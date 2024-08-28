@@ -1,4 +1,4 @@
-module.exports = elementorModules.ViewModule.extend( {
+export default class extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -6,7 +6,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				stickyElements: '.elementor-element.elementor-sticky',
 			},
 		};
-	},
+	}
 
 	onInit() {
 		const that = this;
@@ -14,7 +14,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.observeStickyElements( () => {
 			that.initializeStickyAndAnchorTracking();
 		} );
-	},
+	}
 
 	observeStickyElements( callback ) {
 		const observer = new MutationObserver( ( mutationsList ) => {
@@ -31,7 +31,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			attributes: true,
 			attributeFilter: [ 'class', 'style' ],
 		} );
-	},
+	}
 
 	initializeStickyAndAnchorTracking() {
 		const anchorLinks = this.getAllAnchorLinks();
@@ -46,7 +46,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		this.trackAnchorLinks( anchorLinks, trackedElements );
 
 		this.organizeStickyAndAnchors( trackedElements );
-	},
+	}
 
 	trackAnchorLinks( anchorLinks, trackedElements ) {
 		anchorLinks.forEach( ( element ) => {
@@ -58,10 +58,16 @@ module.exports = elementorModules.ViewModule.extend( {
 				scrollPosition,
 			} );
 		} );
-	},
+	}
 
 	trackStickyElements( stickyElements, trackedElements ) {
 		stickyElements.forEach( ( element ) => {
+			const settings = this.getElementSettings( element );
+
+			if ( ! settings ) {
+				return;
+			}
+
 			const { sticky_anchor_link_offset: scrollMarginTop } = this.getElementSettings( element );
 			if ( 0 === scrollMarginTop ) {
 				return;
@@ -73,7 +79,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				scrollPosition,
 			} );
 		} );
-	},
+	}
 
 	organizeStickyAndAnchors( elements ) {
 		const stickyList = this.filterAndSortElementsByType( elements, 'sticky' );
@@ -82,7 +88,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		stickyList.forEach( ( sticky, index ) => {
 			this.defineCurrentStickyRange( sticky, index, stickyList, anchorList );
 		} );
-	},
+	}
 
 	defineCurrentStickyRange( sticky, index, stickyList, anchorList ) {
 		const nextStickyScrollPosition = ( index + 1 < stickyList.length )
@@ -103,7 +109,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			}
 			return withinRange;
 		} );
-	},
+	}
 
 	getScrollPosition( element ) {
 		let offsetTop = 0;
@@ -114,7 +120,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		return offsetTop;
-	},
+	}
 
 	getAllStickyElements() {
 		const allStickyElements = document.querySelectorAll( this.getSettings( 'selectors.stickyElements' ) );
@@ -122,7 +128,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		return Array.from( allStickyElements ).filter( ( anchor, index, self ) =>
 			index === self.findIndex( ( t ) => t.getAttribute( 'data-id' ) === anchor.getAttribute( 'data-id' ) ),
 		);
-	},
+	}
 
 	getAllAnchorLinks() {
 		const allAnchors = document.querySelectorAll( this.getSettings( 'selectors.links' ) );
@@ -130,18 +136,18 @@ module.exports = elementorModules.ViewModule.extend( {
 		return Array.from( allAnchors ).filter( ( anchor, index, self ) =>
 			index === self.findIndex( ( t ) => t.getAttribute( 'href' ) === anchor.getAttribute( 'href' ) ),
 		);
-	},
+	}
 
 	filterAndSortElementsByType( elements, type ) {
 		return elements
 			.filter( ( item ) => type === item.type )
 			.sort( ( a, b ) => a.scrollPosition - b.scrollPosition );
-	},
+	}
 
 	isValidSelector( hash ) {
 		const validSelectorPattern = /^#[A-Za-z_][\w-]*$/;
 		return validSelectorPattern.test( hash );
-	},
+	}
 
 	getAnchorTarget( element ) {
 		if ( ! this.isValidSelector( element.hash ) ) {
@@ -152,9 +158,9 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 
 		return document.querySelector( element.hash );
-	},
+	}
 
 	getElementSettings( element ) {
 		return JSON.parse( element.getAttribute( 'data-settings' ) );
-	},
-} );
+	}
+};

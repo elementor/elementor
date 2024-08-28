@@ -14,13 +14,13 @@ import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 import Controls from './utils/controls';
+import AnchorScrollMargin from './utils/anchor-scroll-margin';
 
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
-	AnchorsModule = require( 'elementor-frontend/utils/anchors' ),
-	AnchorScrollMargin = require( 'elementor-frontend/utils/anchor-scroll-margin' );
+	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
 
 export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
