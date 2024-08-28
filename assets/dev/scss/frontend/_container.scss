@@ -227,7 +227,7 @@
 	}
 
 	@media (max-width: $screen-mobile-max) {
-		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-phone {
+		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-mobile {
 			display: none;
 		}
 	}
