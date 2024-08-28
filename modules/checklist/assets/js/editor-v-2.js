@@ -25,7 +25,7 @@ const Icon = () => {
 	};
 
 	useEffect( () => {
-		return listenTo(commandEndEvent ( 'checklist/toggle-popup' ), ( e ) => {
+		return listenTo( commandEndEvent( 'checklist/toggle-popup' ), ( e ) => {
 			if ( e.args.isOpen ) {
 				setHasRoot( true );
 			} else {
@@ -38,7 +38,7 @@ const Icon = () => {
 		fetchStatus();
 	}, [] );
 
-	useEffect(() => {
+	useEffect( () => {
 		const handleFirstClosed = () => {
 			setOpen( true );
 		};
@@ -50,9 +50,9 @@ const Icon = () => {
 		};
 	}, [] );
 
-	 if ( hasRoot && !closedForFirstTime ) {
-		return (
-			<RocketIcon />
+	 if ( hasRoot && ! closedForFirstTime ) {
+		 return (
+			 <RocketIcon />
 		);
 	} else {
 		return (
@@ -60,7 +60,7 @@ const Icon = () => {
 				<RocketIcon />
 			</Infotip>
 		);
-	};
+	}
 };
 
 export const editorV2 = () => {
