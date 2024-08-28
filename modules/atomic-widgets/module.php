@@ -160,8 +160,8 @@ class Module extends BaseModule {
 
 		$transformers_map = [];
 
-		foreach($transformers as $transformer) {
-			$transformers_map[$transformer->type()] = $transformer;
+		foreach ( $transformers as $transformer ) {
+			$transformers_map[ $transformer->type() ] = $transformer;
 		}
 
 		return $transformers_map;
@@ -178,8 +178,8 @@ class Module extends BaseModule {
 	private function build_breakpoints(): array {
 		$breakpoints_config = Plugin::$instance->breakpoints->get_breakpoints_config();
 
-		$minWidth = [];
-		$maxWidth = [];
+		$min_width = [];
+		$max_width = [];
 		$defaults = [
 			[
 				'id' => 'desktop',
@@ -187,36 +187,36 @@ class Module extends BaseModule {
 			],
 		];
 
-		foreach ( $breakpoints_config as $id => $v1Breakpoint ) {
-			if ( ! $v1Breakpoint['is_enabled'] ) {
+		foreach ( $breakpoints_config as $id => $v1_breakpoint ) {
+			if ( ! $v1_breakpoint['is_enabled'] ) {
 				continue;
 			}
 
 			$breakpoint = [
 				'id' => $id,
-				'label' => $v1Breakpoint['label'],
-				'width' => $v1Breakpoint['value'],
-				'type' => $v1Breakpoint['direction'] === 'min' ? 'min-width' : 'max-width',
+				'label' => $v1_breakpoint['label'],
+				'width' => $v1_breakpoint['value'],
+				'type' => 'min' === $v1_breakpoint['direction'] ? 'min-width' : 'max-width',
 			];
 
 			if ( ! $breakpoint['width'] ) {
 				$defaults[] = $breakpoint;
-			} elseif ( $breakpoint['type'] === 'min-width' ) {
-				$minWidth[] = $breakpoint;
+			} elseif ( 'min-width' === $breakpoint['type'] ) {
+				$min_width[] = $breakpoint;
 			} else {
-				$maxWidth[] = $breakpoint;
+				$max_width[] = $breakpoint;
 			}
 		}
 
-		usort($minWidth, function ( $a, $b ) {
+		usort($min_width, function ( $a, $b ) {
 			return $b['width'] - $a['width'];
 		});
 
-		usort($maxWidth, function ( $a, $b ) {
+		usort($max_width, function ( $a, $b ) {
 			return $b['width'] - $a['width'];
 		});
 
-		$sorted_breakpoints = array_merge( $minWidth, $defaults, $maxWidth );
+		$sorted_breakpoints = array_merge( $min_width, $defaults, $max_width );
 
 		$breakpoints_map = [];
 		foreach ( $sorted_breakpoints as $breakpoint ) {
