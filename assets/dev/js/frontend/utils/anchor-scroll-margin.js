@@ -66,7 +66,8 @@ export default class extends elementorModules.ViewModule {
 				return;
 			}
 
-			const { sticky_anchor_link_offset: scrollMarginTop } = this.getElementSettings( element );
+			const { sticky_anchor_link_offset: scrollMarginTop } = settings;
+
 			if ( 0 === scrollMarginTop ) {
 				return;
 			}
