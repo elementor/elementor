@@ -3,6 +3,7 @@ import { Page } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import topBarSelectors from '../../../selectors/top-bar-selectors';
+import { Step } from '../../../types/checklist';
 
 export default class ChecklistHelper {
 	readonly page: Page;
@@ -71,19 +72,14 @@ export default class ChecklistHelper {
 		return `${ selectors.popup } ${ selectors.checklistItemButton }.checklist-step-${ itemId }`;
 	}
 
-	getSteps() {
-		return [
-			{
-				id: 'create-pages',
-				title: 'Create your first 3 pages',
-				imagePath: 'https://assets.elementor.com/checklist/v1/images/checklist-step-3.jpg',
-				description: 'Jumpstart your creation with professional designs form the Template Library or start from scratch.',
-				learn_more_link: 'https://elementor.com/help/create-new-page/',
-				learn_more_text: 'https://elementor.com/help/create-new-page/',
-				cta_text: 'Create a new page',
-				is_completed: true,
+	getSteps(): Promise< Step[] > {
+		return this.page.evaluate( () => fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': elementorWebCliConfig.nonce,
 			},
-		];
+		} ).then( ( response ) => response.json() ).then( ( json ) => json.data ) );
 	}
 }
 
