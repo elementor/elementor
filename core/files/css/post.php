@@ -359,26 +359,26 @@ class Post extends Base {
 	private function build_global_controls_and_values( $control, $controls, &$global_controls, &$global_values, $custom_colors_enabled, $custom_typography_enabled ) {
 		$is_color_control = 'color' === $control['type'];
 		$is_typography_control = isset( $control['groupType'] ) && 'typography' === $control['groupType'];
-	
+
 		// If it is a color/typography control and default colors/typography are disabled,
 		// don't add the default CSS.
 		if ( ( $is_color_control && ! $custom_colors_enabled ) || ( $is_typography_control && ! $custom_typography_enabled ) ) {
 			return;
 		}
-	
+
 		$global_control = $control;
-	
+
 		// Handle group controls that don't have a default global property.
 		if ( ! empty( $control['groupType'] ) ) {
 			$global_control = $controls[ $control['groupPrefix'] . $control['groupType'] ];
 		}
-	
+
 		// If the control has a default global defined, add it to the globals array
 		// that is used in add_control_rules.
 		if ( ! empty( $control['global']['default'] ) ) {
 			$global_values['__globals__'][ $control['name'] ] = $global_control['global']['default'];
 		}
-	
+
 		if ( ! empty( $global_control['global']['default'] ) ) {
 			$global_controls[] = $control;
 		}
