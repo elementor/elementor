@@ -37,12 +37,13 @@ ControlSelectItemView = ControlBaseDataView.extend( {
 		}
 
 		this.updatePlaceholder();
+
+		this.maybeUpdateStickyParentValue();
 	},
 
 	onInputChange() {
 		this.updatePlaceholder();
 	},
-}, {
 
 	onPasteStyle( control, clipboardValue ) {
 		if ( control.groups ) {
@@ -52,6 +53,29 @@ ControlSelectItemView = ControlBaseDataView.extend( {
 		}
 
 		return undefined !== control.options[ clipboardValue ];
+	},
+
+
+	maybeUpdateStickyParentValue() {
+		const modelName = this.model.get( 'name' );
+
+		if ( 'sticky_parent' !== modelName ) {
+			return;
+		}
+
+		const value = this.container.settings.get( modelName );
+		const oldValues = [ '', 'yes' ];
+
+		if ( ! oldValues.includes( value ) ) {
+			return;
+		}
+
+		const updatedValue = '' === value
+			? 'js-fixed'
+			: 'js-stay-in-column';
+
+		this.setSettingsModel( updatedValue );
+		this.applySavedValue();
 	},
 } );
 
