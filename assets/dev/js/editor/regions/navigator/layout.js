@@ -15,8 +15,13 @@ export default class extends Marionette.LayoutView {
 			toggleButtonIcon: '#elementor-navigator__toggle-all i',
 			toggleButtonA11yText: '#elementor-navigator__toggle-all span',
 			closeButton: '#elementor-navigator__close',
-			aiTitlesButton: '#elementor-navigator__ai-titles',
 		};
+	}
+
+	behaviors() {
+		var behaviors = {};
+
+		return elementor.hooks.applyFilters( 'navigator/layout/behaviors', behaviors, this );
 	}
 
 	events() {
@@ -24,7 +29,6 @@ export default class extends Marionette.LayoutView {
 			'click @ui.toggleButton': 'toggleElements',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'keyup @ui.closeButton': 'onCloseButtonKeyPress',
-			'click @ui.aiTitlesButton': 'aiTitleClickHandler',
 		};
 	}
 
@@ -32,18 +36,6 @@ export default class extends Marionette.LayoutView {
 		return {
 			elements: '#elementor-navigator__elements',
 		};
-	}
-
-	aiTitleClickHandler() {
-		window.location.hash = 'welcome-ai-return-to-ai-titles';
-		window.addEventListener( 'hashchange', this.handleHashChange.bind( this ) );
-	}
-
-	handleHashChange() {
-		if ( elementorCommon.config.library_connect?.is_connected && window.location.hash.includes( 'ai-titles' ) ) {
-			window.location.hash = '';
-			window.location.reload();
-		}
 	}
 
 	toggleElements() {
