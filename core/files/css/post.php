@@ -334,11 +334,25 @@ class Post extends Base {
 		$global_values['__globals__'] = [];
 
 		foreach ( $controls as $control ) {
-			$this->build_global_controls_and_values( $control, $controls, $global_controls, $global_values, $custom_colors_enabled, $custom_typography_enabled );
+			$this->build_global_controls_and_values(
+				$control,
+				$controls,
+				$global_controls,
+				$global_values,
+				$custom_colors_enabled,
+				$custom_typography_enabled
+			);
 		}
 
 		foreach ( $global_controls as $control ) {
-			$this->add_control_rules( $control, $controls, function( $control ) {}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $element->get_name() ], $global_values );
+			$this->add_control_rules(
+				$control,
+				$controls,
+				function( $control ) {},
+				[ '{{WRAPPER}}' ],
+				[ '.elementor-widget-' . $element->get_name() ],
+				$global_values
+			);
 		}
 	}
 
