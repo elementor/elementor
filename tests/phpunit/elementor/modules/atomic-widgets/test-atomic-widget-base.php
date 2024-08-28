@@ -170,96 +170,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $settings );
 	}
 
-	public function test_get_props_schema__throws_for_non_atomic_prop() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'non_atomic_prop' => 'not-an-atomic-prop',
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop `non_atomic_prop` must be an instance of `Atomic_Prop`' );
-
-		// Act.
-		$widget::get_props_schema();
-	}
-
-	public function test_get_props_schema__throws_for_non_existing_prop_type() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'prop' => Atomic_Prop::make()
-					->type( 'non-existing-type' ),
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop type `non-existing-type` for prop `prop` does not exist' );
-
-		// Act.
-		$widget::get_props_schema();
-	}
-
-	public function test_get_props_schema__throws_for_atomic_prop_without_type() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'prop_without_type' => Atomic_Prop::make(),
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop `prop_without_type` must have a type' );
-
-		// Act.
-		$widget::get_props_schema();
-	}
-
-	public function test_get_props_schema__throws_when_default_value_type_is_wrong() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'prop_with_wrong_default_type' => Atomic_Prop::make()
-					->string()
-					->default( 123 ),
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Default value for `prop_with_wrong_default_type` prop is invalid' );
-		$this->expectExceptionMessage( 'Value must be a string, integer given.' );
-
-		// Act.
-		$widget::get_props_schema();
-	}
-
-	public function test_get_props_schema__throws_when_default_value_doesnt_pass_constraint_validation() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'prop_with_wrong_default_type' => Atomic_Prop::make()
-					->string()
-					->constraints( [
-						Enum::make( [ 'value-a', 'value-b' ] ),
-					] )
-					->default( 'value-c' ),
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Default value for `prop_with_wrong_default_type` prop does not pass the constraint `enum`' );
-		$this->expectExceptionMessage( '`value-c` is not in the list of allowed values (`value-a`, `value-b`).' );
-
-		// Act.
-		$widget::get_props_schema();
-	}
-
 	public function test_get_props_schema__is_serializable() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
@@ -317,7 +227,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	}
 
 	public function test_get_props_schema() {
-		// Act.
+		// Arrange,
 		$schema = [
 			'string_prop' => Atomic_Prop::make()
 				->string()
@@ -329,7 +239,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		$widget = $this->make_mock_widget( [ 'props_schema' => $schema ] );
 
-		// Assert.
+		// Act & Assert.
 		$this->assertSame( $schema, $widget::get_props_schema() );
 	}
 
@@ -434,6 +344,96 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( $controls_definitions, $controls );
+	}
+
+	public function test_get_atomic_controls__schema_validation__throws_for_non_atomic_prop() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'non_atomic_prop' => 'not-an-atomic-prop',
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Prop `non_atomic_prop` must be an instance of `Atomic_Prop`' );
+
+		// Act.
+		$widget->get_atomic_controls();
+	}
+
+	public function test_get_atomic_controls__schema_validation__throws_for_non_existing_prop_type() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'prop' => Atomic_Prop::make()
+					->type( 'non-existing-type' ),
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Prop type `non-existing-type` for prop `prop` does not exist' );
+
+		// Act.
+		$widget->get_atomic_controls();
+	}
+
+	public function test_get_atomic_controls__schema_validation__throws_for_atomic_prop_without_type() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'prop_without_type' => Atomic_Prop::make(),
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Prop `prop_without_type` must have a type' );
+
+		// Act.
+		$widget->get_atomic_controls();
+	}
+
+	public function test_get_atomic_controls__schema_validation__throws_when_default_value_type_is_wrong() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'prop_with_wrong_default_type' => Atomic_Prop::make()
+					->string()
+					->default( 123 ),
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Default value for `prop_with_wrong_default_type` prop is invalid' );
+		$this->expectExceptionMessage( 'Value must be a string, integer given.' );
+
+		// Act.
+		$widget->get_atomic_controls();
+	}
+
+	public function test_get_atomic_controls__schema_validation__throws_when_default_value_doesnt_pass_constraint_validation() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'prop_with_wrong_default_type' => Atomic_Prop::make()
+					->string()
+					->constraints( [
+						Enum::make( [ 'value-a', 'value-b' ] ),
+					] )
+					->default( 'value-c' ),
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Default value for `prop_with_wrong_default_type` prop does not pass the constraint `enum`' );
+		$this->expectExceptionMessage( '`value-c` is not in the list of allowed values (`value-a`, `value-b`).' );
+
+		// Act.
+		$widget->get_atomic_controls();
 	}
 
 	/**
