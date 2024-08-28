@@ -48,7 +48,7 @@ class Steps extends Endpoint_Base {
 		parent::register();
 
 		$this->register_item_route();
-		$this->register_item_route( \WP_REST_Server::EDITABLE,  [
+		$this->register_item_route( \WP_REST_Server::EDITABLE, [
 			'id_arg_name' => 'step_id',
 			'id_arg_type_regex' => '[\w\-\_]+',
 			'step_id' => [
@@ -57,7 +57,7 @@ class Steps extends Endpoint_Base {
 				'required' => true,
 				'validate_callback' => function ( $step_id ) {
 					return in_array( $step_id, Steps_Manager::get_step_ids() );
-				}
+				},
 			],
 		] );
 	}
