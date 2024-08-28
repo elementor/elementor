@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Checklist;
 
 use Elementor\Modules\Checklist\Steps\Create_Pages;
+use Elementor\Modules\Checklist\Steps\Setup_Header;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,6 +15,7 @@ class Steps_Manager {
 	private array $step_instances = [];
 
 	private Checklist_Module_Interface $module;
+	private static $step_ids = [ Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
 
 	public function __construct( Checklist_Module_Interface $module ) {
 		$this->module = $module;
@@ -28,7 +30,7 @@ class Steps_Manager {
 	public function get_steps_for_frontend() : array {
 		$formatted_steps = [];
 
-		foreach ( $this->get_step_ids() as $step_id ) {
+		foreach ( self::$step_ids as $step_id ) {
 			$instance = $this->step_instances[ $step_id ];
 			$is_marked_as_completed = $instance->is_marked_as_completed();
 
@@ -112,10 +114,13 @@ class Steps_Manager {
 				'description' => $step_instance->get_description(),
 				'learn_more_text' => $step_instance->get_learn_more_text(),
 				'learn_more_url' => $step_instance->get_learn_more_url(),
+				Step_Base::IS_COMPLETION_IMMUTABLE => $step_instance->get_is_completion_immutable(),
 				'cta_text' => $step_instance->get_cta_text(),
 				'cta_url' => $step_instance->get_cta_url(),
 				'image_src' => $step_instance->get_image_src(),
-				Step_Base::IS_COMPLETION_IMMUTABLE => $step_instance->get_is_completion_immutable(),
+				'required_license' => $step_instance->get_license(),
+				'is_locked' => $step_instance->get_is_locked(),
+				'promotion_url' => $step_instance->get_promotion_link(),
 			]
 			: [];
 	}
@@ -126,7 +131,7 @@ class Steps_Manager {
 	 * @return void
 	 */
 	private function register_steps() : void {
-		foreach ( $this->get_step_ids() as $step_id ) {
+		foreach ( self::$step_ids as $step_id ) {
 			$step_instance = $this->get_step_instance( $step_id );
 
 			if ( $step_instance && ! isset( $this->step_instances[ $step_id ] ) ) {
@@ -151,14 +156,5 @@ class Steps_Manager {
 
 		/** @var Step_Base $step */
 		return new $class_name( $this->module, $this->module->get_wordpress_adapter() );
-	}
-
-	/**
-	 * Returns the steps config from source
-	 *
-	 * @return array
-	 */
-	private static function get_step_ids() : array {
-		return [ Create_Pages::STEP_ID ];
 	}
 }
