@@ -4,19 +4,27 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 
 class Styles_Renderer {
 
+	/**
+	 * @var array<string, callable> $transformers
+	 */
 	private array $transformers;
 
+	/**
+	 * @var array<int, array{type: string, width: int}> $breakpoints
+	 */
 	private array $breakpoints;
 
 	/**
 	 * Styles_Renderer constructor.
 	 *
-	 * @param $transformers array<string, callable> Style transformers
-	 * @param $breakpoints array<int, array{type: string, width: int}> Screen breakpoints
+	 * @param array{
+	 *     transformers: array<string, callable>,
+	 *     breakpoints: array<int, array{type: string, width: int}>
+	 * } $config
 	 */
-	public function __construct( array $transformers, array $breakpoints ) {
-		$this->transformers = $transformers;
-		$this->breakpoints = $breakpoints;
+	public function __construct( array $config ) {
+		$this->transformers = $config['transformers'];
+		$this->breakpoints = $config['breakpoints'];
 	}
 
 	/**

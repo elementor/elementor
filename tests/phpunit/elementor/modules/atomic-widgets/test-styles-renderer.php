@@ -33,7 +33,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
         $transformers = [];
         $breakpoints = [];
 
-        $stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+        $stylesRenderer = new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints
+		] );
 
         // Act.
         $css = $stylesRenderer->render( $styles );
@@ -75,7 +78,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$transformers = [];
 		$breakpoints = [];
 
-		$stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+		$stylesRenderer = new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints
+		] );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
@@ -96,7 +102,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$transformers = [];
 		$breakpoints = [];
 
-		$stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+		$stylesRenderer = new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints
+		] );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
@@ -132,7 +141,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
         $transformers = [];
         $breakpoints = [];
 
-        $stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+        $stylesRenderer = new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints
+		] );
 
         // Act.
         $css = $stylesRenderer->render( $styles );
@@ -175,7 +187,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
             ],
         ];
 
-        $stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+        $stylesRenderer = new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints
+		] );
 
         // Act.
         $css = $stylesRenderer->render( $styles );
@@ -224,7 +239,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			],
 		];
 
-		$stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+		$stylesRenderer = new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints
+		] );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
@@ -261,7 +279,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$transformers = [];
 		$breakpoints = [];
 
-		$stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+		$stylesRenderer = new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints
+		] );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
@@ -299,7 +320,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		];
 		$breakpoints = [];
 
-		$stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+		$stylesRenderer = new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints
+		] );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
@@ -384,7 +408,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
         ];
         $breakpoints = [];
 
-        $stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+        $stylesRenderer = new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints
+		] );
 
         // Act.
         $css = $stylesRenderer->render( $styles );
@@ -440,7 +467,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$transformers = [];
 		$breakpoints = [];
 
-		$stylesRenderer = new Styles_Renderer( $transformers, $breakpoints );
+		$stylesRenderer = new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints
+		] );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
