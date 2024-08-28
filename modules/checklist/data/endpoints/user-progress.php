@@ -29,7 +29,7 @@ class User_Progress extends Endpoint_Base {
 
 	public function create_item( $id, $request ) {
 		$progress_data = $this->get_checklist_data();
-		if ( false === $progress_data[ 'data' ][ 'first_closed_checklist_in_editor' ] ) {
+		if ( false === $progress_data['data']['first_closed_checklist_in_editor'] ) {
 			Plugin::$instance->modules_manager->get_modules( 'checklist' )->set_user_progress();
 		}
 		return [
