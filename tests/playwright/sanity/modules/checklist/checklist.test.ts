@@ -140,6 +140,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			steps = await checklistHelper.getSteps(),
 			doneStepIds: StepId[] = [];
 
+		await checklistHelper.resetStepsInDb();
 		await checklistHelper.toggleChecklist( 'editor', true );
 
 		for ( const step of steps ) {
@@ -147,14 +148,17 @@ test.describe( 'Launchpad checklist tests', () => {
 				continue;
 			}
 
-			const markAsButton = page.locator( checklistHelper.getStepContentSelector( step.config.id, selectors.markAsButton ) );
+			const markAsButton = page.locator( checklistHelper.getStepContentSelector( step.config.id, selectors.markAsButton ) ),
+				checkIconSelector = checklistHelper.getStepItemSelector( step.config.id, selectors.stepIcon );
 
 			await checklistHelper.toggleChecklistItem( step.config.id, 'editor', true );
 			await expect( markAsButton ).toHaveText( 'Mark as done' );
+			await expect( page.locator( checkIconSelector + '.unchecked' ) ).toBeVisible();
 
 			await checklistHelper.toggleMarkAsDone( step.config.id, 'editor' );
 			doneStepIds.push( step.config.id );
 			await expect( markAsButton ).toHaveText( 'Unmark as done' );
+			await expect( page.locator( checkIconSelector + '.checked' ) ).toBeVisible();
 
 			expect( await checklistHelper.getProgressFromPopup( 'editor' ) )
 				.toBe( Math.round( doneStepIds.length * 100 / steps.length ) );

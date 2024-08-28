@@ -13,6 +13,7 @@ const selectors = {
 	closeButton: '.e-checklist-close',
 	checklistItemButton: '.e-checklist-item-button',
 	checklistItemContent: '.e-checklist-item-content',
+	stepIcon: '.step-check-icon',
 	markAsButton: '.mark-as-button',
 	cta: '.cta-button',
 	progressBarWrapper: '.e-checklist-progress-bar-wrapper',

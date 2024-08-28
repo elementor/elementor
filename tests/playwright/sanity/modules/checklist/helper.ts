@@ -92,8 +92,8 @@ export default class ChecklistHelper {
 		return `${ selectors.popup } ${ selectors.checklistItemContent }.checklist-step-${ itemId } ${ innerSelector }`;
 	}
 
-	getStepItemSelector( itemId: string ) {
-		return `${ selectors.popup } ${ selectors.checklistItemButton }.checklist-step-${ itemId }`;
+	getStepItemSelector( itemId: string, innerSelector: string = '' ) {
+		return `${ selectors.popup } ${ selectors.checklistItemButton }.checklist-step-${ itemId } ${ innerSelector }`;
 	}
 
 	getSteps(): Promise< Step[] > {
@@ -104,6 +104,26 @@ export default class ChecklistHelper {
 				'X-WP-Nonce': elementorWebCliConfig.nonce,
 			},
 		} ).then( ( response ) => response.json() ).then( ( json ) => json.data ) );
+	}
+
+	async resetStepsInDb() {
+		const steps = await this.getSteps();
+
+		for ( const step of steps ) {
+			await this.page.evaluate( ( id ) => fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps/${ id }`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-WP-Nonce': elementorWebCliConfig.nonce,
+				},
+				body: JSON.stringify( {
+					id,
+					is_marked_completed: false,
+					is_absolute_completed: false,
+					is_immutable_completed: false,
+				} ),
+			} ), step.config.id );
+		}
 	}
 
 	isStepCompleted( step: Step ) {

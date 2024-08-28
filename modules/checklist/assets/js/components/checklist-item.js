@@ -15,8 +15,8 @@ function CheckListItem( props ) {
 		<>
 			<ListItemButton onClick={ handleExpandClick } className={ `e-checklist-item-button checklist-step-${ step.config.id }` }>
 				<ListItemIcon>{ step.is_absolute_completed || step.is_marked_completed || step.is_immutable_completed
-					? <CircleCheckFilledIcon color="primary" />
-					: <RadioButtonUncheckedIcon />
+					? <CircleCheckFilledIcon color="primary" className="step-check-icon checked" />
+					: <RadioButtonUncheckedIcon className="step-check-icon unchecked" />
 				}</ListItemIcon>
 				<ListItemText primary={ step.config.title } primaryTypographyProps={ { variant: 'body2' } } />
 				{ step.config.is_locked ? <UpgradeIcon color="promotion" sx={ { mr: 1 } } /> : null }
