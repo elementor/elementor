@@ -98,7 +98,7 @@ jobs:
         run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
       - name: Run checklist tests
         if: ${{ matrix.shardIndex == 'checklist' }}
-        run: npm run test:playwright:elements-regression -- --grep="@checklist" --reporter=${{ inputs.reporter || 'list,github' }}
+        run: npm run test:playwright -- --grep="@checklist" --reporter=${{ inputs.reporter || 'list,github' }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
