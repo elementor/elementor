@@ -52,7 +52,7 @@ body {
 		#elementor-navigator__ai-titles + &__title {
 			padding-inline-end: 17.5px;
 		}
-		  
+		
 	}
 
 	&__ai-titles {
@@ -61,6 +61,7 @@ body {
 		cursor: pointer;
 		background-color: transparent;
 		border: none;
+		outline: none;
 
 		&:hover {
 			color: $e-pink-600;
