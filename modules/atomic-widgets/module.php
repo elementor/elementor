@@ -102,7 +102,8 @@ class Module extends BaseModule {
 	 * @return array<string, Style_Transformer_Base>
 	 */
 	private function register_style_transformers( array $transformers ): array {
-		array_push($transformers,
+		array_push(
+			$transformers,
 			new Size_Transformer(),
 			new Array_Transformer(),
 		);
