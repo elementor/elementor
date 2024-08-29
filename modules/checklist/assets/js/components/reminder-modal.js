@@ -8,7 +8,7 @@ const ReminderModal = ( { setOpen } ) => {
 	};
 
 	return (
-		<Card elevation={ 0 } sx={ { maxWidth: 336 } }>
+		<Card elevation={ 0 } sx={ { maxWidth: 336 } } className='e-checklist-infotip-first-time-closed'>
 			<CardContent>
 				<Typography variant="subtitle2" sx={ { mb: 2 } }>Looking for your Launchpad Checklist?</Typography>
 				<Typography variant="body2">Click the launch icon to continue setting up your site.</Typography>

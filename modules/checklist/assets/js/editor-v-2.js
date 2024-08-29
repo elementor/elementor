@@ -21,6 +21,7 @@ const Icon = () => {
 			},
 		} );
 		const data = await response.json();
+		console.log(data);
 		setClosedForFirstTime( data.data.first_closed_checklist_in_editor );
 	};
 

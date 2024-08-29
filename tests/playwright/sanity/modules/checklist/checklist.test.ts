@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import ChecklistHelper from './helper';
+import { freeUserInformationExceededQuota80Mock } from "../ai/user-information.mock";
 
 test.describe( 'Launchpad checklist tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -56,6 +57,82 @@ test.describe( 'Launchpad checklist tests', () => {
 				await closeButton.click();
 				await expect( checklist ).toBeHidden();
 			} );
+		} );
+	} );
+
+	test.only( 'Checklist first time closed infotip', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Infotip first time triggered', async () => {
+			const rocketButton = editor.page.locator( selectors.topBarIcon ),
+				closeButton = editor.page.locator( selectors.closeButton ),
+				checklist = editor.page.locator( selectors.popup ),
+				infotip = editor.page.locator( selectors.infotipFirstTimeClosed );
+
+			await page.route( `/wp-json/elementor/v1/checklist/user-progress`, async ( route ) => {
+				const json = {
+					"data": {
+						"last_opened_timestamp": null,
+						"first_closed_checklist_in_editor": false,
+						"steps": {
+							"create_pages": {
+								"is_marked_completed": false,
+								"is_completed": false
+							},
+							"setup_header": {
+								"is_marked_completed": false,
+								"is_completed": false
+							}
+						}
+					}
+				}
+				await route.fulfill( {
+					json: json,
+				} );
+
+			} );
+
+			await rocketButton.click();
+			await expect( checklist ).toBeVisible();
+
+			await closeButton.click();
+			await expect( infotip ).toBeHidden();
+		} );
+
+		await test.step( 'Infotip not triggered after db update', async () => {
+			const rocketButton = editor.page.locator( selectors.topBarIcon ),
+				closeButton = editor.page.locator( selectors.closeButton ),
+				checklist = editor.page.locator( selectors.popup ),
+				infotip = editor.page.locator( selectors.infotipFirstTimeClosed );
+
+				await page.route( `/wp-json/elementor/v1/checklist/user-progress`, async ( route ) => {
+				const json = {
+					"data": {
+						"last_opened_timestamp": null,
+						"first_closed_checklist_in_editor": true,
+						"steps": {
+							"create_pages": {
+								"is_marked_completed": false,
+								"is_completed": false
+							},
+							"setup_header": {
+								"is_marked_completed": false,
+								"is_completed": false
+							}
+						}
+					}
+				}
+				await route.fulfill( {
+					json: json,
+				} );
+
+			} );
+			await rocketButton.click();
+			await expect( checklist ).toBeVisible();
+
+			await closeButton.click();
+			await expect( infotip ).toBeVisible();
 		} );
 	} );
 

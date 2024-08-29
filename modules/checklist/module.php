@@ -20,9 +20,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	const EXPERIMENT_ID = 'launchpad-checklist';
 	const DB_OPTION_KEY = 'elementor_checklist';
 	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
-
 	const FIRST_CLOSED_CHECKLIST_IN_EDITOR = 'first_closed_checklist_in_editor';
-
 	private $user_progress = null;
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;

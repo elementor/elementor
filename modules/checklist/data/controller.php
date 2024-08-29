@@ -5,7 +5,6 @@ use Elementor\Data\V2\Base\Controller as Controller_Base;
 use Elementor\Modules\Checklist\Data\Endpoints\Steps;
 use Elementor\Modules\Checklist\Data\Endpoints\User_Progress;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
