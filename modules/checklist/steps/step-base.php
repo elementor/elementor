@@ -135,10 +135,10 @@ abstract class Step_Base {
 		$is_immutable_completed = $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
 
 		if ( ! $is_immutable_completed && $this->get_is_completion_immutable() && $this->is_absolute_completed() ) {
-			$this->update_step( [ [
+			$this->update_step( [
 				self::MARKED_AS_COMPLETED_KEY => false,
 				self::IMMUTABLE_COMPLETION_KEY => true,
-			] ] );
+			] );
 		}
 	}
 
