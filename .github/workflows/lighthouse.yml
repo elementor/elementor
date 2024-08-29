@@ -67,12 +67,12 @@ jobs:
           bash "${GITHUB_WORKSPACE}/.github/scripts/save-lighthouse-pages-html-dumps.sh"
 
       - name: Upload Lighthouse reports on failure
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
-          retention-days: 7
+          retention-days: 3
 
       - name: Upload Lighthouse HTML dumps on failure
         if: failure()
