@@ -32,22 +32,13 @@ class Steps extends Endpoint_Base {
 			Step_Base::IMMUTABLE_COMPLETION_KEY => $request->get_param( Step_Base::IMMUTABLE_COMPLETION_KEY ) ?? null,
 		];
 
-		$step = $checklist_module->get_step_progress( $id );
+		$step = $checklist_module->get_steps_manager()->get_step_by_id( $id );
 
 		if ( ! $step ) {
 			return new \WP_Error( 'rest_invalid_step_id', 'Invalid step id', [ 'status' => 404 ] );
 		}
 
-		foreach ( $allowed_changes as $change_key => $change_value ) {
-			if ( null === $change_value ) {
-				continue;
-			}
-
-			$step[ $change_key ] = $change_value;
-		}
-
-		$checklist_module->set_step_progress( $id, $step );
-		return $step;
+		$step->update_step( $allowed_changes );
 	}
 
 	private function get_checklist_data(): array {

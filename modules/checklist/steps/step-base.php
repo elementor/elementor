@@ -92,14 +92,29 @@ abstract class Step_Base {
 		return 'https://go.elementor.com/getting-started-with-elementor/';
 	}
 
+	public function update_step( array $step_data ) : void {
+		$allowed_properties = [
+			self::MARKED_AS_COMPLETED_KEY => $step_data[ self::MARKED_AS_COMPLETED_KEY ] ?? null,
+			self::IMMUTABLE_COMPLETION_KEY => $step_data[ self::MARKED_AS_COMPLETED_KEY ] ?? null,
+			self::ABSOLUTE_COMPLETION_KEY => $step_data[ self::MARKED_AS_COMPLETED_KEY ] ?? null,
+		];
+
+		foreach ( $allowed_properties as $key => $value ) {
+			if ( null !== $value ) {
+				$this->user_progress[ $key ] = $value;
+			}
+		}
+
+		$this->set_step_progress();
+	}
+
 	/**
 	 * Marking a step as completed based on user's desire
 	 *
 	 * @return void
 	 */
 	public function mark_as_completed() : void {
-		$this->user_progress[ self::MARKED_AS_COMPLETED_KEY ] = true;
-		$this->set_step_progress();
+		$this->update_step( [ [ self::MARKED_AS_COMPLETED_KEY => true ] ] );
 	}
 
 	/**
@@ -108,8 +123,7 @@ abstract class Step_Base {
 	 * @return void
 	 */
 	public function unmark_as_completed() : void {
-		$this->user_progress[ self::MARKED_AS_COMPLETED_KEY ] = false;
-		$this->set_step_progress();
+		$this->update_step( [ [ self::MARKED_AS_COMPLETED_KEY => false ] ] );
 	}
 
 	/**
@@ -121,9 +135,10 @@ abstract class Step_Base {
 		$is_immutable_completed = $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
 
 		if ( ! $is_immutable_completed && $this->get_is_completion_immutable() && $this->is_absolute_completed() ) {
-			$this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] = true;
-			$this->user_progress[ self::MARKED_AS_COMPLETED_KEY ] = false;
-			$this->set_step_progress();
+			$this->update_step( [ [
+				self::MARKED_AS_COMPLETED_KEY => false,
+				self::IMMUTABLE_COMPLETION_KEY => true,
+			] ] );
 		}
 	}
 

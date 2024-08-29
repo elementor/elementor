@@ -19,22 +19,6 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 		await page.close();
 	} );
 
-	test.beforeEach( async ( { browser, apiRequests, request }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.openNewPage();
-
-		// Delete all pages
-		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
-
-		await apiRequests.cleanUpTestPages( request );
-		await checklistHelper.resetStepsInDb( request );
-
-		await page.close();
-	} );
-
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -49,8 +33,12 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 
 		await wpAdmin.openNewPage();
 
-		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests ),
-			steps = await checklistHelper.getSteps( request ),
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await apiRequests.cleanUpTestPages( request, true );
+		await checklistHelper.resetStepsInDb( request );
+
+		const steps = await checklistHelper.getSteps( request ),
 			doneStepIds: StepId[] = [];
 
 		await checklistHelper.toggleChecklist( 'editor', true );

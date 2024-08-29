@@ -81,13 +81,13 @@ export default class ApiRequests {
 		await Promise.all( requests );
 	}
 
-	public async cleanUpTestPages( request: APIRequestContext ) {
+	public async cleanUpTestPages( request: APIRequestContext, shouldDeleteAllPages = false ) {
 		const pagesPublished = await this.getPages( request ),
 			pagesDraft = await this.getPages( request, 'draft' ),
 			pages = [ ...pagesPublished, ...pagesDraft ];
 
 		const pageIds = pages
-			.filter( ( page: WpPage ) => page.title.rendered.includes( 'Playwright Test Page' ) )
+			.filter( ( page: WpPage ) => shouldDeleteAllPages || page.title.rendered.includes( 'Playwright Test Page' ) )
 			.map( ( page: WpPage ) => page.id );
 
 		for ( const id of pageIds ) {
@@ -186,8 +186,6 @@ export default class ApiRequests {
 			${ await response.text() }
 		` );
 		}
-
-		return await response.json();
 	}
 
 	private async get( request: APIRequestContext, entity: string, status: string = 'publish' ) {

@@ -48,6 +48,16 @@ class Steps_Manager {
 		return $formatted_steps;
 	}
 
+	public function update_step( string $step_id, array $data ) : void {
+		$step = $this->get_step_by_id( $step_id );
+
+		if ( ! $step ) {
+			return;
+		}
+
+		$step->update_step( $data );
+	}
+
 	/**
 	 * Marks a step as completed, returns true if the step was found and marked or false otherwise
 	 *
@@ -56,13 +66,7 @@ class Steps_Manager {
 	 * @return void
 	 */
 	public function mark_step_as_completed( string $step_id ) : void {
-		foreach ( $this->step_instances as $step ) {
-			if ( $step->get_id() === $step_id ) {
-				$step->mark_as_completed();
-
-				return;
-			}
-		}
+		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => true ] );
 	}
 
 	/**
@@ -73,13 +77,7 @@ class Steps_Manager {
 	 * @return void
 	 */
 	public function unmark_step_as_completed( string $step_id ) : void {
-		foreach ( $this->step_instances as $step ) {
-			if ( $step->get_id() === $step_id ) {
-				$step->unmark_as_completed();
-
-				return;
-			}
-		}
+		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => false ] );
 	}
 
 	/**
@@ -90,13 +88,13 @@ class Steps_Manager {
 	 * @return void
 	 */
 	public function maybe_set_step_as_immutable_completed( string $step_id ) : void {
-		foreach ( $this->step_instances as $step ) {
-			if ( $step->get_id() === $step_id ) {
-				$step->maybe_immutably_mark_as_completed();
+		$step = $this->get_step_by_id( $step_id );
 
-				return;
-			}
+		if ( ! $step ) {
+			return;
 		}
+
+		$step->maybe_immutably_mark_as_completed();
 	}
 
 	public function get_step_by_id( string $step_id ) : ?Step_Base {
