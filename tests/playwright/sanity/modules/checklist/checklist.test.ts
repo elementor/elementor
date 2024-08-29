@@ -59,7 +59,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		} );
 	} );
 
-	test.only( 'Checklist first time closed infotip', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Checklist first time closed infotip', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			elementorCommon = await page.evaluate( () => {
@@ -80,13 +80,13 @@ test.describe( 'Launchpad checklist tests', () => {
 						steps: {
 							create_pages: {
 								is_marked_completed: false,
-								is_completed: false
+								is_completed: false,
 							},
 							setup_header: {
 								is_marked_completed: false,
-								is_completed: false
-							}
-						}
+								is_completed: false,
+							},
+						},
 					}
 				}
 				await route.fulfill( {
@@ -116,13 +116,13 @@ test.describe( 'Launchpad checklist tests', () => {
 						steps: {
 							create_pages: {
 								is_marked_completed: false,
-								is_completed: false
+								is_completed: false,
 							},
 							setup_header: {
 								is_marked_completed: false,
-								is_completed: false
-							}
-						}
+								is_completed: false,
+							},
+						},
 					}
 				}
 				await route.fulfill( {
