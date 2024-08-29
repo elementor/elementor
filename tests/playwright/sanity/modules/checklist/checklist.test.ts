@@ -19,6 +19,19 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 		await page.close();
 	} );
 
+	test.beforeEach( async ( { browser, apiRequests, request }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+
+		// Delete all pages
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await apiRequests.cleanUpTestPages( request );
+		await checklistHelper.resetStepsInDb();
+
+		await page.close();
+	} );
+
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -129,18 +142,15 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 		expect( pageProgress ).toBe( progressToCompare );
 	} );
 
-	test( 'Mark as done function in the editor - top bar on', async ( { page, apiRequests, request }, testInfo ) => {
+	test( 'Mark as done function in the editor - top bar on', async ( { page, apiRequests  }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		// Delete all pages
-		await apiRequests.cleanUpTestPages( request );
 		await wpAdmin.openNewPage();
 
 		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests ),
 			steps = await checklistHelper.getSteps(),
 			doneStepIds: StepId[] = [];
 
-		await checklistHelper.resetStepsInDb();
 		await checklistHelper.toggleChecklist( 'editor', true );
 
 		for ( const step of steps ) {
