@@ -9,7 +9,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
 	// Removed the-plus-addons-for-elementor-page-builder since they create a popup that interferes with the tests
-	// { pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
+	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'stratum', installSource: 'api' },
 	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
 	{ pluginName: 'wunderwp', installSource: 'api' },
@@ -39,7 +39,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
 	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
-	{ pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
+	// { pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
 	{ pluginName: 'visibility-logic-elementor', installSource: 'api' },
 	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
 	{ pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
