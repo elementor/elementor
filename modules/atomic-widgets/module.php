@@ -97,20 +97,6 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Image() );
 	}
 
-	/**
-	 * @param array<int, Style_Transformer_Base> $transformers
-	 * @return array<string, Style_Transformer_Base>
-	 */
-	private function register_style_transformers( array $transformers ): array {
-		array_push(
-			$transformers,
-			new Size_Transformer(),
-			new Array_Transformer(),
-		);
-
-		return $transformers;
-	}
-
 	private function register_prop_types() {
 		// Primitive types.
 		$this->prop_types->register( new String_Type() );
@@ -125,6 +111,20 @@ class Module extends BaseModule {
 			'elementor/atomic-widgets/prop-types/register',
 			$this->prop_types
 		);
+	}
+
+	/**
+	 * @param array<int, Style_Transformer_Base> $transformers
+	 * @return array<string, Style_Transformer_Base>
+	 */
+	private function register_style_transformers( array $transformers ): array {
+		array_push(
+			$transformers,
+			new Size_Transformer(),
+			new Array_Transformer(),
+		);
+
+		return $transformers;
 	}
 
 	private function add_prop_types_config( array $settings ): array {
