@@ -51,12 +51,22 @@ export default class FloatingBarsHandler extends Base {
 		if ( this.elements.main ) {
 			window.addEventListener( 'keyup', this.onDocumentKeyup.bind( this ) );
 		}
+
+		if ( this.isStickyTop() && this.hasStickyElements() ) {
+			window.addEventListener( 'resize', this.handleStickyElements.bind( this ) );
+		}
 	}
 
 	isStickyTop() {
 		const { isSticky, hasVerticalPositionTop } = this.getSettings( 'constants' );
 
 		return this.elements.main.classList.contains( isSticky ) && this.elements.main.classList.contains( hasVerticalPositionTop );
+	}
+
+	hasStickyElements() {
+		const stickyElements = document.querySelectorAll( '.elementor-sticky' );
+
+		return stickyElements.length > 0;
 	}
 
 	focusOnLoad() {
@@ -81,6 +91,28 @@ export default class FloatingBarsHandler extends Base {
 		}
 	}
 
+	handleStickyElements() {
+		const mainHeight = this.elements.main.offsetHeight;
+		const wpAdminBar = elementorFrontend.elements.$wpAdminBar;
+		const stickyElements = document.querySelectorAll( '.elementor-sticky:not(.elementor-sticky__spacer)' );
+
+		if ( 0 === stickyElements.length ) {
+			return;
+		}
+
+		stickyElements.forEach( ( stickyElement ) => {
+			if ( wpAdminBar.length ) {
+				stickyElement.style.top = `${ mainHeight + wpAdminBar.height() }px`;
+			} else {
+				stickyElement.style.top = `${ mainHeight }px`;
+			}
+		} );
+
+		document.querySelectorAll( '.elementor-sticky__spacer' ).forEach( ( stickySpacer ) => {
+			stickySpacer.style.marginBottom = `${ mainHeight }px`;
+		} );
+	}
+
 	closeFloatingBar() {
 		const { isHidden } = this.getSettings( 'constants' );
 
@@ -88,7 +120,11 @@ export default class FloatingBarsHandler extends Base {
 			this.elements.main.classList.add( isHidden );
 
 			if ( this.isStickyTop() ) {
-				this.removeBodyPadding();
+				if ( this.hasStickyElements() ) {
+					this.handleStickyElements();
+				} else {
+					this.removeBodyPadding();
+				}
 			}
 		}
 	}
@@ -141,8 +177,13 @@ export default class FloatingBarsHandler extends Base {
 		const { hasEntranceAnimation } = this.getSettings( 'constants' );
 
 		if ( this.isStickyTop() ) {
-			this.applyBodyPadding();
 			this.handleWPAdminBar();
+
+			if ( this.hasStickyElements() ) {
+				this.handleStickyElements();
+			} else {
+				this.applyBodyPadding();
+			}
 		}
 
 		if ( this.elements.main && ! this.elements.ctaButton.classList.contains( hasEntranceAnimation ) && ! elementorFrontend.isEditMode() ) {
