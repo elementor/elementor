@@ -95,8 +95,8 @@ abstract class Step_Base {
 	public function update_step( array $step_data ) : void {
 		$allowed_properties = [
 			self::MARKED_AS_COMPLETED_KEY => $step_data[ self::MARKED_AS_COMPLETED_KEY ] ?? null,
-			self::IMMUTABLE_COMPLETION_KEY => $step_data[ self::MARKED_AS_COMPLETED_KEY ] ?? null,
-			self::ABSOLUTE_COMPLETION_KEY => $step_data[ self::MARKED_AS_COMPLETED_KEY ] ?? null,
+			self::IMMUTABLE_COMPLETION_KEY => $step_data[ self::IMMUTABLE_COMPLETION_KEY ] ?? null,
+			self::ABSOLUTE_COMPLETION_KEY => $step_data[ self::ABSOLUTE_COMPLETION_KEY ] ?? null,
 		];
 
 		foreach ( $allowed_properties as $key => $value ) {
@@ -106,24 +106,6 @@ abstract class Step_Base {
 		}
 
 		$this->set_step_progress();
-	}
-
-	/**
-	 * Marking a step as completed based on user's desire
-	 *
-	 * @return void
-	 */
-	public function mark_as_completed() : void {
-		$this->update_step( [ [ self::MARKED_AS_COMPLETED_KEY => true ] ] );
-	}
-
-	/**
-	 * Unmarking a step as completed based on user's desire
-	 *
-	 * @return void
-	 */
-	public function unmark_as_completed() : void {
-		$this->update_step( [ [ self::MARKED_AS_COMPLETED_KEY => false ] ] );
 	}
 
 	/**
