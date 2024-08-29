@@ -72,17 +72,17 @@ test.describe( 'Launchpad checklist tests', () => {
 
 			await page.route( `/wp-json/elementor/v1/checklist/user-progress`, async ( route ) => {
 				const json = {
-					"data": {
-						"last_opened_timestamp": null,
-						"first_closed_checklist_in_editor": false,
-						"steps": {
-							"create_pages": {
-								"is_marked_completed": false,
-								"is_completed": false
+					data: {
+						last_opened_timestamp: null,
+						first_closed_checklist_in_editor: false,
+						steps: {
+							create_pages: {
+								is_marked_completed: false,
+								is_completed: false
 							},
-							"setup_header": {
-								"is_marked_completed": false,
-								"is_completed": false
+							setup_header: {
+								is_marked_completed: false,
+								is_completed: false
 							}
 						}
 					}
@@ -106,7 +106,7 @@ test.describe( 'Launchpad checklist tests', () => {
 				checklist = editor.page.locator( selectors.popup ),
 				infotip = editor.page.locator( selectors.infotipFirstTimeClosed );
 
-				await page.route( `/wp-json/elementor/v1/checklist/user-progress`, async ( route ) => {
+			await page.route( `/wp-json/elementor/v1/checklist/user-progress`, async ( route ) => {
 				const json = {
 					"data": {
 						"last_opened_timestamp": null,

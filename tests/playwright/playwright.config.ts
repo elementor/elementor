@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 import { config as _config } from 'dotenv';
 
 process.env.DEV_SERVER = 'http://local-dev.local/';
-process.env.TEST_SERVER = 'http://localhost:8889';
+process.env.TEST_SERVER = 'http://local-dev.local/';
 process.env.DEBUG_PORT = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '9223' : '9222';
 
 _config( {
