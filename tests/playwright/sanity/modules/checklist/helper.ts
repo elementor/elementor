@@ -24,51 +24,51 @@ export default class ChecklistHelper {
 		await this.page.waitForResponse( ( response ) => response.url().includes( 'wp-admin/admin-ajax.php' ), { timeout: 30000 } );
 	}
 
-	async toggleChecklist( frame: 'editor' | 'wp-admin', shouldOpen: boolean ) {
-		if ( shouldOpen === await this.isChecklistOpen( frame ) ) {
+	async toggleChecklist( context: 'editor' | 'wp-admin', shouldOpen: boolean ) {
+		if ( shouldOpen === await this.isChecklistOpen( context ) ) {
 			return;
 		}
 
-		const context = 'editor' === frame ? this.editor.page : this.page;
+		const frame = 'editor' === context ? this.editor.page : this.page;
 
-		if ( 'editor' === frame && await this.editor.hasTopBar() ) {
-			await context.locator( selectors.topBarIcon ).click();
-		} else if ( 'editor' === frame ) {
+		if ( 'editor' === context && await this.editor.hasTopBar() ) {
+			await frame.locator( selectors.topBarIcon ).click();
+		} else if ( 'editor' === context ) {
 			// TODO: Implement openChecklist with no top bar
 		} else {
 			// TODO: Implement openChecklist in wp-admin
 		}
 
-		await context.locator( selectors.popup ).waitFor( { state: shouldOpen ? 'visible' : 'hidden' } );
+		await frame.locator( selectors.popup ).waitFor( { state: shouldOpen ? 'visible' : 'hidden' } );
 	}
 
-	async toggleChecklistItem( itemId: string, frame: 'editor' | 'wp-admin', shouldExpand: boolean ) {
-		if ( ! await this.isChecklistOpen( frame ) ) {
-			await this.toggleChecklist( frame, true );
+	async toggleChecklistItem( itemId: string, context: 'editor' | 'wp-admin', shouldExpand: boolean ) {
+		if ( ! await this.isChecklistOpen( context ) ) {
+			await this.toggleChecklist( context, true );
 		}
 
-		if ( shouldExpand === await this.isChecklistItemExpanded( itemId, frame ) ) {
+		if ( shouldExpand === await this.isChecklistItemExpanded( itemId, context ) ) {
 			return;
 		}
 
 		await this.page.click( this.getStepItemSelector( itemId ) );
 	}
 
-	async isChecklistOpen( frame: 'editor' | 'wp-admin' ) {
-		return 'editor' === frame
+	async isChecklistOpen( context: 'editor' | 'wp-admin' ) {
+		return 'editor' === context
 			? await this.editor.page.locator( selectors.popup ).isVisible()
 			: await this.page.locator( selectors.popup ).isVisible();
 	}
 
-	async isChecklistItemExpanded( itemId: string, frame: 'editor' | 'wp-admin' ) {
+	async isChecklistItemExpanded( itemId: string, context: 'editor' | 'wp-admin' ) {
 		const checklistItemSelector = this.getStepContentSelector( itemId ),
-			context = frame ? this.editor.page : this.page;
+			frame = context ? this.editor.page : this.page;
 
-		return await this.isChecklistOpen( frame ) && await context.locator( checklistItemSelector ).isVisible();
+		return await this.isChecklistOpen( context ) && await frame.locator( checklistItemSelector ).isVisible();
 	}
 
-	async toggleMarkAsDone( itemId: string, frame: 'editor' | 'wp-admin' ) {
-		await this.toggleChecklistItem( itemId, frame, true );
+	async toggleMarkAsDone( itemId: string, context: 'editor' | 'wp-admin' ) {
+		await this.toggleChecklistItem( itemId, context, true );
 
 		const markAsButton = this.page.locator( this.getStepContentSelector( itemId, selectors.markAsButton ) ),
 			buttonText = await markAsButton.textContent();
@@ -80,9 +80,9 @@ export default class ChecklistHelper {
 			.waitFor( { state: 'hidden' } );
 	}
 
-	async getProgressFromPopup( frame: 'editor' | 'wp-admin' ) {
-		if ( ! await this.isChecklistOpen( frame ) ) {
-			await this.toggleChecklist( frame, true );
+	async getProgressFromPopup( context: 'editor' | 'wp-admin' ) {
+		if ( ! await this.isChecklistOpen( context ) ) {
+			await this.toggleChecklist( context, true );
 		}
 
 		const progress = await this.page.locator( selectors.progressBarPercentage ).textContent();
