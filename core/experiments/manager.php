@@ -346,6 +346,7 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 			static::TYPE_HIDDEN => true,
+			'mutable' => false,
 			'generator_tag' => true,
 		] );
 
