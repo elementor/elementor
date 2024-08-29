@@ -3,7 +3,6 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import ChecklistHelper from './helper';
-import { freeUserInformationExceededQuota80Mock } from "../ai/user-information.mock";
 
 test.describe( 'Launchpad checklist tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -62,7 +61,10 @@ test.describe( 'Launchpad checklist tests', () => {
 
 	test.only( 'Checklist first time closed infotip', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-			editor = await wpAdmin.openNewPage();
+			editor = await wpAdmin.openNewPage(),
+			elementorCommon = await page.evaluate( () => {
+			return elementorCommon;
+		} );
 
 		await test.step( 'Infotip first time triggered', async () => {
 			const rocketButton = editor.page.locator( selectors.topBarIcon ),
@@ -70,7 +72,7 @@ test.describe( 'Launchpad checklist tests', () => {
 				checklist = editor.page.locator( selectors.popup ),
 				infotip = editor.page.locator( selectors.infotipFirstTimeClosed );
 
-			await page.route( `/wp-json/elementor/v1/checklist/user-progress`, async ( route ) => {
+			await page.route( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, async ( route ) => {
 				const json = {
 					data: {
 						last_opened_timestamp: null,
@@ -106,7 +108,7 @@ test.describe( 'Launchpad checklist tests', () => {
 				checklist = editor.page.locator( selectors.popup ),
 				infotip = editor.page.locator( selectors.infotipFirstTimeClosed );
 
-			await page.route( `/wp-json/elementor/v1/checklist/user-progress`, async ( route ) => {
+			await page.route( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, async ( route ) => {
 				const json = {
 					"data": {
 						"last_opened_timestamp": null,
