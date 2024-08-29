@@ -23,11 +23,11 @@ class Module extends BaseModule {
 		];
 	}
 
+	// TODO: This is a hidden experiment which needs to remain enabled like this until 3.26 for pro compatibility.
 	public static function get_experimental_data() {
 		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Link In Bio', 'elementor' ),
-			'description' => esc_html__( 'Enable Link In Bio. This is a hidden experiment which needs to remain enabled like this until 3.26.', 'elementor' ),
 			'hidden' => true,
 			'default' => Manager::STATE_ACTIVE,
 			'release_status' => Manager::RELEASE_STATUS_STABLE,
