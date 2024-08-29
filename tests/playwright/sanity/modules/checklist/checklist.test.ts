@@ -22,6 +22,9 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 	test.beforeEach( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
 
 		// Delete all pages
 		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
@@ -142,7 +145,7 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 		expect( pageProgress ).toBe( progressToCompare );
 	} );
 
-	test( 'Mark as done function in the editor - top bar on', async ( { page, apiRequests  }, testInfo ) => {
+	test( 'Mark as done function in the editor - top bar on', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.openNewPage();
