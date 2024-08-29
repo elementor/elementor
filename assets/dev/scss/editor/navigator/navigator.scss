@@ -333,6 +333,7 @@ body {
 			justify-content: center;
 			color: var(--e-a-color-txt);
 			background-color: var(--e-a-bg-default);
+			border-inline-end: var(--e-a-border);
 
 			&:first-child {
 				border-inline-start: var(--e-editor-navigator-indicator-width) solid var(--e-a-border-color-accent);
