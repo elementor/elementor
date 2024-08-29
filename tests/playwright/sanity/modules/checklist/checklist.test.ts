@@ -30,7 +30,7 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
 		await apiRequests.cleanUpTestPages( request );
-		await checklistHelper.resetStepsInDb();
+		await checklistHelper.resetStepsInDb( request );
 
 		await page.close();
 	} );
@@ -131,11 +131,11 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 		await checklistHelper.setChecklistSwitcherInPreferences( true );
 	} );
 
-	test( 'Progress Bar', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Progress Bar', async ( { page, apiRequests, request }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			checklistHelper = new ChecklistHelper( page, testInfo, apiRequests ),
-			steps = await checklistHelper.getSteps(),
+			steps = await checklistHelper.getSteps( request ),
 			progressToCompare = Math.round( steps.filter( checklistHelper.isStepCompleted ).length * 100 / steps.length ),
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
 			pageProgress = await checklistHelper.getProgressFromPopup( 'editor' );
@@ -145,13 +145,13 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 		expect( pageProgress ).toBe( progressToCompare );
 	} );
 
-	test( 'Mark as done function in the editor - top bar on', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Mark as done function in the editor - top bar on', async ( { page, apiRequests, request }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.openNewPage();
 
 		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests ),
-			steps = await checklistHelper.getSteps(),
+			steps = await checklistHelper.getSteps( request ),
 			doneStepIds: StepId[] = [];
 
 		await checklistHelper.toggleChecklist( 'editor', true );

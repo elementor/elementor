@@ -154,6 +154,42 @@ export default class ApiRequests {
 		return await this.get( request, 'themes', status );
 	}
 
+	public async customGet( request: APIRequestContext, restRoute: string, multipart? ) {
+		const response = await request.get( `${ this.baseUrl }/${ restRoute }`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			multipart,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+			Failed to get from ${ restRoute }: ${ response.status() }.
+			${ this.baseUrl }
+		` );
+		}
+
+		return await response.json();
+	}
+
+	public async customPut( request: APIRequestContext, restRoute: string, data ) {
+		const response = await request.put( `${ this.baseUrl }/${ restRoute }`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			data,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+			Failed to put to ${ restRoute }: ${ response.status() }.
+			${ await response.text() }
+		` );
+		}
+
+		return await response.json();
+	}
+
 	private async get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
 		const response = await request.get( `${ this.baseUrl }/index.php`, {
 			params: {

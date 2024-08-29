@@ -1,5 +1,5 @@
 import EditorPage from '../../../pages/editor-page';
-import { Page, type TestInfo } from '@playwright/test';
+import { type APIRequestContext, Page, type TestInfo } from '@playwright/test';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import { proStepIds, Step, StepId } from '../../../types/checklist';
@@ -9,11 +9,13 @@ export default class ChecklistHelper {
 	readonly page: Page;
 	readonly editor: EditorPage;
 	readonly wpAdmin: WpAdminPage;
+	readonly apiRequests: ApiRequests;
 
 	constructor( page: Page, testInfo: TestInfo, apiRequest: ApiRequests ) {
 		this.page = page;
 		this.editor = new EditorPage( page, testInfo );
 		this.wpAdmin = new WpAdminPage( page, testInfo, apiRequest );
+		this.apiRequests = apiRequest;
 	}
 
 	async setChecklistSwitcherInPreferences( shouldShow: boolean ) {
@@ -96,41 +98,19 @@ export default class ChecklistHelper {
 		return `${ selectors.popup } ${ selectors.checklistItemButton }.checklist-step-${ itemId } ${ innerSelector }`;
 	}
 
-	getSteps(): Promise< Step[] > {
-		return this.page.evaluate( ( { url, nonce } ) => fetch( `${ url }elementor/v1/checklist/steps`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-WP-Nonce': nonce,
-			},
-		} ).then( ( response ) => response.json() )
-			.then( ( json ) => json.data ), {
-			url: elementorCommon.config.urls.rest,
-			nonce: elementorWebCliConfig.nonce,
-		} );
+	async getSteps( request: APIRequestContext ): Promise< Step[] > {
+		return ( await this.apiRequests.customGet( request, 'wp-json/elementor/v1/checklist/steps' ) ).data;
 	}
 
-	async resetStepsInDb() {
-		const steps = await this.getSteps();
+	async resetStepsInDb( request: APIRequestContext ) {
+		const steps = await this.getSteps( request );
 
 		for ( const step of steps ) {
-			await this.page.evaluate( async ( { id, url, nonce } ) =>
-				await fetch( `${ url }elementor/v1/checklist/steps/${ id }`, {
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-WP-Nonce': nonce,
-					},
-					body: JSON.stringify( {
-						id,
-						is_marked_completed: false,
-						is_absolute_completed: false,
-						is_immutable_completed: false,
-					} ),
-				} ), {
+			await this.apiRequests.customPut( request, `wp-json/elementor/v1/checklist/steps/${ step.config.id }`, {
 				id: step.config.id,
-				url: elementorCommon.config.urls.rest,
-				nonce: elementorWebCliConfig.nonce,
+				is_marked_completed: false,
+				is_absolute_completed: false,
+				is_immutable_completed: false,
 			} );
 		}
 	}
