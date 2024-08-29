@@ -5,7 +5,7 @@ import { controlIds, selectors } from './selectors';
 import ChecklistHelper from './helper';
 import { StepId } from '../../../types/checklist';
 
-test.describe( 'Launchpad checklist tests', () => {
+test.describe( 'Launchpad checklist tests @checklist', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
