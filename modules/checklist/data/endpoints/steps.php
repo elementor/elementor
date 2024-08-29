@@ -27,9 +27,9 @@ class Steps extends Endpoint_Base {
 	public function update_item( $id, $request ) {
 		$checklist_module = Plugin::$instance->modules_manager->get_modules( 'checklist' );
 		$allowed_changes = [
-			'is_marked_completed' => $request->get_param( Step_Base::MARKED_AS_COMPLETED_KEY ) ?? null,
-			'is_absolute_completed' => $request->get_param( Step_Base::ABSOLUTE_COMPLETION_KEY ) ?? null,
-			'is_immutable_completed' => $request->get_param( Step_Base::IMMUTABLE_COMPLETION_KEY ) ?? null,
+			Step_Base::MARKED_AS_COMPLETED_KEY => $request->get_param( Step_Base::MARKED_AS_COMPLETED_KEY ) ?? null,
+			Step_Base::ABSOLUTE_COMPLETION_KEY => $request->get_param( Step_Base::ABSOLUTE_COMPLETION_KEY ) ?? null,
+			Step_Base::IMMUTABLE_COMPLETION_KEY => $request->get_param( Step_Base::IMMUTABLE_COMPLETION_KEY ) ?? null,
 		];
 
 		$step = $checklist_module->get_step_progress( $id );
@@ -47,6 +47,7 @@ class Steps extends Endpoint_Base {
 		}
 
 		$checklist_module->set_step_progress( $id, $step );
+		return $step;
 	}
 
 	private function get_checklist_data(): array {
@@ -67,7 +68,7 @@ class Steps extends Endpoint_Base {
 			'id_arg_type_regex' => '[\w\-\_]+',
 			'step_id' => [
 				'type' => 'string',
-				'description' => 'The type of the element.',
+				'description' => 'The step id.',
 				'required' => true,
 				'validate_callback' => function ( $step_id ) {
 					return in_array( $step_id, Steps_Manager::get_step_ids() );

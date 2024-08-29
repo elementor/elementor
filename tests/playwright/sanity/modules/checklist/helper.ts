@@ -97,32 +97,41 @@ export default class ChecklistHelper {
 	}
 
 	getSteps(): Promise< Step[] > {
-		return this.page.evaluate( () => fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps`, {
+		return this.page.evaluate( ( { url, nonce } ) => fetch( `${ url }elementor/v1/checklist/steps`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
-				'X-WP-Nonce': elementorWebCliConfig.nonce,
+				'X-WP-Nonce': nonce,
 			},
-		} ).then( ( response ) => response.json() ).then( ( json ) => json.data ) );
+		} ).then( ( response ) => response.json() )
+			.then( ( json ) => json.data ), {
+			url: elementorCommon.config.urls.rest,
+			nonce: elementorWebCliConfig.nonce,
+		} );
 	}
 
 	async resetStepsInDb() {
 		const steps = await this.getSteps();
 
 		for ( const step of steps ) {
-			await this.page.evaluate( ( id ) => fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps/${ id }`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-WP-Nonce': elementorWebCliConfig.nonce,
-				},
-				body: JSON.stringify( {
-					id,
-					is_marked_completed: false,
-					is_absolute_completed: false,
-					is_immutable_completed: false,
-				} ),
-			} ), step.config.id );
+			await this.page.evaluate( async ( { id, url, nonce } ) =>
+				await fetch( `${ url }elementor/v1/checklist/steps/${ id }`, {
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-Nonce': nonce,
+					},
+					body: JSON.stringify( {
+						id,
+						is_marked_completed: false,
+						is_absolute_completed: false,
+						is_immutable_completed: false,
+					} ),
+				} ), {
+				id: step.config.id,
+				url: elementorCommon.config.urls.rest,
+				nonce: elementorWebCliConfig.nonce,
+			} );
 		}
 	}
 
