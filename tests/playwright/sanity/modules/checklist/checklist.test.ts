@@ -44,6 +44,44 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 		await page.close();
 	} );
 
+	test( 'Mark as done function in the editor - top bar on', async ( { page, apiRequests, request }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests ),
+			steps = await checklistHelper.getSteps( request ),
+			doneStepIds: StepId[] = [];
+
+		await checklistHelper.toggleChecklist( 'editor', true );
+
+		for ( const step of steps ) {
+			if ( checklistHelper.isStepProLocked( step.config.id ) ) {
+				continue;
+			}
+
+			const markAsButton = page.locator( checklistHelper.getStepContentSelector( step.config.id, selectors.markAsButton ) ),
+				checkIconSelector = checklistHelper.getStepItemSelector( step.config.id, selectors.stepIcon );
+
+			await checklistHelper.toggleChecklistItem( step.config.id, 'editor', true );
+			await expect( markAsButton ).toHaveText( 'Mark as done' );
+			await expect( page.locator( checkIconSelector + '.unchecked' ) ).toBeVisible();
+
+			await checklistHelper.toggleMarkAsDone( step.config.id, 'editor' );
+			doneStepIds.push( step.config.id );
+			await expect( markAsButton ).toHaveText( 'Unmark as done' );
+			await expect( page.locator( checkIconSelector + '.checked' ) ).toBeVisible();
+
+			expect( await checklistHelper.getProgressFromPopup( 'editor' ) )
+				.toBe( Math.round( doneStepIds.length * 100 / steps.length ) );
+		}
+
+		// Resetting for the sake of the next test
+		for ( const stepId of doneStepIds ) {
+			await checklistHelper.toggleMarkAsDone( stepId, 'editor' );
+		}
+	} );
+
 	test( 'Checklist module general test', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
@@ -143,43 +181,5 @@ test.describe( 'Launchpad checklist tests @checklist', () => {
 		await rocketButton.click();
 
 		expect( pageProgress ).toBe( progressToCompare );
-	} );
-
-	test( 'Mark as done function in the editor - top bar on', async ( { page, apiRequests, request }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.openNewPage();
-
-		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests ),
-			steps = await checklistHelper.getSteps( request ),
-			doneStepIds: StepId[] = [];
-
-		await checklistHelper.toggleChecklist( 'editor', true );
-
-		for ( const step of steps ) {
-			if ( checklistHelper.isStepProLocked( step.config.id ) ) {
-				continue;
-			}
-
-			const markAsButton = page.locator( checklistHelper.getStepContentSelector( step.config.id, selectors.markAsButton ) ),
-				checkIconSelector = checklistHelper.getStepItemSelector( step.config.id, selectors.stepIcon );
-
-			await checklistHelper.toggleChecklistItem( step.config.id, 'editor', true );
-			await expect( markAsButton ).toHaveText( 'Mark as done' );
-			await expect( page.locator( checkIconSelector + '.unchecked' ) ).toBeVisible();
-
-			await checklistHelper.toggleMarkAsDone( step.config.id, 'editor' );
-			doneStepIds.push( step.config.id );
-			await expect( markAsButton ).toHaveText( 'Unmark as done' );
-			await expect( page.locator( checkIconSelector + '.checked' ) ).toBeVisible();
-
-			expect( await checklistHelper.getProgressFromPopup( 'editor' ) )
-				.toBe( Math.round( doneStepIds.length * 100 / steps.length ) );
-		}
-
-		// Resetting for the sake of the next test
-		for ( const stepId of doneStepIds ) {
-			await checklistHelper.toggleMarkAsDone( stepId, 'editor' );
-		}
 	} );
 } );
