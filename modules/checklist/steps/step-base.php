@@ -4,6 +4,7 @@ namespace Elementor\Modules\Checklist\Steps;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Utils\Constants;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Step_Base {
+	private $is_locked = false;
 
 	/**
 	 * @var string
@@ -138,7 +140,31 @@ abstract class Step_Base {
 	 * @return bool
 	 */
 	public function is_immutable_completed() : bool {
-		return $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ];
+		return $this->get_is_completion_immutable() && $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
+	}
+
+	/**
+	 * Returns the required license to be able to complete the step
+	 *
+	 * @return string
+	 */
+	public function get_license() : string {
+		return Constants::ACCESS_TIER_FREE;
+	}
+
+	public function get_is_locked() : bool {
+		return $this->is_locked;
+	}
+
+	public function set_is_locked( $is_locked ) : void {
+		$this->is_locked = $is_locked;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_promotion_link() : string {
+		return '';
 	}
 
 	/**
