@@ -114,7 +114,7 @@ abstract class Step_Base {
 	 * @return void
 	 */
 	public function mark_as_completed() : void {
-		$this->update_step( [ [ self::MARKED_AS_COMPLETED_KEY => true ] ] );
+		$this->update_step( [ self::MARKED_AS_COMPLETED_KEY => true ] );
 	}
 
 	/**
@@ -123,7 +123,7 @@ abstract class Step_Base {
 	 * @return void
 	 */
 	public function unmark_as_completed() : void {
-		$this->update_step( [ [ self::MARKED_AS_COMPLETED_KEY => false ] ] );
+		$this->update_step( [ self::MARKED_AS_COMPLETED_KEY => false ] );
 	}
 
 	/**

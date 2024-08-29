@@ -66,13 +66,7 @@ class Steps_Manager {
 	 * @return void
 	 */
 	public function mark_step_as_completed( string $step_id ) : void {
-		$step = $this->get_step_by_id( $step_id );
-
-		if ( ! $step ) {
-			return;
-		}
-
-		$step->mark_as_completed();
+		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => true ] );
 	}
 
 	/**
@@ -83,13 +77,7 @@ class Steps_Manager {
 	 * @return void
 	 */
 	public function unmark_step_as_completed( string $step_id ) : void {
-		$step = $this->get_step_by_id( $step_id );
-
-		if ( ! $step ) {
-			return;
-		}
-
-		$step->unmark_as_completed();
+		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => false ] );
 	}
 
 	/**
