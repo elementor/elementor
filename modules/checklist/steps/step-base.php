@@ -109,6 +109,24 @@ abstract class Step_Base {
 	}
 
 	/**
+	 * Marking a step as completed based on user's desire
+	 *
+	 * @return void
+	 */
+	public function mark_as_completed() : void {
+		$this->update_step( [ [ self::MARKED_AS_COMPLETED_KEY => true ] ] );
+	}
+
+	/**
+	 * Unmarking a step as completed based on user's desire
+	 *
+	 * @return void
+	 */
+	public function unmark_as_completed() : void {
+		$this->update_step( [ [ self::MARKED_AS_COMPLETED_KEY => false ] ] );
+	}
+
+	/**
 	 * Marking a step as completed if it was completed once, and it's suffice to marketing's requirements
 	 *
 	 * @return void
