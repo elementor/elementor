@@ -10,7 +10,13 @@ const fetchSteps = async () => {
 			'X-WP-Nonce': elementorWebCliConfig.nonce,
 		},
 	} );
+
+	if ( 200 !== response.status ) {
+		return null;
+	}
+
 	const data = await response.json();
+
 	return data.data;
 };
 
