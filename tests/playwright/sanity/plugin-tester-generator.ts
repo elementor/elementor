@@ -14,8 +14,6 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
 	{ pluginName: 'wunderwp', installSource: 'api' },
 	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
-	// Addons for elementor is closed as of July 2, 2024 and is not available for download. This closure is temporary, pending a full review.
-	// see: https://wordpress.org/plugins/addons-for-elementor/
 	{ pluginName: 'addons-for-elementor', installSource: 'api' },
 	{ pluginName: 'anywhere-elementor', installSource: 'api' },
 	{ pluginName: 'astra-sites', installSource: 'api' },
@@ -39,7 +37,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
 	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
-	// { pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
+	{ pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
 	{ pluginName: 'visibility-logic-elementor', installSource: 'api' },
 	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
 	{ pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
