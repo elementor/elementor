@@ -56,7 +56,10 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 				if ( 200 === response.status() ) {
 					responses[ route.request().url() ] = {
 						body: await response.body(),
-						headers: response.headers(),
+						headers: {
+							...response.headers(),
+							'elementor-playwright-cache': 'true',
+						},
 					};
 				}
 			} else {
