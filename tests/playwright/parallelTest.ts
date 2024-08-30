@@ -1,10 +1,10 @@
-import { request, test as baseTest } from '@playwright/test';
+import {APIResponse, request, test as baseTest} from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import { fetchNonce, login } from './wp-authentication';
 import ApiRequests from './assets/api-requests';
 
-const responses = [];
+const responses: APIResponse[] = [];
 export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStorageState: string, workerBaseURL: string, apiRequests: ApiRequests }>( {
 	// Use the same storage state for all tests in this worker.
 	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
@@ -52,12 +52,16 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		await context.route( /\/wp-includes\//, async ( route ) => {
 			if ( ! responses[ route.request().url() ] ) {
 				await route.continue();
-				responses[ route.request().url() ] = await route.fetch();
+				const response = await route.fetch();
+				if ( 200 === response.status() ) {
+					responses[ route.request().url() ] = {
+						body: await response.body(),
+						headers: response.headers(),
+					};
+				}
 			} else {
-				await route.fulfill( {
-					// Pass all fields from the response.
-					response: responses[ route.request().url() ],
-				} );
+				const originalResponse = responses[ route.request().url() ];
+				await route.fulfill( originalResponse );
 			}
 		} );
 		return use( context );
