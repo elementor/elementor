@@ -33,10 +33,11 @@ export default defineConfig( {
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
 		navigationTimeout: 10_000,
-		trace: 'retain-on-failure',
+		trace: 'on',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
 		baseURL: process.env.BASE_URL || ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? process.env.TEST_SERVER : process.env.DEV_SERVER,
 		viewport: { width: 1920, height: 1080 },
 		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
+
 	},
 } );
