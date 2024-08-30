@@ -56,4 +56,4 @@ jobs:
       - name: "Grunt Scripts"
         run: npx grunt scripts
       - name: "Run Qunit"
-        run: xvfb-run -a npx grunt karma:unit # Use xvfb-run to emulate a display
+        run: npx grunt karma:unit

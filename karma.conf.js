@@ -107,8 +107,8 @@ module.exports = function( config ) {
 			ChromeHeadlessCustom: {
 				base: 'ChromeHeadless',
 				flags: [
-					'--no-sandbox', 
-					'--disable-gpu', 
+					'--no-sandbox',
+					'--disable-gpu',
 					'--disable-software-rasterizer',
 					'--disable-dev-shm-usage',
 					'--disable-extensions',
