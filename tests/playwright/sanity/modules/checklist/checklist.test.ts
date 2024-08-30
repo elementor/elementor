@@ -31,31 +31,29 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.close();
 	} );
 
-	test.describe( 'Checklist module', () => {
-		test( 'General test', async ( { page, apiRequests }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-				editor = await wpAdmin.openNewPage();
+	test( 'Checklist module general test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage();
 
-			await test.step( 'Rocket Icon in top bar is visible', async () => {
-				const rocketButton = editor.page.locator( selectors.topBarIcon );
-				await expect( rocketButton ).toBeVisible();
-			} );
+		await test.step( 'Rocket Icon in top bar is visible', async () => {
+			const rocketButton = editor.page.locator( selectors.topBarIcon );
+			await expect( rocketButton ).toBeVisible();
+		} );
 
-			await test.step( 'Open checklist trigger', async () => {
-				const rocketButton = editor.page.locator( selectors.topBarIcon ),
-					checklist = editor.page.locator( selectors.popup );
+		await test.step( 'Open checklist trigger', async () => {
+			const rocketButton = editor.page.locator( selectors.topBarIcon ),
+				checklist = editor.page.locator( selectors.popup );
 
-				await rocketButton.click();
-				await expect( checklist ).toBeVisible();
-			} );
+			await rocketButton.click();
+			await expect( checklist ).toBeVisible();
+		} );
 
-			await test.step( 'Close checklist trigger', async () => {
-				const closeButton = editor.page.locator( selectors.closeButton ),
-					checklist = editor.page.locator( selectors.popup );
+		await test.step( 'Close checklist trigger', async () => {
+			const closeButton = editor.page.locator( selectors.closeButton ),
+				checklist = editor.page.locator( selectors.popup );
 
-				await closeButton.click();
-				await expect( checklist ).toBeHidden();
-			} );
+			await closeButton.click();
+			await expect( checklist ).toBeHidden();
 		} );
 	} );
 
@@ -124,7 +122,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			checklistHelper = new ChecklistHelper( page, wpAdmin ),
-			steps = checklistHelper.getSteps(),
+			steps = await checklistHelper.getSteps(),
 			progressToCompare = Math.round( steps.filter( ( { is_completed: isCompleted } ) => isCompleted ).length * 100 / steps.length ),
 			progressTextToCompare = `${ progressToCompare }%`,
 			rocketButton = editor.page.locator( selectors.topBarIcon ),

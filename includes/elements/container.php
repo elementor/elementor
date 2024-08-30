@@ -171,7 +171,7 @@ class Container extends Element_Base {
 			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
 			if ( ! settings.background_play_on_mobile ) {
-				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
 			}
 			#>
 			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
@@ -208,7 +208,7 @@ class Container extends Element_Base {
 		$this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
 		if ( ! $settings['background_play_on_mobile'] ) {
-			$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+			$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
 		}
 
 		?><div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>

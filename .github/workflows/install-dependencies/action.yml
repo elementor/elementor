@@ -1,0 +1,12 @@
+name: 'Install npm and Composer Dependencies'
+description: 'A composite action to install npm packages and Composer dependencies.'
+
+runs:
+    using: 'composite'
+    steps:
+      - shell: bash
+        run: |
+            npm ci
+            composer install --optimize-autoloader --prefer-dist  # Reason for running this is so that have opportunity to execute composer scripts
+            composer install --no-scripts --no-dev # Now we want the final `composer install` for the build with flags `--no-dev` that will strip off the dev dependencies from vendor folder added by the command above
+            composer dump-autoload
