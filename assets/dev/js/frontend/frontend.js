@@ -14,6 +14,7 @@ import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 import Controls from './utils/controls';
+import AnchorScrollMargin from './utils/anchor-scroll-margin';
 
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
@@ -192,7 +193,6 @@ export default class Frontend extends elementorModules.ViewModule {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
 			baseVideoLoader: new BaseVideoLoader(),
-			anchors: new AnchorsModule(),
 			get lightbox() {
 				return LightboxManager.getLightbox();
 			},
@@ -204,6 +204,12 @@ export default class Frontend extends elementorModules.ViewModule {
 			events: Events,
 			controls: new Controls(),
 		};
+
+		if ( this.config.experimentalFeatures.e_css_smooth_scroll ) {
+			this.utils.anchor_scroll_margin = new AnchorScrollMargin();
+		} else {
+			this.utils.anchors = new AnchorsModule();
+		}
 
 		// TODO: BC since 2.4.0
 		this.modules = {

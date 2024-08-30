@@ -1,8 +1,24 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
-const ChecklistCardContent = ( props ) => {
-	const { description, learn_more_url: learnMoreUrl, learn_more_text: learnMoreText, cta_text: CTA, id, image_src: imageSrc } = props.step.config;
+const ChecklistCardContent = ( { step } ) => {
+	const {
+		id,
+		description,
+		learn_more_url: learnMoreUrl,
+		learn_more_text: learnMoreText,
+		image_src: imageSrc,
+		is_locked: isLocked,
+		promotion_url: promotionUrl,
+	} = step.config;
+
+	const ctaText = isLocked ? __( 'Upgrade Now', 'elementor-pro' ) : step.config.cta_text,
+		ctaUrl = isLocked ? promotionUrl : step.config.cta_url;
+
+	const redirectHandler = () => {
+		window.open( ctaUrl, isLocked ? '_blank' : '' );
+	};
 
 	return (
 		<Card elevation={ 0 } square={ true } className={ `e-checklist-item-content checklist-step-${ id }` }>
@@ -17,8 +33,27 @@ const ChecklistCardContent = ( props ) => {
 				</Typography>
 			</CardContent>
 			<CardActions>
-				<Button size="small" color="secondary" variant="text" className="mark-as-done">{ __( 'Mark as done', 'elementor' ) }</Button>
-				<Button size="small" variant="contained" className="cta-button">{ CTA }</Button>
+
+				{ isLocked
+					? null
+					: <Button
+							size="small"
+							color="secondary"
+							variant="text"
+							className="mark-as-done"
+					>
+						{ __( 'Mark as done', 'elementor' ) }
+					</Button> }
+
+				<Button
+					color={ isLocked ? 'promotion' : 'primary' }
+					size="small"
+					variant="contained"
+					className="cta-button"
+					onClick={ redirectHandler }
+				>
+					{ ctaText }
+				</Button>
 			</CardActions>
 		</Card>
 	);
