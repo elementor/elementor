@@ -1,4 +1,4 @@
-import {APIResponse, request, test as baseTest} from '@playwright/test';
+import { APIResponse, request, test as baseTest } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import { fetchNonce, login } from './wp-authentication';
