@@ -38,6 +38,5 @@ export default defineConfig( {
 		baseURL: process.env.BASE_URL || ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? process.env.TEST_SERVER : process.env.DEV_SERVER,
 		viewport: { width: 1920, height: 1080 },
 		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
-
 	},
 } );

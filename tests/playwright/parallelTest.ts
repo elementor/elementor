@@ -4,6 +4,7 @@ import path from 'path';
 import { fetchNonce, login } from './wp-authentication';
 import ApiRequests from './assets/api-requests';
 
+const responses = [];
 export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStorageState: string, workerBaseURL: string, apiRequests: ApiRequests }>( {
 	// Use the same storage state for all tests in this worker.
 	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
@@ -47,4 +48,18 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		}
 	}, { scope: 'worker' } ],
 
+	context: async ( { context }, use ) => {
+		await context.route( /\/wp-includes\//, async ( route ) => {
+			if ( ! responses[ route.request().url() ] ) {
+				await route.continue();
+				responses[ route.request().url() ] = await route.fetch();
+			} else {
+				await route.fulfill( {
+					// Pass all fields from the response.
+					response: responses[ route.request().url() ],
+				} );
+			}
+		} );
+		return use( context );
+	},
 } );
