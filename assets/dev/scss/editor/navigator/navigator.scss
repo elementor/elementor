@@ -323,10 +323,6 @@ body {
 
 				transform: translateX($transform);
 			}
-
-			&:empty {
-				display: none;
-			}
 		}
 
 		&__indicator {
