@@ -62,11 +62,12 @@ export default class extends elementorModules.ViewModule {
 		stickyElements.forEach( ( element ) => {
 			const settings = this.getElementSettings( element );
 
-			if ( ! settings ) {
+			if ( ! settings || ! settings.sticky_anchor_link_offset ) {
 				return;
 			}
 
-			const { sticky_anchor_link_offset: scrollMarginTop } = this.getElementSettings( element );
+			const { sticky_anchor_link_offset: scrollMarginTop } = settings;
+
 			if ( 0 === scrollMarginTop ) {
 				return;
 			}
@@ -90,20 +91,13 @@ export default class extends elementorModules.ViewModule {
 
 	defineCurrentStickyRange( sticky, index, stickyList, anchorList ) {
 		const nextStickyScrollPosition = ( index + 1 < stickyList.length )
-				? stickyList[ index + 1 ].scrollPosition
-				: Infinity,
-			$wpAdminBar = elementorFrontend.elements.$wpAdminBar;
+			? stickyList[ index + 1 ].scrollPosition
+			: Infinity;
 
 		sticky.anchor = anchorList.filter( ( anchor ) => {
 			const withinRange = anchor.scrollPosition > sticky.scrollPosition && anchor.scrollPosition < nextStickyScrollPosition;
 			if ( withinRange ) {
-				let scrollMarginTop = sticky.scrollMarginTop;
-
-				if ( $wpAdminBar.length > 0 ) {
-					scrollMarginTop += $wpAdminBar.height();
-				}
-
-				anchor.element.style.scrollMarginTop = `${ scrollMarginTop }px`;
+				anchor.element.style.scrollMarginTop = `${ sticky.scrollMarginTop }px`;
 			}
 			return withinRange;
 		} );
