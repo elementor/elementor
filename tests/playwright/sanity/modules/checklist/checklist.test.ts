@@ -67,7 +67,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			checklist = editor.page.locator( selectors.popup ),
 			infotip = editor.page.locator( selectors.infotipFirstTimeClosed ),
 			infotipCloseButton = editor.page.locator( selectors.infotipFirstTimeClosedButton ),
-			url= '/wp-json/elementor/v1/checklist/user-progress';
+			url = '/wp-json/elementor/v1/checklist/user-progress';
 
 		const returnDataMock = ( firstClosedChecklistInEditor ) => {
 			return {
@@ -84,7 +84,7 @@ test.describe( 'Launchpad checklist tests', () => {
 							is_completed: false,
 						},
 					},
-				}
+				};
 			};
 		};
 
