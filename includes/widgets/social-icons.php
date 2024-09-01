@@ -75,6 +75,20 @@ class Widget_Social_Icons extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-social-icons', 'e-apple-webkit' ];
+	}
+
+	/**
 	 * Register social icons widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -263,8 +277,8 @@ class Widget_Social_Icons extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'rounded',
 				'options' => [
-					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'circle' => esc_html__( 'Circle', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-shape-',
@@ -660,7 +674,7 @@ class Widget_Social_Icons extends Widget_Base {
 					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
 				#>
 				<span class="elementor-grid-item">
-					<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ link }}">
+					<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ elementor.helpers.sanitizeUrl( link ) }}">
 						<span class="elementor-screen-only">{{{ social }}}</span>
 						<#
 							iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );

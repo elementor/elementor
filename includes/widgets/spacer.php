@@ -91,6 +91,20 @@ class Widget_Spacer extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-spacer' ];
+	}
+
+	/**
 	 * Register spacer widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.

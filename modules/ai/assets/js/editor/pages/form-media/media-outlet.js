@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import View from './components/view';
 import Loader from '../../components/loader';
-import { LOCATIONS } from './constants';
+import { LOCATIONS, IMAGE_PLACEHOLDERS_HOSTS } from './constants';
 import Generate from './views/generate';
 import ImageTools from './views/image-tools';
 import Resize from './views/resize';
@@ -10,6 +10,8 @@ import OutPainting from './views/out-painting';
 import Variations from './views/variations';
 import ReplaceBackground from './views/replace-background';
 import RemoveBackground from './views/remove-background';
+import Cleanup from './views/cleanup';
+
 import { useLocation } from './context/location-context';
 import { useEditImage } from './context/edit-image-context';
 import {
@@ -25,12 +27,14 @@ const MediaOutlet = ( { additionalOptions = null } ) => {
 	const { current, navigate } = useLocation( { current: additionalOptions?.location || LOCATIONS.GENERATE } );
 
 	useEffect( () => {
-		const isNotPlaceholderImage = editImage.id;
+		const placeholderHostRegex = new RegExp( IMAGE_PLACEHOLDERS_HOSTS.WIREFRAME );
+		const isNotWireframePlaceholder = editImage.url && ! placeholderHostRegex.test( new URL( editImage.url ).host );
+		const isNotPlaceholderImage = editImage.id && isNotWireframePlaceholder;
 
 		if ( isNotPlaceholderImage ) {
 			navigate( LOCATIONS.IMAGE_TOOLS );
 		}
-	}, [ editImage.id ] );
+	}, [ editImage.id, editImage.url ] );
 
 	useSubscribeOnPromptHistoryAction( [
 		{
@@ -64,6 +68,7 @@ const MediaOutlet = ( { additionalOptions = null } ) => {
 			{ current === LOCATIONS.RESIZE && <Resize /> }
 			{ current === LOCATIONS.REPLACE_BACKGROUND && <ReplaceBackground /> }
 			{ current === LOCATIONS.REMOVE_BACKGROUND && <RemoveBackground /> }
+			{ current === LOCATIONS.CLEANUP && <Cleanup /> }
 		</>
 	);
 };

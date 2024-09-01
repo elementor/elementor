@@ -977,8 +977,7 @@
 				"selected_button_icon[value]!": ""
 			},
 			"selectors": {
-				"{{WRAPPER}} .elementor-button .elementor-align-icon-right": "margin-left: {{SIZE}}{{UNIT}};",
-				"{{WRAPPER}} .elementor-button .elementor-align-icon-left": "margin-right: {{SIZE}}{{UNIT}};"
+				"{{WRAPPER}} .elementor-button .elementor-button-content-wrapper": "gap: {{SIZE}}{{UNIT}};"
 			},
 			"name": "button_icon_indent",
 			"default": {
@@ -2487,8 +2486,8 @@
 			"tab": "content",
 			"section": "section_form_options",
 			"label": "Error Message",
-			"default": "An error occured.",
-			"placeholder": "An error occured.",
+			"default": "An error occurred.",
+			"placeholder": "An error occurred.",
 			"label_block": true,
 			"condition": {
 				"custom_messages!": ""

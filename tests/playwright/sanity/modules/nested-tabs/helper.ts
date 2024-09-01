@@ -2,39 +2,6 @@ import { type Page, type Frame, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
-const tabIcons = [
-	{
-		icon: 'fa-arrow-alt-circle-right',
-		activeIcon: 'fa-bookmark',
-	},
-	{
-		icon: 'fa-clipboard',
-		activeIcon: 'fa-clock',
-	},
-	{
-		icon: 'fa-clipboard',
-		activeIcon: 'fa-address-card',
-	},
-];
-
-// Set icons to tabs, used in setIconsToTabs function.
-export async function addIcon( page: Page, selectedIcon: string ) {
-	await page.locator( `#elementor-icons-manager__tab__content .${ selectedIcon }` ).first().click();
-	await page.locator( '.dialog-lightbox-insert_icon' ).click();
-}
-
-// Iterate tabs and add an icon and an active Icon to each one.
-export async function setIconsToTabs( page: Page, TabIcons: Array<{ icon: string; activeIcon: string; }> ) {
-	for ( const tab of TabIcons ) {
-		const index = tabIcons.indexOf( tab ) + 1;
-		await page.locator( `#elementor-controls >> text=Tab #${ index }` ).click();
-		await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index } ) .elementor-control-tab_icon .eicon-circle` ).click();
-		await addIcon( page, tab.icon );
-		await page.locator( `.elementor-repeater-fields-wrapper.ui-sortable .elementor-repeater-fields:nth-child( ${ index }  ) .elementor-control-tab_icon_active .eicon-circle` ).click();
-		await addIcon( page, tab.activeIcon );
-	}
-}
-
 export async function editTab( editor: EditorPage, tabIndex: string ) {
 	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
 	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }[aria-selected="true"]` );
@@ -53,16 +20,6 @@ export async function setup( wpAdmin: WpAdminPage, customExperiment: {[ n: strin
 	let experiments = {
 		container: 'active',
 		'nested-elements': 'active',
-	};
-
-	experiments = { ...experiments, ...customExperiment };
-	await wpAdmin.setExperiments( experiments );
-}
-
-export async function cleanup( wpAdmin, customExperiment: {[ n: string ]: boolean | string } | '' = '' ) {
-	let experiments = {
-		'nested-elements': 'inactive',
-		container: 'inactive',
 	};
 
 	experiments = { ...experiments, ...customExperiment };
@@ -139,11 +96,7 @@ export async function isTabTitleVisible( context: Page | Frame, positionIndex: n
 	const isItemPositionToTheRightOfTitleWrapper = titleWrapperWidth < itemBox.left,
 		isItemPositionToTheLeftOfTitleWrapper = 0 > ( itemBox.left );
 
-	if ( isItemPositionToTheRightOfTitleWrapper || isItemPositionToTheLeftOfTitleWrapper ) {
-		return false;
-	}
-
-	return true;
+	return ! ( isItemPositionToTheRightOfTitleWrapper || isItemPositionToTheLeftOfTitleWrapper );
 }
 
 export async function deleteItemFromRepeater( editor: EditorPage, widgetID: string ) {
@@ -173,7 +126,10 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 		numberOfContents = await nestedItemContent.count();
 
 	// Act
-	await addItemButton.click();
+	// Sometimes this action causes Playwright to mistakenly think that the "click" event should trigger navigation and
+	// fails when the navigation never happens. This is inconsistent behavior, but setting the "noWaitAfter" option to
+	// true seems to fix the issue.
+	await addItemButton.click( { noWaitAfter: true } );
 
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
@@ -191,7 +147,10 @@ export async function cloneItemFromRepeater( editor: EditorPage, widgetID: strin
 		cloneItemButton = editor.page.locator( '.elementor-repeater-tool-duplicate' ).nth( position );
 
 	// Act
-	await cloneItemButton.click();
+	// Sometimes this action causes Playwright to mistakenly think that the "click" event should trigger navigation and
+	// fails when the navigation never happens. This is inconsistent behavior, but setting the "noWaitAfter" option to
+	// true seems to fix the issue.
+	await cloneItemButton.click( { noWaitAfter: true } );
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	const currentTitle = nestedItemTitle.nth( position ),

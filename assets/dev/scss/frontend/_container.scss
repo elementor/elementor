@@ -227,7 +227,7 @@
 	}
 
 	@media (max-width: $screen-mobile-max) {
-		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-phone {
+		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-mobile {
 			display: none;
 		}
 	}
@@ -284,5 +284,9 @@
 	.e-con.e-flex {
 		--width: 100%;
 		--flex-wrap: var(--flex-wrap-mobile);
+
+		.elementor-widget-archive-posts {
+			width: 100%;
+		}
 	}
 }

@@ -1,5 +1,7 @@
-import { type Page } from '@playwright/test';
+import { Locator, type Page } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
+import { Device } from '../types/types';
+import EditorSelectors from '../selectors/editor-selectors';
 
 export default class {
 	readonly page: Page;
@@ -8,12 +10,37 @@ export default class {
 		// TODO: throw exception if experiment Breakpoints is deactivated.
 	}
 
+	static getDeviceLocator( page: Page, device: Device ): Locator {
+		// TODO: use the new data-testid attribute
+		const baseLocator = page.locator( '[aria-label="Switch Device"]' );
+		const locators = {
+			mobile: baseLocator.locator( 'button[aria-label="Mobile Portrait (up to 767px)"]' ),
+			mobile_extra: baseLocator.locator( 'button[aria-label="Mobile Landscape (up to 880px)"]' ),
+			tablet: baseLocator.locator( 'button[aria-label="Tablet Portrait (up to 1024px)"]' ),
+			tablet_extra: baseLocator.locator( 'button[aria-label="Tablet Landscape (up to 1200px)"]' ),
+			laptop: baseLocator.locator( 'button[aria-label="Laptop (up to 1366px)"]' ),
+			desktop: baseLocator.locator( 'button[aria-label="Desktop"]' ),
+			widescreen: baseLocator.locator( 'button[aria-label="Widescreen (2400px and up)"]' ),
+		};
+
+		return locators[ device ];
+	}
+
 	static getAll() {
 		return [ 'mobile', 'mobile_extra', 'tablet', 'tablet_extra', 'laptop', 'desktop', 'widescreen' ];
 	}
 
 	static getBasic() {
 		return [ 'mobile', 'tablet', 'desktop' ];
+	}
+
+	async saveOrUpdate( editor: EditorPage, toReload = false ) {
+		const hasTopBar: boolean = await editor.hasTopBar();
+		if ( hasTopBar ) {
+			await editor.saveSiteSettingsWithTopBar( toReload );
+		} else {
+			await editor.saveSiteSettingsNoTopBar();
+		}
 	}
 
 	async addAllBreakpoints( editor: EditorPage, experimentPostId?: string ) {
@@ -30,15 +57,7 @@ export default class {
 			}
 		}
 
-		const hasTopBar = await editor.hasTopBar();
-		if ( hasTopBar ) {
-			await this.page.locator( 'button:not([disabled])', { hasText: 'Save Changes' } ).waitFor();
-			await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
-		} else {
-			await this.page.click( 'text=Update' );
-		}
-
-		await this.page.waitForSelector( '#elementor-toast' );
+		await this.saveOrUpdate( editor, true );
 
 		if ( experimentPostId ) {
 			await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
@@ -58,19 +77,10 @@ export default class {
 		await editor.openSection( 'section_breakpoints' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
-		const removeBreakpointButton = '#elementor-kit-panel-content .select2-selection__choice__remove';
+		const removeBreakpointButton = EditorSelectors.panels.siteSettings.layout.breakpoints.removeBreakpointButton;
 		while ( await this.page.locator( removeBreakpointButton ).count() > 0 ) {
 			await this.page.click( removeBreakpointButton );
 		}
-
-		const hasTopBar = await editor.hasTopBar();
-		if ( hasTopBar ) {
-			await this.page.locator( 'button:not([disabled])', { hasText: 'Save Changes' } ).waitFor();
-			await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
-		} else {
-			await this.page.click( 'text=Update' );
-		}
-
-		await this.page.waitForSelector( '#elementor-toast' );
+		await this.saveOrUpdate( editor, true );
 	}
 }
