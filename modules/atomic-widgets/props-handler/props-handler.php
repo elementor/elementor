@@ -10,6 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Props_Handler {
+	/**
+	 * Each transformer can return a value that is also a transformable value,
+	 * which means that it can be transformed again by another transformer.
+	 * this constant defines the maximum depth of transformations.
+	 */
 	const TRANSFORM_DEPTH_LIMIT = 3;
 
 	const CONTEXT_SETTINGS = 'settings';
@@ -76,8 +81,10 @@ class Props_Handler {
 	}
 
 	private function is_transformable( $value ): bool {
-		return ! empty( $value['$$type'] )
-			&& is_string( $value['$$type'] )
-			&& ! empty( $value['value'] );
+		return (
+			! empty( $value['$$type'] ) &&
+			is_string( $value['$$type'] ) &&
+			! empty( $value['value'] )
+		);
 	}
 }
