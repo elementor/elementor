@@ -344,10 +344,9 @@ class Manager extends Base_Object {
 				esc_html__( 'Learn more', 'elementor' )
 			),
 			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.3.0',
-			],
+			'default' => self::STATE_ACTIVE,
+			static::TYPE_HIDDEN => true,
+			'mutable' => false,
 			'generator_tag' => true,
 		] );
 
@@ -470,12 +469,29 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
+			'name' => 'e_swiper_css_conditional_loading',
+			'title' => esc_html__( 'Conditionally load Swiper CSS files', 'elementor' ),
+			static::TYPE_HIDDEN => true,
+			'default' => self::STATE_INACTIVE,
+		] );
+
+		$this->add_feature( [
 			'name' => 'e_onboarding',
 			'title' => esc_html__( 'Plugin Onboarding', 'elementor' ),
 			'description' => esc_html__( 'New plugin onboarding.', 'elementor' ),
 			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_ACTIVE,
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_css_smooth_scroll',
+			'title' => esc_html__( 'CSS Smooth Scroll', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Use CSS Smooth Scroll to improve the user experience on your site. This experiment replaces the default JavaScript-based smooth scroll with a CSS-based solution.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_DEV,
+			static::TYPE_HIDDEN => true,
+			'default' => self::STATE_INACTIVE,
 		] );
 	}
 

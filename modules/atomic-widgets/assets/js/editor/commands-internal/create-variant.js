@@ -1,3 +1,5 @@
+import { getVariantByMeta } from '../utils/get-variants';
+
 /**
  * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
@@ -14,12 +16,6 @@ export class CreateVariant extends $e.modules.editor.CommandContainerInternalBas
 		}
 	}
 
-	variantExists( style, meta ) {
-		return style.variants.some( ( variant ) => {
-			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
-		} );
-	}
-
 	apply( args ) {
 		const { container, styleDefID, meta } = args;
 
@@ -31,7 +27,7 @@ export class CreateVariant extends $e.modules.editor.CommandContainerInternalBas
 
 		const style = oldStyles[ styleDefID ];
 
-		if ( this.variantExists( style, meta ) ) {
+		if ( getVariantByMeta( style.variants, meta ) ) {
 			throw new Error( 'Style Variant already exits' );
 		}
 

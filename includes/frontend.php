@@ -5,7 +5,6 @@ use Elementor\Core\Base\App;
 use Elementor\Core\Base\Elements_Iteration_Actions\Assets;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
-use Elementor\Core\Files\CSS\Global_CSS;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Responsive\Responsive;
@@ -436,7 +435,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.9.0',
+			'4.9.3',
 			true
 		);
 
@@ -492,6 +491,10 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function register_styles() {
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
 		/**
 		 * Before frontend register styles.
 		 *
@@ -537,25 +540,10 @@ class Frontend extends App {
 		);
 
 		wp_register_style(
-			'e-lightbox',
-			$this->get_css_assets_url( 'lightbox', 'assets/css/conditionals/' ),
-			[],
+			'e-swiper',
+			$this->get_css_assets_url( 'e-swiper', 'assets/css/conditionals/' ),
+			[ 'swiper' ],
 			ELEMENTOR_VERSION
-		);
-
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
-
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-
-		$frontend_file_name = "frontend{$direction_suffix}{$min_suffix}.css";
-
-		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		wp_register_style(
-			'elementor-frontend',
-			$this->get_frontend_file_url( $frontend_file_name, $has_custom_breakpoints ),
-			[],
-			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -567,19 +555,35 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-wp-admin-bar',
-			$this->get_frontend_file_url( "admin-bar{$min_suffix}.css", false ),
+			$this->get_css_assets_url( 'admin-bar', 'assets/css/' ),
 			[],
 			ELEMENTOR_VERSION
 		);
 
-		$internal_widgets_styles = Plugin::$instance->widgets_manager->widgets_styles_names();
+		wp_register_style(
+			'elementor-frontend',
+			$this->get_frontend_file_url( "frontend{$direction_suffix}{$min_suffix}.css", $has_custom_breakpoints ),
+			[],
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
+		);
 
-		foreach ( $internal_widgets_styles as $style_name ) {
+		$widgets_with_styles = Plugin::$instance->widgets_manager->widgets_with_styles();
+		foreach ( $widgets_with_styles as $widget_name ) {
 			wp_register_style(
-				$style_name,
-				$this->get_css_assets_url( $style_name, null, true, true ),
+				"widget-{$widget_name}",
+				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
 				[],
 				ELEMENTOR_VERSION
+			);
+		}
+
+		$widgets_with_responsive_styles = Plugin::$instance->widgets_manager->widgets_with_responsive_styles();
+		foreach ( $widgets_with_responsive_styles as $widget_name ) {
+			wp_register_style(
+				"widget-{$widget_name}",
+				$this->get_frontend_file_url( "widget-{$widget_name}{$direction_suffix}.min.css", $has_custom_breakpoints ),
+				[],
+				$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 			);
 		}
 
@@ -659,10 +663,22 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'elementor-frontend' );
 
-			wp_enqueue_style( 'swiper' );
+			// TODO: Update in version 3.26.0 [ED-15471]
+			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_swiper_css_conditional_loading' ) ) {
+				wp_enqueue_style( 'e-swiper' );
+			}
 
 			if ( is_admin_bar_showing() ) {
 				wp_enqueue_style( 'elementor-wp-admin-bar' );
+			}
+
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_css_smooth_scroll' ) ) {
+				wp_enqueue_style(
+					'e-smooth-scroll',
+					$this->get_frontend_file_url( 'smooth-scroll.min.css', false ),
+					[],
+					ELEMENTOR_VERSION
+				);
 			}
 
 			/**
@@ -675,18 +691,16 @@ class Frontend extends App {
 			do_action( 'elementor/frontend/after_enqueue_styles' );
 
 			if ( ! Plugin::$instance->preview->is_preview_mode() ) {
-				$this->parse_global_css_code();
-
 				$post_id = get_the_ID();
 				// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
 				if ( $post_id && is_singular() ) {
-					$css_file = Post_CSS::create( get_the_ID() );
-					$css_file->enqueue();
-
 					$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
 					if ( ! empty( $page_assets ) ) {
 						Plugin::$instance->assets_loader->enable_assets( $page_assets );
 					}
+
+					$css_file = Post_CSS::create( get_the_ID() );
+					$css_file->enqueue();
 				}
 			}
 		}
@@ -1045,20 +1059,6 @@ class Frontend extends App {
 
 		$this->fonts_to_enqueue[] = $font;
 		$this->registered_fonts[] = $font;
-	}
-
-	/**
-	 * Parse global CSS.
-	 *
-	 * Enqueue the global CSS file.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 */
-	protected function parse_global_css_code() {
-		$scheme_css_file = Global_CSS::create( 'global.css' );
-
-		$scheme_css_file->enqueue();
 	}
 
 	/**

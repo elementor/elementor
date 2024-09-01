@@ -4,7 +4,7 @@ import { WrapperWithLink } from './wrapper-with-link';
 import { WhatsNewItemThumbnail } from './whats-new-item-thumbnail';
 import { WhatsNewItemChips } from './whats-new-item-chips';
 
-export const WhatsNewItem = ( { item, itemIndex, itemsLength } ) => {
+export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
 	return (
 		<Box
 			key={ itemIndex }
@@ -75,10 +75,11 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength } ) => {
 				>
 					<Button
 						href={ item.ctaLink }
-						target="_blank"
+						target={ item.ctaLink.startsWith( '#' ) ? '_self' : '_blank' }
 						variant="contained"
 						size="small"
 						color="promotion"
+						onClick={ item.ctaLink.startsWith( '#' ) ? () => setIsOpen( false ) : () => {} }
 					>
 						{ item.cta }
 					</Button>
@@ -99,4 +100,5 @@ WhatsNewItem.propTypes = {
 	item: PropTypes.object.isRequired,
 	itemIndex: PropTypes.number.isRequired,
 	itemsLength: PropTypes.number.isRequired,
+	setIsOpen: PropTypes.func.isRequired,
 };
