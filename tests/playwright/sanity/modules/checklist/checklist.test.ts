@@ -67,13 +67,13 @@ test.describe( 'Launchpad checklist tests', () => {
 			checklist = editor.page.locator( selectors.popup ),
 			infotip = editor.page.locator( selectors.infotipFirstTimeClosed ),
 			infotipCloseButton = editor.page.locator( selectors.infotipFirstTimeClosedButton ),
-			url='/wp-json/elementor/v1/checklist/user-progress';
+			url= '/wp-json/elementor/v1/checklist/user-progress';
 
-		const returnDataMock = ( first_closed_checklist_in_editor ) => {
+		const returnDataMock = ( firstClosedChecklistInEditor ) => {
 			return {
 				data: {
 					last_opened_timestamp: null,
-					first_closed_checklist_in_editor: first_closed_checklist_in_editor,
+					first_closed_checklist_in_editor: firstClosedChecklistInEditor,
 					steps: {
 						create_pages: {
 							is_marked_completed: false,
@@ -85,17 +85,15 @@ test.describe( 'Launchpad checklist tests', () => {
 						},
 					},
 				}
-			}
+			};
 		}
 
 		await test.step( 'Infotip first time triggered', async () => {
 			await page.route( url, async ( route ) => {
 				const json = returnDataMock( false );
-
 				await route.fulfill( {
 					json: json,
 				} );
-
 			} );
 
 			await rocketButton.click();
@@ -111,7 +109,6 @@ test.describe( 'Launchpad checklist tests', () => {
 				await route.fulfill( {
 					json: json,
 				} );
-
 			} );
 			await rocketButton.click();
 			await expect( checklist ).toBeVisible();
