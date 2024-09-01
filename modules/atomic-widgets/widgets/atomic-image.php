@@ -66,7 +66,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return [
 			'classes' => Atomic_Prop::make()
 				->string()
-				->default([]),
+				->default( [] ),
 
 			'image' => Atomic_Prop::make()
 				->type( 'image' )

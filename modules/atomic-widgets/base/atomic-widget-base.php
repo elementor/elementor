@@ -3,9 +3,9 @@ namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\PropsHandler\Props_Handler;
 use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
 use Elementor\Utils;
-use Elementor\Modules\AtomicWidgets\Settings_Provider;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -115,10 +115,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	final public function get_atomic_settings(): array {
-		return Settings_Provider::instance()->transform(
-			$this->get_settings(),
-			static::get_props_schema()
-		);
+		return Props_Handler::instance( Props_Handler::CONTEXT_SETTINGS )
+			->handle( $this->get_settings(), static::get_props_schema() );
 	}
 
 	public static function get_props_schema(): array {

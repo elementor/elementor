@@ -1,17 +1,17 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Base;
+namespace Elementor\Modules\AtomicWidgets\PropsHandler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Atomic_Transformer_Base {
+interface Transformer {
 	/**
 	 * Get the transformer type.
 	 *
 	 * @return string
 	 */
-	abstract public static function type(): string;
+	public function get_type(): string;
 
 	/**
 	 * Transform the value.
@@ -20,5 +20,5 @@ abstract class Atomic_Transformer_Base {
 	 *
 	 * @return mixed
 	 */
-	abstract public function transform( $value );
+	public function transform( $value );
 }

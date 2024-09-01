@@ -4,9 +4,8 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\transformers\Classes_Transformer;
-use Elementor\Modules\AtomicWidgets\transformers\Image_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsHandler\Transformers_Registry;
+use Elementor\Modules\AtomicWidgets\PropsHandler\SettingsTransformers\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Type;
@@ -53,11 +52,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/editor/localize_settings', fn( array $settings ) => $this->add_prop_types_config( $settings ) );
-
-			add_filter(
-				'elementor/atomic-widgets/settings/transformers',
-				fn (Collection $transformers) => $this->register_transformers( $transformers )
-			);
+			add_action( 'elementor/atomic-widgets/settings/transformers', fn ( $transformers ) => $this->register_transformers( $transformers ) );
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 		}
@@ -83,11 +78,8 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Image() );
 	}
 
-	private function register_transformers( Collection $transformers ): Collection {
-		$transformers->offsetSet( Classes_Transformer::type(), new Classes_Transformer() );
-		$transformers->offsetSet( Image_Transformer::type(), new Image_Transformer() );
-
-		return $transformers;
+	private function register_transformers( Transformers_Registry $transformers ) {
+		$transformers->register( new Classes_Transformer() );
 	}
 
 	private function register_prop_types() {
