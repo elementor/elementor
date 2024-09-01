@@ -30,6 +30,10 @@ abstract class Prop_Type implements \JsonSerializable {
 		return $this;
 	}
 
+	public function get_default() {
+		return $this->default;
+	}
+
 	/**
 	 * @return array<string>
 	 */
@@ -38,11 +42,10 @@ abstract class Prop_Type implements \JsonSerializable {
 	}
 
 	public function jsonSerialize(): array {
-		return [
+		return array_merge( [
 			'type' => $this->get_type(),
 			'dynamic_categories' => $this->get_dynamic_categories(),
 			'default' => $this->default,
-			...$this->settings,
-		];
+		], $this->settings );
 	}
 }
