@@ -164,9 +164,9 @@ export default class ApiRequests {
 
 		if ( ! response.ok() ) {
 			throw new Error( `
-			Failed to get from ${ restRoute }: ${ response.status() }.
-			${ this.baseUrl }
-		` );
+				Failed to get from ${ restRoute }: ${ response.status() }.
+				${ this.baseUrl }
+			` );
 		}
 
 		return await response.json();
@@ -182,9 +182,9 @@ export default class ApiRequests {
 
 		if ( ! response.ok() ) {
 			throw new Error( `
-			Failed to put to ${ restRoute }: ${ response.status() }.
-			${ await response.text() }
-		` );
+				Failed to put to ${ restRoute }: ${ response.status() }.
+				${ await response.text() }
+			` );
 		}
 	}
 

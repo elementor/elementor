@@ -129,6 +129,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		expect( pageProgress ).toBe( progressToCompare );
 	} );
 
+	// CAUTION: This test will delete all you pages by running `cleanUpTestPages` function
 	test( 'Mark as done function in the editor - top bar on', async ( { page, apiRequests, request }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
