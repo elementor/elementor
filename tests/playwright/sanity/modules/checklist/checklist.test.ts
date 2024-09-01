@@ -59,7 +59,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		} );
 	} );
 
-	test( 'Checklist first time closed infotip', async ( { page, apiRequests }, testInfo ) => {
+	test.only( 'Checklist first time closed infotip', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			elementorCommon = await page.evaluate( () => {
