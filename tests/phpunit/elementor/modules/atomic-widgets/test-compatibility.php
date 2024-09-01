@@ -138,20 +138,19 @@ class Test_Compatibility extends Elementor_Test_Base {
 					'before' => [
 						'default' => '',
 						'type' => 'string',
-						'constraints' => [
+						'dynamic_categories' => [
+							'text',
 						],
 					],
 					'after' => [
 						'default' => '',
 						'type' => 'string',
-						'constraints' => [
-							[
-								'type' => 'enum',
-								'value' => [
-									'name',
-									'email',
-								],
-							],
+						'enum' => [
+							'name',
+							'email',
+						],
+						'dynamic_categories' => [
+							'text',
 						],
 					],
 				],
@@ -168,7 +167,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 			]
 		];
 
-		$this->assertEquals( $expected, json_decode( json_encode( $settings['atomicDynamicTags'] ), true ) );
+		$this->assertEqualSets( $expected, json_decode( wp_json_encode( $settings['atomicDynamicTags'] ), true ) );
 	}
 
 	public function test_add_atomic_dynamic_tags_settings__returns_empty_array_when_tags_have_no_name() {

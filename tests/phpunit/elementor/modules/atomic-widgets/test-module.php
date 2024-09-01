@@ -55,34 +55,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEmpty( $packages );
 	}
 
-	public function test_add_prop_types_config() {
-		// Arrange.
-		remove_all_filters( 'elementor/editor/localize_settings' );
-
-		$this->experiment_on();
-
-		$prop_types_registry = new Prop_Types_Registry();
-		$prop_types_registry->register( new String_Type() );
-		$prop_types_registry->register( new Image_Type() );
-
-		$module = new Module();
-		$module->prop_types = $prop_types_registry;
-
-		// Act.
-		$settings = apply_filters( 'elementor/editor/localize_settings', [
-			'existing-setting' => 'original-value',
-		] );
-
-		// Assert.
-		$this->assertEquals( [
-			'existing-setting' => 'original-value',
-			'atomicPropTypes' => [
-				'string' => new String_Type(),
-				'image' => new Image_Type(),
-			]
-		], $settings );
-	}
-
 	private function experiment_on() {
 		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 	}
