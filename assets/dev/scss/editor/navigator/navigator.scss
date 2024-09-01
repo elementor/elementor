@@ -1,5 +1,6 @@
 body {
 	--e-editor-navigator-width: 240px;
+	--e-editor-navigator-indicator-width: 3px;
 	--e-editor-navigator-promotion-height: 30px;
 }
 
@@ -198,7 +199,7 @@ body {
 			padding: 10px;
 
 			&__title {
-				margin-inline-start: 23px;
+				margin-inline-start: 34px;
 				font-size: 10px;
 				font-style: italic;
 			}
@@ -315,11 +316,10 @@ body {
 		&__indicators {
 			position: relative;
 			transition: transform .5s;
-			padding-inline-start: 5px;
 			z-index: 91;
 
 			&:not(:hover) {
-				$transform: getValueByDirection(calc(100% - 8px), calc(-100% + 8px));
+				$transform: getValueByDirection(calc(100% - var(--e-editor-navigator-indicator-width)), calc(-100% + var(--e-editor-navigator-indicator-width)));
 
 				transform: translateX($transform);
 			}
@@ -333,14 +333,10 @@ body {
 			justify-content: center;
 			color: var(--e-a-color-txt);
 			background-color: var(--e-a-bg-default);
-			border-inline-start: var(--e-a-border);
+			border-inline-end: var(--e-a-border);
 
 			&:first-child {
-				border-inline-start: 3px solid var(--e-a-border-color-accent);
-
-				.elementor-editing & {
-					border-color: lighten($e-gray-900, 10%);
-				}
+				border-inline-start: var(--e-editor-navigator-indicator-width) solid var(--e-a-border-color-accent);
 			}
 
 			&:hover {
