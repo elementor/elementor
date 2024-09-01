@@ -90,7 +90,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			await page.route( url, async ( route ) => {
 				const json = returnDataMock( false );
 				await route.fulfill( {
-					json: json,
+					json,
 				} );
 			} );
 
@@ -105,7 +105,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			await page.route( url, async ( route ) => {
 				const json = returnDataMock( true );
 				await route.fulfill( {
-					json: json,
+					json,
 				} );
 			} );
 			await rocketButton.click();
