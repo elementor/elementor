@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Transformable_Type extends Prop_Type {
+abstract class Transformable_Prop_Type extends Prop_Type {
 
 	public function validate( $value ): void {
 		if ( ! isset( $value['$$type'] ) ) {
@@ -29,4 +29,13 @@ abstract class Transformable_Type extends Prop_Type {
 	}
 
 	abstract protected function validate_value( $value ): void;
+
+	public function default( $default ): self {
+		$this->default = [
+			'$$type' => $this->get_type(),
+			'value' => $default,
+		];
+
+		return $this;
+	}
 }

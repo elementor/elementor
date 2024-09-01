@@ -1,12 +1,12 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
-use Elementor\Modules\AtomicWidgets\Schema\Constraints\Enum;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -115,17 +115,13 @@ class Atomic_Image extends Atomic_Widget_Base {
 		);
 
 		return [
-			'image' => Atomic_Prop::make()
-				->type( 'image' )
+			'image' => Image_Prop_Type::make()
 				->default( [
 					'url' => Utils::get_placeholder_image_src(),
 				] ),
 
-			'image_size' => Atomic_Prop::make()
-				->string()
-				->constraints( [
-					Enum::make( $image_sizes ),
-				] )
+			'image_size' => String_Prop_Type::make()
+				->enum( $image_sizes )
 				->default( 'full' ),
 		];
 	}

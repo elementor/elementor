@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Number_Type extends Prop_Type {
+class Number_Prop_Type extends Prop_Type {
 
 	public function get_type(): string {
 		return 'number';

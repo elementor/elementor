@@ -2,7 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ class Test_Boolean_Type extends Elementor_Test_Base {
 
 	public function test_validate__throws_when_passing_non_boolean() {
 		// Arrange.
-		$prop_type = new Boolean_Type();
+		$prop_type = new Boolean_Prop_Type();
 
 		// Expect.
 		$this->expectException( \Exception::class );

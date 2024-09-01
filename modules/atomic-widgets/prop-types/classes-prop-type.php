@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Classes_Type extends Transformable_Type {
+class Classes_Prop_Type extends Transformable_Prop_Type {
 
 	public function get_type(): string {
 		return 'classes';

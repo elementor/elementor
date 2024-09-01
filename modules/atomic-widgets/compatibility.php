@@ -5,8 +5,7 @@ namespace Elementor\Modules\AtomicWidgets;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
-use Elementor\Modules\AtomicWidgets\Schema\Constraints\Enum;
+use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 
 class Compatibility {
 	public function register_hooks() {
@@ -114,7 +113,7 @@ class Compatibility {
 	 * @param $control
 	 *
 	 * @throws \Exception
-	 * @return array{ atomic_control: Select_Control, prop_schema: Atomic_Prop }
+	 * @return array{ atomic_control: Select_Control, prop_schema: String_Prop_Type }
 	 */
 	private function convert_select_control_to_atomic( $control ) {
 		if ( ! isset( $control['options'] ) ) {
@@ -134,9 +133,8 @@ class Compatibility {
 			->set_label( $control['label'] )
 			->set_options( $options );
 
-		$prop_schema = Atomic_Prop::make()
-			->string()
-			->constraints( [ Enum::make( array_keys( $control['options'] ) ) ] )
+		$prop_schema = String_Prop_Type::make()
+			->enum( array_keys( $control['options'] ) )
 			->default( $control['default'] );
 
 		return [
@@ -148,14 +146,13 @@ class Compatibility {
 	/**
 	 * @param $control
 	 *
-	 * @return array{ atomic_control: Text_Control, prop_schema: Atomic_Prop }
+	 * @return array{ atomic_control: Text_Control, prop_schema: String_Prop_Type }
 	 */
 	private function convert_text_control_to_atomic( $control ) {
 		$atomic_control = Text_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] );
 
-		$prop_schema = Atomic_Prop::make()
-			->string()
+		$prop_schema = String_Prop_Type::make()
 			->default( $control['default'] );
 
 		return [

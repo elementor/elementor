@@ -2,8 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
-use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
@@ -25,9 +24,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	public function get_atomic_controls() {
 		$controls = $this->define_atomic_controls();
 		$schema = static::get_props_schema();
-
-		// Validate the schema only in the Editor.
-		static::validate_schema( $schema );
 
 		return $this->get_valid_controls( $schema, $controls );
 	}
@@ -136,33 +132,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return static::define_props_schema();
 	}
 
-	// TODO: Move to a `Schema_Validator` class?
-	private static function validate_schema( array $schema ) {
-		$widget_name = static::class;
-
-		foreach ( $schema as $key => $prop ) {
-			if ( ! ( $prop instanceof Atomic_Prop ) ) {
-				Utils::safe_throw( "Prop `$key` must be an instance of `Atomic_Prop` in `{$widget_name}`." );
-			}
-
-			if ( ! $prop->get_type() ) {
-				Utils::safe_throw( "Prop `$key` must have a type in `{$widget_name}`." );
-			}
-
-			$prop_type = AtomicWidgetsModule::instance()->prop_types->get( $prop->get_type() );
-
-			if ( ! $prop_type ) {
-				Utils::safe_throw( "Prop type `{$prop->get_type()}` for prop `$key` does not exist in `{$widget_name}`." );
-			}
-
-			try {
-				$prop->validate( $prop->get_default() );
-			} catch ( \Exception $e ) {
-				Utils::safe_throw( "Default value for `$key` prop is invalid in `{$widget_name}` - {$e->getMessage()}" );
-			}
-		}
-	}
-
 	private function transform_setting( $setting ) {
 		if ( ! $this->is_transformable( $setting ) ) {
 			return $setting;
@@ -192,5 +161,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return ! empty( $setting['$$type'] ) && 'string' === getType( $setting['$$type'] ) && isset( $setting['value'] );
 	}
 
+	/**
+	 * @return array<string, Prop_Type>
+	 */
 	abstract protected static function define_props_schema(): array;
 }

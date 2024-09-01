@@ -8,9 +8,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Prop_Type implements \JsonSerializable {
 
+	protected $default = null;
+
+	// TODO: Find a real name!
+	protected array $settings = [];
+
 	abstract public function get_type(): string;
 
 	abstract public function validate( $value ): void;
+
+	/**
+	 * @return $this
+	 */
+	public static function make(): self {
+		return new static();
+	}
+
+	public function default( $default ): self {
+		$this->default = $default;
+
+		return $this;
+	}
 
 	/**
 	 * @return array<string>
@@ -23,6 +41,8 @@ abstract class Prop_Type implements \JsonSerializable {
 		return [
 			'type' => $this->get_type(),
 			'dynamic_categories' => $this->get_dynamic_categories(),
+			'default' => $this->default,
+			...$this->settings,
 		];
 	}
 }

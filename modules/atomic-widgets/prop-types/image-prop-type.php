@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Image_Type extends Transformable_Type {
+class Image_Prop_Type extends Transformable_Prop_Type {
 
 	public function get_type(): string {
 		return 'image';
