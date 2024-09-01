@@ -17,8 +17,8 @@ abstract class Transformable_Prop_Type extends Prop_Type {
 			throw new \Exception( 'Key `$$type` must be a string, ' . gettype( $value['$$type'] ) . ' given.' );
 		}
 
-		if ( $value['$$type'] !== $this->get_type() ) {
-			throw new \Exception( '`$$type` must be `' . $this->get_type() . '`, `' . $value['$$type'] . '` given.' );
+		if ( $value['$$type'] !== $this->get_key() ) {
+			throw new \Exception( '`$$type` must be `' . $this->get_key() . '`, `' . $value['$$type'] . '` given.' );
 		}
 
 		if ( ! isset( $value['value'] ) ) {
@@ -32,7 +32,7 @@ abstract class Transformable_Prop_Type extends Prop_Type {
 
 	public function default( $default ): self {
 		$this->default = [
-			'$$type' => $this->get_type(),
+			'$$type' => $this->get_key(),
 			'value' => $default,
 		];
 

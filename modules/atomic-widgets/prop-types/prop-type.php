@@ -13,7 +13,7 @@ abstract class Prop_Type implements \JsonSerializable {
 	// TODO: Find a real name!
 	protected array $settings = [];
 
-	abstract public function get_type(): string;
+	abstract public function get_key(): string;
 
 	abstract public function validate( $value ): void;
 
@@ -43,7 +43,7 @@ abstract class Prop_Type implements \JsonSerializable {
 
 	public function jsonSerialize(): array {
 		return array_merge( [
-			'type' => $this->get_type(),
+			'key' => $this->get_key(),
 			'dynamic_categories' => $this->get_dynamic_categories(),
 			'default' => $this->default,
 		], $this->settings );

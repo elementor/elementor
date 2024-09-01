@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Classes_Prop_Type extends Transformable_Prop_Type {
 
-	public function get_type(): string {
+	public function get_key(): string {
 		return 'classes';
 	}
 

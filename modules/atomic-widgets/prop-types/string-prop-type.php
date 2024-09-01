@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class String_Prop_Type extends Prop_Type {
 
-	public function get_type(): string {
+	public function get_key(): string {
 		return 'string';
 	}
 

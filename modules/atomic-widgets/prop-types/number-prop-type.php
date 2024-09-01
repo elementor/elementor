@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Number_Prop_Type extends Prop_Type {
 
-	public function get_type(): string {
+	public function get_key(): string {
 		return 'number';
 	}
 

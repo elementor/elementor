@@ -194,7 +194,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Assert.
 		$this->assertJsonStringEqualsJsonString( '{
 			"string_prop": {
-				"type": "string",
+				"key": "string",
 				"enum": ["value-a", "value-b"],
 				"default": "value-a",
 				"dynamic_categories": [
@@ -202,19 +202,19 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				]
 			},
 			"number_prop": {
-				"type": "number",
+				"key": "number",
 				"default": 123,
 				"dynamic_categories": [
 					"number"
 				]
 			},
 			"boolean_prop": {
-				"type": "boolean",
+				"key": "boolean",
 				"default": true,
 				"dynamic_categories": []
 			},
 			"image_prop": {
-				"type": "image",
+				"key": "image",
 				"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } },
 				"dynamic_categories": [
 					"image"

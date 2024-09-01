@@ -137,14 +137,14 @@ class Test_Compatibility extends Elementor_Test_Base {
 				'props_schema' => [
 					'before' => [
 						'default' => '',
-						'type' => 'string',
+						'key' => 'string',
 						'dynamic_categories' => [
 							'text',
 						],
 					],
 					'after' => [
 						'default' => '',
-						'type' => 'string',
+						'key' => 'string',
 						'enum' => [
 							'name',
 							'email',
