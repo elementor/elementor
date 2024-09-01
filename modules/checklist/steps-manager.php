@@ -4,6 +4,7 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Modules\Checklist\Steps\Create_Pages;
 use Elementor\Modules\Checklist\Steps\Setup_Header;
+use Elementor\Modules\Checklist\Steps\Add_Logo;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +16,7 @@ class Steps_Manager {
 	private array $step_instances = [];
 
 	private Checklist_Module_Interface $module;
-	private static $step_ids = [ Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
+	private static $step_ids = [ Create_Pages::STEP_ID, Setup_Header::STEP_ID, Add_Logo::STEP_ID ];
 
 	public function __construct( Checklist_Module_Interface $module ) {
 		$this->module = $module;
