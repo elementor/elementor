@@ -50,14 +50,17 @@ jobs:
 
       - name: Import Media
         run: |
-          bash "npx wp-env run tests-cli wp media import --path=elementor-media/*"
+#          bash "npx wp-env run tests-cli wp media import --path=elementor-media/*"
+          sed -i 's/[0-9]\{4\}\/[0-9]\{2\}/2024\/09/g' tests/lighthouse/templates/law-firm-about.json
 
       - name: Import Templates
-        uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@master
+        uses: yotamselementor/elementor-editor-github-actions/actions/setup-elementor-env@main
         with:
           env: 'testing'
           templates: |-
             elementor-templates
+          media: |-
+            elementor-media
 
       - name: Install Dependencies
         run: npm ci
