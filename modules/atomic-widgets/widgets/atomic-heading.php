@@ -52,12 +52,30 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					Select_Control::bind_to( 'tag' )
 						->set_label( esc_html__( 'Tag', 'elementor' ) )
 						->set_options( [
-							[ 'value' => 'h1', 'label' => 'H1' ],
-							[ 'value' => 'h2', 'label' => 'H2' ],
-							[ 'value' => 'h3', 'label' => 'H3' ],
-							[ 'value' => 'h4', 'label' => 'H4' ],
-							[ 'value' => 'h5', 'label' => 'H5' ],
-							[ 'value' => 'h6', 'label' => 'H6' ],
+							[
+								'value' => 'h1',
+								'label' => 'H1'
+							],
+							[
+								'value' => 'h2',
+								'label' => 'H2'
+							],
+							[
+								'value' => 'h3',
+								'label' => 'H3'
+							],
+							[
+								'value' => 'h4',
+								'label' => 'H4'
+							],
+							[
+								'value' => 'h5',
+								'label' => 'H5'
+							],
+							[
+								'value' => 'h6',
+								'label' => 'H6'
+							],
 						]),
 
 					Textarea_Control::bind_to( 'title' )

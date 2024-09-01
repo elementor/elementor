@@ -11,7 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Classes_Transformer implements Transformer {
 	public function get_type(): string {
-		return Classes_Type::class;
+		// TODO: should be const from the prop type
+		return 'classes';
 	}
 
 	public function transform( $value ) {
