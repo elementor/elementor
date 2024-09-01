@@ -82,7 +82,7 @@ test.describe( 'Launchpad checklist tests', () => {
 							is_completed: false,
 						},
 					},
-				};
+				},
 			};
 		};
 
