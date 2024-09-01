@@ -54,9 +54,6 @@ jobs:
           templates: |-
             elementor-templates
 
-      - name: Install lhci
-        run: npm install --no-package-lock --no-save @lhci/cli@0.14.0
-
       - name: Run Lighthouse tests
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
