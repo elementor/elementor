@@ -59,36 +59,39 @@ test.describe( 'Launchpad checklist tests', () => {
 		} );
 	} );
 
-	test.only( 'Checklist first time closed infotip', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Checklist first time closed infotip', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
-			elementorCommon = await page.evaluate( () => {
-			return elementorCommon;
-		} );
+			rocketButton = editor.page.locator( selectors.topBarIcon ),
+			closeButton = editor.page.locator( selectors.closeButton ),
+			checklist = editor.page.locator( selectors.popup ),
+			infotip = editor.page.locator( selectors.infotipFirstTimeClosed ),
+			infotipCloseButton = editor.page.locator( selectors.infotipFirstTimeClosedButton ),
+			url='/wp-json/elementor/v1/checklist/user-progress';
+
+		const returnDataMock = ( first_closed_checklist_in_editor ) => {
+			return {
+				data: {
+					last_opened_timestamp: null,
+					first_closed_checklist_in_editor: first_closed_checklist_in_editor,
+					steps: {
+						create_pages: {
+							is_marked_completed: false,
+							is_completed: false,
+						},
+						setup_header: {
+							is_marked_completed: false,
+							is_completed: false,
+						},
+					},
+				}
+			}
+		}
 
 		await test.step( 'Infotip first time triggered', async () => {
-			const rocketButton = editor.page.locator( selectors.topBarIcon ),
-				closeButton = editor.page.locator( selectors.closeButton ),
-				checklist = editor.page.locator( selectors.popup ),
-				infotip = editor.page.locator( selectors.infotipFirstTimeClosed );
+			await page.route( url, async ( route ) => {
+				const json = returnDataMock( false );
 
-			await page.route( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, async ( route ) => {
-				const json = {
-					data: {
-						last_opened_timestamp: null,
-						first_closed_checklist_in_editor: false,
-						steps: {
-							create_pages: {
-								is_marked_completed: false,
-								is_completed: false,
-							},
-							setup_header: {
-								is_marked_completed: false,
-								is_completed: false,
-							},
-						},
-					}
-				}
 				await route.fulfill( {
 					json: json,
 				} );
@@ -97,34 +100,14 @@ test.describe( 'Launchpad checklist tests', () => {
 
 			await rocketButton.click();
 			await expect( checklist ).toBeVisible();
-
 			await closeButton.click();
-			await expect( infotip ).toBeHidden();
+			await expect( infotip ).toBeVisible();
 		} );
 
 		await test.step( 'Infotip not triggered after db update', async () => {
-			const rocketButton = editor.page.locator( selectors.topBarIcon ),
-				closeButton = editor.page.locator( selectors.closeButton ),
-				checklist = editor.page.locator( selectors.popup ),
-				infotip = editor.page.locator( selectors.infotipFirstTimeClosed );
-
-			await page.route( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, async ( route ) => {
-				const json = {
-					data: {
-						last_opened_timestamp: null,
-						first_closed_checklist_in_editor: false,
-						steps: {
-							create_pages: {
-								is_marked_completed: false,
-								is_completed: false,
-							},
-							setup_header: {
-								is_marked_completed: false,
-								is_completed: false,
-							},
-						},
-					}
-				}
+			await infotipCloseButton.click();
+			await page.route( url, async ( route ) => {
+				const json = returnDataMock( true );
 				await route.fulfill( {
 					json: json,
 				} );
@@ -132,9 +115,8 @@ test.describe( 'Launchpad checklist tests', () => {
 			} );
 			await rocketButton.click();
 			await expect( checklist ).toBeVisible();
-
 			await closeButton.click();
-			await expect( infotip ).toBeVisible();
+			await expect( infotip ).toBeHidden();
 		} );
 	} );
 

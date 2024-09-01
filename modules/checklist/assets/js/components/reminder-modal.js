@@ -14,7 +14,7 @@ const ReminderModal = ( { setOpen } ) => {
 				<Typography variant="body2">Click the launch icon to continue setting up your site.</Typography>
 			</CardContent>
 			<CardActions>
-				<Button size="small" variant="contained" onClick={ ( e ) => {
+				<Button size="small" variant="contained" className="e-checklist-infotip-first-time-closed-button" onClick={ ( e ) => {
 					closeChecklist( e );
 				} }>Got it</Button>
 			</CardActions>
