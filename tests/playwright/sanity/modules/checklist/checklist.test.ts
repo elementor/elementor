@@ -86,7 +86,7 @@ test.describe( 'Launchpad checklist tests', () => {
 					},
 				}
 			};
-		}
+		};
 
 		await test.step( 'Infotip first time triggered', async () => {
 			await page.route( url, async ( route ) => {
