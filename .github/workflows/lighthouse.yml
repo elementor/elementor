@@ -50,7 +50,7 @@ jobs:
 
       - name: Import Media
         run: |
-          bash "npx wp-env run wp media import --path=elementor-media/*"
+          bash "npx wp-env run tests-cli wp media import --path=elementor-media/*"
 
       - name: Import Templates
         uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@master
