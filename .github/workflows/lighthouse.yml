@@ -54,6 +54,9 @@ jobs:
           templates: |-
             elementor-templates
 
+      - name: Install Dependencies
+        run: npm ci
+
       - name: Run Lighthouse tests
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
