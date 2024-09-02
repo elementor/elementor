@@ -9,15 +9,15 @@ const controlIds = {
 
 const selectors = {
 	topBarIcon: '[aria-label="Checklist"]',
-	popup: '#e-checklist .e-checklist-popup',
-	closeButton: '.e-checklist-close',
-	checklistItemButton: '.e-checklist-item-button',
-	checklistItemContent: '.e-checklist-item-content',
-	stepIcon: '.step-check-icon',
-	markAsButton: '.mark-as-button',
-	cta: '.cta-button',
-	progressBarWrapper: '.e-checklist-progress-bar-wrapper',
-	progressBarPercentage: '.e-checklist-progress-bar-percentage',
+	popup: '#e-checklist > div',
+	closeButton: 'header button',
+	checklistItemButton: '#e-checklist .MuiListItemButton-root',
+	checklistItemContent: '#e-checklist .MuiCollapse-root',
+	stepIcon: '.MuiListItemIcon-root',
+	markAsButton: 'button:nth-child(1)',
+	cta: 'button:nth-child(2)',
+	progressBarWrapper: '#e-checklist header > div >> nth=1',
+	progressBarPercentage: '#e-checklist header > div:nth-child(2) > div:nth-child(2)',
 };
 
 export { controlIds, selectors };

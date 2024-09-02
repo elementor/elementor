@@ -53,7 +53,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 	};
 
 	return (
-		<Card elevation={ 0 } square={ true } className={ `e-checklist-item-content checklist-step-${ id }` }>
+		<Card elevation={ 0 } square={ true } data-step-id={ id }>
 			<CardMedia
 				image={ imageSrc }
 				sx={ { height: 180 } }
@@ -71,7 +71,6 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 							size="small"
 							color="secondary"
 							variant="text"
-							className="mark-as-button"
 							onClick={ toggleMarkAsDone }
 					>
 						{ isMarkedCompleted ? __( 'Unmark as done', 'elementor' ) : __( 'Mark as done', 'elementor' ) }
@@ -83,7 +82,6 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 					color={ isLocked ? 'promotion' : 'primary' }
 					size="small"
 					variant="contained"
-					className="cta-button"
 					onClick={ redirectHandler }
 				>
 					{ ctaText }

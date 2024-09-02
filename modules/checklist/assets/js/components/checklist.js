@@ -7,7 +7,7 @@ const Checklist = ( props ) => {
 	const [ steps, setSteps ] = useState( props.steps );
 
 	return (
-		<Paper elevation={ 5 } className="e-checklist-popup" sx={ {
+		<Paper elevation={ 5 } sx={ {
 			position: 'fixed',
 			width: '360px',
 			bottom: '40px',

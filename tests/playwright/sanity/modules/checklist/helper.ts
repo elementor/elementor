@@ -91,11 +91,11 @@ export default class ChecklistHelper {
 	}
 
 	getStepContentSelector( itemId: string, innerSelector: string = '' ) {
-		return `${ selectors.popup } ${ selectors.checklistItemContent }.checklist-step-${ itemId } ${ innerSelector }`;
+		return `${ selectors.checklistItemContent } [data-step-id="${ itemId }"] ${ innerSelector }`;
 	}
 
 	getStepItemSelector( itemId: string, innerSelector: string = '' ) {
-		return `${ selectors.popup } ${ selectors.checklistItemButton }.checklist-step-${ itemId } ${ innerSelector }`;
+		return `${ selectors.checklistItemButton }[data-step-id="${ itemId }"] ${ innerSelector }`;
 	}
 
 	async getSteps( request: APIRequestContext ): Promise< Step[] > {

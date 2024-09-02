@@ -15,10 +15,10 @@ function CheckListItem( props ) {
 
 	return (
 		<>
-			<ListItemButton onClick={ handleExpandClick } className={ `e-checklist-item-button checklist-step-${ step.config.id }` }>
+			<ListItemButton onClick={ handleExpandClick } data-step-id={ step.config.id }>
 				<ListItemIcon>
 					<Checkbox
-						className={ `step-check-icon ${ isChecked ? 'checked' : 'unchecked' }` }
+						data-is-checked={ isChecked }
 						icon={ <RadioButtonUncheckedIcon /> }
 						checkedIcon={ <CircleCheckFilledIcon color="primary" /> }
 						edge="start"
