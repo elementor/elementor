@@ -55,7 +55,7 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		return wp_get_referer();
 	}
 
-	public function http_build_query( $data ) : string {
-		return http_build_query( $data );
+	public function add_query_arg( $args, $url ) : string {
+		return add_query_arg( $args, $url );
 	}
 }

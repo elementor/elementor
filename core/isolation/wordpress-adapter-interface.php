@@ -22,5 +22,6 @@ interface Wordpress_Adapter_Interface {
 	public function update_option( $option_key, $option_value );
 
 	public function get_referer();
-	public function http_build_query( $data );
+
+	public function add_query_arg( $args, $url );
 }

@@ -36,18 +36,12 @@ class Add_Logo extends Step_Base {
 			return '';
 		}
 
-		$parsed_url = parse_url($link);
-		parse_str($parsed_url['query'] ?? '', $query_params);
-
 		$additional_params = [
 			'active-document' => 5,
 			'active-tab' => 'settings-site-identity',
 		];
 
-		$merged_params = array_merge($query_params, $additional_params);
-		$new_query_string = $this->wordpress_adapter->http_build_query($merged_params);
-
-		return $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'] . '?' . $new_query_string;
+		return add_query_arg($additional_params, $link);
 	}
 
 	public function get_is_completion_immutable() : bool {
