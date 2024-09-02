@@ -10,6 +10,9 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Image_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Types_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Type;
+use Elementor\Core\Files\CSS\Post;
+use Elementor\Element_Base;
+use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Plugin;
@@ -51,6 +54,8 @@ class Module extends BaseModule {
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/editor/localize_settings', fn( array $settings ) => $this->add_prop_types_config( $settings ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
+
+			add_action( 'elementor/element/parse_css', fn( Post $post, Element_Base $element ) => $this->parse_atomic_widget_css( $post, $element ), 10, 2 );
 		}
 	}
 
@@ -109,5 +114,21 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+	}
+
+	private function parse_atomic_widget_css( Post $post, Element_Base $element ) {
+		if ( ! ( $element instanceof Atomic_Widget_Base ) || Post::class !== get_class( $post ) ) {
+			return;
+		}
+
+		$styles = $element->get_raw_data()['styles'];
+
+		if ( empty( $styles ) ) {
+			return;
+		}
+
+		$css = ''; // TODO: Implement style render engine.
+
+		$post->get_stylesheet()->add_raw_css( $css );
 	}
 }
