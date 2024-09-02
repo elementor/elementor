@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class String_Prop_Type extends Prop_Type {
 
-	public function get_key(): string {
+	public static function get_key(): string {
 		return 'string';
 	}
 
@@ -33,15 +33,6 @@ class String_Prop_Type extends Prop_Type {
 		$this->settings['enum'] = $allowed_values;
 
 		return $this;
-	}
-
-	/**
-	 * @return array<string>
-	 */
-	public function get_dynamic_categories(): array {
-		return [
-			DynamicTags::TEXT_CATEGORY,
-		];
 	}
 
 	private function validate_enum( $value ): void {

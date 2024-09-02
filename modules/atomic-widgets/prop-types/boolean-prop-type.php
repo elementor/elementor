@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Boolean_Prop_Type extends Prop_Type {
 
-	public function get_key(): string {
+	public static function get_key(): string {
 		return 'boolean';
 	}
 

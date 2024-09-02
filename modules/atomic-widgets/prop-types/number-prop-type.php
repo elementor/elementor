@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Number_Prop_Type extends Prop_Type {
 
-	public function get_key(): string {
+	public static function get_key(): string {
 		return 'number';
 	}
 
@@ -18,14 +18,5 @@ class Number_Prop_Type extends Prop_Type {
 		if ( ! is_numeric( $value ) ) {
 			throw new \Exception( 'Value must be a number, ' . gettype( $value ) . ' given.' );
 		}
-	}
-
-	/**
-	 * @return array<string>
-	 */
-	public function get_dynamic_categories(): array {
-		return [
-			DynamicTags::NUMBER_CATEGORY,
-		];
 	}
 }

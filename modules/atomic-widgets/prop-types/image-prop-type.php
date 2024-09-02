@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Image_Prop_Type extends Transformable_Prop_Type {
 
-	public function get_key(): string {
+	public static function get_key(): string {
 		return 'image';
 	}
 
@@ -33,11 +33,5 @@ class Image_Prop_Type extends Transformable_Prop_Type {
 		if ( $has_url && ! is_string( $value['url'] ) ) {
 			throw new \Exception( 'URL must be a string, ' . gettype( $value['url'] ) . ' given.' );
 		}
-	}
-
-	public function get_dynamic_categories(): array {
-		return [
-			DynamicTags::IMAGE_CATEGORY,
-		];
 	}
 }

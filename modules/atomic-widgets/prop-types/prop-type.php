@@ -10,10 +10,9 @@ abstract class Prop_Type implements \JsonSerializable {
 
 	protected $default = null;
 
-	// TODO: Find a real name!
 	protected array $settings = [];
 
-	abstract public function get_key(): string;
+	abstract public static function get_key(): string;
 
 	abstract public function validate( $value ): void;
 
@@ -34,17 +33,9 @@ abstract class Prop_Type implements \JsonSerializable {
 		return $this->default;
 	}
 
-	/**
-	 * @return array<string>
-	 */
-	public function get_dynamic_categories(): array {
-		return [];
-	}
-
 	public function jsonSerialize(): array {
 		return array_merge( [
-			'key' => $this->get_key(),
-			'dynamic_categories' => $this->get_dynamic_categories(),
+			'key' => static::get_key(),
 			'default' => $this->default,
 		], $this->settings );
 	}
