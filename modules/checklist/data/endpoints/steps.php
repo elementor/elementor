@@ -4,6 +4,7 @@ namespace Elementor\Modules\Checklist\Data\Endpoints;
 use Elementor\Data\V2\Base\Endpoint as Endpoint_Base;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 use Elementor\Modules\Checklist\Steps_Manager;
+use Elementor\Modules\Checklist\Module as Checklist_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,7 +26,7 @@ class Steps extends Endpoint_Base {
 	}
 
 	public function update_item( $id, $request ) {
-		$checklist_module = Plugin::$instance->modules_manager->get_modules( 'checklist' );
+		$checklist_module = Checklist_Module::instance();
 		$allowed_changes = [
 			Step_Base::MARKED_AS_COMPLETED_KEY => $request->get_param( Step_Base::MARKED_AS_COMPLETED_KEY ) ?? null,
 			Step_Base::ABSOLUTE_COMPLETION_KEY => $request->get_param( Step_Base::ABSOLUTE_COMPLETION_KEY ) ?? null,
@@ -42,7 +43,7 @@ class Steps extends Endpoint_Base {
 	}
 
 	private function get_checklist_data(): array {
-		$checklist_module = Plugin::$instance->modules_manager->get_modules( 'checklist' );
+		$checklist_module = Checklist_Module::instance();
 		$steps_data = $checklist_module->get_steps_manager()->get_steps_for_frontend();
 
 		return [
