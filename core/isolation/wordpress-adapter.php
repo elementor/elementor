@@ -50,4 +50,12 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function add_option( $option_key, $option_value ) : void {
 		add_option( $option_key, $option_value );
 	}
+
+	public function get_referer(): string {
+		return wp_get_referer();
+	}
+
+	public function http_build_query( $data ) : string {
+		return http_build_query( $data );
+	}
 }

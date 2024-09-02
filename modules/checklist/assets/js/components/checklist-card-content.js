@@ -17,7 +17,7 @@ const ChecklistCardContent = ( { step } ) => {
 		ctaUrl = isLocked ? promotionUrl : step.config.cta_url;
 
 	const redirectHandler = () => {
-		window.open( ctaUrl, isLocked ? '_blank' : '' );
+		window.open( ctaUrl, isLocked ? '_blank' : '_self' );
 	};
 
 	return (

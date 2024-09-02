@@ -30,11 +30,24 @@ class Add_Logo extends Step_Base {
 	}
 
 	public function get_cta_url() : string {
-		$current_url = $_SERVER['HTTP_REFERER'];
-		$query_params = '&active-document=5&active-tab=settings-site-identity';
-		return $current_url . $query_params;
-	}
+		$link = $this->wordpress_adapter->get_referer();
+		if (!$link) {
+			return '';
+		}
 
+		$parsed_url = parse_url($link);
+		parse_str($parsed_url['query'] ?? '', $query_params);
+
+		$additional_params = [
+			'active-document' => 5,
+			'active-tab' => 'settings-site-identity',
+		];
+
+		$merged_params = array_merge($query_params, $additional_params);
+		$new_query_string = $this->wordpress_adapter->http_build_query($merged_params);
+
+		return $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'] . '?' . $new_query_string;
+	}
 	public function get_is_completion_immutable() : bool {
 		return false;
 	}
@@ -43,6 +56,6 @@ class Add_Logo extends Step_Base {
 		return 'https://assets.elementor.com/checklist/v1/images/checklist-step-1.jpg';
 	}
 	public function get_learn_more_url() : string {
-		return 'https://elementor.com/help/setting-up-your-site-identity/';
+		return 'http://go.elementor.com/app-website-checklist-logo-article';
 	}
 }
