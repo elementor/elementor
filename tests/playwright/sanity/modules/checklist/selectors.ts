@@ -10,7 +10,7 @@ const controlIds = {
 const selectors = {
 	topBarIcon: '[aria-label="Checklist"]',
 	popup: '#e-checklist > div',
-	closeButton: 'header button',
+	closeButton: '#e-checklist > div header button',
 	checklistItemButton: '#e-checklist .MuiListItemButton-root',
 	checklistItemContent: '#e-checklist .MuiCollapse-root',
 	stepIcon: '.MuiListItemIcon-root',
