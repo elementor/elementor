@@ -7,6 +7,7 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
@@ -44,6 +45,17 @@ class Module extends BaseModule {
 		return [
 			'floating-buttons' => esc_html__( 'Floating Buttons', 'elementor' ),
 			'floating-bars' => esc_html__( 'Floating Bars', 'elementor' ),
+		];
+	}
+
+	// TODO: This is a hidden experiment which needs to remain enabled like this until 3.26 for pro compatibility.
+	public static function get_experimental_data() {
+		return [
+			'name' => self::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Floating Buttons', 'elementor' ),
+			'hidden' => true,
+			'default' => Manager::STATE_ACTIVE,
+			'release_status' => Manager::RELEASE_STATUS_STABLE,
 		];
 	}
 
