@@ -150,6 +150,11 @@ export default class FloatingBarsHandler extends Base {
 		}
 	}
 
+	setupInnerContainer() {
+		this.elements.main.closest( '.e-con-inner' ).classList.add( 'e-con-inner--floating-bars' );
+		this.elements.main.closest( '.e-con' ).classList.add( 'e-con--floating-bars' );
+	}
+
 	onInit( ...args ) {
 		const { hasEntranceAnimation } = this.getSettings( 'constants' );
 
@@ -165,5 +170,7 @@ export default class FloatingBarsHandler extends Base {
 		}
 
 		this.initDefaultState();
+
+		this.setupInnerContainer();
 	}
 }
