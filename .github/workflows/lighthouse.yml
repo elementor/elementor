@@ -40,14 +40,6 @@ jobs:
           sed -i 's/[0-9]\{4\}\/[0-9]\{2\}/2024\/09/g' tests/lighthouse/templates/law-firm-about.json
           cat tests/lighthouse/templates/law-firm-about.json
 
-      - name: Upload for debug
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: law-firm-about
-          path: ${{ github.workspace }}/tests/lighthouse/templates/law-firm-about.json
-          retention-days: 1
-
       - name: Setup wp-env
         uses: elementor/elementor-editor-github-actions/actions/setup-wp-env@master
         with:
@@ -62,7 +54,7 @@ jobs:
             elementor-media:./tests/lighthouse/media
 
       - name: Import Templates
-        uses: yotamselementor/elementor-editor-github-actions/actions/setup-elementor-env@main
+        uses: yotamselementor/elementor-editor-github-actions/actions/setup-elementor-env@media-import
         with:
           env: 'testing'
           templates: |-
