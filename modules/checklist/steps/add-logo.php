@@ -9,10 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Add_Logo extends Step_Base {
 	const STEP_ID = 'add_logo';
 
-	public function __construct( ...$args ) {
-		parent::__construct( ...$args );
-	}
-
 	public function get_id() : string {
 		return self::STEP_ID;
 	}
@@ -34,7 +30,9 @@ class Add_Logo extends Step_Base {
 	}
 
 	public function get_cta_url() : string {
-		return admin_url('customize.php?autofocus[section]=title_tagline');
+		$current_url = $_SERVER['HTTP_REFERER'];
+		$query_params = '&active-document=5&active-tab=settings-site-identity';
+		return $current_url . $query_params;
 	}
 
 	public function get_is_completion_immutable() : bool {
