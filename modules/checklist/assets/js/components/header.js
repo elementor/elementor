@@ -2,25 +2,32 @@ import { Typography, CloseButton, AppBar, Divider, Toolbar } from '@elementor/ui
 import { __ } from '@wordpress/i18n';
 import Progress from './progress';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { QueryClient, QueryClientProvider, useQuery } from "@elementor/query";
+import * as React from "react";
 
-const Header = ( { steps } ) => {
-	const [ closedForFirstTime, setClosedForFirstTime ] = useState( null );
-	const fetchStatus = async () => {
-		const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-WP-Nonce': elementorWebCliConfig.nonce,
-			},
-		} );
-		const data = await response.json();
-		setClosedForFirstTime( data.data.first_closed_checklist_in_editor );
-	};
+const fetchStatus = async () => {
+	const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			'X-WP-Nonce': elementorWebCliConfig.nonce,
+		},
+	} );
+	const data = await response.json();
+	return data.data.first_closed_checklist_in_editor;
+};
 
-	useEffect( () => {
-		fetchStatus();
-	}, [] );
+const queryClient = new QueryClient();
+
+const HeaderContent = ( { steps } ) => {
+	const { error, data: closedForFirstTime } = useQuery( {
+		queryKey: [ 'closedForFirstTime' ],
+		queryFn: fetchStatus,
+	} );
+
+	if ( error ) {
+		return null;
+	}
 
 	const closeChecklist = async () => {
 		if ( closedForFirstTime !== true ) {
@@ -62,6 +69,14 @@ const Header = ( { steps } ) => {
 		</>
 	);
 };
+
+const Header = () => {
+	return (
+		<QueryClientProvider client={ queryClient }>
+			<HeaderContent />
+		</QueryClientProvider>
+	)
+}
 
 export default Header;
 

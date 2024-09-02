@@ -19,7 +19,7 @@ const selectors = {
 	progressBarWrapper: '.e-checklist-progress-bar-wrapper',
 	progressBarPercentage: '.e-checklist-progress-bar-percentage',
 	infotipFirstTimeClosed: '.e-checklist-infotip-first-time-closed',
-	infotipFirstTimeClosedButton: '.e-checklist-infotip-first-time-closed-button',
+	infotipFirstTimeClosedButton: '.infotip-first-time-closed-button',
 };
 
 export { controlIds, selectors };

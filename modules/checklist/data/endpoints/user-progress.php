@@ -32,6 +32,7 @@ class User_Progress extends Endpoint_Base {
 		if ( false === $progress_data['data']['first_closed_checklist_in_editor'] ) {
 			Plugin::$instance->modules_manager->get_modules( 'checklist' )->set_user_progress();
 		}
+
 		return [
 			'data' => 'success',
 		];
