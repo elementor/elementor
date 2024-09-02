@@ -14,7 +14,9 @@
   "largest-contentful-paint": [ "warn", {} ],
   "legacy-javascript": [ "error", { "maxLength": 2 } ],
   "render-blocking-resources": [ "error", { "maxLength": 9 } ],
+  "unsized-images": [ "warn", { "minScore": 0.9 } ],
   "uses-long-cache-ttl": [ "warn", { "maxLength": 31 } ],
+  "uses-responsive-images": [ "warn", { "maxScore": 0 } ],
   "modern-image-formats": [ "warn", { "maxLength": 4 }],
   "csp-xss": [ "warn", { "minScore": 0 }]
 }

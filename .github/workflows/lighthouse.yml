@@ -35,6 +35,10 @@ jobs:
           name: ${{ needs.build-plugin-lh.outputs.artifact_name }}
           path: ./elementor
 
+      - name: Setup Media in Templates
+        run: |
+          sed -i 's/[0-9]\{4\}\/[0-9]\{2\}/2024\/09/g' tests/lighthouse/templates/law-firm-about.json
+
       - name: Setup wp-env
         uses: elementor/elementor-editor-github-actions/actions/setup-wp-env@master
         with:
@@ -45,17 +49,20 @@ jobs:
           themes: |-
             https://downloads.wordpress.org/theme/hello-elementor.zip
           mappings: |-
-            elementor-templates:./tests/playwright/templates
+            elementor-templates:./tests/lighthouse/templates
+            elementor-media:./tests/lighthouse/media
 
       - name: Import Templates
-        uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@master
+        uses: yotamselementor/elementor-editor-github-actions/actions/setup-elementor-env@media-import
         with:
           env: 'testing'
           templates: |-
             elementor-templates
+          media: |-
+            elementor-media
 
-      - name: Install lhci
-        run: npm install --no-package-lock --no-save @lhci/cli@0.11.1
+      - name: Install Dependencies
+        run: npm ci
 
       - name: Run Lighthouse tests
         run: |
@@ -67,12 +74,12 @@ jobs:
           bash "${GITHUB_WORKSPACE}/.github/scripts/save-lighthouse-pages-html-dumps.sh"
 
       - name: Upload Lighthouse reports on failure
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
-          retention-days: 7
+          retention-days: 3
 
       - name: Upload Lighthouse HTML dumps on failure
         if: failure()
