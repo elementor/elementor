@@ -28,10 +28,6 @@ const TopBarIconContent = () => {
 		queryFn: fetchStatus,
 	} );
 
-	if ( error ) {
-		return null;
-	}
-
 	useEffect( () => {
 		return listenTo( commandEndEvent( 'checklist/toggle-popup' ), ( e ) => {
 			setHasRoot( e.args.isOpen );
@@ -49,6 +45,10 @@ const TopBarIconContent = () => {
 			window.removeEventListener( 'firstClose', handleFirstClosed );
 		};
 	}, [] );
+
+	if ( error ) {
+		return null;
+	}
 
 	return hasRoot && ! closedForFirstTime ? (
 		<RocketIcon />
