@@ -43,7 +43,6 @@ class Test_Add_Logo_Step extends Step_Test_Base {
 		] );
 
 		$step = new Add_Logo( $this->checklist_module, $this->wordpress_adapter );
-		$step->maybe_mark_as_completed();
 		$this->assertFalse( $step->is_absolute_completed() );
 
 		$this->set_wordpress_adapter_mock( [ 'has_custom_logo' ], [
@@ -51,7 +50,6 @@ class Test_Add_Logo_Step extends Step_Test_Base {
 		] );
 
 		$step = new Add_Logo( $this->checklist_module, $this->wordpress_adapter );
-		$step->maybe_mark_as_completed();
 		$this->assertTrue( $step->is_absolute_completed() );
 	}
 

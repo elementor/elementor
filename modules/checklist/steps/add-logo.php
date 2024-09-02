@@ -22,7 +22,7 @@ class Add_Logo extends Step_Base {
 	}
 
 	public function get_description() : string {
-		return esc_html__( 'Let`s start by adding your logo and filling in the site identity settings. This will establish your initial presence and also improve SEO.', 'elementor' );
+		return esc_html__( 'Let\'s start by adding your logo and filling in the site identity settings. This will establish your initial presence and also improve SEO.', 'elementor' );
 	}
 
 	public function get_cta_text() : string {
@@ -31,6 +31,7 @@ class Add_Logo extends Step_Base {
 
 	public function get_cta_url() : string {
 		$link = $this->wordpress_adapter->get_referer();
+
 		if (!$link) {
 			return '';
 		}
@@ -48,6 +49,7 @@ class Add_Logo extends Step_Base {
 
 		return $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'] . '?' . $new_query_string;
 	}
+
 	public function get_is_completion_immutable() : bool {
 		return false;
 	}
@@ -55,6 +57,7 @@ class Add_Logo extends Step_Base {
 	public function get_image_src() : string {
 		return 'https://assets.elementor.com/checklist/v1/images/checklist-step-1.jpg';
 	}
+
 	public function get_learn_more_url() : string {
 		return 'http://go.elementor.com/app-website-checklist-logo-article';
 	}
