@@ -25,6 +25,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$controls = $this->define_atomic_controls();
 		$schema = static::get_props_schema();
 
+		// Validate the schema only in the Editor.
+		static::validate_schema( $schema );
+
 		return $this->get_valid_controls( $schema, $controls );
 	}
 
@@ -130,6 +133,23 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	public static function get_props_schema(): array {
 		return static::define_props_schema();
+	}
+
+	// TODO: Move to a `Schema_Validator` class?
+	private static function validate_schema( array $schema ) {
+		$widget_name = static::class;
+
+		foreach ( $schema as $key => $prop ) {
+			if ( ! ( $prop instanceof Prop_Type ) ) {
+				Utils::safe_throw( "Prop `$key` must be an instance of `Prop_Type` in `{$widget_name}`." );
+			}
+
+			try {
+				$prop->validate( $prop->get_default() );
+			} catch ( \Exception $e ) {
+				Utils::safe_throw( "Default value for `$key` prop is invalid in `{$widget_name}` - {$e->getMessage()}" );
+			}
+		}
 	}
 
 	private function transform_setting( $setting ) {

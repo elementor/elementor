@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\DynamicTags\Module as DynamicTags;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,7 +17,7 @@ class Number_Prop_Type extends Prop_Type {
 
 	public function validate( $value ): void {
 		if ( ! is_numeric( $value ) ) {
-			throw new \Exception( 'Value must be a number, ' . gettype( $value ) . ' given.' );
+			Utils::safe_throw( 'Value must be a number, ' . gettype( $value ) . ' given.' );
 		}
 	}
 }

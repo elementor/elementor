@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -14,11 +16,11 @@ class Classes_Prop_Type extends Transformable_Prop_Type {
 
 	public function validate_value( $value ): void {
 		if ( ! is_array( $value ) ) {
-			throw new \Exception( 'Value must be an array, ' . gettype( $value ) . ' given.' );
+			Utils::safe_throw( 'Value must be an array, ' . gettype( $value ) . ' given.' );
 		}
 
 		if ( ! $this->all_are_valid_classes( $value ) ) {
-			throw new \Exception( 'All classes must start with an english letter, and contain only english letters, numbers, hyphens, and underscores.' );
+			Utils::safe_throw( 'All classes must start with an english letter, and contain only english letters, numbers, hyphens, and underscores.' );
 		}
 	}
 

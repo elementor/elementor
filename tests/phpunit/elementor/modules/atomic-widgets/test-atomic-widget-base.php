@@ -196,29 +196,19 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			"string_prop": {
 				"key": "string",
 				"enum": ["value-a", "value-b"],
-				"default": "value-a",
-				"dynamic_categories": [
-					"text"
-				]
+				"default": "value-a"
 			},
 			"number_prop": {
 				"key": "number",
-				"default": 123,
-				"dynamic_categories": [
-					"number"
-				]
+				"default": 123
 			},
 			"boolean_prop": {
 				"key": "boolean",
-				"default": true,
-				"dynamic_categories": []
+				"default": true
 			},
 			"image_prop": {
 				"key": "image",
-				"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } },
-				"dynamic_categories": [
-					"image"
-				]
+				"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } }
 			}
 		}', $serialized );
 	}
@@ -338,6 +328,39 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( $controls_definitions, $controls );
+	}
+
+	public function test_get_atomic_controls__schema_validation__throws_for_non_prop_type() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'non_prop_type' => 'not-a-prop-type',
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Prop `non_prop_type` must be an instance of `Prop_Type`' );
+
+		// Act.
+		$widget->get_atomic_controls();
+	}
+
+	public function test_get_atomic_controls__schema_validation__throws_for_invalid_default() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'test_prop' => String_Prop_Type::make()
+					->default( 123 ),
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Default value for `test_prop` prop is invalid' );
+
+		// Act.
+		$widget->get_atomic_controls();
 	}
 
 	/**
