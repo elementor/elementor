@@ -71,10 +71,12 @@ const TopBarIconContent = () => {
 	);
 };
 
-const TopBarIcon = () => (
-	<QueryClientProvider client={ queryClient }>
-		<TopBarIconContent />
-	</QueryClientProvider>
-);
+const TopBarIcon = () => {
+	return (
+		<QueryClientProvider client={ queryClient }>
+			<TopBarIconContent />
+		</QueryClientProvider>
+	);
+};
 
-export default TopBarIcon
+export default TopBarIcon;

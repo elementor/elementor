@@ -2,8 +2,8 @@ import { Typography, CloseButton, AppBar, Divider, Toolbar } from '@elementor/ui
 import { __ } from '@wordpress/i18n';
 import Progress from './progress';
 import PropTypes from 'prop-types';
-import { QueryClient, QueryClientProvider, useQuery } from "@elementor/query";
-import * as React from "react";
+import { QueryClient, QueryClientProvider, useQuery } from '@elementor/query';
+import * as React from 'react';
 
 const fetchStatus = async () => {
 	const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
@@ -70,16 +70,16 @@ const HeaderContent = ( { steps } ) => {
 	);
 };
 
+HeaderContent.propTypes = {
+	steps: PropTypes.array.isRequired,
+};
+
 const Header = () => {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<HeaderContent />
 		</QueryClientProvider>
-	)
-}
+	);
+};
 
 export default Header;
-
-Header.propTypes = {
-	steps: PropTypes.array.isRequired,
-};
