@@ -14,7 +14,7 @@ class Add_Logo extends Step_Base {
 	}
 
 	public function is_absolute_completed() : bool {
-		return has_custom_logo();
+		return $this->wordpress_adapter->has_custom_logo();
 	}
 
 	public function get_title() : string {
@@ -41,7 +41,7 @@ class Add_Logo extends Step_Base {
 			'active-tab' => 'settings-site-identity',
 		];
 
-		return add_query_arg($additional_params, $link);
+		return $this->wordpress_adapter->add_query_arg($additional_params, $link);
 	}
 
 	public function get_is_completion_immutable() : bool {

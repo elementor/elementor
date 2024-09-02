@@ -37,11 +37,6 @@ class Test_Add_Logo_Step extends Step_Test_Base {
 		$this->assertFalse( $step->is_immutable_completed() );
 		$this->assertFalse( $step->is_absolute_completed() );
 
-
-		$this->set_wordpress_adapter_mock( [ 'has_custom_logo' ], [
-			'has_custom_logo' => false,
-		] );
-
 		$step = new Add_Logo( $this->checklist_module, $this->wordpress_adapter );
 		$this->assertFalse( $step->is_absolute_completed() );
 
