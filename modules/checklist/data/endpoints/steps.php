@@ -5,7 +5,6 @@ use Elementor\Data\V2\Base\Endpoint as Endpoint_Base;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 use Elementor\Modules\Checklist\Steps_Manager;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
