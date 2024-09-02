@@ -138,9 +138,6 @@ class Test_Compatibility extends Elementor_Test_Base {
 					'before' => [
 						'default' => '',
 						'key' => 'string',
-						'dynamic_categories' => [
-							'text',
-						],
 					],
 					'after' => [
 						'default' => '',
@@ -148,9 +145,6 @@ class Test_Compatibility extends Elementor_Test_Base {
 						'enum' => [
 							'name',
 							'email',
-						],
-						'dynamic_categories' => [
-							'text',
 						],
 					],
 				],
