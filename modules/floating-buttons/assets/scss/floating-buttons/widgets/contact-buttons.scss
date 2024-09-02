@@ -698,11 +698,10 @@
 	}
 }
 
-.elementor-location-floating_buttons {
-
-	& .e-con-inner {
-		padding: 0;
-	}
+.e-con > .e-con-inner.e-con-inner--floating-buttons,
+.e-con:has(.e-contact-buttons) > .e-con-inner {
+	padding-block-end: 0;
+	padding-block-start: 0;
 }
 
 @keyframes e-contact-buttons-typing-jump {

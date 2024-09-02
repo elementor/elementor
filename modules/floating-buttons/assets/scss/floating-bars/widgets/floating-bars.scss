@@ -259,15 +259,14 @@
 	}
 }
 
-.e-con-inner:has(.e-floating-bars) {
-	padding: 0;
-}
-
-.elementor-element:has(.e-floating-bars:is(:not(.is-sticky))) {
+.e-con.e-con--floating-bars,
+.e-con:has(.e-floating-bars) {
 	padding: 0;
 
-	.e-con-inner {
+	& > .e-con-inner.e-con-inner--floating-bars,
+	& > .e-con-inner {
 		max-width: unset;
-		padding: 0;
+		padding-block-end: 0;
+		padding-block-start: 0;
 	}
 }
