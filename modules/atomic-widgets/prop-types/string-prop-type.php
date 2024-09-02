@@ -3,7 +3,6 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\DynamicTags\Module as DynamicTags;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +17,7 @@ class String_Prop_Type extends Prop_Type {
 
 	public function validate( $value ): void {
 		if ( ! is_string( $value ) ) {
-			Utils::safe_throw( 'Value must be a string, ' . gettype( $value ) . ' given.' );
+			throw new \Exception( 'Value must be a string, ' . gettype( $value ) . ' given.' );
 		}
 
 		if ( isset( $this->settings['enum'] ) ) {
@@ -44,7 +43,7 @@ class String_Prop_Type extends Prop_Type {
 				->map( fn ( $item ) => "`$item`" )
 				->implode( ', ' );
 
-			Utils::safe_throw( "`$value` is not in the list of allowed values ($values)." );
+			throw new \Exception( "`$value` is not in the list of allowed values ($values)." );
 		}
 	}
 

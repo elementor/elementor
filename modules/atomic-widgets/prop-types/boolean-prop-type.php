@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Utils;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -16,7 +14,7 @@ class Boolean_Prop_Type extends Prop_Type {
 
 	public function validate( $value ): void {
 		if ( ! is_bool( $value ) ) {
-			Utils::safe_throw( 'Value must be a boolean, ' . gettype( $value ) . ' given.' );
+			throw new \Exception( 'Value must be a boolean, ' . gettype( $value ) . ' given.' );
 		}
 	}
 }

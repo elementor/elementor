@@ -33,7 +33,6 @@ class Module extends BaseModule {
 		$this->register_experiment();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			( new Compatibility() )->register_hooks();
 			( new Dynamic_Tags() )->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
