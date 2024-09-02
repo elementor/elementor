@@ -292,6 +292,10 @@ export default class ContactButtonsHandler extends Base {
 		}
 	}
 
+	setupInnerContainer() {
+		this.elements.main.closest( '.e-con-inner' ).classList.add( 'e-con-inner--floating-buttons' );
+	}
+
 	onInit( ...args ) {
 		const { hasEntranceAnimation } = this.getSettings( 'constants' );
 
@@ -310,5 +314,7 @@ export default class ContactButtonsHandler extends Base {
 				this.initChatButtonEntranceAnimation();
 			}
 		}
+
+		this.setupInnerContainer();
 	}
 }
