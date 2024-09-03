@@ -294,7 +294,7 @@ class Test_Manager extends Data_Test_Base {
 			'site-navigation/duplicate-post' => 'site-navigation/duplicate-post',
 			'site-navigation/homepage' => 'site-navigation/homepage',
 			'checklist/steps' => 'checklist',
-			'checklist/index' => 'checklist/{id}'
+			'checklist/index' => 'checklist/{id}',
 			'checklist/user-progress' => 'checklist',
 		], $this->manager->command_formats );
 	}
