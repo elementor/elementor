@@ -19,7 +19,7 @@ class Dynamic_Tags {
 		if ( isset( $settings['dynamicTags']['tags'] ) ) {
 			$settings['atomicDynamicTags'] = [
 				'tags' => $this->convert_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] ),
-				'prop_types_mapping' => $this->get_prop_types_mapping(),
+				'prop_types_to_dynamic' => $this->get_prop_types_mapping(),
 			];
 		}
 

@@ -138,13 +138,16 @@ class Test_Dynamic_Tags extends Elementor_Test_Base {
 					'before' => [
 						'default' => '',
 						'type' => 'string',
+						'settings' => [],
 					],
 					'after' => [
 						'default' => '',
 						'type' => 'string',
-						'enum' => [
-							'name',
-							'email',
+						'settings' => [
+							'enum' => [
+								'name',
+								'email',
+							],
 						],
 					],
 				],
@@ -298,7 +301,7 @@ class Test_Dynamic_Tags extends Elementor_Test_Base {
 		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => [] ] ] );
 
 		// Assert.
-		$mapping = $settings['atomicDynamicTags']['prop_types_mapping'];
+		$mapping = $settings['atomicDynamicTags']['prop_types_to_dynamic'];
 
 		$this->assertIsArray( $mapping );
 

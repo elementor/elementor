@@ -34,9 +34,12 @@ abstract class Prop_Type implements \JsonSerializable {
 	}
 
 	public function jsonSerialize(): array {
-		return array_merge( [
+		return [
 			'type' => static::get_key(),
 			'default' => $this->default,
-		], $this->settings );
+
+			// Make sure it's always serialized to an object.
+			'settings' => empty( $this->settings ) ? new \stdClass() : $this->settings,
+		];
 	}
 }
