@@ -62,4 +62,9 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function has_custom_logo() : bool {
 		return has_custom_logo();
 	}
+
+	public function page_exists($params) : bool {
+		$query = new \WP_Query( $params );
+		return $query->found_posts;
+	}
 }
