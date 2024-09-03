@@ -1,4 +1,3 @@
-// TODO: Remove this file in a future version of Elementor.
 import { isScrollSnapActive } from './utils';
 
 module.exports = elementorModules.ViewModule.extend( {

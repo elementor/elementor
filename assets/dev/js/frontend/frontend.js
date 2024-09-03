@@ -19,7 +19,8 @@ import AnchorScrollMargin from './utils/anchor-scroll-margin';
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
-	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' );
+	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
+	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
 
 export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
@@ -202,8 +203,13 @@ export default class Frontend extends elementorModules.ViewModule {
 			escapeHTML,
 			events: Events,
 			controls: new Controls(),
-			anchor_scroll_margin: new AnchorScrollMargin(),
 		};
+
+		if ( this.config.experimentalFeatures.e_css_smooth_scroll ) {
+			this.utils.anchor_scroll_margin = new AnchorScrollMargin();
+		} else {
+			this.utils.anchors = new AnchorsModule();
+		}
 
 		// TODO: BC since 2.4.0
 		this.modules = {
