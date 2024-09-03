@@ -30,13 +30,12 @@ class Add_Logo extends Step_Base {
 	}
 
 	public function get_cta_url() : string {
-
-
 		$link = $this->wordpress_adapter->get_referer();
 
 		if ( ! $link ) {
 			return '';
 		}
+
 		$parsed_url = parse_url($link);
 		parse_str($parsed_url['query'] ?? '', $query_params);
 
