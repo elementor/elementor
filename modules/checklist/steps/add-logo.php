@@ -31,7 +31,7 @@ class Add_Logo extends Step_Base {
 	}
 
 	public function get_cta_url() : string {
-		$link = $this->wordpress_adapter->wp_get_referer();
+		$link = $this->get_site_settings_url_config();
 
 		if ( ! $link ) {
 			return '';
