@@ -8,10 +8,20 @@ ApplyAiTitlesNavigatorBehavior = Marionette.Behavior.extend( {
 		'click @ui.aiTitlesButton': 'aiTitleClickHandler',
 	},
 
+	initialize() {
+		try {
+			this.getTemplate();
+		} catch ( e ) {
+			this.hasTemplate = false;
+		}
+	},
+
 	getTemplate() {
-		console.log( 'getTemplate' );
-		// Build a template with jquery of a button
-		return $( '<button id="elementor-navigator__ai-titles" class="elementor-button elementor-button-default elementor-button-icon elementor-button-icon-left" aria-label="AI Titles" title="AI Titles"><i class="eicon-library"></i><span>AI Titles</span></button>' )[ 0 ].outerHTML;
+		const $button = jQuery( '<button>', {
+			id: 'elementor-navigator__ai-titles',
+		} );
+		$button.html( '<i class="eicon-ai"></i>' );
+		return $button[ 0 ].outerHTML;
 	},
 
 	aiTitleClickHandler() {
@@ -29,6 +39,12 @@ ApplyAiTitlesNavigatorBehavior = Marionette.Behavior.extend( {
 	onShow() {
 		if ( elementorCommon.config.library_connect?.is_connected ) {
 			this.ui.aiTitlesButton.remove();
+		} else {
+			const $targetElement = this.view.$el.find( '#elementor-navigator__toggle-all' );
+
+			if ( $targetElement.length ) {
+				$targetElement.after( this.getTemplate() );
+			}
 		}
 	},
 } );

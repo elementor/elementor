@@ -71,9 +71,6 @@ export default class extends Marionette.LayoutView {
 	}
 
 	onShow() {
-		if ( elementorCommon.config.library_connect?.is_connected ) {
-			this.ui.aiTitlesButton.remove();
-		}
 		this.elements.show( new ElementView( {
 			model: elementor.elementsModel,
 		} ) );

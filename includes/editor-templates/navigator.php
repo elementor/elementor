@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Modules\Ai\Preferences;
 use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
@@ -28,9 +27,6 @@ if ( ! $has_pro ) {
 	);
 	$elements_list_class = 'elementor-navigator-list__promotion';
 }
-
-
-//$is_ai_enabled = Preferences::is_ai_enabled( get_current_user_id() )
 
 ?>
 <script type="text/template" id="tmpl-elementor-navigator">
