@@ -15,12 +15,10 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
+		$this->index_endpoint->register_item_route();
 		$this->register_endpoint( new Steps( $this ) );
 		$this->register_endpoint( new User_Progress( $this ) );
 	}
-
-	// Bypass, currently not required.
-	protected function register_index_endpoint() {}
 
 	public function update_items_permissions_check( $request ) {
 		return current_user_can( 'manage_options' );

@@ -12,7 +12,6 @@ class User_Progress extends Endpoint_Base {
 	protected function register() {
 		parent::register();
 
-		$this->register_route();
 		$this->register_route( '', \WP_REST_Server::EDITABLE );
 	}
 
