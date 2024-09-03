@@ -32,7 +32,7 @@ class Add_Logo extends Step_Base {
 	public function get_cta_url() : string {
 		$link = $this->wordpress_adapter->get_referer();
 
-		if (!$link) {
+		if ( ! $link ) {
 			return '';
 		}
 
@@ -41,7 +41,7 @@ class Add_Logo extends Step_Base {
 			'active-tab' => 'settings-site-identity',
 		];
 
-		return $this->wordpress_adapter->add_query_arg($additional_params, $link);
+		return $this->wordpress_adapter->add_query_arg( $additional_params, $link );
 	}
 
 	public function get_is_completion_immutable() : bool {
