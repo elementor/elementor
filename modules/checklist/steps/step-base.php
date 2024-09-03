@@ -197,6 +197,11 @@ abstract class Step_Base {
 		$this->module->set_step_progress( $this->get_id(), $this->user_progress );
 	}
 
+	public function page_exists( $params ) : bool {
+		$query = new \WP_Query( $params );
+		return $query->found_posts;
+	}
+
 	public function get_elementor_create_new_page_url(): string {
 		return $this->wordpress_adapter->add_query_arg( [
 			'active-document' => self::SITE_SETTINGS_TAB,

@@ -31,7 +31,7 @@ class Add_Logo extends Step_Base {
 	}
 
 	public function get_cta_url() : string {
-		$link = $this->wordpress_adapter->get_referer();
+		$link = $this->wordpress_adapter->wp_get_referer();
 
 		if ( ! $link ) {
 			return '';
@@ -48,7 +48,7 @@ class Add_Logo extends Step_Base {
 
 		$merged_params = array_merge( $query_params, $additional_params );
 
-		if ( $this->wordpress_adapter->page_exists( $merged_params ) ) {
+		if ( $this->page_exists( $merged_params ) ) {
 			return $this->wordpress_adapter->add_query_arg( $additional_params, $link );
 		}
 
