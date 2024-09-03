@@ -28,6 +28,10 @@ class Controller extends Controller_Base {
 		return current_user_can( 'manage_options' );
 	}
 
+	public function create_item_permissions_check( $request ) {
+		return current_user_can( 'manage_options' );
+	}
+
 	public function get_item_permissions_check( $request ) {
 		return current_user_can( 'manage_options' );
 	}

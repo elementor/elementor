@@ -1,10 +1,13 @@
 import Header from './header';
 import CheckListWrapper from './checklist-wrapper';
+import { useState } from 'react';
 import { Paper } from '@elementor/ui';
 
-const Checklist = ( { steps } ) => {
+const Checklist = ( props ) => {
+	const [ steps, setSteps ] = useState( props.steps );
+
 	return (
-		<Paper elevation={ 5 } className="e-checklist-popup" sx={ {
+		<Paper elevation={ 5 } sx={ {
 			position: 'fixed',
 			width: '360px',
 			bottom: '40px',
@@ -15,7 +18,7 @@ const Checklist = ( { steps } ) => {
 			overflowY: 'auto',
 		} }>
 			<Header steps={ steps } />
-			<CheckListWrapper steps={ steps } />
+			<CheckListWrapper steps={ steps } setSteps={ setSteps } />
 		</Paper>
 	);
 };

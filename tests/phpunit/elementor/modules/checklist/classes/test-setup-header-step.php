@@ -36,7 +36,7 @@ class Test_Setup_Header_Step extends Step_Test_Base {
 
 		$step = new Setup_Header( $this->checklist_module, $this->wordpress_adapter );
 
-		$step->maybe_mark_as_completed();
+		$step->maybe_immutably_mark_as_completed();
 		$this->assertFalse( $step->is_marked_as_completed() );
 		$this->assertFalse( $step->is_immutable_completed() );
 		$this->assertTrue( $step->is_absolute_completed() );
