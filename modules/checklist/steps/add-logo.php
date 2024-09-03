@@ -22,7 +22,7 @@ class Add_Logo extends Step_Base {
 	}
 
 	public function get_description() : string {
-		return esc_html__( 'Let\'s start by adding your logo and filling in the site identity settings. This will establish your initial presence and also improve SEO.', 'elementor' );
+		return __( 'Let\'s start by adding your logo and filling in the site identity settings. This will establish your initial presence and also improve SEO.', 'elementor' );
 	}
 
 	public function get_cta_text() : string {
