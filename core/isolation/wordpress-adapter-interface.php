@@ -27,5 +27,5 @@ interface Wordpress_Adapter_Interface {
 
 	public function has_custom_logo();
 
-	public function page_exists($params);
+	public function page_exists( $params );
 }

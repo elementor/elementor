@@ -36,18 +36,21 @@ class Add_Logo extends Step_Base {
 			return '';
 		}
 
-		$parsed_url = parse_url($link);
-		parse_str($parsed_url['query'] ?? '', $query_params);
+		$parsed_url = parse_url( $link );
+		parse_str( $parsed_url['query'] ?? '', $query_params );
 
 		$additional_params = [
 			'active-document' => 5,
 			'active-tab' => 'settings-site-identity',
 		];
 
-		$merged_params = array_merge($query_params, $additional_params);
-		if ($this->wordpress_adapter->page_exists($merged_params)){
-			return $this->wordpress_adapter->add_query_arg( $additional_params, $link );
+		$merged_params = array_merge( $query_params, $additional_params );
+
+		if ( ! $this->wordpress_adapter->page_exists( $merged_params ) ){
+			return '';
 		}
+
+		return $this->wordpress_adapter->add_query_arg( $additional_params, $link );
 	}
 
 	public function get_is_completion_immutable() : bool {
