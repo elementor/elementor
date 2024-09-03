@@ -6,7 +6,6 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Utils\Constants;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
