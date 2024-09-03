@@ -81,13 +81,13 @@ export default class ApiRequests {
 		await Promise.all( requests );
 	}
 
-	public async cleanUpTestPages( request: APIRequestContext ) {
+	public async cleanUpTestPages( request: APIRequestContext, shouldDeleteAllPages = false ) {
 		const pagesPublished = await this.getPages( request ),
 			pagesDraft = await this.getPages( request, 'draft' ),
 			pages = [ ...pagesPublished, ...pagesDraft ];
 
 		const pageIds = pages
-			.filter( ( page: WpPage ) => page.title.rendered.includes( 'Playwright Test Page' ) )
+			.filter( ( page: WpPage ) => shouldDeleteAllPages || page.title.rendered.includes( 'Playwright Test Page' ) )
 			.map( ( page: WpPage ) => page.id );
 
 		for ( const id of pageIds ) {
@@ -152,6 +152,40 @@ export default class ApiRequests {
 
 	public async getTheme( request: APIRequestContext, status?: 'active' | 'inactive' ) {
 		return await this.get( request, 'themes', status );
+	}
+
+	public async customGet( request: APIRequestContext, restRoute: string, multipart? ) {
+		const response = await request.get( `${ this.baseUrl }/${ restRoute }`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			multipart,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to get from ${ restRoute }: ${ response.status() }.
+				${ this.baseUrl }
+			` );
+		}
+
+		return await response.json();
+	}
+
+	public async customPut( request: APIRequestContext, restRoute: string, data ) {
+		const response = await request.put( `${ this.baseUrl }/${ restRoute }`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			data,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to put to ${ restRoute }: ${ response.status() }.
+				${ await response.text() }
+			` );
+		}
 	}
 
 	private async get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
