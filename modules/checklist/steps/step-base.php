@@ -23,10 +23,6 @@ abstract class Step_Base {
 	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
 	const IMMUTABLE_COMPLETION_KEY = 'is_completed';
 
-	const SITE_SETTINGS_TAB = 5;
-
-	const SITE_IDENTITY_TAB = 'settings-site-identity';
-
 	protected array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
 	protected Checklist_Module $module;
@@ -199,33 +195,7 @@ abstract class Step_Base {
 
 	public function page_exists( $params ) : bool {
 		$query = new \WP_Query( $params );
+
 		return $query->found_posts;
-	}
-
-	public function get_elementor_create_new_page_url(): string {
-		return $this->wordpress_adapter->add_query_arg( [
-			'active-document' => self::SITE_SETTINGS_TAB,
-			'active-tab' => self::SITE_IDENTITY_TAB,
-		], Plugin::$instance->documents->get_create_new_post_url( 'page' ) );
-	}
-
-	public function get_site_settings_url_config(): string {
-		$existing_elementor_page = $this->get_elementor_page();
-		$site_settings_url = ! empty( $existing_elementor_page )
-			? $this->get_elementor_edit_url( $existing_elementor_page->ID )
-			: $this->get_elementor_create_new_page_url();
-
-		return $site_settings_url;
-	}
-
-	public function get_elementor_edit_url( int $post_id ): string {
-		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		if ( ! $document ) {
-			return '';
-		}
-
-		return add_query_arg( [ 'active-document' => $active_kit_id ], $document->get_edit_url() );
 	}
 }

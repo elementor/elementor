@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\Checklist\Steps;
 
+use Elementor\Core\Base\Document;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -9,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Add_Logo extends Step_Base {
 	const STEP_ID = 'add_logo';
 
+	const SITE_IDENTITY_TAB = 'settings-site-identity';
 
 	public function get_id() : string {
 		return self::STEP_ID;
@@ -34,16 +38,15 @@ class Add_Logo extends Step_Base {
 		$link = $this->get_site_settings_url_config();
 
 		if ( ! $link ) {
-			return '';
+			return $this->get_elementor_create_new_page_url();
 		}
 
 		$parsed_url = parse_url( $link );
 		$query_params = [];
 		parse_str( $parsed_url['query'] ?? '', $query_params );
-
 		$additional_params = [
-			'active-document' => parent::SITE_SETTINGS_TAB,
-			'active-tab' => parent::SITE_IDENTITY_TAB,
+			'active-document' => Plugin::$instance->kits_manager->get_active_id(),
+			'active-tab' => self::SITE_IDENTITY_TAB,
 		];
 
 		$merged_params = array_merge( $query_params, $additional_params );
@@ -65,5 +68,59 @@ class Add_Logo extends Step_Base {
 
 	public function get_learn_more_url() : string {
 		return 'http://go.elementor.com/app-website-checklist-logo-article';
+	}
+
+	private function get_elementor_create_new_page_url(): string {
+		return $this->wordpress_adapter->add_query_arg( [
+			'active-document' => Plugin::$instance->kits_manager->get_active_id(),
+			'active-tab' => self::SITE_IDENTITY_TAB,
+		], Plugin::$instance->documents->get_create_new_post_url( 'page' ) );
+	}
+
+	private function get_site_settings_url_config(): string {
+		$existing_elementor_page = $this->get_elementor_page();
+		return ! empty( $existing_elementor_page )
+			? $this->get_elementor_edit_url( $existing_elementor_page->ID )
+			: $this->get_elementor_create_new_page_url();
+	}
+
+	private function get_elementor_edit_url( int $post_id ): string {
+		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return '';
+		}
+
+		return $this->wordpress_adapter->add_query_arg( [ 'active-document' => $active_kit_id ], $document->get_edit_url() );
+	}
+
+	private function get_elementor_page() {
+		$args = [
+			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
+			'sort_order' => 'asc',
+			'sort_column' => 'post_date',
+		];
+		$pages =  $this->wordpress_adapter->get_pages( $args );
+
+		if ( empty( $pages ) ) {
+			return null;
+		}
+
+		$show_page_on_front = 'page' === $this->wordpress_adapter->get_option( 'show_on_front' );
+
+		if ( ! $show_page_on_front ) {
+			return $pages[0];
+		}
+
+		$home_page_id = $this->wordpress_adapter->get_option( 'page_on_front' );
+
+		foreach ( $pages as $page ) {
+			if ( (string) $page->ID === $home_page_id ) {
+				return $page;
+			}
+		}
+
+		return $pages[0];
 	}
 }
