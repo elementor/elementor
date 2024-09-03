@@ -20,9 +20,6 @@ class Controller extends Controller_Base {
 		$this->register_endpoint( new User_Progress( $this ) );
 	}
 
-	// Bypass, currently not required.
-	protected function register_index_endpoint() {}
-
 	public function create_items_permissions_check( $request ) {
 		return current_user_can( 'manage_options' );
 	}
