@@ -12,6 +12,7 @@ class User_Progress extends Endpoint_Base {
 	protected function register() {
 		parent::register();
 
+		$this->register_route();
 		$this->register_route( '', \WP_REST_Server::EDITABLE );
 	}
 
@@ -27,11 +28,14 @@ class User_Progress extends Endpoint_Base {
 		return $this->get_checklist_data();
 	}
 
+	public function get_item( $id, $request ) {
+		return $this->get_checklist_data();
+	}
+
 	public function update_item( $id, $request ) {
-		$progress_data = $this->get_checklist_data();
-		if ( false === $progress_data['data']['first_closed_checklist_in_editor'] ) {
-			Plugin::$instance->modules_manager->get_modules( 'checklist' )->update_user_progress();
-		}
+		$data = json_decode( $request->get_body(), true );
+
+		Plugin::$instance->modules_manager->get_modules( 'checklist' )->update_user_progress( $data );
 
 		return [
 			'data' => 'success',

@@ -22,11 +22,11 @@ class Controller extends Controller_Base {
 	// Bypass, currently not required.
 	protected function register_index_endpoint() {}
 
-	public function create_items_permissions_check( $request ) {
+	public function update_items_permissions_check( $request ) {
 		return current_user_can( 'manage_options' );
 	}
 
-	public function create_item_permissions_check( $request ) {
+	public function update_item_permissions_check( $request ) {
 		return current_user_can( 'manage_options' );
 	}
 

@@ -1,6 +1,7 @@
 import * as commands from './commands/';
-import { Index } from './commands-data/index';
-import { Steps } from './commands-data/steps';
+import index from './commands-data/index';
+import steps from './commands-data/steps';
+import userProgress from './commands-data/user-progress';
 import { toggleChecklistPopup } from './utils/functions';
 
 export default class Component extends $e.modules.ComponentBase {
@@ -18,12 +19,12 @@ export default class Component extends $e.modules.ComponentBase {
 		return {
 			togglePopup: toggleChecklistPopup,
 			toggleIcon: () => $e.run( 'checklist/toggle-icon' ),
-			... modalCommands,
-			... this.importCommands( commands ),
+			...modalCommands,
+			...this.importCommands( commands ),
 		};
 	}
 
 	defaultData() {
-		return { index: Index, steps: Steps };
+		return { index, steps, 'user-progress': userProgress };
 	}
 }

@@ -1,5 +1,5 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
-import { QueryClient, QueryClientProvider, useQuery } from '@elementor/query';
+import { useQuery } from '@elementor/query';
 import Checklist from './components/checklist';
 
 const fetchSteps = async () => {
@@ -8,9 +8,8 @@ const fetchSteps = async () => {
 	return response?.data?.data || null;
 };
 
-const queryClient = new QueryClient();
 
-const AppContent = () => {
+const App = () => {
 	const isRTL = elementorCommon.config.isRTL;
 	const { error, data: steps } = useQuery( {
 		queryKey: [ 'steps' ],
@@ -29,11 +28,5 @@ const AppContent = () => {
 		</DirectionProvider>
 	);
 };
-
-const App = () => (
-	<QueryClientProvider client={ queryClient }>
-		<AppContent />
-	</QueryClientProvider>
-);
 
 export default App;

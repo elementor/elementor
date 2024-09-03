@@ -2,49 +2,34 @@ import { Typography, CloseButton, AppBar, Divider, Toolbar } from '@elementor/ui
 import { __ } from '@wordpress/i18n';
 import Progress from './progress';
 import PropTypes from 'prop-types';
-import { QueryClient, QueryClientProvider, useQuery } from '@elementor/query';
+import { useQuery } from '@elementor/query';
 import * as React from 'react';
 import { toggleChecklistPopup } from '../../utils/functions';
 
 const fetchStatus = async () => {
-	const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			'X-WP-Nonce': elementorWebCliConfig.nonce,
-		},
-	} );
-	const data = await response.json();
-	return data.data.first_closed_checklist_in_editor;
+	const response = await $e.data.get( 'checklist/user-progress' );
+
+	return response?.data?.first_closed_checklist_in_editor || false;
 };
 
-const queryClient = new QueryClient();
-
-const HeaderContent = ( { steps } ) => {
-	const { error, data: closedForFirstTime } = useQuery( {
+const Header = ( { steps } ) => {
+	const { data: closedForFirstTime } = useQuery( {
 		queryKey: [ 'closedForFirstTime' ],
 		queryFn: fetchStatus,
 	} );
 
-	if ( error ) {
-		return null;
-	}
-
 	const closeChecklist = async () => {
-		if ( closedForFirstTime !== true ) {
-			await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-WP-Nonce': elementorWebCliConfig.nonce,
-				},
+		if ( ! closedForFirstTime ) {
+			await $e.data.update( 'checklist/user-progress', {
+				first_closed_checklist_in_editor: true,
 			} );
-			window.dispatchEvent( new CustomEvent( 'elementor/checklist/first_close', { detail: { message: 'firstClose' } } ) );
-	};
 
+			window.dispatchEvent( new CustomEvent( 'elementor/checklist/first_close', { detail: { message: 'firstClose' } } ) );
 		}
 
 		toggleChecklistPopup();
+	};
+
 	return (
 		<>
 			<AppBar
@@ -63,7 +48,7 @@ const HeaderContent = ( { steps } ) => {
 					>
 						{ __( 'Let\'s make a productivity boost', 'elementor' ) }
 					</Typography>
-					<CloseButton onClick={ toggleChecklistPopup } className="e-checklist-close" />
+					<CloseButton onClick={ closeChecklist } className="e-checklist-close" />
 				</Toolbar>
 				<Progress steps={ steps } />
 			</AppBar>
@@ -72,20 +57,9 @@ const HeaderContent = ( { steps } ) => {
 	);
 };
 
-HeaderContent.propTypes = {
+Header.propTypes = {
 	steps: PropTypes.array.isRequired,
-};
-
-const Header = ( { steps } ) => {
-	return (
-		<QueryClientProvider client={ queryClient }>
-			<HeaderContent steps={ steps } />
-		</QueryClientProvider>
-	);
 };
 
 export default Header;
 
-Header.propTypes = {
-	steps: PropTypes.array.isRequired,
-};
