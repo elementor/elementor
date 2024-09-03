@@ -672,13 +672,6 @@ class Frontend extends App {
 				wp_enqueue_style( 'elementor-wp-admin-bar' );
 			}
 
-			wp_enqueue_style(
-				'e-smooth-scroll',
-				$this->get_frontend_file_url( 'smooth-scroll.min.css', false ),
-				[],
-				ELEMENTOR_VERSION
-			);
-
 			/**
 			 * After frontend styles enqueued.
 			 *
