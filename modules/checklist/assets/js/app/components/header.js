@@ -2,9 +2,49 @@ import { Typography, CloseButton, AppBar, Divider, Toolbar } from '@elementor/ui
 import { __ } from '@wordpress/i18n';
 import Progress from './progress';
 import PropTypes from 'prop-types';
+import { QueryClient, QueryClientProvider, useQuery } from '@elementor/query';
+import * as React from 'react';
 import { toggleChecklistPopup } from '../../utils/functions';
 
-const Header = ( { steps } ) => {
+const fetchStatus = async () => {
+	const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			'X-WP-Nonce': elementorWebCliConfig.nonce,
+		},
+	} );
+	const data = await response.json();
+	return data.data.first_closed_checklist_in_editor;
+};
+
+const queryClient = new QueryClient();
+
+const HeaderContent = ( { steps } ) => {
+	const { error, data: closedForFirstTime } = useQuery( {
+		queryKey: [ 'closedForFirstTime' ],
+		queryFn: fetchStatus,
+	} );
+
+	if ( error ) {
+		return null;
+	}
+
+	const closeChecklist = async () => {
+		if ( closedForFirstTime !== true ) {
+			await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/user-progress`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-WP-Nonce': elementorWebCliConfig.nonce,
+				},
+			} );
+			window.dispatchEvent( new CustomEvent( 'elementor/checklist/first_close', { detail: { message: 'firstClose' } } ) );
+	};
+
+		}
+
+		toggleChecklistPopup();
 	return (
 		<>
 			<AppBar
@@ -29,6 +69,18 @@ const Header = ( { steps } ) => {
 			</AppBar>
 			<Divider />
 		</>
+	);
+};
+
+HeaderContent.propTypes = {
+	steps: PropTypes.array.isRequired,
+};
+
+const Header = ( { steps } ) => {
+	return (
+		<QueryClientProvider client={ queryClient }>
+			<HeaderContent steps={ steps } />
+		</QueryClientProvider>
 	);
 };
 
