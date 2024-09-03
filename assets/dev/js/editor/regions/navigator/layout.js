@@ -19,8 +19,7 @@ export default class extends Marionette.LayoutView {
 	}
 
 	behaviors() {
-		var behaviors = {};
-
+		const behaviors = {};
 		return elementor.hooks.applyFilters( 'navigator/layout/behaviors', behaviors, this );
 	}
 

@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
+use Elementor\Utils;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
