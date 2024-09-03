@@ -2,12 +2,9 @@ import { Typography, CloseButton, AppBar, Divider, Toolbar } from '@elementor/ui
 import { __ } from '@wordpress/i18n';
 import Progress from './progress';
 import PropTypes from 'prop-types';
+import { toggleChecklistPopup } from '../../utils/functions';
 
 const Header = ( { steps } ) => {
-	const closeChecklist = () => {
-		$e.run( 'checklist/toggle-popup' );
-	};
-
 	return (
 		<>
 			<AppBar
@@ -26,7 +23,7 @@ const Header = ( { steps } ) => {
 					>
 						{ __( 'Let\'s make a productivity boost', 'elementor' ) }
 					</Typography>
-					<CloseButton onClick={ closeChecklist } className="e-checklist-close" />
+					<CloseButton onClick={ toggleChecklistPopup } className="e-checklist-close" />
 				</Toolbar>
 				<Progress steps={ steps } />
 			</AppBar>

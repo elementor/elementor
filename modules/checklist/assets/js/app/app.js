@@ -3,21 +3,9 @@ import { QueryClient, QueryClientProvider, useQuery } from '@elementor/query';
 import Checklist from './components/checklist';
 
 const fetchSteps = async () => {
-	const response = await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			'X-WP-Nonce': elementorWebCliConfig.nonce,
-		},
-	} );
+	const response = await $e.data.get( 'checklist/steps' );
 
-	if ( 200 !== response.status ) {
-		return null;
-	}
-
-	const data = await response.json();
-
-	return data.data;
+	return response?.data?.data || null;
 };
 
 const queryClient = new QueryClient();

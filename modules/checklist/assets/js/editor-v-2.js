@@ -3,6 +3,7 @@ import * as EditorAppBar from '@elementor/editor-app-bar';
 import { __ } from '@wordpress/i18n';
 import * as React from 'react';
 import RocketIcon from '@elementor/icons/RocketIcon';
+import { toggleChecklistPopup } from './utils/functions';
 
 const IconWithBadge = ( { invisible } ) => {
 	return (
@@ -26,9 +27,7 @@ export const editorV2 = () => {
 			return {
 				title: __( 'Checklist', 'elementor' ),
 				icon: () => <RocketIcon />,
-				onClick: () => {
-					$e.commands.run( 'checklist/toggle-popup' );
-				},
+				onClick: toggleChecklistPopup,
 			};
 		},
 	} );
