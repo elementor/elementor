@@ -35,7 +35,7 @@ abstract class Prop_Type implements \JsonSerializable {
 
 	public function jsonSerialize(): array {
 		return array_merge( [
-			'key' => static::get_key(),
+			'type' => static::get_key(),
 			'default' => $this->default,
 		], $this->settings );
 	}

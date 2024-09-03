@@ -194,20 +194,20 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Assert.
 		$this->assertJsonStringEqualsJsonString( '{
 			"string_prop": {
-				"key": "string",
+				"type": "string",
 				"enum": ["value-a", "value-b"],
 				"default": "value-a"
 			},
 			"number_prop": {
-				"key": "number",
+				"type": "number",
 				"default": 123
 			},
 			"boolean_prop": {
-				"key": "boolean",
+				"type": "boolean",
 				"default": true
 			},
 			"image_prop": {
-				"key": "image",
+				"type": "image",
 				"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } }
 			}
 		}', $serialized );

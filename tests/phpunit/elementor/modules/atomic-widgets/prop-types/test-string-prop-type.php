@@ -23,7 +23,7 @@ class Test_String_Prop_Type extends Elementor_Test_Base {
 		$prop_type->enum( [ 'string', 123 ] );
 	}
 
-	public function test_validate__throws_when_passing_non_string() {
+	public function test_validate__throws_when_value_is_not_a_string() {
 		// Arrange.
 		$prop_type = String_Prop_Type::make();
 

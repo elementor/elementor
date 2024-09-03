@@ -137,11 +137,11 @@ class Test_Dynamic_Tags extends Elementor_Test_Base {
 				'props_schema' => [
 					'before' => [
 						'default' => '',
-						'key' => 'string',
+						'type' => 'string',
 					],
 					'after' => [
 						'default' => '',
-						'key' => 'string',
+						'type' => 'string',
 						'enum' => [
 							'name',
 							'email',
