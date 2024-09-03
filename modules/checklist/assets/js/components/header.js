@@ -74,10 +74,10 @@ HeaderContent.propTypes = {
 	steps: PropTypes.array.isRequired,
 };
 
-const Header = () => {
+const Header = ( { steps } )  => {
 	return (
 		<QueryClientProvider client={ queryClient }>
-			<HeaderContent />
+			<HeaderContent steps={ steps } />
 		</QueryClientProvider>
 	);
 };
