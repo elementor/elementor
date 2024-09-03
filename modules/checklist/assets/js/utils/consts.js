@@ -7,4 +7,4 @@ export const STEP = {
 
 export const USER_PROGRESS = {
 	FIRST_CLOSED_CHECKLIST_IN_EDITOR: 'first_closed_checklist_in_editor',
-}
+};
