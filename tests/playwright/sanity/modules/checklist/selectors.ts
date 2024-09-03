@@ -18,6 +18,8 @@ const selectors = {
 	cta: '.cta-button',
 	progressBarWrapper: '.e-checklist-progress-bar-wrapper',
 	progressBarPercentage: '.e-checklist-progress-bar-percentage',
+	infotipFirstTimeClosed: '.e-checklist-infotip-first-time-closed',
+	infotipFirstTimeClosedButton: '.infotip-first-time-closed-button',
 };
 
 export { controlIds, selectors };
