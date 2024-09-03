@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Add_Logo extends Step_Base {
 	const STEP_ID = 'add_logo';
 
+
 	public function get_id() : string {
 		return self::STEP_ID;
 	}
@@ -37,20 +38,21 @@ class Add_Logo extends Step_Base {
 		}
 
 		$parsed_url = parse_url( $link );
+		$query_params = [];
 		parse_str( $parsed_url['query'] ?? '', $query_params );
 
 		$additional_params = [
-			'active-document' => 5,
-			'active-tab' => 'settings-site-identity',
+			'active-document' => parent::SITE_SETTINGS_TAB,
+			'active-tab' => parent::SITE_IDENTITY_TAB,
 		];
 
 		$merged_params = array_merge( $query_params, $additional_params );
 
-		if ( ! $this->wordpress_adapter->page_exists( $merged_params ) ) {
-			return '';
+		if ( $this->wordpress_adapter->page_exists( $merged_params ) ) {
+			return $this->wordpress_adapter->add_query_arg( $additional_params, $link );
 		}
 
-		return $this->wordpress_adapter->add_query_arg( $additional_params, $link );
+		return $this->get_elementor_create_new_page_url();
 	}
 
 	public function get_is_completion_immutable() : bool {

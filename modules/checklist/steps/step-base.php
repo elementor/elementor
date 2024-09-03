@@ -6,6 +6,7 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Utils\Constants;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -21,6 +22,10 @@ abstract class Step_Base {
 	const IS_COMPLETION_IMMUTABLE = 'is_completion_immutable';
 	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
 	const IMMUTABLE_COMPLETION_KEY = 'is_completed';
+
+	const SITE_SETTINGS_TAB = 5;
+
+	const SITE_IDENTITY_TAB = 'settings-site-identity';
 
 	protected array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
@@ -190,5 +195,12 @@ abstract class Step_Base {
 	 */
 	private function set_step_progress() : void {
 		$this->module->set_step_progress( $this->get_id(), $this->user_progress );
+	}
+
+	public function get_elementor_create_new_page_url(): string {
+		return $this->wordpress_adapter->add_query_arg( [
+			'active-document' => self::SITE_SETTINGS_TAB,
+			'active-tab' => self::SITE_IDENTITY_TAB,
+		], Plugin::$instance->documents->get_create_new_post_url( 'page' ) );
 	}
 }
