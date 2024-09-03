@@ -18,6 +18,8 @@ const selectors = {
 	cta: 'button:nth-child(2)',
 	progressBarWrapper: '#e-checklist header > div >> nth=1',
 	progressBarPercentage: '#e-checklist header > div:nth-child(2) > div:nth-child(2)',
+	infotipFirstTimeClosed: '.e-checklist-infotip-first-time-closed',
+	infotipFirstTimeClosedButton: '.infotip-first-time-closed-button',
 };
 
 export { controlIds, selectors };

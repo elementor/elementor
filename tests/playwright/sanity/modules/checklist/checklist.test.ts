@@ -54,6 +54,64 @@ test.describe( 'Launchpad checklist tests', () => {
 		} );
 	} );
 
+	test( 'Checklist first time closed infotip', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage(),
+			rocketButton = editor.page.locator( selectors.topBarIcon ),
+			closeButton = editor.page.locator( selectors.closeButton ),
+			checklist = editor.page.locator( selectors.popup ),
+			infotip = editor.page.locator( selectors.infotipFirstTimeClosed ),
+			infotipCloseButton = editor.page.locator( selectors.infotipFirstTimeClosedButton ),
+			url = '/wp-json/elementor/v1/checklist/user-progress';
+
+		const returnDataMock = ( firstClosedChecklistInEditor ) => {
+			return {
+				data: {
+					last_opened_timestamp: null,
+					first_closed_checklist_in_editor: firstClosedChecklistInEditor,
+					steps: {
+						create_pages: {
+							is_marked_completed: false,
+							is_completed: false,
+						},
+						setup_header: {
+							is_marked_completed: false,
+							is_completed: false,
+						},
+					},
+				},
+			};
+		};
+
+		await test.step( 'Infotip first time triggered', async () => {
+			await page.route( url, async ( route ) => {
+				const json = returnDataMock( false );
+				await route.fulfill( {
+					json,
+				} );
+			} );
+
+			await rocketButton.click();
+			await expect( checklist ).toBeVisible();
+			await closeButton.click();
+			await expect( infotip ).toBeVisible();
+		} );
+
+		await test.step( 'Infotip not triggered after db update', async () => {
+			await infotipCloseButton.click();
+			await page.route( url, async ( route ) => {
+				const json = returnDataMock( true );
+				await route.fulfill( {
+					json,
+				} );
+			} );
+			await rocketButton.click();
+			await expect( checklist ).toBeVisible();
+			await closeButton.click();
+			await expect( infotip ).toBeHidden();
+		} );
+	} );
+
 	test( 'Checklist preference switch effects', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		let checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
