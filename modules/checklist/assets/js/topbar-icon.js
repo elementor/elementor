@@ -39,10 +39,10 @@ const TopBarIconContent = () => {
 			setOpen( true );
 		};
 
-		window.addEventListener( 'firstClose', handleFirstClosed );
+		window.addEventListener( 'elementor/checklist/first_close', handleFirstClosed );
 
 		return () => {
-			window.removeEventListener( 'firstClose', handleFirstClosed );
+			window.removeEventListener( 'elementor/checklist/first_close', handleFirstClosed );
 		};
 	}, [] );
 
