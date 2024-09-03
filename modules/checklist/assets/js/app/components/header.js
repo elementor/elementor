@@ -7,9 +7,9 @@ import * as React from 'react';
 import { toggleChecklistPopup } from '../../utils/functions';
 
 const fetchStatus = async () => {
-	const response = await $e.data.get( 'checklist/user-progress' );
+	const response = await $e.data.get( 'checklist/user-progress', {}, { refresh: true } );
 
-	return response?.data?.first_closed_checklist_in_editor || false;
+	return response?.data?.data?.first_closed_checklist_in_editor || false;
 };
 
 const Header = ( { steps } ) => {

@@ -1,7 +1,2 @@
-export class Index extends $e.modules.CommandData {
-	static getEndpointFormat() {
-		return 'checklist';
-	}
-}
-
-export default Index;
+export { Steps } from './steps';
+export { UserProgress } from './user-progress';

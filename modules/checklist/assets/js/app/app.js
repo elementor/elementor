@@ -3,7 +3,7 @@ import { useQuery } from '@elementor/query';
 import Checklist from './components/checklist';
 
 const fetchSteps = async () => {
-	const response = await $e.data.get( 'checklist/steps' );
+	const response = await $e.data.get( 'checklist/steps', {}, { refresh: true } );
 
 	return response?.data?.data || null;
 };

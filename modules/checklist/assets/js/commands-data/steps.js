@@ -1,6 +1,6 @@
 export class Steps extends $e.modules.CommandData {
 	static getEndpointFormat() {
-		return 'checklist/steps';
+		return 'checklist/steps/{id}';
 	}
 }
 

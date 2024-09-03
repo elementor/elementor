@@ -39,6 +39,10 @@ class Steps extends Endpoint_Base {
 		}
 
 		$step->update_step( $allowed_changes );
+
+		return [
+			'data' => 'success',
+		];
 	}
 
 	private function get_checklist_data(): array {
@@ -55,9 +59,9 @@ class Steps extends Endpoint_Base {
 
 		$this->register_item_route();
 		$this->register_item_route( \WP_REST_Server::EDITABLE, [
-			'id_arg_name' => 'step_id',
+			'id_arg_name' => 'id',
 			'id_arg_type_regex' => '[\w\-\_]+',
-			'step_id' => [
+			'id' => [
 				'type' => 'string',
 				'description' => 'The step id.',
 				'required' => true,
