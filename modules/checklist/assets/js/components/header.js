@@ -74,7 +74,7 @@ HeaderContent.propTypes = {
 	steps: PropTypes.array.isRequired,
 };
 
-const Header = ( { steps } )  => {
+const Header = ( { steps } ) => {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<HeaderContent steps={ steps } />
@@ -83,3 +83,7 @@ const Header = ( { steps } )  => {
 };
 
 export default Header;
+
+Header.propTypes = {
+	steps: PropTypes.array.isRequired,
+};
