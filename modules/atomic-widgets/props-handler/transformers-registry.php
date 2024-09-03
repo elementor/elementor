@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Transformers_Registry extends Collection {
-	public function register( Transformer $transformer ): self {
+	public function register( Transformer_Base $transformer ): self {
 		$this->items[ $transformer->get_type() ] = $transformer;
 
 		return $this;

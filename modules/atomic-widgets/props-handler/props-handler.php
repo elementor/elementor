@@ -48,14 +48,14 @@ class Props_Handler {
 
 		foreach ( $schema as $prop_name => $prop_type ) {
 			$result[ $prop_name ] = $prop_type instanceof Atomic_Prop
-				? $this->transform( $props[ $prop_name ] ?? $prop_type->get_default() )
+				? $this->transform( $props[ $prop_name ] ?? $prop_type->get_default(), $prop_type )
 				: null;
 		}
 
 		return $result;
 	}
 
-	private function transform( $value, int $depth = 0 ) {
+	private function transform( $value, Atomic_Prop $prop_type, int $depth = 0 ) {
 		if ( ! $value || ! $this->is_transformable( $value ) ) {
 			return $value;
 		}
@@ -66,15 +66,16 @@ class Props_Handler {
 
 		$transformer = $this->transformers->get( $value['$$type'] );
 
-		if ( ! ( $transformer instanceof Transformer ) ) {
+		if ( ! ( $transformer instanceof Transformer_Base ) ) {
 			return null;
 		}
 
 		try {
-			return $this->transform(
-				$transformer->transform( $value['value'] ),
-				$depth + 1
-			);
+			$transformed_value = $transformer
+				->set_props_handler( $this )
+				->transform( $value['value'] ); // TODO: Here the prop_type should pass the children prop_types schema so it can be used in the transformer.
+
+			return $this->transform( $transformed_value, $prop_type, $depth + 1 );
 		} catch ( Exception $e ) {
 			return null;
 		}
