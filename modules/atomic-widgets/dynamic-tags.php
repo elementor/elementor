@@ -19,7 +19,7 @@ class Dynamic_Tags {
 		if ( isset( $settings['dynamicTags']['tags'] ) ) {
 			$settings['atomicDynamicTags'] = [
 				'tags' => $this->convert_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] ),
-				'prop_types_to_dynamic' => $this->get_prop_types_mapping(),
+				'prop_types_to_dynamic' => $this->get_prop_types_to_dynamic_mapping(),
 			];
 		}
 
@@ -167,7 +167,7 @@ class Dynamic_Tags {
 		];
 	}
 
-	private function get_prop_types_mapping() {
+	private function get_prop_types_to_dynamic_mapping() {
 		return [
 			Image_Prop_Type::get_key() => [
 				Dynamic_Tags_Module::IMAGE_CATEGORY,

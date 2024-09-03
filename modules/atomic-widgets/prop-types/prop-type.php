@@ -37,9 +37,7 @@ abstract class Prop_Type implements \JsonSerializable {
 		return [
 			'type' => static::get_key(),
 			'default' => $this->default,
-
-			// Make sure it's always serialized to an object.
-			'settings' => empty( $this->settings ) ? new \stdClass() : $this->settings,
+			'settings' => (object) $this->settings,
 		];
 	}
 }
