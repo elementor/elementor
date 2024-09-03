@@ -20,9 +20,10 @@ abstract class Step_Base {
 	 */
 	const IS_COMPLETION_IMMUTABLE = 'is_completion_immutable';
 	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
-	const IMMUTABLE_COMPLETION_KEY = 'is_completed';
+	const IMMUTABLE_COMPLETION_KEY = 'is_immutable_completed';
+	const ABSOLUTE_COMPLETION_KEY = 'is_absolute_completed';
 
-	protected array $user_progress;
+	private array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
 	protected Checklist_Module $module;
 
@@ -91,14 +92,29 @@ abstract class Step_Base {
 		return 'https://go.elementor.com/getting-started-with-elementor/';
 	}
 
+	public function update_step( array $step_data ) : void {
+		$allowed_properties = [
+			self::MARKED_AS_COMPLETED_KEY => $step_data[ self::MARKED_AS_COMPLETED_KEY ] ?? null,
+			self::IMMUTABLE_COMPLETION_KEY => $step_data[ self::IMMUTABLE_COMPLETION_KEY ] ?? null,
+			self::ABSOLUTE_COMPLETION_KEY => $step_data[ self::ABSOLUTE_COMPLETION_KEY ] ?? null,
+		];
+
+		foreach ( $allowed_properties as $key => $value ) {
+			if ( null !== $value ) {
+				$this->user_progress[ $key ] = $value;
+			}
+		}
+
+		$this->set_step_progress();
+	}
+
 	/**
 	 * Marking a step as completed based on user's desire
 	 *
 	 * @return void
 	 */
 	public function mark_as_completed() : void {
-		$this->user_progress[ self::MARKED_AS_COMPLETED_KEY ] = true;
-		$this->set_step_progress();
+		$this->update_step( [ self::MARKED_AS_COMPLETED_KEY => true ] );
 	}
 
 	/**
@@ -107,8 +123,7 @@ abstract class Step_Base {
 	 * @return void
 	 */
 	public function unmark_as_completed() : void {
-		$this->user_progress[ self::MARKED_AS_COMPLETED_KEY ] = false;
-		$this->set_step_progress();
+		$this->update_step( [ self::MARKED_AS_COMPLETED_KEY => false ] );
 	}
 
 	/**
@@ -116,12 +131,14 @@ abstract class Step_Base {
 	 *
 	 * @return void
 	 */
-	public function maybe_mark_as_completed() : void {
+	public function maybe_immutably_mark_as_completed() : void {
 		$is_immutable_completed = $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
 
 		if ( ! $is_immutable_completed && $this->get_is_completion_immutable() && $this->is_absolute_completed() ) {
-			$this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] = true;
-			$this->set_step_progress();
+			$this->update_step( [
+				self::MARKED_AS_COMPLETED_KEY => false,
+				self::IMMUTABLE_COMPLETION_KEY => true,
+			] );
 		}
 	}
 
