@@ -54,27 +54,27 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						->set_options( [
 							[
 								'value' => 'h1',
-								'label' => 'H1'
+								'label' => 'H1',
 							],
 							[
 								'value' => 'h2',
-								'label' => 'H2'
+								'label' => 'H2',
 							],
 							[
 								'value' => 'h3',
-								'label' => 'H3'
+								'label' => 'H3',
 							],
 							[
 								'value' => 'h4',
-								'label' => 'H4'
+								'label' => 'H4',
 							],
 							[
 								'value' => 'h5',
-								'label' => 'H5'
+								'label' => 'H5',
 							],
 							[
 								'value' => 'h6',
-								'label' => 'H6'
+								'label' => 'H6',
 							],
 						]),
 
