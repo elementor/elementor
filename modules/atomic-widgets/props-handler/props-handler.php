@@ -13,7 +13,7 @@ class Props_Handler {
 	/**
 	 * Each transformer can return a value that is also a transformable value,
 	 * which means that it can be transformed again by another transformer.
-	 * this constant defines the maximum depth of transformations.
+	 * This constant defines the maximum depth of transformations to avoid infinite loops.
 	 */
 	const TRANSFORM_DEPTH_LIMIT = 3;
 
@@ -41,6 +41,14 @@ class Props_Handler {
 		}
 
 		return self::$instances[ $context ];
+	}
+
+	public static function for_style() {
+		return self::instance( self::CONTEXT_STYLE );
+	}
+
+	public static function for_settings() {
+		return self::instance( self::CONTEXT_SETTINGS );
 	}
 
 	public function handle( array $props, array $schema ): array {
