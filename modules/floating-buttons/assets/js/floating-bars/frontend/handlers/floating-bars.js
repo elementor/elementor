@@ -17,6 +17,7 @@ export default class FloatingBarsHandler extends Base {
 				visible: 'visible',
 				isSticky: 'is-sticky',
 				hasVerticalPositionTop: 'has-vertical-position-top',
+				hasVerticalPositionBottom: 'has-vertical-position-bottom',
 				isHidden: 'is-hidden',
 				animated: 'animated',
 			},
@@ -32,6 +33,16 @@ export default class FloatingBarsHandler extends Base {
 			closeButton: this.$element[ 0 ].querySelector( selectors.closeButton ),
 			ctaButton: this.$element[ 0 ].querySelector( selectors.ctaButton ),
 		};
+	}
+
+	onElementChange( property ) {
+		const changedProperties = [
+			'advanced_vertical_position',
+		];
+
+		if ( changedProperties.includes( property ) ) {
+			this.initDefaultState();
+		}
 	}
 
 	getResponsiveSetting( controlName ) {
@@ -51,12 +62,28 @@ export default class FloatingBarsHandler extends Base {
 		if ( this.elements.main ) {
 			window.addEventListener( 'keyup', this.onDocumentKeyup.bind( this ) );
 		}
+
+		if ( this.hasStickyElements() ) {
+			window.addEventListener( 'resize', this.handleStickyElements.bind( this ) );
+		}
 	}
 
 	isStickyTop() {
 		const { isSticky, hasVerticalPositionTop } = this.getSettings( 'constants' );
 
 		return this.elements.main.classList.contains( isSticky ) && this.elements.main.classList.contains( hasVerticalPositionTop );
+	}
+
+	isStickyBottom() {
+		const { isSticky, hasVerticalPositionBottom } = this.getSettings( 'constants' );
+
+		return this.elements.main.classList.contains( isSticky ) && this.elements.main.classList.contains( hasVerticalPositionBottom );
+	}
+
+	hasStickyElements() {
+		const stickyElements = document.querySelectorAll( '.elementor-sticky' );
+
+		return stickyElements.length > 0;
 	}
 
 	focusOnLoad() {
@@ -81,13 +108,62 @@ export default class FloatingBarsHandler extends Base {
 		}
 	}
 
+	handleStickyElements() {
+		const mainHeight = this.elements.main.offsetHeight;
+		const wpAdminBar = elementorFrontend.elements.$wpAdminBar;
+		const stickyElements = document.querySelectorAll( '.elementor-sticky:not(.elementor-sticky__spacer)' );
+
+		if ( 0 === stickyElements.length ) {
+			return;
+		}
+
+		stickyElements.forEach( ( stickyElement ) => {
+			const dataSettings = stickyElement.getAttribute( 'data-settings' );
+			const stickyPosition = JSON.parse( dataSettings )?.sticky;
+
+			const isTop = '0px' === stickyElement.style.top || 'top' === stickyPosition;
+			const isBottom = '0px' === stickyElement.style.bottom || 'bottom' === stickyPosition;
+
+			if ( this.isStickyTop() && isTop ) {
+				if ( wpAdminBar.length ) {
+					stickyElement.style.top = `${ mainHeight + wpAdminBar.height() }px`;
+				} else {
+					stickyElement.style.top = `${ mainHeight }px`;
+				}
+			} else if ( this.isStickyBottom() && isBottom ) {
+				stickyElement.style.bottom = `${ mainHeight }px`;
+			}
+
+			if ( elementorFrontend.isEditMode() ) {
+				if ( isTop ) {
+					stickyElement.style.top = this.isStickyTop() ? `${ mainHeight }px` : '0px';
+				} else if ( isBottom ) {
+					stickyElement.style.bottom = this.isStickyBottom() ? `${ mainHeight }px` : '0px';
+				}
+			}
+		} );
+
+		document.querySelectorAll( '.elementor-sticky__spacer' ).forEach( ( stickySpacer ) => {
+			const dataSettings = stickySpacer.getAttribute( 'data-settings' );
+			const stickyPosition = JSON.parse( dataSettings )?.sticky;
+
+			const isTop = '0px' === stickySpacer.style.top || 'top' === stickyPosition;
+
+			if ( this.isStickyTop() && isTop ) {
+				stickySpacer.style.marginBottom = `${ mainHeight }px`;
+			}
+		} );
+	}
+
 	closeFloatingBar() {
 		const { isHidden } = this.getSettings( 'constants' );
 
 		if ( ! elementorFrontend.isEditMode() ) {
 			this.elements.main.classList.add( isHidden );
 
-			if ( this.isStickyTop() ) {
+			if ( this.hasStickyElements() ) {
+				this.handleStickyElements();
+			} else if ( this.isStickyTop() ) {
 				this.removeBodyPadding();
 			}
 		}
@@ -141,13 +217,23 @@ export default class FloatingBarsHandler extends Base {
 		const { hasEntranceAnimation } = this.getSettings( 'constants' );
 
 		if ( this.isStickyTop() ) {
-			this.applyBodyPadding();
 			this.handleWPAdminBar();
+		}
+
+		if ( this.hasStickyElements() ) {
+			this.handleStickyElements();
+		} else if ( this.isStickyTop() ) {
+			this.applyBodyPadding();
 		}
 
 		if ( this.elements.main && ! this.elements.ctaButton.classList.contains( hasEntranceAnimation ) && ! elementorFrontend.isEditMode() ) {
 			this.focusOnLoad();
 		}
+	}
+
+	setupInnerContainer() {
+		this.elements.main.closest( '.e-con-inner' ).classList.add( 'e-con-inner--floating-bars' );
+		this.elements.main.closest( '.e-con' ).classList.add( 'e-con--floating-bars' );
 	}
 
 	onInit( ...args ) {
@@ -165,5 +251,7 @@ export default class FloatingBarsHandler extends Base {
 		}
 
 		this.initDefaultState();
+
+		this.setupInnerContainer();
 	}
 }
