@@ -22,7 +22,7 @@ const App = () => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme="light">
-				<Checklist steps={ steps } />
+				<Checklist steps={ [ ...steps ] } />
 			</ThemeProvider>
 		</DirectionProvider>
 	);
