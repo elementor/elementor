@@ -106,6 +106,15 @@
 					color: var(--n-accordion-title-active-color);
 
 					&-icon {
+
+						.e-opened {
+							display: flex;
+						}
+
+						.e-closed {
+							display: none;
+						}
+
 						span {
 
 							& > i {
@@ -151,10 +160,6 @@
 				}
 
 				.e-closed {
-					display: none;
-				}
-
-				.e-show {
 					display: flex;
 				}
 
