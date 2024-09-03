@@ -564,7 +564,7 @@ class Module extends BaseModule {
 		wp_register_style(
 			'widget-floating-buttons',
 			$this->get_css_assets_url( 'widget-floating-buttons', null, true, true ),
-			[],
+			[ 'elementor-icons' ],
 			ELEMENTOR_VERSION
 		);
 	}
