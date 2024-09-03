@@ -2,6 +2,10 @@
 // Global selectors for Elementor Front-End
 //
 
+html {
+	scroll-behavior: smooth;
+}
+
 .elementor {
 
 	* {
