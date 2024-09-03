@@ -46,7 +46,7 @@ class Add_Logo extends Step_Base {
 
 		$merged_params = array_merge( $query_params, $additional_params );
 
-		if ( ! $this->wordpress_adapter->page_exists( $merged_params ) ){
+		if ( ! $this->wordpress_adapter->page_exists( $merged_params ) ) {
 			return '';
 		}
 
