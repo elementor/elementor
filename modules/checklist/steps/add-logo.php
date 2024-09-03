@@ -101,7 +101,7 @@ class Add_Logo extends Step_Base {
 			'sort_order' => 'asc',
 			'sort_column' => 'post_date',
 		];
-		$pages =  $this->wordpress_adapter->get_pages( $args );
+		$pages = $this->wordpress_adapter->get_pages( $args );
 
 		if ( empty( $pages ) ) {
 			return null;
