@@ -8,7 +8,6 @@ const fetchSteps = async () => {
 	return response?.data?.data || null;
 };
 
-
 const App = () => {
 	const isRTL = elementorCommon.config.isRTL;
 	const { error, data: steps } = useQuery( {
