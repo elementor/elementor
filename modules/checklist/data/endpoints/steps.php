@@ -26,19 +26,13 @@ class Steps extends Endpoint_Base {
 
 	public function update_item( $id, $request ) {
 		$checklist_module = Checklist_Module::instance();
-		$allowed_changes = [
-			Step_Base::MARKED_AS_COMPLETED_KEY => $request->get_param( Step_Base::MARKED_AS_COMPLETED_KEY ) ?? null,
-			Step_Base::ABSOLUTE_COMPLETION_KEY => $request->get_param( Step_Base::ABSOLUTE_COMPLETION_KEY ) ?? null,
-			Step_Base::IMMUTABLE_COMPLETION_KEY => $request->get_param( Step_Base::IMMUTABLE_COMPLETION_KEY ) ?? null,
-		];
-
 		$step = $checklist_module->get_steps_manager()->get_step_by_id( $id );
 
 		if ( ! $step ) {
 			return new \WP_Error( 'rest_invalid_step_id', 'Invalid step id', [ 'status' => 404 ] );
 		}
 
-		$step->update_step( $allowed_changes );
+		$step->update_step( $request->get_json_params() );
 
 		return [
 			'data' => 'success',

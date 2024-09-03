@@ -5,11 +5,14 @@ import PropTypes from 'prop-types';
 import { useQuery } from '@elementor/query';
 import * as React from 'react';
 import { toggleChecklistPopup } from '../../utils/functions';
+import { USER_PROGRESS } from '../../utils/consts';
+
+const { FIRST_CLOSED_CHECKLIST_IN_EDITOR } = USER_PROGRESS;
 
 const fetchStatus = async () => {
 	const response = await $e.data.get( 'checklist/user-progress', {}, { refresh: true } );
 
-	return response?.data?.data?.first_closed_checklist_in_editor || false;
+	return response?.data?.data?.[ FIRST_CLOSED_CHECKLIST_IN_EDITOR ] || false;
 };
 
 const Header = ( { steps } ) => {
@@ -21,7 +24,7 @@ const Header = ( { steps } ) => {
 	const closeChecklist = async () => {
 		if ( ! closedForFirstTime ) {
 			await $e.data.update( 'checklist/user-progress', {
-				first_closed_checklist_in_editor: true,
+				[ FIRST_CLOSED_CHECKLIST_IN_EDITOR ]: true,
 			} );
 
 			window.dispatchEvent( new CustomEvent( 'elementor/checklist/first_close', { detail: { message: 'firstClose' } } ) );

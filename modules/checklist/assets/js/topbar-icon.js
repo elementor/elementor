@@ -5,11 +5,14 @@ import RocketIcon from '@elementor/icons/RocketIcon';
 import { Infotip } from '@elementor/ui';
 import ReminderModal from './app/components/reminder-modal';
 import * as React from 'react';
+import { USER_PROGRESS } from './utils/consts';
+
+const { FIRST_CLOSED_CHECKLIST_IN_EDITOR } = USER_PROGRESS;
 
 const fetchStatus = async () => {
-	const response = await $e.data.get( 'checklist/user-progress' );
+	const response = await $e.data.get( 'checklist/user-progress', {}, { refresh: true } );
 
-	return response?.data?.data?.first_closed_checklist_in_editor || false;
+	return response?.data?.data?.[ FIRST_CLOSED_CHECKLIST_IN_EDITOR ] || false;
 };
 
 const TopBarIcon = () => {

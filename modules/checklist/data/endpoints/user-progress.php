@@ -28,9 +28,7 @@ class User_Progress extends Endpoint_Base {
 	}
 
 	public function update_items( $request ) {
-		$data = json_decode( $request->get_body(), true );
-
-		Plugin::$instance->modules_manager->get_modules( 'checklist' )->update_user_progress( $data );
+		Plugin::$instance->modules_manager->get_modules( 'checklist' )->update_user_progress( $request->get_json_params() );
 
 		return [
 			'data' => 'success',
