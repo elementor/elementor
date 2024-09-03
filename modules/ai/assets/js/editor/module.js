@@ -74,6 +74,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 		} );
 	}
 
+	// eslint-disable-next-line no-unused-vars
 	registerNavigatorBehavior( behaviors, view ) {
 		behaviors.ai = {
 			behaviorClass: ApplyAiTitlesNavigatorBehavior,
