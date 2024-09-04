@@ -8,21 +8,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Prop_Type implements \JsonSerializable {
 
-	abstract public function get_type(): string;
+	protected $default = null;
+
+	protected array $settings = [];
+
+	abstract public static function get_key(): string;
 
 	abstract public function validate( $value ): void;
 
+	public function sanitize( $value ) {
+		try {
+			$this->validate( $value );
+			return $value;
+
+		} catch ( \Exception $e ) {
+			return null;
+		}
+	}
+
 	/**
-	 * @return array<string>
+	 * @return $this
 	 */
-	public function get_dynamic_categories(): array {
-		return [];
+	public static function make(): self {
+		return new static();
+	}
+
+	public function default( $default ): self {
+		$this->default = $default;
+
+		return $this;
+	}
+
+	public function get_default() {
+		return $this->default;
 	}
 
 	public function jsonSerialize(): array {
 		return [
-			'type' => $this->get_type(),
-			'dynamic_categories' => $this->get_dynamic_categories(),
+			'type' => static::get_key(),
+			'default' => $this->default,
+			'settings' => (object) $this->settings,
 		];
 	}
 }

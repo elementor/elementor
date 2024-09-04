@@ -20,10 +20,12 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	const EXPERIMENT_ID = 'launchpad-checklist';
 	const DB_OPTION_KEY = 'elementor_checklist';
 	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
+	const FIRST_CLOSED_CHECKLIST_IN_EDITOR = 'first_closed_checklist_in_editor';
 
-	private $user_progress = null;
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;
+	private $user_progress = null;
+	private static $instance = null;
 
 	/**
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
@@ -31,6 +33,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 * @return void
 	 */
 	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
+		static::$instance = $this;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		parent::__construct();
 
@@ -45,6 +48,10 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->steps_manager = new Steps_Manager( $this );
 		$this->enqueue_editor_scripts();
+	}
+
+	public static function instance() : self {
+		return static::$instance ?? new self();
 	}
 
 	/**
@@ -110,6 +117,11 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$this->update_user_progress_in_db();
 	}
 
+	public function update_user_progress() : void {
+		$this->user_progress[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] = true;
+		$this->update_user_progress_in_db();
+	}
+
 	/**
 	 * @return Steps_Manager
 	 */
@@ -171,6 +183,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	private function init_user_progress() : void {
 		$default_settings = [
 			'last_opened_timestamp' => null,
+			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			'steps' => [],
 		];
 
