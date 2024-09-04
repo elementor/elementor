@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Boolean_Type extends Prop_Type {
+class Boolean_Prop_Type extends Prop_Type {
 
-	public function get_type(): string {
+	public static function get_key(): string {
 		return 'boolean';
 	}
 

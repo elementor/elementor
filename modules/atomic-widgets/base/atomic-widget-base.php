@@ -2,8 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
-use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
@@ -141,18 +140,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$widget_name = static::class;
 
 		foreach ( $schema as $key => $prop ) {
-			if ( ! ( $prop instanceof Atomic_Prop ) ) {
-				Utils::safe_throw( "Prop `$key` must be an instance of `Atomic_Prop` in `{$widget_name}`." );
-			}
-
-			if ( ! $prop->get_type() ) {
-				Utils::safe_throw( "Prop `$key` must have a type in `{$widget_name}`." );
-			}
-
-			$prop_type = AtomicWidgetsModule::instance()->prop_types->get( $prop->get_type() );
-
-			if ( ! $prop_type ) {
-				Utils::safe_throw( "Prop type `{$prop->get_type()}` for prop `$key` does not exist in `{$widget_name}`." );
+			if ( ! ( $prop instanceof Prop_Type ) ) {
+				Utils::safe_throw( "Prop `$key` must be an instance of `Prop_Type` in `{$widget_name}`." );
 			}
 
 			try {
@@ -192,5 +181,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return ! empty( $setting['$$type'] ) && 'string' === getType( $setting['$$type'] ) && isset( $setting['value'] );
 	}
 
+	/**
+	 * @return array<string, Prop_Type>
+	 */
 	abstract protected static function define_props_schema(): array;
 }
