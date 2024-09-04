@@ -12,7 +12,7 @@ class Styles_Renderer {
 	private array $transformers;
 
 	/**
-	 * @var array<string, array{type: string, width: int}> $breakpoints
+	 * @var array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}> $breakpoints
 	 */
 	private array $breakpoints;
 
@@ -21,7 +21,7 @@ class Styles_Renderer {
 	 *
 	 * @param array{
 	 *     transformers: array<string, Style_Transformer_Base>,
-	 *     breakpoints: array<string, array{type: string, width: int}>
+	 *     breakpoints: array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
 	 * } $config
 	 */
 	public function __construct( array $config ) {
@@ -134,15 +134,18 @@ class Styles_Renderer {
 			return $css;
 		}
 
+		$breakpoint_config = $this->breakpoints[ $breakpoint ];
+		if ( isset($breakpoint_config['is_enabled']) && ! $breakpoint_config['is_enabled'] ) {
+			return '';
+		}
+
 		$size = $this->get_breakpoint_size( $this->breakpoints[ $breakpoint ] );
 
 		return $size ? '@media(' . $size . '){' . $css . '}' : $css;
 	}
 
 	private function get_breakpoint_size( array $breakpoint ): ?string {
-		return isset( $breakpoint['type'] )
-			? $breakpoint['type'] . ':' . $breakpoint['width'] . 'px'
-			: null;
+		return 'min' === $breakpoint['direction'] ? 'min-width' : 'max-width' . ':' . $breakpoint['value'] . 'px';
 	}
 
 	private function transform_value( $value ): ?string {

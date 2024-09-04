@@ -18,7 +18,7 @@ class Widget_Styles {
 	private array $style_transformers = [];
 
 	/**
-	 * @var array<string, array{type: string, width: int}> $breakpoints
+	 * @var array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}> $breakpoints
 	 */
 	private array $breakpoints = [];
 
@@ -73,54 +73,7 @@ class Widget_Styles {
 	}
 
 	private function build_breakpoints(): array {
-		$breakpoints_config = Plugin::$instance->breakpoints->get_breakpoints_config();
-
-		$min_width = [];
-		$max_width = [];
-		$defaults = [
-			[
-				'id' => 'desktop',
-				'label' => __( 'Desktop', 'elementor' ),
-			],
-		];
-
-		foreach ( $breakpoints_config as $id => $v1_breakpoint ) {
-			if ( ! $v1_breakpoint['is_enabled'] ) {
-				continue;
-			}
-
-			$breakpoint = [
-				'id' => $id,
-				'label' => $v1_breakpoint['label'],
-				'width' => $v1_breakpoint['value'],
-				'type' => 'min' === $v1_breakpoint['direction'] ? 'min-width' : 'max-width',
-			];
-
-			if ( ! $breakpoint['width'] ) {
-				$defaults[] = $breakpoint;
-			} elseif ( 'min-width' === $breakpoint['type'] ) {
-				$min_width[] = $breakpoint;
-			} else {
-				$max_width[] = $breakpoint;
-			}
-		}
-
-		usort($min_width, function ( $a, $b ) {
-			return $b['width'] - $a['width'];
-		});
-
-		usort($max_width, function ( $a, $b ) {
-			return $b['width'] - $a['width'];
-		});
-
-		$sorted_breakpoints = array_merge( $min_width, $defaults, $max_width );
-
-		$breakpoints_map = [];
-		foreach ( $sorted_breakpoints as $breakpoint ) {
-			$breakpoints_map[ $breakpoint['id'] ] = $breakpoint;
-		}
-
-		return $breakpoints_map;
+		return Plugin::$instance->breakpoints->get_breakpoints_config();
 	}
 
 	private function parse_atomic_widget_css( Post $post, Element_Base $element ) {
