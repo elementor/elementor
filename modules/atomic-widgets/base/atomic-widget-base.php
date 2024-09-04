@@ -91,15 +91,13 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	final public function get_data_for_save() {
 		$data = parent::get_data_for_save();
-		$raw_settings = $data['settings'];
-
 		$schema = static::get_props_schema();
 
+		$raw_settings = $data['settings'];
 		$sanitized_settings = static::sanitize_schema( $schema, $raw_settings );
+		$data['settings'] = $sanitized_settings;
 
 		$data['version'] = $this->version;
-
-		$data['settings'] = $sanitized_settings;
 
 		return $data;
 	}
