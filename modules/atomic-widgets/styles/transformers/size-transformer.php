@@ -20,9 +20,13 @@ class Size_Transformer extends Style_Transformer_Base {
 	 * @return string
 	 */
 	public function transform( $value, callable $transform ): string {
-		$size = (int)$value['size'];
-		$unit = $value['unit'];
+		try {
+			$size = (int) $value['size'];
+			$unit = $value['unit'];
 
-		return $size . $unit;
+			return $size . $unit;
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Undefined size or unit' );
+		}
 	}
 }

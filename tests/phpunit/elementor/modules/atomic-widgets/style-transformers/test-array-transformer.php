@@ -41,18 +41,16 @@ class Test_Array_Transformer extends Elementor_Test_Base {
 		// Arrange.
 		$array_transform = new Array_Transformer();
 
-		// Act.
-		try {
-			$transformed_value = $array_transform->transform( [
-				'delimiter' => '.',
-			], function ( $value ) {
-				return $value;
-			} );
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Invalid array or delimited' );
 
-		} catch ( \Exception $e ) {
-			// Assert.
-			$this->assertSame( 'Undefined index: array', $e->getMessage() );
-		}
+		// Act.
+		$transformed_value = $array_transform->transform( [
+			'delimiter' => '.',
+		], function ( $value ) {
+			return $value;
+		} );
 
 		// Assert.
 		$this->assertEquals( false, isset( $transformed_value ) );
@@ -62,19 +60,17 @@ class Test_Array_Transformer extends Elementor_Test_Base {
 		// Arrange.
 		$array_transform = new Array_Transformer();
 
-		// Act.
-		try {
-			$transformed_value = $array_transform->transform( [
-				'array' => [ 'a', 'b' ],
-				'delimiter' => [ '.' ],
-			], function ( $value ) {
-				return $value;
-			} );
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Invalid array or delimited' );
 
-		} catch ( \Exception $e ) {
-			// Assert.
-			$this->assertSame( 'Array to string conversion', $e->getMessage() );
-		}
+		// Act.
+		$transformed_value = $array_transform->transform( [
+			'array' => [ 'a', 'b' ],
+			'delimiter' => [ '.' ],
+		], function ( $value ) {
+			return $value;
+		} );
 
 		// Assert.
 		$this->assertEquals( false, isset( $transformed_value ) );
