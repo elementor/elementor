@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsHandler;
 
-use Elementor\Modules\Announcements\Classes\Utils;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
+use Elementor\Utils;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
