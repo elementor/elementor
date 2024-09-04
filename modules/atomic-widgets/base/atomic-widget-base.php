@@ -172,7 +172,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			try {
 				$sanitized_value = $prop->sanitize( $settings[ $key ] );
 
-				if ( $sanitized_value !== null ) {
+				if ( null !== $sanitized_value ) {
 					$sanitized_values[ $key ] = $sanitized_value;
 				}
 			} catch ( \Exception $e ) {
