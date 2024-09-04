@@ -43,9 +43,9 @@ export default class NestedAccordion extends Base {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		if ( elementorFrontend.isEditMode() && ! elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) {
-			this.interlaceContainers();
-		}
+		// if ( elementorFrontend.isEditMode() && ! elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) {
+		// 	this.interlaceContainers();
+		// }
 
 		this.injectKeyboardHandler();
 	}
