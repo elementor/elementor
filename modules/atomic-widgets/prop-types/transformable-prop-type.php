@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Transformable_Type extends Prop_Type {
+abstract class Transformable_Prop_Type extends Prop_Type {
 
 	public function validate( $value ): void {
 		if ( ! isset( $value['$$type'] ) ) {
@@ -17,8 +17,8 @@ abstract class Transformable_Type extends Prop_Type {
 			throw new \Exception( 'Key `$$type` must be a string, ' . gettype( $value['$$type'] ) . ' given.' );
 		}
 
-		if ( $value['$$type'] !== $this->get_type() ) {
-			throw new \Exception( '`$$type` must be `' . $this->get_type() . '`, `' . $value['$$type'] . '` given.' );
+		if ( static::get_key() !== $value['$$type'] ) {
+			throw new \Exception( '`$$type` must be `' . $this->get_key() . '`, `' . $value['$$type'] . '` given.' );
 		}
 
 		if ( ! isset( $value['value'] ) ) {
@@ -29,4 +29,13 @@ abstract class Transformable_Type extends Prop_Type {
 	}
 
 	abstract protected function validate_value( $value ): void;
+
+	public function default( $default ): self {
+		$this->default = [
+			'$$type' => static::get_key(),
+			'value' => $default,
+		];
+
+		return $this;
+	}
 }

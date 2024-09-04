@@ -1,40 +1,50 @@
 <?php
 
-namespace Elementor\Testing\Modules\AtomicWidgets\Schema\Constraints;
+namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\Schema\Constraints\Enum;
+use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Enum extends Elementor_Test_Base {
+class Test_String_Prop_Type extends Elementor_Test_Base {
 
-	public function test_construct__throws_when_not_all_values_are_strings() {
+	public function test_enum__throws_when_not_all_values_are_strings() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make();
+
 		// Expect.
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'All values in an enum must be strings.' );
 
 		// Act.
-		Enum::make( [ 'string', 1 ] );
+		$prop_type->enum( [ 'string', 123 ] );
 	}
 
 	public function test_validate__throws_when_value_is_not_a_string() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make();
+
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Expected value to be of type `string`, but got `integer`.' );
+		$this->expectExceptionMessage( 'Value must be a string, integer given.' );
 
 		// Act.
-		Enum::make( [ 'a', 'b', 'c' ] )->validate( 1 );
+		$prop_type->validate( 123 );
 	}
 
 	public function test_validate__throws_when_value_is_not_in_allowed_values() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make()
+			->enum( [ 'a', 'b', 'c' ] );
+
 		// Expect.
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( '`d` is not in the list of allowed values (`a`, `b`, `c`).' );
 
 		// Act.
-		Enum::make( [ 'a', 'b', 'c' ] )->validate( 'd' );
+		$prop_type->validate( 'd' );
 	}
 }
