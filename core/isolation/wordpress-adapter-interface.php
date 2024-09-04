@@ -21,8 +21,6 @@ interface Wordpress_Adapter_Interface {
 
 	public function update_option( $option_key, $option_value );
 
-	public function wp_get_referer();
-
 	public function add_query_arg( $args, $url );
 
 	public function has_custom_logo();

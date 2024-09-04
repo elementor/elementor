@@ -51,10 +51,6 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		add_option( $option_key, $option_value );
 	}
 
-	public function wp_get_referer(): string {
-		return wp_get_referer();
-	}
-
 	public function add_query_arg( $args, $url ) : string {
 		return add_query_arg( $args, $url );
 	}

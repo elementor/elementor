@@ -208,10 +208,4 @@ abstract class Step_Base {
 	private function set_step_progress() : void {
 		$this->module->set_step_progress( $this->get_id(), $this->user_progress );
 	}
-
-	public function page_exists( $params ) : bool {
-		$query = new \WP_Query( $params );
-
-		return $query->found_posts;
-	}
 }

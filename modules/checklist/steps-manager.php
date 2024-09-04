@@ -15,7 +15,7 @@ class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
 	private array $steps_config = [];
-	private static $step_ids = [ Add_Logo::STEP_ID, Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
+	private static array $step_ids = [ Add_Logo::STEP_ID, Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
 
 	private Checklist_Module_Interface $module;
 
