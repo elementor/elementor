@@ -9,8 +9,8 @@ const fetchSteps = async () => {
 };
 
 const App = () => {
-	const isRTL = elementorCommon.config.isRTL;
-	const { error, data: steps } = useQuery( {
+	const isRTL = elementorCommon.config.isRTL,
+		{ error, data: steps } = useQuery( {
 		queryKey: [ 'steps' ],
 		queryFn: fetchSteps,
 	} );

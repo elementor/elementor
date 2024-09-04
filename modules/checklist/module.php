@@ -82,7 +82,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *      @type array $steps {
 	 *          @type string $step_id => {
 	 *              @type bool $is_marked_completed
-	 *              @type bool $is_completed
+	 *              @type bool $is_absolute_competed
+	 *              @type bool $is_immutable_completed
 	 *          }
 	 *      }
 	 *  }
@@ -193,7 +194,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	private function init_user_progress() : void {
 		$default_settings = [
-			self::LAST_OPENED_TIMESTAMP => null,
+			self::LAST_OPENED_TIMESTAMP => -1,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			'steps' => [],
 		];

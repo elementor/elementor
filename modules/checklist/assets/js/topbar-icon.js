@@ -16,12 +16,12 @@ const fetchStatus = async () => {
 };
 
 const TopBarIcon = () => {
-	const [ hasRoot, setHasRoot ] = useState( false );
-	const [ open, setOpen ] = useState( false );
-	const { error, data: closedForFirstTime } = useQuery( {
-		queryKey: [ 'closedForFirstTime' ],
-		queryFn: fetchStatus,
-	} );
+	const [ hasRoot, setHasRoot ] = useState( false ),
+		[ open, setOpen ] = useState( false ),
+		{ error, data: closedForFirstTime } = useQuery( {
+			queryKey: [ 'closedForFirstTime' ],
+			queryFn: fetchStatus,
+		} );
 
 	useEffect( () => {
 		return listenTo( commandEndEvent( 'checklist/toggle-popup' ), ( e ) => {

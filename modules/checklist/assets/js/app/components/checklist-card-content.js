@@ -34,15 +34,19 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		const currState = isMarkedCompleted;
 
 		try {
-			setSteps( ( steps ) => steps.map( ( iteratedStep ) => getAndUpdateStep( step.config.id, iteratedStep, IS_MARKED_COMPLETED, ! currState ) ) );
+			updateStepsState( IS_MARKED_COMPLETED, ! currState );
 
 			await $e.data.update( `checklist/steps`, {
 				id,
 				[ IS_MARKED_COMPLETED ]: ! currState,
 			}, { id } );
 		} catch ( e ) {
-			setSteps( ( steps ) => steps.map( ( iteratedStep ) => getAndUpdateStep( step.config.id, iteratedStep, IS_MARKED_COMPLETED, currState ) ) );
+			updateStepsState( IS_MARKED_COMPLETED, currState );
 		}
+	};
+
+	const updateStepsState = ( key, value ) => {
+		setSteps( ( steps ) => steps.map( ( iteratedStep ) => getAndUpdateStep( step.config.id, iteratedStep, key, value ) ) );
 	};
 
 	return (

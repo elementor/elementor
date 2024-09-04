@@ -27,11 +27,6 @@ class Steps extends Endpoint_Base {
 	public function update_item( $id, $request ) {
 		$checklist_module = Checklist_Module::instance();
 		$step = $checklist_module->get_steps_manager()->get_step_by_id( $id );
-
-		if ( ! $step ) {
-			return new \WP_Error( 'rest_invalid_step_id', 'Invalid step id', [ 'status' => 404 ] );
-		}
-
 		$step->update_step( $request->get_json_params() );
 
 		return [
