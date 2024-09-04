@@ -24,7 +24,9 @@ class Array_Transformer extends Style_Transformer_Base {
 			$array = $value['array'];
 			$delimiter = $value['delimiter'] ?? ' ';
 
-			return implode( $delimiter, array_map( $transform, $array ) );
+			$str = implode( $delimiter, array_map( $transform, $array ) );
+
+			return $str;
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Invalid array or delimited' );
 		}
