@@ -36,9 +36,6 @@ if ( ! $has_pro ) {
 			<i class="eicon-expand" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php esc_html__( 'Expand all elements', 'elementor' ); ?></span>
 		</button>
-		<button id="elementor-navigator__ai-titles">
-			<i class="eicon-ai"></i>
-		</button>
 		<h2 id="elementor-navigator__header__title"><?php
 			echo $is_app_bar_active
 				? esc_html__( 'Structure', 'elementor' )
