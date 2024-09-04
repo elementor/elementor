@@ -37,13 +37,6 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'assets/dev/scss/frontend',
-				src: 'swiper.scss',
-				dest: 'assets/lib/swiper/css',
-				ext: '.css',
-			},
-			{
-				expand: true,
 				cwd: 'modules/announcements/assets/scss',
 				src: 'announcements.scss',
 				dest: 'assets/css/modules/announcements',
