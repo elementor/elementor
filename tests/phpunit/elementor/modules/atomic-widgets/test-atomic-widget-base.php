@@ -177,7 +177,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => Atomic_Prop::make()
 					->string()
 					->constraints( [
-						Enum::make( [ 'value-a', 'value-b' ] )
+						Enum::make( [ 'value-a', 'value-b' ] ),
 					] )
 					->default( 'value-a' ),
 
@@ -232,7 +232,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'string_prop' => Atomic_Prop::make()
 				->string()
 				->constraints( [
-					Enum::make( [ 'value-a', 'value-b' ] )
+					Enum::make( [ 'value-a', 'value-b' ] ),
 				] )
 				->default( 'value-a' ),
 		];
@@ -266,8 +266,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'props_schema' => [],
 			'controls' => [
 				Section::make()->set_items( [
-					Textarea_Control::bind_to( 'not-in-schema' )
-				] )
+					Textarea_Control::bind_to( 'not-in-schema' ),
+				] ),
 			],
 		] );
 
@@ -434,6 +434,65 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$widget->get_atomic_controls();
+	}
+
+	public function test_get_atomic_widget_sanitized_settings__removes_non_existing_fields() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => Atomic_Prop::make()->string()->default( '' ),
+				'number_prop' => Atomic_Prop::make()->number()->default( 0 ),
+				'boolean_prop' => Atomic_Prop::make()->boolean()->default( false ),
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+				'number_prop' => 123,
+				'boolean_prop' => true,
+				'invalid_prop' => 'invalid-value',
+			],
+		] );
+
+		// Act.
+		$sanitized_settings = $widget::sanitize_schema( $widget::get_props_schema(), $widget->get_atomic_settings() );
+
+		// Assert.
+		$this->assertSame( [
+			'string_prop' => 'valid-string',
+			'number_prop' => 123,
+			'boolean_prop' => true,
+		], $sanitized_settings );
+	}
+
+	public function test_get_atomic_widget_sanitized_settings__removes_invalid_values() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => Atomic_Prop::make()->string()->default( '' ),
+				'number_prop' => Atomic_Prop::make()->number()->default( 0 ),
+				'boolean_prop' => Atomic_Prop::make()->boolean()->default( false ),
+				'invalid_string_prop' => Atomic_Prop::make()->string()->default( '' ),
+				'invalid_number_prop' => Atomic_Prop::make()->number()->default( 0 ),
+				'invalid_boolean_prop' => Atomic_Prop::make()->boolean()->default( false ),
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+				'number_prop' => 123,
+				'boolean_prop' => true,
+				'invalid_string_prop' => 123,
+				'invalid_number_prop' => 'invalid-number',
+				'invalid_boolean_prop' => 'invalid-boolean',
+			],
+		] );
+
+		// Act.
+		$sanitized_settings = $widget::sanitize_schema( $widget::get_props_schema(), $widget->get_atomic_settings() );
+
+		// Assert.
+		$this->assertSame( [
+			'string_prop' => 'valid-string',
+			'number_prop' => 123,
+			'boolean_prop' => true,
+		], $sanitized_settings );
 	}
 
 	/**

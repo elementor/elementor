@@ -96,6 +96,16 @@ class Atomic_Prop implements JsonSerializable {
 		$this->validate_constraints( $value );
 	}
 
+	public function sanitize( $value ) {
+		try {
+			$this->validate( $value );
+			return $value;
+
+		} catch ( \Exception $e ) {
+			return null;
+		}
+	}
+
 	private function validate_constraints( $value ) {
 		foreach ( $this->get_constraints() as $constraint ) {
 			$constraint->validate( $value );
