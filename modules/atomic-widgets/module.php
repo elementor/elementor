@@ -5,12 +5,6 @@ namespace Elementor\Modules\AtomicWidgets;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Base\Style_Transformer_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Number_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Types_Registry;
-use Elementor\Modules\AtomicWidgets\PropTypes\String_Type;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
@@ -35,8 +29,6 @@ class Module extends BaseModule {
 		'editor-editing-panel',
 		'editor-style',
 	];
-
-	public Prop_Types_Registry $prop_types;
 
 	/**
 	 * @var array<string, Style_Transformer_Base> $transformers
