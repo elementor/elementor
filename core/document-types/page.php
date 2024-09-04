@@ -97,7 +97,7 @@ class Page extends PageBase {
 		}
 
 		$args = [
-			'active-document' => Plugin::$instance->kits_manager->get_active_id(),
+			'active-document' => $active_kit_id,
 			'active-tab' => $active_tab,
 		];
 
@@ -106,7 +106,7 @@ class Page extends PageBase {
 
 	private static function get_elementor_edit_url( int $post_id ): string {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$document = Plugin::$instance->documents->get( $post_id );
+		$document = Plugin::$instance->documents->get( $post_id ) ?? null;
 
 		if ( ! $document ) {
 			return '';
