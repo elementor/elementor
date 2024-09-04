@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsHandler;
 
+use Elementor\Modules\Announcements\Classes\Utils;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Exception;
 
@@ -51,12 +52,26 @@ class Props_Handler {
 		return self::$instances[ $context ];
 	}
 
-	public function handle( array $props, array $schema ): array {
+	/**
+	 * @param array{
+	 *     schema: array<string, Prop_Type>,
+	 *     props: array<string, mixed>
+	 * } $args
+	 *
+	 * @return array
+	 */
+	public function handle( array $args ): array {
+		if ( empty( $args['schema'] ) || empty( $args['props'] ) ) {
+			Utils::safe_throw( 'Missing schema or props.' );
+
+			return [];
+		}
+
 		$result = [];
 
-		foreach ( $schema as $prop_name => $prop_type ) {
+		foreach ( $args['schema'] as $prop_name => $prop_type ) {
 			$result[ $prop_name ] = $prop_type instanceof Prop_Type
-				? $this->transform( $props[ $prop_name ] ?? $prop_type->get_default(), [] ) // TODO: Pass the children schema to the transformer.
+				? $this->transform( $args['props'][ $prop_name ] ?? $prop_type->get_default(), [] ) // TODO: Pass the children schema to the transformer.
 				: null;
 		}
 
