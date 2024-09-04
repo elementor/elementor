@@ -165,18 +165,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$sanitized_values = [];
 
 		foreach ( $schema as $key => $prop ) {
-			if ( ! ( $prop instanceof Prop_Type ) ) {
-				Utils::safe_throw( "Prop `$key` must be an instance of `Prop_Type` in `{$widget_name}`." );
-			}
+			if ( $prop instanceof Prop_Type ) {
+				try {
+					$sanitized_value = $prop->sanitize( $settings[ $key ] );
 
-			try {
-				$sanitized_value = $prop->sanitize( $settings[ $key ] );
-
-				if ( null !== $sanitized_value ) {
-					$sanitized_values[ $key ] = $sanitized_value;
+					if ( null !== $sanitized_value ) {
+						$sanitized_values[ $key ] = $sanitized_value;
+					}
+				} catch ( \Exception $e ) {
+					Utils::safe_throw( "Error while sanitizing `$key` prop in `{$widget_name}` - {$e->getMessage()}" );
 				}
-			} catch ( \Exception $e ) {
-				Utils::safe_throw( "Value for `$key` prop is invalid in `{$widget_name}` - {$e->getMessage()}" );
 			}
 		}
 
