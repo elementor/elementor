@@ -484,6 +484,7 @@ class Manager extends Base_Object {
 			'default' => self::STATE_ACTIVE,
 		] );
 
+		// TODO: Remove experiment in v3.27.0 [ED-15717].
 		$this->add_feature( [
 			'name' => 'e_css_smooth_scroll',
 			'title' => esc_html__( 'CSS Smooth Scroll', 'elementor' ),
