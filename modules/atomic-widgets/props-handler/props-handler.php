@@ -108,7 +108,7 @@ class Props_Handler {
 		return (
 			! empty( $value['$$type'] ) &&
 			is_string( $value['$$type'] ) &&
-			! empty( $value['value'] )
+			array_key_exists( 'value', $value )
 		);
 	}
 }

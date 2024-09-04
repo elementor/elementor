@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropsHandler\SettingsTransformers;
 
 use Elementor\Modules\AtomicWidgets\PropsHandler\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -10,8 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Classes_Transformer extends Transformer_Base {
 	public function get_type(): string {
-		// TODO: should be const from the prop type
-		return 'classes';
+		return Classes_Prop_Type::get_key();
 	}
 
 	public function transform( $value ) {
