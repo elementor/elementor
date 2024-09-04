@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Assign_Homepage_Step extends Step_Test_Base {
 	public function setUp(): void {
-		$this->set_wordpress_adapter_mock( [ 'show_on_front' ], [
-			'show_on_front' => 'posts',
+		$this->set_wordpress_adapter_mock( [ 'page_on_front' ], [
+			'page_on_front' => '0',
 		] );
 		parent::setUp();
 	}
@@ -40,8 +40,8 @@ class Test_Assign_Homepage_Step extends Step_Test_Base {
 		$step = new Assign_Homepage( $this->checklist_module, $this->wordpress_adapter );
 		$this->assertFalse( $step->is_absolute_completed() );
 
-		$this->set_wordpress_adapter_mock( [ 'show_on_front' ], [
-			'show_on_front' => 'page',
+		$this->set_wordpress_adapter_mock( [ 'page_on_front' ], [
+			'page_on_front' => '2',
 		] );
 
 		$step = new Assign_Homepage( $this->checklist_module, $this->wordpress_adapter );
