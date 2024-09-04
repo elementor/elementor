@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsHandler\Props_Handler;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
