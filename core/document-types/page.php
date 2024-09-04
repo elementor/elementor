@@ -121,7 +121,8 @@ class Page extends PageBase {
 			'sort_order' => 'asc',
 			'sort_column' => 'post_date',
 		];
-		$pages = get_pages( $args );
+		$query_string = http_build_query($args);
+		$pages = get_pages( $query_string );
 
 		if ( empty( $pages ) ) {
 			return null;
