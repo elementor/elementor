@@ -135,7 +135,7 @@ class Styles_Renderer {
 		}
 
 		$breakpoint_config = $this->breakpoints[ $breakpoint ];
-		if ( isset($breakpoint_config['is_enabled']) && ! $breakpoint_config['is_enabled'] ) {
+		if ( isset( $breakpoint_config['is_enabled'] ) && ! $breakpoint_config['is_enabled'] ) {
 			return '';
 		}
 
@@ -145,7 +145,10 @@ class Styles_Renderer {
 	}
 
 	private function get_breakpoint_size( array $breakpoint ): ?string {
-		return 'min' === $breakpoint['direction'] ? 'min-width' : 'max-width' . ':' . $breakpoint['value'] . 'px';
+		$bound = 'min' === $breakpoint['direction'] ? 'min-width' : 'max-width';
+		$width = $breakpoint['value'] . 'px';
+
+		return "{$bound}:{$width}";
 	}
 
 	private function transform_value( $value ): ?string {
