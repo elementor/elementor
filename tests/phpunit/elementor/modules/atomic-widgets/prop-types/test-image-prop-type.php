@@ -2,18 +2,18 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Image_Type extends Elementor_Test_Base {
+class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 	public function test_validate_value__throws_when_passing_null() {
 		// Arrange.
-		$prop_type = new Image_Type();
+		$prop_type = Image_Prop_Type::make();
 
 		// Expect.
 		$this->expectException( \Exception::class );
@@ -25,7 +25,7 @@ class Test_Image_Type extends Elementor_Test_Base {
 
 	public function test_validate_value__throws_when_passing_array_without_id_and_url() {
 		// Arrange.
-		$prop_type = new Image_Type();
+		$prop_type = Image_Prop_Type::make();
 
 		// Expect.
 		$this->expectException( \Exception::class );
@@ -37,7 +37,7 @@ class Test_Image_Type extends Elementor_Test_Base {
 
 	public function test_validate_value__throws_when_passing_array_with_both_id_and_url() {
 		// Arrange.
-		$prop_type = new Image_Type();
+		$prop_type = Image_Prop_Type::make();
 
 		// Expect.
 		$this->expectException( \Exception::class );
@@ -52,7 +52,7 @@ class Test_Image_Type extends Elementor_Test_Base {
 
 	public function test_validate_value__throws_when_passing_array_with_non_numeric_attachment_id() {
 		// Arrange.
-		$prop_type = new Image_Type();
+		$prop_type = Image_Prop_Type::make();
 
 		// Expect.
 		$this->expectException( \Exception::class );
@@ -64,7 +64,7 @@ class Test_Image_Type extends Elementor_Test_Base {
 
 	public function test_validate_value__throws_when_passing_array_with_non_string_url() {
 		// Arrange.
-		$prop_type = new Image_Type();
+		$prop_type = Image_Prop_Type::make();
 
 		// Expect.
 		$this->expectException( \Exception::class );

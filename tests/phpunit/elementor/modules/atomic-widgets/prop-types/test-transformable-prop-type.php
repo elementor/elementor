@@ -2,19 +2,19 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Transformable_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transformable_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Transformable_Type extends Elementor_Test_Base {
+class Test_Transformable_Prop_Type extends Elementor_Test_Base {
 
 	public function test_validate__throws_when_value_doesnt_have_type_key() {
 		// Arrange.
-		$prop_type = new class extends Transformable_Type {
-			public function get_type(): string {
+		$prop_type = new class extends Transformable_Prop_Type {
+			public static function get_key(): string {
 				return 'transformable';
 			}
 
@@ -33,8 +33,8 @@ class Test_Transformable_Type extends Elementor_Test_Base {
 
 	public function test_validate__throws_when_type_is_not_string() {
 		// Arrange.
-		$prop_type = new class extends Transformable_Type {
-			public function get_type(): string {
+		$prop_type = new class extends Transformable_Prop_Type {
+			public static function get_key(): string {
 				return 'transformable';
 			}
 
@@ -53,8 +53,8 @@ class Test_Transformable_Type extends Elementor_Test_Base {
 
 	public function test_validate__throws_when_type_is_not_the_expected_type() {
 		// Arrange.
-		$prop_type = new class extends Transformable_Type {
-			public function get_type(): string {
+		$prop_type = new class extends Transformable_Prop_Type {
+			public static function get_key(): string {
 				return 'transformable';
 			}
 
@@ -73,8 +73,8 @@ class Test_Transformable_Type extends Elementor_Test_Base {
 
 	public function test_validate__throws_when_value_doesnt_have_value_key() {
 		// Arrange.
-		$prop_type = new class extends Transformable_Type {
-			public function get_type(): string {
+		$prop_type = new class extends Transformable_Prop_Type {
+			public static function get_key(): string {
 				return 'transformable';
 			}
 

@@ -2,15 +2,13 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\DynamicTags\Module as DynamicTags;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Image_Type extends Transformable_Type {
+class Image_Prop_Type extends Transformable_Prop_Type {
 
-	public function get_type(): string {
+	public static function get_key(): string {
 		return 'image';
 	}
 
@@ -33,11 +31,5 @@ class Image_Type extends Transformable_Type {
 		if ( $has_url && ! is_string( $value['url'] ) ) {
 			throw new \Exception( 'URL must be a string, ' . gettype( $value['url'] ) . ' given.' );
 		}
-	}
-
-	public function get_dynamic_categories(): array {
-		return [
-			DynamicTags::IMAGE_CATEGORY,
-		];
 	}
 }
