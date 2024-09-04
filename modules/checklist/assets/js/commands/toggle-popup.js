@@ -5,7 +5,7 @@ export class TogglePopup extends $e.modules.CommandBase {
 	static rootElement = null;
 	static isOpen = false;
 
-	apply() {
+	apply( args ) {
 		if ( ! TogglePopup.isOpen ) {
 			this.mount();
 		} else {
@@ -13,6 +13,7 @@ export class TogglePopup extends $e.modules.CommandBase {
 		}
 
 		TogglePopup.isOpen = ! TogglePopup.isOpen;
+		args.isOpen = TogglePopup.isOpen;
 	}
 
 	mount() {

@@ -1,14 +1,14 @@
 <?php
-namespace Elementor\Testing\Modules\AtomicWidgets\Compatibility;
+namespace Elementor\Testing\Modules\AtomicWidgets;
 
-use Elementor\Modules\AtomicWidgets\Compatibility;
+use Elementor\Modules\AtomicWidgets\Dynamic_Tags;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Compatibility extends Elementor_Test_Base {
+class Test_Dynamic_Tags extends Elementor_Test_Base {
 	public function set_up() {
 		parent::set_up();
 
@@ -17,7 +17,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 
 	public function test_add_atomic_dynamic_tags_settings__returns_the_original_settings_when_there_are_no_tags() {
 		// Arrange.
-		( new Compatibility() )->register_hooks();
+		( new Dynamic_Tags() )->register_hooks();
 
 		// Act.
 		$settings = apply_filters( 'elementor/editor/localize_settings', [
@@ -76,7 +76,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 			],
 		];
 
-		( new Compatibility() )->register_hooks();
+		( new Dynamic_Tags() )->register_hooks();
 
 		// Act.
 		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
@@ -138,19 +138,15 @@ class Test_Compatibility extends Elementor_Test_Base {
 					'before' => [
 						'default' => '',
 						'type' => 'string',
-						'constraints' => [
-						],
+						'settings' => [],
 					],
 					'after' => [
 						'default' => '',
 						'type' => 'string',
-						'constraints' => [
-							[
-								'type' => 'enum',
-								'value' => [
-									'name',
-									'email',
-								],
+						'settings' => [
+							'enum' => [
+								'name',
+								'email',
 							],
 						],
 					],
@@ -168,7 +164,7 @@ class Test_Compatibility extends Elementor_Test_Base {
 			]
 		];
 
-		$this->assertEquals( $expected, json_decode( json_encode( $settings['atomicDynamicTags'] ), true ) );
+		$this->assertEqualSets( $expected, json_decode( wp_json_encode( $settings['atomicDynamicTags']['tags'] ), true ) );
 	}
 
 	public function test_add_atomic_dynamic_tags_settings__returns_empty_array_when_tags_have_no_name() {
@@ -183,13 +179,13 @@ class Test_Compatibility extends Elementor_Test_Base {
 			],
 		];
 
-		( new Compatibility() )->register_hooks();
+		( new Dynamic_Tags() )->register_hooks();
 
 		// Act.
 		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
 
 		// Assert.
-		$this->assertEmpty( $settings['atomicDynamicTags'] );
+		$this->assertEmpty( $settings['atomicDynamicTags']['tags'] );
 	}
 
 	public function test_add_atomic_dynamic_tags_settings__returns_empty_array_when_tags_have_no_categories() {
@@ -202,13 +198,13 @@ class Test_Compatibility extends Elementor_Test_Base {
 			],
 		];
 
-		( new Compatibility() )->register_hooks();
+		( new Dynamic_Tags() )->register_hooks();
 
 		// Act.
 		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
 
 		// Assert.
-		$this->assertEmpty( $settings['atomicDynamicTags'] );
+		$this->assertEmpty( $settings['atomicDynamicTags']['tags'] );
 	}
 
 	public function test_add_atomic_dynamic_tags_settings__returns_empty_array_when_tags_have_unsupported_control() {
@@ -245,13 +241,13 @@ class Test_Compatibility extends Elementor_Test_Base {
 			],
 		];
 
-		( new Compatibility() )->register_hooks();
+		( new Dynamic_Tags() )->register_hooks();
 
 		// Act.
 		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
 
 		// Assert.
-		$this->assertEmpty( $settings['atomicDynamicTags'] );
+		$this->assertEmpty( $settings['atomicDynamicTags']['tags'] );
 	}
 
 	public function test_add_atomic_dynamic_tags_settings__returns_empty_array_when_tags_have_select_control_with_no_options() {
@@ -288,12 +284,34 @@ class Test_Compatibility extends Elementor_Test_Base {
 			],
 		];
 
-		( new Compatibility() )->register_hooks();
+		( new Dynamic_Tags() )->register_hooks();
 
 		// Act.
 		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
 
 		// Assert.
-		$this->assertEmpty( $settings['atomicDynamicTags'] );
+		$this->assertEmpty( $settings['atomicDynamicTags']['tags'] );
+	}
+
+	public function test_add_atomic_dynamic_tags_settings__returns_array_of_props_types_mapping() {
+		// Arrange.
+		( new Dynamic_Tags() )->register_hooks();
+
+		// Act.
+		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => [] ] ] );
+
+		// Assert.
+		$mapping = $settings['atomicDynamicTags']['prop_types_to_dynamic'];
+
+		$this->assertIsArray( $mapping );
+
+		foreach ( $mapping as $key => $dynamic_categories ) {
+			$this->assertIsString( $key );
+			$this->assertIsArray( $dynamic_categories );
+
+			foreach ( $dynamic_categories as $category ) {
+				$this->assertIsString( $category );
+			}
+		}
 	}
 }

@@ -5,17 +5,22 @@ namespace Elementor\Modules\AtomicWidgets;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
-use Elementor\Modules\AtomicWidgets\Schema\Constraints\Enum;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
+use Elementor\Modules\DynamicTags\Module as Dynamic_Tags_Module;
 
-class Compatibility {
+class Dynamic_Tags {
 	public function register_hooks() {
 		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_atomic_dynamic_tags_settings( $settings ) );
 	}
 
 	private function add_atomic_dynamic_tags_settings( $settings ) {
 		if ( isset( $settings['dynamicTags']['tags'] ) ) {
-			$settings['atomicDynamicTags'] = $this->convert_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] );
+			$settings['atomicDynamicTags'] = [
+				'tags' => $this->convert_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] ),
+				'prop_types_to_dynamic' => $this->get_prop_types_to_dynamic_mapping(),
+			];
 		}
 
 		return $settings;
@@ -114,7 +119,7 @@ class Compatibility {
 	 * @param $control
 	 *
 	 * @throws \Exception
-	 * @return array{ atomic_control: Select_Control, prop_schema: Atomic_Prop }
+	 * @return array{ atomic_control: Select_Control, prop_schema: String_Prop_Type }
 	 */
 	private function convert_select_control_to_atomic( $control ) {
 		if ( ! isset( $control['options'] ) ) {
@@ -134,9 +139,8 @@ class Compatibility {
 			->set_label( $control['label'] )
 			->set_options( $options );
 
-		$prop_schema = Atomic_Prop::make()
-			->string()
-			->constraints( [ Enum::make( array_keys( $control['options'] ) ) ] )
+		$prop_schema = String_Prop_Type::make()
+			->enum( array_keys( $control['options'] ) )
 			->default( $control['default'] );
 
 		return [
@@ -148,19 +152,34 @@ class Compatibility {
 	/**
 	 * @param $control
 	 *
-	 * @return array{ atomic_control: Text_Control, prop_schema: Atomic_Prop }
+	 * @return array{ atomic_control: Text_Control, prop_schema: String_Prop_Type }
 	 */
 	private function convert_text_control_to_atomic( $control ) {
 		$atomic_control = Text_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] );
 
-		$prop_schema = Atomic_Prop::make()
-			->string()
+		$prop_schema = String_Prop_Type::make()
 			->default( $control['default'] );
 
 		return [
 			'atomic_control' => $atomic_control,
 			'prop_schema' => $prop_schema,
+		];
+	}
+
+	private function get_prop_types_to_dynamic_mapping() {
+		return [
+			Image_Prop_Type::get_key() => [
+				Dynamic_Tags_Module::IMAGE_CATEGORY,
+			],
+
+			Number_Prop_Type::get_key() => [
+				Dynamic_Tags_Module::NUMBER_CATEGORY,
+			],
+
+			String_Prop_Type::get_key() => [
+				Dynamic_Tags_Module::TEXT_CATEGORY,
+			],
 		];
 	}
 }
