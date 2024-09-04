@@ -91,20 +91,13 @@ export default class extends elementorModules.ViewModule {
 
 	defineCurrentStickyRange( sticky, index, stickyList, anchorList ) {
 		const nextStickyScrollPosition = ( index + 1 < stickyList.length )
-				? stickyList[ index + 1 ].scrollPosition
-				: Infinity,
-			$wpAdminBar = elementorFrontend.elements.$wpAdminBar;
+			? stickyList[ index + 1 ].scrollPosition
+			: Infinity;
 
 		sticky.anchor = anchorList.filter( ( anchor ) => {
 			const withinRange = anchor.scrollPosition > sticky.scrollPosition && anchor.scrollPosition < nextStickyScrollPosition;
 			if ( withinRange ) {
-				let scrollMarginTop = sticky.scrollMarginTop;
-
-				if ( $wpAdminBar.length > 0 ) {
-					scrollMarginTop += $wpAdminBar.height();
-				}
-
-				anchor.element.style.scrollMarginTop = `${ scrollMarginTop }px`;
+				anchor.element.style.scrollMarginTop = `${ sticky.scrollMarginTop }px`;
 			}
 			return withinRange;
 		} );
