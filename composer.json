@@ -20,7 +20,6 @@
 	},
 	"scripts": {
 	  "lint": "phpcs --standard=ruleset.xml",
-	  "format": "phpcbf --standard=ruleset.xml",
 	  "test": "phpunit",
 	  "test:install": "bash ./bin/install-wp-tests-local.sh",
 	  "coverage": "composer run coverage:test && composer run coverage:check",
