@@ -41,10 +41,15 @@ class Test_Assign_Homepage_Step extends Step_Test_Base {
 		$this->assertFalse( $step->is_absolute_completed() );
 
 		$this->set_wordpress_adapter_mock( [ 'page_on_front' ], [
-			'page_on_front' => "2",
+			'page_on_front' => '2',
 		] );
-
 		$step = new Assign_Homepage( $this->checklist_module, $this->wordpress_adapter );
+
+		$this->wordpress_adapter->method('get_option')
+			->willReturnMap([
+				['page_on_front', '2'],
+			]);
+
 		$this->assertFalse( $step->is_marked_as_completed() );
 		$this->assertFalse( $step->is_immutable_completed() );
 		$this->assertTrue( $step->is_absolute_completed() );
