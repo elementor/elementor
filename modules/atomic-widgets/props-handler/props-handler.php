@@ -31,7 +31,15 @@ class Props_Handler {
 		$this->transformers = $transformers;
 	}
 
-	public static function instance( string $context, bool $fresh = false ): self {
+	public static function for_style() {
+		return self::instance( self::CONTEXT_STYLE );
+	}
+
+	public static function for_settings() {
+		return self::instance( self::CONTEXT_SETTINGS );
+	}
+
+	private static function instance( string $context, bool $fresh = false ): self {
 		if ( ! isset( self::$instances[ $context ] ) || $fresh ) {
 			$registry = new Transformers_Registry();
 
@@ -41,14 +49,6 @@ class Props_Handler {
 		}
 
 		return self::$instances[ $context ];
-	}
-
-	public static function for_style() {
-		return self::instance( self::CONTEXT_STYLE );
-	}
-
-	public static function for_settings() {
-		return self::instance( self::CONTEXT_SETTINGS );
 	}
 
 	public function handle( array $props, array $schema ): array {
