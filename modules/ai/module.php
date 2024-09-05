@@ -3,10 +3,9 @@ namespace Elementor\Modules\Ai;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
-use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -41,11 +40,13 @@ class Module extends BaseModule {
 			( new Preferences() )->register();
 		}
 
-		if ( ! Preferences::is_ai_enabled( get_current_user_id() ) ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 			return;
 		}
 
-		$this->register_layout_experiment();
+		if ( ! Preferences::is_ai_enabled( get_current_user_id() ) ) {
+			return;
+		}
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'ai', Ai::get_class_name() );
@@ -156,19 +157,6 @@ class Module extends BaseModule {
 
 			return $data;
 		} );
-	}
-
-	private function register_layout_experiment() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => static::LAYOUT_EXPERIMENT,
-			'title' => esc_html__( 'Build with AI', 'elementor' ),
-			'description' => esc_html__( 'Tap into the potential of AI to easily create and customize containers to your specifications, right within Elementor. This feature comes packed with handy AI tools, including generation, variations, and URL references.', 'elementor' ),
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'dependencies' => [
-				'container',
-			],
-		] );
 	}
 
 	public function enqueue_ai_media_library() {
