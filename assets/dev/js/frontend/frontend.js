@@ -20,7 +20,7 @@ import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
-	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
+	AnchorsModule = require( 'elementor-frontend/utils/anchors' ); // // TODO: Remove anchors.js file in v3.27.0 [ED-15717].
 
 export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
@@ -205,6 +205,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			controls: new Controls(),
 		};
 
+		// TODO: Remove experiment in v3.27.0 [ED-15717].
 		if ( this.config.experimentalFeatures.e_css_smooth_scroll ) {
 			this.utils.anchor_scroll_margin = new AnchorScrollMargin();
 		} else {
