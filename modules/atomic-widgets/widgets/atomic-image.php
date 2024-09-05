@@ -30,13 +30,17 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$image_url = esc_url( $settings['image'] );
+		if ( empty( $settings['image'] ) ) {
+			return;
+		}
 
+		$image_url = esc_url( $settings['image'] );
+		$src = 'src=' . $image_url;
 		$class = '';
 		if ( ! empty( $settings['classes'] ) ) {
 			$class = "class='" . esc_attr( $settings['classes'] ) . "'";
 		}
-		echo "<img src='$image_url' alt='Atomic Image' $class />";
+		echo "<img $src alt='Atomic Image' $class />";
 	}
 
 	private static function get_image_size_options() {
