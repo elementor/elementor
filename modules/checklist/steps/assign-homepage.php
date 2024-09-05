@@ -14,9 +14,9 @@ class Assign_Homepage extends Step_Base {
 	}
 
 	public function is_absolute_completed() : bool {
-		$front_page_id = $this->wordpress_adapter->get_option( 'page_on_front' );
+		$front_page_id = ( int ) ( $this->wordpress_adapter->get_option( 'page_on_front' ) ?? 0 );
 
-		return 0 != $front_page_id && ! empty( $front_page_id );
+		return !! $front_page_id;
 	}
 
 	public function get_title() : string {
