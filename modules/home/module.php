@@ -23,6 +23,12 @@ class Module extends BaseApp {
 	public function __construct() {
 		parent::__construct();
 
+		$this->register_layout_experiment();
+
+		if ( ! $this->is_experiment_active() ) {
+			return;
+		}
+
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			$hook_suffix = 'toplevel_page_elementor';
 			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_home_screen_scripts' ] );
