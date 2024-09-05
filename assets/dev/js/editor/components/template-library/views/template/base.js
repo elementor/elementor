@@ -17,7 +17,7 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 			classes += ' elementor-template-library-pro-template';
 		}
 
-		return classes;
+		return elementor.hooks.applyFilters( 'elementor/editor/template-library/template/classes', classes, this );
 	},
 
 	attributes() {
