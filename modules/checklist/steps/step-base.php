@@ -24,7 +24,7 @@ abstract class Step_Base {
 	const ABSOLUTE_COMPLETION_KEY = 'is_absolute_completed';
 
 	private array $user_progress;
-	public Wordpress_Adapter_Interface $wordpress_adapter;
+	protected Wordpress_Adapter_Interface $wordpress_adapter;
 	protected Checklist_Module $module;
 
 	/**
@@ -80,7 +80,6 @@ abstract class Step_Base {
 	 */
 	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
 		$this->module = $module;
-		$abcDEF = "123";
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
 	}
