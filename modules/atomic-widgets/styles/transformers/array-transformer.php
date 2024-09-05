@@ -20,13 +20,9 @@ class Array_Transformer extends Style_Transformer_Base {
 	 * @return string
 	 */
 	public function transform( $value, callable $transform ): string {
-		try {
-			$array = $value['array'];
-			$delimiter = $value['delimiter'] ?? ' ';
+		$array = $value['array'];
+		$delimiter = $value['delimiter'] ?? ' ';
 
-			return implode( (string) $delimiter, array_map( $transform, $array ) );
-		} catch ( \Exception $e ) {
-			throw new \Exception( 'Invalid array or delimited' );
-		}
+		return implode( (string) $delimiter, array_map( $transform, $array ) );
 	}
 }

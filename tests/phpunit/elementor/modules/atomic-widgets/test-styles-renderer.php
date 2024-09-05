@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
+use Elementor\Modules\AtomicWidgets\Base\Style_Transformer_Base;
 use Elementor\Modules\AtomicWidgets\Styles\Transformers\Array_Transformer;
 use Elementor\Modules\AtomicWidgets\Styles\Transformers\Size_Transformer;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -10,6 +11,17 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
+}
+
+class Mock_Faulty_Transformer extends Style_Transformer_Base {
+
+	public static function type(): string {
+		return 'faulty';
+	}
+
+	public function transform( $value, callable $transform ): string {
+		throw new \Exception( 'Faulty transformer' );
+	}
 }
 
 class Test_Styles_Renderer extends Elementor_Test_Base {
@@ -355,6 +367,40 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$stylesRenderer = new Styles_Renderer( [
 			'transformers' => [
 				'size' => new Size_Transformer(),
+			],
+			'breakpoints' => []
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_with_thrown_exceptions_in_transformer() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-size' => [
+								'$$type' => 'faulty',
+								'value' => true // no matter what the value here is really...
+							],
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'transformers' => [
+				'faulty' => new Mock_Faulty_Transformer(),
 			],
 			'breakpoints' => []
 		] );
