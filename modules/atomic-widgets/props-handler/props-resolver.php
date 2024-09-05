@@ -94,9 +94,7 @@ class Props_Resolver {
 		}
 
 		try {
-			$transformed_value = $transformer
-				->set_props_handler( $this )
-				->transform( $value['value'] );
+			$transformed_value = $transformer->transform( $value['value'] );
 
 			return $this->transform( $transformed_value, $depth + 1 );
 		} catch ( Exception $e ) {
