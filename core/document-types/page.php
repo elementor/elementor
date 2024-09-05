@@ -72,13 +72,13 @@ class Page extends PageBase {
 		return esc_html__( 'Pages', 'elementor' );
 	}
 
-	public static function get_site_settings_url_config( $return_string ) {
+	public static function get_site_settings_url_config( $should_return_string_format ) {
 		$existing_elementor_page = self::get_elementor_page();
 		$site_settings_url = ! empty( $existing_elementor_page )
 			? self::get_elementor_edit_url( $existing_elementor_page->ID )
-			: self::get_elementor_create_new_page_url( $return_string ? self::SITE_IDENTITY_TAB : null );
+			: self::get_elementor_create_new_page_url( $should_return_string_format ? self::SITE_IDENTITY_TAB : null );
 
-		if ( $return_string ) {
+		if ( $should_return_string_format ) {
 			return $site_settings_url;
 		}
 
@@ -118,6 +118,7 @@ class Page extends PageBase {
 	private static function get_elementor_page() {
 		if ( 'page' === get_option( 'show_on_front' ) ) {
 			$home_page_id = get_option( 'page_on_front' );
+
 			return get_post( $home_page_id ) ?? null;
 		}
 
