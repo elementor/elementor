@@ -72,13 +72,13 @@ class Page extends PageBase {
 		return esc_html__( 'Pages', 'elementor' );
 	}
 
-	public static function get_site_settings_url_config( $returnString ) {
+	public static function get_site_settings_url_config( $return_string ) {
 		$existing_elementor_page = self::get_elementor_page();
 		$site_settings_url = ! empty( $existing_elementor_page )
 			? self::get_elementor_edit_url( $existing_elementor_page->ID )
-			: self::get_elementor_create_new_page_url( $returnString ? self::SITE_IDENTITY_TAB : null);
+			: self::get_elementor_create_new_page_url( $return_string ? self::SITE_IDENTITY_TAB : null);
 
-		if ($returnString) {
+		if  ( $return_string ) {
 			return $site_settings_url;
 		}
 
@@ -121,7 +121,7 @@ class Page extends PageBase {
 			'sort_order' => 'asc',
 			'sort_column' => 'post_date',
 		];
-		$query_string = http_build_query($args);
+		$query_string = http_build_query( $args );
 		$pages = get_pages( $query_string );
 
 		if ( empty( $pages ) ) {
