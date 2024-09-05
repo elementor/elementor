@@ -10,9 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Assign_Homepage_Step extends Step_Test_Base {
 	public function setUp(): void {
-		$this->set_wordpress_adapter_mock( [ 'page_on_front' ], [
-			'page_on_front' => '0',
-		] );
 		parent::setUp();
 	}
 
@@ -37,9 +34,6 @@ class Test_Assign_Homepage_Step extends Step_Test_Base {
 		$this->assertFalse( $step->is_immutable_completed() );
 		$this->assertFalse( $step->is_absolute_completed() );
 
-		$step = new Assign_Homepage( $this->checklist_module, $this->wordpress_adapter );
-		$this->assertFalse( $step->is_absolute_completed() );
-
 		$this->set_wordpress_adapter_mock( [ 'get_option' ], [
 			'get_option' => '2',
 		] );
@@ -47,6 +41,14 @@ class Test_Assign_Homepage_Step extends Step_Test_Base {
 		$this->assertFalse( $step->is_marked_as_completed() );
 		$this->assertFalse( $step->is_immutable_completed() );
 		$this->assertTrue( $step->is_absolute_completed() );
+
+		$this->set_wordpress_adapter_mock( [ 'get_option' ], [
+			'get_option' => '0',
+		] );
+		$step = new Assign_Homepage( $this->checklist_module, $this->wordpress_adapter );
+		$this->assertFalse( $step->is_marked_as_completed() );
+		$this->assertFalse( $step->is_immutable_completed() );
+		$this->assertFalse( $step->is_absolute_completed() );
 	}
 
 }
