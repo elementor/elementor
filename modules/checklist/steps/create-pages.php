@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Checklist\Steps;
 
-use Elementor\Plugin;
+use Elementor\Core\DocumentTypes\Page;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -37,7 +37,7 @@ class Create_Pages extends Step_Base {
 	}
 
 	public function get_cta_url() : string {
-		return Plugin::$instance->documents->get_create_new_post_url( 'page' );
+		return Page::get_site_settings_url_config()['url'];
 	}
 
 	public function get_learn_more_url() : string {
