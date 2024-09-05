@@ -27,8 +27,6 @@ class Module extends BaseModule {
 		self::HISTORY_TYPE_BLOCK,
 	];
 
-	const LAYOUT_EXPERIMENT = 'ai-layout';
-
 	public function get_name() {
 		return 'ai';
 	}
@@ -89,10 +87,7 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function() {
 			$this->enqueue_main_script();
-
-			if ( $this->is_layout_active() ) {
-				$this->enqueue_layout_script();
-			}
+			$this->enqueue_layout_script();
 		} );
 
 		add_action( 'elementor/editor/after_enqueue_styles', function() {
@@ -105,14 +100,12 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/preview/enqueue_styles', function() {
-			if ( $this->is_layout_active() ) {
-				wp_enqueue_style(
-					'elementor-ai-layout-preview',
-					$this->get_css_assets_url( 'modules/ai/layout-preview' ),
-					[],
-					ELEMENTOR_VERSION
-				);
-			}
+			wp_enqueue_style(
+				'elementor-ai-layout-preview',
+				$this->get_css_assets_url( 'modules/ai/layout-preview' ),
+				[],
+				ELEMENTOR_VERSION
+			);
 		} );
 
 		if ( is_admin() ) {
@@ -151,11 +144,7 @@ class Module extends BaseModule {
 		});
 
 		add_filter( 'elementor/document/save/data', function ( $data ) {
-			if ( $this->is_layout_active() ) {
-				return $this->remove_temporary_containers( $data );
-			}
-
-			return $data;
+			return $this->remove_temporary_containers( $data );
 		} );
 	}
 
@@ -243,10 +232,6 @@ class Module extends BaseModule {
 		);
 
 		wp_set_script_translations( 'elementor-ai-layout', 'elementor' );
-	}
-
-	private function is_layout_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::LAYOUT_EXPERIMENT );
 	}
 
 	private function remove_temporary_containers( $data ) {
