@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsHandler\SettingsTransformers;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers;
 
-use Elementor\Modules\AtomicWidgets\PropsHandler\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {

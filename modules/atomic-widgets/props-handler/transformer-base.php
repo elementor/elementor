@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\PropsHandler;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Transformer_Base {
 	/** Used for handling inner props inside a prop. */
-	protected Props_Handler $props_handler;
+	protected Props_Resolver $props_handler;
 
-	public function set_props_handler( Props_Handler $props_handler ): self {
+	public function set_props_handler( Props_Resolver $props_handler ): self {
 		$this->props_handler = $props_handler;
 
 		return $this;

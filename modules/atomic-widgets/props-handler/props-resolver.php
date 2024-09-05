@@ -1,10 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsHandler;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Utils;
 use Exception;
 
@@ -12,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Props_Handler {
+class Props_Resolver {
 	/**
 	 * Each transformer can return a value that is also a transformable value,
 	 * which means that it can be transformed again by another transformer.
@@ -24,7 +22,7 @@ class Props_Handler {
 	const CONTEXT_STYLE = 'style';
 
 	/**
-	 * @var array<Props_Handler>
+	 * @var array<Props_Resolver>
 	 */
 	private static array $instances = [];
 
@@ -62,7 +60,7 @@ class Props_Handler {
 	 *
 	 * @return array
 	 */
-	public function handle( array $args ): array {
+	public function resolve( array $args ): array {
 		if ( empty( $args['schema'] ) || empty( $args['props'] ) ) {
 			Utils::safe_throw( 'Missing schema or props.' );
 

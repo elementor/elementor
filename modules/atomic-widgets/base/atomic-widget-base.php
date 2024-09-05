@@ -2,7 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\PropsHandler\Props_Handler;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Utils;
 use Elementor\Widget_Base;
@@ -114,7 +114,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	final public function get_atomic_settings(): array {
-		return Props_Handler::for_settings()->handle( [
+		return Props_Resolver::for_settings()->resolve( [
 			'schema' => static::get_props_schema(),
 			'props' => $this->get_settings(),
 		] );

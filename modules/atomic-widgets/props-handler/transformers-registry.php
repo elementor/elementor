@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsHandler;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Utils;
