@@ -116,32 +116,18 @@ class Page extends PageBase {
 	}
 
 	private static function get_elementor_page() {
-		$args = [
+		if ( 'page' === get_option( 'show_on_front' ) ) {
+			$home_page_id = get_option( 'page_on_front' );
+			return get_post( $home_page_id ) ?? null;
+		}
+
+		$pages = get_pages( [
 			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
 			'sort_order' => 'asc',
 			'sort_column' => 'post_date',
-		];
-		$query_string = http_build_query( $args );
-		$pages = get_pages( $query_string );
+			'number' => 1,
+		] );
 
-		if ( empty( $pages ) ) {
-			return null;
-		}
-
-		$show_page_on_front = 'page' === get_option( 'show_on_front' );
-
-		if ( ! $show_page_on_front ) {
-			return $pages[0];
-		}
-
-		$home_page_id = get_option( 'page_on_front' );
-
-		foreach ( $pages as $page ) {
-			if ( (string) $page->ID === $home_page_id ) {
-				return $page;
-			}
-		}
-
-		return $pages[0];
+		return $pages[0] ?? null;
 	}
 }
