@@ -2,12 +2,12 @@ import PropTypes from 'prop-types';
 import ChecklistCardContent from './checklist-card-content';
 import { ListItemButton, ListItemIcon, ListItemText, Collapse, Checkbox } from '@elementor/ui';
 import { CircleCheckFilledIcon, ChevronDownIcon, RadioButtonUncheckedIcon, UpgradeIcon } from '@elementor/icons';
-import { isConsideredDone } from '../utils/functions';
+import { isStepChecked } from '../../utils/functions';
 
 function CheckListItem( props ) {
 	const { expandedIndex, setExpandedIndex, setSteps, index, step } = props,
 		chevronStyle = index === expandedIndex ? { transform: 'rotate(180deg)' } : {},
-		isChecked = isConsideredDone( step );
+		isChecked = isStepChecked( step );
 
 	const handleExpandClick = () => {
 		setExpandedIndex( index === expandedIndex ? -1 : index );

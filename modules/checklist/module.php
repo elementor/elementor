@@ -21,6 +21,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	const DB_OPTION_KEY = 'elementor_checklist';
 	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
 	const FIRST_CLOSED_CHECKLIST_IN_EDITOR = 'first_closed_checklist_in_editor';
+	const LAST_OPENED_TIMESTAMP = 'last_opened_timestamp';
 
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;
@@ -81,7 +82,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *      @type array $steps {
 	 *          @type string $step_id => {
 	 *              @type bool $is_marked_completed
-	 *              @type bool $is_completed
+	 *              @type bool $is_absolute_competed
+	 *              @type bool $is_immutable_completed
 	 *          }
 	 *      }
 	 *  }
@@ -117,8 +119,18 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$this->update_user_progress_in_db();
 	}
 
-	public function update_user_progress() : void {
-		$this->user_progress[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] = true;
+	public function update_user_progress( $new_data ) : void {
+		$allowed_properties = [
+			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
+			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
+		];
+
+		foreach ( $allowed_properties as $key => $value ) {
+			if ( null !== $value ) {
+				$this->user_progress[ $key ] = $value;
+			}
+		}
+
 		$this->update_user_progress_in_db();
 	}
 
@@ -182,7 +194,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	private function init_user_progress() : void {
 		$default_settings = [
-			'last_opened_timestamp' => null,
+			self::LAST_OPENED_TIMESTAMP => -1,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			'steps' => [],
 		];
