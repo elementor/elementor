@@ -239,6 +239,7 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		// Resetting for the sake of the next test
 		for ( const stepId of doneStepIds ) {
+			await checklistHelper.toggleChecklistItem( stepId, 'editor', true );
 			await checklistHelper.toggleMarkAsDone( stepId, 'editor' );
 		}
 	} );
