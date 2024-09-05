@@ -76,9 +76,9 @@ class Page extends PageBase {
 		$existing_elementor_page = self::get_elementor_page();
 		$site_settings_url = ! empty( $existing_elementor_page )
 			? self::get_elementor_edit_url( $existing_elementor_page->ID )
-			: self::get_elementor_create_new_page_url( $return_string ? self::SITE_IDENTITY_TAB : null);
+			: self::get_elementor_create_new_page_url( $return_string ? self::SITE_IDENTITY_TAB : null );
 
-		if  ( $return_string ) {
+		if ( $return_string ) {
 			return $site_settings_url;
 		}
 
