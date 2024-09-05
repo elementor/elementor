@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsHandler;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Utils;
 use Exception;
 
@@ -71,14 +73,14 @@ class Props_Handler {
 
 		foreach ( $args['schema'] as $prop_name => $prop_type ) {
 			$result[ $prop_name ] = $prop_type instanceof Prop_Type
-				? $this->transform( $args['props'][ $prop_name ] ?? $prop_type->get_default(), [] ) // TODO: Pass the children schema to the transformer.
+				? $this->transform( $args['props'][ $prop_name ] ?? $prop_type->get_default() )
 				: null;
 		}
 
 		return $result;
 	}
 
-	private function transform( $value, array $schema, int $depth = 0 ) {
+	private function transform( $value, int $depth = 0 ) {
 		if ( ! $value || ! $this->is_transformable( $value ) ) {
 			return $value;
 		}
@@ -96,9 +98,9 @@ class Props_Handler {
 		try {
 			$transformed_value = $transformer
 				->set_props_handler( $this )
-				->transform( $value['value'] ); // TODO: Here the prop_type should pass the children prop_types schema so it can be used in the transformer.
+				->transform( $value['value'] );
 
-			return $this->transform( $transformed_value, $schema, $depth + 1 );
+			return $this->transform( $transformed_value, $depth + 1 );
 		} catch ( Exception $e ) {
 			return null;
 		}
