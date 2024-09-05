@@ -1,5 +1,8 @@
-import App from '../app';
+import App from '../app/app';
+import { QueryClient, QueryClientProvider } from '@elementor/query';
 import ReactDOM from 'react-dom/client';
+
+const queryClient = new QueryClient();
 
 export class TogglePopup extends $e.modules.CommandBase {
 	static rootElement = null;
@@ -19,7 +22,9 @@ export class TogglePopup extends $e.modules.CommandBase {
 	mount() {
 		this.setRootElement();
 
-		TogglePopup.rootElement.render( <App /> );
+		TogglePopup.rootElement.render( <QueryClientProvider client={ queryClient }>
+			<App />
+		</QueryClientProvider> );
 	}
 
 	unmount() {

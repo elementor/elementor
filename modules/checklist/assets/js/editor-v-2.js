@@ -2,6 +2,10 @@ import * as EditorAppBar from '@elementor/editor-app-bar';
 import { __ } from '@wordpress/i18n';
 import * as React from 'react';
 import TopBarIcon from './topbar-icon';
+import { toggleChecklistPopup } from './utils/functions';
+import { QueryClient, QueryClientProvider } from '@elementor/query';
+
+const queryClient = new QueryClient();
 
 export const editorV2 = () => {
 	const { utilitiesMenu } = EditorAppBar;
@@ -12,10 +16,10 @@ export const editorV2 = () => {
 		useProps: () => {
 			return {
 				title: __( 'Checklist', 'elementor' ),
-				icon: () => <TopBarIcon />,
-				onClick: () => {
-					$e.commands.run( 'checklist/toggle-popup' );
-				},
+				icon: () => <QueryClientProvider client={ queryClient }>
+					<TopBarIcon />
+				</QueryClientProvider>,
+				onClick: toggleChecklistPopup,
 			};
 		},
 	} );
