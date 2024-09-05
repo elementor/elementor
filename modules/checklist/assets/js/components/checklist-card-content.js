@@ -19,7 +19,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! isLocked;
 
 	const redirectHandler = () => {
-		window.open( ctaUrl, isLocked ? '_blank' : '' );
+		window.open( ctaUrl, isLocked ? '_blank' : '_self' );
 	};
 
 	const toggleMarkAsDone = async () => {
