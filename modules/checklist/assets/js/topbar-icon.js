@@ -7,12 +7,12 @@ import ReminderModal from './app/components/reminder-modal';
 import * as React from 'react';
 import { USER_PROGRESS } from './utils/consts';
 
-const { FIRST_CLOSED_CHECKLIST_IN_EDITOR } = USER_PROGRESS;
+const { CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME } = USER_PROGRESS;
 
 const fetchStatus = async () => {
 	const response = await $e.data.get( 'checklist/user-progress', {}, { refresh: true } );
 
-	return response?.data?.data?.[ FIRST_CLOSED_CHECKLIST_IN_EDITOR ] || false;
+	return response?.data?.data?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ] || false;
 };
 
 const TopBarIcon = () => {
