@@ -106,13 +106,13 @@ class Page extends PageBase {
 
 	private static function get_elementor_edit_url( int $post_id ): string {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$document = Plugin::$instance->documents->get( $post_id ) ?? null;
+		$args = [
+			'active-document' => $active_kit_id,
+			'action' => 'elementor',
+			'post' => $post_id,
+		];
 
-		if ( ! $document ) {
-			return '';
-		}
-
-		return add_query_arg( [ 'active-document' => $active_kit_id ], $document->get_edit_url() );
+		return add_query_arg( $args, get_admin_url() . 'post.php' );
 	}
 
 	private static function get_elementor_page() {
