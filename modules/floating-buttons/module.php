@@ -56,6 +56,7 @@ class Module extends BaseModule {
 			'hidden' => true,
 			'default' => Manager::STATE_ACTIVE,
 			'release_status' => Manager::RELEASE_STATUS_STABLE,
+			'mutable' => false,
 		];
 	}
 
