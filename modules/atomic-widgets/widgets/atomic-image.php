@@ -30,7 +30,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$image_url = $settings['image'];
+		$image_url = esc_url( $settings['image'] );
 
 		$class = '';
 		if ( ! empty( $settings['classes'] ) ) {
