@@ -1,9 +1,9 @@
 import { Box, LinearProgress, Typography } from '@elementor/ui';
 import PropTypes from 'prop-types';
-import { isConsideredDone } from '../utils/functions';
+import { isStepChecked } from '../../utils/functions';
 
 const Progress = ( { steps } ) => {
-	const progress = steps.filter( isConsideredDone ).length * 100 / steps.length;
+	const progress = steps.filter( isStepChecked ).length * 100 / steps.length;
 
 	return (
 		<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>

@@ -20,11 +20,11 @@ class Controller extends Controller_Base {
 		$this->register_endpoint( new User_Progress( $this ) );
 	}
 
-	public function create_items_permissions_check( $request ) {
+	public function update_items_permissions_check( $request ) {
 		return current_user_can( 'manage_options' );
 	}
 
-	public function create_item_permissions_check( $request ) {
+	public function update_item_permissions_check( $request ) {
 		return current_user_can( 'manage_options' );
 	}
 
@@ -33,10 +33,6 @@ class Controller extends Controller_Base {
 	}
 
 	public function get_items_permissions_check( $request ) {
-		return current_user_can( 'manage_options' );
-	}
-
-	public function update_item_permissions_check( $request ) {
 		return current_user_can( 'manage_options' );
 	}
 }
