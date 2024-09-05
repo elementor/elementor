@@ -34,15 +34,15 @@ class Atomic_Image extends Atomic_Widget_Base {
 			return;
 		}
 
-		$tag = 'img';
 		$image_url = esc_url( $settings['image'] );
 		$src = 'src=' . $image_url;
-		$alt = "alt='Atomic Image'";
 		$class = '';
 		if ( ! empty( $settings['classes'] ) ) {
 			$class = "class='" . esc_attr( $settings['classes'] ) . "'";
 		}
-		echo "<$tag $src $alt $class />";
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo "<img $src alt='Atomic Image' $class />";
 	}
 
 	private static function get_image_size_options() {
