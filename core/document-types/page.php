@@ -75,7 +75,7 @@ class Page extends PageBase {
 	public static function get_site_settings_url_config( $active_tab_id = null ) {
 		$existing_elementor_page = self::get_elementor_page();
 		$site_settings_url = $existing_elementor_page
-			? self::get_elementor_edit_url( $existing_elementor_page->ID )
+			? self::get_elementor_edit_url( $existing_elementor_page->ID, [ 'active-tab' => $active_tab_id ] )
 			: self::get_create_new_editor_page_url( $active_tab_id );
 
 		return [
