@@ -113,18 +113,6 @@ class Page extends PageBase {
 	}
 
 	public static function get_elementor_page() {
-		return 'page' === get_option( 'show_on_front' )
-			? self::get_home_page()
-			: self::get_any_page();
-	}
-
-	private static function get_home_page() {
-		$home_page_id = get_option( 'page_on_front' );
-
-		return get_post( $home_page_id ) ?? null;
-	}
-
-	private static function get_any_page() {
 		return get_pages( [
 			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
 			'sort_order' => 'asc',
