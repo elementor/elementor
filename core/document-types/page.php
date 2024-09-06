@@ -125,7 +125,7 @@ class Page extends PageBase {
 	}
 
 	private static function get_any_page() {
-		return  get_pages( [
+		return get_pages( [
 			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
 			'sort_order' => 'asc',
 			'sort_column' => 'post_date',
