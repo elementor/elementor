@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
-	private array $steps_config = [];
 	private static array $step_ids = [ Add_Logo::STEP_ID, Create_Pages::STEP_ID, Setup_Header::STEP_ID, Assign_Homepage::STEP_ID ];
 
 	private Checklist_Module_Interface $module;
@@ -41,7 +40,7 @@ class Steps_Manager {
 				Step_Base::MARKED_AS_COMPLETED_KEY => $instance->is_marked_as_completed(),
 				Step_Base::IMMUTABLE_COMPLETION_KEY => $instance->is_immutable_completed(),
 				Step_Base::ABSOLUTE_COMPLETION_KEY => $instance->is_absolute_completed(),
-				'config' => $this->steps_config[ $step_id ],
+				'config' => $this->get_step_config( $step_id ),
 			];
 
 			$formatted_steps[] = $step;
@@ -133,14 +132,31 @@ class Steps_Manager {
 	 * @return void
 	 */
 	private function register_steps() : void {
+		$formatted_steps = [];
+		$step_ids = [];
+
 		foreach ( self::$step_ids as $step_id ) {
 			$step_instance = $this->get_step_instance( $step_id );
 
 			if ( $step_instance && ! isset( $this->step_instances[ $step_id ] ) ) {
-				$this->step_instances[ $step_id ] = $step_instance;
-				$this->steps_config[ $step_id ] = $this->get_step_config( $step_id );
+				$formatted_steps[ $step_id ] = $step_instance;
 			}
 		}
+
+		add_action( 'elementor/init', function () use ( $formatted_steps ) {
+			$filtered_steps = apply_filters( 'elementor/checklist/steps', $formatted_steps );
+
+			foreach ( $filtered_steps as $step_id => $step_instance ) {
+				if ( ! $step_instance instanceof Step_Base ) {
+					continue;
+				}
+
+				$this->step_instances[ $step_id ] = $step_instance;
+				$step_ids[] = $step_id;
+			}
+
+			self::$step_ids = $step_ids;
+		} );
 	}
 
 	/**
