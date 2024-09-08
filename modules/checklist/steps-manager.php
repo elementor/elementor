@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Checklist;
 
+use Elementor\Modules\Checklist\Steps\Assign_Homepage;
 use Elementor\Modules\Checklist\Steps\Create_Pages;
 use Elementor\Modules\Checklist\Steps\Setup_Header;
 use Elementor\Modules\Checklist\Steps\Add_Logo;
@@ -15,7 +16,7 @@ class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
 	private array $steps_config = [];
-	private static array $step_ids = [ Add_Logo::STEP_ID, Create_Pages::STEP_ID, Setup_Header::STEP_ID ];
+	private static array $step_ids = [ Add_Logo::STEP_ID, Create_Pages::STEP_ID, Setup_Header::STEP_ID, Assign_Homepage::STEP_ID ];
 
 	private Checklist_Module_Interface $module;
 
