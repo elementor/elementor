@@ -33,6 +33,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		$image_url = esc_url( $settings['image'] );
 		$src = 'src=' . $image_url;
 		$class = '';
+
 		if ( ! empty( $settings['classes'] ) ) {
 			$class = "class='" . esc_attr( $settings['classes'] ) . "'";
 		}
