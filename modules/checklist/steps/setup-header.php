@@ -16,7 +16,7 @@ class Setup_Header extends Step_Base {
 		$promotion_data = $should_promote
 			? [
 				'url' => 'http://go.elementor.com/app-website-checklist-header-article',
-				'text' => esc_html__( 'Upgrade Now', 'elementor-pro' ),
+				'text' => esc_html__( 'Upgrade Now', 'elementor' ),
 				'icon' => 'default',
 			]
 			: null;
