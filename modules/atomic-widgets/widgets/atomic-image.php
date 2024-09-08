@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Utils;
@@ -29,13 +30,16 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$image_url = $settings['image'];
+		$image_url = esc_url( $settings['image'] );
+		$src = 'src=' . $image_url;
+		$class = '';
 
-		?> <img
-			src='<?php echo esc_url( $image_url ); ?>'
-			alt='Atomic Image'
-		/>
-		<?php
+		if ( ! empty( $settings['classes'] ) ) {
+			$class = "class='" . esc_attr( $settings['classes'] ) . "'";
+		}
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo "<img $src alt='Atomic Image' $class />";
 	}
 
 	private static function get_image_size_options() {
@@ -115,6 +119,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 		);
 
 		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
 			'image' => Image_Prop_Type::make()
 				->default( [
 					'url' => Utils::get_placeholder_image_src(),
