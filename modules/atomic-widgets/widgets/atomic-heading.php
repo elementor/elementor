@@ -37,8 +37,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 		echo sprintf(
 			'<%1$s %2$s>%3$s</%1$s>',
-			Utils::validate_html_tag( $tag ),
-			Utils::render_html_attributes( $attrs ),
+			Utils::validate_html_tag( $tag ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			Utils::render_html_attributes( $attrs ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			esc_html( $title )
 		);
 	}
