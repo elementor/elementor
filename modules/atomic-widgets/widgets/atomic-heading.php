@@ -35,7 +35,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'class' => $settings['classes'] ?? '',
 		] );
 
-		// TODO: Move the validation/sanitization to the props schema constraints.
 		echo sprintf(
 			'<%1$s %2$s>%3$s</%1$s>',
 			Utils::validate_html_tag( $tag ),
