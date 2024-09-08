@@ -26,19 +26,12 @@ class Steps extends Endpoint_Base {
 
 	public function update_item( $id, $request ) {
 		$checklist_module = Checklist_Module::instance();
-		$allowed_changes = [
-			Step_Base::MARKED_AS_COMPLETED_KEY => $request->get_param( Step_Base::MARKED_AS_COMPLETED_KEY ) ?? null,
-			Step_Base::ABSOLUTE_COMPLETION_KEY => $request->get_param( Step_Base::ABSOLUTE_COMPLETION_KEY ) ?? null,
-			Step_Base::IMMUTABLE_COMPLETION_KEY => $request->get_param( Step_Base::IMMUTABLE_COMPLETION_KEY ) ?? null,
-		];
-
 		$step = $checklist_module->get_steps_manager()->get_step_by_id( $id );
+		$step->update_step( $request->get_json_params() );
 
-		if ( ! $step ) {
-			return new \WP_Error( 'rest_invalid_step_id', 'Invalid step id', [ 'status' => 404 ] );
-		}
-
-		$step->update_step( $allowed_changes );
+		return [
+			'data' => 'success',
+		];
 	}
 
 	private function get_checklist_data(): array {
@@ -55,9 +48,9 @@ class Steps extends Endpoint_Base {
 
 		$this->register_item_route();
 		$this->register_item_route( \WP_REST_Server::EDITABLE, [
-			'id_arg_name' => 'step_id',
+			'id_arg_name' => 'id',
 			'id_arg_type_regex' => '[\w\-\_]+',
-			'step_id' => [
+			'id' => [
 				'type' => 'string',
 				'description' => 'The step id.',
 				'required' => true,
