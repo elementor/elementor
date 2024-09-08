@@ -1,6 +1,10 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
+import { getAndUpdateStep } from '../../utils/functions';
+import { STEP } from '../../utils/consts';
+
+const { IS_MARKED_COMPLETED, IS_ABSOLUTE_COMPLETED, IS_IMMUTABLE_COMPLETED } = STEP;
 
 const ChecklistCardContent = ( { step, setSteps } ) => {
 	const {
@@ -15,41 +19,34 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 
 	const ctaText = isLocked ? __( 'Upgrade Now', 'elementor-pro' ) : step.config.cta_text,
 		ctaUrl = isLocked ? promotionUrl : step.config.cta_url,
-		{ is_absolute_completed: isAbsoluteCompleted, is_immutable_completed: isImmutableCompleted, is_marked_completed: isMarkedCompleted } = step,
+		{
+			[ IS_ABSOLUTE_COMPLETED ]: isAbsoluteCompleted,
+			[ IS_IMMUTABLE_COMPLETED ]: isImmutableCompleted,
+			[ IS_MARKED_COMPLETED ]: isMarkedCompleted,
+		} = step,
 		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! isLocked;
 
 	const redirectHandler = () => {
-		window.open( ctaUrl, isLocked ? '_blank' : '' );
+		window.open( ctaUrl, isLocked ? '_blank' : '_self' );
 	};
 
 	const toggleMarkAsDone = async () => {
 		const currState = isMarkedCompleted;
 
 		try {
-			setSteps( ( steps ) => steps.map( ( iteratedStep ) => updateStepProperty( iteratedStep, 'is_marked_completed', ! currState ) ) );
+			updateStepsState( IS_MARKED_COMPLETED, ! currState );
 
-			await fetch( `${ elementorCommon.config.urls.rest }elementor/v1/checklist/steps/${ id }`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-WP-Nonce': elementorWebCliConfig.nonce,
-				},
-				body: JSON.stringify( {
-					id,
-					is_marked_completed: ! currState,
-				} ),
-			} );
+			await $e.data.update( `checklist/steps`, {
+				id,
+				[ IS_MARKED_COMPLETED ]: ! currState,
+			}, { id } );
 		} catch ( e ) {
-			setSteps( ( steps ) => steps.map( ( iteratedStep ) => updateStepProperty( iteratedStep, 'is_marked_completed', currState ) ) );
+			updateStepsState( IS_MARKED_COMPLETED, currState );
 		}
 	};
 
-	const updateStepProperty = ( iteratedStep, key, value ) => {
-		if ( iteratedStep.config.id !== step.config.id ) {
-			return iteratedStep;
-		}
-
-		return { ...iteratedStep, [ key ]: value };
+	const updateStepsState = ( key, value ) => {
+		setSteps( ( steps ) => steps.map( ( iteratedStep ) => getAndUpdateStep( step.config.id, iteratedStep, key, value ) ) );
 	};
 
 	return (

@@ -1,10 +1,14 @@
 import Header from './header';
 import CheckListWrapper from './checklist-wrapper';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Paper } from '@elementor/ui';
 
 const Checklist = ( props ) => {
 	const [ steps, setSteps ] = useState( props.steps );
+
+	useEffect( () => {
+		setSteps( props.steps );
+	}, [ props.steps ] );
 
 	return (
 		<Paper elevation={ 5 } sx={ {
