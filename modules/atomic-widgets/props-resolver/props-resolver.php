@@ -90,7 +90,6 @@ class Props_Resolver {
 	private function is_transformable( $value ): bool {
 		return (
 			! empty( $value['$$type'] ) &&
-			is_string( $value['$$type'] ) &&
 			array_key_exists( 'value', $value )
 		);
 	}

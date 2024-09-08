@@ -16,7 +16,7 @@ class Classes_Transformer extends Transformer_Base {
 
 	public function transform( $value ) {
 		if ( ! is_array( $value ) ) {
-			return '';
+			throw new \Exception( 'Value must be an array, ' . gettype( $value ) . ' given.' );
 		}
 
 		return implode( ' ', array_filter( $value ) );
