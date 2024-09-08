@@ -10,18 +10,19 @@ const { PROMOTION_DATA } = STEP;
 function CheckListItem( props ) {
 	const { expandedIndex, setExpandedIndex, setSteps, index, step } = props,
 		chevronStyle = index === expandedIndex ? { transform: 'rotate(180deg)' } : {},
-		isChecked = isStepChecked( step );
+		isChecked = isStepChecked( step ),
+		promotionData = step.config[ PROMOTION_DATA ];
 
 	const handleExpandClick = () => {
 		setExpandedIndex( index === expandedIndex ? -1 : index );
 	};
 
 	const getUpgradeIcon = () => {
-		return 'default' === step.config[ PROMOTION_DATA ]?.icon
+		return 'default' === promotionData?.icon
 			? <UpgradeIcon color="promotion" sx={ { mr: 1 } } />
 			: <SvgIcon color="promotion" sx={ { mr: 1 } }>
-				<img src={ step.config[ PROMOTION_DATA ]?.icon } />
-			</SvgIcon>
+				<img src={ promotionData?.icon } alt={ promotionData.iconAlt || '' } />
+			</SvgIcon>;
 	};
 
 	return (
@@ -39,7 +40,7 @@ function CheckListItem( props ) {
 					/>
 				</ListItemIcon>
 				<ListItemText primary={ step.config.title } primaryTypographyProps={ { variant: 'body2' } } />
-				{ step.config[ PROMOTION_DATA ] ? getUpgradeIcon() : null }
+				{ promotionData ? getUpgradeIcon() : null }
 				<ChevronDownIcon sx={ { ...chevronStyle, transition: '300ms' } } />
 			</ListItemButton>
 			<Collapse in={ index === expandedIndex } >
