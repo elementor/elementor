@@ -12,8 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Step_Base {
-	private $is_locked = false;
-
 	/**
 	 * @var string
 	 * This is the key to be set to true if the step can be completed, and still be considered completed even if the user later did something to the should have it marked as not completed
@@ -25,6 +23,7 @@ abstract class Step_Base {
 
 	private array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
+	protected $is_locked = false;
 	protected Checklist_Module $module;
 
 	/**
@@ -78,9 +77,10 @@ abstract class Step_Base {
 
 	 * @return void
 	 */
-	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
+	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null, $is_locked = null ) {
 		$this->module = $module;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
+		$this->is_locked = $is_locked ?? $this->is_locked;
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
 	}
 
@@ -173,9 +173,9 @@ abstract class Step_Base {
 		return $this->is_locked;
 	}
 
-	public function set_is_locked( $is_locked ) : void {
-		$this->is_locked = $is_locked;
-	}
+//	public function set_is_locked( $is_locked ) : void {
+//		$this->is_locked = $is_locked;
+//	}
 
 	/**
 	 * @return string

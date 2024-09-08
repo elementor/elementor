@@ -15,7 +15,8 @@ class Setup_Header extends Step_Base {
 	public function __construct( ...$args ) {
 		parent::__construct( ...$args );
 
-		$this->set_is_locked( true );
+		$step_args = func_get_args();
+		$this->is_locked = $step_args[2] ?? true;
 	}
 
 	public function get_id() : string {

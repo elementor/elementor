@@ -22,6 +22,10 @@ class Steps_Manager {
 	public function __construct( Checklist_Module_Interface $module ) {
 		$this->module = $module;
 		$this->register_steps();
+
+		add_action( 'elementor/init', function() {
+			$this->filter_steps();
+		} );
 	}
 
 	/**
@@ -132,31 +136,13 @@ class Steps_Manager {
 	 * @return void
 	 */
 	private function register_steps() : void {
-		$formatted_steps = [];
-		$step_ids = [];
-
 		foreach ( self::$step_ids as $step_id ) {
 			$step_instance = $this->get_step_instance( $step_id );
 
 			if ( $step_instance && ! isset( $this->step_instances[ $step_id ] ) ) {
-				$formatted_steps[ $step_id ] = $step_instance;
+				$this->step_instances[ $step_id ] = $step_instance;
 			}
 		}
-
-		add_action( 'elementor/init', function () use ( $formatted_steps ) {
-			$filtered_steps = apply_filters( 'elementor/checklist/steps', $formatted_steps );
-
-			foreach ( $filtered_steps as $step_id => $step_instance ) {
-				if ( ! $step_instance instanceof Step_Base ) {
-					continue;
-				}
-
-				$this->step_instances[ $step_id ] = $step_instance;
-				$step_ids[] = $step_id;
-			}
-
-			self::$step_ids = $step_ids;
-		} );
 	}
 
 	/**
@@ -184,5 +170,21 @@ class Steps_Manager {
 
 		/** @var Step_Base $step */
 		return new $class_name( $this->module, $this->module->get_wordpress_adapter() );
+	}
+
+	private function filter_steps() {
+		$step_ids  = [];
+		$filtered_steps = apply_filters( 'elementor/checklist/steps', $this->step_instances );
+
+		foreach ( $filtered_steps as $step_id => $step_instance ) {
+			if ( ! $step_instance instanceof Step_Base ) {
+				continue;
+			}
+
+			$this->step_instances[ $step_id ] = $step_instance;
+			$step_ids[] = $step_id;
+		}
+
+		self::$step_ids = $step_ids;
 	}
 }
