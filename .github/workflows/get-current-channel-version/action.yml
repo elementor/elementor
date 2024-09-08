@@ -1,0 +1,63 @@
+name: Get Current Channel Version
+description: Get the current version by channel.
+
+inputs:
+  CHANNEL:
+    required: true
+    description: 'The channel to get the version from.'
+  POSTFIX:
+    required: false
+    description: 'The postfix that will be added to the package version -rc / -test / empty string.'
+  CLEAN_PACKAGE_VERSION:
+    required: true
+    description: 'The package version without the postfix.'
+outputs:
+  CURRENT_CHANNEL_VERSION:
+    description: 'The current channel version.'
+    value: ${{ steps.set-output.outputs.CURRENT_CHANNEL_VERSION }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get all tags
+      id: get-tags
+      shell: bash
+      run: git ls-remote --tags
+
+    - name: Filter test tags
+      id: filter-test-tags
+      if: ${{ inputs.POSTFIX == '-test' }}
+      shell: bash
+      run: |
+        result=$(echo "${{ steps.get-tags.outputs.tags }}" | grep "\-test" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}")
+        echo "filtered-tags=$result" >> $GITHUB_OUTPUT
+
+    - name: Filter tags
+      id: filter-tags
+      if: ${{ inputs.POSTFIX != '-test' || inputs.POSTFIX == '-rc' }}
+      shell: bash
+      run: |
+        result=$(echo "${{ steps.get-tags.outputs.tags }}" | grep -v "\-rc" | grep -v "\-test" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}")
+        echo "filtered-tags=$result" >> $GITHUB_OUTPUT
+
+    - name: Clean package version
+      id: clean-package-version
+      shell: bash
+      run: |
+        filtered_tags="${{ steps.filter-test-tags.outputs.filtered-tags || steps.filter-tags.outputs.filtered-tags }}"
+        clean_version=$(echo "$filtered_tags" | grep "$(echo "${{ env.CLEAN_PACKAGE_VERSION }}" | sed 's/\./\\./g')") | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
+        echo "clean-version=$clean_version" >> $GITHUB_OUTPUT
+
+    - name: Ensure step returns a number
+      id: ensure-number
+      shell: bash
+      run: |
+        if ! [[ $clean_version =~ ^[0-9]+$ ]]; then
+          clean_version=0
+        fi
+
+    - name: Set output as an env variable
+      run: |
+        echo "CURRENT_CHANNEL_VERSION=$clean_version"
+        echo "CURRENT_CHANNEL_VERSION=$clean_version" >> $GITHUB_ENV
+
