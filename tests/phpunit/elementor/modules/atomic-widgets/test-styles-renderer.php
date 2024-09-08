@@ -13,17 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-class Mock_Faulty_Transformer extends Style_Transformer_Base {
-
-	public static function type(): string {
-		return 'faulty';
-	}
-
-	public function transform( $value, callable $transform ): string {
-		throw new \Exception( 'Faulty transformer' );
-	}
-}
-
 class Test_Styles_Renderer extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
@@ -400,7 +389,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$stylesRenderer = new Styles_Renderer( [
 			'transformers' => [
-				'faulty' => new Mock_Faulty_Transformer(),
+				'faulty' => $this->make_mock_faulty_transformer(),
 			],
 			'breakpoints' => []
 		] );
@@ -534,5 +523,17 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $css );
+	}
+
+	private function make_mock_faulty_transformer() {
+		return new class() extends Style_Transformer_Base {
+			public static function type(): string {
+				return 'faulty';
+			}
+
+			public function transform( $value, callable $transform ): string {
+				throw new \Exception( 'Faulty transformer' );
+			}
+		};
 	}
 }
