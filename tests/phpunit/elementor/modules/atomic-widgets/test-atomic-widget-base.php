@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -427,6 +428,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $sanitized_settings );
 	}
 
+	public function test_get_atomic_widget_sanitized_settings__throws_on_sanitization_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'mock_prop' => $this->make_mock_prop_type()::make()->default( '' ),
+			],
+			'settings' => [
+				'mock_prop' => 'valid-value',
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Throwing sanitization exception.' );
+
+		// Act.
+		$widget::sanitize_schema( $widget::get_props_schema(), $widget->get_atomic_settings() );
+	}
+
 	/**
 	 * @param array{controls: array, props_schema: array, settings: array} $options
 	 */
@@ -453,6 +473,20 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 			protected static function define_props_schema(): array {
 				return static::$options['props_schema'] ?? [];
+			}
+		};
+	}
+
+	private function make_mock_prop_type() {
+		return new class() extends Prop_Type {
+			public static function get_key(): string {
+				return 'mock-prop-type';
+			}
+
+			public function validate( $value ): void {}
+
+			public function sanitize( $value ): void {
+				throw new \Exception( 'Throwing sanitization exception.' );
 			}
 		};
 	}
