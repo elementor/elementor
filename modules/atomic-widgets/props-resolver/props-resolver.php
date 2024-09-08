@@ -3,7 +3,6 @@
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
-use Elementor\Utils;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,26 +51,12 @@ class Props_Resolver {
 		return self::$instances[ $context ];
 	}
 
-	/**
-	 * @param array{
-	 *     schema: array<string, Prop_Type>,
-	 *     props: array<string, mixed>
-	 * } $args
-	 *
-	 * @return array
-	 */
-	public function resolve( array $args ): array {
-		if ( empty( $args['schema'] ) || empty( $args['props'] ) ) {
-			Utils::safe_throw( 'Missing schema or props.' );
-
-			return [];
-		}
-
+	public function resolve( array $schema, array $props ): array {
 		$result = [];
 
-		foreach ( $args['schema'] as $prop_name => $prop_type ) {
+		foreach ( $schema as $prop_name => $prop_type ) {
 			$result[ $prop_name ] = $prop_type instanceof Prop_Type
-				? $this->transform( $args['props'][ $prop_name ] ?? $prop_type->get_default() )
+				? $this->transform( $props[ $prop_name ] ?? $prop_type->get_default() )
 				: null;
 		}
 

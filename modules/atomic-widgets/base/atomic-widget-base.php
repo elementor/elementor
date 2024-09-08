@@ -114,10 +114,10 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	final public function get_atomic_settings(): array {
-		return Props_Resolver::for_settings()->resolve( [
-			'schema' => static::get_props_schema(),
-			'props' => $this->get_settings(),
-		] );
+		$schema = static::get_props_schema();
+		$props = $this->get_settings();
+
+		return Props_Resolver::for_settings()->resolve( $schema, $props );
 	}
 
 	public static function get_props_schema(): array {
