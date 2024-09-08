@@ -23,7 +23,7 @@ abstract class Step_Base {
 
 	private array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
-	protected $is_locked = false;
+	protected ?array $promotion_data;
 	protected Checklist_Module $module;
 
 	/**
@@ -77,10 +77,10 @@ abstract class Step_Base {
 
 	 * @return void
 	 */
-	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null, $is_locked = null ) {
+	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null, $promotion_data = null ) {
 		$this->module = $module;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
-		$this->is_locked = $is_locked ?? $this->is_locked;
+		$this->promotion_data = $promotion_data;
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
 	}
 
@@ -161,30 +161,6 @@ abstract class Step_Base {
 	}
 
 	/**
-	 * Returns the required license to be able to complete the step
-	 *
-	 * @return string
-	 */
-	public function get_license() : string {
-		return Constants::ACCESS_TIER_FREE;
-	}
-
-	public function get_is_locked() : bool {
-		return $this->is_locked;
-	}
-
-//	public function set_is_locked( $is_locked ) : void {
-//		$this->is_locked = $is_locked;
-//	}
-
-	/**
-	 * @return string
-	 */
-	public function get_promotion_link() : string {
-		return '';
-	}
-
-	/**
 	 * Sets and returns the initial progress of the step
 	 *
 	 * @return array
@@ -198,6 +174,13 @@ abstract class Step_Base {
 		$this->module->set_step_progress( $this->get_id(), $initial_progress );
 
 		return $initial_progress;
+	}
+
+	/**
+	 * @return ?array
+	 */
+	public function get_promotion_data() : ?array {
+		return $this->promotion_data;
 	}
 
 	/**

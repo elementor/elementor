@@ -12,11 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Setup_Header extends Step_Base {
 	const STEP_ID = 'setup_header';
 
-	public function __construct( ...$args ) {
-		parent::__construct( ...$args );
+	public function __construct( $module, $wordpress_adapter = null, $should_promote = true ) {
+		$promotion_data = $should_promote
+			? [
+				'url' => 'http://go.elementor.com/app-website-checklist-header-article',
+				'text' => esc_html__( 'Upgrade Now', 'elementor-pro' ),
+				'icon' => 'default',
+			]
+			: null;
 
-		$step_args = func_get_args();
-		$this->is_locked = $step_args[2] ?? true;
+		parent::__construct( $module, $wordpress_adapter, $promotion_data );
 	}
 
 	public function get_id() : string {
@@ -75,9 +80,5 @@ class Setup_Header extends Step_Base {
 
 	public function get_learn_more_url() : string {
 		return 'https://elementor.com/help/header-site-part/';
-	}
-
-	public function get_promotion_link() : string {
-		return 'http://go.elementor.com/app-website-checklist-header-article';
 	}
 }

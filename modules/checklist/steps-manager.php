@@ -123,9 +123,7 @@ class Steps_Manager {
 				'cta_text' => $step_instance->get_cta_text(),
 				'cta_url' => $step_instance->get_cta_url(),
 				'image_src' => $step_instance->get_image_src(),
-				'required_license' => $step_instance->get_license(),
-				'is_locked' => $step_instance->get_is_locked(),
-				'promotion_url' => $step_instance->get_promotion_link(),
+				'promotion_data' => $step_instance->get_promotion_data(),
 			]
 			: [];
 	}
