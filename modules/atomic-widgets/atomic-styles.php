@@ -79,7 +79,7 @@ class Atomic_Styles {
 	}
 
 	private function get_styles_renderer(): Styles_Renderer {
-		if ( ! $this->styles_renderer ) {
+		if ( ! isset( $this->styles_renderer ) ) {
 			$this->styles_renderer = $this->build_styles_renderer();
 		}
 
