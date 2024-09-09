@@ -1,19 +1,20 @@
-import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import * as commands from './commands/';
+import * as commandsData from './commands-data/';
 
-export default class Component extends ComponentModalBase {
+export default class Component extends $e.modules.ComponentBase {
 	getNamespace() {
 		return 'checklist';
 	}
 
-	defaultCommands() {
-		const modalCommands = super.defaultCommands();
+	static getEndpointFormat() {
+		return 'checklist';
+	}
 
-		return {
-			togglePopup: () => $e.run( 'checklist/toggle-popup' ),
-			toggleIcon: () => $e.run( 'checklist/toggle-icon' ),
-			... modalCommands,
-			... this.importCommands( commands ),
-		};
+	defaultCommands() {
+		return this.importCommands( commands );
+	}
+
+	defaultData() {
+		return this.importCommands( commandsData );
 	}
 }

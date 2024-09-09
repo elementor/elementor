@@ -20,4 +20,8 @@ interface Wordpress_Adapter_Interface {
 	public function add_option( $option_key, $option_value );
 
 	public function update_option( $option_key, $option_value );
+
+	public function add_query_arg( $args, $url );
+
+	public function has_custom_logo();
 }
