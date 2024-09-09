@@ -22,12 +22,14 @@ class Widget_Styles {
 	 */
 	private array $breakpoints = [];
 
+	private Styles_Renderer $styles_renderer;
+
 	public function register_hooks() {
 		add_filter(
 			'elementor/atomic-widgets/styles/transformers',
 			fn ( array $transformers) => $this->register_style_transformers( $transformers )
 		);
-		add_action( 'elementor/element/parse_css', fn( Post $post, Element_Base $element ) => $this->parse_atomic_widget_css( $post, $element ), 10, 2 );
+		add_action( 'elementor/element/parse_css', fn( Post $post, Element_Base $element ) => $this->parse_element_style( $post, $element ), 10, 2 );
 	}
 
 	/**
@@ -76,10 +78,25 @@ class Widget_Styles {
 		return Plugin::$instance->breakpoints->get_breakpoints_config();
 	}
 
-	private function parse_atomic_widget_css( Post $post, Element_Base $element ) {
+	private function get_styles_renderer(): Styles_Renderer {
+		if ( ! $this->styles_renderer ) {
+			$this->styles_renderer = $this->build_styles_renderer();
+		}
+
+		return $this->styles_renderer;
+	}
+
+	private function build_styles_renderer(): Styles_Renderer {
 		$transformers = $this->get_style_transformers();
 		$breakpoints = $this->get_breakpoints();
 
+		return new Styles_Renderer( [
+			'transformers' => $transformers,
+			'breakpoints' => $breakpoints,
+		] );
+	}
+
+	private function parse_element_style( Post $post, Element_Base $element ) {
 		if ( ! ( $element instanceof Atomic_Widget_Base ) || Post::class !== get_class( $post ) ) {
 			return;
 		}
@@ -90,12 +107,12 @@ class Widget_Styles {
 			return;
 		}
 
-		$styles_renderer = new Styles_Renderer( [
-			'transformers' => $transformers,
-			'breakpoints' => $breakpoints,
-		] );
-		$css = $styles_renderer->render( $styles );
+		$post->get_stylesheet()->add_raw_css( $this->convert_styles_to_css( $styles ) );
+	}
 
-		$post->get_stylesheet()->add_raw_css( $css );
+	private function convert_styles_to_css( array $styles ): string {
+		$styles_renderer = $this->get_styles_renderer();
+
+		return $styles_renderer->render( $styles );
 	}
 }
