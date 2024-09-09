@@ -17,7 +17,7 @@ export default class Style {
 			.locator( EditorSelectors.getWidgetByName( widget ) )
 			.first()
 			.click();
-		await this.page.getByRole( 'button', { name: ' Style' } ).click();
+		await this.editor.setWidgetTab( 'style' );
 		await this.page.getByRole( 'button', { name: 'toggle color picker dialog' } ).click();
 		await this.page.getByRole( 'textbox', { name: 'color input field' } ).click();
 		await this.page.locator( '.pcr-app.visible input.pcr-result' ).fill( color );
