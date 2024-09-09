@@ -74,13 +74,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 		$title_control = Textarea_Control::bind_to( 'title' )
 			->set_label( __( 'Title', 'elementor' ) )
-			->set_placeholder( __( 'Type your title here', 'elementor' ) );
+			->set_placeholder( __( "Write something or press 'space' for AI, '/' for Dynamic content", 'elementor' ) );
 
 		$tag_and_title_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
 			->set_items( [
-				$tag_control,
 				$title_control,
+				$tag_control,
 			]);
 
 		return [
