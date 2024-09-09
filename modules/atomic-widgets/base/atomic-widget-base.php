@@ -133,7 +133,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	public static function get_props_schema(): array {
 		return apply_filters(
-			'elementor/editor/atomic-widgets/props-schema',
+			'elementor/atomic-widgets/props-schema',
 			static::define_props_schema()
 		);
 	}

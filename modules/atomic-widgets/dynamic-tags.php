@@ -20,12 +20,16 @@ class Dynamic_Tags {
 		);
 
 		add_filter(
-			'elementor/editor/atomic-widgets/props-schema',
+			'elementor/atomic-widgets/props-schema',
 			fn( array $schema ) => $this->add_dynamic_prop_type( $schema )
 		);
 	}
 
-	public static function ignore() {
+	/**
+	 * Return a tuple that lets the developer ignore the dynamic prop type in the props schema
+	 * using `Prop_Type::add_meta()`, e.g. `String_Prop_Type::make()->add_meta( Dynamic::ignore() )`.
+	 */
+	public static function ignore(): array {
 		return [ 'dynamic', false ];
 	}
 

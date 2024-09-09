@@ -73,7 +73,7 @@ abstract class Prop_Type implements \JsonSerializable {
 	}
 
 	public function jsonSerialize(): array {
-		$additional_types = array_map( function ( $type ) {
+		$additional_types = array_map( function ( Prop_Type $type ) {
 			return [
 				'key' => $type::get_key(),
 				'settings' => (object) $type->settings,
