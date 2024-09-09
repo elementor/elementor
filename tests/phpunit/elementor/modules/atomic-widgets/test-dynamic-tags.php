@@ -307,12 +307,12 @@ class Test_Dynamic_Tags extends Elementor_Test_Base {
 
 	public function test_add_dynamic_prop_type__skips_non_prop_types() {
 		// Arrange.
-		remove_all_filters( 'elementor/editor/atomic-widgets/props-schema' );
+		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
 
 		( new Dynamic_Tags() )->register_hooks();
 
 		// Act.
-		$schema = apply_filters( 'elementor/editor/atomic-widgets/props-schema', [
+		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
 			'prop' => 'not-a-prop-type',
 		] );
 
@@ -322,7 +322,7 @@ class Test_Dynamic_Tags extends Elementor_Test_Base {
 
 	public function test_add_dynamic_prop_type__skips_prop_types_that_ignore_dynamic() {
 		// Arrange.
-		remove_all_filters( 'elementor/editor/atomic-widgets/props-schema' );
+		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
 
 		( new Dynamic_Tags() )->register_hooks();
 
@@ -331,7 +331,7 @@ class Test_Dynamic_Tags extends Elementor_Test_Base {
 			->add_meta( Dynamic_Tags::ignore() )
 			->default( 'default-value' );
 
-		$schema = apply_filters( 'elementor/editor/atomic-widgets/props-schema', [
+		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
 			'prop' => $prop,
 		] );
 
@@ -345,12 +345,12 @@ class Test_Dynamic_Tags extends Elementor_Test_Base {
 	 */
 	public function test_add_dynamic_prop_type( Prop_Type $prop, array $expected_categories ) {
 		// Arrange.
-		remove_all_filters( 'elementor/editor/atomic-widgets/props-schema' );
+		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
 
 		( new Dynamic_Tags() )->register_hooks();
 
 		// Act.
-		$schema = apply_filters( 'elementor/editor/atomic-widgets/props-schema', [
+		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
 			'prop' => $prop,
 		] );
 

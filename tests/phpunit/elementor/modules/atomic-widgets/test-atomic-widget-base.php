@@ -171,7 +171,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 	public function test_get_props_schema__is_serializable() {
 		// Arrange.
-		remove_all_filters( 'elementor/editor/atomic-widgets/props-schema' );
+		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
 
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
