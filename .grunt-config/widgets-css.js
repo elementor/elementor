@@ -113,8 +113,8 @@ class WidgetsCss {
 			moduleWidgetsList = this.getModulesFrontendScssFiles( this.sourceModulesScssFolder );
 
 		moduleWidgetsList.forEach( ( filePath ) => {
-			const isFrontendScssFile = filePath.indexOf( 'frontend.scss' ) > -1,
-				widgetData = this.getWidgetDataFromPath( this.sourceModulesScssFolder, filePath, isFrontendScssFile );
+			const isFrontendScssFile = filePath.indexOf( 'frontend.scss' ) > -1;
+			const widgetData = this.getWidgetDataFromPath( this.sourceModulesScssFolder, filePath, isFrontendScssFile );
 
 			moduleWidgetData.push( {
 				widgetName: widgetData.name,
