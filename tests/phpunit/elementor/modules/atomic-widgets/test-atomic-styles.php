@@ -21,7 +21,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		remove_all_actions( 'elementor/element/parse_css' );
 	}
 
-	public function test_parse_atomic_widget_styles__append_widget_style_to_post_css() {
+	public function test_parse_atomic_widget_styles__append_css_of_multiple_widgets() {
 		// Arrange.
 		( new Atomic_Styles() )->register_hooks();
 		$post = $this->make_mock_post();
@@ -80,14 +80,14 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		]);
 
 		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element_1);
-		do_action( 'elementor/element/parse_css', $post, $element_2);
+		do_action( 'elementor/element/parse_css', $post, $element_1 );
+		do_action( 'elementor/element/parse_css', $post, $element_2 );
 
 		// Assert.
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
 	}
 
-	public function test_parse_atomic_widget_styles__append_widget_style_with_breakpoints_to_post_css() {
+	public function test_parse_atomic_widget_styles__append_css_of_styles_with_breakpoints() {
 		// Arrange.
 		( new Atomic_Styles() )->register_hooks();
 		$post = $this->make_mock_post();
@@ -137,8 +137,64 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		]);
 
 		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element_1);
-		do_action( 'elementor/element/parse_css', $post, $element_2);
+		do_action( 'elementor/element/parse_css', $post, $element_1 );
+		do_action( 'elementor/element/parse_css', $post, $element_2 );
+
+		// Assert.
+		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
+	}
+
+	public function test_parse_atomic_widget_styles__append_css_of_styles_with_transformable_values() {
+		// Arrange.
+		( new Atomic_Styles() )->register_hooks();
+		$post = $this->make_mock_post();
+		$element = $this->make_mock_widget([
+			'controls' => [],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				[
+					'id' => 'test-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'red',
+								'fontSize' => [
+									'$$type' => 'size',
+									'value' => [
+										'unit' => 'px',
+										'size' => 16,
+									],
+								],
+							],
+							'meta' => [],
+						],
+					],
+				],
+			],
+		]);
+
+		// Act.
+		do_action( 'elementor/element/parse_css', $post, $element );
+
+		// Assert.
+		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
+	}
+
+	public function test_parse_atomic_widget_styles__no_append_when_styles_are_empty() {
+		// Arrange.
+		( new Atomic_Styles() )->register_hooks();
+		$post = $this->make_mock_post();
+		$element = $this->make_mock_widget([
+			'controls' => [],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [],
+		]);
+
+		// Act.
+		do_action( 'elementor/element/parse_css', $post, $element );
 
 		// Assert.
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
@@ -163,7 +219,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 					'settings' => $options['settings'] ?? [],
 					'styles' => $options['styles'] ?? [],
 					'elType' => 'widget',
-					'widgetType' => 'test-widget'
+					'widgetType' => 'test-widget',
 				], [] );
 			}
 
