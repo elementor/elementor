@@ -91,7 +91,7 @@ class WidgetsCss {
 
 	getStandAloneWidgetsCssFilesList() {
 		const standAloneWidgetData = [],
-			standAloneWidgetsList = fs.existsSync( this.sourceScssFolde
+			standAloneWidgetsList = fs.existsSync( this.sourceScssFolder ) ? fs.readdirSync( this.sourceScssFolder ) : [];
 
 		standAloneWidgetsList.forEach( ( filename ) => {
 			const widgetName = filename.replace( '.scss', '' );
@@ -103,7 +103,6 @@ class WidgetsCss {
 				importPath: `../frontend/widgets/${ widgetName }`,
 				filePath: this.sourceScssFolder + '/' + filename,
 			} );
-
 		} );
 
 		return standAloneWidgetData;
