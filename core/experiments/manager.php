@@ -435,6 +435,16 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
+			'name' => 'e_nested_atomic_repeaters',
+			'title' => esc_html__( 'Nested Elements Performance', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Improve the performance of the Nested widgets.', 'elementor' ),
+			static::TYPE_HIDDEN => true,
+			'release_status' => self::RELEASE_STATUS_DEV,
+			'default' => self::STATE_ACTIVE,
+		] );
+
+		$this->add_feature( [
 			'name' => 'e_optimized_control_loading',
 			'title' => esc_html__( 'Optimized Control Loading', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
