@@ -441,7 +441,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Throwing sanitization exception.' );
+		$this->expectExceptionMessageMatches( '/Error while sanitizing `mock_prop` prop/' );
 
 		// Act.
 		$widget::sanitize_schema( $widget::get_props_schema(), $widget->get_atomic_settings() );
