@@ -1,12 +1,14 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Attachment_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -28,16 +30,19 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$image_url = $settings['image']['url'];
+		$image_url = esc_url( $settings['image'] );
+		$src = 'src=' . $image_url;
+		$class = '';
 
-		?> <img
-			src='<?php echo esc_url( $image_url ); ?>'
-			alt='Atomic Image'
-		/>
-		<?php
+		if ( ! empty( $settings['classes'] ) ) {
+			$class = "class='" . esc_attr( $settings['classes'] ) . "'";
+		}
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo "<img $src alt='Atomic Image' $class />";
 	}
 
-	private function get_image_size_options() {
+	private static function get_image_size_options() {
 		$wp_image_sizes = self::get_wp_image_sizes();
 
 		$image_sizes = [];
@@ -87,10 +92,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		$image_control = Attachment_Control::bind_to( 'image' )
-			->set_media_types( [ 'image' ] );
+		$image_control = Image_Control::bind_to( 'image' );
 
-		$options = $this->get_image_size_options();
+		$options = static::get_image_size_options();
 
 		$resolution_control = Select_Control::bind_to( 'image_size' )
 			->set_label( esc_html__( 'Image Resolution', 'elementor' ) )
@@ -109,17 +113,23 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$image_sizes = array_map(
+			fn( $size ) => $size['value'],
+			static::get_image_size_options()
+		);
+
 		return [
-			'image' => Atomic_Prop::make()
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
+			'image' => Image_Prop_Type::make()
 				->default( [
-					'$$type' => 'image-url',
-					'value' => [
-						'url' => Utils::get_placeholder_image_src(),
-					],
+					'url' => Utils::get_placeholder_image_src(),
 				] ),
 
-			'image_size' => Atomic_Prop::make()
-				->default( 'large' ),
+			'image_size' => String_Prop_Type::make()
+				->enum( $image_sizes )
+				->default( 'full' ),
 		];
 	}
 }

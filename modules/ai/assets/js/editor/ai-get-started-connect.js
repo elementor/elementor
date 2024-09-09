@@ -19,7 +19,7 @@ function isElementInViewport( el ) {
 	);
 }
 
-export const AiGetStartedConnect = ( { onClose, source } ) => {
+export const AiGetStartedConnect = ( { onClose, source, newHashOnConnect } ) => {
 	const { isLoading, isConnected, isGetStarted, connectUrl, fetchData } = useUserInfo();
 	const [ shouldShowPromotion, setShouldShowPromotion ] = useState( false );
 
@@ -28,6 +28,10 @@ export const AiGetStartedConnect = ( { onClose, source } ) => {
 			const element = elementorFrontend.elements.$body[ 0 ].querySelector( '.e-ai-layout-button' );
 			if ( ! isElementInViewport( element ) ) {
 				element.scrollIntoView( { behavior: 'smooth' } );
+			}
+
+			if ( newHashOnConnect ) {
+				window.location.hash = newHashOnConnect;
 			}
 
 			setTimeout( () => {
@@ -92,4 +96,5 @@ export const AiGetStartedConnect = ( { onClose, source } ) => {
 AiGetStartedConnect.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	source: PropTypes.string.isRequired,
+	newHashOnConnect: PropTypes.string,
 };

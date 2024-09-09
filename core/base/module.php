@@ -76,7 +76,7 @@ abstract class Module extends Base_Object {
 	 * @access public
 	 * @static
 	 *
-	 * @return Module An instance of the class.
+	 * @return $this An instance of the class.
 	 */
 	public static function instance() {
 		$class_name = static::class_name();

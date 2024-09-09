@@ -17,6 +17,16 @@ test.describe( 'Image carousel tests', () => {
 		} );
 	} );
 
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		const editor = await wpAdmin.openNewPage();
+		const breakpoints = new Breakpoints( page );
+		await breakpoints.resetBreakpoints( editor );
+	} );
+
 	test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
@@ -72,17 +82,21 @@ test.describe( 'Image carousel tests', () => {
 		await editor.setPageTemplate( 'default' );
 	} );
 
-	test.skip( 'Image Carousel Responsive Spacing', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Image Carousel Responsive Spacing', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
+
 		await wpAdmin.setExperiments( {
 			additional_custom_breakpoints: true,
 		} );
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
+
 		// Add breakpoints.
 		const breakpoints = new Breakpoints( page );
 		await breakpoints.addAllBreakpoints( editor );
+
+		// Add and configure widget
 		await editor.addWidget( 'image-carousel' );
 		await editor.openPanelTab( 'content' );
 		await editor.addImagesToGalleryControl();
@@ -91,16 +105,19 @@ test.describe( 'Image carousel tests', () => {
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_style_image' );
 		await editor.setSelectControlValue( 'image_spacing', 'custom' );
+
 		// Test Desktop
 		await editor.setSliderControlValue( 'image_spacing_custom', '100' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
+
 		// Test Tablet Extra
 		await editor.togglePreviewMode();
 		await editor.changeResponsiveView( 'tablet_extra' );
 		await editor.setSliderControlValue( 'image_spacing_custom_tablet_extra', '50' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
+
 		// Test Tablet
 		await editor.togglePreviewMode();
 		await editor.changeResponsiveView( 'tablet' );
@@ -116,6 +133,7 @@ test.describe( 'Image carousel tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const imageCarousel = new ImageCarousel( page, testInfo );
 		const editor = new EditorPage( page, testInfo );
+
 		await wpAdmin.openNewPage();
 		await editor.setPageTemplate( 'default' );
 		await editor.closeNavigatorIfOpen();
@@ -126,7 +144,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.openSection( 'section_additional_options' );
 		await editor.setSwitcherControlValue( 'autoplay', false );
 
-		// Assert.
+		// Assert
 		await test.step( 'Assert keyboard navigation in the Frontend', async () => {
 			await editor.publishAndViewPage();
 			await page.locator( EditorSelectors.imageCarousel.prevSliderBtn ).focus();

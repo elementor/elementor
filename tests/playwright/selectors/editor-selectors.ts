@@ -8,6 +8,7 @@ const EditorSelectors = {
 	siteTitle: '.site-title >> nth=0',
 	pageTitle: '.entry-title >> nth=0',
 	pageHeader: '.page-header',
+	toast: '#elementor-toast',
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
@@ -26,9 +27,19 @@ const EditorSelectors = {
 		},
 		siteSettings: {
 			wrapper: '#elementor-panel-page-menu',
+			saveButton: '//button[text()="Save Changes"]',
+			layout: {
+				breakpoints: {
+					removeBreakpointButton: '#elementor-kit-panel-content .select2-selection__choice__remove',
+				},
+			},
 		},
 		userPreferences: {
 			wrapper: '#elementor-panel-editorPreferences-settings-controls',
+		},
+		footerTools: {
+			wrapper: '#elementor-panel-footer',
+			updateButton: '#elementor-panel-saver-button-publish-label',
 		},
 		navigator: {
 			wrapper: '#elementor-navigator',
@@ -37,6 +48,10 @@ const EditorSelectors = {
 			footerButton: '#elementor-panel-footer-navigator i',
 		},
 	},
+	refreshPopup: {
+		reloadButton: '#elementor-save-kit-refresh-page .dialog-button.dialog-ok.dialog-alert-ok',
+	},
+
 	media: {
 		preview: '.elementor-control-media__preview',
 		imageByTitle: ( imageTitle: string ) => `[aria-label="${ imageTitle }"]`,

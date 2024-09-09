@@ -5,9 +5,9 @@ on:
   pull_request:
   workflow_call:
     outputs:
-      artifact_name: 
+      artifact_name:
         value: ${{ jobs.build-plugin.outputs.artifact_name }}
-      changelog_diff: 
+      changelog_diff:
         value: ${{ jobs.build-plugin.outputs.changelog_diff }}
   push:
     branches:
@@ -44,28 +44,38 @@ jobs:
             .*/**/*
             !readme.txt
             !changelog.txt
+
+      - name: Prevent git tag versioning
+        shell: bash
+        run: npm config set git-tag-version false
+
       - name: Install Dependencies
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        run: npm ci
-      - name: Build and Deploy
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        uses: ./.github/workflows/install-dependencies
+
+      - name: Set ENV variables
+        shell: bash
         run: |
-          npm config set git-tag-version false
-          export PLUGIN_VERSION=$(date '+%Y%m%d.%H%M')
-          export PACKAGE_VERSION=$(cat package.json \
-            | grep version \
-            | head -1 \
-            | awk -F: '{ print $2 }' \
-            | sed 's/[",]//g' \
-            | tr -d '[[:space:]]')
-          export PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}-${PLUGIN_VERSION}"
-          export PLUGIN_ZIP_FILENAME="${PLUGIN_FOLDER_FILENAME}.zip"
-          npx grunt build
-          sed -i -E "s/Version: (.*?)/Version: ${PACKAGE_VERSION}-${PLUGIN_VERSION}/g" build/elementor.php
-          sed -i -E "s/ELEMENTOR_VERSION', '(.*?)'/ELEMENTOR_VERSION', '${PACKAGE_VERSION}-${PLUGIN_VERSION}'/g" build/elementor.php
-          mv build elementor
-          zip -r $PLUGIN_ZIP_FILENAME elementor
-          echo "PLUGIN_FOLDER_FILENAME=${PLUGIN_FOLDER_FILENAME}" >> $GITHUB_ENV
+          DATE_VERSION=$(date '+%Y%m%d.%H%M')
+          VERSION=$(cat package.json \
+              | grep version \
+              | head -1 \
+              | awk -F: '{ print $2 }' \
+              | sed 's/[",]//g' \
+              | tr -d '[[:space:]]')
+
+          PACKAGE_VERSION=${VERSION}-${DATE_VERSION}
+          PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}"
+
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+          echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
+
+      - name: Build plugin
+        uses: ./.github/workflows/build-plugin
+        with:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
+
       - uses: actions/upload-artifact@v4
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         with:

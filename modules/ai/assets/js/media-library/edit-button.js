@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { RequestIdsProvider } from '../editor/context/requests-ids';
 import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
-import { getImageId } from './utils';
+import { getImageId, isImageFile } from './utils';
 import { AIMediaEditApp } from './components';
 
 const Icon = styled.i`
@@ -45,7 +45,7 @@ const AIMediaEditAppButtonWrapper = () => {
 	};
 
 	return (
-		<div style={ { marginLeft: '0.5em' } }>
+		isImageFile() && <div style={ { marginLeft: '0.5em' } }>
 			<RequestIdsProvider>
 				<StyledButton onClick={ handleClick }>
 					<Icon className={ 'eicon-ai' } />

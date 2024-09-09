@@ -1,4 +1,5 @@
 <?php
+// TODO: Delete this file in v3.26.0 - It is not in use anymore [ED-15471].
 namespace Elementor\Core\Files\CSS;
 
 use Elementor\Core\Kits\Manager;

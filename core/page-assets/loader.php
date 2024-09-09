@@ -168,11 +168,23 @@ class Loader extends Module {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 					} else {
+						// TODO: Remove the 'e-animations' registration in v3.26.0 [ED-15471].
+						if ( $this->skip_animations_style( $asset_name ) ) {
+							continue;
+						}
+
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					}
 				}
 			}
 		}
+	}
+
+	// TODO: Remove the 'e-animations' registration in v3.26.0 [ED-15471].
+	private function skip_animations_style( $asset_name ): bool {
+		$is_preview = Plugin::$instance->preview->is_preview_mode();
+
+		return $is_preview && 'e-animations' === $asset_name;
 	}
 
 	private function register_assets(): void {

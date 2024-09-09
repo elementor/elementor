@@ -661,6 +661,10 @@ abstract class Base_App {
 					<?php echo wp_json_encode( $data ); ?>
 				);
 
+				opener.dispatchEvent( new CustomEvent( 'elementor/connect/success' ),
+					<?php echo wp_json_encode( $data ); ?>
+				);
+
 				window.close();
 				opener.focus();
 			} else {

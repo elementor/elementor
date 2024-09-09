@@ -4,3 +4,9 @@
 		transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s, transform var( --e-transform-transition-duration, 400ms );
 	}
 }
+
+.elementor-heading-title {
+	padding: 0;
+	margin: 0;
+	line-height: 1;
+}

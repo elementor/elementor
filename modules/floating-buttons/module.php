@@ -48,6 +48,18 @@ class Module extends BaseModule {
 		];
 	}
 
+	// TODO: This is a hidden experiment which needs to remain enabled like this until 3.26 for pro compatibility.
+	public static function get_experimental_data() {
+		return [
+			'name' => self::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Floating Buttons', 'elementor' ),
+			'hidden' => true,
+			'default' => Manager::STATE_ACTIVE,
+			'release_status' => Manager::RELEASE_STATUS_STABLE,
+			'mutable' => false,
+		];
+	}
+
 	public function get_name(): string {
 		return static::EXPERIMENT_NAME;
 	}
@@ -235,6 +247,13 @@ class Module extends BaseModule {
 
 			$this->override_admin_bar_add_contact( $admin_bar );
 		}, 100 );
+	}
+
+	public function is_preview_for_document( $post_id ) {
+		$preview_id = ElementorUtils::get_super_global_value( $_GET, 'preview_id' );
+		$preview = ElementorUtils::get_super_global_value( $_GET, 'preview' );
+
+		return 'true' === $preview && (int) $post_id === (int) $preview_id;
 	}
 
 	public function handle_click_tracking() {
@@ -523,7 +542,11 @@ class Module extends BaseModule {
 				continue;
 			}
 
-			if ( in_array( 'include/general', $conditions ) ) {
+			if (
+				in_array( 'include/general', $conditions ) &&
+				! $this->is_preview_for_document( $post_id ) &&
+				get_the_ID() !== $post_id
+			) {
 				$document = Plugin::$instance->documents->get( $post_id );
 				$document->print_content();
 			}
@@ -542,7 +565,7 @@ class Module extends BaseModule {
 		wp_register_style(
 			'widget-floating-buttons',
 			$this->get_css_assets_url( 'widget-floating-buttons', null, true, true ),
-			[],
+			[ 'elementor-icons' ],
 			ELEMENTOR_VERSION
 		);
 	}

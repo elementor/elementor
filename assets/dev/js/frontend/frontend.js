@@ -14,12 +14,13 @@ import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 import Controls from './utils/controls';
+import AnchorScrollMargin from './utils/anchor-scroll-margin';
 
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
 	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
-	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
+	AnchorsModule = require( 'elementor-frontend/utils/anchors' ); // // TODO: Remove anchors.js file in v3.27.0 [ED-15717].
 
 export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
@@ -192,7 +193,6 @@ export default class Frontend extends elementorModules.ViewModule {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
 			baseVideoLoader: new BaseVideoLoader(),
-			anchors: new AnchorsModule(),
 			get lightbox() {
 				return LightboxManager.getLightbox();
 			},
@@ -204,6 +204,13 @@ export default class Frontend extends elementorModules.ViewModule {
 			events: Events,
 			controls: new Controls(),
 		};
+
+		// TODO: Remove experiment in v3.27.0 [ED-15717].
+		if ( this.config.experimentalFeatures.e_css_smooth_scroll ) {
+			this.utils.anchor_scroll_margin = new AnchorScrollMargin();
+		} else {
+			this.utils.anchors = new AnchorsModule();
+		}
 
 		// TODO: BC since 2.4.0
 		this.modules = {

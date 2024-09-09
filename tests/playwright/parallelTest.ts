@@ -8,7 +8,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 	// Use the same storage state for all tests in this worker.
 	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
 	workerBaseURL: [ async ( {}, use, testInfo ) => {
-		await use( ( 1 === Number( testInfo.parallelIndex ) ) ? process.env.TEST_SERVER : process.env.DEV_SERVER );
+		await use( ( 1 === Number( testInfo.workerIndex ) ) ? process.env.TEST_SERVER : process.env.DEV_SERVER );
 	}, { scope: 'worker' } ],
 
 	// Use the same storage state for all tests in this worker.
@@ -17,7 +17,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 	// Authenticate once per worker with a worker-scoped fixture.
 	workerStorageState: [ async ( { workerBaseURL }, use, testInfo ) => {
 		// Use parallelIndex as a unique identifier for each worker.
-		const id = testInfo.parallelIndex;
+		const id = testInfo.workerIndex;
 		const fileName = path.resolve( testInfo.project.outputDir, `.storageState-${ id }.json` );
 
 		if ( fs.existsSync( fileName ) ) {
@@ -42,7 +42,8 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 			const apiRequests = new ApiRequests( workerBaseURL, nonce );
 			await use( apiRequests );
 		} catch ( e ) {
-			throw new Error( `Failed to fetch Nonce. Base URL: ${ workerBaseURL }, Storage State: ${ workerStorageState }`, { cause: e } );
+			const fileContent = fs.readFileSync( workerStorageState, 'utf8' );
+			throw new Error( `Failed to fetch Nonce. Base URL: ${ workerBaseURL }, Storage State: ${ workerStorageState }, Storage State content: ${ fileContent }`, { cause: e } );
 		}
 	}, { scope: 'worker' } ],
 

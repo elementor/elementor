@@ -3,6 +3,9 @@ namespace Elementor\Testing\Modules\AtomicWidgets;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Types_Registry;
+use Elementor\Modules\AtomicWidgets\PropTypes\String_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -30,7 +33,7 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_it__enqueues_packages_when_experiment_on() {
 		// Arrange
-		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->experiment_on();
 
 		// Act
 		new Module();
@@ -42,7 +45,7 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_it__does_not_enqueue_packages_and_styles_when_experiment_off() {
 		// Arrange
-		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+		$this->experiment_off();
 
 		// Act
 		new Module();
@@ -50,5 +53,13 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		$packages = apply_filters( 'elementor/editor/v2/packages', [] );
 		$this->assertEmpty( $packages );
+	}
+
+	private function experiment_on() {
+		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+	}
+
+	private function experiment_off() {
+		Plugin::instance()->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 }

@@ -111,17 +111,6 @@
 	}
 }
 
-// Row
-// BC: Deprecated since 3.0.0 - use `.elementor-container`.
-.elementor-row {
-	width: 100%;
-	display: flex;
-
-	@media (max-width: $screen-tablet-max) {
-		flex-wrap: wrap;
-	}
-}
-
 // Widget
 .elementor-widget-wrap {
 	position: relative;
@@ -161,13 +150,6 @@
 .elementor-column {
 	position: relative;
 	min-height: 1px;
-	display: flex;
-}
-
-// BC: Deprecated since 3.0.0 - use `.elementor-widget-wrap`.
-.elementor-column-wrap {
-	width: 100%;
-	position: relative;
 	display: flex;
 }
 

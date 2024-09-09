@@ -280,9 +280,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'return_value' => 'yes',
 				'default' => $config['content']['floating_bar_section']['close_switch_default'],
-				'condition' => [
-					'advanced_toggle_sticky' => 'yes',
-				],
 			]
 		);
 

@@ -1,3 +1,5 @@
+import { getVariantByMeta } from '../utils/get-variants';
+
 /**
  * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
@@ -18,12 +20,6 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 		if ( 0 === Object.keys( args.props ).length ) {
 			throw new Error( 'Props are empty' );
 		}
-	}
-
-	getVariantByMeta( variants, meta ) {
-		return variants.find( ( variant ) => {
-			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
-		} );
 	}
 
 	updateExistingVariant( style, variant, props ) {
@@ -56,7 +52,7 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 			throw new Error( 'Style Def not found' );
 		}
 
-		const variant = this.getVariantByMeta( style.variants, meta );
+		const variant = getVariantByMeta( style.variants, meta );
 
 		if ( ! variant ) {
 			throw new Error( 'Style Variant not found' );

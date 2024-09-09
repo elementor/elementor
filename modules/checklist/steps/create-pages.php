@@ -40,7 +40,15 @@ class Create_Pages extends Step_Base {
 		return Plugin::$instance->documents->get_create_new_post_url( 'page' );
 	}
 
+	public function get_learn_more_url() : string {
+		return 'http://go.elementor.com/app-website-checklist-pages-article';
+	}
+
 	public function get_is_completion_immutable() : bool {
 		return true;
+	}
+
+	public function get_image_src() : string {
+		return 'https://assets.elementor.com/checklist/v1/images/checklist-step-3.jpg';
 	}
 }
