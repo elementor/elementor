@@ -202,7 +202,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		const steps = await checklistHelper.getSteps( request ),
 			doneStepIds: StepId[] = [];
 
-		let onlyActionSteps = steps.filter( step => step.config.id !== 'all_done' );
+		const onlyActionSteps = steps.filter( ( step ) => 'all_done' !== step.config.id );
 
 		for ( const step of steps ) {
 			if ( checklistHelper.isStepProLocked( step.config.id ) ) {
@@ -251,17 +251,17 @@ test.describe( 'Launchpad checklist tests', () => {
 		}
 	} );
 
-	test( 'Checklist all done step', async ( { page, apiRequests }, testInfo )=> {
-		const wpAdmin  = new WpAdminPage( page, testInfo, apiRequests ),
+	test( 'Checklist all done step', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
 			closeButton = editor.page.locator( selectors.closeButton ),
 			checklist = editor.page.locator( selectors.popup ),
-			allDone  = editor.page.locator( selectors.allDone ),
+			allDone = editor.page.locator( selectors.allDone ),
 			gotItButton = editor.page.locator( selectors.gotItButton ),
 			url = '/wp-json/elementor/v1/checklist/steps';
 
-		let checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
 		const returnDataMock = ( isCompleted ) => {
 			return {
@@ -283,7 +283,7 @@ test.describe( 'Launchpad checklist tests', () => {
 							required_license: 'free',
 							is_locked: false,
 							promotion_url: '',
-						}
+						},
 					},
 					{
 						is_marked_completed: false,
@@ -303,7 +303,7 @@ test.describe( 'Launchpad checklist tests', () => {
 							is_locked: false,
 							promotion_url: '',
 						},
-					}, ]
+					} ],
 				};
 		};
 
@@ -319,7 +319,6 @@ test.describe( 'Launchpad checklist tests', () => {
 			await expect( checklist ).toBeVisible();
 			await expect( allDone ).toBeHidden();
 			await closeButton.click();
-
 		} );
 
 		await test.step( 'All done is visible, all steps are complete', async () => {
@@ -333,11 +332,8 @@ test.describe( 'Launchpad checklist tests', () => {
 			await expect( checklist ).toBeVisible();
 			await expect( allDone ).toBeVisible();
 			await gotItButton.click();
-			await page.pause();
 			await expect( rocketButton ).toBeHidden();
-			await page.pause();
 			await checklistHelper.setChecklistSwitcherInPreferences( false );
-
 		} );
 	} );
 } );

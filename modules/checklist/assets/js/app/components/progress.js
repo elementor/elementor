@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { isStepChecked } from '../../utils/functions';
 
 const Progress = ( { steps } ) => {
-	const onlyActionSteps = steps.filter( step => step.config.id !== 'all_done' );
-	const progress = onlyActionSteps.filter( isStepChecked ).length  * 100 / onlyActionSteps.length;
+	const onlyActionSteps = steps.filter( ( step ) => step.config.id !== 'all_done' );
+	const progress = onlyActionSteps.filter( isStepChecked ).length * 100 / onlyActionSteps.length;
 
 	return (
 		<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>

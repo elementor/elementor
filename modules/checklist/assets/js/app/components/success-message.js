@@ -1,4 +1,6 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@elementor/ui';
+import PropTypes from "prop-types";
+import ChecklistCardContent from "./checklist-card-content";
 
 const SuccessMessage = ( props ) => {
 	const {
@@ -19,7 +21,7 @@ const SuccessMessage = ( props ) => {
 				external: true,
 			},
 		} )
-	}
+	};
 
 	return (
 		<Card elevation={ 0 } square={ true } data-step-id={ id }>
@@ -44,7 +46,11 @@ const SuccessMessage = ( props ) => {
 				</Button>
 			</CardActions>
 		</Card>
-	)
-}
+	);
+};
 
 export default SuccessMessage;
+
+SuccessMessage.propTypes = {
+	step: PropTypes.object.isRequired,
+};
