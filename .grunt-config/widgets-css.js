@@ -131,9 +131,8 @@ class WidgetsCss {
 	getModulesFrontendScssFiles( filePath, frontendScssFiles = [] ) {
 		fs.readdirSync( filePath ).forEach( ( fileName ) => {
 			const fileFullPath = path.join( filePath, fileName );
-
-			const isFrontendScssFile = fileName.indexOf( 'frontend.scss' ) > -1,
-				isWidgetsScssFile = fileName.indexOf( '.scss' ) > -1 && filePath.indexOf( '/widgets' ) > -1;
+			const isFrontendScssFile = fileName.indexOf( 'frontend.scss' ) > -1;
+			const isWidgetsScssFile = fileName.indexOf( '.scss' ) > -1 && filePath.indexOf( '/widgets' ) > -1;
 
 			if ( fs.lstatSync( fileFullPath ).isDirectory() ) {
 				this.getModulesFrontendScssFiles( fileFullPath, frontendScssFiles );
