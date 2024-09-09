@@ -45,8 +45,9 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 	apply( args ) {
 		const { container, styleDefID, meta, props } = args;
 
-		const oldStyles = container.model.get( 'styles' ) || {};
-		let style = oldStyles[ styleDefID ];
+		const styles = container.model.get( 'styles' ) || {};
+
+		const style = styles[ styleDefID ];
 
 		if ( ! style ) {
 			throw new Error( 'Style Def not found' );
@@ -58,14 +59,9 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 			throw new Error( 'Style Variant not found' );
 		}
 
-		style = this.updateExistingVariant( style, variant, props );
+		styles[ style.id ] = this.updateExistingVariant( style, variant, props );
 
-		const newStyles = {
-			...oldStyles,
-			[ style.id ]: style,
-		};
-
-		container.model.set( 'styles', newStyles );
+		container.model.set( 'styles', styles );
 	}
 }
 
