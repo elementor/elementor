@@ -43,6 +43,10 @@ export default class NestedAccordion extends Base {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
+		if ( elementorFrontend.isEditMode() && ! elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters ) {
+			this.interlaceContainers();
+		}
+
 		this.injectKeyboardHandler();
 	}
 
@@ -53,6 +57,14 @@ export default class NestedAccordion extends Base {
 				toggleTitle: this.clickListener.bind( this ),
 			} );
 		}
+	}
+
+	interlaceContainers() {
+		const { $contentContainers, $accordionItems } = this.getDefaultElements();
+
+		$contentContainers.each( ( index, element ) => {
+			$accordionItems[ index ].appendChild( element );
+		} );
 	}
 
 	linkContainer( event ) {
