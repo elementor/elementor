@@ -42,5 +42,4 @@ class All_Done extends Step_Base {
 	public function is_absolute_completed() : bool {
 		return true;
 	}
-
 }

@@ -30,6 +30,9 @@ const ChecklistWrapper = ( { steps, setSteps } ) => {
 							<SuccessMessage key={ index } step={ step } />
 						);
 					}
+					else {
+						return null;
+					}
 				} )
 			};
 		</List>

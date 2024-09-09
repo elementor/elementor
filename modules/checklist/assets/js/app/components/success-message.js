@@ -1,6 +1,5 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@elementor/ui';
-import PropTypes from "prop-types";
-import ChecklistCardContent from "./checklist-card-content";
+import PropTypes from 'prop-types';
 
 const SuccessMessage = ( props ) => {
 	const {
@@ -11,7 +10,7 @@ const SuccessMessage = ( props ) => {
 		cta_text: ctaText,
 	} = props.step.config;
 
-	const redirectHandler = () => {
+	const hideChecklist = () => {
 		$e.run( 'document/elements/settings', {
 			container: elementor.settings.editorPreferences.getEditedView().getContainer(),
 			settings: {
@@ -20,7 +19,7 @@ const SuccessMessage = ( props ) => {
 			options: {
 				external: true,
 			},
-		} )
+		} );
 	};
 
 	return (
@@ -40,7 +39,7 @@ const SuccessMessage = ( props ) => {
 					color="primary"
 					size="small"
 					variant="contained"
-					onClick={ redirectHandler }
+					onClick={ hideChecklist }
 				>
 					{ ctaText }
 				</Button>
