@@ -91,6 +91,11 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	final public function get_data_for_save() {
 		$data = parent::get_data_for_save();
+		$schema = static::get_props_schema();
+
+		$raw_settings = $data['settings'];
+		$sanitized_settings = static::sanitize_schema( $schema, $raw_settings );
+		$data['settings'] = $sanitized_settings;
 
 		$data['version'] = $this->version;
 
@@ -150,6 +155,28 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 				Utils::safe_throw( "Default value for `$key` prop is invalid in `{$widget_name}` - {$e->getMessage()}" );
 			}
 		}
+	}
+
+	public static function sanitize_schema( array $schema, array $settings ): array {
+		$widget_name = static::class;
+
+		$sanitized_values = [];
+
+		foreach ( $schema as $key => $prop ) {
+			if ( $prop instanceof Prop_Type ) {
+				try {
+					$sanitized_value = $prop->sanitize( $settings[ $key ] );
+
+					if ( null !== $sanitized_value ) {
+						$sanitized_values[ $key ] = $sanitized_value;
+					}
+				} catch ( \Exception $e ) {
+					Utils::safe_throw( "Error while sanitizing `$key` prop in `{$widget_name}` - {$e->getMessage()}" );
+				}
+			}
+		}
+
+		return $sanitized_values;
 	}
 
 	private function transform_setting( $setting ) {
