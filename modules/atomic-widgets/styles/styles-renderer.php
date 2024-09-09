@@ -129,17 +129,17 @@ class Styles_Renderer {
 		return strtolower( preg_replace( '/([a-zA-Z])(?=[A-Z])/', '$1-', $str ) );
 	}
 
-	private function wrap_with_media_query( string $breakpoint, string $css ): string {
-		if ( ! isset( $this->breakpoints[ $breakpoint ] ) ) {
+	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {
+		if ( ! isset( $this->breakpoints[ $breakpoint_id ] ) ) {
 			return $css;
 		}
 
-		$breakpoint_config = $this->breakpoints[ $breakpoint ];
-		if ( isset( $breakpoint_config['is_enabled'] ) && ! $breakpoint_config['is_enabled'] ) {
+		$breakpoint = $this->breakpoints[ $breakpoint_id ];
+		if ( isset( $breakpoint['is_enabled'] ) && ! $breakpoint['is_enabled'] ) {
 			return '';
 		}
 
-		$size = $this->get_breakpoint_size( $this->breakpoints[ $breakpoint ] );
+		$size = $this->get_breakpoint_size( $this->breakpoints[ $breakpoint_id ] );
 
 		return $size ? '@media(' . $size . '){' . $css . '}' : $css;
 	}
