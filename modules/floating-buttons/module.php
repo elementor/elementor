@@ -108,7 +108,12 @@ class Module extends BaseModule {
 			} );
 		}
 
-		$this->flush_permalinks_on_elementor_version_change();
+		add_action( 'current_screen', function() {
+			$screen = get_current_screen();
+			if ( $screen && 'edit-e-floating-buttons' === $screen->id ) {
+				$this->flush_permalinks_on_elementor_version_change();
+			}
+		});
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
