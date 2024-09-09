@@ -8,9 +8,6 @@ import { isStepChecked } from "../../utils/functions";
 const ChecklistWrapper = ( { steps, setSteps } ) => {
 	const [ expandedIndex, setExpandedIndex ] = useState( -1 );
 	const onlyActionSteps = steps.filter( step => step.config.id !== 'all_done' );
-	console.log(onlyActionSteps);	console.log(steps);
-
-
 	let checkIfAllStepsCompleted = onlyActionSteps.filter( isStepChecked ).length === onlyActionSteps.length;
 
 	return (

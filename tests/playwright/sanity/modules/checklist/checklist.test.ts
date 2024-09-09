@@ -178,7 +178,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			editor = await wpAdmin.openNewPage(),
 			checklistHelper = new ChecklistHelper( page, testInfo, apiRequests ),
 			steps = await checklistHelper.getSteps( request ),
-			onlyActionSteps = steps.filter( step => step.config.id !== 'all_done' ),
+			onlyActionSteps = steps.filter( ( step ) => step.config.id !== 'all_done' ),
 			progressToCompare = ( Math.round( onlyActionSteps.filter( checklistHelper.isStepCompleted ).length ) * 100 / onlyActionSteps.length ),
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
 			pageProgress = await checklistHelper.getProgressFromPopup( 'editor' );
@@ -202,14 +202,20 @@ test.describe( 'Launchpad checklist tests', () => {
 		const steps = await checklistHelper.getSteps( request ),
 			doneStepIds: StepId[] = [];
 
+		let onlyActionSteps = steps.filter( step => step.config.id !== 'all_done' );
+
 		for ( const step of steps ) {
 			if ( checklistHelper.isStepProLocked( step.config.id ) ) {
 				continue;
 			}
 
+			if ( step.config.id === 'all_done' ) {
+				continue;
+			}
+
 			const markAsButton = page.locator( checklistHelper.getStepContentSelector( step.config.id, selectors.markAsButton ) ),
 				checkIconSelector = checklistHelper.getStepItemSelector( step.config.id, selectors.stepIcon );
-
+			await page.pause();
 			await checklistHelper.toggleChecklistItem( step.config.id, 'editor', true );
 			await expect( markAsButton ).toHaveText( 'Mark as done' );
 			await expect( page.locator( checkIconSelector + ' [data-is-checked="false"]' ) ).toBeVisible();
@@ -220,7 +226,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			await expect( page.locator( checkIconSelector + ' [data-is-checked="true"]' ) ).toBeVisible();
 
 			expect( await checklistHelper.getProgressFromPopup( 'editor' ) )
-				.toBe( Math.round( doneStepIds.length * 100 / steps.length ) );
+				.toBe( Math.round( doneStepIds.length * 100 / onlyActionSteps.length ) );
 		}
 
 		await wpAdmin.openNewPage();
@@ -245,8 +251,8 @@ test.describe( 'Launchpad checklist tests', () => {
 		}
 	} );
 
-	test( 'Checklist all done step', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+	test( 'Checklist all done step', async ( { page, apiRequests }, testInfo )=> {
+		const wpAdmin  = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
 			closeButton = editor.page.locator( selectors.closeButton ),
@@ -254,6 +260,8 @@ test.describe( 'Launchpad checklist tests', () => {
 			allDone  = editor.page.locator( selectors.allDone ),
 			gotItButton = editor.page.locator( selectors.gotItButton ),
 			url = '/wp-json/elementor/v1/checklist/steps';
+
+		let checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
 		const returnDataMock = ( isCompleted ) => {
 			return {
@@ -274,7 +282,7 @@ test.describe( 'Launchpad checklist tests', () => {
 							image_src: 'https://assets.elementor.com/checklist/v1/images/checklist-step-6.jpg',
 							required_license: 'free',
 							is_locked: false,
-							promotion_url: ''
+							promotion_url: '',
 						}
 					},
 					{
@@ -293,9 +301,9 @@ test.describe( 'Launchpad checklist tests', () => {
 							image_src: 'https://assets.elementor.com/checklist/v1/images/checklist-step-7.jpg',
 							required_license: 'free',
 							is_locked: false,
-							promotion_url: ''
+							promotion_url: '',
 						},
-					} ]
+					}, ]
 				};
 		};
 
@@ -327,6 +335,9 @@ test.describe( 'Launchpad checklist tests', () => {
 			await gotItButton.click();
 			await page.pause();
 			await expect( rocketButton ).toBeHidden();
+			await page.pause();
+			await checklistHelper.setChecklistSwitcherInPreferences( false );
+
 		} );
 	} );
 } );
