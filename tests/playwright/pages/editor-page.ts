@@ -303,6 +303,10 @@ export default class EditorPage extends BasePage {
 		await this.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
 	}
 
+	async setWidgetTab( tab: 'content' | 'style' | 'advanced' ) {
+		await this.page.locator( `.elementor-tab-control-${ tab }` ).click();
+	}
+
 	/**
 	 * Paste styling setting on the element.
 	 *
@@ -450,11 +454,9 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @param {string} controlId - The control to set the value to.
 	 * @param {string} value     - The value to set.
-	 *
-	 * @return {Promise<void>}
 	 */
 	async setSliderControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value );
 	}
 
 	/**
