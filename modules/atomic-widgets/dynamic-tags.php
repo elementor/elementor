@@ -26,7 +26,7 @@ class Dynamic_Tags {
 	}
 
 	public static function ignore() {
-		return [ 'dynamic' => false ];
+		return [ 'dynamic', false ];
 	}
 
 	private function add_atomic_dynamic_tags_settings( $settings ) {

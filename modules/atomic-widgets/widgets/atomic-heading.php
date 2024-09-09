@@ -98,7 +98,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( 'h2' ),
 
 			'title' => String_Prop_Type::make()
-//				->meta( Dynamic_Tags::ignore() )
 				->default( __( 'Your Title Here', 'elementor' ) ),
 		];
 	}
