@@ -77,6 +77,24 @@ export default class EditorPage extends BasePage {
 			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
 
+	async uploadImages( images: string[], resourcesBaseDir: string, imageFileType: string, beforeImageUpload: ( editor: EditorPage ) => Promise<void>, afterimageUpload: ( editor: EditorPage ) => Promise<void> ) {
+		await beforeImageUpload( this );
+		await this.page.waitForSelector( '#media-frame-title' );
+
+		for ( const image of images ) {
+			const alreadyLoaded = await this.page.locator( '[aria-label="' + image + '"]' ).count();
+
+			if ( alreadyLoaded !== 0 ) {
+				await this.page.click( '[aria-label="' + image + '"]' );
+			} else {
+				await this.page.click( 'text=Upload files' );
+				await this.page.setInputFiles( 'input[type="file"]', `${ resourcesBaseDir }/${ image }${ imageFileType }` );
+			}
+		}
+
+		await afterimageUpload( this );
+	}
+
 	/**
 	 * Load a template from a file.
 	 *
