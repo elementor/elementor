@@ -11,7 +11,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Transformers\Array_Transformer;
 use Elementor\Modules\AtomicWidgets\Styles\Transformers\Size_Transformer;
 use Elementor\Plugin;
 
-class Widget_Styles {
+class Atomic_Styles {
 	/**
 	 * @var array<string, Style_Transformer_Base> $transformers
 	 */

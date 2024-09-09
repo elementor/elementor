@@ -34,7 +34,7 @@ class Module extends BaseModule {
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			( new Dynamic_Tags() )->register_hooks();
-			( new Widget_Styles() )->register_hooks();
+			( new Atomic_Styles() )->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
