@@ -208,6 +208,7 @@ test.describe( 'Launchpad checklist tests', () => {
 
 			const markAsButton = page.locator( checklistHelper.getStepContentSelector( step.config.id, selectors.markAsButton ) ),
 				checkIconSelector = checklistHelper.getStepItemSelector( step.config.id, selectors.stepIcon );
+
 			await checklistHelper.toggleChecklistItem( step.config.id, 'editor', true );
 			await expect( markAsButton ).toHaveText( 'Mark as done' );
 			await expect( page.locator( checkIconSelector + ' [data-is-checked="false"]' ) ).toBeVisible();

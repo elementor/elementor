@@ -6,7 +6,6 @@ use Elementor\Modules\Checklist\Steps\Assign_Homepage;
 use Elementor\Modules\Checklist\Steps\Create_Pages;
 use Elementor\Modules\Checklist\Steps\Setup_Header;
 use Elementor\Modules\Checklist\Steps\Add_Logo;
-use Elementor\Modules\Checklist\Steps\All_Done;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
