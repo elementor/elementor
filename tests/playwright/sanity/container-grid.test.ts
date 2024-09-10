@@ -50,7 +50,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.changeResponsiveView( 'mobile' );
 
 			const rowsMobileUnitLabel = page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
-			expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
+			await expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
 
 			await editor.changeResponsiveView( 'desktop' );
 		} );

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Utils;
@@ -124,6 +125,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 		);
 
 		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
 			'image' => Image_Prop_Type::make()
 				->default( [
 					'url' => Utils::get_placeholder_image_src(),

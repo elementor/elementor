@@ -35,27 +35,7 @@ class Add_Logo extends Step_Base {
 	}
 
 	public function get_cta_url() : string {
-		$link = Page::get_site_settings_url_config( true );
-
-		if ( ! $link ) {
-			return Page::get_elementor_create_new_page_url( self::SITE_IDENTITY_TAB );
-		}
-
-		$parsed_url = wp_parse_url( $link );
-		$query_params = [];
-		wp_parse_str( $parsed_url['query'] ?? '', $query_params );
-		$additional_params = [
-			'active-document' => Plugin::$instance->kits_manager->get_active_id(),
-			'active-tab' => self::SITE_IDENTITY_TAB,
-		];
-
-		$merged_params = array_merge( $query_params, $additional_params );
-
-		if ( $this->page_exists( $merged_params ) ) {
-			return $this->wordpress_adapter->add_query_arg( $additional_params, $link );
-		}
-
-		return Page::get_elementor_create_new_page_url();
+		return Page::get_site_settings_url_config( self::SITE_IDENTITY_TAB )['url'];
 	}
 
 	public function get_is_completion_immutable() : bool {
