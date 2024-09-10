@@ -9,9 +9,9 @@ const SuccessMessage = () => {
 				sx={ { height: 180 } }
 			/>
 			<CardContent sx={ { textAlign: 'center' } }>
-				<Typography variant="h6" color="text.primary">{ __( 'You\'re on your way!' ) }</Typography>
+				<Typography variant="h6" color="text.primary">{ __( 'You\'re on your way!', 'elementor' ) }</Typography>
 				<Typography variant="body2" color="text.secondary" component="p">
-					{ __( 'With these steps, you\'ve got a great base for a robust website. Enjoy your web creation journey!' ) }
+					{ __( 'With these steps, you\'ve got a great base for a robust website. Enjoy your web creation journey!', 'elementor' ) }
 				</Typography>
 			</CardContent>
 			<CardActions sx={ { justifyContent: 'center' } }>
@@ -21,7 +21,7 @@ const SuccessMessage = () => {
 					variant="contained"
 					onClick={ hideChecklist }
 				>
-					{ __( 'Got it' ) }
+					{ __( 'Got it', 'elementor' ) }
 				</Button>
 			</CardActions>
 		</Card>
