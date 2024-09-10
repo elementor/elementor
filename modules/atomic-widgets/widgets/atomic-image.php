@@ -29,8 +29,12 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
+		if ( ! isset( $settings['image'] ) ) {
+			return;
+		}
+
 		$attrs = array_filter( array_merge(
-			$settings['image'] ?? [],
+			$settings['image'],
 			[ 'class' => $settings['classes'] ?? '' ]
 		) );
 

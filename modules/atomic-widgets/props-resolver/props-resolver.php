@@ -18,21 +18,21 @@ class Props_Resolver {
 	const TRANSFORM_DEPTH_LIMIT = 3;
 
 	const CONTEXT_SETTINGS = 'settings';
-	const CONTEXT_STYLE = 'style';
+	const CONTEXT_STYLES = 'styles';
 
 	/**
-	 * @var array<Props_Resolver>
+	 * @var array<string, Props_Resolver>
 	 */
 	private static array $instances = [];
 
 	private Transformers_Registry $transformers;
 
-	public function __construct( Transformers_Registry $transformers ) {
+	private function __construct( Transformers_Registry $transformers ) {
 		$this->transformers = $transformers;
 	}
 
-	public static function for_style() {
-		return self::instance( self::CONTEXT_STYLE );
+	public static function for_styles() {
+		return self::instance( self::CONTEXT_STYLES );
 	}
 
 	public static function for_settings() {
@@ -43,7 +43,7 @@ class Props_Resolver {
 		if ( ! isset( self::$instances[ $context ] ) || $fresh ) {
 			$registry = new Transformers_Registry();
 
-			do_action( "elementor/atomic-widgets/{$context}/transformers", $registry );
+			do_action( "elementor/atomic-widgets/{$context}/transformers/register", $registry );
 
 			self::$instances[ $context ] = new self( $registry );
 		}

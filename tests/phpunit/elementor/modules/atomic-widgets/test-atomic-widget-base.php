@@ -22,7 +22,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	/**
 	 * @dataProvider get_atomic_settings_data_provider
 	 */
-	public function test_get_atomic_settings($prop_types, $settings, $result) {
+	public function test_get_atomic_settings( $prop_types, $settings, $result ) {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => $prop_types,

@@ -37,6 +37,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 		echo sprintf(
 			'<%1$s %2$s>%3$s</%1$s>',
+			// TODO: we should avoid using `validate html tag` and use the enum validation instead.
 			Utils::validate_html_tag( $tag ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			Utils::render_html_attributes( $attrs ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			esc_html( $title )
