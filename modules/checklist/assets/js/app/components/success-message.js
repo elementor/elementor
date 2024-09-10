@@ -3,7 +3,7 @@ import { hideChecklist } from '../../utils/functions';
 
 const SuccessMessage = () => {
 	return (
-		<Card elevation={ 0 } square={ true } className="all_done">
+		<Card elevation={ 0 } square={ true } className="e-checklist-done">
 			<CardMedia
 				image="https://assets.elementor.com/checklist/v1/images/checklist-step-7.jpg"
 				sx={ { height: 180 } }
