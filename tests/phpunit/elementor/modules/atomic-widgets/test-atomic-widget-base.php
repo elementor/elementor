@@ -20,157 +20,82 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
-	public function test_get_atomic_settings__returns_the_saved_value() {
+	/**
+	 * @dataProvider get_atomic_settings_data_provider
+	 */
+	public function test_get_atomic_settings( $prop_types, $settings, $result ) {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'test_prop' => String_Prop_Type::make()
-					->default( 'default-value' ),
-			],
-			'settings' => [
-				'test_prop' => 'saved-value',
-			],
+			'props_schema' => $prop_types,
+			'settings' => $settings,
 		] );
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
 
 		// Assert.
-		$this->assertSame( [
-			'test_prop' => 'saved-value',
-		], $settings );
+		$this->assertSame( $result, $settings );
 	}
 
-	public function test_get_atomic_settings__returns_the_default_value() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'test_prop' => String_Prop_Type::make()
-					->default( 'default-value-a' ),
-			],
-			'settings' => [],
-		] );
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertSame( [
-			'test_prop' => 'default-value-a',
-		], $settings );
-	}
-
-	public function test_get_atomic_settings__returns_only_settings_that_are_defined_in_the_schema() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'test_prop' => String_Prop_Type::make()
-					->default( 'default-value-a' ),
-			],
-			'settings' => [
-				'test_prop' => 'saved-value',
-				'not_in_schema' => 'not-in-schema',
-			],
-		] );
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertSame( [
-			'test_prop' => 'saved-value',
-		], $settings );
-	}
-
-	public function test_get_atomic_settings__transforms_classes_prop() {
-		// Arrange.
-		$widget = $this->make_mock_widget(
-			[
-				'props_schema' => [
-					'should_transform' => Classes_Prop_Type::make()
-						->default( [] ),
+	public function get_atomic_settings_data_provider() {
+		return [
+			'basic' => [
+				'prop_types' => [
+					'text' => String_Prop_Type::make()->default( 'The greatest text' ),
+					'tag' => String_Prop_Type::make()->default( 'h2' ),
 				],
 				'settings' => [
-					'should_transform' => [
-						'$$type' => 'classes',
-						'value' => [ 'one', 'two', 'three' ],
-					],
+					'text' => 'This text is more great than the greatest text',
+					'invalid_prop' => 'This prop is not in the schema',
+				],
+				'result' => [
+					'text' => 'This text is more great than the greatest text',
+					'tag' => 'h2',
 				],
 			],
-		);
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertSame( [
-			'should_transform' => 'one two three',
-		], $settings );
-	}
-
-	public function test_get_atomic_settings__returns_empty_string_when_classes_prop_value_is_not_an_array() {
-		// Arrange.
-		$widget = $this->make_mock_widget(
-			[
-				'props_schema' => [
-					'classes' => Classes_Prop_Type::make()
-						->default( [] ),
+			'cannot transform value' => [
+				'prop_types' => [
+					'text' => String_Prop_Type::make()->default( 'Not transformable' ),
+				],
+				'settings' => [
+					'text' => [
+						'$$type' => 'not_transformable',
+						'value' => 'Not transformable',
+					],
+				],
+				'result' => [
+					'text' => null,
+				],
+			],
+			'transform classes' => [
+				'prop_types' => [
+					'classes' => Classes_Prop_Type::make()->default( [] ),
+					'inner_classes' => Classes_Prop_Type::make()->default( [] ),
+					'outer_classes' => Classes_Prop_Type::make()->default( [] ),
 				],
 				'settings' => [
 					'classes' => [
 						'$$type' => 'classes',
-						'value' => 'not-an-array',
+						'value' => [ 'one', 'two', 'three' ],
+					],
+					'outer_classes' => [
+						'$$type' => 'classes',
+						'value' => 111, // Invalid value for classes
 					],
 				],
-			],
-		);
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertSame( [
-			'classes' => '',
-		], $settings );
-	}
-
-	public function test_get_atomic_settings__skip_the_value_transformation_when_it_is_not_transformable() {
-		// Arrange.
-		$widget = $this->make_mock_widget(
-			[
-				'props_schema' => [
-					'invalid_transformable_setting_1' => String_Prop_Type::make()->default( '' ),
-					'invalid_transformable_setting_2' => String_Prop_Type::make()->default( '' ),
-				],
-				'settings' => [
-					'invalid_transformable_setting_1' => [
-						'$$type' => 'type',
-					],
-					'invalid_transformable_setting_2' => [
-						'$$type' => [],
-						'value' => [],
-					],
+				'result' => [
+					'classes' => 'one two three',
+					'inner_classes' => '',
+					'outer_classes' => null,
 				],
 			],
-		);
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertSame( [
-			'invalid_transformable_setting_1' => [
-				'$$type' => 'type',
-			],
-			'invalid_transformable_setting_2' => [
-				'$$type' => [],
-				'value' => [],
-			],
-		], $settings );
+		];
 	}
 
 	public function test_get_props_schema__is_serializable() {
 		// Arrange.
+		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
+
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'string_prop' => String_Prop_Type::make()
@@ -195,26 +120,38 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Assert.
 		$this->assertJsonStringEqualsJsonString( '{
 			"string_prop": {
-				"type": "string",
-				"default": "value-a",
-				"settings": {
-					"enum": ["value-a", "value-b"]
-				}
+				"type": {
+					"key": "string",
+					"default": "value-a",
+					"settings": {
+						"enum": ["value-a", "value-b"]
+					}
+				},
+				"additional_types": []
 			},
 			"number_prop": {
-				"type": "number",
-				"default": 123,
-				"settings": {}
+				"type": {
+					"key": "number",
+					"default": 123,
+					"settings": {}
+				},
+				"additional_types": []
 			},
 			"boolean_prop": {
-				"type": "boolean",
-				"default": true,
-				"settings": {}
+				"type": {
+					"key": "boolean",
+					"default": true,
+					"settings": {}
+				},
+				"additional_types": []
 			},
 			"image_prop": {
-				"type": "image",
-				"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } },
-				"settings": {}
+				"type": {
+					"key": "image",
+					"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } },
+					"settings": {}
+				},
+				"additional_types": []
 			}
 		}', $serialized );
 	}
