@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Utils;
@@ -14,28 +15,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Image extends Atomic_Widget_Base {
-	public function get_icon() {
-		return 'eicon-image';
+	public function get_name() {
+		return 'a-image';
 	}
 
 	public function get_title() {
 		return esc_html__( 'Atomic Image', 'elementor' );
 	}
 
-	public function get_name() {
-		return 'a-image';
+	public function get_icon() {
+		return 'eicon-image';
 	}
 
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$image_url = $settings['image'];
+		if ( ! isset( $settings['image'] ) ) {
+			return;
+		}
 
-		?> <img
-			src='<?php echo esc_url( $image_url ); ?>'
-			alt='Atomic Image'
-		/>
-		<?php
+		$attrs = array_filter( array_merge(
+			$settings['image'],
+			[ 'class' => $settings['classes'] ?? '' ]
+		) );
+
+		Utils::print_wp_kses_extended(
+			sprintf(
+				'<img %1$s >',
+				Utils::render_html_attributes( $attrs )
+			),
+			[ 'image' ]
+		);
 	}
 
 	private static function get_image_size_options() {
@@ -115,6 +125,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 		);
 
 		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
 			'image' => Image_Prop_Type::make()
 				->default( [
 					'url' => Utils::get_placeholder_image_src(),

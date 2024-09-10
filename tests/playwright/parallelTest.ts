@@ -42,8 +42,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 			const apiRequests = new ApiRequests( workerBaseURL, nonce );
 			await use( apiRequests );
 		} catch ( e ) {
-			const fileContent = fs.readFileSync( workerStorageState, 'utf8' );
-			throw new Error( `Failed to fetch Nonce. Base URL: ${ workerBaseURL }, Storage State: ${ workerStorageState }, Storage State content: ${ fileContent }`, { cause: e } );
+			throw new Error( `Failed to fetch Nonce. Base URL: ${ workerBaseURL }, Storage State: ${ workerStorageState } `, { cause: e } );
 		}
 	}, { scope: 'worker' } ],
 
