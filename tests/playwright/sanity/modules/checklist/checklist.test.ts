@@ -178,8 +178,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			editor = await wpAdmin.openNewPage(),
 			checklistHelper = new ChecklistHelper( page, testInfo, apiRequests ),
 			steps = await checklistHelper.getSteps( request ),
-			onlyActionSteps = steps.filter( ( step ) => step.config.id !== 'all_done' ),
-			progressToCompare = ( Math.round( onlyActionSteps.filter( checklistHelper.isStepCompleted ).length ) * 100 / onlyActionSteps.length ),
+			progressToCompare = ( Math.round( steps.filter( checklistHelper.isStepCompleted ).length ) * 100 / steps.length ),
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
 			pageProgress = await checklistHelper.getProgressFromPopup( 'editor' );
 
@@ -202,14 +201,8 @@ test.describe( 'Launchpad checklist tests', () => {
 		const steps = await checklistHelper.getSteps( request ),
 			doneStepIds: StepId[] = [];
 
-		const onlyActionSteps = steps.filter( ( step ) => 'all_done' !== step.config.id );
-
 		for ( const step of steps ) {
 			if ( checklistHelper.isStepProLocked( step.config.id ) ) {
-				continue;
-			}
-
-			if ( 'all_done' === step.config.id ) {
 				continue;
 			}
 
@@ -225,7 +218,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			await expect( page.locator( checkIconSelector + ' [data-is-checked="true"]' ) ).toBeVisible();
 
 			expect( await checklistHelper.getProgressFromPopup( 'editor' ) )
-				.toBe( Math.round( doneStepIds.length * 100 / onlyActionSteps.length ) );
+				.toBe( Math.round( doneStepIds.length * 100 / steps.length ) );
 		}
 
 		await wpAdmin.openNewPage();

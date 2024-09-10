@@ -7,14 +7,13 @@ import { isStepChecked } from '../../utils/functions';
 
 const ChecklistWrapper = ( { steps, setSteps } ) => {
 	const [ expandedIndex, setExpandedIndex ] = useState( -1 );
-	const onlyActionSteps = steps.filter( ( step ) => step.config.id !== 'all_done' );
-	const checkIfAllStepsCompleted = onlyActionSteps.filter( isStepChecked ).length === onlyActionSteps.length;
+	const checkIfAllStepsCompleted = steps.filter( isStepChecked ).length === steps.length;
 
 	return (
-		<List component="div" sx={ { py: 0 } }>
-			{
-				steps.map( ( step, index ) => {
-					if ( ( step.config.id !== 'all_done' ) ) {
+		<>
+			<List component="div" sx={ { py: 0 } }>
+				{
+					steps.map( ( step, index ) => {
 						return (
 							<CheckListItem
 								key={ index }
@@ -25,15 +24,11 @@ const ChecklistWrapper = ( { steps, setSteps } ) => {
 								index={ index }
 							/>
 						);
-					} else if ( checkIfAllStepsCompleted ) {
-						return (
-							<SuccessMessage key={ index } step={ step } />
-						);
-					}
-					return null;
-				} )
-			};
-		</List>
+					} )
+				}
+			</List>
+			{ checkIfAllStepsCompleted ? <SuccessMessage /> : null }
+		</>
 	);
 };
 

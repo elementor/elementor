@@ -20,8 +20,8 @@ const selectors = {
 	progressBarPercentage: '#e-checklist header > div:nth-child(2) > div:nth-child(2)',
 	infotipFirstTimeClosed: '.e-checklist-infotip-first-time-closed',
 	infotipFirstTimeClosedButton: '.infotip-first-time-closed-button',
-	allDone: '[data-step-id="all_done"]',
-	gotItButton: '[data-step-id="all_done"] button',
+	allDone: '#e-checklist :last-child',
+	gotItButton: '#e-checklist :last-child button',
 };
 
 export { controlIds, selectors };

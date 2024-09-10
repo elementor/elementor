@@ -1,14 +1,7 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
-const SuccessMessage = ( props ) => {
-	const {
-		id,
-		description,
-		title,
-		image_src: imageSrc,
-		cta_text: ctaText,
-	} = props.step.config;
+const SuccessMessage = () => {
 
 	const hideChecklist = () => {
 		$e.run( 'document/elements/settings', {
@@ -23,15 +16,15 @@ const SuccessMessage = ( props ) => {
 	};
 
 	return (
-		<Card elevation={ 0 } square={ true } data-step-id={ id }>
+		<Card elevation={ 0 } square={ true }>
 			<CardMedia
-				image={ imageSrc }
+				image="https://assets.elementor.com/checklist/v1/images/checklist-step-7.jpg"
 				sx={ { height: 180 } }
 			/>
 			<CardContent sx={ { textAlign: 'center' } }>
-				<Typography variant="h6" color="text.primary">{ title }</Typography>
+				<Typography variant="h6" color="text.primary">You're on your way!</Typography>
 				<Typography variant="body2" color="text.secondary" component="p">
-					{ description + ' ' }
+					With these steps, you've got a great base for a robust website. Enjoy your web creation journey!
 				</Typography>
 			</CardContent>
 			<CardActions sx={ { justifyContent: 'center' } }>
@@ -41,7 +34,7 @@ const SuccessMessage = ( props ) => {
 					variant="contained"
 					onClick={ hideChecklist }
 				>
-					{ ctaText }
+					Got it
 				</Button>
 			</CardActions>
 		</Card>
@@ -49,7 +42,3 @@ const SuccessMessage = ( props ) => {
 };
 
 export default SuccessMessage;
-
-SuccessMessage.propTypes = {
-	step: PropTypes.object.isRequired,
-};
