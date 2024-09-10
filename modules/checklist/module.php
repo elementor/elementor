@@ -177,7 +177,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			->get_model()
 			->get_settings( self::VISIBILITY_SWITCH_ID );
 		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
-		$is_preference_switch_on = $user_preferences[ self::VISIBILITY_SWITCH_ID ] ?? $is_new_installation;
+		$is_preference_switch_on = $user_preferences ?? $is_new_installation;
 
 		return 'yes' === $is_preference_switch_on;
 	}
