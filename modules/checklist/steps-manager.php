@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
-	private array $steps_config = [];
 	private static array $step_ids = [ Add_Logo::STEP_ID, Create_Pages::STEP_ID, Setup_Header::STEP_ID, Assign_Homepage::STEP_ID ];
 
 	private Checklist_Module_Interface $module;
@@ -23,6 +22,10 @@ class Steps_Manager {
 	public function __construct( Checklist_Module_Interface $module ) {
 		$this->module = $module;
 		$this->register_steps();
+
+		add_action( 'elementor/init', function() {
+			$this->filter_steps();
+		} );
 	}
 
 	/**
@@ -41,7 +44,7 @@ class Steps_Manager {
 				Step_Base::MARKED_AS_COMPLETED_KEY => $instance->is_marked_as_completed(),
 				Step_Base::IMMUTABLE_COMPLETION_KEY => $instance->is_immutable_completed(),
 				Step_Base::ABSOLUTE_COMPLETION_KEY => $instance->is_absolute_completed(),
-				'config' => $this->steps_config[ $step_id ],
+				'config' => $this->get_step_config( $step_id ),
 			];
 
 			$formatted_steps[] = $step;
@@ -120,9 +123,7 @@ class Steps_Manager {
 				'cta_text' => $step_instance->get_cta_text(),
 				'cta_url' => $step_instance->get_cta_url(),
 				'image_src' => $step_instance->get_image_src(),
-				'required_license' => $step_instance->get_license(),
-				'is_locked' => $step_instance->get_is_locked(),
-				'promotion_url' => $step_instance->get_promotion_link(),
+				'promotion_data' => $step_instance->get_promotion_data(),
 			]
 			: [];
 	}
@@ -138,7 +139,6 @@ class Steps_Manager {
 
 			if ( $step_instance && ! isset( $this->step_instances[ $step_id ] ) ) {
 				$this->step_instances[ $step_id ] = $step_instance;
-				$this->steps_config[ $step_id ] = $this->get_step_config( $step_id );
 			}
 		}
 	}
@@ -168,5 +168,21 @@ class Steps_Manager {
 
 		/** @var Step_Base $step */
 		return new $class_name( $this->module, $this->module->get_wordpress_adapter() );
+	}
+
+	private function filter_steps() {
+		$step_ids  = [];
+		$filtered_steps = apply_filters( 'elementor/checklist/steps', $this->step_instances );
+
+		foreach ( $filtered_steps as $step_id => $step_instance ) {
+			if ( ! $step_instance instanceof Step_Base ) {
+				continue;
+			}
+
+			$this->step_instances[ $step_id ] = $step_instance;
+			$step_ids[] = $step_id;
+		}
+
+		self::$step_ids = $step_ids;
 	}
 }
