@@ -17,7 +17,7 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 			return $home_screen_data;
 		}
 
-		$site_settings_url_config = Page::get_site_settings_url_config( false );
+		$site_settings_url_config = Page::get_site_settings_url_config();
 
 		$home_screen_data['get_started']['repeater'] = array_map( function( $repeater_item ) use ( $site_settings_url_config ) {
 			if ( ! in_array( $repeater_item['title'], static::SITE_SETTINGS_ITEMS, true ) ) {
