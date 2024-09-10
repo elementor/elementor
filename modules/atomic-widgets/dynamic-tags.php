@@ -5,21 +5,38 @@ namespace Elementor\Modules\AtomicWidgets;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Modules\DynamicTags\Module as Dynamic_Tags_Module;
 
 class Dynamic_Tags {
 	public function register_hooks() {
-		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_atomic_dynamic_tags_settings( $settings ) );
+		add_filter(
+			'elementor/editor/localize_settings',
+			fn( $settings ) => $this->add_atomic_dynamic_tags_settings( $settings )
+		);
+
+		add_filter(
+			'elementor/atomic-widgets/props-schema',
+			fn( array $schema ) => $this->add_dynamic_prop_type( $schema )
+		);
+	}
+
+	/**
+	 * Return a tuple that lets the developer ignore the dynamic prop type in the props schema
+	 * using `Prop_Type::add_meta()`, e.g. `String_Prop_Type::make()->add_meta( Dynamic::ignore() )`.
+	 */
+	public static function ignore(): array {
+		return [ 'dynamic', false ];
 	}
 
 	private function add_atomic_dynamic_tags_settings( $settings ) {
 		if ( isset( $settings['dynamicTags']['tags'] ) ) {
 			$settings['atomicDynamicTags'] = [
 				'tags' => $this->convert_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] ),
-				'prop_types_to_dynamic' => $this->get_prop_types_to_dynamic_mapping(),
 			];
 		}
 
@@ -167,19 +184,46 @@ class Dynamic_Tags {
 		];
 	}
 
-	private function get_prop_types_to_dynamic_mapping() {
-		return [
-			Image_Prop_Type::get_key() => [
-				Dynamic_Tags_Module::IMAGE_CATEGORY,
-			],
+	/**
+	 * @param array<string, Prop_Type> $schema
+	 *
+	 * @return array<string, Prop_Type>
+	 */
+	private function add_dynamic_prop_type( array $schema ): array {
+		foreach ( $schema as $prop ) {
+			if ( ! ( $prop instanceof Prop_Type ) ) {
+				continue;
+			}
 
-			Number_Prop_Type::get_key() => [
-				Dynamic_Tags_Module::NUMBER_CATEGORY,
-			],
+			if ( false === $prop->get_meta( 'dynamic' ) ) {
+				continue;
+			}
 
-			String_Prop_Type::get_key() => [
-				Dynamic_Tags_Module::TEXT_CATEGORY,
-			],
-		];
+			if ( $prop instanceof Number_Prop_Type ) {
+				$prop->additional_type(
+					Dynamic_Prop_Type::make()->categories( [ Dynamic_Tags_Module::NUMBER_CATEGORY ] )
+				);
+
+				continue;
+			}
+
+			if ( $prop instanceof Image_Prop_Type ) {
+				$prop->additional_type(
+					Dynamic_Prop_Type::make()->categories( [ Dynamic_Tags_Module::IMAGE_CATEGORY ] )
+				);
+
+				continue;
+			}
+
+			if ( $prop instanceof String_Prop_Type && empty( $prop->get_enum() ) ) {
+				$prop->additional_type(
+					Dynamic_Prop_Type::make()->categories( [ Dynamic_Tags_Module::TEXT_CATEGORY ] )
+				);
+
+				continue;
+			}
+		}
+
+		return $schema;
 	}
 }
