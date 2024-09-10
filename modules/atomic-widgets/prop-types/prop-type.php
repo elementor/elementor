@@ -57,20 +57,24 @@ abstract class Prop_Type implements \JsonSerializable {
 		return $this->default;
 	}
 
-	public function add_meta( array $meta ): self {
-		$is_tuple = 2 === count( $meta );
+	public function add_meta( $key_or_tuple, $value = null ): self {
+		$is_tuple = (
+			is_array( $key_or_tuple ) &&
+			2 === count( $key_or_tuple ) &&
+			is_string( $key_or_tuple[0] )
+		);
 
-		if ( ! $is_tuple ) {
+		if ( $is_tuple ) {
+			[ $key, $value ] = $key_or_tuple;
+
+			$this->meta[ $key ] = $value;
+
 			return $this;
 		}
 
-		[ $key, $value ] = $meta;
-
-		if ( ! is_string( $key ) ) {
-			return $this;
+		if ( is_string( $key_or_tuple ) ) {
+			$this->meta[ $key_or_tuple ] = $value;
 		}
-
-		$this->meta[ $key ] = $value;
 
 		return $this;
 	}

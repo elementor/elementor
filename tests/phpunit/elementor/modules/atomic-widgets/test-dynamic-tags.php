@@ -327,17 +327,23 @@ class Test_Dynamic_Tags extends Elementor_Test_Base {
 		( new Dynamic_Tags() )->register_hooks();
 
 		// Act.
-		$prop = String_Prop_Type::make()
+		$prop1 = String_Prop_Type::make()
 			->add_meta( Dynamic_Tags::ignore() )
 			->default( 'default-value' );
 
+		$prop2 = String_Prop_Type::make()
+			->add_meta( 'dynamic', false )
+			->default( 'default-value' );
+
 		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
-			'prop' => $prop,
+			'prop1' => $prop1,
+			'prop2' => $prop2,
 		] );
 
 		// Assert.
-		$this->assertSame( [ 'prop' => $prop ], $schema );
-		$this->assertEmpty( $prop->get_additional_types() );
+		$this->assertSame( [ 'prop1' => $prop1, 'prop2' => $prop2 ], $schema );
+		$this->assertEmpty( $prop1->get_additional_types() );
+		$this->assertEmpty( $prop2->get_additional_types() );
 	}
 
 	/**
