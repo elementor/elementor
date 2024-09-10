@@ -15,31 +15,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Image extends Atomic_Widget_Base {
-	public function get_icon() {
-		return 'eicon-image';
+	public function get_name() {
+		return 'a-image';
 	}
 
 	public function get_title() {
 		return esc_html__( 'Atomic Image', 'elementor' );
 	}
 
-	public function get_name() {
-		return 'a-image';
+	public function get_icon() {
+		return 'eicon-image';
 	}
 
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$image_url = esc_url( $settings['image'] );
-		$src = 'src=' . $image_url;
-		$class = '';
-
-		if ( ! empty( $settings['classes'] ) ) {
-			$class = "class='" . esc_attr( $settings['classes'] ) . "'";
+		if ( ! isset( $settings['image'] ) ) {
+			return;
 		}
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo "<img $src alt='Atomic Image' $class />";
+		$attrs = array_filter( array_merge(
+			$settings['image'],
+			[ 'class' => $settings['classes'] ?? '' ]
+		) );
+
+		Utils::print_wp_kses_extended(
+			sprintf(
+				'<img %1$s >',
+				Utils::render_html_attributes( $attrs )
+			),
+			[ 'image' ]
+		);
 	}
 
 	private static function get_image_size_options() {
