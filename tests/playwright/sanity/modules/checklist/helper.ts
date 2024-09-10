@@ -165,6 +165,5 @@ export default class ChecklistHelper {
 					},
 				} ],
 		};
-	};
+	}
 }
-

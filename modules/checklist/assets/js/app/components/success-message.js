@@ -2,7 +2,6 @@ import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@
 import { hideChecklist } from '../../utils/functions';
 
 const SuccessMessage = () => {
-
 	return (
 		<Card elevation={ 0 } square={ true } className="all_done">
 			<CardMedia
