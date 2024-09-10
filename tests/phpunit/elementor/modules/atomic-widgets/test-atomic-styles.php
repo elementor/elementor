@@ -3,6 +3,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets;
 
 use Elementor\Modules\AtomicWidgets\Atomic_Styles;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Widget_Base;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Files\CSS\Post;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -200,6 +201,35 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
 	}
 
+	public function test_parse_atomic_widget_styles__invalid_non_atomic_widget() {
+		// Arrange.
+		( new Atomic_Styles() )->register_hooks();
+		$post = $this->make_mock_post();
+		$element = $this->mock_non_atomic_widget([
+			'styles' => [
+				[
+					'id' => 'test-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'red',
+								'fontSize' => '16px',
+							],
+							'meta' => [],
+						],
+					],
+				],
+			],
+		]);
+
+		// Act.
+		do_action( 'elementor/element/parse_css', $post, $element );
+
+		// Assert.
+		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
+	}
+
 	private function make_mock_post() {
 		return new Post( 1 );
 	}
@@ -233,6 +263,21 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 			protected static function define_props_schema(): array {
 				return static::$options['props_schema'] ?? [];
+			}
+		};
+	}
+
+	private function mock_non_atomic_widget( array $options = [] ): Widget_Base {
+		return new class() extends Widget_Base {
+			public function get_name() {
+				return 'test-widget-invalid';
+			}
+
+			public function get_raw_data( $with_html_content = false ) {
+				$settings = parent::get_raw_data( $with_html_content );
+				$styles = $options['styles'] ?? [];
+				$settings['styles']  = $styles;
+				return $settings;
 			}
 		};
 	}
