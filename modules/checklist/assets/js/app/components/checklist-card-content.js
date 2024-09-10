@@ -17,7 +17,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 	} = step.config;
 
 	const ctaText = promotionData
-			? promotionData?.text || __( 'Upgrade Now', 'elementor-pro' )
+			? promotionData?.text || __( 'Upgrade Now', 'elementor' )
 			: step.config.cta_text,
 		ctaUrl = promotionData ? promotionData.url : step.config.cta_url,
 		{
