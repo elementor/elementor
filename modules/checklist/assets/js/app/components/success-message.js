@@ -14,7 +14,7 @@ const SuccessMessage = () => {
 	};
 
 	return (
-		<Card elevation={ 0 } square={ true }>
+		<Card elevation={ 0 } square={ true } className="all_done">
 			<CardMedia
 				image="https://assets.elementor.com/checklist/v1/images/checklist-step-7.jpg"
 				sx={ { height: 180 } }
