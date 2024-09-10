@@ -35,6 +35,10 @@ class String_Prop_Type extends Prop_Type {
 		return $this;
 	}
 
+	public function get_enum() {
+		return $this->settings['enum'] ?? null;
+	}
+
 	private function validate_enum( $value ): void {
 		$is_allowed = in_array( $value, $this->settings['enum'], true );
 
