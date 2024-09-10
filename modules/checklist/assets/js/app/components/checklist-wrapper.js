@@ -7,7 +7,7 @@ import { isStepChecked } from '../../utils/functions';
 
 const ChecklistWrapper = ( { steps, setSteps } ) => {
 	const [ expandedIndex, setExpandedIndex ] = useState( -1 );
-	const checkIfAllStepsCompleted = steps.filter( isStepChecked ).length === steps.length;
+	const isChecklistCompleted = steps.filter( isStepChecked ).length === steps.length;
 
 	return (
 		<>
@@ -27,7 +27,7 @@ const ChecklistWrapper = ( { steps, setSteps } ) => {
 					} )
 				}
 			</List>
-			{ checkIfAllStepsCompleted ? <SuccessMessage /> : null }
+			{ isChecklistCompleted ? <SuccessMessage /> : null }
 		</>
 	);
 };

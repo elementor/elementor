@@ -1,17 +1,7 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@elementor/ui';
+import { hideChecklist } from '../../utils/functions';
 
 const SuccessMessage = () => {
-	const hideChecklist = () => {
-		$e.run( 'document/elements/settings', {
-			container: elementor.settings.editorPreferences.getEditedView().getContainer(),
-			settings: {
-				show_launchpad_checklist: '',
-			},
-			options: {
-				external: true,
-			},
-		} );
-	};
 
 	return (
 		<Card elevation={ 0 } square={ true } className="all_done">
@@ -20,9 +10,9 @@ const SuccessMessage = () => {
 				sx={ { height: 180 } }
 			/>
 			<CardContent sx={ { textAlign: 'center' } }>
-				<Typography variant="h6" color="text.primary">You&apos;re on your way!</Typography>
+				<Typography variant="h6" color="text.primary">{ __( 'You\'re on your way!' ) }</Typography>
 				<Typography variant="body2" color="text.secondary" component="p">
-					With these steps, you&apos;ve got a great base for a robust website. Enjoy your web creation journey!
+					{ __( 'With these steps, you\'ve got a great base for a robust website. Enjoy your web creation journey!' ) }
 				</Typography>
 			</CardContent>
 			<CardActions sx={ { justifyContent: 'center' } }>
@@ -32,7 +22,7 @@ const SuccessMessage = () => {
 					variant="contained"
 					onClick={ hideChecklist }
 				>
-					Got it
+					{ __( 'Got it' ) }
 				</Button>
 			</CardActions>
 		</Card>
