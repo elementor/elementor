@@ -94,6 +94,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 	public function test_get_props_schema__is_serializable() {
 		// Arrange.
+		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
+
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'string_prop' => String_Prop_Type::make()
@@ -118,26 +120,38 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Assert.
 		$this->assertJsonStringEqualsJsonString( '{
 			"string_prop": {
-				"type": "string",
-				"default": "value-a",
-				"settings": {
-					"enum": ["value-a", "value-b"]
-				}
+				"type": {
+					"key": "string",
+					"default": "value-a",
+					"settings": {
+						"enum": ["value-a", "value-b"]
+					}
+				},
+				"additional_types": []
 			},
 			"number_prop": {
-				"type": "number",
-				"default": 123,
-				"settings": {}
+				"type": {
+					"key": "number",
+					"default": 123,
+					"settings": {}
+				},
+				"additional_types": []
 			},
 			"boolean_prop": {
-				"type": "boolean",
-				"default": true,
-				"settings": {}
+				"type": {
+					"key": "boolean",
+					"default": true,
+					"settings": {}
+				},
+				"additional_types": []
 			},
 			"image_prop": {
-				"type": "image",
-				"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } },
-				"settings": {}
+				"type": {
+					"key": "image",
+					"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } },
+					"settings": {}
+				},
+				"additional_types": []
 			}
 		}', $serialized );
 	}
