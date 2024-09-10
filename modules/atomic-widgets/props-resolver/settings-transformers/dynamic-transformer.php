@@ -2,23 +2,34 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers;
 
+use Elementor\Core\DynamicTags\Manager as Dynamic_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dynamic_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Classes_Transformer extends Transformer_Base {
+class Dynamic_Transformer extends Transformer_Base {
+	private Dynamic_Manager $dynamic_manager;
+
+	public function __construct( Dynamic_Manager $dynamic_manager ) {
+		$this->dynamic_manager = $dynamic_manager;
+	}
+
 	public function get_type(): string {
-		return Classes_Prop_Type::get_key();
+		return Dynamic_Prop_Type::get_key();
 	}
 
 	public function transform( $value ) {
-		if ( ! is_array( $value ) ) {
-			throw new \Exception( 'Value must be an array, ' . gettype( $value ) . ' given.' );
+		if ( ! isset( $value['name'] ) || ! is_string( $value['name'] ) ) {
+			throw new \Exception( 'Dynamic tag name must be a string' );
 		}
 
-		return implode( ' ', array_filter( $value ) );
+		if ( ! isset( $value['settings'] ) || ! is_array( $value['settings'] ) ) {
+			throw new \Exception( 'Dynamic tag settings must be an array' );
+		}
+
+		return $this->dynamic_manager->get_tag_data_content( null, $value['name'], $value['settings'] );
 	}
 }
