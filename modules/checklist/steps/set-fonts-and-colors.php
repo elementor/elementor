@@ -18,10 +18,10 @@ class Set_Fonts_And_Colors extends Step_Base {
 
 	public function is_absolute_completed() : bool {
 		$settings = Plugin::$instance->kits_manager->get_kit_for_frontend()->get_settings();
-		$customColor = $settings['custom_colors'];
-		$customFonts = $settings['custom_typography'];
+		$custom_color = $settings['custom_colors'];
+		$custom_fonts = $settings['custom_typography'];
 
-		return ! empty( $customColor ) && ! empty( $customFonts );
+		return ! empty( $custom_color ) && ! empty( $custom_fonts );
 	}
 
 	public function get_title() : string {
