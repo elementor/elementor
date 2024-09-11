@@ -4,6 +4,8 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Classes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Plugin;
@@ -34,9 +36,12 @@ class Module extends BaseModule {
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			( new Dynamic_Tags() )->register_hooks();
+			( new Atomic_Styles() )->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_transformers( $transformers ) );
+
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 		}
 	}
@@ -59,6 +64,10 @@ class Module extends BaseModule {
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
+	}
+
+	private function register_transformers( Transformers_Registry $transformers ) {
+		$transformers->register( new Classes_Transformer() );
 	}
 
 	/**

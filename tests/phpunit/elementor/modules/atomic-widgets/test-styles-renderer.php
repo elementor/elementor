@@ -2,6 +2,9 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
+use Elementor\Modules\AtomicWidgets\Base\Style_Transformer_Base;
+use Elementor\Modules\AtomicWidgets\Styles\Transformers\Array_Transformer;
+use Elementor\Modules\AtomicWidgets\Styles\Transformers\Size_Transformer;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -176,8 +179,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			'transformers' => [],
 			'breakpoints' => [
 				'mobile' => [
-					'type' => 'max-width',
-					'width' => 768,
+					'direction' => 'max',
+					'value' => 768,
+					'is_enabled' => true,
 				],
 			]
 		] );
@@ -188,6 +192,56 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
         // Assert.
 		$this->assertMatchesSnapshot( $css );
     }
+
+	public function test_render__style_variants_with_disabled_breakpoints() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'color' => 'green',
+						],
+						'meta' => [
+							'breakpoint' => 'mobile',
+						],
+					],
+					[
+						'props' => [
+							'color' => 'blue',
+						],
+						'meta' => [
+							'breakpoint' => 'tablet',
+						],
+					]
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'transformers' => [],
+			'breakpoints' => [
+				'mobile' => [
+					'direction' => 'max',
+					'value' => 768,
+					'is_enabled' => true,
+				],
+				'tablet' => [
+					'direction' => 'max',
+					'value' => 1024,
+					'is_enabled' => false,
+				],
+			]
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
 
 	public function test_render__style_variants_with_breakpoint_and_state() {
 		// Arrange.
@@ -222,12 +276,14 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			'transformers' => [],
 			'breakpoints' => [
 				'mobile' => [
-					'type' => 'max-width',
-					'width' => 768,
+					'direction' => 'max',
+					'value' => 768,
+					'is_enabled' => true,
 				],
 				'tablet' => [
-					'type' => 'max-width',
-					'width' => 1024,
+					'direction' => 'max',
+					'value' => 1024,
+					'is_enabled' => true,
 				],
 			]
 		] );
@@ -299,12 +355,41 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$stylesRenderer = new Styles_Renderer( [
 			'transformers' => [
-				'size' => function( $value ) {
-					// would throw exception as $value is an integer
-					$size = (int)$value['size'];
-					$unit = $value['unit'];
-					return $size . $unit;
-				},
+				'size' => new Size_Transformer(),
+			],
+			'breakpoints' => []
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_with_thrown_exceptions_in_transformer() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-size' => [
+								'$$type' => 'faulty',
+								'value' => true // no matter what the value here is really...
+							],
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'transformers' => [
+				'faulty' => $this->make_mock_faulty_transformer(),
 			],
 			'breakpoints' => []
 		] );
@@ -325,10 +410,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
                 'variants' => [
                     [
                         'props' => [
-							'color' => [
-								'$$type' => 'color',
-								'value' => 'CF0000'
-							],
                             'font-size' => [
 								'$$type' => 'size',
 								'value' => [
@@ -337,33 +418,32 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								]
 							],
 							'box-shadow' => [
-								'$$type' => 'box-shadow',
+								'$$type' => 'array',
 								'value' => [
-									'x' => [
-										'$$type' => 'size',
-										'value' => [
-											'size' => 1,
-											'unit' => 'px'
-										]
-									],
-									'y' => [
-										'$$type' => 'size',
-										'value' => [
-											'size' => 1,
-											'unit' => 'px'
-										]
-									],
-									'blur' => [
-										'$$type' => 'size',
-										'value' => [
-											'size' => 5,
-											'unit' => 'px'
-										]
-									],
-									'color' => [
-										'$$type' => 'color',
-										'value' => '000000'
-									],
+									'array' => [
+										[
+											'$$type' => 'size',
+											'value' => [
+												'size' => 1,
+												'unit' => 'px'
+											]
+										],
+										[
+											'$$type' => 'size',
+											'value' => [
+												'size' => 1,
+												'unit' => 'px'
+											]
+										],
+										[
+											'$$type' => 'size',
+											'value' => [
+												'size' => 5,
+												'unit' => 'px'
+											]
+										],
+										'#000000'
+									]
 								]
 							]
                         ],
@@ -375,22 +455,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
         $stylesRenderer = new Styles_Renderer( [
 			'transformers' => [
-				'size' => function( $value ) {
-					$size = (int)$value['size'];
-					$unit = $value['unit'];
-					return $size . $unit;
-				},
-				'color' => function( $value ) {
-					return '#' . $value;
-				},
-				'box-shadow' => function( $value, $transform ) {
-					$x = $transform( $value['x'] );
-					$y = $transform( $value['y'] );
-					$blur = $transform( $value['blur'] );
-					$color = $transform( $value['color'] );
-
-					return $x.' '.$y.' '.$blur.' '.$transform( $color );
-				}
+				'size' => new Size_Transformer(),
+				'array' => new Array_Transformer()
 			],
 			'breakpoints' => []
 		] );
@@ -457,5 +523,17 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $css );
+	}
+
+	private function make_mock_faulty_transformer() {
+		return new class() extends Style_Transformer_Base {
+			public static function type(): string {
+				return 'faulty';
+			}
+
+			public function transform( $value, callable $transform ): string {
+				throw new \Exception( 'Faulty transformer' );
+			}
+		};
 	}
 }
