@@ -1,7 +1,43 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@elementor/ui';
-import { hideChecklist } from '../../utils/functions';
+import useAjax from 'elementor-app/hooks/use-ajax';
+import { useEffect } from 'react';
+import { hideChecklist } from "../../utils/functions";
 
 const SuccessMessage = () => {
+	const { ajaxState, setAjax } = useAjax();
+
+	const hideChecklist = () => {
+		setAjax( {
+			data: {
+				action: 'elementor_ajax',
+				actions: JSON.stringify( {
+					save_editorPreferences_settings: {
+						action: "save_editorPreferences_settings",
+						data: {
+							data: {
+								show_launchpad_checklist: ""
+							}
+						}
+					},
+				} ),
+			},
+		} );
+		window.dispatchEvent( new CustomEvent( 'AllDoneTriggered', { detail: { message: 'AllDoneTriggered' } } ) );
+		// $e.commands.run( 'checklist/toggle-icon', false );
+	}
+	useEffect( () => {
+		switch ( ajaxState.status ) {
+			case 'success':
+				onReady();
+				break;
+			case 'error':
+				setIsEnableError( true );
+				setShow( true );
+				break;
+		}
+	}, [ ajaxState ] );
+
+
 	return (
 		<Card elevation={ 0 } square={ true } className="e-checklist-done">
 			<CardMedia

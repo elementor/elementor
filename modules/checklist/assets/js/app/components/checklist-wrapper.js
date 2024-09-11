@@ -7,7 +7,8 @@ import { isStepChecked } from '../../utils/functions';
 
 const ChecklistWrapper = ( { steps, setSteps } ) => {
 	const [ expandedIndex, setExpandedIndex ] = useState( -1 );
-	const isChecklistCompleted = steps.filter( isStepChecked ).length === steps.length;
+	const isChecklistCompleted = true
+		// steps.filter( isStepChecked ).length === steps.length;
 
 	return (
 		<>
