@@ -5,7 +5,6 @@ $e.components.register( new Component() );
 editorV2();
 
 window.addEventListener( 'DOMContentLoaded', maybeHideToggleIcon );
-window.addEventListener( 'AllDoneTriggered', maybeHideToggleIcon );
 
 function maybeHideToggleIcon() {
 	const shouldHide = 'yes' !== elementor.getPreferences( 'show_launchpad_checklist' );
@@ -15,5 +14,4 @@ function maybeHideToggleIcon() {
 	}
 
 	window.removeEventListener( 'DOMContentLoaded', maybeHideToggleIcon );
-	window.removeEventListener( 'AllDoneTriggered', maybeHideToggleIcon );
 }

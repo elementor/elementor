@@ -6,7 +6,6 @@ const SuccessMessage = () => {
 	const { ajaxState, setAjax } = useAjax();
 
 	const hideChecklist = () => {
-		// $e.commands.run( 'checklist/toggle-icon' );
 		setAjax( {
 			data: {
 				action: 'elementor_ajax',
@@ -22,18 +21,14 @@ const SuccessMessage = () => {
 				} ),
 			},
 		} );
-		window.dispatchEvent( new CustomEvent( 'AllDoneTriggered', { detail: { message: 'AllDoneTriggered' } } ) );
-
 	}
 
 	useEffect( () => {
 		switch ( ajaxState.status ) {
 			case 'success':
-				onReady();
+				$e.commands.run( 'checklist/toggle-icon', false );
 				break;
 			case 'error':
-				setIsEnableError( true );
-				setShow( true );
 				break;
 		}
 	}, [ ajaxState ] );
