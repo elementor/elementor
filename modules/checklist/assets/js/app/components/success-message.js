@@ -1,12 +1,12 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@elementor/ui';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import { useEffect } from 'react';
-import { hideChecklist } from "../../utils/functions";
 
 const SuccessMessage = () => {
 	const { ajaxState, setAjax } = useAjax();
 
 	const hideChecklist = () => {
+		// $e.commands.run( 'checklist/toggle-icon' );
 		setAjax( {
 			data: {
 				action: 'elementor_ajax',
@@ -23,8 +23,9 @@ const SuccessMessage = () => {
 			},
 		} );
 		window.dispatchEvent( new CustomEvent( 'AllDoneTriggered', { detail: { message: 'AllDoneTriggered' } } ) );
-		// $e.commands.run( 'checklist/toggle-icon', false );
+
 	}
+
 	useEffect( () => {
 		switch ( ajaxState.status ) {
 			case 'success':
