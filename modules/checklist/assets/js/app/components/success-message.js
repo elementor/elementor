@@ -11,17 +11,17 @@ const SuccessMessage = () => {
 				action: 'elementor_ajax',
 				actions: JSON.stringify( {
 					save_editorPreferences_settings: {
-						action: "save_editorPreferences_settings",
+						action: 'save_editorPreferences_settings',
 						data: {
 							data: {
-								show_launchpad_checklist: ""
-							}
-						}
+								show_launchpad_checklist: '',
+							},
+						},
 					},
 				} ),
 			},
 		} );
-	}
+	};
 
 	useEffect( () => {
 		switch ( ajaxState.status ) {
@@ -32,8 +32,7 @@ const SuccessMessage = () => {
 				break;
 		}
 	}, [ ajaxState ] );
-
-
+	
 	return (
 		<Card elevation={ 0 } square={ true } className="e-checklist-done">
 			<CardMedia
