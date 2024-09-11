@@ -344,9 +344,16 @@ class Manager extends Base_Object {
 				esc_html__( 'Learn more', 'elementor' )
 			),
 			'release_status' => self::RELEASE_STATUS_STABLE,
+<<<<<<< HEAD
 			'default' => self::STATE_INACTIVE,
 			static::TYPE_HIDDEN => true,
 			'mutable' => false,
+=======
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.3.0-beta',
+			],
+>>>>>>> origin/3.16
 			'generator_tag' => true,
 		] );
 
@@ -383,6 +390,7 @@ class Manager extends Base_Object {
 		$this->add_feature( [
 			'name' => 'container',
 			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
+<<<<<<< HEAD
 			'description' => sprintf(
 				esc_html__(
 					'Create advanced layouts and responsive designs with the new %1$sFlexbox Container element%2$s.
@@ -395,6 +403,14 @@ class Manager extends Base_Object {
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">',
 				'</a>'
 			),
+=======
+			'description' => sprintf( esc_html__(
+				'Create advanced layouts and responsive designs with the new %1$sFlexbox Container element%2$s.
+				This experiment replaces the current section/column structure, but you\'ll still keep your existing
+				Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
+				'elementor'
+			), '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">', '</a>', '<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">', '</a>'),
+>>>>>>> origin/3.16
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_INACTIVE,
 			'new_site' => [

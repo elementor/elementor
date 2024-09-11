@@ -93,6 +93,7 @@ class Module extends BaseApp {
 	 * @return array[]
 	 */
 	private function get_raw_announcements(): array {
+<<<<<<< HEAD
 		$raw_announcements = [];
 
 		if ( Preferences::is_ai_enabled( get_current_user_id() ) ) {
@@ -117,6 +118,20 @@ class Module extends BaseApp {
 					'variant' => 'primary',
 					'target' => '_top',
 					'url' => '#welcome-ai',
+=======
+		$raw_announcements = [
+			[
+				'title' => 'Picture perfect: Introducing the AI image generator',
+				'description' => '<p>Generate new images or edit existing ones with text to image prompts.</p>
+				<ul>
+					<li>Use generative fill to edit, add, or erase content in existing images or expand them beyond their original size and aspect ratio.</li>
+					<li>Choose from twenty-nine preset styles that will supercharge your prompts and check out the image-prompt gallery for inspiration. </li>
+					<li>Create custom code, write content, and generate images with Elementor’s comprehensive AI toolbox.</li>
+				</ul>',
+				'media' => [
+					'type' => 'image',
+					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
+>>>>>>> origin/3.16
 				],
 				[
 					'label' => __( 'Skip', 'elementor' ),
@@ -129,6 +144,9 @@ class Module extends BaseApp {
 				],
 			],
 		];
+
+		// DO NOT USE THIS FILTER
+		return apply_filters( 'elementor/announcements/raw_announcements', $raw_announcements );
 	}
 
 	/**

@@ -501,6 +501,7 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertTrue( $result2 );
 		$this->assertFalse( $result3 );
 	}
+<<<<<<< HEAD
 
 	public function test_some() {
 		// Arrange.
@@ -514,4 +515,6 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertTrue( $has_evens );
 		$this->assertFalse( $has_10 );
 	}
+=======
+>>>>>>> origin/3.16
 }

@@ -31,7 +31,11 @@ class Admin_Apps_Page {
 				<?php self::render_plugins_list(); ?>
 			</div>
 			<div class="e-a-page-footer">
+<<<<<<< HEAD
 				<p>*<?php echo esc_html__( 'Please note that certain tools and services on this page are developed by third-party companies and are not part of Elementor\'s suite of products or support. Before using them, we recommend independently evaluating them. Additionally, when clicking on their action buttons, you may be redirected to an external website.', 'elementor' ); ?></p>
+=======
+				<p><?php echo esc_html__( 'Please note that certain services on this page are developed by third-party companies. When you click on the their action button, you may be redirected to an external website.', 'elementor' ); ?></p>
+>>>>>>> origin/3.16
 			</div>
 		</div>
 		<?php
@@ -50,9 +54,100 @@ class Admin_Apps_Page {
 			self::$wordpress_adapter = new Wordpress_Adapter();
 		}
 
+<<<<<<< HEAD
 		if ( ! self::$plugin_status_adapter ) {
 			self::$plugin_status_adapter = new Plugin_Status_Adapter( self::$wordpress_adapter );
 		}
+=======
+		$plugins = [
+			[
+				'name' => 'Elementor AI',
+				'author' => 'Elementor',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-elementor-ai/',
+				'badge' => 'Premium',
+				'description' => 'Boost creativity with Elementor AI. Craft & enhance copy, create custom CSS & Code, and generate images to elevate your website.',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-elementor-ai/',
+				'image' => $images_url . 'elementor.svg',
+			],
+			[
+				'name' => 'JetPlugins Add-ons',
+				'author' => 'Crocoblock',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-crocoblock/',
+				'badge' => '10% Off',
+				'description' => 'Unlock dynamic widgets, e-commerce features, and a powerful filtering system for enhanced website capabilities.',
+				'offering' => 'Use coupon code: onlyforelementor',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-crocoblock/',
+				'image' => $images_url . 'crocoblock.png',
+			],
+			[
+				'name' => 'Unlimited Elements',
+				'author' => 'Unlimited Group',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-unlimited-elements/',
+				'badge' => '20% Off',
+				'description' => 'An all-in-one plugin that instantly gives you the most advanced tools to make better Elementor websites faster.',
+				'offering' => 'Use coupon code: elementor20',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-unlimited-elements/',
+				'image' => $images_url . 'unlimited-elements.gif',
+			],
+			[
+				'name' => 'Essential Addons',
+				'author' => 'WPDeveloper',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-wpdeveloper/',
+				'badge' => '20% Off',
+				'description' => 'Essential Addons is the ultimate library for Elementor, with 1 Million+ users and 100+ widgets & extensions to enhance web-building & design experiences.',
+				'offering' => 'Use coupon code: elementor20',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-wpdeveloper/',
+				'image' => $images_url . 'essential-addons.svg',
+			],
+			[
+				'name' => 'Element Pack Pro',
+				'author' => 'BdThemes Ltd',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-element-pack-pro/',
+				'description' => 'Revolutionize your web design experience with 250+ powerful features, tailored for designers of all skill levels. Create websites without breaking a sweat!',
+				'badge' => '10% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-element-pack-pro/',
+				'image' => $images_url . 'element-pack.gif',
+			],
+			[
+				'name' => 'Ultimate Addons',
+				'author' => 'Brainstorm Force',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-ultimate-elementor/',
+				'description' => 'Ultimate Addons for Elementor is a powerful plugin with advanced widgets, templates, and features for designing stunning websites using Elementor.',
+				'badge' => '25% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-ultimate-elementor/',
+				'image' => $images_url . 'uae.svg',
+			],
+			[
+				'name' => 'Fiverr Logo Maker',
+				'author' => 'Fiverr',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-fiverr/',
+				'description' => 'Craft your brand\'s identity on Fiverr Logo Maker. Upload logo, choose typography & colors for versatile variations. Elevate your brand effortlessly.',
+				'badge' => 'Premium',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-fiverr/',
+				'image' => $images_url . 'fiverr.svg',
+			],
+			[
+				'name' => 'Hover Custom Domains',
+				'author' => 'Tucows',
+				'author_url' => 'https://go.elementor.com/wp-dash-apps-author-uri-hover/',
+				'description' => 'Elevate your website with a custom domain for maximum online impact. Enjoy exclusive Elementor user discounts through our Hover partnership.',
+				'badge' => '10% Off',
+				'offering' => 'Discount is automatically applied',
+				'action_label' => 'Let\'s Go',
+				'action_url' => 'https://go.elementor.com/wp-dash-apps-go-to-hover/',
+				'image' => $images_url . 'hover.svg',
+			],
+		];
+>>>>>>> origin/3.16
 
 		$apps = static::get_remote_apps();
 

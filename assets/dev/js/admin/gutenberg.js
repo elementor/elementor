@@ -33,17 +33,26 @@
 			}
 
 			if ( this.hasIframe() ) {
+<<<<<<< HEAD
 				this.handleIframe();
+=======
+				this.hideIframeContent();
+>>>>>>> origin/3.16
 			}
 
 			if ( ! $( '#elementor-editor' ).length ) {
 				self.cache.$editorPanel = $( $( '#elementor-gutenberg-panel' ).html() );
+<<<<<<< HEAD
 				let editorButtonParent = self.cache.$gutenberg.find( '.block-editor-writing-flow' );
 				if ( ! editorButtonParent.length ) {
 					editorButtonParent = self.cache.$gutenberg.find( '.is-desktop-preview' );
 				}
 
 				self.cache.$gurenbergBlockList = editorButtonParent;
+=======
+
+				self.cache.$gurenbergBlockList = self.cache.$gutenberg.find( '.is-desktop-preview' );
+>>>>>>> origin/3.16
 				self.cache.$gurenbergBlockList.append( self.cache.$editorPanel );
 
 				self.cache.$editorPanelButton = self.cache.$editorPanel.find( '#elementor-go-to-edit-page-link' );
@@ -56,11 +65,14 @@
 			}
 		},
 
+<<<<<<< HEAD
 		handleIframe() {
 			this.hideIframeContent();
 			this.buildPanelTopBar();
 		},
 
+=======
+>>>>>>> origin/3.16
 		// Sometimes Gutenberg uses iframe instead of div.
 		hasIframe() {
 			return !! this.cache.$gutenberg.find( 'iframe[name="editor-canvas"]' ).length;
@@ -85,6 +97,7 @@
 			this.cache.$gutenberg.find( 'iframe[name="editor-canvas"]' ).contents().find( 'body' ).append( style );
 		},
 
+<<<<<<< HEAD
 		buildPanelTopBar() {
 			var self = this;
 
@@ -123,6 +136,8 @@
 			self.redirectWhenSave();
 		},
 
+=======
+>>>>>>> origin/3.16
 		bindEvents() {
 			var self = this;
 

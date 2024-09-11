@@ -401,6 +401,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertTrue( $is_test_feature_active );
 	}
 
+<<<<<<< HEAD
     public function is_feature_active_new_site_with_beta_data_provider() {
         return [
             'new_site_active' => [
@@ -421,6 +422,12 @@ class Test_Manager extends Elementor_Test_Base {
                 'versions_history' => [
                     '3.1.0-beta1' => time(),
                     '3.1.0-beta2' => time() + 1,
+=======
+	public function test_is_feature_active__new_site() {
+		update_option( Manager::get_install_history_meta(), [
+			time() => '3.1.0',
+		] );
+>>>>>>> origin/3.16
 
                 ],
                 'minimum_installation_version' => '3.1.0',
@@ -458,7 +465,11 @@ class Test_Manager extends Elementor_Test_Base {
 
 	public function test_is_feature_active__immutable() {
 		update_option( Manager::get_install_history_meta(), [
+<<<<<<< HEAD
 			'3.1.0' => time(),
+=======
+			time() => '3.1.0',
+>>>>>>> origin/3.16
 		] );
 
 		$this->add_test_feature( [

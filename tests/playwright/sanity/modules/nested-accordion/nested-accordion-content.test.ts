@@ -152,9 +152,15 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		} );
 	} );
 
+<<<<<<< HEAD
 	test( 'Nested Accordion test SVG Icon and No Icon when Title Icons is disabled', async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+=======
+	test( 'Nested Accordion test SVG Icon and No Icon when Title Icons is disabled', async ( { browser }, testInfo ) => {
+		const page = await browser.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo );
+>>>>>>> origin/3.16
 
 		await wpAdmin.enableAdvancedUploads();
 		const editor = await wpAdmin.openNewPage();
@@ -198,7 +204,11 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		} );
 	} );
 
+<<<<<<< HEAD
 	test( 'Nested Accordion Title, Text and Icon Position', async ( { browser, apiRequests }, testInfo ) => {
+=======
+	test( 'Nested Accordion Title, Text and Icon Position', async ( { browser }, testInfo ) => {
+>>>>>>> origin/3.16
 		// Act
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
