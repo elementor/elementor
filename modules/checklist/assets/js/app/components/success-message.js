@@ -32,7 +32,7 @@ const SuccessMessage = () => {
 				break;
 		}
 	}, [ ajaxState ] );
-	
+
 	return (
 		<Card elevation={ 0 } square={ true } className="e-checklist-done">
 			<CardMedia
