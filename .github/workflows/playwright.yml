@@ -39,6 +39,7 @@ concurrency:
 jobs:
   build-plugin:
     name: Build plugin
+    if: ${{ github.event.pull_request.title == 'no run' }}
     uses: ./.github/workflows/build.yml
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
