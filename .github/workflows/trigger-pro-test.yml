@@ -1,29 +1,15 @@
-name: Custom Core
+name: CI
+
 on:
   pull_request:
-    types: [labeled]
+    types: [ labeled ]
 
 jobs:
-  trigger-pro-workflow:
-    name: Trigger Pro Workflow
+  build:
+    if: ${{ github.event.label.name == 'trigger-pro-tests' }}
     runs-on: ubuntu-latest
-    needs: Playwright
-    if: contains(github.event.pull_request.labels.*.name, 'trigger-pro-tests')
 
     steps:
-      - name: Trigger Elementor Pro Playwright Workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: Playwright - Custom Core
-          repo: elementor/elementor-pro
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.head_ref }}
-
-      - name: Track Remote Workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repo: elementor/elementor-pro
-          workflow: Playwright - Custom Core
-          ref: main
-          check_status: true
+      - uses: actions/checkout@v2
+      - name: Run a one-line script
+        run: echo I'll run Custom Core
