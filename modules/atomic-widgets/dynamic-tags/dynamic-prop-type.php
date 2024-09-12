@@ -1,15 +1,19 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes;
+namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
-use Elementor\Core\DynamicTags\Tag;
-use Elementor\Plugin;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Settings_Validator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Dynamic_Prop_Type extends Transformable_Prop_Type {
+
+	public static function ignore(): array {
+		return [ 'dynamic', false ];
+	}
 
 	public static function get_key(): string {
 		return 'dynamic';
@@ -42,25 +46,33 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 			throw new \Exception( 'Property `settings` must be an array' );
 		}
 
-		$tag = Plugin::$instance->dynamic_tags->create_tag( null, $value['name'] );
+		$tag = Dynamic_Tags_Module::instance()->registry->get_tag( $value['name'] );
 
 		if ( ! $tag ) {
 			throw new \Exception( "Dynamic tag `{$value['name']}` does not exist" );
 		}
 
 		if ( ! $this->is_tag_in_supported_categories( $tag ) ) {
-			$tag_categories = implode( ', ', $tag->get_categories() );
+			$tag_categories = implode( ', ', $tag['categories'] );
 			$prop_categories = implode( ', ', $this->get_categories() );
 
-			throw new \Exception( "Dynamic tag `{$tag->get_name()}` categories ($tag_categories) are not in supported categories ($prop_categories)" );
+			throw new \Exception( "Dynamic tag `{$tag['name']}` categories ($tag_categories) are not in supported categories ($prop_categories)" );
 		}
 
-		// TODO: Validate the settings against the schema using the same method from the save process.
+		$validator = Settings_Validator::make( $tag['props_schema'] );
+
+		[ $is_valid, , $errors ] = $validator->validate( $value['settings'] );
+
+		if ( ! $is_valid ) {
+			$errors = join( ', ', $errors );
+
+			throw new \Exception( 'Dynamic tag settings validation failed. Invalid keys: ' . $errors );
+		}
 	}
 
-	private function is_tag_in_supported_categories( Tag $tag ): bool {
+	private function is_tag_in_supported_categories( array $tag ): bool {
 		$intersection = array_intersect(
-			$tag->get_categories(),
+			$tag['categories'],
 			$this->get_categories()
 		);
 

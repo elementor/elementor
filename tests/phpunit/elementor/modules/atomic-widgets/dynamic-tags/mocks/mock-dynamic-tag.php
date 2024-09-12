@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes\Mocks;
+namespace Elementor\Testing\Modules\AtomicWidgets\DynamicTags\Mocks;
 
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Modules\DynamicTags\Module as DynamicTagsModule;

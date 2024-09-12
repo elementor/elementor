@@ -1,60 +1,53 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets;
+namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dynamic_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
-use Elementor\Modules\DynamicTags\Module as Dynamic_Tags_Module;
 
-class Dynamic_Tags {
-	public function register_hooks() {
-		add_filter(
-			'elementor/editor/localize_settings',
-			fn( $settings ) => $this->add_atomic_dynamic_tags_settings( $settings )
-		);
+class Dynamic_Tags_Registry {
 
-		add_filter(
-			'elementor/atomic-widgets/props-schema',
-			fn( array $schema ) => $this->add_dynamic_prop_type( $schema )
-		);
+	private array $tags = [];
+
+	public function get_tags(): array {
+		return $this->tags;
 	}
 
 	/**
-	 * Return a tuple that lets the developer ignore the dynamic prop type in the props schema
-	 * using `Prop_Type::add_meta()`, e.g. `String_Prop_Type::make()->add_meta( Dynamic::ignore() )`.
+	 * @param string $name
+	 *
+	 * @return null|array{
+	 *       name: string,
+	 *       categories: string[],
+	 *       label: string,
+	 *       group: string,
+	 *       atomic_controls: array,
+	 *       props_schema: array<string, Prop_Type>
+	 *  }
 	 */
-	public static function ignore(): array {
-		return [ 'dynamic', false ];
+	public function get_tag( string $name ): ?array {
+		$tags = $this->get_tags();
+
+		return $tags[ $name ] ?? null;
 	}
 
-	private function add_atomic_dynamic_tags_settings( $settings ) {
-		if ( isset( $settings['dynamicTags']['tags'] ) ) {
-			$settings['atomicDynamicTags'] = [
-				'tags' => $this->convert_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] ),
-			];
-		}
-
-		return $settings;
-	}
-
-	private function convert_dynamic_tags_to_atomic( $dynamic_tags ) {
-		$result = [];
+	public function populate_from_v1_tags( array $dynamic_tags ): self {
+		$atomic_tags = [];
 
 		foreach ( $dynamic_tags as $name => $tag ) {
 			$atomic_tag = $this->convert_dynamic_tag_to_atomic( $tag );
 
 			if ( $atomic_tag ) {
-				$result[ $name ] = $atomic_tag;
+				$atomic_tags[ $name ] = $atomic_tag;
 			}
 		}
 
-		return $result;
+		$this->tags = $atomic_tags;
+
+		return $this;
 	}
 
 	private function convert_dynamic_tag_to_atomic( $tag ) {
@@ -129,6 +122,10 @@ class Dynamic_Tags {
 			throw new \Exception( 'Control type is not allowed' );
 		}
 
+		if ( ! isset( $control['name'], $control['section'], $control['label'], $control['default'] ) ) {
+			throw new \Exception( 'Control must have name, section, label and default' );
+		}
+
 		return $map[ $control['type'] ]( $control );
 	}
 
@@ -182,48 +179,5 @@ class Dynamic_Tags {
 			'atomic_control' => $atomic_control,
 			'prop_schema' => $prop_schema,
 		];
-	}
-
-	/**
-	 * @param array<string, Prop_Type> $schema
-	 *
-	 * @return array<string, Prop_Type>
-	 */
-	private function add_dynamic_prop_type( array $schema ): array {
-		foreach ( $schema as $prop ) {
-			if ( ! ( $prop instanceof Prop_Type ) ) {
-				continue;
-			}
-
-			if ( false === $prop->get_meta( 'dynamic' ) ) {
-				continue;
-			}
-
-			if ( $prop instanceof Number_Prop_Type ) {
-				$prop->additional_type(
-					Dynamic_Prop_Type::make()->categories( [ Dynamic_Tags_Module::NUMBER_CATEGORY ] )
-				);
-
-				continue;
-			}
-
-			if ( $prop instanceof Image_Prop_Type ) {
-				$prop->additional_type(
-					Dynamic_Prop_Type::make()->categories( [ Dynamic_Tags_Module::IMAGE_CATEGORY ] )
-				);
-
-				continue;
-			}
-
-			if ( $prop instanceof String_Prop_Type && empty( $prop->get_enum() ) ) {
-				$prop->additional_type(
-					Dynamic_Prop_Type::make()->categories( [ Dynamic_Tags_Module::TEXT_CATEGORY ] )
-				);
-
-				continue;
-			}
-		}
-
-		return $schema;
 	}
 }
