@@ -42,10 +42,10 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		this.initLayoutOverlay();
 		this.updateEmptyViewHeight();
 		elementor.hooks.addAction( 'panel/open_editor/container', this.onPanelShow );
-		elementor.channels.editor.on( 'section:activated', this.hideAdvancedTab.bind( this ) );
+		elementor.channels.editor.on( 'section:activated', this.hideGridControls.bind( this ) );
 	}
 
-	hideAdvancedTab( sectionName, editor ) {
+	hideGridControls( sectionName, editor ) {
 		const advancedSections = [
 			'_section_style', // Widgets
 			'section_layout', // Containers
