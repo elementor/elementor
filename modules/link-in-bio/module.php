@@ -53,7 +53,7 @@ class Module extends BaseModule {
 		wp_register_style(
 			'widget-link-in-bio',
 			$this->get_css_assets_url( 'widget-link-in-bio', null, true, true ),
-			[],
+			[ 'elementor-frontend' ],
 			ELEMENTOR_VERSION
 		);
 	}
