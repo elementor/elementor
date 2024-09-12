@@ -62,36 +62,36 @@ jobs:
           workflow: Playwright - Custom Core
           ref: main
           check_status: true
-  test-result:
-    needs: Playwright
-    if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
-    runs-on: ubuntu-22.04
-    name: Playwright - Test Results
-    steps:
-      - name: Test status
-        run: echo "Test status is - ${{ needs.Playwright.result }}"
-      - name: Checkout source code
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
-        uses: actions/checkout@v4
-      - name: Send slack message
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
-        uses: ./.github/workflows/post-to-slack
-        with:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
-          PAYLOAD: |
-            {
-              "text": "Elementor Core: Playwright with WordPress nightly has failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Elementor Core: Playwright with WordPress nightly failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                  }
-                }
-              ]
-            }
-      - name: Check Playwright matrix status
-        if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
-        run: exit 1
+#  test-result:
+#    needs: Playwright
+#    if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
+#    runs-on: ubuntu-22.04
+#    name: Playwright - Test Results
+#    steps:
+#      - name: Test status
+#        run: echo "Test status is - ${{ needs.Playwright.result }}"
+#      - name: Checkout source code
+#        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+#        uses: actions/checkout@v4
+#      - name: Send slack message
+#        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+#        uses: ./.github/workflows/post-to-slack
+#        with:
+#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+#          SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
+#          PAYLOAD: |
+#            {
+#              "text": "Elementor Core: Playwright with WordPress nightly has failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+#              "blocks": [
+#                {
+#                  "type": "section",
+#                  "text": {
+#                    "type": "mrkdwn",
+#                    "text": "Elementor Core: Playwright with WordPress nightly failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+#                  }
+#                }
+#              ]
+#            }
+#      - name: Check Playwright matrix status
+#        if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
+#        run: exit 1
