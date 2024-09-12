@@ -21,6 +21,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			classes: {
 				outline: 'e-grid-outline',
 				outlineItem: 'e-grid-outline-item',
+				gridControls: '[class*="elementor-control-_heading_grid"], [class*="elementor-control-_grid_row"], [class*="elementor-control-_grid_column"], [class*="elementor-control-heading_grid"], [class*="elementor-control-grid_row"], [class*="elementor-control-grid_column"]',
 			},
 		};
 	}
@@ -42,10 +43,10 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		this.initLayoutOverlay();
 		this.updateEmptyViewHeight();
 		elementor.hooks.addAction( 'panel/open_editor/container', this.onPanelShow );
-		elementor.channels.editor.on( 'section:activated', this.hideGridControls.bind( this ) );
+		elementor.channels.editor.on( 'section:activated', this.handleGridControls.bind( this ) );
 	}
 
-	hideGridControls( sectionName, editor ) {
+	handleGridControls( sectionName, editor ) {
 		const advancedSections = [
 			'_section_style', // Widgets
 			'section_layout', // Containers
@@ -55,13 +56,22 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			return;
 		}
 
-		if ( 'grid' !== editor?.options?.editedElementView?.container?.parent?.model?.attributes?.settings?.attributes?.container_type ) {
-			const partialMatches = document.querySelectorAll( '[class*="elementor-control-grid_row"]' );
-
-			partialMatches.forEach( element => {
-				element.style.display = 'none';
-			} );
+		if ( ! this.isItemInGridCell( editor ) ) {
+			this.hideGridControls( editor );
 		}
+	}
+
+	isItemInGridCell( editor ) {
+		return 'grid' === editor?.options?.editedElementView?.container?.parent?.model?.attributes?.settings?.attributes?.container_type
+	}
+
+	hideGridControls( editor ) {
+		const classes = this.getSettings( 'classes' );
+		const gridControls = editor?.el.querySelectorAll( classes.gridControls );
+
+		gridControls.forEach( element => {
+			element.style.display = 'none';
+		} );
 	}
 
 	onPanelShow( panel, model ) {
