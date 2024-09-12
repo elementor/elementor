@@ -44,7 +44,6 @@ jobs:
   trigger-pro-workflow:
     name: Trigger Pro Workflow
     runs-on: ubuntu-latest
-    needs: Playwright
     if: contains(github.event.pull_request.labels.*.name, 'trigger-pro-tests')
     steps:
       - name: Trigger Elementor Pro Playwright Workflow
