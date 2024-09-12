@@ -109,7 +109,15 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'trigger-pro-tests')
     steps:
       - name: Trigger Custom Core Workflow
-        uses:
+        uses: anecdotes-ai/remote-workflow-control@latest
+        with:
+          github-auth-token: ${{ secrets.GITHUB_KEY }}
+          workflow-org: 'elementor'
+          workflow-repo: 'elementor-pro'
+          workflow-yaml: '.github/workflows/playwright-custom-core.yml'
+          workflow-branch: 'main'
+          workflow-inputs: '{\"core_branch\": ${{ github.head_ref }}}'
+          wait-timeout-in-minutes: '10'
 
   test-result:
     needs: Playwright
