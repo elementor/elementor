@@ -236,6 +236,44 @@ class Widget_Common extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'_heading_grid_item',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Grid Item', 'elementor' ),
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'_grid_column',
+			[
+				'label' => esc_html__( 'Grid column', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'ai' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-column: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_grid_row',
+			[
+				'label' => esc_html__( 'Grid row', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'separator' => 'after',
+				'ai' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-row: {{VALUE}}',
+				],
+			]
+		);
+
 		$this->add_responsive_control(
 			'_element_custom_width',
 			[

@@ -1389,6 +1389,44 @@ class Container extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'heading_grid_item',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Grid Item', 'elementor' ),
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'grid_column',
+			[
+				'label' => esc_html__( 'Grid column', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'ai' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-column: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'grid_row',
+			[
+				'label' => esc_html__( 'Grid row', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'separator' => 'after',
+				'ai' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-row: {{VALUE}}',
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Flex_Item::get_type(),
 			[

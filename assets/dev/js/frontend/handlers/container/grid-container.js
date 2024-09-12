@@ -42,6 +42,26 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		this.initLayoutOverlay();
 		this.updateEmptyViewHeight();
 		elementor.hooks.addAction( 'panel/open_editor/container', this.onPanelShow );
+		elementor.channels.editor.on( 'section:activated', this.hideAdvancedTab.bind( this ) );
+	}
+
+	hideAdvancedTab( sectionName, editor ) {
+		const advancedSections = [
+			'_section_style', // Widgets
+			'section_layout', // Containers
+		];
+
+		if ( ! advancedSections.includes( sectionName ) ) {
+			return;
+		}
+
+		if ( 'grid' !== editor?.options?.editedElementView?.container?.parent?.model?.attributes?.settings?.attributes?.container_type ) {
+			const partialMatches = document.querySelectorAll( '[class*="elementor-control-grid_row"]' );
+
+			partialMatches.forEach( element => {
+				element.style.display = 'none';
+			} );
+		}
 	}
 
 	onPanelShow( panel, model ) {
