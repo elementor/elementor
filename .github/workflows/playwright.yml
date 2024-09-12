@@ -37,8 +37,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-#
-#
+  build-plugin:
+    name: Build plugin
+    uses: ./.github/workflows/build.yml
+
   trigger-pro-workflow:
     name: Trigger Pro Workflow
     runs-on: ubuntu-latest
