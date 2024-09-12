@@ -259,9 +259,11 @@ class Post extends Base {
 
 		$registered_style_dependencies = [];
 
-		foreach ( $additional_style_dependencies as $style ) {
-			if ( wp_style_is( $style, 'registered' ) ) {
-				$registered_style_dependencies[] = $style;
+		if ( ! empty( $additional_style_dependencies ) ) {
+			foreach ( $additional_style_dependencies as $style ) {
+				if ( wp_style_is( $style, 'registered' ) ) {
+					$registered_style_dependencies[] = $style;
+				}
 			}
 		}
 
