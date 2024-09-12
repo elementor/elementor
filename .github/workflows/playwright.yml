@@ -108,9 +108,22 @@ jobs:
     needs: Playwright
     if: contains(github.event.pull_request.labels.*.name, 'trigger-pro-tests')
     steps:
-      - name: Trigger Custom Core Workflow
-        uses:
+      - name: Trigger Elementor Pro Playwright Workflow
+        uses: benc-uk/workflow-dispatch@latest
+        with:
+          workflow: Playwright - Custom Core
+          repo: elementor/elementor-pro
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
 
+      - name: Track Remote Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repo: elementor/elementor-pro
+          workflow: Playwright - Custom Core
+          ref: main
+          check_status: true
   test-result:
     needs: Playwright
     if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
