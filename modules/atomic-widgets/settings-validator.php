@@ -63,11 +63,9 @@ class Settings_Validator {
 	}
 
 	private function get_validators( Prop_Type $prop_type ): Collection {
-		$prop_validator = $this->wrap_validator( $prop_type );
-
-		return Collection::make( $prop_type->get_additional_types() )
-			->map( fn( Prop_Type $type ) => $this->wrap_validator( $type ) )
-			->prepend( $prop_validator );
+		return Collection::make( [ $prop_type ] )
+			->push( ...$prop_type->get_additional_types() )
+			->map( fn( Prop_Type $type ) => $this->wrap_validator( $type ) );
 	}
 
 	private function wrap_validator( Prop_Type $prop_type ): callable {

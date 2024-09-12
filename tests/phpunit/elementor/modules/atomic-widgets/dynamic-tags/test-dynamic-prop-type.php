@@ -91,11 +91,11 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 			V1DynamicTags::DATETIME_CATEGORY,
 		] );
 
-		Plugin::$instance->dynamic_tags->register( new Mock_Dynamic_Tag() );
+		$dynamic_tag = new Mock_Dynamic_Tag();
 
-		Dynamic_Tags_Module::fresh()->registry->populate_from_v1_tags(
-			Plugin::$instance->dynamic_tags->get_tags_config()
-		);
+		Dynamic_Tags_Module::fresh()->registry->populate_from_v1_tags( [
+			$dynamic_tag->get_name() => $dynamic_tag->get_editor_config(),
+		] );
 
 		// Expect.
 		$this->expectException( \Exception::class );
