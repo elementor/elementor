@@ -45,7 +45,7 @@ class Module extends \Elementor\Core\Base\Module {
 		wp_register_style(
 			'widget-nested-tabs',
 			$this->get_frontend_file_url( "widget-nested-tabs{$direction_suffix}.min.css", $has_custom_breakpoints ),
-			[],
+			[ 'elementor-frontend' ],
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 	}
