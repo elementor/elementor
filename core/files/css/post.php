@@ -256,8 +256,17 @@ class Post extends Base {
 		$enqueue_dependencies = [ 'elementor-frontend' ];
 
 		$additional_style_dependencies = $this->get_meta( 'additional_style_dependencies' );
-		if ( ! empty( $additional_style_dependencies ) ) {
-			$enqueue_dependencies = array_merge( $enqueue_dependencies, $additional_style_dependencies );
+
+		$registered_style_dependencies = [];
+
+		foreach ( $additional_style_dependencies as $style ) {
+			if ( wp_style_is( $style, 'registered' ) ) {
+				$registered_style_dependencies[] = $style;
+			}
+		}
+
+		if ( ! empty( $registered_style_dependencies ) ) {
+			$enqueue_dependencies = array_merge( $enqueue_dependencies, $registered_style_dependencies );
 		}
 
 		return $enqueue_dependencies;
