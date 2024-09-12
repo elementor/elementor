@@ -37,6 +37,8 @@ class Post extends Base {
 	 */
 	private $post_id;
 
+	private $additional_style_dependencies = [];
+
 	protected function is_global_parsing_supported() {
 		return true;
 	}
@@ -141,6 +143,18 @@ class Post extends Base {
 		delete_post_meta( $this->post_id, static::META_KEY );
 	}
 
+	public function write() {
+		parent::write();
+
+		if ( ! empty( $this->additional_style_dependencies ) ) {
+			$meta = $this->get_meta();
+
+			$meta['additional_style_dependencies'] = $this->additional_style_dependencies;
+
+			$this->update_meta( $meta );
+		}
+	}
+
 	/**
 	 * Get post data.
 	 *
@@ -239,7 +253,14 @@ class Post extends Base {
 	 * @return array Name of the stylesheet.
 	 */
 	protected function get_enqueue_dependencies() {
-		return [ 'elementor-frontend' ];
+		$enqueue_dependencies = [ 'elementor-frontend' ];
+
+		$additional_style_dependencies = $this->get_meta( 'additional_style_dependencies' );
+		if ( ! empty( $additional_style_dependencies ) ) {
+			$enqueue_dependencies = array_merge( $enqueue_dependencies, $additional_style_dependencies );
+		}
+
+		return $enqueue_dependencies;
 	}
 
 	/**
@@ -296,6 +317,11 @@ class Post extends Base {
 		$element_settings = $element->get_settings();
 
 		$this->add_controls_stack_style_rules( $element, $this->get_style_controls( $element, null, $element->get_parsed_dynamic_settings() ), $element_settings, [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
+
+		$element_style_depend = $element->get_style_depends();
+		if ( ! empty( $element_style_depend ) ) {
+			$this->additional_style_dependencies = array_unique( array_merge( $this->additional_style_dependencies, $element_style_depend ) );
+		}
 
 		/**
 		 * After element parse CSS.
