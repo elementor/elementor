@@ -248,7 +248,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_grid_column',
 			[
-				'label' => esc_html__( 'Grid column', 'elementor' ),
+				'label' => esc_html__( 'Grid Column', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'ai' => [
 					'active' => false,
@@ -262,7 +262,7 @@ class Widget_Common extends Widget_Base {
 		$this->add_responsive_control(
 			'_grid_row',
 			[
-				'label' => esc_html__( 'Grid row', 'elementor' ),
+				'label' => esc_html__( 'Grid Row', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'separator' => 'after',
 				'ai' => [
