@@ -111,7 +111,7 @@ jobs:
       - name: Trigger Custom Core Workflow
         uses: anecdotes-ai/remote-workflow-control@latest
         with:
-          github-auth-token: ${{ secrets.GITHUB_KEY }}
+          github-auth-token: ${{ secrets.GITHUB_TOKEN }}
           workflow-org: 'elementor'
           workflow-repo: 'elementor-pro'
           workflow-yaml: '.github/workflows/playwright-custom-core.yml'
