@@ -11,6 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Dynamic_Prop_Type extends Transformable_Prop_Type {
 
+	/**
+	 * Return a tuple that lets the developer ignore the dynamic prop type in the props schema
+	 * using `Prop_Type::add_meta()`, e.g. `String_Prop_Type::make()->add_meta( Dynamic_Prop_Type::ignore() )`.
+	 */
 	public static function ignore(): array {
 		return [ 'dynamic', false ];
 	}
