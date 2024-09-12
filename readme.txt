@@ -315,6 +315,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.24.1 - 2024-09-12 =
+
+* Fix: Widget styles not loading correctly on front causing alignment inconsistencies ([#28676](https://github.com/elementor/elementor/issues/28676))
+
 = 3.24.0 - 2024-09-10 =
 
 * New: Introducing Floating Bars - including Call to Action, Ticker, and Coupon Bars, to enhance visitor engagement and boost conversions
