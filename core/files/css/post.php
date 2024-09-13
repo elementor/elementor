@@ -297,11 +297,6 @@ class Post extends Base {
 
 		$this->add_controls_stack_style_rules( $element, $this->get_style_controls( $element, null, $element->get_parsed_dynamic_settings() ), $element_settings, [ '{{ID}}', '{{WRAPPER}}' ], [ $element->get_id(), $this->get_element_unique_selector( $element ) ] );
 
-		$element_style_depend = $element->get_style_depends();
-		if ( ! empty( $element_style_depend ) ) {
-			$this->additional_style_dependencies = array_unique( array_merge( $this->additional_style_dependencies, $element_style_depend ) );
-		}
-
 		/**
 		 * After element parse CSS.
 		 *
