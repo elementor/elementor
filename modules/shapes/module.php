@@ -26,7 +26,7 @@ class Module extends \Elementor\Core\Base\Module {
 		wp_register_style(
 			'widget-text-path',
 			$this->get_css_assets_url( 'widget-text-path', null, true, true ),
-			[],
+			[ 'elementor-frontend' ],
 			ELEMENTOR_VERSION
 		);
 	}
