@@ -110,4 +110,33 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 			],
 		] );
 	}
+
+	public function test_validate__throws_for_invalid_settings() {
+		// Arrange.
+		$prop_type = Dynamic_Prop_Type::make()->categories( [
+			V1DynamicTags::TEXT_CATEGORY,
+		] );
+
+		$dynamic_tag = new Mock_Dynamic_Tag();
+
+		Dynamic_Tags_Module::fresh()->registry->populate_from_v1_tags( [
+			$dynamic_tag->get_name() => $dynamic_tag->get_editor_config(),
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Dynamic tag settings validation failed. Invalid keys: mock-control-1' );
+
+		// Act.
+		$prop_type->validate( [
+			'$$type' => 'dynamic',
+			'value' => [
+				'name' => 'mock-dynamic-tag',
+				'settings' => [
+					'mock-control-1' => 'invalid-value',
+					'mock-control-2' => 'valid-value',
+				],
+			],
+		] );
+	}
 }
