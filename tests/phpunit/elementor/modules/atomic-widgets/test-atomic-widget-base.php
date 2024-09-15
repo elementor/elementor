@@ -27,11 +27,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	 */
 	public function test_get_atomic_settings( $args, $arrange_cb = null ) {
 		// Arrange.
-		$cleanup = null;
-
-		if ( $arrange_cb ) {
-			$cleanup = $arrange_cb();
-		}
+		$cleanup = $arrange_cb ? $arrange_cb() : fn() => null;
 
 		$widget = $this->make_mock_widget( [
 			'props_schema' => $args['prop_types'],
@@ -44,9 +40,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( $args['result'], $settings );
 
-		if ( $cleanup ) {
-			$cleanup();
-		}
+		$cleanup();
 	}
 
 	public function get_atomic_settings_data_provider() {
