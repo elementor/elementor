@@ -51,10 +51,10 @@ class Props_Resolver {
 		return self::$instances[ $context ];
 	}
 
-	public function resolve( array $schema, array $props ): array {
+	public function resolve( array $prop_types, array $props ): array {
 		$result = [];
 
-		foreach ( $schema as $prop_name => $prop_type ) {
+		foreach ( $prop_types as $prop_name => $prop_type ) {
 			$result[ $prop_name ] = $prop_type instanceof Prop_Type
 				? $this->transform( $props[ $prop_name ] ?? $prop_type->get_default() )
 				: null;

@@ -28,7 +28,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$post = $this->make_mock_post();
 		$element_1 = $this->make_mock_widget([
 			'controls' => [],
-			'props_schema' => [],
+			'prop_types' => [],
 			'settings' => [],
 			'styles' => [
 				[
@@ -61,7 +61,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		]);
 		$element_2 = $this->make_mock_widget([
 			'controls' => [],
-			'props_schema' => [],
+			'prop_types' => [],
 			'settings' => [],
 			'styles' => [
 				[
@@ -94,7 +94,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$post = $this->make_mock_post();
 		$element_1 = $this->make_mock_widget([
 			'controls' => [],
-			'props_schema' => [],
+			'prop_types' => [],
 			'settings' => [],
 			'styles' => [
 				[
@@ -116,7 +116,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		]);
 		$element_2 = $this->make_mock_widget([
 			'controls' => [],
-			'props_schema' => [],
+			'prop_types' => [],
 			'settings' => [],
 			'styles' => [
 				[
@@ -151,7 +151,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$post = $this->make_mock_post();
 		$element = $this->make_mock_widget([
 			'controls' => [],
-			'props_schema' => [],
+			'prop_types' => [],
 			'settings' => [],
 			'styles' => [
 				[
@@ -189,7 +189,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$post = $this->make_mock_post();
 		$element = $this->make_mock_widget([
 			'controls' => [],
-			'props_schema' => [],
+			'prop_types' => [],
 			'settings' => [],
 			'styles' => [],
 		]);
@@ -235,7 +235,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @param array{controls: array, props_schema: array, settings: array} $options
+	 * @param array{controls: array, prop_types: array, settings: array} $options
 	 */
 	private function make_mock_widget( array $options ): Atomic_Widget_Base {
 		return new class( $options ) extends Atomic_Widget_Base {
@@ -261,8 +261,8 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 				return static::$options['controls'] ?? [];
 			}
 
-			protected static function define_props_schema(): array {
-				return static::$options['props_schema'] ?? [];
+			protected static function define_prop_types(): array {
+				return static::$options['prop_types'] ?? [];
 			}
 		};
 	}

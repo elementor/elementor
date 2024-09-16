@@ -25,7 +25,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	public function test_get_atomic_settings( $prop_types, $settings, $result ) {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => $prop_types,
+			'prop_types' => $prop_types,
 			'settings' => $settings,
 		] );
 
@@ -45,7 +45,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				],
 				'settings' => [
 					'text' => 'This text is more great than the greatest text',
-					'invalid_prop' => 'This prop is not in the schema',
+					'invalid_prop' => 'This prop is not in the prop types',
 				],
 				'result' => [
 					'text' => 'This text is more great than the greatest text',
@@ -91,12 +91,12 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_get_props_schema__is_serializable() {
+	public function test_get_prop_types__is_serializable() {
 		// Arrange.
-		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
+		remove_all_filters( 'elementor/atomic-widgets/prop-types' );
 
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [
+			'prop_types' => [
 				'string_prop' => String_Prop_Type::make()
 					->enum( [ 'value-a', 'value-b' ] )
 					->default( 'value-a' ),
@@ -114,7 +114,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		] );
 
 		// Act.
-		$serialized = json_encode( $widget::get_props_schema() );
+		$serialized = json_encode( $widget::get_prop_types() );
 
 		// Assert.
 		$this->assertJsonStringEqualsJsonString( '{
@@ -155,24 +155,24 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		}', $serialized );
 	}
 
-	public function test_get_props_schema() {
+	public function test_get_prop_types() {
 		// Arrange,
-		$schema = [
+		$prop_types = [
 			'string_prop' => String_Prop_Type::make()
 				->enum( [ 'value-a', 'value-b' ] )
 				->default( 'value-a' ),
 		];
 
-		$widget = $this->make_mock_widget( [ 'props_schema' => $schema ] );
+		$widget = $this->make_mock_widget( [ 'prop_types' => $prop_types ] );
 
 		// Act & Assert.
-		$this->assertSame( $schema, $widget::get_props_schema() );
+		$this->assertSame( $prop_types, $widget::get_prop_types() );
 	}
 
 	public function test_get_atomic_controls__throws_when_control_is_invalid() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [],
+			'prop_types' => [],
 			'controls' => [
 				new \stdClass(),
 			],
@@ -186,37 +186,37 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_atomic_controls();
 	}
 
-	public function test_get_atomic_controls__throws_when_control_inside_a_section_is_not_in_schema() {
+	public function test_get_atomic_controls__throws_when_control_inside_a_section_is_not_in_prop_types() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [],
+			'prop_types' => [],
 			'controls' => [
 				Section::make()->set_items( [
-					Textarea_Control::bind_to( 'not-in-schema' )
+					Textarea_Control::bind_to( 'not-in-prop-types' )
 				] )
 			],
 		] );
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop `not-in-schema` is not defined in the schema of `test-widget`.' );
+		$this->expectExceptionMessage( 'Prop `not-in-prop-types` is not defined in the prop types of `test-widget`.' );
 
 		// Act.
 		$widget->get_atomic_controls();
 	}
 
-	public function test_get_atomic_controls__throws_when_top_level_control_is_not_in_schema() {
+	public function test_get_atomic_controls__throws_when_top_level_control_is_not_in_prop_types() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [],
+			'prop_types' => [],
 			'controls' => [
-				Textarea_Control::bind_to( 'not-in-schema' ),
+				Textarea_Control::bind_to( 'not-in-prop-types' ),
 			],
 		] );
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop `not-in-schema` is not defined in the schema of `test-widget`.' );
+		$this->expectExceptionMessage( 'Prop `not-in-prop-types` is not defined in the prop types of `test-widget`.' );
 
 		// Act.
 		$widget->get_atomic_controls();
@@ -225,7 +225,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	public function test_get_atomic_controls__throws_when_control_has_empty_bind() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [],
+			'prop_types' => [],
 			'controls' => [
 				Textarea_Control::bind_to( '' ),
 			],
@@ -233,7 +233,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Control is missing a bound prop from the schema.' );
+		$this->expectExceptionMessage( 'Control is missing a bound prop from the prop types.' );
 
 		// Act.
 		$widget->get_atomic_controls();
@@ -257,7 +257,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		];
 
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [
+			'prop_types' => [
 				'text' => String_Prop_Type::make()->default( '' ),
 				'select' => String_Prop_Type::make()->default( '' ),
 				'nested-text' => String_Prop_Type::make()->default( '' ),
@@ -272,10 +272,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertEquals( $controls_definitions, $controls );
 	}
 
-	public function test_get_atomic_controls__schema_validation__throws_for_non_prop_type() {
+	public function test_get_atomic_controls__prop_types_validation__throws_for_non_prop_type() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [
+			'prop_types' => [
 				'non_prop_type' => 'not-a-prop-type',
 			],
 		] );
@@ -288,10 +288,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_atomic_controls();
 	}
 
-	public function test_get_atomic_controls__schema_validation__throws_for_invalid_default() {
+	public function test_get_atomic_controls__prop_types_validation__throws_for_invalid_default() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [
+			'prop_types' => [
 				'test_prop' => String_Prop_Type::make()
 					->default( 123 ),
 			],
@@ -308,18 +308,18 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	public function test_get_data_for_save() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [
+			'prop_types' => [
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 				'number_prop' => Number_Prop_Type::make()->default( 0 ),
 				'boolean_prop' => Boolean_Prop_Type::make()->default( false ),
-				'in_schema_not_in_settings' => String_Prop_Type::make()->default( '' ),
+				'in_prop_types_not_in_settings' => String_Prop_Type::make()->default( '' ),
 				'not_a_prop_type' => 'not-a-prop-type',
 			],
 			'settings' => [
 				'string_prop' => 'valid-string',
 				'number_prop' => 123,
 				'boolean_prop' => true,
-				'not_in_schema' => 'not-in-schema',
+				'not_in_prop_types' => 'not-in-prop-types',
 				'not_a_prop_type' => 'not-a-prop-type',
 			],
 		] );
@@ -338,7 +338,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	public function test_get_data_for_save__throws_on_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [
+			'prop_types' => [
 				'mock_prop_1' => String_Prop_Type::make()->default( '' ),
 				'mock_prop_2' => Number_Prop_Type::make()->default( 0 ),
 			],
@@ -357,7 +357,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @param array{controls: array, props_schema: array, settings: array} $options
+	 * @param array{controls: array, prop_types: array, settings: array} $options
 	 */
 	private function make_mock_widget( array $options ) {
 		return new class( $options ) extends Atomic_Widget_Base {
@@ -382,8 +382,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				return static::$options['controls'] ?? [];
 			}
 
-			protected static function define_props_schema(): array {
-				return static::$options['props_schema'] ?? [];
+			protected static function define_prop_types(): array {
+				return static::$options['prop_types'] ?? [];
 			}
 		};
 	}

@@ -26,7 +26,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 		parent::set_up();
 
 		remove_all_actions( 'elementor/init' );
-		remove_all_actions( 'elementor/atomic-widgets/props-schema' );
+		remove_all_actions( 'elementor/atomic-widgets/prop-types' );
 		remove_all_filters( 'elementor/editor/localize_settings' );
 
 		$this->original_dynamic_tags = Plugin::$instance->dynamic_tags;
@@ -111,7 +111,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'group' => 'post',
 				'atomic_controls' => [],
-				'props_schema' => [],
+				'prop_types' => [],
 			],
 		];
 
@@ -173,7 +173,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 						],
 					],
 				],
-				'props_schema' => [
+				'prop_types' => [
 					'before' => [
 						'type' => [
 							'key' => 'string',
@@ -205,7 +205,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'group' => 'post',
 				'atomic_controls' => [],
-				'props_schema' => [],
+				'prop_types' => [],
 			]
 		];
 
@@ -393,12 +393,12 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 
 	public function test_add_dynamic_prop_type__skips_non_prop_types() {
 		// Act.
-		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
+		$prop_types = apply_filters( 'elementor/atomic-widgets/prop-types', [
 			'prop' => 'not-a-prop-type',
 		] );
 
 		// Assert.
-		$this->assertSame( [ 'prop' => 'not-a-prop-type' ], $schema );
+		$this->assertSame( [ 'prop' => 'not-a-prop-type' ], $prop_types );
 	}
 
 	public function test_add_dynamic_prop_type__skips_prop_types_that_ignore_dynamic() {
@@ -411,13 +411,13 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 			->add_meta( 'dynamic', false )
 			->default( 'default-value' );
 
-		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
+		$prop_types = apply_filters( 'elementor/atomic-widgets/prop-types', [
 			'prop1' => $prop1,
 			'prop2' => $prop2,
 		] );
 
 		// Assert.
-		$this->assertSame( [ 'prop1' => $prop1, 'prop2' => $prop2 ], $schema );
+		$this->assertSame( [ 'prop1' => $prop1, 'prop2' => $prop2 ], $prop_types );
 		$this->assertEmpty( $prop1->get_additional_types() );
 		$this->assertEmpty( $prop2->get_additional_types() );
 	}
@@ -427,7 +427,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 	 */
 	public function test_add_dynamic_prop_type( Prop_Type $prop, array $expected_categories ) {
 		// Act.
-		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
+		$prop_types = apply_filters( 'elementor/atomic-widgets/prop-types', [
 			'prop' => $prop,
 		] );
 
@@ -436,7 +436,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 			? []
 			: [ Dynamic_Prop_Type::make()->categories( $expected_categories ) ];
 
-		$this->assertSame( [ 'prop' => $prop ], $schema );
+		$this->assertSame( [ 'prop' => $prop ], $prop_types );
 		$this->assertEquals( $expected, $prop->get_additional_types() );
 	}
 

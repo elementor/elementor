@@ -39,8 +39,8 @@ class Dynamic_Tags_Module {
 		);
 
 		add_filter(
-			'elementor/atomic-widgets/props-schema',
-			fn( array $schema ) => Dynamic_Prop_Types_Mapping::add_to_schema( $schema )
+			'elementor/atomic-widgets/prop-types',
+			fn( array $prop_types ) => Dynamic_Prop_Types_Mapping::add_to_prop_types_definition( $prop_types )
 		);
 	}
 

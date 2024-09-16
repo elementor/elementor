@@ -25,15 +25,15 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	public function get_atomic_controls() {
 		$controls = $this->define_atomic_controls();
-		$schema = static::get_props_schema();
+		$prop_types = static::get_prop_types();
 
-		// Validate the schema only in the Editor.
-		static::validate_schema( $schema );
+		// Validate the prop types only in the Editor.
+		static::validate_prop_types( $prop_types );
 
-		return $this->get_valid_controls( $schema, $controls );
+		return $this->get_valid_controls( $prop_types, $controls );
 	}
 
-	private function get_valid_controls( array $schema, array $controls ): array {
+	private function get_valid_controls( array $prop_types, array $controls ): array {
 		$valid_controls = [];
 
 		foreach ( $controls as $control ) {
@@ -41,7 +41,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 				$cloned_section = clone $control;
 
 				$cloned_section->set_items(
-					$this->get_valid_controls( $schema, $control->get_items() )
+					$this->get_valid_controls( $prop_types, $control->get_items() )
 				);
 
 				$valid_controls[] = $cloned_section;
@@ -56,12 +56,12 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			$prop_name = $control->get_bind();
 
 			if ( ! $prop_name ) {
-				Utils::safe_throw( 'Control is missing a bound prop from the schema.' );
+				Utils::safe_throw( 'Control is missing a bound prop from the prop types.' );
 				continue;
 			}
 
-			if ( ! array_key_exists( $prop_name, $schema ) ) {
-				Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
+			if ( ! array_key_exists( $prop_name, $prop_types ) ) {
+				Utils::safe_throw( "Prop `{$prop_name}` is not defined in the prop types of `{$this->get_name()}`." );
 				continue;
 			}
 
@@ -85,7 +85,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config = parent::get_initial_config();
 
 		$config['atomic_controls'] = $this->get_atomic_controls();
-		$config['atomic_props_schema'] = static::get_props_schema();
+		$config['atomic_prop_types'] = static::get_prop_types();
 		$config['version'] = $this->version;
 
 		return $config;
@@ -116,24 +116,24 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	final public function get_atomic_settings(): array {
-		$schema = static::get_props_schema();
+		$prop_types = static::get_prop_types();
 		$props = $this->get_settings();
 
-		return Props_Resolver::for_settings()->resolve( $schema, $props );
+		return Props_Resolver::for_settings()->resolve( $prop_types, $props );
 	}
 
-	public static function get_props_schema(): array {
+	public static function get_prop_types(): array {
 		return apply_filters(
-			'elementor/atomic-widgets/props-schema',
-			static::define_props_schema()
+			'elementor/atomic-widgets/prop-types',
+			static::define_prop_types()
 		);
 	}
 
-	// TODO: Move to a `Schema_Validator` class?
-	private static function validate_schema( array $schema ) {
+	// TODO: Move to a `Prop_Types_Validator` class?
+	private static function validate_prop_types( array $prop_types ) {
 		$widget_name = static::class;
 
-		foreach ( $schema as $key => $prop ) {
+		foreach ( $prop_types as $key => $prop ) {
 			if ( ! ( $prop instanceof Prop_Type ) ) {
 				Utils::safe_throw( "Prop `$key` must be an instance of `Prop_Type` in `{$widget_name}`." );
 			}
@@ -147,9 +147,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	private function sanitize_atomic_settings( array $settings ): array {
-		$schema = static::get_props_schema();
+		$prop_types = static::get_prop_types();
 
-		[ , $validated, $errors ] = Settings_Validator::make( $schema )->validate( $settings );
+		[ , $validated, $errors ] = Settings_Validator::make( $prop_types )->validate( $settings );
 
 		if ( ! empty( $errors ) ) {
 			Utils::safe_throw( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
@@ -161,5 +161,5 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	/**
 	 * @return array<string, Prop_Type>
 	 */
-	abstract protected static function define_props_schema(): array;
+	abstract protected static function define_prop_types(): array;
 }

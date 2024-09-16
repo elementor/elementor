@@ -118,7 +118,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		];
 	}
 
-	protected static function define_props_schema(): array {
+	protected static function define_prop_types(): array {
 		$image_sizes = array_map(
 			fn( $size ) => $size['value'],
 			static::get_image_size_options()

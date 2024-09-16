@@ -25,7 +25,7 @@ class Dynamic_Tags_Registry {
 	 *       label: string,
 	 *       group: string,
 	 *       atomic_controls: array,
-	 *       props_schema: array<string, Prop_Type>
+	 *       prop_types: array<string, Prop_Type>
 	 *  }
 	 */
 	public function get_tag( string $name ): ?array {
@@ -61,7 +61,7 @@ class Dynamic_Tags_Registry {
 			'label' => $tag['title'] ?? '',
 			'group' => $tag['group'] ?? '',
 			'atomic_controls' => [],
-			'props_schema' => [],
+			'prop_types' => [],
 		];
 
 		if ( ! isset( $tag['controls'] ) ) {
@@ -69,10 +69,10 @@ class Dynamic_Tags_Registry {
 		}
 
 		try {
-			['atomic_controls' => $controls, 'props_schema' => $props_schema] = $this->convert_controls_to_atomic( $tag['controls'] );
+			['atomic_controls' => $controls, 'prop_types' => $prop_types] = $this->convert_controls_to_atomic( $tag['controls'] );
 
 			$atomic_dynamic_tag['atomic_controls'] = $controls;
-			$atomic_dynamic_tag['props_schema'] = $props_schema;
+			$atomic_dynamic_tag['prop_types'] = $prop_types;
 		} catch ( \Exception $e ) {
 			return null;
 		}
@@ -82,14 +82,14 @@ class Dynamic_Tags_Registry {
 
 	private function convert_controls_to_atomic( $controls ) {
 		$atomic_controls = [];
-		$props_schema = [];
+		$prop_types = [];
 
 		foreach ( $controls as $control ) {
 			if ( 'section' === $control['type'] ) {
 				continue;
 			}
 
-			['atomic_control' => $atomic_control, 'prop_schema' => $prop_schema] = $this->convert_control_to_atomic( $control );
+			['atomic_control' => $atomic_control, 'prop_type' => $prop_type] = $this->convert_control_to_atomic( $control );
 
 			$section_name = $control['section'];
 
@@ -103,12 +103,12 @@ class Dynamic_Tags_Registry {
 			$section->set_items( array_merge( $section->get_items(), [ $atomic_control ] ) );
 
 			$atomic_controls[ $section_name ] = $section;
-			$props_schema[ $control['name'] ] = $prop_schema;
+			$prop_types[ $control['name'] ] = $prop_type;
 		}
 
 		return [
 			'atomic_controls' => array_values( $atomic_controls ),
-			'props_schema' => $props_schema,
+			'prop_types' => $prop_types,
 		];
 	}
 
@@ -133,7 +133,7 @@ class Dynamic_Tags_Registry {
 	 * @param $control
 	 *
 	 * @throws \Exception
-	 * @return array{ atomic_control: Select_Control, prop_schema: String_Prop_Type }
+	 * @return array{ atomic_control: Select_Control, prop_type: String_Prop_Type }
 	 */
 	private function convert_select_control_to_atomic( $control ) {
 		if ( ! isset( $control['options'] ) ) {
@@ -153,31 +153,31 @@ class Dynamic_Tags_Registry {
 			->set_label( $control['label'] )
 			->set_options( $options );
 
-		$prop_schema = String_Prop_Type::make()
+		$prop_type = String_Prop_Type::make()
 			->enum( array_keys( $control['options'] ) )
 			->default( $control['default'] );
 
 		return [
 			'atomic_control' => $atomic_control,
-			'prop_schema' => $prop_schema,
+			'prop_type' => $prop_type,
 		];
 	}
 
 	/**
 	 * @param $control
 	 *
-	 * @return array{ atomic_control: Text_Control, prop_schema: String_Prop_Type }
+	 * @return array{ atomic_control: Text_Control, prop_type: String_Prop_Type }
 	 */
 	private function convert_text_control_to_atomic( $control ) {
 		$atomic_control = Text_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] );
 
-		$prop_schema = String_Prop_Type::make()
+		$prop_type = String_Prop_Type::make()
 			->default( $control['default'] );
 
 		return [
 			'atomic_control' => $atomic_control,
-			'prop_schema' => $prop_schema,
+			'prop_type' => $prop_type,
 		];
 	}
 }

@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Dynamic_Prop_Type extends Transformable_Prop_Type {
 
 	/**
-	 * Return a tuple that lets the developer ignore the dynamic prop type in the props schema
+	 * Return a tuple that lets the developer ignore the dynamic prop type in the prop types definition
 	 * using `Prop_Type::add_meta()`, e.g. `String_Prop_Type::make()->add_meta( Dynamic_Prop_Type::ignore() )`.
 	 */
 	public static function ignore(): array {
@@ -63,7 +63,7 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 			throw new \Exception( "Dynamic tag `{$tag['name']}` categories ($tag_categories) are not in supported categories ($prop_categories)" );
 		}
 
-		$validator = Settings_Validator::make( $tag['props_schema'] );
+		$validator = Settings_Validator::make( $tag['prop_types'] );
 
 		[ $is_valid, , $errors ] = $validator->validate( $value['settings'] );
 

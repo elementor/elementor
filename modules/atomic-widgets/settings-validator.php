@@ -11,14 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Settings_Validator {
 
-	private array $schema;
+	private array $prop_types;
 
-	public function __construct( array $schema ) {
-		$this->schema = $schema;
+	public function __construct( array $prop_types ) {
+		$this->prop_types = $prop_types;
 	}
 
-	public static function make( array $schema ): self {
-		return new static( $schema );
+	public static function make( array $prop_types ): self {
+		return new static( $prop_types );
 	}
 
 	/**
@@ -35,7 +35,7 @@ class Settings_Validator {
 		$errors = [];
 
 		foreach ( $settings as $key => $value ) {
-			$prop_type = $this->schema[ $key ] ?? null;
+			$prop_type = $this->prop_types[ $key ] ?? null;
 
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				continue;
