@@ -4,7 +4,6 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Checklist\Classes;
 
 use Elementor\Core\Isolation\Kit_Adapter_Interface;
 use Elementor\Modules\Checklist\Steps\Set_Fonts_And_Colors;
-use Prophecy\Prophet;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -21,7 +20,7 @@ class Test_Set_Fonts_And_Colors_Step extends Step_Test_Base {
 	}
 
 	public function test__step_is_completed_when_fonts_and_color_are_assigned() {
-		$main_post_mock = parent::prophesize( \WP_Post::class );
+		$main_post_mock = new \stdClass();
 		$active_kit_mock = $this->getMockBuilder( Kit_Adapter_Interface::class )
 			->getMock();
 		$active_kit_mock->method('get_main_post')->willReturn( $main_post_mock );
@@ -40,8 +39,6 @@ class Test_Set_Fonts_And_Colors_Step extends Step_Test_Base {
 		$this->assertFalse( $step->is_marked_as_completed() );
 		$this->assertFalse( $step->is_immutable_completed() );
 		$this->assertFalse( $step->is_absolute_completed() );
-
-		$main_post_mock = $this->createMock( \WP_Post::class );
 
 		$active_kit_mock = $this->getMockBuilder( Kit_Adapter_Interface::class )
 			->getMock();
