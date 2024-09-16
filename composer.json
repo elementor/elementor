@@ -16,8 +16,7 @@
 		"wp-coding-standards/wpcs": "^2.3",
 		"yoast/phpunit-polyfills": "^1.0",
 		"thor-juhasz/phpunit-coverage-check": "^0.3.0",
-		"spatie/phpunit-snapshot-assertions": "^4.2",
-		"phpspec/prophecy": "^1.19"
+		"spatie/phpunit-snapshot-assertions": "^4.2"
 	},
 	"scripts": {
 	  "lint": "phpcs --standard=ruleset.xml",
