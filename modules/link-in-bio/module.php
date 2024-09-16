@@ -64,7 +64,7 @@ class Module extends BaseModule {
 			wp_register_style(
 				$widget_style_name,
 				$this->get_css_assets_url( $widget_style_name, null, true, $custom_breakpoints ),
-				[],
+				[ 'elementor-frontend' ],
 				$custom_breakpoints ? null : ELEMENTOR_PRO_VERSION
 			);
 		}
