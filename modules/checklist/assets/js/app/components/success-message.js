@@ -28,7 +28,7 @@ const SuccessMessage = () => {
 			case 'success':
 				setTimeout( () => {
 					$e.commands.run( 'checklist/toggle-icon', false );
-					}, 0 );
+				}, 0 );
 				break;
 			case 'error':
 				break;
