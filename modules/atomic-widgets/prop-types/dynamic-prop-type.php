@@ -26,22 +26,6 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 	}
 
 	public function validate_value( $value ): void {
-		if ( ! isset( $value['name'] ) ) {
-			throw new \Exception( 'Property `name` is required' );
-		}
-
-		if ( ! is_string( $value['name'] ) ) {
-			throw new \Exception( 'Property `name` must be a string' );
-		}
-
-		if ( ! isset( $value['settings'] ) ) {
-			throw new \Exception( 'Property `settings` is required' );
-		}
-
-		if ( ! is_array( $value['settings'] ) ) {
-			throw new \Exception( 'Property `settings` must be an array' );
-		}
-
 		$tag = Plugin::$instance->dynamic_tags->create_tag( null, $value['name'] );
 
 		if ( ! $tag ) {
@@ -56,6 +40,13 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 		}
 
 		// TODO: Validate the settings against the schema using the same method from the save process.
+	}
+
+	protected static function define_value_schema(): array {
+		return Object_Prop_Type::make( [
+			'name' => String_Prop_Type::make(), // TODO: Enum of available dynamic tags?
+			'settings' => Object_Prop_Type::make()->any(),
+		] );
 	}
 
 	private function is_tag_in_supported_categories( Tag $tag ): bool {
