@@ -26,8 +26,9 @@ const SuccessMessage = () => {
 	useEffect( () => {
 		switch ( ajaxState.status ) {
 			case 'success':
-				setTimeout( ()=> {
-					$e.commands.run( 'checklist/toggle-icon', false ) }, 0 );
+				setTimeout( () => {
+					$e.commands.run( 'checklist/toggle-icon', false );
+					}, 0 );
 				break;
 			case 'error':
 				break;
