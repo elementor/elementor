@@ -249,7 +249,7 @@ class Manager {
 			}
 
 			$processed_posts += $batch_size;
-			
+
 			wp_reset_postdata();
 		}
 
