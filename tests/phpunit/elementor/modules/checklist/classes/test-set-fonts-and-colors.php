@@ -4,12 +4,14 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Checklist\Classes;
 
 use Elementor\Core\Isolation\Kit_Adapter_Interface;
 use Elementor\Modules\Checklist\Steps\Set_Fonts_And_Colors;
+use Prophecy\Prophet;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Test_Set_Fonts_And_Colors_Step extends Step_Test_Base {
+
 	public function setUp(): void {
 		parent::setUp();
 	}
@@ -19,8 +21,12 @@ class Test_Set_Fonts_And_Colors_Step extends Step_Test_Base {
 	}
 
 	public function test__step_is_completed_when_fonts_and_color_are_assigned() {
-		$main_post_mock = $this->createMock( \WP_Post::class );
-		$main_post_mock->post_status = 'publish';
+		//$prophet = new Prophet;
+		$main_post_mock = parent::prophesize( \WP_Post::class );
+		//$main_post_mock = $prophet->prophesize(\WP_Post::class);
+		//$main_post_mock = $this->createMock( \WP_Post::class );
+
+		//$main_post_mock->post_status = 'publish';
 
 		$active_kit_mock = $this->getMockBuilder( Kit_Adapter_Interface::class )
 			->getMock();

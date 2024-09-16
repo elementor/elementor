@@ -6,6 +6,7 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
+use Prophecy\Prophecy\ObjectProphecy;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -45,5 +46,9 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		$this->wordpress_adapter = $wordpress_adapter_mock;
 
 		return $wordpress_adapter_mock;
+	}
+
+	public function prophesize ( ?string $classOrInterface = null ): ObjectProphecy{
+		return parent::prophesize($classOrInterface);
 	}
 }
