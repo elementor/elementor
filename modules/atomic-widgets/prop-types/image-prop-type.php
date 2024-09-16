@@ -20,8 +20,19 @@ class Image_Prop_Type extends Transformable_Prop_Type {
 
 	protected static function define_value_schema(): Prop_Type {
 		return Object_Prop_Type::make( [
-			'src' => String_Prop_Type::make()->default( Utils::get_placeholder_image_src() ),
+			'src' => Object_Prop_Type::make( [
+				'id' => Number_Prop_Type::make()->int()->optional(),
+				'url' => String_Prop_Type::make()->optional(),
+			] ),
 			'size' => String_Prop_Type::make()->optional(),
+		] );
+
+		// icon list
+		return Object_Prop_Type::make( [
+			'items' => Array_Prop_Type::make()->of( Object_Prop_Type::make( [
+				'icon' => Icon_Prop_Type::make(),
+				'label' => String_Prop_Type::make(),
+			] ) ),
 		] );
 	}
 }

@@ -124,7 +124,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 			static::get_image_size_options()
 		);
 
-		return [
+		return Object_Prop_Type::make([
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
@@ -136,6 +136,6 @@ class Atomic_Image extends Atomic_Widget_Base {
 			'image_size' => String_Prop_Type::make()
 				->enum( $image_sizes )
 				->default( 'full' ),
-		];
+		]);
 	}
 }
