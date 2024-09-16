@@ -4,7 +4,7 @@ namespace Elementor\Modules\LinkInBio;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
-use ElementorPro\Plugin;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -56,7 +56,7 @@ class Module extends BaseModule {
 	 */
 	public function register_styles() {
 		$widget_styles = self::get_widget_style_list();
-		$has_custom_breakpoints = Plugin::elementor()->breakpoints->has_custom_breakpoints();
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		foreach ( $widget_styles as $widget_style_name => $has_widget_custom_breakpoints ) {
 			$custom_breakpoints = $has_widget_custom_breakpoints ? $has_custom_breakpoints : false;
@@ -72,6 +72,7 @@ class Module extends BaseModule {
 
 	private function get_widget_style_list() {
 		return [
+			'widget-link-in-bio' => self::HAS_WIDGET_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-link-in-bio-base' => self::HAS_WIDGET_CUSTOM_BREAKPOINTS,
 			'widget-link-in-bio-var-2' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
 			'widget-link-in-bio-var-3' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,

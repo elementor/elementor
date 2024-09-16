@@ -32,6 +32,8 @@ class Module extends BaseModule {
 	const FLOATING_BUTTONS_DOCUMENT_TYPE = 'floating-buttons';
 	const CPT_FLOATING_BUTTONS = 'e-floating-buttons';
 	const ADMIN_PAGE_SLUG_CONTACT = 'edit.php?post_type=e-floating-buttons';
+	const HAS_WIDGET_CUSTOM_BREAKPOINTS = true;
+	const HAS_WIDGET_NO_CUSTOM_BREAKPOINTS = false;
 
 	private $has_contact_pages = null;
 	private $trashed_contact_pages;
@@ -556,17 +558,42 @@ class Module extends BaseModule {
 	/**
 	 * Register styles.
 	 *
-	 * At build time, Elementor compiles `/modules/floating-buttons/assets/scss/frontend.scss`
-	 * to `/assets/css/widget-floating-buttons.min.css`.
+	 * At build time, Elementor compiles `/modules/floating-buttons/assets/scss/widgets/*.scss`
+	 * to `/assets/css/widget-*.min.css`.
 	 *
 	 * @return void
 	 */
 	public function register_styles() {
-		wp_register_style(
-			'widget-floating-buttons',
-			$this->get_css_assets_url( 'widget-floating-buttons', null, true, true ),
-			[ 'elementor-icons' ],
-			ELEMENTOR_VERSION
-		);
+		$widget_styles = self::get_widget_style_list();
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
+		foreach ( $widget_styles as $widget_style_name => $has_widget_custom_breakpoints ) {
+			$custom_breakpoints = $has_widget_custom_breakpoints ? $has_custom_breakpoints : false;
+
+			wp_register_style(
+					$widget_style_name,
+					$this->get_css_assets_url( $widget_style_name, null, true, $custom_breakpoints ),
+					[ 'elementor-frontend' ],
+					$custom_breakpoints ? null : ELEMENTOR_PRO_VERSION
+			);
+		}
+	}
+
+	private function get_widget_style_list() {
+		return [
+			'widget-floating-buttons' => self::HAS_WIDGET_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
+			'widget-floating-bars-base' => self::HAS_WIDGET_CUSTOM_BREAKPOINTS,
+			'widget-floating-bars-var-2' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+			'widget-floating-bars-var-3' => self::HAS_WIDGET_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-base' => self::HAS_WIDGET_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-1' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-3' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-4' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-6' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-7' => self::HAS_WIDGET_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-8' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-9' => self::HAS_WIDGET_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-10' => self::HAS_WIDGET_CUSTOM_BREAKPOINTS,
+		];
 	}
 }
