@@ -21,7 +21,7 @@ class Setup_Header extends Step_Base {
 			]
 			: null;
 
-		parent::__construct( $module, $wordpress_adapter, $promotion_data );
+		parent::__construct( $module, $wordpress_adapter, null, $promotion_data );
 	}
 
 	public function get_id() : string {
