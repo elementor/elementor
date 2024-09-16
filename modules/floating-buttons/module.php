@@ -571,10 +571,10 @@ class Module extends BaseModule {
 			$custom_breakpoints = $has_widget_custom_breakpoints ? $has_custom_breakpoints : false;
 
 			wp_register_style(
-					$widget_style_name,
-					$this->get_css_assets_url( $widget_style_name, null, true, $custom_breakpoints ),
-					[ 'elementor-frontend' ],
-					$custom_breakpoints ? null : ELEMENTOR_PRO_VERSION
+				$widget_style_name,
+				$this->get_css_assets_url( $widget_style_name, null, true, $custom_breakpoints ),
+				[ 'elementor-frontend' ],
+				$custom_breakpoints ? null : ELEMENTOR_VERSION
 			);
 		}
 	}
