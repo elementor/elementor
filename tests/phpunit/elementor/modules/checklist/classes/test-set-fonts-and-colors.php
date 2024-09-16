@@ -21,13 +21,7 @@ class Test_Set_Fonts_And_Colors_Step extends Step_Test_Base {
 	}
 
 	public function test__step_is_completed_when_fonts_and_color_are_assigned() {
-		//$prophet = new Prophet;
 		$main_post_mock = parent::prophesize( \WP_Post::class );
-		//$main_post_mock = $prophet->prophesize(\WP_Post::class);
-		//$main_post_mock = $this->createMock( \WP_Post::class );
-
-		//$main_post_mock->post_status = 'publish';
-
 		$active_kit_mock = $this->getMockBuilder( Kit_Adapter_Interface::class )
 			->getMock();
 		$active_kit_mock->method('get_main_post')->willReturn( $main_post_mock );
