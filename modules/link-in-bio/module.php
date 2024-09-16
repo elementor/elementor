@@ -4,6 +4,7 @@ namespace Elementor\Modules\LinkInBio;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
+use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -12,6 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'link-in-bio';
+
+	const HAS_WIDGET_CUSTOM_BREAKPOINTS = true;
+
+	const HAS_WIDGET_NO_CUSTOM_BREAKPOINTS = false;
 
 	public function get_name(): string {
 		return static::EXPERIMENT_NAME;
@@ -44,17 +49,35 @@ class Module extends BaseModule {
 	/**
 	 * Register styles.
 	 *
-	 * At build time, Elementor compiles `/modules/link-in-bio/assets/scss/frontend.scss`
-	 * to `/assets/css/widget-link-in-bio.min.css`.
+	 * At build time, Elementor compiles `/modules/link-in-bio/assets/scss/widgets/*.scss`
+	 * to `/assets/css/widget-*.min.css`.
 	 *
 	 * @return void
 	 */
 	public function register_styles() {
-		wp_register_style(
-			'widget-link-in-bio',
-			$this->get_css_assets_url( 'widget-link-in-bio', null, true, true ),
-			[ 'elementor-frontend' ],
-			ELEMENTOR_VERSION
-		);
+		$widget_styles = self::get_widget_style_list();
+		$has_custom_breakpoints = Plugin::elementor()->breakpoints->has_custom_breakpoints();
+
+		foreach ( $widget_styles as $widget_style_name => $has_widget_custom_breakpoints ) {
+			$custom_breakpoints = $has_widget_custom_breakpoints ? $has_custom_breakpoints : false;
+
+			wp_register_style(
+				$widget_style_name,
+				$this->get_css_assets_url( $widget_style_name, null, true, $custom_breakpoints ),
+				[],
+				$custom_breakpoints ? null : ELEMENTOR_PRO_VERSION
+			);
+		}
+	}
+
+	private function get_widget_style_list() {
+		return [
+			'widget-link-in-bio-base' => self::HAS_WIDGET_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio-var-2' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio-var-3' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio-var-4' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio-var-5' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio-var-7' => self::HAS_WIDGET_NO_CUSTOM_BREAKPOINTS,
+		];
 	}
 }
