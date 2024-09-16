@@ -250,7 +250,6 @@ class Manager {
 
 			$processed_posts += $batch_size;
 			
-			// Reset query and memory after each batch.
 			wp_reset_postdata();
 		}
 
