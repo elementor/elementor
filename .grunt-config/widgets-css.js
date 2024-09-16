@@ -138,10 +138,6 @@ class WidgetsCss {
 				this.getModulesFrontendScssFiles( fileFullPath, frontendScssFiles );
 			} else if ( isFrontendScssFile || isWidgetsScssFile ) {
 				frontendScssFiles.push( fileFullPath );
-
-				if ( isWidgetsScssFile ) {
-					console.log( 'fileFullPath', fileFullPath );
-				}
 			}
 		} );
 
