@@ -567,8 +567,8 @@ class Module extends BaseModule {
 		$widget_styles = self::get_widget_style_list();
 		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
-		foreach ( $widget_styles as $widget_style_name => $WIDGET_HAS_CUSTOM_BREAKPOINTS ) {
-			$custom_breakpoints = $WIDGET_HAS_CUSTOM_BREAKPOINTS ? $has_custom_breakpoints : false;
+		foreach ( $widget_styles as $widget_style_name => $widget_has_custom_breakpoints ) {
+			$custom_breakpoints = $widget_has_custom_breakpoints ? $has_custom_breakpoints : false;
 
 			wp_register_style(
 				$widget_style_name,
