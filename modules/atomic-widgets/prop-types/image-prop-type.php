@@ -18,10 +18,7 @@ class Image_Prop_Type extends Transformable_Prop_Type {
 		// TODO: Validate the image size against the src.
 	}
 
-	/**
-	 * @return array<string, Prop_Type>
-	 */
-	protected static function define_value_schema(): array {
+	protected static function define_value_schema(): Prop_Type {
 		return Object_Prop_Type::make( [
 			'src' => String_Prop_Type::make()->default( Utils::get_placeholder_image_src() ),
 			'size' => String_Prop_Type::make()->optional(),

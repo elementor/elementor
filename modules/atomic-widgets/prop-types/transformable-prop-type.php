@@ -39,10 +39,7 @@ abstract class Transformable_Prop_Type extends Prop_Type {
 		return $this;
 	}
 
-	/**
-	 * @return array<string, Prop_Type>
-	 */
-	public static function get_value_schema(): array {
+	public static function get_value_schema(): Prop_Type {
 		return apply_filters(
 			// TODO: Use dedicated filter.
 			'elementor/atomic-widgets/props-schema',
@@ -50,9 +47,6 @@ abstract class Transformable_Prop_Type extends Prop_Type {
 		);
 	}
 
-	/**
-	 * @return Prop_Type
-	 */
 	abstract protected static function define_value_schema(): Prop_Type;
 
 	public function jsonSerialize(): array {

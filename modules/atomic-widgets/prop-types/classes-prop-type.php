@@ -16,7 +16,7 @@ class Classes_Prop_Type extends Transformable_Prop_Type {
 		// Nothing.
 	}
 
-	protected static function define_value_schema(): array {
+	protected static function define_value_schema(): Prop_Type {
 		return Array_Prop_Type::make()->items(
 			String_Prop_Type::make()->regex( '/^[a-z][a-z-_0-9]*$/i' )
 		);

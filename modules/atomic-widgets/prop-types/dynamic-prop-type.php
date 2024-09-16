@@ -42,7 +42,7 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 		// TODO: Validate the settings against the schema using the same method from the save process.
 	}
 
-	protected static function define_value_schema(): array {
+	protected static function define_value_schema(): Prop_Type {
 		return Object_Prop_Type::make( [
 			'name' => String_Prop_Type::make(), // TODO: Enum of available dynamic tags?
 			'settings' => Object_Prop_Type::make()->any(),
