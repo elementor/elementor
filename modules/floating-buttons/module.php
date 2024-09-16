@@ -26,7 +26,6 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'floating-buttons';
 	const FLOATING_ELEMENTS_TYPE_META_KEY = '_elementor_floating_elements_type';
-	const ROUTER_VERSION = '1.0.0';
 	const ROUTER_OPTION_KEY = 'elementor_floating_buttons_router_version';
 	const META_CLICK_TRACKING = '_elementor_click_tracking';
 	const CLICK_TRACKING_NONCE = 'elementor-conversion-center-click';
@@ -109,7 +108,12 @@ class Module extends BaseModule {
 			} );
 		}
 
-		add_action( 'save_post_' . static::CPT_FLOATING_BUTTONS, [ $this, 'flush_permalinks_on_save' ] );
+		add_action( 'current_screen', function() {
+			$screen = get_current_screen();
+			if ( $screen && 'edit-e-floating-buttons' === $screen->id ) {
+				$this->flush_permalinks_on_elementor_version_change();
+			}
+		});
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
@@ -316,14 +320,10 @@ class Module extends BaseModule {
 		}
 	}
 
-	public function flush_permalinks_on_save() {
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			return;
-		}
-
-		if ( get_option( static::ROUTER_OPTION_KEY ) !== static::ROUTER_VERSION ) {
+	public function flush_permalinks_on_elementor_version_change() {
+		if ( get_option( static::ROUTER_OPTION_KEY ) !== ELEMENTOR_VERSION ) {
 			flush_rewrite_rules();
-			update_option( static::ROUTER_OPTION_KEY, static::ROUTER_VERSION );
+			update_option( static::ROUTER_OPTION_KEY, ELEMENTOR_VERSION );
 		}
 	}
 
