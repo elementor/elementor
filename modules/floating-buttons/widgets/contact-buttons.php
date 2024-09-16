@@ -25,11 +25,4 @@ class Contact_Buttons extends Widget_Contact_Button_Base {
 	public function get_title(): string {
 		return esc_html__( 'Single Chat', 'elementor' );
 	}
-<<<<<<< HEAD
-
-	public function get_style_depends(): array {
-		return [ 'widget-floating-buttons' ];
-	}
-=======
->>>>>>> fixED-15773-fix-icons-are-not-showing-inside-the-new-widgets-when-the-icon-experiment-is-inactive
 }
