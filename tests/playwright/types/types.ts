@@ -88,7 +88,8 @@ export type ElementorType = {
 		initial_document:{
 			id: string
 		}
-	}
+	},
+	isDeviceModeActive?: () => unknown
 }
 
 export type Device = 'mobile' | 'mobile_extra' | 'tablet' | 'tablet_extra' | 'laptop' | 'desktop' | 'widescreen';

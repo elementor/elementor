@@ -8,7 +8,7 @@ export const editorV1 = () => {
 
 		elementor.getPanelView().getPages( 'menu' ).view.addItem( {
 			name: 'notification-center',
-			icon: 'eicon-notification',
+			icon: 'eicon-speakerphone',
 			title: __( 'What\'s New', 'elementor' ),
 			callback: editorOnButtonClicked,
 		}, 'navigate_from_page', 'view-page' );

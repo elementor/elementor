@@ -447,9 +447,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.modules.linkInBioLibraryModule = new LinkInBioLibraryModule();
 
-		if ( elementorCommon.config.experimentalFeatures[ 'floating-bars' ] ) {
-			this.modules.floatingBarsLibraryModule = new FloatingBarsLibraryModule();
-		}
+		this.modules.floatingBarsLibraryModule = new FloatingBarsLibraryModule();
 
 		this.modules.elementsColorPicker = new ElementsColorPicker();
 

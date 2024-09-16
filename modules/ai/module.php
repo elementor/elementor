@@ -3,10 +3,9 @@ namespace Elementor\Modules\Ai;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
-use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -28,8 +27,6 @@ class Module extends BaseModule {
 		self::HISTORY_TYPE_BLOCK,
 	];
 
-	const LAYOUT_EXPERIMENT = 'ai-layout';
-
 	public function get_name() {
 		return 'ai';
 	}
@@ -41,11 +38,13 @@ class Module extends BaseModule {
 			( new Preferences() )->register();
 		}
 
-		if ( ! Preferences::is_ai_enabled( get_current_user_id() ) ) {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 			return;
 		}
 
-		$this->register_layout_experiment();
+		if ( ! Preferences::is_ai_enabled( get_current_user_id() ) ) {
+			return;
+		}
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'ai', Ai::get_class_name() );
@@ -68,6 +67,7 @@ class Module extends BaseModule {
 				'ai_get_text_to_image' => [ $this, 'ajax_ai_get_text_to_image' ],
 				'ai_get_image_to_image' => [ $this, 'ajax_ai_get_image_to_image' ],
 				'ai_get_image_to_image_mask' => [ $this, 'ajax_ai_get_image_to_image_mask' ],
+				'ai_get_image_to_image_mask_cleanup' => [ $this, 'ajax_ai_get_image_to_image_mask_cleanup' ],
 				'ai_get_image_to_image_outpainting' => [ $this, 'ajax_ai_get_image_to_image_outpainting' ],
 				'ai_get_image_to_image_upscale' => [ $this, 'ajax_ai_get_image_to_image_upscale' ],
 				'ai_get_image_to_image_remove_background' => [ $this, 'ajax_ai_get_image_to_image_remove_background' ],
@@ -87,10 +87,7 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function() {
 			$this->enqueue_main_script();
-
-			if ( $this->is_layout_active() ) {
-				$this->enqueue_layout_script();
-			}
+			$this->enqueue_layout_script();
 		} );
 
 		add_action( 'elementor/editor/after_enqueue_styles', function() {
@@ -103,14 +100,12 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/preview/enqueue_styles', function() {
-			if ( $this->is_layout_active() ) {
-				wp_enqueue_style(
-					'elementor-ai-layout-preview',
-					$this->get_css_assets_url( 'modules/ai/layout-preview' ),
-					[],
-					ELEMENTOR_VERSION
-				);
-			}
+			wp_enqueue_style(
+				'elementor-ai-layout-preview',
+				$this->get_css_assets_url( 'modules/ai/layout-preview' ),
+				[],
+				ELEMENTOR_VERSION
+			);
 		} );
 
 		if ( is_admin() ) {
@@ -149,25 +144,8 @@ class Module extends BaseModule {
 		});
 
 		add_filter( 'elementor/document/save/data', function ( $data ) {
-			if ( $this->is_layout_active() ) {
-				return $this->remove_temporary_containers( $data );
-			}
-
-			return $data;
+			return $this->remove_temporary_containers( $data );
 		} );
-	}
-
-	private function register_layout_experiment() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => static::LAYOUT_EXPERIMENT,
-			'title' => esc_html__( 'Build with AI', 'elementor' ),
-			'description' => esc_html__( 'Tap into the potential of AI to easily create and customize containers to your specifications, right within Elementor. This feature comes packed with handy AI tools, including generation, variations, and URL references.', 'elementor' ),
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'dependencies' => [
-				'container',
-			],
-		] );
 	}
 
 	public function enqueue_ai_media_library() {
@@ -254,10 +232,6 @@ class Module extends BaseModule {
 		);
 
 		wp_set_script_translations( 'elementor-ai-layout', 'elementor' );
-	}
-
-	private function is_layout_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::LAYOUT_EXPERIMENT );
 	}
 
 	private function remove_temporary_containers( $data ) {
@@ -793,6 +767,44 @@ class Module extends BaseModule {
 			'usage' => $result['usage'],
 		];
 	}
+	public function ajax_ai_get_image_to_image_mask_cleanup( $data ) {
+		$this->verify_upload_permissions( $data );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
+			throw new \Exception( 'Missing Image' );
+		}
+
+		if ( empty( $data['payload']['settings'] ) ) {
+			throw new \Exception( 'Missing prompt settings' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		if ( empty( $data['payload']['mask'] ) ) {
+			throw new \Exception( 'Missing Mask' );
+		}
+
+		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_image_to_image_mask_cleanup( [
+			'attachment_id' => $data['payload']['image']['id'],
+			'mask' => $data['payload']['mask'],
+		], $context, $request_ids );
+
+		$this->throw_on_error( $result );
+
+		return [
+			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
 	public function ajax_ai_get_image_to_image_outpainting( $data ) {
 		$this->verify_upload_permissions( $data );
 

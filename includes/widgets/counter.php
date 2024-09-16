@@ -102,9 +102,7 @@ class Widget_Counter extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return $this->load_widgets_styles_in_head()
-			? [ 'widget-counter' ]
-			: [];
+		return [ 'widget-counter' ];
 	}
 
 	/**

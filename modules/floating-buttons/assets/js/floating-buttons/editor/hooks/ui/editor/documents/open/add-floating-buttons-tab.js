@@ -12,12 +12,37 @@ export class FloatingButtonsAddLibraryTab extends $e.modules.hookUI.After {
 		return 'floating-buttons' === document.config.type;
 	}
 
+	getSubtype() {
+		const urlParams = new URLSearchParams( window.location.search );
+		switch ( urlParams.get( 'floating_element' ) ) {
+			case 'floating-bars':
+				return 'Floating Bar';
+			case 'floating-buttons':
+				return 'Floating Button';
+			default:
+				return 'Floating Button';
+		}
+	}
+
+	getTitle() {
+		const urlParams = new URLSearchParams( window.location.search );
+		switch ( urlParams.get( 'floating_element' ) ) {
+			case 'floating-bars':
+				return __( 'Floating Bars', 'elementor' );
+			case 'floating-buttons':
+				return __( 'Floating Buttons', 'elementor' );
+			default:
+				return __( 'Floating Buttons', 'elementor' );
+		}
+	}
+
 	apply() {
 		$e.components.get( 'library' ).addTab( 'templates/floating-buttons', {
-			title: __( 'Floating Elements', 'elementor' ),
+			title: this.getTitle(),
 			filter: {
 				source: 'remote',
 				type: 'floating_button',
+				subtype: this.getSubtype(),
 			},
 		}, 2 );
 

@@ -29,6 +29,20 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'store',
 		'ui',
 		'utils',
+		'wp-media',
+	];
+
+	/**
+	 * Additional dependencies for packages that rely on global variables, rather than
+	 * an explicit npm dependency (e.g. `window.elementor`, `window.wp`, etc.).
+	 */
+	const ADDITIONAL_DEPS = [
+		'editor-v1-adapters' => [
+			'elementor-web-cli',
+		],
+		'wp-media' => [
+			'media-models',
+		],
 	];
 
 	/**
@@ -75,10 +89,13 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 				);
 			}
 
+			$additional_deps = self::ADDITIONAL_DEPS[ $package ] ?? [];
+			$deps = array_merge( $config['deps'], $additional_deps );
+
 			wp_register_script(
 				$config['handle'],
 				"{$assets_url}js/packages/{$package}/{$package}{$min_suffix}.js",
-				$config['deps'],
+				$deps,
 				ELEMENTOR_VERSION,
 				true
 			);

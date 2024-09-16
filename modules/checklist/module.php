@@ -4,10 +4,13 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\Modules\Checklist\Data\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,10 +19,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule implements Checklist_Module_Interface {
 	const EXPERIMENT_ID = 'launchpad-checklist';
 	const DB_OPTION_KEY = 'elementor_checklist';
+	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
+	const FIRST_CLOSED_CHECKLIST_IN_EDITOR = 'first_closed_checklist_in_editor';
+	const LAST_OPENED_TIMESTAMP = 'last_opened_timestamp';
 
-	private $user_progress = null;
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;
+	private $user_progress = null;
+	private static $instance = null;
 
 	/**
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
@@ -27,19 +34,25 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 * @return void
 	 */
 	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
+		static::$instance = $this;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		parent::__construct();
 
 		$this->register_experiment();
+		$this->init_user_progress();
 
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
 
-		$this->init_user_progress();
+		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->steps_manager = new Steps_Manager( $this );
 		$this->enqueue_editor_scripts();
+	}
+
+	public static function instance() : self {
+		return static::$instance ?? new self();
 	}
 
 	/**
@@ -69,7 +82,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *      @type array $steps {
 	 *          @type string $step_id => {
 	 *              @type bool $is_marked_completed
-	 *              @type bool $is_completed
+	 *              @type bool $is_absolute_competed
+	 *              @type bool $is_immutable_completed
 	 *          }
 	 *      }
 	 *  }
@@ -105,6 +119,21 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$this->update_user_progress_in_db();
 	}
 
+	public function update_user_progress( $new_data ) : void {
+		$allowed_properties = [
+			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
+			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
+		];
+
+		foreach ( $allowed_properties as $key => $value ) {
+			if ( null !== $value ) {
+				$this->user_progress[ $key ] = $value;
+			}
+		}
+
+		$this->update_user_progress_in_db();
+	}
+
 	/**
 	 * @return Steps_Manager
 	 */
@@ -131,6 +160,9 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 					'react-dom',
 					'elementor-common',
 					'elementor-v2-ui',
+					'elementor-v2-icons',
+					'elementor-v2-editor-app-bar',
+					'elementor-web-cli',
 				],
 				ELEMENTOR_VERSION,
 				true
@@ -138,6 +170,16 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 			wp_set_script_translations( $this->get_name(), 'elementor' );
 		} );
+	}
+
+	public static function is_preference_switch_on() : bool {
+		$user_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )
+			->get_model()
+			->get_settings( self::VISIBILITY_SWITCH_ID );
+		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
+		$is_preference_switch_on = $user_preferences ?? $is_new_installation;
+
+		return 'yes' === $is_preference_switch_on;
 	}
 
 	private function register_experiment() : void {
@@ -152,8 +194,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	private function init_user_progress() : void {
 		$default_settings = [
-			'is_hidden' => false,
-			'last_opened_timestamp' => time(),
+			self::LAST_OPENED_TIMESTAMP => -1,
+			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			'steps' => [],
 		];
 

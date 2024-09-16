@@ -26,6 +26,31 @@ test.describe( 'Container tests @container', () => {
 		await page.close();
 	} );
 
+	test( 'Background slideshow', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( 'heading', containerId );
+		await editor.selectElement( containerId );
+
+		await editor.closeNavigatorIfOpen();
+		await editor.openPanelTab( 'style' );
+		await editor.openSection( 'section_background' );
+		await editor.setChooseControlValue( 'background_background', 'eicon-slideshow' );
+		await editor.addImagesToGalleryControl();
+
+		await test.step( 'Verify background slideshow', async () => {
+			await editor.togglePreviewMode();
+			await expect.soft( editor.getPreviewFrame().locator( '.e-con' ).nth( 0 ) ).toHaveScreenshot( 'editor-container-background-slideshow.png' );
+			await editor.togglePreviewMode();
+			await editor.publishAndViewPage();
+		} );
+
+		await test.step( 'Verify background slideshow on the frontend', async () => {
+			await expect.soft( page.locator( '.e-con' ) ).toHaveScreenshot( 'frontend-container-background-slideshow.png' );
+		} );
+	} );
+
 	test( 'Sort items in a Container using DnD', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

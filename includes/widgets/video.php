@@ -103,9 +103,7 @@ class Widget_Video extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return $this->load_widgets_styles_in_head()
-			? [ 'widget-video' ]
-			: [];
+		return [ 'widget-video' ];
 	}
 
 	/**
@@ -1087,7 +1085,7 @@ class Widget_Video extends Widget_Base {
 							'entranceAnimation' => $settings['lightbox_content_animation'],
 							'entranceAnimation_tablet' => $settings['lightbox_content_animation_tablet'],
 							'entranceAnimation_mobile' => $settings['lightbox_content_animation_mobile'],
-							'videoAspectRatio' => $settings['aspect_ratio'],
+							'videoAspectRatio' => $settings['aspect_ratio'] ?? '169',
 						],
 					];
 

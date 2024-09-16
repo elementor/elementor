@@ -30,6 +30,15 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		return get_pages( $args );
 	}
 
+	/**
+	 * Creates and returns a wp query instance.
+	 *
+	 * @return \WP_Query
+	 */
+	public function get_query( $args ) : ?\WP_Query {
+		return new \WP_Query( $args );
+	}
+
 	public function get_option( $option_key ) {
 		return get_option( $option_key );
 	}
@@ -40,5 +49,13 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
 	public function add_option( $option_key, $option_value ) : void {
 		add_option( $option_key, $option_value );
+	}
+
+	public function add_query_arg( $args, $url ) : string {
+		return add_query_arg( $args, $url );
+	}
+
+	public function has_custom_logo() : bool {
+		return has_custom_logo();
 	}
 }

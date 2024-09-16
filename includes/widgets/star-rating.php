@@ -88,9 +88,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return $this->load_widgets_styles_in_head()
-			? [ 'widget-star-rating' ]
-			: [];
+		return [ 'widget-star-rating' ];
 	}
 
 	/**

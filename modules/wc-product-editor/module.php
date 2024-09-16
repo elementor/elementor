@@ -13,8 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	public function __construct() {
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
-		add_action( 'admin_footer', [ $this, 'print_button_js_template' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 	}
 
 	public static function is_active() {
@@ -25,19 +24,17 @@ class Module extends BaseModule {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script(
-			'elementor-wc-product-editor',
-			ELEMENTOR_ASSETS_URL . 'js/wc-product-editor' . $suffix . '.js',
-			[],
+			'e-wc-product-editor',
+			ELEMENTOR_ASSETS_URL . 'js/e-wc-product-editor' . $suffix . '.js',
+			[ 'wp-components', 'wp-core-data', 'wc-admin-layout', 'wp-plugins' ],
 			ELEMENTOR_VERSION,
 			true
 		);
 
-		wp_enqueue_style(
-			'elementor-wc-product-editor',
-			ELEMENTOR_ASSETS_URL . 'css/wc-product-editor' . $suffix . '.css',
-			[],
-			ELEMENTOR_VERSION
-		);
+		$elementor_settings = [
+			'editLink' => admin_url( 'post.php' ),
+		];
+		Utils::print_js_config( 'e-wc-product-editor', 'ElementorWCProductEditorSettings', $elementor_settings );
 	}
 
 	public function get_name() {
@@ -55,47 +52,6 @@ class Module extends BaseModule {
 		$path_pieces = explode( '/', $path );
 		$route       = $path_pieces[1];
 
-		return 'product' === $route;
-	}
-
-	public function print_button_js_template() {
-		$post_id = $this->get_post_id();
-		$document = Plugin::$instance->documents->get( $post_id );
-
-		if ( ! $document ) {
-			return;
-		}
-		?>
-		<script id="elementor-woocommerce-new-editor-button" type="text/html">
-			<a id="elementor-go-to-edit-page-link" class="elementor-wc-button-wrapper" href="<?php echo esc_url( $document->get_edit_url() ); ?>">
-				<div id="elementor-editor-button" class="button button-primary button-large">
-					<i class="eicon-elementor-square" aria-hidden="true"></i>
-					<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
-				</div>
-				<div class="elementor-loader-wrapper">
-					<div class="elementor-loader">
-						<div class="elementor-loader-boxes">
-							<div class="elementor-loader-box"></div>
-							<div class="elementor-loader-box"></div>
-							<div class="elementor-loader-box"></div>
-							<div class="elementor-loader-box"></div>
-						</div>
-					</div>
-					<div class="elementor-loading-title"><?php echo esc_html__( 'Loading', 'elementor' ); ?></div>
-				</div>
-			</a>
-		</script>
-		<?php
-	}
-
-	private function get_post_id() {
-		if ( Utils::get_super_global_value( $_GET, 'path' ) === null ) {
-			return false;
-		}
-
-		$path_query = Utils::get_super_global_value( $_GET, 'path' );
-		$query_string = isset( $path_query ) ? explode( '/', $path_query ) : [];
-
-		return (int) end( $query_string );
+		return 'product' === $route || 'add-product' === $route;
 	}
 }

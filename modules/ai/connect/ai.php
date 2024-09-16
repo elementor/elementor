@@ -598,6 +598,45 @@ class Ai extends Library {
 
 		return $result;
 	}
+	public function get_image_to_image_mask_cleanup( $image_data, $context, $request_ids ) {
+		$image_file = get_attached_file( $image_data['attachment_id'] );
+		$mask_file = $this->store_temp_file( $image_data['mask'], '.svg' );
+
+		if ( ! $image_file ) {
+			throw new \Exception( 'Image file not found' );
+		}
+
+		if ( ! $mask_file ) {
+			throw new \Exception( 'Mask file not found' );
+		}
+
+		$result = $this->ai_request(
+			'POST',
+			'image/image-to-image/cleanup',
+			[
+				self::PROMPT => $image_data[ self::PROMPT ],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+				'image_base64' => $image_data['image_base64'],
+			],
+			[
+				[
+					'name' => 'image',
+					'type' => 'image',
+					'path' => $image_file,
+				],
+				[
+					'name' => 'mask_image',
+					'type' => 'image/svg+xml',
+					'path' => $mask_file,
+				],
+			]
+		);
+
+		return $result;
+	}
 
 	public function generate_layout( $data, $context ) {
 		$endpoint = 'generate/layout';

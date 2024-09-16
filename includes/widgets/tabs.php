@@ -89,9 +89,7 @@ class Widget_Tabs extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return $this->load_widgets_styles_in_head()
-			? [ 'widget-tabs' ]
-			: [];
+		return [ 'widget-tabs' ];
 	}
 
 	public function show_in_panel(): bool {
