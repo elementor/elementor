@@ -5,7 +5,11 @@ import WpAdminPage from '../pages/wp-admin-page';
 test( 'Heading widget added using shortcode with non-correct payload', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
-	const testShortcode = '[elementor-element data="eyJpZCI6IjIyODIzYzYiLCJlbFR5cGUiOiJ3aWRnZXQiLCJpc0lubmVyIjpmYWxzZSwiaXNMb2NrZWQiOmZhbHNlLCJzZXR0aW5ncyI6eyJjb250ZW50X3dpZHRoIjoiZnVsbCIsInRpdGxlIjoiSG93ZHkgPHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pm93ZHkifSwiZWxlbWVudHMiOltdLCJ3aWRnZXRUeXBlIjoiaGVhZGluZyJ9"]';
+
+	const jsInPayload = '<script>alert(1)</script>',
+		payloadRaw = '{"id":"22823c6","elType":"widget","isInner":false,"isLocked":false,"settings":{"content_width":"full","title":"Howdy ' + jsInPayload + 'owdy"},"elements":[],"widgetType":"heading"}',
+		payload = Buffer.from( payloadRaw ).toString( 'base64' ),
+		testShortcode = '[elementor-element data="' + payload + '"]';
 
 	let alertDetected = false;
 	page.on( 'dialog', async ( dialog ) => {
@@ -15,6 +19,7 @@ test( 'Heading widget added using shortcode with non-correct payload', async ( {
 
 	await editor.addWidget( 'shortcode' );
 	await page.locator( '.elementor-control-shortcode textarea' ).fill( testShortcode );
+	await page.waitForLoadState( 'networkidle' );
 
 	expect( alertDetected ).toBe( false );
 	expect( await editor.getPreviewFrame().locator( '.elementor-heading-title' ).textContent() ).toBe( 'Howdy alert(1)owdy' );
