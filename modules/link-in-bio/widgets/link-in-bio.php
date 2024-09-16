@@ -27,8 +27,11 @@ class Link_In_Bio extends Widget_Link_In_Bio_Base {
 	public function get_title(): string {
 		return esc_html__( 'Minimalist', 'elementor' );
 	}
+<<<<<<< HEAD
 
 	public function get_style_depends(): array {
 		return [ 'widget-link-in-bio' ];
 	}
+=======
+>>>>>>> fixED-15773-fix-icons-are-not-showing-inside-the-new-widgets-when-the-icon-experiment-is-inactive
 }
