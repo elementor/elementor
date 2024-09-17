@@ -242,15 +242,13 @@ class Manager {
 			foreach ( $query->posts as $post_id ) {
 				$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 
-				if ( $document && $document->is_built_with_elementor() ) {
+				if ( $document ) {
 					$css_file = Post_CSS::create( $post_id );
 					$css_file->update();
 				}
 			}
 
 			$processed_posts += $batch_size;
-
-			wp_reset_postdata();
 		}
 
 		/**
@@ -258,8 +256,8 @@ class Manager {
 		 *
 		 * Fires after Elementor generates new CSS files
 		 *
-		 * @since 3.250.0
+		 * @since 3.25.0
 		 */
-		do_action( 'elementor/core/files/generate_css' );
+		do_action( 'elementor/core/files/after_generate_css' );
 	}
 }
