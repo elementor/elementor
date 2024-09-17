@@ -33,7 +33,6 @@ class Module extends BaseModule {
 	const CPT_FLOATING_BUTTONS = 'e-floating-buttons';
 	const ADMIN_PAGE_SLUG_CONTACT = 'edit.php?post_type=e-floating-buttons';
 	const WIDGET_HAS_CUSTOM_BREAKPOINTS = true;
-	const WIDGET_HAS_NO_CUSTOM_BREAKPOINTS = false;
 
 	private $has_contact_pages = null;
 	private $trashed_contact_pages;
@@ -583,15 +582,15 @@ class Module extends BaseModule {
 		return [
 			'widget-floating-buttons' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-floating-bars-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-			'widget-floating-bars-var-2' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
+			'widget-floating-bars-var-2' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-floating-bars-var-3' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-contact-buttons-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-			'widget-contact-buttons-var-1' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
-			'widget-contact-buttons-var-3' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
-			'widget-contact-buttons-var-4' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
-			'widget-contact-buttons-var-6' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-1' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-3' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-4' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-6' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-contact-buttons-var-7' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-			'widget-contact-buttons-var-8' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-8' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-contact-buttons-var-9' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-contact-buttons-var-10' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 		];

@@ -16,8 +16,6 @@ class Module extends BaseModule {
 
 	const WIDGET_HAS_CUSTOM_BREAKPOINTS = true;
 
-	const WIDGET_HAS_NO_CUSTOM_BREAKPOINTS = false;
-
 	public function get_name(): string {
 		return static::EXPERIMENT_NAME;
 	}
@@ -74,11 +72,11 @@ class Module extends BaseModule {
 		return [
 			'widget-link-in-bio' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-link-in-bio-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-			'widget-link-in-bio-var-2' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
-			'widget-link-in-bio-var-3' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
-			'widget-link-in-bio-var-4' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
-			'widget-link-in-bio-var-5' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
-			'widget-link-in-bio-var-7' => self::WIDGET_HAS_NO_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio-var-2' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio-var-3' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio-var-4' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio-var-5' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio-var-7' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 		];
 	}
 }
