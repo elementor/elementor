@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Classes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Dynamic_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
@@ -68,6 +69,7 @@ class Module extends BaseModule {
 
 	private function register_transformers( Transformers_Registry $transformers ) {
 		$transformers->register( new Classes_Transformer() );
+		$transformers->register( new Dynamic_Transformer( Plugin::$instance->dynamic_tags ) );
 	}
 
 	/**
