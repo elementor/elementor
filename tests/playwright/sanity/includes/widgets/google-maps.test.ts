@@ -35,4 +35,3 @@ test( 'Verify Google maps controls', async ( { page, apiRequests }, testInfo ) =
 	currentHeight = await googleMapsWidget.getHeight( true );
 	expect( String( currentHeight ) ).toEqual( height );
 } );
-

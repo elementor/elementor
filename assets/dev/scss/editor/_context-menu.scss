@@ -91,6 +91,10 @@
 					}
 				}
 			}
+
+			&.elementor-hidden {
+				display: none;
+			}
 		}
 	}
 

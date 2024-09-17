@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import useAjax from 'elementor-app/hooks/use-ajax';
 import { OnboardingContext } from '../context/context';
 import Message from '../components/message';
 import { options, setSelectedFeatureList } from '../utils/utils';
@@ -7,6 +8,7 @@ import PageContentLayout from '../components/layout/page-content-layout';
 
 export default function ChooseFeatures() {
 	const { state } = useContext( OnboardingContext ),
+		{ setAjax } = useAjax(),
 		tiers = { advanced: __( 'Advanced', 'elementor' ), essential: __( 'Essential', 'elementor' ) },
 		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
 		[ tierName, setTierName ] = useState( tiers.essential ),
@@ -25,6 +27,15 @@ export default function ChooseFeatures() {
 						step: state.currentStep,
 					},
 				} );
+
+				setAjax( {
+					data: {
+						action: 'elementor_save_onboarding_features',
+						data: JSON.stringify( {
+							features: selectedFeatures,
+						} ),
+					},
+				} );
 			},
 		};
 
@@ -33,6 +44,16 @@ export default function ChooseFeatures() {
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
+			action: () => {
+				setAjax( {
+					data: {
+						action: 'elementor_save_onboarding_features',
+						data: JSON.stringify( {
+							features: selectedFeatures,
+						} ),
+					},
+				} );
+			},
 		};
 	}
 

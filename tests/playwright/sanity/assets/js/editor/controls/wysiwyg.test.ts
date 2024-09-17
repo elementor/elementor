@@ -30,5 +30,5 @@ test( 'WYSIWYG Control allows mixing HTML & entities', async ( { page, apiReques
 
 	// Assert.
 	expect( value ).toContain( '&lt;hr&gt;' );
-	expect( value ).toContain( '<hr />' ); // It's seperated because of inconsistent output . Sometimes the widget return a text with a <p> element and sometimes not.
+	expect( value ).toContain( '<hr />' ); // It's separated because of inconsistent output . Sometimes the widget return a text with a <p> element and sometimes not.
 } );

@@ -18,7 +18,7 @@ test( 'Spacer widget should be shown in search result', async ( { page, apiReque
 } );
 
 // When searching for a widget that is hidden on search, the widget should not be shown in search result.
-test( 'Wordpress widget should not be shown in search result', async ( { page, apiRequests }, testInfo ) => {
+test( 'WordPress widget should not be shown in search result', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	await wpAdmin.openNewPage();
 

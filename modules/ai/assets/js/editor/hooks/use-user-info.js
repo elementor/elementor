@@ -17,7 +17,7 @@ const useUserInfo = ( immediately = false ) => {
 	} );
 
 	const credits = userInfo.usage.quota - userInfo.usage.usedQuota;
-	const usagePercentage = ( userInfo.usage.usedQuota / userInfo.usage.quota ) * 100;
+	const usagePercentage = userInfo.usage.quota ? ( userInfo.usage.usedQuota / userInfo.usage.quota ) * 100 : 0;
 
 	const fetchData = async () => {
 		setIsLoading( true );

@@ -108,6 +108,7 @@
 					dismissId: event.target.closest( '.e-hint__container' ).dataset.event,
 				},
 			} );
+
 			this.hideHint( event );
 		},
 

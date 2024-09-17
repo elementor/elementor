@@ -15,13 +15,8 @@ test.describe( 'Editor top bar', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( { editor_v2: true } );
 
 		editor = await wpAdmin.openNewPage();
-	} );
-
-	test.afterAll( async () => {
-		await wpAdmin.setExperiments( { editor_v2: false } );
 	} );
 
 	test( 'check that app-bar exists', async () => {

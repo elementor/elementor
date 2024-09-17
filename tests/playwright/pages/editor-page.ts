@@ -2,11 +2,12 @@ import { addElement, getElementSelector } from '../assets/elements-utils';
 import { expect, type Page, type Frame, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
-import _path from 'path';
+import _path, { resolve as pathResolve } from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, WindowType, BackboneType, ElementorType } from '../types/types';
+import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
+import Breakpoints from '../assets/breakpoints';
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
@@ -302,6 +303,10 @@ export default class EditorPage extends BasePage {
 		await this.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
 	}
 
+	async setWidgetTab( tab: 'content' | 'style' | 'advanced' ) {
+		await this.page.locator( `.elementor-tab-control-${ tab }` ).click();
+	}
+
 	/**
 	 * Paste styling setting on the element.
 	 *
@@ -417,7 +422,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setTextControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } input` ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } input` ).nth( 0 ).fill( value.toString() );
 	}
 
 	/**
@@ -449,11 +454,9 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @param {string} controlId - The control to set the value to.
 	 * @param {string} value     - The value to set.
-	 *
-	 * @return {Promise<void>}
 	 */
 	async setSliderControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value );
 	}
 
 	/**
@@ -886,27 +889,25 @@ export default class EditorPage extends BasePage {
 		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
 	}
 
+	async openResponsiveViewBar() {
+		const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
+
+		if ( ! hasResponsiveViewBar ) {
+			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		}
+	}
+
 	/**
 	 * Select a responsive view.
 	 *
 	 * @param {string} device - The name of the device breakpoint, such as `tablet_extra`.
-	 *
-	 * @return {Promise<void>}
 	 */
-	async changeResponsiveView( device: string ) {
+	async changeResponsiveView( device: Device ) {
 		const hasTopBar = await this.hasTopBar();
-
 		if ( hasTopBar ) {
-			const deviceLabel = device.charAt( 0 ).toUpperCase() + device.slice( 1 );
-
-			await this.page.locator( `${ EditorSelectors.panels.topBar.wrapper } [aria-label="Switch Device"] button[aria-label*="${ deviceLabel }"]` ).click();
+			await Breakpoints.getDeviceLocator( this.page, device ).click();
 		} else {
-			const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
-
-			if ( ! hasResponsiveViewBar ) {
-				await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
-			}
-
+			await this.openResponsiveViewBar();
 			await this.page.locator( `#e-responsive-bar-switcher__option-${ device }` ).first().locator( 'i' ).click();
 		}
 	}
@@ -1257,5 +1258,55 @@ export default class EditorPage extends BasePage {
 	 */
 	async isolatedIdNumber( idPrefix: string, itemID: string ): Promise<number> {
 		return Number( itemID.replace( idPrefix, '' ) );
+	}
+
+	async addImagesToGalleryControl( args?: { images?: string[], metaData?: boolean } ) {
+		const defaultImages = [ 'A.jpg', 'B.jpg', 'C.jpg', 'D.jpg', 'E.jpg' ];
+
+		await this.page.locator( EditorSelectors.galleryControl.addGalleryBtn ).nth( 0 ).click();
+		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
+
+		const _images = args?.images === undefined ? defaultImages : args.images;
+
+		for ( const i in _images ) {
+			await this.page.setInputFiles( EditorSelectors.media.imageInp, pathResolve( __dirname, `../resources/${ _images[ i ] }` ) );
+
+			if ( args?.metaData ) {
+				await this.addTestImageMetaData();
+			}
+		}
+
+		await this.page.locator( EditorSelectors.media.addGalleryButton ).click();
+		await this.page.locator( 'text=Insert gallery' ).click();
+	}
+
+	async addTestImageMetaData( args = { caption: 'Test caption!', description: 'Test description!' } ) {
+		await this.page.locator( EditorSelectors.media.images ).first().click();
+		await this.page.locator( EditorSelectors.media.imgCaption ).clear();
+		await this.page.locator( EditorSelectors.media.imgCaption ).type( args.caption );
+
+		await this.page.locator( EditorSelectors.media.images ).first().click();
+		await this.page.locator( EditorSelectors.media.imgDescription ).clear();
+		await this.page.locator( EditorSelectors.media.imgDescription ).type( args.description );
+	}
+
+	async saveSiteSettingsWithTopBar( toReload: boolean ) {
+		if ( await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).isEnabled() ) {
+			await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).click();
+		} else {
+			await this.page.evaluate( ( selector ) => {
+				const button: HTMLElement = document.evaluate( selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
+				button.click();
+			}, EditorSelectors.panels.siteSettings.saveButton );
+		}
+
+		if ( toReload ) {
+			await this.page.locator( EditorSelectors.refreshPopup.reloadButton ).click();
+		}
+	}
+
+	async saveSiteSettingsNoTopBar() {
+		await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
+		await this.page.locator( EditorSelectors.toast ).waitFor();
 	}
 }

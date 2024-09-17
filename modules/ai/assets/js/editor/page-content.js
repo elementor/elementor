@@ -16,6 +16,9 @@ import useUpgradeMessage from './hooks/use-upgrade-message';
 import UsageMessages from './components/usage-messages';
 import { Box, Typography } from '@elementor/ui';
 import Loader from './components/loader';
+import { useEffect, useRef, useState } from 'react';
+import { useRequestIds } from './context/requests-ids';
+import { FREE_TRIAL_FEATURES_NAMES } from './helpers/features-enum';
 
 const PageContent = (
 	{
@@ -35,9 +38,23 @@ const PageContent = (
 		fetchData,
 		hasSubscription,
 		credits,
-		usagePercentage,
+		usagePercentage: initialUsagePercentage,
 	} = ( () => additionalOptions?.useCustomInit ?? useUserInfo )()();
+
+	const { updateUsagePercentage, usagePercentage } = useRequestIds();
+	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isInitUsageDone && ! isLoading && ( initialUsagePercentage || 0 === initialUsagePercentage ) ) {
+			updateUsagePercentage( initialUsagePercentage );
+			setIsInitUsageDone( true );
+		}
+	}, [ isLoading, initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
+
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
+	const [ sxStyle, setSxStyle ] = useState( { pointerEvents: 'none' } );
+	const timeoutRef = useRef( null );
+
 	const promptDialogStyleProps = {
 		sx: {
 			zIndex: 170000, // Make sure the dialog is above wp attachment details view
@@ -63,6 +80,29 @@ const PageContent = (
 		},
 	};
 
+	const codePromptDialogStyleProps = {
+		sx: {
+			...promptDialogStyleProps.sx,
+			...sxStyle,
+		},
+		PaperProps: {
+			onMouseEnter: () => {
+				clearTimeout( timeoutRef.current );
+				setSxStyle( { pointerEvents: 'all' } );
+			},
+			onMouseLeave: () => {
+				clearTimeout( timeoutRef.current );
+				timeoutRef.current = setTimeout( () => {
+					setSxStyle( { pointerEvents: 'none' } );
+				}, 200 );
+			},
+			sx: {
+				...promptDialogStyleProps.PaperProps.sx,
+				pointerEvents: 'auto',
+			},
+		},
+	};
+
 	const maybeRenderUpgradeChip = () => {
 		if ( ! showBadge ) {
 			return;
@@ -76,7 +116,7 @@ const PageContent = (
 		);
 	};
 
-	if ( isLoading ) {
+	if ( isLoading || ! isInitUsageDone ) {
 		return (
 
 			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth={ 'media' === type ? 'lg' : 'sm' }>
@@ -149,12 +189,11 @@ const PageContent = (
 
 	if ( 'code' === type ) {
 		return (
-			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
+			<PromptDialog onClose={ onClose } { ...codePromptDialogStyleProps }>
 				<PromptHistoryProvider historyType={ HISTORY_TYPES.CODE }>
 					<PromptHistoryActionProvider>
 						<PromptDialog.Header onClose={ onClose }>
 							<PromptHistory />
-
 							{ maybeRenderUpgradeChip() }
 						</PromptDialog.Header>
 
@@ -171,6 +210,7 @@ const PageContent = (
 									hasSubscription={ hasSubscription }
 									usagePercentage={ usagePercentage }
 									sx={ { mb: 2 } }
+									feature={ FREE_TRIAL_FEATURES_NAMES.CODE }
 								/>
 							</FormCode>
 						</PromptDialog.Content>
@@ -205,6 +245,7 @@ const PageContent = (
 								hasSubscription={ hasSubscription }
 								usagePercentage={ usagePercentage }
 								sx={ { mb: 2 } }
+								feature={ FREE_TRIAL_FEATURES_NAMES.TEXT }
 							/>
 						</FormText>
 					</PromptDialog.Content>

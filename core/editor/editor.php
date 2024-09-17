@@ -12,6 +12,7 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 use Elementor\Core\Editor\Data;
+use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -32,7 +33,12 @@ class Editor {
 	 */
 	const EDITING_CAPABILITY = 'edit_posts';
 
-	const EDITOR_V2_EXPERIMENT_NAME = 'editor_v2';
+	/**
+	 * The const is deprecated, it remains here for backward compatibility.
+	 *
+	 * @deprecated Use App_Bar_Module::EXPERIMENT_NAME instead
+	 */
+	const EDITOR_V2_EXPERIMENT_NAME = App_Bar_Module::EXPERIMENT_NAME;
 
 	/**
 	 * Post ID.
@@ -538,8 +544,6 @@ class Editor {
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 
-		$this->register_editor_v2_experiment();
-
 		// Handle autocomplete feature for URL control.
 		add_filter( 'wp_link_query_args', [ $this, 'filter_wp_link_query_args' ] );
 		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
@@ -596,30 +600,6 @@ class Editor {
 		}
 
 		return $this->loader;
-	}
-
-	/**
-	 * Adding Editor V2 experiment.
-	 *
-	 * @return void
-	 * @throws \Exception
-	 */
-	private function register_editor_v2_experiment() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => static::EDITOR_V2_EXPERIMENT_NAME,
-			'title' => esc_html__( 'Editor Top Bar', 'elementor' ),
-			'description' => sprintf(
-				'%1$s <a href="https://go.elementor.com/wp-dash-elementor-top-bar/" target="_blank">%2$s</a>',
-				esc_html__( 'Get a sneak peek of the new Editor powered by React. The beautiful design and experimental layout of the Top bar are just some of the exciting tools on their way.', 'elementor' ),
-				esc_html__( 'Learn more', 'elementor' )
-			),
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.23.0',
-			],
-		] );
 	}
 
 	/**

@@ -249,11 +249,7 @@ export class ContainerHelper {
 	 * @param {Container} container - Container to open edit mode for.
 	 */
 	static openEditMode( container ) {
-		$e.run( 'panel/editor/open', {
-			model: container.model,
-			view: container.view,
-			container,
-		} );
+		$e.run( 'document/elements/select', { container } );
 	}
 }
 

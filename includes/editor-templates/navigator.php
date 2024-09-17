@@ -1,7 +1,7 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Editor\Editor;
+use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 use Elementor\Utils;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-$is_editor_v2_active = Plugin::$instance->experiments->is_feature_active( Editor::EDITOR_V2_EXPERIMENT_NAME );
+$is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_Module::EXPERIMENT_NAME );
 
 $has_pro = Utils::has_pro();
 $elements_list_class = '';
@@ -37,14 +37,14 @@ if ( ! $has_pro ) {
 			<span class="elementor-screen-only"><?php esc_html__( 'Expand all elements', 'elementor' ); ?></span>
 		</button>
 		<h2 id="elementor-navigator__header__title"><?php
-			echo $is_editor_v2_active
+			echo $is_app_bar_active
 				? esc_html__( 'Structure', 'elementor' )
 				: esc_html__( 'Navigator', 'elementor' );
 		?></h2>
 		<button id="elementor-navigator__close">
 			<i class="eicon-close" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php
-				echo $is_editor_v2_active
+				echo $is_app_bar_active
 					? esc_html__( 'Close structure', 'elementor' )
 					: esc_html__( 'Close navigator', 'elementor' );
 			?></span>
@@ -69,7 +69,7 @@ if ( ! $has_pro ) {
 		<div id="elementor-navigator__footer__resize-bar">
 			<i class="eicon-ellipsis-h" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php
-				echo $is_editor_v2_active
+				echo $is_app_bar_active
 					? esc_html__( 'Resize structure', 'elementor' )
 					: esc_html__( 'Resize navigator', 'elementor' );
 			?></span>

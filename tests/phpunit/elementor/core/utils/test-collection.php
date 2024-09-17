@@ -501,4 +501,17 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertTrue( $result2 );
 		$this->assertFalse( $result3 );
 	}
+
+	public function test_some() {
+		// Arrange.
+		$collection = Collection::make( [ 1, 2, 3, 4 ] );
+
+		// Act.
+		$has_evens = $collection->some( fn ( $item ) => $item % 2 === 0 );
+		$has_10 = $collection->some( fn ( $item ) => $item === 10 );
+
+		// Assert.
+		$this->assertTrue( $has_evens );
+		$this->assertFalse( $has_10 );
+	}
 }

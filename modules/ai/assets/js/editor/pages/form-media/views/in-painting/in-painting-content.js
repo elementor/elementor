@@ -45,11 +45,9 @@ const BrishSizeIcon = styled( Box, { shouldForwardProp: ( prop ) => 'size' === p
 	backgroundColor: theme.palette.secondary.main,
 } ) );
 
-const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: canvasHeight } ) => {
+const InPaintingContent = ( { editImage, setMask, setIsCanvasChanged, width: canvasWidth, height: canvasHeight } ) => {
 	const sketchRef = useRef();
-
 	const [ stroke, setStroke ] = useState( 30 );
-
 	const brushCursorRef = useRef();
 
 	useEffect( () => {
@@ -156,6 +154,7 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 					strokeColor={ BRUSH_COLOR }
 					canvasColor={ CANVAS_COLOR }
 					backgroundImage={ editImage.url }
+					onStroke={ () => setIsCanvasChanged( true ) }
 					onChange={ async () => {
 						const svg = await sketchRef.current.exportSvg();
 						setMask( svg );
@@ -168,6 +167,7 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 
 InPaintingContent.propTypes = {
 	setMask: PropTypes.func.isRequired,
+	setIsCanvasChanged: PropTypes.func.isRequired,
 	width: PropTypes.number.isRequired,
 	height: PropTypes.number.isRequired,
 	editImage: PropTypes.object.isRequired,

@@ -1,9 +1,11 @@
 const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	if ( Object.keys( data ).length ) {
-		data.context = window.elementorAiCurrentContext;
+		if ( window.elementorAiCurrentContext ) {
+			data.context = window.elementorAiCurrentContext;
+		} else {
+			data.context = window.elementorWpAiCurrentContext;
+		}
 	}
-
-	data.editor_session_id = window.EDITOR_SESSION_ID;
 
 	return new Promise( ( resolve, reject ) => {
 		const ajaxData = elementorCommon.ajax.addRequest(
@@ -26,6 +28,8 @@ export const getUserInformation = ( immediately ) => request( 'ai_get_user_infor
 
 export const getRemoteConfig = () => request( 'ai_get_remote_config' );
 
+export const getRemoteFrontendConfig = ( payload, immediately ) => request( 'ai_get_remote_frontend_config', { payload }, immediately );
+
 export const getCompletionText = ( payload ) => request( 'ai_get_completion_text', { payload } );
 
 export const getExcerpt = ( payload ) => request( 'ai_get_excerpt', { payload } );
@@ -45,6 +49,8 @@ export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedb
 export const getTextToImageGeneration = ( payload ) => request( 'ai_get_text_to_image', { payload } );
 
 export const getImageToImageGeneration = ( payload ) => request( 'ai_get_image_to_image', { payload } );
+
+export const getImageToImageMaskCleanup = ( payload ) => request( 'ai_get_image_to_image_mask_cleanup', { payload } );
 
 export const getImageToImageMaskGeneration = ( payload ) => request( 'ai_get_image_to_image_mask', { payload } );
 

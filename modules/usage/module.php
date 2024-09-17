@@ -539,7 +539,7 @@ class Module extends BaseModule {
 
 				$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref );
 
-				$percent = $changed_controls_count / ( count( $element_controls ) / 100 );
+				$percent = ! empty( $element_controls ) ? $changed_controls_count / ( count( $element_controls ) / 100 ) : 0;
 
 				$usage[ $type ] ['control_percent'] = (int) round( $percent );
 			}

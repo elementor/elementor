@@ -81,17 +81,110 @@ export default class ApiRequests {
 		await Promise.all( requests );
 	}
 
-	public async cleanUpTestPages( request: APIRequestContext ) {
+	public async cleanUpTestPages( request: APIRequestContext, shouldDeleteAllPages = false ) {
 		const pagesPublished = await this.getPages( request ),
 			pagesDraft = await this.getPages( request, 'draft' ),
 			pages = [ ...pagesPublished, ...pagesDraft ];
 
 		const pageIds = pages
-			.filter( ( page: WpPage ) => page.title.rendered.includes( 'Playwright Test Page' ) )
+			.filter( ( page: WpPage ) => shouldDeleteAllPages || page.title.rendered.includes( 'Playwright Test Page' ) )
 			.map( ( page: WpPage ) => page.id );
 
 		for ( const id of pageIds ) {
 			await this.deletePage( request, id );
+		}
+	}
+
+	public async installPlugin( request: APIRequestContext, slug: string, active: boolean ) {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/plugins`,
+				slug,
+				status: active ? 'active' : 'inactive',
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to install a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				slug: ${ slug }
+			` );
+		}
+		const { plugin } = await response.json();
+
+		return plugin;
+	}
+
+	public async deactivatePlugin( request: APIRequestContext, slug: string ) {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/plugins/${ slug }`,
+				status: 'inactive',
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to deactivate a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				slug: ${ slug }
+			` );
+		}
+	}
+
+	public async deletePlugin( request: APIRequestContext, slug: string ) {
+		const response = await this._delete( request, 'plugins', slug );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to delete a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				slug: ${ slug }
+			` );
+		}
+	}
+
+	public async getTheme( request: APIRequestContext, status?: 'active' | 'inactive' ) {
+		return await this.get( request, 'themes', status );
+	}
+
+	public async customGet( request: APIRequestContext, restRoute: string, multipart? ) {
+		const response = await request.get( `${ this.baseUrl }/${ restRoute }`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			multipart,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to get from ${ restRoute }: ${ response.status() }.
+				${ this.baseUrl }
+			` );
+		}
+
+		return await response.json();
+	}
+
+	public async customPut( request: APIRequestContext, restRoute: string, data ) {
+		const response = await request.put( `${ this.baseUrl }/${ restRoute }`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			data,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to put to ${ restRoute }: ${ response.status() }.
+				${ await response.text() }
+			` );
 		}
 	}
 
@@ -134,9 +227,11 @@ export default class ApiRequests {
 
 		if ( ! response.ok() ) {
 			throw new Error( `
-			Failed to delete a ${ entity }: ${ response.status() }.
+			Failed to delete a ${ entity } with id '${ id }': ${ response.status() }.
 			${ await response.text() }
 		` );
 		}
+
+		return response;
 	}
 }

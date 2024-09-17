@@ -3,11 +3,6 @@
 		.elementor-hidden-mobile {
 			display: none;
 		}
-
-		// TODO: BC Since 3.4.0 - remove at some point
-		.elementor-hidden-phone {
-			display: none;
-		}
 	}
 
 	@media (min-width: $screen-mobile-extra-min) and (max-width: $screen-mobile-extra-max) {

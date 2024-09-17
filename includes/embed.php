@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Elementor embed handler class is responsible for Elementor embed functionality.
  * The class holds the supported providers with their embed patters, and handles
- * their custom properties to create custom HTML with the embeded content.
+ * their custom properties to create custom HTML with the embedded content.
  *
  * @since 1.5.0
  */

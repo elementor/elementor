@@ -11,12 +11,7 @@ test.describe( 'Section tests', () => {
 		await wpAdmin.setExperiments( {
 			container: false,
 		} );
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		new WpAdminPage( page, testInfo, apiRequests );
+		await page.close();
 	} );
 
 	test( 'Verify that elements are in the correct order after passing into a new section', async ( { page, apiRequests }, testInfo ) => {

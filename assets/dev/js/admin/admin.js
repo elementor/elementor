@@ -5,7 +5,7 @@ import Events from 'elementor-utils/events';
 import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
-import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js/admin/module';
+import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js/floating-buttons/admin/module';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -115,6 +115,22 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 					$wrapperElm.slideUp( 100, function() {
 						$wrapperElm.remove();
 					} );
+				} );
+			} );
+
+			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="plugin_image_optimization"] a.e-button--cta' ).on( 'click', function() {
+				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
+					data: {
+						source: 'io-wp-media-library-install',
+					},
+				} );
+			} );
+
+			$( '.e-a-apps .e-a-item[data-plugin="image-optimization/image-optimization.php"] a.e-btn' ).on( 'click', function() {
+				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
+					data: {
+						source: 'io-esetting-addons-install',
+					},
 				} );
 			} );
 
@@ -340,7 +356,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				new LandingPagesModule();
 			}
 
-			if ( elementorCommon.config.experimentalFeatures[ 'floating-buttons' ] ) {
+			if ( elementorCommon.config.experimentalFeatures.container ) {
 				new FloatingButtonsHandler();
 			}
 

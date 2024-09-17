@@ -49,4 +49,11 @@
 			}
 		}
 	}
+
+	.e-link-in-bio__identity-image-cover {
+
+		.e-link-in-bio__identity-image-element {
+			object-position: var(--e-link-in-bio-identity-image-profile-position);
+		}
+	}
 }

@@ -513,6 +513,8 @@ abstract class Element_Base extends Controls_Stack {
 			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			$this->after_render();
 
+			// TODO: Remove this in the future
+			// Since version 3.24.0 page scripts/styles are handled by `page_assets`.
 			$this->enqueue_scripts();
 			$this->enqueue_styles();
 		}
@@ -561,10 +563,28 @@ abstract class Element_Base extends Controls_Stack {
 
 		$is_dynamic_content = apply_filters( 'elementor/element/is_dynamic_content', false, $raw_data, $this );
 
-		$has_dynamic_tag = ! empty( $raw_data['settings']['__dynamic__'] );
+		$has_dynamic_tag = $this->has_element_dynamic_tag( $raw_data['settings'] );
 
 		if ( $is_dynamic_content || $has_dynamic_tag ) {
 			return true;
+		}
+
+		return false;
+	}
+
+	private function has_element_dynamic_tag( $element_settings ): bool {
+		if ( is_array( $element_settings ) ) {
+			if ( ! empty( $element_settings['__dynamic__'] ) ) {
+				return true;
+			}
+
+			foreach ( $element_settings as $value ) {
+				$has_dynamic = $this->has_element_dynamic_tag( $value );
+
+				if ( $has_dynamic ) {
+					return true;
+				}
+			}
 		}
 
 		return false;

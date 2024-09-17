@@ -8,7 +8,6 @@ use Elementor\Core\Base\Traits\Shared_Widget_Controls_Trait;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\LinkInBio\Classes\Render\Core_Render;
-use Elementor\Modules\LinkInBio\Module as ConversionCenterModule;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Utils;
@@ -17,6 +16,20 @@ use Elementor\Widget_Base;
 abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 	use Shared_Widget_Controls_Trait;
+
+	public function get_group_name(): string {
+		return 'link-in-bio';
+	}
+
+	public function get_style_depends(): array {
+		$style_depends = Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' )
+			? parent::get_style_depends()
+			: [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+
+		$style_depends[] = 'widget-link-in-bio';
+
+		return $style_depends;
+	}
 
 	public static function get_configuration() {
 		return [
@@ -168,10 +181,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
 			'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
 		];
-	}
-
-	public function show_in_panel(): bool {
-		return Plugin::$instance->experiments->is_feature_active( ConversionCenterModule::EXPERIMENT_NAME );
 	}
 
 	protected function register_controls(): void {
@@ -611,7 +620,6 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 								Social_Network_Provider::SPOTIFY,
 								Social_Network_Provider::SOUNDCLOUD,
 								Social_Network_Provider::VIMEO,
-								Social_Network_Provider::WAZE,
 							]
 						),
 					],

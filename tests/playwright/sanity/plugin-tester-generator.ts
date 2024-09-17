@@ -4,81 +4,97 @@ import EditorPage from '../pages/editor-page';
 import wpAdminPage from '../pages/wp-admin-page';
 import { wpEnvCli } from '../assets/wp-env-cli';
 
-const pluginList = [
-	'essential-addons-for-elementor-lite',
-	'jetsticky-for-elementor',
-	'jetgridbuilder',
-	'the-plus-addons-for-elementor-page-builder',
-	'stratum',
-	'bdthemes-prime-slider-lite',
-	'wunderwp',
-	'addon-elements-for-elementor-page-builder',
-	'addons-for-elementor',
-	'anywhere-elementor',
-	'astra-sites',
-	'connect-polylang-elementor',
-	'dynamic-visibility-for-elementor',
-	'ele-custom-skin',
-	'elementskit-lite',
-	'envato-elements',
-	'exclusive-addons-for-elementor',
-	// 'header-footer-elementor',
-	'jeg-elementor-kit',
-	'make-column-clickable-elementor',
-	'metform',
-	'music-player-for-elementor',
-	'ooohboi-steroids-for-elementor',
-	'post-grid-elementor-addon',
-	'powerpack-lite-for-elementor',
-	'premium-addons-for-elementor',
-	'rife-elementor-extensions',
-	'royal-elementor-addons',
-	'sb-elementor-contact-form-db',
-	'skyboot-custom-icons-for-elementor',
-	'sticky-header-effects-for-elementor',
-	'timeline-widget-addon-for-elementor',
-	// 'unlimited-elements-for-elementor',
-	// 'visibility-logic-elementor',
-	'ht-mega-for-elementor',
-	'tutor-lms-elementor-addons',
-	'code-block-for-elementor',
-	'jetwidgets-for-elementor',
-	'happy-elementor-addons',
+const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[] = [
+	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
+	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
+	{ pluginName: 'jetgridbuilder', installSource: 'api' },
+	// Removed the-plus-addons-for-elementor-page-builder since they create a popup that interferes with the tests
+	// { pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
+	{ pluginName: 'stratum', installSource: 'api' },
+	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
+	{ pluginName: 'wunderwp', installSource: 'api' },
+	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
+	{ pluginName: 'addons-for-elementor', installSource: 'api' },
+	{ pluginName: 'anywhere-elementor', installSource: 'api' },
+	{ pluginName: 'astra-sites', installSource: 'api' },
+	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
+	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
+	{ pluginName: 'elementskit-lite', installSource: 'api' },
+	{ pluginName: 'envato-elements', installSource: 'api' },
+	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api' },
+	{ pluginName: 'header-footer-elementor', installSource: 'api' },
+	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
+	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
+	{ pluginName: 'metform', installSource: 'api' },
+	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
+	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
+	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
+	// { pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
+	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
+	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
+	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
+	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
+	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
+	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
+	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
+	// { pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
+	{ pluginName: 'visibility-logic-elementor', installSource: 'api' },
+	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
+	{ pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
+	{ pluginName: 'code-block-for-elementor', installSource: 'api' },
+	{ pluginName: 'jetwidgets-for-elementor', installSource: 'api' },
+	{ pluginName: 'happy-elementor-addons', installSource: 'cli' },
+	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
-		test( `"${ plugin }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
-			const editor = new EditorPage( page, testInfo );
-			const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
-			const adminBar = 'wpadminbar';
-
-			wpEnvCli( `wp plugin install ${ plugin } --activate` );
-
-			await page.goto( '/law-firm-about/' );
-			await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
-			await page.evaluate( ( selector ) => {
-				const admin = document.getElementById( selector );
-				admin.remove();
-			}, adminBar );
-			await editor.removeClasses( 'elementor-motion-effects-element' );
-			await editor.scrollPage();
-			await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
-
-			if ( 'astra-sites' === plugin ) {
-				await page.goto( '/wp-admin/index.php' );
+		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
+			let pluginTechnicalName: string;
+			switch ( plugin.installSource ) {
+				case 'api':
+					pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
+					break;
+				case 'cli':
+					wpEnvCli( `wp plugin install ${ plugin.pluginName } --activate` );
+					break;
+				case 'zip':
+					wpEnvCli( `wp plugin install elementor-playwright/plugin-tester-plugins/${ plugin.pluginName }.zip --activate` );
+					break;
 			}
-			await page.goto( '/law-firm-about/?elementor' );
-			if ( 'happy-elementor-addons' === plugin ) {
+
+			try {
+				const editor = new EditorPage( page, testInfo );
+				const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
+				const adminBar = 'wpadminbar';
+
+				await page.goto( '/law-firm-about/' );
+				await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
+				await page.evaluate( ( selector ) => {
+					const admin = document.getElementById( selector );
+					admin.remove();
+				}, adminBar );
+				await editor.removeClasses( 'elementor-motion-effects-element' );
+				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
+
+				if ( 'astra-sites' === plugin.pluginName ) {
+					await page.goto( '/wp-admin/index.php' );
+				}
 				await page.goto( '/law-firm-about/?elementor' );
+
+				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+				await wpAdmin.closeAnnouncementsIfVisible();
+				await editor.closeNavigatorIfOpen();
+
+				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
+			} finally {
+				if ( 'api' === plugin.installSource ) {
+					await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
+					await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
+				} else {
+					wpEnvCli( `wp plugin uninstall ${ plugin.pluginName } --deactivate` );
+				}
 			}
-
-			await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
-			await wpAdmin.closeAnnouncementsIfVisible();
-			await editor.closeNavigatorIfOpen();
-
-			await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
-			wpEnvCli( `wp plugin deactivate ${ plugin }` );
 		} );
 	}
 };

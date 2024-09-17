@@ -29,18 +29,28 @@ class Ai extends Library {
 		return static::API_URL . '/';
 	}
 
-	public function get_usage( $client_name, $client_session_id ) {
+	public function get_usage() {
 		return $this->ai_request(
 			'POST',
 			'status/check',
 			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-				'client_name' => esc_attr( $client_name ),
-				'client_version' => ELEMENTOR_VERSION,
-				'client_session_id' => esc_attr( $client_session_id ),
 			]
 		);
+	}
+
+	public function get_cached_usage() {
+		$cache_key = 'elementor_ai_usage';
+		$cache_time = 24 * HOUR_IN_SECONDS;
+		$usage = get_site_transient( $cache_key );
+
+		if ( ! $usage ) {
+			$usage = $this->get_usage();
+			set_site_transient( $cache_key, $usage, $cache_time );
+		}
+
+		return $usage;
 	}
 
 	public function get_remote_config() {
@@ -51,6 +61,24 @@ class Ai extends Library {
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
+		);
+	}
+
+	public function get_remote_frontend_config( $data ) {
+		return $this->ai_request(
+			'POST',
+			'remote-config/frontend-config',
+			[
+				'client_name' => $data['payload']['client_name'],
+				'client_version' => $data['payload']['client_version'],
+				'client_session_id' => $data['payload']['client_session_id'],
+
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -570,6 +598,45 @@ class Ai extends Library {
 
 		return $result;
 	}
+	public function get_image_to_image_mask_cleanup( $image_data, $context, $request_ids ) {
+		$image_file = get_attached_file( $image_data['attachment_id'] );
+		$mask_file = $this->store_temp_file( $image_data['mask'], '.svg' );
+
+		if ( ! $image_file ) {
+			throw new \Exception( 'Image file not found' );
+		}
+
+		if ( ! $mask_file ) {
+			throw new \Exception( 'Mask file not found' );
+		}
+
+		$result = $this->ai_request(
+			'POST',
+			'image/image-to-image/cleanup',
+			[
+				self::PROMPT => $image_data[ self::PROMPT ],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+				'image_base64' => $image_data['image_base64'],
+			],
+			[
+				[
+					'name' => 'image',
+					'type' => 'image',
+					'path' => $image_file,
+				],
+				[
+					'name' => 'mask_image',
+					'type' => 'image/svg+xml',
+					'path' => $mask_file,
+				],
+			]
+		);
+
+		return $result;
+	}
 
 	public function generate_layout( $data, $context ) {
 		$endpoint = 'generate/layout';
@@ -604,6 +671,7 @@ class Ai extends Library {
 					$html = wp_json_encode( $attachment['content'] );
 
 					$body['html'] = $html;
+					$body['htmlFetchedUrl'] = $attachment['label'];
 
 					break;
 			}
@@ -611,7 +679,7 @@ class Ai extends Library {
 
 		$context['currentContext'] = $data['currentContext'];
 		$context['features'] = [
-			'supportedFeatures' => [],
+			'supportedFeatures' => [ 'Taxonomy' ],
 		];
 
 		if ( ElementorUtils::has_pro() ) {
@@ -626,12 +694,12 @@ class Ai extends Library {
 			$context['features']['supportedFeatures'][] = 'Nested';
 		}
 
-		if ( Plugin::instance()->experiments->get_active_features()['taxonomy-filter'] ) {
-			$context['features']['supportedFeatures'][] = 'Taxonomy';
-		}
-
 		if ( Plugin::instance()->experiments->get_active_features()['mega-menu'] ) {
 			$context['features']['supportedFeatures'][] = 'MegaMenu';
+		}
+
+		if ( class_exists( 'WC' ) ) {
+			$context['features']['supportedFeatures'][] = 'WooCommerce';
 		}
 
 		$metadata = [

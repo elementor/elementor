@@ -78,6 +78,20 @@ class Widget_Icon_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-icon-box' ];
+	}
+
+	/**
 	 * Register icon box widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -130,8 +144,9 @@ class Widget_Icon_Box extends Widget_Base {
 				'label' => esc_html__( 'Shape', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'circle' => esc_html__( 'Circle', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
+					'circle' => esc_html__( 'Circle', 'elementor' ),
 				],
 				'default' => 'circle',
 				'condition' => [
@@ -789,7 +804,7 @@ class Widget_Icon_Box extends Widget_Base {
 		view.addRenderAttribute( 'icon', 'class', 'elementor-icon elementor-animation-' + settings.hover_animation );
 
 		if ( hasLink ) {
-			view.addRenderAttribute( 'link', 'href', settings.link.url );
+			view.addRenderAttribute( 'link', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
 			view.addRenderAttribute( 'icon', 'tabindex', '-1' );
 		}
 

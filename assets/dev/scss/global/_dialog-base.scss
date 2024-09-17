@@ -19,7 +19,7 @@
 	cursor: pointer;
 	position: absolute;
 	margin-block-start: 15px;
-	@include end(15px);
+	inset-inline-end: 15px;
 	color: var(--e-a-color-txt);
 	font-size: 15px;
 	line-height: 1;

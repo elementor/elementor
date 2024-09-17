@@ -33,7 +33,19 @@ export const getUiConfig = () => {
 	};
 };
 
-const VARIATIONS_PROMPTS = [
+export const VARIATIONS_PROMPTS = [
+	{ text: __( 'Minimalist design with bold typography about', 'elementor' ) },
+	{ text: __( 'Elegant style with serif fonts discussing', 'elementor' ) },
+	{ text: __( 'Retro vibe with muted colors and classic fonts about', 'elementor' ) },
+	{ text: __( 'Futuristic design with neon accents about', 'elementor' ) },
+	{ text: __( 'Professional look with clean lines for', 'elementor' ) },
+	{ text: __( 'Earthy tones and organic shapes featuring', 'elementor' ) },
+	{ text: __( 'Luxurious theme with rich colors discussing', 'elementor' ) },
+	{ text: __( 'Tech-inspired style with modern fonts about', 'elementor' ) },
+	{ text: __( 'Warm hues with comforting visuals about', 'elementor' ) },
+];
+
+export const WEB_BASED_PROMPTS = [
 	{ text: __( 'Change the content to be about [topic]', 'elementor' ) },
 	{ text: __( 'Generate lorem ipsum placeholder text for all paragraphs', 'elementor' ) },
 	{ text: __( 'Revise the content to focus on [topic] and then translate it into Spanish', 'elementor' ) },
@@ -93,7 +105,7 @@ export const renderLayoutApp = ( options = {
 					},
 					url: {
 						promptPlaceholder: PROMPT_PLACEHOLDER,
-						promptSuggestions: VARIATIONS_PROMPTS,
+						promptSuggestions: WEB_BASED_PROMPTS,
 					},
 				} }
 				attachments={ options.attachments || [] }

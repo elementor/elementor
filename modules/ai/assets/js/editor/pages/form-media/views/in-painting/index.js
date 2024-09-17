@@ -19,15 +19,11 @@ const InPainting = () => {
 	const [ prompt, setPrompt ] = useState( '' );
 	const { setGenerate } = useRequestIds();
 	const [ mask, setMask ] = useState( '' );
-
+	const [ isCanvasChanged, setIsCanvasChanged ] = useState( false );
 	const { settings, resetSettings } = usePromptSettings();
-
 	const { editImage, width, height } = useEditImage();
-
 	const { use, edit, isLoading: isUploading } = useImageActions();
-
 	const { data, send, isLoading: isGenerating, error, reset } = useInPainting();
-
 	const isLoading = isGenerating || isUploading;
 
 	const handleSubmit = async ( event ) => {
@@ -71,7 +67,7 @@ const InPainting = () => {
 								} } />
 							</Stack>
 						) : (
-							<GenerateSubmit disabled={ isLoading } />
+							<GenerateSubmit disabled={ isLoading || ! prompt || ! isCanvasChanged } />
 						)
 					}
 				</ImageForm>
@@ -87,7 +83,13 @@ const InPainting = () => {
 							onEditImage={ edit }
 						/>
 					) : (
-						<InPaintingContent editImage={ editImage } width={ width } height={ height } setMask={ setMask } />
+						<InPaintingContent
+							editImage={ editImage }
+							width={ width }
+							height={ height }
+							setMask={ setMask }
+							setIsCanvasChanged={ setIsCanvasChanged }
+						/>
 					)
 				}
 			</View.Content>

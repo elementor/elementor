@@ -2,7 +2,6 @@
 namespace Elementor\Modules\LazyLoad;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,22 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'e_lazyload';
-
 	public function get_name() {
 		return 'lazyload';
-	}
-
-	public static function get_experimental_data() {
-		return [
-			'name' => static::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Lazy Load Background Images', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Lazy loading images that are not in the viewport improves initial page load performance and user experience. By activating this experiment all background images except the first one on your page will be lazy loaded to improve your LCP score', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'generator_tag' => true,
-		];
 	}
 
 	public function __construct() {
@@ -36,6 +21,10 @@ class Module extends BaseModule {
 	}
 
 	public function init() {
+		if ( ! $this->is_lazy_load_background_images_enabled() ) {
+			return;
+		}
+
 		add_action( 'wp_head', function() {
 			if ( ! $this->should_lazyload() ) {
 				return;
@@ -99,5 +88,9 @@ class Module extends BaseModule {
 
 	private function should_lazyload() {
 		return ! is_admin() && ! Plugin::$instance->preview->is_preview_mode() && ! Plugin::$instance->editor->is_edit_mode();
+	}
+
+	private static function is_lazy_load_background_images_enabled(): bool {
+		return '1' === get_option( 'elementor_lazy_load_background_images', '1' );
 	}
 }

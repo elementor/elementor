@@ -11,83 +11,76 @@ concurrency:
 
 jobs:
   build-plugin-lh:
+    name: Build plugin
     uses: ./.github/workflows/build.yml
+
   lighthouse_test:
-    name: Lighthouse test - WP ${{ matrix.wpCoreVersion }} on PHP ${{ matrix.phpVersion }}
+    name: Lighthouse test - WP latest on PHP 7.4
     runs-on: ubuntu-latest
     needs: [build-plugin-lh]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin-lh.outputs.changelog_diff }}
-    strategy:
-      matrix:
-        include:
-          - phpVersion: '8.0'
-            wpCoreVersion: 'master'
-          - phpVersion: '7.4'
-            wpCoreVersion: 'latest'
     steps:
       - name: Checkout source code
-        if: matrix.wpCoreVersion != 'master'
         uses: actions/checkout@v4
+
       - name: Install Node.js 20.x
-        if: matrix.wpCoreVersion != 'master'
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
           cache: 'npm'
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-plugin-lh.outputs.artifact_name }}
-          path: ./build
-      - name: Install node modules
-        if: matrix.wpCoreVersion != 'master'
-        run: npm ci
-      - name: Run wp-env
-        if: matrix.wpCoreVersion != 'master'
-        run: |
-          npm run start-local-server
-          npm run test:setup:playwright
+          path: ./elementor
+
+      - name: Setup wp-env
+        uses: elementor/elementor-editor-github-actions/actions/setup-wp-env@master
+        with:
+          php: '7.4'
+          active-theme: 'hello-elementor'
+          plugins: |-
+            ./elementor
+          themes: |-
+            https://downloads.wordpress.org/theme/hello-elementor.zip
+          mappings: |-
+            elementor-templates:./tests/playwright/templates
+
+      - name: Import Templates
+        uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@master
+        with:
+          env: 'testing'
+          templates: |-
+            elementor-templates
+
       - name: Install lhci
-        if: matrix.wpCoreVersion != 'master'
-        run: |
-          npm ci
-          npm install --no-package-lock --no-save @lhci/cli@0.11.1
-      - name: WordPress debug information
-        if: matrix.wpCoreVersion != 'master'
-        run: |
-          npx wp-env run cli wp core version
-          npx wp-env run cli wp --info
+        run: npm install --no-package-lock --no-save @lhci/cli@0.11.1
+
       - name: Run Lighthouse tests
-        if: matrix.wpCoreVersion != 'master'
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
+
       - name: Save HTML dumps on failure
-        if: failure() || matrix.wpCoreVersion != 'master'
+        if: failure()
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/save-lighthouse-pages-html-dumps.sh"
+
       - name: Upload Lighthouse reports on failure
-        if: failure() || matrix.wpCoreVersion != 'master'
+        if: failure()
         uses: actions/upload-artifact@v3
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
           retention-days: 7
+
       - name: Upload Lighthouse HTML dumps on failure
-        if: failure() || matrix.wpCoreVersion != 'master'
+        if: failure()
         uses: actions/upload-artifact@v3
         with:
           name: lighthouseci-htmls
           path: ${{ github.workspace }}/.lighthouseci/dumps/**/*
           retention-days: 7
-      - name: Notify slack on failure
-        if: failure() && github.event_name == 'schedule'
-        env:
-          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_CHANNEL: ${{ secrets.SLACK_LIGHTHOUSE_CHANNEL }}
-          SLACK_BOT_NAME: ElementorBot
-        run: |
-          MESSAGE_TEXT="@channel Repo: *$GITHUB_REPOSITORY* Workflow: *$GITHUB_WORKFLOW* is FAILED - <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|link>"
-          curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"
 
   lighthouse:
     needs: lighthouse_test
@@ -97,6 +90,7 @@ jobs:
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.lighthouse_test.result }}"
+
       - name: Check lighthouse_test matrix status
         if: ${{ needs.lighthouse_test.result != 'success' && needs.lighthouse_test.result != 'skipped' }}
         run: exit 1
