@@ -210,7 +210,7 @@ class Manager {
 	/**
 	 * Generate CSS.
 	 *
-	 * Generates CSS for all posts build with Elementor.
+	 * Generates CSS for all posts built with Elementor.
 	 *
 	 * @since 3.25.0
 	 * @access public
