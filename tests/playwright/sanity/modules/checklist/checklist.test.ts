@@ -243,4 +243,46 @@ test.describe( 'Launchpad checklist tests', () => {
 			await checklistHelper.toggleMarkAsDone( stepId, 'editor' );
 		}
 	} );
+
+	test( 'Checklist all done step', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage(),
+			rocketButton = editor.page.locator( selectors.topBarIcon ),
+			closeButton = editor.page.locator( selectors.closeButton ),
+			checklist = editor.page.locator( selectors.popup ),
+			allDone = editor.page.locator( selectors.allDone ),
+			gotItButton = editor.page.locator( selectors.gotItButton ),
+			url = '/wp-json/elementor/v1/checklist/steps';
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await test.step( 'All done, not visible, some steps are incomplete', async () => {
+			await page.route( url, async ( route ) => {
+				const json = checklistHelper.returnDataMockAllDoneMessage( false );
+				await route.fulfill( {
+					json,
+				} );
+			} );
+
+			await rocketButton.click();
+			await expect( checklist ).toBeVisible();
+			await expect( allDone ).toBeHidden();
+			await closeButton.click();
+		} );
+
+		await test.step( 'All done is visible, all steps are complete', async () => {
+			await page.route( url, async ( route ) => {
+				const json = checklistHelper.returnDataMockAllDoneMessage( true );
+				await route.fulfill( {
+					json,
+				} );
+			} );
+			await rocketButton.click();
+			await expect( checklist ).toBeVisible();
+			await expect( allDone ).toBeVisible();
+			await gotItButton.click();
+			await expect( rocketButton ).toBeHidden();
+			await checklistHelper.setChecklistSwitcherInPreferences( false );
+		} );
+	} );
 } );
