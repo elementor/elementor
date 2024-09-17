@@ -330,6 +330,38 @@ abstract class Module extends Base_Object {
 	}
 
 	/**
+	 * Check if we should load the responsive css file.
+	 *
+	 * @param $widget_style_name
+	 * @return bool
+	 * @since 3.25.0
+	 * @access protected
+	 */
+	protected function should_load_responsive_css_file( $widget_style_name ): bool {
+		$custom_breakpoints_are_enabled = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
+		if ( ! $custom_breakpoints_are_enabled ) {
+			return false;
+		}
+
+		return $this->css_template_file_exists( $widget_style_name );
+	}
+
+	/**
+	 * Check if the responsive css file exists.
+	 *
+	 * @param $widget_style_name
+	 * @return bool
+	 * @since 3.25.0
+	 * @access protected
+	 */
+	protected function css_template_file_exists( $widget_style_name ): bool {
+		$file_path = ELEMENTOR_ASSETS_PATH . 'css/templates/' . $widget_style_name . '.min.css';
+
+		return file_exists( $file_path );
+	}
+
+	/**
 	 * Get the module's associated widgets.
 	 *
 	 * @return string[]

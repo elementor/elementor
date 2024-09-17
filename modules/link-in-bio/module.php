@@ -5,6 +5,7 @@ namespace Elementor\Modules\LinkInBio;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -53,30 +54,31 @@ class Module extends BaseModule {
 	 * @return void
 	 */
 	public function register_styles() {
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+		$direction_suffix = is_rtl() ? '-rtl' : '';
 		$widget_styles = self::get_widget_style_list();
-		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
-		foreach ( $widget_styles as $widget_style_name => $widget_has_custom_breakpoints ) {
-			$custom_breakpoints = $widget_has_custom_breakpoints ? $has_custom_breakpoints : false;
+		foreach ( $widget_styles as $widget_style_name ) {
+			$should_load_responsive_css = $this->should_load_responsive_css_file( $widget_style_name );
 
 			wp_register_style(
 				$widget_style_name,
-				$this->get_css_assets_url( $widget_style_name, null, true, $custom_breakpoints ),
+				$this->get_frontend_file_url( "{$widget_style_name}{$direction_suffix}{$min_suffix}.css", $should_load_responsive_css ),
 				[ 'elementor-frontend' ],
-				$custom_breakpoints ? null : ELEMENTOR_VERSION
+				$should_load_responsive_css ? null : ELEMENTOR_VERSION
 			);
 		}
 	}
 
 	private function get_widget_style_list() {
 		return [
-			'widget-link-in-bio' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
-			'widget-link-in-bio-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-			'widget-link-in-bio-var-2' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-			'widget-link-in-bio-var-3' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-			'widget-link-in-bio-var-4' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-			'widget-link-in-bio-var-5' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-			'widget-link-in-bio-var-7' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-link-in-bio', // TODO: Remove in v3.27.0 [ED-15717]
+			'widget-link-in-bio-base',
+			'widget-link-in-bio-var-2',
+			'widget-link-in-bio-var-3',
+			'widget-link-in-bio-var-4',
+			'widget-link-in-bio-var-5',
+			'widget-link-in-bio-var-7',
 		];
 	}
 }
