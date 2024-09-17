@@ -16,7 +16,6 @@ use Elementor\Modules\FloatingButtons\Control\Hover_Animation_Floating_Buttons;
 use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\Utils;
 use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -563,7 +562,7 @@ class Module extends BaseModule {
 	 * @return void
 	 */
 	public function register_styles() {
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+		$min_suffix = ElementorUtils::is_script_debug() ? '' : '.min';
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 		$widget_styles = self::get_widget_style_list();
 

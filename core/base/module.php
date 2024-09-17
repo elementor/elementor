@@ -2,6 +2,7 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -356,7 +357,8 @@ abstract class Module extends Base_Object {
 	 * @access protected
 	 */
 	protected function css_template_file_exists( $widget_style_name ): bool {
-		$file_path = ELEMENTOR_ASSETS_PATH . 'css/templates/' . $widget_style_name . '.min.css';
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+		$file_path = ELEMENTOR_ASSETS_PATH . "css/templates/{$widget_style_name}{$direction_suffix}.min.css";
 
 		return file_exists( $file_path );
 	}
