@@ -555,7 +555,7 @@ class Module extends BaseModule {
 		return [ 'elementor-frontend', 'elementor-icons' ];
 	}
 
-	protected function get_widget_style_list():array {
+	protected function get_widgets_style_list():array {
 		return [
 			'widget-floating-buttons', // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-floating-bars-base',

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
-	protected function get_widget_style_list():array {
+	protected function get_widgets_style_list():array {
 		return [ 'widget-text-path' ];
 	}
 

@@ -30,7 +30,7 @@ class Module extends BaseModule {
 
 	}
 
-	protected function get_widget_style_list():array {
+	protected function get_widgets_style_list():array {
 		return [ 'widget-nested-accordion' ];
 	}
 }

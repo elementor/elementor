@@ -341,7 +341,7 @@ abstract class Module extends Base_Object {
 	public function register_styles() {
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 		$direction_suffix = is_rtl() ? '-rtl' : '';
-		$widget_styles = $this->get_widget_style_list();
+		$widget_styles = $this->get_widgets_style_list();
 
 		foreach ( $widget_styles as $widget_style_name ) {
 			$should_load_responsive_css = $this->should_load_responsive_css_file( $widget_style_name );
@@ -373,7 +373,7 @@ abstract class Module extends Base_Object {
 	 *
 	 * @return array
 	 */
-	protected function get_widget_style_list(): array {
+	protected function get_widgets_style_list(): array {
 		return [];
 	}
 

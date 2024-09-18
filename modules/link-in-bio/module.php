@@ -35,7 +35,7 @@ class Module extends BaseModule {
 		];
 	}
 
-	protected function get_widget_style_list():array {
+	protected function get_widgets_style_list():array {
 		return [
 			'widget-link-in-bio', // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-link-in-bio-base',
