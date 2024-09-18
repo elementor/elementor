@@ -32,7 +32,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	// { pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
 	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
-	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
+	//{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
 	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
