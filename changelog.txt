@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.24.3 - 2024-09-18 =
+
+* Fix: 404 console error when loading custom animations ([#28727](https://github.com/elementor/elementor/issues/28727))
+
 = 3.24.2 - 2024-09-13 =
 
 * Fix: Widget styles not loading correctly affecting the layout on front ([#28693](https://github.com/elementor/elementor/issues/28693))
