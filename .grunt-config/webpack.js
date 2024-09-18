@@ -90,6 +90,7 @@ const entry = {
 		path.resolve( __dirname, '../assets/dev/js/editor/utils/jquery-serialize-object.js' ),
 		path.resolve( __dirname, '../assets/dev/js/editor/utils/jquery-html5-dnd.js' ),
 		path.resolve( __dirname, '../assets/dev/js/editor/editor.js' ),
+		path.resolve( __dirname, '../modules/promotions/assets/js/editor/editor-v-2.js' ),
 	],
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
