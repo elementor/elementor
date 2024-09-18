@@ -6,6 +6,8 @@ import ElementRegressionHelper from '../helper';
 
 test.describe( 'Elementor regression tests with templates for CORE', () => {
 	const testData = [
+		'container_flexbox',
+		'container_grid',
 		'divider',
 		'heading',
 		'text_editor',

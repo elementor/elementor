@@ -2,7 +2,7 @@ import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } f
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { getAndUpdateStep } from '../../utils/functions';
-import { STEP } from '../../utils/consts';
+import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES } from '../../utils/consts';
 
 const { IS_MARKED_COMPLETED, IS_ABSOLUTE_COMPLETED, IS_IMMUTABLE_COMPLETED } = STEP;
 
@@ -13,21 +13,27 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		learn_more_url: learnMoreUrl,
 		learn_more_text: learnMoreText,
 		image_src: imageSrc,
-		is_locked: isLocked,
-		promotion_url: promotionUrl,
+		promotion_data: promotionData,
 	} = step.config;
 
-	const ctaText = isLocked ? __( 'Upgrade Now', 'elementor-pro' ) : step.config.cta_text,
-		ctaUrl = isLocked ? promotionUrl : step.config.cta_url,
+	const ctaText = promotionData
+			? promotionData?.text || __( 'Upgrade Now', 'elementor' )
+			: step.config.cta_text,
+		ctaUrl = promotionData ? promotionData.url : step.config.cta_url,
 		{
 			[ IS_ABSOLUTE_COMPLETED ]: isAbsoluteCompleted,
 			[ IS_IMMUTABLE_COMPLETED ]: isImmutableCompleted,
 			[ IS_MARKED_COMPLETED ]: isMarkedCompleted,
 		} = step,
-		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! isLocked;
+		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! promotionData;
 
-	const redirectHandler = () => {
-		window.open( ctaUrl, isLocked ? '_blank' : '_self' );
+	const redirectHandler = async () => {
+		if ( ! elementor || ! STEP_IDS_TO_COMPLETE_IN_EDITOR.includes( id ) || ! PANEL_ROUTES[ id ] ) {
+			return window.open( ctaUrl, isLocked ? '_blank' : '_self' );
+		}
+
+		await $e.run( 'panel/global/open' );
+		$e.route( PANEL_ROUTES[ id ] );
 	};
 
 	const toggleMarkAsDone = async () => {
@@ -76,7 +82,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 				}
 
 				<Button
-					color={ isLocked ? 'promotion' : 'primary' }
+					color={ promotionData ? 'promotion' : 'primary' }
 					size="small"
 					variant="contained"
 					onClick={ redirectHandler }

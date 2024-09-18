@@ -572,7 +572,7 @@ class Frontend extends App {
 			wp_register_style(
 				"widget-{$widget_name}",
 				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
-				[],
+				[ 'elementor-frontend' ],
 				ELEMENTOR_VERSION
 			);
 		}
@@ -582,7 +582,7 @@ class Frontend extends App {
 			wp_register_style(
 				"widget-{$widget_name}",
 				$this->get_frontend_file_url( "widget-{$widget_name}{$direction_suffix}.min.css", $has_custom_breakpoints ),
-				[],
+				[ 'elementor-frontend' ],
 				$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 			);
 		}
