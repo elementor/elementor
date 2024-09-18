@@ -534,7 +534,7 @@ class Frontend extends App {
 
 		wp_register_style(
 			'e-apple-webkit',
-			$this->get_frontend_file_url( "apple-webkit.min.css", $has_custom_breakpoints, 'conditionals/' ),
+			$this->get_frontend_file_url( 'apple-webkit.min.css', $has_custom_breakpoints, 'conditionals/' ),
 			[],
 			ELEMENTOR_VERSION
 		);
