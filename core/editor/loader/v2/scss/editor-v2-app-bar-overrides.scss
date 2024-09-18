@@ -47,3 +47,14 @@ body.elementor-navigator-docked #elementor-navigator {
 		}
 	}
 }
+
+#elementor-editor-wrapper-v2 {
+
+	[aria-label="Upgrade"] {
+
+		&:hover {
+			border-radius: 999px;
+		}
+	}
+
+}
