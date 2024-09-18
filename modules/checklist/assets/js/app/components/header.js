@@ -38,8 +38,7 @@ const Header = ( { steps } ) => {
 			<AppBar
 				elevation={ 0 }
 				position="sticky"
-				color="transparent"
-				sx={ { p: 2 } }
+				sx={ { p: 2, backgroundColor: 'background.default' } }
 			>
 				<Toolbar
 					variant="dense"
