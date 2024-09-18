@@ -40,7 +40,7 @@ class Set_Fonts_And_Colors extends Step_Base {
 		$link = Page::get_site_settings_url_config( true )['url'];
 
 		if ( ! $link ) {
-			return Page::get_elementor_create_new_page_url();
+			return Page::get_create_new_editor_page_url();
 		}
 
 		$parsed_url = wp_parse_url( $link );
@@ -56,7 +56,7 @@ class Set_Fonts_And_Colors extends Step_Base {
 			return $this->wordpress_adapter->add_query_arg( $additional_params, $link );
 		}
 
-		return Page::get_elementor_create_new_page_url();
+		return Page::get_create_new_editor_page_url();
 	}
 
 	public function get_is_completion_immutable() : bool {
