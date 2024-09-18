@@ -43,7 +43,7 @@ module.exports = {
 				'assets/lib/swiper/css/*.css',
 				'!assets/lib/swiper/css/*.min.css',
 				'assets/css/templates/*.css',
-				'!assets/css/templates/*.min.css',
+				'!assets/css/templates/*.min.css'
 			],
 			ext: '.min.css'
 		} ]
