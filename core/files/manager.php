@@ -206,4 +206,58 @@ class Manager {
 	private function reset_assets_data() {
 		delete_option( Page_Assets_Data_Manager::ASSETS_DATA_KEY );
 	}
+
+	/**
+	 * Generate CSS.
+	 *
+	 * Generates CSS for all posts built with Elementor.
+	 *
+	 * @since 3.25.0
+	 * @access public
+	 */
+	public function generate_css() {
+		$batch_size = apply_filters( 'elementor/core/files/generate_css/batch_size', 100 );
+		$processed_posts = 0;
+
+		while ( true ) {
+			$args = [
+				'post_type' => get_post_types(),
+				'posts_per_page' => $batch_size,
+				'meta_query' => [
+					[
+						'key' => Document_Base::BUILT_WITH_ELEMENTOR_META_KEY,
+						'compare' => 'EXISTS',
+					],
+				],
+				'offset' => $processed_posts,
+				'fields' => 'ids',
+			];
+
+			$query = new \WP_Query( $args );
+
+			if ( empty( $query->posts ) ) {
+				break;
+			}
+
+			foreach ( $query->posts as $post_id ) {
+				$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+
+				if ( $document ) {
+					$css_file = Post_CSS::create( $post_id );
+					$css_file->update();
+				}
+			}
+
+			$processed_posts += $batch_size;
+		}
+
+		/**
+		 * Elementor Generate CSS files.
+		 *
+		 * Fires after Elementor generates new CSS files
+		 *
+		 * @since 3.25.0
+		 */
+		do_action( 'elementor/core/files/after_generate_css' );
+	}
 }
