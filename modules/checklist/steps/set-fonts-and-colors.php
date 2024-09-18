@@ -37,7 +37,7 @@ class Set_Fonts_And_Colors extends Step_Base {
 	}
 
 	public function get_cta_url() : string {
-		$link = Page::get_site_settings_url_config( true );
+		$link = Page::get_site_settings_url_config( true )['url'];
 
 		if ( ! $link ) {
 			return Page::get_elementor_create_new_page_url();
