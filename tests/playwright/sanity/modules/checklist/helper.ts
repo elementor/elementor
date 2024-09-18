@@ -122,5 +122,48 @@ export default class ChecklistHelper {
 	isStepProLocked( stepId: StepId ) {
 		return proStepIds.includes( stepId );
 	}
-}
 
+	returnDataMockAllDoneMessage( isCompleted ) {
+		return {
+			data: [
+				{
+					is_marked_completed: false,
+					is_immutable_completed: false,
+					is_absolute_completed: isCompleted,
+					config: {
+						id: 'assign_homepage',
+						title: 'Assign a homepage',
+						description: 'Before your launch, make sure to assign a homepage so visitors have a clear entry point into your site.',
+						learn_more_text: 'Learn more',
+						learn_more_url: 'http://go.elementor.com/app-website-checklist-assign-home-article',
+						is_completion_immutable: false,
+						cta_text: 'Assign homepage',
+						cta_url: 'https://elementor.com',
+						image_src: 'https://assets.elementor.com/checklist/v1/images/checklist-step-6.jpg',
+						required_license: 'free',
+						is_locked: false,
+						promotion_url: '',
+					},
+				},
+				{
+					is_marked_completed: false,
+					is_immutable_completed: false,
+					is_absolute_completed: true,
+					config: {
+						id: 'all_done',
+						title: 'You\'re on your way!',
+						description: 'With these steps, you\'ve got a great base for a robust website. Enjoy your web creation journey!',
+						learn_more_text: 'Learn more',
+						learn_more_url: 'https://go.elementor.com/getting-started-with-elementor/',
+						is_completion_immutable: false,
+						cta_text: 'Got it',
+						cta_url: 'https://elementor.com',
+						image_src: 'https://assets.elementor.com/checklist/v1/images/checklist-step-7.jpg',
+						required_license: 'free',
+						is_locked: false,
+						promotion_url: '',
+					},
+				} ],
+		};
+	}
+}
