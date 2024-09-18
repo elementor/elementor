@@ -35,7 +35,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
 	// { pluginName: 'royal-elementor-addons', installSource: 'cli' },
-	// { pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
+	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
 	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
