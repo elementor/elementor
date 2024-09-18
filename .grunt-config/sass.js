@@ -84,6 +84,20 @@ const sass = {
 				dest: 'assets/css/conditionals',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend/conditionals/with-breakpoints',
+				src: '*.scss',
+				dest: 'assets/css/conditionals',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend/conditionals/with-breakpoints',
+				src: '*.scss',
+				dest: 'assets/css/templates',
+				ext: '.css',
+			},
 		]
 	}
 };
