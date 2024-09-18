@@ -13,7 +13,6 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		learn_more_url: learnMoreUrl,
 		learn_more_text: learnMoreText,
 		image_src: imageSrc,
-		is_locked: isLocked,
 		promotion_data: promotionData,
 	} = step.config;
 
