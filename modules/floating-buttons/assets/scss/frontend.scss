@@ -1,5 +1,7 @@
+// TODO: Remove this file in v3.27.0 [ED-15717]
+
 @import "floating-buttons/widgets/contact-buttons-vars";
-@import "floating-buttons/widgets/contact-buttons";
+@import "floating-buttons/widgets/contact-buttons-base";
 @import "floating-buttons/widgets/contact-buttons-var-1";
 @import "floating-buttons/widgets/contact-buttons-var-3";
 @import "floating-buttons/widgets/contact-buttons-var-4";
@@ -10,6 +12,6 @@
 @import "floating-buttons/widgets/contact-buttons-var-10";
 
 @import "floating-bars/widgets/floating-bars-vars";
-@import "floating-bars/widgets/floating-bars";
+@import "floating-bars/widgets/floating-bars-base";
 @import "floating-bars/widgets/floating-bars-var-2";
 @import "floating-bars/widgets/floating-bars-var-3";
