@@ -4,6 +4,8 @@ namespace Elementor\Modules\Checklist\Steps;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Kit_Adapter;
+use Elementor\Core\Isolation\Kit_Adapter_Interface;
 use Elementor\Core\Utils\Constants;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
 
@@ -25,6 +27,7 @@ abstract class Step_Base {
 
 	private array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
+	protected Kit_Adapter_Interface $kit_adapter;
 	protected Checklist_Module $module;
 
 	/**
@@ -75,12 +78,13 @@ abstract class Step_Base {
 	 *
 	 * @param Checklist_Module $module
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
-
-	 * @return void
+	 * @param ?Kit_Adapter_Interface $kit_adapter
+ * @return void
 	 */
-	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
+	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null, $promotion_data = null ) {
 		$this->module = $module;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
+		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
 	}
 
