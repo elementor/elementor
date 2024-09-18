@@ -118,8 +118,6 @@ class Module extends BaseModule {
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
-
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Hover_Animation_Floating_Buttons() );
 		});
@@ -553,32 +551,11 @@ class Module extends BaseModule {
 		}
 	}
 
-	/**
-	 * Register styles.
-	 *
-	 * At build time, Elementor compiles `/modules/floating-buttons/assets/scss/widgets/*.scss`
-	 * to `/assets/css/widget-*.min.css`.
-	 *
-	 * @return void
-	 */
-	public function register_styles() {
-		$min_suffix = ElementorUtils::is_script_debug() ? '' : '.min';
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-		$widget_styles = self::get_widget_style_list();
-
-		foreach ( $widget_styles as $widget_style_name ) {
-			$should_load_responsive_css = $this->should_load_responsive_css_file( $widget_style_name );
-
-			wp_register_style(
-				$widget_style_name,
-				$this->get_frontend_file_url( "{$widget_style_name}{$direction_suffix}{$min_suffix}.css", $should_load_responsive_css ),
-				[ 'elementor-frontend', 'elementor-icons' ],
-				$should_load_responsive_css ? null : ELEMENTOR_VERSION
-			);
-		}
+	protected function get_widget_styles_depends():array {
+		return [ 'elementor-frontend', 'elementor-icons' ];
 	}
 
-	private function get_widget_style_list() {
+	protected function get_widget_style_list():array {
 		return [
 			'widget-floating-buttons', // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-floating-bars-base',

@@ -36,38 +36,7 @@ class Module extends BaseModule {
 		];
 	}
 
-	public function __construct() {
-		parent::__construct();
-
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
-	}
-
-	/**
-	 * Register styles.
-	 *
-	 * At build time, Elementor compiles `/modules/link-in-bio/assets/scss/widgets/*.scss`
-	 * to `/assets/css/widget-*.min.css`.
-	 *
-	 * @return void
-	 */
-	public function register_styles() {
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-		$widget_styles = self::get_widget_style_list();
-
-		foreach ( $widget_styles as $widget_style_name ) {
-			$should_load_responsive_css = $this->should_load_responsive_css_file( $widget_style_name );
-
-			wp_register_style(
-				$widget_style_name,
-				$this->get_frontend_file_url( "{$widget_style_name}{$direction_suffix}{$min_suffix}.css", $should_load_responsive_css ),
-				[ 'elementor-frontend' ],
-				$should_load_responsive_css ? null : ELEMENTOR_VERSION
-			);
-		}
-	}
-
-	private function get_widget_style_list() {
+	protected function get_widget_style_list():array {
 		return [
 			'widget-link-in-bio', // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-link-in-bio-base',
