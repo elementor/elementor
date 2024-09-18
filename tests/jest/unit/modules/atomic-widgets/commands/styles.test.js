@@ -409,6 +409,15 @@ describe( 'Styles - apply', () => {
 				color: undefined,
 			},
 		} );
+		new StylesCommand().apply( {
+			container,
+			bind: 'classes',
+			styleDefID: 'new-style-id',
+			meta: { breakpoint: null, state: 'hover' },
+			props: {
+				color: undefined,
+			},
+		} );
 
 		// Assert
 		const expectedStyles = {
@@ -420,10 +429,6 @@ describe( 'Styles - apply', () => {
 					{
 						meta: { breakpoint: null, state: null },
 						props: { fontWeight: 'bold' },
-					},
-					{
-						meta: { breakpoint: null, state: 'hover' },
-						props: { color: 'blue' },
 					},
 				],
 			},
