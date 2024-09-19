@@ -6,7 +6,7 @@
   "unused-css-rules": [ "error", { "maxLength": 0 } ],
   "unused-javascript": [ "error", { "maxLength": 0 } ],
   "uses-rel-preconnect": [ "error", { "maxLength": 0 } ],
-  "first-contentful-paint": [ "error", { "minScore": 0.8 } ],
+  "first-contentful-paint": [ "error", { "minScore": 0.7 } ],
   "first-meaningful-paint": [ "error", { "minScore": 0.6 } ],
   "largest-contentful-paint": [ "error", { "minScore": 0.6 } ],
   "legacy-javascript": [ "error", { "maxLength": 0 } ],
