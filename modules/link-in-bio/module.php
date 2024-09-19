@@ -16,14 +16,14 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'link-in-bio';
 	const WIDGET_HAS_CUSTOM_BREAKPOINTS = true;
 
+	public function get_name(): string {
+		return static::EXPERIMENT_NAME;
+	}
+
 	public function __construct() {
 		parent::__construct();
 
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
-	}
-
-	public function get_name(): string {
-		return static::EXPERIMENT_NAME;
 	}
 
 	public function get_widgets(): array {
