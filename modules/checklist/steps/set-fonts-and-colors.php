@@ -37,7 +37,11 @@ class Set_Fonts_And_Colors extends Step_Base {
 	}
 
 	public function get_cta_url() : string {
-		return Page::get_site_settings_url_config()['url'];
+		$settings = $this->kit_adapter->get_kit_settings();
+
+		$tab = ! $settings['custom_colors'] ? 'global-typography' : 'global-colors';
+
+		return Page::get_site_settings_url_config($tab)['url'];
 	}
 
 	public function get_is_completion_immutable() : bool {
