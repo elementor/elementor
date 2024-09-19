@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Core\Files\CSS;
 
-use Elementor\Base_Data_Control;
-use Elementor\Control_Repeater;
 use Elementor\Controls_Stack;
+use Elementor\Core\DynamicTags\Dynamic_CSS;
+use Elementor\Core\Kits\Manager;
 use Elementor\Element_Base;
 use Elementor\Plugin;
 

@@ -118,8 +118,6 @@ class Module extends BaseModule {
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
-
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Hover_Animation_Floating_Buttons() );
 		});
@@ -553,20 +551,25 @@ class Module extends BaseModule {
 		}
 	}
 
-	/**
-	 * Register styles.
-	 *
-	 * At build time, Elementor compiles `/modules/floating-buttons/assets/scss/frontend.scss`
-	 * to `/assets/css/widget-floating-buttons.min.css`.
-	 *
-	 * @return void
-	 */
-	public function register_styles() {
-		wp_register_style(
-			'widget-floating-buttons',
-			$this->get_css_assets_url( 'widget-floating-buttons', null, true, true ),
-			[ 'elementor-icons' ],
-			ELEMENTOR_VERSION
-		);
+	protected function get_widget_styles_depends():array {
+		return [ 'elementor-frontend', 'elementor-icons' ];
+	}
+
+	protected function get_widgets_style_list():array {
+		return [
+			'widget-floating-buttons', // TODO: Remove in v3.27.0 [ED-15717]
+			'widget-floating-bars-base',
+			'widget-floating-bars-var-2',
+			'widget-floating-bars-var-3',
+			'widget-contact-buttons-base',
+			'widget-contact-buttons-var-1',
+			'widget-contact-buttons-var-3',
+			'widget-contact-buttons-var-4',
+			'widget-contact-buttons-var-6',
+			'widget-contact-buttons-var-7',
+			'widget-contact-buttons-var-8',
+			'widget-contact-buttons-var-9',
+			'widget-contact-buttons-var-10',
+		];
 	}
 }
