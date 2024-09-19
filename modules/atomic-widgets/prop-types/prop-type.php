@@ -24,23 +24,6 @@ abstract class Prop_Type implements \JsonSerializable {
 	abstract public function validate( $value ): void;
 
 	/**
-	 * This method should be overridden by the child class if needed
-	 * (e.g. URL-safe, XSS prevention...)
-	 *
-	 * @param $value
-	 * @return mixed | null - if null is returned, the prop will be omitted from the widget settings
-	 */
-	public function sanitize( $value ) {
-		try {
-			$this->validate( $value );
-			return $value;
-
-		} catch ( \Exception $e ) {
-			return null;
-		}
-	}
-
-	/**
 	 * @return $this
 	 */
 	public static function make(): self {
