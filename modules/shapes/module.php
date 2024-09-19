@@ -24,8 +24,8 @@ class Module extends \Elementor\Core\Base\Module {
 	 */
 	public function register_styles() {
 		wp_register_style(
-			'widget-shapes',
-			$this->get_css_assets_url( 'widget-shapes', null, true, true ),
+			'widget-text-path',
+			$this->get_css_assets_url( 'widget-text-path', null, true, true ),
 			[ 'elementor-frontend' ],
 			ELEMENTOR_VERSION
 		);
