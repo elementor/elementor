@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Container Grid tests @container', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -9,7 +9,6 @@ test.describe( 'Container Grid tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
-			container_grid: true,
 		} );
 	} );
 
@@ -19,7 +18,6 @@ test.describe( 'Container Grid tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: false,
-			container_grid: false,
 		} );
 	} );
 
