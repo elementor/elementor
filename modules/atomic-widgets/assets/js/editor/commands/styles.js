@@ -139,7 +139,8 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			style = currentStyle[ styleDefID ];
 		}
 
-		if ( ! getVariantByMeta( style.variants, meta ) ) {
+		const currentVariant = getVariantByMeta( style.variants, meta );
+		if ( ! currentVariant ) {
 			$e.internal( 'document/atomic-widgets/create-variant', {
 				container,
 				styleDefID,
@@ -147,7 +148,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			} );
 		}
 
-		const nonEmptyValues = Object.values( props ).filter( ( value ) => value !== undefined );
+		const nonEmptyValues = Object.values( { ...currentVariant?.props, ...props } ).filter( ( value ) => value !== undefined );
 		if ( 0 === nonEmptyValues.length ) {
 			// Doesn't have any props to use for this variant
 			$e.internal( 'document/atomic-widgets/delete-variant', {
