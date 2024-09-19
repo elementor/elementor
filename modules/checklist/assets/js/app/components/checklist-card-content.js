@@ -29,7 +29,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 
 	const redirectHandler = async () => {
 		if ( ! elementor || ! STEP_IDS_TO_COMPLETE_IN_EDITOR.includes( id ) || ! PANEL_ROUTES[ id ] ) {
-			return window.open( ctaUrl, isLocked ? '_blank' : '_self' );
+			return window.open( ctaUrl, promotionData ? '_blank' : '_self' );
 		}
 
 		await $e.run( 'panel/global/open' );
