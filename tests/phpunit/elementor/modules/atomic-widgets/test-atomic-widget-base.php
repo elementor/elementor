@@ -11,7 +11,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -383,82 +382,55 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_atomic_controls();
 	}
 
-	public function test_get_atomic_widget_sanitized_settings__removes_non_existing_fields() {
+	public function test_get_data_for_save() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 				'number_prop' => Number_Prop_Type::make()->default( 0 ),
 				'boolean_prop' => Boolean_Prop_Type::make()->default( false ),
+				'in_schema_not_in_settings' => String_Prop_Type::make()->default( '' ),
+				'not_a_prop_type' => 'not-a-prop-type',
 			],
 			'settings' => [
 				'string_prop' => 'valid-string',
 				'number_prop' => 123,
 				'boolean_prop' => true,
-				'invalid_prop' => 'invalid-value',
+				'not_in_schema' => 'not-in-schema',
+				'not_a_prop_type' => 'not-a-prop-type',
 			],
 		] );
 
 		// Act.
-		$sanitized_settings = $widget::sanitize_schema( $widget::get_props_schema(), $widget->get_atomic_settings() );
+		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
 		$this->assertSame( [
 			'string_prop' => 'valid-string',
 			'number_prop' => 123,
 			'boolean_prop' => true,
-		], $sanitized_settings );
+		], $data_for_save['settings'] );
 	}
 
-	public function test_get_atomic_widget_sanitized_settings__removes_invalid_values() {
+	public function test_get_data_for_save__throws_on_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'string_prop' => String_Prop_Type::make()->default( '' ),
-				'number_prop' => Number_Prop_Type::make()->default( 0 ),
-				'boolean_prop' => Boolean_Prop_Type::make()->default( false ),
-				'invalid_string_prop' => String_Prop_Type::make()->default( '' ),
-				'invalid_number_prop' => Number_Prop_Type::make()->default( 0 ),
-				'invalid_boolean_prop' => Boolean_Prop_Type::make()->default( false ),
+				'mock_prop_1' => String_Prop_Type::make()->default( '' ),
+				'mock_prop_2' => Number_Prop_Type::make()->default( 0 ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
-				'number_prop' => 123,
-				'boolean_prop' => true,
-				'invalid_string_prop' => 123,
-				'invalid_number_prop' => 'invalid-number',
-				'invalid_boolean_prop' => 'invalid-boolean',
-			],
-		] );
-
-		// Act.
-		$sanitized_settings = $widget::sanitize_schema( $widget::get_props_schema(), $widget->get_atomic_settings() );
-
-		// Assert.
-		$this->assertSame( [
-			'string_prop' => 'valid-string',
-			'number_prop' => 123,
-			'boolean_prop' => true,
-		], $sanitized_settings );
-	}
-
-	public function test_get_atomic_widget_sanitized_settings__throws_on_sanitization_error() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'mock_prop' => $this->make_mock_prop_type()::make()->default( '' ),
-			],
-			'settings' => [
-				'mock_prop' => 'valid-value',
+				'mock_prop_1' => 123,
+				'mock_prop_2' => 'not-a-number',
 			],
 		] );
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessageMatches( '/Error while sanitizing `mock_prop` prop/' );
+		$this->expectExceptionMessage( 'Settings validation failed. Invalid keys: mock_prop_1, mock_prop_2' );
 
 		// Act.
-		$widget::sanitize_schema( $widget::get_props_schema(), $widget->get_atomic_settings() );
+		$widget->get_data_for_save();
 	}
 
 	/**
@@ -474,6 +446,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				parent::__construct( [
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
+					'elType' => 'widget',
+					'widgetType' => 'test-widget',
 				], [] );
 			}
 
@@ -487,20 +461,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 			protected static function define_props_schema(): array {
 				return static::$options['props_schema'] ?? [];
-			}
-		};
-	}
-
-	private function make_mock_prop_type() {
-		return new class() extends Prop_Type {
-			public static function get_key(): string {
-				return 'mock-prop-type';
-			}
-
-			public function validate( $value ): void {}
-
-			public function sanitize( $value ): void {
-				throw new \Exception( 'Throwing sanitization exception.' );
 			}
 		};
 	}

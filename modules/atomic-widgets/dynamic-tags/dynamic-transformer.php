@@ -1,10 +1,9 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers;
+namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Core\DynamicTags\Manager as Dynamic_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dynamic_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

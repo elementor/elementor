@@ -1,3 +1,5 @@
+@import "./contact-buttons-vars";
+
 .e-contact-buttons {
 	--e-contact-buttons-chat-box-width: #{$contact-buttons-default-width};
 	--e-contact-buttons-size-small: #{$contact-buttons-size-small};
