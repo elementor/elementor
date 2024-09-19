@@ -42,7 +42,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		try {
 			updateStepsState( IS_MARKED_COMPLETED, ! currState );
 
-			await $e.data.update( `checklist/steps`, {
+			await $e.data.update( 'checklist/steps', {
 				id,
 				[ IS_MARKED_COMPLETED ]: ! currState,
 			}, { id } );

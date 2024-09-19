@@ -8,21 +8,31 @@ const fetchSteps = async () => {
 	return response?.data?.data || null;
 };
 
+const fetchStatus = async () => {
+	const response = await $e.data.get( 'checklist/user-progress', {}, { refresh: true } );
+
+	return response?.data?.data || null;
+};
+
 const App = () => {
 	const isRTL = elementorCommon.config.isRTL,
-		{ error, data: steps } = useQuery( {
+		{ error: stepsError, data: steps } = useQuery( {
 		queryKey: [ 'steps' ],
 		queryFn: fetchSteps,
-	} );
+	} ),
+		{ error: userProgressError, data: userProgress } = useQuery( {
+			queryKey: [ 'statusData' ],
+			queryFn: fetchStatus,
+		} );
 
-	if ( error || ! steps || 0 === steps.length ) {
+	if ( userProgressError || ! userProgress || stepsError || ! steps || 0 === steps.length ) {
 		return null;
 	}
 
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme="light">
-				<Checklist steps={ [ ...steps ] } />
+				<Checklist steps={ [ ...steps ] } userProgress={ userProgress } />
 			</ThemeProvider>
 		</DirectionProvider>
 	);
