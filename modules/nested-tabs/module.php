@@ -40,7 +40,7 @@ class Module extends \Elementor\Core\Base\Module {
 	 */
 	public function register_styles() {
 		$direction_suffix = is_rtl() ? '-rtl' : '';
-		$has_custom_breakpoints = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' ) && Plugin::$instance->breakpoints->has_custom_breakpoints();
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		wp_register_style(
 			'widget-nested-tabs',

@@ -565,7 +565,7 @@ class Module extends BaseModule {
 	public function register_styles() {
 		$direction_suffix = is_rtl() ? '-rtl' : '';
 		$widget_styles = $this->get_widgets_style_list();
-		$has_custom_breakpoints = Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' ) && Plugin::$instance->breakpoints->has_custom_breakpoints();
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
 
 		foreach ( $widget_styles as $widget_style_name => $widget_has_responsive_style ) {
 			$should_load_responsive_css = $widget_has_responsive_style ? $has_custom_breakpoints : false;
