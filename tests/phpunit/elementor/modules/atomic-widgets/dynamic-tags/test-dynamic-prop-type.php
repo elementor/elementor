@@ -1,12 +1,13 @@
 <?php
 
-namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
+namespace Elementor\Testing\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dynamic_Prop_Type;
-use Elementor\Modules\DynamicTags\Module as DynamicTagsModule;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\DynamicTags\Module as V1DynamicTags;
 use Elementor\Plugin;
-use Elementor\Testing\Modules\AtomicWidgets\PropTypes\Mocks\Mock_Dynamic_Tag;
+use Elementor\Testing\Modules\AtomicWidgets\DynamicTags\Mocks\Mock_Dynamic_Tag;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -86,11 +87,15 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 	public function test_validate__throws_for_unsupported_categories() {
 		// Arrange.
 		$prop_type = Dynamic_Prop_Type::make()->categories( [
-			DynamicTagsModule::NUMBER_CATEGORY,
-			DynamicTagsModule::DATETIME_CATEGORY,
+			V1DynamicTags::NUMBER_CATEGORY,
+			V1DynamicTags::DATETIME_CATEGORY,
 		] );
 
-		Plugin::$instance->dynamic_tags->register( new Mock_Dynamic_Tag() );
+		$dynamic_tag = new Mock_Dynamic_Tag();
+
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+
+		Dynamic_Tags_Module::fresh();
 
 		// Expect.
 		$this->expectException( \Exception::class );
@@ -102,6 +107,35 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 			'value' => [
 				'name' => 'mock-dynamic-tag',
 				'settings' => [],
+			],
+		] );
+	}
+
+	public function test_validate__throws_for_invalid_settings() {
+		// Arrange.
+		$prop_type = Dynamic_Prop_Type::make()->categories( [
+			V1DynamicTags::TEXT_CATEGORY,
+		] );
+
+		$dynamic_tag = new Mock_Dynamic_Tag();
+
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+
+		Dynamic_Tags_Module::fresh();
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Dynamic tag settings validation failed. Invalid keys: mock-control-1' );
+
+		// Act.
+		$prop_type->validate( [
+			'$$type' => 'dynamic',
+			'value' => [
+				'name' => 'mock-dynamic-tag',
+				'settings' => [
+					'mock-control-1' => 'invalid-value',
+					'mock-control-2' => 'valid-value',
+				],
 			],
 		] );
 	}
