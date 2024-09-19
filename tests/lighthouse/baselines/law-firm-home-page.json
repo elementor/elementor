@@ -9,7 +9,7 @@
   "first-contentful-paint": [ "error", { "minScore": 0.8 } ],
   "first-meaningful-paint": [ "error", { "minScore": 0.60 } ],
   "largest-contentful-paint": [ "error", { "minScore": 0.60 } ],
-  "legacy-javascript": [ "error", { "maxLength": 2 } ],
+  "legacy-javascript": [ "error", { "maxLength": 0 } ],
   "render-blocking-resources": [ "error", { "maxLength": 16 } ],
   "uses-long-cache-ttl": [ "warn", { "maxLength": 30 } ],
   "modern-image-formats": [ "warn", { "maxLength": 4 }],
