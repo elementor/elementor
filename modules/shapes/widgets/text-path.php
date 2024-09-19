@@ -91,7 +91,7 @@ class TextPath extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-text-path' ];
+		return [ 'widget-shapes' ];
 	}
 
 	/**

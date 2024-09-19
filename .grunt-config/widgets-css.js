@@ -113,8 +113,7 @@ class WidgetsCss {
 			moduleWidgetsList = this.getModulesFrontendScssFiles( this.sourceModulesScssFolder );
 
 		moduleWidgetsList.forEach( ( filePath ) => {
-			const isFrontendScssFile = filePath.indexOf( 'frontend.scss' ) > -1;
-			const widgetData = this.getWidgetDataFromPath( this.sourceModulesScssFolder, filePath, isFrontendScssFile );
+			const widgetData = this.getWidgetDataFromPath( this.sourceModulesScssFolder, filePath );
 
 			moduleWidgetData.push( {
 				widgetName: widgetData.name,
@@ -131,12 +130,10 @@ class WidgetsCss {
 	getModulesFrontendScssFiles( filePath, frontendScssFiles = [] ) {
 		fs.readdirSync( filePath ).forEach( ( fileName ) => {
 			const fileFullPath = path.join( filePath, fileName );
-			const isFrontendScssFile = fileName.indexOf( 'frontend.scss' ) > -1;
-			const isWidgetsScssFile = fileName.indexOf( '.scss' ) > -1 && filePath.indexOf( '/widgets' ) > -1;
 
 			if ( fs.lstatSync( fileFullPath ).isDirectory() ) {
 				this.getModulesFrontendScssFiles( fileFullPath, frontendScssFiles );
-			} else if ( isFrontendScssFile || isWidgetsScssFile ) {
+			} else if ( fileName.indexOf( 'frontend.scss' ) > -1 ) {
 				frontendScssFiles.push( fileFullPath );
 			}
 		} );
@@ -144,17 +141,13 @@ class WidgetsCss {
 		return frontendScssFiles;
 	}
 
-	getWidgetDataFromPath( baseFolder, filePath, isFrontendScssFile ) {
+	getWidgetDataFromPath( baseFolder, filePath ) {
 		// Removing base-folder and first slash so that the module name will be the first value in the path.
 		filePath = filePath.replace( baseFolder, '' ).substring(1);
 
-		const widgetName = isFrontendScssFile
-			? filePath.split( path.sep )[ 0 ]
-			: path.basename( filePath, path.extname( filePath ) );
-
 		return {
 			path: filePath.replace( /\\/g, '/' ),
-			name: widgetName,
+			name: filePath.split( path.sep )[ 0 ],
 		};
 	}
 
