@@ -2,7 +2,6 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -331,86 +330,6 @@ abstract class Module extends Base_Object {
 	}
 
 	/**
-	 * Register styles.
-	 *
-	 * At build time, Elementor compiles `/modules/{{ module_name }}/assets/scss/widgets/*.scss`
-	 * to `/assets/css/widget-*.min.css`.
-	 *
-	 * @return void
-	 */
-	public function register_styles() {
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-		$widget_styles = $this->get_widgets_style_list();
-
-		foreach ( $widget_styles as $widget_style_name ) {
-			$should_load_responsive_css = $this->should_load_responsive_css_file( $widget_style_name );
-
-			wp_register_style(
-				$widget_style_name,
-				$this->get_frontend_file_url( "{$widget_style_name}{$direction_suffix}{$min_suffix}.css", $should_load_responsive_css ),
-				$this->get_widget_styles_depends(),
-				$should_load_responsive_css ? null : ELEMENTOR_VERSION
-			);
-		}
-	}
-
-	/**
-	 * Get widget styles dependencies.
-	 *
-	 * Provide a list of all the module widget styles dependencies.
-	 *
-	 * @return array
-	 */
-	protected function get_widget_styles_depends():array {
-		return [ 'elementor-frontend' ];
-	}
-
-	/**
-	 * Get widget style list.
-	 *
-	 * Provide a list of all the module widget styles that should be registered.
-	 *
-	 * @return array
-	 */
-	protected function get_widgets_style_list(): array {
-		return [];
-	}
-
-	/**
-	 * Check if we should load the responsive css file.
-	 *
-	 * @param $widget_style_name
-	 * @return bool
-	 * @since 3.25.0
-	 * @access protected
-	 */
-	protected function should_load_responsive_css_file( $widget_style_name ): bool {
-		$custom_breakpoints_are_enabled = Plugin::$instance->breakpoints->has_custom_breakpoints();
-
-		if ( ! $custom_breakpoints_are_enabled ) {
-			return false;
-		}
-
-		return $this->css_template_file_exists( $widget_style_name );
-	}
-
-	/**
-	 * Check if the responsive css file exists.
-	 *
-	 * @param $widget_style_name
-	 * @return bool
-	 * @since 3.25.0
-	 * @access protected
-	 */
-	protected function css_template_file_exists( $widget_style_name ): bool {
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-		$file_path = ELEMENTOR_ASSETS_PATH . "css/templates/{$widget_style_name}{$direction_suffix}.min.css";
-
-		return file_exists( $file_path );
-	}
-
-	/**
 	 * Get the module's associated widgets.
 	 *
 	 * @return string[]
@@ -434,7 +353,5 @@ abstract class Module extends Base_Object {
 
 	public function __construct() {
 		add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
-
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 	}
 }
