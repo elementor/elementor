@@ -71,7 +71,6 @@ class Module extends BaseModule {
 
 	private function register_transformers( Transformers_Registry $transformers ) {
 		$transformers->register( new Classes_Transformer() );
-		$transformers->register( new Dynamic_Transformer( Plugin::$instance->dynamic_tags ) );
 	}
 
 	/**

@@ -57,10 +57,7 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 		}
 
 		if ( ! $this->is_tag_in_supported_categories( $tag ) ) {
-			$tag_categories = implode( ', ', $tag['categories'] );
-			$prop_categories = implode( ', ', $this->get_categories() );
-
-			throw new \Exception( "Dynamic tag `{$tag['name']}` categories ($tag_categories) are not in supported categories ($prop_categories)" );
+			throw $this->unsupported_tag( $tag );
 		}
 
 		$validator = Settings_Validator::make( $tag['props_schema'] );
@@ -81,5 +78,12 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 		);
 
 		return ! empty( $intersection );
+	}
+
+	private function unsupported_tag( array $tag ): \Exception {
+		$tag_categories = implode( ', ', $tag['categories'] );
+		$prop_categories = implode( ', ', $this->get_categories() );
+
+		return new \Exception( "Dynamic tag `{$tag['name']}` categories ($tag_categories) are not in supported categories ($prop_categories)" );
 	}
 }

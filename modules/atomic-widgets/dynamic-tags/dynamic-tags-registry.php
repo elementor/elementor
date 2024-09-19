@@ -7,12 +7,30 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
+use Elementor\Plugin;
 
 class Dynamic_Tags_Registry {
 
-	private array $tags = [];
+	private ?array $tags = null;
 
 	public function get_tags(): array {
+		if ( null !== $this->tags ) {
+			return $this->tags;
+		}
+
+		$atomic_tags = [];
+		$dynamic_tags = Plugin::$instance->dynamic_tags->get_tags_config();
+
+		foreach ( $dynamic_tags as $name => $tag ) {
+			$atomic_tag = $this->convert_dynamic_tag_to_atomic( $tag );
+
+			if ( $atomic_tag ) {
+				$atomic_tags[ $name ] = $atomic_tag;
+			}
+		}
+
+		$this->tags = $atomic_tags;
+
 		return $this->tags;
 	}
 
@@ -34,24 +52,8 @@ class Dynamic_Tags_Registry {
 		return $tags[ $name ] ?? null;
 	}
 
-	public function populate_from_v1_tags( array $dynamic_tags ): self {
-		$atomic_tags = [];
-
-		foreach ( $dynamic_tags as $name => $tag ) {
-			$atomic_tag = $this->convert_dynamic_tag_to_atomic( $tag );
-
-			if ( $atomic_tag ) {
-				$atomic_tags[ $name ] = $atomic_tag;
-			}
-		}
-
-		$this->tags = $atomic_tags;
-
-		return $this;
-	}
-
 	private function convert_dynamic_tag_to_atomic( $tag ) {
-		if ( ! isset( $tag['name'], $tag['categories'] ) ) {
+		if ( empty( $tag['name'] ) || empty( $tag['categories'] ) ) {
 			return null;
 		}
 
@@ -136,7 +138,7 @@ class Dynamic_Tags_Registry {
 	 * @return array{ atomic_control: Select_Control, prop_schema: String_Prop_Type }
 	 */
 	private function convert_select_control_to_atomic( $control ) {
-		if ( ! isset( $control['options'] ) ) {
+		if ( empty( $control['options'] ) ) {
 			throw new \Exception( 'Select control must have options' );
 		}
 

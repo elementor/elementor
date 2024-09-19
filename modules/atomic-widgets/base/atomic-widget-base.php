@@ -152,7 +152,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		[ , $validated, $errors ] = Settings_Validator::make( $schema )->validate( $settings );
 
 		if ( ! empty( $errors ) ) {
-			Utils::safe_throw( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
+			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
 
 		return $validated;

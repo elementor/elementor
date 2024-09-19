@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Plugin;
 
 class Dynamic_Tags_Module {
@@ -27,30 +28,34 @@ class Dynamic_Tags_Module {
 	}
 
 	public function register_hooks() {
-		add_action( 'elementor/init', function () {
-			$v1_tags = Plugin::$instance->dynamic_tags->get_tags_config();
-
-			$this->registry->populate_from_v1_tags( $v1_tags );
-		} );
-
 		add_filter(
 			'elementor/editor/localize_settings',
-			fn( array $settings ) => $this->add_atomic_dynamic_tags_settings( $settings )
+			fn( array $settings ) => $this->add_atomic_dynamic_tags_to_editor_settings( $settings )
 		);
 
 		add_filter(
 			'elementor/atomic-widgets/props-schema',
 			fn( array $schema ) => Dynamic_Prop_Types_Mapping::add_to_schema( $schema )
 		);
+
+		add_action(
+			'elementor/atomic-widgets/settings/transformers/register',
+			fn ( $transformers ) => $this->register_transformers( $transformers )
+		);
 	}
 
-	private function add_atomic_dynamic_tags_settings( $settings ) {
+	private function add_atomic_dynamic_tags_to_editor_settings( $settings ) {
 		if ( isset( $settings['dynamicTags']['tags'] ) ) {
 			$settings['atomicDynamicTags'] = [
 				'tags' => $this->registry->get_tags(),
+				'groups' => Plugin::$instance->dynamic_tags->get_config()['groups'],
 			];
 		}
 
 		return $settings;
+	}
+
+	private function register_transformers( Transformers_Registry $transformers ) {
+		$transformers->register( new Dynamic_Transformer( Plugin::$instance->dynamic_tags ) );
 	}
 }

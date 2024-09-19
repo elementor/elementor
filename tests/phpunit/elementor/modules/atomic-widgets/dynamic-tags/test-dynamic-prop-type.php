@@ -93,9 +93,9 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 
 		$dynamic_tag = new Mock_Dynamic_Tag();
 
-		Dynamic_Tags_Module::fresh()->registry->populate_from_v1_tags( [
-			$dynamic_tag->get_name() => $dynamic_tag->get_editor_config(),
-		] );
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+
+		Dynamic_Tags_Module::fresh();
 
 		// Expect.
 		$this->expectException( \Exception::class );
@@ -119,9 +119,9 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 
 		$dynamic_tag = new Mock_Dynamic_Tag();
 
-		Dynamic_Tags_Module::fresh()->registry->populate_from_v1_tags( [
-			$dynamic_tag->get_name() => $dynamic_tag->get_editor_config(),
-		] );
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+
+		Dynamic_Tags_Module::fresh();
 
 		// Expect.
 		$this->expectException( \Exception::class );
