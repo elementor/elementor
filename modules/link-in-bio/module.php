@@ -20,12 +20,6 @@ class Module extends BaseModule {
 		return static::EXPERIMENT_NAME;
 	}
 
-	public function __construct() {
-		parent::__construct();
-
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
-	}
-
 	public function get_widgets(): array {
 		return [
 			'Link_In_Bio',
@@ -42,6 +36,12 @@ class Module extends BaseModule {
 			'release_status' => Manager::RELEASE_STATUS_STABLE,
 			'mutable' => false,
 		];
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 	}
 
 	/**
