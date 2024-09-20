@@ -384,7 +384,7 @@ class Manager extends Base_Object {
 			'name' => 'container',
 			'title' => esc_html__( 'Container', 'elementor' ),
 			'description' => sprintf(
-				esc_html__( 'Create advanced layouts and responsive designs with %1$sFlexbox%2$s & %3$sGrid%4$s container elements. Give it a try using the %5$sContainer playground%6$s.','elementor' ),
+				esc_html__( 'Create advanced layouts and responsive designs with %1$sFlexbox%2$s and %3$sGrid%4$s container elements. Give it a try using the %5$sContainer playground%6$s.', 'elementor' ),
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">',
 				'</a>',
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">',
