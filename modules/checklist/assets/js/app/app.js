@@ -1,15 +1,16 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import { useQuery } from '@elementor/query';
 import Checklist from './components/checklist';
+import { STEPS_ROUTE, USER_PROGRESS_ROUTE } from '../utils/consts';
 
 const fetchSteps = async () => {
-	const response = await $e.data.get( 'checklist/steps', {}, { refresh: true } );
+	const response = await $e.data.get( STEPS_ROUTE, {}, { refresh: true } );
 
 	return response?.data?.data || null;
 };
 
 const fetchStatus = async () => {
-	const response = await $e.data.get( 'checklist/user-progress', {}, { refresh: true } );
+	const response = await $e.data.get( USER_PROGRESS_ROUTE, {}, { refresh: true } );
 
 	return response?.data?.data || null;
 };
@@ -19,13 +20,15 @@ const App = () => {
 		{ error: stepsError, data: steps } = useQuery( {
 		queryKey: [ 'steps' ],
 		queryFn: fetchSteps,
+		gcTime: 0,
 	} ),
 		{ error: userProgressError, data: userProgress } = useQuery( {
 			queryKey: [ 'statusData' ],
 			queryFn: fetchStatus,
+			gcTime: 0,
 		} );
 
-	if ( userProgressError || ! userProgress || stepsError || ! steps || 0 === steps.length ) {
+	if ( userProgressError || ! userProgress || stepsError || ! steps?.length ) {
 		return null;
 	}
 

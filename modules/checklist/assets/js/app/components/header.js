@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useQuery } from '@elementor/query';
 import * as React from 'react';
 import { toggleChecklistPopup } from '../../utils/functions';
-import { USER_PROGRESS } from '../../utils/consts';
+import { USER_PROGRESS, USER_PROGRESS_ROUTE } from '../../utils/consts';
 import { ExpandDiagonalIcon, MinimizeDiagonalIcon } from '@elementor/icons';
 
 const { CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME } = USER_PROGRESS;
@@ -24,7 +24,7 @@ const Header = ( { steps, isMinimized, toggleIsMinimized } ) => {
 
 	const closeChecklist = async () => {
 		if ( ! closedForFirstTime ) {
-			await $e.data.update( 'checklist/user-progress', {
+			await $e.data.update( USER_PROGRESS_ROUTE, {
 				[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ]: true,
 			} );
 

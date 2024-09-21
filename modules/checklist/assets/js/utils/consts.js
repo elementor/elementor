@@ -1,3 +1,6 @@
+export const STEPS_ROUTE = 'checklist/steps',
+	USER_PROGRESS_ROUTE = 'checklist/user-progress';
+
 export const STEP = {
 	IS_MARKED_COMPLETED: 'is_marked_completed',
 	IS_IMMUTABLE_COMPLETED: 'is_immutable_completed',
