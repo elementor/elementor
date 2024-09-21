@@ -13,8 +13,9 @@ export const USER_PROGRESS = {
 	IS_POPUP_MINIMIZED: 'is_popup_minimized',
 };
 
-export const STEP_IDS_TO_COMPLETE_IN_EDITOR = [ 'add_logo' ];
+export const STEP_IDS_TO_COMPLETE_IN_EDITOR = [ 'add_logo', 'set_fonts_and_colors' ];
 
 export const PANEL_ROUTES = {
 	add_logo: 'panel/global/settings-site-identity',
+	set_fonts_and_colors: 'panel/global/global-typography',
 };
