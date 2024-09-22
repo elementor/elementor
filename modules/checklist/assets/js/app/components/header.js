@@ -51,7 +51,7 @@ const Header = ( { steps, isMinimized, toggleIsMinimized } ) => {
 					>
 						{ __( 'Let\'s make a productivity boost', 'elementor' ) }
 					</Typography>
-					<IconButton onClick={ toggleIsMinimized } >
+					<IconButton onClick={ toggleIsMinimized } aria-expanded={ ! isMinimized }>
 						{ isMinimized ? <ExpandDiagonalIcon /> : <MinimizeDiagonalIcon /> }
 					</IconButton>
 					<CloseButton onClick={ closeChecklist } />
