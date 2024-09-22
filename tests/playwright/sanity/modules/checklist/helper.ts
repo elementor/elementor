@@ -54,7 +54,7 @@ export class ChecklistHelper {
 			: this.page;
 
 		await frame.locator( selectors.toggleExpandButton ).click();
-		await frame.locator( `${ selectors.toggleExpandButton }[aria-expanded="${ shouldExpand.toString() }"]` ).waitFor(); // buffer to allow aria expanded attribute to update
+		await frame.locator( `${ selectors.toggleExpandButton }[aria-expanded="${ shouldExpand.toString() }"]` ).waitFor();
 	}
 
 	async toggleChecklistItem( itemId: string, context: 'editor' | 'wp-admin', shouldExpand: boolean ) {

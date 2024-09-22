@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
-import ChecklistHelper from './helper';
+import { ChecklistHelper } from './helper';
 import { StepId } from '../../../types/checklist';
 
 test.describe( 'Launchpad checklist tests', () => {
