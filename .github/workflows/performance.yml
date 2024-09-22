@@ -46,6 +46,11 @@ jobs:
           templates: |-
             elementor-templates
 
+      - name: Echo list of pages
+        shell: bash
+        run: |
+          wp-env run tests-cli wp post list --fields=ID,post_title,post_name,url --post_type=page
+
       - name: Run Performance tests
         uses: elementor/elementor-editor-github-actions/actions/run-lighthouse-tests@main
         id: run-lighthouse-tests
@@ -63,3 +68,13 @@ jobs:
         shell: bash
         run: |
           echo "Test performance score: $PERFORMANCE_SCORE"
+
+      - name: Notify Slack
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_LIGHTHOUSE_CHANNEL }}
+          SLACK_BOT_NAME: ElementorBot
+          PERFORMANCE_SCORE: ${{ steps.run-lighthouse-tests.outputs.test-performance-score }}
+        run: |
+          MESSAGE_TEXT="Repo: *$GITHUB_REPOSITORY* \n Workflow: *$GITHUB_WORKFLOW* \n Score: *$PERFORMANCE_SCORE* \n Link: <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|link>"
+          curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"
