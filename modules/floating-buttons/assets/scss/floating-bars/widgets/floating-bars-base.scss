@@ -1,3 +1,5 @@
+@import './floating-bars-vars';
+
 .e-floating-bars {
 	--e-floating-bars-announcement-bg-color: #467FF7;
 	--e-floating-bars-announcement-text-color: #FFFFFF;
@@ -161,7 +163,7 @@
 		&.has-entrance-animation {
 			opacity: 0;
 		}
-	
+
 		&.visible {
 			opacity: 1;
 		}
@@ -186,7 +188,7 @@
 			border-color: var(--e-floating-bars-cta-button-border-color);
 			border-style: solid;
 			border-width: var(--e-floating-bars-cta-button-border-width);
-			
+
 			&:hover,
 			&:focus {
 				border-color: var(--e-floating-bars-cta-button-border-color-hover);

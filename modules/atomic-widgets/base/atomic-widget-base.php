@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
+use Elementor\Modules\AtomicWidgets\Settings_Validator;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
@@ -92,13 +93,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	final public function get_data_for_save() {
 		$data = parent::get_data_for_save();
-		$schema = static::get_props_schema();
-
-		$raw_settings = $data['settings'];
-		$sanitized_settings = static::sanitize_schema( $schema, $raw_settings );
-		$data['settings'] = $sanitized_settings;
 
 		$data['version'] = $this->version;
+		$data['settings'] = $this->sanitize_atomic_settings( $data['settings'] );
 
 		return $data;
 	}
@@ -149,26 +146,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		}
 	}
 
-	public static function sanitize_schema( array $schema, array $settings ): array {
-		$widget_name = static::class;
+	private function sanitize_atomic_settings( array $settings ): array {
+		$schema = static::get_props_schema();
 
-		$sanitized_values = [];
+		[ , $validated, $errors ] = Settings_Validator::make( $schema )->validate( $settings );
 
-		foreach ( $schema as $key => $prop ) {
-			if ( $prop instanceof Prop_Type ) {
-				try {
-					$sanitized_value = $prop->sanitize( $settings[ $key ] );
-
-					if ( null !== $sanitized_value ) {
-						$sanitized_values[ $key ] = $sanitized_value;
-					}
-				} catch ( \Exception $e ) {
-					Utils::safe_throw( "Error while sanitizing `$key` prop in `{$widget_name}` - {$e->getMessage()}" );
-				}
-			}
+		if ( ! empty( $errors ) ) {
+			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
 
-		return $sanitized_values;
+		return $validated;
 	}
 
 	/**

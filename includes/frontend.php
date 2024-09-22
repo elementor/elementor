@@ -534,9 +534,9 @@ class Frontend extends App {
 
 		wp_register_style(
 			'e-apple-webkit',
-			$this->get_css_assets_url( 'apple-webkit', 'assets/css/conditionals/' ),
+			$this->get_frontend_file_url( 'apple-webkit.min.css', $has_custom_breakpoints, 'conditionals/' ),
 			[],
-			ELEMENTOR_VERSION
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -712,13 +712,13 @@ class Frontend extends App {
 	 *
 	 * @return string frontend file URL
 	 */
-	public function get_frontend_file_url( $frontend_file_name, $custom_file ) {
+	public function get_frontend_file_url( $frontend_file_name, $custom_file, $css_subfolder = '' ) {
 		if ( $custom_file ) {
 			$frontend_file = $this->get_frontend_file( $frontend_file_name );
 
 			$frontend_file_url = $frontend_file->get_url();
 		} else {
-			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
+			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $css_subfolder . $frontend_file_name;
 		}
 
 		return $frontend_file_url;
