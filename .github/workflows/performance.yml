@@ -55,3 +55,11 @@ jobs:
             test:http://localhost:8889/test/
           categories: |-
             performance
+
+      - name: Echo Performance Score
+        if: ${{ steps.run-lighthouse-tests.outputs.test-performance-score }}
+        env:
+          PERFORMANCE_SCORE: ${{ steps.run-lighthouse-tests.outputs.test-performance-score }}
+        shell: bash
+        run: |
+          echo "Test performance score: $PERFORMANCE_SCORE"
