@@ -37,7 +37,7 @@ jobs:
           themes: |-
             https://downloads.wordpress.org/theme/hello-elementor.zip
           mappings: |-
-            elementor-templates:./tests/playwright/templates
+            elementor-templates:./tests/lighthouse/templates
 
       - name: Import Templates
         uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@main
