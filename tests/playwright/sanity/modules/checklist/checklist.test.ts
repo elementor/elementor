@@ -286,6 +286,18 @@ test.describe( 'Launchpad checklist tests', () => {
 		} );
 	} );
 
+	test( 'Make sure steps are reset and checklist is active after previous test in case it failed', async ( { page, apiRequests, request }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await checklistHelper.resetStepsInDb( request );
+		await checklistHelper.setChecklistSwitcherInPreferences( true );
+		await checklistHelper.toggleExpandChecklist( 'editor', true );
+	} );
+
 	test( 'Expand and minimize behavior in the editor', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 

@@ -22,6 +22,7 @@ export class ChecklistHelper {
 		await this.editor.openUserPreferencesPanel();
 		await this.editor.setSwitcherControlValue( controlIds.preferencePanel.checklistSwitcher, shouldShow );
 		await this.page.waitForResponse( ( response ) => response.url().includes( 'wp-admin/admin-ajax.php' ), { timeout: 30000 } );
+		await this.page.waitForResponse( ( response ) => response.url().includes( 'wp-admin/admin-ajax.php' ), { timeout: 30000 } );
 	}
 
 	async toggleChecklist( context: 'editor' | 'wp-admin', shouldOpen: boolean ) {
@@ -54,6 +55,7 @@ export class ChecklistHelper {
 			: this.page;
 
 		await frame.locator( selectors.toggleExpandButton ).click();
+		await this.page.waitForResponse( ( response ) => response.url().includes( 'checklist/user-progress' ), { timeout: 30000 } );
 		await frame.locator( `${ selectors.toggleExpandButton }[aria-expanded="${ shouldExpand.toString() }"]` ).waitFor();
 	}
 
