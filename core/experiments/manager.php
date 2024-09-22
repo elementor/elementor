@@ -382,15 +382,12 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'container',
-			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
+			'title' => esc_html__( 'Container', 'elementor' ),
 			'description' => sprintf(
-				esc_html__(
-					'Create advanced layouts and responsive designs with the new %1$sFlexbox Container element%2$s.
-					This experiment replaces the current section/column structure, but you\'ll still keep your existing
-					Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
-					'elementor'
-				),
+				esc_html__( 'Create advanced layouts and responsive designs with %1$sFlexbox%2$s and %3$sGrid%4$s container elements. Give it a try using the %5$sContainer playground%6$s.', 'elementor' ),
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">',
+				'</a>',
+				'<a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">',
 				'</a>',
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">',
 				'</a>'
@@ -407,22 +404,6 @@ class Manager extends Base_Object {
 					esc_html__( 'Container-based content will be hidden from your site and may not be recoverable in all cases.', 'elementor' ),
 					esc_html__( 'Learn more', 'elementor' ),
 				),
-			],
-		] );
-
-		$this->add_feature( [
-			'name' => 'container_grid',
-			'title' => esc_html__( 'Grid Container', 'elementor' ),
-			'tag' => esc_html__( 'Feature', 'elementor' ),
-			'description' => sprintf(
-				'%1$s <a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">%2$s</a>',
-				esc_html__( 'Create pixel perfect layouts by placing elements in a customizable grid. Activate to add the CSS Grid option to container elements.', 'elementor' ),
-				esc_html__( 'Learn more', 'elementor' ),
-			),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-			'dependencies' => [
-				'container',
 			],
 		] );
 
@@ -449,12 +430,8 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Optimized Control Loading', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Use this experiment to improve control loading. This experiment improves site performance by loading controls only when needed.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_BETA,
-			'default' => self::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.22.0',
-			],
+			'release_status' => self::RELEASE_STATUS_STABLE,
+			'default' => self::STATE_ACTIVE,
 			'generator_tag' => true,
 		] );
 
