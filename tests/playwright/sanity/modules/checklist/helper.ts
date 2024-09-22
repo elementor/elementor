@@ -55,7 +55,6 @@ export class ChecklistHelper {
 			: this.page;
 
 		await frame.locator( selectors.toggleExpandButton ).click();
-		await this.page.waitForResponse( new RegExp( 'checklist/user-progress' ), { timeout: 30000 } );
 		await frame.locator( `${ selectors.toggleExpandButton }[aria-expanded="${ shouldExpand.toString() }"]` ).waitFor();
 	}
 
