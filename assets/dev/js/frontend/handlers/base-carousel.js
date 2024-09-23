@@ -126,8 +126,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		};
 
 		swiperOptions.on = {
-			slideChangeTransitionEnd: () => {
-			},
 			slideChange: () => {
 				this.a11ySetPaginationTabindex();
 				this.handleElementHandlers();
