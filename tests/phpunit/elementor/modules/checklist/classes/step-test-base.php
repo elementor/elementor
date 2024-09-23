@@ -17,12 +17,27 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 */
 	protected $wordpress_adapter;
 
+	private $original_user_roles;
+
 	protected Checklist_Module $checklist_module;
 
 	public function setup(): void {
 		$this->checklist_module = new Checklist_Module( $this->wordpress_adapter );
 
+		$this->original_user_roles = wp_get_current_user()->roles;
+		$user = wp_get_current_user();
+		$user->set_role( 'administrator'  );
+
 		parent::setUp();
+	}
+
+	public function teardown(): void {
+		$user = wp_get_current_user();
+		foreach ( $this->original_user_roles as $role ) {
+			$user->set_role( $role );
+		}
+
+		parent::TearDown();
 	}
 
 	/**
