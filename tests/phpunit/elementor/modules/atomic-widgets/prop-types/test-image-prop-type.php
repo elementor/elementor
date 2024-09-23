@@ -20,7 +20,10 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'Value must have an `attachment_id` or a `url` key.' );
 
 		// Act.
-		$prop_type->validate_value( null );
+		$prop_type->validate( [
+			'$$type' => 'image',
+			'value' => null,
+		] );
 	}
 
 	public function test_validate_value__throws_when_passing_array_without_id_and_url() {
@@ -32,7 +35,10 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'Value must have an `attachment_id` or a `url` key.' );
 
 		// Act.
-		$prop_type->validate_value( [ 'key' => 'test' ] );
+		$prop_type->validate( [
+			'$$type' => 'image',
+			'value' => [ 'key' => 'test' ],
+		] );
 	}
 
 	public function test_validate_value__throws_when_passing_array_with_both_id_and_url() {
@@ -44,9 +50,12 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'Value must have either an `attachment_id` or a `url` key, not both.' );
 
 		// Act.
-		$prop_type->validate_value( [
-			'attachment_id' => 123,
-			'url' => 'https://example.com/image.jpg',
+		$prop_type->validate( [
+			'$$type' => 'image',
+			'value' => [
+				'attachment_id' => 123,
+				'url' => 'https://example.com/image.jpg',
+			],
 		] );
 	}
 
@@ -59,7 +68,12 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'Attachment id must be numeric, string given.' );
 
 		// Act.
-		$prop_type->validate_value( [ 'attachment_id' => 'not-number' ] );
+		$prop_type->validate( [
+			'$$type' => 'image',
+			'value' => [
+				'attachment_id' => 'not-number',
+			],
+		] );
 	}
 
 	public function test_validate_value__throws_when_passing_array_with_non_string_url() {
@@ -71,6 +85,11 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'URL must be a string, integer given.' );
 
 		// Act.
-		$prop_type->validate_value( [ 'url' => 123 ] );
+		$prop_type->validate( [
+			'$$type' => 'image',
+			'value' => [
+				'url' => 123,
+			],
+		] );
 	}
 }

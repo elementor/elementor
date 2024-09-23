@@ -1,15 +1,14 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsResolver;
+namespace Elementor\Modules\AtomicWidgets\PropsTransformer;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Props_Resolver {
+class Props_Transformer {
 	/**
 	 * Each transformer can return a value that is also a transformable value,
 	 * which means that it can be transformed again by another transformer.
@@ -21,7 +20,7 @@ class Props_Resolver {
 	const CONTEXT_STYLES = 'styles';
 
 	/**
-	 * @var array<string, Props_Resolver>
+	 * @var array<string, Props_Transformer>
 	 */
 	private static array $instances = [];
 
@@ -51,25 +50,24 @@ class Props_Resolver {
 		return self::$instances[ $context ];
 	}
 
-	public function resolve( array $schema, array $props ): array {
-		$result = [];
-
-		foreach ( $schema as $prop_name => $prop_type ) {
-			$result[ $prop_name ] = $prop_type instanceof Prop_Type
-				? $this->transform( $props[ $prop_name ] ?? $prop_type->get_default() )
-				: null;
-		}
-
-		return $result;
+	public function transform( array $props ): array {
+		return array_map(
+			fn( $value ) => $this->transform_value( $value ),
+			$props
+		);
 	}
 
-	private function transform( $value, int $depth = 0 ) {
+	private function transform_value( $value, int $depth = 0 ) {
 		if ( ! $value || ! $this->is_transformable( $value ) ) {
 			return $value;
 		}
 
 		if ( $depth >= self::TRANSFORM_DEPTH_LIMIT ) {
 			return null;
+		}
+
+		if ( is_array( $value['value'] ) ) {
+			$value['value'] = $this->transform( $value['value'] );
 		}
 
 		$transformer = $this->transformers->get( $value['$$type'] );
@@ -81,7 +79,7 @@ class Props_Resolver {
 		try {
 			$transformed_value = $transformer->transform( $value['value'] );
 
-			return $this->transform( $transformed_value, $depth + 1 );
+			return $this->transform_value( $transformed_value, $depth + 1 );
 		} catch ( Exception $e ) {
 			return null;
 		}

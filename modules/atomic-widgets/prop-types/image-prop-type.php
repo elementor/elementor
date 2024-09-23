@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -12,24 +14,46 @@ class Image_Prop_Type extends Transformable_Prop_Type {
 		return 'image';
 	}
 
-	public function validate_value( $value ): void {
-		$has_id = isset( $value['attachment_id'] );
-		$has_url = isset( $value['url'] );
+	public function __construct() {
+		$this->internal_types['src'] = Image_Src_Prop_Type::make()->default( [
+			'id' => null,
+			'url' => Utils::get_placeholder_image_src(),
+		] );
 
-		if ( ! $has_id && ! $has_url ) {
-			throw new \Exception( 'Value must have an `attachment_id` or a `url` key.' );
+		$this->internal_types['size'] = String_Prop_Type::make()->default( 'full' );
+
+		// TODO: Find a better way?
+		$this->default( [
+			'src' => $this->internal_types['src']->get_default(),
+			'size' => $this->internal_types['size']->get_default(),
+		] );
+	}
+
+	public function default_url( string $url ): self {
+		$this->default['value']['src']['value']['url'] = $url;
+
+		return $this;
+	}
+
+	public function default_id( int $id ): self {
+		$this->default['value']['src']['value']['id'] = $id;
+
+		return $this;
+	}
+
+	public function default_size( string $size ): self {
+		$this->default['value']['size'] = $size;
+
+		return $this;
+	}
+
+	protected function validate_value( $value ): void {
+		if ( isset( $value['src'] ) ) {
+			$this->internal_types['src']->validate( $value['src'] );
 		}
 
-		if ( $has_id && $has_url ) {
-			throw new \Exception( 'Value must have either an `attachment_id` or a `url` key, not both.' );
-		}
-
-		if ( $has_id && ! is_numeric( $value['attachment_id'] ) ) {
-			throw new \Exception( 'Attachment id must be numeric, ' . gettype( $value['attachment_id'] ) . ' given.' );
-		}
-
-		if ( $has_url && ! is_string( $value['url'] ) ) {
-			throw new \Exception( 'URL must be a string, ' . gettype( $value['url'] ) . ' given.' );
+		if ( isset( $value['size'] ) ) {
+			$this->internal_types['size']->validate( $value['size'] );
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
+use Elementor\Modules\AtomicWidgets\PropsTransformer\Transformers_Registry;
 use Elementor\Plugin;
 
 class Dynamic_Tags_Module {
