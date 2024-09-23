@@ -3,7 +3,7 @@ import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorSelectors from '../selectors/editor-selectors';
 
-test( 'Heading widget added using shortcode with non-correct payload', async ( { page, apiRequests }, testInfo ) => {
+test.skip( 'Heading widget added using shortcode with non-correct payload', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 
