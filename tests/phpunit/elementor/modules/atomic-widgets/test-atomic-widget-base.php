@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
+use Elementor\Core\DynamicTags\Tag;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
@@ -10,8 +11,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,72 +24,147 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	/**
 	 * @dataProvider get_atomic_settings_data_provider
 	 */
-	public function test_get_atomic_settings( $prop_types, $settings, $result ) {
+	public function test_get_atomic_settings( $args, $arrange_cb = null ) {
 		// Arrange.
+		$cleanup = $arrange_cb ? $arrange_cb() : fn() => null;
+
 		$widget = $this->make_mock_widget( [
-			'props_schema' => $prop_types,
-			'settings' => $settings,
+			'props_schema' => $args['prop_types'],
+			'settings' => $args['settings'],
 		] );
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
 
 		// Assert.
-		$this->assertSame( $result, $settings );
+		$this->assertSame( $args['result'], $settings );
+
+		$cleanup();
 	}
 
 	public function get_atomic_settings_data_provider() {
 		return [
 			'basic' => [
-				'prop_types' => [
-					'text' => String_Prop_Type::make()->default( 'The greatest text' ),
-					'tag' => String_Prop_Type::make()->default( 'h2' ),
-				],
-				'settings' => [
-					'text' => 'This text is more great than the greatest text',
-					'invalid_prop' => 'This prop is not in the schema',
-				],
-				'result' => [
-					'text' => 'This text is more great than the greatest text',
-					'tag' => 'h2',
-				],
+				'args' => [
+					'prop_types' => [
+						'text' => String_Prop_Type::make()->default( 'The greatest text' ),
+						'tag' => String_Prop_Type::make()->default( 'h2' ),
+					],
+					'settings' => [
+						'text' => 'This text is more great than the greatest text',
+						'invalid_prop' => 'This prop is not in the schema',
+					],
+					'result' => [
+						'text' => 'This text is more great than the greatest text',
+						'tag' => 'h2',
+					],
+				]
 			],
 			'cannot transform value' => [
-				'prop_types' => [
-					'text' => String_Prop_Type::make()->default( 'Not transformable' ),
-				],
-				'settings' => [
-					'text' => [
-						'$$type' => 'not_transformable',
-						'value' => 'Not transformable',
+				'args' => [
+					'prop_types' => [
+						'text' => String_Prop_Type::make()->default( 'Not transformable' ),
 					],
-				],
-				'result' => [
-					'text' => null,
-				],
+					'settings' => [
+						'text' => [
+							'$$type' => 'not_transformable',
+							'value' => 'Not transformable',
+						],
+					],
+					'result' => [
+						'text' => null,
+					],
+				]
 			],
 			'transform classes' => [
-				'prop_types' => [
-					'classes' => Classes_Prop_Type::make()->default( [] ),
-					'inner_classes' => Classes_Prop_Type::make()->default( [] ),
-					'outer_classes' => Classes_Prop_Type::make()->default( [] ),
-				],
-				'settings' => [
-					'classes' => [
-						'$$type' => 'classes',
-						'value' => [ 'one', 'two', 'three' ],
+				'args' => [
+					'prop_types' => [
+						'classes' => Classes_Prop_Type::make()->default( [] ),
+						'inner_classes' => Classes_Prop_Type::make()->default( [] ),
+						'outer_classes' => Classes_Prop_Type::make()->default( [] ),
 					],
-					'outer_classes' => [
-						'$$type' => 'classes',
-						'value' => 111, // Invalid value for classes
+					'settings' => [
+						'classes' => [
+							'$$type' => 'classes',
+							'value' => [ 'one', 'two', 'three' ],
+						],
+						'outer_classes' => [
+							'$$type' => 'classes',
+							'value' => 111, // Invalid value for classes
+						],
 					],
-				],
-				'result' => [
-					'classes' => 'one two three',
-					'inner_classes' => '',
-					'outer_classes' => null,
+					'result' => [
+						'classes' => 'one two three',
+						'inner_classes' => '',
+						'outer_classes' => null,
+					],
 				],
 			],
+			'transform dynamic' => [
+				'args' => [
+					'prop_types' => [
+						'text' => String_Prop_Type::make()->default( 'Cool cool cool' ),
+						'text_2' => String_Prop_Type::make(),
+						'invalid_name' => String_Prop_Type::make(),
+						'invalid_settings' => String_Prop_Type::make(),
+					],
+					'settings' => [
+						'text' => [
+							'$$type' => 'dynamic',
+							'value' => [
+								'name' => 'dynamic-tag',
+								'settings' => [
+									'before' => 'Before text - '
+								],
+							],
+						],
+						'text_2' => [
+							'$$type' => 'dynamic',
+							'value' => [
+								'name' => 'not-exist-dynamic-tag',
+								'settings' => []
+							],
+						],
+						'invalid_name' => [
+							'$$type' => 'dynamic',
+							'value' => [
+								'name' => 123,
+								'settings' => []
+							],
+						],
+						'invalid_settings' => [
+							'$$type' => 'dynamic',
+							'value' => [
+								'name' => 'dynamic-tag',
+								'settings' => 'Invalid Before - ',
+							],
+						],
+					],
+					'result' => [
+						'text' => 'Before text - Dynamic tag content',
+						'text_2' => null,
+						'invalid_name' => null,
+						'invalid_settings' => null,
+					],
+				],
+				'arrange_cb' => function() {
+					Plugin::$instance->dynamic_tags->register(
+						new class() extends Tag {
+							public function get_name() { return 'dynamic-tag'; }
+							public function get_group() { return 'dynamic'; }
+							public function get_categories() { return [ 'text' ]; }
+							public function get_title() { return 'Dynamic Tag'; }
+							public function get_content( array $options = [] ) {
+								$settings = $this->get_settings();
+
+								return "{$settings['before']}Dynamic tag content";
+							}
+						}
+					);
+
+					return fn() => Plugin::$instance->dynamic_tags->unregister( 'dynamic-tag' );
+				},
+			]
 		];
 	}
 
@@ -306,82 +382,55 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_atomic_controls();
 	}
 
-	public function test_get_atomic_widget_sanitized_settings__removes_non_existing_fields() {
+	public function test_get_data_for_save() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 				'number_prop' => Number_Prop_Type::make()->default( 0 ),
 				'boolean_prop' => Boolean_Prop_Type::make()->default( false ),
+				'in_schema_not_in_settings' => String_Prop_Type::make()->default( '' ),
+				'not_a_prop_type' => 'not-a-prop-type',
 			],
 			'settings' => [
 				'string_prop' => 'valid-string',
 				'number_prop' => 123,
 				'boolean_prop' => true,
-				'invalid_prop' => 'invalid-value',
+				'not_in_schema' => 'not-in-schema',
+				'not_a_prop_type' => 'not-a-prop-type',
 			],
 		] );
 
 		// Act.
-		$sanitized_settings = $widget::sanitize_schema( $widget::get_props_schema(), $widget->get_atomic_settings() );
+		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
 		$this->assertSame( [
 			'string_prop' => 'valid-string',
 			'number_prop' => 123,
 			'boolean_prop' => true,
-		], $sanitized_settings );
+		], $data_for_save['settings'] );
 	}
 
-	public function test_get_atomic_widget_sanitized_settings__removes_invalid_values() {
+	public function test_get_data_for_save__throws_on_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'string_prop' => String_Prop_Type::make()->default( '' ),
-				'number_prop' => Number_Prop_Type::make()->default( 0 ),
-				'boolean_prop' => Boolean_Prop_Type::make()->default( false ),
-				'invalid_string_prop' => String_Prop_Type::make()->default( '' ),
-				'invalid_number_prop' => Number_Prop_Type::make()->default( 0 ),
-				'invalid_boolean_prop' => Boolean_Prop_Type::make()->default( false ),
+				'mock_prop_1' => String_Prop_Type::make()->default( '' ),
+				'mock_prop_2' => Number_Prop_Type::make()->default( 0 ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
-				'number_prop' => 123,
-				'boolean_prop' => true,
-				'invalid_string_prop' => 123,
-				'invalid_number_prop' => 'invalid-number',
-				'invalid_boolean_prop' => 'invalid-boolean',
-			],
-		] );
-
-		// Act.
-		$sanitized_settings = $widget::sanitize_schema( $widget::get_props_schema(), $widget->get_atomic_settings() );
-
-		// Assert.
-		$this->assertSame( [
-			'string_prop' => 'valid-string',
-			'number_prop' => 123,
-			'boolean_prop' => true,
-		], $sanitized_settings );
-	}
-
-	public function test_get_atomic_widget_sanitized_settings__throws_on_sanitization_error() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'mock_prop' => $this->make_mock_prop_type()::make()->default( '' ),
-			],
-			'settings' => [
-				'mock_prop' => 'valid-value',
+				'mock_prop_1' => 123,
+				'mock_prop_2' => 'not-a-number',
 			],
 		] );
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessageMatches( '/Error while sanitizing `mock_prop` prop/' );
+		$this->expectExceptionMessage( 'Settings validation failed. Invalid keys: mock_prop_1, mock_prop_2' );
 
 		// Act.
-		$widget::sanitize_schema( $widget::get_props_schema(), $widget->get_atomic_settings() );
+		$widget->get_data_for_save();
 	}
 
 	/**
@@ -397,6 +446,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				parent::__construct( [
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
+					'elType' => 'widget',
+					'widgetType' => 'test-widget',
 				], [] );
 			}
 
@@ -410,20 +461,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 			protected static function define_props_schema(): array {
 				return static::$options['props_schema'] ?? [];
-			}
-		};
-	}
-
-	private function make_mock_prop_type() {
-		return new class() extends Prop_Type {
-			public static function get_key(): string {
-				return 'mock-prop-type';
-			}
-
-			public function validate( $value ): void {}
-
-			public function sanitize( $value ): void {
-				throw new \Exception( 'Throwing sanitization exception.' );
 			}
 		};
 	}

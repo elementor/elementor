@@ -55,7 +55,7 @@ jobs:
             elementor-templates
 
       - name: Install lhci
-        run: npm install --no-package-lock --no-save @lhci/cli@0.11.1
+        run: npm install --no-package-lock --no-save @lhci/cli@0.14.0
 
       - name: Run Lighthouse tests
         run: |
