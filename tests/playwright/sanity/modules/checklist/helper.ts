@@ -5,7 +5,7 @@ import { controlIds, selectors } from './selectors';
 import { proStepIds, Step, StepId } from '../../../types/checklist';
 import ApiRequests from '../../../assets/api-requests';
 
-export default class ChecklistHelper {
+export class ChecklistHelper {
 	readonly page: Page;
 	readonly editor: EditorPage;
 	readonly wpAdmin: WpAdminPage;
@@ -21,6 +21,7 @@ export default class ChecklistHelper {
 	async setChecklistSwitcherInPreferences( shouldShow: boolean ) {
 		await this.editor.openUserPreferencesPanel();
 		await this.editor.setSwitcherControlValue( controlIds.preferencePanel.checklistSwitcher, shouldShow );
+		await this.page.waitForResponse( ( response ) => response.url().includes( 'wp-admin/admin-ajax.php' ), { timeout: 30000 } );
 		await this.page.waitForResponse( ( response ) => response.url().includes( 'wp-admin/admin-ajax.php' ), { timeout: 30000 } );
 	}
 
@@ -42,6 +43,21 @@ export default class ChecklistHelper {
 		await frame.locator( selectors.popup ).waitFor( { state: shouldOpen ? 'visible' : 'hidden' } );
 	}
 
+	async toggleExpandChecklist( context: 'editor' | 'wp-admin', shouldExpand: boolean ) {
+		await this.toggleChecklist( context, true );
+
+		if ( await this.isChecklistExpanded( context ) === shouldExpand ) {
+			return;
+		}
+
+		const frame = 'editor' === context
+			? this.editor.page
+			: this.page;
+
+		await frame.locator( selectors.toggleExpandButton ).click();
+		await frame.locator( `${ selectors.toggleExpandButton }[aria-expanded="${ shouldExpand.toString() }"]` ).waitFor();
+	}
+
 	async toggleChecklistItem( itemId: string, context: 'editor' | 'wp-admin', shouldExpand: boolean ) {
 		if ( ! await this.isChecklistOpen( context ) ) {
 			await this.toggleChecklist( context, true );
@@ -58,6 +74,14 @@ export default class ChecklistHelper {
 		return 'editor' === context
 			? await this.editor.page.locator( selectors.popup ).isVisible()
 			: await this.page.locator( selectors.popup ).isVisible();
+	}
+
+	async isChecklistExpanded( context: 'editor' | 'wp-admin' ) {
+		const frame = 'editor' === context
+			? this.editor.page
+			: this.page;
+
+		return await this.isChecklistOpen( context ) && 'true' === await frame.locator( selectors.toggleExpandButton ).getAttribute( 'aria-expanded' );
 	}
 
 	async isChecklistItemExpanded( itemId: string, context: 'editor' | 'wp-admin' ) {
