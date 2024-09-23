@@ -24,6 +24,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
 	const FIRST_CLOSED_CHECKLIST_IN_EDITOR = 'first_closed_checklist_in_editor';
 	const LAST_OPENED_TIMESTAMP = 'last_opened_timestamp';
+	const IS_POPUP_MINIMIZED_KEY = 'is_popup_minimized';
 
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;
@@ -128,6 +129,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$allowed_properties = [
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
 			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
+			self::IS_POPUP_MINIMIZED_KEY => $new_data[ self::IS_POPUP_MINIMIZED_KEY ] ?? null,
 		];
 
 		foreach ( $allowed_properties as $key => $value ) {
@@ -208,6 +210,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$default_settings = [
 			self::LAST_OPENED_TIMESTAMP => -1,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
+			self::IS_POPUP_MINIMIZED_KEY => false,
 			'steps' => [],
 		];
 

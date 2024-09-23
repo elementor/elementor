@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
-import ChecklistHelper from './helper';
+import { ChecklistHelper } from './helper';
 import { StepId } from '../../../types/checklist';
 
 test.describe( 'Launchpad checklist tests', () => {
@@ -284,5 +284,53 @@ test.describe( 'Launchpad checklist tests', () => {
 			await expect( rocketButton ).toBeHidden();
 			await checklistHelper.setChecklistSwitcherInPreferences( false );
 		} );
+	} );
+
+	test( 'Make sure steps are reset and checklist is active after previous test in case it failed', async ( { page, apiRequests, request }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await checklistHelper.resetStepsInDb( request );
+		await checklistHelper.setChecklistSwitcherInPreferences( true );
+		await checklistHelper.toggleExpandChecklist( 'editor', true );
+	} );
+
+	test( 'Expand and minimize behavior in the editor', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await test.step( 'Assert checklist expanded', async () => {
+			await checklistHelper.toggleChecklist( 'editor', true );
+			expect( await checklistHelper.isChecklistExpanded( 'editor' ) ).toBeTruthy();
+		} );
+
+		await test.step( 'Assert checklist stays minimized after closing', async () => {
+			await checklistHelper.toggleExpandChecklist( 'editor', false );
+			await checklistHelper.toggleChecklist( 'editor', false );
+			await checklistHelper.toggleChecklist( 'editor', true );
+			expect( await checklistHelper.isChecklistExpanded( 'editor' ) ).toBeFalsy();
+		} );
+
+		await test.step( 'Assert checklist is minimized after refresh', async () => {
+			await page.reload();
+			await checklistHelper.toggleChecklist( 'editor', true );
+			expect( await checklistHelper.isChecklistExpanded( 'editor' ) ).toBeFalsy();
+		} );
+	} );
+
+	test( 'Make sure checklist is expanded after previous test if it failed', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
 } );
