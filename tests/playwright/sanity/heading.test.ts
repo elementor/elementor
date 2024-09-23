@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
+import EditorSelectors from '../selectors/editor-selectors';
 
 test( 'Heading widget added using shortcode with non-correct payload', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -19,8 +20,8 @@ test( 'Heading widget added using shortcode with non-correct payload', async ( {
 
 	await editor.addWidget( 'shortcode' );
 	await page.locator( '.elementor-control-shortcode textarea' ).fill( testShortcode );
-	await page.waitForLoadState( 'networkidle' );
+	await editor.getPreviewFrame().waitForSelector( EditorSelectors.heading.h2 );
 
 	expect( alertDetected ).toBe( false );
-	expect( await editor.getPreviewFrame().locator( '.elementor-heading-title' ).textContent() ).toBe( 'Howdy alert(1)owdy' );
+	expect( await editor.getPreviewFrame().locator( EditorSelectors.heading.h2 ).textContent() ).toBe( 'Howdy alert(1)owdy' );
 } );
