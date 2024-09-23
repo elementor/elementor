@@ -8,6 +8,8 @@ use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Kit_Adapter;
+use Elementor\Core\Isolation\Kit_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
@@ -22,20 +24,24 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
 	const FIRST_CLOSED_CHECKLIST_IN_EDITOR = 'first_closed_checklist_in_editor';
 	const LAST_OPENED_TIMESTAMP = 'last_opened_timestamp';
+	const IS_POPUP_MINIMIZED_KEY = 'is_popup_minimized';
 
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;
+	private Kit_Adapter_Interface $kit_adapter;
 	private $user_progress = null;
 	private static $instance = null;
 
 	/**
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
+	 * @param ?Kit_Adapter_Interface $kit_adapter
 	 *
 	 * @return void
 	 */
-	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
+	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null ) {
 		static::$instance = $this;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
+		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();
 		parent::__construct();
 
 		$this->register_experiment();
@@ -123,6 +129,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$allowed_properties = [
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
 			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
+			self::IS_POPUP_MINIMIZED_KEY => $new_data[ self::IS_POPUP_MINIMIZED_KEY ] ?? null,
 		];
 
 		foreach ( $allowed_properties as $key => $value ) {
@@ -146,6 +153,13 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 */
 	public function get_wordpress_adapter() : Wordpress_Adapter {
 		return $this->wordpress_adapter;
+	}
+
+	/**
+	 * @return Kit_Adapter
+	 */
+	public function get_kit_adapter() : Kit_Adapter {
+		return $this->kit_adapter;
 	}
 
 	public function enqueue_editor_scripts() : void {
@@ -177,7 +191,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			->get_model()
 			->get_settings( self::VISIBILITY_SWITCH_ID );
 		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
-		$is_preference_switch_on = $user_preferences[ self::VISIBILITY_SWITCH_ID ] ?? $is_new_installation;
+		$is_preference_switch_on = $user_preferences ?? $is_new_installation;
 
 		return 'yes' === $is_preference_switch_on;
 	}
@@ -196,6 +210,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$default_settings = [
 			self::LAST_OPENED_TIMESTAMP => -1,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
+			self::IS_POPUP_MINIMIZED_KEY => false,
 			'steps' => [],
 		];
 

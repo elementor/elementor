@@ -1,47 +1,59 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets;
+namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
-use Elementor\Modules\DynamicTags\Module as Dynamic_Tags_Module;
+use Elementor\Plugin;
 
-class Dynamic_Tags {
-	public function register_hooks() {
-		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_atomic_dynamic_tags_settings( $settings ) );
-	}
+class Dynamic_Tags_Registry {
 
-	private function add_atomic_dynamic_tags_settings( $settings ) {
-		if ( isset( $settings['dynamicTags']['tags'] ) ) {
-			$settings['atomicDynamicTags'] = [
-				'tags' => $this->convert_dynamic_tags_to_atomic( $settings['dynamicTags']['tags'] ),
-				'prop_types_to_dynamic' => $this->get_prop_types_to_dynamic_mapping(),
-			];
+	private ?array $tags = null;
+
+	public function get_tags(): array {
+		if ( null !== $this->tags ) {
+			return $this->tags;
 		}
 
-		return $settings;
-	}
-
-	private function convert_dynamic_tags_to_atomic( $dynamic_tags ) {
-		$result = [];
+		$atomic_tags = [];
+		$dynamic_tags = Plugin::$instance->dynamic_tags->get_tags_config();
 
 		foreach ( $dynamic_tags as $name => $tag ) {
 			$atomic_tag = $this->convert_dynamic_tag_to_atomic( $tag );
 
 			if ( $atomic_tag ) {
-				$result[ $name ] = $atomic_tag;
+				$atomic_tags[ $name ] = $atomic_tag;
 			}
 		}
 
-		return $result;
+		$this->tags = $atomic_tags;
+
+		return $this->tags;
+	}
+
+	/**
+	 * @param string $name
+	 *
+	 * @return null|array{
+	 *       name: string,
+	 *       categories: string[],
+	 *       label: string,
+	 *       group: string,
+	 *       atomic_controls: array,
+	 *       props_schema: array<string, Prop_Type>
+	 *  }
+	 */
+	public function get_tag( string $name ): ?array {
+		$tags = $this->get_tags();
+
+		return $tags[ $name ] ?? null;
 	}
 
 	private function convert_dynamic_tag_to_atomic( $tag ) {
-		if ( ! isset( $tag['name'], $tag['categories'] ) ) {
+		if ( empty( $tag['name'] ) || empty( $tag['categories'] ) ) {
 			return null;
 		}
 
@@ -112,6 +124,10 @@ class Dynamic_Tags {
 			throw new \Exception( 'Control type is not allowed' );
 		}
 
+		if ( ! isset( $control['name'], $control['section'], $control['label'], $control['default'] ) ) {
+			throw new \Exception( 'Control must have name, section, label and default' );
+		}
+
 		return $map[ $control['type'] ]( $control );
 	}
 
@@ -122,7 +138,7 @@ class Dynamic_Tags {
 	 * @return array{ atomic_control: Select_Control, prop_schema: String_Prop_Type }
 	 */
 	private function convert_select_control_to_atomic( $control ) {
-		if ( ! isset( $control['options'] ) ) {
+		if ( empty( $control['options'] ) ) {
 			throw new \Exception( 'Select control must have options' );
 		}
 
@@ -164,22 +180,6 @@ class Dynamic_Tags {
 		return [
 			'atomic_control' => $atomic_control,
 			'prop_schema' => $prop_schema,
-		];
-	}
-
-	private function get_prop_types_to_dynamic_mapping() {
-		return [
-			Image_Prop_Type::get_key() => [
-				Dynamic_Tags_Module::IMAGE_CATEGORY,
-			],
-
-			Number_Prop_Type::get_key() => [
-				Dynamic_Tags_Module::NUMBER_CATEGORY,
-			],
-
-			String_Prop_Type::get_key() => [
-				Dynamic_Tags_Module::TEXT_CATEGORY,
-			],
 		];
 	}
 }

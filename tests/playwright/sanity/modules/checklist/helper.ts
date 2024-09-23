@@ -5,7 +5,7 @@ import { controlIds, selectors } from './selectors';
 import { proStepIds, Step, StepId } from '../../../types/checklist';
 import ApiRequests from '../../../assets/api-requests';
 
-export default class ChecklistHelper {
+export class ChecklistHelper {
 	readonly page: Page;
 	readonly editor: EditorPage;
 	readonly wpAdmin: WpAdminPage;
@@ -21,6 +21,7 @@ export default class ChecklistHelper {
 	async setChecklistSwitcherInPreferences( shouldShow: boolean ) {
 		await this.editor.openUserPreferencesPanel();
 		await this.editor.setSwitcherControlValue( controlIds.preferencePanel.checklistSwitcher, shouldShow );
+		await this.page.waitForResponse( ( response ) => response.url().includes( 'wp-admin/admin-ajax.php' ), { timeout: 30000 } );
 		await this.page.waitForResponse( ( response ) => response.url().includes( 'wp-admin/admin-ajax.php' ), { timeout: 30000 } );
 	}
 
@@ -42,6 +43,21 @@ export default class ChecklistHelper {
 		await frame.locator( selectors.popup ).waitFor( { state: shouldOpen ? 'visible' : 'hidden' } );
 	}
 
+	async toggleExpandChecklist( context: 'editor' | 'wp-admin', shouldExpand: boolean ) {
+		await this.toggleChecklist( context, true );
+
+		if ( await this.isChecklistExpanded( context ) === shouldExpand ) {
+			return;
+		}
+
+		const frame = 'editor' === context
+			? this.editor.page
+			: this.page;
+
+		await frame.locator( selectors.toggleExpandButton ).click();
+		await frame.locator( `${ selectors.toggleExpandButton }[aria-expanded="${ shouldExpand.toString() }"]` ).waitFor();
+	}
+
 	async toggleChecklistItem( itemId: string, context: 'editor' | 'wp-admin', shouldExpand: boolean ) {
 		if ( ! await this.isChecklistOpen( context ) ) {
 			await this.toggleChecklist( context, true );
@@ -58,6 +74,14 @@ export default class ChecklistHelper {
 		return 'editor' === context
 			? await this.editor.page.locator( selectors.popup ).isVisible()
 			: await this.page.locator( selectors.popup ).isVisible();
+	}
+
+	async isChecklistExpanded( context: 'editor' | 'wp-admin' ) {
+		const frame = 'editor' === context
+			? this.editor.page
+			: this.page;
+
+		return await this.isChecklistOpen( context ) && 'true' === await frame.locator( selectors.toggleExpandButton ).getAttribute( 'aria-expanded' );
 	}
 
 	async isChecklistItemExpanded( itemId: string, context: 'editor' | 'wp-admin' ) {
@@ -122,5 +146,48 @@ export default class ChecklistHelper {
 	isStepProLocked( stepId: StepId ) {
 		return proStepIds.includes( stepId );
 	}
-}
 
+	returnDataMockAllDoneMessage( isCompleted ) {
+		return {
+			data: [
+				{
+					is_marked_completed: false,
+					is_immutable_completed: false,
+					is_absolute_completed: isCompleted,
+					config: {
+						id: 'assign_homepage',
+						title: 'Assign a homepage',
+						description: 'Before your launch, make sure to assign a homepage so visitors have a clear entry point into your site.',
+						learn_more_text: 'Learn more',
+						learn_more_url: 'http://go.elementor.com/app-website-checklist-assign-home-article',
+						is_completion_immutable: false,
+						cta_text: 'Assign homepage',
+						cta_url: 'https://elementor.com',
+						image_src: 'https://assets.elementor.com/checklist/v1/images/checklist-step-6.jpg',
+						required_license: 'free',
+						is_locked: false,
+						promotion_url: '',
+					},
+				},
+				{
+					is_marked_completed: false,
+					is_immutable_completed: false,
+					is_absolute_completed: true,
+					config: {
+						id: 'all_done',
+						title: 'You\'re on your way!',
+						description: 'With these steps, you\'ve got a great base for a robust website. Enjoy your web creation journey!',
+						learn_more_text: 'Learn more',
+						learn_more_url: 'https://go.elementor.com/getting-started-with-elementor/',
+						is_completion_immutable: false,
+						cta_text: 'Got it',
+						cta_url: 'https://elementor.com',
+						image_src: 'https://assets.elementor.com/checklist/v1/images/checklist-step-7.jpg',
+						required_license: 'free',
+						is_locked: false,
+						promotion_url: '',
+					},
+				} ],
+		};
+	}
+}
