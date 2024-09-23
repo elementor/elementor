@@ -1,6 +1,6 @@
 import Header from './header';
 import CheckListWrapper from './checklist-wrapper';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Paper } from '@elementor/ui';
 import { USER_PROGRESS, USER_PROGRESS_ROUTE } from '../../utils/consts';
 
@@ -23,6 +23,10 @@ const Checklist = ( props ) => {
 			setIsMinimized( currState );
 		}
 	};
+
+	useEffect( () => {
+		setSteps( props.steps );
+	}, [ props.steps ] );
 
 	return (
 		<Paper elevation={ 5 } sx={ {
