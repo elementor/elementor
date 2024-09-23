@@ -386,8 +386,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 
 		$title_html = sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $settings['header_size'] ), $this->get_render_attribute_string( 'title' ), $title );
 
-//		echo wp_kses_post( $title_html );
-		echo $title_html;
+		echo wp_kses_post( $title_html );
 	}
 
 	/**
