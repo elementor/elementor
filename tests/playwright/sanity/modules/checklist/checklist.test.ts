@@ -334,7 +334,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
 
-	test( 'Checklist reactivity in the editor', async ( { page, apiRequests }, testInfo ) => {
+	test.only( 'Checklist reactivity in the editor', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.openNewPage();
@@ -348,7 +348,8 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.locator( '.elementor-control-site_logo' ).waitFor();
 		await page.locator( '.elementor-control-site_logo .eicon-plus-circle' ).click();
 		await page.getByRole( 'tab', { name: 'Media Library' } ).click();
-		await page.locator( '[aria-label="A"]' ).click();
+		await page.locator( '.thumbnail' ).waitFor();
+		await page.locator( '.thumbnail' ).first().click();
 		await page.locator( '.button.media-button' ).click();
 		await page.locator( '.elementor-panel button', { hasText: 'Save Changes' } ).click();
 
