@@ -291,7 +291,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			await checklistHelper.setChecklistSwitcherInPreferences( false );
 		} );
 	} );
-	test.only( 'Checklist visible only to admin', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Checklist visible only to admin', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
