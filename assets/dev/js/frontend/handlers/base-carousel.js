@@ -126,12 +126,10 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		};
 
 		swiperOptions.on = {
-			slideChangeTransitionEnd: () => {
-				this.a11ySetSlideAriaHidden();
-			},
 			slideChange: () => {
 				this.a11ySetPaginationTabindex();
 				this.handleElementHandlers();
+				this.a11ySetSlideAriaHidden();
 			},
 			init: () => {
 				this.a11ySetWidgetAriaDetails();
