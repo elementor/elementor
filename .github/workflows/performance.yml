@@ -39,17 +39,12 @@ jobs:
           mappings: |-
             elementor-templates:./tests/lighthouse/templates
 
-      - name: Import Templates
+      - name: Setup Elementor Env
         uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@main
         with:
           env: 'testing'
           templates: |-
             elementor-templates
-
-      - name: Echo list of pages
-        shell: bash
-        run: |
-          wp-env run tests-cli wp post list --fields=ID,post_title,post_name,url --post_type=page
 
       - name: Run Performance tests
         uses: elementor/elementor-editor-github-actions/actions/run-lighthouse-tests@main
