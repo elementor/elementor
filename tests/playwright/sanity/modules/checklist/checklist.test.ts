@@ -348,7 +348,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.locator( '.elementor-control-site_logo' ).waitFor();
 		await page.locator( '.elementor-control-site_logo .eicon-plus-circle' ).click();
 		await page.getByRole( 'tab', { name: 'Media Library' } ).click();
-		await page.locator( '.thumbnail' ).waitFor();
+		await page.locator( '.thumbnail' ).first().waitFor();
 		await page.locator( '.thumbnail' ).first().click();
 		await page.locator( '.button.media-button' ).click();
 		await page.locator( '.elementor-panel button', { hasText: 'Save Changes' } ).click();
