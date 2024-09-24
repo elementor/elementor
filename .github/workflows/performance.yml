@@ -61,20 +61,17 @@ jobs:
           categories: |-
             performance
 
-      - name: Echo Performance Score
-        if: ${{ steps.run-lighthouse-tests.outputs.test-performance-score }}
-        env:
-          PERFORMANCE_SCORE: ${{ steps.run-lighthouse-tests.outputs.test-performance-score }}
-        shell: bash
-        run: |
-          echo "Test performance score: $PERFORMANCE_SCORE"
-
       - name: Notify Slack
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "repository": "${{ github.event.repository.name }}",
+              "pull_request": "${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}",
+              "scores": "${{ steps.run-lighthouse-tests.outputs.test-performance-scores }}",
+              "median_score": "${{ steps.run-lighthouse-tests.outputs.test-performance-median-score }}",
+              "pr_url": "${{ github.event.pull_request.html_url }}",
+              "run_url": "${{ github.run_url }}"
+            }
         env:
-          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_CHANNEL: ${{ secrets.SLACK_LIGHTHOUSE_CHANNEL }}
-          SLACK_BOT_NAME: ElementorBot
-          PERFORMANCE_SCORE: ${{ steps.run-lighthouse-tests.outputs.test-performance-score }}
-        run: |
-          MESSAGE_TEXT="Repo: *$GITHUB_REPOSITORY* \n Workflow: *$GITHUB_WORKFLOW* \n Score: *$PERFORMANCE_SCORE* \n Link: <$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|link>"
-          curl -X POST "https://slack.com/api/chat.postMessage" -d "username=${SLACK_BOT_NAME}&token=${SLACK_TOKEN}&channel=${SLACK_CHANNEL}&text=${MESSAGE_TEXT}&link_names=true"
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_PERFORMANCE_WEBHOOK_URL }}
