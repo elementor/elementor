@@ -4,6 +4,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import { ChecklistHelper } from './helper';
 import { StepId } from '../../../types/checklist';
+import { newUser } from './new-user';
 
 test.describe( 'Launchpad checklist tests', () => {
 	let myUser;
@@ -23,7 +24,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
