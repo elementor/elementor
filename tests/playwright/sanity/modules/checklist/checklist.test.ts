@@ -333,4 +333,20 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
+
+	test( 'Checklist reactivity in the editor', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage(),
+			checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await checklistHelper.toggleChecklistItem( 'add_logo', 'editor', true );
+		await expect( page.locator( checklistHelper.getStepItemSelector( 'add_logo', `[data-is-checked="false"] ${ selectors.stepIcon }` ) ) ).toBeVisible();
+		await checklistHelper.clickStepCta( 'add_logo', 'editor' );
+
+		await page.locator( '.elementor-control-site_logo' ).waitFor();
+		await editor.uploadSVG();
+		await editor.setMediaControlImageValue( 'site_logo', 'A' );
+
+		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', `[data-is-checked="true"] ${ selectors.stepIcon }` ) ).waitFor();
+	} );
 } );

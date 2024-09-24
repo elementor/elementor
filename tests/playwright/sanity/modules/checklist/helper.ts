@@ -58,7 +58,7 @@ export class ChecklistHelper {
 		await frame.locator( `${ selectors.toggleExpandButton }[aria-expanded="${ shouldExpand.toString() }"]` ).waitFor();
 	}
 
-	async toggleChecklistItem( itemId: string, context: 'editor' | 'wp-admin', shouldExpand: boolean ) {
+	async toggleChecklistItem( itemId: StepId, context: 'editor' | 'wp-admin', shouldExpand: boolean ) {
 		if ( ! await this.isChecklistOpen( context ) ) {
 			await this.toggleChecklist( context, true );
 		}
@@ -84,14 +84,14 @@ export class ChecklistHelper {
 		return await this.isChecklistOpen( context ) && 'true' === await frame.locator( selectors.toggleExpandButton ).getAttribute( 'aria-expanded' );
 	}
 
-	async isChecklistItemExpanded( itemId: string, context: 'editor' | 'wp-admin' ) {
+	async isChecklistItemExpanded( itemId: StepId, context: 'editor' | 'wp-admin' ) {
 		const checklistItemSelector = this.getStepContentSelector( itemId ),
 			frame = context ? this.editor.page : this.page;
 
 		return await this.isChecklistOpen( context ) && await frame.locator( checklistItemSelector ).isVisible();
 	}
 
-	async toggleMarkAsDone( itemId: string, context: 'editor' | 'wp-admin' ) {
+	async toggleMarkAsDone( itemId: StepId, context: 'editor' | 'wp-admin' ) {
 		await this.toggleChecklistItem( itemId, context, true );
 
 		const markAsButton = this.page.locator( this.getStepContentSelector( itemId, selectors.markAsButton ) ),
@@ -104,6 +104,12 @@ export class ChecklistHelper {
 			.waitFor( { state: 'hidden' } );
 	}
 
+	async clickStepCta( itemId: StepId, context: 'editor' | 'wp-admin' ) {
+		await this.toggleChecklist( context, true );
+		await this.toggleChecklistItem( itemId, context, true );
+		await this.page.locator( this.getStepContentSelector( itemId, selectors.cta ) ).click();
+	}
+
 	async getProgressFromPopup( context: 'editor' | 'wp-admin' ) {
 		if ( ! await this.isChecklistOpen( context ) ) {
 			await this.toggleChecklist( context, true );
@@ -114,11 +120,11 @@ export class ChecklistHelper {
 		return +progress.replace( '%', '' );
 	}
 
-	getStepContentSelector( itemId: string, innerSelector: string = '' ) {
+	getStepContentSelector( itemId: StepId, innerSelector: string = '' ) {
 		return `${ selectors.checklistItemContent } [data-step-id="${ itemId }"] ${ innerSelector }`;
 	}
 
-	getStepItemSelector( itemId: string, innerSelector: string = '' ) {
+	getStepItemSelector( itemId: StepId, innerSelector: string = '' ) {
 		return `${ selectors.checklistItemButton }[data-step-id="${ itemId }"] ${ innerSelector }`;
 	}
 
