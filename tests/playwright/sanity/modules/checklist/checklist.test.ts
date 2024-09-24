@@ -340,13 +340,17 @@ test.describe( 'Launchpad checklist tests', () => {
 			checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
 		await checklistHelper.toggleChecklistItem( 'add_logo', 'editor', true );
-		await expect( page.locator( checklistHelper.getStepItemSelector( 'add_logo', `[data-is-checked="false"] ${ selectors.stepIcon }` ) ) ).toBeVisible();
+		await expect( page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="false"]' ) ) ).toBeVisible();
 		await checklistHelper.clickStepCta( 'add_logo', 'editor' );
 
 		await page.locator( '.elementor-control-site_logo' ).waitFor();
-		await editor.uploadSVG();
 		await editor.setMediaControlImageValue( 'site_logo', 'A' );
 
-		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', `[data-is-checked="true"] ${ selectors.stepIcon }` ) ).waitFor();
+		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="true"]' ) ).waitFor();
+
+		await page.locator( '.elementor-control-site_logo .elementor-control-media__content' ).hover();
+		await page.locator( '.elementor-control-site_logo .elementor-control-media__content .elementor-control-media__remove' ).click();
+
+		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="false"]' ) ).waitFor();
 	} );
 } );
