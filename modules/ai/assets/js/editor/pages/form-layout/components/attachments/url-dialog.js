@@ -19,7 +19,8 @@ export const UrlDialog = ( props ) => {
 	const [ isInitUsageDone, setIsInitUsageDone ] = useState( false );
 
 	const { remoteConfig } = useRemoteConfig();
-	const urlObject = new URL( remoteConfig[ CONFIG_KEYS.WEB_BASED_BUILDER_URL ] );
+	const builderUrl = remoteConfig[ CONFIG_KEYS.WEB_BASED_BUILDER_URL ];
+	const urlObject = builderUrl ? new URL( builderUrl ) : {};
 	const iframeOrigin = urlObject.origin;
 	const isOpen = useRef( false );
 
@@ -33,7 +34,7 @@ export const UrlDialog = ( props ) => {
 	useEffect( () => {
 		if ( ! isOpen.current ) {
 			try {
-				$e.run( 'ai-integration/open-choose-element', {
+				window.$e.run( 'ai-integration/open-choose-element', {
 					url: props.url,
 				} );
 				isOpen.current = true;
