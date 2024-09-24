@@ -334,7 +334,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
 
-	test.only( 'Checklist reactivity in the editor', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Checklist reactivity in the editor', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.openNewPage();
