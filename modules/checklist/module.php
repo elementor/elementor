@@ -38,10 +38,6 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 * @return void
 	 */
 	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null ) {
-//		if ( ! current_user_can( 'manage_options' ) ) {
-//			return;
-//		}
-
 		static::$instance = $this;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();
@@ -57,10 +53,11 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->steps_manager = new Steps_Manager( $this );
-		
+
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
+
 		$this->enqueue_editor_scripts();
 	}
 

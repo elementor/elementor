@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { type APIRequestContext } from '@playwright/test';
 import { Image, Post, WpPage } from '../types/types';
+// import axios from 'axios';
 
 export default class ApiRequests {
 	private readonly nonce: string;
@@ -217,6 +218,10 @@ export default class ApiRequests {
 		await this._delete( request, 'pages', pageId );
 	}
 
+	public async deleteUser( request: APIRequestContext, userId: string ) {
+		await this._delete( request, 'users', userId );
+	}
+
 	private async _delete( request: APIRequestContext, entity: string, id: string ) {
 		const response = await request.delete( `${ this.baseUrl }/index.php`, {
 			params: { rest_route: `/wp/v2/${ entity }/${ id }` },
@@ -233,5 +238,37 @@ export default class ApiRequests {
 		}
 
 		return response;
+	}
+
+	public async createNewUser( request: APIRequestContext, user ) {
+		const username = `${ user.username }${ Math.floor( Math.random() * 1000 ) }`,
+			email = user.email || username + '@example.com',
+			password = user.password || 'password',
+			roles = user.roles;
+
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+
+			params: { rest_route: '/wp/v2/users' },
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			multipart: {
+				username,
+				email,
+				password,
+				roles: roles,
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+			Failed to create new user: ${ response.status() }.
+			${ await response.text() }
+		` );
+		}
+
+		const { id } = await response.json();
+
+		return { id, username, password };
 	}
 }

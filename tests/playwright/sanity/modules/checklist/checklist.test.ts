@@ -4,9 +4,12 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import ChecklistHelper from './helper';
 import { StepId } from '../../../types/checklist';
+import { newUser } from './new-user';
 
 test.describe( 'Launchpad checklist tests', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+	let myUser;
+
+	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -16,15 +19,18 @@ test.describe( 'Launchpad checklist tests', () => {
 			'launchpad-checklist': true,
 		} );
 
+		myUser  = await apiRequests.createNewUser( request, newUser );
+
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.resetExperiments();
+		await apiRequests.deleteUser( request, myUser.id )
 		await page.close();
 	} );
 
@@ -285,4 +291,35 @@ test.describe( 'Launchpad checklist tests', () => {
 			await checklistHelper.setChecklistSwitcherInPreferences( false );
 		} );
 	} );
+	test.only( 'Checklist visible only to admin', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage(),
+			rocketButton = editor.page.locator( selectors.topBarIcon ),
+			closeButton = editor.page.locator( selectors.closeButton ),
+			checklist = editor.page.locator( selectors.popup );
+
+		await test.step( 'Checklist visible to admin default', async () => {
+			await rocketButton.click();
+			await expect( checklist ).toBeVisible();
+			await closeButton.click();
+		} );
+
+		await test.step( 'Checklist not visible to author', async () => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			const myNewUser = {
+				username: myUser.username,
+				password: myUser.password
+			};
+
+			await wpAdmin.customLogin( myNewUser )
+
+			const editor = await wpAdmin.openNewPage(false, false ),
+				rocketButton = editor.page.locator( selectors.topBarIcon );
+
+			await expect( rocketButton ).toBeHidden();
+
+			await wpAdmin.customLogOut();
+		} );
+	} );
+
 } );
