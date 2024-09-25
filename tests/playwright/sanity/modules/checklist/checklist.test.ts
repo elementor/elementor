@@ -29,8 +29,10 @@ test.describe( 'Launchpad checklist tests', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdmin.resetExperiments();
-		await apiRequests.deleteUser( request, myUser.id )
+		await apiRequests.updateNonce( request )
+		// await wpAdmin.resetExperiments();
+		// await apiRequests.deleteUser( request, myUser.id )
+		await apiRequests.cleanUpTestPages( request, false )
 		await page.close();
 	} );
 
@@ -339,7 +341,7 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
-	test( 'Checklist visible only to admin', async ( { page, apiRequests }, testInfo ) => {
+	test.only( 'Checklist visible only to admin', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			rocketButton = editor.page.locator( selectors.topBarIcon ),

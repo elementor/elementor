@@ -1,10 +1,10 @@
 import fs from 'fs';
 import { type APIRequestContext } from '@playwright/test';
 import { Image, Post, WpPage } from '../types/types';
-// import axios from 'axios';
+import { fetchNonce } from "../wp-authentication";
 
 export default class ApiRequests {
-	private readonly nonce: string;
+	private nonce: string;
 	private readonly baseUrl: string;
 	constructor( baseUrl: string, nonce: string ) {
 		this.nonce = nonce;
@@ -32,6 +32,10 @@ export default class ApiRequests {
 		const { id } = await response.json();
 
 		return id;
+	}
+
+	public async updateNonce ( request: APIRequestContext ) {
+		this.nonce =  await fetchNonce( request, this.baseUrl )
 	}
 
 	public async createMedia( request: APIRequestContext, image: Image ) {
@@ -135,6 +139,24 @@ export default class ApiRequests {
 				Failed to deactivate a plugin: ${ response ? response.status() : '<no status>' }.
 				${ response ? await response.text() : '<no response>' }
 				slug: ${ slug }
+			` );
+		}
+	}
+
+	public async deleteTestUser( request: APIRequestContext, id ) {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/users/${ id }`,
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to delete user: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+
 			` );
 		}
 	}
