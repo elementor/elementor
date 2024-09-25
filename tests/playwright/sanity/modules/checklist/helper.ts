@@ -126,8 +126,16 @@ export class ChecklistHelper {
 		return ( await this.apiRequests.customGet( request, 'wp-json/elementor/v1/checklist/steps' ) ).data;
 	}
 
-	async resetStepsInDb( request: APIRequestContext ) {
+	async resetStepsInDb( request: APIRequestContext, progressDefaults = {} ) {
 		const steps = await this.getSteps( request );
+
+		await this.apiRequests.customPut( request, `wp-json/elementor/v1/checklist/user-progress`, {
+			first_closed_checklist_in_editor: false,
+			last_opened_timestamp: -1,
+			is_popup_minimized: false,
+			editor_visit_count: 0,
+			...progressDefaults,
+		} );
 
 		for ( const step of steps ) {
 			await this.apiRequests.customPut( request, `wp-json/elementor/v1/checklist/steps/${ step.config.id }`, {
