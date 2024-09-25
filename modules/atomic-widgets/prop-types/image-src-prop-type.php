@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -31,7 +33,7 @@ class Image_Src_Prop_Type extends Transformable_Prop_Type {
 			throw new \Exception( '`id` must be a number, ' . gettype( $value['id'] ) . ' given.' );
 		}
 
-		if ( $has_id && ! wp_attachment_is_image( $value['id'] ) ) {
+		if ( $has_id && ! Plugin::$instance->wp->wp_attachment_is_image( $value['id'] ) ) {
 			throw new \Exception( '`id` must be a valid attachment ID.' );
 		}
 

@@ -52,31 +52,35 @@ class Props_Resolver {
 	}
 
 	public function resolve( array $schema, array $props ): array {
+		$resolved_props = [];
+
 		foreach ( $schema as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				continue;
 			}
 
 			if ( ! array_key_exists( $key, $props ) ) {
-				$props[ $key ] = $prop_type->get_default();
+				$resolved_props[ $key ] = $prop_type->get_default();
 				continue;
 			}
 
+			$resolved_props[ $key ] = $props[ $key ];
+
 			// Merge the top-level defaults for transformable props.
 			if (
-				$this->is_nested_transformable( $props[ $key ] ) &&
+				$this->is_nested_transformable( $resolved_props[ $key ] ) &&
 				$this->is_nested_transformable( $prop_type->get_default() )
 			) {
-				$props[ $key ]['value'] = array_merge(
+				$resolved_props[ $key ]['value'] = array_merge(
 					$prop_type->get_default()['value'],
-					$props[ $key ]['value']
+					$resolved_props[ $key ]['value']
 				);
 			}
 		}
 
 		return array_map(
 			fn( $value ) => $this->transform( $value ),
-			$props
+			$resolved_props
 		);
 	}
 

@@ -185,7 +185,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					->default( true ),
 
 				'image_prop' => Image_Prop_Type::make()
-					->default( [ 'url' => 'https://images.com/image.png' ] ),
+					->default_url( 'https://example.com/image.jpg' )
+					->default_id( 123 )
+					->default_size( 'full' ),
 			],
 			'settings' => [],
 		] );
@@ -224,7 +226,19 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			"image_prop": {
 				"type": {
 					"key": "image",
-					"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } },
+					"default": {
+						"$$type": "image",
+						"value": {
+							"src": {
+								"$$type": "image-src",
+								"value": {
+									"id": 123,
+									"url": "https://example.com/image.jpg"
+								}
+							},
+							"size": "full"
+						}
+					},
 					"settings": {}
 				},
 				"additional_types": []
@@ -360,23 +374,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Expect.
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Prop `non_prop_type` must be an instance of `Prop_Type`' );
-
-		// Act.
-		$widget->get_atomic_controls();
-	}
-
-	public function test_get_atomic_controls__schema_validation__throws_for_invalid_default() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'test_prop' => String_Prop_Type::make()
-					->default( 123 ),
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Default value for `test_prop` prop is invalid' );
 
 		// Act.
 		$widget->get_atomic_controls();

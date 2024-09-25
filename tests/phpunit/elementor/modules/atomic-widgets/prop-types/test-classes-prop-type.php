@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Classes_Prop_Type extends Elementor_Test_Base {
 
-	public function test_validate_value__throws_when_passing_non_array() {
+	public function test_validate__throws_when_passing_non_array() {
 		// Arrange.
 		$prop_type = Classes_Prop_Type::make();
 
@@ -29,7 +29,7 @@ class Test_Classes_Prop_Type extends Elementor_Test_Base {
 	/**
 	 * @dataProvider invalid_classes_data_provider
 	 */
-	public function test_validate_value__throws_when_passing_a_class_that_starts_with_number( $classes ) {
+	public function test_validate__throws_when_passing_a_class_that_starts_with_number( $classes ) {
 		// Arrange.
 		$prop_type = Classes_Prop_Type::make();
 
@@ -44,7 +44,7 @@ class Test_Classes_Prop_Type extends Elementor_Test_Base {
 		] );
 	}
 
-	public function test_validate_value() {
+	public function test_validate() {
 		// Arrange.
 		$prop_type = Classes_Prop_Type::make();
 
