@@ -1,14 +1,15 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsTransformer;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Props_Transformer {
+class Props_Resolver {
 	/**
 	 * Each transformer can return a value that is also a transformable value,
 	 * which means that it can be transformed again by another transformer.
@@ -20,7 +21,7 @@ class Props_Transformer {
 	const CONTEXT_STYLES = 'styles';
 
 	/**
-	 * @var array<string, Props_Transformer>
+	 * @var array<string, Props_Resolver>
 	 */
 	private static array $instances = [];
 
@@ -50,14 +51,36 @@ class Props_Transformer {
 		return self::$instances[ $context ];
 	}
 
-	public function transform( array $props ): array {
+	public function resolve( array $schema, array $props ): array {
+		foreach ( $schema as $key => $prop_type ) {
+			if ( ! ( $prop_type instanceof Prop_Type ) ) {
+				continue;
+			}
+
+			if ( ! array_key_exists( $key, $props ) ) {
+				$props[ $key ] = $prop_type->get_default();
+				continue;
+			}
+
+			// Merge the top-level defaults for transformable props.
+			if (
+				$this->is_nested_transformable( $props[ $key ] ) &&
+				$this->is_nested_transformable( $prop_type->get_default() )
+			) {
+				$props[ $key ]['value'] = array_merge(
+					$prop_type->get_default()['value'],
+					$props[ $key ]['value']
+				);
+			}
+		}
+
 		return array_map(
-			fn( $value ) => $this->transform_value( $value ),
+			fn( $value ) => $this->transform( $value ),
 			$props
 		);
 	}
 
-	private function transform_value( $value, int $depth = 0 ) {
+	private function transform( $value, int $depth = 0 ) {
 		if ( ! $value || ! $this->is_transformable( $value ) ) {
 			return $value;
 		}
@@ -66,8 +89,12 @@ class Props_Transformer {
 			return null;
 		}
 
+		// Transform nested transformable values recursively.
 		if ( is_array( $value['value'] ) ) {
-			$value['value'] = $this->transform( $value['value'] );
+			$value['value'] = array_map(
+				fn( $item ) => $this->transform( $item ),
+				$value['value']
+			);
 		}
 
 		$transformer = $this->transformers->get( $value['$$type'] );
@@ -79,7 +106,7 @@ class Props_Transformer {
 		try {
 			$transformed_value = $transformer->transform( $value['value'] );
 
-			return $this->transform_value( $transformed_value, $depth + 1 );
+			return $this->transform( $transformed_value, $depth + 1 );
 		} catch ( Exception $e ) {
 			return null;
 		}
@@ -89,6 +116,13 @@ class Props_Transformer {
 		return (
 			! empty( $value['$$type'] ) &&
 			array_key_exists( 'value', $value )
+		);
+	}
+
+	private function is_nested_transformable( $value ): bool {
+		return (
+			$this->is_transformable( $value ) &&
+			is_array( $value['value'] )
 		);
 	}
 }

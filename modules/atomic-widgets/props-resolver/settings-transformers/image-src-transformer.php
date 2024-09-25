@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsTransformer\SettingsTransformers;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers;
 
-use Elementor\Modules\AtomicWidgets\PropsTransformer\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,8 +16,8 @@ class Image_Src_Transformer extends Transformer_Base {
 
 	public function transform( $value ) {
 		return [
-			'id' => $value['id'] ?? null,
-			'url' => $value['url'] ?? null,
+			'id' => isset( $value['id'] ) ? (int) $value['id'] : null,
+			'url' => isset( $value['url'] ) ? esc_url( $value['url'] ) : null,
 		];
 	}
 }

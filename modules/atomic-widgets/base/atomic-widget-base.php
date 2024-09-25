@@ -2,9 +2,8 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\PropsTransformer\Props_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Settings_Validator;
 use Elementor\Utils;
 use Elementor\Widget_Base;
@@ -117,43 +116,10 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	final public function get_atomic_settings(): array {
-		return Props_Transformer::for_settings()->transform( $this->get_props_with_defaults() );
-	}
-
-	private function get_props_with_defaults(): array {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
 
-		$result = [];
-
-		foreach ( $schema as $key => $prop_type ) {
-			if ( ! ( $prop_type instanceof Prop_Type ) ) {
-				continue;
-			}
-
-			if ( ! array_key_exists( $key, $props ) ) {
-				$result[ $key ] = $prop_type->get_default();
-				continue;
-			}
-
-			$result[ $key ] = $props[ $key ];
-
-			// Merge only the top-level defaults for the prop.
-			// TODO: Refactor
-			if (
-				isset( $result[ $key ]['$$type'] ) &&
-				isset( $result[ $key ]['value'] ) &&
-				is_array( $result[ $key ]['value'] ) &&
-				is_array( $prop_type->get_default()['value'] )
-			) {
-				$result[ $key ]['value'] = array_merge(
-					$prop_type->get_default()['value'],
-					$result[ $key ]['value']
-				);
-			}
-		}
-
-		return $result;
+		return Props_Resolver::for_settings()->resolve( $schema, $props );
 	}
 
 	public static function get_props_schema(): array {

@@ -129,7 +129,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->default( [] ),
 
 			'image' => Image_Prop_Type::make()
-				->default_url( Utils::get_placeholder_image_src() ),
+				->default_url( Utils::get_placeholder_image_src() )
+				->default_size( 'full' ),
 
 			'image_size' => String_Prop_Type::make()
 				->enum( $image_sizes )

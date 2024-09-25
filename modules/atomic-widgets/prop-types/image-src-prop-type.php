@@ -31,8 +31,16 @@ class Image_Src_Prop_Type extends Transformable_Prop_Type {
 			throw new \Exception( '`id` must be a number, ' . gettype( $value['id'] ) . ' given.' );
 		}
 
+		if ( $has_id && ! wp_attachment_is_image( $value['id'] ) ) {
+			throw new \Exception( '`id` must be a valid attachment ID.' );
+		}
+
 		if ( $has_url && ! is_string( $value['url'] ) ) {
 			throw new \Exception( '`url` must be a string, ' . gettype( $value['url'] ) . ' given.' );
+		}
+
+		if ( $has_url && false === wp_http_validate_url( $value['url'] ) ) {
+			throw new \Exception( '`url` must be a valid URL.' );
 		}
 	}
 }

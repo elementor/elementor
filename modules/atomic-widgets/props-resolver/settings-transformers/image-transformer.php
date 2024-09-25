@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsTransformer\SettingsTransformers;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers;
 
-use Elementor\Modules\AtomicWidgets\PropsTransformer\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,20 +15,23 @@ class Image_Transformer extends Transformer_Base {
 	}
 
 	public function transform( $value ) {
-		if ( isset( $value['src']['id'], $value['size'] ) ) {
-			$image_src = wp_get_attachment_image_src( $value['src']['id'], $value['size'] );
+		if ( isset( $value['src']['id'] ) ) {
+			$image_src = wp_get_attachment_image_src(
+				(int) $value['src']['id'],
+				$value['size'] ?? 'full'
+			);
 
 			return [
-				'src' => $image_src[0] ?? '',
-				'width' => $image_src[1] ?? null,
-				'height' => $image_src[2] ?? null,
+				'src' => esc_url( $image_src[0] ?? '' ),
+				'width' => isset( $image_src[1] ) ? (int) $image_src[1] : null,
+				'height' => isset( $image_src[2] ) ? (int) $image_src[2] : null,
 				'srcset' => wp_get_attachment_image_srcset( $value['src']['id'], $value['size'] ),
 				'alt' => get_post_meta( $value['src']['id'], '_wp_attachment_image_alt', true ),
 			];
 		}
 
 		return [
-			'src' => $value['src']['url'] ?? '',
+			'src' => esc_url( $value['src']['url'] ?? '' ),
 		];
 	}
 }

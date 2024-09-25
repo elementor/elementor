@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\PropsTransformer;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
