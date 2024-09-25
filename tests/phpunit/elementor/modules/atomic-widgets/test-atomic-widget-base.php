@@ -168,6 +168,97 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		];
 	}
 
+	public function test_get_atomic_settings__transforms_props_recursively__default() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'image' => Image_Prop_Type::make()->default_url( 'https://example.com/default-image.jpg' ),
+			],
+			'settings' => [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'size' => 'medium',
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertSame( [
+			'src' => 'https://example.com/default-image.jpg',
+		], $settings['image'] );
+	}
+
+	public function test_get_atomic_settings__transforms_props_recursively__only_url() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'image' => Image_Prop_Type::make(),
+			],
+			'settings' => [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'id' => null,
+							'url' => 'https://example.com/image.jpg',
+						],
+						'size' => 'medium',
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertSame( [
+			'src' => 'https://example.com/image.jpg',
+		], $settings['image'] );
+	}
+
+	public function test_get_atomic_settings__transforms_props_recursively__only_id() {
+		// Arrange.
+		add_filter( 'wp_get_attachment_image_src', function() {
+			return [
+				'https://example.com/image.jpg',
+				100,
+				200,
+			];
+		} );
+
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'image' => Image_Prop_Type::make(),
+			],
+			'settings' => [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'id' => 123,
+							'url' => null,
+						],
+						'size' => 'medium',
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertSame( 'https://example.com/image.jpg', $settings['image']['src'] );
+		$this->assertSame( 100, $settings['image']['width'] );
+		$this->assertSame( 200, $settings['image']['height'] );
+	}
+
 	public function test_get_props_schema__is_serializable() {
 		// Arrange.
 		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
