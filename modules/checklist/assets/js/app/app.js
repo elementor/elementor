@@ -1,20 +1,8 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import { useQuery } from '@elementor/query';
 import Checklist from './components/checklist';
-import { STEPS_ROUTE, USER_PROGRESS_ROUTE } from '../utils/consts';
+import { fetchSteps, fetchUserProgress } from '../utils/functions';
 import { useEffect } from 'react';
-
-const fetchSteps = async () => {
-	const response = await $e.data.get( STEPS_ROUTE, {}, { refresh: true } );
-
-	return response?.data?.data || null;
-};
-
-const fetchStatus = async () => {
-	const response = await $e.data.get( USER_PROGRESS_ROUTE, {}, { refresh: true } );
-
-	return response?.data?.data || null;
-};
 
 const App = () => {
 	const isRTL = elementorCommon.config.isRTL,
@@ -26,7 +14,7 @@ const App = () => {
 		} ),
 		{ error: userProgressError, data: userProgress, refetch: refetchUserProgress } = useQuery( {
 			queryKey: [ 'statusData' ],
-			queryFn: fetchStatus,
+			queryFn: fetchUserProgress,
 			gcTime: 0,
 			enabled: false,
 		} );

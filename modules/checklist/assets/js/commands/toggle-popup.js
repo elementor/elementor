@@ -1,6 +1,7 @@
 import App from '../app/app';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import ReactDOM from 'react-dom/client';
+import { USER_PROGRESS, USER_PROGRESS_ROUTE } from '../utils/consts';
 
 const queryClient = new QueryClient();
 
@@ -13,6 +14,9 @@ export class TogglePopup extends $e.modules.CommandBase {
 			this.mount();
 		} else {
 			this.unmount();
+			$e.data.update( USER_PROGRESS_ROUTE, {
+				[ USER_PROGRESS.EDITOR_VISIT_COUNT ]: -1,
+			} );
 		}
 
 		TogglePopup.isOpen = ! TogglePopup.isOpen;
