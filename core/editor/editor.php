@@ -13,7 +13,6 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 use Elementor\Core\Editor\Data;
 use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
-use Elementor\Modules\Checklist\Module as Checklist_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -123,7 +122,6 @@ class Editor {
 		// End BC.
 
 		Loading_Inspection_Manager::instance()->register_inspections();
-		Checklist_Module::monitor_editor_visits();
 
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );

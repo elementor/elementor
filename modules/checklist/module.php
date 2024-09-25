@@ -50,6 +50,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			return;
 		}
 
+		add_action( 'elementor/editor/init', [ $this, 'monitor_editor_visits' ] );
+
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->steps_manager = new Steps_Manager( $this );
@@ -195,14 +197,12 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		return 'yes' === $is_preference_switch_on;
 	}
 
-	public static function monitor_editor_visits() {
-		$instance = self::instance();
-
-		if ( ! $instance->is_experiment_active() || ! self::is_preference_switch_on() ) {
+	public function monitor_editor_visits() {
+		if ( ! $this->is_experiment_active() || ! self::is_preference_switch_on() ) {
 			return;
 		}
 
-		$progress = $instance->get_user_progress_from_db();
+		$progress = $this->get_user_progress_from_db();
 		$progress[ self::EDITOR_VISIT_COUNT ] = $progress[ self::EDITOR_VISIT_COUNT ] ?? 0;
 
 		if ( -1 === $progress[ self::EDITOR_VISIT_COUNT ] ) {
@@ -213,8 +213,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			$progress[ self::EDITOR_VISIT_COUNT ] = -1;
 		}
 
-		$instance->user_progress = $progress;
-		$instance->update_user_progress_in_db();
+		$this->user_progress = $progress;
+		$this->update_user_progress_in_db();
 	}
 
 	private function register_experiment() : void {
