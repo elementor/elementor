@@ -343,7 +343,6 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 	public function test_add_dynamic_prop_type__adds_recursively_to_internal_types() {
 		// Act.
 		$prop = new class extends Transformable_Prop_Type {
-
 			public function __construct() {
 				$this->internal_types['internal'] = String_Prop_Type::make()->default( 'test' );
 			}

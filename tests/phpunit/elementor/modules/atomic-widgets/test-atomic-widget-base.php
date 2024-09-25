@@ -168,7 +168,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_get_atomic_settings__transforms_props_recursively__default() {
+	public function test_get_atomic_settings__transforms_image_prop_recursively__default() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
@@ -193,7 +193,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $settings['image'] );
 	}
 
-	public function test_get_atomic_settings__transforms_props_recursively__only_url() {
+	public function test_get_atomic_settings__transforms_image_prop_recursively__only_url() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
@@ -222,7 +222,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $settings['image'] );
 	}
 
-	public function test_get_atomic_settings__transforms_props_recursively__only_id() {
+	public function test_get_atomic_settings__transforms_image_prop_recursively__only_id() {
 		// Arrange.
 		add_filter( 'wp_get_attachment_image_src', function() {
 			return [

@@ -21,17 +21,29 @@ class Image_Transformer extends Transformer_Base {
 				$value['size'] ?? 'full'
 			);
 
+			if ( ! $image_src ) {
+				throw new \Exception( 'Cannot get image src.' );
+			}
+
+			[ $src, $width, $height ] = $image_src;
+
 			return [
-				'src' => esc_url( $image_src[0] ?? '' ),
-				'width' => isset( $image_src[1] ) ? (int) $image_src[1] : null,
-				'height' => isset( $image_src[2] ) ? (int) $image_src[2] : null,
+				'src' => esc_url( $src ),
+				'width' => (int) $width,
+				'height' => (int) $height,
 				'srcset' => wp_get_attachment_image_srcset( $value['src']['id'], $value['size'] ),
 				'alt' => get_post_meta( $value['src']['id'], '_wp_attachment_image_alt', true ),
 			];
 		}
 
+		$src = esc_url( $value['src']['url'] ?? '' );
+
+		if ( ! $src ) {
+			throw new \Exception( 'Invalid image URL.' );
+		}
+
 		return [
-			'src' => esc_url( $value['src']['url'] ?? '' ),
+			'src' => $src,
 		];
 	}
 }
