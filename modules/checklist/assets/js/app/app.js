@@ -2,7 +2,6 @@ import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import { useQuery } from '@elementor/query';
 import Checklist from './components/checklist';
 import { fetchSteps, fetchUserProgress } from '../utils/functions';
-import { useEffect } from 'react';
 
 const App = () => {
 	const isRTL = elementorCommon.config.isRTL,
