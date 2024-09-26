@@ -16,7 +16,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			editor_v2: true,
 			'launchpad-checklist': true,
 		} );
-		await checklistHelper.resetStepsInDb( request );
+		await checklistHelper.resetStepsInDb( request, { editor_visit_count: 0 } );
 
 		await page.close();
 	} );

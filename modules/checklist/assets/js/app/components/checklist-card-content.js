@@ -2,7 +2,7 @@ import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } f
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { getAndUpdateStep, updateStep } from '../../utils/functions';
-import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES, STEPS_ROUTE } from '../../utils/consts';
+import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES } from '../../utils/consts';
 
 const { IS_MARKED_COMPLETED, IS_ABSOLUTE_COMPLETED, IS_IMMUTABLE_COMPLETED } = STEP;
 
