@@ -51,8 +51,9 @@ jobs:
         id: run-lighthouse-tests
         with:
           number-of-runs: 3
+          # The URLs correspond to the imported templates in the previous step (the slug is generated based on the template title)
           urls: |-
-            test:http://localhost:8889/test/
+            basic-page:http://localhost:8889/basic-page/
           categories: |-
             performance
 
@@ -65,8 +66,8 @@ jobs:
               "pull_request_title": "${{ github.event.pull_request.title }}",
               "pull_request_number": "${{ github.event.pull_request.number }}",
               "run_id": "${{ github.run_id }}",
-              "scores": "${{ steps.run-lighthouse-tests.outputs.test-performance-scores }}",
-              "median_score": "${{ steps.run-lighthouse-tests.outputs.test-performance-median-score }}",
+              "scores": "${{ steps.run-lighthouse-tests.outputs.basic-page-performance-scores }}",
+              "median_score": "${{ steps.run-lighthouse-tests.outputs.basic-page-performance-median-score }}",
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_PERFORMANCE_WEBHOOK_URL }}
