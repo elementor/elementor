@@ -23,9 +23,7 @@ class Image_Prop_Type extends Transformable_Prop_Type {
 	public function __construct() {
 		$this->internal_types['src'] = Image_Src_Prop_Type::make();
 
-		$this->internal_types['size'] = String_Prop_Type::make()->enum(
-			array_keys( Image_Sizes::get_all() )
-		);
+		$this->internal_types['size'] = String_Prop_Type::make()->enum( Image_Sizes::get_keys() );
 	}
 
 	public function get_default() {
