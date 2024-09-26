@@ -22,6 +22,14 @@ export async function fetchUserProgress() {
 	return response?.data?.data || null;
 }
 
+export async function updateStep( id, data ) {
+	return await $e.data.update( STEPS_ROUTE, { id, ...data }, { id } );
+}
+
+export async function updateUserProgress( data ) {
+	return await $e.data.update( USER_PROGRESS_ROUTE, data );
+}
+
 export function getAndUpdateStep( id, step, key, value ) {
 	if ( step.config.id !== id ) {
 		return step;
