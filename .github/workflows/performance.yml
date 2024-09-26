@@ -61,7 +61,7 @@ jobs:
         with:
           payload: |
             {
-              "repository_name": "${{ github.event.repository.name }}",
+              "repository_name": "${{ github.repository }}",
               "pull_request_title": "${{ github.event.pull_request.title }}",
               "pull_request_number": "${{ github.event.pull_request.number }}",
               "run_id": "${{ github.run_id }}",
