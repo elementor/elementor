@@ -40,6 +40,10 @@ abstract class Prop_Type implements \JsonSerializable {
 		return $this->default;
 	}
 
+	public function get_settings() {
+		return $this->settings;
+	}
+
 	public function add_meta( $key_or_tuple, $value = null ): self {
 		$is_tuple = (
 			is_array( $key_or_tuple ) &&
@@ -80,15 +84,15 @@ abstract class Prop_Type implements \JsonSerializable {
 		$additional_types = array_map( function ( Prop_Type $type ) {
 			return [
 				'key' => $type::get_key(),
-				'settings' => (object) $type->settings,
+				'settings' => (object) $type->get_settings(),
 			];
 		}, $this->additional_types );
 
 		return [
 			'type' => [
 				'key' => static::get_key(),
-				'default' => $this->default,
-				'settings' => (object) $this->settings,
+				'default' => $this->get_default(),
+				'settings' => (object) $this->get_settings(),
 			],
 			'additional_types' => $additional_types,
 		];
