@@ -259,6 +259,60 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertSame( 200, $settings['image']['height'] );
 	}
 
+	public function test_get_atomic_settings__transforms_image_prop_recursively__invalid_id() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'image' => Image_Prop_Type::make(),
+			],
+			'settings' => [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'id' => -1,
+							'url' => null,
+						],
+						'size' => 'medium',
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertNull( $settings['image'] );
+	}
+
+	public function test_get_atomic_settings__transforms_image_prop_recursively__no_id_or_url() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'image' => Image_Prop_Type::make(),
+			],
+			'settings' => [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'id' => null,
+							'url' => null,
+						],
+						'size' => 'medium',
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertNull( $settings['image'] );
+	}
+
 	public function test_get_props_schema__is_serializable() {
 		// Arrange.
 		remove_all_filters( 'elementor/atomic-widgets/props-schema' );

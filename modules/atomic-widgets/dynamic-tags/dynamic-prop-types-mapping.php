@@ -11,22 +11,26 @@ use Elementor\Modules\DynamicTags\Module as V1_Dynamic_Tags_Module;
 
 class Dynamic_Prop_Types_Mapping {
 
+	public static function make(): self {
+		return new static();
+	}
+
 	/**
 	 * @param array<string, Prop_Type> $schema
 	 *
 	 * @return array<string, Prop_Type>
 	 */
-	public static function add_to_schema( array $schema ): array {
+	public function add_to_schema( array $schema ): array {
 		foreach ( $schema as $prop ) {
 			if ( ! ( $prop instanceof Prop_Type ) ) {
 				continue;
 			}
 
-			static::add_to_prop_type( $prop );
+			$this->add_to_prop_type( $prop );
 
 			if ( $prop instanceof Transformable_Prop_Type ) {
 				foreach ( $prop->get_internal_types() as $internal_prop ) {
-					static::add_to_prop_type( $internal_prop );
+					$this->add_to_prop_type( $internal_prop );
 				}
 			}
 		}
@@ -34,7 +38,7 @@ class Dynamic_Prop_Types_Mapping {
 		return $schema;
 	}
 
-	private static function add_to_prop_type( Prop_Type $prop_type ): void {
+	private function add_to_prop_type( Prop_Type $prop_type ): void {
 		if ( false === $prop_type->get_meta( 'dynamic' ) ) {
 			return;
 		}

@@ -39,6 +39,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 			[ 'class' => $settings['classes'] ?? '' ]
 		) );
 
+		$attrs['src'] = esc_url( $attrs['src'] );
+
 		Utils::print_wp_kses_extended(
 			sprintf(
 				'<img %1$s >',
@@ -98,20 +100,12 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		$image_control = Image_Control::bind_to( 'image' );
-
-		$options = static::get_image_size_options();
-
-		$resolution_control = Select_Control::bind_to( 'image_size' )
-			->set_label( esc_html__( 'Image Resolution', 'elementor' ) )
-			->set_options( $options );
-
 		$content_section = Section::make()
 			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
-				$image_control,
-				$resolution_control,
-			]);
+				Image_Control::bind_to( 'image' )
+					->set_sizes( static::get_image_size_options() ),
+			] );
 
 		return [
 			$content_section,
@@ -119,11 +113,6 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$image_sizes = array_map(
-			fn( $size ) => $size['value'],
-			static::get_image_size_options()
-		);
-
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -131,10 +120,6 @@ class Atomic_Image extends Atomic_Widget_Base {
 			'image' => Image_Prop_Type::make()
 				->default_url( Utils::get_placeholder_image_src() )
 				->default_size( 'full' ),
-
-			'image_size' => String_Prop_Type::make()
-				->enum( $image_sizes )
-				->default( 'full' ),
 		];
 	}
 }

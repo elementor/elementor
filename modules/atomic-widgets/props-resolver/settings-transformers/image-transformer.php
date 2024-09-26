@@ -28,7 +28,7 @@ class Image_Transformer extends Transformer_Base {
 			[ $src, $width, $height ] = $image_src;
 
 			return [
-				'src' => esc_url( $src ),
+				'src' => $src,
 				'width' => (int) $width,
 				'height' => (int) $height,
 				'srcset' => wp_get_attachment_image_srcset( $value['src']['id'], $value['size'] ),
@@ -36,14 +36,12 @@ class Image_Transformer extends Transformer_Base {
 			];
 		}
 
-		$src = esc_url( $value['src']['url'] ?? '' );
-
-		if ( ! $src ) {
+		if ( empty( $value['src']['url'] ) ) {
 			throw new \Exception( 'Invalid image URL.' );
 		}
 
 		return [
-			'src' => $src,
+			'src' => $value['src']['url'],
 		];
 	}
 }

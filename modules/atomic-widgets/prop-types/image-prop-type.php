@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Utils;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -26,19 +24,28 @@ class Image_Prop_Type extends Transformable_Prop_Type {
 	}
 
 	public function get_default() {
-		return [
+		$default = [
 			'$$type' => static::get_key(),
-			'value' => [
-				'src' => [
-					'$$type' => Image_Src_Prop_Type::get_key(),
-					'value' => [
-						'url' => $this->default_url,
-						'id' => $this->default_id,
-					],
-				],
-				'size' => $this->default_size,
-			],
+			'value' => null,
 		];
+
+		if ( isset( $this->default_url ) || isset( $this->default_id ) ) {
+			$default['value']['src'] = [
+				'$$type' => 'image-src',
+				'value' => [
+					'id' => $this->default_id ?? null,
+					'url' => $this->default_url ?? null,
+				],
+			];
+		}
+
+		if ( isset( $this->default_size ) ) {
+			$default['value']['size'] = $this->default_size;
+		}
+
+		return isset( $default['value'] )
+			? $default
+			: null;
 	}
 
 	public function default_url( string $url ): self {

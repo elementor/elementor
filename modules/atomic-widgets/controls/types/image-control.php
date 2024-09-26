@@ -8,11 +8,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Image_Control extends Atomic_Control_Base {
+
+	private array $sizes = [];
+
 	public function get_type(): string {
 		return 'image';
 	}
 
+	public function set_sizes( array $sizes ): self {
+		$this->sizes = $sizes;
+
+		return $this;
+	}
+
 	public function get_props(): array {
-		return [];
+		return [
+			'sizes' => $this->sizes,
+		];
 	}
 }
