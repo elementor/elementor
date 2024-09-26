@@ -37,14 +37,14 @@ jobs:
           themes: |-
             https://downloads.wordpress.org/theme/hello-elementor.zip
           mappings: |-
-            elementor-templates:./tests/lighthouse/templates
+            performance-templates:./tests/performance-templates
 
       - name: Setup Elementor Env
         uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@main
         with:
           env: 'testing'
           templates: |-
-            elementor-templates
+            performance-templates
 
       - name: Run Performance tests
         uses: elementor/elementor-editor-github-actions/actions/run-lighthouse-tests@main
