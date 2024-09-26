@@ -34,8 +34,23 @@ export default class ApiRequests {
 		return id;
 	}
 
-	public async updateNonce ( request: APIRequestContext ) {
-		this.nonce =  await fetchNonce( request, this.baseUrl )
+	public async updateNonce ( request: APIRequestContext, url ) {
+		// this.nonce =  await fetchNonce( request, this.baseUrl )
+		const response = await request.get( url );
+
+		// await validateResponse( response, 'Failed to fetch page' );
+
+		 let pageText = await response.text();
+		// if ( pageText.includes( 'WordPress has been updated!' ) ) {
+		// 	pageText = await updateDatabase( context, baseUrl );
+		// }
+
+		const nonceMatch = pageText.match( /var userProfileL10n = .*;/ );
+		if ( ! nonceMatch ) {
+			throw new Error( `Nonce not found on the page:\n"${ pageText }"` );
+		}
+
+		this.nonce = nonceMatch[ 0 ].replace( /^.*"nonce":"([^"]*)".*$/, '$1' );
 	}
 
 	public async createMedia( request: APIRequestContext, image: Image ) {
@@ -236,17 +251,20 @@ export default class ApiRequests {
 		return await this.get( request, 'pages', status );
 	}
 
-	private async deletePage( request: APIRequestContext, pageId: string ) {
-		await this._delete( request, 'pages', pageId );
+	private async deletePage( request: APIRequestContext, pageId: string , options ) {
+		await this._delete( request, 'pages', pageId, options );
 	}
 
-	public async deleteUser( request: APIRequestContext, userId: string ) {
-		await this._delete( request, 'users', userId );
+	public async deleteUser( request: APIRequestContext, userId: string, options = { force: true, reassign: '-1' } ) {
+		await this._delete( request, 'users', userId, options );
 	}
 
-	private async _delete( request: APIRequestContext, entity: string, id: string ) {
+	private async _delete( request: APIRequestContext, entity: string, id: string , options) {
 		const response = await request.delete( `${ this.baseUrl }/index.php`, {
-			params: { rest_route: `/wp/v2/${ entity }/${ id }` },
+			params: {
+				rest_route: `/wp/v2/${ entity }/${ id }`,
+				...options
+			},
 			headers: {
 				'X-WP-Nonce': this.nonce,
 			},

@@ -55,8 +55,12 @@ export default class WpAdminPage extends BasePage {
 
 	async customLogOut() {
 		await this.gotoDashboard();
-		await this.page.hover('#wp-admin-bar-top-secondary');
-		await this.page.click('#wp-admin-bar-logout > a');
+		const loggedIn = await this.page.$( 'text=Dashboard' );
+		if ( loggedIn) {
+			await this.page.hover('#wp-admin-bar-top-secondary');
+			await this.page.click('#wp-admin-bar-logout > a');
+		}
+
 		await this.page.fill( 'input[name="log"]', process.env.USERNAME || 'admin' );
 		await this.page.fill( 'input[name="pwd"]', process.env.PASSWORD || 'password' );
 		await this.page.click( 'text=Log In' );

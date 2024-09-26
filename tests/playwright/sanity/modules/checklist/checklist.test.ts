@@ -28,10 +28,13 @@ test.describe( 'Launchpad checklist tests', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await apiRequests.updateNonce( request )
+		await page.pause();
+		await wpAdmin.customLogOut();
+		await page.pause();
+		const url = await wpAdmin.page.url();
+		await apiRequests.updateNonce( request, url );
 		// await wpAdmin.resetExperiments();
-		// await apiRequests.deleteUser( request, myUser.id )
+		await apiRequests.deleteUser( request, myUser.id )
 		await apiRequests.cleanUpTestPages( request, false )
 		await page.close();
 	} );
@@ -341,7 +344,7 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
-	test.only( 'Checklist visible only to admin', async ( { page, apiRequests }, testInfo ) => {
+	test.only( 'Checklist visible only to admin', async ( { page, apiRequests, request }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
@@ -367,8 +370,9 @@ test.describe( 'Launchpad checklist tests', () => {
 				rocketButton = editor.page.locator( selectors.topBarIcon );
 
 			await expect( rocketButton ).toBeHidden();
-
+			await page.pause();
 			await wpAdmin.customLogOut();
+
 		} );
 	} );
 
