@@ -9,7 +9,6 @@ concurrency:
 
 jobs:
   build-plugin-lh:
-    if: contains( github.event.pull_request.labels.*.name, 'run-performance-test')
     name: Build plugin
     uses: ./.github/workflows/build.yml
 
