@@ -204,4 +204,21 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 			],
 		] );
 	}
+
+	public function test_validate__throws_when_passing_size_that_is_not_in_the_allowed_sizes() {
+		// Arrange.
+		$prop_type = Image_Prop_Type::make()->allowed_sizes( [ 'thumbnail', 'medium' ] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( '`full` is not in the list of allowed values (`thumbnail`, `medium`).' );
+
+		// Act.
+		$prop_type->validate( [
+			'$$type' => 'image',
+			'value' => [
+				'size' => 'full',
+			],
+		] );
+	}
 }

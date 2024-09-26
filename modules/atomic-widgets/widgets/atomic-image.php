@@ -113,12 +113,18 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$image_sizes = array_map(
+			fn( $size ) => $size['value'],
+			static::get_image_size_options()
+		);
+
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
 			'image' => Image_Prop_Type::make()
 				->default_url( Utils::get_placeholder_image_src() )
+				->allowed_sizes( $image_sizes )
 				->default_size( 'full' ),
 		];
 	}

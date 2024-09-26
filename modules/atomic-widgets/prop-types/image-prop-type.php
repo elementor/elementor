@@ -66,6 +66,12 @@ class Image_Prop_Type extends Transformable_Prop_Type {
 		return $this;
 	}
 
+	public function allowed_sizes( array $allowed_sizes ): self {
+		$this->internal_types['size']->enum( $allowed_sizes );
+
+		return $this;
+	}
+
 	protected function validate_value( $value ): void {
 		if ( isset( $value['src'] ) ) {
 			$this->internal_types['src']->validate( $value['src'] );
