@@ -61,12 +61,12 @@ jobs:
         with:
           payload: |
             {
-              "repository": "${{ github.event.repository.name }}",
-              "pull_request": "${{ github.event.pull_request.title }} #${{ github.event.pull_request.number }}",
+              "repository_name": "${{ github.event.repository.name }}",
+              "pull_request_title": "${{ github.event.pull_request.title }}",
+              "pull_request_number": "${{ github.event.pull_request.number }}",
+              "run_id": "${{ github.run_id }}",
               "scores": "${{ steps.run-lighthouse-tests.outputs.test-performance-scores }}",
               "median_score": "${{ steps.run-lighthouse-tests.outputs.test-performance-median-score }}",
-              "pr_url": "${{ github.event.pull_request.html_url }}",
-              "run_url": "${{ github.run_url }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_PERFORMANCE_WEBHOOK_URL }}
