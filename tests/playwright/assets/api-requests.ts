@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { type APIRequestContext } from '@playwright/test';
-import { Image, Post, WpPage } from '../types/types';
+import { type APIRequestContext, type APIRequest } from '@playwright/test';
+import { Image, Post, WpPage, StorageState } from '../types/types';
 import { fetchNonce } from "../wp-authentication";
 
 export default class ApiRequests {
@@ -36,6 +36,7 @@ export default class ApiRequests {
 
 	public async updateNonce ( request: APIRequestContext, url ) {
 		// this.nonce =  await fetchNonce( request, this.baseUrl )
+		// this.nonce =process.env.WP_REST_NONCE
 		const response = await request.get( url );
 
 		// await validateResponse( response, 'Failed to fetch page' );
@@ -51,6 +52,19 @@ export default class ApiRequests {
 		}
 
 		this.nonce = nonceMatch[ 0 ].replace( /^.*"nonce":"([^"]*)".*$/, '$1' );
+	}
+
+	public async createApiContext( request: APIRequest,
+		 options: { storageStateObject: string| StorageState, wpRESTNonce: string, baseURL: string } ) {
+		const context = await request.newContext( {
+			baseURL: options.baseURL,
+			storageState: options.storageStateObject,
+			extraHTTPHeaders: {
+				'X-WP-Nonce': options.wpRESTNonce,
+			},
+		} );
+
+		return context;
 	}
 
 	public async createMedia( request: APIRequestContext, image: Image ) {

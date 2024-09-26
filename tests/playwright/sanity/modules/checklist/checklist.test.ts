@@ -5,6 +5,8 @@ import { controlIds, selectors } from './selectors';
 import { ChecklistHelper } from './helper';
 import { StepId } from '../../../types/checklist';
 import { newUser } from './new-user';
+import { login } from '../../../wp-authentication';
+import ApiRequests from '../../../assets/api-requests';
 
 test.describe( 'Launchpad checklist tests', () => {
 	let myUser;
@@ -24,15 +26,17 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests, request  }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await page.pause();
+		// await page.pause();
 		await wpAdmin.customLogOut();
-		await page.pause();
-		const url = await wpAdmin.page.url();
-		await apiRequests.updateNonce( request, url );
+		// await page.pause();
+		// const url = await wpAdmin.page.url();
+		// await apiRequests.updateNonce( request, url );
+
+		// await login( test.apiRequests, 'admin', 'password', process.env.baseURL );
 		// await wpAdmin.resetExperiments();
 		await apiRequests.deleteUser( request, myUser.id )
 		await apiRequests.cleanUpTestPages( request, false )
@@ -370,8 +374,8 @@ test.describe( 'Launchpad checklist tests', () => {
 				rocketButton = editor.page.locator( selectors.topBarIcon );
 
 			await expect( rocketButton ).toBeHidden();
-			await page.pause();
-			await wpAdmin.customLogOut();
+			// await page.pause();
+			// await wpAdmin.customLogOut();
 
 		} );
 	} );
