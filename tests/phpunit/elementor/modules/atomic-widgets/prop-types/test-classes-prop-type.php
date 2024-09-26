@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Classes_Prop_Type extends Elementor_Test_Base {
 
-	public function test_validate_value__throws_when_passing_non_array() {
+	public function test_validate__throws_when_passing_non_array() {
 		// Arrange.
 		$prop_type = Classes_Prop_Type::make();
 
@@ -20,13 +20,16 @@ class Test_Classes_Prop_Type extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'Value must be an array, string given.' );
 
 		// Act.
-		$prop_type->validate_value( 'string' );
+		$prop_type->validate( [
+			'$$type' => 'classes',
+			'value' => 'string',
+		] );
 	}
 
 	/**
 	 * @dataProvider invalid_classes_data_provider
 	 */
-	public function test_validate_value__throws_when_passing_a_class_that_starts_with_number( $classes ) {
+	public function test_validate__throws_when_passing_a_class_that_starts_with_number( $classes ) {
 		// Arrange.
 		$prop_type = Classes_Prop_Type::make();
 
@@ -35,10 +38,13 @@ class Test_Classes_Prop_Type extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'All classes must start with an english letter, and contain only english letters, numbers, hyphens, and underscores.' );
 
 		// Act.
-		$prop_type->validate_value( $classes );
+		$prop_type->validate( [
+			'$$type' => 'classes',
+			'value' => $classes,
+		] );
 	}
 
-	public function test_validate_value() {
+	public function test_validate() {
 		// Arrange.
 		$prop_type = Classes_Prop_Type::make();
 
@@ -46,7 +52,10 @@ class Test_Classes_Prop_Type extends Elementor_Test_Base {
 		$this->expectNotToPerformAssertions();
 
 		// Act.
-		$prop_type->validate_value( [ 'a', 'b-123', 'c_123' ] );
+		$prop_type->validate( [
+			'$$type' => 'classes',
+			'value' => [ 'a', 'b-123', 'c_123' ],
+		] );
 	}
 
 	public function invalid_classes_data_provider() {
