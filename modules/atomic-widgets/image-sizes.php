@@ -8,10 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Image_Sizes {
 
-	public static function get_values() {
-		return array_keys( static::get_wp_image_sizes() );
-	}
-
 	public static function get_all(): array {
 		$wp_image_sizes = static::get_wp_image_sizes();
 
