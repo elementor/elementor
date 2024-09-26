@@ -6,6 +6,7 @@ use Elementor\Core\Wp_Api;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -207,17 +208,27 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 	public function test_validate__throws_when_passing_size_that_is_not_in_the_allowed_sizes() {
 		// Arrange.
-		$prop_type = Image_Prop_Type::make()->allowed_sizes( [ 'thumbnail', 'medium' ] );
+		$prop_type = Image_Prop_Type::make();
+
+		$wp_sizes = Collection::make ( [
+			'thumbnail',
+			'medium',
+			'medium_large',
+			'large',
+			'1536x1536',
+			'2048x2048',
+			'post-thumbnail',
+		] )->map( fn( $size ) => "`$size`" )->implode( ', ' );
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( '`full` is not in the list of allowed values (`thumbnail`, `medium`).' );
+		$this->expectExceptionMessage( "`unknown-size` is not in the list of allowed values ($wp_sizes)." );
 
 		// Act.
 		$prop_type->validate( [
 			'$$type' => 'image',
 			'value' => [
-				'size' => 'full',
+				'size' => 'unknown-size',
 			],
 		] );
 	}

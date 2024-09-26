@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Modules\AtomicWidgets\Image_Sizes;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -20,7 +22,8 @@ class Image_Prop_Type extends Transformable_Prop_Type {
 
 	public function __construct() {
 		$this->internal_types['src'] = Image_Src_Prop_Type::make();
-		$this->internal_types['size'] = String_Prop_Type::make();
+
+		$this->internal_types['size'] = String_Prop_Type::make()->enum( Image_Sizes::get_values() );
 	}
 
 	public function get_default() {
@@ -62,12 +65,6 @@ class Image_Prop_Type extends Transformable_Prop_Type {
 
 	public function default_size( string $size ): self {
 		$this->default_size = $size;
-
-		return $this;
-	}
-
-	public function allowed_sizes( array $allowed_sizes ): self {
-		$this->internal_types['size']->enum( $allowed_sizes );
 
 		return $this;
 	}
