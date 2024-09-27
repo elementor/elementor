@@ -84,7 +84,7 @@
 		.select2-selection--multiple {
 			background-color: var(--e-a-bg-default);
 			color: var(--e-a-color-txt);
-			border-color: var(--e-a-border-color);
+			border-color: var(--e-a-border-color-bold);
 		}
 	}
 
@@ -93,7 +93,7 @@
 
 		.select2-selection--single,
 		.select2-selection--multiple {
-			border-color: var(--e-a-border-color-bold);
+			border-color: var(--e-a-border-color-focus);
 		}
 	}
 }
