@@ -8,6 +8,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Transformable_Prop_Type extends Prop_Type {
 
+	/**
+	 * @var array<string, Prop_Type>
+	 */
+	protected array $internal_types = [];
+
+	public function get_internal_types(): array {
+		return $this->internal_types;
+	}
+
 	public function validate( $value ): void {
 		if ( ! isset( $value['$$type'] ) ) {
 			throw new \Exception( 'Value must have a `$$type` key.' );
