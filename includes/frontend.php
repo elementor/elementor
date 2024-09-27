@@ -540,6 +540,13 @@ class Frontend extends App {
 		);
 
 		wp_register_style(
+			'e-lightbox',
+			$this->get_frontend_file_url( 'lightbox.min.css', $has_custom_breakpoints, 'conditionals/' ),
+			[],
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
 			'e-swiper',
 			$this->get_css_assets_url( 'e-swiper', 'assets/css/conditionals/' ),
 			[ 'swiper' ],
