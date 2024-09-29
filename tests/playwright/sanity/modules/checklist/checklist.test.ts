@@ -353,8 +353,8 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await test.step( 'Checklist not visible to author role', async () => {
 			const context = await browser.newContext( { storageState: undefined } );
-			const page = await context.newPage();
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			const newScopePage = await context.newPage();
+			const wpAdmin = new WpAdminPage( newScopePage, testInfo, apiRequests );
 
 			await wpAdmin.customLogin( newTestUser.username, newTestUser.password );
 
