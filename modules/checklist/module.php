@@ -54,6 +54,11 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->steps_manager = new Steps_Manager( $this );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$this->enqueue_editor_scripts();
 	}
 
