@@ -2,7 +2,8 @@ import Header from './header';
 import CheckListWrapper from './checklist-wrapper';
 import { useState } from 'react';
 import { Paper } from '@elementor/ui';
-import { USER_PROGRESS, USER_PROGRESS_ROUTE } from '../../utils/consts';
+import { USER_PROGRESS } from '../../utils/consts';
+import { updateUserProgress } from '../../utils/functions';
 
 const { IS_POPUP_MINIMIZED } = USER_PROGRESS;
 
@@ -16,9 +17,7 @@ const Checklist = ( props ) => {
 		try {
 			setIsMinimized( ! currState );
 
-			await $e.data.update( USER_PROGRESS_ROUTE, {
-				[ IS_POPUP_MINIMIZED ]: ! currState,
-			} );
+			await updateUserProgress( { [ IS_POPUP_MINIMIZED ]: ! currState } );
 		} catch ( e ) {
 			setIsMinimized( currState );
 		}
