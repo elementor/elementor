@@ -1,5 +1,6 @@
 import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import { useQuery } from '@elementor/query';
+import { __privateListenTo as listenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 import Checklist from './components/checklist';
 import { fetchSteps, fetchUserProgress } from '../utils/functions';
 import { useEffect } from 'react';
@@ -27,11 +28,11 @@ const App = () => {
 	useEffect( () => {
 		fetchData();
 
-		elementor.saver.on( 'after:save', fetchData );
-
-		return () => {
-			elementor.saver.off( 'after:save', fetchData );
-		};
+		return listenTo( commandEndEvent( 'document/save/save' ), ( { args } ) => {
+			if ( 'kit' === args?.document?.config?.type ) {
+				fetchData();
+			}
+		} );
 	}, [] );
 
 	if ( userProgressError || ! userProgress || stepsError || ! steps?.length ) {
