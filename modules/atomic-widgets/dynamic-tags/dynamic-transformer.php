@@ -25,10 +25,14 @@ class Dynamic_Transformer extends Transformer_Base {
 			throw new \Exception( 'Dynamic tag name must be a string' );
 		}
 
-		if ( ! isset( $value['settings'] ) || ! is_array( $value['settings'] ) ) {
+		if ( isset( $value['settings'] ) && ! is_array( $value['settings'] ) ) {
 			throw new \Exception( 'Dynamic tag settings must be an array' );
 		}
 
-		return $this->dynamic_manager->get_tag_data_content( null, $value['name'], $value['settings'] );
+		return $this->dynamic_manager->get_tag_data_content(
+			null,
+			$value['name'],
+			$value['settings'] ?? []
+		);
 	}
 }
