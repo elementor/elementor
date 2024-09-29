@@ -47,9 +47,9 @@ export default class WpAdminPage extends BasePage {
 		await this.gotoDashboard();
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 
-		if ( loggedIn) {
-			await this.page.hover('#wp-admin-bar-top-secondary');
-			await this.page.click('#wp-admin-bar-logout > a');
+		if ( loggedIn ) {
+			await this.page.hover( '#wp-admin-bar-top-secondary' );
+			await this.page.click( '#wp-admin-bar-logout > a' );
 		}
 
 		await this.page.fill( 'input[name="log"]', username );

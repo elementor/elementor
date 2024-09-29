@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { type APIRequestContext, type APIRequest } from '@playwright/test';
-import { Image, Post, WpPage, StorageState } from '../types/types';
+import { type APIRequestContext } from '@playwright/test';
+import { Image, Post, WpPage } from '../types/types';
 
 export default class ApiRequests {
 	private readonly nonce: string;
@@ -213,7 +213,7 @@ export default class ApiRequests {
 		return await this.get( request, 'pages', status );
 	}
 
-	private async deletePage( request: APIRequestContext, pageId: string  ) {
+	private async deletePage( request: APIRequestContext, pageId: string ) {
 		await this._delete( request, 'pages', pageId );
 	}
 
@@ -225,7 +225,7 @@ export default class ApiRequests {
 				params: {
 					rest_route: `/wp/v2/users/${ userId }`,
 					force: true,
-					reassign: '-1'
+					reassign: '-1',
 				},
 			} );
 
@@ -275,7 +275,7 @@ export default class ApiRequests {
 				username,
 				email,
 				password,
-				roles: roles,
+				roles,
 			},
 		} );
 

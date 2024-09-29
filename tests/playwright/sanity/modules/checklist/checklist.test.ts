@@ -11,7 +11,6 @@ test.describe( 'Launchpad checklist tests', () => {
 
 	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
-		console.log(request)
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -20,16 +19,16 @@ test.describe( 'Launchpad checklist tests', () => {
 			'launchpad-checklist': true,
 		} );
 
-		newTestUser  = await apiRequests.createNewUser( request, newUser );
+		newTestUser = await apiRequests.createNewUser( request, newUser );
 
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests, request  }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await apiRequests.deleteUser( request, newTestUser.id )
+		await apiRequests.deleteUser( request, newTestUser.id );
 		await apiRequests.cleanUpTestPages( request, false );
 
 		await wpAdmin.resetExperiments();
@@ -342,7 +341,7 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
-	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests, request }, testInfo ) => {
+	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
@@ -353,18 +352,16 @@ test.describe( 'Launchpad checklist tests', () => {
 			await expect( checklist ).toBeVisible();
 		} );
 
-		await test.step( 'Checklist not visible to author', async ( ) => {
+		await test.step( 'Checklist not visible to author', async () => {
 			const context = await browser.newContext( { storageState: undefined } );
 			const page = await context.newPage();
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 			await wpAdmin.customLogin( newTestUser.username, newTestUser.password );
 
-			const editor = await wpAdmin.openNewPage(false, false ),
-				rocketButton = editor.page.locator( selectors.topBarIcon );
+			await wpAdmin.openNewPage( false, false );
 
 			await expect( rocketButton ).toBeHidden();
 		} );
 	} );
-
 } );
