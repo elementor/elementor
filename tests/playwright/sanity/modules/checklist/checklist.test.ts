@@ -18,9 +18,12 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		newTestUser = await apiRequests.createNewUser( request, newUser );
 
+		newTestUser = await apiRequests.createNewUser( request, newUser );
+
 		await page.close();
 	} );
 
+<<<<<<< HEAD
 	test.afterAll( async ( { browser, apiRequests, request } ) => {
 		const page = await browser.newPage();
 
@@ -43,6 +46,18 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.locator( selectors.popup ).waitFor();
 
 		expect( await checklistHelper.isChecklistOpen( 'editor' ) ).toBeTruthy();
+=======
+	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
+		const page = await browser.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await apiRequests.deleteUser( request, newTestUser.id );
+		await apiRequests.cleanUpTestPages( request, false );
+
+		await wpAdmin.resetExperiments();
+
+		await page.close();
+>>>>>>> d31551a89d (Internal: Checklist will be visible for users with Admin capabilities [ED-15633] (#28795))
 	} );
 
 	test( 'Checklist module general test', async ( { page, apiRequests }, testInfo ) => {
@@ -336,6 +351,7 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
+<<<<<<< HEAD
 
 	test( 'Checklist reactivity in the editor', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -365,6 +381,8 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="false"]' ) ).waitFor();
 	} );
 
+=======
+>>>>>>> d31551a89d (Internal: Checklist will be visible for users with Admin capabilities [ED-15633] (#28795))
 	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
 		await test.step( 'Checklist visible to admin role by default', async () => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
@@ -373,11 +391,14 @@ test.describe( 'Launchpad checklist tests', () => {
 				checklist = editor.page.locator( selectors.popup );
 			await rocketButton.click();
 			await expect( checklist ).toBeVisible();
+<<<<<<< HEAD
 
 			await editor.openUserPreferencesPanel();
 
 			// See if the checklist switcher is visible for admin role users
 			await expect( editor.page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) ).toBeVisible();
+=======
+>>>>>>> d31551a89d (Internal: Checklist will be visible for users with Admin capabilities [ED-15633] (#28795))
 		} );
 
 		await test.step( 'Checklist not visible to author role', async () => {
@@ -391,11 +412,14 @@ test.describe( 'Launchpad checklist tests', () => {
 			const rocketButton = editor.page.locator( selectors.topBarIcon );
 
 			await expect( rocketButton ).toBeHidden();
+<<<<<<< HEAD
 
 			await editor.openUserPreferencesPanel();
 
 			// See if the checklist switcher is not visible for admin role users
 			await expect( editor.page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) ).toBeHidden();
+=======
+>>>>>>> d31551a89d (Internal: Checklist will be visible for users with Admin capabilities [ED-15633] (#28795))
 		} );
 	} );
 } );

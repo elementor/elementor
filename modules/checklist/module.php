@@ -51,6 +51,16 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->handle_checklist_visibility_with_kit();
 		$this->steps_manager = new Steps_Manager( $this );
+<<<<<<< HEAD
+=======
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$this->enqueue_editor_scripts();
+	}
+>>>>>>> d31551a89d (Internal: Checklist will be visible for users with Admin capabilities [ED-15633] (#28795))
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;

@@ -1,6 +1,9 @@
 import { createReadStream } from 'fs';
 import { type APIRequestContext } from '@playwright/test';
+<<<<<<< HEAD
 
+=======
+>>>>>>> d31551a89d (Internal: Checklist will be visible for users with Admin capabilities [ED-15633] (#28795))
 import { Image, Post, WpPage, User } from '../types/types';
 
 export default class ApiRequests {
@@ -218,6 +221,7 @@ export default class ApiRequests {
 
 	public async deleteUser( request: APIRequestContext, userId: string ) {
 		const response = await request.delete( `${ this.baseUrl }/index.php`, {
+<<<<<<< HEAD
 			headers: {
 				'X-WP-Nonce': this.nonce,
 			},
@@ -227,6 +231,17 @@ export default class ApiRequests {
 				reassign: '-1',
 			},
 		} );
+=======
+				headers: {
+					'X-WP-Nonce': this.nonce,
+				},
+				params: {
+					rest_route: `/wp/v2/users/${ userId }`,
+					force: true,
+					reassign: '-1',
+				},
+			} );
+>>>>>>> d31551a89d (Internal: Checklist will be visible for users with Admin capabilities [ED-15633] (#28795))
 
 		if ( ! response.ok() ) {
 			throw new Error( `
@@ -274,7 +289,11 @@ export default class ApiRequests {
 				username,
 				email,
 				password,
+<<<<<<< HEAD
 				roles: roles ? roles.join( ',' ) : '',
+=======
+				roles: [ ...roles ],
+>>>>>>> d31551a89d (Internal: Checklist will be visible for users with Admin capabilities [ED-15633] (#28795))
 			},
 		} );
 
