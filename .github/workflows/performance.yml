@@ -15,7 +15,7 @@ jobs:
       - name: Echo
         run: echo 1;
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TESTIM_TOKEN: ${{ secrets.TESTIM_TOKEN }}
       - name: Notify Slack
         uses: slackapi/slack-github-action@v1.27.0
         with:
