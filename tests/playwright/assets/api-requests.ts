@@ -1,10 +1,9 @@
 import fs from 'fs';
 import { type APIRequestContext, type APIRequest } from '@playwright/test';
 import { Image, Post, WpPage, StorageState } from '../types/types';
-import { fetchNonce } from "../wp-authentication";
 
 export default class ApiRequests {
-	private nonce: string;
+	private readonly nonce: string;
 	private readonly baseUrl: string;
 	constructor( baseUrl: string, nonce: string ) {
 		this.nonce = nonce;
@@ -32,39 +31,6 @@ export default class ApiRequests {
 		const { id } = await response.json();
 
 		return id;
-	}
-
-	public async updateNonce ( request: APIRequestContext, url ) {
-		// this.nonce =  await fetchNonce( request, this.baseUrl )
-		// this.nonce =process.env.WP_REST_NONCE
-		const response = await request.get( url );
-
-		// await validateResponse( response, 'Failed to fetch page' );
-
-		 let pageText = await response.text();
-		// if ( pageText.includes( 'WordPress has been updated!' ) ) {
-		// 	pageText = await updateDatabase( context, baseUrl );
-		// }
-
-		const nonceMatch = pageText.match( /var userProfileL10n = .*;/ );
-		if ( ! nonceMatch ) {
-			throw new Error( `Nonce not found on the page:\n"${ pageText }"` );
-		}
-
-		this.nonce = nonceMatch[ 0 ].replace( /^.*"nonce":"([^"]*)".*$/, '$1' );
-	}
-
-	public async createApiContext( request: APIRequest,
-		 options: { storageStateObject: string| StorageState, wpRESTNonce: string, baseURL: string } ) {
-		const context = await request.newContext( {
-			baseURL: options.baseURL,
-			storageState: options.storageStateObject,
-			extraHTTPHeaders: {
-				'X-WP-Nonce': options.wpRESTNonce,
-			},
-		} );
-
-		return context;
 	}
 
 	public async createMedia( request: APIRequestContext, image: Image ) {
@@ -172,24 +138,6 @@ export default class ApiRequests {
 		}
 	}
 
-	public async deleteTestUser( request: APIRequestContext, id ) {
-		const response = await request.post( `${ this.baseUrl }/index.php`, {
-			params: {
-				rest_route: `/wp/v2/users/${ id }`,
-			},
-			headers: {
-				'X-WP-Nonce': this.nonce,
-			},
-		} );
-		if ( ! response.ok() ) {
-			throw new Error( `
-				Failed to delete user: ${ response ? response.status() : '<no status>' }.
-				${ response ? await response.text() : '<no response>' }
-
-			` );
-		}
-	}
-
 	public async deletePlugin( request: APIRequestContext, slug: string ) {
 		const response = await this._delete( request, 'plugins', slug );
 
@@ -265,19 +213,36 @@ export default class ApiRequests {
 		return await this.get( request, 'pages', status );
 	}
 
-	private async deletePage( request: APIRequestContext, pageId: string , options ) {
-		await this._delete( request, 'pages', pageId, options );
+	private async deletePage( request: APIRequestContext, pageId: string  ) {
+		await this._delete( request, 'pages', pageId );
 	}
 
-	public async deleteUser( request: APIRequestContext, userId: string, options = { force: true, reassign: '-1' } ) {
-		await this._delete( request, 'users', userId, options );
+	public async deleteUser( request: APIRequestContext, userId: string ) {
+		const response = await request.delete( `${ this.baseUrl }/index.php`, {
+				headers: {
+					'X-WP-Nonce': this.nonce,
+				},
+				params: {
+					rest_route: `/wp/v2/users/${ userId }`,
+					force: true,
+					reassign: '-1'
+				},
+			} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+			Failed to delete a user with id: ${ userId }: ${ response.status() }.
+			${ await response.text() }
+		` );
+		}
+
+		return await response.json();
 	}
 
-	private async _delete( request: APIRequestContext, entity: string, id: string , options) {
+	private async _delete( request: APIRequestContext, entity: string, id: string ) {
 		const response = await request.delete( `${ this.baseUrl }/index.php`, {
 			params: {
 				rest_route: `/wp/v2/${ entity }/${ id }`,
-				...options
 			},
 			headers: {
 				'X-WP-Nonce': this.nonce,

@@ -43,26 +43,17 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async customLogin( user ) {
-		await this.gotoDashboard();
-		await this.page.hover('#wp-admin-bar-top-secondary');
-		await this.page.click('#wp-admin-bar-logout > a');
-		await this.page.fill( 'input[name="log"]', user.username );
-		await this.page.fill( 'input[name="pwd"]', user.password );
-		await this.page.click( 'text=Log In' );
-		await this.page.waitForSelector( 'text=Dashboard' );
-	}
-
-	async customLogOut() {
+	async customLogin( username: string, password: string ) {
 		await this.gotoDashboard();
 		const loggedIn = await this.page.$( 'text=Dashboard' );
+
 		if ( loggedIn) {
 			await this.page.hover('#wp-admin-bar-top-secondary');
 			await this.page.click('#wp-admin-bar-logout > a');
 		}
 
-		await this.page.fill( 'input[name="log"]', process.env.USERNAME || 'admin' );
-		await this.page.fill( 'input[name="pwd"]', process.env.PASSWORD || 'password' );
+		await this.page.fill( 'input[name="log"]', username );
+		await this.page.fill( 'input[name="pwd"]', password );
 		await this.page.click( 'text=Log In' );
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}

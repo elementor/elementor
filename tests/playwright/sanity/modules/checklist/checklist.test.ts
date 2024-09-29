@@ -5,14 +5,13 @@ import { controlIds, selectors } from './selectors';
 import { ChecklistHelper } from './helper';
 import { StepId } from '../../../types/checklist';
 import { newUser } from './new-user';
-import { login } from '../../../wp-authentication';
-import ApiRequests from '../../../assets/api-requests';
 
 test.describe( 'Launchpad checklist tests', () => {
-	let myUser;
+	let newTestUser;
 
 	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
+		console.log(request)
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -21,25 +20,20 @@ test.describe( 'Launchpad checklist tests', () => {
 			'launchpad-checklist': true,
 		} );
 
-		myUser  = await apiRequests.createNewUser( request, newUser );
+		newTestUser  = await apiRequests.createNewUser( request, newUser );
 
 		await page.close();
 	} );
 
 	test.afterAll( async ( { browser, apiRequests, request  }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		// await page.pause();
-		await wpAdmin.customLogOut();
-		// await page.pause();
-		// const url = await wpAdmin.page.url();
-		// await apiRequests.updateNonce( request, url );
+		const page = await browser.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		// await login( test.apiRequests, 'admin', 'password', process.env.baseURL );
-		// await wpAdmin.resetExperiments();
-		await apiRequests.deleteUser( request, myUser.id )
-		await apiRequests.cleanUpTestPages( request, false )
+		await apiRequests.deleteUser( request, newTestUser.id )
+		await apiRequests.cleanUpTestPages( request, false );
+
+		await wpAdmin.resetExperiments();
+
 		await page.close();
 	} );
 
@@ -348,35 +342,28 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
-	test.only( 'Checklist visible only to admin', async ( { page, apiRequests, request }, testInfo ) => {
+	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests, request }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			rocketButton = editor.page.locator( selectors.topBarIcon ),
-			closeButton = editor.page.locator( selectors.closeButton ),
 			checklist = editor.page.locator( selectors.popup );
 
 		await test.step( 'Checklist visible to admin default', async () => {
 			await rocketButton.click();
 			await expect( checklist ).toBeVisible();
-			await closeButton.click();
 		} );
 
-		await test.step( 'Checklist not visible to author', async () => {
+		await test.step( 'Checklist not visible to author', async ( ) => {
+			const context = await browser.newContext( { storageState: undefined } );
+			const page = await context.newPage();
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			const myNewUser = {
-				username: myUser.username,
-				password: myUser.password
-			};
 
-			await wpAdmin.customLogin( myNewUser )
+			await wpAdmin.customLogin( newTestUser.username, newTestUser.password );
 
 			const editor = await wpAdmin.openNewPage(false, false ),
 				rocketButton = editor.page.locator( selectors.topBarIcon );
 
 			await expect( rocketButton ).toBeHidden();
-			// await page.pause();
-			// await wpAdmin.customLogOut();
-
 		} );
 	} );
 
