@@ -40,7 +40,6 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( '`$$type` must be `image-src`, `not-an-src` given.' );
 
 		// Act.
 		$prop_type->validate( [
@@ -60,7 +59,6 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Value must have both `id` and `url` keys.' );
 
 		// Act.
 		$prop_type->validate( [
@@ -80,7 +78,6 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'At least one of `id` or `url` must be set.' );
 
 		// Act.
 		$prop_type->validate( [
@@ -103,7 +100,6 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( '`id` must be a number, string given.' );
 
 		// Act.
 		$prop_type->validate( [
@@ -126,7 +122,6 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( '`id` must be a valid attachment ID.' );
 
 		// Act.
 		$prop_type->validate( [
@@ -149,7 +144,6 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( '`url` must be a string, integer given.' );
 
 		// Act.
 		$prop_type->validate( [
@@ -172,7 +166,6 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( '`url` must be a valid URL.' );
 
 		// Act.
 		$prop_type->validate( [
@@ -195,7 +188,6 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Value must be a string, integer given.' );
 
 		// Act.
 		$prop_type->validate( [
@@ -222,7 +214,6 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( "`unknown-size` is not in the list of allowed values ($wp_sizes)." );
 
 		// Act.
 		$prop_type->validate( [

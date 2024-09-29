@@ -71,11 +71,11 @@ class Image_Prop_Type extends Transformable_Prop_Type {
 
 	protected function validate_value( $value ): void {
 		if ( isset( $value['src'] ) ) {
-			$this->internal_types['src']->validate( $value['src'] );
+			$this->internal_types['src']->validate_with_additional( $value['src'] );
 		}
 
 		if ( isset( $value['size'] ) ) {
-			$this->internal_types['size']->validate( $value['size'] );
+			$this->internal_types['size']->validate_with_additional( $value['size'] );
 		}
 	}
 }
