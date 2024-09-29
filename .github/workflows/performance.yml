@@ -14,7 +14,12 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-        
+
+      - name: Test
+        run: echo 1;
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+
       - name: Notify Slack
         uses: slackapi/slack-github-action@v1.27.0
         with:
