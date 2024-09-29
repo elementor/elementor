@@ -12,7 +12,7 @@ jobs:
     name: WP latest - PHP 7.4
     runs-on: ubuntu-latest
     env:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_PERFORMANCE_WEBHOOK_URL }}
+      SLACK_WEBHOOK_URL: 'https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX'
     steps:
       - name: Notify Slack
         uses: slackapi/slack-github-action@v1.27.0
