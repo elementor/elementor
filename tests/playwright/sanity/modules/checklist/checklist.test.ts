@@ -7,11 +7,12 @@ import { StepId } from '../../../types/checklist';
 import { newUser } from './new-user';
 
 test.describe( 'Launchpad checklist tests', () => {
-	let newTestUser;
+	let newTestUser,
+	page;
 
 	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
-		const page = await context.newPage();
+		page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
@@ -25,8 +26,8 @@ test.describe( 'Launchpad checklist tests', () => {
 	} );
 
 	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
-		const page = await browser.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await apiRequests.deleteUser( request, newTestUser.id );
 		await apiRequests.cleanUpTestPages( request, false );
@@ -341,8 +342,8 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
-	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
-		await test.step( 'Checklist visible to admin default', async () => {
+	test( 'Checklist visible only to admin ', async ( { browser, page, apiRequests }, testInfo ) => {
+		await test.step( 'Checklist visible to admin role by default', async () => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 				editor = await wpAdmin.openNewPage(),
 				rocketButton = editor.page.locator( selectors.topBarIcon ),
@@ -351,9 +352,9 @@ test.describe( 'Launchpad checklist tests', () => {
 			await expect( checklist ).toBeVisible();
 		} );
 
-		await test.step( 'Checklist not visible to author', async () => {
+		await test.step( 'Checklist not visible to author role', async () => {
 			const context = await browser.newContext( { storageState: undefined } );
-			const page = await context.newPage();
+			page = await context.newPage();
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 			await wpAdmin.customLogin( newTestUser.username, newTestUser.password );
