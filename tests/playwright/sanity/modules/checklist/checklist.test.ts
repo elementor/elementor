@@ -342,12 +342,12 @@ test.describe( 'Launchpad checklist tests', () => {
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
 	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-			editor = await wpAdmin.openNewPage(),
-			rocketButton = editor.page.locator( selectors.topBarIcon ),
-			checklist = editor.page.locator( selectors.popup );
-
 		await test.step( 'Checklist visible to admin default', async () => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+				editor = await wpAdmin.openNewPage(),
+				rocketButton = editor.page.locator( selectors.topBarIcon ),
+				checklist = editor.page.locator( selectors.popup );
+			
 			await rocketButton.click();
 			await expect( checklist ).toBeVisible();
 		} );
@@ -359,7 +359,8 @@ test.describe( 'Launchpad checklist tests', () => {
 
 			await wpAdmin.customLogin( newTestUser.username, newTestUser.password );
 
-			await wpAdmin.openNewPage( false, false );
+			const editor = await wpAdmin.openNewPage( false, false );
+			const rocketButton = editor.page.locator( selectors.topBarIcon );
 
 			await expect( rocketButton ).toBeHidden();
 		} );
