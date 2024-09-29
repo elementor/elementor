@@ -15,7 +15,7 @@ class Image_Transformer extends Transformer_Base {
 	}
 
 	public function transform( $value ) {
-		if ( isset( $value['src']['id'] ) ) {
+		if ( ! empty( $value['src']['id'] ) ) {
 			$image_src = wp_get_attachment_image_src(
 				(int) $value['src']['id'],
 				$value['size'] ?? 'full'

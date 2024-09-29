@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
+use Elementor\Core\DynamicTags\Data_Tag;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
@@ -204,8 +205,11 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'$$type' => 'image',
 					'value' => [
 						'src' => [
-							'id' => null,
-							'url' => 'https://example.com/image.jpg',
+							'$$type' => 'image-src',
+							'value' => [
+								'id' => null,
+								'url' => 'https://example.com/image.jpg',
+							],
 						],
 						'size' => 'medium',
 					],
@@ -241,8 +245,11 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'$$type' => 'image',
 					'value' => [
 						'src' => [
-							'id' => 123,
-							'url' => null,
+							'$$type' => 'image-src',
+							'value' => [
+								'id' => 123,
+								'url' => null,
+							],
 						],
 						'size' => 'medium',
 					],
@@ -270,8 +277,11 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'$$type' => 'image',
 					'value' => [
 						'src' => [
-							'id' => -1,
-							'url' => null,
+							'$$type' => 'image-src',
+							'value' => [
+								'id' => -1,
+								'url' => null,
+							],
 						],
 						'size' => 'medium',
 					],
@@ -297,8 +307,11 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'$$type' => 'image',
 					'value' => [
 						'src' => [
-							'id' => null,
-							'url' => null,
+							'$$type' => 'image-src',
+							'value' => [
+								'id' => null,
+								'url' => null,
+							],
 						],
 						'size' => 'medium',
 					],
@@ -311,6 +324,77 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertNull( $settings['image'] );
+	}
+
+	public function test_get_atomic_settings__transforms_image_prop_recursively__dynamic_src() {
+		// Arrange.
+		add_filter( 'wp_get_attachment_image_src', function() {
+			return [
+				'https://example.com/image.jpg',
+				100,
+				200,
+			];
+		} );
+
+		$dynamic_tag = new class extends Data_Tag {
+			public function get_name() {
+				return 'test-image-dynamic';
+			}
+
+			public function get_title() {
+				return 'Test Image Dynamic';
+			}
+
+			public function get_categories() {
+				return [
+					'image',
+				];
+			}
+
+			public function get_group() {
+				return 'basic';
+			}
+
+			protected function get_value( array $options = [] ) {
+				return [
+					'id' => 123,
+					'url' => null,
+				];
+			}
+		};
+
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'image' => Image_Prop_Type::make(),
+			],
+			'settings' => [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'$$type' => 'dynamic',
+							'value' => [
+								'name' => 'test-image-dynamic',
+							],
+						],
+						'size' => 'medium',
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertSame( 'https://example.com/image.jpg', $settings['image']['src'] );
+		$this->assertSame( 100, $settings['image']['width'] );
+		$this->assertSame( 200, $settings['image']['height'] );
+
+		// Cleanup.
+		Plugin::$instance->dynamic_tags->unregister( 'test-image-dynamic' );
 	}
 
 	public function test_get_props_schema__is_serializable() {

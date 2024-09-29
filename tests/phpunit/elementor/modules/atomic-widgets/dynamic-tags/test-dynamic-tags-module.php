@@ -5,7 +5,7 @@ use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
@@ -374,8 +374,8 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				[ V1DynamicTags::NUMBER_CATEGORY ],
 			],
 
-			'image' => [
-				Image_Prop_Type::make()->default( [ 'url' => 'test' ] ),
+			'image-src' => [
+				Image_Src_Prop_Type::make(),
 				[ V1DynamicTags::IMAGE_CATEGORY ],
 			],
 
