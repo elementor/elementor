@@ -124,6 +124,7 @@ class Modules_Manager {
 			'atomic-widgets',
 			'wc-product-editor',
 			'checklist',
+			'optimization-detective',
 		];
 	}
 

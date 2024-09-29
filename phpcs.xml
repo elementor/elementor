@@ -12,6 +12,7 @@
 	<exclude-pattern>node_modules/</exclude-pattern>
 	<exclude-pattern>includes/libraries/</exclude-pattern>
 	<exclude-pattern>tests/*.php</exclude-pattern>
+	<exclude-pattern>modules/optimization-detective/plugins/</exclude-pattern>
 
 	<rule ref="WordPress-Extra">
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />
