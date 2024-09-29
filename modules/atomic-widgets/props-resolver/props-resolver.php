@@ -93,6 +93,10 @@ class Props_Resolver {
 			return null;
 		}
 
+		if ( isset( $value['disabled'] ) && true === $value['disabled'] ) {
+			return null;
+		}
+
 		// Transform nested transformable values recursively.
 		if ( is_array( $value['value'] ) ) {
 			$value['value'] = array_map(
