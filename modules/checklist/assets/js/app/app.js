@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 const App = () => {
 	const isRTL = elementorCommon.config.isRTL,
-		{ error: stepsError, data: steps, refetch: refetchStatus } = useQuery( {
+		{ error: stepsError, data: steps, refetch: refetchSteps } = useQuery( {
 			queryKey: [ 'steps' ],
 			queryFn: fetchSteps,
 			gcTime: 0,
@@ -21,7 +21,7 @@ const App = () => {
 		} );
 
 	const fetchData = () => {
-		refetchStatus();
+		refetchSteps();
 		refetchUserProgress();
 	};
 
