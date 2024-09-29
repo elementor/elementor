@@ -27,4 +27,4 @@ jobs:
               "run_id": "${{ github.run_id }}"
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.TESTIM_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_PERFORMANCE_WEBHOOK_URL }}
