@@ -272,9 +272,9 @@ export default class ApiRequests {
 				'X-WP-Nonce': this.nonce,
 			},
 			multipart: {
-				username: username,
-				email: email,
-				password: password,
+				username,
+				email,
+				password,
 				roles: [ ...roles ],
 			},
 		} );
