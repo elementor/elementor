@@ -11,11 +11,9 @@ jobs:
   performance:
     name: WP latest - PHP 7.4
     runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_PERFORMANCE_WEBHOOK_URL }}
     steps:
-      - name: Echo
-        run: echo 1;
-        env:
-          TESTIM_TOKEN: ${{ secrets.TESTIM_TOKEN }}
       - name: Notify Slack
         uses: slackapi/slack-github-action@v1.27.0
         with:
@@ -27,4 +25,4 @@ jobs:
               "run_id": "${{ github.run_id }}"
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_PERFORMANCE_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
