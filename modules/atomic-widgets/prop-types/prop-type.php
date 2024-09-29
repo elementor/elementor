@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Core\Utils\Collection;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -22,6 +24,34 @@ abstract class Prop_Type implements \JsonSerializable {
 	abstract public static function get_key(): string;
 
 	abstract public function validate( $value ): void;
+
+	public function validate_with_additional( $value ): void {
+		$validators = $this->get_validators();
+
+		$is_value_valid = $validators->some( fn( $validator ) => $validator( $value ) );
+
+		if ( ! $is_value_valid ) {
+			throw new \Exception( 'Value is not valid.' );
+		}
+	}
+
+	private function get_validators(): Collection {
+		return Collection::make( [ $this ] )
+			->push( ...$this->get_additional_types() )
+			->map( fn( Prop_Type $type ) => $this->wrap_validator( $type ) );
+	}
+
+	private function wrap_validator( Prop_Type $prop_type ): callable {
+		return function ( $value ) use ( $prop_type ) {
+			try {
+				$prop_type->validate( $value );
+			} catch ( \Exception $e ) {
+				return false;
+			}
+
+			return true;
+		};
+	}
 
 	/**
 	 * @return $this
