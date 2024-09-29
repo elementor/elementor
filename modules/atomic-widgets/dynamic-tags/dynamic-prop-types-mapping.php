@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
@@ -51,7 +51,7 @@ class Dynamic_Prop_Types_Mapping {
 			return;
 		}
 
-		if ( $prop_type instanceof Image_Prop_Type ) {
+		if ( $prop_type instanceof Image_Src_Prop_Type ) {
 			$prop_type->additional_type(
 				Dynamic_Prop_Type::make()->categories( [ V1_Dynamic_Tags_Module::IMAGE_CATEGORY ] )
 			);
