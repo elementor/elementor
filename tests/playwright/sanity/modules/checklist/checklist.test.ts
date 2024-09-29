@@ -344,7 +344,7 @@ test.describe( 'Launchpad checklist tests', () => {
 	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
 		await test.step( 'Checklist visible to admin role by default', async () => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-				editor = await wpAdmin.openNewPage(),
+				editor = await wpAdmin.openNewPage( false, false ),
 				rocketButton = editor.page.locator( selectors.topBarIcon ),
 				checklist = editor.page.locator( selectors.popup );
 			await rocketButton.click();

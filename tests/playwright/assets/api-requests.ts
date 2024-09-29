@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { type APIRequestContext } from '@playwright/test';
-import { Image, Post, WpPage } from '../types/types';
+import { Image, Post, WpPage, User } from '../types/types';
 
 export default class ApiRequests {
 	private readonly nonce: string;
@@ -259,7 +259,7 @@ export default class ApiRequests {
 		return response;
 	}
 
-	public async createNewUser( request: APIRequestContext, user ) {
+	public async createNewUser( request: APIRequestContext, user: User ) {
 		const username = `${ user.username }${ Math.floor( Math.random() * 1000 ) }`,
 			email = user.email || username + '@example.com',
 			password = user.password || 'password',
@@ -272,10 +272,10 @@ export default class ApiRequests {
 				'X-WP-Nonce': this.nonce,
 			},
 			multipart: {
-				username,
-				email,
-				password,
-				roles,
+				username: username,
+				email: email,
+				password: password,
+				roles: [ ...roles ],
 			},
 		} );
 
