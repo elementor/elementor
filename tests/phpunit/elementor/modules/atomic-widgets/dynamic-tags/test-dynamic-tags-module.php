@@ -5,10 +5,11 @@ use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transformable_Prop_Type;
 use Elementor\Modules\DynamicTags\Module as V1DynamicTags;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -339,6 +340,33 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 		$this->assertEquals( $expected, $prop->get_additional_types() );
 	}
 
+	public function test_add_dynamic_prop_type__adds_recursively_to_internal_types() {
+		// Act.
+		$prop = new class extends Transformable_Prop_Type {
+			public function __construct() {
+				$this->internal_types['internal'] = String_Prop_Type::make()->default( 'test' );
+			}
+
+			public static function get_key(): string {
+				return 'test';
+			}
+
+			protected function validate_value( $value ): void {}
+		};
+
+		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
+			'prop' => $prop,
+		] );
+
+		// Assert.
+		$this->assertSame( [ 'prop' => $prop ], $schema );
+		$this->assertEquals( [], $prop->get_additional_types() );
+
+		$this->assertEquals( [
+			Dynamic_Prop_Type::make()->categories( [ V1DynamicTags::TEXT_CATEGORY ] ),
+		], $prop->get_internal_types()['internal']->get_additional_types() );
+	}
+
 	public function add_dynamic_prop_type_data_provider() {
 		return [
 			'number' => [
@@ -346,8 +374,8 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				[ V1DynamicTags::NUMBER_CATEGORY ],
 			],
 
-			'image' => [
-				Image_Prop_Type::make()->default( [ 'url' => 'test' ] ),
+			'image-src' => [
+				Image_Src_Prop_Type::make(),
 				[ V1DynamicTags::IMAGE_CATEGORY ],
 			],
 
