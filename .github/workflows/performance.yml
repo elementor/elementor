@@ -12,6 +12,9 @@ jobs:
     name: WP latest - PHP 7.4
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        
       - name: Notify Slack
         uses: slackapi/slack-github-action@v1.27.0
         with:
