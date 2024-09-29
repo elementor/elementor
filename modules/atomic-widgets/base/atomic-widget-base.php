@@ -137,12 +137,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			if ( ! ( $prop instanceof Prop_Type ) ) {
 				Utils::safe_throw( "Prop `$key` must be an instance of `Prop_Type` in `{$widget_name}`." );
 			}
-
-			try {
-				$prop->validate( $prop->get_default() );
-			} catch ( \Exception $e ) {
-				Utils::safe_throw( "Default value for `$key` prop is invalid in `{$widget_name}` - {$e->getMessage()}" );
-			}
 		}
 	}
 

@@ -33,7 +33,7 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 		return $this->settings['categories'] ?? [];
 	}
 
-	public function validate_value( $value ): void {
+	protected function validate_value( $value ): void {
 		if ( ! isset( $value['name'] ) ) {
 			throw new \Exception( 'Property `name` is required' );
 		}
