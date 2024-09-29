@@ -123,7 +123,6 @@ class Editor {
 		// End BC.
 
 		Loading_Inspection_Manager::instance()->register_inspections();
-		Checklist_Module::increment_editor_visit_count();
 
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
