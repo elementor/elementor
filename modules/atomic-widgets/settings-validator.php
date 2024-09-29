@@ -41,11 +41,9 @@ class Settings_Validator {
 				continue;
 			}
 
-			$validators = $this->get_validators( $prop_type );
-
-			$is_value_valid = $validators->some( fn( $validator ) => $validator( $value ) );
-
-			if ( ! $is_value_valid ) {
+			try {
+				$prop_type->validate_with_additional( $value );
+			} catch ( \Exception $e ) {
 				$errors[] = $key;
 				continue;
 			}
@@ -60,23 +58,5 @@ class Settings_Validator {
 			$validated,
 			$errors,
 		];
-	}
-
-	private function get_validators( Prop_Type $prop_type ): Collection {
-		return Collection::make( [ $prop_type ] )
-			->push( ...$prop_type->get_additional_types() )
-			->map( fn( Prop_Type $type ) => $this->wrap_validator( $type ) );
-	}
-
-	private function wrap_validator( Prop_Type $prop_type ): callable {
-		return function ( $value ) use ( $prop_type ) {
-			try {
-				$prop_type->validate( $value );
-			} catch ( \Exception $e ) {
-				return false;
-			}
-
-			return true;
-		};
 	}
 }
