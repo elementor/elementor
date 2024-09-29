@@ -347,7 +347,6 @@ test.describe( 'Launchpad checklist tests', () => {
 				editor = await wpAdmin.openNewPage(),
 				rocketButton = editor.page.locator( selectors.topBarIcon ),
 				checklist = editor.page.locator( selectors.popup );
-			
 			await rocketButton.click();
 			await expect( checklist ).toBeVisible();
 		} );
