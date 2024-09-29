@@ -64,7 +64,14 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 			<CardContent>
 				<Typography variant="body2" color="text.secondary" component="p">
 					{ description + ' ' }
-					<Link href={ learnMoreUrl } target="_blank" rel="noreferrer" underline="hover" color="info.main"> { learnMoreText } </Link>
+					<Link
+						href={ learnMoreUrl }
+						target="_blank"
+						rel="noreferrer"
+						underline="hover"
+						color="info.main"
+						noWrap={ true }
+					>{ learnMoreText }</Link>
 				</Typography>
 			</CardContent>
 			<CardActions>
