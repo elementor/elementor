@@ -7,6 +7,14 @@ export type Image = {
     filePath?: string
 }
 
+export type User = {
+	id?: string,
+	username: string,
+	password: string,
+	email: string,
+	roles?: string[],
+}
+
 export type LinkOptions = {
     targetBlank?: boolean,
     noFollow?: boolean,
