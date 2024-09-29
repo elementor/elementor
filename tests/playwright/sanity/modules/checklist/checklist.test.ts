@@ -13,11 +13,13 @@ test.describe( 'Launchpad checklist tests', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			editor_v2: true,
 			'launchpad-checklist': true,
 		} );
+		await checklistHelper.resetStepsInDb( request, { editor_visit_count: 0 } );
 
 		newTestUser = await apiRequests.createNewUser( request, newUser );
 
@@ -34,6 +36,21 @@ test.describe( 'Launchpad checklist tests', () => {
 		await wpAdmin.resetExperiments();
 
 		await page.close();
+	} );
+
+	test( 'Checklist automatically opens on the 2nd visit to the editor', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		expect( await checklistHelper.isChecklistOpen( 'editor' ) ).toBeFalsy();
+
+		await page.reload();
+		await page.locator( selectors.popup ).waitFor();
+
+		expect( await checklistHelper.isChecklistOpen( 'editor' ) ).toBeTruthy();
 	} );
 
 	test( 'Checklist module general test', async ( { page, apiRequests }, testInfo ) => {
