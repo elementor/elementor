@@ -9,7 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Image_Sizes {
 
 	public static function get_keys() {
-		return array_keys( static::get_wp_image_sizes() );
+		return array_map(
+			fn( $size ) => $size['value'],
+			static::get_all()
+		);
 	}
 
 	public static function get_all(): array {
