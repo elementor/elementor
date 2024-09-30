@@ -1,4 +1,4 @@
-const stepIds = [ 'create_pages', 'setup_header' ] as const;
+const stepIds = [ 'add_logo', 'set_fonts_and_colors', 'create_pages', 'setup_header', 'assign_homepage' ] as const;
 export type StepId = typeof stepIds[ number ];
 
 export const immutableStepIds: StepId[] = [ 'create_pages' ] as const;
