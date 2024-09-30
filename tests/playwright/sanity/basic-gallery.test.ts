@@ -77,7 +77,7 @@ test( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRequest
 
 	await editor.publishPage();
 
-	await breakpoints.setBreakpoint( editor, 'mobile', viewportSize.mobile.width );
+	await breakpoints.setBreakpoint( editor, 'mobile', viewportSize.mobile.width - 50 );
 
 	// Act.
 	await editor.viewPage();
