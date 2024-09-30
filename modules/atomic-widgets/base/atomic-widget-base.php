@@ -5,6 +5,8 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Settings_Validator;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Styles_Validator;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
@@ -96,6 +98,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 		$data['version'] = $this->version;
 		$data['settings'] = $this->sanitize_atomic_settings( $data['settings'] );
+		$data['styles'] = $this->sanitize_atomic_styles( $data['styles'] );
 
 		return $data;
 	}
@@ -138,6 +141,18 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 				Utils::safe_throw( "Prop `$key` must be an instance of `Prop_Type` in `{$widget_name}`." );
 			}
 		}
+	}
+
+	private function sanitize_atomic_styles( array $styles ) {
+		$schema = Style_Schema::get();
+
+		[ , $validated, $errors ] = Styles_Validator::make( $schema )->validate( $styles );
+
+		if ( ! empty( $errors ) ) {
+			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
+		}
+
+		return $validated;
 	}
 
 	private function sanitize_atomic_settings( array $settings ): array {

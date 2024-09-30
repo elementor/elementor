@@ -40,9 +40,6 @@ class Atomic_Styles {
 	private function register_style_transformers( array $transformers ): array {
 		array_push(
 			$transformers,
-			new Size_Transformer(),
-			new Array_Transformer(),
-			new Linked_Dimensions_Transformer()
 		);
 
 		return $transformers;
