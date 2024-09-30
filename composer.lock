@@ -8,6 +8,79 @@
     "packages": [],
     "packages-dev": [
         {
+            "name": "composer/package-versions-deprecated",
+            "version": "1.11.99.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/package-versions-deprecated.git",
+                "reference": "b4f54f74ef3453349c24a845d22392cd31e65f1d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/package-versions-deprecated/zipball/b4f54f74ef3453349c24a845d22392cd31e65f1d",
+                "reference": "b4f54f74ef3453349c24a845d22392cd31e65f1d",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.1.0 || ^2.0",
+                "php": "^7 || ^8"
+            },
+            "replace": {
+                "ocramius/package-versions": "1.11.99"
+            },
+            "require-dev": {
+                "composer/composer": "^1.9.3 || ^2.0@dev",
+                "ext-zip": "^1.13",
+                "phpunit/phpunit": "^6.5 || ^7"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "PackageVersions\\Installer",
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PackageVersions\\": "src/PackageVersions"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com"
+                },
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be"
+                }
+            ],
+            "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
+            "support": {
+                "issues": "https://github.com/composer/package-versions-deprecated/issues",
+                "source": "https://github.com/composer/package-versions-deprecated/tree/1.11.99.5"
+            },
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/composer",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-01-17T14:14:24+00:00"
+        },
+        {
             "name": "dealerdirect/phpcodesniffer-composer-installer",
             "version": "v0.7.2",
             "source": {
@@ -495,6 +568,179 @@
             "time": "2022-02-21T01:04:05+00:00"
         },
         {
+            "name": "php-di/invoker",
+            "version": "2.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHP-DI/Invoker.git",
+                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/33234b32dafa8eb69202f950a1fc92055ed76a86",
+                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.3",
+                "psr/container": "^1.0|^2.0"
+            },
+            "require-dev": {
+                "athletic/athletic": "~0.1.8",
+                "mnapoli/hard-mode": "~0.3.0",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Invoker\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Generic and extensible callable invoker",
+            "homepage": "https://github.com/PHP-DI/Invoker",
+            "keywords": [
+                "callable",
+                "dependency",
+                "dependency-injection",
+                "injection",
+                "invoke",
+                "invoker"
+            ],
+            "support": {
+                "issues": "https://github.com/PHP-DI/Invoker/issues",
+                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.4"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/mnapoli",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-09-08T09:24:21+00:00"
+        },
+        {
+            "name": "php-di/php-di",
+            "version": "6.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHP-DI/PHP-DI.git",
+                "reference": "ae0f1b3b03d8b29dff81747063cbfd6276246cc4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHP-DI/PHP-DI/zipball/ae0f1b3b03d8b29dff81747063cbfd6276246cc4",
+                "reference": "ae0f1b3b03d8b29dff81747063cbfd6276246cc4",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/serializable-closure": "^1.0",
+                "php": ">=7.4.0",
+                "php-di/invoker": "^2.0",
+                "php-di/phpdoc-reader": "^2.0.1",
+                "psr/container": "^1.0"
+            },
+            "provide": {
+                "psr/container-implementation": "^1.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "~1.10",
+                "friendsofphp/php-cs-fixer": "^2.4",
+                "mnapoli/phpunit-easymock": "^1.2",
+                "ocramius/proxy-manager": "^2.11.2",
+                "phpstan/phpstan": "^0.12",
+                "phpunit/phpunit": "^9.5"
+            },
+            "suggest": {
+                "doctrine/annotations": "Install it if you want to use annotations (version ~1.2)",
+                "ocramius/proxy-manager": "Install it if you want to use lazy injection (version ~2.0)"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "DI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The dependency injection container for humans",
+            "homepage": "https://php-di.org/",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interop",
+                "dependency injection",
+                "di",
+                "ioc",
+                "psr11"
+            ],
+            "support": {
+                "issues": "https://github.com/PHP-DI/PHP-DI/issues",
+                "source": "https://github.com/PHP-DI/PHP-DI/tree/6.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/mnapoli",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/php-di/php-di",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-04-09T16:46:38+00:00"
+        },
+        {
+            "name": "php-di/phpdoc-reader",
+            "version": "2.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHP-DI/PhpDocReader.git",
+                "reference": "66daff34cbd2627740ffec9469ffbac9f8c8185c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHP-DI/PhpDocReader/zipball/66daff34cbd2627740ffec9469ffbac9f8c8185c",
+                "reference": "66daff34cbd2627740ffec9469ffbac9f8c8185c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "require-dev": {
+                "mnapoli/hard-mode": "~0.3.0",
+                "phpunit/phpunit": "^8.5|^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpDocReader\\": "src/PhpDocReader"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PhpDocReader parses @var and @param values in PHP docblocks (supports namespaced class names with the same resolution rules as PHP)",
+            "keywords": [
+                "phpdoc",
+                "reflection"
+            ],
+            "support": {
+                "issues": "https://github.com/PHP-DI/PhpDocReader/issues",
+                "source": "https://github.com/PHP-DI/PhpDocReader/tree/2.2.1"
+            },
+            "time": "2020-10-12T12:39:22+00:00"
+        },
+        {
             "name": "phpunit/php-code-coverage",
             "version": "9.2.32",
             "source": {
@@ -963,6 +1209,56 @@
                 "source": "https://github.com/php-fig/container/tree/1.1.2"
             },
             "time": "2021-11-05T16:50:12+00:00"
+        },
+        {
+            "name": "psr/event-dispatcher",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/event-dispatcher.git",
+                "reference": "dbefd12671e8a14ec7f180cab83036ed26714bb0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/event-dispatcher/zipball/dbefd12671e8a14ec7f180cab83036ed26714bb0",
+                "reference": "dbefd12671e8a14ec7f180cab83036ed26714bb0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\EventDispatcher\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Standard interfaces for event handling.",
+            "keywords": [
+                "events",
+                "psr",
+                "psr-14"
+            ],
+            "support": {
+                "issues": "https://github.com/php-fig/event-dispatcher/issues",
+                "source": "https://github.com/php-fig/event-dispatcher/tree/1.0.0"
+            },
+            "time": "2019-01-08T18:20:26+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -2588,7 +2884,7 @@
                     "bootstrap.php"
                 ],
                 "psr-4": {
-                    "Symfony\\Polyfill\\Php73\\": ""
+                    "Symfony\\Polyfill\\Php80\\": ""
                 },
                 "classmap": [
                     "Resources/stubs"
@@ -2600,6 +2896,10 @@
             ],
             "authors": [
                 {
+                    "name": "Ion Bazan",
+                    "email": "ion.bazan@gmail.com"
+                },
+                {
                     "name": "Nicolas Grekas",
                     "email": "p@tchwork.com"
                 },
@@ -2608,7 +2908,7 @@
                     "homepage": "https://symfony.com/contributors"
                 }
             ],
-            "description": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
+            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
             "homepage": "https://symfony.com",
             "keywords": [
                 "compatibility",
@@ -2664,7 +2964,7 @@
                     "bootstrap.php"
                 ],
                 "psr-4": {
-                    "Symfony\\Polyfill\\Php80\\": ""
+                    "Symfony\\Polyfill\\Php81\\": ""
                 },
                 "classmap": [
                     "Resources/stubs"
@@ -2676,10 +2976,6 @@
             ],
             "authors": [
                 {
-                    "name": "Ion Bazan",
-                    "email": "ion.bazan@gmail.com"
-                },
-                {
                     "name": "Nicolas Grekas",
                     "email": "p@tchwork.com"
                 },
@@ -2688,7 +2984,7 @@
                     "homepage": "https://symfony.com/contributors"
                 }
             ],
-            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
+            "description": "Symfony polyfill backporting some PHP 8.1+ features to lower PHP versions",
             "homepage": "https://symfony.com",
             "keywords": [
                 "compatibility",
@@ -3333,6 +3629,64 @@
                 "source": "https://github.com/thor-juhasz/phpunit-coverage-check/tree/v0.3.0"
             },
             "time": "2021-07-04T22:21:33+00:00"
+        },
+        {
+            "name": "webmozart/assert",
+            "version": "1.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozarts/assert.git",
+                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/11cb2199493b2f8a3b53e7f19068fc6aac760991",
+                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "php": "^7.2 || ^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan": "<0.12.20",
+                "vimeo/psalm": "<4.6.1 || 4.6.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.5.13"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.10-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webmozart\\Assert\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                }
+            ],
+            "description": "Assertions to validate method input/output with nice error messages.",
+            "keywords": [
+                "assert",
+                "check",
+                "validate"
+            ],
+            "support": {
+                "issues": "https://github.com/webmozarts/assert/issues",
+                "source": "https://github.com/webmozarts/assert/tree/1.11.0"
+            },
+            "time": "2022-06-03T18:03:27+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",
