@@ -6,7 +6,6 @@ import environment from 'elementor-common/utils/environment';
  */
 class AddSectionBase extends Marionette.ItemView {
 	static IS_CONTAINER_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container;
-	static IS_CONTAINER_GRID_ACTIVE = ! ! elementorCommon.config.experimentalFeatures.container_grid;
 
 	// Views.
 	static VIEW_CHOOSE_ACTION = 'choose-action';
@@ -20,7 +19,7 @@ class AddSectionBase extends Marionette.ItemView {
 	}
 
 	static getSelectTypePreset() {
-		return AddSectionBase.IS_CONTAINER_GRID_ACTIVE
+		return AddSectionBase.IS_CONTAINER_ACTIVE
 			? 'select-type'
 			: 'select-container-preset';
 	}

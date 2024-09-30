@@ -1,5 +1,12 @@
+const stepIds = [ 'create_pages', 'setup_header' ] as const;
+export type StepId = typeof stepIds[ number ];
+
+export const immutableStepIds: StepId[] = [ 'create_pages' ] as const;
+
+export const proStepIds: StepId[] = [ 'setup_header' ] as const;
+
 export type StepConfig = {
-	id: string,
+	id: StepId,
 	title: string,
 	description: string,
 	learn_more_text: string,
@@ -11,8 +18,10 @@ export type StepConfig = {
 	required_license: string,
 	promotion_url: string,
 };
+
 export type Step = {
 	is_marked_completed: boolean,
-	is_completed: boolean,
+	is_absolute_completed: boolean,
+	is_immutable_completed: boolean,
 	config: StepConfig,
 };

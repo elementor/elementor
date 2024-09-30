@@ -669,6 +669,10 @@ class Manager {
 			'direct_import_template',
 		];
 
+		if ( 'direct_import_template' === $action && ! User::is_current_user_can_upload_json() ) {
+			return;
+		}
+
 		if ( in_array( $action, $whitelist_methods, true ) ) {
 			$result = $this->$action( $_REQUEST ); // phpcs:ignore -- Nonce already verified.
 		} else {

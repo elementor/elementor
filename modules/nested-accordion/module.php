@@ -44,7 +44,7 @@ class Module extends BaseModule {
 		wp_register_style(
 			'widget-nested-accordion',
 			$this->get_css_assets_url( 'widget-nested-accordion', null, true, true ),
-			[],
+			[ 'elementor-frontend' ],
 			ELEMENTOR_VERSION
 		);
 	}

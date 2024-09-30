@@ -2,12 +2,18 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
+use Elementor\Core\DynamicTags\Data_Tag;
+use Elementor\Core\DynamicTags\Tag;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
-use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
-use Elementor\Modules\AtomicWidgets\Schema\Constraints\Enum;
+use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,16 +22,166 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
-	public function test_get_atomic_settings__returns_the_saved_value() {
+	/**
+	 * @dataProvider get_atomic_settings_data_provider
+	 */
+	public function test_get_atomic_settings( $args, $arrange_cb = null ) {
+		// Arrange.
+		$cleanup = $arrange_cb ? $arrange_cb() : fn() => null;
+
+		$widget = $this->make_mock_widget( [
+			'props_schema' => $args['prop_types'],
+			'settings' => $args['settings'],
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertSame( $args['result'], $settings );
+
+		$cleanup();
+	}
+
+	public function get_atomic_settings_data_provider() {
+		return [
+			'basic' => [
+				'args' => [
+					'prop_types' => [
+						'text' => String_Prop_Type::make()->default( 'The greatest text' ),
+						'tag' => String_Prop_Type::make()->default( 'h2' ),
+					],
+					'settings' => [
+						'text' => 'This text is more great than the greatest text',
+						'invalid_prop' => 'This prop is not in the schema',
+					],
+					'result' => [
+						'text' => 'This text is more great than the greatest text',
+						'tag' => 'h2',
+					],
+				]
+			],
+			'cannot transform value' => [
+				'args' => [
+					'prop_types' => [
+						'text' => String_Prop_Type::make()->default( 'Not transformable' ),
+					],
+					'settings' => [
+						'text' => [
+							'$$type' => 'not_transformable',
+							'value' => 'Not transformable',
+						],
+					],
+					'result' => [
+						'text' => null,
+					],
+				]
+			],
+			'transform classes' => [
+				'args' => [
+					'prop_types' => [
+						'classes' => Classes_Prop_Type::make()->default( [] ),
+						'inner_classes' => Classes_Prop_Type::make()->default( [] ),
+						'outer_classes' => Classes_Prop_Type::make()->default( [] ),
+					],
+					'settings' => [
+						'classes' => [
+							'$$type' => 'classes',
+							'value' => [ 'one', 'two', 'three' ],
+						],
+						'outer_classes' => [
+							'$$type' => 'classes',
+							'value' => 111, // Invalid value for classes
+						],
+					],
+					'result' => [
+						'classes' => 'one two three',
+						'inner_classes' => '',
+						'outer_classes' => null,
+					],
+				],
+			],
+			'transform dynamic' => [
+				'args' => [
+					'prop_types' => [
+						'text' => String_Prop_Type::make()->default( 'Cool cool cool' ),
+						'text_2' => String_Prop_Type::make(),
+						'invalid_name' => String_Prop_Type::make(),
+						'invalid_settings' => String_Prop_Type::make(),
+					],
+					'settings' => [
+						'text' => [
+							'$$type' => 'dynamic',
+							'value' => [
+								'name' => 'dynamic-tag',
+								'settings' => [
+									'before' => 'Before text - '
+								],
+							],
+						],
+						'text_2' => [
+							'$$type' => 'dynamic',
+							'value' => [
+								'name' => 'not-exist-dynamic-tag',
+								'settings' => []
+							],
+						],
+						'invalid_name' => [
+							'$$type' => 'dynamic',
+							'value' => [
+								'name' => 123,
+								'settings' => []
+							],
+						],
+						'invalid_settings' => [
+							'$$type' => 'dynamic',
+							'value' => [
+								'name' => 'dynamic-tag',
+								'settings' => 'Invalid Before - ',
+							],
+						],
+					],
+					'result' => [
+						'text' => 'Before text - Dynamic tag content',
+						'text_2' => null,
+						'invalid_name' => null,
+						'invalid_settings' => null,
+					],
+				],
+				'arrange_cb' => function() {
+					Plugin::$instance->dynamic_tags->register(
+						new class() extends Tag {
+							public function get_name() { return 'dynamic-tag'; }
+							public function get_group() { return 'dynamic'; }
+							public function get_categories() { return [ 'text' ]; }
+							public function get_title() { return 'Dynamic Tag'; }
+							public function get_content( array $options = [] ) {
+								$settings = $this->get_settings();
+
+								return "{$settings['before']}Dynamic tag content";
+							}
+						}
+					);
+
+					return fn() => Plugin::$instance->dynamic_tags->unregister( 'dynamic-tag' );
+				},
+			]
+		];
+	}
+
+	public function test_get_atomic_settings__transforms_image_prop_recursively__default() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'test_prop' => Atomic_Prop::make()
-					->string()
-					->default( 'default-value' ),
+				'image' => Image_Prop_Type::make()->default_url( 'https://example.com/default-image.jpg' ),
 			],
 			'settings' => [
-				'test_prop' => 'saved-value',
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'size' => 'medium',
+					],
+				],
 			],
 		] );
 
@@ -34,41 +190,30 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [
-			'test_prop' => 'saved-value',
-		], $settings );
+			'src' => 'https://example.com/default-image.jpg',
+		], $settings['image'] );
 	}
 
-	public function test_get_atomic_settings__returns_the_default_value() {
+	public function test_get_atomic_settings__transforms_image_prop_recursively__only_url() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'test_prop' => Atomic_Prop::make()
-					->string()
-					->default( 'default-value-a' ),
-			],
-			'settings' => [],
-		] );
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertSame( [
-			'test_prop' => 'default-value-a',
-		], $settings );
-	}
-
-	public function test_get_atomic_settings__returns_only_settings_that_are_defined_in_the_schema() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'test_prop' => Atomic_Prop::make()
-					->string()
-					->default( 'default-value-a' ),
+				'image' => Image_Prop_Type::make(),
 			],
 			'settings' => [
-				'test_prop' => 'saved-value',
-				'not_in_schema' => 'not-in-schema',
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'$$type' => 'image-src',
+							'value' => [
+								'id' => null,
+								'url' => 'https://example.com/image.jpg',
+							],
+						],
+						'size' => 'medium',
+					],
+				],
 			],
 		] );
 
@@ -77,121 +222,201 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [
-			'test_prop' => 'saved-value',
-		], $settings );
+			'src' => 'https://example.com/image.jpg',
+		], $settings['image'] );
 	}
 
-	public function test_get_atomic_settings__transforms_classes_prop() {
+	public function test_get_atomic_settings__transforms_image_prop_recursively__only_id() {
 		// Arrange.
-		$widget = $this->make_mock_widget(
-			[
-				'props_schema' => [
-					'should_transform' => Atomic_Prop::make()
-						->type( 'classes' )
-						->default( [] ),
-				],
-				'settings' => [
-					'should_transform' => [
-						'$$type' => 'classes',
-						'value' => [ 'one', 'two', 'three' ],
+		add_filter( 'wp_get_attachment_image_src', function() {
+			return [
+				'https://example.com/image.jpg',
+				100,
+				200,
+			];
+		} );
+
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'image' => Image_Prop_Type::make(),
+			],
+			'settings' => [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'$$type' => 'image-src',
+							'value' => [
+								'id' => 123,
+								'url' => null,
+							],
+						],
+						'size' => 'medium',
 					],
 				],
 			],
-		);
+		] );
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
 
 		// Assert.
-		$this->assertSame( [
-			'should_transform' => 'one two three',
-		], $settings );
+		$this->assertSame( 'https://example.com/image.jpg', $settings['image']['src'] );
+		$this->assertSame( 100, $settings['image']['width'] );
+		$this->assertSame( 200, $settings['image']['height'] );
 	}
 
-	public function test_get_atomic_settings__returns_empty_string_when_classes_prop_value_is_not_an_array() {
+	public function test_get_atomic_settings__transforms_image_prop_recursively__invalid_id() {
 		// Arrange.
-		$widget = $this->make_mock_widget(
-			[
-				'props_schema' => [
-					'classes' => Atomic_Prop::make()
-						->type( 'classes' )
-						->default( [] ),
-				],
-				'settings' => [
-					'classes' => [
-						'$$type' => 'classes',
-						'value' => 'not-an-array',
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'image' => Image_Prop_Type::make(),
+			],
+			'settings' => [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'$$type' => 'image-src',
+							'value' => [
+								'id' => -1,
+								'url' => null,
+							],
+						],
+						'size' => 'medium',
 					],
 				],
 			],
-		);
+		] );
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
 
 		// Assert.
-		$this->assertSame( [
-			'classes' => '',
-		], $settings );
+		$this->assertNull( $settings['image'] );
 	}
 
-	public function test_get_atomic_settings__skip_the_value_transformation_when_it_is_not_transformable() {
+	public function test_get_atomic_settings__transforms_image_prop_recursively__no_id_or_url() {
 		// Arrange.
-		$widget = $this->make_mock_widget(
-			[
-				'props_schema' => [
-					'invalid_transformable_setting_1' => Atomic_Prop::make()->string()->default( '' ),
-					'invalid_transformable_setting_2' => Atomic_Prop::make()->string()->default( '' ),
-				],
-				'settings' => [
-					'invalid_transformable_setting_1' => [
-						'$$type' => 'type',
-					],
-					'invalid_transformable_setting_2' => [
-						'$$type' => [],
-						'value' => [],
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'image' => Image_Prop_Type::make(),
+			],
+			'settings' => [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'$$type' => 'image-src',
+							'value' => [
+								'id' => null,
+								'url' => null,
+							],
+						],
+						'size' => 'medium',
 					],
 				],
 			],
-		);
+		] );
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
 
 		// Assert.
-		$this->assertSame( [
-			'invalid_transformable_setting_1' => [
-				'$$type' => 'type',
+		$this->assertNull( $settings['image'] );
+	}
+
+	public function test_get_atomic_settings__transforms_image_prop_recursively__dynamic_src() {
+		// Arrange.
+		add_filter( 'wp_get_attachment_image_src', function() {
+			return [
+				'https://example.com/image.jpg',
+				100,
+				200,
+			];
+		} );
+
+		$dynamic_tag = new class extends Data_Tag {
+			public function get_name() {
+				return 'test-image-dynamic';
+			}
+
+			public function get_title() {
+				return 'Test Image Dynamic';
+			}
+
+			public function get_categories() {
+				return [
+					'image',
+				];
+			}
+
+			public function get_group() {
+				return 'basic';
+			}
+
+			protected function get_value( array $options = [] ) {
+				return [
+					'id' => 123,
+					'url' => null,
+				];
+			}
+		};
+
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'image' => Image_Prop_Type::make(),
 			],
-			'invalid_transformable_setting_2' => [
-				'$$type' => [],
-				'value' => [],
+			'settings' => [
+				'image' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'$$type' => 'dynamic',
+							'value' => [
+								'name' => 'test-image-dynamic',
+							],
+						],
+						'size' => 'medium',
+					],
+				],
 			],
-		], $settings );
+		] );
+
+		// Act.
+		$settings = $widget->get_atomic_settings();
+
+		// Assert.
+		$this->assertSame( 'https://example.com/image.jpg', $settings['image']['src'] );
+		$this->assertSame( 100, $settings['image']['width'] );
+		$this->assertSame( 200, $settings['image']['height'] );
+
+		// Cleanup.
+		Plugin::$instance->dynamic_tags->unregister( 'test-image-dynamic' );
 	}
 
 	public function test_get_props_schema__is_serializable() {
 		// Arrange.
+		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
+
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'string_prop' => Atomic_Prop::make()
-					->string()
-					->constraints( [
-						Enum::make( [ 'value-a', 'value-b' ] )
-					] )
+				'string_prop' => String_Prop_Type::make()
+					->enum( [ 'value-a', 'value-b' ] )
 					->default( 'value-a' ),
 
-				'number_prop' => Atomic_Prop::make()
-					->number()
+				'number_prop' => Number_Prop_Type::make()
 					->default( 123 ),
 
-				'boolean_prop' => Atomic_Prop::make()
-					->boolean()
+				'boolean_prop' => Boolean_Prop_Type::make()
 					->default( true ),
 
-				'image_prop' => Atomic_Prop::make()
-					->type( 'image' )
-					->default( [ 'url' => 'https://images.com/image.png' ] ),
+				'image_prop' => Image_Prop_Type::make()
+					->default_url( 'https://example.com/image.jpg' )
+					->default_id( 123 )
+					->default_size( 'full' ),
 			],
 			'settings' => [],
 		] );
@@ -202,26 +427,50 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Assert.
 		$this->assertJsonStringEqualsJsonString( '{
 			"string_prop": {
-				"type": "string",
-				"constraints": [
-					{ "type": "enum", "value": ["value-a", "value-b"] }
-				],
-				"default": "value-a"
+				"type": {
+					"key": "string",
+					"default": "value-a",
+					"settings": {
+						"enum": ["value-a", "value-b"]
+					}
+				},
+				"additional_types": []
 			},
 			"number_prop": {
-				"type": "number",
-				"constraints": [],
-				"default": 123
+				"type": {
+					"key": "number",
+					"default": 123,
+					"settings": {}
+				},
+				"additional_types": []
 			},
 			"boolean_prop": {
-				"type": "boolean",
-				"constraints": [],
-				"default": true
+				"type": {
+					"key": "boolean",
+					"default": true,
+					"settings": {}
+				},
+				"additional_types": []
 			},
 			"image_prop": {
-				"type": "image",
-				"constraints": [],
-				"default": { "$$type": "image", "value": { "url": "https://images.com/image.png" } }
+				"type": {
+					"key": "image",
+					"default": {
+						"$$type": "image",
+						"value": {
+							"src": {
+								"$$type": "image-src",
+								"value": {
+									"id": 123,
+									"url": "https://example.com/image.jpg"
+								}
+							},
+							"size": "full"
+						}
+					},
+					"settings": {}
+				},
+				"additional_types": []
 			}
 		}', $serialized );
 	}
@@ -229,11 +478,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	public function test_get_props_schema() {
 		// Arrange,
 		$schema = [
-			'string_prop' => Atomic_Prop::make()
-				->string()
-				->constraints( [
-					Enum::make( [ 'value-a', 'value-b' ] )
-				] )
+			'string_prop' => String_Prop_Type::make()
+				->enum( [ 'value-a', 'value-b' ] )
 				->default( 'value-a' ),
 		];
 
@@ -332,9 +578,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'text' => Atomic_Prop::make()->string()->default( '' ),
-				'select' => Atomic_Prop::make()->string()->default( '' ),
-				'nested-text' => Atomic_Prop::make()->string()->default( '' ),
+				'text' => String_Prop_Type::make()->default( '' ),
+				'select' => String_Prop_Type::make()->default( '' ),
+				'nested-text' => String_Prop_Type::make()->default( '' ),
 			],
 			'controls' => $controls_definitions,
 		] );
@@ -346,94 +592,71 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertEquals( $controls_definitions, $controls );
 	}
 
-	public function test_get_atomic_controls__schema_validation__throws_for_non_atomic_prop() {
+	public function test_get_atomic_controls__schema_validation__throws_for_non_prop_type() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'non_atomic_prop' => 'not-an-atomic-prop',
+				'non_prop_type' => 'not-a-prop-type',
 			],
 		] );
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop `non_atomic_prop` must be an instance of `Atomic_Prop`' );
+		$this->expectExceptionMessage( 'Prop `non_prop_type` must be an instance of `Prop_Type`' );
 
 		// Act.
 		$widget->get_atomic_controls();
 	}
 
-	public function test_get_atomic_controls__schema_validation__throws_for_non_existing_prop_type() {
+	public function test_get_data_for_save() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'prop' => Atomic_Prop::make()
-					->type( 'non-existing-type' ),
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+				'number_prop' => Number_Prop_Type::make()->default( 0 ),
+				'boolean_prop' => Boolean_Prop_Type::make()->default( false ),
+				'in_schema_not_in_settings' => String_Prop_Type::make()->default( '' ),
+				'not_a_prop_type' => 'not-a-prop-type',
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+				'number_prop' => 123,
+				'boolean_prop' => true,
+				'not_in_schema' => 'not-in-schema',
+				'not_a_prop_type' => 'not-a-prop-type',
 			],
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop type `non-existing-type` for prop `prop` does not exist' );
-
 		// Act.
-		$widget->get_atomic_controls();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'string_prop' => 'valid-string',
+			'number_prop' => 123,
+			'boolean_prop' => true,
+		], $data_for_save['settings'] );
 	}
 
-	public function test_get_atomic_controls__schema_validation__throws_for_atomic_prop_without_type() {
+	public function test_get_data_for_save__throws_on_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
-				'prop_without_type' => Atomic_Prop::make(),
+				'mock_prop_1' => String_Prop_Type::make()->default( '' ),
+				'mock_prop_2' => Number_Prop_Type::make()->default( 0 ),
+			],
+			'settings' => [
+				'mock_prop_1' => 123,
+				'mock_prop_2' => 'not-a-number',
 			],
 		] );
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Prop `prop_without_type` must have a type' );
+		$this->expectExceptionMessage( 'Settings validation failed. Invalid keys: mock_prop_1, mock_prop_2' );
 
 		// Act.
-		$widget->get_atomic_controls();
-	}
-
-	public function test_get_atomic_controls__schema_validation__throws_when_default_value_type_is_wrong() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'prop_with_wrong_default_type' => Atomic_Prop::make()
-					->string()
-					->default( 123 ),
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Default value for `prop_with_wrong_default_type` prop is invalid' );
-		$this->expectExceptionMessage( 'Value must be a string, integer given.' );
-
-		// Act.
-		$widget->get_atomic_controls();
-	}
-
-	public function test_get_atomic_controls__schema_validation__throws_when_default_value_doesnt_pass_constraint_validation() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'prop_with_wrong_default_type' => Atomic_Prop::make()
-					->string()
-					->constraints( [
-						Enum::make( [ 'value-a', 'value-b' ] ),
-					] )
-					->default( 'value-c' ),
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Default value for `prop_with_wrong_default_type` prop does not pass the constraint `enum`' );
-		$this->expectExceptionMessage( '`value-c` is not in the list of allowed values (`value-a`, `value-b`).' );
-
-		// Act.
-		$widget->get_atomic_controls();
+		$widget->get_data_for_save();
 	}
 
 	/**
@@ -449,6 +672,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				parent::__construct( [
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
+					'elType' => 'widget',
+					'widgetType' => 'test-widget',
 				], [] );
 			}
 
