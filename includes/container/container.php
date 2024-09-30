@@ -22,10 +22,18 @@ class Container {
 
 	protected static $instance;
 
-	// Prevent direct instantiation
 	private function __construct() {}
 
+	private function __clone() {
+		throw new \Exception("Cloning the container is not allowed.");
+	}
+	private function __wakeup() {}
+
 	private static function initialize(): DIContainer {
+		if ( isset( self::$instance ) ) {
+			return self::$instance;
+		}
+
 		$builder = new ContainerBuilder();
 
 		self::register_configuration( $builder );
