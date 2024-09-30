@@ -277,7 +277,7 @@ class Manager {
 
 		if ( $is_kit_preview ) {
 			$kit = Plugin::$instance->documents->get_doc_or_auto_save( $active_kit->get_main_id(), get_current_user_id() );
-		} elseif ( 'publish' === $active_kit->get_main_post()->post_status ) {
+		} elseif ( null !== $active_kit->get_main_post() && 'publish' === $active_kit->get_main_post()->post_status ) {
 			$kit = $active_kit;
 		}
 

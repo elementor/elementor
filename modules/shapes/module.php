@@ -8,8 +8,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
-	protected function get_widgets_style_list():array {
-		return [ 'widget-text-path' ];
+	public function __construct() {
+		parent::__construct();
+
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
+	}
+
+	/**
+	 * Register styles.
+	 *
+	 * At build time, Elementor compiles `/modules/shapes/assets/scss/frontend.scss`
+	 * to `/assets/css/widget-shapes.min.css`.
+	 *
+	 * @return void
+	 */
+	public function register_styles() {
+		wp_register_style(
+			'widget-text-path',
+			$this->get_css_assets_url( 'widget-text-path', null, true, true ),
+			[ 'elementor-frontend' ],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	/**

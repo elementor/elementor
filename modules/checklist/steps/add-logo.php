@@ -49,10 +49,4 @@ class Add_Logo extends Step_Base {
 	public function get_learn_more_url() : string {
 		return 'http://go.elementor.com/app-website-checklist-logo-article';
 	}
-
-	public function page_exists( $params ) : bool {
-		$query = new \WP_Query( $params );
-
-		return $query->found_posts;
-	}
 }

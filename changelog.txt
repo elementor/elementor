@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 3.24.4 - 2024-09-23 =
+
+* Security Fix: Improved code security enforcement in Heading and Counter widgets
+* Security Fix: Improved code security enforcement in Template Library
+
 = 3.24.3 - 2024-09-18 =
 
 * Fix: 404 console error when loading custom animations ([#28727](https://github.com/elementor/elementor/issues/28727))

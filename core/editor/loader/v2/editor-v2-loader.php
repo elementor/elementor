@@ -24,6 +24,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		self::ENV_PACKAGE,
 		'icons',
 		'locations',
+		'menus',
 		'query',
 		'schema',
 		'store',

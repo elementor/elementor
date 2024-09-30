@@ -1,7 +1,7 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { getAndUpdateStep } from '../../utils/functions';
+import { getAndUpdateStep, updateStep } from '../../utils/functions';
 import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES } from '../../utils/consts';
 
 const { IS_MARKED_COMPLETED, IS_ABSOLUTE_COMPLETED, IS_IMMUTABLE_COMPLETED } = STEP;
@@ -29,7 +29,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 
 	const redirectHandler = async () => {
 		if ( ! elementor || ! STEP_IDS_TO_COMPLETE_IN_EDITOR.includes( id ) || ! PANEL_ROUTES[ id ] ) {
-			return window.open( ctaUrl, isLocked ? '_blank' : '_self' );
+			return window.open( ctaUrl, promotionData ? '_blank' : '_self' );
 		}
 
 		await $e.run( 'panel/global/open' );
@@ -42,10 +42,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		try {
 			updateStepsState( IS_MARKED_COMPLETED, ! currState );
 
-			await $e.data.update( `checklist/steps`, {
-				id,
-				[ IS_MARKED_COMPLETED ]: ! currState,
-			}, { id } );
+			await updateStep( id, { [ IS_MARKED_COMPLETED ]: ! currState } );
 		} catch ( e ) {
 			updateStepsState( IS_MARKED_COMPLETED, currState );
 		}

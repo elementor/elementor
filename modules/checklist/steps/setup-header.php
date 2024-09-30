@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Setup_Header extends Step_Base {
 	const STEP_ID = 'setup_header';
 
-	public function __construct( $module, $wordpress_adapter = null, $should_promote = true ) {
+	public function __construct( $module, $wordpress_adapter = null, $kit_adapter = null, $should_promote = true ) {
 		$promotion_data = $should_promote
 			? [
 				'url' => 'http://go.elementor.com/app-website-checklist-header-article',
@@ -21,7 +21,7 @@ class Setup_Header extends Step_Base {
 			]
 			: null;
 
-		parent::__construct( $module, $wordpress_adapter, $promotion_data );
+		parent::__construct( $module, $wordpress_adapter, $kit_adapter, $promotion_data );
 	}
 
 	public function get_id() : string {

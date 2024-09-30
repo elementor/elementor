@@ -52,15 +52,36 @@ class Props_Resolver {
 	}
 
 	public function resolve( array $schema, array $props ): array {
-		$result = [];
+		$resolved_props = [];
 
-		foreach ( $schema as $prop_name => $prop_type ) {
-			$result[ $prop_name ] = $prop_type instanceof Prop_Type
-				? $this->transform( $props[ $prop_name ] ?? $prop_type->get_default() )
-				: null;
+		foreach ( $schema as $key => $prop_type ) {
+			if ( ! ( $prop_type instanceof Prop_Type ) ) {
+				continue;
+			}
+
+			if ( ! array_key_exists( $key, $props ) ) {
+				$resolved_props[ $key ] = $prop_type->get_default();
+				continue;
+			}
+
+			$resolved_props[ $key ] = $props[ $key ];
+
+			// Merge the top-level defaults for transformable props.
+			if (
+				$this->is_nested_transformable( $resolved_props[ $key ] ) &&
+				$this->is_nested_transformable( $prop_type->get_default() )
+			) {
+				$resolved_props[ $key ]['value'] = array_merge(
+					$prop_type->get_default()['value'],
+					$resolved_props[ $key ]['value']
+				);
+			}
 		}
 
-		return $result;
+		return array_map(
+			fn( $value ) => $this->transform( $value ),
+			$resolved_props
+		);
 	}
 
 	private function transform( $value, int $depth = 0 ) {
@@ -70,6 +91,14 @@ class Props_Resolver {
 
 		if ( $depth >= self::TRANSFORM_DEPTH_LIMIT ) {
 			return null;
+		}
+
+		// Transform nested transformable values recursively.
+		if ( is_array( $value['value'] ) ) {
+			$value['value'] = array_map(
+				fn( $item ) => $this->transform( $item ),
+				$value['value']
+			);
 		}
 
 		$transformer = $this->transformers->get( $value['$$type'] );
@@ -91,6 +120,13 @@ class Props_Resolver {
 		return (
 			! empty( $value['$$type'] ) &&
 			array_key_exists( 'value', $value )
+		);
+	}
+
+	private function is_nested_transformable( $value ): bool {
+		return (
+			$this->is_transformable( $value ) &&
+			is_array( $value['value'] )
 		);
 	}
 }

@@ -25,8 +25,8 @@ export default class ElementRegressionHelper {
 			return;
 		}
 		const locator = isPublished
-			? this.page.locator( EditorSelectors.container )
-			: this.editor.getPreviewFrame().locator( EditorSelectors.container );
+			? this.page.locator( EditorSelectors.container + ' >> nth=0' )
+			: this.editor.getPreviewFrame().locator( EditorSelectors.container + ' >> nth=0' );
 
 		const label = this.getLabel( isPublished );
 
@@ -85,7 +85,7 @@ export default class ElementRegressionHelper {
 			page = this.page;
 			await page.setViewportSize( deviceParams[ args.device ] );
 			label = '_published';
-			await expect.soft( page.locator( EditorSelectors.container ) )
+			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		} else {
 			page = this.editor.getPreviewFrame();
@@ -94,7 +94,7 @@ export default class ElementRegressionHelper {
 				const iframe = document.getElementById( 'elementor-preview-iframe' );
 				iframe.style.height = '3000px';
 			} );
-			await expect.soft( page.locator( EditorSelectors.container ) )
+			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		}
 	}

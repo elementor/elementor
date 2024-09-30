@@ -57,4 +57,8 @@ class Wp_Api {
 	public function activate_plugin( $plugin ) {
 		return activate_plugin( $plugin );
 	}
+
+	public function wp_attachment_is_image( $post = null ) {
+		return wp_attachment_is_image( $post );
+	}
 }

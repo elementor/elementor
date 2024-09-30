@@ -12,7 +12,7 @@ class Classes_Prop_Type extends Transformable_Prop_Type {
 		return 'classes';
 	}
 
-	public function validate_value( $value ): void {
+	protected function validate_value( $value ): void {
 		if ( ! is_array( $value ) ) {
 			throw new \Exception( 'Value must be an array, ' . gettype( $value ) . ' given.' );
 		}

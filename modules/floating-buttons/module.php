@@ -32,6 +32,7 @@ class Module extends BaseModule {
 	const FLOATING_BUTTONS_DOCUMENT_TYPE = 'floating-buttons';
 	const CPT_FLOATING_BUTTONS = 'e-floating-buttons';
 	const ADMIN_PAGE_SLUG_CONTACT = 'edit.php?post_type=e-floating-buttons';
+	const WIDGET_HAS_CUSTOM_BREAKPOINTS = true;
 
 	private $has_contact_pages = null;
 	private $trashed_contact_pages;
@@ -117,6 +118,8 @@ class Module extends BaseModule {
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Hover_Animation_Floating_Buttons() );
@@ -551,25 +554,46 @@ class Module extends BaseModule {
 		}
 	}
 
-	protected function get_widget_styles_depends():array {
-		return [ 'elementor-frontend', 'elementor-icons' ];
+	/**
+	 * Register styles.
+	 *
+	 * At build time, Elementor compiles `/modules/floating-buttons/assets/scss/widgets/*.scss`
+	 * to `/assets/css/widget-*.min.css`.
+	 *
+	 * @return void
+	 */
+	public function register_styles() {
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+		$widget_styles = $this->get_widgets_style_list();
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
+		foreach ( $widget_styles as $widget_style_name => $widget_has_responsive_style ) {
+			$should_load_responsive_css = $widget_has_responsive_style ? $has_custom_breakpoints : false;
+
+			wp_register_style(
+				$widget_style_name,
+				$this->get_frontend_file_url( "{$widget_style_name}{$direction_suffix}.min.css", $should_load_responsive_css ),
+				[ 'elementor-frontend', 'elementor-icons' ],
+				$should_load_responsive_css ? null : ELEMENTOR_VERSION
+			);
+		}
 	}
 
-	protected function get_widgets_style_list():array {
+	private function get_widgets_style_list():array {
 		return [
-			'widget-floating-buttons', // TODO: Remove in v3.27.0 [ED-15717]
-			'widget-floating-bars-base',
-			'widget-floating-bars-var-2',
-			'widget-floating-bars-var-3',
-			'widget-contact-buttons-base',
-			'widget-contact-buttons-var-1',
-			'widget-contact-buttons-var-3',
-			'widget-contact-buttons-var-4',
-			'widget-contact-buttons-var-6',
-			'widget-contact-buttons-var-7',
-			'widget-contact-buttons-var-8',
-			'widget-contact-buttons-var-9',
-			'widget-contact-buttons-var-10',
+			'widget-floating-buttons' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
+			'widget-floating-bars-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-floating-bars-var-2' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-floating-bars-var-3' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-1' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-3' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-4' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-6' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-7' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-8' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-9' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-10' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 		];
 	}
 }

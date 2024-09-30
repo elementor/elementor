@@ -1,10 +1,9 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers;
+namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Core\DynamicTags\Manager as Dynamic_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dynamic_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -26,10 +25,14 @@ class Dynamic_Transformer extends Transformer_Base {
 			throw new \Exception( 'Dynamic tag name must be a string' );
 		}
 
-		if ( ! isset( $value['settings'] ) || ! is_array( $value['settings'] ) ) {
+		if ( isset( $value['settings'] ) && ! is_array( $value['settings'] ) ) {
 			throw new \Exception( 'Dynamic tag settings must be an array' );
 		}
 
-		return $this->dynamic_manager->get_tag_data_content( null, $value['name'], $value['settings'] );
+		return $this->dynamic_manager->get_tag_data_content(
+			null,
+			$value['name'],
+			$value['settings'] ?? []
+		);
 	}
 }

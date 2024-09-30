@@ -24,7 +24,7 @@ function echo_select_your_structure_title() {
 		</div>
 		<?php
 		$experiments_manager = Plugin::$instance->experiments;
-		if ( $experiments_manager->is_feature_active( 'container_grid' ) ) { ?>
+		if ( $experiments_manager->is_feature_active( 'container' ) ) { ?>
 			<div class="elementor-add-section-back elementor-wizard-icon">
 				<i class="eicon-chevron-left" aria-hidden="true"></i>
 				<span class="elementor-screen-only"><?php echo esc_html__( 'Back', 'elementor' ); ?></span>

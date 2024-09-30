@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { type APIRequestContext } from '@playwright/test';
-import { Image, Post, WpPage } from '../types/types';
+import { Image, Post, WpPage, User } from '../types/types';
 
 export default class ApiRequests {
 	private readonly nonce: string;
@@ -217,9 +217,33 @@ export default class ApiRequests {
 		await this._delete( request, 'pages', pageId );
 	}
 
+	public async deleteUser( request: APIRequestContext, userId: string ) {
+		const response = await request.delete( `${ this.baseUrl }/index.php`, {
+				headers: {
+					'X-WP-Nonce': this.nonce,
+				},
+				params: {
+					rest_route: `/wp/v2/users/${ userId }`,
+					force: true,
+					reassign: '-1',
+				},
+			} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+			Failed to delete a user with id: ${ userId }: ${ response.status() }.
+			${ await response.text() }
+		` );
+		}
+
+		return await response.json();
+	}
+
 	private async _delete( request: APIRequestContext, entity: string, id: string ) {
 		const response = await request.delete( `${ this.baseUrl }/index.php`, {
-			params: { rest_route: `/wp/v2/${ entity }/${ id }` },
+			params: {
+				rest_route: `/wp/v2/${ entity }/${ id }`,
+			},
 			headers: {
 				'X-WP-Nonce': this.nonce,
 			},
@@ -233,5 +257,37 @@ export default class ApiRequests {
 		}
 
 		return response;
+	}
+
+	public async createNewUser( request: APIRequestContext, user: User ) {
+		const username = `${ user.username }${ Math.floor( Math.random() * 1000 ) }`,
+			email = user.email || username + '@example.com',
+			password = user.password || 'password',
+			roles = user.roles;
+
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+
+			params: { rest_route: '/wp/v2/users' },
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			multipart: {
+				username,
+				email,
+				password,
+				roles: [ ...roles ],
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+			Failed to create new user: ${ response.status() }.
+			${ await response.text() }
+		` );
+		}
+
+		const { id } = await response.json();
+
+		return { id, username, password };
 	}
 }
