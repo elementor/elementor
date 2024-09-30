@@ -80,8 +80,7 @@ test( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRequest
 	await breakpoints.setBreakpoint( editor, 'mobile', viewportSize.mobile.width );
 
 	// Act.
-	const pageId = await editor.getPageId();
-	await page.goto( `/?p=${ pageId }` );
+	await editor.viewPage();
 	await page.setViewportSize( viewportSize.mobile );
 	await page.locator( 'div#gallery-1 img' ).first().click();
 	await editor.page.waitForTimeout( 1000 );
