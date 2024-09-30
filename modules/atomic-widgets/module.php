@@ -4,7 +4,13 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Classes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Image_Src_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Image_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 
@@ -19,6 +25,7 @@ class Module extends BaseModule {
 		'editor-documents', // TODO: NEED to be removed once the editor will not be dependent on the documents package.
 		'editor-panels',
 		'editor-editing-panel',
+		'editor-style',
 	];
 
 	public function get_name() {
@@ -31,8 +38,15 @@ class Module extends BaseModule {
 		$this->register_experiment();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			Dynamic_Tags_Module::instance()->register_hooks();
+
+			( new Atomic_Styles() )->register_hooks();
+
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_transformers( $transformers ) );
+
+			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 		}
 	}
 
@@ -53,5 +67,27 @@ class Module extends BaseModule {
 
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
+		$widgets_manager->register( new Atomic_Image() );
+	}
+
+	private function register_transformers( Transformers_Registry $transformers ) {
+		$transformers->register( new Classes_Transformer() );
+		$transformers->register( new Image_Transformer() );
+		$transformers->register( new Image_Src_Transformer() );
+	}
+
+	/**
+	 * Enqueue the module scripts.
+	 *
+	 * @return void
+	 */
+	private function enqueue_scripts() {
+		wp_enqueue_script(
+			'elementor-atomic-widgets-editor',
+			$this->get_js_assets_url( 'atomic-widgets-editor' ),
+			[ 'elementor-editor' ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 }

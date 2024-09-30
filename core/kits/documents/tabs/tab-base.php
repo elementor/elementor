@@ -78,7 +78,7 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 					'content' => sprintf(
 						/* translators: 1: Link open tag, 2: Link close tag. */
 						esc_html__( 'In order for Theme Style to affect all relevant Elementor elements, please disable Default Colors and Fonts from the %1$sSettings Page%2$s.', 'elementor' ),
-						'<a href="' . esc_url( Settings::get_url() ) . '" target="_blank">',
+						'<a href="' . Settings::get_settings_tab_url( 'general' ) . '" target="_blank">',
 						'</a>'
 					),
 					'render_type' => 'ui',

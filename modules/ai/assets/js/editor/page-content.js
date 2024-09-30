@@ -16,8 +16,9 @@ import useUpgradeMessage from './hooks/use-upgrade-message';
 import UsageMessages from './components/usage-messages';
 import { Box, Typography } from '@elementor/ui';
 import Loader from './components/loader';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRequestIds } from './context/requests-ids';
+import { FREE_TRIAL_FEATURES_NAMES } from './helpers/features-enum';
 
 const PageContent = (
 	{
@@ -51,6 +52,9 @@ const PageContent = (
 	}, [ isLoading, initialUsagePercentage, isInitUsageDone, updateUsagePercentage ] );
 
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
+	const [ sxStyle, setSxStyle ] = useState( { pointerEvents: 'none' } );
+	const timeoutRef = useRef( null );
+
 	const promptDialogStyleProps = {
 		sx: {
 			zIndex: 170000, // Make sure the dialog is above wp attachment details view
@@ -72,6 +76,29 @@ const PageContent = (
 				m: 0,
 				maxHeight: 'media' === type ? '95vh' : '76vh',
 				height: 'auto',
+			},
+		},
+	};
+
+	const codePromptDialogStyleProps = {
+		sx: {
+			...promptDialogStyleProps.sx,
+			...sxStyle,
+		},
+		PaperProps: {
+			onMouseEnter: () => {
+				clearTimeout( timeoutRef.current );
+				setSxStyle( { pointerEvents: 'all' } );
+			},
+			onMouseLeave: () => {
+				clearTimeout( timeoutRef.current );
+				timeoutRef.current = setTimeout( () => {
+					setSxStyle( { pointerEvents: 'none' } );
+				}, 200 );
+			},
+			sx: {
+				...promptDialogStyleProps.PaperProps.sx,
+				pointerEvents: 'auto',
 			},
 		},
 	};
@@ -162,12 +189,11 @@ const PageContent = (
 
 	if ( 'code' === type ) {
 		return (
-			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
+			<PromptDialog onClose={ onClose } { ...codePromptDialogStyleProps }>
 				<PromptHistoryProvider historyType={ HISTORY_TYPES.CODE }>
 					<PromptHistoryActionProvider>
 						<PromptDialog.Header onClose={ onClose }>
 							<PromptHistory />
-
 							{ maybeRenderUpgradeChip() }
 						</PromptDialog.Header>
 
@@ -184,6 +210,7 @@ const PageContent = (
 									hasSubscription={ hasSubscription }
 									usagePercentage={ usagePercentage }
 									sx={ { mb: 2 } }
+									feature={ FREE_TRIAL_FEATURES_NAMES.CODE }
 								/>
 							</FormCode>
 						</PromptDialog.Content>
@@ -218,6 +245,7 @@ const PageContent = (
 								hasSubscription={ hasSubscription }
 								usagePercentage={ usagePercentage }
 								sx={ { mb: 2 } }
+								feature={ FREE_TRIAL_FEATURES_NAMES.TEXT }
 							/>
 						</FormText>
 					</PromptDialog.Content>

@@ -21,13 +21,9 @@ class Module extends \Elementor\Core\Base\Module {
 				esc_html__( 'Learn more', 'elementor' )
 			),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'dependencies' => [
 				'container',
-			],
-			'new_site' => [
-				'default_active' => false,
-				'minimum_installation_version' => '3.10.0',
 			],
 		];
 	}

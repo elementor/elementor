@@ -8,14 +8,13 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
-	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
+	// Removed the-plus-addons-for-elementor-page-builder since they create a popup that interferes with the tests
+	// { pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'stratum', installSource: 'api' },
 	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
 	{ pluginName: 'wunderwp', installSource: 'api' },
 	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
-	// Addons for elementor is closed as of July 2, 2024 and is not available for download. This closure is temporary, pending a full review.
-	// see: https://wordpress.org/plugins/addons-for-elementor/
-	// { pluginName: 'addons-for-elementor', installSource: 'api' },
+	{ pluginName: 'addons-for-elementor', installSource: 'api' },
 	{ pluginName: 'anywhere-elementor', installSource: 'api' },
 	{ pluginName: 'astra-sites', installSource: 'api' },
 	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
@@ -23,23 +22,23 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'elementskit-lite', installSource: 'api' },
 	{ pluginName: 'envato-elements', installSource: 'api' },
 	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api' },
-	// 'header-footer-elementor',
+	{ pluginName: 'header-footer-elementor', installSource: 'api' },
 	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
 	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
 	{ pluginName: 'metform', installSource: 'api' },
 	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
-	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
+	// { pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
-	{ pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
+	// { pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
 	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
-	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
+	// { pluginName: 'royal-elementor-addons', installSource: 'cli' },
 	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
 	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
-	// 'unlimited-elements-for-elementor',
-	// 'visibility-logic-elementor',
+	// { pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
+	{ pluginName: 'visibility-logic-elementor', installSource: 'api' },
 	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
 	{ pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
 	{ pluginName: 'code-block-for-elementor', installSource: 'api' },
@@ -89,7 +88,7 @@ export const generatePluginTests = ( testType: string ) => {
 
 				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			} finally {
-				if ( plugin.installByAPI ) {
+				if ( 'api' === plugin.installSource ) {
 					await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
 					await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
 				} else {

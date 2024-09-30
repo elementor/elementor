@@ -126,7 +126,10 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 		numberOfContents = await nestedItemContent.count();
 
 	// Act
-	await addItemButton.click();
+	// Sometimes this action causes Playwright to mistakenly think that the "click" event should trigger navigation and
+	// fails when the navigation never happens. This is inconsistent behavior, but setting the "noWaitAfter" option to
+	// true seems to fix the issue.
+	await addItemButton.click( { noWaitAfter: true } );
 
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
@@ -144,7 +147,10 @@ export async function cloneItemFromRepeater( editor: EditorPage, widgetID: strin
 		cloneItemButton = editor.page.locator( '.elementor-repeater-tool-duplicate' ).nth( position );
 
 	// Act
-	await cloneItemButton.click();
+	// Sometimes this action causes Playwright to mistakenly think that the "click" event should trigger navigation and
+	// fails when the navigation never happens. This is inconsistent behavior, but setting the "noWaitAfter" option to
+	// true seems to fix the issue.
+	await cloneItemButton.click( { noWaitAfter: true } );
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	const currentTitle = nestedItemTitle.nth( position ),

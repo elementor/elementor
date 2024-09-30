@@ -1301,6 +1301,15 @@
 					}
 				  },
 				  "additionalProperties": false
+				},
+				"onboarding_features": {
+					"$id": "#/usages/onboarding_features",
+					"title": "Elementor Onboarding Features usage",
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"additionalProperties": false
 				}
 			},
 			"additionalProperties": false

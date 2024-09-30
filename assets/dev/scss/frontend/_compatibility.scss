@@ -19,7 +19,7 @@
 	padding: 0;
 }
 
-// To be removed in Elementor 3.26.0.
+// TODO: Remove in version 3.26.0 [ED-15471]
 .e--ua-appleWebkit {
 	// Fix glitch in Apple webkit browsers (inline-block items with word-spacing + text-align right)
 	&.rtl { --flex-right: flex-start; }

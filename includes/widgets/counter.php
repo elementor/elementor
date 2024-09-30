@@ -92,6 +92,20 @@ class Widget_Counter extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-counter' ];
+	}
+
+	/**
 	 * Register counter widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -627,7 +641,7 @@ class Widget_Counter extends Widget_Base {
 		#>
 		<div {{{ view.getRenderAttributeString( 'elementor-counter' ) }}}>
 			<# if ( settings.title ) {
-				#><{{ titleTag }} {{{ view.getRenderAttributeString( 'counter-title' ) }}}>{{{ settings.title }}}</{{ titleTag }}><#
+				#><{{ titleTag }} {{{ view.getRenderAttributeString( 'counter-title' ) }}}>{{{ elementor.helpers.sanitize( settings.title, { ALLOW_DATA_ATTR: false } ) }}}</{{ titleTag }}><#
 			} #>
 			<div {{{ view.getRenderAttributeString( 'counter-number' ) }}}>
 				<span {{{ view.getRenderAttributeString( 'prefix' ) }}}>{{{ settings.prefix }}}</span>
@@ -681,7 +695,7 @@ class Widget_Counter extends Widget_Base {
 		<div <?php $this->print_render_attribute_string( 'elementor-counter' ); ?>>
 			<?php
 			if ( $settings['title'] ) :
-				?><<?php Utils::print_validated_html_tag( $title_tag ); ?> <?php $this->print_render_attribute_string( 'counter-title' ); ?>><?php $this->print_unescaped_setting( 'title' ); ?></<?php Utils::print_validated_html_tag( $title_tag ); ?>><?php
+				?><<?php Utils::print_validated_html_tag( $title_tag ); ?> <?php $this->print_render_attribute_string( 'counter-title' ); ?>><?php echo wp_kses_post( $this->get_settings_for_display( 'title' ) ); ?></<?php Utils::print_validated_html_tag( $title_tag ); ?>><?php
 			endif;
 			?>
 			<div <?php $this->print_render_attribute_string( 'counter-number' ); ?>>

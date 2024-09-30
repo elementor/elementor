@@ -8,6 +8,7 @@ import BackButton from './back-button';
 import { useLocation } from '../context/location-context';
 import { useGlobalSettings } from '../context/global-settings-context';
 import UsageMessages from '../../../components/usage-messages';
+import { FREE_TRIAL_FEATURES_NAMES } from '../../../helpers/features-enum';
 
 const ViewBackButton = ( { sx = {}, ...props } ) => {
 	const { back } = useLocation();
@@ -103,6 +104,7 @@ const ViewPanel = ( props ) => {
 				hasSubscription={ hasSubscription }
 				usagePercentage={ usagePercentage }
 				sx={ { mb: 4 } }
+				feature={ FREE_TRIAL_FEATURES_NAMES.IMAGES }
 			/>
 
 			{ props.children }

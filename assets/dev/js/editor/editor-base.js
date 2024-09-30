@@ -29,7 +29,8 @@ import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
 import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
 import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/module';
-import FloatingButtonsLibraryModule from 'elementor/modules/floating-buttons/assets/js/editor/module';
+import FloatingButtonsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-buttons/editor/module';
+import FloatingBarsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-bars/editor/module';
 import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
@@ -444,9 +445,9 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.floatingButtonsLibraryModule = new FloatingButtonsLibraryModule();
 		}
 
-		if ( elementorCommon.config.experimentalFeatures[ 'link-in-bio' ] ) {
-			this.modules.linkInBioLibraryModule = new LinkInBioLibraryModule();
-		}
+		this.modules.linkInBioLibraryModule = new LinkInBioLibraryModule();
+
+		this.modules.floatingBarsLibraryModule = new FloatingBarsLibraryModule();
 
 		this.modules.elementsColorPicker = new ElementsColorPicker();
 

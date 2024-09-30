@@ -3,6 +3,7 @@
 namespace Elementor\Modules\FloatingButtons\Widgets;
 
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

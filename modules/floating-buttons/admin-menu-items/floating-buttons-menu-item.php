@@ -19,11 +19,11 @@ class Floating_Buttons_Menu_Item implements Admin_Menu_Item {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Floating Buttons', 'elementor' );
+		return esc_html__( 'Floating Elements', 'elementor' );
 	}
 
 	public function get_page_title() {
-		return esc_html__( 'Floating Buttons', 'elementor' );
+		return esc_html__( 'Floating Elements', 'elementor' );
 	}
 
 	public function get_capability() {

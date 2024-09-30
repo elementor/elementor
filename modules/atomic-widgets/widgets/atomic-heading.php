@@ -5,6 +5,8 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,72 +14,88 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Heading extends Atomic_Widget_Base {
-	public function get_icon() {
-		return 'eicon-t-letter';
+	public function get_name() {
+		return 'a-heading';
 	}
 
 	public function get_title() {
 		return esc_html__( 'Atomic Heading', 'elementor' );
 	}
 
-	public function get_name() {
-		return 'a-heading';
+	public function get_icon() {
+		return 'eicon-t-letter';
 	}
 
 	protected function render() {
-		$tag = $this->get_settings( 'tag' ) ?? 'h2';
-		$title = $this->get_settings( 'title' ) ?? 'Hello, World!';
+		$settings = $this->get_atomic_settings();
 
-		$escaped_tag = Utils::validate_html_tag( $tag );
-		$escaped_title = esc_html( $title );
+		$tag = $settings['tag'];
+		$title = $settings['title'];
+		$attrs = array_filter( [
+			'class' => $settings['classes'] ?? '',
+		] );
 
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo "<$escaped_tag>$escaped_title</$escaped_tag>";
+		echo sprintf(
+			'<%1$s %2$s>%3$s</%1$s>',
+			// TODO: we should avoid using `validate html tag` and use the enum validation instead.
+			Utils::validate_html_tag( $tag ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			Utils::render_html_attributes( $attrs ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			esc_html( $title )
+		);
 	}
 
-	public function get_atomic_controls(): array {
-		$tag_control = Select_Control::bind_to( 'tag' )
-			->set_label( __( 'Tag', 'elementor' ) )
-			->set_options( [
-				[
-					'value' => 'h1',
-					'label' => 'H1',
-				],
-				[
-					'value' => 'h2',
-					'label' => 'H2',
-				],
-				[
-					'value' => 'h3',
-					'label' => 'H3',
-				],
-				[
-					'value' => 'h4',
-					'label' => 'H4',
-				],
-				[
-					'value' => 'h5',
-					'label' => 'H5',
-				],
-				[
-					'value' => 'h6',
-					'label' => 'H6',
-				],
-			]);
-
-		$title_control = Textarea_Control::bind_to( 'title' )
-			->set_label( __( 'Title', 'elementor' ) )
-			->set_placeholder( __( 'Type your title here', 'elementor' ) );
-
-		$tag_and_title_section = Section::make()
-			->set_label( __( 'Tag and Title', 'elementor' ) )
-			->set_items( [
-				$tag_control,
-				$title_control,
-			]);
-
+	protected function define_atomic_controls(): array {
 		return [
-			$tag_and_title_section,
+			Section::make()
+				->set_label( __( 'Content', 'elementor' ) )
+				->set_items( [
+					Select_Control::bind_to( 'tag' )
+						->set_label( esc_html__( 'Tag', 'elementor' ) )
+						->set_options( [
+							[
+								'value' => 'h1',
+								'label' => 'H1',
+							],
+							[
+								'value' => 'h2',
+								'label' => 'H2',
+							],
+							[
+								'value' => 'h3',
+								'label' => 'H3',
+							],
+							[
+								'value' => 'h4',
+								'label' => 'H4',
+							],
+							[
+								'value' => 'h5',
+								'label' => 'H5',
+							],
+							[
+								'value' => 'h6',
+								'label' => 'H6',
+							],
+						]),
+
+					Textarea_Control::bind_to( 'title' )
+						->set_label( __( 'Title', 'elementor' ) )
+						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
+				]),
+		];
+	}
+
+	protected static function define_props_schema(): array {
+		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
+				->default( 'h2' ),
+
+			'title' => String_Prop_Type::make()
+				->default( __( 'Your Title Here', 'elementor' ) ),
 		];
 	}
 }

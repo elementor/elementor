@@ -3,6 +3,7 @@ import AIMediaGenerateAppWrapper from './generate';
 import { createRoot } from '@wordpress/element';
 import AIMediaEditAppButtonWrapper from './edit-button';
 import AIMediaEditAppLinkWrapper from './edit-link';
+import { getUniqueId } from '../editor/context/requests-ids';
 
 const isMediaLibrary = () => window.location.href.includes( '/upload.php' );
 
@@ -41,6 +42,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 
 ( function() {
 	if ( isMediaLibrary() ) {
+		window.EDITOR_SESSION_ID = getUniqueId( 'wp-media-lib-session' );
 		const mediaLibrary = document.querySelector( '.page-title-action' );
 
 		if ( mediaLibrary ) {

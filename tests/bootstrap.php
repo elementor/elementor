@@ -20,6 +20,7 @@ if ( getenv( 'WP_PHPUNIT__DIR' ) ) {
 }
 
 define( 'ELEMENTOR_TESTS', true );
+define ( 'ELEMENTOR_DEBUG', true );
 
 /**
  * change PLUGIN_FILE env in phpunit.xml
