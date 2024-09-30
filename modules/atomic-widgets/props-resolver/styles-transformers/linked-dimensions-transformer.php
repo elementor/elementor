@@ -1,11 +1,9 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
