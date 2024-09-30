@@ -91,7 +91,7 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
-        run: npm run test:playwright --grep="@plugin" --reporter=${{ inputs.reporter || 'list,github' }}
+        run: npm run test:playwright -- --grep="@plugin" --reporter=${{ inputs.reporter || 'list,github' }}
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
