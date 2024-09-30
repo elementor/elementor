@@ -1442,7 +1442,7 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-				'uploadUrl' => wp_upload_dir()[ 'baseurl' ],
+				'uploadUrl' => wp_upload_dir()['baseurl'],
 			],
 			'nonces' => [
 				'floatingButtonsClickTracking' => wp_create_nonce( Module::CLICK_TRACKING_NONCE ),
