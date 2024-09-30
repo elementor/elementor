@@ -28,6 +28,16 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! promotionData;
 
 	const redirectHandler = async () => {
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names.elementorEditor.checklistSteps.action[ id ],
+			{
+				location: elementor.editorEvents.config.locations.elementorEditor,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
+				trigger: elementor.editorEvents.config.triggers.click,
+				element: elementor.editorEvents.config.elements.mainCta,
+			},
+		);
+
 		if ( ! elementor || ! STEP_IDS_TO_COMPLETE_IN_EDITOR.includes( id ) || ! PANEL_ROUTES[ id ] ) {
 			return window.open( ctaUrl, promotionData ? '_blank' : '_self' );
 		}
@@ -38,6 +48,28 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 
 	const toggleMarkAsDone = async () => {
 		const currState = isMarkedCompleted;
+
+		isMarkedCompleted
+		?
+			elementor.editorEvents.dispatchEvent(
+				elementor.editorEvents.config.names.elementorEditor.checklistSteps.undone[ id ],
+				{
+					location: elementor.editorEvents.config.locations.elementorEditor,
+					secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
+					trigger: elementor.editorEvents.config.triggers.click,
+					element: elementor.editorEvents.config.elements.mainCta,
+				},
+			)
+		:
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names.elementorEditor.checklistSteps.done[ id ],
+			{
+				location: elementor.editorEvents.config.locations.elementorEditor,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
+				trigger: elementor.editorEvents.config.triggers.click,
+				element: elementor.editorEvents.config.elements.mainCta,
+			},
+		);
 
 		try {
 			updateStepsState( IS_MARKED_COMPLETED, ! currState );

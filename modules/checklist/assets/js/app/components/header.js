@@ -18,6 +18,15 @@ const Header = ( { steps, isMinimized, toggleIsMinimized } ) => {
 		closedForFirstTime = userProgress?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ] || false;
 
 	const closeChecklist = async () => {
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names.elementorEditor.checklistHeaderClose,
+			{
+				location: elementor.editorEvents.config.locations.elementorEditor,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistHeader,
+				trigger: elementor.editorEvents.config.triggers.click,
+				element: elementor.editorEvents.config.elements.buttonIcon,
+			},
+		);
 		if ( ! closedForFirstTime ) {
 			await updateUserProgress( { [ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ]: true } );
 

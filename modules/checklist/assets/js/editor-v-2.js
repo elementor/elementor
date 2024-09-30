@@ -19,7 +19,19 @@ export const editorV2 = () => {
 				icon: () => <QueryClientProvider client={ queryClient }>
 					<TopBarIcon />
 				</QueryClientProvider>,
-				onClick: toggleChecklistPopup,
+				onClick: () => {
+					elementor.editorEvents.dispatchEvent(
+						elementor.editorEvents.config.names.topBar.launchpad,
+						{
+							location: elementor.editorEvents.config.locations.topBar,
+							secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
+							trigger: elementor.editorEvents.config.triggers.toggleClick,
+							element: elementor.editorEvents.config.elements.buttonIcon,
+						},
+					);
+
+					toggleChecklistPopup();
+				}
 			};
 		},
 	} );

@@ -6,6 +6,15 @@ const SuccessMessage = () => {
 	const { ajaxState, setAjax } = useAjax();
 
 	const hideChecklist = () => {
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names.elementorEditor.checklistSteps.action[ 'well_done' ],
+			{
+				location: elementor.editorEvents.config.locations.elementorEditor,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
+				trigger: elementor.editorEvents.config.triggers.click,
+				element: elementor.editorEvents.config.elements.mainCta,
+			},
+		);
 		setAjax( {
 			data: {
 				action: 'elementor_ajax',

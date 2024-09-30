@@ -4,11 +4,13 @@ const eventsConfig = {
 		accordionClick: 'Accordion Click',
 		toggleClick: 'Toggle Click',
 		dropdownClick: 'Click Dropdown',
+		toggle: 'Toggle'
 	},
 
 	locations: {
 		widgetPanel: 'Widget Panel',
 		topBar: 'Top Bar',
+		elementorEditor: 'Elementor Editor'
 	},
 
 	secondaryLocations: {
@@ -36,6 +38,10 @@ const eventsConfig = {
 		structure: 'Structure',
 		documentNameDropdown: 'Document Name dropdown',
 		responsiveControls: 'Responsive controls',
+		launchpad: 'launchpad',
+		checklistHeader: 'Checklist Header',
+		checklistSteps: 'Checklist Steps',
+		userPreferences: 'User Preferences'
 	},
 
 	elements: {
@@ -77,6 +83,28 @@ const eventsConfig = {
 			structure: 'top_bar_structure',
 			documentNameDropdown: 'top_bar_document_name_dropdown',
 			responsiveControls: 'top_bar_responsive_controls',
+			launchpad: 'top_bar_launchpad_icon',
+		},
+		elementorEditor: {
+			checklistHeaderClose: 'checklist_header_close_icon',
+			checklistSteps: {
+				title: {
+					'add_logo': 'checklist_step_title_addlogo'
+				},
+				action: {
+					'add_logo': 'checklist_step_action_addlogo',
+					'well_done': 'checklist_step_action_welldone'
+				},
+				done: {
+					'add_logo': 'checklist_step_done_addlogo'
+				},
+				undone: {
+					'add_logo': 'checklist_step_undone_addlogo'
+				},
+				upgrade: {
+
+				},
+			}
 		},
 	},
 };
