@@ -5,9 +5,12 @@ namespace Elementor\Modules\AtomicWidgets;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Image_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Image_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Linked_Dimensions_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
@@ -44,7 +47,8 @@ class Module extends BaseModule {
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
-			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_transformers( $transformers ) );
+			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
+			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 		}
@@ -70,10 +74,16 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Image() );
 	}
 
-	private function register_transformers( Transformers_Registry $transformers ) {
+	private function register_settings_transformers( Transformers_Registry $transformers ) {
 		$transformers->register( new Classes_Transformer() );
 		$transformers->register( new Image_Transformer() );
 		$transformers->register( new Image_Src_Transformer() );
+	}
+
+	private function register_styles_transformers( Transformers_Registry $transformers ) {
+		$transformers->register( new Array_Transformer() );
+		$transformers->register( new Linked_Dimensions_Transformer() );
+		$transformers->register( new Size_Transformer() );
 	}
 
 	/**

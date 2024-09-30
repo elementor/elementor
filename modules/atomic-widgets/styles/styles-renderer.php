@@ -23,16 +23,7 @@ class Styles_Renderer {
 	 * } $config
 	 */
 	public function __construct( array $config ) {
-		$this->register_transformers();
 		$this->breakpoints = $config['breakpoints'];
-	}
-
-	public function register_transformers() {
-		add_action( 'elementor/atomic-widgets/styles/transformers/register', function( $registry ) {
-			$registry->register( new Array_Transformer() );
-			$registry->register( new Linked_Dimensions_Transformer() );
-			$registry->register( new Size_Transformer() );
-		} );
 	}
 
 	/**
