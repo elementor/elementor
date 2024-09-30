@@ -4,6 +4,7 @@ import * as React from 'react';
 import TopBarIcon from './topbar-icon';
 import { toggleChecklistPopup } from './utils/functions';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
+import { TogglePopup } from "./commands";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ export const editorV2 = () => {
 							secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
 							trigger: elementor.editorEvents.config.triggers.toggleClick,
 							element: elementor.editorEvents.config.elements.buttonIcon,
+							isChecklistOpen: ! TogglePopup.isOpen,
 						},
 					);
 
