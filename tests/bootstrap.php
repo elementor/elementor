@@ -79,7 +79,9 @@ add_action( 'elementor/experiments/feature-registered', function ( Experiments_M
 }, 10, 2 );
 
 // Make sure the main class is running
-\Elementor\Plugin::instance();
+$instance = \Elementor\Plugin::instance();
+
+$instance->initialize_container();
 
 // Run fake actions
 do_action( 'init' );
