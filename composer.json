@@ -10,9 +10,6 @@
 	"autoload": {
 		"classmap": [
 			"vendor_prefixed/"
-		],
-		"files": [
-			"vendor_prefixed/php-di/php-di/src/functions.php"
 		]
 	},
 	"require-dev": {

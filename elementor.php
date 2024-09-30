@@ -45,6 +45,9 @@ define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
 
 if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 	require_once ELEMENTOR_PATH . 'vendor/autoload.php';
+	// we need this file because of the DI\create function we are using
+	// autoload classmap doesn't include this file
+	require_once ELEMENTOR_PATH . 'vendor_prefixed/php-di/php-di/src/functions.php';
 }
 
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
