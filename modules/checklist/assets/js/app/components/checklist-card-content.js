@@ -1,8 +1,8 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { getAndUpdateStep } from '../../utils/functions';
-import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES, STEPS_ROUTE } from '../../utils/consts';
+import { getAndUpdateStep, updateStep } from '../../utils/functions';
+import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES } from '../../utils/consts';
 
 const { IS_MARKED_COMPLETED, IS_ABSOLUTE_COMPLETED, IS_IMMUTABLE_COMPLETED } = STEP;
 
@@ -42,10 +42,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		try {
 			updateStepsState( IS_MARKED_COMPLETED, ! currState );
 
-			await $e.data.update( STEPS_ROUTE, {
-				id,
-				[ IS_MARKED_COMPLETED ]: ! currState,
-			}, { id } );
+			await updateStep( id, { [ IS_MARKED_COMPLETED ]: ! currState } );
 		} catch ( e ) {
 			updateStepsState( IS_MARKED_COMPLETED, currState );
 		}
