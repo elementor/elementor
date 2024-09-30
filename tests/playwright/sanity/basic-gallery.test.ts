@@ -62,7 +62,7 @@ test( 'Basic Gallery Lightbox test with older Swiper', async ( { page, apiReques
 	await testBasicSwiperGallery( editor );
 } );
 
-test.only( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRequests }, testInfo ) => {
+test( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
