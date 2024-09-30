@@ -106,7 +106,5 @@ export default class {
 		await locator.fill( String( value ) );
 		await this.saveOrUpdate( editor );
 		await this.page.locator( EditorSelectors.toast ).waitFor();
-
-		await this.page.locator( '#elementor-panel-header-kit-close' ).click( { timeout: 30000 } );
 	}
 }

@@ -70,16 +70,18 @@ test.only( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRe
 
 	await editor.closeNavigatorIfOpen();
 
-	await breakpoints.setBreakpoint( editor, 'mobile', viewportSize.mobile.width );
-
 	await editor.addWidget( 'image-gallery' );
 	await editor.openPanelTab( 'content' );
 	await editor.addImagesToGalleryControl();
 	await editor.setSelectControlValue( 'open_lightbox', 'yes' );
 
-	await editor.publishAndViewPage();
+	await editor.publishPage();
+
+	await breakpoints.setBreakpoint( editor, 'mobile', viewportSize.mobile.width );
 
 	// Act.
+	const pageId = await editor.getPageId();
+	await page.goto( `/?p=${ pageId }` );
 	await page.setViewportSize( viewportSize.mobile );
 	await page.locator( 'div#gallery-1 img' ).first().click();
 	await editor.page.waitForTimeout( 1000 );
