@@ -6,8 +6,8 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Isolation\Kit_Adapter;
 use Elementor\Core\Isolation\Kit_Adapter_Interface;
-use Elementor\Core\Utils\Constants;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
+use Elementor\Modules\Checklist\Traits\Step_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,6 +22,8 @@ abstract class Step_Base {
 	const MARKED_AS_COMPLETED_KEY = 'is_marked_completed';
 	const IMMUTABLE_COMPLETION_KEY = 'is_immutable_completed';
 	const ABSOLUTE_COMPLETION_KEY = 'is_absolute_completed';
+
+	use Step_Utils;
 
 	private array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;

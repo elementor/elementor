@@ -55,7 +55,7 @@ class Setup_Header extends Step_Base {
 	}
 
 	public function get_title() : string {
-		return esc_html__( 'Set up a header', 'elementor' );
+		return esc_html__(   'Set up a header', 'elementor' );
 	}
 
 	public function get_description() : string {

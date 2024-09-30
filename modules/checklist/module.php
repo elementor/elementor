@@ -39,6 +39,12 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 * @return void
 	 */
 	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null ) {
+		add_action( 'elementor/init', function() use ( $wordpress_adapter, $kit_adapter ) {
+			$this->init( $wordpress_adapter, $kit_adapter );
+		} );
+	}
+
+	private function init( ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null ) {
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();
 		parent::__construct();
