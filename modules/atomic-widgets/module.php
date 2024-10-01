@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Image_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Image_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers\Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers\Linked_Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
@@ -82,7 +81,6 @@ class Module extends BaseModule {
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
-		$transformers->register( new Array_Transformer() );
 		$transformers->register( new Linked_Dimensions_Transformer() );
 		$transformers->register( new Size_Transformer() );
 	}

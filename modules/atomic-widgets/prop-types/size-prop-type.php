@@ -22,6 +22,10 @@ class Size_Prop_Type extends Transformable_Prop_Type {
 	}
 
 	public function validate_value( $value ): void {
+		if ( ! is_array( $value ) ) {
+			throw new \Exception( 'Value must be an array, ' . gettype( $value ) . ' given.' );
+		}
+
 		if ( ! isset( $value['size'] ) || ! isset( $value['unit'] ) ) {
 			throw new \Exception( 'Value must include size and unit' );
 		}

@@ -625,6 +625,24 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'not_in_schema' => 'not-in-schema',
 				'not_a_prop_type' => 'not-a-prop-type',
 			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'red',
+								'fontSize' => '16px',
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
 		] );
 
 		// Act.
@@ -636,8 +654,28 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'number_prop' => 123,
 			'boolean_prop' => true,
 		], $data_for_save['settings'] );
+
+		$this->assertSame( [
+			's-1234' => [
+				'id' => 's-1234',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'color' => 'red',
+							'fontSize' => '16px',
+						],
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => null,
+						],
+					],
+				],
+			]
+		], $data_for_save['styles'] );
 	}
 
+	// TODO: add test for get_data_for_save__throws_on_styles_validation_error
 	public function test_get_data_for_save__throws_on_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
