@@ -28,7 +28,6 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! promotionData;
 
 	const redirectHandler = async () => {
-
 		if ( promotionData ) {
 			addMixpanelTrackingChecklistSteps( step.config.id, 'upgrade' );
 		} else {
@@ -51,7 +50,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		} else {
 			addMixpanelTrackingChecklistSteps( step.config.id, 'done' );
 		}
-			
+
 		try {
 			updateStepsState( IS_MARKED_COMPLETED, ! currState );
 
