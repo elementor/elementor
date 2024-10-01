@@ -14,7 +14,6 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
-			container_grid: true,
 			e_nested_atomic_repeaters: true,
 			'nested-elements': true,
 		} );

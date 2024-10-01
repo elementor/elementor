@@ -329,7 +329,9 @@ describe( 'Styles - apply', () => {
 			bind: 'classes',
 			styleDefID: 'new-style-id',
 			meta: { breakpoint: null, state: null },
-			props: {},
+			props: {
+				color: undefined,
+			},
 		} );
 
 		// Assert
@@ -354,11 +356,83 @@ describe( 'Styles - apply', () => {
 			bind: 'classes',
 			styleDefID: 'new-style-id',
 			meta: { breakpoint: null, state: 'hover' },
-			props: {},
+			props: {
+				color: undefined,
+			},
 		} );
 
 		// Assert
 		expectedStyles = {};
+		expect( container.model.get( 'styles' ) ).toEqual( expectedStyles );
+	} );
+
+	it( 'should remove variant only if all props are undefined', async () => {
+		const StylesCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands/styles' ) ).default;
+
+		// Arrange
+		// Mock generateId
+		createStyleCommand.randomId = () => 'new-style-id';
+		const container = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '123',
+			label: 'Container',
+			settings: {
+				text: 'Test text',
+			},
+			styles: {
+				'new-style-id': {
+					id: 'new-style-id',
+					label: 'Container Style 1',
+					type: 'class',
+					variants: [
+						{
+							meta: { breakpoint: null, state: null },
+							props: { color: 'red', fontWeight: 'bold' },
+						},
+						{
+							meta: { breakpoint: null, state: 'hover' },
+							props: { color: 'blue' },
+						},
+					],
+				},
+			},
+		} );
+
+		// Act
+		new StylesCommand().apply( {
+			container,
+			bind: 'classes',
+			styleDefID: 'new-style-id',
+			meta: { breakpoint: null, state: null },
+			props: {
+				color: undefined,
+			},
+		} );
+		new StylesCommand().apply( {
+			container,
+			bind: 'classes',
+			styleDefID: 'new-style-id',
+			meta: { breakpoint: null, state: 'hover' },
+			props: {
+				color: undefined,
+			},
+		} );
+
+		// Assert
+		const expectedStyles = {
+			'new-style-id': {
+				id: 'new-style-id',
+				label: 'Container Style 1',
+				type: 'class',
+				variants: [
+					{
+						meta: { breakpoint: null, state: null },
+						props: { fontWeight: 'bold' },
+					},
+				],
+			},
+		};
 		expect( container.model.get( 'styles' ) ).toEqual( expectedStyles );
 	} );
 } );

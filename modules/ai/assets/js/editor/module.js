@@ -7,6 +7,7 @@ import { AiGetStartedConnect } from './ai-get-started-connect';
 import { getUiConfig } from './utils/editor-integration';
 import { getRemoteFrontendConfig } from './api';
 import { getUniqueId } from './context/requests-ids';
+import ApplyAiTitlesNavigatorBehavior from './integration/navigator/apply-ai-titles-to-navigator-behaviour';
 
 setTimeout( async () => {
 	if ( '1' !== window.ElementorAiConfig?.is_get_started ) {
@@ -42,6 +43,8 @@ setTimeout( async () => {
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
+		elementor.hooks.addFilter( 'navigator/layout/behaviors', this.registerNavigatorBehavior.bind( this ) );
+
 		window.addEventListener( 'hashchange', function( e ) {
 			if ( e.newURL.includes( 'welcome-ai' ) ) {
 				const source = e.newURL.includes( 'welcome-ai-whats-new' ) ? 'whats-new' : 'connect';
@@ -69,6 +72,13 @@ export default class Module extends elementorModules.editor.utils.Module {
 				}, 1000 );
 			}
 		} );
+	}
+
+	registerNavigatorBehavior( behaviors ) {
+		behaviors.ai = {
+			behaviorClass: ApplyAiTitlesNavigatorBehavior,
+		};
+		return behaviors;
 	}
 	registerControlBehavior( behaviors, view ) {
 		const aiOptions = view.options.model.get( 'ai' );
