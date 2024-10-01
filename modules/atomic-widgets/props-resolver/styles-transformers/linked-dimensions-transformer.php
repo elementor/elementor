@@ -20,6 +20,6 @@ class Linked_Dimensions_Transformer extends Transformer_Base {
 		$bottom = $value['bottom'] ?? 'unset';
 		$right = $value['right'] ?? 'unset';
 
-		return $top . ' ' . $left . ' ' . $bottom . ' ' . $right;
+		return $top . ' ' . $right . ' ' . $bottom . ' ' . $left;
 	}
 }

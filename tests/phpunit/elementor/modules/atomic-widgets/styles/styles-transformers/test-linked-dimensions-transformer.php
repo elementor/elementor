@@ -22,9 +22,7 @@ class Test_Linked_Dimensions_Transformer extends Elementor_Test_Base {
 			'right' => '20px',
 			'bottom' => '30px',
 			'left' => '40px',
-		], function( $value ) {
-			return $value;
-		} );
+		] );
 
 		// Assert.
 		$this->assertSame( '10px 20px 30px 40px', $transformed_value );
@@ -37,9 +35,7 @@ class Test_Linked_Dimensions_Transformer extends Elementor_Test_Base {
 		// Act.
 		$transformed_value = $link_dimensions_transformer->transform( [
 			'isLinked' => false,
-		], function( $value ) {
-			return $value;
-		} );
+		] );
 
 		// Assert.
 		$this->assertSame( 'unset unset unset unset', $transformed_value );
@@ -56,9 +52,7 @@ class Test_Linked_Dimensions_Transformer extends Elementor_Test_Base {
 			'right' => null,
 			'bottom' => null,
 			'left' => null,
-		], function( $value ) {
-			return $value;
-		} );
+		] );
 
 		// Assert.
 		$this->assertSame( 'unset unset unset unset', $transformed_value );
