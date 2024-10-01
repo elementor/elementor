@@ -84,6 +84,7 @@ export const generatePluginTests = ( testType: string ) => {
 
 				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 				await wpAdmin.closeAnnouncementsIfVisible();
+				await page.locator( '#tp-skip-button' ).click();
 				await editor.closeNavigatorIfOpen();
 
 				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
