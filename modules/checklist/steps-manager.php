@@ -23,7 +23,9 @@ class Steps_Manager {
 	public function __construct( Checklist_Module_Interface $module ) {
 		$this->module = $module;
 		$this->register_steps();
-		$this->filter_steps();
+		add_action( 'elementor/init', function() {
+			$this->filter_steps();
+		} );
 	}
 
 	/**
