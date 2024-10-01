@@ -26,8 +26,6 @@ class Container {
 
 	private function __clone() {}
 
-	private function __wakeup() {}
-
 	private static function initialize(): DIContainer {
 		if ( isset( self::$instance ) ) {
 			return self::$instance;
