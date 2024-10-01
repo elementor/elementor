@@ -787,7 +787,7 @@ abstract class Base extends Base_File {
 			return $this->get_selector_global_value( $control, $values['__globals__'][ $control['name'] ] );
 		}
 
-		$value = ! empty( $values[ $control['name'] ] )
+		$value = isset( $values[ $control['name'] ] )
 			? $values[ $control['name'] ]
 			: $this->preserved_dynamic_style_values[ $control['name'] ];
 
