@@ -25,12 +25,12 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	const FIRST_CLOSED_CHECKLIST_IN_EDITOR = 'first_closed_checklist_in_editor';
 	const LAST_OPENED_TIMESTAMP = 'last_opened_timestamp';
 	const IS_POPUP_MINIMIZED_KEY = 'is_popup_minimized';
+	const EDITOR_VISIT_COUNT = 'editor_visit_count';
 
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;
 	private Kit_Adapter_Interface $kit_adapter;
 	private $user_progress = null;
-	private static $instance = null;
 
 	/**
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
@@ -39,7 +39,6 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 * @return void
 	 */
 	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null ) {
-		static::$instance = $this;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();
 		parent::__construct();
@@ -51,14 +50,17 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			return;
 		}
 
+		add_action( 'elementor/editor/init', [ $this, 'monitor_editor_visits' ] );
+
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->steps_manager = new Steps_Manager( $this );
-		$this->enqueue_editor_scripts();
-	}
 
-	public static function instance() : self {
-		return static::$instance ?? new self();
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$this->enqueue_editor_scripts();
 	}
 
 	/**
@@ -95,7 +97,10 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *  }
 	 */
 	public function get_user_progress_from_db() : array {
-		return json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true );
+		return array_merge(
+			$this->get_default_user_progress(),
+			json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true )
+		);
 	}
 
 	/**
@@ -130,6 +135,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
 			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
 			self::IS_POPUP_MINIMIZED_KEY => $new_data[ self::IS_POPUP_MINIMIZED_KEY ] ?? null,
+			self::EDITOR_VISIT_COUNT => $new_data[ self::EDITOR_VISIT_COUNT ] ?? null,
 		];
 
 		foreach ( $allowed_properties as $key => $value ) {
@@ -196,6 +202,26 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		return 'yes' === $is_preference_switch_on;
 	}
 
+	public function monitor_editor_visits() {
+		if ( ! $this->is_experiment_active() || ! self::is_preference_switch_on() ) {
+			return;
+		}
+
+		$progress = $this->get_user_progress_from_db();
+		$progress[ self::EDITOR_VISIT_COUNT ] = $progress[ self::EDITOR_VISIT_COUNT ] ?? 0;
+
+		if ( -1 === $progress[ self::EDITOR_VISIT_COUNT ] ) {
+			return;
+		}
+
+		if ( 2 < ++$progress[ self::EDITOR_VISIT_COUNT ] ) {
+			$progress[ self::EDITOR_VISIT_COUNT ] = -1;
+		}
+
+		$this->user_progress = $progress;
+		$this->update_user_progress_in_db();
+	}
+
 	private function register_experiment() : void {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_ID,
@@ -207,14 +233,19 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	private function init_user_progress() : void {
-		$default_settings = [
+		$default_settings = $this->get_default_user_progress();
+
+		$this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
+	}
+
+	private function get_default_user_progress() : array {
+		return [
 			self::LAST_OPENED_TIMESTAMP => -1,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			self::IS_POPUP_MINIMIZED_KEY => false,
+			self::EDITOR_VISIT_COUNT => 0,
 			'steps' => [],
 		];
-
-		$this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
 	}
 
 	private function update_user_progress_in_db() : void {
