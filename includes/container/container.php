@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor Container.
  *
- * Elementor container handler class is responsible for containerization
- * manager classes and their dependencies.
+ * Elementor container handler class is responsible for the containerization
+ * of manager classes and their dependencies.
  *
  * @since 3.24.0
  */

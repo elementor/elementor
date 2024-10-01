@@ -91,7 +91,7 @@ class Test_Container extends Elementor_Test_Base {
 		$this->assertEquals( $stage, $versionClass->stage );
 	}
 
-	public function test_alias_returns_same_Instance() {
+	public function test_alias_returns_same_instance() {
 		$this->container->set( 'wp-adapter', DI\get( Wordpress_Adapter::class ) );
 
 		$service = $this->container->get( Wordpress_Adapter::class );
