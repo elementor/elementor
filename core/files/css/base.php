@@ -789,7 +789,7 @@ abstract class Base extends Base_File {
 
 		$value = isset( $values[ $control['name'] ] )
 			? $values[ $control['name'] ]
-			: $this->preserved_dynamic_style_values[ $control['name'] ];
+			: $this->preserved_dynamic_style_values[ $control['name'] ] ?? null;
 
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
 			$value = $control['selectors_dictionary'][ $value ];
