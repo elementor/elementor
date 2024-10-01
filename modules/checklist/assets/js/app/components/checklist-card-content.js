@@ -36,7 +36,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		}
 
 		if ( ! elementor || ! STEP_IDS_TO_COMPLETE_IN_EDITOR.includes( id ) || ! PANEL_ROUTES[ id ] ) {
-			return window.open( ctaUrl, promotionData ? '_blank' : '_self' );
+			return window.open( ctaUrl, '_blank' );
 		}
 
 		await $e.run( 'panel/global/open' );
@@ -74,7 +74,14 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 			<CardContent>
 				<Typography variant="body2" color="text.secondary" component="p">
 					{ description + ' ' }
-					<Link href={ learnMoreUrl } target="_blank" rel="noreferrer" underline="hover" color="info.main"> { learnMoreText } </Link>
+					<Link
+						href={ learnMoreUrl }
+						target="_blank"
+						rel="noreferrer"
+						underline="hover"
+						color="info.main"
+						noWrap={ true }
+					>{ learnMoreText }</Link>
 				</Typography>
 			</CardContent>
 			<CardActions>
