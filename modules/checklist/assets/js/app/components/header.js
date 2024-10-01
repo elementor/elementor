@@ -16,13 +16,12 @@ import { ExpandDiagonalIcon, MinimizeDiagonalIcon } from '@elementor/icons';
 const { CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME } = USER_PROGRESS;
 const { CHECKLIST_HEADER_CLOSE } = MIXPANEL_CHECKLIST_STEPS;
 
-
 const Header = ( { steps, isMinimized, toggleIsMinimized } ) => {
 	const { data: userProgress } = useQuery( {
 		queryKey: [ 'closedForFirstTime' ],
 		queryFn: fetchUserProgress,
 	} ),
-		closedForFirstTime = userProgress?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ] || false;
+	closedForFirstTime = userProgress?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ] || false;
 
 	const closeChecklist = async () => {
 		addMixpanelTrackingChecklistHeader( CHECKLIST_HEADER_CLOSE );

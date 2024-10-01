@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { addMixpanelTrackingChecklistSteps } from '../../utils/functions';
 import { MIXPANEL_CHECKLIST_STEPS } from '../../utils/consts';
 
-const { ACTION, WELL_DONE} = MIXPANEL_CHECKLIST_STEPS;
+const { ACTION, WELL_DONE } = MIXPANEL_CHECKLIST_STEPS;
 
 const SuccessMessage = () => {
 	const { ajaxState, setAjax } = useAjax();
