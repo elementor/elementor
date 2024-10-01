@@ -8,6 +8,7 @@ use Elementor\Modules\Checklist\Steps\Setup_Header;
 use Elementor\Modules\Checklist\Steps\Add_Logo;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 use Elementor\Modules\Checklist\Steps\Set_Fonts_And_Colors;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -180,10 +181,22 @@ class Steps_Manager {
 				continue;
 			}
 
+			if ( ! $this->step_available( $step_id ) ) {
+				continue;
+			}
+
 			$this->step_instances[ $step_id ] = $step_instance;
 			$step_ids[] = $step_id;
 		}
 
 		self::$step_ids = $step_ids;
+	}
+
+	private function step_available( string $step_id ) : bool {
+		if ( Setup_Header::STEP_ID === $step_id && Utils::has_pro() ) {
+			return false;
+		}
+
+		return true;
 	}
 }
