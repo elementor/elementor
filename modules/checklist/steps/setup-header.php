@@ -15,7 +15,7 @@ class Setup_Header extends Step_Base {
 	public function __construct( $module, $wordpress_adapter = null, $kit_adapter = null, $should_promote = true ) {
 		$promotion_data = $should_promote
 			? [
-				'url' => 'http://go.elementor.com/app-website-checklist-header-article',
+				'url' => 'https://go.elementor.com/go-pro-website-checklist-header/',
 				'text' => esc_html__( 'Upgrade Now', 'elementor' ),
 				'icon' => 'default',
 			]
@@ -79,6 +79,6 @@ class Setup_Header extends Step_Base {
 	}
 
 	public function get_learn_more_url() : string {
-		return 'https://elementor.com/help/header-site-part/';
+		return 'http://go.elementor.com/app-website-checklist-header-article';
 	}
 }
