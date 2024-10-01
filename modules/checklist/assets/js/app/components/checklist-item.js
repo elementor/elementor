@@ -3,9 +3,10 @@ import ChecklistCardContent from './checklist-card-content';
 import { ListItemButton, ListItemIcon, ListItemText, Collapse, Checkbox, SvgIcon } from '@elementor/ui';
 import { CircleCheckFilledIcon, ChevronDownIcon, RadioButtonUncheckedIcon, UpgradeIcon } from '@elementor/icons';
 import { isStepChecked, addMixpanelTrackingChecklistSteps } from '../../utils/functions';
-import { STEP } from '../../utils/consts';
+import { STEP, MIXPANEL_CHECKLIST_STEPS } from '../../utils/consts';
 
 const { PROMOTION_DATA } = STEP;
+const { TITLE, ACCORDION_SECTION } = MIXPANEL_CHECKLIST_STEPS;
 
 function CheckListItem( props ) {
 	const { expandedIndex, setExpandedIndex, setSteps, index, step } = props,
@@ -14,7 +15,7 @@ function CheckListItem( props ) {
 		promotionData = step.config[ PROMOTION_DATA ];
 
 	const handleExpandClick = () => {
-		addMixpanelTrackingChecklistSteps( step.config.id, 'title', 'accordionSection' );
+		addMixpanelTrackingChecklistSteps( step.config.id, TITLE, ACCORDION_SECTION );
 		setExpandedIndex( index === expandedIndex ? -1 : index );
 	};
 

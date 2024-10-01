@@ -2,9 +2,10 @@ import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } f
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { addMixpanelTrackingChecklistSteps, getAndUpdateStep, updateStep } from '../../utils/functions';
-import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES } from '../../utils/consts';
+import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES, MIXPANEL_CHECKLIST_STEPS } from '../../utils/consts';
 
 const { IS_MARKED_COMPLETED, IS_ABSOLUTE_COMPLETED, IS_IMMUTABLE_COMPLETED } = STEP;
+const { DONE, UNDONE, ACTION, UPGRADE } = MIXPANEL_CHECKLIST_STEPS;
 
 const ChecklistCardContent = ( { step, setSteps } ) => {
 	const {
@@ -29,9 +30,9 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 
 	const redirectHandler = async () => {
 		if ( promotionData ) {
-			addMixpanelTrackingChecklistSteps( step.config.id, 'upgrade' );
+			addMixpanelTrackingChecklistSteps( step.config.id, UPGRADE );
 		} else {
-			addMixpanelTrackingChecklistSteps( step.config.id, 'action' );
+			addMixpanelTrackingChecklistSteps( step.config.id, ACTION );
 		}
 
 		if ( ! elementor || ! STEP_IDS_TO_COMPLETE_IN_EDITOR.includes( id ) || ! PANEL_ROUTES[ id ] ) {
@@ -46,9 +47,9 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		const currState = isMarkedCompleted;
 
 		if ( isMarkedCompleted ) {
-			addMixpanelTrackingChecklistSteps( step.config.id, 'undone' );
+			addMixpanelTrackingChecklistSteps( step.config.id, UNDONE );
 		} else {
-			addMixpanelTrackingChecklistSteps( step.config.id, 'done' );
+			addMixpanelTrackingChecklistSteps( step.config.id, DONE );
 		}
 
 		try {

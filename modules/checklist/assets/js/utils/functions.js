@@ -66,7 +66,8 @@ export function addMixpanelTrackingChecklistHeader( name ) {
 	);
 }
 
-export function addMixpanelTrackingChecklistTopBar( name ) {
+export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
+	name = ! togglePopupState ? 'launchpadOn' : 'launchpadOff';
 	return (
 		elementor.editorEvents.dispatchEvent(
 			elementor.editorEvents.config.names.topBar[ name ],

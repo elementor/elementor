@@ -21,12 +21,7 @@ export const editorV2 = () => {
 					<TopBarIcon />
 				</QueryClientProvider>,
 				onClick: () => {
-					if ( ! TogglePopup.isOpen ) {
-						addMixpanelTrackingChecklistTopBar( 'launchpadOn' );
-					} else {
-						addMixpanelTrackingChecklistTopBar( 'launchpadOff' );
-					}
-
+					addMixpanelTrackingChecklistTopBar( TogglePopup.isOpen );
 					toggleChecklistPopup();
 				},
 			};
