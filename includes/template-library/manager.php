@@ -350,16 +350,18 @@ class Manager {
 	 */
 	public function get_template_data( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
+		$post_id = intval( $args['template_id'] );
+		$post_status = get_post_status( $post_id );
 
-		if ( ! current_user_can('read_template_data', $args['template_id'])  ) {
-			return new \WP_Error( 'unauthorized', 'User is unauthorized to read template data' );
+		if ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) ) {
+			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template.', 'elementor' ) );
 		}
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
 		}
 
-		if ( isset( $args['edit_mode'] ) && current_user_can( 'edit_template_data', $args['template_id'] )) {
+		if ( isset( $args['edit_mode'] ) ) {
 			Plugin::$instance->editor->set_edit_mode( $args['edit_mode'] );
 		}
 
