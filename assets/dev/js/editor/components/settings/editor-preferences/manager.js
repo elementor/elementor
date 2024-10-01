@@ -21,27 +21,8 @@ export default class extends BaseManager {
 
 	toggleChecklistIconVisibility( switcherValue ) {
 		const shouldShow = 'yes' === switcherValue;
-		shouldShow
-		?
-			elementor.editorEvents.dispatchEvent(
-				elementor.editorEvents.config.names.elementorEditor.userPreferences.checklistShow,
-				{
-					location: elementor.editorEvents.config.locations.elementorEditor,
-					secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
-					trigger: elementor.editorEvents.config.triggers.click,
-					element: elementor.editorEvents.config.elements.mainCta,
-				},
-			)
-		:
-			elementor.editorEvents.dispatchEvent(
-				elementor.editorEvents.config.names.elementorEditor.userPreferences.checklistHide,
-				{
-					location: elementor.editorEvents.config.locations.elementorEditor,
-					secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
-					trigger: elementor.editorEvents.config.triggers.click,
-					element: elementor.editorEvents.config.elements.mainCta,
-				},
-			);
+
+		shouldShow ? this.addMixpanelTrackingChecklist( 'checklistShow' ) : this.addMixpanelTrackingChecklist( 'checklistHide' );
 
 		$e.run( 'checklist/toggle-icon', shouldShow );
 	}
@@ -79,5 +60,19 @@ export default class extends BaseManager {
 
 	onShowHiddenElementsChange() {
 		elementorFrontend.elements.$body.toggleClass( 'e-preview--show-hidden-elements' );
+	}
+
+	addMixpanelTrackingChecklist ( name ) {
+		return (
+			elementor.editorEvents.dispatchEvent(
+				elementor.editorEvents.config.names.elementorEditor.userPreferences[ name ],
+				{
+					location: elementor.editorEvents.config.locations.elementorEditor,
+					secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
+					trigger: elementor.editorEvents.config.triggers.click,
+					element: elementor.editorEvents.config.elements.mainCta,
+				},
+			)
+		);
 	}
 }

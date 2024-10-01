@@ -48,6 +48,7 @@ const eventsConfig = {
 		accordionSection: 'Accordion section',
 		buttonIcon: 'Button Icon',
 		mainCta: 'Main CTA',
+		button: 'Button',
 		link: 'Link',
 		dropdown: 'Dropdown',
 	},

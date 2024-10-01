@@ -1,7 +1,7 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { getAndUpdateStep, updateStep } from '../../utils/functions';
+import { addMixpanelTrackingChecklistSteps, getAndUpdateStep, updateStep } from '../../utils/functions';
 import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES } from '../../utils/consts';
 
 const { IS_MARKED_COMPLETED, IS_ABSOLUTE_COMPLETED, IS_IMMUTABLE_COMPLETED } = STEP;
@@ -29,26 +29,8 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 
 	const redirectHandler = async () => {
 		promotionData
-			?
-				elementor.editorEvents.dispatchEvent(
-					elementor.editorEvents.config.names.elementorEditor.checklistSteps.upgrade[ id ],
-					{
-						location: elementor.editorEvents.config.locations.elementorEditor,
-						secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
-						trigger: elementor.editorEvents.config.triggers.click,
-						element: elementor.editorEvents.config.elements.mainCta,
-					},
-				)
-			:
-				elementor.editorEvents.dispatchEvent(
-					elementor.editorEvents.config.names.elementorEditor.checklistSteps.action[ id ],
-					{
-						location: elementor.editorEvents.config.locations.elementorEditor,
-						secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
-						trigger: elementor.editorEvents.config.triggers.click,
-						element: elementor.editorEvents.config.elements.mainCta,
-					},
-				);
+			? addMixpanelTrackingChecklistSteps( step.config.id, 'upgrade', 'mainCta' )
+			: addMixpanelTrackingChecklistSteps( step.config.id, 'action', 'mainCta' );
 
 		if ( ! elementor || ! STEP_IDS_TO_COMPLETE_IN_EDITOR.includes( id ) || ! PANEL_ROUTES[ id ] ) {
 			return window.open( ctaUrl, promotionData ? '_blank' : '_self' );
@@ -62,26 +44,8 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		const currState = isMarkedCompleted;
 
 		isMarkedCompleted
-		?
-			elementor.editorEvents.dispatchEvent(
-				elementor.editorEvents.config.names.elementorEditor.checklistSteps.undone[ id ],
-				{
-					location: elementor.editorEvents.config.locations.elementorEditor,
-					secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
-					trigger: elementor.editorEvents.config.triggers.click,
-					element: elementor.editorEvents.config.elements.mainCta,
-				},
-			)
-		:
-		elementor.editorEvents.dispatchEvent(
-			elementor.editorEvents.config.names.elementorEditor.checklistSteps.done[ id ],
-			{
-				location: elementor.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
-				trigger: elementor.editorEvents.config.triggers.click,
-				element: elementor.editorEvents.config.elements.mainCta,
-			},
-		);
+			? addMixpanelTrackingChecklistSteps( step.config.id, 'undone', 'button' )
+			: addMixpanelTrackingChecklistSteps( step.config.id, 'done', 'button' );
 
 		try {
 			updateStepsState( IS_MARKED_COMPLETED, ! currState );

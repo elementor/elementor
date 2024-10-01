@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import ChecklistCardContent from './checklist-card-content';
 import { ListItemButton, ListItemIcon, ListItemText, Collapse, Checkbox, SvgIcon } from '@elementor/ui';
 import { CircleCheckFilledIcon, ChevronDownIcon, RadioButtonUncheckedIcon, UpgradeIcon } from '@elementor/icons';
-import { isStepChecked } from '../../utils/functions';
+import { isStepChecked, addMixpanelTrackingChecklistSteps } from '../../utils/functions';
 import { STEP } from '../../utils/consts';
 
 const { PROMOTION_DATA } = STEP;
@@ -14,15 +14,7 @@ function CheckListItem( props ) {
 		promotionData = step.config[ PROMOTION_DATA ];
 
 	const handleExpandClick = () => {
-		elementor.editorEvents.dispatchEvent(
-			elementor.editorEvents.config.names.elementorEditor.checklistSteps.title[ step.config.id ],
-			{
-				location: elementor.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
-				trigger: elementor.editorEvents.config.triggers.toggleClick,
-				element: elementor.editorEvents.config.elements.accordionSection,
-			},
-		);
+		addMixpanelTrackingChecklistSteps( step.config.id, 'title', 'accordionSection' );
 		setExpandedIndex( index === expandedIndex ? -1 : index );
 	};
 
