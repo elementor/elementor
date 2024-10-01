@@ -65,6 +65,8 @@ abstract class Base extends Base_File {
 
 	private $dynamic_elements_ids = [];
 
+	private $preserved_dynamic_style_values = [];
+
 	/**
 	 * Stylesheet object.
 	 *
@@ -571,6 +573,11 @@ abstract class Base extends Base_File {
 				// Dynamic CSS should not be added to the CSS files.
 				// Instead it's handled by \Elementor\Core\DynamicTags\Dynamic_CSS
 				// and printed in a style tag.
+				$should_preserve_value = isset( $control['control_type'] ) && 'content' === $control['control_type'];
+				if ( $should_preserve_value ) {
+					$this->preserved_dynamic_style_values[ $control['name'] ] = $parsed_dynamic_settings[ $control['name'] ];
+				}
+
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
 
 				$this->dynamic_elements_ids[] = $controls_stack->get_id();
@@ -780,7 +787,9 @@ abstract class Base extends Base_File {
 			return $this->get_selector_global_value( $control, $values['__globals__'][ $control['name'] ] );
 		}
 
-		$value = $values[ $control['name'] ];
+		$value = isset( $values[ $control['name'] ] )
+			? $values[ $control['name'] ]
+			: $this->preserved_dynamic_style_values[ $control['name'] ] ?? null;
 
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
 			$value = $control['selectors_dictionary'][ $value ];
