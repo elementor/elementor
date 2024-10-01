@@ -55,5 +55,3 @@ class Container {
 		return static::$instance;
 	}
 }
-
-
