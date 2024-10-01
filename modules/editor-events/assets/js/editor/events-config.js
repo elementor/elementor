@@ -84,7 +84,7 @@ const eventsConfig = {
 			structure: 'top_bar_structure',
 			documentNameDropdown: 'top_bar_document_name_dropdown',
 			responsiveControls: 'top_bar_responsive_controls',
-			launchpad: 'top_bar_launchpad_icon',
+			launchpad: 'top_bar_checklist_launchpad_icon',
 		},
 		// ChecklistSteps keys have to be with underscore in order to match stepIds
 		elementorEditor: {
