@@ -27,7 +27,7 @@ function CheckListItem( props ) {
 
 	return (
 		<>
-			<ListItemButton onClick={ handleExpandClick } data-step-id={ step.config.id }>
+			<ListItemButton onClick={ handleExpandClick } data-step-id={ step.config.id } dense={ true }>
 				<ListItemIcon>
 					<Checkbox
 						data-is-checked={ isChecked }
