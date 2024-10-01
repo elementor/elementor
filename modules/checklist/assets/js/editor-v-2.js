@@ -4,7 +4,7 @@ import * as React from 'react';
 import TopBarIcon from './topbar-icon';
 import { toggleChecklistPopup } from './utils/functions';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
-import { TogglePopup } from "./commands";
+import { TogglePopup } from './commands';
 
 const queryClient = new QueryClient();
 
@@ -33,7 +33,7 @@ export const editorV2 = () => {
 					);
 
 					toggleChecklistPopup();
-				}
+				},
 			};
 		},
 	} );

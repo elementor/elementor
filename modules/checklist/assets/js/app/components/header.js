@@ -8,7 +8,7 @@ import {
 	addMixpanelTrackingChecklistHeader,
 	fetchUserProgress,
 	toggleChecklistPopup,
-	updateUserProgress
+	updateUserProgress,
 } from '../../utils/functions';
 import { USER_PROGRESS } from '../../utils/consts';
 import { ExpandDiagonalIcon, MinimizeDiagonalIcon } from '@elementor/icons';
@@ -23,7 +23,7 @@ const Header = ( { steps, isMinimized, toggleIsMinimized } ) => {
 		closedForFirstTime = userProgress?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ] || false;
 
 	const closeChecklist = async () => {
-		addMixpanelTrackingChecklistHeader( 'checklistHeaderClose' )
+		addMixpanelTrackingChecklistHeader( 'checklistHeaderClose' );
 
 		if ( ! closedForFirstTime ) {
 			await updateUserProgress( { [ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ]: true } );

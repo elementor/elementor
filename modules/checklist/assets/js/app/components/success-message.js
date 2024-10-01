@@ -1,7 +1,7 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@elementor/ui';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import { useEffect } from 'react';
-import { addMixpanelTrackingChecklistSteps } from "../../utils/functions";
+import { addMixpanelTrackingChecklistSteps } from '../../utils/functions';
 
 const SuccessMessage = () => {
 	const { ajaxState, setAjax } = useAjax();
