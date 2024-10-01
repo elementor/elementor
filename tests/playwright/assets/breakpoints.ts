@@ -1,6 +1,6 @@
 import { Locator, type Page } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
-import { Device } from '../types/types';
+import { BreakpointEditableDevice, Device } from '../types/types';
 import EditorSelectors from '../selectors/editor-selectors';
 
 export default class {
@@ -82,5 +82,29 @@ export default class {
 			await this.page.click( removeBreakpointButton );
 		}
 		await this.saveOrUpdate( editor, true );
+	}
+
+	getBreakpointInputLocator( page: Page, device: BreakpointEditableDevice ): Locator {
+		const locators = {
+			mobile: page.locator( 'input[data-setting="viewport_mobile"]' ),
+			mobile_extra: page.locator( 'input[data-setting="viewport_mobile_extra"]' ),
+			tablet: page.locator( 'input[data-setting="viewport_tablet"]' ),
+			tablet_extra: page.locator( 'input[data-setting="viewport_tablet_extra"]' ),
+			laptop: page.locator( 'input[data-setting="viewport_laptop"]' ),
+			widescreen: page.locator( 'input[data-setting="viewport_widescreen"]' ),
+		};
+
+		return locators[ device ];
+	}
+
+	async setBreakpoint( editor: EditorPage, device: BreakpointEditableDevice, value: number ) {
+		await editor.openSiteSettings( 'layout' );
+		await editor.openSection( 'section_breakpoints' );
+		await this.page.waitForSelector( 'text=Active Breakpoints' );
+
+		const locator = this.getBreakpointInputLocator( this.page, device );
+		await locator.fill( String( value ) );
+		await this.saveOrUpdate( editor );
+		await this.page.locator( EditorSelectors.toast ).waitFor();
 	}
 }
