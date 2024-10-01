@@ -246,7 +246,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	private function init_user_progress() : bool {
 		$default_settings = $this->get_default_user_progress();
 
-		return ( bool ) $this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
+		return (bool) $this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
 	}
 
 	private function get_default_user_progress() : array {
