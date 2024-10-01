@@ -2,7 +2,7 @@ import * as EditorAppBar from '@elementor/editor-app-bar';
 import { __ } from '@wordpress/i18n';
 import * as React from 'react';
 import TopBarIcon from './topbar-icon';
-import { toggleChecklistPopup } from './utils/functions';
+import { toggleChecklistPopup, addMixpanelTrackingChecklistTopBar } from './utils/functions';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { TogglePopup } from './commands';
 
@@ -21,16 +21,11 @@ export const editorV2 = () => {
 					<TopBarIcon />
 				</QueryClientProvider>,
 				onClick: () => {
-					elementor.editorEvents.dispatchEvent(
-						elementor.editorEvents.config.names.topBar.launchpad,
-						{
-							location: elementor.editorEvents.config.locations.topBar,
-							secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
-							trigger: elementor.editorEvents.config.triggers.toggleClick,
-							element: elementor.editorEvents.config.elements.buttonIcon,
-							isChecklistOpen: ! TogglePopup.isOpen,
-						},
-					);
+					if ( ! TogglePopup.isOpen ) {
+						addMixpanelTrackingChecklistTopBar( 'launchpadOn' );
+					} else {
+						addMixpanelTrackingChecklistTopBar( 'launchpadOff' );
+					}
 
 					toggleChecklistPopup();
 				},

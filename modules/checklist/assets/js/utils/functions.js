@@ -65,3 +65,17 @@ export function addMixpanelTrackingChecklistHeader( name ) {
 		)
 	);
 }
+
+export function addMixpanelTrackingChecklistTopBar( name ) {
+	return (
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names.topBar[ name ],
+			{
+				location: elementor.editorEvents.config.locations.topBar,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
+				trigger: elementor.editorEvents.config.triggers.toggleClick,
+				element: elementor.editorEvents.config.elements.buttonIcon,
+			},
+		)
+	);
+}
