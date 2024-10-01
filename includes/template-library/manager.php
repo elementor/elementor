@@ -351,11 +351,15 @@ class Manager {
 	public function get_template_data( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
+		if ( ! current_user_can('read_template_data', $args['template_id'])  ) {
+			return new \WP_Error( 'unauthorized', 'User is unauthorized to read template data' );
+		}
+
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
 		}
 
-		if ( isset( $args['edit_mode'] ) ) {
+		if ( isset( $args['edit_mode'] ) && current_user_can( 'edit_template_data', $args['template_id'] )) {
 			Plugin::$instance->editor->set_edit_mode( $args['edit_mode'] );
 		}
 
