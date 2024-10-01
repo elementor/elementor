@@ -5,7 +5,8 @@
 	"license": "GNU General Public License v3.0",
 	"minimum-stability": "stable",
 	"require": {
-		"php": ">=7.4"
+		"php": ">=7.4",
+		"civicrm/composer-downloads-plugin": "~3 || ~4"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
@@ -28,12 +29,33 @@
 	},
 	"config": {
 		"allow-plugins": {
-			"dealerdirect/phpcodesniffer-composer-installer": true
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"civicrm/composer-downloads-plugin": true
 		}
 	},
 	"authors": [
 		{
 			"name": "Elementor team"
 		}
-	]
+	],
+	"extra": {
+		"downloads": {
+			"optimization-detective": {
+				"url": "https://downloads.wordpress.org/plugin/optimization-detective.zip",
+				"path": "modules/optimization-detective/plugins/optimization-detective/"
+			},
+			"image-prioritizer": {
+				"url": "https://downloads.wordpress.org/plugin/image-prioritizer.zip",
+				"path": "modules/optimization-detective/plugins/image-prioritizer/"
+			},
+			"embed-optimizer": {
+				"url": "https://downloads.wordpress.org/plugin/embed-optimizer.zip",
+				"path": "modules/optimization-detective/plugins/embed-optimizer/"
+			},
+			"elementor-lcp-background-image-preloader": {
+				"url": "https://github.com/westonruter/elementor-lcp-background-image-preloader/archive/refs/heads/main.zip",
+				"path": "modules/optimization-detective/plugins/elementor-lcp-background-image-preloader/"
+			}
+		}
+	}
 }
