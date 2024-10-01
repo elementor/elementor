@@ -4,31 +4,29 @@ namespace Elementor\Modules\Checklist\Steps;
 
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Setup_Header extends Step_Base {
+class Setup_Header extends Step_Base
+{
 	const STEP_ID = 'setup_header';
 
 	public function __construct( $module, $wordpress_adapter = null, $kit_adapter = null, $should_promote = true ) {
 		$promotion_data = $should_promote
-			? [
-				'url' => 'http://go.elementor.com/app-website-checklist-header-article',
-				'text' => esc_html__( 'Upgrade Now', 'elementor' ),
-				'icon' => 'default',
-			]
+			? $this->render_promotion()
 			: null;
 
 		parent::__construct( $module, $wordpress_adapter, $kit_adapter, $promotion_data );
 	}
 
-	public function get_id() : string {
+	public function get_id(): string {
 		return self::STEP_ID;
 	}
 
-	public function is_absolute_completed() : bool {
+	public function is_absolute_completed(): bool {
 		$args = [
 			'post_type' => 'elementor_library',
 			'meta_query' => [
@@ -54,31 +52,45 @@ class Setup_Header extends Step_Base {
 		return count( $header_templates ) >= 1;
 	}
 
-	public function get_title() : string {
-		return esc_html__(   'Set up a header', 'elementor' );
+	public function get_title(): string {
+		return esc_html__( 'Set up a header', 'elementor' );
 	}
 
-	public function get_description() : string {
+	public function get_description(): string {
 		return esc_html__( 'This element apply across different pages, so visitors can easily navigate around your site.', 'elementor' );
 	}
 
-	public function get_cta_text() : string {
+	public function get_cta_text(): string {
 		return esc_html__( 'Add a header', 'elementor' );
 	}
 
-	public function get_cta_url() : string {
+	public function get_cta_url(): string {
 		return '';
 	}
 
-	public function get_image_src() : string {
+	public function get_image_src(): string {
 		return 'https://assets.elementor.com/checklist/v1/images/checklist-step-4.jpg';
 	}
 
-	public function get_is_completion_immutable() : bool {
+	public function get_is_completion_immutable(): bool {
 		return false;
 	}
 
-	public function get_learn_more_url() : string {
+	public function get_learn_more_url(): string {
 		return 'https://elementor.com/help/header-site-part/';
 	}
+
+	private function render_promotion() {
+			return Filtered_Promotions_Manager::get_filtered_promotion_data(
+				[
+					'url' => 'http://go.elementor.com/app-website-checklist-header-article',
+					'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+					'icon' => 'default',
+				],
+				'elementor/checklist/promotion',
+				'upgrade_url'
+			);
+
+	}
+
 }
