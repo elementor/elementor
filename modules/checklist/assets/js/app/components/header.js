@@ -54,7 +54,7 @@ const Header = ( { steps, isMinimized, toggleIsMinimized } ) => {
 					<IconButton size="small" onClick={ toggleIsMinimized } aria-expanded={ ! isMinimized }>
 						{ isMinimized ? <ExpandDiagonalIcon /> : <MinimizeDiagonalIcon /> }
 					</IconButton>
-					<CloseButton sx={ { marginRight: '-4px' } } size="small" onClick={ closeChecklist } />
+					<CloseButton sx={ { mr: -0.5 } } size="small" onClick={ closeChecklist } />
 				</Toolbar>
 				<Progress steps={ steps } />
 			</AppBar>
