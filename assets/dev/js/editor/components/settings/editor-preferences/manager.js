@@ -21,6 +21,27 @@ export default class extends BaseManager {
 
 	toggleChecklistIconVisibility( switcherValue ) {
 		const shouldShow = 'yes' === switcherValue;
+		shouldShow
+		?
+			elementor.editorEvents.dispatchEvent(
+				elementor.editorEvents.config.names.elementorEditor.userPreferences.checklistShow,
+				{
+					location: elementor.editorEvents.config.locations.elementorEditor,
+					secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
+					trigger: elementor.editorEvents.config.triggers.click,
+					element: elementor.editorEvents.config.elements.mainCta,
+				},
+			)
+		:
+			elementor.editorEvents.dispatchEvent(
+				elementor.editorEvents.config.names.elementorEditor.userPreferences.checklistHide,
+				{
+					location: elementor.editorEvents.config.locations.elementorEditor,
+					secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
+					trigger: elementor.editorEvents.config.triggers.click,
+					element: elementor.editorEvents.config.elements.mainCta,
+				},
+			);
 
 		$e.run( 'checklist/toggle-icon', shouldShow );
 	}

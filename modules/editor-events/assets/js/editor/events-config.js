@@ -118,9 +118,13 @@ const eventsConfig = {
 					'setup_header': 'checklist_step_undone_createheader',
 				},
 				upgrade: {
-
+					'setup_header': 'checklist_step_pro_action_createheader',
 				},
-			}
+			},
+			userPreferences: {
+				checklistShow: 'checklist_userprefrences_toggle_show',
+				checklistHide: 'checklist_userprefrences_toggle_hide',
+			},
 		},
 	},
 };
