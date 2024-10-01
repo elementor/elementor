@@ -6,6 +6,7 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Isolation\Kit_Adapter;
 use Elementor\Core\Isolation\Kit_Adapter_Interface;
+use Elementor\Core\Utils\Constants;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
