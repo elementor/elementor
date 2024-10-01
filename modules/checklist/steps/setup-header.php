@@ -76,13 +76,13 @@ class Setup_Header extends Step_Base {
 	}
 
 	public function get_learn_more_url() : string {
-		return 'https://elementor.com/help/header-site-part/';
+		return 'https://go.elementor.com/app-website-checklist-header-article';
 	}
 
 	private function render_promotion() {
 			return Filtered_Promotions_Manager::get_filtered_promotion_data(
 				[
-					'url' => 'http://go.elementor.com/app-website-checklist-header-article',
+					'url' => 'https://go.elementor.com/go-pro-website-checklist-header',
 					'text' => esc_html__( 'Upgrade Now', 'elementor' ),
 					'icon' => 'default',
 				],
