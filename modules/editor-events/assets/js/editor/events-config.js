@@ -125,8 +125,8 @@ const eventsConfig = {
 				},
 			},
 			userPreferences: {
-				checklistShow: 'checklist_userprefrences_toggle_show',
-				checklistHide: 'checklist_userprefrences_toggle_hide',
+				checklistShow: 'checklist_userpreferences_toggle_show',
+				checklistHide: 'checklist_userpreferences_toggle_hide',
 			},
 		},
 	},
