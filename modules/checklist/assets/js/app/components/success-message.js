@@ -7,7 +7,7 @@ const SuccessMessage = () => {
 	const { ajaxState, setAjax } = useAjax();
 
 	const hideChecklist = () => {
-		addMixpanelTrackingChecklistSteps( 'well_done', 'action', 'mainCta' );
+		addMixpanelTrackingChecklistSteps( 'well_done', 'action' );
 
 		setAjax( {
 			data: {

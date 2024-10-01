@@ -38,7 +38,7 @@ export function getAndUpdateStep( id, step, key, value ) {
 	return { ...step, [ key ]: value };
 }
 
-export function addMixpanelTrackingChecklistSteps( name, action, element ) {
+export function addMixpanelTrackingChecklistSteps( name, action, element = 'button' ) {
 	return (
 		elementor.editorEvents.dispatchEvent(
 			elementor.editorEvents.config.names.elementorEditor.checklistSteps[ action ][ name ],

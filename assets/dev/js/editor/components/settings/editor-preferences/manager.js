@@ -22,9 +22,11 @@ export default class extends BaseManager {
 	toggleChecklistIconVisibility( switcherValue ) {
 		const shouldShow = 'yes' === switcherValue;
 
-		shouldShow
-			? this.addMixpanelTrackingChecklist( 'checklistShow' )
-			: this.addMixpanelTrackingChecklist( 'checklistHide' );
+		if ( shouldShow ) {
+			this.addMixpanelTrackingChecklist( 'checklistShow' );
+		} else {
+			this.addMixpanelTrackingChecklist( 'checklistHide' );
+		}
 
 		$e.run( 'checklist/toggle-icon', shouldShow );
 	}
@@ -71,8 +73,8 @@ export default class extends BaseManager {
 				{
 					location: elementor.editorEvents.config.locations.elementorEditor,
 					secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
-					trigger: elementor.editorEvents.config.triggers.click,
-					element: elementor.editorEvents.config.elements.mainCta,
+					trigger: elementor.editorEvents.config.triggers.toggleClick,
+					element: elementor.editorEvents.config.elements.toggle,
 				},
 			)
 		);

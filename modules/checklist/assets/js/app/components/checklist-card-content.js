@@ -28,9 +28,12 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! promotionData;
 
 	const redirectHandler = async () => {
-		promotionData
-			? addMixpanelTrackingChecklistSteps( step.config.id, 'upgrade', 'mainCta' )
-			: addMixpanelTrackingChecklistSteps( step.config.id, 'action', 'mainCta' );
+
+		if ( promotionData ) {
+			addMixpanelTrackingChecklistSteps( step.config.id, 'upgrade' );
+		} else {
+			addMixpanelTrackingChecklistSteps( step.config.id, 'action' );
+		}
 
 		if ( ! elementor || ! STEP_IDS_TO_COMPLETE_IN_EDITOR.includes( id ) || ! PANEL_ROUTES[ id ] ) {
 			return window.open( ctaUrl, promotionData ? '_blank' : '_self' );
@@ -43,10 +46,12 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 	const toggleMarkAsDone = async () => {
 		const currState = isMarkedCompleted;
 
-		isMarkedCompleted
-			? addMixpanelTrackingChecklistSteps( step.config.id, 'undone', 'button' )
-			: addMixpanelTrackingChecklistSteps( step.config.id, 'done', 'button' );
-
+		if ( isMarkedCompleted ) {
+			addMixpanelTrackingChecklistSteps( step.config.id, 'undone' );
+		} else {
+			addMixpanelTrackingChecklistSteps( step.config.id, 'done' );
+		}
+			
 		try {
 			updateStepsState( IS_MARKED_COMPLETED, ! currState );
 

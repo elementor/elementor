@@ -4,7 +4,6 @@ const eventsConfig = {
 		accordionClick: 'Accordion Click',
 		toggleClick: 'Toggle Click',
 		dropdownClick: 'Click Dropdown',
-		toggle: 'Toggle',
 	},
 
 	locations: {
@@ -51,6 +50,7 @@ const eventsConfig = {
 		button: 'Button',
 		link: 'Link',
 		dropdown: 'Dropdown',
+		toggle: 'Toggle',
 	},
 
 	names: {
@@ -86,7 +86,7 @@ const eventsConfig = {
 			responsiveControls: 'top_bar_responsive_controls',
 			launchpad: 'top_bar_launchpad_icon',
 		},
-		// checklistSteps keys have to be with underscore in order to match stepIds
+		// ChecklistSteps keys have to be with underscore in order to match stepIds
 		elementorEditor: {
 			checklistHeaderClose: 'checklist_header_close_icon',
 			checklistSteps: {
