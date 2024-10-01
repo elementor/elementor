@@ -2,11 +2,10 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
-use Elementor\Modules\AtomicWidgets\Settings_Validator;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Styles_Validator;
+use Elementor\Modules\AtomicWidgets\Validators\Styles_Validator;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
@@ -144,9 +143,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	private function sanitize_atomic_styles( array $styles ) {
-		$schema = Style_Schema::get();
-
-		[ , $validated, $errors ] = Styles_Validator::make( $schema )->validate( $styles );
+		[ , $validated, $errors ] = Styles_Validator::make()->validate( $styles );
 
 		if ( ! empty( $errors ) ) {
 			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
@@ -158,7 +155,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	private function sanitize_atomic_settings( array $settings ): array {
 		$schema = static::get_props_schema();
 
-		[ , $validated, $errors ] = Settings_Validator::make( $schema )->validate( $settings );
+		[ , $validated, $errors ] = Props_Validator::make( $schema )->validate( $settings );
 
 		if ( ! empty( $errors ) ) {
 			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );

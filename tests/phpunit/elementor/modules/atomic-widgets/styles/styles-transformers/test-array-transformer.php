@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
+namespace Elementor\Testing\Modules\AtomicWidgets\Styles\StylesTransformers;
 
-use Elementor\Modules\AtomicWidgets\Styles\Transformers\Array_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers\Array_Transformer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {

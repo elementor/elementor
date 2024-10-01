@@ -1,9 +1,7 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets;
+namespace Elementor\Modules\AtomicWidgets\Validators;
 
-use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,8 +16,8 @@ class Styles_Validator {
 		$this->schema = Style_Schema::get();
 	}
 
-	public static function make( array $schema ): self {
-		return new static( $schema );
+	public static function make(): self {
+		return new static();
 	}
 
 	/**
@@ -40,24 +38,12 @@ class Styles_Validator {
 			foreach ( $style['variants'] as $variant_index => $variant ) {
 				$validated[ $style_id ][ $variant_index ] = [
 					'meta' => $variant['meta'],
-					'props' => [],
 				];
-				foreach ( $variant['props'] as $key => $value ) {
-					$prop_type = $this->schema[ $key ] ?? null;
 
-					if ( ! ( $prop_type instanceof Prop_Type ) ) {
-						continue;
-					}
+				[,$validated_props, $variant_errors] = Props_Validator::make( $this->schema )->validate( $variant['props'] );
 
-					try {
-						$prop_type->validate_with_additional( $value );
-					} catch ( \Exception $e ) {
-						$errors[] = $key;
-						continue;
-					}
-
-					$validated[ $style_id ][ $variant_index ]['props'][ $key ] = $value;
-				}
+				$validated[ $style_id ]['variants'][ $variant_index ]['props'] = $validated_props;
+				$errors = array_merge( $errors, $variant_errors );
 			}
 		}
 

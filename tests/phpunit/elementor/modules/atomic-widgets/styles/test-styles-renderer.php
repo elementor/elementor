@@ -1,10 +1,10 @@
 <?php
 
-namespace Elementor\Testing\Modules\AtomicWidgets;
+namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\Base\Style_Transformer_Base;
-use Elementor\Modules\AtomicWidgets\Styles\Transformers\Array_Transformer;
-use Elementor\Modules\AtomicWidgets\Styles\Transformers\Size_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers\Array_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers\Size_Transformer;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;

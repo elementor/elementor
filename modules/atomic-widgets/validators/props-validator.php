@@ -1,15 +1,14 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets;
+namespace Elementor\Modules\AtomicWidgets\Validators;
 
-use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Settings_Validator {
+class Props_Validator {
 
 	private array $schema;
 
@@ -30,11 +29,11 @@ class Settings_Validator {
 	 *     2: array<string>
 	 * }
 	 */
-	public function validate( array $settings ): array {
+	public function validate( array $props ): array {
 		$validated = [];
 		$errors = [];
 
-		foreach ( $settings as $key => $value ) {
+		foreach ( $props as $key => $value ) {
 			$prop_type = $this->schema[ $key ] ?? null;
 
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {

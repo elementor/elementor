@@ -4,9 +4,6 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\Base\Style_Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
-use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Array_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Linked_Dimensions_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers\Size_Transformer;
 
 class Styles_Renderer {
 	/**
@@ -110,9 +107,7 @@ class Styles_Renderer {
 	private function props_to_css_string( array $props ): string {
 		$schema = Style_Schema::get();
 
-		$css_array = array_filter( Props_Resolver::for_styles()->resolve( $schema, $props ), function ( $value ) {
-			return ! is_null( $value );
-		} );
+		$css_array = array_filter( Props_Resolver::for_styles()->resolve( $schema, $props ) );
 
 		$css_string = array_map( function ( $value, $key ) {
 			return $key . ':' . $value . ';';
