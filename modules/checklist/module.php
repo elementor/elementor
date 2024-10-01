@@ -44,7 +44,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		parent::__construct();
 
 		$this->register_experiment();
-		$this->init_user_progress();
+		$is_new_checklist_init = $this->init_user_progress();
+		$this->handle_checklist_visibility_with_kit( $is_new_checklist_init );
 
 		if ( ! $this->is_experiment_active() ) {
 			return;
@@ -222,6 +223,16 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$this->update_user_progress_in_db();
 	}
 
+	public static function is_active_kit_default() {
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		if ( false === $kit_id || null === $kit_id ) {
+			return false;
+		}
+
+		return esc_html__( 'Default Kit', 'elementor' ) === get_post( $kit_id )->post_title;
+	}
+
 	private function register_experiment() : void {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_ID,
@@ -232,10 +243,10 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		] );
 	}
 
-	private function init_user_progress() : void {
+	private function init_user_progress() : bool {
 		$default_settings = $this->get_default_user_progress();
 
-		$this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
+		return ( bool ) $this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
 	}
 
 	private function get_default_user_progress() : array {
@@ -250,5 +261,21 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	private function update_user_progress_in_db() : void {
 		$this->wordpress_adapter->update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
+	}
+
+	private function handle_checklist_visibility_with_kit( $is_new_checklist_init ) {
+		if ( static::is_active_kit_default() ) {
+			return;
+		}
+
+		add_action( 'elementor/init', function () use ( $is_new_checklist_init ) {
+			$editor_visit_count = $this->user_progress[ self::EDITOR_VISIT_COUNT ] ?? 0;
+
+			if ( $is_new_checklist_init || ( 0 <= $editor_visit_count && 2 >= $editor_visit_count ) ) {
+				SettingsManager::get_settings_managers( 'editorPreferences' )
+					->get_model()
+					->set_settings( self::VISIBILITY_SWITCH_ID, '' );
+			}
+		} );
 	}
 }
