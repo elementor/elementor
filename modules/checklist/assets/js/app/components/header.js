@@ -4,20 +4,28 @@ import Progress from './progress';
 import PropTypes from 'prop-types';
 import { useQuery } from '@elementor/query';
 import * as React from 'react';
-import { fetchUserProgress, toggleChecklistPopup, updateUserProgress } from '../../utils/functions';
-import { USER_PROGRESS } from '../../utils/consts';
+import {
+	addMixpanelTrackingChecklistHeader,
+	fetchUserProgress,
+	toggleChecklistPopup,
+	updateUserProgress,
+} from '../../utils/functions';
+import { USER_PROGRESS, MIXPANEL_CHECKLIST_STEPS } from '../../utils/consts';
 import { ExpandDiagonalIcon, MinimizeDiagonalIcon } from '@elementor/icons';
 
 const { CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME } = USER_PROGRESS;
+const { CHECKLIST_HEADER_CLOSE } = MIXPANEL_CHECKLIST_STEPS;
 
 const Header = ( { steps, isMinimized, toggleIsMinimized } ) => {
 	const { data: userProgress } = useQuery( {
 		queryKey: [ 'closedForFirstTime' ],
 		queryFn: fetchUserProgress,
 	} ),
-		closedForFirstTime = userProgress?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ] || false;
+	closedForFirstTime = userProgress?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ] || false;
 
 	const closeChecklist = async () => {
+		addMixpanelTrackingChecklistHeader( CHECKLIST_HEADER_CLOSE );
+
 		if ( ! closedForFirstTime ) {
 			await updateUserProgress( { [ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ]: true } );
 

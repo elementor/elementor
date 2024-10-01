@@ -1,11 +1,17 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@elementor/ui';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import { useEffect } from 'react';
+import { addMixpanelTrackingChecklistSteps } from '../../utils/functions';
+import { MIXPANEL_CHECKLIST_STEPS } from '../../utils/consts';
+
+const { ACTION, WELL_DONE } = MIXPANEL_CHECKLIST_STEPS;
 
 const SuccessMessage = () => {
 	const { ajaxState, setAjax } = useAjax();
 
 	const hideChecklist = () => {
+		addMixpanelTrackingChecklistSteps( WELL_DONE, ACTION );
+
 		setAjax( {
 			data: {
 				action: 'elementor_ajax',
