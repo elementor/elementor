@@ -84,8 +84,10 @@ export const generatePluginTests = ( testType: string ) => {
 
 				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 				await wpAdmin.closeAnnouncementsIfVisible();
-				if ( await page.locator( '.tp-skip-button' ).isVisible() ) {
-					await page.locator( '.tp-skip-button' ).click();
+				const skipButton = page.locator( 'a[href="link://#"].tp-skip-button' );
+
+				if ( await skipButton.isVisible() ) {
+					await skipButton.click();
 				}
 				await editor.closeNavigatorIfOpen();
 
