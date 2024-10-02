@@ -4,29 +4,30 @@ import Progress from './progress';
 import PropTypes from 'prop-types';
 import { useQuery } from '@elementor/query';
 import * as React from 'react';
-import { toggleChecklistPopup } from '../../utils/functions';
-import { USER_PROGRESS, USER_PROGRESS_ROUTE } from '../../utils/consts';
+import {
+	addMixpanelTrackingChecklistHeader,
+	fetchUserProgress,
+	toggleChecklistPopup,
+	updateUserProgress,
+} from '../../utils/functions';
+import { USER_PROGRESS, MIXPANEL_CHECKLIST_STEPS } from '../../utils/consts';
 import { ExpandDiagonalIcon, MinimizeDiagonalIcon } from '@elementor/icons';
 
 const { CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME } = USER_PROGRESS;
-
-const fetchStatus = async () => {
-	const response = await $e.data.get( 'checklist/user-progress', {}, { refresh: true } );
-
-	return response?.data?.data?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ] || false;
-};
+const { CHECKLIST_HEADER_CLOSE } = MIXPANEL_CHECKLIST_STEPS;
 
 const Header = ( { steps, isMinimized, toggleIsMinimized } ) => {
-	const { data: closedForFirstTime } = useQuery( {
+	const { data: userProgress } = useQuery( {
 		queryKey: [ 'closedForFirstTime' ],
-		queryFn: fetchStatus,
-	} );
+		queryFn: fetchUserProgress,
+	} ),
+	closedForFirstTime = userProgress?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ] || false;
 
 	const closeChecklist = async () => {
+		addMixpanelTrackingChecklistHeader( CHECKLIST_HEADER_CLOSE );
+
 		if ( ! closedForFirstTime ) {
-			await $e.data.update( USER_PROGRESS_ROUTE, {
-				[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ]: true,
-			} );
+			await updateUserProgress( { [ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ]: true } );
 
 			window.dispatchEvent( new CustomEvent( 'elementor/checklist/first_close', { detail: { message: 'firstClose' } } ) );
 		}
@@ -51,10 +52,10 @@ const Header = ( { steps, isMinimized, toggleIsMinimized } ) => {
 					>
 						{ __( 'Let\'s make a productivity boost', 'elementor' ) }
 					</Typography>
-					<IconButton onClick={ toggleIsMinimized } aria-expanded={ ! isMinimized }>
+					<IconButton size="small" onClick={ toggleIsMinimized } aria-expanded={ ! isMinimized }>
 						{ isMinimized ? <ExpandDiagonalIcon /> : <MinimizeDiagonalIcon /> }
 					</IconButton>
-					<CloseButton onClick={ closeChecklist } />
+					<CloseButton sx={ { mr: -0.5 } } size="small" onClick={ closeChecklist } />
 				</Toolbar>
 				<Progress steps={ steps } />
 			</AppBar>

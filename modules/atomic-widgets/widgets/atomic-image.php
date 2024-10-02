@@ -3,10 +3,8 @@ namespace Elementor\Modules\AtomicWidgets\Widgets;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 
