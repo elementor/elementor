@@ -34,6 +34,10 @@ abstract class Transformable_Prop_Type extends Prop_Type {
 			throw new \Exception( 'Value must have a `value` key.' );
 		}
 
+		if ( isset( $value['disabled'] ) && ! is_bool( $value['disabled'] ) ) {
+			throw new \Exception( 'Key `disabled` must be a boolean, ' . gettype( $value['disabled'] ) . ' given.' );
+		}
+
 		$this->validate_value( $value['value'] );
 	}
 

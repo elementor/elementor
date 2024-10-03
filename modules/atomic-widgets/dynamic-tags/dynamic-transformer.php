@@ -16,10 +16,6 @@ class Dynamic_Transformer extends Transformer_Base {
 		$this->dynamic_manager = $dynamic_manager;
 	}
 
-	public function get_type(): string {
-		return Dynamic_Prop_Type::get_key();
-	}
-
 	public function transform( $value ) {
 		if ( ! isset( $value['name'] ) || ! is_string( $value['name'] ) ) {
 			throw new \Exception( 'Dynamic tag name must be a string' );

@@ -2,8 +2,9 @@ import * as EditorAppBar from '@elementor/editor-app-bar';
 import { __ } from '@wordpress/i18n';
 import * as React from 'react';
 import TopBarIcon from './topbar-icon';
-import { toggleChecklistPopup } from './utils/functions';
+import { toggleChecklistPopup, addMixpanelTrackingChecklistTopBar } from './utils/functions';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
+import { TogglePopup } from './commands';
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,10 @@ export const editorV2 = () => {
 				icon: () => <QueryClientProvider client={ queryClient }>
 					<TopBarIcon />
 				</QueryClientProvider>,
-				onClick: toggleChecklistPopup,
+				onClick: () => {
+					addMixpanelTrackingChecklistTopBar( TogglePopup.isOpen );
+					toggleChecklistPopup();
+				},
 			};
 		},
 	} );

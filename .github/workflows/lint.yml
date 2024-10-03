@@ -91,7 +91,7 @@ jobs:
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
           php -v
-          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
       - name: Setup PHP 8.0 # not included in ubuntu 22.04
         uses: shivammathur/setup-php@v2
         with:
@@ -100,7 +100,7 @@ jobs:
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
           php -v
-          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
       - name: Setup PHP 8.1 # not included in ubuntu 22.04
         uses: shivammathur/setup-php@v2
         with:
@@ -109,4 +109,4 @@ jobs:
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
           php -v
-          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor .
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .

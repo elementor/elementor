@@ -1,5 +1,5 @@
-@import "../../helpers/variables";
-@import "../breakpoints/breakpoints";
+@import "../../../helpers/variables";
+@import "../../breakpoints/templates";
 
 .elementor-lightbox {
 	--lightbox-ui-color: #{$slides_gui};

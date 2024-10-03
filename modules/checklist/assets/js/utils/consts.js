@@ -20,3 +20,15 @@ export const PANEL_ROUTES = {
 	add_logo: 'panel/global/settings-site-identity',
 	set_fonts_and_colors: 'panel/global/global-typography',
 };
+
+export const MIXPANEL_CHECKLIST_STEPS = {
+	UPGRADE: 'upgrade',
+	ACTION: 'action',
+	DONE: 'done',
+	UNDONE: 'undone',
+	TITLE: 'title',
+	WELL_DONE: 'well_done',
+	CHECKLIST_HEADER_CLOSE: 'checklistHeaderClose',
+	ACCORDION_SECTION: 'accordionSection',
+};
+

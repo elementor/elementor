@@ -9,6 +9,7 @@ const eventsConfig = {
 	locations: {
 		widgetPanel: 'Widget Panel',
 		topBar: 'Top Bar',
+		elementorEditor: 'Elementor Editor',
 	},
 
 	secondaryLocations: {
@@ -36,14 +37,20 @@ const eventsConfig = {
 		structure: 'Structure',
 		documentNameDropdown: 'Document Name dropdown',
 		responsiveControls: 'Responsive controls',
+		launchpad: 'launchpad',
+		checklistHeader: 'Checklist Header',
+		checklistSteps: 'Checklist Steps',
+		userPreferences: 'User Preferences',
 	},
 
 	elements: {
 		accordionSection: 'Accordion section',
 		buttonIcon: 'Button Icon',
 		mainCta: 'Main CTA',
+		button: 'Button',
 		link: 'Link',
 		dropdown: 'Dropdown',
+		toggle: 'Toggle',
 	},
 
 	names: {
@@ -77,6 +84,50 @@ const eventsConfig = {
 			structure: 'top_bar_structure',
 			documentNameDropdown: 'top_bar_document_name_dropdown',
 			responsiveControls: 'top_bar_responsive_controls',
+			launchpadOn: 'top_bar_checklist_icon_show',
+			launchpadOff: 'top_bar_checklist_icon_hide',
+		},
+		// ChecklistSteps keys have to be with underscore in order to match stepIds
+		elementorEditor: {
+			checklistHeaderClose: 'checklist_header_close_icon',
+			checklistSteps: {
+				title: {
+					add_logo: 'checklist_step_title_addlogo',
+					assign_homepage: 'checklist_step_title_assignhomepage',
+					create_pages: 'checklist_step_title_create3pages',
+					set_fonts_and_colors: 'checklist_step_title_createglobal',
+					setup_header: 'checklist_step_title_createheader',
+				},
+				action: {
+					add_logo: 'checklist_step_action_addlogo',
+					assign_homepage: 'checklist_step_action_assignhomepage',
+					create_pages: 'checklist_step_action_create3pages',
+					set_fonts_and_colors: 'checklist_step_action_createglobal',
+					setup_header: 'checklist_step_action_createheader',
+					well_done: 'checklist_step_action_welldone',
+				},
+				done: {
+					add_logo: 'checklist_step_done_addlogo',
+					assign_homepage: 'checklist_step_done_assignhomepage',
+					create_pages: 'checklist_step_done_create3pages',
+					set_fonts_and_colors: 'checklist_step_done_createglobal',
+					setup_header: 'checklist_step_done_createheader',
+				},
+				undone: {
+					add_logo: 'checklist_step_undone_addlogo',
+					assign_homepage: 'checklist_step_undone_assignhomepage',
+					create_pages: 'checklist_step_undone_create3pages',
+					set_fonts_and_colors: 'checklist_step_undone_createglobal',
+					setup_header: 'checklist_step_undone_createheader',
+				},
+				upgrade: {
+					setup_header: 'checklist_step_pro_action_createheader',
+				},
+			},
+			userPreferences: {
+				checklistShow: 'checklist_userpreferences_toggle_show',
+				checklistHide: 'checklist_userpreferences_toggle_hide',
+			},
 		},
 	},
 };

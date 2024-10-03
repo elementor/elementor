@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Box, List } from '@elementor/ui';
+import { useState, Fragment } from 'react';
+import { Box, List, Divider } from '@elementor/ui';
 import CheckListItem from './checklist-item';
 import PropTypes from 'prop-types';
 import SuccessMessage from './success-message';
@@ -18,14 +18,16 @@ const ChecklistWrapper = ( { steps, setSteps, isMinimized } ) => {
 				{
 					steps.map( ( step, index ) => {
 						return (
-							<CheckListItem
-								key={ index }
-								step={ step }
-								setSteps={ setSteps }
-								setExpandedIndex={ setExpandedIndex }
-								expandedIndex={ expandedIndex }
-								index={ index }
-							/>
+							<Fragment key={ index }>
+								{ ( index ) ? <Divider /> : null }
+								<CheckListItem
+									step={ step }
+									setSteps={ setSteps }
+									setExpandedIndex={ setExpandedIndex }
+									expandedIndex={ expandedIndex }
+									index={ index }
+								/>
+							</Fragment>
 						);
 					} )
 				}

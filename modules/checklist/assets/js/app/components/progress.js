@@ -10,7 +10,7 @@ const Progress = ( { steps } ) => {
 			<Box sx={ { width: '100%' } }>
 				<LinearProgress variant="determinate" value={ progress } />
 			</Box>
-			<Box sx={ { minWidth: 35 } }>
+			<Box sx={ { width: 'fit-content' } }>
 				<Typography variant="body2" color="text.secondary">
 					{ `${ Math.round( progress ) }%` }
 				</Typography>

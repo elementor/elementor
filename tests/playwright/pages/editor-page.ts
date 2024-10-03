@@ -953,6 +953,12 @@ export default class EditorPage extends BasePage {
 		await this.page.waitForLoadState();
 	}
 
+	async viewPage() {
+		const pageId = await this.getPageId();
+		await this.page.goto( `/?p=${ pageId }` );
+		await this.page.waitForLoadState();
+	}
+
 	/**
 	 * Save and reload the current page.
 	 *

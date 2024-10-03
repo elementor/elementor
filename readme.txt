@@ -315,6 +315,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.24.5 - 2024-10-01 =
+
+* Fix: Responsive styles not loading properly for Apple WebKit
+* Fix: Responsive styles not loading properly for Lightbox
+
 = 3.24.4 - 2024-09-23 =
 
 * Security Fix: Improved code security enforcement in Heading and Counter widgets
