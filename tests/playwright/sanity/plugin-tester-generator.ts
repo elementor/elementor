@@ -8,8 +8,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
-	// Removed the-plus-addons-for-elementor-page-builder since they create a popup that interferes with the tests
-	// { pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
+	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'stratum', installSource: 'api' },
 	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
 	{ pluginName: 'wunderwp', installSource: 'api' },
@@ -53,7 +52,7 @@ export const generatePluginTests = ( testType: string ) => {
 			let pluginTechnicalName: string;
 			switch ( plugin.installSource ) {
 				case 'api':
-					pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
+					//pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
 					break;
 				case 'cli':
 					wpEnvCli( `wp plugin install ${ plugin.pluginName } --activate` );
@@ -84,6 +83,13 @@ export const generatePluginTests = ( testType: string ) => {
 
 				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 				await wpAdmin.closeAnnouncementsIfVisible();
+				const modalVisible = await page.isVisible('#tp-onbording-elementorp');
+
+				if (modalVisible) {
+					const skipButton = page.locator('.tp-skip-button').last();
+					await skipButton.click();
+				}
+
 				await editor.closeNavigatorIfOpen();
 
 				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
