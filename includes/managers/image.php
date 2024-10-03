@@ -153,7 +153,7 @@ class Images_Manager {
 			}
 		}
 
-		return $attributes;
+		return apply_filters('elementor/image/attributes', $attributes, $attachment);
 	}
 
 	private function delete_custom_images( $post_id ) {
