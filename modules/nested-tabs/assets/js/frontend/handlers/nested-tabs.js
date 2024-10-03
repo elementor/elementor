@@ -1,10 +1,10 @@
-import Base from 'elementor-frontend/handlers/base';
+import Base from '../../../../../../assets/dev/js/frontend/handlers/base';
 import {
 	changeScrollStatus,
 	setHorizontalScrollAlignment,
 	setHorizontalTitleScrollValues,
-} from 'elementor-frontend-utils/flex-horizontal-scroll';
-import NestedTitleKeyboardHandler from 'elementor-frontend/handlers/accessibility/nested-title-keyboard-handler';
+} from '../../../../../../assets/dev/js/frontend/utils/flex-horizontal-scroll';
+import NestedTitleKeyboardHandler from '../../../../../../assets/dev/js/frontend/handlers/accessibility/nested-title-keyboard-handler';
 
 export default class NestedTabs extends Base {
 	/**
@@ -460,3 +460,5 @@ export default class NestedTabs extends Base {
 		};
 	}
 }
+
+window.NestedTabs = NestedTabs;
