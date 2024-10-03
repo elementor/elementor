@@ -85,9 +85,11 @@ export const generatePluginTests = ( testType: string ) => {
 				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 				await wpAdmin.closeAnnouncementsIfVisible();
 
-				const domContent = await page.evaluate( () => document.documentElement.outerHTML );
-				console.log( domContent );
 				if ( 'the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
+					await page.waitForSelector( '#tp-onbording-elementorp' );
+					await page.focus( '#tp-onbording-elementorp' );
+					await page.click( '.tp-skip-button' );
+
 					const skipButton = page.locator( '.tp-skip-button' ).nth( 0 );
 					await skipButton.click();
 				}
