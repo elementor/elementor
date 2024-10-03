@@ -24,5 +24,5 @@ elementorModules.frontend = {
 };
 
 if ( ! elementorCommon.config.experimentalFeatures.update_core_js_modules_loading ) {
-	elementorModules.frontend.handlers.NestedTabs = import( /* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' )
+	elementorModules.frontend.handlers.NestedTabs = import( /* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
 }
