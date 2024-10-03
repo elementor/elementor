@@ -8,7 +8,6 @@ import CarouselBase from './handlers/base-carousel';
 import NestedTabs from 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs';
 import ContactButtonsHandler from 'elementor/modules/floating-buttons/assets/js/floating-buttons/frontend/handlers/contact-buttons';
 import FloatingBarsHandler from 'elementor/modules/floating-buttons/assets/js/floating-bars/frontend/handlers/floating-bars';
-import NestedTitleKeyboardHandler from './handlers/accessibility/nested-title-keyboard-handler';
 
 elementorModules.frontend = {
 	Document,
@@ -21,7 +20,6 @@ elementorModules.frontend = {
 		SwiperBase,
 		CarouselBase,
 		NestedTabs,
-		NestedTitleKeyboardHandler,
 		ContactButtonsHandler,
 		FloatingBarsHandler,
 	},
