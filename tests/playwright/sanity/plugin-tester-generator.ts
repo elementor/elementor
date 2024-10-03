@@ -5,46 +5,46 @@ import wpAdminPage from '../pages/wp-admin-page';
 import { wpEnvCli } from '../assets/wp-env-cli';
 
 const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[] = [
-	// { pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
-	// { pluginName: 'jetsticky-for-elementor', installSource: 'api' },
-	// { pluginName: 'jetgridbuilder', installSource: 'api' },
+	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
+	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
+	{ pluginName: 'jetgridbuilder', installSource: 'api' },
 	// Removed the-plus-addons-for-elementor-page-builder since they create a popup that interferes with the tests
 	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
-	// { pluginName: 'stratum', installSource: 'api' },
-	// { pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
-	// { pluginName: 'wunderwp', installSource: 'api' },
-	// { pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
-	// { pluginName: 'addons-for-elementor', installSource: 'api' },
-	// { pluginName: 'anywhere-elementor', installSource: 'api' },
-	// { pluginName: 'astra-sites', installSource: 'api' },
-	// { pluginName: 'connect-polylang-elementor', installSource: 'api' },
-	// { pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
-	// { pluginName: 'elementskit-lite', installSource: 'api' },
-	// { pluginName: 'envato-elements', installSource: 'api' },
-	// { pluginName: 'exclusive-addons-for-elementor', installSource: 'api' },
-	// { pluginName: 'header-footer-elementor', installSource: 'api' },
-	// { pluginName: 'jeg-elementor-kit', installSource: 'cli' },
-	// { pluginName: 'make-column-clickable-elementor', installSource: 'api' },
-	// { pluginName: 'metform', installSource: 'api' },
-	// { pluginName: 'music-player-for-elementor', installSource: 'cli' },
-	// { pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
-	// { pluginName: 'post-grid-elementor-addon', installSource: 'api' },
-	// { pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
-	// { pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
-	// { pluginName: 'rife-elementor-extensions', installSource: 'api' },
-	// { pluginName: 'royal-elementor-addons', installSource: 'cli' },
-	// { pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
-	// { pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
-	// { pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
-	// { pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
-	// { pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
-	// { pluginName: 'visibility-logic-elementor', installSource: 'api' },
-	// { pluginName: 'ht-mega-for-elementor', installSource: 'api' },
-	// { pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
-	// { pluginName: 'code-block-for-elementor', installSource: 'api' },
-	// { pluginName: 'jetwidgets-for-elementor', installSource: 'api' },
-	// { pluginName: 'happy-elementor-addons', installSource: 'cli' },
-	// { pluginName: 'enqueue-media-on-front', installSource: 'zip' },
+	{ pluginName: 'stratum', installSource: 'api' },
+	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
+	{ pluginName: 'wunderwp', installSource: 'api' },
+	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
+	{ pluginName: 'addons-for-elementor', installSource: 'api' },
+	{ pluginName: 'anywhere-elementor', installSource: 'api' },
+	{ pluginName: 'astra-sites', installSource: 'api' },
+	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
+	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
+	{ pluginName: 'elementskit-lite', installSource: 'api' },
+	{ pluginName: 'envato-elements', installSource: 'api' },
+	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api' },
+	{ pluginName: 'header-footer-elementor', installSource: 'api' },
+	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
+	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
+	{ pluginName: 'metform', installSource: 'api' },
+	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
+	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
+	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
+	{ pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
+	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
+	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
+	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
+	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
+	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
+	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
+	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
+	{ pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
+	{ pluginName: 'visibility-logic-elementor', installSource: 'api' },
+	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
+	{ pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
+	{ pluginName: 'code-block-for-elementor', installSource: 'api' },
+	{ pluginName: 'jetwidgets-for-elementor', installSource: 'api' },
+	{ pluginName: 'happy-elementor-addons', installSource: 'cli' },
+	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
@@ -85,9 +85,10 @@ export const generatePluginTests = ( testType: string ) => {
 				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 				await wpAdmin.closeAnnouncementsIfVisible();
 
-				const skipButton = page.locator( '.tp-skip-button' ).nth( 0 );
-
-				await skipButton.click();
+				if ( 'the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
+					const skipButton = page.locator( '.tp-skip-button' ).nth( 0 );
+					await skipButton.click();
+				}
 
 				await editor.closeNavigatorIfOpen();
 
