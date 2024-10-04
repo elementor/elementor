@@ -56,7 +56,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		expect( popup.url() ).toContain( 'my.elementor.com/signup' );
 
-		const signupForm = popup.locator( 'form#signup-form' );
+		const signupForm = popup.locator( '[data-test="signup-form"]' );
 
 		// Check that the popup opens the Elementor Connect screen.
 		await expect( signupForm ).toBeVisible();
