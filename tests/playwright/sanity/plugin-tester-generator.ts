@@ -3,13 +3,13 @@ import { parallelTest as test } from '../parallelTest';
 import EditorPage from '../pages/editor-page';
 import wpAdminPage from '../pages/wp-admin-page';
 import { wpEnvCli } from '../assets/wp-env-cli';
+import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
 const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[] = [
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
-	// Removed the-plus-addons-for-elementor-page-builder since they create a popup that interferes with the tests
-	// { pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
+	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'stratum', installSource: 'api' },
 	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
 	{ pluginName: 'wunderwp', installSource: 'api' },
@@ -82,8 +82,20 @@ export const generatePluginTests = ( testType: string ) => {
 				}
 				await page.goto( '/law-firm-about/?elementor' );
 
-				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+				try {
+					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
+				} catch ( error ) {
+					await page.reload();
+					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
+				}
+
 				await wpAdmin.closeAnnouncementsIfVisible();
+
+				if ( 'the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
+					const plusAddonTemplateModal = new ImportTemplatesModal( page );
+					await plusAddonTemplateModal.skipTemplatesImportIfVisible();
+				}
+
 				await editor.closeNavigatorIfOpen();
 
 				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
