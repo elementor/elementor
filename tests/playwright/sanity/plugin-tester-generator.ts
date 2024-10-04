@@ -85,7 +85,7 @@ export const generatePluginTests = ( testType: string ) => {
 				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 				await wpAdmin.closeAnnouncementsIfVisible();
 
-				if ( 'the-the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
+				if ( 'the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
 					const plusAddonTemplateModal = new ImportTemplatesModal( page );
 					await plusAddonTemplateModal.skipTemplatesImportIfVisible();
 				}
