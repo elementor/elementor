@@ -118,7 +118,7 @@ class Embed {
 		];
 
 		if ( 'youtube' === $video_properties['provider'] ) {
-			$replacements['{NO_COOKIE}'] = ! empty( $options['privacy'] ) ? '-nocookie' : '';
+			$replacements['{NO_COOKIE}'] = ! empty( $options['privacy'] ) || preg_match('/^(?:https?:\/\/)?(?:www\.)?(?:m\.)?youtube-nocookie\.com/', $video_url) ? '-nocookie' : '';
 		} elseif ( 'vimeo' === $video_properties['provider'] ) {
 			$time_text = '';
 
