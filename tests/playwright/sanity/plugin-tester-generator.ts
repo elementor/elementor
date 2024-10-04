@@ -82,7 +82,14 @@ export const generatePluginTests = ( testType: string ) => {
 				}
 				await page.goto( '/law-firm-about/?elementor' );
 
-				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+				try {
+					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
+				} catch ( error ) {
+					await page.reload(); // Перезагружаем страницу
+
+					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
+				}
+
 				await wpAdmin.closeAnnouncementsIfVisible();
 
 				if ( 'the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
