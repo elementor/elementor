@@ -18,7 +18,10 @@ elementorModules.frontend = {
 		StretchedElement,
 		SwiperBase,
 		CarouselBase,
-		NestedTabs: () => import( /* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' ),
+		NestedTabs: ( async () => {
+			const NestedTabsModule = await import( /* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
+			return NestedTabsModule.default;
+		} )(),
 		ContactButtonsHandler,
 		FloatingBarsHandler,
 	},
