@@ -151,6 +151,7 @@ class Autoloader {
 			'TemplateLibrary\Source_Local' => 'includes/template-library/sources/local.php',
 			'TemplateLibrary\Source_Remote' => 'includes/template-library/sources/remote.php',
 			'Tools' => 'includes/settings/tools.php',
+			'Container\Container' => 'includes/container/container.php',
 			'Tracker' => 'includes/tracker.php',
 			'User' => 'includes/user.php',
 			'Utils' => 'includes/utils.php',

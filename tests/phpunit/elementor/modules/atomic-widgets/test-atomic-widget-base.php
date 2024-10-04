@@ -50,15 +50,45 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'prop_types' => [
 						'text' => String_Prop_Type::make()->default( 'The greatest text' ),
 						'tag' => String_Prop_Type::make()->default( 'h2' ),
+						'transformable_string' => String_Prop_Type::make(),
 					],
 					'settings' => [
 						'text' => 'This text is more great than the greatest text',
 						'invalid_prop' => 'This prop is not in the schema',
+						'transformable_string' => [
+							'$$type' => 'string',
+							'value' => 'This is awesome!',
+						],
 					],
 					'result' => [
 						'text' => 'This text is more great than the greatest text',
 						'tag' => 'h2',
+						'transformable_string' => 'This is awesome!',
 					],
+				]
+			],
+			'support_disabled' => [
+				'args' => [
+					'prop_types' => [
+						'non_disabled_prop' => String_Prop_Type::make(),
+						'disabled_prop' => String_Prop_Type::make(),
+					],
+					'settings' => [
+						'non_disabled_prop' => [
+							'$$type' => 'string',
+							'disabled' => false,
+							'value' => 'Awesome!'
+						],
+						'disabled_prop' => [
+							'$$type' => 'string',
+							'disabled' => true,
+							'value' => 'Should be null'
+						]
+					],
+					'result' => [
+						'non_disabled_prop' => 'Awesome!',
+						'disabled_prop' => null,
+					]
 				]
 			],
 			'cannot transform value' => [

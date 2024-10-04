@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsResolver\SettingsTransformers;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
@@ -10,10 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Image_Transformer extends Transformer_Base {
-	public function get_type(): string {
-		return Image_Prop_Type::get_key();
-	}
-
 	public function transform( $value ) {
 		if ( ! empty( $value['src']['id'] ) ) {
 			$image_src = wp_get_attachment_image_src(

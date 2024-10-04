@@ -37,3 +37,46 @@ export function getAndUpdateStep( id, step, key, value ) {
 
 	return { ...step, [ key ]: value };
 }
+
+export function addMixpanelTrackingChecklistSteps( name, action, element = 'button' ) {
+	return (
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names.elementorEditor.checklistSteps[ action ][ name ],
+			{
+				location: elementor.editorEvents.config.locations.elementorEditor,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
+				trigger: elementor.editorEvents.config.triggers.click,
+				element: elementor.editorEvents.config.elements[ element ],
+			},
+		)
+	);
+}
+
+export function addMixpanelTrackingChecklistHeader( name ) {
+	return (
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names.elementorEditor[ name ],
+			{
+				location: elementor.editorEvents.config.locations.elementorEditor,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistHeader,
+				trigger: elementor.editorEvents.config.triggers.click,
+				element: elementor.editorEvents.config.elements.buttonIcon,
+			},
+		)
+	);
+}
+
+export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
+	name = ! togglePopupState ? 'launchpadOn' : 'launchpadOff';
+	return (
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names.topBar[ name ],
+			{
+				location: elementor.editorEvents.config.locations.topBar,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
+				trigger: elementor.editorEvents.config.triggers.toggleClick,
+				element: elementor.editorEvents.config.elements.buttonIcon,
+			},
+		)
+	);
+}
