@@ -48,7 +48,7 @@ test.describe( 'Promotion tests @promotions', () => {
 			}
 		} );
 
-		await test.step( 'Free to Pro - Control modals screenshot tests', async () => {
+		await test.step( 'Free to Pro - Control plugins screenshot tests', async () => {
 			const promotionControls = [ 'scrolling-effects', 'mouse-effects', 'sticky-effects' ];
 			for ( const effect of promotionControls ) {
 				await promotionsHelper.widgetControlPromotionModalScreenshotTest( effect );

@@ -3,12 +3,13 @@ import { parallelTest as test } from '../parallelTest';
 import EditorPage from '../pages/editor-page';
 import wpAdminPage from '../pages/wp-admin-page';
 import { wpEnvCli } from '../assets/wp-env-cli';
+import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
 const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[] = [
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
-	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
+	{ pluginName: 'the-the-plus-addons-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'stratum', installSource: 'api' },
 	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
 	{ pluginName: 'wunderwp', installSource: 'api' },
@@ -83,11 +84,10 @@ export const generatePluginTests = ( testType: string ) => {
 
 				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 				await wpAdmin.closeAnnouncementsIfVisible();
-				const modalVisible = await page.isVisible('#tp-onbording-elementorp');
 
-				if (modalVisible) {
-					const skipButton = page.locator('.tp-skip-button').last();
-					await skipButton.click();
+				if ( 'the-the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
+					const plusAddonTemplateModal = new ImportTemplatesModal( page );
+					await plusAddonTemplateModal.skipTemplatesImportIfVisible();
 				}
 
 				await editor.closeNavigatorIfOpen();
