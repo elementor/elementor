@@ -27,6 +27,6 @@ const isEditor = ! window.elementorCommon;
 
 // TODO: Remove in v3.27.0 [ED-15717]
 // Load NestedTabs module only when older Pro versions are active.
-if ( isEditor || ! elementorCommon.config.experimentalFeatures.update_core_js_modules_loading ) {
+if ( ! isEditor && ! elementorCommon.config.experimentalFeatures.update_core_js_modules_loading ) {
 	elementorModules.frontend.handlers.NestedTabs = () => import( /* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
 }
