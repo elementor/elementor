@@ -85,8 +85,7 @@ export const generatePluginTests = ( testType: string ) => {
 				try {
 					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
 				} catch ( error ) {
-					await page.reload(); // Перезагружаем страницу
-
+					await page.reload();
 					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
 				}
 
