@@ -460,5 +460,3 @@ export default class NestedTabs extends Base {
 		};
 	}
 }
-
-window.NestedTabs = NestedTabs;
