@@ -52,7 +52,7 @@ export const generatePluginTests = ( testType: string ) => {
 			let pluginTechnicalName: string;
 			switch ( plugin.installSource ) {
 				case 'api':
-					//pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
+					pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
 					break;
 				case 'cli':
 					wpEnvCli( `wp plugin install ${ plugin.pluginName } --activate` );
