@@ -45,6 +45,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'jetwidgets-for-elementor', installSource: 'api' },
 	{ pluginName: 'happy-elementor-addons', installSource: 'cli' },
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
+	{ pluginName: 'akismet', installSource: 'api' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
