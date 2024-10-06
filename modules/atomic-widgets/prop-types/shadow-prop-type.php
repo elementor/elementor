@@ -14,8 +14,8 @@ $shadow = [
 	'$$type' => 'shadow',
 	'value' => [
 		'color' => Color_Prop_Type,
-		'horizontal' => Size_Prop_Type,
-		'vertical' => Size_Prop_Type,
+		'hOffset' => Size_Prop_Type,
+		'vOffset' => Size_Prop_Type,
 		'blur' => Size_Prop_Type,
 		'spread' => Size_Prop_Type,
 		'position' => 'inset' | 'outset',
@@ -31,8 +31,8 @@ class Shadow_Prop_Type extends Transformable_Prop_Type {
 
 	public function __construct() {
 		$this->internal_types['color'] = Color_Prop_Type::make();
-		$this->internal_types['horizontal'] = Size_Prop_Type::make();
-		$this->internal_types['vertical'] = Size_Prop_Type::make();
+		$this->internal_types['hOffset'] = Size_Prop_Type::make();
+		$this->internal_types['vOffset'] = Size_Prop_Type::make();
 		$this->internal_types['blur'] = Size_Prop_Type::make();
 		$this->internal_types['spread'] = Size_Prop_Type::make();
 		$this->internal_types['position'] = String_Prop_Type::make()->enum( [ 'inset', 'outset' ] );
