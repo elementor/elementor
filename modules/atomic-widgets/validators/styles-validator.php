@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\Validators;
 
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -12,12 +10,12 @@ class Styles_Validator {
 
 	private array $schema;
 
-	public function __construct() {
-		$this->schema = Style_Schema::get();
+	public function __construct( array $schema ) {
+		$this->schema = $schema;
 	}
 
-	public static function make(): self {
-		return new static();
+	public static function make( array $schema ): self {
+		return new static( $schema );
 	}
 
 	/**
@@ -44,7 +42,7 @@ class Styles_Validator {
 
 		return [
 			$is_valid,
-			'validated' => $styles,
+			$styles,
 			$errors,
 		];
 	}

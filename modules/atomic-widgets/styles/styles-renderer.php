@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\Base\Style_Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 
 class Styles_Renderer {
@@ -15,7 +14,6 @@ class Styles_Renderer {
 	 * Styles_Renderer constructor.
 	 *
 	 * @param array{
-	 *     transformers: array<string, Style_Transformer_Base>,
 	 *     breakpoints: array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
 	 * } $config
 	 */

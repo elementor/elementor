@@ -663,7 +663,13 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						[
 							'props' => [
 								'color' => 'red',
-								'fontSize' => '16px',
+								'font-size' => [
+									'$$type' => 'size',
+									'value' => [
+										'unit' => 'px',
+										'size' => 16,
+									],
+								],
 							],
 							'meta' => [
 								'breakpoint' => 'desktop',
@@ -693,7 +699,13 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					[
 						'props' => [
 							'color' => 'red',
-							'fontSize' => '16px',
+							'font-size' => [
+								'$$type' => 'size',
+								'value' => [
+									'unit' => 'px',
+									'size' => 16,
+								],
+							],
 						],
 						'meta' => [
 							'breakpoint' => 'desktop',
