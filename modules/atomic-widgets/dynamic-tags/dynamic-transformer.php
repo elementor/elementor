@@ -16,19 +16,19 @@ class Dynamic_Transformer extends Transformer_Base {
 		$this->dynamic_manager = $dynamic_manager;
 	}
 
-	public function get_type(): string {
-		return Dynamic_Prop_Type::get_key();
-	}
-
 	public function transform( $value ) {
 		if ( ! isset( $value['name'] ) || ! is_string( $value['name'] ) ) {
 			throw new \Exception( 'Dynamic tag name must be a string' );
 		}
 
-		if ( ! isset( $value['settings'] ) || ! is_array( $value['settings'] ) ) {
+		if ( isset( $value['settings'] ) && ! is_array( $value['settings'] ) ) {
 			throw new \Exception( 'Dynamic tag settings must be an array' );
 		}
 
-		return $this->dynamic_manager->get_tag_data_content( null, $value['name'], $value['settings'] );
+		return $this->dynamic_manager->get_tag_data_content(
+			null,
+			$value['name'],
+			$value['settings'] ?? []
+		);
 	}
 }

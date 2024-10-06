@@ -8,6 +8,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Transformable_Prop_Type extends Prop_Type {
 
+	/**
+	 * @var array<string, Prop_Type>
+	 */
+	protected array $internal_types = [];
+
+	public function get_internal_types(): array {
+		return $this->internal_types;
+	}
+
 	public function validate( $value ): void {
 		if ( ! isset( $value['$$type'] ) ) {
 			throw new \Exception( 'Value must have a `$$type` key.' );
@@ -23,6 +32,10 @@ abstract class Transformable_Prop_Type extends Prop_Type {
 
 		if ( ! isset( $value['value'] ) ) {
 			throw new \Exception( 'Value must have a `value` key.' );
+		}
+
+		if ( isset( $value['disabled'] ) && ! is_bool( $value['disabled'] ) ) {
+			throw new \Exception( 'Key `disabled` must be a boolean, ' . gettype( $value['disabled'] ) . ' given.' );
 		}
 
 		$this->validate_value( $value['value'] );

@@ -8,6 +8,7 @@ use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Modules\AtomicWidgets\Styles\Transformers\Array_Transformer;
+use Elementor\Modules\AtomicWidgets\Styles\Transformers\Linked_Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\Styles\Transformers\Size_Transformer;
 use Elementor\Plugin;
 
@@ -41,6 +42,7 @@ class Atomic_Styles {
 			$transformers,
 			new Size_Transformer(),
 			new Array_Transformer(),
+			new Linked_Dimensions_Transformer()
 		);
 
 		return $transformers;

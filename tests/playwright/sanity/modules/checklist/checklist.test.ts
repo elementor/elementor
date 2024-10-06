@@ -2,30 +2,55 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
-import ChecklistHelper from './helper';
+import { ChecklistHelper } from './helper';
 import { StepId } from '../../../types/checklist';
+import { newUser } from './new-user';
 
 test.describe( 'Launchpad checklist tests', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+	let newTestUser;
+
+	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			editor_v2: true,
 			'launchpad-checklist': true,
 		} );
+		await checklistHelper.resetStepsInDb( request, { editor_visit_count: 0 } );
+
+		newTestUser = await apiRequests.createNewUser( request, newUser );
 
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
+		const page = await browser.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await apiRequests.deleteUser( request, newTestUser.id );
+		await apiRequests.cleanUpTestPages( request, false );
 
 		await wpAdmin.resetExperiments();
+
 		await page.close();
+	} );
+
+	test( 'Checklist automatically opens on the 2nd visit to the editor', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		expect( await checklistHelper.isChecklistOpen( 'editor' ) ).toBeFalsy();
+
+		await page.reload();
+		await page.locator( selectors.popup ).waitFor();
+
+		expect( await checklistHelper.isChecklistOpen( 'editor' ) ).toBeTruthy();
 	} );
 
 	test( 'Checklist module general test', async ( { page, apiRequests }, testInfo ) => {
@@ -283,6 +308,106 @@ test.describe( 'Launchpad checklist tests', () => {
 			await gotItButton.click();
 			await expect( rocketButton ).toBeHidden();
 			await checklistHelper.setChecklistSwitcherInPreferences( false );
+		} );
+	} );
+
+	test( 'Make sure steps are reset and checklist is active after previous test in case it failed', async ( { page, apiRequests, request }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await checklistHelper.resetStepsInDb( request );
+		await checklistHelper.setChecklistSwitcherInPreferences( true );
+		await checklistHelper.toggleExpandChecklist( 'editor', true );
+	} );
+
+	test( 'Expand and minimize behavior in the editor', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await test.step( 'Assert checklist expanded', async () => {
+			await checklistHelper.toggleChecklist( 'editor', true );
+			expect( await checklistHelper.isChecklistExpanded( 'editor' ) ).toBeTruthy();
+		} );
+
+		await test.step( 'Assert checklist stays minimized after closing', async () => {
+			await checklistHelper.toggleExpandChecklist( 'editor', false );
+			await checklistHelper.toggleChecklist( 'editor', false );
+			await checklistHelper.toggleChecklist( 'editor', true );
+			expect( await checklistHelper.isChecklistExpanded( 'editor' ) ).toBeFalsy();
+		} );
+
+		await test.step( 'Assert checklist is minimized after refresh', async () => {
+			await page.reload();
+			await checklistHelper.toggleChecklist( 'editor', true );
+			expect( await checklistHelper.isChecklistExpanded( 'editor' ) ).toBeFalsy();
+		} );
+	} );
+
+	test( 'Make sure checklist is expanded after previous test if it failed', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await checklistHelper.toggleExpandChecklist( 'editor', true );
+	} );
+
+	test( 'Checklist reactivity in the editor', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await checklistHelper.toggleChecklistItem( 'add_logo', 'editor', true );
+		await expect( page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="false"]' ) ) ).toBeVisible();
+		await checklistHelper.clickStepCta( 'add_logo', 'editor' );
+
+		await page.locator( '.elementor-control-site_logo' ).waitFor();
+		await page.locator( '.elementor-control-site_logo .eicon-plus-circle' ).click();
+		await page.getByRole( 'tab', { name: 'Media Library' } ).click();
+		await page.locator( '.thumbnail' ).first().waitFor();
+		await page.locator( '.thumbnail' ).first().click();
+		await page.locator( '.button.media-button' ).click();
+		await page.locator( '.elementor-panel button', { hasText: 'Save Changes' } ).click();
+
+		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="true"]' ) ).waitFor();
+
+		await page.locator( '.elementor-control-site_logo .elementor-control-media__content' ).hover();
+		await page.locator( '.elementor-control-site_logo .elementor-control-media__content .elementor-control-media__remove' ).click();
+		await page.locator( '.elementor-panel button', { hasText: 'Save Changes' } ).click();
+
+		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="false"]' ) ).waitFor();
+	} );
+
+	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
+		await test.step( 'Checklist visible to admin role by default', async () => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+				editor = await wpAdmin.openNewPage( false, false ),
+				rocketButton = editor.page.locator( selectors.topBarIcon ),
+				checklist = editor.page.locator( selectors.popup );
+			await rocketButton.click();
+			await expect( checklist ).toBeVisible();
+		} );
+
+		await test.step( 'Checklist not visible to author role', async () => {
+			const context = await browser.newContext( { storageState: undefined } );
+			const newScopePage = await context.newPage();
+			const wpAdmin = new WpAdminPage( newScopePage, testInfo, apiRequests );
+
+			await wpAdmin.customLogin( newTestUser.username, newTestUser.password );
+
+			const editor = await wpAdmin.openNewPage( false, false );
+			const rocketButton = editor.page.locator( selectors.topBarIcon );
+
+			await expect( rocketButton ).toBeHidden();
 		} );
 	} );
 } );

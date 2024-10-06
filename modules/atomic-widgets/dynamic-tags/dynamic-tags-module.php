@@ -35,7 +35,7 @@ class Dynamic_Tags_Module {
 
 		add_filter(
 			'elementor/atomic-widgets/props-schema',
-			fn( array $schema ) => Dynamic_Prop_Types_Mapping::add_to_schema( $schema )
+			fn( array $schema ) => Dynamic_Prop_Types_Mapping::make()->add_to_schema( $schema )
 		);
 
 		add_action(
@@ -56,6 +56,9 @@ class Dynamic_Tags_Module {
 	}
 
 	private function register_transformers( Transformers_Registry $transformers ) {
-		$transformers->register( new Dynamic_Transformer( Plugin::$instance->dynamic_tags ) );
+		$transformers->register(
+			Dynamic_Prop_Type::get_key(),
+			new Dynamic_Transformer( Plugin::$instance->dynamic_tags )
+		);
 	}
 }
