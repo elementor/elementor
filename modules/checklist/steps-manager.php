@@ -181,7 +181,7 @@ class Steps_Manager {
 				continue;
 			}
 
-			if ( ! $this->step_available( $step_id ) ) {
+			if ( $this->exclude_step_for_pro_user( $step_id ) ) {
 				continue;
 			}
 
@@ -192,11 +192,11 @@ class Steps_Manager {
 		self::$step_ids = $step_ids;
 	}
 
-	private function step_available( string $step_id ) : bool {
+	private function exclude_step_for_pro_user( string $step_id ) : bool {
 		if ( Setup_Header::STEP_ID === $step_id && Utils::has_pro() ) {
-			return false;
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 }
