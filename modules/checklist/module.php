@@ -4,6 +4,8 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
+use Elementor\Core\isolation\Elementor_Counter_Interface;
+use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
@@ -24,34 +26,39 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
 	const FIRST_CLOSED_CHECKLIST_IN_EDITOR = 'first_closed_checklist_in_editor';
 	const LAST_OPENED_TIMESTAMP = 'last_opened_timestamp';
+	const SHOULD_OPEN_IN_EDITOR = 'should_open_in_editor';
 	const IS_POPUP_MINIMIZED_KEY = 'is_popup_minimized';
-	const EDITOR_VISIT_COUNT = 'editor_visit_count';
 
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;
 	private Kit_Adapter_Interface $kit_adapter;
+	private Elementor_Counter_Interface $counter_adapter;
 	private $user_progress = null;
 
 	/**
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
 	 * @param ?Kit_Adapter_Interface $kit_adapter
+	 * @param ?Elementor_Counter_Interface $counter_adapter
 	 *
 	 * @return void
 	 */
-	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null ) {
+	public function __construct(
+		?Wordpress_Adapter_Interface $wordpress_adapter = null,
+		?Kit_Adapter_Interface $kit_adapter = null,
+		?Elementor_Counter_Interface $counter_adapter = null
+	) {
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();
+		$this->counter_adapter = $counter_adapter ?? Elementor_Counter::instance();
 		parent::__construct();
 
 		$this->register_experiment();
-		$is_new_checklist_init = $this->init_user_progress();
-		$this->handle_checklist_visibility_with_kit( $is_new_checklist_init );
 
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
 
-		add_action( 'elementor/editor/init', [ $this, 'monitor_editor_visits' ] );
+		$this->init_user_progress();
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
@@ -98,10 +105,15 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *  }
 	 */
 	public function get_user_progress_from_db() : array {
-		return array_merge(
+		$progress = array_merge(
 			$this->get_default_user_progress(),
 			json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true )
 		);
+
+		$editor_visit_count = $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
+		$progress[ self::SHOULD_OPEN_IN_EDITOR ] = 2 === $editor_visit_count;
+
+		return $progress;
 	}
 
 	/**
@@ -134,9 +146,9 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	public function update_user_progress( $new_data ) : void {
 		$allowed_properties = [
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
-			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
+			self::SHOULD_OPEN_IN_EDITOR => $new_data[ self::SHOULD_OPEN_IN_EDITOR ] ?? null,
 			self::IS_POPUP_MINIMIZED_KEY => $new_data[ self::IS_POPUP_MINIMIZED_KEY ] ?? null,
-			self::EDITOR_VISIT_COUNT => $new_data[ self::EDITOR_VISIT_COUNT ] ?? null,
+			Elementor_Counter::EDITOR_COUNTER_KEY => $new_data[ Elementor_Counter::EDITOR_COUNTER_KEY ] ?? null,
 		];
 
 		foreach ( $allowed_properties as $key => $value ) {
@@ -146,6 +158,10 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		}
 
 		$this->update_user_progress_in_db();
+
+		if ( isset( $new_data[ Elementor_Counter::EDITOR_COUNTER_KEY ] ) ) {
+			$this->counter_adapter->set_count( Elementor_Counter::EDITOR_COUNTER_KEY, $new_data[ Elementor_Counter::EDITOR_COUNTER_KEY ] );
+		}
 	}
 
 	/**
@@ -203,36 +219,6 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		return 'yes' === $is_preference_switch_on;
 	}
 
-	public function monitor_editor_visits() {
-		if ( ! $this->is_experiment_active() || ! self::is_preference_switch_on() ) {
-			return;
-		}
-
-		$progress = $this->get_user_progress_from_db();
-		$progress[ self::EDITOR_VISIT_COUNT ] = $progress[ self::EDITOR_VISIT_COUNT ] ?? 0;
-
-		if ( -1 === $progress[ self::EDITOR_VISIT_COUNT ] ) {
-			return;
-		}
-
-		if ( 2 < ++$progress[ self::EDITOR_VISIT_COUNT ] ) {
-			$progress[ self::EDITOR_VISIT_COUNT ] = -1;
-		}
-
-		$this->user_progress = $progress;
-		$this->update_user_progress_in_db();
-	}
-
-	public static function is_active_kit_default() {
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-
-		if ( false === $kit_id || null === $kit_id ) {
-			return false;
-		}
-
-		return esc_html__( 'Default Kit', 'elementor' ) === get_post( $kit_id )->post_title;
-	}
-
 	private function register_experiment() : void {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_ID,
@@ -243,18 +229,16 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		] );
 	}
 
-	private function init_user_progress() : bool {
+	private function init_user_progress() {
 		$default_settings = $this->get_default_user_progress();
-
-		return (bool) $this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
+		$this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
 	}
 
 	private function get_default_user_progress() : array {
 		return [
-			self::LAST_OPENED_TIMESTAMP => -1,
+			self::SHOULD_OPEN_IN_EDITOR => true,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			self::IS_POPUP_MINIMIZED_KEY => false,
-			self::EDITOR_VISIT_COUNT => 0,
 			'steps' => [],
 		];
 	}
@@ -263,19 +247,19 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$this->wordpress_adapter->update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
 	}
 
-	private function handle_checklist_visibility_with_kit( $is_new_checklist_init ) {
-		if ( static::is_active_kit_default() ) {
-			return;
-		}
-
-		add_action( 'elementor/init', function () use ( $is_new_checklist_init ) {
-			$editor_visit_count = $this->user_progress[ self::EDITOR_VISIT_COUNT ] ?? 0;
-
-			if ( $is_new_checklist_init || ( 0 <= $editor_visit_count && 2 >= $editor_visit_count ) ) {
-				SettingsManager::get_settings_managers( 'editorPreferences' )
-					->get_model()
-					->set_settings( self::VISIBILITY_SWITCH_ID, '' );
-			}
-		} );
-	}
+//	private function handle_checklist_visibility_with_kit( $is_new_checklist_init ) {
+//		if ( static::is_active_kit_default() ) {
+//			return;
+//		}
+//
+//		add_action( 'elementor/init', function () use ( $is_new_checklist_init ) {
+//			$editor_visit_count = $this->user_progress[ self::EDITOR_VISIT_COUNT ] ?? 0;
+//
+//			if ( $is_new_checklist_init || ( 0 <= $editor_visit_count && 2 >= $editor_visit_count ) ) {
+//				SettingsManager::get_settings_managers( 'editorPreferences' )
+//					->get_model()
+//					->set_settings( self::VISIBILITY_SWITCH_ID, '' );
+//			}
+//		} );
+//	}
 }

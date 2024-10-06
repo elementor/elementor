@@ -1,7 +1,7 @@
 import { editorV2 } from './editor-v-2';
 import Component from './component';
 import { USER_PROGRESS } from './utils/consts';
-import { fetchUserProgress, toggleChecklistPopup } from './utils/functions';
+import { fetchUserProgress, toggleChecklistPopup, updateUserProgress } from './utils/functions';
 
 $e.components.register( new Component() );
 editorV2();
@@ -19,11 +19,11 @@ async function checklistStartup() {
 	if ( shouldHide ) {
 		$e.commands.run( 'checklist/toggle-icon', false );
 	} else {
-		const userProgress = await fetchUserProgress(),
-			editorVisitCount = userProgress?.[ USER_PROGRESS.EDITOR_VISIT_COUNT ] || null;
+		const userProgress = await fetchUserProgress();
 
-		if ( 2 === editorVisitCount ) {
+		if ( userProgress?.[ USER_PROGRESS.SHOULD_OPEN_IN_EDITOR ] ) {
 			toggleChecklistPopup();
+			updateUserProgress( { [ USER_PROGRESS.SHOULD_OPEN_IN_EDITOR ]: false } );
 		}
 	}
 
