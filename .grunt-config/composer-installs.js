@@ -2,6 +2,7 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// Changes made to this file: should be in sync with the changes made to the .github/workflows/install-dependencies/action.yml
 function runCommand( command, description ) {
 	return new Promise( ( resolve, reject ) => {
 		console.log( `Running: ${ description }` );
