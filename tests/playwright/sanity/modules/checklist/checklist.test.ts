@@ -17,7 +17,6 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await wpAdmin.setExperiments( {
 			editor_v2: true,
-			'launchpad-checklist': true,
 		} );
 		await checklistHelper.resetStepsInDb( request, { editor_visit_count: 0 } );
 
