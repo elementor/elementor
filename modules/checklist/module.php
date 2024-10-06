@@ -4,7 +4,6 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
-use Elementor\Core\isolation\Elementor_Counter_Interface;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -12,6 +11,7 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Isolation\Kit_Adapter;
 use Elementor\Core\Isolation\Kit_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Counter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
@@ -53,12 +53,11 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		parent::__construct();
 
 		$this->register_experiment();
+		$this->init_user_progress();
 
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
-
-		$this->init_user_progress();
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
@@ -112,7 +111,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		);
 
 		$editor_visit_count = $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
-		$progress[ self::SHOULD_OPEN_IN_EDITOR ] = 2 === $editor_visit_count && $progress[ self::LAST_OPENED_TIMESTAMP ];
+		$progress[ self::SHOULD_OPEN_IN_EDITOR ] = 2 === $editor_visit_count && ! $progress[ self::LAST_OPENED_TIMESTAMP ];
 
 		return $progress;
 	}
@@ -146,10 +145,9 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	public function update_user_progress( $new_data ) : void {
 		$allowed_properties = [
-			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
+			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
 			self::IS_POPUP_MINIMIZED_KEY => $new_data[ self::IS_POPUP_MINIMIZED_KEY ] ?? null,
-			Elementor_Counter::EDITOR_COUNTER_KEY => $new_data[ Elementor_Counter::EDITOR_COUNTER_KEY ] ?? null,
 		];
 
 		foreach ( $allowed_properties as $key => $value ) {
@@ -232,15 +230,15 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		] );
 	}
 
-	private function init_user_progress() {
+	private function init_user_progress() :void {
 		$default_settings = $this->get_default_user_progress();
+
 		$this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
 	}
 
 	private function get_default_user_progress() : array {
 		return [
 			self::LAST_OPENED_TIMESTAMP => null,
-			self::SHOULD_OPEN_IN_EDITOR => true,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			self::IS_POPUP_MINIMIZED_KEY => false,
 			'steps' => [],

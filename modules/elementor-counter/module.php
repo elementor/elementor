@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\ElementorCounter;
 
-use Elementor\Core\isolation\Elementor_Counter_Interface;
+use Elementor\Core\Isolation\Elementor_Counter_Interface;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use ElementorPro\Base\Module_Base;
