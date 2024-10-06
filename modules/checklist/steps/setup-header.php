@@ -4,6 +4,7 @@ namespace Elementor\Modules\Checklist\Steps;
 
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -14,11 +15,7 @@ class Setup_Header extends Step_Base {
 
 	public function __construct( $module, $wordpress_adapter = null, $kit_adapter = null, $should_promote = true ) {
 		$promotion_data = $should_promote
-			? [
-				'url' => 'http://go.elementor.com/app-website-checklist-header-article',
-				'text' => esc_html__( 'Upgrade Now', 'elementor' ),
-				'icon' => 'default',
-			]
+			? $this->render_promotion()
 			: null;
 
 		parent::__construct( $module, $wordpress_adapter, $kit_adapter, $promotion_data );
@@ -79,6 +76,20 @@ class Setup_Header extends Step_Base {
 	}
 
 	public function get_learn_more_url() : string {
-		return 'https://elementor.com/help/header-site-part/';
+		return 'https://go.elementor.com/app-website-checklist-header-article';
 	}
+
+	private function render_promotion() {
+			return Filtered_Promotions_Manager::get_filtered_promotion_data(
+				[
+					'url' => 'https://go.elementor.com/go-pro-website-checklist-header',
+					'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+					'icon' => 'default',
+				],
+				'elementor/checklist/promotion',
+				'upgrade_url'
+			);
+
+	}
+
 }

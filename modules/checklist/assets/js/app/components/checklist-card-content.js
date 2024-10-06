@@ -1,10 +1,11 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Link, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { getAndUpdateStep, updateStep } from '../../utils/functions';
-import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES } from '../../utils/consts';
+import { addMixpanelTrackingChecklistSteps, getAndUpdateStep, updateStep } from '../../utils/functions';
+import { STEP, STEP_IDS_TO_COMPLETE_IN_EDITOR, PANEL_ROUTES, MIXPANEL_CHECKLIST_STEPS } from '../../utils/consts';
 
 const { IS_MARKED_COMPLETED, IS_ABSOLUTE_COMPLETED, IS_IMMUTABLE_COMPLETED } = STEP;
+const { DONE, UNDONE, ACTION, UPGRADE } = MIXPANEL_CHECKLIST_STEPS;
 
 const ChecklistCardContent = ( { step, setSteps } ) => {
 	const {
@@ -28,8 +29,14 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 		shouldShowMarkAsDone = ! isAbsoluteCompleted && ! isImmutableCompleted && ! promotionData;
 
 	const redirectHandler = async () => {
+		if ( promotionData ) {
+			addMixpanelTrackingChecklistSteps( step.config.id, UPGRADE );
+		} else {
+			addMixpanelTrackingChecklistSteps( step.config.id, ACTION );
+		}
+
 		if ( ! elementor || ! STEP_IDS_TO_COMPLETE_IN_EDITOR.includes( id ) || ! PANEL_ROUTES[ id ] ) {
-			return window.open( ctaUrl, promotionData ? '_blank' : '_self' );
+			return window.open( ctaUrl, '_blank' );
 		}
 
 		await $e.run( 'panel/global/open' );
@@ -38,6 +45,12 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 
 	const toggleMarkAsDone = async () => {
 		const currState = isMarkedCompleted;
+
+		if ( isMarkedCompleted ) {
+			addMixpanelTrackingChecklistSteps( step.config.id, UNDONE );
+		} else {
+			addMixpanelTrackingChecklistSteps( step.config.id, DONE );
+		}
 
 		try {
 			updateStepsState( IS_MARKED_COMPLETED, ! currState );
@@ -61,7 +74,14 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 			<CardContent>
 				<Typography variant="body2" color="text.secondary" component="p">
 					{ description + ' ' }
-					<Link href={ learnMoreUrl } target="_blank" rel="noreferrer" underline="hover" color="info.main"> { learnMoreText } </Link>
+					<Link
+						href={ learnMoreUrl }
+						target="_blank"
+						rel="noreferrer"
+						underline="hover"
+						color="info.main"
+						noWrap={ true }
+					>{ learnMoreText }</Link>
 				</Typography>
 			</CardContent>
 			<CardActions>

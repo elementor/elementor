@@ -10,10 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Linked_Dimensions_Transformer extends Transformer_Base {
-	public function get_type(): string {
-		return Linked_Dimensions_Prop_Type::get_key();
-	}
-
 	public function transform( $value ) {
 		$top = $value['top'] ?? 'unset';
 		$left = $value['left'] ?? 'unset';

@@ -11,10 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Transformer extends Transformer_Base {
-	public function get_type(): string {
-		return Size_Prop_Type::get_key();
-	}
-
 	public function transform( $value ) {
 		$size = (int) $value['size'];
 		$unit = $value['unit'];
