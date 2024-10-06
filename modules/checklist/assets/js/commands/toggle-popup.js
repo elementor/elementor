@@ -1,6 +1,8 @@
 import App from '../app/app';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import ReactDOM from 'react-dom/client';
+import { updateUserProgress } from '../utils/functions';
+import { USER_PROGRESS } from '../utils/consts';
 
 const queryClient = new QueryClient();
 
@@ -15,6 +17,7 @@ export class TogglePopup extends $e.modules.CommandBase {
 			this.unmount();
 		}
 
+		updateUserProgress( { [ USER_PROGRESS.LAST_OPENED_TIMESTAMP ]: TogglePopup.isOpen ? Date.now() : null } );
 		TogglePopup.isOpen = ! TogglePopup.isOpen;
 		args.isOpen = TogglePopup.isOpen;
 	}

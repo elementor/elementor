@@ -62,6 +62,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
+		$this->handle_checklist_visibility_with_kit();
 		$this->steps_manager = new Steps_Manager( $this );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -111,7 +112,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		);
 
 		$editor_visit_count = $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
-		$progress[ self::SHOULD_OPEN_IN_EDITOR ] = 2 === $editor_visit_count;
+		$progress[ self::SHOULD_OPEN_IN_EDITOR ] = 2 === $editor_visit_count && $progress[ self::LAST_OPENED_TIMESTAMP ];
 
 		return $progress;
 	}
@@ -145,15 +146,15 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	public function update_user_progress( $new_data ) : void {
 		$allowed_properties = [
+			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
-			self::SHOULD_OPEN_IN_EDITOR => $new_data[ self::SHOULD_OPEN_IN_EDITOR ] ?? null,
 			self::IS_POPUP_MINIMIZED_KEY => $new_data[ self::IS_POPUP_MINIMIZED_KEY ] ?? null,
 			Elementor_Counter::EDITOR_COUNTER_KEY => $new_data[ Elementor_Counter::EDITOR_COUNTER_KEY ] ?? null,
 		];
 
 		foreach ( $allowed_properties as $key => $value ) {
 			if ( null !== $value ) {
-				$this->user_progress[ $key ] = $value;
+				$this->user_progress[ $key ] = $this->get_formatted_value( $key, $value );
 			}
 		}
 
@@ -209,14 +210,16 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		} );
 	}
 
-	public static function is_preference_switch_on() : bool {
+	public function is_preference_switch_on() : bool {
+		if ( $this->should_switch_off() ) {
+			return false;
+		}
+
 		$user_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )
 			->get_model()
 			->get_settings( self::VISIBILITY_SWITCH_ID );
-		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
-		$is_preference_switch_on = $user_preferences ?? $is_new_installation;
 
-		return 'yes' === $is_preference_switch_on;
+		return 'yes' === $user_preferences || Upgrade_Manager::is_new_installation();
 	}
 
 	private function register_experiment() : void {
@@ -236,6 +239,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	private function get_default_user_progress() : array {
 		return [
+			self::LAST_OPENED_TIMESTAMP => null,
 			self::SHOULD_OPEN_IN_EDITOR => true,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			self::IS_POPUP_MINIMIZED_KEY => false,
@@ -247,19 +251,27 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$this->wordpress_adapter->update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
 	}
 
-//	private function handle_checklist_visibility_with_kit( $is_new_checklist_init ) {
-//		if ( static::is_active_kit_default() ) {
-//			return;
-//		}
-//
-//		add_action( 'elementor/init', function () use ( $is_new_checklist_init ) {
-//			$editor_visit_count = $this->user_progress[ self::EDITOR_VISIT_COUNT ] ?? 0;
-//
-//			if ( $is_new_checklist_init || ( 0 <= $editor_visit_count && 2 >= $editor_visit_count ) ) {
-//				SettingsManager::get_settings_managers( 'editorPreferences' )
-//					->get_model()
-//					->set_settings( self::VISIBILITY_SWITCH_ID, '' );
-//			}
-//		} );
-//	}
+	private function get_formatted_value( $key, $value ) {
+		if ( self::LAST_OPENED_TIMESTAMP === $key ) {
+			return $value ? time() : -1;
+		}
+
+		return $value;
+	}
+
+	private function handle_checklist_visibility_with_kit() {
+		if ( ! $this->should_switch_off() ) {
+			return;
+		}
+
+		add_action( 'elementor/editor/init', function (){
+			SettingsManager::get_settings_managers( 'editorPreferences' )
+				->get_model()
+				->set_settings( self::VISIBILITY_SWITCH_ID, '' );
+		} );
+	}
+
+	private function should_switch_off() {
+		return ! $this->kit_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
+	}
 }
