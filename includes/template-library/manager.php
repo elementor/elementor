@@ -359,7 +359,7 @@ class Manager {
 		$post_status = get_post_status( $post_id );
 
 		$is_private_and_no_access = ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) );
-		$is_restricted_status = post_password_required( $post_id ) || in_array( $post_status, ['auto-draft', 'draft'], true );
+		$is_restricted_status = post_password_required( $post_id ) || in_array( $post_status, [ 'auto-draft', 'draft' ], true );
 
 		if ( $is_private_and_no_access || $is_restricted_status ) {
 			return new \WP_Error(
