@@ -5,13 +5,13 @@ namespace Elementor\Modules\ElementorCounter;
 use Elementor\Core\Isolation\Elementor_Counter_Interface;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use ElementorPro\Base\Module_Base;
+use Elementor\Core\Base\Module as BaseModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Module extends Module_Base implements Elementor_Counter_Interface {
+class Module extends BaseModule implements Elementor_Counter_Interface {
 	const EDITOR_COUNTER_KEY = 'e_editor_counter';
 
 	private ?Wordpress_Adapter_Interface $wordpress_adapter = null;
@@ -21,6 +21,7 @@ class Module extends Module_Base implements Elementor_Counter_Interface {
 	}
 
 	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
+		parent::__construct();
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 
 		add_action( 'elementor/editor/init', function () {
