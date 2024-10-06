@@ -358,12 +358,14 @@ class Manager {
 		$post_id = intval( $args['template_id'] );
 		$post_status = get_post_status( $post_id );
 
-		if ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) ) {
-			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template.', 'elementor' ) );
-		}
+		$is_private_and_no_access = ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) );
+		$is_restricted_status = post_password_required( $post_id ) || in_array( $post_status, ['auto-draft', 'draft'], true );
 
-		if ( post_password_required( $post_id ) || 'auto-draft' === $post_status || 'draft' === $post_status ) {
-			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template.', 'elementor' ) );
+		if ( $is_private_and_no_access || $is_restricted_status ) {
+			return new \WP_Error(
+				'template_error',
+				esc_html__( 'You do not have permission to access this template.', 'elementor' )
+			);
 		}
 
 		if ( isset( $args['edit_mode'] ) ) {
