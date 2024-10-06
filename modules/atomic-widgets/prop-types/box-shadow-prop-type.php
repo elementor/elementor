@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ```
 $box_shadow = [
 	'$$type' => 'box-shadow',
-    'value' => Shadow_Prop_Type[]
+	'value' => Shadow_Prop_Type[],
 ];
 ```
 */
