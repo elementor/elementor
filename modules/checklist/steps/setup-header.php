@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Setup_Header extends Step_Base {
-	const STEP_ID = 'setup_header';
+	const STEP_ID = 'setup_header_promo';
 
 	public function __construct( $module, $wordpress_adapter = null, $kit_adapter = null, $should_promote = true ) {
 		$promotion_data = $should_promote
