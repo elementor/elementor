@@ -4,11 +4,10 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Modules\Checklist\Steps\Assign_Homepage;
 use Elementor\Modules\Checklist\Steps\Create_Pages;
-use Elementor\Modules\Checklist\Steps\Setup_Header;
+use Elementor\Modules\Checklist\Steps\Setup_Header_Promo;
 use Elementor\Modules\Checklist\Steps\Add_Logo;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 use Elementor\Modules\Checklist\Steps\Set_Fonts_And_Colors;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -17,7 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
-	private static array $step_ids = [ Add_Logo::STEP_ID, Set_Fonts_And_Colors::STEP_ID, Create_Pages::STEP_ID, Setup_Header::STEP_ID, Assign_Homepage::STEP_ID ];
+
+	private static array $step_ids = [
+		Add_Logo::STEP_ID,
+		Set_Fonts_And_Colors::STEP_ID,
+		Create_Pages::STEP_ID,
+		Setup_Header_Promo::STEP_ID,
+		Assign_Homepage::STEP_ID,
+	];
 
 	private Checklist_Module_Interface $module;
 
@@ -181,7 +187,7 @@ class Steps_Manager {
 				continue;
 			}
 
-			if ( $this->exclude_step_for_pro_user( $step_id ) ) {
+			if ( ! $step_instance->is_visible() ) {
 				continue;
 			}
 
@@ -190,13 +196,5 @@ class Steps_Manager {
 		}
 
 		self::$step_ids = $step_ids;
-	}
-
-	private function exclude_step_for_pro_user( string $step_id ) : bool {
-		if ( Setup_Header::STEP_ID === $step_id && Utils::has_pro() ) {
-			return true;
-		}
-
-		return false;
 	}
 }
