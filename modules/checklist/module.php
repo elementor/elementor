@@ -262,7 +262,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			return;
 		}
 
-		add_action( 'elementor/editor/init', function (){
+		add_action( 'elementor/editor/init', function () {
 			SettingsManager::get_settings_managers( 'editorPreferences' )
 				->get_model()
 				->set_settings( self::VISIBILITY_SWITCH_ID, '' );

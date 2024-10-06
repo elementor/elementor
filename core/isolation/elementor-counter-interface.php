@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\isolation;
+namespace Elementor\Core\Isolation;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
