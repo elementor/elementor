@@ -269,7 +269,12 @@ export default class NestedTabs extends Base {
 		this.setTouchMode();
 
 		if ( 'nested-tabs.default' === this.getSettings( 'elementName' ) ) {
-			new elementorModules.frontend.handlers.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
+			import( /* webpackChunkName: 'nested-title-keyboard-handler' */ 'elementor-frontend/handlers/accessibility/nested-title-keyboard-handler' ).then( ( { default: NestedTitleKeyboardHandler } ) => {
+				new NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
+			} ).catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( 'Error importing module:', error );
+			} );
 		}
 	}
 
