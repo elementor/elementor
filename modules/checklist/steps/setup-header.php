@@ -73,7 +73,7 @@ class Setup_Header extends Step_Base {
 		return 'https://go.elementor.com/app-website-checklist-header-article';
 	}
 
-	public static function get_default_promotion_data() : ?array {
+	protected function get_default_promotion_data() : ?array {
 			return Filtered_Promotions_Manager::get_filtered_promotion_data(
 				[
 					'url' => 'https://go.elementor.com/go-pro-website-checklist-header',

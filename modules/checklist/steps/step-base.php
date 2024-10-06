@@ -84,7 +84,7 @@ abstract class Step_Base {
 		$this->module = $module;
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();
-		$this->promotion_data = static::get_default_promotion_data();
+		$this->promotion_data = $this->get_default_promotion_data();
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
 	}
 
@@ -187,7 +187,7 @@ abstract class Step_Base {
 		return $this->promotion_data;
 	}
 
-	public static function get_default_promotion_data() : ?array {
+	protected function get_default_promotion_data() : ?array {
 		return null;
 	}
 
