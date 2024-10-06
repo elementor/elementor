@@ -705,8 +705,43 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $data_for_save['styles'] );
 	}
 
-	// TODO: add test for get_data_for_save__throws_on_styles_validation_error
-	public function test_get_data_for_save__throws_on_validation_error() {
+	public function test_get_data_for_save__throws_on_styles_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'font-size' => 'not-a-size',
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: font-size' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
+	public function test_get_data_for_save__throws_on_settings_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
@@ -740,6 +775,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				parent::__construct( [
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
+					'styles' => $options['styles'] ?? [],
 					'elType' => 'widget',
 					'widgetType' => 'test-widget',
 				], [] );

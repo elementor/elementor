@@ -30,19 +30,12 @@ class Styles_Validator {
 	 * }
 	 */
 	public function validate( array $styles ): array {
-		$validated = [];
 		$errors = [];
 
 		foreach ( $styles as $style_id => $style ) {
-			$validated[ $style_id ] = [];
 			foreach ( $style['variants'] as $variant_index => $variant ) {
-				$validated[ $style_id ][ $variant_index ] = [
-					'meta' => $variant['meta'],
-				];
-
 				[,$validated_props, $variant_errors] = Props_Validator::make( $this->schema )->validate( $variant['props'] );
-
-				$validated[ $style_id ]['variants'][ $variant_index ]['props'] = $validated_props;
+				$styles[ $style_id ]['variants'][ $variant_index ]['props'] = $validated_props;
 				$errors = array_merge( $errors, $variant_errors );
 			}
 		}
@@ -51,7 +44,7 @@ class Styles_Validator {
 
 		return [
 			$is_valid,
-			$validated,
+			'validated' => $styles,
 			$errors,
 		];
 	}
