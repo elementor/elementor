@@ -472,18 +472,6 @@ class Manager extends Base_Object {
 			'default' => self::STATE_ACTIVE,
 			'mutable' => false,
 		] );
-
-//		$this->add_feature( [
-//			'name' => 'e-checklist',
-//			'title' => esc_html__( 'Launchpad Checklist', 'elementor' ),
-//			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
-//			'release_status' => self::RELEASE_STATUS_ALPHA,
-//			static::TYPE_HIDDEN => true,
-//			'new_site' => [
-//				'default_active' => true,
-//				'minimum_installation_version' => '3.25.0',
-//			],
-//		] );
 	}
 
 	/**
