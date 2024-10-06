@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $shadow = [
 	'$$type' => 'shadow',
 	'value' => [
-		'color' => Color_Prop_Type
+		'color' => Color_Prop_Type,
 		'horizontal' => Size_Prop_Type,
 		'vertical' => Size_Prop_Type,
 		'blur' => Size_Prop_Type,
