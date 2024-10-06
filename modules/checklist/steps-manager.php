@@ -4,7 +4,7 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Modules\Checklist\Steps\Assign_Homepage;
 use Elementor\Modules\Checklist\Steps\Create_Pages;
-use Elementor\Modules\Checklist\Steps\Setup_Header_Promo;
+use Elementor\Modules\Checklist\Steps\Setup_Header;
 use Elementor\Modules\Checklist\Steps\Add_Logo;
 use Elementor\Modules\Checklist\Steps\Step_Base;
 use Elementor\Modules\Checklist\Steps\Set_Fonts_And_Colors;
@@ -21,7 +21,7 @@ class Steps_Manager {
 		Add_Logo::STEP_ID,
 		Set_Fonts_And_Colors::STEP_ID,
 		Create_Pages::STEP_ID,
-		Setup_Header_Promo::STEP_ID,
+		Setup_Header::STEP_ID,
 		Assign_Homepage::STEP_ID,
 	];
 
