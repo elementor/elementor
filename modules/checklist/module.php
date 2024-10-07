@@ -229,6 +229,10 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
 			'release_status' => Manager::RELEASE_STATUS_ALPHA,
 			'hidden' => true,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.25.0',
+			],
 		] );
 	}
 
