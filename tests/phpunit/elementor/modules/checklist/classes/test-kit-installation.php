@@ -25,7 +25,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 	}
 
 	/**
-	 * @dataProvider test_cases_provider
+	 * @dataProvider data_provider
 	 */
 	public function test__kit_installation( $plugin_activated, $editor_first, $editor_second, $editor_third ) {
 		// Plugin activated
@@ -48,11 +48,11 @@ class Test_Kit_Installation extends Step_Test_Base {
 		//Editor visit #3
 		$this->set_counter_adapter_mock( [ 'get_count' => 3 ] );
 		$this->set_checklist_module();
-		$this->assertTrue( $editor_second['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
-		$this->assertTrue( $editor_second['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
+		$this->assertTrue( $editor_third['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
+		$this->assertTrue( $editor_third['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 	}
 
-	public function test_cases_provider() {
+	public function data_provider() {
 		return [
 			[
 				[
