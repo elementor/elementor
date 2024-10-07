@@ -187,10 +187,11 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 			return $this;
 		}
 
-		$this->set_kit_adapter_mock( [ 'is_active_kit_default' => $kit_key === self::DEFAULT_KIT ], true );
+		$this->set_kit_adapter_mock( [ 'is_active_kit_default' => $kit_key === self::DEFAULT_KIT ] );
 
 		if ( $this->checklist_module->should_switch_preferences_off() ) {
 			$this->set_user_preference_switch( false );
+			var_dump('yessss');
 		}
 
 		return $this;

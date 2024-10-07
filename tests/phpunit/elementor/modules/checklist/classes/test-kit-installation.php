@@ -72,6 +72,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 		}
 
 		if ( $toggle_popup_first ) {
+			var_dump('1st');
 			$this->set_user_preference_switch( true );
 			$this->toggle_popup( false );
 		}
@@ -185,6 +186,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
+				self::PREFERENCE_SECOND_CHANGE => true,
 				self::TOGGLE_POPUP_FIRST => true,
 				self::EDITOR_SECOND_VISIT => [
 					self::PREFERENCE_SWITCH_EXPECTED => true,
@@ -210,9 +212,10 @@ class Test_Kit_Installation extends Step_Test_Base {
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 				self::EDITOR_SECOND_VISIT => [
-					self::PREFERENCE_SWITCH_EXPECTED => false,
+					self::PREFERENCE_SWITCH_EXPECTED => true,
 					self::SHOULD_AUTO_OPEN_POPUP => true,
 				],
+				self::PREFERENCE_SECOND_CHANGE => true,
 				self::EDITOR_THIRD_VISIT => [
 					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
@@ -230,6 +233,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 	}
 
 	private function editor_visit( $visit, $visit_index ) {
+		$this->set_counter_adapter_mock( [ 'get_count' => $visit_index ] );
 		$this->set_wordpress_adapter_mock( [
 			'get_user_preferences' => $this->get_user_preference_state() ? 'yes' : '',
 			'is_new_installation' => true,
@@ -237,7 +241,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 		$this->assertTrue( $visit[ self::PREFERENCE_SWITCH_EXPECTED ] === $this->checklist_module->is_preference_switch_on() );
 
 		$this->wordpress_adapter = null;
-		$this->set_counter_adapter_mock( [ 'get_count' => $visit_index ], true );
+		$this->set_checklist_module();
 
 		$this->assertTrue( $visit[ self::SHOULD_AUTO_OPEN_POPUP ] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 	}
