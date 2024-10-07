@@ -6,9 +6,9 @@ import ApiRequests from './assets/api-requests';
 
 export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStorageState: string, workerBaseURL: string, apiRequests: ApiRequests }>( {
 	// Use the same storage state for all tests in this worker.
-	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
-	workerBaseURL: [ async ( {}, use, testInfo ) => {
-		await use( ( 1 === Number( testInfo.workerIndex ) ) ? process.env.TEST_SERVER : process.env.DEV_SERVER );
+	baseURL: process.env.BASE_URL,
+	workerBaseURL: [ async ( {}, use ) => {
+		await use( process.env.BASE_URL );
 	}, { scope: 'worker' } ],
 
 	// Use the same storage state for all tests in this worker.
