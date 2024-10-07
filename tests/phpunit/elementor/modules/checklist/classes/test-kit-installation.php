@@ -126,7 +126,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
-				self::KIT_FIRST_CHANGE => self::CUSTOM_KIT,
+				self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT ],
 				self::EDITOR_FIRST_VISIT => [
 					self::SHOULD_SWITCH_PREFERENCE_OFF => true,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
@@ -149,7 +149,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
-				self::KIT_FIRST_CHANGE => self::CUSTOM_KIT,
+				self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT ],
 				self::EDITOR_FIRST_VISIT => [
 					self::SHOULD_SWITCH_PREFERENCE_OFF => true,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
@@ -173,7 +173,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
-				self::KIT_FIRST_CHANGE => self::CUSTOM_KIT,
+				self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT ],
 				self::EDITOR_FIRST_VISIT => [
 					self::SHOULD_SWITCH_PREFERENCE_OFF => true,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
