@@ -171,15 +171,16 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		$preferences = is_array( $preferences ) ? $preferences : [];
 		$preferences[ Checklist_Module::VISIBILITY_SWITCH_ID ] = $state ? 'yes' : '';
 
-		update_user_meta( $this->user->ID, 'elementor_preferences', wp_json_encode( $preferences ) );
+		update_user_meta( $this->user->ID, 'elementor_preferences', $preferences );
 
 		return $this;
 	}
 
 	protected function get_user_preference_state() {
-		$preferences = json_decode( get_user_meta( $this->user->ID, 'elementor_preferences', true ), true );
+		$preferences = get_user_meta( $this->user->ID, 'elementor_preferences', true );
+		$preferences = is_array( $preferences ) ? $preferences : [];
 		$state = $preferences[ Checklist_Module::VISIBILITY_SWITCH_ID ] ?? '';
-var_dump( $preferences );
+
 		return 'yes' === $state;
 	}
 
@@ -212,6 +213,7 @@ var_dump( $preferences );
 		delete_option( Checklist_Module::DB_OPTION_KEY );
 		delete_option( 'elementor_install_history' );
 		update_user_meta( $this->user->ID, 'elementor_preferences', [] );
+
 		$this->set_user_preference_switch( true );
 
 		var_dump( $this->get_user_preference_state() );
@@ -219,14 +221,8 @@ var_dump( $preferences );
 	}
 
 	private function reset_data() {
-		if ( ! empty( $this->checklist_progress_backup ) ) {
-			update_option( Checklist_Module::DB_OPTION_KEY, $this->checklist_progress_backup );
-		}
-
-		if ( ! empty( $this->user_meta_backup ) ) {
-			update_user_meta( $this->user->ID, 'elementor_preferences', $this->user_meta_backup );
-		}
-
+		update_option( Checklist_Module::DB_OPTION_KEY, $this->checklist_progress_backup );
+		update_user_meta( $this->user->ID, 'elementor_preferences', $this->user_meta_backup );
 		update_option( 'elementor_install_history', $this->installation_history_backup );
 
 		$this->installation_history_backup = null;
