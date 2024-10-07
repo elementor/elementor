@@ -48,7 +48,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 		// Kit change 1
 		foreach ( $kit_first as $kit_key ) {
-			$this->set_kit( $kit_key, 1 < count( $kit_first ) );
+			$this->set_kit( $kit_key );
 		}
 
 		// User Preference change 1
@@ -70,7 +70,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 		// Kit change 2
 		foreach ( $kit_second as $kit_key ) {
-			$this->set_kit( $kit_key, 1 < count( $kit_second ) );
+			$this->set_kit( $kit_key );
 		}
 
 		// User Preference change 2

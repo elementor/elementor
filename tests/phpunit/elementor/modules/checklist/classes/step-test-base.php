@@ -184,6 +184,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 	protected function set_kit( $kit_key ) : Step_Test_Base {
 		if ( ! in_array( $kit_key, [ self::CUSTOM_KIT, self::DEFAULT_KIT ] ) ) {
+			var_dump('fuck');
 			return $this;
 		}
 
