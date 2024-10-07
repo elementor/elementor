@@ -179,7 +179,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	protected function get_user_preference_state() {
 		$preferences = json_decode( get_user_meta( $this->user->ID, 'elementor_preferences', true ), true );
 		$state = $preferences[ Checklist_Module::VISIBILITY_SWITCH_ID ] ?? '';
-
+var_dump( $preferences );
 		return 'yes' === $state;
 	}
 
@@ -211,7 +211,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 		delete_option( Checklist_Module::DB_OPTION_KEY );
 		delete_option( 'elementor_install_history' );
-		delete_user_meta( $this->user->ID, 'elementor_preferences' );
+		update_user_meta( $this->user->ID, 'elementor_preferences', [] );
 		$this->set_user_preference_switch( true );
 
 		var_dump( $this->get_user_preference_state() );
