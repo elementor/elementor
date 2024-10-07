@@ -98,117 +98,127 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 	public function data_provider() {
 		$case_1 = [
-			self::PLUGIN_ACTIVATED => [
-				self::PREFERENCE_SWITCH_EXPECTED => true,
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::EDITOR_FIRST_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::EDITOR_SECOND_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => true,
-			],
-			self::EDITOR_THIRD_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
+			[
+				self::PLUGIN_ACTIVATED => [
+					self::PREFERENCE_SWITCH_EXPECTED => true,
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::EDITOR_FIRST_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::EDITOR_SECOND_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => true,
+				],
+				self::EDITOR_THIRD_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
 			],
 		];
 
 		$case_2 = [
-			self::PLUGIN_ACTIVATED => [
-				self::PREFERENCE_SWITCH_EXPECTED => true,
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT ],
-			self::EDITOR_FIRST_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => true,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::EDITOR_SECOND_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::EDITOR_THIRD_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
+			[
+				self::PLUGIN_ACTIVATED => [
+					self::PREFERENCE_SWITCH_EXPECTED => true,
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::KIT_FIRST_CHANGE => self::CUSTOM_KIT,
+				self::EDITOR_FIRST_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => true,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::EDITOR_SECOND_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::EDITOR_THIRD_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
 			],
 		];
 
 		$case_3 = [
-			self::PLUGIN_ACTIVATED => [
-				self::PREFERENCE_SWITCH_EXPECTED => true,
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT ],
-			self::EDITOR_FIRST_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => true,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::PREFERENCE_SECOND_CHANGE => true,
-			self::EDITOR_SECOND_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => true,
-			],
-			self::EDITOR_THIRD_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
+			[
+				self::PLUGIN_ACTIVATED => [
+					self::PREFERENCE_SWITCH_EXPECTED => true,
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::KIT_FIRST_CHANGE => self::CUSTOM_KIT,
+				self::EDITOR_FIRST_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => true,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::PREFERENCE_SECOND_CHANGE => true,
+				self::EDITOR_SECOND_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => true,
+				],
+				self::EDITOR_THIRD_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
 			],
 		];
 
 		$case_4 = [
-			self::PLUGIN_ACTIVATED => [
-				self::PREFERENCE_SWITCH_EXPECTED => true,
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT ],
-			self::EDITOR_FIRST_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => true,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::TOGGLE_POPUP_FIRST => true,
-			self::EDITOR_SECOND_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::EDITOR_THIRD_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
+			[
+				self::PLUGIN_ACTIVATED => [
+					self::PREFERENCE_SWITCH_EXPECTED => true,
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::KIT_FIRST_CHANGE => self::CUSTOM_KIT,
+				self::EDITOR_FIRST_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => true,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::TOGGLE_POPUP_FIRST => true,
+				self::EDITOR_SECOND_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::EDITOR_THIRD_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
 			],
 		];
 
 		$case_5 = [
-			self::PLUGIN_ACTIVATED => [
-				self::PREFERENCE_SWITCH_EXPECTED => true,
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT, self::DEFAULT_KIT ],
-			self::EDITOR_FIRST_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => true,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::EDITOR_SECOND_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
-			],
-			self::EDITOR_THIRD_VISIT => [
-				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
-				self::SHOULD_AUTO_OPEN_POPUP => false,
+			[
+				self::PLUGIN_ACTIVATED => [
+					self::PREFERENCE_SWITCH_EXPECTED => true,
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT, self::DEFAULT_KIT ],
+				self::EDITOR_FIRST_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
+				self::EDITOR_SECOND_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => true,
+				],
+				self::EDITOR_THIRD_VISIT => [
+					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::SHOULD_AUTO_OPEN_POPUP => false,
+				],
 			],
 		];
 
 		return [
-			[ $case_1 ],
-			[ $case_2 ],
-			[ $case_3 ],
-			[ $case_4 ],
-			[ $case_5 ],
+			$case_1,
+			$case_2,
+			$case_3,
+			$case_4,
+			$case_5,
 		];
 	}
 
