@@ -48,13 +48,12 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	/**
 	 * Creates a mock object of the Wordpress_Adapter class with specified methods and return values.
 	 *
-	 * @param string[] $methods Array of method names to be mocked.
-	 * @param array $return_map Associative array mapping method names to their return values.
+	 * @param array $methods_map Associative array mapping method names to their return values.
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_wordpress_adapter_mock( $methods, $return_map ) : Step_Test_Base {
-		$this->wordpress_adapter =  $this->get_adapter_mock( self::WORDPRESS_ID, $methods, $return_map );
+	public function set_wordpress_adapter_mock( $methods_map ) : Step_Test_Base {
+		$this->wordpress_adapter =  $this->get_adapter_mock( self::WORDPRESS_ID, $methods_map );
 
 		return $this;
 	}
@@ -62,13 +61,12 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	/**
 	 * Creates a mock object of the Kit_Adapter class with specified methods and return values.
 	 *
-	 * @param string[] $methods Array of method names to be mocked.
-	 * @param array $return_map Associative array mapping method names to their return values.
+	 * @param array $methods_map Associative array mapping method names to their return values.
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_kit_adapter_mock( $methods, $return_map ) : Step_Test_Base {
-		$this->kit_adapter =  $this->get_adapter_mock( self::KIT_ID, $methods, $return_map );
+	public function set_kit_adapter_mock( $methods_map ) : Step_Test_Base {
+		$this->kit_adapter =  $this->get_adapter_mock( self::KIT_ID, $methods_map );
 
 		return $this;
 	}
@@ -76,13 +74,12 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	/**
 	 * Creates a mock object of the Elementor_Counter_Adapter class with specified methods and return values.
 	 *
-	 * @param string[] $methods Array of method names to be mocked.
-	 * @param array $return_map Associative array mapping method names to their return values.
+	 * @param array $methods_map Associative array mapping method names to their return values.
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_counter_adapter_mock( $methods, $return_map ) : Step_Test_Base {
-		$this->counter_adapter =  $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $methods, $return_map );
+	public function set_counter_adapter_mock( $methods_map ) : Step_Test_Base {
+		$this->counter_adapter =  $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $methods_map );
 
 		return $this;
 	}
@@ -91,12 +88,11 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 * Creates a mock object of any of the adapters' class with specified methods and return values.
 	 *
 	 * @param (self::WORDPRESS_ID|self::KIT_ID|self::ELEMENTOR_COUNTER_ID) $adapter_key
-	 * @param string[] $methods Array of method names to be mocked.
-	 * @param array $return_map Associative array mapping method names to their return values.
+	 * @param array $methods_map Associative array mapping method names to their return values.
 	 *
 	 * @return MockObject
 	 */
-	private function get_adapter_mock( $adapter_key, $methods, $return_map ) {
+	private function get_adapter_mock( $adapter_key, $methods_map ) {
 		$classes = [
 			self::WORDPRESS_ID => Wordpress_Adapter::class,
 			self::KIT_ID => Kit_Adapter::class,
@@ -106,10 +102,10 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		$class = $classes[ $adapter_key ];
 
 		$adapter_mock = $this->getMockBuilder( $class )
-			->setMethods( $methods )
+			->setMethods( array_keys( $methods_map ) )
 			->getMock();
 
-		foreach ( $return_map as $method => $return_value ) {
+		foreach ( $methods_map as $method => $return_value ) {
 			$adapter_mock->method( $method )->willReturn( $return_value );
 		}
 
