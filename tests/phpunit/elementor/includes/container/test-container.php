@@ -25,6 +25,18 @@ class Test_Container extends Elementor_Test_Base {
 		$this->container = Plugin::$instance->elementor_container();
 	}
 
+	public function test_container_cache_performance() {
+		$startTime = microtime( true );
+		$this->container->get( Wordpress_Adapter::class );
+		$firstRunTime = microtime( true ) - $startTime;
+
+		$startTime = microtime( true );
+		$this->container->get( Wordpress_Adapter::class );
+		$cachedRunTime = microtime( true ) - $startTime;
+
+		$this->assertLessThan( $firstRunTime, $cachedRunTime );
+	}
+
 	/**
 	 * @throws NotFoundException
 	 * @throws DependencyException
@@ -169,17 +181,5 @@ class Test_Container extends Elementor_Test_Base {
 		$homeScreenData = $property->getValue( $transformer );
 
 		$this->assertEquals( $json_data, $homeScreenData );
-	}
-
-	public function test_container_cache_performance() {
-		$startTime = microtime( true );
-		$this->container->get( Wordpress_Adapter::class );
-		$firstRunTime = microtime( true ) - $startTime;
-
-		$startTime = microtime( true );
-		$this->container->get( Wordpress_Adapter::class );
-		$cachedRunTime = microtime( true ) - $startTime;
-
-		$this->assertLessThan( $firstRunTime, $cachedRunTime );
 	}
 }
