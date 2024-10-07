@@ -53,7 +53,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 	protected Checklist_Module_Interface $checklist_module;
 
-	private $user_id;
+	private $user;
 	private $checklist_progress_backup;
 	private $user_meta_backup;
 
@@ -191,16 +191,12 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	}
 
 	private function setup_data() {
-		$this->user_id = get_current_user_id();
+		$this->user = wp_get_current_user();
 		$this->checklist_progress_backup = get_option( Checklist_Module::DB_OPTION_KEY ) || '';
-		$this->user_meta_backup = get_user_meta( get_current_user_id(), 'elementor_preferences' ) || '';
+		$this->user_meta_backup = get_user_meta( get_current_user_id(), 'elementor_preferences', true ) || '';
 
-		update_option( Checklist_Module::DB_OPTION_KEY, wp_json_encode( [
-			Checklist_Module::LAST_OPENED_TIMESTAMP => null,
-			Checklist_Module::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
-			Checklist_Module::IS_POPUP_MINIMIZED_KEY => false,
-			'steps' => [],
-		] ) );
+		delete_option( Checklist_Module::DB_OPTION_KEY );
+		delete_user_meta( $this->user->ID, 'elementor_preferences' );
 
 		return $this;
 	}
@@ -211,10 +207,9 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		}
 
 		if ( ! empty( $this->user_meta_backup ) ) {
-			update_user_meta( $this->user_id, 'elementor_preferences', $this->user_meta_backup );
+			update_user_meta( $this->user->ID, 'elementor_preferences', $this->user_meta_backup );
 		}
 
-		$this->user_id = null;
 		$this->checklist_progress_backup = null;
 		$this->user_meta_backup = null;
 
