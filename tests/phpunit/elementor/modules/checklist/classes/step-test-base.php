@@ -172,9 +172,8 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		} else {
 			$preferences = [];
 		}
-
-		update_user_meta( get_current_user_id(), 'elementor_preferences', wp_json_encode( $preferences ) );
-		$this->set_checklist_module();
+var_dump($preferences);
+		update_user_meta( $this->user->ID, 'elementor_preferences', wp_json_encode( $preferences ) );
 
 		return $this;
 	}
@@ -188,7 +187,6 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 	protected function toggle_popup( bool $state ) {
 		$this->checklist_module->update_user_progress( [ Checklist_Module::LAST_OPENED_TIMESTAMP => ! $state ] );
-		$this->set_checklist_module();
 
 		return $this;
 	}

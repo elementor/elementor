@@ -65,6 +65,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 		}
 
 		if ( $toggle_popup_first ) {
+			$this->set_user_preference_switch( true );
 			$this->toggle_popup( false );
 		}
 
@@ -87,6 +88,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 		}
 
 		if ( $toggle_popup_second ) {
+			$this->set_user_preference_switch( true );
 			$this->toggle_popup( false );
 		}
 
@@ -103,15 +105,15 @@ class Test_Kit_Installation extends Step_Test_Base {
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 				self::EDITOR_FIRST_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => true,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 				self::EDITOR_SECOND_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => true,
 					self::SHOULD_AUTO_OPEN_POPUP => true,
 				],
 				self::EDITOR_THIRD_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 			],
@@ -126,7 +128,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 				],
 				self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT ],
 				self::EDITOR_FIRST_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => true,
+					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 				self::EDITOR_SECOND_VISIT => [
@@ -149,16 +151,16 @@ class Test_Kit_Installation extends Step_Test_Base {
 				],
 				self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT ],
 				self::EDITOR_FIRST_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => true,
+					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 				self::PREFERENCE_SECOND_CHANGE => true,
 				self::EDITOR_SECOND_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => true,
 					self::SHOULD_AUTO_OPEN_POPUP => true,
 				],
 				self::EDITOR_THIRD_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => true,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 			],
@@ -173,16 +175,16 @@ class Test_Kit_Installation extends Step_Test_Base {
 				],
 				self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT ],
 				self::EDITOR_FIRST_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => true,
+					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 				self::TOGGLE_POPUP_FIRST => true,
 				self::EDITOR_SECOND_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => true,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 				self::EDITOR_THIRD_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => true,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 			],
@@ -197,15 +199,15 @@ class Test_Kit_Installation extends Step_Test_Base {
 				],
 				self::KIT_FIRST_CHANGE => [ self::CUSTOM_KIT, self::DEFAULT_KIT ],
 				self::EDITOR_FIRST_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 				self::EDITOR_SECOND_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => true,
 				],
 				self::EDITOR_THIRD_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 			],
@@ -222,6 +224,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 	private function editor_visit( $visit, $visit_index ) {
 		$this->set_counter_adapter_mock( [ 'get_count' => $visit_index ], true );
+		$this->assertTrue( $visit[ self::PREFERENCE_SWITCH_EXPECTED ] === $this->checklist_module->is_preference_switch_on() );
 		$this->assertTrue( $visit[ self::SHOULD_AUTO_OPEN_POPUP ] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 	}
 }
