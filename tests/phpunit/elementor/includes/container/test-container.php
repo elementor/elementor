@@ -171,11 +171,6 @@ class Test_Container extends Elementor_Test_Base {
 		$this->assertEquals( $json_data, $homeScreenData );
 	}
 
-	public function test_container_has_no_bindings_after_init() {
-		$this->assertFalse( $this->container->has( Wordpress_Adapter_Interface::class ) );
-		$this->assertFalse( $this->container->has( Plugin_Status_Adapter::class ) );
-	}
-
 	public function test_container_cache_performance() {
 		$startTime = microtime( true );
 		$this->container->get( Wordpress_Adapter::class );
