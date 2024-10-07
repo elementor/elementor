@@ -96,7 +96,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 * @return Step_Test_Base
 	 */
 	public function set_kit_adapter_mock( $methods_map, $should_instantiate_module = false ) : Step_Test_Base {
-		$this->kit_adapter =  $this->get_adapter_mock( self::KIT_ID, $methods_map );
+		$this->kit_adapter = $this->get_adapter_mock( self::KIT_ID, $methods_map );
 
 		if ( $should_instantiate_module ) {
 			$this->set_checklist_module();
@@ -114,7 +114,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 * @return Step_Test_Base
 	 */
 	public function set_counter_adapter_mock( $methods_map, $should_instantiate_module = false ) : Step_Test_Base {
-		$this->counter_adapter =  $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $methods_map );
+		$this->counter_adapter = $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $methods_map );
 
 		if ( $should_instantiate_module ) {
 			$this->set_checklist_module();
@@ -174,17 +174,20 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		}
 
 		update_user_meta( get_current_user_id(), 'elementor_preferences', wp_json_encode( $preferences ) );
+		$this->set_checklist_module();
 
 		return $this;
 	}
 
 	protected function toggle_popup( bool $state ) {
 		$this->checklist_module->update_user_progress( [ Checklist_Module::LAST_OPENED_TIMESTAMP => ! $state ] );
+		$this->set_checklist_module();
+
+		return $this;
 	}
 
 	protected function set_kit( $kit_key ) : Step_Test_Base {
 		if ( ! in_array( $kit_key, [ self::CUSTOM_KIT, self::DEFAULT_KIT ] ) ) {
-			var_dump('fuck');
 			return $this;
 		}
 
