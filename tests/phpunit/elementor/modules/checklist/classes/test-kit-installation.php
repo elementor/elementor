@@ -139,11 +139,11 @@ class Test_Kit_Installation extends Step_Test_Base {
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 				self::EDITOR_SECOND_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 				self::EDITOR_THIRD_VISIT => [
-					self::SHOULD_SWITCH_PREFERENCE_OFF => false,
+					self::PREFERENCE_SWITCH_EXPECTED => false,
 					self::SHOULD_AUTO_OPEN_POPUP => false,
 				],
 			],
