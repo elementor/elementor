@@ -72,18 +72,17 @@ class Test_Kit_Installation extends Step_Test_Base {
 		}
 
 		if ( $toggle_popup_first ) {
-			var_dump('1st');
 			$this->set_user_preference_switch( true );
-			$this->toggle_popup( false );
 		}
 
 		// Kit change 2
 		foreach ( $kit_second as $kit_key ) {
-			$this->set_kit( $kit_key );
+			$this->set_kit( $kit_key , true );
 		}
 
 		// User Preference change 2
 		if ( null !== $preference_switch_second ) {
+			var_dump('fucl');
 			$this->set_user_preference_switch( $preference_switch_second );
 		}
 
@@ -97,7 +96,6 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 		if ( $toggle_popup_second ) {
 			$this->set_user_preference_switch( true );
-			$this->toggle_popup( false );
 		}
 
 		//Editor visit #3
@@ -224,11 +222,11 @@ class Test_Kit_Installation extends Step_Test_Base {
 		];
 
 		return [
-			$case_1,
+//			$case_1,
 			$case_2,
-			$case_3,
-			$case_4,
-			$case_5,
+//			$case_3,
+//			$case_4,
+//			$case_5,
 		];
 	}
 

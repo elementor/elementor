@@ -182,16 +182,15 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		return $this;
 	}
 
-	protected function set_kit( $kit_key ) : Step_Test_Base {
+	protected function set_kit( $kit_key, $print ) : Step_Test_Base {
 		if ( ! in_array( $kit_key, [ self::CUSTOM_KIT, self::DEFAULT_KIT ] ) ) {
 			return $this;
 		}
 
 		$this->set_kit_adapter_mock( [ 'is_active_kit_default' => $kit_key === self::DEFAULT_KIT ] );
 
-		if ( $this->checklist_module->should_switch_preferences_off() ) {
+		if ( $this->checklist_module->should_switch_preferences_off( $print ) ) {
 			$this->set_user_preference_switch( false );
-			var_dump('yessss');
 		}
 
 		return $this;
