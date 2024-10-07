@@ -204,11 +204,11 @@ class Test_Kit_Installation extends Step_Test_Base {
 		];
 
 		return [
-			$case_1,
-			$case_2,
-			$case_3,
-			$case_4,
-			$case_5,
+			[ $case_1 ],
+			[ $case_2 ],
+			[ $case_3 ],
+			[ $case_4 ],
+			[ $case_5 ],
 		];
 	}
 
