@@ -1,50 +1,51 @@
 <?php
 
-namespace Elementor\Testing\Modules\AtomicWidgets;
+namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\Base\Style_Transformer_Base;
-use Elementor\Modules\AtomicWidgets\Styles\Transformers\Array_Transformer;
-use Elementor\Modules\AtomicWidgets\Styles\Transformers\Size_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers\Linked_Dimensions_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers\Size_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Exit if accessed directly.
+	exit; // Exit if accessed directly.
 }
 
 class Test_Styles_Renderer extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
-    public function test_render__basic_style() {
-        // Arrange.
-        $styles = [
-            [
-                'id' => 'test-style',
-                'type' => 'class',
-                'variants' => [
-                    [
-                        'props' => [
-                            'color' => 'red',
-                            'fontSize' => '16px',
-                        ],
-                        'meta' => [],
-                    ],
-                ],
-            ],
-        ];
+	public function test_render__basic_style() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'color' => 'red',
+							'fontSize' => '16px',
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
 
-        $stylesRenderer = new Styles_Renderer( [
-			'transformers' => [],
+		$stylesRenderer = new Styles_Renderer( [
 			'breakpoints' => []
 		] );
 
-        // Act.
-        $css = $stylesRenderer->render( $styles );
+		// Act.
+		$css = $stylesRenderer->render( $styles );
 
-        // Assert.
+		// Assert.
 		$this->assertMatchesSnapshot( $css );
-    }
+	}
 
 	public function test_render__invalid_style_type() {
 		// Arrange.
@@ -78,7 +79,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => [],
 			'breakpoints' => []
 		] );
 
@@ -100,7 +100,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => [],
 			'breakpoints' => []
 		] );
 
@@ -117,52 +116,51 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertEmpty( $css );
 	}
 
-    public function test_render__style_variant_with_state() {
-        // Arrange.
-        $styles = [
-            [
-                'id' => 'test-style',
-                'type' => 'class',
-                'variants' => [
-                    [
-                        'props' => [
-                            'color' => 'blue',
-                        ],
-                        'meta' => [
-                            'state' => 'hover',
-                        ],
-                    ],
-                ],
-            ],
-        ];
+	public function test_render__style_variant_with_state() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'color' => 'blue',
+						],
+						'meta' => [
+							'state' => 'hover',
+						],
+					],
+				],
+			],
+		];
 
-        $stylesRenderer = new Styles_Renderer( [
-			'transformers' => [],
+		$stylesRenderer = new Styles_Renderer( [
 			'breakpoints' => []
 		] );
 
-        // Act.
-        $css = $stylesRenderer->render( $styles );
+		// Act.
+		$css = $stylesRenderer->render( $styles );
 
-        // Assert.
+		// Assert.
 		$this->assertMatchesSnapshot( $css );
-    }
+	}
 
-    public function test_render__style_variant_with_breakpoint() {
-        // Arrange.
-        $styles = [
-            [
-                'id' => 'test-style',
-                'type' => 'class',
-                'variants' => [
-                    [
-                        'props' => [
-                            'color' => 'green',
-                        ],
-                        'meta' => [
-                            'breakpoint' => 'mobile',
-                        ],
-                    ],
+	public function test_render__style_variant_with_breakpoint() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'color' => 'green',
+						],
+						'meta' => [
+							'breakpoint' => 'mobile',
+						],
+					],
 					[
 						'props' => [
 							'color' => 'blue',
@@ -171,12 +169,11 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'breakpoint' => 'tablet', // non-existing breakpoint
 						],
 					]
-                ],
-            ],
-        ];
+				],
+			],
+		];
 
-        $stylesRenderer = new Styles_Renderer( [
-			'transformers' => [],
+		$stylesRenderer = new Styles_Renderer( [
 			'breakpoints' => [
 				'mobile' => [
 					'direction' => 'max',
@@ -186,12 +183,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			]
 		] );
 
-        // Act.
-        $css = $stylesRenderer->render( $styles );
+		// Act.
+		$css = $stylesRenderer->render( $styles );
 
-        // Assert.
+		// Assert.
 		$this->assertMatchesSnapshot( $css );
-    }
+	}
 
 	public function test_render__style_variants_with_disabled_breakpoints() {
 		// Arrange.
@@ -221,7 +218,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => [],
 			'breakpoints' => [
 				'mobile' => [
 					'direction' => 'max',
@@ -273,7 +269,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => [],
 			'breakpoints' => [
 				'mobile' => [
 					'direction' => 'max',
@@ -295,7 +290,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
-    public function test_render__style_with_non_existing_transformers() {
+	public function test_render__style_with_non_existing_transformers() {
 		$styles = [
 			[
 				'id' => 'test-style',
@@ -322,7 +317,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => [],
 			'breakpoints' => []
 		] );
 
@@ -335,6 +329,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_transformers_receiving_faulty_values() {
 		// Arrange.
+		add_action('elementor/atomic-widgets/{$context}/transformers/register', function($registry) {
+			$registry->register( Size_Prop_Type::get_key(), new Size_Transformer() );
+		});
+
 		$styles = [
 			[
 				'id' => 'test-style',
@@ -354,9 +352,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => [
-				'size' => new Size_Transformer(),
-			],
 			'breakpoints' => []
 		] );
 
@@ -369,6 +364,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_thrown_exceptions_in_transformer() {
 		// Arrange.
+		add_action('elementor/atomic-widgets/{$context}/transformers/register', function($registry) {
+			$registry->register( 'faulty', $this->make_mock_faulty_transformer() );
+		});
+
 		$styles = [
 			[
 				'id' => 'test-style',
@@ -388,9 +387,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => [
-				'faulty' => $this->make_mock_faulty_transformer(),
-			],
 			'breakpoints' => []
 		] );
 
@@ -402,15 +398,20 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 	}
 
 	public function test_render__style_with_nested_transformers() {
-        // Arrange.
-        $styles = [
-            [
-                'id' => 'test-style',
-                'type' => 'class',
-                'variants' => [
-                    [
-                        'props' => [
-                            'font-size' => [
+		// Arrange.
+		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
+			$registry->register( Size_Prop_Type::get_key(), new Size_Transformer() );
+			$registry->register( Linked_Dimensions_Prop_Type::get_key(), new Linked_Dimensions_Transformer() );
+		});
+
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-size' => [
 								'$$type' => 'size',
 								'value' => [
 									'size' => 14,
@@ -418,55 +419,55 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								]
 							],
 							'box-shadow' => [
-								'$$type' => 'array',
+								'$$type' => 'linked-dimensions',
 								'value' => [
-									'array' => [
-										[
-											'$$type' => 'size',
-											'value' => [
-												'size' => 1,
-												'unit' => 'px'
-											]
-										],
-										[
-											'$$type' => 'size',
-											'value' => [
-												'size' => 1,
-												'unit' => 'px'
-											]
-										],
-										[
-											'$$type' => 'size',
-											'value' => [
-												'size' => 5,
-												'unit' => 'px'
-											]
-										],
-										'#000000'
-									]
+									'top' => [
+										'$$type' => 'size',
+										'value' => [
+											'size' => 1,
+											'unit' => 'px'
+										]
+									],
+									'right' => [
+										'$$type' => 'size',
+										'value' => [
+											'size' => 1,
+											'unit' => 'px'
+										]
+									],
+									'bottom' => [
+										'$$type' => 'size',
+										'value' => [
+											'size' => 5,
+											'unit' => 'px'
+										]
+									],
+									'left' => [
+										'$$type' => 'size',
+										'value' => [
+											'size' => 1,
+											'unit' => 'px'
+										]
+									],
 								]
 							]
-                        ],
-                        'meta' => [],
-                    ],
-                ],
-            ],
-        ];
-
-        $stylesRenderer = new Styles_Renderer( [
-			'transformers' => [
-				'size' => new Size_Transformer(),
-				'array' => new Array_Transformer()
+						],
+						'meta' => [],
+					],
+				],
 			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
 			'breakpoints' => []
 		] );
 
-        // Act.
-        $css = $stylesRenderer->render( $styles );
+		// Act.
+		$css = $stylesRenderer->render( $styles );
 
-        // Assert.
+		// Assert.
 		$this->assertMatchesSnapshot( $css );
-    }
+	}
 
 	public function test_render__multiple_style_definitions_and_variants() {
 		// Arrange.
@@ -514,7 +515,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		];
 
 		$stylesRenderer = new Styles_Renderer( [
-			'transformers' => [],
 			'breakpoints' => []
 		] );
 
@@ -526,12 +526,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 	}
 
 	private function make_mock_faulty_transformer() {
-		return new class() extends Style_Transformer_Base {
-			public static function type(): string {
-				return 'faulty';
-			}
-
-			public function transform( $value, callable $transform ): string {
+		return new class() extends Transformer_Base {
+			public function transform( $value ): string {
 				throw new \Exception( 'Faulty transformer' );
 			}
 		};

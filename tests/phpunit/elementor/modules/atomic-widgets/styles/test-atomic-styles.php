@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\Testing\Modules\AtomicWidgets;
+namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\Atomic_Styles;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Widget_Base;
 use ElementorEditorTesting\Elementor_Test_Base;
