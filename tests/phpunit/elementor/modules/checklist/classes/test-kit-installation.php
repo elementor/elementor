@@ -16,8 +16,6 @@ class Test_Kit_Installation extends Step_Test_Base {
 	const SHOULD_AUTO_OPEN_POPUP = 'popup_auto_open';
 
 	public function setUp(): void {
-		$container = Plugin::$instance->elementor_container();
-		$container->set( Wordpress_Adapter::class, $this->wordpress_adapter );
 		$this->set_kit_adapter_mock( [ 'is_active_kit_default' => true ] )
 			->set_counter_adapter_mock( [ 'get_count' => 0 ] );
 
@@ -32,6 +30,8 @@ class Test_Kit_Installation extends Step_Test_Base {
 	 * @dataProvider data_provider
 	 */
 	public function test__kit_installation( $args ) {
+		$this->setUp();
+
 		$plugin_activated = $args[ self::PLUGIN_ACTIVATED ];
 		$kit_first = $args[ self::KIT_FIRST_CHANGE ] ?? [];
 		$preference_switch_first = $args[ self::PREFERENCE_FIRST_CHANGE ] ?? null;
