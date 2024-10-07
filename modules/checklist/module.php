@@ -11,7 +11,7 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Isolation\Kit_Adapter;
 use Elementor\Core\Isolation\Kit_Adapter_Interface;
-use Elementor\Core\Isolation\Elementor_Counter_Interface;
+use Elementor\Core\Isolation\Elementor_Counter_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
@@ -32,20 +32,20 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;
 	private Kit_Adapter_Interface $kit_adapter;
-	private Elementor_Counter_Interface $counter_adapter;
+	private Elementor_Counter_Adapter_Interface $counter_adapter;
 	private $user_progress = null;
 
 	/**
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
 	 * @param ?Kit_Adapter_Interface $kit_adapter
-	 * @param ?Elementor_Counter_Interface $counter_adapter
+	 * @param ?Elementor_Counter_Adapter_Interface $counter_adapter
 	 *
 	 * @return void
 	 */
 	public function __construct(
 		?Wordpress_Adapter_Interface $wordpress_adapter = null,
 		?Kit_Adapter_Interface $kit_adapter = null,
-		?Elementor_Counter_Interface $counter_adapter = null
+		?Elementor_Counter_Adapter_Interface $counter_adapter = null
 	) {
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();

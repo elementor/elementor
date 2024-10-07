@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-interface Elementor_Counter_Interface {
+interface Elementor_Counter_Adapter_Interface {
 	public function get_count( $key ) : ?int;
 
 	public function set_count( $key, $count = 0 ) : void;
