@@ -27,7 +27,7 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 		}
 
 		// Send authentication request.
-		const context = await login( request, process.env.USERNAME || 'admin', process.env.PASSWORD || 'password', process.env.BASE_PASSWORD );
+		const context = await login( request, process.env.USERNAME || 'admin', process.env.PASSWORD || 'password', workerBaseURL );
 		await context.storageState( { path: fileName } );
 		await context.dispose();
 
