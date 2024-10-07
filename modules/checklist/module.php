@@ -221,6 +221,10 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	public function should_switch_preferences_off() {
+		var_dump( [
+			'is_kit_default' => $this->kit_adapter->is_active_kit_default(),
+			'last_opened' => $this->user_progress[ self::LAST_OPENED_TIMESTAMP ],
+		] );
 		return ! $this->kit_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 	}
 

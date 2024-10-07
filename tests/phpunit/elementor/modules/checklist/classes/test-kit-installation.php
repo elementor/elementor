@@ -2,9 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Checklist\Classes;
 
-use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
