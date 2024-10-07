@@ -56,6 +56,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	private $user;
 	private $checklist_progress_backup;
 	private $user_meta_backup;
+	private $installation_history_backup;
 
 	public function setup(): void {
 		$this->setup_data()
@@ -210,8 +211,10 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		$this->user = wp_get_current_user();
 		$this->checklist_progress_backup = get_option( Checklist_Module::DB_OPTION_KEY ) || '';
 		$this->user_meta_backup = get_user_meta( get_current_user_id(), 'elementor_preferences', true ) || '';
+		$this->installation_history_backup = get_option( 'elementor_install_history' );
 
 		delete_option( Checklist_Module::DB_OPTION_KEY );
+		delete_option( 'elementor_install_history' );
 		delete_user_meta( $this->user->ID, 'elementor_preferences' );
 
 		return $this;
@@ -226,6 +229,9 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 			update_user_meta( $this->user->ID, 'elementor_preferences', $this->user_meta_backup );
 		}
 
+		update_option( 'elementor_install_history', $this->installation_history_backup );
+
+		$this->installation_history_backup = null;
 		$this->checklist_progress_backup = null;
 		$this->user_meta_backup = null;
 
