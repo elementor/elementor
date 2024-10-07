@@ -97,7 +97,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 	}
 
 	public function data_provider() {
-		$case_1 = [ [
+		$case_1 = [
 			self::PLUGIN_ACTIVATED => [
 				self::PREFERENCE_SWITCH_EXPECTED => true,
 				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
@@ -115,9 +115,9 @@ class Test_Kit_Installation extends Step_Test_Base {
 				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
 				self::SHOULD_AUTO_OPEN_POPUP => false,
 			],
-		] ];
+		];
 
-		$case_2 = [ [
+		$case_2 = [
 			self::PLUGIN_ACTIVATED => [
 				self::PREFERENCE_SWITCH_EXPECTED => true,
 				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
@@ -136,9 +136,9 @@ class Test_Kit_Installation extends Step_Test_Base {
 				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
 				self::SHOULD_AUTO_OPEN_POPUP => false,
 			],
-		] ];
+		];
 
-		$case_3 = [ [
+		$case_3 = [
 			self::PLUGIN_ACTIVATED => [
 				self::PREFERENCE_SWITCH_EXPECTED => true,
 				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
@@ -157,10 +157,10 @@ class Test_Kit_Installation extends Step_Test_Base {
 			self::EDITOR_THIRD_VISIT => [
 				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
 				self::SHOULD_AUTO_OPEN_POPUP => false,
-			] ],
+			],
 		];
 
-		$case_4 = [ [
+		$case_4 = [
 			self::PLUGIN_ACTIVATED => [
 				self::PREFERENCE_SWITCH_EXPECTED => true,
 				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
@@ -179,10 +179,10 @@ class Test_Kit_Installation extends Step_Test_Base {
 			self::EDITOR_THIRD_VISIT => [
 				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
 				self::SHOULD_AUTO_OPEN_POPUP => false,
-			] ],
+			],
 		];
 
-		$case_5 = [ [
+		$case_5 = [
 			self::PLUGIN_ACTIVATED => [
 				self::PREFERENCE_SWITCH_EXPECTED => true,
 				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
@@ -200,7 +200,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 			self::EDITOR_THIRD_VISIT => [
 				self::SHOULD_SWITCH_PREFERENCE_OFF => false,
 				self::SHOULD_AUTO_OPEN_POPUP => false,
-			] ],
+			],
 		];
 
 		return [
