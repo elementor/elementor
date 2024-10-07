@@ -209,7 +209,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	public function is_preference_switch_on() : bool {
-		if ( $this->should_switch_off() ) {
+		if ( $this->should_switch_preferences_off() ) {
 			return false;
 		}
 
@@ -218,6 +218,10 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			->get_settings( self::VISIBILITY_SWITCH_ID );
 
 		return 'yes' === $user_preferences || Upgrade_Manager::is_new_installation();
+	}
+
+	public function should_switch_preferences_off() {
+		return ! $this->kit_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 	}
 
 	private function register_experiment() : void {
@@ -262,7 +266,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	private function handle_checklist_visibility_with_kit() {
-		if ( ! $this->should_switch_off() ) {
+		if ( ! $this->should_switch_preferences_off() ) {
 			return;
 		}
 
@@ -271,9 +275,5 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 				->get_model()
 				->set_settings( self::VISIBILITY_SWITCH_ID, '' );
 		} );
-	}
-
-	private function should_switch_off() {
-		return ! $this->kit_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 	}
 }

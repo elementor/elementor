@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Checklist\Classes;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Modules\Checklist\Module as Checklist_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,7 +26,23 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 	public function test__kit_installation() {
 		// Plugin activated
-		var_dump( $this->checklist_module->get_user_progress_from_db() );
 		$this->assertTrue( $this->checklist_module->is_preference_switch_on() );
+		$this->assertFalse( $this->checklist_module->should_switch_preferences_off() );
+		$this->assertFalse( $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
+
+		//Editor visit #1
+		$this->set_counter_adapter_mock( [ 'get_count' => 1 ] );
+		$this->assertFalse( $this->checklist_module->should_switch_preferences_off() );
+		$this->assertFalse( $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
+
+		//Editor visit #2
+		$this->set_counter_adapter_mock( [ 'get_count' => 2 ] );
+		$this->assertFalse( $this->checklist_module->should_switch_preferences_off() );
+		$this->assertTrue( $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
+
+		//Editor visit #3
+		$this->set_counter_adapter_mock( [ 'get_count' => 3 ] );
+		$this->assertFalse( $this->checklist_module->should_switch_preferences_off() );
+		$this->assertFalse( $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 	}
 }
