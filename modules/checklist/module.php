@@ -213,11 +213,9 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			return false;
 		}
 
-		$user_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )
-			->get_model()
-			->get_settings( self::VISIBILITY_SWITCH_ID );
+		$user_preferences = $this->wordpress_adapter->get_user_preferences( self::VISIBILITY_SWITCH_ID );
 
-		var_dump( 'not good', $user_preferences );
+
 		return 'yes' === $user_preferences || Upgrade_Manager::is_new_installation();
 	}
 

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Isolation;
 
+use Elementor\Core\Settings\Manager;
+
 class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
 	public function get_plugins(): array {
@@ -49,6 +51,12 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
 	public function add_option( $option_key, $option_value ) : void {
 		add_option( $option_key, $option_value );
+	}
+
+	public function get_user_preferences( $preference_key ) {
+		return Manager::get_settings_managers( 'editorPreferences' )
+			->get_model()
+			->get_settings( $preference_key );
 	}
 
 	public function add_query_arg( $args, $url ) : string {

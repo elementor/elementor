@@ -42,7 +42,11 @@ class Test_Kit_Installation extends Step_Test_Base {
 		$editor_third = $args[ self::EDITOR_THIRD_VISIT];
 
 		// Plugin activated
+		$this->set_wordpress_adapter_mock( [ 'get_user_preferences' => $this->get_user_preference_state() ], true );
 		$this->assertTrue( $plugin_activated[ self::PREFERENCE_SWITCH_EXPECTED ] === $this->checklist_module->is_preference_switch_on() );
+
+		$this->wordpress_adapter = null;
+		$this->set_checklist_module();
 		$this->assertTrue( $plugin_activated[ self::SHOULD_SWITCH_PREFERENCE_OFF ] === $this->checklist_module->should_switch_preferences_off() );
 		$this->assertTrue( $plugin_activated[ self::SHOULD_AUTO_OPEN_POPUP ] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 
@@ -224,7 +228,11 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 	private function editor_visit( $visit, $visit_index ) {
 		$this->set_counter_adapter_mock( [ 'get_count' => $visit_index ], true );
+		$this->set_wordpress_adapter_mock( [ 'get_user_preferences' => $this->get_user_preference_state() ], true );
 		$this->assertTrue( $visit[ self::PREFERENCE_SWITCH_EXPECTED ] === $this->checklist_module->is_preference_switch_on() );
+
+		$this->wordpress_adapter = null;
+		$this->set_checklist_module();
 		$this->assertTrue( $visit[ self::SHOULD_AUTO_OPEN_POPUP ] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 	}
 }
