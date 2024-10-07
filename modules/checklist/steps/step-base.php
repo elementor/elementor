@@ -89,8 +89,7 @@ abstract class Step_Base {
 	}
 
 	/**
-	 * Returns step visibility
-	 * by-default step is visible
+	 * Returns step visibility (by-default step is visible)
 	 *
 	 * @return bool
 	 */
