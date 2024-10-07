@@ -23,6 +23,11 @@ elementorModules.frontend = {
 	},
 };
 
-if ( window.NestedTabs ) {
-	elementorModules.frontend.handlers.NestedTabs = window.NestedTabs;
-}
+// if ( window.NestedTabs ) {
+// 	elementorModules.frontend.handlers.NestedTabs = window.NestedTabs;
+// }
+
+const hasModule = document.querySelector( '#widget-nested-tabs-js-module' );
+
+console.log( 'has module', !! elementorModules.frontend.handlers.NestedTabs );
+console.log( 'has selector', !! hasModule );

@@ -7,6 +7,7 @@ import columnHandlers from './handlers/column';
 import HandlesPosition from './handlers/section/handles-position';
 import StretchedSection from './handlers/section/stretched-section';
 import Shapes from './handlers/section/shapes';
+import elementorModules from "../modules/modules";
 
 /* global elementorFrontendConfig */
 
@@ -26,9 +27,12 @@ module.exports = function( $ ) {
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
-	if ( window.NestedTabs ) {
-		this.elementsHandlers[ 'nested-tabs.default' ] = window.NestedTabs;
+	if ( elementorModules?.frontend?.handlers?.NestedTabs ) {
+		this.elementsHandlers[ 'nested-tabs.default' ] = elementorModules.frontend.handlers.NestedTabs;
 	}
+
+
+	console.log( 'has handler', !! this.elementsHandlers[ 'nested-tabs.default' ] );
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
 		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion' );
