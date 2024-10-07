@@ -42,7 +42,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 		$editor_third = $args[ self::EDITOR_THIRD_VISIT];
 
 		// Plugin activated
-		$this->set_wordpress_adapter_mock( [ 'get_user_preferences' => $this->get_user_preference_state() ], true );
+		$this->set_wordpress_adapter_mock( [ 'get_user_preferences' => [ Checklist_Module::VISIBILITY_SWITCH_ID => $this->get_user_preference_state() ] ], true );
 		$this->assertTrue( $plugin_activated[ self::PREFERENCE_SWITCH_EXPECTED ] === $this->checklist_module->is_preference_switch_on() );
 
 		$this->wordpress_adapter = null;
@@ -228,7 +228,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 	private function editor_visit( $visit, $visit_index ) {
 		$this->set_counter_adapter_mock( [ 'get_count' => $visit_index ], true );
-		$this->set_wordpress_adapter_mock( [ 'get_user_preferences' => $this->get_user_preference_state() ], true );
+		$this->set_wordpress_adapter_mock( [ 'get_user_preferences' => [ Checklist_Module::VISIBILITY_SWITCH_ID => $this->get_user_preference_state() ] ], true );
 		$this->assertTrue( $visit[ self::PREFERENCE_SWITCH_EXPECTED ] === $this->checklist_module->is_preference_switch_on() );
 
 		$this->wordpress_adapter = null;
