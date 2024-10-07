@@ -1,12 +1,4 @@
-// import {
-// 	changeScrollStatus,
-// 	setHorizontalScrollAlignment,
-// 	setHorizontalTitleScrollValues,
-// } from window.FlexHorizontalScroll;
-
 export default class NestedTabs extends window.BaseHandler {
-
-
 	/**
 	 * @param {string|number} tabIndex
 	 *
@@ -265,7 +257,7 @@ export default class NestedTabs extends window.BaseHandler {
 			this.activateDefaultTab();
 		}
 
-		setHorizontalScrollAlignment( this.getHorizontalScrollingSettings() );
+		window.FlexHorizontalScroll.setHorizontalScrollAlignment( this.getHorizontalScrollingSettings() );
 
 		this.setTouchMode();
 
@@ -282,7 +274,7 @@ export default class NestedTabs extends window.BaseHandler {
 
 	onElementChange( propertyName ) {
 		if ( this.checkSliderPropsToWatch( propertyName ) ) {
-			setHorizontalScrollAlignment( this.getHorizontalScrollingSettings() );
+			window.FlexHorizontalScroll.setHorizontalScrollAlignment( this.getHorizontalScrollingSettings() );
 		}
 	}
 
