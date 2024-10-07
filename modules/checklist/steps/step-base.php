@@ -88,6 +88,15 @@ abstract class Step_Base {
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
 	}
 
+	/**
+	 * Returns step visibility (by-default step is visible)
+	 *
+	 * @return bool
+	 */
+	public function is_visible() : bool {
+		return true;
+	}
+
 	public function get_learn_more_text() : string {
 		return esc_html__( 'Learn more', 'elementor' );
 	}
