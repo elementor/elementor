@@ -167,7 +167,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	}
 
 	protected function set_user_preference_switch( bool $state ) {
-		$preferences = $this->user_meta_backup ?? [];
+		$preferences = get_user_meta( $this->user->ID, 'elementor_preferences', true ) || [];
 		$preferences = is_array( $preferences ) ? $preferences : [];
 		$preferences[ Checklist_Module::VISIBILITY_SWITCH_ID ] = $state ? 'yes' : '';
 		update_user_meta( $this->user->ID, 'elementor_preferences', $preferences );
@@ -177,7 +177,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	}
 
 	protected function get_user_preference_state() {
-		$preferences = get_user_meta( $this->user->ID, 'elementor_preferences', true );
+		$preferences = get_user_meta( $this->user->ID, 'elementor_preferences', true ) || [];
 		$preferences = is_array( $preferences ) ? $preferences : [];
 		$state = $preferences[ Checklist_Module::VISIBILITY_SWITCH_ID ] ?? '';
 
