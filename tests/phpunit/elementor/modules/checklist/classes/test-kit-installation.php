@@ -25,14 +25,10 @@ class Test_Kit_Installation extends Step_Test_Base {
 	}
 
 	/**
-	 *
-	 * @param array<array<bool>> $test_case.
-	 *
 	 * @dataProvider test_cases_provider
-	 *
-	 * @return void
 	 */
 	public function test__kit_installation( $test_case ) {
+		var_dump( $test_case );
 		// Plugin activated
 		$this->assertTrue( $test_case[0]['preferences_switch_expected'] === $this->checklist_module->is_preference_switch_on() );
 		$this->assertTrue( $test_case[0]['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
@@ -57,12 +53,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 		$this->assertTrue( $test_case[3]['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 	}
 
-	/**
-	 * Data provider.
-	 *
-	 * @return array<array<array<bool>>>
-	 */
-	public static function test_cases_provider() {
+	public function test_cases_provider() {
 		return [
 			[
 				[
