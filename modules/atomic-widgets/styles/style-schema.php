@@ -35,12 +35,16 @@ class Style_Schema {
 
 	private static function get_typography_props() {
 		return [
-			'font-weight' => String_Prop_Type::make()->enum([
-				'400',
-				'500',
-				'600',
-				'700',
-				'900',
+			'font-weight' => Number_Prop_Type::make()->enum([
+				100,
+				200,
+				300,
+				400,
+				500,
+				600,
+				700,
+				800,
+				900,
 			]),
 			'font-size' => Size_Prop_Type::make(),
 			'color' => String_Prop_Type::make(),
@@ -57,12 +61,8 @@ class Style_Schema {
 				'italic',
 				'oblique',
 			]),
-			'text-decoration' => String_Prop_Type::make()->enum([
-				'none',
-				'underline',
-				'overline',
-				'line-through',
-			]),
+			// TODO: validate text-decoration in more specific way [EDS-524]
+			'text-decoration' => String_Prop_Type::make(),
 			'text-transform' => String_Prop_Type::make()->enum([
 				'none',
 				'capitalize',
