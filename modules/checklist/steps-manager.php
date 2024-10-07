@@ -16,7 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
-	private static array $step_ids = [ Add_Logo::STEP_ID, Set_Fonts_And_Colors::STEP_ID, Create_Pages::STEP_ID, Setup_Header::STEP_ID, Assign_Homepage::STEP_ID ];
+
+	private static array $step_ids = [
+		Add_Logo::STEP_ID,
+		Set_Fonts_And_Colors::STEP_ID,
+		Create_Pages::STEP_ID,
+		Setup_Header::STEP_ID,
+		Assign_Homepage::STEP_ID,
+	];
 
 	private Checklist_Module_Interface $module;
 
@@ -177,6 +184,10 @@ class Steps_Manager {
 
 		foreach ( $filtered_steps as $step_id => $step_instance ) {
 			if ( ! $step_instance instanceof Step_Base ) {
+				continue;
+			}
+
+			if ( ! $step_instance->is_visible() ) {
 				continue;
 			}
 
