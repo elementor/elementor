@@ -4,8 +4,6 @@ namespace Elementor\Modules\NestedTabs\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Core\Isolation\Wordpress_Adapter;
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
