@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
@@ -423,6 +422,10 @@ class Control_Media extends Control_Base_Multiple {
 
 		$attachment = get_post( $attachment_id );
 		if ( ! $attachment ) {
+			return '';
+		}
+
+		if ( Utils::has_invalid_post_permissions( $attachment ) ) {
 			return '';
 		}
 
