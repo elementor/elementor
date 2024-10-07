@@ -175,6 +175,10 @@ abstract class Element_Base extends Controls_Stack {
 		];
 
 		foreach ( $this->get_script_depends() as $script ) {
+			if ( 'imagesloaded' !== $script ) {
+				echo 'not images';
+			}
+
 			if ( isset( $deprecated_scripts[ $script ] ) ) {
 				Utils::handle_deprecation( $script, $deprecated_scripts[ $script ]['version'], $deprecated_scripts[ $script ]['replacement'] );
 			}
