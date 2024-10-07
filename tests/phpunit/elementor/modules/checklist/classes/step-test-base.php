@@ -161,12 +161,6 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		$counter_adapter = $counter_adapter ?? $this->counter_adapter;
 
 		$this->checklist_module = new Checklist_Module( $wordpress_adapter, $kit_adapter, $counter_adapter );
-		$this->checklist_module->update_user_progress( [
-			Checklist_Module::LAST_OPENED_TIMESTAMP => null,
-			Checklist_Module::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
-			Checklist_Module::IS_POPUP_MINIMIZED_KEY => false,
-			'steps' => [],
-		] );
 
 		return $this;
 	}
@@ -179,7 +173,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 			$preferences = [];
 		}
 
-		update_user_meta( get_current_user_id(), 'elementor_preferences', json_encode( $preferences ) );
+		update_user_meta( get_current_user_id(), 'elementor_preferences', wp_json_encode( $preferences ) );
 
 		return $this;
 	}
@@ -200,6 +194,13 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		$this->user_id = get_current_user_id();
 		$this->checklist_progress_backup = get_option( Checklist_Module::DB_OPTION_KEY ) || '';
 		$this->user_meta_backup = get_user_meta( get_current_user_id(), 'elementor_preferences' ) || '';
+
+		update_option( Checklist_Module::DB_OPTION_KEY, wp_json_encode( [
+			Checklist_Module::LAST_OPENED_TIMESTAMP => null,
+			Checklist_Module::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
+			Checklist_Module::IS_POPUP_MINIMIZED_KEY => false,
+			'steps' => [],
+		] ) );
 
 		return $this;
 	}
