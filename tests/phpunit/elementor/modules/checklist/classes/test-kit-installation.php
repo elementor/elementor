@@ -27,30 +27,29 @@ class Test_Kit_Installation extends Step_Test_Base {
 	/**
 	 * @dataProvider test_cases_provider
 	 */
-	public function test__kit_installation( $test_case ) {
-		var_dump( $test_case );
+	public function test__kit_installation( $plugin_activated, $editor_first, $editor_second, $editor_third ) {
 		// Plugin activated
-		$this->assertTrue( $test_case[0]['preferences_switch_expected'] === $this->checklist_module->is_preference_switch_on() );
-		$this->assertTrue( $test_case[0]['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
-		$this->assertTrue( $test_case[0]['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
+		$this->assertTrue( $plugin_activated['preferences_switch_expected'] === $this->checklist_module->is_preference_switch_on() );
+		$this->assertTrue( $plugin_activated['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
+		$this->assertTrue( $plugin_activated['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 
 		//Editor visit #1
 		$this->set_counter_adapter_mock( [ 'get_count' => 1 ] );
 		$this->set_checklist_module();
-		$this->assertTrue( $test_case[1]['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
-		$this->assertTrue( $test_case[1]['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
+		$this->assertTrue( $editor_first['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
+		$this->assertTrue( $editor_first['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 
 		//Editor visit #2
 		$this->set_counter_adapter_mock( [ 'get_count' => 2 ] );
 		$this->set_checklist_module();
-		$this->assertTrue( $test_case[2]['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
-		$this->assertTrue( $test_case[2]['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
+		$this->assertTrue( $editor_second['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
+		$this->assertTrue( $editor_second['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 
 		//Editor visit #3
 		$this->set_counter_adapter_mock( [ 'get_count' => 3 ] );
 		$this->set_checklist_module();
-		$this->assertTrue( $test_case[3]['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
-		$this->assertTrue( $test_case[3]['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
+		$this->assertTrue( $editor_second['should_switch_preferences_off_expected'] === $this->checklist_module->should_switch_preferences_off() );
+		$this->assertTrue( $editor_second['should_open_in_editor_expected'] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 	}
 
 	public function test_cases_provider() {
