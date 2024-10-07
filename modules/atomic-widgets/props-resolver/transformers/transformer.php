@@ -6,8 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Primitive_Transformer implements Transformer {
-	public function transform( $value ) {
-		return $value;
-	}
+interface Transformer {
+	public function transform( $value );
 }
