@@ -12,12 +12,8 @@ test.describe( 'Launchpad checklist tests', () => {
 	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
-		await wpAdmin.setExperiments( {
-			editor_v2: true,
-		} );
 		await checklistHelper.resetStepsInDb( request, { editor_visit_count: 0 } );
 
 		newTestUser = await apiRequests.createNewUser( request, newUser );
@@ -25,14 +21,11 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
-		const page = await browser.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	test.afterAll( async ( { browser, apiRequests, request } ) => {
+		const page = await browser.newPage();
 
 		await apiRequests.deleteUser( request, newTestUser.id );
 		await apiRequests.cleanUpTestPages( request, false );
-
-		await wpAdmin.resetExperiments();
 
 		await page.close();
 	} );
