@@ -122,6 +122,12 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		$counter_adapter = $counter_adapter ?? $this->counter_adapter;
 
 		$this->checklist_module = new Checklist_Module( $wordpress_adapter, $kit_adapter, $counter_adapter );
+		$this->checklist_module->update_user_progress( [
+			Checklist_Module::LAST_OPENED_TIMESTAMP => null,
+			Checklist_Module::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
+			Checklist_Module::IS_POPUP_MINIMIZED_KEY => false,
+			'steps' => [],
+		] );
 
 		return $this;
 	}
