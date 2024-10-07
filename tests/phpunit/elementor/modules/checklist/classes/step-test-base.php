@@ -53,7 +53,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_wordpress_adapter_mock( $methods, $return_map ) : Wordpress_Adapter_Interface&MockObject {
+	public function set_wordpress_adapter_mock( $methods, $return_map ) : Step_Test_Base {
 		$this->wordpress_adapter =  $this->get_adapter_mock( self::WORDPRESS_ID, $methods, $return_map );
 
 		return $this;
@@ -67,7 +67,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_kit_adapter_mock( $methods, $return_map ) : Kit_Adapter_Interface&MockObject{
+	public function set_kit_adapter_mock( $methods, $return_map ) : Step_Test_Base {
 		$this->kit_adapter =  $this->get_adapter_mock( self::KIT_ID, $methods, $return_map );
 
 		return $this;
@@ -81,7 +81,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_counter_adapter_mock( $methods, $return_map ) : Elementor_Counter_Adapter_Interface&MockObject {
+	public function set_counter_adapter_mock( $methods, $return_map ) : Step_Test_Base {
 		$this->counter_adapter =  $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $methods, $return_map );
 
 		return $this;
