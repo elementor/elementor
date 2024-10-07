@@ -32,16 +32,19 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 		//Editor visit #1
 		$this->set_counter_adapter_mock( [ 'get_count' => 1 ] );
+		$this->set_checklist_module();
 		$this->assertFalse( $this->checklist_module->should_switch_preferences_off() );
 		$this->assertFalse( $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 
 		//Editor visit #2
 		$this->set_counter_adapter_mock( [ 'get_count' => 2 ] );
+		$this->set_checklist_module();
 		$this->assertFalse( $this->checklist_module->should_switch_preferences_off() );
 		$this->assertTrue( $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 
 		//Editor visit #3
 		$this->set_counter_adapter_mock( [ 'get_count' => 3 ] );
+		$this->set_checklist_module();
 		$this->assertFalse( $this->checklist_module->should_switch_preferences_off() );
 		$this->assertFalse( $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 	}
