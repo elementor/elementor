@@ -167,7 +167,8 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	}
 
 	protected function set_user_preference_switch( bool $state ) {
-		$preferences = json_decode( $this->user_meta_backup, true ) || [];
+		$preferences = json_decode( $this->user_meta_backup, true );
+		$preferences = is_array( $preferences ) ? $preferences : [];
 		$preferences[ Checklist_Module::VISIBILITY_SWITCH_ID ] = $state ? 'yes' : '';
 
 		update_user_meta( $this->user->ID, 'elementor_preferences', wp_json_encode( $preferences ) );
