@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 
 class Styles_Renderer {
@@ -105,13 +106,9 @@ class Styles_Renderer {
 	private function props_to_css_string( array $props ): string {
 		$schema = Style_Schema::get();
 
-		$css_array = array_filter( Props_Resolver::for_styles()->resolve( $schema, $props ) );
-
-		$css_string = array_map( function ( $value, $key ) {
-			return $key . ':' . $value . ';';
-		}, $css_array, array_keys( $css_array ) );
-
-		return implode( '', $css_string );
+		return Collection::make( Props_Resolver::for_styles()->resolve( $schema, $props ) )->filter()->map( function ( $value, $prop ) {
+			return $prop . ':' . $value . ';';
+		} )->implode( '' );
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {

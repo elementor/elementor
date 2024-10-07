@@ -30,7 +30,7 @@ class Size_Prop_Type extends Transformable_Prop_Type {
 			throw new \Exception( 'Value must include size and unit' );
 		}
 
-		if ( array_search( $value['unit'], $this->settings['units'], true ) === false ) {
+		if ( ! in_array( $value['unit'], $this->settings['units'], true ) ) {
 			throw new \Exception( 'unit is not valid' );
 		}
 	}
