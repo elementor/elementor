@@ -179,6 +179,13 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		return $this;
 	}
 
+	protected function get_user_preference_state() {
+		$preferences = json_decode( get_user_meta( $this->user->ID, 'elementor_preferences', true ), true );
+		$state = $preferences[ Checklist_Module::VISIBILITY_SWITCH_ID ] ?? '';
+
+		return 'yes' === $state;
+	}
+
 	protected function toggle_popup( bool $state ) {
 		$this->checklist_module->update_user_progress( [ Checklist_Module::LAST_OPENED_TIMESTAMP => ! $state ] );
 		$this->set_checklist_module();
@@ -193,10 +200,6 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 		$this->set_kit_adapter_mock( [ 'is_active_kit_default' => $kit_key === self::DEFAULT_KIT ], true );
 
-		if ( $this->checklist_module->should_switch_preferences_off() ) {
-			$this->set_user_preference_switch( false );
-		}
-
 		return $this;
 	}
 
@@ -207,7 +210,6 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 		delete_option( Checklist_Module::DB_OPTION_KEY );
 		delete_user_meta( $this->user->ID, 'elementor_preferences' );
-		$this->set_user_preference_switch( false );
 
 		return $this;
 	}
