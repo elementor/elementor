@@ -167,7 +167,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	}
 
 	protected function set_user_preference_switch( bool $state ) {
-		$preferences = json_decode( $this->user_meta_backup, true );
+		$preferences = $this->user_meta_backup ?? [];
 		$preferences = is_array( $preferences ) ? $preferences : [];
 		$preferences[ Checklist_Module::VISIBILITY_SWITCH_ID ] = $state ? 'yes' : '';
 		update_user_meta( $this->user->ID, 'elementor_preferences', $preferences );
@@ -207,7 +207,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	private function setup_data() {
 		$this->user = wp_get_current_user();
 		$this->checklist_progress_backup = get_option( Checklist_Module::DB_OPTION_KEY ) || '';
-		$this->user_meta_backup = get_user_meta( get_current_user_id(), 'elementor_preferences', true ) || '';
+		$this->user_meta_backup = get_user_meta( get_current_user_id(), 'elementor_preferences', true ) || [];
 		$this->installation_history_backup = get_option( 'elementor_install_history' );
 
 		delete_option( Checklist_Module::DB_OPTION_KEY );
