@@ -110,10 +110,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true )
 		);
 
-
 		$editor_visit_count = $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 		$progress[ self::SHOULD_OPEN_IN_EDITOR ] = 2 === $editor_visit_count && ! $progress[ self::LAST_OPENED_TIMESTAMP ];
-		var_dump( $progress[ self::LAST_OPENED_TIMESTAMP ], $editor_visit_count );
 
 		return $progress;
 	}
