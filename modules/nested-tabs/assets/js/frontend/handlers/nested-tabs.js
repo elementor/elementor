@@ -1,11 +1,12 @@
-import Base from 'elementor-frontend/handlers/base';
-import {
-	changeScrollStatus,
-	setHorizontalScrollAlignment,
-	setHorizontalTitleScrollValues,
-} from 'elementor-frontend-utils/flex-horizontal-scroll';
+// import {
+// 	changeScrollStatus,
+// 	setHorizontalScrollAlignment,
+// 	setHorizontalTitleScrollValues,
+// } from window.FlexHorizontalScroll;
 
-export default class NestedTabs extends Base {
+export default class NestedTabs extends window.BaseHandler {
+
+
 	/**
 	 * @param {string|number} tabIndex
 	 *
@@ -206,10 +207,10 @@ export default class NestedTabs extends Base {
 		const navigationWrapper = this.elements.$headingContainer[ 0 ];
 
 		return {
-			mousedown: changeScrollStatus.bind( this, navigationWrapper ),
-			mouseup: changeScrollStatus.bind( this, navigationWrapper ),
-			mouseleave: changeScrollStatus.bind( this, navigationWrapper ),
-			mousemove: setHorizontalTitleScrollValues.bind( this, navigationWrapper, this.getHorizontalScrollSetting() ),
+			mousedown: window.FlexHorizontalScroll.changeScrollStatus.bind( this, navigationWrapper ),
+			mouseup: window.FlexHorizontalScroll.changeScrollStatus.bind( this, navigationWrapper ),
+			mouseleave: window.FlexHorizontalScroll.changeScrollStatus.bind( this, navigationWrapper ),
+			mousemove: window.FlexHorizontalScroll.setHorizontalTitleScrollValues.bind( this, navigationWrapper, this.getHorizontalScrollSetting() ),
 		};
 	}
 
@@ -269,12 +270,7 @@ export default class NestedTabs extends Base {
 		this.setTouchMode();
 
 		if ( 'nested-tabs.default' === this.getSettings( 'elementName' ) ) {
-			import( /* webpackChunkName: 'nested-title-keyboard-handler' */ 'elementor-frontend/handlers/accessibility/nested-title-keyboard-handler' ).then( ( { default: NestedTitleKeyboardHandler } ) => {
-				new NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
-			} ).catch( ( error ) => {
-				// eslint-disable-next-line no-console
-				console.error( 'Error importing module:', error );
-			} );
+			new window.NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
 		}
 	}
 
@@ -464,3 +460,5 @@ export default class NestedTabs extends Base {
 		};
 	}
 }
+
+window.NestedTabs = NestedTabs;

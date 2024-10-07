@@ -470,6 +470,13 @@ class Frontend extends App {
 			true
 		);
 
+		wp_register_script_module(
+			'handlers-base',
+			ELEMENTOR_URL . 'assets/dev/js/frontend/handlers/base.js',
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		/**
 		 * After frontend register scripts.
 		 *

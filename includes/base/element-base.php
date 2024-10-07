@@ -67,6 +67,18 @@ abstract class Element_Base extends Controls_Stack {
 	private $depended_scripts = [];
 
 	/**
+	 * Depended script modules.
+	 *
+	 * Holds all the element depended script modules to enqueue.
+	 *
+	 * @since 3.26.0
+	 * @access private
+	 *
+	 * @var array
+	 */
+	private $depended_script_modules = [];
+
+	/**
 	 * Depended styles.
 	 *
 	 * Holds all the element depended styles to enqueue.
@@ -90,6 +102,20 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	public function add_script_depends( $handler ) {
 		$this->depended_scripts[] = $handler;
+	}
+
+	/**
+	 * Add script module depends.
+	 *
+	 * Register new script module to enqueue by the handler.
+	 *
+	 * @since 3.26.0
+	 * @access public
+	 *
+	 * @param string $handler Depend script module handler.
+	 */
+	public function add_script_module_depends( $handler ) {
+		$this->depended_script_modules[] = $handler;
 	}
 
 	/**
@@ -121,6 +147,20 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
+	 * Get script module dependencies.
+	 *
+	 * Retrieve the list of script module dependencies the element requires.
+	 *
+	 * @since 3.26.0
+	 * @access public
+	 *
+	 * @return array Element script modules dependencies.
+	 */
+	public function get_script_module_depends(): array {
+		return $this->depended_script_modules;
+	}
+
+	/**
 	 * Enqueue scripts.
 	 *
 	 * Registers all the scripts defined as element dependencies and enqueues
@@ -135,11 +175,38 @@ abstract class Element_Base extends Controls_Stack {
 		];
 
 		foreach ( $this->get_script_depends() as $script ) {
+			if ( 'imagesloaded' !== $script ) {
+				echo 'not images';
+			}
+
 			if ( isset( $deprecated_scripts[ $script ] ) ) {
 				Utils::handle_deprecation( $script, $deprecated_scripts[ $script ]['version'], $deprecated_scripts[ $script ]['replacement'] );
 			}
 
 			wp_enqueue_script( $script );
+		}
+	}
+
+	/**
+	 * Enqueue script modules.
+	 *
+	 * Registers all the script modules defined as element dependencies and enqueues
+	 * them. Use `get_script_modules_depends()` method to add custom script dependencies.
+	 *
+	 * @since 3.26.0
+	 * @access public
+	 */
+	final public function enqueue_script_modules() {
+		$deprecated_script_modules = [
+			//Insert here when you have a deprecated script module
+		];
+
+		foreach ( $this->get_script_module_depends() as $script_module ) {
+			if ( isset( $deprecated_script_modules[ $script_module ] ) ) {
+				Utils::handle_deprecation( $script_module, $deprecated_script_modules[ $script_module ]['version'], $deprecated_script_modules[ $script_module ]['replacement'] );
+			}
+
+			wp_enqueue_script_module( $script_module );
 		}
 	}
 
@@ -516,6 +583,7 @@ abstract class Element_Base extends Controls_Stack {
 			// TODO: Remove this in the future
 			// Since version 3.24.0 page scripts/styles are handled by `page_assets`.
 			$this->enqueue_scripts();
+			$this->enqueue_script_modules();
 			$this->enqueue_styles();
 		}
 

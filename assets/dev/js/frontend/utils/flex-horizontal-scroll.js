@@ -1,4 +1,4 @@
-export function changeScrollStatus( element, event ) {
+function changeScrollStatus( element, event ) {
 	if ( 'mousedown' === event.type ) {
 		element.classList.add( 'e-scroll' );
 		element.dataset.pageX = event.pageX;
@@ -9,7 +9,7 @@ export function changeScrollStatus( element, event ) {
 }
 
 // This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
-export function setHorizontalTitleScrollValues( element, horizontalScrollStatus, event ) {
+function setHorizontalTitleScrollValues( element, horizontalScrollStatus, event ) {
 	const isActiveScroll = element.classList.contains( 'e-scroll' ),
 		isHorizontalScrollActive = 'enable' === horizontalScrollStatus,
 		headingContentIsWiderThanWrapper = element.scrollWidth > element.clientWidth;
@@ -39,7 +39,7 @@ export function setHorizontalTitleScrollValues( element, horizontalScrollStatus,
 	element.classList.add( 'e-scroll-active' );
 }
 
-export function setHorizontalScrollAlignment( { element, direction, justifyCSSVariable, horizontalScrollStatus } ) {
+function setHorizontalScrollAlignment( { element, direction, justifyCSSVariable, horizontalScrollStatus } ) {
 	if ( ! element ) {
 		return;
 	}
@@ -82,3 +82,9 @@ function initialScrollPosition( element, direction, justifyCSSVariable ) {
 			element.scrollLeft = 0;
 	}
 }
+
+window.FlexHorizontalScroll = {
+	changeScrollStatus,
+	setHorizontalTitleScrollValues,
+	setHorizontalScrollAlignment,
+};

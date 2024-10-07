@@ -1,6 +1,4 @@
-import Base from '../base';
-
-export default class NestedTitleKeyboardHandler extends Base {
+export default class NestedTitleKeyboardHandler extends window.BaseHandler {
 	__construct( settings ) {
 		super.__construct( settings );
 
@@ -214,3 +212,5 @@ export default class NestedTitleKeyboardHandler extends Base {
 
 	handleContentElementTabEvents() {}
 }
+
+window.NestedTitleKeyboardHandler = NestedTitleKeyboardHandler;
