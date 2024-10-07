@@ -1,4 +1,5 @@
 import TogglePopup from './toggle-popup';
+import { toggleChecklistPopup } from '../utils/functions';
 
 export class ToggleIcon extends $e.modules.CommandBase {
 	static isSettingsOn = true;
@@ -9,7 +10,7 @@ export class ToggleIcon extends $e.modules.CommandBase {
 			: 'none';
 
 		if ( ! shouldShow && TogglePopup.isOpen ) {
-			$e.run( 'checklist/toggle-popup' );
+			toggleChecklistPopup();
 		}
 	}
 }

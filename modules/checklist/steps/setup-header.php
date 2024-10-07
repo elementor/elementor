@@ -4,6 +4,7 @@ namespace Elementor\Modules\Checklist\Steps;
 
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -12,10 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Setup_Header extends Step_Base {
 	const STEP_ID = 'setup_header';
 
-	public function __construct( ...$args ) {
-		parent::__construct( ...$args );
+	public function __construct( $module, $wordpress_adapter = null, $kit_adapter = null, $should_promote = true ) {
+		$promotion_data = $should_promote
+			? $this->render_promotion()
+			: null;
 
-		$this->set_is_locked( true );
+		parent::__construct( $module, $wordpress_adapter, $kit_adapter, $promotion_data );
 	}
 
 	public function get_id() : string {
@@ -73,10 +76,20 @@ class Setup_Header extends Step_Base {
 	}
 
 	public function get_learn_more_url() : string {
-		return 'https://elementor.com/help/header-site-part/';
+		return 'https://go.elementor.com/app-website-checklist-header-article';
 	}
 
-	public function get_promotion_link() : string {
-		return 'http://go.elementor.com/app-website-checklist-header-article';
+	private function render_promotion() {
+			return Filtered_Promotions_Manager::get_filtered_promotion_data(
+				[
+					'url' => 'https://go.elementor.com/go-pro-website-checklist-header',
+					'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+					'icon' => 'default',
+				],
+				'elementor/checklist/promotion',
+				'upgrade_url'
+			);
+
 	}
+
 }

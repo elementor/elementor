@@ -71,6 +71,7 @@ jobs:
           echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
 
       - name: Build plugin
+        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         uses: ./.github/workflows/build-plugin
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}

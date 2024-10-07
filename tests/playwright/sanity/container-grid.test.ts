@@ -9,7 +9,6 @@ test.describe( 'Container Grid tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
-			container_grid: true,
 		} );
 	} );
 
@@ -19,7 +18,6 @@ test.describe( 'Container Grid tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: false,
-			container_grid: false,
 		} );
 	} );
 
@@ -50,7 +48,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.changeResponsiveView( 'mobile' );
 
 			const rowsMobileUnitLabel = page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
-			expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
+			await expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
 
 			await editor.changeResponsiveView( 'desktop' );
 		} );

@@ -534,9 +534,9 @@ class Frontend extends App {
 
 		wp_register_style(
 			'e-apple-webkit',
-			$this->get_css_assets_url( 'apple-webkit', 'assets/css/conditionals/' ),
+			$this->get_frontend_file_url( 'apple-webkit.min.css', $has_custom_breakpoints, 'conditionals/' ),
 			[],
-			ELEMENTOR_VERSION
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -561,6 +561,13 @@ class Frontend extends App {
 		);
 
 		wp_register_style(
+			'e-lightbox',
+			$this->get_frontend_file_url( 'lightbox.min.css', $has_custom_breakpoints, 'conditionals/' ),
+			[],
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
 			'elementor-frontend',
 			$this->get_frontend_file_url( "frontend{$direction_suffix}{$min_suffix}.css", $has_custom_breakpoints ),
 			[],
@@ -572,7 +579,7 @@ class Frontend extends App {
 			wp_register_style(
 				"widget-{$widget_name}",
 				$this->get_css_assets_url( "widget-{$widget_name}", null, true, true ),
-				[],
+				[ 'elementor-frontend' ],
 				ELEMENTOR_VERSION
 			);
 		}
@@ -582,7 +589,7 @@ class Frontend extends App {
 			wp_register_style(
 				"widget-{$widget_name}",
 				$this->get_frontend_file_url( "widget-{$widget_name}{$direction_suffix}.min.css", $has_custom_breakpoints ),
-				[],
+				[ 'elementor-frontend' ],
 				$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 			);
 		}
@@ -672,15 +679,6 @@ class Frontend extends App {
 				wp_enqueue_style( 'elementor-wp-admin-bar' );
 			}
 
-			if ( Plugin::$instance->experiments->is_feature_active( 'e_css_smooth_scroll' ) ) {
-				wp_enqueue_style(
-					'e-smooth-scroll',
-					$this->get_frontend_file_url( 'smooth-scroll.min.css', false ),
-					[],
-					ELEMENTOR_VERSION
-				);
-			}
-
 			/**
 			 * After frontend styles enqueued.
 			 *
@@ -721,13 +719,13 @@ class Frontend extends App {
 	 *
 	 * @return string frontend file URL
 	 */
-	public function get_frontend_file_url( $frontend_file_name, $custom_file ) {
+	public function get_frontend_file_url( $frontend_file_name, $custom_file, $css_subfolder = '' ) {
 		if ( $custom_file ) {
 			$frontend_file = $this->get_frontend_file( $frontend_file_name );
 
 			$frontend_file_url = $frontend_file->get_url();
 		} else {
-			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
+			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $css_subfolder . $frontend_file_name;
 		}
 
 		return $frontend_file_url;
@@ -1419,6 +1417,7 @@ class Frontend extends App {
 			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
 			'responsive' => [
 				'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
+				'hasCustomBreakpoints' => Plugin::$instance->breakpoints->has_custom_breakpoints(),
 			],
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
@@ -1426,6 +1425,7 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'uploadUrl' => wp_upload_dir()['baseurl'],
 			],
 			'nonces' => [
 				'floatingButtonsClickTracking' => wp_create_nonce( Module::CLICK_TRACKING_NONCE ),
