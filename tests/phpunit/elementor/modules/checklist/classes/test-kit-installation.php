@@ -71,8 +71,8 @@ class Test_Kit_Installation extends Step_Test_Base {
 		}
 
 		// Kit change 2
-		if ( null !== $kit_second ) {
-			$this->set_kit_adapter_mock( [ 'is_active_kit_default' => $kit_second === 'default' ], true );
+		foreach ( $kit_second as $kit_key ) {
+			$this->set_kit( $kit_key );
 		}
 
 		// User Preference change 2
