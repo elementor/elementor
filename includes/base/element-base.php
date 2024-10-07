@@ -2,6 +2,8 @@
 namespace Elementor;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -89,6 +91,19 @@ abstract class Element_Base extends Controls_Stack {
 	 * @var array
 	 */
 	private $depended_styles = [];
+
+	private Wordpress_Adapter_Interface $wordpress_adapter;
+
+	/**
+	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
+	 *
+	 * @return void
+	 */
+	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
+		parent::__construct();
+
+		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
+	}
 
 	/**
 	 * Add script depends.
@@ -206,7 +221,7 @@ abstract class Element_Base extends Controls_Stack {
 				Utils::handle_deprecation( $script_module, $deprecated_script_modules[ $script_module ]['version'], $deprecated_script_modules[ $script_module ]['replacement'] );
 			}
 
-			wp_enqueue_script_module( $script_module );
+			$this->wordpress_adapter->wp_enqueue_script_module( $script_module );
 		}
 	}
 
