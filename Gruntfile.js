@@ -4,8 +4,7 @@ module.exports = function( grunt ) {
 	const fs = require( 'fs' ),
 		pkgInfo = grunt.file.readJSON( 'package.json' ),
 		WidgetsCss = require( './.grunt-config/widgets-css' ),
-		Eicons = require( './.grunt-config/eicons' ),
-		runComposerTask = require( './.grunt-config/composer-installs' );
+		Eicons = require( './.grunt-config/eicons' );
 
 	const widgetsCss = new WidgetsCss( 'production' ),
 		eicons = new Eicons();
@@ -131,7 +130,6 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'build', [
-		'composer:installs',
 		'default',
 		'usebanner',
 		'clean',
@@ -155,12 +153,4 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'test', [
 		'karma:unit',
 	] );
-
-	grunt.registerTask( 'composer:installs', () => {
-		runComposerTask()
-			.then()
-			.catch( () => {
-				grunt.log.error( 'Composer task failed.' );
-			} );
-	} );
 };
