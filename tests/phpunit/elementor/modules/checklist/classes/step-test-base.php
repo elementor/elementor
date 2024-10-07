@@ -168,7 +168,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 	protected function set_user_preference_switch( bool $state ) {
 		$this->user_meta_mock[ Checklist_Module::VISIBILITY_SWITCH_ID ] = $state ? 'yes' : '';
-
+var_dump( $this->user_meta_mock );
 		return $this;
 	}
 

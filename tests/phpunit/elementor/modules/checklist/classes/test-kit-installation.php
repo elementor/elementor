@@ -230,7 +230,6 @@ class Test_Kit_Installation extends Step_Test_Base {
 	}
 
 	private function editor_visit( $visit, $visit_index ) {
-		$this->set_counter_adapter_mock( [ 'get_count' => $visit_index ], true );
 		$this->set_wordpress_adapter_mock( [
 			'get_user_preferences' => $this->get_user_preference_state() ? 'yes' : '',
 			'is_new_installation' => true,
@@ -238,7 +237,8 @@ class Test_Kit_Installation extends Step_Test_Base {
 		$this->assertTrue( $visit[ self::PREFERENCE_SWITCH_EXPECTED ] === $this->checklist_module->is_preference_switch_on() );
 
 		$this->wordpress_adapter = null;
-		$this->set_checklist_module();
+		$this->set_counter_adapter_mock( [ 'get_count' => $visit_index ], true );
+
 		$this->assertTrue( $visit[ self::SHOULD_AUTO_OPEN_POPUP ] === $this->checklist_module->get_user_progress_from_db()[ Checklist_Module::SHOULD_OPEN_IN_EDITOR ] );
 	}
 }
