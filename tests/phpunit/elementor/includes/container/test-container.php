@@ -7,6 +7,7 @@ use Elementor\Core\Isolation\Plugin_Status_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Utils\Version;
+use Elementor\Modules\Home\Classes\Transformations_Manager;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Includes\Container\Traits\Trait_Test_Container;
 use ElementorDeps\DI\DependencyException;
@@ -118,5 +119,72 @@ class Test_Container extends Elementor_Test_Base {
 		$secondInstance = Container::get_instance();
 
 		$this->assertSame( $firstInstance, $secondInstance, 'Container was recreated, but it should be a singleton.' );
+	}
+
+	public function test_get_and_make_cannot_give_same_instance() {
+		$makeService = $this->container->make( Wordpress_Adapter::class );
+		$getService = $this->container->get( Wordpress_Adapter::class );
+
+		$this->assertNotSame( $makeService, $getService );
+	}
+
+	/**
+	 * @throws NotFoundException
+	 * @throws DependencyException
+	 * @throws \ReflectionException
+	 */
+	public function test_passing_parameters_to_class_through_container() {
+		$json_data = [
+			'top' => [
+				'title' => 'Unleash your imagination with Elementor',
+			],
+			'top_with_licences' => [
+				[
+					'title' => 'Unleash your imagination with Elementor',
+					'license' => 'pro',
+				],
+				[
+					'title' => 'Unleash your imagination with Elementor',
+					'license' => 'free',
+				],
+			],
+			'get_stated' => [
+				'title' => 'Get Started',
+				'button' => 'Get Started',
+				'link' => 'https://elementor.com',
+			],
+		];
+		$transformer = $this->container->make(
+			Transformations_Manager::class,
+			[
+				'home_screen_data' => $json_data
+			]
+		);
+
+		$reflection = new \ReflectionClass( $transformer );
+		$property = $reflection->getProperty( 'home_screen_data' );
+
+		$property->setAccessible( true );
+
+		$homeScreenData = $property->getValue( $transformer );
+
+		$this->assertEquals( $json_data, $homeScreenData );
+	}
+
+	public function test_container_has_no_bindings_after_init() {
+		$this->assertFalse( $this->container->has( Wordpress_Adapter_Interface::class ) );
+		$this->assertFalse( $this->container->has( Plugin_Status_Adapter::class ) );
+	}
+
+	public function test_container_cache_performance() {
+		$startTime = microtime( true );
+		$this->container->get( Wordpress_Adapter::class );
+		$firstRunTime = microtime( true ) - $startTime;
+
+		$startTime = microtime( true );
+		$this->container->get( Wordpress_Adapter::class );
+		$cachedRunTime = microtime( true ) - $startTime;
+
+		$this->assertLessThan( $firstRunTime, $cachedRunTime );
 	}
 }
