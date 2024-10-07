@@ -11,10 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Setup_Header extends Step_Base {
 	const STEP_ID = 'setup_header';
 
-	public function __construct( $module, $wordpress_adapter = null, $kit_adapter = null ) {
-		parent::__construct( $module, $wordpress_adapter, $kit_adapter );
-	}
-
 	public function get_id() : string {
 		return self::STEP_ID;
 	}
