@@ -217,6 +217,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			->get_model()
 			->get_settings( self::VISIBILITY_SWITCH_ID );
 
+		var_dump( 'not good', $user_preferences );
 		return 'yes' === $user_preferences || Upgrade_Manager::is_new_installation();
 	}
 
