@@ -26,7 +26,7 @@ module.exports = function( $ ) {
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
-	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
+	if ( window.NestedTabs ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = window.NestedTabs;
 	}
 
