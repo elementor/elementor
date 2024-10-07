@@ -5,7 +5,6 @@ namespace Elementor\Modules\Checklist;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
-use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
@@ -215,7 +214,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 		$user_preferences = $this->wordpress_adapter->get_user_preferences( self::VISIBILITY_SWITCH_ID );
 var_dump( $user_preferences );
-		return 'yes' === $user_preferences || Upgrade_Manager::is_new_installation();
+		return 'yes' === $user_preferences || $this->wordpress_adapter->is_new_installation();
 	}
 
 	public function should_switch_preferences_off() {

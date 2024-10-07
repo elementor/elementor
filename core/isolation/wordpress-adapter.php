@@ -2,6 +2,7 @@
 namespace Elementor\Core\Isolation;
 
 use Elementor\Core\Settings\Manager;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
 class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
@@ -57,6 +58,10 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		return Manager::get_settings_managers( 'editorPreferences' )
 			->get_model()
 			->get_settings( $preference_key );
+	}
+
+	public function is_new_installation() {
+		return Upgrade_Manager::is_new_installation();
 	}
 
 	public function add_query_arg( $args, $url ) : string {

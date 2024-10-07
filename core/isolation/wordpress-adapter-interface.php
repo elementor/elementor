@@ -23,6 +23,8 @@ interface Wordpress_Adapter_Interface {
 
 	public function get_user_preferences( $preference_key );
 
+	public function is_new_installation();
+
 	public function add_query_arg( $args, $url );
 
 	public function has_custom_logo();

@@ -53,9 +53,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 	protected Checklist_Module_Interface $checklist_module;
 
-	private $user;
 	private $checklist_progress_backup;
-	private $user_meta_backup;
 	private $installation_history_backup;
 
 	private $user_meta_mock = [];
@@ -199,8 +197,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	}
 
 	private function setup_data() {
-		$this->user = wp_get_current_user();
-		$this->user_meta_mock = [ Checklist_Module::VISIBILITY_SWITCH_ID => true ];
+		$this->user_meta_mock = [ Checklist_Module::VISIBILITY_SWITCH_ID => 'yes' ];
 		$this->checklist_progress_backup = get_option( Checklist_Module::DB_OPTION_KEY ) || '';
 		$this->installation_history_backup = get_option( 'elementor_install_history' );
 
