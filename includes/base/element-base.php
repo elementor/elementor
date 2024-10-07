@@ -95,17 +95,6 @@ abstract class Element_Base extends Controls_Stack {
 	private Wordpress_Adapter_Interface $wordpress_adapter;
 
 	/**
-	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
-	 *
-	 * @return void
-	 */
-	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
-		parent::__construct();
-
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
-	}
-
-	/**
 	 * Add script depends.
 	 *
 	 * Register new script to enqueue by the handler.
@@ -1644,8 +1633,11 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @param array      $data Optional. Element data. Default is an empty array.
 	 * @param array|null $args Optional. Element default arguments. Default is null.
+	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
+	 *
+	 * @return void
 	 **/
-	public function __construct( array $data = [], array $args = null ) {
+	public function __construct( array $data = [], array $args = null, ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
 		if ( $data ) {
 			$this->is_type_instance = false;
 		} elseif ( $args ) {
@@ -1653,5 +1645,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		parent::__construct( $data );
+
+		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 	}
 }

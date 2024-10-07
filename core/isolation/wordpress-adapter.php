@@ -58,4 +58,22 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function has_custom_logo() : bool {
 		return has_custom_logo();
 	}
+
+	public function wp_register_script_module(  string $id, string $src, array $deps = array(), $version = false ) : void {
+		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+			require_once( __DIR__ . '../../includes/wordpress/script-modules.php' );
+			wp_script_modules();
+		}
+
+		wp_register_script_module( $id, $src, $deps, $version );
+	}
+
+	public function wp_enqueue_script_module( string $id, string $src = '', array $deps = array(), $version = false ) : void {
+		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+			require_once( __DIR__ . '../../includes/wordpress/script-modules.php' );
+			wp_script_modules();
+		}
+
+		wp_enqueue_script_module( $id, $src, $deps, $version );
+	}
 }
