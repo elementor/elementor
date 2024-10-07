@@ -1,7 +1,6 @@
 name: 'Install npm and Composer Dependencies'
 description: 'A composite action to install npm packages and Composer dependencies.'
 
-# Changes made to this file: should be in sync with the changes made to the .grunt-config/composer-installs.js
 runs:
     using: 'composite'
     steps:
