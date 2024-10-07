@@ -357,10 +357,10 @@ class Manager {
 
 		$post_id = intval( $args['template_id'] );
 		$post_status = get_post_status( $post_id );
-		$is_private_and_no_access = ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) );
+		$is_not_admin = ! current_user_can( 'read_private_posts', $post_id );
 		$is_restricted_status = ( post_password_required( $post_id ) && ! isset( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] ) ) || 'publish' !== $post_status;
 
-		if ( $is_private_and_no_access || $is_restricted_status ) {
+		if ( $is_not_admin && $is_restricted_status ) {
 			return new \WP_Error(
 				'template_error',
 				esc_html__( 'You do not have permission to access this template.', 'elementor' )
