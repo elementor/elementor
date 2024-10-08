@@ -217,4 +217,16 @@ class Test_Container extends Elementor_Test_Base {
 		// Set a threshold in milliseconds (e.g., 100ms)
 		$this->assertLessThan(100, $executionTime, "Performance issue: Resolving services is too slow.");
 	}
+	public function test_memory_usage()
+	{
+		$initialMemory = memory_get_usage();
+
+		for ($i = 0; $i < 10000; $i++) {
+			$this->container->set("Service$i", \DI\create(Wordpress_Adapter::class));
+			$this->container->get("Service$i");
+		}
+
+		$this->assertLessThan(10 * 1024 * 1024, memory_get_usage() - $initialMemory); // Ensure memory usage doesn't grow unreasonably
+	}
+
 }

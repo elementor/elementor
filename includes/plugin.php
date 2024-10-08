@@ -652,7 +652,7 @@ class Plugin {
 	/**
 	 * Get the Elementor container or resolve a dependency.
 	 */
-	public function get_elementor_container($abstract = null ) {
+	public function get_elementor_container( $abstract = null ) {
 		if ( is_null( $abstract ) ) {
 			return $this->container;
 		}
