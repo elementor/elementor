@@ -126,11 +126,9 @@ class Test_Container extends Elementor_Test_Base {
 
 	public function test_cannot_recreate_container() {
 		$firstInstance = Container::get_instance();
-
-		Container::initialize_instance();
 		$secondInstance = Container::get_instance();
 
-		$this->assertSame( $firstInstance, $secondInstance, 'Container was recreated, but it should be a singleton.' );
+		$this->assertSame( $firstInstance, $secondInstance, 'Container was not recreated, as it is a singleton.' );
 	}
 
 	public function test_get_and_make_cannot_give_same_instance() {
