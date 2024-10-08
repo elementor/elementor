@@ -1815,23 +1815,13 @@ abstract class Document extends Controls_Stack {
 			add_filter( 'elementor/element/should_render_shortcode', '__return_true' );
 
 			$scripts_to_queue = [];
-			$script_modules_to_queue = [];
 			$styles_to_queue = [];
 
 			global $wp_scripts, $wp_script_modules, $wp_styles;
 
-			if ( ! class_exists( 'WP_Script_Modules' ) ) {
-				require_once ELEMENTOR_PATH . 'includes/wordpress/class-wp-script-modules.php';
-				custom_wp_script_modules();
-			}
+			$printed_script_modules = $this->cache_script_module( $wp_script_modules );
 
 			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles && $wp_script_modules instanceof \WP_Script_Modules;
-
-			ob_start();
-			$wp_script_modules->print_enqueued_script_modules();
-			$printed_script_modules = ob_get_clean();
-
-			$this->print_script_module( $printed_script_modules );
 
 			if ( $should_store_scripts ) {
 				$scripts_ignored = $wp_scripts->queue;
@@ -1936,6 +1926,18 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $cache['value'];
+	}
+
+	private function cache_script_module( $wp_script_modules ): string {
+		ob_start();
+		$wp_script_modules->print_enqueued_script_modules();
+		$printed_script_module = ob_get_clean();
+
+		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+			custom_wp_script_modules()->print_enqueued_script_modules();
+		}
+
+		return $printed_script_module;
 	}
 
 	private function print_script_module( $script_module ) {

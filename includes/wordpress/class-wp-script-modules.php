@@ -1,17 +1,10 @@
 <?php
 /**
- * Script Modules API: WP_Script_Modules class.
+ * A Clone of the WordPress Script Modules.
  *
- * Native support for ES Modules and Import Maps.
+ * We load this class conditionally for users with a WordPress version lower than 6.5.
  *
- * @package WordPress
- * @subpackage Script Modules
- */
-
-/**
- * Core class used to register script modules.
- *
- * @since 6.5.0
+ * @since 3.26.0
  */
 class WP_Script_Modules {
 	/**
