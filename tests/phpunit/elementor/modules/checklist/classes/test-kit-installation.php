@@ -31,6 +31,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 		], true );
 
 		$this->mock_editor_visit();
+		$this->set_checklist_module();
 
 		var_dump( $this->user_preferences_mock );
 		$this->assertTrue( $this->checklist_module->is_preference_switch_on() );
@@ -47,6 +48,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 				] );
 
 		$this->mock_editor_visit();
+		$this->set_checklist_module();
 
 		var_dump( $this->user_preferences_mock );
 		$this->assertFalse( $this->checklist_module->is_preference_switch_on() );
