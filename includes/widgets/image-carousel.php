@@ -1055,6 +1055,10 @@ class Widget_Image_Carousel extends Widget_Base {
 
 		$attachment_post = get_post( $attachment['id'] );
 
+		if ( Utils::has_invalid_post_permissions( $attachment_post ) ) {
+			return '';
+		}
+
 		if ( 'caption' === $caption_type ) {
 			return $attachment_post->post_excerpt;
 		}
