@@ -60,6 +60,12 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 			->get_settings( $preference_key );
 	}
 
+	public function set_user_preferences( $preference_key, $value ) {
+		Manager::get_settings_managers( 'editorPreferences' )
+			->get_model()
+			->set_settings( $preference_key, $value );
+	}
+
 	public function is_new_installation() {
 		return Upgrade_Manager::is_new_installation();
 	}

@@ -217,10 +217,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		return 'yes' === $user_preferences || $this->wordpress_adapter->is_new_installation();
 	}
 
-	public function should_switch_preferences_off( $print = false ) {
-		if ( $print ) {
-			var_dump( [ $this->kit_adapter->is_active_kit_default(), $this->user_progress[ self::LAST_OPENED_TIMESTAMP ], $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY ) ] );
-		}
+	public function should_switch_preferences_off() {
 		return ! $this->kit_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 	}
 
@@ -271,9 +268,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		}
 
 		add_action( 'elementor/editor/init', function () {
-			SettingsManager::get_settings_managers( 'editorPreferences' )
-				->get_model()
-				->set_settings( self::VISIBILITY_SWITCH_ID, '' );
+			$this->wordpress_adapter->set_user_preferences( self::VISIBILITY_SWITCH_ID, '' );
 		} );
 	}
 }

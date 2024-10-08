@@ -78,8 +78,8 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_wordpress_adapter_mock( $methods_map, $should_instantiate_module = false ) : Step_Test_Base {
-		$this->wordpress_adapter = $this->get_adapter_mock( self::WORDPRESS_ID, $methods_map );
+	public function set_wordpress_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = false ) : Step_Test_Base {
+		$this->wordpress_adapter = $this->get_adapter_mock( self::WORDPRESS_ID, $methods_map, $callbacks_map );
 
 		if ( $should_instantiate_module ) {
 			$this->set_checklist_module();
@@ -96,8 +96,8 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_kit_adapter_mock( $methods_map, $should_instantiate_module = false ) : Step_Test_Base {
-		$this->kit_adapter = $this->get_adapter_mock( self::KIT_ID, $methods_map );
+	public function set_kit_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = false ) : Step_Test_Base {
+		$this->kit_adapter = $this->get_adapter_mock( self::KIT_ID, $methods_map, $callbacks_map );
 
 		if ( $should_instantiate_module ) {
 			$this->set_checklist_module();
@@ -114,8 +114,8 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_counter_adapter_mock( $methods_map, $should_instantiate_module = false ) : Step_Test_Base {
-		$this->counter_adapter = $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $methods_map );
+	public function set_counter_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = false ) : Step_Test_Base {
+		$this->counter_adapter = $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $methods_map, $callbacks_map );
 
 		if ( $should_instantiate_module ) {
 			$this->set_checklist_module();
@@ -132,7 +132,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return MockObject
 	 */
-	private function get_adapter_mock( $adapter_key, $methods_map ) {
+	private function get_adapter_mock( $adapter_key, $methods_map, $callbacks_map = [] ) {
 		$classes = [
 			self::WORDPRESS_ID => Wordpress_Adapter::class,
 			self::KIT_ID => Kit_Adapter::class,
@@ -147,6 +147,10 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 		foreach ( $methods_map as $method => $return_value ) {
 			$adapter_mock->method( $method )->willReturn( $return_value );
+		}
+
+		foreach ( $callbacks_map as $method => $callback ) {
+			$adapter_mock->method( $method )->willReturnCallback( $callback );
 		}
 
 		return $adapter_mock;

@@ -2,8 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Checklist\Classes;
 
-use Elementor\Modules\Checklist\Module as Checklist_Module;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -12,6 +10,8 @@ class Test_Kit_Installation extends Step_Test_Base {
 	const PREFERENCE_SWITCH_EXPECTED = 'preference_switch_expected';
 	const SHOULD_SWITCH_PREFERENCE_OFF = 'preference_switch_off';
 	const SHOULD_AUTO_OPEN_POPUP = 'popup_auto_open';
+
+	private $preferences_mock = [];
 
 	public function setUp(): void {
 		$this->set_kit_adapter_mock( [ 'is_active_kit_default' => true ] )
@@ -24,10 +24,19 @@ class Test_Kit_Installation extends Step_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_editor_count() {}
+	public function test__default_kit_installed() {
+		$this->mock_editor_visit();
 
-	public function test__kit_installation( $args ) {
-		$this->setUp();
+		$this->set_wordpress_adapter_mock( [], [
+			'set_user_preferences' => function ( $key, $value ) {
+				$this->preferences_mock[ $key ] = $value;
+			},
+			'get_user_preferences' => function ( $key ) {
+				return $this->preferences_mock[ $key ] ?? null;
+			}
+		], true );
+
+		$this->assertFalse( $this->checklist_module->is_preference_switch_on() );
 	}
 
 
