@@ -106,7 +106,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	public function get_user_progress_from_db() : array {
 		$progress = array_merge(
 			$this->get_default_user_progress(),
-			json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true )
+			json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true ) ?? []
 		);
 
 		$editor_visit_count = $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
