@@ -4,6 +4,7 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Core\Isolation\Wordpress_Adapter;
 
 class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 
@@ -12,6 +13,20 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	 */
 	protected static $manager;
 	private $fake_post_id = '123';
+
+	public function set_wordpress_adapter_mock( $methods, $return_map ) {
+		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter::class )
+			->setMethods( $methods )
+			->getMock();
+
+		foreach ( $return_map as $method => $return_value ) {
+			$wordpress_adapter_mock->method( $method )->willReturn( $return_value );
+		}
+
+		$this->wordpress_adapter = $wordpress_adapter_mock;
+
+		return $wordpress_adapter_mock;
+	}
 
 	public static function setUpBeforeClass(): void {
 		self::$manager = self::elementor()->templates_manager;
@@ -132,15 +147,19 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	/**
 	 * @covers \Elementor\TemplateLibrary\Manager::get_template_data()
 	 */
-	public function test_should_return_error_from_get_template_data() {
-		$this->assertWPError(
-			self::$manager->get_template_data(
-				[
-					'source' => 'local',
-					'template_id' => $this->fake_post_id,
-				]
-			)
+	public function test_should_return_data_from_get_template_data() {
+		$ret = self::$manager->get_template_data(
+			[
+				'source' => 'local',
+				'template_id' => $this->fake_post_id,
+			]
 		);
+
+		$this->set_wordpress_adapter_mock( [ 'current_user_can' ], [
+			'current_user_can' => true,
+		] );
+
+		$this->assertEquals( $ret, [ 'content' => [] ] );
 	}
 
 	public function test_get_data__document_without_data() {

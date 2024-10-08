@@ -3,12 +3,14 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
 use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -47,6 +49,11 @@ class Manager {
 	private $_import_images = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
+	 * @var Wordpress_Adapter_Interface
+	 */
+	protected $wordpress_adapter = null;
+
+	/**
 	 * Template library manager constructor.
 	 *
 	 * Initializing the template library manager by registering default template
@@ -57,7 +64,7 @@ class Manager {
 	 */
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
-
+		$this->wordpress_adapter = new Wordpress_Adapter();
 		$this->register_default_sources();
 
 		$this->add_actions();
@@ -357,9 +364,11 @@ class Manager {
 
 		$post_id = intval( $args['template_id'] );
 		$post_status = get_post_status( $post_id );
-		$is_private_or_non_published = ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status && ! current_user_can( 'edit_post', $post_id ) );
-
-		if ( $is_private_or_non_published || ! current_user_can( 'edit_post', $post_id ) ) {
+		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status && ! $this->wordpress_adapter->current_user_can( 'edit_post', $post_id ) );
+		var_dump($is_private_or_non_published);
+		var_dump($this->wordpress_adapter->current_user_can( 'edit_post', $post_id ));
+		var_dump($this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ));
+		if ( $is_private_or_non_published || ! $this->wordpress_adapter->current_user_can( 'edit_post', $post_id ) ) {
 			return new \WP_Error(
 				'template_error',
 				esc_html__( 'You do not have permission to access this template.', 'elementor' )
