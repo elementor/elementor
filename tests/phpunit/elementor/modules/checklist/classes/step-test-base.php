@@ -22,20 +22,6 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	const KIT_ID = 'kit';
 	const ELEMENTOR_COUNTER_ID = 'counter';
 
-	const PLUGIN_ACTIVATED = 'plugin_activated';
-	const KIT_FIRST_CHANGE = 'kit_first_change';
-	const KIT_SECOND_CHANGE = 'kit_second_change';
-	const PREFERENCE_FIRST_CHANGE = 'preference_first_change';
-	const PREFERENCE_SECOND_CHANGE = 'preference_second_change';
-	const EDITOR_FIRST_VISIT = 'editor_first_visit';
-	const EDITOR_SECOND_VISIT = 'editor_second_visit';
-	const EDITOR_THIRD_VISIT = 'editor_third_visit';
-	const TOGGLE_POPUP_FIRST = 'toggle_popup_first';
-	const TOGGLE_POPUP_SECOND = 'toggle_popup_second';
-
-	const CUSTOM_KIT = 'custom';
-	const DEFAULT_KIT = 'default';
-
 	/**
 	 * @var MockObject&Wordpress_Adapter_Interface
 	 */
@@ -54,7 +40,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 	protected Checklist_Module_Interface $checklist_module;
 
-	private $user_preferences_mock = [];
+	private array $user_preferences_mock = [];
 
 	public function setup(): void {
 		parent::setUp();
@@ -70,23 +56,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		parent::teardown();
 	}
 
-	/**
-	 * Creates a mock object of the Wordpress_Adapter class with specified methods and return values.
-	 *
-	 * @param array $methods_map Associative array mapping method names to their return values.
-	 * @param bool $should_instantiate_module set to true to re-instantiate the module.
-	 *
-	 * @return Step_Test_Base
-	 */
 	public function set_wordpress_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = true ) : Step_Test_Base {
-//		if ( ! isset( $callbacks_map[ 'get_user_preferences' ] ) ) {
-//			$callbacks_map[ 'get_user_preferences' ] = [ $this, 'get_user_preferences' ];
-//		}
-//
-//		if ( ! isset( $callbacks_map[ 'set_user_preferences' ] ) ) {
-//			$callbacks_map[ 'set_user_preferences' ] = [ $this, 'set_user_preferences' ];
-//		}
-
 		$this->wordpress_adapter = $this->get_adapter_mock( self::WORDPRESS_ID, $methods_map, $callbacks_map );
 
 		if ( $should_instantiate_module ) {
@@ -96,14 +66,6 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		return $this;
 	}
 
-	/**
-	 * Creates a mock object of the Kit_Adapter class with specified methods and return values.
-	 *
-	 * @param array $methods_map Associative array mapping method names to their return values.
-	 * @param bool $should_instantiate_module set to true to re-instantiate the module.
-	 *
-	 * @return Step_Test_Base
-	 */
 	public function set_kit_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = true ) : Step_Test_Base {
 		$this->kit_adapter = $this->get_adapter_mock( self::KIT_ID, $methods_map, $callbacks_map );
 
@@ -114,14 +76,6 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		return $this;
 	}
 
-	/**
-	 * Creates a mock object of the Elementor_Counter_Adapter class with specified methods and return values.
-	 *
-	 * @param array $methods_map Associative array mapping method names to their return values.
-	 * @param bool $should_instantiate_module set to true to re-instantiate the module.
-	 *
-	 * @return Step_Test_Base
-	 */
 	public function set_counter_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = true ) : Step_Test_Base {
 		$this->counter_adapter = $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $methods_map, $callbacks_map );
 
@@ -163,8 +117,8 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 			->set_kit_adapter_mock( [ 'is_active_kit_default' => true ] )
 			->set_wordpress_adapter_mock( [ 'is_new_installation' => true ] )
 			->checklist_module->update_user_progress( [
-			Checklist_Module::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
-			Checklist_Module::IS_POPUP_MINIMIZED_KEY => false,
+				Checklist_Module::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
+				Checklist_Module::IS_POPUP_MINIMIZED_KEY => false,
 			'steps' => [],
 		] );
 
@@ -172,7 +126,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	}
 
 	/**
-	 * Creates a mock object of any of the adapters' class with specified methods and return values.
+	 * Creates a mock object of any of the adapters' class with specified methods, return callbacks and return values.
 	 *
 	 * @param (self::WORDPRESS_ID|self::KIT_ID|self::ELEMENTOR_COUNTER_ID) $adapter_key
 	 * @param array $methods_map Associative array mapping method names to their return values.

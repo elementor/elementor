@@ -139,7 +139,7 @@ export class ChecklistHelper {
 			first_closed_checklist_in_editor: true,
 			last_opened_timestamp: -1,
 			is_popup_minimized: false,
-			editor_visit_count: -1,
+			e_editor_counter: -1,
 			...alternativeValues,
 		} );
 
