@@ -63,7 +63,10 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		parent::setUp();
 
 		$this->set_checklist_module()
-			->set_user_preferences( Checklist_Module::VISIBILITY_SWITCH_ID, $this->checklist_module->is_preference_switch_on() );
+			->set_user_preferences(
+				Checklist_Module::VISIBILITY_SWITCH_ID,
+				$this->checklist_module->is_preference_switch_on() ? 'yes' : ''
+			);
 	}
 
 	public function teardown(): void {
