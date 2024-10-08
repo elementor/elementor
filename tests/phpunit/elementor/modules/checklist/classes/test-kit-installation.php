@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Modules\Checklist\Module as Checklist_Module;
+
 class Test_Kit_Installation extends Step_Test_Base {
 	const PREFERENCE_SWITCH_EXPECTED = 'preference_switch_expected';
 	const SHOULD_SWITCH_PREFERENCE_OFF = 'preference_switch_off';
@@ -18,6 +20,8 @@ class Test_Kit_Installation extends Step_Test_Base {
 			->set_counter_adapter_mock( [ 'get_count' => 0 ] );
 
 		parent::setUp();
+
+		$this->set_user_preferences( Checklist_Module::VISIBILITY_SWITCH_ID, $this->is_preference_switch_on() ? 'yes' : '' );
 	}
 
 	public function tearDown(): void {
