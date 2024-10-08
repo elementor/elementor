@@ -1826,10 +1826,14 @@ abstract class Document extends Controls_Stack {
 				require_once plugin_dir_path( __FILE__ ) . 'includes/wordpress/class-wp-script-modules.php';
 			}
 
-			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_scripts instanceof \WP_Script_Modules && $wp_styles instanceof \WP_Styles;
+			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_script_modules instanceof \WP_Script_Modules && $wp_styles instanceof \WP_Styles;
+
+			ob_start();
+			$wp_script_modules->print_enqueued_script_modules();
+			$printed_script_modules = ob_get_clean();
+
 			if ( $should_store_scripts ) {
 				$scripts_ignored = $wp_scripts->queue;
-				$script_modules_ignored = $wp_scripts->queue;
 				$styles_ignored = $wp_styles->queue;
 			}
 
@@ -1839,14 +1843,13 @@ abstract class Document extends Controls_Stack {
 
 			if ( $should_store_scripts ) {
 				$scripts_to_queue = array_values( array_diff( $wp_scripts->queue, $scripts_ignored ) );
-				$script_modules_to_queue = array_values( array_diff( $wp_script_modules->queue, $script_modules_ignored ) );
 				$styles_to_queue = array_values( array_diff( $wp_styles->queue, $styles_ignored ) );
 			}
 
 			$cached_data = [
 				'content' => ob_get_clean(),
 				'scripts' => $scripts_to_queue,
-				'script_modules' => $script_modules_to_queue,
+				'script_modules' => $printed_script_modules,
 				'styles' => $styles_to_queue,
 			];
 
@@ -1858,29 +1861,24 @@ abstract class Document extends Controls_Stack {
 		} else {
 			if ( ! empty( $cached_data['scripts'] ) ) {
 				foreach ( $cached_data['scripts'] as $script_handle ) {
-					if ( ! empty( $script_handle ) ) {
-						echo 's';
-					}
 					wp_enqueue_script( $script_handle );
 				}
 			}
 
 			if ( ! empty( $cached_data['script_modules'] ) ) {
-				foreach ( $cached_data['script_modules'] as $script_module_handle ) {
+				$allowed_tags = [
+					'script' => [
+						'type' => true,
+						'src'  => true,
+						'id'   => true,
+					],
+				];
 
-					if ( ! empty( $script_module_handle ) ) {
-						echo 's';
-					}
-
-					$this->wordpress_adapter->wp_enqueue_script_module( $script_module_handle );
-				}
+				echo wp_kses( $cached_data['script_modules'], $allowed_tags );
 			}
 
 			if ( ! empty( $cached_data['styles'] ) ) {
 				foreach ( $cached_data['styles'] as $style_handle ) {
-					if ( ! empty( $style_handle ) ) {
-						echo 's';
-					}
 					wp_enqueue_style( $style_handle );
 				}
 			}
