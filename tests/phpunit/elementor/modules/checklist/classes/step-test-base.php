@@ -163,7 +163,8 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 			'steps' => [],
 		] );
 
-		var_dump( $this->checklist_module );
+		var_dump( "\n\nreset!@#@!\n\n" );
+		$this->checklist_module->should_switch_preferences_off();
 		return $this;
 	}
 
