@@ -196,6 +196,10 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		return $this;
 	}
 
+	protected function mock_editor_visit() {
+		do_action( 'elementor/editor/init' );
+	}
+
 	private function setup_data() {
 		$this->user_meta_mock = [ Checklist_Module::VISIBILITY_SWITCH_ID => 'yes' ];
 		$this->checklist_progress_backup = get_option( Checklist_Module::DB_OPTION_KEY ) || '';
