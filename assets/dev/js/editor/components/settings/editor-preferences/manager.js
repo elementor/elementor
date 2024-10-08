@@ -66,7 +66,7 @@ export default class extends BaseManager {
 		const name = shouldShow ? 'checklistShow' : 'checklistHide';
 		const postId = elementor.getPreviewContainer().document.config.id;
 		const postTitle = elementor.getPreviewContainer().model.attributes.settings.attributes.post_title;
-		const postTypeTitle =  elementor.getPreviewContainer().document.config.post_type_title;
+		const postTypeTitle = elementor.getPreviewContainer().document.config.post_type_title;
 		const documentType = elementor.getPreviewContainer().document.config.type;
 
 		return (
