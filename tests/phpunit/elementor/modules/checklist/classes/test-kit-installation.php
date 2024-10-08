@@ -55,7 +55,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 		// Kit change 1
 		foreach ( $kit_first as $kit_key ) {
-			$this->set_kit( $kit_key );
+			$this->set_kit( $kit_key, false );
 		}
 
 		// User Preference change 1
