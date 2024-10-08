@@ -78,7 +78,15 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_wordpress_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = false ) : Step_Test_Base {
+	public function set_wordpress_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = true ) : Step_Test_Base {
+		if ( ! isset( $callbacks_map[ 'get_user_preferences' ] ) ) {
+			$callbacks_map[ 'get_user_preferences' ] = [ $this, 'get_user_preferences' ];
+		}
+
+		if ( ! isset( $callbacks_map[ 'set_user_preferences' ] ) ) {
+			$callbacks_map[ 'set_user_preferences' ] = [ $this, 'set_user_preferences' ];
+		}
+
 		$this->wordpress_adapter = $this->get_adapter_mock( self::WORDPRESS_ID, $methods_map, $callbacks_map );
 
 		if ( $should_instantiate_module ) {
@@ -96,7 +104,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_kit_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = false ) : Step_Test_Base {
+	public function set_kit_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = true ) : Step_Test_Base {
 		$this->kit_adapter = $this->get_adapter_mock( self::KIT_ID, $methods_map, $callbacks_map );
 
 		if ( $should_instantiate_module ) {
@@ -114,7 +122,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_counter_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = false ) : Step_Test_Base {
+	public function set_counter_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = true ) : Step_Test_Base {
 		$this->counter_adapter = $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $methods_map, $callbacks_map );
 
 		if ( $should_instantiate_module ) {
@@ -153,10 +161,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	protected function reset_progress() : Step_Test_Base {
 		$this->set_counter_adapter_mock( [ 'get_count' => 0 ] )
 			->set_kit_adapter_mock( [ 'is_active_kit_default' => true ] )
-			->set_wordpress_adapter_mock( [ 'is_new_installation' => true ], [
-				'set_user_preferences' => [ $this, 'set_user_preferences' ],
-				'get_user_preferences' => [ $this, 'get_user_preferences' ],
-			], true )
+			->set_wordpress_adapter_mock( [ 'is_new_installation' => true ], null, true )
 			->checklist_module->update_user_progress( [
 			Checklist_Module::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			Checklist_Module::IS_POPUP_MINIMIZED_KEY => false,

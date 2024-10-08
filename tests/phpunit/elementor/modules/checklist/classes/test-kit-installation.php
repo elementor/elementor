@@ -21,7 +21,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 		$this->set_wordpress_adapter_mock( [], [
 			'set_user_preferences' => [ $this, 'set_user_preferences' ],
 			'get_user_preferences' => [ $this, 'get_user_preferences' ],
-		], true );
+		] );
 
 		$this->mock_editor_visit();
 
@@ -36,7 +36,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 			->set_wordpress_adapter_mock( [], [
 				'set_user_preferences' => [ $this, 'set_user_preferences' ],
 				'get_user_preferences' => [ $this, 'get_user_preferences' ],
-				], true );
+				] );
 
 		$this->mock_editor_visit();
 
@@ -51,7 +51,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 			->set_wordpress_adapter_mock( [], [
 				'set_user_preferences' => [ $this, 'set_user_preferences' ],
 				'get_user_preferences' => [ $this, 'get_user_preferences' ],
-				], true );
+				] );
 
 		$this->mock_editor_visit();
 
