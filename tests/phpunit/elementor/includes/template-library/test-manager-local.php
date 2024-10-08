@@ -4,7 +4,6 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 class Elementor_Test_Manager_Local extends Elementor_Test_Base {
