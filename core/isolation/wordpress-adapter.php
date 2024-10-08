@@ -79,8 +79,8 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		}
 
 		wp_enqueue_script_module( $id, $src, $deps, $version );
-  }
-  
+	}
+
 	public function current_user_can( $capability, $args ) : bool {
 		return current_user_can( $capability, $args );
 	}
