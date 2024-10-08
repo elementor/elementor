@@ -39,6 +39,7 @@ export function getAndUpdateStep( id, step, key, value ) {
 }
 
 export function addMixpanelTrackingChecklistSteps( name, action, element = 'button' ) {
+	const documentMetaData = getDocumentMetaDataMixpanel();
 	return (
 		elementor.editorEvents.dispatchEvent(
 			elementor.editorEvents.config.names.elementorEditor.checklistSteps[ action ][ name ],
@@ -47,12 +48,14 @@ export function addMixpanelTrackingChecklistSteps( name, action, element = 'butt
 				secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
 				trigger: elementor.editorEvents.config.triggers.click,
 				element: elementor.editorEvents.config.elements[ element ],
+				...documentMetaData,
 			},
 		)
 	);
 }
 
 export function addMixpanelTrackingChecklistHeader( name ) {
+	const documentMetaData = getDocumentMetaDataMixpanel();
 	return (
 		elementor.editorEvents.dispatchEvent(
 			elementor.editorEvents.config.names.elementorEditor[ name ],
@@ -61,13 +64,15 @@ export function addMixpanelTrackingChecklistHeader( name ) {
 				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistHeader,
 				trigger: elementor.editorEvents.config.triggers.click,
 				element: elementor.editorEvents.config.elements.buttonIcon,
+				...documentMetaData,
 			},
 		)
 	);
 }
 
 export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
-	name = ! togglePopupState ? 'launchpadOn' : 'launchpadOff';
+	const documentMetaData = getDocumentMetaDataMixpanel();
+	const name = ! togglePopupState ? 'launchpadOn' : 'launchpadOff';
 	return (
 		elementor.editorEvents.dispatchEvent(
 			elementor.editorEvents.config.names.topBar[ name ],
@@ -76,7 +81,22 @@ export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
 				secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
 				trigger: elementor.editorEvents.config.triggers.toggleClick,
 				element: elementor.editorEvents.config.elements.buttonIcon,
+				...documentMetaData,
 			},
 		)
 	);
+}
+
+export function getDocumentMetaDataMixpanel() {
+	const id = elementor.getPreviewContainer().document.config.id;
+	const title = elementor.getPreviewContainer().model.attributes.settings.attributes.post_title;
+	const postTypeTitle =  elementor.getPreviewContainer().document.config.post_type_title;
+	const type = elementor.getPreviewContainer().document.config.type;
+
+	return {
+		id,
+		title,
+		type,
+		postTypeTitle
+	}
 }
