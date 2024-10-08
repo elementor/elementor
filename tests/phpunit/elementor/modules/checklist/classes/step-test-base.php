@@ -78,7 +78,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 *
 	 * @return Step_Test_Base
 	 */
-	public function set_wordpress_adapter_mock( $methods_map, $callbacks_map = null, $should_instantiate_module = true ) : Step_Test_Base {
+	public function set_wordpress_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = true ) : Step_Test_Base {
 //		if ( ! isset( $callbacks_map[ 'get_user_preferences' ] ) ) {
 //			$callbacks_map[ 'get_user_preferences' ] = [ $this, 'get_user_preferences' ];
 //		}
