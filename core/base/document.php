@@ -1824,6 +1824,7 @@ abstract class Document extends Controls_Stack {
 			if ( ! class_exists( 'WP_Script_Modules' ) ) {
 				// Load your custom class for older WP versions
 				require_once ELEMENTOR_PATH . 'includes/wordpress/class-wp-script-modules.php';
+				$wp_script_modules = new \Elementor\Includes\WordPress\WP_Script_Modules();
 				$should_store_script_modules = $wp_script_modules instanceof \Elementor\Includes\WordPress\WP_Script_Modules;
 			} else {
 				$should_store_script_modules = $wp_script_modules instanceof \WP_Script_Modules;

@@ -55,7 +55,7 @@ class NestedTabs extends Widget_Nested_Base {
 	 * @return array Widget script module dependencies.
 	 */
 	public function get_script_module_depends(): array {
-		return [ 'nested-title-keyboard-handler', 'widget-nested-tabs' ];
+		return [ 'nested-title-keyboard-handler', 'flex-horizontal-scroll', 'widget-nested-tabs' ];
 	}
 
 	protected function tab_content_container( int $index ) {

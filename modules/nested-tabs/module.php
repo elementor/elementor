@@ -63,12 +63,11 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return void
 	 */
 	public function register_script_modules() {
-		wp_enqueue_script(
+		$this->wordpress_adapter->wp_register_script_module(
 			'flex-horizontal-scroll',
 			ELEMENTOR_URL . 'assets/dev/js/frontend/utils/flex-horizontal-scroll.js',
 			[],
-			ELEMENTOR_VERSION,
-			false
+			ELEMENTOR_VERSION
 		);
 
 		$this->wordpress_adapter->wp_register_script_module(
