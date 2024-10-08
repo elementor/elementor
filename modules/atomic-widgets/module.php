@@ -4,12 +4,18 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Number_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Types_Registry;
-use Elementor\Modules\AtomicWidgets\PropTypes\String_Type;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Src_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
+use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Plugin;
@@ -29,8 +35,6 @@ class Module extends BaseModule {
 		'editor-style',
 	];
 
-	public Prop_Types_Registry $prop_types;
-
 	public function get_name() {
 		return 'atomic-widgets';
 	}
@@ -38,18 +42,17 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->prop_types = new Prop_Types_Registry();
-
 		$this->register_experiment();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			$this->register_prop_types();
+			Dynamic_Tags_Module::instance()->register_hooks();
 
-			( new Compatibility() )->register_hooks();
+			( new Atomic_Styles() )->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
-			add_filter( 'elementor/editor/localize_settings', fn( array $settings ) => $this->add_prop_types_config( $settings ) );
+			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_transformers( $transformers ) );
+
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 		}
 	}
@@ -74,26 +77,16 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Image() );
 	}
 
-	private function register_prop_types() {
-		// Primitive types.
-		$this->prop_types->register( new String_Type() );
-		$this->prop_types->register( new Number_Type() );
-		$this->prop_types->register( new Boolean_Type() );
+	private function register_transformers( Transformers_Registry $transformers ) {
+		// Primitives
+		$transformers->register( Boolean_Prop_Type::get_key(), new Primitive_Transformer() );
+		$transformers->register( Number_Prop_Type::get_key(), new Primitive_Transformer() );
+		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
 
-		// Transformable types.
-		$this->prop_types->register( new Image_Type() );
-		$this->prop_types->register( new Classes_Type() );
-
-		do_action(
-			'elementor/atomic-widgets/prop-types/register',
-			$this->prop_types
-		);
-	}
-
-	private function add_prop_types_config( array $settings ): array {
-		$settings['atomicPropTypes'] = $this->prop_types->get_all();
-
-		return $settings;
+		// Other
+		$transformers->register( Classes_Prop_Type::get_key(), new Classes_Transformer() );
+		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
+		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 	}
 
 	/**

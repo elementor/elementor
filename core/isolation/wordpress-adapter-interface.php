@@ -13,9 +13,17 @@ interface Wordpress_Adapter_Interface {
 
 	public function get_pages( $args );
 
+	public function get_query( $args );
+
 	public function get_option( $option_key );
 
 	public function add_option( $option_key, $option_value );
 
 	public function update_option( $option_key, $option_value );
+
+	public function add_query_arg( $args, $url );
+
+	public function has_custom_logo();
+
+	public function current_user_can( $capability, $args );
 }
