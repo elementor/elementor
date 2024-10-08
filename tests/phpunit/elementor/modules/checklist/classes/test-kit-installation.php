@@ -7,10 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Kit_Installation extends Step_Test_Base {
-	const PREFERENCE_SWITCH_EXPECTED = 'preference_switch_expected';
-	const SHOULD_SWITCH_PREFERENCE_OFF = 'preference_switch_off';
-	const SHOULD_AUTO_OPEN_POPUP = 'popup_auto_open';
-
 	public function tearDown(): void {
 		parent::tearDown();
 	}

@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Core\Isolation;
 
 interface Kit_Adapter_Interface {

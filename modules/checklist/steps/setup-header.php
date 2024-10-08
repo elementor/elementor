@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Checklist\Steps;
 
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Modules\Checklist\Module as Checklist_Module;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils;
 

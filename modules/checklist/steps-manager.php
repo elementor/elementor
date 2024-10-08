@@ -161,7 +161,7 @@ class Steps_Manager {
 	}
 
 	/**
-	 * Using step data->id, instanciates and returns the step class or null if the class does not exist
+	 * Using step data->id, instantiates and returns the step class or null if the class does not exist
 	 *
 	 * @param $step_data
 	 *

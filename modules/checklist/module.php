@@ -5,7 +5,6 @@ namespace Elementor\Modules\Checklist;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
-use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Isolation\Kit_Adapter;

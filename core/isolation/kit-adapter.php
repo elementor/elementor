@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Core\Isolation;
 
 use Elementor\Plugin;

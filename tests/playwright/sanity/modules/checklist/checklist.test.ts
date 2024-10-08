@@ -295,6 +295,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			} );
 
 			await rocketButton.click();
+			await checklist.waitFor();
 			await expect( checklist ).toBeVisible();
 			await expect( allDone ).toBeHidden();
 			await closeButton.click();

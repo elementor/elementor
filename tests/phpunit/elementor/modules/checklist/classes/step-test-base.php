@@ -56,34 +56,22 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		parent::teardown();
 	}
 
-	public function set_wordpress_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = true ) : Step_Test_Base {
-		$this->wordpress_adapter = $this->get_adapter_mock( self::WORDPRESS_ID, $methods_map, $callbacks_map );
+	public function set_wordpress_adapter_mock( $return_value_map, $callbacks_map = [] ) : Step_Test_Base {
+		$this->wordpress_adapter = $this->get_adapter_mock( self::WORDPRESS_ID, $return_value_map, $callbacks_map );
 
-		if ( $should_instantiate_module ) {
-			$this->set_checklist_module();
-		}
-
-		return $this;
+		return $this->set_checklist_module();
 	}
 
-	public function set_kit_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = true ) : Step_Test_Base {
-		$this->kit_adapter = $this->get_adapter_mock( self::KIT_ID, $methods_map, $callbacks_map );
+	public function set_kit_adapter_mock( $return_value_map, $callbacks_map = [] ) : Step_Test_Base {
+		$this->kit_adapter = $this->get_adapter_mock( self::KIT_ID, $return_value_map, $callbacks_map );
 
-		if ( $should_instantiate_module ) {
-			$this->set_checklist_module();
-		}
-
-		return $this;
+		return $this->set_checklist_module();
 	}
 
-	public function set_counter_adapter_mock( $methods_map, $callbacks_map = [], $should_instantiate_module = true ) : Step_Test_Base {
-		$this->counter_adapter = $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $methods_map, $callbacks_map );
+	public function set_counter_adapter_mock( $return_value_map, $callbacks_map = [] ) : Step_Test_Base {
+		$this->counter_adapter = $this->get_adapter_mock( self::ELEMENTOR_COUNTER_ID, $return_value_map, $callbacks_map );
 
-		if ( $should_instantiate_module ) {
-			$this->set_checklist_module();
-		}
-
-		return $this;
+		return $this->set_checklist_module();
 	}
 
 	public function set_user_preferences( $key, $value ) {
@@ -129,11 +117,12 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 * Creates a mock object of any of the adapters' class with specified methods, return callbacks and return values.
 	 *
 	 * @param (self::WORDPRESS_ID|self::KIT_ID|self::ELEMENTOR_COUNTER_ID) $adapter_key
-	 * @param array $methods_map Associative array mapping method names to their return values.
+	 * @param array $return_value_map Associative array mapping method names to their return values.
+	 * @param array $callbacks_map Associative array mapping method names to a mock callback.
 	 *
 	 * @return MockObject
 	 */
-	private function get_adapter_mock( $adapter_key, $methods_map, $callbacks_map = [] ) {
+	private function get_adapter_mock( $adapter_key, $return_value_map, $callbacks_map = [] ) {
 		$classes = [
 			self::WORDPRESS_ID => Wordpress_Adapter::class,
 			self::KIT_ID => Kit_Adapter::class,
@@ -143,10 +132,10 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		$class = $classes[ $adapter_key ];
 
 		$adapter_mock = $this->getMockBuilder( $class )
-			->setMethods( array_merge( array_keys( $methods_map ), array_keys( $callbacks_map ) ) )
+			->setMethods( array_keys( array_merge( $return_value_map, $callbacks_map ) ) )
 			->getMock();
 
-		foreach ( $methods_map as $method => $return_value ) {
+		foreach ( $return_value_map as $method => $return_value ) {
 			$adapter_mock->method( $method )->willReturn( $return_value );
 		}
 
