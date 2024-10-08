@@ -28,4 +28,6 @@ interface Wordpress_Adapter_Interface {
 	public function wp_register_script_module( string $id, string $src, array $deps = array(), $version = false );
 
 	public function wp_enqueue_script_module( string $id, string $src = '', array $deps = array(), $version = false );
+
+	public function current_user_can( $capability, $args );
 }
