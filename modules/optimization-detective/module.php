@@ -33,6 +33,7 @@ class Module extends BaseModule {
 			 * designed with the assumption that the plugin code has loaded before the after_setup_theme action, which
 			 * is not the case for Elementor. This will be accounted for in future versions of the above plugins and
 			 * the foreach loop can be removed at that time.
+			 * TODO: Remove this once https://github.com/WordPress/performance/pull/1373 is merged and released.
 			 */
 			$pending_plugin_variables = array(
 				'optimization_detective_pending_plugin',
