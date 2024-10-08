@@ -59,7 +59,11 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	public function setup(): void {
 		parent::setUp();
 
-		$this->reset_progress();
+		$this->reset_progress()
+			->set_user_preferences(
+			Checklist_Module::VISIBILITY_SWITCH_ID,
+			$this->checklist_module->is_preference_switch_on() ? 'yes' : ''
+		);
 	}
 
 	public function teardown(): void {
@@ -148,6 +152,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 	protected function reset_progress() : Step_Test_Base {
 		$this->set_counter_adapter_mock( [ 'get_count' => 0 ] )
+			->set_wordpress_adapter_mock( [ 'is_active_kit_default' => true ] )
 			->set_wordpress_adapter_mock( [], [
 				'set_user_preferences' => [ $this, 'set_user_preferences' ],
 				'get_user_preferences' => [ $this, 'get_user_preferences' ],
@@ -157,11 +162,6 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 			Checklist_Module::IS_POPUP_MINIMIZED_KEY => false,
 			'steps' => [],
 		] );
-
-		$this->set_user_preferences(
-			Checklist_Module::VISIBILITY_SWITCH_ID,
-			$this->checklist_module->is_preference_switch_on() ? 'yes' : ''
-		);
 
 		return $this;
 	}
