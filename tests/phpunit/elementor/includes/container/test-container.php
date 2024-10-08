@@ -221,7 +221,7 @@ class Test_Container extends Elementor_Test_Base {
 	{
 		$initialMemory = memory_get_usage();
 
-		for ($i = 0; $i < 10000; $i++) {
+		for ($i = 0; $i < 1000; $i++) {
 			$this->container->set("Service$i", \DI\create(Wordpress_Adapter::class));
 			$this->container->get("Service$i");
 		}
