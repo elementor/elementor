@@ -11,6 +11,7 @@
 	"scripts": {
 		"wp-env": "wp-env",
 		"test:linux": "node ./run-on-linux.js",
+		"build": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload && grunt build",
 		"setup-templates": "rm -rf ./templates && mkdir -p ./templates/playwright && mkdir -p ./templates/lighthouse && cp ./tests/playwright/templates/* ./templates/playwright && cp ./tests/lighthouse/templates/* ./templates/lighthouse",
 		"start-local-server": "npm run setup-templates && wp-env start",
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
