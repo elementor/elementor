@@ -64,10 +64,10 @@ export default class extends BaseManager {
 
 	addMixpanelTrackingChecklist( shouldShow ) {
 		const name = shouldShow ? 'checklistShow' : 'checklistHide';
-		const post_id = elementor.getPreviewContainer().document.config.id;
-		const title = elementor.getPreviewContainer().model.attributes.settings.attributes.post_title;
+		const postId = elementor.getPreviewContainer().document.config.id;
+		const postTitle = elementor.getPreviewContainer().model.attributes.settings.attributes.post_title;
 		const postTypeTitle =  elementor.getPreviewContainer().document.config.post_type_title;
-		const type = elementor.getPreviewContainer().document.config.type;
+		const documentType = elementor.getPreviewContainer().document.config.type;
 
 		return (
 			elementor.editorEvents.dispatchEvent(
@@ -77,10 +77,10 @@ export default class extends BaseManager {
 					secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
 					trigger: elementor.editorEvents.config.triggers.toggleClick,
 					element: elementor.editorEvents.config.elements.toggle,
-					post_id,
-					title,
+					postId,
+					postTitle,
 					postTypeTitle,
-					type,
+					documentType,
 				},
 			)
 		);

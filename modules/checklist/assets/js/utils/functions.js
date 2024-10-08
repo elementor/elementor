@@ -88,15 +88,15 @@ export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
 }
 
 export function getDocumentMetaDataMixpanel() {
-	const post_id = elementor.getPreviewContainer().document.config.id;
-	const title = elementor.getPreviewContainer().model.attributes.settings.attributes.post_title;
+	const postId = elementor.getPreviewContainer().document.config.id;
+	const postTitle = elementor.getPreviewContainer().model.attributes.settings.attributes.post_title;
 	const postTypeTitle =  elementor.getPreviewContainer().document.config.post_type_title;
-	const type = elementor.getPreviewContainer().document.config.type;
+	const documentType = elementor.getPreviewContainer().document.config.type;
 
 	return {
-		post_id,
-		title,
-		type,
-		postTypeTitle
+		postId,
+		postTitle,
+		postTypeTitle,
+		documentType,
 	}
 }
