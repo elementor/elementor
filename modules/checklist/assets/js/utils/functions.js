@@ -40,9 +40,14 @@ export function getAndUpdateStep( id, step, key, value ) {
 
 export function addMixpanelTrackingChecklistSteps( name, action, element = 'button' ) {
 	const documentMetaData = getDocumentMetaDataMixpanel();
+
+	name = name.replace(/_/g, '');
+
+	const eventName = `checklist_steps_${ action }_${ name }`;
+
 	return (
 		elementor.editorEvents.dispatchEvent(
-			elementor.editorEvents.config.names.elementorEditor.checklistSteps[ action ][ name ],
+			eventName,
 			{
 				location: elementor.editorEvents.config.locations.elementorEditor,
 				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
@@ -56,6 +61,7 @@ export function addMixpanelTrackingChecklistSteps( name, action, element = 'butt
 
 export function addMixpanelTrackingChecklistHeader( name ) {
 	const documentMetaData = getDocumentMetaDataMixpanel();
+
 	return (
 		elementor.editorEvents.dispatchEvent(
 			elementor.editorEvents.config.names.elementorEditor[ name ],
