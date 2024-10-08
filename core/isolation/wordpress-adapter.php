@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Core\Isolation;
 
-use Code_Snippets\Elementor\Elementor;
+use Elementor;
 
 class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
