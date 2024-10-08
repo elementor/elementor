@@ -2,26 +2,20 @@
 
 namespace Elementor\Core\Utils;
 
-use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Isolation_manager {
+class Isolation_Manager{
 	/**
-	 * @var Wordpress_Adapter
+	 * @param string $adapter_name
+	 *
+	 * @return mixed
 	 */
-	private static $wordpress_adapter;
-
-	/**
-	 * @return Wordpress_Adapter
-	 */
-	public static function get_wordpress_adapter() {
-		if ( ! self::$wordpress_adapter ) {
-			self::$wordpress_adapter = new Wordpress_Adapter();
-		}
-
-		return self::$wordpress_adapter;
+	public static function get_adapter( string $adapter_name ): mixed {
+		$container = PLugin::$instance->elementor_container();
+		return $container->get( $adapter_name );
 	}
 }
