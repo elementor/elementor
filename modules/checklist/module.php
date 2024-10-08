@@ -40,8 +40,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 * @return void
 	 */
 	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null ) {
-		$this->wordpress_adapter = Isolation_Manager::get_adapter( Wordpress_Adapter::class ) ?? $wordpress_adapter;
-		$this->kit_adapter = Isolation_Manager::get_adapter( Kit_Adapter::class ) ?? $kit_adapter;
+		$this->wordpress_adapter = $wordpress_adapter ?? Isolation_Manager::get_adapter( Wordpress_Adapter::class );
+		$this->kit_adapter = $kit_adapter ?? Isolation_Manager::get_adapter( Kit_Adapter::class );
 		parent::__construct();
 
 		$this->register_experiment();
