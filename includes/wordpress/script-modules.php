@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Includes\WordPress;
 
-use Elementor\Includes\WordPress\WP_Script_Modules;
+require_once ELEMENTOR_PATH . 'includes/wordpress/class-wp-script-modules.php';
 
 function custom_wp_script_modules(): WP_Script_Modules {
 	global $wp_script_modules;

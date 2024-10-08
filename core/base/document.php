@@ -1820,8 +1820,6 @@ abstract class Document extends Controls_Stack {
 
 			global $wp_scripts, $wp_script_modules, $wp_styles;
 
-			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles && $wp_script_modules instanceof \WP_Script_Modules;
-
 			// Check if the WP_Script_Modules class exists (introduced in WP 6.5)
 			if ( ! class_exists( 'WP_Script_Modules' ) ) {
 				// Load your custom class for older WP versions
