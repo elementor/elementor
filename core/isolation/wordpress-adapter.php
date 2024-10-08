@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Isolation;
 
+use Code_Snippets\Elementor\Elementor;
+
 class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
 	public function get_plugins(): array {
@@ -62,6 +64,8 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function wp_register_script_module(  string $id, string $src, array $deps = array(), $version = false ) : void {
 		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
 			require_once ELEMENTOR_PATH . 'includes/wordpress/script-modules.php';
+			custom_wp_register_script_module( $id, $src, $deps, $version );
+			return;
 		}
 
 		wp_register_script_module( $id, $src, $deps, $version );
@@ -70,6 +74,8 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function wp_enqueue_script_module( string $id, string $src = '', array $deps = array(), $version = false ) : void {
 		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
 			require_once ELEMENTOR_PATH . 'includes/wordpress/script-modules.php';
+			custom_wp_enqueue_script_module( $id, $src, $deps, $version );
+			return;
 		}
 
 		wp_enqueue_script_module( $id, $src, $deps, $version );
