@@ -256,7 +256,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	private function get_formatted_value( $key, $value ) {
 		if ( self::LAST_OPENED_TIMESTAMP === $key ) {
-			return time();
+			return $value ? time() : null;
 		}
 
 		return $value;

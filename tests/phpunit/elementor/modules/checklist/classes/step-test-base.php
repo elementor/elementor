@@ -56,17 +56,10 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 	private $user_preferences_mock = [];
 
-	private $checklist_progress_backup;
-	private $installation_history_backup;
-
 	public function setup(): void {
 		parent::setUp();
 
-		$this->set_checklist_module()
-			->set_user_preferences(
-				Checklist_Module::VISIBILITY_SWITCH_ID,
-				$this->checklist_module->is_preference_switch_on() ? 'yes' : ''
-			);
+		$this->reset_progress();
 	}
 
 	public function teardown(): void {
@@ -153,6 +146,26 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		do_action( 'elementor/editor/init' );
 	}
 
+	protected function reset_progress() : Step_Test_Base {
+		$this->set_counter_adapter_mock( [ 'get_count' => 0 ] )
+			->set_wordpress_adapter_mock( [], [
+				'set_user_preferences' => [ $this, 'set_user_preferences' ],
+				'get_user_preferences' => [ $this, 'get_user_preferences' ],
+			], true )
+			->checklist_module->update_user_progress( [
+			Checklist_Module::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
+			Checklist_Module::IS_POPUP_MINIMIZED_KEY => false,
+			'steps' => [],
+		] );
+
+		$this->set_user_preferences(
+			Checklist_Module::VISIBILITY_SWITCH_ID,
+			$this->checklist_module->is_preference_switch_on() ? 'yes' : ''
+		);
+
+		return $this;
+	}
+
 	/**
 	 * Creates a mock object of any of the adapters' class with specified methods and return values.
 	 *
@@ -183,25 +196,5 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		}
 
 		return $adapter_mock;
-	}
-
-	private function setup_data() {
-		$this->checklist_progress_backup = get_option( Checklist_Module::DB_OPTION_KEY ) || '';
-		$this->installation_history_backup = get_option( 'elementor_install_history' );
-
-		delete_option( Checklist_Module::DB_OPTION_KEY );
-		delete_option( 'elementor_install_history' );
-
-		return $this;
-	}
-
-	private function reset_data() {
-		update_option( Checklist_Module::DB_OPTION_KEY, $this->checklist_progress_backup );
-		update_option( 'elementor_install_history', $this->installation_history_backup );
-
-		$this->installation_history_backup = null;
-		$this->checklist_progress_backup = null;
-
-		return $this;
 	}
 }
