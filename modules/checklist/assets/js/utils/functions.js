@@ -39,20 +39,29 @@ export function getAndUpdateStep( id, step, key, value ) {
 }
 
 export function addMixpanelTrackingChecklistSteps( name, action, element = 'button' ) {
+	const documentMetaData = getDocumentMetaDataMixpanel();
+
+	name = name.replace( /_/g, '' );
+
+	const eventName = `checklist_steps_${ action }_${ name }`;
+
 	return (
 		elementor.editorEvents.dispatchEvent(
-			elementor.editorEvents.config.names.elementorEditor.checklistSteps[ action ][ name ],
+			eventName,
 			{
 				location: elementor.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
 				trigger: elementor.editorEvents.config.triggers.click,
 				element: elementor.editorEvents.config.elements[ element ],
+				...documentMetaData,
 			},
 		)
 	);
 }
 
 export function addMixpanelTrackingChecklistHeader( name ) {
+	const documentMetaData = getDocumentMetaDataMixpanel();
+
 	return (
 		elementor.editorEvents.dispatchEvent(
 			elementor.editorEvents.config.names.elementorEditor[ name ],
@@ -61,13 +70,16 @@ export function addMixpanelTrackingChecklistHeader( name ) {
 				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistHeader,
 				trigger: elementor.editorEvents.config.triggers.click,
 				element: elementor.editorEvents.config.elements.buttonIcon,
+				...documentMetaData,
 			},
 		)
 	);
 }
 
 export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
-	name = ! togglePopupState ? 'launchpadOn' : 'launchpadOff';
+	const documentMetaData = getDocumentMetaDataMixpanel();
+	const name = ! togglePopupState ? 'launchpadOn' : 'launchpadOff';
+
 	return (
 		elementor.editorEvents.dispatchEvent(
 			elementor.editorEvents.config.names.topBar[ name ],
@@ -76,7 +88,22 @@ export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
 				secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
 				trigger: elementor.editorEvents.config.triggers.toggleClick,
 				element: elementor.editorEvents.config.elements.buttonIcon,
+				...documentMetaData,
 			},
 		)
 	);
+}
+
+export function getDocumentMetaDataMixpanel() {
+	const postId = elementor.getPreviewContainer().document.config.id;
+	const postTitle = elementor.getPreviewContainer().model.attributes.settings.attributes.post_title;
+	const postTypeTitle = elementor.getPreviewContainer().document.config.post_type_title;
+	const documentType = elementor.getPreviewContainer().document.config.type;
+
+	return {
+		postId,
+		postTitle,
+		postTypeTitle,
+		documentType,
+	};
 }
