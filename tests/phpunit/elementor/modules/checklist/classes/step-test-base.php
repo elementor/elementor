@@ -152,8 +152,8 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 	protected function reset_progress() : Step_Test_Base {
 		$this->set_counter_adapter_mock( [ 'get_count' => 0 ] )
-			->set_wordpress_adapter_mock( [ 'is_active_kit_default' => true ] )
-			->set_wordpress_adapter_mock( [], [
+			->set_kit_adapter_mock( [ 'is_active_kit_default' => true ] )
+			->set_wordpress_adapter_mock( [ 'is_new_installation' => true ], [
 				'set_user_preferences' => [ $this, 'set_user_preferences' ],
 				'get_user_preferences' => [ $this, 'get_user_preferences' ],
 			], true )
@@ -164,7 +164,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		] );
 
 		var_dump( "\n\nreset!@#@!\n\n" );
-		$this->checklist_module->should_switch_preferences_off();
+		$this->checklist_module->should_switch_preferences_off( true );
 		return $this;
 	}
 
