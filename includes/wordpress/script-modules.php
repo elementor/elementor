@@ -13,10 +13,10 @@ function custom_wp_script_modules(): WP_Script_Modules {
 	return $wp_script_modules;
 }
 
-function  custom_wp_register_script_module( string $id, string $src, array $deps = array(), $version = false ) {
+function custom_wp_register_script_module( string $id, string $src, array $deps = array(), $version = false ) {
 	custom_wp_script_modules()->register( $id, $src, $deps, $version );
 }
 
-function  custom_wp_enqueue_script_module( string $id, string $src = '', array $deps = array(), $version = false ) {
+function custom_wp_enqueue_script_module( string $id, string $src = '', array $deps = array(), $version = false ) {
 	custom_wp_script_modules()->enqueue( $id, $src, $deps, $version );
 }
