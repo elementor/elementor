@@ -83,7 +83,8 @@ function initialScrollPosition( element, direction, justifyCSSVariable ) {
 	}
 }
 
-window.FlexHorizontalScroll = {};
-window.FlexHorizontalScroll.changeScrollStatus = changeScrollStatus
-window.FlexHorizontalScroll.setHorizontalTitleScrollValues = setHorizontalScrollAlignment;
-window.FlexHorizontalScroll.setHorizontalScrollAlignment = setHorizontalScrollAlignment;
+window.FlexHorizontalScroll = {
+	changeScrollStatus,
+	setHorizontalTitleScrollValues,
+	setHorizontalScrollAlignment,
+};
