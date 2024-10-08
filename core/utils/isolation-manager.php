@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Isolation_Manager{
+class Isolation_Manager {
 	/**
 	 * @param string $adapter_name
 	 */
