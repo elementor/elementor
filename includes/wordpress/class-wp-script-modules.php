@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Includes\WordPress;
 
-
 /**
  * Script Modules API: WP_Script_Modules class.
  *
@@ -70,7 +69,7 @@ class WP_Script_Modules {
 			foreach ( $deps as $dependency ) {
 				if ( is_array( $dependency ) ) {
 					if ( ! isset( $dependency['id'] ) ) {
-						_doing_it_wrong( __METHOD__, __( 'Missing required id key in entry among dependencies array.' ), '6.5.0' );
+						_doing_it_wrong( __METHOD__, '', '6.5.0' );
 						continue;
 					}
 					$dependencies[] = array(
@@ -83,7 +82,7 @@ class WP_Script_Modules {
 						'import' => 'static',
 					);
 				} else {
-					_doing_it_wrong( __METHOD__, __( 'Entries in dependencies array must be either strings or arrays with an id key.' ), '6.5.0' );
+					_doing_it_wrong( __METHOD__, '', '6.5.0' );
 				}
 			}
 
