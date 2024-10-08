@@ -11,10 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Isolation_Manager{
 	/**
 	 * @param string $adapter_name
-	 *
-	 * @return mixed
 	 */
-	public static function get_adapter( string $adapter_name ): mixed {
+	public static function get_adapter( string $adapter_name ) {
 		$container = PLugin::$instance->elementor_container();
 		return $container->get( $adapter_name );
 	}
