@@ -268,6 +268,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		}
 
 		add_action( 'elementor/editor/init', function () {
+			echo 'triggered';
 			$this->wordpress_adapter->set_user_preferences( self::VISIBILITY_SWITCH_ID, '' );
 		} );
 	}
