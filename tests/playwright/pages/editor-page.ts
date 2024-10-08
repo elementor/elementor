@@ -951,6 +951,12 @@ export default class EditorPage extends BasePage {
 		await this.page.waitForLoadState();
 	}
 
+	async viewPage() {
+		const pageId = await this.getPageId();
+		await this.page.goto( `/?p=${ pageId }` );
+		await this.page.waitForLoadState();
+	}
+
 	/**
 	 * Save and reload the current page.
 	 *
@@ -1286,5 +1292,25 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( EditorSelectors.media.images ).first().click();
 		await this.page.locator( EditorSelectors.media.imgDescription ).clear();
 		await this.page.locator( EditorSelectors.media.imgDescription ).type( args.description );
+	}
+
+	async saveSiteSettingsWithTopBar( toReload: boolean ) {
+		if ( await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).isEnabled() ) {
+			await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).click();
+		} else {
+			await this.page.evaluate( ( selector ) => {
+				const button: HTMLElement = document.evaluate( selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
+				button.click();
+			}, EditorSelectors.panels.siteSettings.saveButton );
+		}
+
+		if ( toReload ) {
+			await this.page.locator( EditorSelectors.refreshPopup.reloadButton ).click();
+		}
+	}
+
+	async saveSiteSettingsNoTopBar() {
+		await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
+		await this.page.locator( EditorSelectors.toast ).waitFor();
 	}
 }
