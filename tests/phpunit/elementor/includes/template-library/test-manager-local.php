@@ -4,6 +4,7 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 
@@ -127,6 +128,23 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$updated_template = self::$manager->update_template( $template_data );
 
 		$this->assert_array_have_keys( $remote_remote, $updated_template );
+	}
+
+	/**
+	 * @covers \Elementor\TemplateLibrary\Manager::get_template_data()
+	 */
+	public function test_should_return_data_from_get_template_data() {
+		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
+		$wordpress_adapter_mock->method( 'current_user_can' )->willReturn( true );
+		self::$manager->set_wordpress_adapter( $wordpress_adapter_mock );
+
+		$ret = self::$manager->get_template_data(
+			[
+				'source' => 'local',
+				'template_id' => $this->fake_post_id,
+			]
+		);
+		$this->assertEquals( $ret, [ 'content' => [] ] );
 	}
 
 	/**
