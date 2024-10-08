@@ -58,4 +58,8 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function has_custom_logo() : bool {
 		return has_custom_logo();
 	}
+
+	public function current_user_can( $capability, $args ) : bool {
+		return current_user_can( $capability, $args );
+	}
 }
