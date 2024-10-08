@@ -1,4 +1,4 @@
-module.exports = elementorModules.ViewModule.extend( {
+const BaseHandler = elementorModules.ViewModule.extend( {
 	$element: null,
 
 	editorListeners: null,
@@ -251,3 +251,6 @@ module.exports = elementorModules.ViewModule.extend( {
 		}
 	},
 } );
+
+module.exports = BaseHandler;
+window.BaseHandler = BaseHandler;
