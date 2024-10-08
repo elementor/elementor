@@ -161,7 +161,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	protected function reset_progress() : Step_Test_Base {
 		$this->set_counter_adapter_mock( [ 'get_count' => 0 ] )
 			->set_kit_adapter_mock( [ 'is_active_kit_default' => true ] )
-			->set_wordpress_adapter_mock( [ 'is_new_installation' => true ], null, true )
+			->set_wordpress_adapter_mock( [ 'is_new_installation' => true ], null )
 			->checklist_module->update_user_progress( [
 			Checklist_Module::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			Checklist_Module::IS_POPUP_MINIMIZED_KEY => false,
@@ -191,7 +191,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		$class = $classes[ $adapter_key ];
 
 		$adapter_mock = $this->getMockBuilder( $class )
-			->setMethods( array_keys( $methods_map ) )
+			->setMethods( array_merge( array_keys( $methods_map ), array_keys( $callbacks_map ) ) )
 			->getMock();
 
 		foreach ( $methods_map as $method => $return_value ) {
