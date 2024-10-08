@@ -52,11 +52,11 @@ class Test_Kit_Installation extends Step_Test_Base {
 		var_dump( $this->user_preferences_mock );
 	}
 
-	private function set_user_preferences( $key, $value ) {
+	public function set_user_preferences( $key, $value ) {
 		$this->user_preferences_mock[ $key ] = $value;
 	}
 
-	private function get_user_preferences( $key ) {
+	public function get_user_preferences( $key ) {
 		return $this->user_preferences_mock[ $key ] ?? null;
 	}
 }
