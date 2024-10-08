@@ -1,6 +1,4 @@
 <?php
-namespace Elementor\Includes\WordPress;
-
 /**
  * Script Modules API: WP_Script_Modules class.
  *

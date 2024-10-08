@@ -1,6 +1,4 @@
 <?php
-namespace Elementor\Includes\WordPress;
-
 require_once ELEMENTOR_PATH . 'includes/wordpress/class-wp-script-modules.php';
 
 function custom_wp_script_modules(): WP_Script_Modules {
