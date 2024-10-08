@@ -126,6 +126,7 @@ const eventsConfig = {
 				},
 				upgrade: {
 					setup_header: 'checklist_step_pro_action_createheader',
+					setup_header_pro: 'checklist_step_pro_action_createheader',
 				},
 			},
 			userPreferences: {
