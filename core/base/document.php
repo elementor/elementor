@@ -1823,7 +1823,7 @@ abstract class Document extends Controls_Stack {
 			// Check if the WP_Script_Modules class exists (introduced in WP 6.5)
 			if ( ! class_exists( 'WP_Script_Modules' ) ) {
 				// Load your custom class for older WP versions
-				require_once plugin_dir_path( __FILE__ ) . 'includes/wordpress/class-wp-script-modules.php';
+				require_once ELEMENTOR_PATH . 'includes/wordpress/class-wp-script-modules.php';
 			}
 
 			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_script_modules instanceof \WP_Script_Modules && $wp_styles instanceof \WP_Styles;
