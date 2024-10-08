@@ -83,8 +83,8 @@ abstract class Step_Base {
 	 */
 	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null, $promotion_data = null ) {
 		$this->module = $module;
-		$this->wordpress_adapter = Isolation_Manager::get_adapter( Wordpress_Adapter::class );
-		$this->kit_adapter = Isolation_Manager::get_adapter( Kit_Adapter::class );
+		$this->wordpress_adapter = Isolation_Manager::get_adapter( Wordpress_Adapter::class ) ?? $wordpress_adapter;
+		$this->kit_adapter = Isolation_Manager::get_adapter( Kit_Adapter::class ) ?? $kit_adapter;
 		$this->promotion_data = $promotion_data;
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
 	}
