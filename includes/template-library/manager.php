@@ -64,10 +64,13 @@ class Manager {
 	 */
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
-		$this->wordpress_adapter = new Wordpress_Adapter();
 		$this->register_default_sources();
 
 		$this->add_actions();
+	}
+
+	public function set_wordpress_adapter( Wordpress_Adapter_Interface $wordpress_adapter ) {
+		$this->wordpress_adapter = $wordpress_adapter;
 	}
 
 	/**
@@ -362,12 +365,14 @@ class Manager {
 			return $validate_args;
 		}
 
+		if ( null === $this->wordpress_adapter ) {
+			$this->set_wordpress_adapter( new WordPress_Adapter() );
+		}
+
 		$post_id = intval( $args['template_id'] );
 		$post_status = get_post_status( $post_id );
 		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status && ! $this->wordpress_adapter->current_user_can( 'edit_post', $post_id ) );
-		var_dump($is_private_or_non_published);
-		var_dump($this->wordpress_adapter->current_user_can( 'edit_post', $post_id ));
-		var_dump($this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ));
+
 		if ( $is_private_or_non_published || ! $this->wordpress_adapter->current_user_can( 'edit_post', $post_id ) ) {
 			return new \WP_Error(
 				'template_error',

@@ -5,6 +5,7 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Isolation\Wordpress_Adapter;
+use ElementorPro\Core\Isolation\Wordpress_Adapter_Interface;
 
 class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 
@@ -13,20 +14,6 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	 */
 	protected static $manager;
 	private $fake_post_id = '123';
-
-	public function set_wordpress_adapter_mock( $methods, $return_map ) {
-		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter::class )
-			->setMethods( $methods )
-			->getMock();
-
-		foreach ( $return_map as $method => $return_value ) {
-			$wordpress_adapter_mock->method( $method )->willReturn( $return_value );
-		}
-
-		$this->wordpress_adapter = $wordpress_adapter_mock;
-
-		return $wordpress_adapter_mock;
-	}
 
 	public static function setUpBeforeClass(): void {
 		self::$manager = self::elementor()->templates_manager;
@@ -148,6 +135,10 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	 * @covers \Elementor\TemplateLibrary\Manager::get_template_data()
 	 */
 	public function test_should_return_data_from_get_template_data() {
+		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
+		$wordpress_adapter_mock->method( 'current_user_can' )->willReturn( true );
+		self::$manager->set_wordpress_adapter( $wordpress_adapter_mock );
+
 		$ret = self::$manager->get_template_data(
 			[
 				'source' => 'local',
