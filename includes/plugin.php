@@ -642,16 +642,17 @@ class Plugin {
 		return self::$instance;
 	}
 
-	public function initialize_container() {
-		Container::initialize_instance();
-
+	/**
+	 * @throws \Exception
+	 */
+	public function initialize_container(): void {
 		$this->container = Container::get_instance();
 	}
 
 	/**
 	 * Get the Elementor container or resolve a dependency.
 	 */
-	public function elementor_container( $abstract = null ) {
+	public function get_elementor_container($abstract = null ) {
 		if ( is_null( $abstract ) ) {
 			return $this->container;
 		}

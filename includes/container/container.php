@@ -4,6 +4,7 @@ namespace Elementor\Container;
 
 use ElementorDeps\DI\ContainerBuilder;
 use ElementorDeps\DI\Container as DIContainer;
+use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,34 +21,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Container {
 
-	protected static $instance;
+	private static $instance;
 
 	private function __construct() {}
 
 	private function __clone() {}
 
-	private static function initialize(): DIContainer {
-		if ( isset( self::$instance ) ) {
-			return self::$instance;
-		}
-
+	/**
+	 * @throws Exception
+	 */
+	private static function initialize(): void {
 		$builder = new ContainerBuilder();
 
 		self::register_configuration( $builder );
-		return $builder->build();
+
+		self::$instance = $builder->build();
 	}
 
-	private static function register_configuration( ContainerBuilder $builder ) {
+	private static function register_configuration( ContainerBuilder $builder ): void {
 		$builder->addDefinitions( __DIR__ . '/config.php' );
 	}
 
-	public static function initialize_instance() {
-		static::$instance = self::initialize();
-	}
-
+	/**
+	 * @throws Exception
+	 */
 	public static function get_instance() {
 		if ( is_null( static::$instance ) ) {
-			self::initialize_instance();
+			self::initialize();
 		}
 
 		return static::$instance;
