@@ -1820,13 +1820,18 @@ abstract class Document extends Controls_Stack {
 
 			global $wp_scripts, $wp_script_modules, $wp_styles;
 
+			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles && $wp_script_modules instanceof \WP_Script_Modules;
+
 			// Check if the WP_Script_Modules class exists (introduced in WP 6.5)
 			if ( ! class_exists( 'WP_Script_Modules' ) ) {
 				// Load your custom class for older WP versions
 				require_once ELEMENTOR_PATH . 'includes/wordpress/class-wp-script-modules.php';
+				$should_store_script_modules = $wp_script_modules instanceof \Elementor\Includes\WordPress\WP_Script_Modules;
+			} else {
+				$should_store_script_modules = $wp_script_modules instanceof \WP_Script_Modules;
 			}
 
-			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_script_modules instanceof \WP_Script_Modules && $wp_styles instanceof \WP_Styles;
+			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles && $should_store_script_modules;
 
 			ob_start();
 			$wp_script_modules->print_enqueued_script_modules();
