@@ -662,12 +662,36 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
-								'color' => 'red',
+								'color' => [
+									'$$type' => 'color',
+									'value' => [
+										'color' => 'red',
+									],
+								],
 								'font-size' => [
 									'$$type' => 'size',
 									'value' => [
 										'unit' => 'px',
 										'size' => 16,
+									],
+								],
+								'padding' => [
+									'$$type' => 'linked-dimensions',
+									'value' => [
+										'top' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 0,
+											],
+										],
+										'right' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 0,
+											],
+										],
 									],
 								],
 							],
@@ -698,12 +722,36 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'color' => 'red',
+							'color' => [
+								'$$type' => 'color',
+								'value' => [
+									'color' => 'red',
+								],
+							],
 							'font-size' => [
 								'$$type' => 'size',
 								'value' => [
 									'unit' => 'px',
 									'size' => 16,
+								],
+							],
+							'padding' => [
+								'$$type' => 'linked-dimensions',
+								'value' => [
+									'top' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 0,
+										],
+									],
+									'right' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 0,
+										],
+									],
 								],
 							],
 						],
@@ -832,7 +880,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			],
 			'styles' => [
 				'1234' => [
-					'id' => '1234',
+					'id' => 12344,
 					'type' => 'class',
 					'variants' => [
 						[
@@ -912,6 +960,42 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Expect.
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: padding' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
+	public function test_get_data_for_save__throws_on_styles_color_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'not-a-color',
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: color' );
 
 		// Act.
 		$widget->get_data_for_save();

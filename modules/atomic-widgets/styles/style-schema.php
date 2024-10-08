@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -51,7 +52,7 @@ class Style_Schema {
 				'lighter',
 			]),
 			'font-size' => Size_Prop_Type::make(),
-			'color' => String_Prop_Type::make(),
+			'color' => Color_Prop_Type::make(),
 			'letter-spacing' => Size_Prop_Type::make(),
 			'word-spacing' => Size_Prop_Type::make(),
 			'text-align' => String_Prop_Type::make()->enum([
