@@ -45,7 +45,7 @@ export function addMixpanelTrackingChecklistSteps( name, action, element = 'butt
 			elementor.editorEvents.config.names.elementorEditor.checklistSteps[ action ][ name ],
 			{
 				location: elementor.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
 				trigger: elementor.editorEvents.config.triggers.click,
 				element: elementor.editorEvents.config.elements[ element ],
 				...documentMetaData,
