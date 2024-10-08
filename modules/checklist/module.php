@@ -217,13 +217,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		return 'yes' === $user_preferences || $this->wordpress_adapter->is_new_installation();
 	}
 
-	public function should_switch_preferences_off( $print = false) : bool {
-		if ( $print ) {
-			var_dump( '\n\n' . $this->kit_adapter->is_active_kit_default() . '\n\n' );
-			var_dump( '\n\n' . $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] . '\n\n' );
-			var_dump( '\n\n'.$this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY ).'\n\n');
-		}
-
+	public function should_switch_preferences_off() : bool {
 		return ! $this->kit_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 	}
 
