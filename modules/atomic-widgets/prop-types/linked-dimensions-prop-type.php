@@ -8,10 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Linked_Dimensions_Prop_Type extends Transformable_Prop_Type {
 	public function __construct() {
-		$this->internal_types['top'] = Size_Prop_Type::make();
-		$this->internal_types['right'] = Size_Prop_Type::make();
-		$this->internal_types['bottom'] = Size_Prop_Type::make();
-		$this->internal_types['left'] = Size_Prop_Type::make();
+		$this->internal_types['dimension'] = Size_Prop_Type::make();
 	}
 
 	public static function get_key(): string {
@@ -19,20 +16,14 @@ class Linked_Dimensions_Prop_Type extends Transformable_Prop_Type {
 	}
 
 	public function validate_value( $value ): void {
-		if ( isset( $value['top'] ) ) {
-			$this->internal_types['top']->validate( $value['top'] );
-		}
+		$dimensions = [ 'top', 'right', 'bottom', 'left' ];
 
-		if ( isset( $value['right'] ) ) {
-			$this->internal_types['right']->validate( $value['right'] );
-		}
+		foreach ( $dimensions as $dimension ) {
+			if ( ! isset( $value[ $dimension ] ) ) {
+				continue;
+			}
 
-		if ( isset( $value['bottom'] ) ) {
-			$this->internal_types['bottom']->validate( $value['bottom'] );
-		}
-
-		if ( isset( $value['left'] ) ) {
-			$this->internal_types['left']->validate( $value['left'] );
+			$this->internal_types['dimension']->validate_with_additional( $value[ $dimension ] );
 		}
 
 		if ( ! is_array( $value ) ) {

@@ -35,16 +35,20 @@ class Style_Schema {
 
 	private static function get_typography_props() {
 		return [
-			'font-weight' => Number_Prop_Type::make()->enum([
-				100,
-				200,
-				300,
-				400,
-				500,
-				600,
-				700,
-				800,
-				900,
+			'font-weight' => String_Prop_Type::make()->enum([
+				'100',
+				'200',
+				'300',
+				'400',
+				'500',
+				'600',
+				'700',
+				'800',
+				'900',
+				'normal',
+				'bold',
+				'bolder',
+				'lighter',
 			]),
 			'font-size' => Size_Prop_Type::make(),
 			'color' => String_Prop_Type::make(),
