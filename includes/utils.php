@@ -903,8 +903,7 @@ class Utils {
 			&& ! current_user_can( 'edit_post', $post->ID );
 
 		$password_required = post_password_required( $post->ID )
-			&& ! current_user_can( 'edit_post', $post->ID )
-			&& ! isset( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] );
+			&& ! current_user_can( 'edit_post', $post->ID );
 
 		return $is_private || $not_allowed || $password_required;
 	}
