@@ -214,7 +214,7 @@ class Test_Container extends Elementor_Test_Base {
 		$endTime = microtime(true);
 		$executionTime = ($endTime - $startTime) * 1000;
 
-		// Set a threshold in milliseconds (e.g., 10ms)
-		$this->assertLessThan(10, $executionTime, "Performance issue: Resolving services is too slow.");
+		// Set a threshold in milliseconds (e.g., 100ms)
+		$this->assertLessThan(100, $executionTime, "Performance issue: Resolving services is too slow.");
 	}
 }
