@@ -21,7 +21,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 		parent::setUp();
 
-		$this->set_user_preferences( Checklist_Module::VISIBILITY_SWITCH_ID, $this->is_preference_switch_on() ? 'yes' : '' );
+		$this->set_user_preferences( Checklist_Module::VISIBILITY_SWITCH_ID, $this->checklist_module->is_preference_switch_on() ? 'yes' : '' );
 	}
 
 	public function tearDown(): void {
