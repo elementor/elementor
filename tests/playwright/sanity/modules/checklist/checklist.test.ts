@@ -12,13 +12,8 @@ test.describe( 'Launchpad checklist tests', () => {
 	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
-		await wpAdmin.setExperiments( {
-			editor_v2: true,
-			'launchpad-checklist': true,
-		} );
 		await checklistHelper.resetStepsInDb( request, { editor_visit_count: 0 } );
 
 		newTestUser = await apiRequests.createNewUser( request, newUser );
@@ -26,14 +21,11 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests, request }, testInfo ) => {
-		const page = await browser.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	test.afterAll( async ( { browser, apiRequests, request } ) => {
+		const page = await browser.newPage();
 
 		await apiRequests.deleteUser( request, newTestUser.id );
 		await apiRequests.cleanUpTestPages( request, false );
-
-		await wpAdmin.resetExperiments();
 
 		await page.close();
 	} );
@@ -158,6 +150,19 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await wpAdmin.setExperiments( {
 			'launchpad-checklist': true,
+			editor_v2: false,
+		} );
+		await wpAdmin.openNewPage();
+
+		await test.step( 'Assert switch is hidden in user preferences when top bar experiment is off', async () => {
+			await editor.openUserPreferencesPanel();
+			await editor.openSection( 'preferences' );
+
+			await expect( page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) ).toBeHidden();
+		} );
+
+		await wpAdmin.setExperiments( {
+			editor_v2: true,
 		} );
 		await wpAdmin.openNewPage();
 
@@ -358,6 +363,35 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await checklistHelper.toggleExpandChecklist( 'editor', true );
 	} );
+
+	test( 'Checklist reactivity in the editor', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.openNewPage();
+
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+
+		await checklistHelper.toggleChecklistItem( 'add_logo', 'editor', true );
+		await expect( page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="false"]' ) ) ).toBeVisible();
+		await checklistHelper.clickStepCta( 'add_logo', 'editor' );
+
+		await page.locator( '.elementor-control-site_logo' ).waitFor();
+		await page.locator( '.elementor-control-site_logo .eicon-plus-circle' ).click();
+		await page.getByRole( 'tab', { name: 'Media Library' } ).click();
+		await page.locator( '.thumbnail' ).first().waitFor();
+		await page.locator( '.thumbnail' ).first().click();
+		await page.locator( '.button.media-button' ).click();
+		await page.locator( '.elementor-panel button', { hasText: 'Save Changes' } ).click();
+
+		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="true"]' ) ).waitFor();
+
+		await page.locator( '.elementor-control-site_logo .elementor-control-media__content' ).hover();
+		await page.locator( '.elementor-control-site_logo .elementor-control-media__content .elementor-control-media__remove' ).click();
+		await page.locator( '.elementor-panel button', { hasText: 'Save Changes' } ).click();
+
+		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="false"]' ) ).waitFor();
+	} );
+
 	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
 		await test.step( 'Checklist visible to admin role by default', async () => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
