@@ -146,10 +146,6 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 			]
 		);
 
-		$this->set_wordpress_adapter_mock( [ 'current_user_can' ], [
-			'current_user_can' => true,
-		] );
-
 		$this->assertEquals( $ret, [ 'content' => [] ] );
 	}
 
