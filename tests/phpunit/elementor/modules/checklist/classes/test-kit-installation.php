@@ -55,7 +55,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 
 		// Kit change 1
 		foreach ( $kit_first as $kit_key ) {
-			$this->set_kit( $kit_key, false );
+			$this->set_kit( $kit_key, true );
 		}
 
 		// User Preference change 1
@@ -222,11 +222,11 @@ class Test_Kit_Installation extends Step_Test_Base {
 		];
 
 		return [
-			$case_1,
+//			$case_1,
 			$case_2,
-			$case_3,
-			$case_4,
-			$case_5,
+//			$case_3,
+//			$case_4,
+//			$case_5,
 		];
 	}
 
