@@ -5,7 +5,7 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Isolation\Wordpress_Adapter;
-use ElementorPro\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 
