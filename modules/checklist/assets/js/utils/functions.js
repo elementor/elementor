@@ -41,7 +41,7 @@ export function getAndUpdateStep( id, step, key, value ) {
 export function addMixpanelTrackingChecklistSteps( name, action, element = 'button' ) {
 	const documentMetaData = getDocumentMetaDataMixpanel();
 
-	name = name.replace(/_/g, '');
+	name = name.replace( /_/g, '' );
 
 	const eventName = `checklist_steps_${ action }_${ name }`;
 
