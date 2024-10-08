@@ -30,8 +30,8 @@ class Test_Kit_Installation extends Step_Test_Base {
 			'get_user_preferences' => [ $this, 'get_user_preferences' ],
 		], true );
 
-		$this->mock_editor_visit();
 		$this->set_checklist_module();
+		$this->mock_editor_visit();
 
 		var_dump( $this->user_preferences_mock );
 		$this->assertTrue( $this->checklist_module->is_preference_switch_on() );
