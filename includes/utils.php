@@ -894,4 +894,17 @@ class Utils {
 
 		throw new \Exception( $message );
 	}
+
+	public static function has_invalid_post_permissions( $post ): bool {
+		$is_private = 'private' === $post->post_status
+			&& ! current_user_can( 'read_private_posts', $post->ID );
+
+		$not_allowed = 'publish' !== $post->post_status
+			&& ! current_user_can( 'edit_post', $post->ID );
+
+		$password_required = post_password_required( $post->ID )
+			&& ! current_user_can( 'edit_post', $post->ID );
+
+		return $is_private || $not_allowed || $password_required;
+	}
 }
