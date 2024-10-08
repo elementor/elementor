@@ -51,22 +51,22 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 	 */
 	protected $counter_adapter;
 
+
 	protected Checklist_Module_Interface $checklist_module;
+
+	private $user_preferences_mock = [];
 
 	private $checklist_progress_backup;
 	private $installation_history_backup;
 
-	private $user_meta_mock = [];
-
 	public function setup(): void {
-		$this->setup_data()
-			->set_checklist_module();
-
 		parent::setUp();
-	}
-	public function teardown(): void {
-		$this->reset_data();
 
+		$this->set_checklist_module()
+			->set_user_preferences( Checklist_Module::VISIBILITY_SWITCH_ID, $this->checklist_module->is_preference_switch_on() );
+	}
+
+	public function teardown(): void {
 		parent::teardown();
 	}
 
@@ -124,6 +124,32 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		return $this;
 	}
 
+	public function set_user_preferences( $key, $value ) {
+		$this->user_preferences_mock[ $key ] = $value;
+	}
+
+	public function get_user_preferences( $key ) {
+		return $this->user_preferences_mock[ $key ] ?? null;
+	}
+
+	protected function set_checklist_module(
+		?Wordpress_Adapter_Interface $wordpress_adapter = null,
+		?Kit_Adapter_Interface $kit_adapter = null,
+		?Elementor_Counter_Adapter_Interface $counter_adapter = null
+	) : Step_Test_Base {
+		$wordpress_adapter = $wordpress_adapter ?? $this->wordpress_adapter;
+		$kit_adapter = $kit_adapter ?? $this->kit_adapter;
+		$counter_adapter = $counter_adapter ?? $this->counter_adapter;
+
+		$this->checklist_module = new Checklist_Module( $wordpress_adapter, $kit_adapter, $counter_adapter );
+
+		return $this;
+	}
+
+	protected function mock_editor_visit() {
+		do_action( 'elementor/editor/init' );
+	}
+
 	/**
 	 * Creates a mock object of any of the adapters' class with specified methods and return values.
 	 *
@@ -156,56 +182,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 		return $adapter_mock;
 	}
 
-	protected function set_checklist_module(
-		?Wordpress_Adapter_Interface $wordpress_adapter = null,
-		?Kit_Adapter_Interface $kit_adapter = null,
-		?Elementor_Counter_Adapter_Interface $counter_adapter = null
-	) : Step_Test_Base {
-		$wordpress_adapter = $wordpress_adapter ?? $this->wordpress_adapter;
-		$kit_adapter = $kit_adapter ?? $this->kit_adapter;
-		$counter_adapter = $counter_adapter ?? $this->counter_adapter;
-
-		$this->checklist_module = new Checklist_Module( $wordpress_adapter, $kit_adapter, $counter_adapter );
-
-		return $this;
-	}
-
-	protected function set_user_preference_switch( bool $state ) {
-		$this->user_meta_mock[ Checklist_Module::VISIBILITY_SWITCH_ID ] = $state ? 'yes' : '';
-
-		return $this;
-	}
-
-	protected function get_user_preference_state() {
-		return 'yes' === $this->user_meta_mock[ Checklist_Module::VISIBILITY_SWITCH_ID ];
-	}
-
-	protected function toggle_popup( bool $state ) {
-		$this->checklist_module->update_user_progress( [ Checklist_Module::LAST_OPENED_TIMESTAMP => ! $state ] );
-
-		return $this;
-	}
-
-	protected function set_kit( $kit_key, $print ) : Step_Test_Base {
-		if ( ! in_array( $kit_key, [ self::CUSTOM_KIT, self::DEFAULT_KIT ] ) ) {
-			return $this;
-		}
-
-		$this->set_kit_adapter_mock( [ 'is_active_kit_default' => $kit_key === self::DEFAULT_KIT ] );
-
-		if ( $this->checklist_module->should_switch_preferences_off( $print ) ) {
-			$this->set_user_preference_switch( false );
-		}
-
-		return $this;
-	}
-
-	protected function mock_editor_visit() {
-		do_action( 'elementor/editor/init' );
-	}
-
 	private function setup_data() {
-		$this->user_meta_mock = [ Checklist_Module::VISIBILITY_SWITCH_ID => 'yes' ];
 		$this->checklist_progress_backup = get_option( Checklist_Module::DB_OPTION_KEY ) || '';
 		$this->installation_history_backup = get_option( 'elementor_install_history' );
 
@@ -221,7 +198,6 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 		$this->installation_history_backup = null;
 		$this->checklist_progress_backup = null;
-		$this->user_meta_mock = null;
 
 		return $this;
 	}
