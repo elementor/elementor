@@ -97,6 +97,7 @@ const eventsConfig = {
 					create_pages: 'checklist_step_title_create3pages',
 					set_fonts_and_colors: 'checklist_step_title_createglobal',
 					setup_header: 'checklist_step_title_createheader',
+					setup_header_pro: 'checklist_step_title_createheader',
 				},
 				action: {
 					add_logo: 'checklist_step_action_addlogo',
@@ -104,6 +105,7 @@ const eventsConfig = {
 					create_pages: 'checklist_step_action_create3pages',
 					set_fonts_and_colors: 'checklist_step_action_createglobal',
 					setup_header: 'checklist_step_action_createheader',
+					setup_header_pro: 'checklist_step_action_createheader',
 					well_done: 'checklist_step_action_welldone',
 				},
 				done: {
@@ -112,6 +114,7 @@ const eventsConfig = {
 					create_pages: 'checklist_step_done_create3pages',
 					set_fonts_and_colors: 'checklist_step_done_createglobal',
 					setup_header: 'checklist_step_done_createheader',
+					setup_header_pro: 'checklist_step_done_createheader',
 				},
 				undone: {
 					add_logo: 'checklist_step_undone_addlogo',
@@ -119,6 +122,7 @@ const eventsConfig = {
 					create_pages: 'checklist_step_undone_create3pages',
 					set_fonts_and_colors: 'checklist_step_undone_createglobal',
 					setup_header: 'checklist_step_undone_createheader',
+					setup_header_pro: 'checklist_step_undone_createheader',
 				},
 				upgrade: {
 					setup_header: 'checklist_step_pro_action_createheader',
