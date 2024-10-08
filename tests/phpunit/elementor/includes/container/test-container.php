@@ -180,4 +180,41 @@ class Test_Container extends Elementor_Test_Base {
 
 		$this->assertEquals( $json_data, $homeScreenData );
 	}
+
+	public function test_Di_performance()
+	{
+		$startTime = microtime(true);
+
+
+		// Define and resolve a service
+		$this->container->set('ServiceA', \DI\create(Wordpress_Adapter::class));
+		$serviceA = $this->container->get('ServiceA');
+
+		// End measuring time
+		$endTime = microtime(true);
+
+		// Calculate the total time taken in milliseconds
+		$executionTime = ($endTime - $startTime) * 1000;
+
+		// Set a threshold in milliseconds (e.g., 10ms)
+		$this->assertLessThan(10, $executionTime, "Performance issue: DI container took too long to resolve dependencies.");
+	}
+
+	public function test_multiple_resolutions_performance()
+	{
+		// Test resolving multiple services to benchmark performance with a bigger scale
+		$startTime = microtime(true);
+
+		// Set up multiple services
+		for ($i = 0; $i < 10000; $i++) {
+			$this->container->set("Service$i", \DI\create(Wordpress_Adapter::class));
+			$this->container->get("Service$i");
+		}
+
+		$endTime = microtime(true);
+		$executionTime = ($endTime - $startTime) * 1000;
+
+		// Set a threshold in milliseconds (e.g., 10ms)
+		$this->assertLessThan(10, $executionTime, "Performance issue: Resolving services is too slow.");
+	}
 }
