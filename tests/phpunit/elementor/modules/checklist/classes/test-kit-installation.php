@@ -11,10 +11,6 @@ class Test_Kit_Installation extends Step_Test_Base {
 	const SHOULD_SWITCH_PREFERENCE_OFF = 'preference_switch_off';
 	const SHOULD_AUTO_OPEN_POPUP = 'popup_auto_open';
 
-	public function setUp(): void {
-		parent::setUp();
-	}
-
 	public function tearDown(): void {
 		parent::tearDown();
 	}

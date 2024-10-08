@@ -163,6 +163,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 			'steps' => [],
 		] );
 
+		var_dump( $this->checklist_module );
 		return $this;
 	}
 
