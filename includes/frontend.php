@@ -480,8 +480,8 @@ class Frontend extends App {
 			true
 		);
 
-		$this->wordpress_adapter->wp_register_script_module(
-			'handlers-base',
+		wp_register_script(
+			'script-module-handlers-base',
 			ELEMENTOR_URL . 'assets/dev/js/frontend/handlers/base.js',
 			[],
 			ELEMENTOR_VERSION

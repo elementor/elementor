@@ -34,7 +34,7 @@ class Module extends \Elementor\Core\Base\Module {
 			], ELEMENTOR_VERSION, true );
 		} );
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_script_modules' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
 	}
 
 	/**
@@ -62,25 +62,25 @@ class Module extends \Elementor\Core\Base\Module {
 	 *
 	 * @return void
 	 */
-	public function register_script_modules() {
-		$this->wordpress_adapter->wp_register_script_module(
-			'flex-horizontal-scroll',
+	public function register_scripts() {
+		wp_register_script(
+			'script-module-flex-horizontal-scroll',
 			ELEMENTOR_URL . 'assets/dev/js/frontend/utils/flex-horizontal-scroll.js',
 			[],
 			ELEMENTOR_VERSION
 		);
 
-		$this->wordpress_adapter->wp_register_script_module(
-			'nested-title-keyboard-handler',
+		wp_register_script(
+			'script-module-nested-title-keyboard-handler',
 			ELEMENTOR_URL . 'assets/dev/js/frontend/handlers/accessibility/nested-title-keyboard-handler.js',
-			[ 'handlers-base' ],
+			[ 'script-module-handlers-base' ],
 			ELEMENTOR_VERSION
 		);
 
-		$this->wordpress_adapter->wp_register_script_module(
-			'widget-nested-tabs',
+		wp_register_script(
+			'script-module-widget-nested-tabs',
 			ELEMENTOR_URL . 'modules/nested-tabs/assets/js/frontend/handlers/nested-tabs.js',
-			[ 'handlers-base' ],
+			[ 'script-module-handlers-base' ],
 			ELEMENTOR_VERSION
 		);
 	}

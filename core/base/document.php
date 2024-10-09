@@ -19,8 +19,6 @@ use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
-use Elementor\Core\Isolation\Wordpress_Adapter;
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -88,8 +86,6 @@ abstract class Document extends Controls_Stack {
 	 * @var Elements_Iteration_Action[]
 	 */
 	private $elements_iteration_actions = [];
-
-	private Wordpress_Adapter_Interface $wordpress_adapter;
 
 	/**
 	 * Document post data.
@@ -1580,7 +1576,6 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param array $data
-	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
 	 *
 	 * @throws \Exception If the post does not exist.
 	 * @return void
@@ -1611,8 +1606,6 @@ abstract class Document extends Controls_Stack {
 		}
 
 		parent::__construct( $data );
-
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 	}
 
 	/*
@@ -1817,11 +1810,11 @@ abstract class Document extends Controls_Stack {
 			$scripts_to_queue = [];
 			$styles_to_queue = [];
 
-			global $wp_scripts, $wp_script_modules, $wp_styles;
+			global $wp_scripts, $wp_styles;
 
-			$printed_script_modules = $this->cache_script_module( $wp_script_modules );
+//			$printed_script_modules = $this->cache_script_module( $wp_script_modules );
 
-			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles && $wp_script_modules instanceof \WP_Script_Modules;
+			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles;
 
 			if ( $should_store_scripts ) {
 				$scripts_ignored = $wp_scripts->queue;
@@ -1840,7 +1833,7 @@ abstract class Document extends Controls_Stack {
 			$cached_data = [
 				'content' => ob_get_clean(),
 				'scripts' => $scripts_to_queue,
-				'script_modules' => $printed_script_modules,
+//				'script_modules' => $printed_script_modules,
 				'styles' => $styles_to_queue,
 			];
 
@@ -1855,10 +1848,10 @@ abstract class Document extends Controls_Stack {
 					wp_enqueue_script( $script_handle );
 				}
 			}
-
-			if ( ! empty( $cached_data['script_modules'] ) ) {
-				$this->print_script_module( $cached_data['script_modules'] );
-			}
+//
+//			if ( ! empty( $cached_data['script_modules'] ) ) {
+//				$this->print_script_module( $cached_data['script_modules'] );
+//			}
 
 			if ( ! empty( $cached_data['styles'] ) ) {
 				foreach ( $cached_data['styles'] as $style_handle ) {
@@ -1928,29 +1921,29 @@ abstract class Document extends Controls_Stack {
 		return $cache['value'];
 	}
 
-	private function cache_script_module( $wp_script_modules ): string {
-		ob_start();
-		$wp_script_modules->print_enqueued_script_modules();
-		$printed_script_module = ob_get_clean();
-
-		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
-			custom_wp_script_modules()->print_enqueued_script_modules();
-		}
-
-		return $printed_script_module;
-	}
-
-	private function print_script_module( $script_module ) {
-		$allowed_tags = [
-			'script' => [
-				'type' => true,
-				'src' => true,
-				'id' => true,
-			],
-		];
-
-		echo wp_kses( $script_module, $allowed_tags );
-	}
+//	private function cache_script_module( $wp_script_modules ): string {
+//		ob_start();
+//		$wp_script_modules->print_enqueued_script_modules();
+//		$printed_script_module = ob_get_clean();
+//
+//		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+//			custom_wp_script_modules()->print_enqueued_script_modules();
+//		}
+//
+//		return $printed_script_module;
+//	}
+//
+//	private function print_script_module( $script_module ) {
+//		$allowed_tags = [
+//			'script' => [
+//				'type' => true,
+//				'src' => true,
+//				'id' => true,
+//			],
+//		];
+//
+//		echo wp_kses( $script_module, $allowed_tags );
+//	}
 
 	protected function delete_cache() {
 		$this->delete_meta( static::CACHE_META_KEY );
