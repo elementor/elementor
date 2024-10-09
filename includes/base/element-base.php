@@ -129,7 +129,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.3.0
 	 * @access public
 	 */
-	final public function enqueue_scripts() {
+	public function enqueue_scripts(): void {
 		$deprecated_scripts = [
 			//Insert here when you have a deprecated script
 		];
@@ -139,25 +139,22 @@ abstract class Element_Base extends Controls_Stack {
 				Utils::handle_deprecation( $script, $deprecated_scripts[ $script ]['version'], $deprecated_scripts[ $script ]['replacement'] );
 			}
 
-			var_dump( $script );
-
 			wp_enqueue_script( $script );
 
 			$this->maybe_enqueue_as_script_module( $script );
 		}
 	}
 
-	private function maybe_enqueue_as_script_module( $script ) {
+	public function maybe_enqueue_as_script_module( $script ): void {
 		if ( 0 !== strpos( $script, 'script-module-' ) ) {
 			return;
 		}
 
-		add_filter( 'wp_script_attributes', 'set_script_as_module', 10, 1 );
+		add_filter( 'script_loader_tag', [ $this, 'set_script_as_module' ], 10, 3 );
 	}
 
-	public function set_script_as_module( $attributes ) {
-		$attributes['type'] = 'module';
-		return $attributes;
+	public function set_script_as_module( $tag ): string {
+		return str_replace( '<script', '<script type="module"', $tag );
 	}
 
 	/**
