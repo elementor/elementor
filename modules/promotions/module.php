@@ -79,4 +79,34 @@ class Module extends Base_Module {
 	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
 	}
+
+	public function enqueue_react_promotion_scripts(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
+		// Study how this file is loaded.
+
+		wp_enqueue_script(
+			'e-promotion',
+			ELEMENTOR_ASSETS_URL . 'js/e-promotion' . $min_suffix . '.js',
+			[
+				'react',
+				'react-dom',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		// Do we need this?
+		//		wp_set_script_translations( 'e-promotion', 'elementor' );
+
+//		wp_localize_script(
+//			'e-home-screen',
+//			'elementorHomeScreenData',
+//			$this->get_app_js_config()
+//		);
+	}
 }
