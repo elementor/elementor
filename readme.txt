@@ -315,6 +315,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.24.6 - 2024-10-09 =
+
+* Security Fix: Improved code security enforcement in Notices
+* Security Fix: Improved code security enforcement in Media control
+
 = 3.24.5 - 2024-10-01 =
 
 * Fix: Responsive styles not loading properly for Apple WebKit
