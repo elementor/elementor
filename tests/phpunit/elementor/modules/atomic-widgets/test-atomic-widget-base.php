@@ -664,9 +664,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'props' => [
 								'color' => [
 									'$$type' => 'color',
-									'value' => [
-										'color' => 'red',
-									],
+									'value' => 'red',
 								],
 								'font-size' => [
 									'$$type' => 'size',
@@ -724,9 +722,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'props' => [
 							'color' => [
 								'$$type' => 'color',
-								'value' => [
-									'color' => 'red',
-								],
+								'value' => 'red',
 							],
 							'font-size' => [
 								'$$type' => 'size',
