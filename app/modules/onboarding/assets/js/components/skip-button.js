@@ -5,7 +5,7 @@ import { useNavigate } from '@reach/router';
 import Button from './button';
 
 export default function SkipButton( props ) {
-	const { button, className, forceSkip } = props,
+	const { button, className } = props,
 		{ state, updateState } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
 		skipStep = () => {
@@ -21,11 +21,9 @@ export default function SkipButton( props ) {
 		};
 
 	const handleAction = () => {
-		if ( forceSkip ) {
+		if ( button.action ) {
 			button.action();
 			skipStep();
-		} else if ( button.action ) {
-			button.action();
 		} else {
 			skipStep();
 		}
@@ -56,5 +54,4 @@ export default function SkipButton( props ) {
 SkipButton.propTypes = {
 	button: PropTypes.object.isRequired,
 	className: PropTypes.string,
-	forceSkip: PropTypes.bool,
 };
