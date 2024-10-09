@@ -44,7 +44,6 @@ export default function ChooseFeatures() {
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
 			text: __( 'Skip', 'elementor' ),
-			forceSkip: true,
 			action: () => {
 				setAjax( {
 					data: {
