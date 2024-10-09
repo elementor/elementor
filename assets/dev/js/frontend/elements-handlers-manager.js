@@ -2,6 +2,7 @@ import globalHandler from './handlers/global';
 import backgroundHandlers from './handlers/background';
 import containerHandlers from './handlers/container/container';
 import columnHandlers from './handlers/column';
+import accessKeyHandler from './handlers/accessibility/accesskey';
 
 // Section handlers.
 import HandlesPosition from './handlers/section/handles-position';
@@ -42,6 +43,8 @@ module.exports = function( $ ) {
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
 	const addElementsHandlers = () => {
+		this.elementsHandlers.widget = accessKeyHandler;
+
 		this.elementsHandlers.section = [
 			StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
 			...backgroundHandlers,
