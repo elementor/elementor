@@ -17,13 +17,12 @@ export default class PromotionBehavior extends Marionette.Behavior {
 			'click @ui.mouseEffectsButton': 'onClickControlButtonMouseEffects',
 			'click @ui.stickyEffectsButton': 'onClickControlButtonStickyEffects',
 			'click @ui.animatedHeadlineButton': 'onClickControlButtonAnimatedHeadline',
-
 		};
 	}
 
 	onClickControlButtonDisplayConditions( event ) {
 		event.stopPropagation();
-		
+
 		const dialogOptions = {
 			title: __( 'Display Conditions', 'elementor' ),
 			content: __(
@@ -99,16 +98,13 @@ export default class PromotionBehavior extends Marionette.Behavior {
 
 	onClickControlButtonAnimatedHeadline( event ) {
 		event.stopPropagation();
-		console.log('clicking')
 		this.mount();
 	}
 
 	mount() {
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
 			isRTL = elementorCommon.config.isRTL,
-			rootElement = this.getRootElement();
-
-		window.parent.document.body.appendChild( rootElement );
+			rootElement = document.querySelector( '.e-promotion-react' );
 
 		ReactDOM.render( <App // eslint-disable-line react/no-deprecated
 			colorScheme={ colorScheme }
@@ -120,6 +116,5 @@ export default class PromotionBehavior extends Marionette.Behavior {
 	unmount( rootElement ) {
 		// eslint-disable-next-line react/no-deprecated
 		ReactDOM.unmountComponentAtNode( rootElement );
-		rootElement.remove();
 	}
 }
