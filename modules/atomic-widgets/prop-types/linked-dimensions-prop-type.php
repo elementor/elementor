@@ -16,6 +16,10 @@ class Linked_Dimensions_Prop_Type extends Transformable_Prop_Type {
 	}
 
 	public function validate_value( $value ): void {
+		if ( ! is_array( $value ) ) {
+			throw new \Exception( 'Value must be an array, ' . gettype( $value ) . ' given.' );
+		}
+
 		$dimensions = [ 'top', 'right', 'bottom', 'left' ];
 
 		foreach ( $dimensions as $dimension ) {
@@ -26,8 +30,5 @@ class Linked_Dimensions_Prop_Type extends Transformable_Prop_Type {
 			$this->internal_types['dimension']->validate_with_additional( $value[ $dimension ] );
 		}
 
-		if ( ! is_array( $value ) ) {
-			throw new \Exception( 'Value must be an array, ' . gettype( $value ) . ' given.' );
-		}
 	}
 }
