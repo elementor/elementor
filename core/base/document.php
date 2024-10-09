@@ -1842,9 +1842,11 @@ abstract class Document extends Controls_Stack {
 		} else {
 			if ( ! empty( $cached_data['scripts'] ) ) {
 				foreach ( $cached_data['scripts'] as $script_handle ) {
-					wp_enqueue_script( $script_handle );
+					$is_module = $this->maybe_enqueue_as_script_module( $script_handle );
 
-					$this->maybe_enqueue_as_script_module( $script_handle );
+					if ( ! $is_module ) {
+						wp_enqueue_script( $script_handle );
+					}
 				}
 			}
 
@@ -1860,26 +1862,41 @@ abstract class Document extends Controls_Stack {
 		}
 	}
 
-	public function maybe_enqueue_as_script_module( $script ): void {
-		if ( 0 !== strpos( $script, 'script-module-' ) ) {
-			return;
+	public function maybe_enqueue_as_script_module( $script_handle ): bool {
+		if ( 0 !== strpos( $script_handle, 'script-module-' ) ) {
+			return false;
 		}
 
-		var_dump( $script );
+		$src_path = $this->get_module_src_path( $script_handle );
 
-		add_filter( 'script_loader_tag', [ $this, 'set_script_as_module2' ], 10, 100 );
+		add_action( 'wp_footer', function() use ( $src_path, $script_handle ) {
+			echo '<script type="module" src="' . $src_path . '" id="' . $script_handle .'-js"></script>';
+		}, 20 );
+
+		return true;
 	}
 
-	public function set_script_as_module2( $tag ): string {
+	private function get_module_src_path( $handle ) {
+		global $wp_scripts;
 
-		var_dump( $tag );
-		if ( 0 !== strpos( $tag, 'script-module-' ) ) {
-			return '';
+		if ( isset( $wp_scripts->registered[ $handle ] ) ) {
+			return $wp_scripts->registered[ $handle ]->src;
 		}
 
+		return false; // Handle not found
+	}
 
-		var_dump( $tag );
+	public function set_script_as_module2( $tag, $handle, $source ): string {
+		var_dump( $handle );
+		var_dump( $source );
+		// Check if the script handle starts with 'script-module-'
+		if ( 0 !== strpos( $handle, 'script-module-' ) ) {
+			return $tag; // Return unmodified tag if the handle doesn't match
+		}
 
+		var_dump( $tag ); // For debugging
+
+		// Modify the script tag to include `type="module"`
 		return str_replace( '<script', '<script type="module"', $tag );
 	}
 
@@ -1938,30 +1955,6 @@ abstract class Document extends Controls_Stack {
 
 		return $cache['value'];
 	}
-
-//	private function cache_script_module( $wp_script_modules ): string {
-//		ob_start();
-//		$wp_script_modules->print_enqueued_script_modules();
-//		$printed_script_module = ob_get_clean();
-//
-//		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
-//			custom_wp_script_modules()->print_enqueued_script_modules();
-//		}
-//
-//		return $printed_script_module;
-//	}
-//
-//	private function print_script_module( $script_module ) {
-//		$allowed_tags = [
-//			'script' => [
-//				'type' => true,
-//				'src' => true,
-//				'id' => true,
-//			],
-//		];
-//
-//		echo wp_kses( $script_module, $allowed_tags );
-//	}
 
 	protected function delete_cache() {
 		$this->delete_meta( static::CACHE_META_KEY );
