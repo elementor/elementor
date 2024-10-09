@@ -24,6 +24,4 @@ interface Wordpress_Adapter_Interface {
 	public function add_query_arg( $args, $url );
 
 	public function has_custom_logo();
-
-	public function current_user_can( $capability, $args );
 }
