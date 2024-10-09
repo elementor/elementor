@@ -55,6 +55,13 @@ class Module extends Base_Module {
 				] ) );
 			}
 		} );
+
+		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
+			$hook_suffix = 'toplevel_page_elementor';
+			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_scripts' ] );
+		}, 10, 2 );
+
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}
 
 	private function handle_external_redirects() {
@@ -80,21 +87,20 @@ class Module extends Base_Module {
 		$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
 	}
 
-	public function enqueue_react_promotion_scripts(): void {
+	public function enqueue_scripts(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
-		// Study how this file is loaded.
-
 		wp_enqueue_script(
-			'e-promotion',
-			ELEMENTOR_ASSETS_URL . 'js/e-promotion' . $min_suffix . '.js',
+			'e-react-promotions',
+			ELEMENTOR_ASSETS_URL . 'js/e-react-promotions' . $min_suffix . '.js',
 			[
 				'react',
 				'react-dom',
+				'elementor-v2-ui',
 			],
 			ELEMENTOR_VERSION,
 			true

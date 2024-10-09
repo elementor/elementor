@@ -34,6 +34,8 @@ class Module extends BaseApp {
 			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_home_screen_scripts' ] );
 		}, 10, 2 );
 
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_home_screen_scripts' ] );
+
 		add_filter( 'elementor/document/urls/edit', [ $this, 'add_active_document_to_edit_link' ] );
 	}
 
