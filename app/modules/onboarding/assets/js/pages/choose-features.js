@@ -5,15 +5,23 @@ import Message from '../components/message';
 import { options, setSelectedFeatureList } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
+import { useNavigate } from '@reach/router';
 
 export default function ChooseFeatures() {
-	const { state } = useContext( OnboardingContext ),
+	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		{ setAjax } = useAjax(),
 		tiers = { advanced: __( 'Advanced', 'elementor' ), essential: __( 'Essential', 'elementor' ) },
 		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
 		[ tierName, setTierName ] = useState( tiers.essential ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
+		navigate = useNavigate(),
+		goToNextScreen = () => navigate( 'onboarding/' + nextStep ),
+		handleClick = ( action ) => {
+			const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, action );
+			updateState( stateToUpdate );
+			goToNextScreen();
+		},
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
 			href: elementorAppConfig.onboarding.urls.upgrade,
@@ -36,6 +44,8 @@ export default function ChooseFeatures() {
 						} ),
 					},
 				} );
+
+				handleClick( 'completed' );
 			},
 		};
 
@@ -53,6 +63,8 @@ export default function ChooseFeatures() {
 						} ),
 					},
 				} );
+
+				handleClick( 'skipped' );
 			},
 		};
 	}
