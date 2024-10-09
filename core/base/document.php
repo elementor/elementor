@@ -1812,8 +1812,6 @@ abstract class Document extends Controls_Stack {
 
 			global $wp_scripts, $wp_styles;
 
-//			$printed_script_modules = $this->cache_script_module( $wp_script_modules );
-
 			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles;
 
 			if ( $should_store_scripts ) {
@@ -1833,7 +1831,6 @@ abstract class Document extends Controls_Stack {
 			$cached_data = [
 				'content' => ob_get_clean(),
 				'scripts' => $scripts_to_queue,
-//				'script_modules' => $printed_script_modules,
 				'styles' => $styles_to_queue,
 			];
 
@@ -1846,12 +1843,10 @@ abstract class Document extends Controls_Stack {
 			if ( ! empty( $cached_data['scripts'] ) ) {
 				foreach ( $cached_data['scripts'] as $script_handle ) {
 					wp_enqueue_script( $script_handle );
+
+					$this->maybe_enqueue_as_script_module( $script_handle );
 				}
 			}
-//
-//			if ( ! empty( $cached_data['script_modules'] ) ) {
-//				$this->print_script_module( $cached_data['script_modules'] );
-//			}
 
 			if ( ! empty( $cached_data['styles'] ) ) {
 				foreach ( $cached_data['styles'] as $style_handle ) {
@@ -1863,6 +1858,29 @@ abstract class Document extends Controls_Stack {
 		if ( ! empty( $cached_data['content'] ) ) {
 			echo do_shortcode( $cached_data['content'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
+	}
+
+	public function maybe_enqueue_as_script_module( $script ): void {
+		if ( 0 !== strpos( $script, 'script-module-' ) ) {
+			return;
+		}
+
+		var_dump( $script );
+
+		add_filter( 'script_loader_tag', [ $this, 'set_script_as_module2' ], 10, 100 );
+	}
+
+	public function set_script_as_module2( $tag ): string {
+
+		var_dump( $tag );
+		if ( 0 !== strpos( $tag, 'script-module-' ) ) {
+			return '';
+		}
+
+
+		var_dump( $tag );
+
+		return str_replace( '<script', '<script type="module"', $tag );
 	}
 
 	protected function do_print_elements( $elements_data ) {

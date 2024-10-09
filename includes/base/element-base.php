@@ -129,7 +129,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.3.0
 	 * @access public
 	 */
-	public function enqueue_scripts(): void {
+	final public function enqueue_scripts(): void {
 		$deprecated_scripts = [
 			//Insert here when you have a deprecated script
 		];
@@ -145,7 +145,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 	}
 
-	public function maybe_enqueue_as_script_module( $script ): void {
+	private function maybe_enqueue_as_script_module( $script ): void {
 		if ( 0 !== strpos( $script, 'script-module-' ) ) {
 			return;
 		}
@@ -154,6 +154,10 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	public function set_script_as_module( $tag ): string {
+		if ( 0 !== strpos( $tag, 'script-module-' ) ) {
+			return '';
+		}
+
 		return str_replace( '<script', '<script type="module"', $tag );
 	}
 
