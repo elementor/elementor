@@ -453,4 +453,7 @@ export default class NestedTabs extends window.BaseHandler {
 	}
 }
 
+window.elementorModules = {};
+window.elementorModules.frontend = {};
+window.elementorModules.frontend.handlers = {};
 window.elementorModules.frontend.handlers.NestedTabs = NestedTabs;
