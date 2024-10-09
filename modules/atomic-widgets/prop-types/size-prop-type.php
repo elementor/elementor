@@ -19,7 +19,7 @@ class Size_Prop_Type extends Transformable_Prop_Type {
 	}
 
 	public function units( array $units ): self {
-		$this->internal_types['unit'] = $this->internal_types['unit']->enum( $units );
+		$this->internal_types['unit']->enum( $units );
 
 		return $this;
 	}

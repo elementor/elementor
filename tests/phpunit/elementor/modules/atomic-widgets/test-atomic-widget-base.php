@@ -896,7 +896,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: id' );
 
 		// Act.
-		$widget->get_data_for_save();
+		$data = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame($data['styles']['1234'], []);
 	}
 
 	public function test_get_data_for_save__throws_on_styles_linked_dimensions_validation_error() {

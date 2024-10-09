@@ -41,6 +41,7 @@ class Styles_Validator {
 		foreach ( $styles as $style_id => $style ) {
 			if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
 				$this->errors_bag[] = 'id';
+				$styles[ $style_id ] = [];
 				continue;
 			}
 

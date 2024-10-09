@@ -52,7 +52,7 @@ class Props_Validator {
 			$validated[ $key ] = $value;
 		}
 
-		$is_valid = empty( $errors );
+		$is_valid = empty( $this->errors_bag );
 
 		return [
 			$is_valid,
