@@ -11,8 +11,6 @@ use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\FloatingButtons\Module;
-use Elementor\Core\Isolation\Wordpress_Adapter;
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -160,28 +158,22 @@ class Frontend extends App {
 	 */
 	private $e_swiper_version;
 
-	private Wordpress_Adapter_Interface $wordpress_adapter;
-
 	/**
 	 * Front End constructor.
 	 *
 	 * Initializing Elementor front end. Make sure we are not in admin, not and
 	 * redirect from old URL structure of Elementor editor.
 	 *
-	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
-	 *
 	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return void
 	 */
-	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
+	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests.
 		if ( is_admin() && ! wp_doing_ajax() ) {
 			return;
 		}
-
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 
 		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );

@@ -1,8 +1,6 @@
 <?php
 namespace Elementor\Core\Isolation;
 
-use Elementor;
-
 class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
 	public function get_plugins(): array {
