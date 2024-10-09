@@ -1,3 +1,4 @@
+import App from './e-promotion/app/app';
 export default class PromotionBehavior extends Marionette.Behavior {
 	ui() {
 		return {
@@ -5,6 +6,7 @@ export default class PromotionBehavior extends Marionette.Behavior {
 			scrollingEffectsButton: '.e-control-scrolling-effects-promotion',
 			mouseEffectsButton: '.e-control-mouse-effects-promotion',
 			stickyEffectsButton: '.e-control-sticky-effects-promotion',
+			animatedHeadlineButton: '.e-control-header-promotion-promotion',
 		};
 	}
 
@@ -14,12 +16,14 @@ export default class PromotionBehavior extends Marionette.Behavior {
 			'click @ui.scrollingEffectsButton': 'onClickControlButtonScrollingEffects',
 			'click @ui.mouseEffectsButton': 'onClickControlButtonMouseEffects',
 			'click @ui.stickyEffectsButton': 'onClickControlButtonStickyEffects',
+			'click @ui.animatedHeadlineButton': 'onClickControlButtonAnimatedHeadline',
+
 		};
 	}
 
 	onClickControlButtonDisplayConditions( event ) {
 		event.stopPropagation();
-
+		
 		const dialogOptions = {
 			title: __( 'Display Conditions', 'elementor' ),
 			content: __(
@@ -91,5 +95,31 @@ export default class PromotionBehavior extends Marionette.Behavior {
 		};
 
 		elementor.promotion.showDialog( dialogOptions );
+	}
+
+	onClickControlButtonAnimatedHeadline( event ) {
+		event.stopPropagation();
+		console.log('clicking')
+		this.mount();
+	}
+
+	mount() {
+		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
+			isRTL = elementorCommon.config.isRTL,
+			rootElement = this.getRootElement();
+
+		window.parent.document.body.appendChild( rootElement );
+
+		ReactDOM.render( <App // eslint-disable-line react/no-deprecated
+			colorScheme={ colorScheme }
+			isRTL={ isRTL }
+			onClose={ () => this.unmount( rootElement ) }
+		/>, rootElement );
+	}
+
+	unmount( rootElement ) {
+		// eslint-disable-next-line react/no-deprecated
+		ReactDOM.unmountComponentAtNode( rootElement );
+		rootElement.remove();
 	}
 }
