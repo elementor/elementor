@@ -16,11 +16,10 @@ export default function ChooseFeatures() {
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
 		navigate = useNavigate(),
-		goToNextScreen = () => navigate( 'onboarding/' + nextStep ),
 		handleClick = ( action ) => {
 			const stateToUpdate = getStateObjectToUpdate( state, 'steps', pageId, action );
 			updateState( stateToUpdate );
-			goToNextScreen();
+			navigate( 'onboarding/' + nextStep );
 		},
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
