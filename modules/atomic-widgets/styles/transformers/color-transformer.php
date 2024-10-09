@@ -15,11 +15,11 @@ class Color_Transformer extends Style_Transformer_Base {
 	}
 
 	/**
-	 * @param array{size: int, unit: string} $value
+	 * @param string $value
 	 * @param callable $transform
 	 * @return string
 	 */
 	public function transform( $value, callable $transform ): string {
-		return $value['color'];
+		return $value;
 	}
 }
