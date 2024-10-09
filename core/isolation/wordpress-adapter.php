@@ -41,4 +41,8 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function add_option( $option_key, $option_value ) : void {
 		add_option( $option_key, $option_value );
 	}
+
+	public function current_user_can( $capability, $args ) : bool {
+		return current_user_can( $capability, $args );
+	}
 }
