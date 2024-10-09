@@ -5,7 +5,7 @@ import { useNavigate } from '@reach/router';
 import Button from './button';
 
 export default function SkipButton( props ) {
-	const { button, className } = props,
+	const { button, className, forceSkip } = props,
 		{ state, updateState } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
 		skipStep = () => {
@@ -18,8 +18,18 @@ export default function SkipButton( props ) {
 			if ( state.nextStep ) {
 				navigate( 'onboarding/' + state.nextStep );
 			}
-		},
-		action = button.action || skipStep;
+		};
+
+	const handleAction = () => {
+		if ( forceSkip ) {
+			button.action();
+			skipStep();
+		} else if ( button.action ) {
+			button.action();
+		} else {
+			skipStep();
+		}
+	};
 
 	// Make sure the 'action' prop doesn't get printed on the button markup which causes an error.
 	delete button.action;
@@ -36,7 +46,7 @@ export default function SkipButton( props ) {
 		} );
 
 		if ( ! button.href ) {
-			action();
+			handleAction();
 		}
 	};
 
@@ -46,4 +56,5 @@ export default function SkipButton( props ) {
 SkipButton.propTypes = {
 	button: PropTypes.object.isRequired,
 	className: PropTypes.string,
+	forceSkip: PropTypes.bool,
 };
