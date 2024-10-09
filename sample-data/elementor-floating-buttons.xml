@@ -37,123 +37,8 @@
 
 		<wp:author><wp:author_id>1</wp:author_id><wp:author_login><![CDATA[admin]]></wp:author_login><wp:author_email><![CDATA[wordpress@example.com]]></wp:author_email><wp:author_display_name><![CDATA[admin]]></wp:author_display_name><wp:author_first_name><![CDATA[]]></wp:author_first_name><wp:author_last_name><![CDATA[]]></wp:author_last_name></wp:author>
 
-				
-	<generator>https://wordpress.org/?v=6.6.2</generator>
 
-		<item>
-		<title><![CDATA[New Floating Button]]></title>
-		<link>http://localhost:8888/?post_type=e-floating-buttons&#038;p=39</link>
-		<pubDate>Tue, 08 Oct 2024 15:35:02 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-		<guid isPermaLink="false">http://localhost:8888/?post_type=e-floating-buttons&#038;p=39</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>39</wp:post_id>
-		<wp:post_date><![CDATA[2024-10-08 15:35:02]]></wp:post_date>
-		<wp:post_date_gmt><![CDATA[2024-10-08 15:35:02]]></wp:post_date_gmt>
-		<wp:post_modified><![CDATA[2024-10-08 15:35:02]]></wp:post_modified>
-		<wp:post_modified_gmt><![CDATA[2024-10-08 15:35:02]]></wp:post_modified_gmt>
-		<wp:comment_status><![CDATA[open]]></wp:comment_status>
-		<wp:ping_status><![CDATA[open]]></wp:ping_status>
-		<wp:post_name><![CDATA[__trashed]]></wp:post_name>
-		<wp:status><![CDATA[trash]]></wp:status>
-		<wp:post_parent>0</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type><![CDATA[e-floating-buttons]]></wp:post_type>
-		<wp:post_password><![CDATA[]]></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-										<category domain="elementor_library_type" nicename="floating-buttons"><![CDATA[floating-buttons]]></category>
-						<wp:postmeta>
-		<wp:meta_key><![CDATA[_elementor_floating_elements_type]]></wp:meta_key>
-		<wp:meta_value><![CDATA[floating-buttons]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_elementor_edit_mode]]></wp:meta_key>
-		<wp:meta_value><![CDATA[builder]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_elementor_template_type]]></wp:meta_key>
-		<wp:meta_value><![CDATA[floating-buttons]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_wp_page_template]]></wp:meta_key>
-		<wp:meta_value><![CDATA[elementor_canvas]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_elementor_version]]></wp:meta_key>
-		<wp:meta_value><![CDATA[3.25.0]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_wp_trash_meta_status]]></wp:meta_key>
-		<wp:meta_value><![CDATA[draft]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_wp_trash_meta_time]]></wp:meta_key>
-		<wp:meta_value><![CDATA[1728401702]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_wp_desired_post_slug]]></wp:meta_key>
-		<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-							</item>
-					<item>
-		<title><![CDATA[New Floating Button]]></title>
-		<link>http://localhost:8888/?post_type=e-floating-buttons&#038;p=46</link>
-		<pubDate>Tue, 08 Oct 2024 15:36:31 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-		<guid isPermaLink="false">http://localhost:8888/?post_type=e-floating-buttons&#038;p=46</guid>
-		<description></description>
-		<content:encoded><![CDATA[]]></content:encoded>
-		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
-		<wp:post_id>46</wp:post_id>
-		<wp:post_date><![CDATA[2024-10-08 15:36:31]]></wp:post_date>
-		<wp:post_date_gmt><![CDATA[2024-10-08 15:36:31]]></wp:post_date_gmt>
-		<wp:post_modified><![CDATA[2024-10-08 15:36:31]]></wp:post_modified>
-		<wp:post_modified_gmt><![CDATA[2024-10-08 15:36:31]]></wp:post_modified_gmt>
-		<wp:comment_status><![CDATA[open]]></wp:comment_status>
-		<wp:ping_status><![CDATA[open]]></wp:ping_status>
-		<wp:post_name><![CDATA[__trashed-2]]></wp:post_name>
-		<wp:status><![CDATA[trash]]></wp:status>
-		<wp:post_parent>0</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type><![CDATA[e-floating-buttons]]></wp:post_type>
-		<wp:post_password><![CDATA[]]></wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-										<category domain="elementor_library_type" nicename="floating-buttons"><![CDATA[floating-buttons]]></category>
-						<wp:postmeta>
-		<wp:meta_key><![CDATA[_elementor_floating_elements_type]]></wp:meta_key>
-		<wp:meta_value><![CDATA[floating-buttons]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_elementor_edit_mode]]></wp:meta_key>
-		<wp:meta_value><![CDATA[builder]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_elementor_template_type]]></wp:meta_key>
-		<wp:meta_value><![CDATA[floating-buttons]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_wp_page_template]]></wp:meta_key>
-		<wp:meta_value><![CDATA[elementor_canvas]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_elementor_version]]></wp:meta_key>
-		<wp:meta_value><![CDATA[3.25.0]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_wp_trash_meta_status]]></wp:meta_key>
-		<wp:meta_value><![CDATA[draft]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_wp_trash_meta_time]]></wp:meta_key>
-		<wp:meta_value><![CDATA[1728401791]]></wp:meta_value>
-		</wp:postmeta>
-							<wp:postmeta>
-		<wp:meta_key><![CDATA[_wp_desired_post_slug]]></wp:meta_key>
-		<wp:meta_value><![CDATA[]]></wp:meta_value>
-		</wp:postmeta>
-							</item>
+	<generator>https://wordpress.org/?v=6.6.2</generator>
 					<item>
 		<title><![CDATA[Floating Button]]></title>
 		<link>http://localhost:8888/e-floating-buttons/floating-button/</link>
@@ -163,7 +48,7 @@
 		<description></description>
 		<content:encoded><![CDATA[<button aria-controls="e-contact-buttons__content-wrapper" aria-label="Close Floating Element" type="button">
 			</button>
-				<img width="300" height="200" src="http://localhost:8888/wp-content/uploads/2024/10/law-showcase-2-cover-300x200.jpg" alt="" decoding="async" srcset="http://localhost:8888/wp-content/uploads/2024/10/law-showcase-2-cover-300x200.jpg 300w, http://localhost:8888/wp-content/uploads/2024/10/law-showcase-2-cover-1024x683.jpg 1024w, http://localhost:8888/wp-content/uploads/2024/10/law-showcase-2-cover-768x512.jpg 768w, http://localhost:8888/wp-content/uploads/2024/10/law-showcase-2-cover.jpg 1530w" sizes="(max-width: 300px) 100vw, 300px" />			
+				<img width="300" height="200" src="http://localhost:8888/wp-content/uploads/2024/10/law-showcase-2-cover-300x200.jpg" alt="" decoding="async" srcset="http://localhost:8888/wp-content/uploads/2024/10/law-showcase-2-cover-300x200.jpg 300w, http://localhost:8888/wp-content/uploads/2024/10/law-showcase-2-cover-1024x683.jpg 1024w, http://localhost:8888/wp-content/uploads/2024/10/law-showcase-2-cover-768x512.jpg 768w, http://localhost:8888/wp-content/uploads/2024/10/law-showcase-2-cover.jpg 1530w" sizes="(max-width: 300px) 100vw, 300px" />
 									<p>Dorian Hayes</p>
 													<p>Store Manager</p>
 											<p>Dorian</p>
@@ -290,4 +175,3 @@
 							</item>
 				</channel>
 </rss>
-	
