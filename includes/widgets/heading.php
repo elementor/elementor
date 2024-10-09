@@ -241,6 +241,8 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			]
 		);
 
+		Plugin::$instance->controls_manager->add_header_promotion_control( $this );
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(

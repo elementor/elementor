@@ -1325,6 +1325,21 @@ class Controls_Manager {
 		);
 	}
 
+	public function add_header_promotion_control( Controls_Stack $controls_stack ) {
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
+		$controls_stack->add_control(
+			'header_promotion_pro',
+			[
+				'type'      => self::RAW_HTML,
+				'separator' => 'before',
+				'raw'       => $this->react_promotion_control( esc_html__( 'Animated Widget heading', 'elementor' ), 'header-promotion' ),
+			]
+		);
+	}
+
 	private function promotion_switcher_control( $title, $id ): string {
 		return '<div class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
 			<div class="elementor-control-content">
@@ -1345,6 +1360,14 @@ class Controls_Manager {
 				</div>
 			</div>
 		</div>';
+	}
+
+	private function react_promotion_control( $title, $id ): string {
+		$control = $this->promotion_switcher_control( esc_html__( 'Animated Widget heading', 'elementor' ), 'header-promotion' );
+
+		$wrapper = '<div class="e-promotion-react" data-promotion="' . $id . '"></div>';
+
+		return $control . $wrapper;
 	}
 
 	private function promotion_select_control( $title, $id ): string {
