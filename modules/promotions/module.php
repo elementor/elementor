@@ -96,13 +96,6 @@ class Module extends Base_Module {
 				'react',
 				'react-dom',
 				'backbone-marionette',
-				'elementor-web-cli',
-				'wp-date',
-				'elementor-common',
-				'elementor-editor-modules',
-				'elementor-editor-document',
-				'elementor-v2-ui',
-				'elementor-v2-icons',
 			],
 			ELEMENTOR_VERSION,
 			true
