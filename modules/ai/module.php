@@ -192,10 +192,8 @@ class Module extends BaseModule {
 	}
 
 	public function handle_unify_product_images_ajax() {
-		// Check the nonce for security
 		check_ajax_referer( 'elementor-ai-unify-product-images_nonce', 'nonce' );
 
-		// Get the selected product IDs
 		$post_ids = isset( $_POST['post_ids'] ) ? array_map( 'intval', $_POST['post_ids'] ) : [];
 
 		if ( ! current_user_can( 'edit_products' ) ) {
@@ -208,7 +206,6 @@ class Module extends BaseModule {
 
 		$image_urls = [];
 
-		// Get product images and unify them (or whatever your bulk action does)
 		foreach ( $post_ids as $post_id ) {
 			$thumbnail_id = get_post_thumbnail_id( $post_id );
 			$image_url = $thumbnail_id ? wp_get_attachment_url( $thumbnail_id ) : 'No Image';
@@ -218,7 +215,6 @@ class Module extends BaseModule {
 			];
 		}
 
-		// Return success response with the product image URLs
 		wp_send_json_success( [ 'product_images' => $image_urls ] );
 
 		wp_die();

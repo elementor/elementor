@@ -6,16 +6,13 @@ import UnifyProductImages from './unify-product-images';
 ( function( $ ) {
 	'use strict';
 
-	// Intercept the form submission for bulk actions
 	$( '#bulk-action-selector-top, #bulk-action-selector-bottom' ).on( 'change', function() {
 		const selectedAction = $( this ).val();
 		if ( 'elementor-ai-unify-product-images' === selectedAction ) {
-			// Intercept the apply button click
 			$( '#doaction, #doaction2' ).on( 'click', function( e ) {
 				try {
 					e.preventDefault();
 
-					// Collect the selected product IDs
 					const postIds = [];
 					$( 'input[name="post[]"]:checked' ).each( function() {
 						postIds.push( $( this ).val() );
