@@ -1363,11 +1363,26 @@ class Controls_Manager {
 	}
 
 	private function react_promotion_control( $title, $id ): string {
-		$control = $this->promotion_switcher_control( esc_html__( 'Animated Widget heading', 'elementor' ), 'header-promotion' );
-
-		$wrapper = '<div class="e-promotion-react" data-promotion="' . $id . '"></div>';
-
-		return $control . $wrapper;
+		return '<div class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
+			<div class="elementor-control-content">
+				<div class="elementor-control-field">
+					<label>
+						' . $title . '
+					</label>
+					<span class="e-control-motion-effects-promotion__lock-wrapper">
+						<i class="eicon-lock"></i>
+					</span>
+					<div class="elementor-control-input-wrapper">
+						<label class="elementor-switch elementor-control-unit-2 e-control-' . $id . '-promotion">
+							<input type="checkbox" class="elementor-switch-input" disabled>
+							<span class="elementor-switch-label" data-off="Off"></span>
+							<span class="elementor-switch-handle"></span>
+						</label>
+					</div>
+					<div class="e-promotion-react" data-promotion="' . $id . '"></div>
+				</div>
+			</div>
+		</div>';
 	}
 
 	private function promotion_select_control( $title, $id ): string {
