@@ -18,16 +18,8 @@ export default function SkipButton( props ) {
 			if ( state.nextStep ) {
 				navigate( 'onboarding/' + state.nextStep );
 			}
-		};
-
-	const handleAction = () => {
-		if ( button.action ) {
-			button.action();
-			skipStep();
-		} else {
-			skipStep();
-		}
-	};
+		},
+		action = button.action || skipStep;
 
 	// Make sure the 'action' prop doesn't get printed on the button markup which causes an error.
 	delete button.action;
@@ -44,7 +36,7 @@ export default function SkipButton( props ) {
 		} );
 
 		if ( ! button.href ) {
-			handleAction();
+			action();
 		}
 	};
 
