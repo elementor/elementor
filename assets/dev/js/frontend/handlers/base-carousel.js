@@ -105,7 +105,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				type: !! elementSettings.pagination ? elementSettings.pagination : 'bullets',
 				clickable: true,
 				renderBullet: ( index, classname ) => {
-					return `<span class="${ classname }" data-bullet-index="${ index }" aria-label="${ elementorFrontend.config.i18n.a11yCarouselPaginationBulletMessage } ${ index + 1 }"></span>`;
+					return `<span class="${ classname }" role="button" tabindex="0" data-bullet-index="${ index }" aria-label="${ elementorFrontend.config.i18n.a11yCarouselPaginationBulletMessage } ${ index + 1 }"></span>`;
 				},
 			};
 		}

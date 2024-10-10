@@ -2,15 +2,10 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\Base\Style_Transformer_Base;
+use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 
 class Styles_Renderer {
-
-	/**
-	 * @var array<string, Style_Transformer_Base> $transformers
-	 */
-	private array $transformers;
-
 	/**
 	 * @var array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}> $breakpoints
 	 */
@@ -20,12 +15,10 @@ class Styles_Renderer {
 	 * Styles_Renderer constructor.
 	 *
 	 * @param array{
-	 *     transformers: array<string, Style_Transformer_Base>,
 	 *     breakpoints: array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
 	 * } $config
 	 */
 	public function __construct( array $config ) {
-		$this->transformers = $config['transformers'];
 		$this->breakpoints = $config['breakpoints'];
 	}
 
@@ -111,22 +104,14 @@ class Styles_Renderer {
 	}
 
 	private function props_to_css_string( array $props ): string {
-		$css = [];
+		$schema = Style_Schema::get();
 
-		foreach ( $props as $prop => $raw_value ) {
-			$prop = $this->camel_case_to_dash( $prop );
-			$value = $this->transform_value( $raw_value );
-
-			if ( $prop && $value ) {
-				$css[] = $prop . ':' . $value;
-			}
-		}
-
-		return implode( ';', $css );
-	}
-
-	private function camel_case_to_dash( string $str ): string {
-		return strtolower( preg_replace( '/([a-zA-Z])(?=[A-Z])/', '$1-', $str ) );
+		return Collection::make( Props_Resolver::for_styles()->resolve( $schema, $props ) )
+			->filter()
+			->map( function ( $value, $prop ) {
+				return $prop . ':' . $value . ';';
+			} )
+			->implode( '' );
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {
@@ -149,54 +134,5 @@ class Styles_Renderer {
 		$width = $breakpoint['value'] . 'px';
 
 		return "{$bound}:{$width}";
-	}
-
-	private function transform_value( $value ): ?string {
-		if ( is_string( $value ) ) {
-			return $value;
-		}
-
-		if ( ! $this->is_transformable( $value ) ) {
-			return 'unset';
-		}
-
-		$transformer = $this->get_transformer( $value['$$type'] );
-
-		if ( ! $transformer ) {
-			return 'unset';
-		}
-
-		try {
-			$transformed = $transformer->transform(
-				$value['value'],
-				fn( $value ) => $this->transform_value( $value )
-			);
-
-			return $this->transform_value( $transformed );
-
-		} catch ( \Exception $e ) {
-			return 'unset';
-		}
-	}
-
-	private function is_transformable( $value ): bool {
-		return (
-			isset( $value['$$type'], $value['value'] ) &&
-			is_string( $value['$$type'] )
-		);
-	}
-
-	private function get_transformer( $type ): ?Style_Transformer_Base {
-		if ( ! isset( $this->transformers[ $type ] ) ) {
-			return null;
-		}
-
-		$transformer = $this->transformers[ $type ];
-
-		if ( ! $transformer instanceof Style_Transformer_Base ) {
-			return null;
-		}
-
-		return $transformer;
 	}
 }
