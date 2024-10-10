@@ -175,7 +175,7 @@ class Steps_Manager {
 		}
 
 		/** @var Step_Base $step */
-		return new $class_name( $this->module, $this->module->get_wordpress_adapter(), $this->module->get_kit_adapter() );
+		return new $class_name( $this->module, $this->module->get_wordpress_adapter(), $this->module->get_elementor_adapter() );
 	}
 
 	private function filter_steps() {

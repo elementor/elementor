@@ -27,8 +27,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 	public function test__custom_kit_installed() {
 		parent::setup();
 
-		$this->set_kit_adapter_mock( [ 'is_active_kit_default' => false ] )
-			->set_counter_adapter_mock( [ 'get_count' => 0 ] )
+		$this->set_elementor_adapter_mock( [ 'is_active_kit_default' => false, 'get_count' => 0 ] )
 			->set_wordpress_adapter_mock( [], [
 				'set_user_preferences' => [ $this, 'set_user_preferences' ],
 				'get_user_preferences' => [ $this, 'get_user_preferences' ],
@@ -42,8 +41,7 @@ class Test_Kit_Installation extends Step_Test_Base {
 	public function test__custom_kit_installed_after_first_visit() {
 		parent::setup();
 
-		$this->set_kit_adapter_mock( [ 'is_active_kit_default' => false ] )
-			->set_counter_adapter_mock( [ 'get_count' => 1 ] )
+		$this->set_elementor_adapter_mock( [ 'is_active_kit_default' => false, 'get_count' => 1 ] )
 			->set_wordpress_adapter_mock( [], [
 				'set_user_preferences' => [ $this, 'set_user_preferences' ],
 				'get_user_preferences' => [ $this, 'get_user_preferences' ],

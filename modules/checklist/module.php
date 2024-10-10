@@ -7,8 +7,8 @@ use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Core\Isolation\Kit_Adapter;
-use Elementor\Core\Isolation\Kit_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Core\Isolation\Elementor_Counter_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -30,25 +30,22 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;
-	private Kit_Adapter_Interface $kit_adapter;
+	private Elementor_Adapter_Interface $elementor_adapter;
 	private Elementor_Counter_Adapter_Interface $counter_adapter;
 	private $user_progress = null;
 
 	/**
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
-	 * @param ?Kit_Adapter_Interface $kit_adapter
-	 * @param ?Elementor_Counter_Adapter_Interface $counter_adapter
+	 * @param ?Elementor_Adapter_Interface $elementor_adapter
 	 *
 	 * @return void
 	 */
 	public function __construct(
 		?Wordpress_Adapter_Interface $wordpress_adapter = null,
-		?Kit_Adapter_Interface $kit_adapter = null,
-		?Elementor_Counter_Adapter_Interface $counter_adapter = null
+		?Elementor_Adapter_Interface $elementor_adapter = null
 	) {
 		$this->wordpress_adapter = $wordpress_adapter ?? Isolation_Manager::get_adapter( Wordpress_Adapter::class );
-		$this->kit_adapter = $kit_adapter ?? Isolation_Manager::get_adapter( Kit_Adapter::class );
-		$this->counter_adapter = $counter_adapter ?? Isolation_Manager::get_adapter( Elementor_Counter::class );
+		$this->elementor_adapter = $elementor_adapter ?? Isolation_Manager::get_adapter( Elementor_Adapter::class );
 
 		parent::__construct();
 		$this->register_experiment();
@@ -109,7 +106,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 		$progress = array_merge( $this->get_default_user_progress(), $db_progress );
 
-		$editor_visit_count = $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
+		$editor_visit_count = $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 		$progress[ self::SHOULD_OPEN_IN_EDITOR ] = 2 === $editor_visit_count && ! $progress[ self::LAST_OPENED_TIMESTAMP ];
 
 		return $progress;
@@ -158,7 +155,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$this->update_user_progress_in_db();
 
 		if ( isset( $new_data[ Elementor_Counter::EDITOR_COUNTER_KEY ] ) ) {
-			$this->counter_adapter->set_count( Elementor_Counter::EDITOR_COUNTER_KEY, $new_data[ Elementor_Counter::EDITOR_COUNTER_KEY ] );
+			$this->elementor_adapter->set_count( Elementor_Counter::EDITOR_COUNTER_KEY, $new_data[ Elementor_Counter::EDITOR_COUNTER_KEY ] );
 		}
 	}
 
@@ -177,10 +174,10 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	/**
-	 * @return Kit_Adapter
+	 * @return Elementor_Adapter
 	 */
-	public function get_kit_adapter() : Kit_Adapter {
-		return $this->kit_adapter;
+	public function get_elementor_adapter() : Elementor_Adapter {
+		return $this->elementor_adapter;
 	}
 
 	public function enqueue_editor_scripts() : void {
@@ -218,7 +215,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	public function should_switch_preferences_off() : bool {
-		return ! $this->kit_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->counter_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
+		return ! $this->elementor_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 	}
 
 	private function register_experiment() : void {
@@ -269,6 +266,6 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 		add_action( 'elementor/editor/init', function () {
 			$this->wordpress_adapter->set_user_preferences( self::VISIBILITY_SWITCH_ID, '' );
-		} );
+		}, 11 );
 	}
 }

@@ -28,7 +28,7 @@ class Module extends BaseModule implements Elementor_Counter_Adapter_Interface {
 		if ( self::$should_count_editor ) {
 			add_action( 'elementor/editor/init', function () {
 				$this->increment( self::EDITOR_COUNTER_KEY );
-			} );
+			}, 10 );
 
 			self::$should_count_editor = false;
 		}
