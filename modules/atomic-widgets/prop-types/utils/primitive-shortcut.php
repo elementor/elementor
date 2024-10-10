@@ -1,6 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Utils;
+
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Primitive_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,5 +20,9 @@ trait Primitive_Shortcut {
 		$this->default = $default;
 
 		return $this;
+	}
+
+	public function generate_value( $value ) {
+		return $value;
 	}
 }

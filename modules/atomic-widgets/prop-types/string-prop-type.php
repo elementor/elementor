@@ -3,30 +3,35 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Primitive_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Primitive_Shortcut;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class String_Prop_Type extends Prop_Type {
+class String_Prop_Type extends Primitive_Prop_Type {
+	use Primitive_Shortcut;
 
 	public static function get_key(): string {
 		return 'string';
 	}
 
-	public function validate( $value ): void {
-		if ( ! is_string( $value ) ) {
-			throw new \Exception( 'Value must be a string, ' . gettype( $value ) . ' given.' );
-		}
-
-		if ( isset( $this->settings['enum'] ) ) {
-			$this->validate_enum( $value );
-		}
+	protected function validate_value( $value ): bool {
+		return ! is_string( $value )
+			&& ( ! $this->get_enum() || $this->validate_enum( $value ) )
+			&& ( ! $this->get_regex() || $this->validate_regex( $value ) );
 	}
 
 	public function enum( array $allowed_values ): self {
-		if ( ! $this->all_are_strings( $allowed_values ) ) {
+		$all_are_strings = array_reduce(
+			$allowed_values,
+			fn ( $carry, $item ) => $carry && is_string( $item ),
+			true
+		);
+
+		if ( ! $all_are_strings ) {
 			Utils::safe_throw( 'All values in an enum must be strings.' );
 		}
 
@@ -35,27 +40,29 @@ class String_Prop_Type extends Prop_Type {
 		return $this;
 	}
 
+	public function regex( $pattern ) {
+		if ( ! is_string( $pattern ) ) {
+			Utils::safe_throw( 'Pattern must be a string, and valid regex pattern' );
+		}
+
+		$this->settings['regex'] = $pattern;
+
+		return $this;
+	}
+
 	public function get_enum() {
 		return $this->settings['enum'] ?? null;
 	}
 
-	private function validate_enum( $value ): void {
-		$is_allowed = in_array( $value, $this->settings['enum'], true );
-
-		if ( ! $is_allowed ) {
-			$values = Collection::make( $this->settings['enum'] )
-				->map( fn ( $item ) => "`$item`" )
-				->implode( ', ' );
-
-			throw new \Exception( "`$value` is not in the list of allowed values ($values)." );
-		}
+	public function get_regex() {
+		return $this->settings['regex'] ?? null;
 	}
 
-	private function all_are_strings( array $allowed_values ): bool {
-		return array_reduce(
-			$allowed_values,
-			fn ( $carry, $item ) => $carry && is_string( $item ),
-			true
-		);
+	private function validate_enum( $value ): bool {
+		return in_array( $value, $this->settings['enum'], true );
+	}
+
+	private function validate_regex( $value ): bool {
+		return preg_match( $this->settings['regex'], $value );
 	}
 }
