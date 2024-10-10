@@ -198,7 +198,11 @@ class Module extends BaseModule {
 		// Get the selected product IDs
 		$post_ids = isset( $_POST['post_ids'] ) ? array_map( 'intval', $_POST['post_ids'] ) : [];
 
-		if ( ! current_user_can( 'edit_products' ) || empty( $post_ids ) ) {
+		if ( ! current_user_can( 'edit_products' ) ) {
+			wp_send_json_error( [ 'message' => 'You do not have permission to edit products' ] );
+		}
+
+		if ( empty( $post_ids ) ) {
 			wp_send_json_error( [ 'message' => 'No products selected' ] );
 		}
 
