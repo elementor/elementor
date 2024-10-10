@@ -9,11 +9,20 @@ const App = ( props ) => {
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ props.colorScheme }>
 					<Infotip
-						placement="right"
+						placement="right-start"
 						arrow={ true }
 						open={ true }
 						content={ <PromotionCard /> }
 						onClose={ props.onClose }
+						PopperProps={ {
+							modifiers: [
+								{
+									name: 'offset',
+									options:
+										{ offset: [ -16, 12 ] },
+								},
+							],
+						} }
 					>
 					</Infotip>
 				</ThemeProvider>

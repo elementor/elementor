@@ -18,8 +18,8 @@ const PromotionCard = () => {
 				</Box>
 			} />
 			<CardMedia
-				image="https://elementor.com/cdn-cgi/image/f=auto,w=1100,h=840/marketing/wp-content/uploads/2022/10/IMG-3-2-1.png"
-				sx={ { height: 190 } }
+				image="https://assets.elementor.com/free-to-pro-upsell/v1/images/animated-headline.jpg"
+				sx={ { height: 190, width: 296 } }
 			/>
 			<CardContent>
 				<Typography variant="body2" color="text.secondary" component="p">
