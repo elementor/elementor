@@ -1578,6 +1578,7 @@ abstract class Document extends Controls_Stack {
 	 * @param array $data
 	 *
 	 * @throws \Exception If the post does not exist.
+	 * @return void
 	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
@@ -1812,6 +1813,7 @@ abstract class Document extends Controls_Stack {
 			global $wp_scripts, $wp_styles;
 
 			$should_store_scripts = $wp_scripts instanceof \WP_Scripts && $wp_styles instanceof \WP_Styles;
+
 			if ( $should_store_scripts ) {
 				$scripts_ignored = $wp_scripts->queue;
 				$styles_ignored = $wp_styles->queue;
@@ -1840,7 +1842,11 @@ abstract class Document extends Controls_Stack {
 		} else {
 			if ( ! empty( $cached_data['scripts'] ) ) {
 				foreach ( $cached_data['scripts'] as $script_handle ) {
-					wp_enqueue_script( $script_handle );
+					$is_module = $this->maybe_enqueue_as_script_module( $script_handle );
+
+					if ( ! $is_module ) {
+						wp_enqueue_script( $script_handle );
+					}
 				}
 			}
 
@@ -1854,6 +1860,44 @@ abstract class Document extends Controls_Stack {
 		if ( ! empty( $cached_data['content'] ) ) {
 			echo do_shortcode( $cached_data['content'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
+	}
+
+	public function maybe_enqueue_as_script_module( $script_handle ): bool {
+		if ( 0 !== strpos( $script_handle, 'script-module-' ) ) {
+			return false;
+		}
+
+		$src_path = $this->get_module_src_path( $script_handle );
+
+		add_action( 'wp_footer', function() use ( $src_path, $script_handle ) {
+			echo '<script type="module" src="' . $src_path . '" id="' . $script_handle .'-js"></script>';
+		}, 20 );
+
+		return true;
+	}
+
+	private function get_module_src_path( $handle ) {
+		global $wp_scripts;
+
+		if ( isset( $wp_scripts->registered[ $handle ] ) ) {
+			return $wp_scripts->registered[ $handle ]->src;
+		}
+
+		return false; // Handle not found
+	}
+
+	public function set_script_as_module2( $tag, $handle, $source ): string {
+		var_dump( $handle );
+		var_dump( $source );
+		// Check if the script handle starts with 'script-module-'
+		if ( 0 !== strpos( $handle, 'script-module-' ) ) {
+			return $tag; // Return unmodified tag if the handle doesn't match
+		}
+
+		var_dump( $tag ); // For debugging
+
+		// Modify the script tag to include `type="module"`
+		return str_replace( '<script', '<script type="module"', $tag );
 	}
 
 	protected function do_print_elements( $elements_data ) {

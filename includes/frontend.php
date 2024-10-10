@@ -166,6 +166,8 @@ class Frontend extends App {
 	 *
 	 * @since 1.0.0
 	 * @access public
+	 *
+	 * @return void
 	 */
 	public function __construct() {
 		// We don't need this class in admin side, but in AJAX requests.
@@ -468,6 +470,13 @@ class Frontend extends App {
 			],
 			ELEMENTOR_VERSION,
 			true
+		);
+
+		wp_register_script(
+			'script-module-handlers-base',
+			ELEMENTOR_URL . 'assets/dev/js/frontend/handlers/base.js',
+			[],
+			ELEMENTOR_VERSION
 		);
 
 		/**
