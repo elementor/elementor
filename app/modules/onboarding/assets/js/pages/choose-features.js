@@ -1,19 +1,19 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useAjax from 'elementor-app/hooks/use-ajax';
-import { OnboardingContext } from '../context/context';
 import Message from '../components/message';
 import { options, setSelectedFeatureList } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
+import useButtonAction from '../utils/use-button-action';
 
 export default function ChooseFeatures() {
-	const { state } = useContext( OnboardingContext ),
-		{ setAjax } = useAjax(),
+	const { setAjax } = useAjax(),
 		tiers = { advanced: __( 'Advanced', 'elementor' ), essential: __( 'Essential', 'elementor' ) },
 		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
 		[ tierName, setTierName ] = useState( tiers.essential ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
+		{ state, handleAction } = useButtonAction( pageId, nextStep ),
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
 			href: elementorAppConfig.onboarding.urls.upgrade,
@@ -36,6 +36,8 @@ export default function ChooseFeatures() {
 						} ),
 					},
 				} );
+
+				handleAction( 'completed' );
 			},
 		};
 
@@ -53,6 +55,8 @@ export default function ChooseFeatures() {
 						} ),
 					},
 				} );
+
+				handleAction( 'skipped' );
 			},
 		};
 	}
