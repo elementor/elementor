@@ -1,4 +1,4 @@
-import App from './e-promotion/app/app';
+import App from './react/app';
 export default class PromotionBehavior extends Marionette.Behavior {
 	ui() {
 		return {
