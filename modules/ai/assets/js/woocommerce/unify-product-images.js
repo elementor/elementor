@@ -20,7 +20,6 @@ const UnifyProductImages = ( { productImageUrls } ) => {
 					getControlValue={ () => ( {
 						url: productImageUrls[ 0 ].image_url,
 					} ) }
-					setControlValue={ ( value ) => console.log( value ) }
 					onClose={ handleClose }
 					isRTL={ elementorCommon.config.isRTL }
 					additionalOptions={ {

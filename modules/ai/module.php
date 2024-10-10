@@ -110,8 +110,9 @@ class Module extends BaseModule {
 
 		if ( is_admin() ) {
 			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
-			add_action( 'admin_init', [ $this, 'enqueue_ai_woocommerce' ] );
-			add_action('wp_ajax_elementor-ai-unify-product-images',[ $this, 'handle_unify_product_images_ajax']);
+			//Temp disable until feature will be ready
+//			add_action( 'admin_init', [ $this, 'enqueue_ai_woocommerce' ] );
+//			add_action('wp_ajax_elementor-ai-unify-product-images',[ $this, 'handle_unify_product_images_ajax']);
 		}
 
 		add_action( 'enqueue_block_editor_assets', function() {
