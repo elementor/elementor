@@ -110,6 +110,8 @@ class Module extends BaseModule {
 
 		if ( is_admin() ) {
 			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
+			add_action( 'admin_init', [ $this, 'enqueue_ai_woocommerce' ] );
+			add_action('wp_ajax_elementor-ai-unify-product-images',[ $this, 'handle_unify_product_images_ajax']);
 		}
 
 		add_action( 'enqueue_block_editor_assets', function() {
@@ -146,6 +148,75 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function ( $data ) {
 			return $this->remove_temporary_containers( $data );
 		} );
+	}
+
+	public function enqueue_ai_woocommerce() {
+
+		if ( !class_exists( 'WooCommerce' ) || !post_type_exists( 'product' ) ||
+			!isset( $_GET['post_type'] ) || 'product' !== $_GET['post_type'] ) {
+			return;
+		}
+
+		wp_enqueue_script( 'elementor-ai-unify-product-images',
+			$this->get_js_assets_url( 'ai-unify-product-images' ),
+			[
+				'jquery',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'elementor-ai-unify-product-images',
+			'UnifyProductImagesConfig',
+			[
+				'ajax_url' => admin_url('admin-ajax.php'),
+				'nonce' => wp_create_nonce('elementor-ai-unify-product-images_nonce'),
+			]
+		);
+
+		add_filter( 'bulk_actions-edit-product', function ( $data ) {
+			return $this->add_products_bulk_action($data);
+		});
+
+		wp_set_script_translations( 'elementor-ai-unify-product-images', 'elementor' );
+
+	}
+
+	private function add_products_bulk_action($bulk_actions) {
+		$bulk_actions['elementor-ai-unify-product-images'] = __( 'Unify with Elementor AI', 'elementor' );
+		return $bulk_actions;
+	}
+
+	public function handle_unify_product_images_ajax() {
+		// Check the nonce for security
+		check_ajax_referer('elementor-ai-unify-product-images_nonce', 'nonce');
+
+		// Get the selected product IDs
+		$post_ids = isset($_POST['post_ids']) ? array_map('intval', $_POST['post_ids']) : [];
+
+		if (! current_user_can( 'edit_products' ) || empty($post_ids)) {
+			wp_send_json_error(['message' => 'No products selected']);
+		}
+
+		$image_urls = [];
+
+		// Get product images and unify them (or whatever your bulk action does)
+		foreach ($post_ids as $post_id) {
+			$thumbnail_id = get_post_thumbnail_id($post_id);
+			$image_url = $thumbnail_id ? wp_get_attachment_url($thumbnail_id) : 'No Image';
+			$image_urls[] = [
+				'product_id' => $post_id,
+				'image_url' => $image_url,
+			];
+		}
+
+		// Return success response with the product image URLs
+		wp_send_json_success(['product_images' => $image_urls]);
+
+		wp_die();
 	}
 
 	public function enqueue_ai_media_library() {
