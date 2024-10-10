@@ -34,6 +34,7 @@ const App = ( props ) => {
 App.propTypes = {
 	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
 	isRTL: PropTypes.bool,
+	promotionsData: PropTypes.object,
 	onClose: PropTypes.func.isRequired,
 };
 
