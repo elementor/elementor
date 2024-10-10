@@ -3,13 +3,13 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Core\DynamicTags\Manager as Dynamic_Manager;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Transformer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Dynamic_Transformer extends Transformer_Base {
+class Dynamic_Transformer implements Transformer {
 	private Dynamic_Manager $dynamic_manager;
 
 	public function __construct( Dynamic_Manager $dynamic_manager ) {
