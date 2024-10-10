@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { type APIRequestContext } from '@playwright/test';
-import { Image, Post, WpPage, User } from '../types/types';
+
+import { Image, Post, WpPage, User, PostForREST } from '../types/types';
 
 export default class ApiRequests {
 	private readonly nonce: string;
@@ -17,6 +18,28 @@ export default class ApiRequests {
 				'X-WP-Nonce': this.nonce,
 			},
 			multipart: data,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to create a ${ entity }: ${ response.status() }.
+				${ await response.text() }
+				${ response.url() }
+				TEST_PARALLEL_INDEX: ${ process.env.TEST_PARALLEL_INDEX }
+				NONCE: ${ this.nonce }
+			` );
+		}
+		const { id } = await response.json();
+
+		return id;
+	}
+
+	public async createWithREST( request: APIRequestContext, entity: string, data: PostForREST ) {
+		const response = await request.post( `${ this.baseUrl }/wp-json/wp/v2/${ entity }?playwright_testing=true`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			data,
 		} );
 
 		if ( ! response.ok() ) {
@@ -219,15 +242,15 @@ export default class ApiRequests {
 
 	public async deleteUser( request: APIRequestContext, userId: string ) {
 		const response = await request.delete( `${ this.baseUrl }/index.php`, {
-				headers: {
-					'X-WP-Nonce': this.nonce,
-				},
-				params: {
-					rest_route: `/wp/v2/users/${ userId }`,
-					force: true,
-					reassign: '-1',
-				},
-			} );
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			params: {
+				rest_route: `/wp/v2/users/${ userId }`,
+				force: true,
+				reassign: '-1',
+			},
+		} );
 
 		if ( ! response.ok() ) {
 			throw new Error( `
