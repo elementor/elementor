@@ -15,14 +15,6 @@ class Linked_Dimensions_Transformer extends Transformer_Base {
 		$bottom = $value['bottom'] ?? 'unset';
 		$right = $value['right'] ?? 'unset';
 
-		return [
-			'$$type' => 'css-props',
-			'value' => [
-				'top' => $top,
-				'right' => $right,
-				'bottom' => $bottom,
-				'left' => $left,
-			],
-		];
+		return $top . ' ' . $right . ' ' . $bottom . ' ' . $left;
 	}
 }
