@@ -106,9 +106,12 @@ class Styles_Renderer {
 	private function props_to_css_string( array $props ): string {
 		$schema = Style_Schema::get();
 
-		return Collection::make( Props_Resolver::for_styles()->resolve( $schema, $props ) )->filter()->map( function ( $value, $prop ) {
-			return $prop . ':' . $value . ';';
-		} )->implode( '' );
+		return Collection::make( Props_Resolver::for_styles()->resolve( $schema, $props ) )
+			->filter()
+			->map( function ( $value, $prop ) {
+				return $prop . ':' . $value . ';';
+			} )
+			->implode( '' );
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {
