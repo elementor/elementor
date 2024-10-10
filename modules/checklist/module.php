@@ -13,6 +13,7 @@ use Elementor\Core\Isolation\Elementor_Counter_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
+use Elementor\Core\Utils\Isolation_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -45,11 +46,11 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		?Kit_Adapter_Interface $kit_adapter = null,
 		?Elementor_Counter_Adapter_Interface $counter_adapter = null
 	) {
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
-		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();
-		$this->counter_adapter = $counter_adapter ?? Elementor_Counter::instance();
-		parent::__construct();
+		$this->wordpress_adapter = $wordpress_adapter ?? Isolation_Manager::get_adapter( Wordpress_Adapter::class );
+		$this->kit_adapter = $kit_adapter ?? Isolation_Manager::get_adapter( Kit_Adapter::class );
+		$this->counter_adapter = $counter_adapter ?? Isolation_Manager::get_adapter( Elementor_Counter::class );
 
+		parent::__construct();
 		$this->register_experiment();
 		$this->init_user_progress();
 
