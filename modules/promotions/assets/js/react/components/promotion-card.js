@@ -12,9 +12,9 @@ const PromotionCard = () => {
 	return (
 		<Card sx={ { maxWidth: 300 } }>
 			<CardHeader title={
-				<Box sx={ { display: 'flex', gap: 1 } }>
+				<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
 					<>Bring Headlines to Life</>
-					<Chip size="small" label="pro" variant="outlined" color="promotion" />
+					<Chip size="small" label="pro" variant="outlined" color="promotion" sx={ { textTransform: 'uppercase' } } />
 				</Box>
 			} />
 			<CardMedia
@@ -23,7 +23,11 @@ const PromotionCard = () => {
 			/>
 			<CardContent>
 				<Typography variant="body2" color="text.secondary" component="p">
-					promo text...
+					<ul>
+						<li>first line of text</li>
+						<li>second line of text</li>
+						<li>third line of text</li>
+					</ul>
 				</Typography>
 			</CardContent>
 			<CardActions>
