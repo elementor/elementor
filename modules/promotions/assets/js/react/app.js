@@ -9,7 +9,7 @@ const App = ( props ) => {
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ props.colorScheme }>
 					<Infotip
-						content={ <PromotionCard promotionsData = { props.promotionsData } /> }
+						content={ <PromotionCard promotionsData={ props.promotionsData } /> }
 						placement="right-start"
 						arrow={ true }
 						open={ true }

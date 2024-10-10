@@ -9,33 +9,47 @@ import Button from '@elementor/ui/Button';
 import Box from '@elementor/ui/Box';
 
 const PromotionCard = ( { promotionsData } ) => {
-	console.log(promotionsData)
+	const title = promotionsData?.title;
+	const description = promotionsData?.description;
+	const imgSrc = promotionsData?.image;
+	const ctaText = promotionsData?.upgrade_text;
+	const ctaUrl = promotionsData?.upgrade_url;
+
+	const redirectHandler = () => {
+		return window.open( ctaUrl, '_blank' );
+	};
+
 	return (
 		<Card sx={ { maxWidth: 300 } }>
 			<CardHeader title={
 				<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
-					<>Bring Headlines to Life</>
+					<>{ title }</>
 					<Chip size="small" label="pro" variant="outlined" color="promotion" sx={ { textTransform: 'uppercase' } } />
 				</Box>
 			} />
 			<CardMedia
-				image="https://assets.elementor.com/free-to-pro-upsell/v1/images/animated-headline.jpg"
+				image={ imgSrc }
 				sx={ { height: 190, width: 296 } }
 			/>
 			<CardContent>
 				<Typography variant="body2" color="text.secondary" component="p">
-					<ul>
-						<li>first line of text</li>
-						<li>second line of text</li>
-						<li>third line of text</li>
-					</ul>
+					{ description }
 				</Typography>
 			</CardContent>
 			<CardActions>
-				<Button variant="contained" size="small" color="promotion">Upgrade Now</Button>
+				<Button
+					variant="contained"
+					size="small"
+					color="promotion"
+					onClick={ redirectHandler }
+				>{ ctaText }</Button>
 			</CardActions>
 		</Card>
 	);
+};
+
+PromotionCard.propTypes = {
+	promotionsData: PropTypes.object,
 };
 
 export default PromotionCard;

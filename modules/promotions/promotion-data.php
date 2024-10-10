@@ -47,7 +47,7 @@ class PromotionData extends EditorAssetsAPI {
 			'image' => esc_url( $assets_data['animated-headline'] ) ?? '',
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( 'Unlock Elementor Pro', 'elementor' ),
-			'description' => esc_html__( $header_description, 'elementor' ),
+			'description' => esc_html__( $header_description , 'elementor' ),
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
 			'upgrade_url' => 'https://elementor.com/pro/',
 		];

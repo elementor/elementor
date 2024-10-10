@@ -1379,7 +1379,7 @@ class Controls_Manager {
 							<span class="elementor-switch-handle"></span>
 						</label>
 					</div>
-					<div class="e-promotion-react"></div>
+					<div class="e-promotion-react" data-promotion="' . $id . '"></div>
 				</div>
 			</div>
 		</div>';
