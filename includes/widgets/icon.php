@@ -333,7 +333,7 @@ class Widget_Icon extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'icon_padding',
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
