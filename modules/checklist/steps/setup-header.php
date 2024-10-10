@@ -5,6 +5,7 @@ namespace Elementor\Modules\Checklist\Steps;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -23,6 +24,14 @@ class Setup_Header extends Step_Base {
 
 	public function get_id() : string {
 		return self::STEP_ID;
+	}
+
+	public function is_visible() : bool {
+		if ( Utils::has_pro() ) {
+			return false;
+		}
+
+		return parent::is_visible();
 	}
 
 	public function is_absolute_completed() : bool {

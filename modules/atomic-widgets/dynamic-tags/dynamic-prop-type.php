@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Transformable_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Settings_Validator;
+use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -60,7 +60,7 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 			throw $this->unsupported_tag( $tag );
 		}
 
-		$validator = Settings_Validator::make( $tag['props_schema'] );
+		$validator = Props_Validator::make( $tag['props_schema'] );
 
 		[ $is_valid, , $errors ] = $validator->validate( $value['settings'] );
 
