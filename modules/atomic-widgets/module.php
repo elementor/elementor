@@ -14,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Trans
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
@@ -104,6 +105,7 @@ class Module extends BaseModule {
 		// Other
 		$transformers->register( Linked_Dimensions_Prop_Type::get_key(), new Linked_Dimensions_Transformer() );
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
+		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 	}
 
 	/**
