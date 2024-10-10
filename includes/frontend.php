@@ -670,11 +670,6 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'elementor-frontend' );
 
-			// TODO: Update in version 3.26.0 [ED-15471]
-			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_swiper_css_conditional_loading' ) ) {
-				wp_enqueue_style( 'e-swiper' );
-			}
-
 			if ( is_admin_bar_showing() ) {
 				wp_enqueue_style( 'elementor-wp-admin-bar' );
 			}
