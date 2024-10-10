@@ -30,9 +30,7 @@ class Test_Setup_Header_Step extends Step_Test_Base {
 
 		$query = new \WP_Query();
 		$query->posts = [1];
-		$this->set_wordpress_adapter_mock( [ 'get_query' ], [
-			'get_query' => $query,
-		] );
+		$this->set_wordpress_adapter_mock( [ 'get_query' => $query ] );
 
 		$step = new Setup_Header( $this->checklist_module, $this->wordpress_adapter );
 
@@ -42,9 +40,7 @@ class Test_Setup_Header_Step extends Step_Test_Base {
 		$this->assertTrue( $step->is_absolute_completed() );
 
 		$query->posts = [];
-		$this->set_wordpress_adapter_mock( [ 'get_query' ], [
-			'get_query' => $query,
-		] );
+		$this->set_wordpress_adapter_mock( [ 'get_query' => $query ] );
 		$step = new Setup_Header( $this->checklist_module, $this->wordpress_adapter );
 		$this->assertFalse( $step->is_marked_as_completed() );
 		$this->assertFalse( $step->is_immutable_completed() );
@@ -55,9 +51,7 @@ class Test_Setup_Header_Step extends Step_Test_Base {
 		$query = new \WP_Query();
 		$query->posts = [];
 
-		$this->set_wordpress_adapter_mock( [ 'get_query' ], [
-			'get_query' => $query,
-		] );
+		$this->set_wordpress_adapter_mock( [ 'get_query' => $query ] );
 
 		parent::setUp();
 	}

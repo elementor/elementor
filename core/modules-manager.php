@@ -94,6 +94,7 @@ class Modules_Manager {
 			'compatibility-tag',
 			'generator-tag',
 			'elements-color-picker',
+			'elementor-counter',
 			'shapes',
 			'favorites',
 			'admin-top-bar',
