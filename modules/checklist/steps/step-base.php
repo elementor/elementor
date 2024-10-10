@@ -7,6 +7,7 @@ use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Isolation\Kit_Adapter;
 use Elementor\Core\Isolation\Kit_Adapter_Interface;
 use Elementor\Core\Utils\Constants;
+use Elementor\Core\Utils\Isolation_Manager;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -82,8 +83,8 @@ abstract class Step_Base {
 	 */
 	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null, $promotion_data = null ) {
 		$this->module = $module;
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
-		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();
+		$this->wordpress_adapter = $wordpress_adapter ?? Isolation_Manager::get_adapter( Wordpress_Adapter::class );
+		$this->kit_adapter = $kit_adapter ?? Isolation_Manager::get_adapter( Kit_Adapter::class );
 		$this->promotion_data = $promotion_data;
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
 	}
