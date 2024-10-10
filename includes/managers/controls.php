@@ -1363,7 +1363,7 @@ class Controls_Manager {
 	}
 
 	private function react_promotion_control( $title, $id ): string {
-		return '<div class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
+		return '<div data-promotion="' . $id . '" class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label>

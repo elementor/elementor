@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 export default class ReactPromotionBehavior extends Marionette.Behavior {
 	ui() {
 		return {
-			animatedHeadlineButton: '.e-control-header-promotion-promotion',
+			animatedHeadlineButton: '[data-promotion].elementor-control-type-switcher',
 		};
 	}
 
@@ -19,6 +19,8 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 		this.mount();
 	}
 
+	promotionInfotip = null;
+
 	mount() {
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
 			isRTL = elementorCommon.config.isRTL,
@@ -28,21 +30,23 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 			return;
 		}
 
-		const root = createRoot( rootElement );
+		this.promotionInfotip = createRoot( rootElement );
 
-		root.render(
+		this.promotionInfotip.render(
 			<App
 				colorScheme={ colorScheme }
 				isRTL={ isRTL }
 				promotionsData={ elementorPromotionsData }
-				onClose={ () => this.unmount( root ) }
+				onClose={ () => this.unmount() }
 			/>,
 		);
 	}
 
-	unmount( root ) {
-		if ( root ) {
-			root.unmount();
+	unmount() {
+		if ( this.promotionInfotip ) {
+			this.promotionInfotip.unmount();
 		}
+
+		this.promotionInfotip = null;
 	}
 }
