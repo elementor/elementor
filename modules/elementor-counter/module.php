@@ -15,6 +15,7 @@ class Module extends BaseModule implements Elementor_Counter_Adapter_Interface {
 	const EDITOR_COUNTER_KEY = 'e_editor_counter';
 
 	private ?Wordpress_Adapter_Interface $wordpress_adapter = null;
+	private static $should_count_editor = true;
 
 	public function get_name() {
 		return 'elementor-counter';
@@ -24,9 +25,13 @@ class Module extends BaseModule implements Elementor_Counter_Adapter_Interface {
 		parent::__construct();
 		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 
-		add_action( 'elementor/editor/init', function () {
-			$this->increment( self::EDITOR_COUNTER_KEY );
-		} );
+		if ( self::$should_count_editor ) {
+			add_action( 'elementor/editor/init', function () {
+				$this->increment( self::EDITOR_COUNTER_KEY );
+			} );
+
+			self::$should_count_editor = false;
+		}
 	}
 
 	/**
