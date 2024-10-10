@@ -55,6 +55,8 @@ class Module extends Base_Module {
 				] ) );
 			}
 		} );
+
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 	}
 
 	private function handle_external_redirects() {
@@ -78,5 +80,44 @@ class Module extends Base_Module {
 
 	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
+	}
+
+	public function enqueue_react_data(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_enqueue_script(
+			'e-react-promotions',
+			ELEMENTOR_ASSETS_URL . 'js/e-react-promotions' . $min_suffix . '.js',
+			[
+				'react',
+				'react-dom',
+				'backbone-marionette',
+				'elementor-web-cli',
+				'wp-date',
+				'elementor-common',
+				'elementor-editor-modules',
+				'elementor-editor-document',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_set_script_translations( 'e-react-promotions', 'elementor' );
+
+		wp_localize_script(
+			'e-react-promotions',
+			'elementorPromotionsData',
+			$this->get_app_js_config()
+		);
+	}
+
+	private function get_app_js_config(): array {
+		return PromotionData::get_promotion_data();
 	}
 }
