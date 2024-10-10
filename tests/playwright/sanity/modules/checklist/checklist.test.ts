@@ -59,6 +59,7 @@ test.describe( 'Launchpad checklist tests', () => {
 				checklist = editor.page.locator( selectors.popup );
 
 			await rocketButton.click();
+			await checklist.waitFor();
 			await expect( checklist ).toBeVisible();
 		} );
 
@@ -309,6 +310,7 @@ test.describe( 'Launchpad checklist tests', () => {
 				} );
 			} );
 			await rocketButton.click();
+			await checklist.waitFor();
 			await expect( checklist ).toBeVisible();
 			await expect( allDone ).toBeVisible();
 			await gotItButton.click();
