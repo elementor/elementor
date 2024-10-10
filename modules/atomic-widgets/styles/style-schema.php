@@ -74,6 +74,10 @@ class Style_Schema {
 				'uppercase',
 				'lowercase',
 			]),
+			'direction' => String_Prop_Type::make()->enum([
+				'ltr',
+				'rtl',
+			]),
 		];
 	}
 
