@@ -247,6 +247,10 @@ class Widget_Icon_Box extends Widget_Base {
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
+					'bottom' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
 				],
 				'prefix_class' => 'elementor%s-position-',
 				'condition' => [
@@ -278,7 +282,7 @@ class Widget_Icon_Box extends Widget_Base {
 				'toggle' => false,
 				'prefix_class' => 'elementor-vertical-align-',
 				'condition' => [
-					'position!' => 'top',
+					'position!' => [ 'top', 'bottom' ],
 				],
 			]
 		);
@@ -334,7 +338,7 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--icon-box-icon-margin: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-icon-box-wrapper' => '--icon-box-gap: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'selected_icon[value]!' => '',
