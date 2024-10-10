@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Props_Validator {
 
 	private array $schema;
+	private array $errors_bag = [];
 
 	public function __construct( array $schema ) {
 		$this->schema = $schema;
@@ -33,7 +34,6 @@ class Props_Validator {
 	 */
 	public function validate( array $props ): array {
 		$validated = [];
-		$errors = [];
 
 		foreach ( $props as $key => $value ) {
 			$prop_type = $this->schema[ $key ] ?? null;
@@ -45,19 +45,19 @@ class Props_Validator {
 			try {
 				$prop_type->validate_with_additional( $value );
 			} catch ( \Exception $e ) {
-				$errors[] = $key;
+				$this->errors_bag[] = $key;
 				continue;
 			}
 
 			$validated[ $key ] = $value;
 		}
 
-		$is_valid = empty( $errors );
+		$is_valid = empty( $this->errors_bag );
 
 		return [
 			$is_valid,
 			$validated,
-			$errors,
+			$this->errors_bag,
 		];
 	}
 }
