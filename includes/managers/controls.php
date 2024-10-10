@@ -1335,7 +1335,7 @@ class Controls_Manager {
 			[
 				'type'      => self::RAW_HTML,
 				'separator' => 'before',
-				'raw'       => $this->react_promotion_control( esc_html__( 'Animated Widget heading', 'elementor' ), 'header-promotion' ),
+				'raw'       => $this->react_promotion_control( esc_html__( 'Animated Widget heading', 'elementor' ), 'animated_headline' ),
 			]
 		);
 	}
@@ -1379,7 +1379,7 @@ class Controls_Manager {
 							<span class="elementor-switch-handle"></span>
 						</label>
 					</div>
-					<div class="e-promotion-react" data-promotion="' . $id . '"></div>
+					<div class="e-promotion-react"></div>
 				</div>
 			</div>
 		</div>';

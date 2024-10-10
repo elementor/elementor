@@ -2,6 +2,8 @@ import App from './app';
 import { createRoot } from 'react-dom/client';
 
 export default class ReactPromotionBehavior extends Marionette.Behavior {
+	promotionInfoTip = null;
+
 	ui() {
 		return {
 			animatedHeadlineButton: '[data-promotion].elementor-control-type-switcher',
@@ -19,34 +21,33 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 		this.mount();
 	}
 
-	promotionInfotip = null;
-
 	mount() {
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
 			isRTL = elementorCommon.config.isRTL,
-			rootElement = document.querySelector( '.e-promotion-react' );
+			rootElement = document.querySelector( '.e-promotion-react' ),
+			promotionType = rootElement?.closest( '.elementor-control-type-switcher' )?.dataset?.promotion;
 
 		if ( ! rootElement ) {
 			return;
 		}
 
-		this.promotionInfotip = createRoot( rootElement );
+		this.promotionInfoTip = createRoot( rootElement );
 
-		this.promotionInfotip.render(
+		this.promotionInfoTip.render(
 			<App
 				colorScheme={ colorScheme }
 				isRTL={ isRTL }
-				promotionsData={ elementorPromotionsData }
+				promotionsData={ elementorPromotionsData[ promotionType ] }
 				onClose={ () => this.unmount() }
 			/>,
 		);
 	}
 
 	unmount() {
-		if ( this.promotionInfotip ) {
-			this.promotionInfotip.unmount();
+		if ( this.promotionInfoTip ) {
+			this.promotionInfoTip.unmount();
 		}
 
-		this.promotionInfotip = null;
+		this.promotionInfoTip = null;
 	}
 }

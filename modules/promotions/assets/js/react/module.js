@@ -20,8 +20,6 @@ export default class Module extends elementorModules.editor.utils.Module {
 			behaviorClass: ReactPromotionBehavior,
 		};
 
-		// console.log( 'behaviors: ', behaviors );
-
 		return behaviors;
 	}
 }
