@@ -38,7 +38,7 @@ class Module extends BaseApp {
 	}
 
 	public function enqueue_home_screen_scripts(): void {
-		if ( ! current_user_can( 'manage_options' )) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
