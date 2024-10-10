@@ -221,6 +221,15 @@ const EditorSelectors = {
 	dialog: {
 		lightBox: '.elementor-lightbox',
 	},
+	onboarding: {
+		upgradeButton: '.e-onboarding__button-action',
+		skipButton: '.e-onboarding__button-skip',
+		screenTitle: '.e-onboarding__page-content-section-title',
+		features: {
+			essential: '#essential',
+			advanced: '#advanced',
+		},
+	},
 };
 
 export default EditorSelectors;
