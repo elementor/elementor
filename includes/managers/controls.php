@@ -1331,7 +1331,7 @@ class Controls_Manager {
 		}
 
 		$controls_stack->add_control(
-			'header_promotion_pro',
+			'animated_heading_promotion',
 			[
 				'type'      => self::RAW_HTML,
 				'separator' => 'before',
