@@ -3,20 +3,17 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Primitive_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Primitive_Shortcut;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Boolean_Prop_Type extends Primitive_Prop_Type {
-	use Primitive_Shortcut;
-
+class Url_Prop_Type extends Primitive_Prop_Type {
 	public static function get_key(): string {
-		return 'boolean';
+		return 'url';
 	}
 
 	protected function validate_value( $value ): bool {
-		return ! is_bool( $value );
+		return is_string( $value ) && wp_http_validate_url( $value );
 	}
 }
