@@ -198,8 +198,8 @@ class Module extends BaseModule {
 		// Get the selected product IDs
 		$post_ids = isset( $_POST['post_ids'] ) ? array_map( 'intval', $_POST['post_ids'] ) : [];
 
-		if (! current_user_can( 'edit_products' ) || empty( $post_ids) ) {
-			wp_send_json_error( ['message' => 'No products selected'] );
+		if ( ! current_user_can( 'edit_products' ) || empty( $post_ids ) ) {
+			wp_send_json_error( [ 'message' => 'No products selected' ] );
 		}
 
 		$image_urls = [];
@@ -215,7 +215,7 @@ class Module extends BaseModule {
 		}
 
 		// Return success response with the product image URLs
-		wp_send_json_success( ['product_images' => $image_urls] );
+		wp_send_json_success( [ 'product_images' => $image_urls ] );
 
 		wp_die();
 	}
