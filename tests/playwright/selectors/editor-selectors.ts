@@ -225,6 +225,10 @@ const EditorSelectors = {
 		upgradeButton: '.e-onboarding__button-action',
 		skipButton: '.e-onboarding__button-skip',
 		screenTitle: '.e-onboarding__page-content-section-title',
+		progressBar: {
+			skippedItem: '.e-onboarding__progress-bar-item--skipped',
+			completedItem: '.e-onboarding__progress-bar-item--completed',
+		},
 		features: {
 			essential: '#essential',
 			advanced: '#advanced',

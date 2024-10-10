@@ -260,6 +260,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 
 		await test.step( 'Check that step was changed to Good to Go', async () => {
 			expect( page.url() ).toContain( 'onboarding/goodToGo' );
+			expect( page.locator( EditorSelectors.onboarding.progressBar.completedItem ) ).toContainText( 'Choose Features' );
 			expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
 		} );
 	} );
@@ -274,6 +275,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		await test.step( 'Check that Skip button leads to the Good to Go screen', async () => {
 			await skipButton.click();
 			expect( page.url() ).toContain( 'onboarding/goodToGo' );
+			expect( page.locator( EditorSelectors.onboarding.progressBar.skippedItem ) ).toContainText( 'Choose Features' );
 			expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
 		} );
 	} );
