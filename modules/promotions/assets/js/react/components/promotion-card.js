@@ -8,7 +8,8 @@ import CardActions from '@elementor/ui/CardActions';
 import Button from '@elementor/ui/Button';
 import Box from '@elementor/ui/Box';
 
-const PromotionCard = () => {
+const PromotionCard = ( { promotionsData } ) => {
+	console.log(promotionsData)
 	return (
 		<Card sx={ { maxWidth: 300 } }>
 			<CardHeader title={
