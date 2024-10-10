@@ -2,9 +2,10 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers\Linked_Dimensions_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\StylesTransformers\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dimensions_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -18,6 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Styles_Renderer extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
+	public function set_up() {
+		parent::set_up();
+
+		remove_all_actions( 'elementor/atomic-widgets/styles/transformers/register' );
+	}
+
 	public function test_render__basic_style() {
 		// Arrange.
 		$styles = [
@@ -28,7 +35,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 					[
 						'props' => [
 							'color' => 'red',
-							'fontSize' => '16px',
+							'font-size' => '16px',
 						],
 						'meta' => [],
 					],
@@ -291,6 +298,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 	}
 
 	public function test_render__style_with_non_existing_transformers() {
+		// Arrange.
 		$styles = [
 			[
 				'id' => 'test-style',
@@ -298,13 +306,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'font-size' => [
-								'$$type' => 'size',
-								'value' => [
-									'size' => 14,
-									'unit' => 'px'
-								]
-							],
 							'text-decoration' => [
 								'$$type' => 'text-decoration', // non-existing transformer
 								'value' => 'underline'
@@ -329,7 +330,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_transformers_receiving_faulty_values() {
 		// Arrange.
-		add_action('elementor/atomic-widgets/{$context}/transformers/register', function($registry) {
+		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
 			$registry->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 		});
 
@@ -343,41 +344,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'font-size' => [
 								'$$type' => 'size',
 								'value' => 14 // expected array{size: int, unit: string}
-							],
-						],
-						'meta' => [],
-					],
-				],
-			],
-		];
-
-		$stylesRenderer = new Styles_Renderer( [
-			'breakpoints' => []
-		] );
-
-		// Act.
-		$css = $stylesRenderer->render( $styles );
-
-		// Assert.
-		$this->assertMatchesSnapshot( $css );
-	}
-
-	public function test_render__style_with_thrown_exceptions_in_transformer() {
-		// Arrange.
-		add_action('elementor/atomic-widgets/{$context}/transformers/register', function($registry) {
-			$registry->register( 'faulty', $this->make_mock_faulty_transformer() );
-		});
-
-		$styles = [
-			[
-				'id' => 'test-style',
-				'type' => 'class',
-				'variants' => [
-					[
-						'props' => [
-							'font-size' => [
-								'$$type' => 'faulty',
-								'value' => true // no matter what the value here is really...
 							],
 						],
 						'meta' => [],
@@ -418,7 +384,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 									'unit' => 'px'
 								]
 							],
-							'box-shadow' => [
+							'padding' => [
 								'$$type' => 'linked-dimensions',
 								'value' => [
 									'top' => [
@@ -451,6 +417,41 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 									],
 								]
 							]
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'breakpoints' => []
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_with_thrown_exceptions_in_transformer() {
+		// Arrange.
+		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
+			$registry->register( 'faulty', $this->make_mock_faulty_transformer() );
+		});
+
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-size' => [
+								'$$type' => 'faulty',
+								'value' => true // no matter what the value here is really...
+							],
 						],
 						'meta' => [],
 					],

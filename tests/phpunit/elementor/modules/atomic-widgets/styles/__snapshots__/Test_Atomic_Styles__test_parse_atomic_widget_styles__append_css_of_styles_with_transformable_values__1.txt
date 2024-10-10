@@ -1,1 +1,1 @@
-.test-style{color:red;}
+.test-style{font-size:16px;color:red;}
