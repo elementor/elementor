@@ -13,6 +13,7 @@ use Elementor\Core\Isolation\Kit_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
+use Elementor\Core\Utils\Isolation_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -39,8 +40,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 * @return void
 	 */
 	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Kit_Adapter_Interface $kit_adapter = null ) {
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
-		$this->kit_adapter = $kit_adapter ?? new Kit_Adapter();
+		$this->wordpress_adapter = $wordpress_adapter ?? Isolation_Manager::get_adapter( Wordpress_Adapter::class );
+		$this->kit_adapter = $kit_adapter ?? Isolation_Manager::get_adapter( Kit_Adapter::class );
 		parent::__construct();
 
 		$this->register_experiment();
