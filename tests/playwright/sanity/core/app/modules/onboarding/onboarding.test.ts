@@ -103,7 +103,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await expect( nextButton ).toHaveClass( 'e-onboarding__button e-onboarding__button-action' );
 
-		const skipButton = await page.waitForSelector( 'text=Skip' );
+		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
 
 		await skipButton.click();
 
