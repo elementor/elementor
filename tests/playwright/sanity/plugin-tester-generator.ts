@@ -85,7 +85,7 @@ export const generatePluginTests = ( testType: string ) => {
 				async function goToPage() {
 					await page.goto( '/law-firm-about/?elementor', {
 						timeout: 10000,
-						waitUntil: 'networkidle',
+						waitUntil: 'domcontentloaded',
 					} );
 				}
 
