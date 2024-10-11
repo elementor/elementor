@@ -1869,9 +1869,13 @@ abstract class Document extends Controls_Stack {
 
 		$src_path = $this->get_module_src_path( $script_handle );
 
-		add_action( 'wp_footer', function() use ( $src_path, $script_handle ) {
-			echo '<script type="module" src="' . $src_path . '" id="' . $script_handle .'-js"></script>';
-		}, 20 );
+//		add_action( 'wp_footer', function() use ( $src_path, $script_handle ) {
+//			echo '<script type="module" src="' . $src_path . '" id="' . $script_handle .'-js"></script>';
+//		}, 20 );
+////
+//		wp_deregister_script( $script_handle );
+
+		add_filter( 'script_loader_tag', [ $this, 'set_script_as_module2' ], 10, 3 );
 
 		return true;
 	}

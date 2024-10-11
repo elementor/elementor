@@ -153,8 +153,8 @@ abstract class Element_Base extends Controls_Stack {
 		add_filter( 'script_loader_tag', [ $this, 'set_script_as_module' ], 10, 3 );
 	}
 
-	public function set_script_as_module( $tag ): string {
-		if ( 0 !== strpos( $tag, 'script-module-' ) ) {
+	public function set_script_as_module( $tag, $handle, $source ): string {
+		if ( 0 !== strpos( $handle, 'script-module-' ) ) {
 			return '';
 		}
 
