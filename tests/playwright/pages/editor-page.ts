@@ -236,11 +236,7 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Get the frame of the Elementor editor preview.
 	 */
-	async getPreviewFrame() {
-		// Wait until the frame with name 'elementor-preview-iframe' is available
-		await this.page.waitForSelector( 'iframe[name="elementor-preview-iframe"]', { timeout: 10000 } );
-
-		// Return the frame once it's available
+	getPreviewFrame() {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
