@@ -10,4 +10,11 @@ abstract class Primitive_Prop_Type extends Prop_Type {
 	public static function get_type(): string {
 		return 'primitive';
 	}
+
+	protected function validate_self( $value ): bool {
+		return parent::validate_self( $value )
+	       && $this->validate_value( $value['value'] );
+	}
+
+	abstract protected function validate_value( $value ): bool;
 }

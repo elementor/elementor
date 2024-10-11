@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Prop_Type;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -59,23 +59,9 @@ class Props_Resolver {
 				continue;
 			}
 
-			if ( ! array_key_exists( $key, $props ) ) {
-				$resolved_props[ $key ] = $prop_type->get_default();
-				continue;
-			}
-
-			$resolved_props[ $key ] = $props[ $key ];
-
-			// Merge the top-level defaults for transformable props.
-			if (
-				$this->is_nested_transformable( $resolved_props[ $key ] ) &&
-				$this->is_nested_transformable( $prop_type->get_default() )
-			) {
-				$resolved_props[ $key ]['value'] = array_merge(
-					$prop_type->get_default()['value'],
-					$resolved_props[ $key ]['value']
-				);
-			}
+			$resolved_props[ $key ] = array_key_exists( $key, $props )
+				? $props[ $key ]
+				: $prop_type->get_default();
 		}
 
 		return array_map(
@@ -124,13 +110,6 @@ class Props_Resolver {
 		return (
 			! empty( $value['$$type'] ) &&
 			array_key_exists( 'value', $value )
-		);
-	}
-
-	private function is_nested_transformable( $value ): bool {
-		return (
-			$this->is_transformable( $value ) &&
-			is_array( $value['value'] )
 		);
 	}
 }

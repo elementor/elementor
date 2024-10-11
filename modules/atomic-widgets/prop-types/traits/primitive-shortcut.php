@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes\Utils;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Traits;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Primitive_Prop_Type;
 
@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @mixin Primitive_Prop_Type
  */
 trait Primitive_Shortcut {
-	public function validate( $value ): bool {
-		return $this->validate_value( $value ) || parent::validate( $value );
+	public function validate_self( $value ): bool {
+		return $this->validate_self( $value ) || parent::validate_self( $value );
 	}
 
 	public function default( $default ): self {

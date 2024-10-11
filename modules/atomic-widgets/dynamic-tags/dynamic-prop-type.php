@@ -2,14 +2,14 @@
 
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Primitive_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Settings_Validator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Dynamic_Prop_Type extends Transformable_Prop_Type {
+class Dynamic_Prop_Type extends Primitive_Prop_Type {
 
 	/**
 	 * Return a tuple that lets the developer ignore the dynamic prop type in the props schema

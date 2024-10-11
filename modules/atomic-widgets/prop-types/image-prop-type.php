@@ -23,7 +23,7 @@ class Image_Prop_Type extends Object_Prop_Type {
 
 	public function default_url( string $url ): self {
 		$default = $this->get_default();
-		$src_prop = $this->get_props( 'src' );
+		$src_prop = $this->get_prop( 'src' );
 
 		$this->default( [
 			'src' => $src_prop->generate_value( [
@@ -38,7 +38,7 @@ class Image_Prop_Type extends Object_Prop_Type {
 
 	public function default_size( string $size ): self {
 		$default = $this->get_default();
-		$size_prop = $this->get_props( 'size' );
+		$size_prop = $this->get_prop( 'size' );
 
 		$this->default( [
 			'src' => $default['value']['src'] ?? null,

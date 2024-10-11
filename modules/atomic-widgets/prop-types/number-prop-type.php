@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Primitive_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Primitive_Shortcut;
+use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Primitive_Shortcut;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

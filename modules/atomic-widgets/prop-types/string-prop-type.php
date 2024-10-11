@@ -2,9 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Primitive_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Primitive_Shortcut;
+use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Primitive_Shortcut;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
