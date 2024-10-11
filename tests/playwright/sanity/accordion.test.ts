@@ -12,6 +12,7 @@ test( 'Accordion', async ( { page, apiRequests }, testInfo ) => {
 
 	// Assert
 	await editor.togglePreviewMode();
+	await page.waitForTimeout( 3000 );
 	expect( await editor.getPreviewFrame()
 		.locator( '.elementor-widget-wrap > .elementor-background-overlay' )
 		.screenshot( { type: 'jpeg', quality: 90 } ) )
