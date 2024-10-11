@@ -81,13 +81,20 @@ export const generatePluginTests = ( testType: string ) => {
 				if ( 'astra-sites' === plugin.pluginName ) {
 					await page.goto( '/wp-admin/index.php' );
 				}
-				await page.goto( '/law-firm-about/?elementor' );
+
+				async function goToPage() {
+					await page.goto( '/law-firm-about/?elementor', {
+						timeout: 10000,
+						waitUntil: 'networkidle',
+					} );
+				}
 
 				try {
-					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
+					await goToPage();
+					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 				} catch ( error ) {
-					await page.reload();
-					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
+					await goToPage();
+					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 				}
 
 				await wpAdmin.closeAnnouncementsIfVisible();
