@@ -70,7 +70,7 @@ abstract class Step_Test_Base extends PHPUnit_TestCase {
 
 	protected function set_checklist_module(
 		?Wordpress_Adapter_Interface $wordpress_adapter = null,
-		?Elementor_Adapter_Interface $elementor_adapter = null,
+		?Elementor_Adapter_Interface $elementor_adapter = null
 	) : Step_Test_Base {
 		$wordpress_adapter = $wordpress_adapter ?? $this->wordpress_adapter;
 		$elementor_adapter = $elementor_adapter ?? $this->elementor_adapter;
