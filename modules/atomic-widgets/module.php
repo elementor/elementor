@@ -9,15 +9,21 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dimensions_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 
@@ -51,7 +57,8 @@ class Module extends BaseModule {
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
-			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_transformers( $transformers ) );
+			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
+			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 		}
@@ -77,7 +84,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Image() );
 	}
 
-	private function register_transformers( Transformers_Registry $transformers ) {
+	private function register_settings_transformers( Transformers_Registry $transformers ) {
 		// Primitives
 		$transformers->register( Boolean_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Number_Prop_Type::get_key(), new Primitive_Transformer() );
@@ -87,6 +94,18 @@ class Module extends BaseModule {
 		$transformers->register( Classes_Prop_Type::get_key(), new Classes_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+	}
+
+	private function register_styles_transformers( Transformers_Registry $transformers ) {
+		// Primitives
+		$transformers->register( Boolean_Prop_Type::get_key(), new Primitive_Transformer() );
+		$transformers->register( Number_Prop_Type::get_key(), new Primitive_Transformer() );
+		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
+
+		// Other
+		$transformers->register( Linked_Dimensions_Prop_Type::get_key(), new Linked_Dimensions_Transformer() );
+		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
+		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 	}
 
 	/**
