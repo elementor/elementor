@@ -89,13 +89,8 @@ export const generatePluginTests = ( testType: string ) => {
 					} );
 				}
 
-				try {
-					await goToPage();
-					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 20000 } );
-				} catch ( error ) {
-					await goToPage();
-					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 20000 } );
-				}
+				await goToPage();
+				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 20000 } );
 
 				await wpAdmin.closeAnnouncementsIfVisible();
 
