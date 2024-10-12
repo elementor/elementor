@@ -20,3 +20,6 @@ wp user meta add admin wp_persisted_preferences 'a:2:{s:14:\"core/edit-post\";a:
 for id in $(wp user list --field=ID)
 do wp user meta add "$id" "announcements_user_counter" 999
 done
+
+wp plugin install wordpress-importer --activate
+wp import /var/www/html/elementor-playwright/sample-data/elementor-floating-buttons.xml --authors=skip --quiet --allow-root
