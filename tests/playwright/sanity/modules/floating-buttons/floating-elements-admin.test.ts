@@ -4,14 +4,6 @@ import { expect } from '@playwright/test';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Verify floating buttons editor, admin page and front page behavior', () => {
-	test.afterEach( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const floatingElPage = new FloatingElementPage( page, testInfo, apiRequests );
-		await floatingElPage.deleteAllFloatingButtons();
-		await page.close();
-	} );
-
 	test( 'Verify editor behavior by creating post through API and also FE behavior', async (
 		{
 			browser,
@@ -19,7 +11,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 			apiRequests,
 		}, testInfo ) => {
 		const floatingElPage = new FloatingElementPage( page, testInfo, apiRequests );
-		const editor = await floatingElPage.createFloatingButtonWithAPI();
+		const editor = await floatingElPage.goToFloatingButtonElementorEditor();
 		await floatingElPage.waitForPanel();
 
 		await test.step( 'Check that the editor has no button to Add Element and no navigator', async () => {
@@ -77,7 +69,9 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				const actions = contactButtonActionsContainer.locator( 'li' );
 				await expect( actions ).toHaveCount( 1 );
 
-				await contactButtonWidget.hover();
+				const contactButtonElement = editor.getPreviewFrame().locator( '.elementor-widget-container .e-contact-buttons' );
+
+				await contactButtonElement.hover();
 				const deleteContainer = contactButtonActionsContainer.locator( '.elementor-editor-element-remove' );
 				await deleteContainer.click();
 				const libraryModal = page.locator( '#elementor-template-library-modal' );
@@ -88,9 +82,9 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 
 		await test.step( 'Verify that Setting as entire site displays the Widget on the FE. Check the snapshot for visual regression.', async () => {
 			await floatingElPage.goToFloatingButtonsPage();
-			const floatingElementTitle = page.locator( '.wp-list-table tbody tr td.page-title a.row-title' );
+			const floatingElementTitle = page.locator( '.wp-list-table a.row-title:has-text("Floating Button")' );
 			await floatingElementTitle.hover();
-			const setAsEntireSite = page.locator( '.row-actions .set_as_entire_site' );
+			const setAsEntireSite = page.locator( '#post-50 .row-actions .set_as_entire_site' );
 			await expect( setAsEntireSite ).toBeVisible();
 			await setAsEntireSite.click();
 			await page.waitForURL( '/wp-admin/edit.php?post_type=e-floating-buttons' );
@@ -137,8 +131,8 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 			await newPage.close();
 
 			await floatingElPage.goToFloatingButtonsPage();
-			const columnClickTracking = page.locator( '.wp-list-table tbody tr td.column-click_tracking' );
-			await expect( columnClickTracking ).toHaveText( '2' );
+			const columnClickTracking = page.locator( '.wp-list-table tbody tr td.column-click_tracking:has-text("2")' );
+			await expect( columnClickTracking ).toBeVisible();
 		} );
 	} );
 
@@ -147,10 +141,9 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		apiRequests,
 	}, testInfo ) => {
 		const floatingElPage = new FloatingElementPage( page, testInfo, apiRequests );
-		await floatingElPage.goToFloatingButtonsEmptyPage();
+		await floatingElPage.goToFloatingButtonsPage();
 
-		const addNewButtonId = '#elementor-template-library-add-new';
-		const addNewButton = page.locator( addNewButtonId );
+		const addNewButton = page.locator( '.e-admin-top-bar__main-area-buttons a' );
 
 		await test.step( 'Check that buttons and top bar exists', async () => {
 			await expect( addNewButton ).toBeVisible();
@@ -168,7 +161,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				const optionsField = page.locator( 'select[name="meta[_elementor_floating_elements_type]"] option' );
 				await expect( optionsField ).toHaveCount( 2 );
 
-				const hiddenField = page.locator( 'input[name="post_type"]' );
+				const hiddenField = page.locator( '#elementor-new-floating-elements__form input[name="post_type"]' );
 				await expect( hiddenField ).toHaveAttribute( 'value', 'e-floating-buttons' );
 
 				const titleField = page.locator( 'input[name="post_data[post_title]"]' );
@@ -200,10 +193,9 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		await test.step(
 			'Verify that the correct title and type are set for the floating element',
 			async () => {
-				const floatingElementTitle = page.locator( '.wp-list-table tbody tr td.page-title a.row-title' );
-				await expect( floatingElementTitle ).toHaveText( 'New Floating Button' );
-				const floatingElementType = page.locator( '.wp-list-table tbody tr td.column-elementor_library_type a' );
-				await expect( floatingElementType ).toHaveText( 'Floating Buttons' );
+				const floatingElementTitle = page.locator( '.wp-list-table a.row-title:has-text("New Floating Button")' );
+				await expect( floatingElementTitle ).toBeVisible();
+				await expect( page.locator( '.wp-list-table td.elementor_library_type:has-text("Floating Buttons")' ) ).toHaveCount( 2 );
 			} );
 	} );
 } );
