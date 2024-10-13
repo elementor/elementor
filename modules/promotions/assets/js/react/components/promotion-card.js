@@ -30,7 +30,7 @@ const PromotionCard = ( { promotionsData } ) => {
 						<Typography variant="subtitle2">{ title }</Typography>
 						<Chip size="small" label="pro" variant="outlined" color="promotion" sx={ { textTransform: 'uppercase' } } />
 					</Box>
-					<CloseButton edge="end" size="small"/>
+					<CloseButton size="tiny" edge="end"/>
 				</Box>
 			} sx={ { py: 1 } } />
 			<CardMedia
