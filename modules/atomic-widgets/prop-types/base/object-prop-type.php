@@ -27,7 +27,7 @@ abstract class Object_Prop_Type extends Prop_Type {
 	}
 
 	public function get_shape_item( $key ): ?Prop_Type {
-		return $this->props[ $key ] ?? null;
+		return $this->shape[ $key ] ?? null;
 	}
 
 	public function generate_value( $value ) {
