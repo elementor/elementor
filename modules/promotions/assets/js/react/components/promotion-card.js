@@ -8,7 +8,7 @@ import CardActions from '@elementor/ui/CardActions';
 import Button from '@elementor/ui/Button';
 import Box from '@elementor/ui/Box';
 import List from '@elementor/ui/List';
-import ListItem from '@elementor/ui/ListItem'
+import ListItemText from '@elementor/ui/ListItemText';
 import CloseButton from '@elementor/ui/CloseButton';
 
 const PromotionCard = ( { promotionsData } ) => {
@@ -38,9 +38,7 @@ const PromotionCard = ( { promotionsData } ) => {
 			<CardContent>
 				<List>
 					{description.map( e => { return (
-						<ListItem>
-							{e}
-						</ListItem>
+						<ListItemText primary={ e }/>
 						)
 					})}
 				</List>
