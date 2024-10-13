@@ -65,7 +65,9 @@ class Widgets_Manager {
 	*/
 	private function init_widgets() {
 		$build_widgets_filename = [
+			'common-base',
 			'common',
+			'common-optimized',
 			'inner-section',
 			'heading',
 			'image',
@@ -387,7 +389,7 @@ class Widgets_Manager {
 			}
 
 			$config[ $widget_key ] = [
-				'controls' => $widget->get_stack( false )['controls'],
+				'controls' => $widget->get_stack()['controls'],
 				'tabs_controls' => $widget->get_tabs_controls(),
 			];
 		}

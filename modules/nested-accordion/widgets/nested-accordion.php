@@ -52,6 +52,10 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
 
+	public function has_widget_container(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	protected function item_content_container( int $index ) {
 		return [
 			'elType' => 'container',

@@ -191,9 +191,11 @@ abstract class Widget_Base extends Element_Base {
 	public function get_stack( $with_common_controls = true ) {
 		$stack = parent::get_stack();
 
-		if ( $with_common_controls && 'common' !== $this->get_unique_name() ) {
+		if ( $with_common_controls && ! in_array( $this->get_unique_name(), [ 'common', 'common-optimized' ] ) ) {
+			$common_widget_name = $this->has_widget_container() ? 'common' : 'common-optimized';
+
 			/** @var Widget_Common $common_widget */
-			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
+			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( $common_widget_name );
 
 			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
 
@@ -395,7 +397,7 @@ abstract class Widget_Base extends Element_Base {
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
 
 		if ( $stack ) {
-			$config['controls'] = $this->get_stack( false )['controls'];
+			$config['controls'] = $this->get_stack()['controls'];
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
 
@@ -422,13 +424,14 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $template_content Template content.
 	 */
 	protected function print_template_content( $template_content ) {
+		if ( $this->has_widget_container() ) :
 		?>
 		<div class="elementor-widget-container">
-			<?php
+		<?php endif;
 			echo $template_content; // XSS ok.
-			?>
+		if ( $this->has_widget_container() ) : ?>
 		</div>
-		<?php
+		<?php endif;
 	}
 
 	/**
@@ -640,9 +643,10 @@ abstract class Widget_Base extends Element_Base {
 		if ( empty( $widget_content ) ) {
 			return;
 		}
+		if ( $this->has_widget_container() ) :
 		?>
 		<div class="elementor-widget-container">
-			<?php
+		<?php endif;
 			if ( $this->is_widget_first_render( $this->get_group_name() ) ) {
 				$this->register_runtime_widget( $this->get_group_name() );
 			}
@@ -664,9 +668,9 @@ abstract class Widget_Base extends Element_Base {
 			$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
 
 			echo $widget_content; // XSS ok.
-			?>
+		if ( $this->has_widget_container() ) : ?>
 		</div>
-		<?php
+		<?php endif;
 	}
 
 	protected function is_widget_first_render( $widget_name ) {

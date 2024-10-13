@@ -1548,6 +1548,10 @@ abstract class Element_Base extends Controls_Stack {
 		}
 	}
 
+	public function has_widget_container(): bool {
+		return true;
+	}
+
 	/**
 	 * Element base constructor.
 	 *

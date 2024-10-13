@@ -88,6 +88,10 @@ class Widget_Social_Icons extends Widget_Base {
 		return [ 'widget-social-icons', 'e-apple-webkit' ];
 	}
 
+	public function has_widget_container(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register social icons widget controls.
 	 *
