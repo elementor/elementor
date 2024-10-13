@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
-use Elementor\Modules\AtomicWidgets\Utils;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -13,7 +11,9 @@ abstract class Prop_Type implements \JsonSerializable {
 
 	protected array $meta = [];
 
-	protected array $settings = [];
+	protected array $settings = [
+		'required' => false,
+	];
 
 	protected array $sub_types = [];
 
@@ -28,7 +28,9 @@ abstract class Prop_Type implements \JsonSerializable {
 	}
 
 	public function meta( $key, $value = null ): self {
-		[ $key, $value ] = Utils::is_tuple( $key ) ? $key : [ $key, $value ];
+		$is_tuple = is_array( $value ) && 2 === count( $value );
+
+		[ $key, $value ] = $is_tuple ? $key : [ $key, $value ];
 
 		$this->meta[ $key ] = $value;
 
@@ -36,7 +38,7 @@ abstract class Prop_Type implements \JsonSerializable {
 	}
 
 	public function sub_type( Prop_Type $prop_type ): self {
-		$this->sub_types[ $prop_type::get_type() ] = $prop_type;
+		$this->sub_types[ $prop_type::get_key() ] = $prop_type;
 
 		return $this;
 	}
@@ -49,8 +51,16 @@ abstract class Prop_Type implements \JsonSerializable {
 		return $this->meta;
 	}
 
+	public function get_meta_item( $key ) {
+		return $this->meta[ $key ] ?? null;
+	}
+
 	protected function get_settings() {
 		return $this->settings;
+	}
+
+	protected function get_setting( $key ) {
+		return $this->settings[ $key ] ?? null;
 	}
 
 	public function get_sub_types(): array {
@@ -61,6 +71,25 @@ abstract class Prop_Type implements \JsonSerializable {
 		return $this->sub_types[ $key ] ?? null;
 	}
 
+	public function get_relevant_prop_types(): array {
+		return [
+			...$this->get_sub_types(),
+			static::get_key() => $this,
+		];
+	}
+
+	public function required(): self {
+		$this->settings['required'] = true;
+
+		return $this;
+	}
+
+	public function optional(): self {
+		$this->settings['required'] = false;
+
+		return $this;
+	}
+
 	public function generate_value( $value ) {
 		return [
 			'$$type' => static::get_key(),
@@ -69,6 +98,10 @@ abstract class Prop_Type implements \JsonSerializable {
 	}
 
 	public function validate( $value ): bool {
+		if ( null === $value ) {
+			return ! $this->get_setting( 'required' );
+		}
+
 		return $this->validate_self( $value )
 			|| $this->validate_sub_types( $value );
 	}
@@ -90,7 +123,7 @@ abstract class Prop_Type implements \JsonSerializable {
 		return false;
 	}
 
-	public function jsonSerialize() {
+	public function jsonSerialize(): array {
 		return [
 			'type' => static::get_type(),
 			'key' => static::get_key(),

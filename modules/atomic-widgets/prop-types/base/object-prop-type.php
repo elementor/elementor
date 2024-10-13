@@ -40,7 +40,7 @@ abstract class Object_Prop_Type extends Prop_Type {
 		}
 
 		return [
-			'$$type' => static::get_type(),
+			'$$type' => static::get_key(),
 			'value' => $parsed_value,
 		];
 	}
@@ -60,7 +60,7 @@ abstract class Object_Prop_Type extends Prop_Type {
 				throw new \Exception( 'Prop type must be an instance of `Prop_Type`.' );
 			}
 
-			if ( isset( $value[ $key ] ) && ! $prop_type->validate( $value[ $key ] ) ) {
+			if ( ! $prop_type->validate( $value[ $key ] ?? null ) ) {
 				return false;
 			}
 		}
@@ -68,7 +68,7 @@ abstract class Object_Prop_Type extends Prop_Type {
 		return true;
 	}
 
-	public function jsonSerialize() {
+	public function jsonSerialize(): array {
 		return [
 			...parent::jsonSerialize(),
 			'props' => $this->get_props(),

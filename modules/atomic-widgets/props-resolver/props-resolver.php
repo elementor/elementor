@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Prop_Type;
 use Exception;
 
@@ -51,26 +53,25 @@ class Props_Resolver {
 		return self::$instances[ $context ];
 	}
 
-	public function resolve( array $schema, array $props ): array {
-		$resolved_props = [];
+	public function resolve( array $prop_types, array $props ): array {
+		$resolved = [];
 
-		foreach ( $schema as $key => $prop_type ) {
+		foreach ( $prop_types as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				continue;
 			}
 
-			$resolved_props[ $key ] = array_key_exists( $key, $props )
+			$value = array_key_exists( $key, $props ) && null !== $props[ $key ]
 				? $props[ $key ]
 				: $prop_type->get_default();
+
+			$resolved[ $key ] = $this->transform( $value, $prop_type );
 		}
 
-		return array_map(
-			fn( $value ) => $this->transform( $value ),
-			$resolved_props
-		);
+		return $resolved;
 	}
 
-	private function transform( $value, int $depth = 0 ) {
+	private function transform( $value, Prop_Type $prop_type, int $depth = 0 ) {
 		if ( ! $value || ! $this->is_transformable( $value ) ) {
 			return $value;
 		}
@@ -83,10 +84,24 @@ class Props_Resolver {
 			return null;
 		}
 
-		// Transform nested transformable values recursively.
-		if ( is_array( $value['value'] ) ) {
+		$prop_types = $prop_type->get_relevant_prop_types();
+
+		if ( ! array_key_exists( $value['$$type'], $prop_types ) ) {
+			return null;
+		}
+
+		$prop_type = $prop_types[ $value['$$type'] ];
+
+		if ( $prop_type instanceof Object_Prop_Type ) {
+			$value['value'] = $this->resolve(
+				$prop_type->get_props(),
+				$value['value']
+			);
+		}
+
+		if ( $prop_type instanceof Array_Prop_Type ) {
 			$value['value'] = array_map(
-				fn( $item ) => $this->transform( $item ),
+				fn( $item ) => $this->transform( $item, $prop_type->get_prop() ),
 				$value['value']
 			);
 		}
@@ -100,7 +115,7 @@ class Props_Resolver {
 		try {
 			$transformed_value = $transformer->transform( $value['value'] );
 
-			return $this->transform( $transformed_value, $depth + 1 );
+			return $this->transform( $transformed_value, $prop_type, $depth + 1 );
 		} catch ( Exception $e ) {
 			return null;
 		}

@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
 use Elementor\Plugin;
 

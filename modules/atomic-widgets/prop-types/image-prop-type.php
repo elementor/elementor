@@ -16,34 +16,22 @@ class Image_Prop_Type extends Object_Prop_Type {
 
 	public function init_props(): array {
 		return [
-			'src' => Image_Src_Prop_Type::make(),
-			'size' => String_Prop_Type::make()->enum( Image_Sizes::get_keys() ),
+			'src' => Image_Src_Prop_Type::make()->required(),
+			'size' => String_Prop_Type::make()->enum( Image_Sizes::get_keys() )->required(),
 		];
 	}
 
 	public function default_url( string $url ): self {
-		$default = $this->get_default();
-		$src_prop = $this->get_prop( 'src' );
-
-		$this->default( [
-			'src' => $src_prop->generate_value( [
-				'id' => null,
-				'url' => $url,
-			] ),
-			'size' => $default['value']['size'] ?? null,
+		$this->get_prop( 'src' )->default( [
+			'id' => null,
+			'url' => $url,
 		] );
 
 		return $this;
 	}
 
 	public function default_size( string $size ): self {
-		$default = $this->get_default();
-		$size_prop = $this->get_prop( 'size' );
-
-		$this->default( [
-			'src' => $default['value']['src'] ?? null,
-			'size' => $size_prop->generate_value( $size ),
-		] );
+		$this->get_prop( 'size' )->default( $size );
 
 		return $this;
 	}

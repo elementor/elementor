@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Transformable_Validation;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -27,9 +25,9 @@ abstract class Array_Prop_Type extends Prop_Type {
 		$item_prop_type = $this->get_prop();
 
 		return [
-			'$$type' => static::get_type(),
+			'$$type' => static::get_key(),
 			'value' => array_map(
-				fn ($item) => $item_prop_type->generate_value( $value ),
+				fn( $item ) => $item_prop_type->generate_value( $value ),
 				$value
 			),
 		];
@@ -37,7 +35,7 @@ abstract class Array_Prop_Type extends Prop_Type {
 
 	protected function validate_self( $value ): bool {
 		return parent::validate_self( $value )
-	       && $this->validate_value( $value['value'] );
+			&& $this->validate_value( $value['value'] );
 	}
 
 	protected function validate_value( $value ): bool {
@@ -56,7 +54,7 @@ abstract class Array_Prop_Type extends Prop_Type {
 		return true;
 	}
 
-	public function jsonSerialize() {
+	public function jsonSerialize(): array {
 		return [
 			...parent::jsonSerialize(),
 			'prop' => $this->get_prop(),

@@ -2,9 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Prop_Type_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -19,6 +17,10 @@ abstract class Union_Prop_Type extends Prop_Type {
 		foreach ( $this->init_sub_types() as $type ) {
 			$this->sub_type( $type );
 		}
+	}
+
+	public function get_relevant_prop_types(): array {
+		return $this->get_sub_types();
 	}
 
 	public function generate_value( $value, $type = null ) {
@@ -40,8 +42,8 @@ abstract class Union_Prop_Type extends Prop_Type {
 		return $this;
 	}
 
-	public function validate( $value ): bool {
-		return $this->validate_sub_types( $value );
+	protected function validate_self( $value ): bool {
+		return false;
 	}
 
 	abstract protected function init_sub_types(): array;
