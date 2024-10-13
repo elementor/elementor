@@ -204,22 +204,19 @@
 
 	&center {
 		text-align: center;
-
-		.elementor-button {
-			width: auto;
-		}
 	}
 
 	&right {
 		text-align: right;
-
-		.elementor-button {
-			width: auto;
-		}
 	}
 
 	&left {
 		text-align: left;
+	}
+
+	&center,
+	&right,
+	&left {
 
 		.elementor-button {
 			width: auto;
@@ -308,22 +305,19 @@
 
 		&center {
 			text-align: center;
-
-			.elementor-button {
-				width: auto;
-			}
 		}
 
 		&right {
 			text-align: right;
-
-			.elementor-button {
-				width: auto;
-			}
 		}
 
 		&left {
 			text-align: left;
+		}
+
+		&center,
+		&right,
+		&left {
 
 			.elementor-button {
 				width: auto;
