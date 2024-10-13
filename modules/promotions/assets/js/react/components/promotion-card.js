@@ -8,9 +8,8 @@ import {
 	CardActions,
 	Button,
 	Box,
-	List,
-	ListItemText,
-	CloseButton
+	CloseButton,
+	Stack,
 } from '@elementor/ui';
 
 const PromotionCard = ( { onClose, promotionsData } ) => {
@@ -26,19 +25,15 @@ const PromotionCard = ( { onClose, promotionsData } ) => {
 
 	return (
 		<Card sx={ { width: 296 } }>
-			<CardHeader title={
-				<Box sx={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
-					<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
-						<Typography variant="subtitle2">{ title }</Typography>
-						<Chip size="small" label="pro" variant="outlined" color="promotion" sx={ { textTransform: 'uppercase' } } />
-					</Box>
-					<CloseButton edge="end" slotProps={ {
-						icon: {
-							fontSize: 'small',
-						},
-					} } onClose={ onClose } />
-				</Box>
-			} sx={ { py: 1 } } />
+			<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
+				<Typography variant="subtitle2">{ title }</Typography>
+				<Chip label="PRO" size="small" variant="outlined" color="promotion" sx={ { ml: 1, fontWeight: 400  } } />
+				<CloseButton edge="end" sx={ { ml: 'auto' } } slotProps={ {
+					icon: {
+						fontSize: 'small',
+					},
+				} } onClose={ onClose } />
+			</Stack>
 			<CardMedia
 				image={ imgSrc }
 				sx={ { height: 150 } }
