@@ -1,15 +1,17 @@
-import Card from '@elementor/ui/Card';
-import CardHeader from '@elementor/ui/CardHeader';
-import Chip from '@elementor/ui/Chip';
-import CardMedia from '@elementor/ui/CardMedia';
-import CardContent from '@elementor/ui/CardContent';
-import Typography from '@elementor/ui/Typography';
-import CardActions from '@elementor/ui/CardActions';
-import Button from '@elementor/ui/Button';
-import Box from '@elementor/ui/Box';
-import List from '@elementor/ui/List';
-import ListItemText from '@elementor/ui/ListItemText';
-import CloseButton from '@elementor/ui/CloseButton';
+import {
+	Card,
+	CardHeader,
+	Chip,
+	CardMedia,
+	CardContent,
+	Typography,
+	CardActions,
+	Button,
+	Box,
+	List,
+	ListItemText,
+	CloseButton
+} from '@elementor/ui';
 
 const PromotionCard = ( { onClose, promotionsData } ) => {
 	const title = promotionsData?.title;
@@ -41,12 +43,10 @@ const PromotionCard = ( { onClose, promotionsData } ) => {
 				image={ imgSrc }
 				sx={ { height: 150 } }
 			/>
-			<CardContent sx={ { py: 0 } }>
-				<List sx={ { listStyleType: 'disc', pl: 2 } }>
-					{ description.map( ( e, idx ) => {
-						return ( <ListItemText key={ idx } primary={ e } primaryTypographyProps={ { variant: 'body2' } } sx={ { display: 'list-item' } } /> );
-					} ) }
-				</List>
+			<CardContent>
+				{ description.map( ( e, index ) => {
+					return ( <Typography key={ index } variant="body2" color="secondary">&bull; {e}</Typography> );
+				} ) }
 			</CardContent>
 			<CardActions sx={ { pt: 1 } }>
 				<Button
