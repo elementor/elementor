@@ -36,9 +36,9 @@ const PromotionCard = ( { promotionsData } ) => {
 				sx={ { height: 190, width: 296 } }
 			/>
 			<CardContent>
-				<List>
+				<List sx={{ listStyleType: 'disc' }}>
 					{description.map( e => { return (
-						<ListItemText primary={ e }/>
+						<ListItemText primary={ e } sx={{ display: 'list-item' }}/>
 						)
 					})}
 				</List>
