@@ -23,24 +23,26 @@ const PromotionCard = ( { promotionsData } ) => {
 	};
 
 	return (
-		<Card sx={ { maxWidth: 300 } }>
+		<Card sx={ { width: 296 } }>
 			<CardHeader title={
-				<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
-					<>{ title }</>
-					<Chip size="small" label="pro" variant="outlined" color="promotion" sx={ { textTransform: 'uppercase' } } />
-					<CloseButton/>
+				<Box sx={ { display: 'flex', alignItems: 'center', justifyContent: 'space-between' } }>
+					<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
+						<Typography variant="subtitle2">{ title }</Typography>
+						<Chip size="small" label="pro" variant="outlined" color="promotion" sx={ { textTransform: 'uppercase' } } />
+					</Box>
+					<CloseButton edge="end" size="small"/>
 				</Box>
-			} />
+			} sx={ { py: 1 } } />
 			<CardMedia
 				image={ imgSrc }
 				sx={ { height: 190, width: 296 } }
 			/>
-			<CardContent>
-				<List sx={{ listStyleType: 'disc' }}>
-					{description.map( e => { return (
-						<ListItemText primary={ e } sx={{ display: 'list-item' }}/>
-						)
-					})}
+			<CardContent sx={ { py: 0 } }>
+				<List sx={ { listStyleType: 'disc', pl: 1 } }>
+					{ description.map( e => { return (
+						<ListItemText primary={ e } primaryTypographyProps={ { variant: "body2" } } sx={ { display: 'list-item' } }/>
+						);
+					} ) }
 				</List>
 			</CardContent>
 			<CardActions>
