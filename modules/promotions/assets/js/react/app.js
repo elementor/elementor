@@ -19,7 +19,7 @@ const App = ( props ) => {
 								{
 									name: 'offset',
 									options:
-										{ offset: [ -16, 8 ] },
+										{ offset: [ -24, 8 ] },
 								},
 							],
 						} }

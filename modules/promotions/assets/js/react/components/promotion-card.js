@@ -30,22 +30,26 @@ const PromotionCard = ( { promotionsData } ) => {
 						<Typography variant="subtitle2">{ title }</Typography>
 						<Chip size="small" label="pro" variant="outlined" color="promotion" sx={ { textTransform: 'uppercase' } } />
 					</Box>
-					<CloseButton size="tiny" edge="end"/>
+					<CloseButton edge="end" slotProps={ {
+						icon: {
+							fontSize: 'small',
+						},
+					} }/>
 				</Box>
 			} sx={ { py: 1 } } />
 			<CardMedia
 				image={ imgSrc }
-				sx={ { height: 190, width: 296 } }
+				sx={ { height: 150 } }
 			/>
 			<CardContent sx={ { py: 0 } }>
-				<List sx={ { listStyleType: 'disc', pl: 1 } }>
+				<List sx={ { listStyleType: 'disc', pl: 2 } }>
 					{ description.map( e => { return (
 						<ListItemText primary={ e } primaryTypographyProps={ { variant: "body2" } } sx={ { display: 'list-item' } }/>
 						);
 					} ) }
 				</List>
 			</CardContent>
-			<CardActions>
+			<CardActions sx={ { pt: 1 } }>
 				<Button
 					variant="contained"
 					size="small"
