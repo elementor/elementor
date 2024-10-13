@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Corners_Transformer extends Transformer_Base {
 	public function transform( $value ) {
-		$topLeft = $value['topLeft'] ?? 'unset';
-		$topRight = $value['topRight'] ?? 'unset';
-		$bottomRight = $value['bottomRight'] ?? 'unset';
-		$bottomLeft = $value['bottomLeft'] ?? 'unset';
+		$top_left = $value['topLeft'] ?? 'unset';
+		$top_right = $value['topRight'] ?? 'unset';
+		$bottom_right = $value['bottomRight'] ?? 'unset';
+		$bottom_left = $value['bottomLeft'] ?? 'unset';
 
-		return $topLeft . ' ' . $topRight . ' ' . $bottomRight . ' ' . $bottomLeft;
+		return $top_left . ' ' . $top_right . ' ' . $bottom_right . ' ' . $bottom_left;
 	}
 }
