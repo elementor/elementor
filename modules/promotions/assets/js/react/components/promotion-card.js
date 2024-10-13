@@ -40,7 +40,7 @@ const PromotionCard = ( { onClose, promotionsData } ) => {
 			/>
 			<CardContent>
 				{ description.map( ( e, index ) => {
-					return ( <Typography key={ index } variant="body2" color="secondary">&bull; {e}</Typography> );
+					return ( <Typography key={ index } variant="body2" color="secondary">&bull; { e }</Typography> );
 				} ) }
 			</CardContent>
 			<CardActions sx={ { pt: 1 } }>
