@@ -73,27 +73,6 @@ export type Post = {
 	tags?: number
 }
 
-export type PostForREST = {
-	id?: string,
-	date?: string,
-	date_gmt?: string,
-	slug?: string,
-	status?: string,
-	password?: string,
-	title?: string,
-	content?: string,
-	author?: number,
-	excerpt?: string,
-	featured_media?: number,
-	comment_status?: 'open' | 'closed',
-	ping_status?: 'open' | 'closed',
-	format?: 'standard' | 'aside' | 'chat' | 'gallery' | 'link' | 'image' | 'quote' | 'status' | 'video' | 'audio',
-	meta?: object,
-	sticky?: boolean,
-	template?: string,
-	tags?: number
-}
-
 export type WindowType = Window & {
 	$e?: {
 		run: ( s: string, o: object )=> unknown

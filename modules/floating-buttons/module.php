@@ -86,33 +86,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( isset( $_GET['playwright_testing'] ) ) {
-			add_action( 'init', function () {
-				$metafields = [
-					'_elementor_floating_elements_type',
-					'_elementor_edit_mode',
-					'_elementor_template_type',
-					'_wp_page_template',
-					'_elementor_version',
-					'_elementor_data',
-					'_elementor_page_assets',
-					'_elementor_controls_usage',
-				];
-
-				foreach ( $metafields as $metafield ) {
-					register_post_meta( '', $metafield, [
-						'show_in_rest'      => true,
-						'type'              => 'string',
-						'single'            => true,
-						'sanitize_callback' => 'sanitize_text_field',
-						'auth_callback'     => function () {
-							return current_user_can( 'edit_posts' );
-						},
-					] );
-				}
-			} );
-		}
-
 		if ( Floating_Buttons::is_creating_floating_buttons_page() || Floating_Buttons::is_editing_existing_floating_buttons_page() ) {
 			Controls_Manager::add_tab(
 				Widget_Contact_Button_Base::TAB_ADVANCED,

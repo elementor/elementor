@@ -108,31 +108,22 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 			await button.click();
 			const cta = floatingElement.locator( '.e-contact-buttons__send-button' );
 			await expect( cta ).toBeVisible();
-			const [ tabOpenedByButton ] = await Promise.all( [
-				context.waitForEvent( 'page' ),
-				// Perform the action that triggers the new tab, e.g., clicking a link
-				cta.click(),
-			] );
-
-			expect( tabOpenedByButton ).not.toBeNull();
-			await tabOpenedByButton.waitForLoadState( 'domcontentloaded' );
-
-			const [ secondtTabOpenedByButton ] = await Promise.all( [
-				context.waitForEvent( 'page' ),
-				// Perform the action that triggers the new tab, e.g., clicking a link
-				cta.click(),
-			] );
-
-			expect( secondtTabOpenedByButton ).not.toBeNull();
-			await secondtTabOpenedByButton.waitForLoadState( 'domcontentloaded' );
-
-			await tabOpenedByButton.close();
-			await secondtTabOpenedByButton.close();
+			for (let i = 0; i < 10; i++) {
+				const [tabOpenedByButton] = await Promise.all([
+					context.waitForEvent('page'),
+					// Perform the action that triggers the new tab, e.g., clicking a link
+					cta.click(),
+				]);
+				expect( tabOpenedByButton ).not.toBeNull();
+				await tabOpenedByButton.waitForLoadState( 'domcontentloaded' );
+				await tabOpenedByButton.close();
+			}
+			
 			await newPage.close();
 
 			await floatingElPage.goToFloatingButtonsPage();
-			const columnClickTracking = page.locator( '.wp-list-table tbody tr td.column-click_tracking:has-text("2")' );
-			await expect( columnClickTracking ).toBeVisible();
+			const columnClickTracking = page.locator( '#post-50 td.column-click_tracking' );
+			await expect( columnClickTracking ).toHaveText( '10' );
 		} );
 	} );
 
