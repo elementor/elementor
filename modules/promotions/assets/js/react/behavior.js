@@ -30,9 +30,6 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 	}
 
 	mount() {
-		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
-			isRTL = elementorCommon.config.isRTL;
-
 		const rootElement = document.querySelector( this.selectors.reactAnchor );
 
 		if ( ! rootElement ) {
@@ -43,9 +40,11 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 			return;
 		}
 
-		const promotionType = rootElement.getAttribute( 'data-promotion' );
-
 		this.promotionInfoTip = createRoot( rootElement );
+
+		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
+			isRTL = elementorCommon.config.isRTL,
+			promotionType = rootElement.getAttribute( 'data-promotion' );
 
 		this.promotionInfoTip.render(
 			<App

@@ -11,7 +11,7 @@ import List from '@elementor/ui/List';
 import ListItemText from '@elementor/ui/ListItemText';
 import CloseButton from '@elementor/ui/CloseButton';
 
-const PromotionCard = ( { promotionsData } ) => {
+const PromotionCard = ( { onClose, promotionsData } ) => {
 	const title = promotionsData?.title;
 	const description = promotionsData?.description;
 	const imgSrc = promotionsData?.image;
@@ -34,7 +34,7 @@ const PromotionCard = ( { promotionsData } ) => {
 						icon: {
 							fontSize: 'small',
 						},
-					} }/>
+					} } onClose={ onClose } />
 				</Box>
 			} sx={ { py: 1 } } />
 			<CardMedia
@@ -43,9 +43,8 @@ const PromotionCard = ( { promotionsData } ) => {
 			/>
 			<CardContent sx={ { py: 0 } }>
 				<List sx={ { listStyleType: 'disc', pl: 2 } }>
-					{ description.map( e => { return (
-						<ListItemText primary={ e } primaryTypographyProps={ { variant: "body2" } } sx={ { display: 'list-item' } }/>
-						);
+					{ description.map( ( e, idx ) => {
+						return ( <ListItemText key={ idx } primary={ e } primaryTypographyProps={ { variant: 'body2' } } sx={ { display: 'list-item' } } /> );
 					} ) }
 				</List>
 			</CardContent>
@@ -62,6 +61,7 @@ const PromotionCard = ( { promotionsData } ) => {
 };
 
 PromotionCard.propTypes = {
+	onClose: PropTypes.func,
 	promotionsData: PropTypes.object,
 };
 
