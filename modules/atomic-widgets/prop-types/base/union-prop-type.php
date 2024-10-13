@@ -42,7 +42,7 @@ abstract class Union_Prop_Type extends Prop_Type {
 		return $this;
 	}
 
-	protected function validate_self( $value ): bool {
+	protected function validate_value( $value ): bool {
 		return false;
 	}
 

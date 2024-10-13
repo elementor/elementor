@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Shorthanded_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Shorthanded_Plain_Prop_Type;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,14 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class String_Prop_Type extends Plain_Prop_Type {
-	use Shorthanded_Prop_Type;
+	use Shorthanded_Plain_Prop_Type;
 
 	public static function get_key(): string {
 		return 'string';
 	}
 
 	protected function validate_value( $value ): bool {
-		return ! is_string( $value )
+		return is_string( $value )
 			&& ( ! $this->get_enum() || $this->validate_enum( $value ) )
 			&& ( ! $this->get_regex() || $this->validate_regex( $value ) );
 	}

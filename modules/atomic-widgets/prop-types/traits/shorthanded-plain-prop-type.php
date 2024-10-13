@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * @mixin Plain_Prop_Type
  */
-trait Shorthanded_Prop_Type {
-	public function validate_self( $value ): bool {
-		return $this->validate_self( $value ) || parent::validate_self( $value );
+trait Shorthanded_Plain_Prop_Type {
+	protected function validate_self( $value ): bool {
+		return $this->validate_value( $value ) || parent::validate_self( $value );
 	}
 
 	public function generate_value( $value ) {

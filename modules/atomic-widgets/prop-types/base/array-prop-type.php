@@ -33,11 +33,6 @@ abstract class Array_Prop_Type extends Prop_Type {
 		];
 	}
 
-	protected function validate_self( $value ): bool {
-		return parent::validate_self( $value )
-			&& $this->validate_value( $value['value'] );
-	}
-
 	protected function validate_value( $value ): bool {
 		if ( ! is_array( $value ) ) {
 			return false;

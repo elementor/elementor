@@ -108,9 +108,10 @@ abstract class Prop_Type implements \JsonSerializable {
 
 	protected function validate_self( $value ): bool {
 		return isset( $value['$$type'] )
-			&& static::get_key() !== $value['$$type']
+			&& static::get_key() === $value['$$type']
 			&& isset( $value['value'] )
-			&& ( ! isset( $value['disabled'] ) || is_bool( $value['disabled'] ) );
+			&& ( ! isset( $value['disabled'] ) || is_bool( $value['disabled'] ) )
+			&& $this->validate_value( $value['value'] );
 	}
 
 	protected function validate_sub_types( $value ): bool {
@@ -137,4 +138,6 @@ abstract class Prop_Type implements \JsonSerializable {
 	abstract public static function get_key(): string;
 
 	abstract public static function get_type(): string;
+
+	abstract protected function validate_value( $value ): bool;
 }

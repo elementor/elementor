@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -45,19 +47,14 @@ abstract class Object_Prop_Type extends Prop_Type {
 		];
 	}
 
-	protected function validate_self( $value ): bool {
-		return parent::validate_self( $value )
-			&& $this->validate_value( $value['value'] );
-	}
-
 	protected function validate_value( $value ): bool {
 		if ( ! is_array( $value ) ) {
 			return false;
 		}
 
 		foreach ( $this->get_props() as $key => $prop_type ) {
-			if ( $prop_type instanceof Prop_Type ) {
-				throw new \Exception( 'Prop type must be an instance of `Prop_Type`.' );
+			if ( ! ( $prop_type instanceof Prop_Type ) ) {
+				Utils::safe_throw( "Object prop type must have a prop type for key: $key" );
 			}
 
 			if ( ! $prop_type->validate( $value[ $key ] ?? null ) ) {
