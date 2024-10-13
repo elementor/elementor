@@ -108,17 +108,17 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 			await button.click();
 			const cta = floatingElement.locator( '.e-contact-buttons__send-button' );
 			await expect( cta ).toBeVisible();
-			for (let i = 0; i < 10; i++) {
-				const [tabOpenedByButton] = await Promise.all([
-					context.waitForEvent('page'),
+			for ( let i = 0; i < 10; i++ ) {
+				const [ tabOpenedByButton ] = await Promise.all( [
+					context.waitForEvent( 'page' ),
 					// Perform the action that triggers the new tab, e.g., clicking a link
 					cta.click(),
-				]);
+				] );
 				expect( tabOpenedByButton ).not.toBeNull();
 				await tabOpenedByButton.waitForLoadState( 'domcontentloaded' );
 				await tabOpenedByButton.close();
 			}
-			
+
 			await newPage.close();
 
 			await floatingElPage.goToFloatingButtonsPage();
