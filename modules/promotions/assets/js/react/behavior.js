@@ -20,6 +20,10 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 		};
 	}
 
+	promotionData( promotionType ) {
+		return elementorPromotionsData[ promotionType ] || {};
+	}
+
 	onClickControlButtonAnimatedHeadline( event ) {
 		event.stopPropagation();
 		this.mount();
@@ -47,7 +51,7 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 			<App
 				colorScheme={ colorScheme }
 				isRTL={ isRTL }
-				promotionsData={ elementorPromotionsData[ promotionType ] }
+				promotionsData={ this.promotionData( promotionType ) }
 				onClose={ () => this.unmount() }
 			/>,
 		);
