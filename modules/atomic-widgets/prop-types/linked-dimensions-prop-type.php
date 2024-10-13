@@ -13,7 +13,7 @@ class Linked_Dimensions_Prop_Type extends Object_Prop_Type {
 		return 'linked-dimensions';
 	}
 
-	protected function init_props(): array {
+	protected function define_shape(): array {
 		return [
 			'isLinked' => Boolean_Prop_Type::make(),
 			'top' => Size_Prop_Type::make(),

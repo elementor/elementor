@@ -94,14 +94,14 @@ class Props_Resolver {
 
 		if ( $prop_type instanceof Object_Prop_Type ) {
 			$value['value'] = $this->resolve(
-				$prop_type->get_props(),
+				$prop_type->get_shape(),
 				$value['value']
 			);
 		}
 
 		if ( $prop_type instanceof Array_Prop_Type ) {
 			$value['value'] = array_map(
-				fn( $item ) => $this->transform( $item, $prop_type->get_prop() ),
+				fn( $item ) => $this->transform( $item, $prop_type->get_item_prop_type() ),
 				$value['value']
 			);
 		}

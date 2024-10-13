@@ -35,11 +35,11 @@ class Dynamic_Prop_Types_Mapping {
 
 	private function add_to_prop_type( Prop_Type $prop_type ): void {
 		if ( $prop_type instanceof Object_Prop_Type ) {
-			$this->add_to_schema( $prop_type->get_props() );
+			$this->add_to_schema( $prop_type->get_shape() );
 		}
 
 		if ( $prop_type instanceof Array_Prop_Type ) {
-			$this->add_to_prop_type( $prop_type->get_prop() );
+			$this->add_to_prop_type( $prop_type->get_item_prop_type() );
 		}
 
 		if ( false === $prop_type->get_meta_item( 'dynamic' ) ) {

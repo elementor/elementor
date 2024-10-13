@@ -36,11 +36,11 @@ class Props_Validator {
 		$validated = [];
 
 		foreach ( $this->schema as $key => $prop_type ) {
-			$value = $props[ $key ] ?? null;
-
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				continue;
 			}
+
+			$value = $props[ $key ] ?? null;
 
 			$is_valid = $prop_type->validate( $value ?? $prop_type->get_default() );
 

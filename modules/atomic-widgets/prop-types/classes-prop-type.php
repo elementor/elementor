@@ -14,7 +14,7 @@ class Classes_Prop_Type extends Array_Prop_Type {
 		return 'classes';
 	}
 
-	public function init_prop(): Prop_Type {
+	public function define_item_prop_type(): Prop_Type {
 		return String_Prop_Type::make()->regex( '/^[a-z][a-z-_0-9]*$/i' );
 	}
 }

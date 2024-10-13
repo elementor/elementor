@@ -7,22 +7,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Array_Prop_Type extends Prop_Type {
-	protected ?Prop_Type $prop = null;
+	protected ?Prop_Type $item_prop_type = null;
 
 	public static function get_type(): string {
 		return 'array';
 	}
 
 	public function __construct() {
-		$this->prop = $this->init_prop();
+		$this->item_prop_type = $this->define_item_prop_type();
 	}
 
-	public function get_prop(): ?Prop_Type {
-		return $this->prop;
+	public function get_item_prop_type(): ?Prop_Type {
+		return $this->item_prop_type;
 	}
 
 	public function generate_value( $value ) {
-		$item_prop_type = $this->get_prop();
+		$item_prop_type = $this->get_item_prop_type();
 
 		return [
 			'$$type' => static::get_key(),
@@ -38,7 +38,7 @@ abstract class Array_Prop_Type extends Prop_Type {
 			return false;
 		}
 
-		$prop_type = $this->get_prop();
+		$prop_type = $this->get_item_prop_type();
 
 		foreach ( $value as $item ) {
 			if ( $prop_type && ! $prop_type->validate( $item ) ) {
@@ -52,9 +52,9 @@ abstract class Array_Prop_Type extends Prop_Type {
 	public function jsonSerialize(): array {
 		return [
 			...parent::jsonSerialize(),
-			'prop' => $this->get_prop(),
+			'item_prop_type' => $this->get_item_prop_type(),
 		];
 	}
 
-	abstract protected function init_prop(): Prop_Type;
+	abstract protected function define_item_prop_type(): Prop_Type;
 }

@@ -12,28 +12,28 @@ abstract class Object_Prop_Type extends Prop_Type {
 	/**
 	 * @var array<Prop_Type>
 	 */
-	protected array $props = [];
+	protected array $shape = [];
 
 	public static function get_type(): string {
 		return 'object';
 	}
 
 	public function __construct() {
-		$this->props = $this->init_props();
+		$this->shape = $this->define_shape();
 	}
 
-	public function get_props(): array {
-		return $this->props;
+	public function get_shape(): array {
+		return $this->shape;
 	}
 
-	public function get_prop( $key ): ?Prop_Type {
+	public function get_shape_item( $key ): ?Prop_Type {
 		return $this->props[ $key ] ?? null;
 	}
 
 	public function generate_value( $value ) {
 		$parsed_value = [];
 
-		foreach ( $this->get_props() as $key => $prop_type ) {
+		foreach ( $this->get_shape() as $key => $prop_type ) {
 			if ( ! isset( $value[ $key ] ) ) {
 				continue;
 			}
@@ -52,7 +52,7 @@ abstract class Object_Prop_Type extends Prop_Type {
 			return false;
 		}
 
-		foreach ( $this->get_props() as $key => $prop_type ) {
+		foreach ( $this->get_shape() as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				Utils::safe_throw( "Object prop type must have a prop type for key: $key" );
 			}
@@ -68,12 +68,12 @@ abstract class Object_Prop_Type extends Prop_Type {
 	public function jsonSerialize(): array {
 		return [
 			...parent::jsonSerialize(),
-			'props' => $this->get_props(),
+			'shape' => $this->get_shape(),
 		];
 	}
 
 	/**
 	 * @return array<Prop_Type>
 	 */
-	abstract protected function init_props(): array;
+	abstract protected function define_shape(): array;
 }

@@ -15,7 +15,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 		return 'size';
 	}
 
-	protected function init_props(): array {
+	protected function define_shape(): array {
 		return [
 			'size' => Number_Prop_Type::make()->required(),
 			'unit' => String_Prop_Type::make()->enum( static::DEFAULT_UNITS )->required(),
@@ -23,7 +23,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 	}
 
 	public function units( array $units ): self {
-		$this->get_prop( 'unit' )->enum( $units );
+		$this->get_shape_item( 'unit' )->enum( $units );
 
 		return $this;
 	}

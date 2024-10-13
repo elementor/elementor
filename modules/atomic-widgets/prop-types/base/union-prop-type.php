@@ -23,7 +23,7 @@ abstract class Union_Prop_Type extends Prop_Type {
 		return $this->get_sub_types();
 	}
 
-	public function generate_value( $value, $type = null ) {
+	public function generate_value( $value, ?string $type = null ) {
 		$sub_type = $this->get_sub_type( $type );
 
 		if ( ! $sub_type ) {
