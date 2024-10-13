@@ -36,26 +36,18 @@ class PromotionData extends EditorAssetsAPI {
 	}
 
 	private static function get_animated_headline_data( $assets_data ) {
-		$header_description = 'Get access to more features, widgets, and templates with Elementor Pro.';
-		$header_description .= '<ul>';
-		$header_description .= '<li>First bullet point.</li>';
-		$header_description .= '<li>Second bullet point</li>';
-		$header_description .= '<li>Third bullet point.</li>';
-		$header_description .= '</ul>';
 
 		$data = [
 			'image' => esc_url( $assets_data['animated-headline'] ) ?? '',
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
-			'title' => esc_html__( 'Unlock Elementor Pro', 'elementor' ),
-			'description' => esc_html__( $header_description, 'elementor' ),
-			'description_alterative' => [
-				esc_html__( 'First bullet point', 'elementor' ),
-				esc_html__( 'Second bullet point', 'elementor' ),
-				esc_html__( 'Third bullet point', 'elementor' ),
-				esc_html__( 'Fourth bullet point', 'elementor' ),
+			'title' => esc_html__( 'Bring Headlines to Life', 'elementor' ),
+			'description' =>  [
+				esc_html__( 'Highlight key messages dynamically.', 'elementor' ),
+				esc_html__( 'Apply rotating effects to text.', 'elementor' ),
+				esc_html__( 'Fully customize your headlines.', 'elementor' ),
 			],
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-			'upgrade_url' => 'https://elementor.com/pro/',
+			'upgrade_url' => 'https://go.elementor.com/go-pro-heading-widget/',
 		];
 
 		return self::filter_data( 'heading', $data );
