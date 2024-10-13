@@ -191,8 +191,12 @@ abstract class Widget_Base extends Element_Base {
 	public function get_stack( $with_common_controls = true ) {
 		$stack = parent::get_stack();
 
-		if ( $with_common_controls && ! in_array( $this->get_unique_name(), [ 'common', 'common-optimized' ] ) ) {
-			$common_widget_name = $this->has_widget_container() ? 'common' : 'common-optimized';
+		if ( $with_common_controls && ! $this instanceof Widget_Common_Base ) {
+			$common_widget_name = 'common';
+
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) ) {
+				$common_widget_name = $this->has_widget_container() ? 'common' : 'common-optimized';
+			}
 
 			/** @var Widget_Common $common_widget */
 			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( $common_widget_name );
