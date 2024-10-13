@@ -7,6 +7,9 @@ import Typography from '@elementor/ui/Typography';
 import CardActions from '@elementor/ui/CardActions';
 import Button from '@elementor/ui/Button';
 import Box from '@elementor/ui/Box';
+import List from '@elementor/ui/List';
+import ListItem from '@elementor/ui/ListItem'
+import CloseButton from '@elementor/ui/CloseButton';
 
 const PromotionCard = ( { promotionsData } ) => {
 	const title = promotionsData?.title;
@@ -25,6 +28,7 @@ const PromotionCard = ( { promotionsData } ) => {
 				<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
 					<>{ title }</>
 					<Chip size="small" label="pro" variant="outlined" color="promotion" sx={ { textTransform: 'uppercase' } } />
+					<CloseButton/>
 				</Box>
 			} />
 			<CardMedia
@@ -32,9 +36,14 @@ const PromotionCard = ( { promotionsData } ) => {
 				sx={ { height: 190, width: 296 } }
 			/>
 			<CardContent>
-				<Typography variant="body2" color="text.secondary" component="p">
-					{ description }
-				</Typography>
+				<List>
+					{description.map( e => { return (
+						<ListItem>
+							{e}
+						</ListItem>
+						)
+					})}
+				</List>
 			</CardContent>
 			<CardActions>
 				<Button
