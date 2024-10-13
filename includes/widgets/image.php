@@ -108,7 +108,7 @@ class Widget_Image extends Widget_Base {
 	}
 
 	public function has_widget_container(): bool {
-		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**
