@@ -41,7 +41,7 @@ class PromotionData extends EditorAssetsAPI {
 			'image' => esc_url( $assets_data['animated-headline'] ) ?? '',
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( 'Bring Headlines to Life', 'elementor' ),
-			'description' =>  [
+			'description' => [
 				esc_html__( 'Highlight key messages dynamically.', 'elementor' ),
 				esc_html__( 'Apply rotating effects to text.', 'elementor' ),
 				esc_html__( 'Fully customize your headlines.', 'elementor' ),
