@@ -2,15 +2,15 @@
 namespace Elementor\Data\EditorAssets;
 
 class EditorAssetsAPI {
-    public static function config( $key ): string {
-        $config = [
-            'ASSETS_DATA_URL' => 'https://assets.elementor.com/home-screen/v1/home-screen.json',
-            'ASSETS_DATA_TRANSIENT_KEY' => '_elementor_home_screen_data',
-            'ASSETS_DATA_KEY' => 'home-screen',
-        ];
+	public static function config( $key ): string {
+		$config = [
+			'ASSETS_DATA_URL' => 'https://assets.elementor.com/home-screen/v1/home-screen.json',
+			'ASSETS_DATA_TRANSIENT_KEY' => '_elementor_home_screen_data',
+			'ASSETS_DATA_KEY' => 'home-screen',
+		];
 
-        return $config[ $key ] ?? '';
-    }
+		return $config[ $key ] ?? '';
+	}
 
 	public static function get_assets_data( $force_request = false ): array {
 		$assets_data = self::get_transient( static::config( 'ASSETS_DATA_TRANSIENT_KEY' ) );
