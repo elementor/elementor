@@ -192,14 +192,8 @@ abstract class Widget_Base extends Element_Base {
 		$stack = parent::get_stack();
 
 		if ( $with_common_controls && ! $this instanceof Widget_Common_Base ) {
-			$common_widget_name = 'common';
-
-			if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) ) {
-				$common_widget_name = $this->has_widget_container() ? 'common' : 'common-optimized';
-			}
-
-			/** @var Widget_Common $common_widget */
-			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( $common_widget_name );
+			/** @var Widget_Common_Base $common_widget */
+			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( $this->get_common_widget_name() );
 
 			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
 
@@ -207,6 +201,14 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return $stack;
+	}
+
+	private function get_common_widget_name() {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) ) {
+			return $this->has_widget_container() ? 'common' : 'common-optimized';
+		}
+
+		return 'common';
 	}
 
 	/**
@@ -399,7 +401,7 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
-		$with_common_controls = ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+		$with_common_controls = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 
 		if ( $stack ) {
 			$config['controls'] = $this->get_stack( $with_common_controls )['controls'];
