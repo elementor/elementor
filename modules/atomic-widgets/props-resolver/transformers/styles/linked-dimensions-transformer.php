@@ -9,12 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Linked_Dimensions_Transformer extends Transformer_Base {
-	public function transform( $value ) {
+	public function transform( $value, $key ) {
 		$top = $value['top'] ?? 'unset';
 		$left = $value['left'] ?? 'unset';
 		$bottom = $value['bottom'] ?? 'unset';
 		$right = $value['right'] ?? 'unset';
 
-		return $top . ' ' . $right . ' ' . $bottom . ' ' . $left;
+		return $this->multi( [
+			$key . '-top' => $top,
+			$key . '-right' => $right,
+			$key . '-bottom' => $bottom,
+			$key . '-left' => $left,
+		] );
 	}
 }

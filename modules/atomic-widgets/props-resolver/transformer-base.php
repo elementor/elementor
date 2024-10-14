@@ -6,5 +6,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Transformer_Base {
-	abstract public function transform( $value );
+	abstract public function transform( $value, $key );
+
+	protected function multi( $value ) {
+		return [
+			'$$multi' => true,
+			'value' => $value,
+		];
+	}
+
 }
