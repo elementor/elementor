@@ -14,7 +14,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		const page = await context.newPage();
 		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
-		await checklistHelper.resetStepsInDb( request, { editor_visit_count: 0 } );
+		await checklistHelper.resetStepsInDb( request, { e_editor_counter: 0 } );
 
 		newTestUser = await apiRequests.createNewUser( request, newUser );
 
@@ -59,6 +59,7 @@ test.describe( 'Launchpad checklist tests', () => {
 				checklist = editor.page.locator( selectors.popup );
 
 			await rocketButton.click();
+			await checklist.waitFor();
 			await expect( checklist ).toBeVisible();
 		} );
 
@@ -295,6 +296,7 @@ test.describe( 'Launchpad checklist tests', () => {
 			} );
 
 			await rocketButton.click();
+			await checklist.waitFor();
 			await expect( checklist ).toBeVisible();
 			await expect( allDone ).toBeHidden();
 			await closeButton.click();
@@ -308,6 +310,7 @@ test.describe( 'Launchpad checklist tests', () => {
 				} );
 			} );
 			await rocketButton.click();
+			await checklist.waitFor();
 			await expect( checklist ).toBeVisible();
 			await expect( allDone ).toBeVisible();
 			await gotItButton.click();
