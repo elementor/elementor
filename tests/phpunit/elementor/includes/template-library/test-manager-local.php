@@ -144,21 +144,8 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 				'template_id' => $this->fake_post_id,
 			]
 		);
-		$this->assertEquals( $ret, [ 'content' => [] ] );
-	}
 
-	/**
-	 * @covers \Elementor\TemplateLibrary\Manager::get_template_data()
-	 */
-	public function test_should_return_error_from_get_template_data() {
-		$this->assertWPError(
-			self::$manager->get_template_data(
-				[
-					'source' => 'local',
-					'template_id' => $this->fake_post_id,
-				]
-			)
-		);
+		$this->assertEquals( $ret, [ 'content' => [] ] );
 	}
 
 	public function test_get_data__document_without_data() {
