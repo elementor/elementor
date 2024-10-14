@@ -88,19 +88,21 @@ class NestedTabs extends Widget_Nested_Base {
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
 
-		$heading_selector_non_touch_device = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container()
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container();
+
+		$heading_selector_non_touch_device = $optimized_markup
 			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading'
 			: ':{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
 		
-		$heading_selector_touch_device = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container()
+		$heading_selector_touch_device = $optimized_markup
 			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading'
 			: '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading';
 		
-		$heading_selector = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container()
+		$heading_selector = $optimized_markup
 			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs > .e-n-tabs-heading'
 			: '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
 
-		$content_selector = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container()
+		$content_selector = $optimized_markup
 			? ':where( {{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs > .e-n-tabs-content ) > .e-con'
 			: ':where( {{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
 
