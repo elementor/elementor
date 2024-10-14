@@ -168,7 +168,7 @@ class Model extends BaseModel {
 			]
 		);
 
-		if ( $this->should_display_checklist_toggle_control() ) {
+		if ( ChecklistModule::should_display_checklist_toggle_control() ) {
 			$this->add_control(
 				'get_started_heading',
 				[
@@ -237,11 +237,5 @@ class Model extends BaseModel {
 		);
 
 		$this->end_controls_section();
-	}
-
-	private function should_display_checklist_toggle_control() : bool {
-		return Plugin::$instance->experiments->is_feature_active( ChecklistModule::EXPERIMENT_ID ) &&
-			Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) &&
-			current_user_can( 'manage_options' );
 	}
 }
