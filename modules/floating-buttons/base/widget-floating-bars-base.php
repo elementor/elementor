@@ -16,6 +16,20 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 
 	const TAB_ADVANCED = 'advanced-tab-floating-bars';
 
+	public function get_style_depends(): array {
+		$widget_name = $this->get_name();
+
+		$style_depends = Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' )
+			? parent::get_style_depends()
+			: [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+
+		$style_depends[] = 'widget-floating-bars-base';
+
+		$style_depends[] = "widget-{$widget_name}";
+
+		return $style_depends;
+	}
+
 	public function get_icon(): string {
 		return 'eicon-banner';
 	}
@@ -280,9 +294,6 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'return_value' => 'yes',
 				'default' => $config['content']['floating_bar_section']['close_switch_default'],
-				'condition' => [
-					'advanced_toggle_sticky' => 'yes',
-				],
 			]
 		);
 

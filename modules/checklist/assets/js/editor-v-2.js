@@ -1,20 +1,12 @@
-import { Badge } from '@elementor/ui';
 import * as EditorAppBar from '@elementor/editor-app-bar';
 import { __ } from '@wordpress/i18n';
 import * as React from 'react';
-import RocketIcon from '@elementor/icons/RocketIcon';
+import TopBarIcon from './topbar-icon';
+import { toggleChecklistPopup, addMixpanelTrackingChecklistTopBar } from './utils/functions';
+import { QueryClient, QueryClientProvider } from '@elementor/query';
+import { TogglePopup } from './commands';
 
-const IconWithBadge = ( { invisible } ) => {
-	return (
-		<Badge color="primary" variant="dot" invisible={ invisible }>
-			<RocketIcon />
-		</Badge>
-	);
-};
-
-IconWithBadge.propTypes = {
-	invisible: PropTypes.bool,
-};
+const queryClient = new QueryClient();
 
 export const editorV2 = () => {
 	const { utilitiesMenu } = EditorAppBar;
@@ -25,12 +17,14 @@ export const editorV2 = () => {
 		useProps: () => {
 			return {
 				title: __( 'Checklist', 'elementor' ),
-				icon: () => <RocketIcon />,
+				icon: () => <QueryClientProvider client={ queryClient }>
+					<TopBarIcon />
+				</QueryClientProvider>,
 				onClick: () => {
-					$e.commands.run( 'checklist/toggle-popup' );
+					addMixpanelTrackingChecklistTopBar( TogglePopup.isOpen );
+					toggleChecklistPopup();
 				},
 			};
 		},
 	} );
 };
-

@@ -1,11 +1,16 @@
-import App from '../app';
+import App from '../app/app';
+import { QueryClient, QueryClientProvider } from '@elementor/query';
 import ReactDOM from 'react-dom/client';
+import { updateUserProgress } from '../utils/functions';
+import { USER_PROGRESS } from '../utils/consts';
+
+const queryClient = new QueryClient();
 
 export class TogglePopup extends $e.modules.CommandBase {
 	static rootElement = null;
 	static isOpen = false;
 
-	apply() {
+	apply( args ) {
 		if ( ! TogglePopup.isOpen ) {
 			this.mount();
 		} else {
@@ -13,12 +18,16 @@ export class TogglePopup extends $e.modules.CommandBase {
 		}
 
 		TogglePopup.isOpen = ! TogglePopup.isOpen;
+		args.isOpen = TogglePopup.isOpen;
+		updateUserProgress( { [ USER_PROGRESS.LAST_OPENED_TIMESTAMP ]: TogglePopup.isOpen } );
 	}
 
 	mount() {
 		this.setRootElement();
 
-		TogglePopup.rootElement.render( <App /> );
+		TogglePopup.rootElement.render( <QueryClientProvider client={ queryClient }>
+			<App />
+		</QueryClientProvider> );
 	}
 
 	unmount() {

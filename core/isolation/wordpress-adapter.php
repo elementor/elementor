@@ -1,5 +1,9 @@
 <?php
+
 namespace Elementor\Core\Isolation;
+
+use Elementor\Core\Settings\Manager;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
 class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
@@ -30,6 +34,15 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		return get_pages( $args );
 	}
 
+	/**
+	 * Creates and returns a wp query instance.
+	 *
+	 * @return \WP_Query
+	 */
+	public function get_query( $args ) : ?\WP_Query {
+		return new \WP_Query( $args );
+	}
+
 	public function get_option( $option_key ) {
 		return get_option( $option_key );
 	}
@@ -40,5 +53,29 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
 	public function add_option( $option_key, $option_value ) : void {
 		add_option( $option_key, $option_value );
+	}
+
+	public function get_user_preferences( $preference_key ) {
+		return Manager::get_settings_managers( 'editorPreferences' )
+			->get_model()
+			->get_settings( $preference_key );
+	}
+
+	public function set_user_preferences( $preference_key, $value ) {
+		Manager::get_settings_managers( 'editorPreferences' )
+			->get_model()
+			->set_settings( $preference_key, $value );
+	}
+
+	public function is_new_installation() {
+		return Upgrade_Manager::is_new_installation();
+	}
+
+	public function add_query_arg( $args, $url ) : string {
+		return add_query_arg( $args, $url );
+	}
+
+	public function has_custom_logo() : bool {
+		return has_custom_logo();
 	}
 }

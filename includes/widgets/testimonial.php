@@ -623,7 +623,7 @@ class Widget_Testimonial extends Widget_Base {
 
 			if ( settings.link.url ) {
 				#>
-				<a href="{{ settings.link.url }}" {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{{ settings.testimonial_name }}}</a>
+				<a href="{{  elementor.helpers.sanitizeUrl( settings.link.url ) }}" {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{{ settings.testimonial_name }}}</a>
 				<#
 			} else {
 				#>
@@ -639,7 +639,7 @@ class Widget_Testimonial extends Widget_Base {
 
 			if ( settings.link.url ) {
 				#>
-				<a href="{{ settings.link.url }}" {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{{ settings.testimonial_job }}}</a>
+				<a href="{{  elementor.helpers.sanitizeUrl( settings.link.url ) }}" {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{{ settings.testimonial_job }}}</a>
 				<#
 			} else {
 				#>

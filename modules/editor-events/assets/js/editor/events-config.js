@@ -9,6 +9,7 @@ const eventsConfig = {
 	locations: {
 		widgetPanel: 'Widget Panel',
 		topBar: 'Top Bar',
+		elementorEditor: 'Elementor Editor',
 	},
 
 	secondaryLocations: {
@@ -36,14 +37,20 @@ const eventsConfig = {
 		structure: 'Structure',
 		documentNameDropdown: 'Document Name dropdown',
 		responsiveControls: 'Responsive controls',
+		launchpad: 'launchpad',
+		checklistHeader: 'Checklist Header',
+		checklistSteps: 'Checklist Steps',
+		userPreferences: 'User Preferences',
 	},
 
 	elements: {
 		accordionSection: 'Accordion section',
 		buttonIcon: 'Button Icon',
 		mainCta: 'Main CTA',
+		button: 'Button',
 		link: 'Link',
 		dropdown: 'Dropdown',
+		toggle: 'Toggle',
 	},
 
 	names: {
@@ -77,6 +84,16 @@ const eventsConfig = {
 			structure: 'top_bar_structure',
 			documentNameDropdown: 'top_bar_document_name_dropdown',
 			responsiveControls: 'top_bar_responsive_controls',
+			launchpadOn: 'top_bar_checklist_icon_show',
+			launchpadOff: 'top_bar_checklist_icon_hide',
+		},
+		// ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
+		elementorEditor: {
+			checklistHeaderClose: 'checklist_header_close_icon',
+			userPreferences: {
+				checklistShow: 'checklist_userpreferences_toggle_show',
+				checklistHide: 'checklist_userpreferences_toggle_hide',
+			},
 		},
 	},
 };

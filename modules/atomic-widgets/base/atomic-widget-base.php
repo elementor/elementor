@@ -2,7 +2,11 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Schema\Atomic_Prop;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
+use Elementor\Modules\AtomicWidgets\Validators\Styles_Validator;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
@@ -23,20 +27,23 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	public function get_atomic_controls() {
 		$controls = $this->define_atomic_controls();
+		$schema = static::get_props_schema();
 
-		return $this->get_valid_controls( $controls );
+		// Validate the schema only in the Editor.
+		static::validate_schema( $schema );
+
+		return $this->get_valid_controls( $schema, $controls );
 	}
 
-	private function get_valid_controls( array $controls ): array {
+	private function get_valid_controls( array $schema, array $controls ): array {
 		$valid_controls = [];
-		$schema = static::get_props_schema();
 
 		foreach ( $controls as $control ) {
 			if ( $control instanceof Section ) {
 				$cloned_section = clone $control;
 
 				$cloned_section->set_items(
-					$this->get_valid_controls( $control->get_items() )
+					$this->get_valid_controls( $schema, $control->get_items() )
 				);
 
 				$valid_controls[] = $cloned_section;
@@ -90,6 +97,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$data = parent::get_data_for_save();
 
 		$data['version'] = $this->version;
+		$data['settings'] = $this->sanitize_atomic_settings( $data['settings'] );
+		$data['styles'] = $this->sanitize_atomic_styles( $data['styles'] );
 
 		return $data;
 	}
@@ -111,29 +120,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	final public function get_atomic_settings(): array {
 		$schema = static::get_props_schema();
-		$raw_settings = $this->get_settings();
+		$props = $this->get_settings();
 
-		$transformed_settings = [];
-
-		foreach ( $schema as $key => $prop ) {
-			if ( array_key_exists( $key, $raw_settings ) ) {
-				$transformed_settings[ $key ] = $raw_settings[ $key ];
-			} else {
-				$transformed_settings[ $key ] = $prop->get_default();
-			}
-
-			$transformed_settings[ $key ] = $this->transform_setting( $transformed_settings[ $key ] );
-		}
-
-		return $transformed_settings;
+		return Props_Resolver::for_settings()->resolve( $schema, $props );
 	}
 
-	public static function get_props_schema() {
-		$schema = static::define_props_schema();
-
-		static::validate_schema( $schema );
-
-		return $schema;
+	public static function get_props_schema(): array {
+		return apply_filters(
+			'elementor/atomic-widgets/props-schema',
+			static::define_props_schema()
+		);
 	}
 
 	// TODO: Move to a `Schema_Validator` class?
@@ -141,64 +137,36 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$widget_name = static::class;
 
 		foreach ( $schema as $key => $prop ) {
-			if ( ! ( $prop instanceof Atomic_Prop ) ) {
-				Utils::safe_throw( "Prop `$key` must be an instance of `Atomic_Prop` in `{$widget_name}`." );
-			}
-
-			if ( ! $prop->get_type() ) {
-				Utils::safe_throw( "Prop `$key` must have a type in `{$widget_name}`." );
-			}
-
-			static::validate_prop_default_value( $prop, $key );
-		}
-	}
-
-	private static function validate_prop_default_value( Atomic_Prop $prop, string $key ) {
-		$widget_name = static::class;
-
-		if ( ! $prop->validate( $prop->get_default() ) ) {
-			Utils::safe_throw( "Default value for `$key` prop is not of type `{$prop->get_type()}` in `{$widget_name}`." );
-		}
-
-		foreach ( $prop->get_constraints() as $constraint ) {
-			try {
-				$constraint->validate( $prop->get_default() );
-			} catch ( \Exception $e ) {
-				Utils::safe_throw(
-					"Default value for `$key` prop does not pass the constraint `{$constraint->get_type()}` in `{$widget_name}` - {$e->getMessage()}"
-				);
+			if ( ! ( $prop instanceof Prop_Type ) ) {
+				Utils::safe_throw( "Prop `$key` must be an instance of `Prop_Type` in `{$widget_name}`." );
 			}
 		}
 	}
 
-	private function transform_setting( $setting ) {
-		if ( ! $this->is_transformable( $setting ) ) {
-			return $setting;
+	private function sanitize_atomic_styles( array $styles ) {
+		[ , $validated, $errors ] = Styles_Validator::make( Style_Schema::get() )->validate( $styles );
+
+		if ( ! empty( $errors ) ) {
+			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
 
-		switch ( $setting['$$type'] ) {
-			case 'classes':
-				return is_array( $setting['value'] )
-					? join( ' ', $setting['value'] )
-					: '';
+		return $validated;
+	}
 
-			case 'image':
-				if ( isset( $setting['value']['attachmentId'] ) ) {
-					$url = wp_get_attachment_image_url( $setting['value']['attachmentId'] ) ?? null;
-				} elseif ( isset( $setting['value']['url'] ) ) {
-					$url = $setting['value']['url'];
-				}
+	private function sanitize_atomic_settings( array $settings ): array {
+		$schema = static::get_props_schema();
 
-				return empty( $url ) ? Utils::get_placeholder_image_src() : $url;
+		[ , $validated, $errors ] = Props_Validator::make( $schema )->validate( $settings );
 
-			default:
-				return null;
+		if ( ! empty( $errors ) ) {
+			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
+
+		return $validated;
 	}
 
-	private function is_transformable( $setting ): bool {
-		return ! empty( $setting['$$type'] ) && 'string' === getType( $setting['$$type'] ) && isset( $setting['value'] );
-	}
-
+	/**
+	 * @return array<string, Prop_Type>
+	 */
 	abstract protected static function define_props_schema(): array;
 }
