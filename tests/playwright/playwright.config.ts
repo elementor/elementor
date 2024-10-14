@@ -2,8 +2,8 @@ import { resolve } from 'path';
 import { defineConfig } from '@playwright/test';
 import { config as _config } from 'dotenv';
 
-process.env.DEV_SERVER = 'http://localhost:8888';
-process.env.TEST_SERVER = 'http://localhost:8889';
+process.env.DEV_SERVER = 'http://localhost:9999';
+process.env.TEST_SERVER = 'http://localhost:9998';
 process.env.DEBUG_PORT = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '9223' : '9222';
 
 _config( {
@@ -24,7 +24,10 @@ export default defineConfig( {
 	retries: process.env.CI ? 1 : 0,
 	workers: process.env.CI ? 2 : 1,
 	fullyParallel: false,
-	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
+	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : [
+		[ 'list' ],
+		[ 'json', { outputFile: 'test-results.json' } ],
+	],
 	use: {
 		launchOptions: {
 			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
