@@ -476,7 +476,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	private function add_content_style_section() {
-		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container();
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
 
 		$low_specificity_accordion_item_selector = $optimized_markup
 			? ':where( {{WRAPPER}} > .e-n-accordion > .e-n-accordion-item ) > .e-con'
@@ -727,7 +727,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	 * @string $state
 	 */
 	private function add_border_and_radius_style( $state ) {
-		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container();
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
 
 		$selector = $optimized_markup
 			? '{{WRAPPER}} > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title'

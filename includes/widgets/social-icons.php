@@ -314,7 +314,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$start = is_rtl() ? 'end' : 'start';
 		$end = is_rtl() ? 'start' : 'end';
 
-		$align_selector = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container()
+		$align_selector = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container()
 			? '{{WRAPPER}}'
 			: '{{WRAPPER}} .elementor-widget-container';
 
