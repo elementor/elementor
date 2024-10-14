@@ -497,13 +497,17 @@ class NestedTabs extends Widget_Nested_Base {
 			]
 		);
 
+		$tabs_title_bg_color_selector = $optimized_markup
+			? '{{WRAPPER}} > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected="false"]:not( :hover )'
+			: '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected="false"]:not( :hover )';
+
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected="false"]:not( :hover )',
+				'selector' => $tabs_title_bg_color_selector,
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
