@@ -15,13 +15,9 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 
 	public function test_elementMethods() {
 		foreach ( $this->elementor()->elements_manager->get_element_types() as $element ) {
-			$title = $element->get_title();
-			$type = $element->get_type();
-			$name = $element->get_name();
-
-			$this->assertNotEmpty( $title, sprintf( 'Element title is empty for element type: %s', $element->get_name() ) );
-			$this->assertNotEmpty( $type, sprintf( 'Element type is empty for element name: %s', $element->get_name() ) );			
-			$this->assertNotEmpty( $name, sprintf( 'Element name is empty for element title: %s', $title ) );
+			$this->assertNotEmpty( $element->get_title() );
+			$this->assertNotEmpty( $element->get_type() );
+			$this->assertNotEmpty( $element->get_name() );
 		}
 	}
 

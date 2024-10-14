@@ -18,7 +18,7 @@ class Elementor_Test_Widgets extends Elementor_Test_Base {
 		foreach ( $this->elementor()->widgets_manager->get_widget_types() as $widget_type ) {
 			$name = $widget_type->get_name();
 
-			if ( 'common' === $name ) {
+			if ( 'common' === $name || 'common-optimized' === $name ) {
 				continue;
 			}
 
