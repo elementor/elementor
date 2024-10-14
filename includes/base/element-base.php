@@ -825,7 +825,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 * @return void
 	 */
-	protected function register_transform_section( $element_selector = '' ) {
+	protected function register_transform_section( $element_selector = '', $transform_selector_class = ' > .elementor-widget-container' ) {
 		$default_unit_values_deg = [];
 		$default_unit_values_ms = [];
 
@@ -857,10 +857,6 @@ abstract class Element_Base extends Controls_Stack {
 		$transform_prefix_class = 'e-';
 		$transform_return_value = 'transform';
 		$transform_css_modifier = '';
-
-		$transform_selector_class = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container()
-			? ''
-			: ' > .elementor-widget-container';
 
 		if ( 'con' === $element_selector ) {
 			$transform_selector_class = '.e-' . $element_selector;

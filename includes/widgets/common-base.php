@@ -21,6 +21,7 @@ class Widget_Common_Base extends Widget_Base {
 	const WRAPPER_SELECTOR_HOVER_CHILD = '{{WRAPPER}}:hover > .elementor-widget-container';
 	const MASK_SELECTOR_DEFAULT = '{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container';
 	const MASK_SELECTOR_IMG = '{{WRAPPER}}.elementor-widget-image .elementor-widget-container img';
+	const TRANSFORM_SELECTOR_CLASS = ' > .elementor-widget-container';
 
 	/**
 	 * Get widget name.
@@ -1154,7 +1155,7 @@ class Widget_Common_Base extends Widget_Base {
 
 		$this->register_effects_section();
 
-		$this->register_transform_section();
+		$this->register_transform_section( '', static::TRANSFORM_SELECTOR_CLASS );
 
 		$this->register_background_section();
 
