@@ -1,13 +1,11 @@
 import {
 	Card,
-	CardHeader,
 	Chip,
 	CardMedia,
 	CardContent,
 	Typography,
 	CardActions,
 	Button,
-	Box,
 	CloseButton,
 	Stack,
 } from '@elementor/ui';
@@ -27,7 +25,7 @@ const PromotionCard = ( { onClose, promotionsData } ) => {
 		<Card sx={ { width: 296 } }>
 			<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 				<Typography variant="subtitle2">{ title }</Typography>
-				<Chip label="PRO" size="small" variant="outlined" color="promotion" sx={ { ml: 1, fontWeight: 400  } } />
+				<Chip label="PRO" size="small" variant="outlined" color="promotion" sx={ { ml: 1, fontWeight: 400 } } />
 				<CloseButton edge="end" sx={ { ml: 'auto' } } slotProps={ {
 					icon: {
 						fontSize: 'small',
