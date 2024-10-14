@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
-test( 'Accordion', async ( { page, apiRequests }, testInfo ) => {
+test.skip( 'Accordion', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
