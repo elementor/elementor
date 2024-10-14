@@ -13,6 +13,7 @@ use Elementor\Core\Isolation\Elementor_Counter_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
+use Elementor\Core\Utils\Isolation_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
