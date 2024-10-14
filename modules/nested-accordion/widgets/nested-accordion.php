@@ -659,6 +659,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 	private function add_header_style( $state, $context ) {
 		$variable = '--n-accordion-' . $context . '-' . $state . '-color';
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
 
 		switch ( $state ) {
 			case 'hover':
