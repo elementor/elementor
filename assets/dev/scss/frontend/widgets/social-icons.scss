@@ -15,9 +15,9 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 		}
 
 		&:not(:has(.elementor-widget-container)) {
-            line-height: 1;
-            font-size: 0;
-        }
+			line-height: 1;
+			font-size: 0;
+		}
 	}
 
 	&:not(.elementor-grid-0):not(.elementor-grid-tablet-0):not(.elementor-grid-mobile-0) {
