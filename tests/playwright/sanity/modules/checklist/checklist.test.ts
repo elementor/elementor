@@ -395,7 +395,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="false"]' ) ).waitFor();
 	} );
 
-	test.only( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
+	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
 		await test.step( 'Checklist visible to admin role by default', async () => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 				editor = await wpAdmin.openNewPage( false, false ),
