@@ -732,7 +732,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$selector = $optimized_markup
 			? '{{WRAPPER}} > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title'
 			: '{{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title';
-		
+
 		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
 
 		switch ( $state ) {

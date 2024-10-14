@@ -431,8 +431,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $template_content Template content.
 	 */
 	protected function print_template_content( $template_content ) {
-		if ( $this->has_widget_container() ) :
-		?>
+		if ( $this->has_widget_container() ) : ?>
 		<div class="elementor-widget-container">
 		<?php endif;
 			echo $template_content; // XSS ok.
@@ -650,8 +649,7 @@ abstract class Widget_Base extends Element_Base {
 		if ( empty( $widget_content ) ) {
 			return;
 		}
-		if ( $this->has_widget_container() ) :
-		?>
+		if ( $this->has_widget_container() ) : ?>
 		<div class="elementor-widget-container">
 		<?php endif;
 			if ( $this->is_widget_first_render( $this->get_group_name() ) ) {
