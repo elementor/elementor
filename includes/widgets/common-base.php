@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,7 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Widget_Common_Base extends Widget_Base {
 
-	const WRAPPER_SELECTOR = '{{WRAPPER}} > .elementor-widget-container';
+	const WRAPPER_SELECTOR = '{{WRAPPER}} .elementor-widget-container';
+	const WRAPPER_SELECTOR_CHILD = '{{WRAPPER}} > .elementor-widget-container';
+	const WRAPPER_SELECTOR_HOVER = '{{WRAPPER}}:hover .elementor-widget-container';
+	const WRAPPER_SELECTOR_HOVER_CHILD = '{{WRAPPER}}:hover > .elementor-widget-container';
+	const MASK_SELECTOR_DEFAULT = '{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container';
+	const MASK_SELECTOR_IMG = '{{WRAPPER}}.elementor-widget-image .elementor-widget-container img';
 
 	/**
 	 * Get widget name.
@@ -155,8 +158,8 @@ class Widget_Common_Base extends Widget_Base {
 	 */
 	private function get_mask_selectors( $rules ) {
 		$mask_selectors = [
-			'default' => '{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container',
-			'image' => '{{WRAPPER}}.elementor-widget-image .elementor-widget-container img',
+			'default' => static::MASK_SELECTOR_DEFAULT,
+			'image' => static::MASK_SELECTOR_IMG,
 		];
 
 		return [
@@ -196,7 +199,7 @@ class Widget_Common_Base extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					static::WRAPPER_SELECTOR => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					static::WRAPPER_SELECTOR_CHILD => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -208,7 +211,7 @@ class Widget_Common_Base extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					static::WRAPPER_SELECTOR => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					static::WRAPPER_SELECTOR_CHILD => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -693,7 +696,7 @@ class Widget_Common_Base extends Widget_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => '_background',
-				'selector' => static::WRAPPER_SELECTOR,
+				'selector' => static::WRAPPER_SELECTOR_CHILD,
 			]
 		);
 
@@ -710,7 +713,7 @@ class Widget_Common_Base extends Widget_Base {
 			Group_Control_Background::get_type(),
 			[
 				'name' => '_background_hover',
-				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+				'selector' => static::WRAPPER_SELECTOR_HOVER,
 			]
 		);
 
@@ -729,7 +732,7 @@ class Widget_Common_Base extends Widget_Base {
 				'render_type' => 'ui',
 				'separator' => 'before',
 				'selectors' => [
-					static::WRAPPER_SELECTOR => 'transition: background {{SIZE}}s',
+					static::WRAPPER_SELECTOR_CHILD => 'transition: background {{SIZE}}s',
 				],
 			]
 		);
@@ -768,7 +771,7 @@ class Widget_Common_Base extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => '_border',
-				'selector' => static::WRAPPER_SELECTOR,
+				'selector' => static::WRAPPER_SELECTOR_CHILD,
 			]
 		);
 
@@ -779,7 +782,7 @@ class Widget_Common_Base extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					static::WRAPPER_SELECTOR => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					static::WRAPPER_SELECTOR_CHILD => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -788,7 +791,7 @@ class Widget_Common_Base extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => '_box_shadow',
-				'selector' => static::WRAPPER_SELECTOR,
+				'selector' => static::WRAPPER_SELECTOR_CHILD,
 			]
 		);
 
@@ -805,7 +808,7 @@ class Widget_Common_Base extends Widget_Base {
 			Group_Control_Border::get_type(),
 			[
 				'name' => '_border_hover',
-				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+				'selector' => static::WRAPPER_SELECTOR_HOVER,
 			]
 		);
 
@@ -816,7 +819,7 @@ class Widget_Common_Base extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}}:hover > .elementor-widget-container' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					static::WRAPPER_SELECTOR_HOVER_CHILD => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -825,7 +828,7 @@ class Widget_Common_Base extends Widget_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => '_box_shadow_hover',
-				'selector' => '{{WRAPPER}}:hover .elementor-widget-container',
+				'selector' => static::WRAPPER_SELECTOR_HOVER,
 			]
 		);
 
@@ -843,7 +846,7 @@ class Widget_Common_Base extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'transition: background {{_background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
+					static::WRAPPER_SELECTOR => 'transition: background {{_background_hover_transition.SIZE}}s, border {{SIZE}}s, border-radius {{SIZE}}s, box-shadow {{SIZE}}s',
 				],
 			]
 		);

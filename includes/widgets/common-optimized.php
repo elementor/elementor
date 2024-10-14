@@ -1,8 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -10,6 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Common_Optimized extends Widget_Common_Base {
 
 	const WRAPPER_SELECTOR = '{{WRAPPER}}';
+	const WRAPPER_SELECTOR_CHILD = '{{WRAPPER}}';
+	const WRAPPER_SELECTOR_HOVER = '{{WRAPPER}}:hover';
+	const WRAPPER_SELECTOR_HOVER_CHILD = '{{WRAPPER}}:hover';
+	const MASK_SELECTOR_DEFAULT = '{{WRAPPER}}:not( .elementor-widget-image )';
+	const MASK_SELECTOR_IMG = '{{WRAPPER}}.elementor-widget-image img';
 
 	public function get_name() {
 		return 'common-optimized';
