@@ -18,7 +18,7 @@ const UnifyProductImages = ( { productImageUrls } ) => {
 				{ isOpen && <App
 					type={ 'media' }
 					getControlValue={ () => ( {
-						url: productImageUrls[ 0 ].image_url,
+						urls: productImageUrls,
 					} ) }
 					setControlValue={ () => {} }
 					onClose={ handleClose }

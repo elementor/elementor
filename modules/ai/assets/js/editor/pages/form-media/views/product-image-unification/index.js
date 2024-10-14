@@ -1,35 +1,37 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
-import ImagesDisplay from '../../components/images-display';
 import useImageActions from '../../hooks/use-image-actions';
 import { useEditImage } from '../../context/edit-image-context';
-import usePromptSettings, { IMAGE_RATIO } from '../../hooks/use-prompt-settings';
+import usePromptSettings, { IMAGE_BACKGROUND_COLOR, IMAGE_RATIO } from '../../hooks/use-prompt-settings';
 import { useRequestIds } from '../../../../context/requests-ids';
-import ImagesPlaceholder from '../variations/components/images-placeholder';
 import useProductImageUnification from './hooks/use-produc-image-unification';
 import ImageRatioSelect from '../../components/image-ratio-select';
 import ColorInput from '../../components/color-picker';
 import GenerateAgainSubmit from '../../components/generate-again-submit';
 import GenerateSubmit from '../../components/generate-submit';
+import ImagesDisplay from '../../components/images-display';
 
 const ProductImageUnification = () => {
-	const [ prompt ] = useState( '' );
 	const { setGenerate } = useRequestIds();
-	const { editImage, aspectRatio: initialAspectRatio } = useEditImage();
-	const { settings, updateSettings } = usePromptSettings( { aspectRatio: initialAspectRatio } );
+	const { editImage } = useEditImage();
+	const { settings, updateSettings } = usePromptSettings( );
 	const { data, send, isLoading: isGenerating, error } = useProductImageUnification( );
 	const { use, edit, isLoading: isUploading } = useImageActions();
 	const isLoading = isGenerating || isUploading;
-	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ data?.result ] );
-	const [ backgroundColor, setBackgroundColor ] = useState( '#FFFFFF' );
+	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ settings ] );
+	const generatedBgColor = useMemo( () => settings[ IMAGE_BACKGROUND_COLOR ], [ settings ] );
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 		setGenerate();
-		send( { prompt, settings: { ...settings, backgroundColor, imageRatio: settings.imageRatio }, image: editImage } );
+		send( { settings: { [ IMAGE_RATIO ]: settings[ IMAGE_RATIO ], [ IMAGE_BACKGROUND_COLOR ]: settings[ IMAGE_BACKGROUND_COLOR ] }, urls: editImage.urls } );
+	};
+
+	const getCols = ( dataLength = 1 ) => {
+		return Math.min( Math.ceil( Math.sqrt( dataLength ?? 1 ) ), 4 );
 	};
 
 	return (
@@ -44,12 +46,12 @@ const ProductImageUnification = () => {
 					<Stack gap={ 2 } sx={ { my: 2.5 } }>
 						<ColorInput
 							label={ __( 'Background Color', 'elementor' ) }
-							color={ backgroundColor }
-							onChange={ ( c ) => setBackgroundColor( c ) }
+							color={ generatedBgColor }
+							onChange={ ( color ) => updateSettings( { [ IMAGE_BACKGROUND_COLOR ]: color } ) }
 						/>
 						<ImageRatioSelect
 							disabled={ isLoading }
-							value={ settings[ IMAGE_RATIO ] }
+							value={ generatedAspectRatio }
 							onChange={ ( event ) => updateSettings( { [ IMAGE_RATIO ]: event.target.value } ) }
 						/>
 						<Stack gap={ 2 } sx={ { my: 2.5 } }>
@@ -70,12 +72,15 @@ const ProductImageUnification = () => {
 					data?.result ? (
 						<ImagesDisplay
 							images={ data.result }
-							aspectRatio={ generatedAspectRatio }
 							onUseImage={ use }
 							onEditImage={ edit }
+							cols={ getCols( data.result?.length ) }
 						/>
 					) : (
-						<ImagesPlaceholder />
+						<ImagesDisplay
+							images={ editImage.urls }
+							cols={ getCols( editImage.urls?.length ?? 1 ) }
+						/>
 					)
 				}
 			</View.Content>

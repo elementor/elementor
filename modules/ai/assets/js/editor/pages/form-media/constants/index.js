@@ -20,6 +20,7 @@ export const IMAGE_PROMPT_SETTINGS = {
 	IMAGE_RATIO: 'ratio',
 	IMAGE_ZOOM: 'zoom',
 	IMAGE_UPSCALE: 'upscale_to',
+	IMAGE_BACKGROUND_COLOR: 'background_color',
 };
 
 export const IMAGE_PROMPT_CATEGORIES = {

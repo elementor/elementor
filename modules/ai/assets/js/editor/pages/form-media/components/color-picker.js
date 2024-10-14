@@ -44,7 +44,7 @@ const ColorInput = ( { label, color, onChange } ) => {
 	};
 
 	const handleTextFieldChange = ( event ) => {
-		onChange( event.target.value );
+		onChange( `#${ event.target.value }` );
 	};
 
 	const handleColorPickerChange = ( colorValue ) => {
