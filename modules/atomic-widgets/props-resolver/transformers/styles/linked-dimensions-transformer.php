@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Multi_Props;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,7 +16,7 @@ class Linked_Dimensions_Transformer extends Transformer_Base {
 		$bottom = $value['bottom'] ?? 'unset';
 		$right = $value['right'] ?? 'unset';
 
-		return $this->multi( [
+		return Multi_Props::generate( [
 			$key . '-top' => $top,
 			$key . '-right' => $right,
 			$key . '-bottom' => $bottom,

@@ -83,7 +83,7 @@ class Props_Resolver {
 		foreach ( $resolved_props as $key => $value ) {
 			$transformed = $this->transform( $value, $key );
 
-			if ( $this->is_multi( $transformed ) ) {
+			if ( Multi_Props::is( $transformed ) ) {
 				unset( $transformed_props[ $key ] );
 
 				$transformed_props = array_merge( $transformed_props, $transformed['value'] );
@@ -114,7 +114,7 @@ class Props_Resolver {
 			foreach ( $value['value'] as $nested_key => $nested_value ) {
 				$value['value'][ $nested_key ] = $this->transform( $nested_value, $nested_key, $depth + 1 );
 
-				if ( $this->is_multi( $value['value'][ $nested_key ] ) ) {
+				if ( Multi_Props::is( $value['value'][ $nested_key ] ) ) {
 					$multi_prop = $value['value'][ $nested_key ];
 					unset( $value['value'][ $nested_key ] );
 					$value['value'] = array_merge( $value['value'], $multi_prop['value'] );
@@ -140,14 +140,6 @@ class Props_Resolver {
 	private function is_transformable( $value ): bool {
 		return (
 			! empty( $value['$$type'] ) &&
-			array_key_exists( 'value', $value )
-		);
-	}
-
-	private function is_multi( $value ): bool {
-		return (
-			! empty( $value['$$multi'] ) &&
-			true === $value['$$multi'] &&
 			array_key_exists( 'value', $value )
 		);
 	}
