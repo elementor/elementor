@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Core\Isolation;
 
 interface Wordpress_Adapter_Interface {
@@ -20,6 +21,12 @@ interface Wordpress_Adapter_Interface {
 	public function add_option( $option_key, $option_value );
 
 	public function update_option( $option_key, $option_value );
+
+	public function get_user_preferences( $preference_key );
+
+	public function set_user_preferences( $preference_key, $value );
+
+	public function is_new_installation();
 
 	public function add_query_arg( $args, $url );
 
