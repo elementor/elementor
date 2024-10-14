@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Checklist\Steps;
 
 use Elementor\Core\DocumentTypes\Page;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

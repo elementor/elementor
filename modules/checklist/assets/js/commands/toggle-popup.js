@@ -15,11 +15,11 @@ export class TogglePopup extends $e.modules.CommandBase {
 			this.mount();
 		} else {
 			this.unmount();
-			updateUserProgress( { [ USER_PROGRESS.EDITOR_VISIT_COUNT ]: -1 } );
 		}
 
 		TogglePopup.isOpen = ! TogglePopup.isOpen;
 		args.isOpen = TogglePopup.isOpen;
+		updateUserProgress( { [ USER_PROGRESS.LAST_OPENED_TIMESTAMP ]: TogglePopup.isOpen } );
 	}
 
 	mount() {
