@@ -561,6 +561,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 			]
 		);
 
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
+
 		$title_typography_selector = $optimized_markup
 			? ':where( {{WRAPPER}} > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text'
 			: ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text';
