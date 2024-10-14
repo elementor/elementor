@@ -129,7 +129,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @since 1.3.0
 	 * @access public
 	 */
-	final public function enqueue_scripts() {
+	final public function enqueue_scripts(): void {
 		$deprecated_scripts = [
 			//Insert here when you have a deprecated script
 		];
@@ -140,7 +140,25 @@ abstract class Element_Base extends Controls_Stack {
 			}
 
 			wp_enqueue_script( $script );
+
+			$this->maybe_enqueue_as_script_module( $script );
 		}
+	}
+
+	private function maybe_enqueue_as_script_module( $script ): void {
+		if ( 0 !== strpos( $script, 'script-module-' ) ) {
+			return;
+		}
+
+		add_filter( 'script_loader_tag', [ $this, 'set_script_as_module' ], 10, 3 );
+	}
+
+	public function set_script_as_module( $tag, $handle, $source ): string {
+		if ( 0 !== strpos( $handle, 'script-module-' ) ) {
+			return '';
+		}
+
+		return str_replace( '<script', '<script type="module"', $tag );
 	}
 
 	/**
@@ -1561,6 +1579,8 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @param array      $data Optional. Element data. Default is an empty array.
 	 * @param array|null $args Optional. Element default arguments. Default is null.
+	 *
+	 * @return void
 	 **/
 	public function __construct( array $data = [], array $args = null ) {
 		if ( $data ) {
