@@ -185,7 +185,7 @@ class Model extends BaseModel {
 					'type' => Controls_Manager::SWITCHER,
 					'label_on' => esc_html__( 'Show', 'elementor' ),
 					'label_off' => esc_html__( 'Hide', 'elementor' ),
-					'default' => ChecklistModule::is_preference_switch_on() ? 'yes' : '',
+					'default' => Plugin::$instance->modules_manager->get_modules( 'checklist' )->is_preference_switch_on() ? 'yes' : '',
 					'description' => esc_html__( 'Show a checklist to guide you through your first steps of website creation.', 'elementor' ),
 				]
 			);
