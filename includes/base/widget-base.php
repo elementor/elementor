@@ -674,7 +674,7 @@ abstract class Widget_Base extends Element_Base {
 			$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
 
 			echo $widget_content; // XSS ok.
-		if ( $this->has_widget_container() ) : ?>
+			if ( $this->has_widget_container() ) : ?>
 		</div>
 		<?php endif;
 	}
