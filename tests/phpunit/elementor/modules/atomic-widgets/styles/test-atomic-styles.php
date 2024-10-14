@@ -1,7 +1,11 @@
 <?php
-namespace Elementor\Testing\Modules\AtomicWidgets;
+namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\Atomic_Styles;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Widget_Base;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -38,7 +42,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 						[
 							'props' => [
 								'color' => 'red',
-								'fontSize' => '16px',
+								'font-size' => '16px',
 							],
 							'meta' => [],
 						],
@@ -51,7 +55,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 						[
 							'props' => [
 								'color' => 'blue',
-								'fontWeight' => 'bold',
+								'font-weight' => 'bold',
 							],
 							'meta' => [],
 						],
@@ -71,7 +75,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 						[
 							'props' => [
 								'color' => 'green',
-								'fontSize' => '18px',
+								'font-size' => '18px',
 							],
 							'meta' => [],
 						],
@@ -104,7 +108,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 						[
 							'props' => [
 								'color' => 'red',
-								'fontSize' => '16px',
+								'font-size' => '16px',
 							],
 							'meta' => [
 								'breakpoint' => 'mobile',
@@ -126,7 +130,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 						[
 							'props' => [
 								'color' => 'blue',
-								'fontSize' => '18px',
+								'font-size' => '18px',
 							],
 							'meta' => [
 								'breakpoint' => 'tablet',
@@ -147,6 +151,11 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 	public function test_parse_atomic_widget_styles__append_css_of_styles_with_transformable_values() {
 		// Arrange.
+		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
+			$registry->register( Size_Prop_Type::get_key(), new Size_Transformer() );
+			$registry->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
+		});
+
 		( new Atomic_Styles() )->register_hooks();
 		$post = $this->make_mock_post();
 		$element = $this->make_mock_widget([
@@ -160,8 +169,11 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
-								'color' => 'red',
-								'fontSize' => [
+								'color' => [
+									'$$type' => 'color',
+									'value' => 'red',
+								],
+								'font-size' => [
 									'$$type' => 'size',
 									'value' => [
 										'unit' => 'px',
@@ -214,7 +226,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 						[
 							'props' => [
 								'color' => 'red',
-								'fontSize' => '16px',
+								'font-size' => '16px',
 							],
 							'meta' => [],
 						],
