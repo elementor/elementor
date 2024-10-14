@@ -20,10 +20,11 @@ const UnifyProductImages = ( { productImageUrls } ) => {
 					getControlValue={ () => ( {
 						url: productImageUrls[ 0 ].image_url,
 					} ) }
+					setControlValue={ () => {} }
 					onClose={ handleClose }
 					isRTL={ elementorCommon.config.isRTL }
 					additionalOptions={ {
-						location: LOCATIONS.VARIATIONS,
+						location: LOCATIONS.PRODUCT_IMAGE_UNIFICATION,
 					} }
 				/> }
 			</RequestIdsProvider>

@@ -10,6 +10,7 @@ export const LOCATIONS = {
 	REPLACE_BACKGROUND: 'replace-background',
 	REMOVE_TEXT: 'remove-text',
 	CLEANUP: 'cleanup',
+	PRODUCT_IMAGE_UNIFICATION: 'product-image-unification',
 };
 
 export const IMAGE_PROMPT_SETTINGS = {
