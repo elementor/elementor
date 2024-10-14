@@ -9,9 +9,11 @@ export const STEP = {
 };
 
 export const USER_PROGRESS = {
+	LAST_OPENED_TIMESTAMP: 'last_opened_timestamp',
+	SHOULD_OPEN_IN_EDITOR: 'should_open_in_editor',
 	CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME: 'first_closed_checklist_in_editor',
 	IS_POPUP_MINIMIZED: 'is_popup_minimized',
-	EDITOR_VISIT_COUNT: 'editor_visit_count',
+	EDITOR_VISIT_COUNT: 'e_editor_counter',
 };
 
 export const STEP_IDS_TO_COMPLETE_IN_EDITOR = [ 'add_logo', 'set_fonts_and_colors' ];
