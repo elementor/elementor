@@ -84,13 +84,13 @@ export const generatePluginTests = ( testType: string ) => {
 
 				async function goToPage() {
 					await page.goto( '/law-firm-about/?elementor', {
-						timeout: 10000,
-						waitUntil: 'domcontentloaded',
+						timeout: 10000, // Reduced timeout for faster failure
+						waitUntil: 'load', // Ensures full page load (all resources)
 					} );
 				}
 
 				await goToPage();
-				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 20000 } );
+				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 5000 } );
 
 				await wpAdmin.closeAnnouncementsIfVisible();
 
