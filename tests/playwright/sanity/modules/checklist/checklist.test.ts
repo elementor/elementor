@@ -395,7 +395,7 @@ test.describe( 'Launchpad checklist tests', () => {
 		await page.locator( checklistHelper.getStepItemSelector( 'add_logo', '[data-is-checked="false"]' ) ).waitFor();
 	} );
 
-	test( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
+	test.only( 'Checklist visible only to admin', async ( { browser, page, apiRequests }, testInfo ) => {
 		await test.step( 'Checklist visible to admin role by default', async () => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 				editor = await wpAdmin.openNewPage( false, false ),
@@ -403,6 +403,11 @@ test.describe( 'Launchpad checklist tests', () => {
 				checklist = editor.page.locator( selectors.popup );
 			await rocketButton.click();
 			await expect( checklist ).toBeVisible();
+
+			await editor.openUserPreferencesPanel();
+
+			// See if the checklist switcher is visible for admin role users
+			await expect( editor.page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) ).toBeVisible();
 		} );
 
 		await test.step( 'Checklist not visible to author role', async () => {
@@ -416,6 +421,11 @@ test.describe( 'Launchpad checklist tests', () => {
 			const rocketButton = editor.page.locator( selectors.topBarIcon );
 
 			await expect( rocketButton ).toBeHidden();
+
+			await editor.openUserPreferencesPanel();
+
+			// See if the checklist switcher is not visible for admin role users
+			await expect( editor.page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) ).toBeHidden();
 		} );
 	} );
 } );

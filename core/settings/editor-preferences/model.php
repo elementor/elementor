@@ -168,7 +168,9 @@ class Model extends BaseModel {
 			]
 		);
 
-		if ( Plugin::$instance->experiments->is_feature_active( ChecklistModule::EXPERIMENT_ID ) && Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( ChecklistModule::EXPERIMENT_ID ) &&
+			Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) &&
+			current_user_can( 'manage_options' ) ) {
 			$this->add_control(
 				'get_started_heading',
 				[
