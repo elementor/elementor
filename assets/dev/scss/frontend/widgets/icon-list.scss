@@ -10,6 +10,10 @@
 		.elementor-widget-container {
 			overflow: hidden;
 		}
+
+		&:not(:has(.elementor-widget-container)) {
+            overflow: hidden;
+        }
 	}
 
 	.elementor-icon-list-items.elementor-inline-items {

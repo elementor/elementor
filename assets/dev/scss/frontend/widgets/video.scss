@@ -8,6 +8,11 @@
 		transform: translate3d(0, 0, 0); // Allow border-radius in Safari
 	}
 
+	&:not(:has(.elementor-widget-container)) {
+        overflow: hidden; // Adjust as needed
+        transform: translate3d(0, 0, 0); // Adjust as needed
+    }
+
 	.elementor-wrapper {
 		aspect-ratio: var( --video-aspect-ratio );
 

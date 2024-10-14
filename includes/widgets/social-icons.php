@@ -314,6 +314,10 @@ class Widget_Social_Icons extends Widget_Base {
 		$start = is_rtl() ? 'end' : 'start';
 		$end = is_rtl() ? 'start' : 'end';
 
+		$align_selector = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container()
+			? '{{WRAPPER}}'
+			: '{{WRAPPER}} .elementor-widget-container';
+
 		$this->add_responsive_control(
 			'align',
 			[
@@ -336,7 +340,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'prefix_class' => 'e-grid-align%s-',
 				'default' => 'center',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'text-align: {{VALUE}}',
+					$align_selector => 'text-align: {{VALUE}}',
 				],
 			]
 		);

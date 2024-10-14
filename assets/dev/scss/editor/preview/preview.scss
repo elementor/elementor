@@ -524,6 +524,10 @@ html.elementor-html {
 		filter: opacity(0.4) saturate(0);
 	}
 
+	&:not(:has(> .elementor-widget-container)) {
+        filter: opacity(0.4) saturate(0);
+    }
+
 	//Compatibility for hidden element by the navigator
 	&.elementor-edit-hidden {
 		display: none;

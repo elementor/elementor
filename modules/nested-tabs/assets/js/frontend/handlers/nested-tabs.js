@@ -43,7 +43,11 @@ export default class NestedTabs extends Base {
 	}
 
 	getWidgetNumber() {
-		return this.$element.find( '> .elementor-widget-container > .e-n-tabs, > .e-n-tabs' ).attr( 'data-widget-number' );
+		const selector = elementorFrontend.config.experimentalFeatures.e_optimized_markup
+			? '> .e-n-tabs, > .e-n-tabs'
+			: '> .elementor-widget-container > .e-n-tabs, > .e-n-tabs';
+
+		return this.$element.find( selector ).attr( 'data-widget-number' );
 	}
 
 	getDefaultSettings() {

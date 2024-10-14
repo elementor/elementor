@@ -87,10 +87,23 @@ class NestedTabs extends Widget_Nested_Base {
 		$end = is_rtl() ? 'left' : 'right';
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
-		$heading_selector_non_touch_device = '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
-		$heading_selector_touch_device = '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading';
-		$heading_selector = '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
-		$content_selector = ':where( {{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
+
+		$heading_selector_non_touch_device = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container()
+			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading'
+			: ':{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
+		
+		$heading_selector_touch_device = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container()
+			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading'
+			: '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading';
+		
+		$heading_selector = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container()
+			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs > .e-n-tabs-heading'
+			: '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
+
+		$content_selector = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->had_widget_container()
+			? ':where( {{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs > .e-n-tabs-content ) > .e-con'
+			: ':where( {{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
+
 
 		$this->start_controls_section( 'section_tabs', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
