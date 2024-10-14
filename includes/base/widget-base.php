@@ -651,7 +651,8 @@ abstract class Widget_Base extends Element_Base {
 		}
 		if ( $this->has_widget_container() ) : ?>
 		<div class="elementor-widget-container">
-			<?php endif;
+		<?php endif; ?>
+			<?php
 			if ( $this->is_widget_first_render( $this->get_group_name() ) ) {
 				$this->register_runtime_widget( $this->get_group_name() );
 			}
