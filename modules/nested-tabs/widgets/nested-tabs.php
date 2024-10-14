@@ -92,7 +92,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 		$heading_selector_non_touch_device = $optimized_markup
 			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading'
-			: ':{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
+			: '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
 
 		$heading_selector_touch_device = $optimized_markup
 			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading'
