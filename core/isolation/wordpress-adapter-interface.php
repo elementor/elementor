@@ -20,4 +20,6 @@ interface Wordpress_Adapter_Interface {
 	public function update_option( $option_key, $option_value );
 
 	public function current_user_can( $capability, $args );
+
+	public function get_post_status( $post_id );
 }

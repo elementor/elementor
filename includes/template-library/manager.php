@@ -371,7 +371,7 @@ class Manager {
 		}
 
 		$post_id = intval( $args['template_id'] );
-		$post_status = get_post_status( $post_id );
+		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
 		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) && ( 'publish' !== $post_status );
 
 		if ( $is_private_or_non_published && ! $this->wordpress_adapter->current_user_can( 'edit_post', $post_id ) ) {
