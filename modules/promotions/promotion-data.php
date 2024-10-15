@@ -36,7 +36,6 @@ class PromotionData extends EditorAssetsAPI {
 	}
 
 	private static function get_animated_headline_data( $assets_data ) {
-
 		$data = [
 			'image' => esc_url( $assets_data['animated-headline'] ) ?? '',
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
@@ -50,10 +49,10 @@ class PromotionData extends EditorAssetsAPI {
 			'upgrade_url' => 'https://go.elementor.com/go-pro-heading-widget/',
 		];
 
-		return self::filter_data( 'animated_headline', $data );
+		return self::filter_data( 'animated-headline', $data );
 	}
 
-	private static function filter_data( $filter_name, $asset_data ) {
-		return Filtered_Promotions_Manager::get_filtered_promotion_data( $asset_data, "elementor/widgets/{ $filter_name }/custom_promotion", 'upgrade_url' );
+	private static function filter_data( $widget_name, $asset_data ) {
+		return Filtered_Promotions_Manager::get_filtered_promotion_data( $asset_data, "elementor/widgets/{$widget_name}/custom_promotion", 'upgrade_url' );
 	}
 }
