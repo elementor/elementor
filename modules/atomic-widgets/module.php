@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Sr
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corners_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edges_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
@@ -17,6 +18,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Corners_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Edges_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
@@ -109,6 +111,7 @@ class Module extends BaseModule {
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Corners_Prop_Type::get_key(), new Corners_Transformer() );
+		$transformers->register( Edges_Prop_Type::get_key(), new Edges_Transformer() );
 	}
 
 	/**

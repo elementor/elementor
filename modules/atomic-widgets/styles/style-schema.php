@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Corners_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Edges_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -93,6 +94,20 @@ class Style_Schema {
 	private static function get_border_props() {
 		return [
 			'border-radius' => Corners_Prop_Type::make(),
+			'border-width' => Edges_Prop_Type::make(),
+			'border-color' => Color_Prop_Type::make(),
+			'border-style' => String_Prop_Type::make()->enum([
+				'none',
+				'hidden',
+				'dotted',
+				'dashed',
+				'solid',
+				'double',
+				'groove',
+				'ridge',
+				'inset',
+				'outset',
+			]),
 		];
 	}
 }
