@@ -23,6 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class NestedTabs extends Widget_Nested_Base {
 
 	private $tab_item_settings = [];
+	private $optimized_markup = null;
+	private $widget_container_selector = '';
 
 	public function get_name() {
 		return 'nested-tabs';
@@ -88,17 +90,18 @@ class NestedTabs extends Widget_Nested_Base {
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
 
-		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
+		if ( null === $this->optimized_markup ) {
+			$this->optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
+			$this->widget_container_selector = $this->optimized_markup ? '' : ' > .elementor-widget-container';
+		}
 
-		$widget_container_selector = $optimized_markup ? '' : ' > .elementor-widget-container';
+		$heading_selector_non_touch_device = "{{WRAPPER}}.elementor-widget-n-tabs{$this->widget_container_selector} > .e-n-tabs[data-touch-mode='false'] > .e-n-tabs-heading";
 
-		$heading_selector_non_touch_device = "{{WRAPPER}}.elementor-widget-n-tabs{$widget_container_selector} > .e-n-tabs[data-touch-mode='false'] > .e-n-tabs-heading";
+		$heading_selector_touch_device = "{{WRAPPER}}.elementor-widget-n-tabs{$this->widget_container_selector} > .e-n-tabs[data-touch-mode='true'] > .e-n-tabs-heading";
 
-		$heading_selector_touch_device = "{{WRAPPER}}.elementor-widget-n-tabs{$widget_container_selector} > .e-n-tabs[data-touch-mode='true'] > .e-n-tabs-heading";
+		$heading_selector = "{{WRAPPER}}.elementor-widget-n-tabs{$this->widget_container_selector} > .e-n-tabs > .e-n-tabs-heading";
 
-		$heading_selector = "{{WRAPPER}}.elementor-widget-n-tabs{$widget_container_selector} > .e-n-tabs > .e-n-tabs-heading";
-
-		$content_selector = ":where( {{WRAPPER}}.elementor-widget-n-tabs{$widget_container_selector} > .e-n-tabs > .e-n-tabs-content ) > .e-con";
+		$content_selector = ":where( {{WRAPPER}}.elementor-widget-n-tabs{$this->widget_container_selector} > .e-n-tabs > .e-n-tabs-content ) > .e-con";
 
 		$this->start_controls_section( 'section_tabs', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
@@ -497,7 +500,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => "{{WRAPPER}}{$widget_container_selector} > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected='false']:not( :hover )",
+				'selector' => "{{WRAPPER}}{$this->widget_container_selector} > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected='false']:not( :hover )",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
