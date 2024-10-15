@@ -21,4 +21,8 @@ class Multi_Props {
 			'value' => $value,
 		];
 	}
+
+	public static function get_value( $value ) {
+		return $value['value'] ?? null;
+	}
 }

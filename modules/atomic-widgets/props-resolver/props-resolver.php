@@ -135,7 +135,7 @@ class Props_Resolver {
 			$transformed_value = $this->transform( $value, $key );
 
 			if ( Multi_Props::is( $transformed_value ) ) {
-				$assigned = array_merge( $assigned, $transformed_value['value'] );
+				$assigned = array_merge( $assigned, Multi_Props::get_value( $transformed_value ) );
 
 				continue;
 			}
