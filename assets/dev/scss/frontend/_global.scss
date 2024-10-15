@@ -55,6 +55,8 @@
 	.elementor-background-video-container,
 	.elementor-background-holder,
 	.elementor-background {
+		height: 100%;
+		width: 100%;
 		position: absolute;
 		inset: 0;
 		overflow: hidden;
@@ -90,11 +92,15 @@
 	// End Background Video
 
 	.elementor-background-overlay {
+		height: 100%;
+		width: 100%;
 		position: absolute;
 		inset: 0;
 	}
 
 	.elementor-background-slideshow {
+		height: 100%;
+		width: 100%;
 		position: absolute;
 		inset: 0;
 		z-index: $ground-layer;

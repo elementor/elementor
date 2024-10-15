@@ -31,10 +31,9 @@
 					--e-rating-icon-color: var(--e-rating-icon-marked-color);
 					width: var(--e-rating-icon-marked-width);
 					position: absolute;
+					inset: 0;
 					z-index: $first-layer;
 					height: 100%;
-					left: 0;
-					top: 0;
 					overflow: hidden;
 				}
 

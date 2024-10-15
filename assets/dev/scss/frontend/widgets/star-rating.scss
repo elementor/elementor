@@ -17,8 +17,7 @@
 			position: absolute;
 			overflow: hidden;
 			color: $orange;
-			top: 0;
-			@include start(0);
+			inset: 0;
 		}
 	}
 

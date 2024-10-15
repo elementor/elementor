@@ -169,10 +169,9 @@
 			&:after {
 				content: '';
 				position: absolute;
+				inset: 0;
 				height: 100%;
 				width: 3px;
-				top: 0;
-				@include start(0);
 				background-color: var(--e-a-border-color-accent);
 			}
 		}

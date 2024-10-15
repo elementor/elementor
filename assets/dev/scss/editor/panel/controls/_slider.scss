@@ -170,6 +170,8 @@
 			position: absolute;
 			z-index: 0;
 			inset: 0;
+			height: 100%;
+			width: 100%;
 			will-change: transform;
 			transform-origin: 0 0;
 			background-color: var(--e-a-border-color-focus);
