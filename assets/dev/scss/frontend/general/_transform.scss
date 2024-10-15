@@ -16,8 +16,8 @@
 .e-transform {
 	.elementor-widget-container,
 	&:not(:has(.elementor-widget-container)) {
-        @include transform-styling('');
-    }
+		@include transform-styling('');
+	}
 }
 
 .e-con.e-transform {
