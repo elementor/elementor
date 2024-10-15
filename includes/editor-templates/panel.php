@@ -211,24 +211,6 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank">{{{ elementData.upsale_data.upgrade_text }}}</a>
 		<# } #>
 	</div>
-	<# } #>
-<!--	<# if ( elementData.upsale_data_modal && elementData.upsale_data_modal.condition ) { #>-->
-<!--	<div>jhdfv</div>-->
-<!--	<div class="elementor-nerd-box elementor-nerd-box--upsale">-->
-<!--		<# if ( elementData.upsale_data.image ) { #>-->
-<!--		<img class="elementor-nerd-box-icon" src="{{ elementData.upsale_data.image }}" loading="lazy" alt="{{ elementData.upsale_data.image_alt }}" />-->
-<!--		<# } #>-->
-<!--		<# if ( elementData.upsale_data.title ) { #>-->
-<!--		<div class="elementor-nerd-box-title">{{{ elementData.upsale_data.title }}}</div>-->
-<!--		<# } #>-->
-<!--		<# if ( elementData.upsale_data.description ) { #>-->
-<!--		<div class="elementor-nerd-box-message">{{{ elementData.upsale_data.description }}}</div>-->
-<!--		<# } #>-->
-<!--		<# if ( elementData.upsale_data.upgrade_url && elementData.upsale_data.upgrade_text ) { #>-->
-<!--		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank">{{{ elementData.upsale_data.upgrade_text }}}</a>-->
-<!--		<# } #>-->
-<!--	</div>-->
-<!--	<# } #>-->
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
