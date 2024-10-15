@@ -1335,7 +1335,7 @@ class Controls_Manager {
 			[
 				'type'      => self::RAW_HTML,
 				'separator' => 'before',
-				'raw'       => $this->react_promotion_control( esc_html__( 'Animated Widget heading', 'elementor' ), 'animated_headline' ),
+				'raw'       => $this->react_promotion_control( esc_html__( 'Animated Headline widget', 'elementor' ), 'animated_headline' ),
 			]
 		);
 	}

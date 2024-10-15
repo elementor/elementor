@@ -50,7 +50,7 @@ class PromotionData extends EditorAssetsAPI {
 			'upgrade_url' => 'https://go.elementor.com/go-pro-heading-widget/',
 		];
 
-		return self::filter_data( 'heading', $data );
+		return self::filter_data( 'animated_headline', $data );
 	}
 
 	private static function filter_data( $filter_name, $asset_data ) {

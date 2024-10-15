@@ -127,6 +127,10 @@ abstract class Widget_Base extends Element_Base {
 		return null;
 	}
 
+
+	protected function get_upsale_data_modal() {
+		return null;
+	}
 	/**
 	 * Widget base constructor.
 	 *
@@ -380,6 +384,7 @@ abstract class Widget_Base extends Element_Base {
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
 			'upsale_data' => $this->get_upsale_data(),
+			'upsale_data_modal' => $this->get_upsale_data_modal(),
 			'is_dynamic_content' => $this->is_dynamic_content(),
 		];
 

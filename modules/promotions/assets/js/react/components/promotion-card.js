@@ -1,16 +1,15 @@
 import {
 	Card,
-	CardHeader,
 	Chip,
 	CardMedia,
 	CardContent,
 	Typography,
 	CardActions,
 	Button,
-	Box,
 	CloseButton,
 	Stack,
 } from '@elementor/ui';
+// import imgSrc from '../images/animated_heading.jpg'
 
 const PromotionCard = ( { onClose, promotionsData } ) => {
 	const title = promotionsData?.title;
@@ -34,10 +33,16 @@ const PromotionCard = ( { onClose, promotionsData } ) => {
 					},
 				} } onClose={ onClose } />
 			</Stack>
-			<CardMedia
-				image={ imgSrc }
-				sx={ { height: 150 } }
-			/>
+			{/*<CardMedia*/}
+			{/*	// image={ imgSrc }*/}
+			{/*	image={'https://assets.stg.elementor.red/free-to-pro-upsell/v1/images/animated_heading_small.jpg'}*/}
+			{/*	sx={ { height: 150 } }*/}
+			{/*/>*/}
+			{/*<CardMedia*/}
+			{/*	image={ imgSrc }*/}
+			{/*	// image={'https://assets.stg.elementor.red/free-to-pro-upsell/v1/images/animated_heading_small.jpg'}*/}
+			{/*	sx={ { height: 150 } }*/}
+			{/*/>*/}
 			<CardContent>
 				{ description.map( ( e, index ) => {
 					return ( <Typography key={ index } variant="body2" color="secondary">&bull; { e }</Typography> );
