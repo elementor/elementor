@@ -4,7 +4,8 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Union_Prop_Type;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -84,13 +85,13 @@ class Props_Resolver {
 			return null;
 		}
 
-		$prop_types = $prop_type->get_relevant_prop_types();
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			$prop_type = $prop_type->get_prop_type( $value['$$type'] );
 
-		if ( ! array_key_exists( $value['$$type'], $prop_types ) ) {
-			return null;
+			if ( ! $prop_type ) {
+				return null;
+			}
 		}
-
-		$prop_type = $prop_types[ $value['$$type'] ];
 
 		if ( $prop_type instanceof Object_Prop_Type ) {
 			$value['value'] = $this->resolve(
@@ -101,7 +102,7 @@ class Props_Resolver {
 
 		if ( $prop_type instanceof Array_Prop_Type ) {
 			$value['value'] = array_map(
-				fn( $item ) => $this->transform( $item, $prop_type->get_item_prop_type() ),
+				fn( $item ) => $this->transform( $item, $prop_type->get_item_type() ),
 				$value['value']
 			);
 		}

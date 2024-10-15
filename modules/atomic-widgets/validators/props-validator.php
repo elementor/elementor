@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Validators;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

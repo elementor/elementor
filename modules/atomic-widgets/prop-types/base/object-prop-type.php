@@ -2,24 +2,41 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Persistable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Object_Prop_Type extends Prop_Type {
+abstract class Object_Prop_Type implements Persistable_Prop_Type {
+	const TYPE = 'object';
+
+	use Concerns\Has_Meta,
+		Concerns\Has_Settings,
+		Concerns\Has_Default,
+		Concerns\Has_Transformable_Validation,
+		Concerns\Has_Required_Validation;
+
 	/**
 	 * @var array<Prop_Type>
 	 */
-	protected array $shape = [];
-
-	public static function get_type(): string {
-		return 'object';
-	}
+	protected array $shape;
 
 	public function __construct() {
 		$this->shape = $this->define_shape();
+	}
+
+	public static function make(): self {
+		return new static();
+	}
+
+	public function set_shape( array $shape ): self {
+		$this->shape = $shape;
+
+		return $this;
 	}
 
 	public function get_shape(): array {
@@ -30,21 +47,12 @@ abstract class Object_Prop_Type extends Prop_Type {
 		return $this->shape[ $key ] ?? null;
 	}
 
-	public function generate_value( $value ) {
-		$parsed_value = [];
-
-		foreach ( $this->get_shape() as $key => $prop_type ) {
-			if ( ! isset( $value[ $key ] ) ) {
-				continue;
-			}
-
-			$parsed_value[ $key ] = $prop_type->generate_value( $value[ $key ] );
+	public function validate( $value ): bool {
+		if ( is_null( $value ) ) {
+			return ! $this->is_required();
 		}
 
-		return [
-			'$$type' => static::get_key(),
-			'value' => $parsed_value,
-		];
+		return $this->validate_transformable( $value );
 	}
 
 	protected function validate_value( $value ): bool {
@@ -67,7 +75,11 @@ abstract class Object_Prop_Type extends Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
-			...parent::jsonSerialize(),
+			'type' => static::TYPE,
+			'key' => static::get_key(),
+			'default' => $this->get_default(),
+			'meta' => $this->get_meta(),
+			'settings' => $this->get_settings(),
 			'shape' => $this->get_shape(),
 		];
 	}

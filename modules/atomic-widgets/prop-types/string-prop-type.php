@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Shorthanded_Plain_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Supports_Shorthanded_Value;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class String_Prop_Type extends Plain_Prop_Type {
-	use Shorthanded_Plain_Prop_Type;
+	use Supports_Shorthanded_Value;
 
 	public static function get_key(): string {
 		return 'string';

@@ -11,12 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Dynamic_Prop_Type extends Plain_Prop_Type {
 
+	const META_KEY = 'dynamic';
+
 	/**
 	 * Return a tuple that lets the developer ignore the dynamic prop type in the props schema
 	 * using `Prop_Type::add_meta()`, e.g. `String_Prop_Type::make()->add_meta( Dynamic_Prop_Type::ignore() )`.
 	 */
 	public static function ignore(): array {
-		return [ 'dynamic', false ];
+		return [ static::META_KEY, false ];
 	}
 
 	public static function get_key(): string {
