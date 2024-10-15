@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Checklist\Steps;
 
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Modules\Checklist\Module as Checklist_Module;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils;
 
@@ -14,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Setup_Header extends Step_Base {
 	const STEP_ID = 'setup_header';
 
-	public function __construct( $module, $wordpress_adapter = null, $kit_adapter = null, $should_promote = true ) {
+	public function __construct( $module, $wordpress_adapter = null, $elementor_adapter = null, $should_promote = true ) {
 		$promotion_data = $should_promote
 			? $this->render_promotion()
 			: null;
 
-		parent::__construct( $module, $wordpress_adapter, $kit_adapter, $promotion_data );
+		parent::__construct( $module, $wordpress_adapter, $elementor_adapter, $promotion_data );
 	}
 
 	public function get_id() : string {
