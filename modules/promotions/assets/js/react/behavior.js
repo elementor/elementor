@@ -46,14 +46,15 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
 			isRTL = elementorCommon.config.isRTL,
-			promotionType = rootElement.getAttribute( 'data-promotion' );
+			promotionType = rootElement.getAttribute( 'data-promotion' ),
+			handleClose = () => this.unmount();
 
 		this.promotionInfoTip.render(
 			<App
 				colorScheme={ colorScheme }
 				isRTL={ isRTL }
 				promotionsData={ this.promotionData( promotionType ) }
-				onClose={ () => this.unmount() }
+				onClose={ handleClose }
 			/>,
 		);
 	}

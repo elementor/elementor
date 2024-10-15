@@ -1,7 +1,6 @@
 import { DirectionProvider, LocalizationProvider, ThemeProvider } from '@elementor/ui';
 
 import Infotip from '@elementor/ui/Infotip';
-import ClickAwayListener from '@elementor/ui/ClickAwayListener';
 import PromotionCard from './components/promotion-card';
 
 const App = ( props ) => {
@@ -9,24 +8,22 @@ const App = ( props ) => {
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ props.colorScheme }>
-					<ClickAwayListener onClickAway={ props.onClose }>
-						<Infotip
-							content={ <PromotionCard onClose={ props.onClose } promotionsData={ props.promotionsData } /> }
-							placement="right-start"
-							arrow={ true }
-							open={ true }
-							disableHoverListener={ true }
-							PopperProps={ {
-								modifiers: [
-									{
-										name: 'offset',
-										options:
-											{ offset: [ -24, 8 ] },
-									},
-								],
-							} }
-						/>
-					</ClickAwayListener>
+					<Infotip
+						content={ <PromotionCard doClose={ props.onClose } promotionsData={ props.promotionsData } /> }
+						placement="right"
+						arrow={ true }
+						open={ true }
+						disableHoverListener={ true }
+						PopperProps={ {
+							modifiers: [
+								{
+									name: 'offset',
+									options:
+										{ offset: [ -24, 8 ] },
+								},
+							],
+						} }
+					/>
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>
