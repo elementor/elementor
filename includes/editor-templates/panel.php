@@ -211,6 +211,7 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank">{{{ elementData.upsale_data.upgrade_text }}}</a>
 		<# } #>
 	</div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
