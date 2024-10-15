@@ -2,8 +2,8 @@ import { resolve } from 'path';
 import { defineConfig } from '@playwright/test';
 import { config as _config } from 'dotenv';
 
-process.env.DEV_SERVER = 'http://localhost:9999';
-process.env.TEST_SERVER = 'http://localhost:9998';
+process.env.DEV_SERVER = 'http://localhost:8888';
+process.env.TEST_SERVER = 'http://localhost:8889';
 process.env.DEBUG_PORT = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '9223' : '9222';
 
 _config( {
@@ -32,7 +32,7 @@ export default defineConfig( {
 		launchOptions: {
 			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
 		},
-		headless: !! process.env.CI,
+		headless: true,
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
 		navigationTimeout: 10_000,
