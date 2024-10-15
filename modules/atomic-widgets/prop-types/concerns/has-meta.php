@@ -15,9 +15,11 @@ trait Has_Meta {
 	protected array $meta = [];
 
 	public function meta( $key, $value = null ): self {
-		$is_tuple = is_array( $value ) && 2 === count( $value );
+		$is_tuple = is_array( $key ) && 2 === count( $key );
 
-		[ $key, $value ] = $is_tuple ? $key : [ $key, $value ];
+		if ( $is_tuple ) {
+			[ $key, $value ] = $key;
+		}
 
 		$this->meta[ $key ] = $value;
 

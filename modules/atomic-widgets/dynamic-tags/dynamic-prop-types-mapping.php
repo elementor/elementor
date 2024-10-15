@@ -32,6 +32,8 @@ class Dynamic_Prop_Types_Mapping {
 
 		foreach ( $schema as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
+				$result[ $key ] = $prop_type;
+
 				continue;
 			}
 

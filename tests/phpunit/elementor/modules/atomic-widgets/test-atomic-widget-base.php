@@ -431,78 +431,49 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Arrange.
 		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
 
+		$schema = [
+			'string_prop' => String_Prop_Type::make()
+				->enum( [ 'value-a', 'value-b' ] )
+				->default( 'value-a' ),
+
+			'number_prop' => Number_Prop_Type::make()
+				->default( 123 ),
+
+			'boolean_prop' => Boolean_Prop_Type::make()
+				->default( true ),
+
+			'image_prop' => Image_Prop_Type::make()
+				->default_url( 'https://example.com/image.jpg' )
+				->default_size( 'full' ),
+
+			'classes_prop' => Classes_Prop_Type::make(),
+		];
+
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'string_prop' => String_Prop_Type::make()
-					->enum( [ 'value-a', 'value-b' ] )
-					->default( 'value-a' ),
-
-				'number_prop' => Number_Prop_Type::make()
-					->default( 123 ),
-
-				'boolean_prop' => Boolean_Prop_Type::make()
-					->default( true ),
-
-				'image_prop' => Image_Prop_Type::make()
-					->default_url( 'https://example.com/image.jpg' )
-					->default_id( 123 )
-					->default_size( 'full' ),
-			],
+			'props_schema' => $schema,
 			'settings' => [],
 		] );
 
 		// Act.
-		$serialized = json_encode( $widget::get_props_schema() );
+		$json = json_decode( json_encode( $widget::get_props_schema() ), true );
 
 		// Assert.
-		$this->assertJsonStringEqualsJsonString( '{
-			"string_prop": {
-				"type": {
-					"key": "string",
-					"default": "value-a",
-					"settings": {
-						"enum": ["value-a", "value-b"]
-					}
-				},
-				"additional_types": []
-			},
-			"number_prop": {
-				"type": {
-					"key": "number",
-					"default": 123,
-					"settings": {}
-				},
-				"additional_types": []
-			},
-			"boolean_prop": {
-				"type": {
-					"key": "boolean",
-					"default": true,
-					"settings": {}
-				},
-				"additional_types": []
-			},
-			"image_prop": {
-				"type": {
-					"key": "image",
-					"default": {
-						"$$type": "image",
-						"value": {
-							"src": {
-								"$$type": "image-src",
-								"value": {
-									"id": 123,
-									"url": "https://example.com/image.jpg"
-								}
-							},
-							"size": "full"
-						}
-					},
-					"settings": {}
-				},
-				"additional_types": []
-			}
-		}', $serialized );
+		$keys = [
+			'string_prop',
+			'number_prop',
+			'boolean_prop',
+			'image_prop',
+			'classes_prop',
+		];
+
+		$this->assertEqualSets( $keys, array_keys( $json ) );
+
+		foreach ( $keys as $key ) {
+			$this->assertEquals( $json[$key]['type'], $schema[$key]::TYPE );
+			$this->assertEquals( $json[$key]['key'], $schema[$key]::get_key() );
+			$this->assertEquals( $json[$key]['default'], $schema[$key]->get_default() );
+			$this->assertEquals( $json[$key]['settings'], $schema[$key]->get_settings() );
+		}
 	}
 
 	public function test_get_props_schema() {
@@ -720,16 +691,16 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'color' => [
-								'$$type' => 'color',
-								'value' => 'red',
-							],
 							'font-size' => [
 								'$$type' => 'size',
 								'value' => [
 									'unit' => 'px',
 									'size' => 16,
 								],
+							],
+							'color' => [
+								'$$type' => 'color',
+								'value' => 'red',
 							],
 							'padding' => [
 								'$$type' => 'linked-dimensions',

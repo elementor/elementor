@@ -34,16 +34,16 @@ class Props_Resolver {
 		$this->transformers = $transformers;
 	}
 
-	public static function for_styles() {
+	public static function for_styles(): self {
 		return self::instance( self::CONTEXT_STYLES );
 	}
 
-	public static function for_settings() {
+	public static function for_settings(): self {
 		return self::instance( self::CONTEXT_SETTINGS );
 	}
 
-	private static function instance( string $context, bool $fresh = false ): self {
-		if ( ! isset( self::$instances[ $context ] ) || $fresh ) {
+	private static function instance( string $context ): self {
+		if ( ! isset( self::$instances[ $context ] ) ) {
 			$registry = new Transformers_Registry();
 
 			do_action( "elementor/atomic-widgets/{$context}/transformers/register", $registry );
@@ -52,6 +52,10 @@ class Props_Resolver {
 		}
 
 		return self::$instances[ $context ];
+	}
+
+	public static function reset(): void {
+		self::$instances = [];
 	}
 
 	public function resolve( array $prop_types, array $props ): array {
@@ -77,6 +81,7 @@ class Props_Resolver {
 			return $value;
 		}
 
+
 		if ( $depth >= self::TRANSFORM_DEPTH_LIMIT ) {
 			return null;
 		}
@@ -94,6 +99,10 @@ class Props_Resolver {
 		}
 
 		if ( $prop_type instanceof Object_Prop_Type ) {
+			if ( ! is_array( $value['value'] ) ) {
+				return null;
+			}
+
 			$value['value'] = $this->resolve(
 				$prop_type->get_shape(),
 				$value['value']
@@ -101,6 +110,10 @@ class Props_Resolver {
 		}
 
 		if ( $prop_type instanceof Array_Prop_Type ) {
+			if ( ! is_array( $value['value'] ) ) {
+				return null;
+			}
+
 			$value['value'] = array_map(
 				fn( $item ) => $this->transform( $item, $prop_type->get_item_type() ),
 				$value['value']

@@ -23,7 +23,12 @@ trait Supports_Shorthanded_Value {
 		);
 	}
 
-	public function default( $value ): self {
+	/**
+	 * @param $value
+	 *
+	 * @return $this
+	 */
+	public function default( $value ) {
 		$this->default = $value;
 
 		return $this;

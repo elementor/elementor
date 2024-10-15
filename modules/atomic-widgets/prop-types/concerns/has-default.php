@@ -14,7 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Default {
 	protected $default = null;
 
-	public function default( $value ): self {
+	/**
+	 * @param $value
+	 *
+	 * @return $this
+	 */
+	public function default( $value ) {
 		$this->default = [
 			'$$type' => static::get_key(),
 			'value' => $value,
