@@ -506,7 +506,11 @@ BaseElementView = BaseContainer.extend( {
 		this.controlsCSSParser.stylesheet.empty();
 
 		this.controlsCSSParser.addStyleRules(
-			settings.getStyleControls(),
+			settings.getStyleControls(
+				elementorCommon.config.experimentalFeatures.e_optimized_markup
+				? elementor.config.document.widgets[ this.model.attributes.widgetType ]?.controls
+				: null,
+			),
 			settings.attributes,
 			this.getEditModel().get( 'settings' ).controls,
 			[ /{{ID}}/g, /{{WRAPPER}}/g ],
