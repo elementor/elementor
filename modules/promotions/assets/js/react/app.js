@@ -9,7 +9,7 @@ const App = ( props ) => {
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ props.colorScheme }>
-					<ClickAwayListener onClickAway={ props.onClose }>
+					<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ props.onClose }>
 						<Infotip
 							content={ <PromotionCard onClose={ props.onClose } promotionsData={ props.promotionsData } /> }
 							placement="right-start"

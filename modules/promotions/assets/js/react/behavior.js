@@ -30,15 +30,17 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 	}
 
 	mount() {
+		if ( this.promotionInfoTip ) {
+			return;
+		}
+
 		const rootElement = document.querySelector( this.selectors.reactAnchor );
 
 		if ( ! rootElement ) {
 			return;
 		}
 
-		if ( this.promotionInfoTip ) {
-			return;
-		}
+		this.attachEditorEventListeners();
 
 		this.promotionInfoTip = createRoot( rootElement );
 
@@ -58,9 +60,18 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 
 	unmount() {
 		if ( this.promotionInfoTip ) {
+			this.detachEditorEventListeners();
 			this.promotionInfoTip.unmount();
 		}
 
 		this.promotionInfoTip = null;
+	}
+
+	attachEditorEventListeners() {
+		$e.routes.on( 'run:after', this.unmount.bind( this ) );
+	}
+
+	detachEditorEventListeners() {
+		$e.routes.off( 'run:after', this.unmount.bind( this ) );
 	}
 }
