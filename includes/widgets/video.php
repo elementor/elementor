@@ -106,6 +106,10 @@ class Widget_Video extends Widget_Base {
 		return [ 'widget-video' ];
 	}
 
+	public function has_widget_container(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register video widget controls.
 	 *
