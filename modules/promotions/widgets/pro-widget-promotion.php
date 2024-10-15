@@ -95,19 +95,6 @@ class Pro_Widget_Promotion extends Widget_Base {
 		];
 
 		parent::__construct( $data, $args );
-
-//		add_filter( 'elementor/widgets/animated_headline/custom_promotion', [
-//			'image' => esc_url( $assets_data['animated-heading-small'] ) ?? '',
-//			'image_alt' => esc_attr__( 'sdthrtkh', 'elementor' ),
-//			'title' => esc_html__( 'fdgfdh', 'elementor' ),
-//			'description' => [
-//				esc_html__( 'Highlight key messages dynamically.', 'elementor' ),
-//				esc_html__( 'Apply rotating effects to text.', 'elementor' ),
-//				esc_html__( 'Fully customize your headlines.', 'elementor' ),
-//			],
-//			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-//			'upgrade_url' => 'google.com',
-//		] );
 	}
 
 	public function render_plain_content( $instance = [] ) {}
