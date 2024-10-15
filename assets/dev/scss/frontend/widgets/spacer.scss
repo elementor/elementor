@@ -17,7 +17,8 @@
 		--align-self: var( --container-widget-align-self, initial );
 		--flex-shrink: 0;
 
-		& > .elementor-widget-container {
+		& > .elementor-widget-container,
+		&:not(:has(.elementor-widget-container)) {
 			height: 100%;
 			width: 100%;
 

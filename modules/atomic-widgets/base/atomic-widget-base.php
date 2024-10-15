@@ -25,6 +25,10 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$this->styles = $data['styles'] ?? [];
 	}
 
+	public function has_widget_container(): bool {
+		return false;
+	}
+
 	public function get_atomic_controls() {
 		$controls = $this->define_atomic_controls();
 		$schema = static::get_props_schema();
