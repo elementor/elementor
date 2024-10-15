@@ -5,7 +5,8 @@
 .elementor-widget {
 	$e-icon-list-svg-icon-size: var(--e-icon-list-icon-size, 1em);
 
-	&.elementor-icon-list--layout-inline {
+	&.elementor-icon-list--layout-inline,
+	&:not(:has(.elementor-widget-container)) {
 
 		.elementor-widget-container {
 			overflow: hidden;

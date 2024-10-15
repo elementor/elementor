@@ -104,6 +104,10 @@ class Widget_Spacer extends Widget_Base {
 		return [ 'widget-spacer' ];
 	}
 
+	public function has_widget_container(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register spacer widget controls.
 	 *
