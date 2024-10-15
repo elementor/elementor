@@ -394,13 +394,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											'unit' => 'px'
 										]
 									],
-									'bottom' => [
-										'$$type' => 'size',
-										'value' => [
-											'size' => 5,
-											'unit' => 'px'
-										]
-									],
+									'bottom' => null,
 									'left' => [
 										'$$type' => 'size',
 										'value' => [

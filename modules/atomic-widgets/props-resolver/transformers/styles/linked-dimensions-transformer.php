@@ -14,9 +14,8 @@ class Linked_Dimensions_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
 		$dimensions = Collection::make( $value )
 			->only( [ 'top', 'right', 'bottom', 'left' ] )
-			->map_with_keys( function( $dimension, $side ) use ( $key ) {
-				return [ $key . '-' . $side => $dimension ];
-			} )
+			->filter()
+			->map_with_keys( fn( $dimension, $side ) => [ $key . '-' . $side => $dimension ] )
 			->all();
 
 		return Multi_Props::generate( $dimensions );
