@@ -2,7 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Checklist\Classes;
 
-use Elementor\Core\Isolation\Kit_Adapter_Interface;
 use Elementor\Modules\Checklist\Steps\Set_Fonts_And_Colors;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,11 +20,12 @@ class Test_Set_Fonts_And_Colors_Step extends Step_Test_Base {
 
 	public function test__step_is_completed_when_fonts_and_color_are_assigned() {
 		$main_post_mock = new \stdClass();
-		$active_kit_mock = $this->getMockBuilder( Kit_Adapter_Interface::class )
-			->getMock();
-		$active_kit_mock->method('get_main_post')->willReturn( $main_post_mock );
+		$this->set_elementor_adapter_mock( [
+			'get_main_post' => $main_post_mock,
+			'get_kit_settings' => [ 'custom_colors' => '', 'custom_typography' => '' ],
+		] );
 
-		$step = new Set_Fonts_And_Colors( $this->checklist_module, $this->wordpress_adapter, $active_kit_mock );
+		$step = new Set_Fonts_And_Colors( $this->checklist_module, $this->wordpress_adapter, $this->elementor_adapter );
 		$this->assertFalse( $step->is_marked_as_completed() );
 		$this->assertFalse( $step->is_immutable_completed() );
 		$this->assertFalse( $step->is_absolute_completed() );
@@ -40,12 +40,12 @@ class Test_Set_Fonts_And_Colors_Step extends Step_Test_Base {
 		$this->assertFalse( $step->is_immutable_completed() );
 		$this->assertFalse( $step->is_absolute_completed() );
 
-		$active_kit_mock = $this->getMockBuilder( Kit_Adapter_Interface::class )
-			->getMock();
-		$active_kit_mock->method( 'get_main_post' )->willReturn( $main_post_mock );
-		$active_kit_mock->method( 'get_kit_settings' )->willReturn( [ "custom_colors" => "TEST_VALUE", "custom_typography" => "TEST_VALUE" ]);
+		$this->set_elementor_adapter_mock( [
+			'get_main_post' => $main_post_mock,
+			'get_kit_settings' => [ 'custom_colors' => 'TEST_VALUE', 'custom_typography' => 'TEST_VALUE' ],
+			] );
 
-		$step = new Set_Fonts_And_Colors( $this->checklist_module, $this->wordpress_adapter, $active_kit_mock );
+		$step = new Set_Fonts_And_Colors( $this->checklist_module, $this->wordpress_adapter, $this->elementor_adapter );
 		$this->assertFalse( $step->is_marked_as_completed() );
 		$this->assertFalse( $step->is_immutable_completed() );
 		$this->assertTrue( $step->is_absolute_completed() );

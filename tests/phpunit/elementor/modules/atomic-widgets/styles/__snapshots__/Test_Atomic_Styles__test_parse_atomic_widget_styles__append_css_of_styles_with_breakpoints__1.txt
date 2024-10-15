@@ -1,0 +1,2 @@
+@media(max-width:767px){.test-style{font-size:16px;color:red;}}
+@media(max-width:1024px){.test-style{font-size:18px;color:blue;}}
