@@ -46,7 +46,7 @@ class Props_Resolver {
 		if ( ! isset( self::$instances[ $context ] ) ) {
 			$registry = new Transformers_Registry();
 
-			do_action( "elementor/atomic-widgets/{$context}/transformers/register", $registry );
+			do_action( "elementor/atomic-widgets/$context/transformers/register", $registry );
 
 			self::$instances[ $context ] = new self( $registry );
 		}
@@ -80,7 +80,6 @@ class Props_Resolver {
 		if ( ! $value || ! $this->is_transformable( $value ) ) {
 			return $value;
 		}
-
 
 		if ( $depth >= self::TRANSFORM_DEPTH_LIMIT ) {
 			return null;
