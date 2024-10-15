@@ -67,11 +67,21 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 		this.promotionInfoTip = null;
 	}
 
+	onRoute = () => {};
+
 	attachEditorEventListeners() {
-		$e.routes.on( 'run:after', this.unmount.bind( this ) );
+		this.onRoute = ( component, route ) => {
+			if ( 'panel/elements/categories' !== route && 'panel/editor/content' !== route ) {
+				return;
+			}
+
+			this.unmount();
+		};
+
+		$e.routes.on( 'run:after', this.onRoute );
 	}
 
 	detachEditorEventListeners() {
-		$e.routes.off( 'run:after', this.unmount.bind( this ) );
+		$e.routes.off( 'run:after', this.onRoute );
 	}
 }
