@@ -335,6 +335,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 
 		if ( $has_categories ) {
 			$this->assertInstanceof( Union_Prop_Type::class, $schema['prop'] );
+			$this->assertEquals( $prop->get_default(), $schema['prop']->get_default() );
 			$this->assertInstanceof( Dynamic_Prop_Type::class, $schema['prop']->get_prop_type( 'dynamic' ) );
 			$this->assertEquals( $expected_categories, $schema['prop']->get_prop_type( 'dynamic' )->get_categories() );
 		} else {

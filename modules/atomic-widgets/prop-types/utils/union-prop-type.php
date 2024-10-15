@@ -32,10 +32,7 @@ class Union_Prop_Type implements Prop_Type {
 		$default = $prop_type->get_default() ?? null;
 
 		if ( $default ) {
-			$instance->default(
-				$default['value'] ?? $default,
-				$prop_type::get_key()
-			);
+			$instance->default( $default );
 		}
 
 		return $instance;
@@ -55,11 +52,13 @@ class Union_Prop_Type implements Prop_Type {
 		return $this->prop_types[ $type ] ?? null;
 	}
 
-	public function default( $value, string $type ): self {
-		$this->default = [
-			'$$type' => $type,
-			'value' => $value,
-		];
+	public function default( $value, ?string $type = null ): self {
+		$this->default = ! $type ?
+			$value :
+			[
+				'$$type' => $type,
+				'value' => $value,
+			];
 
 		return $this;
 	}
