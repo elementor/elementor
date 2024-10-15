@@ -2,19 +2,21 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Supports_Shorthanded_Value;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Number_Prop_Type extends Prop_Type {
+class Number_Prop_Type extends Plain_Prop_Type {
+	use Supports_Shorthanded_Value;
 
 	public static function get_key(): string {
 		return 'number';
 	}
 
-	public function validate( $value ): void {
-		if ( ! is_numeric( $value ) ) {
-			throw new \Exception( 'Value must be a number, ' . gettype( $value ) . ' given.' );
-		}
+	protected function validate_value( $value ): bool {
+		return is_numeric( $value );
 	}
 }

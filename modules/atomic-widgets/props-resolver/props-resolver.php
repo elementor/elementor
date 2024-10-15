@@ -2,7 +2,10 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Union_Prop_Type;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,19 +34,19 @@ class Props_Resolver {
 		$this->transformers = $transformers;
 	}
 
-	public static function for_styles() {
+	public static function for_styles(): self {
 		return self::instance( self::CONTEXT_STYLES );
 	}
 
-	public static function for_settings() {
+	public static function for_settings(): self {
 		return self::instance( self::CONTEXT_SETTINGS );
 	}
 
-	private static function instance( string $context, bool $fresh = false ): self {
-		if ( ! isset( self::$instances[ $context ] ) || $fresh ) {
+	private static function instance( string $context ): self {
+		if ( ! isset( self::$instances[ $context ] ) ) {
 			$registry = new Transformers_Registry();
 
-			do_action( "elementor/atomic-widgets/{$context}/transformers/register", $registry );
+			do_action( "elementor/atomic-widgets/$context/transformers/register", $registry );
 
 			self::$instances[ $context ] = new self( $registry );
 		}
@@ -51,40 +54,29 @@ class Props_Resolver {
 		return self::$instances[ $context ];
 	}
 
-	public function resolve( array $schema, array $props ): array {
-		$resolved_props = [];
+	public static function reset(): void {
+		self::$instances = [];
+	}
 
-		foreach ( $schema as $key => $prop_type ) {
+	public function resolve( array $prop_types, array $props ): array {
+		$resolved = [];
+
+		foreach ( $prop_types as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				continue;
 			}
 
-			if ( ! array_key_exists( $key, $props ) ) {
-				$resolved_props[ $key ] = $prop_type->get_default();
-				continue;
-			}
+			$value = array_key_exists( $key, $props ) && null !== $props[ $key ]
+				? $props[ $key ]
+				: $prop_type->get_default();
 
-			$resolved_props[ $key ] = $props[ $key ];
-
-			// Merge the top-level defaults for transformable props.
-			if (
-				$this->is_nested_transformable( $resolved_props[ $key ] ) &&
-				$this->is_nested_transformable( $prop_type->get_default() )
-			) {
-				$resolved_props[ $key ]['value'] = array_merge(
-					$prop_type->get_default()['value'],
-					$resolved_props[ $key ]['value']
-				);
-			}
+			$resolved[ $key ] = $this->transform( $value, $prop_type );
 		}
 
-		return array_map(
-			fn( $value ) => $this->transform( $value ),
-			$resolved_props
-		);
+		return $resolved;
 	}
 
-	private function transform( $value, int $depth = 0 ) {
+	private function transform( $value, Prop_Type $prop_type, int $depth = 0 ) {
 		if ( ! $value || ! $this->is_transformable( $value ) ) {
 			return $value;
 		}
@@ -97,10 +89,32 @@ class Props_Resolver {
 			return null;
 		}
 
-		// Transform nested transformable values recursively.
-		if ( is_array( $value['value'] ) ) {
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			$prop_type = $prop_type->get_prop_type( $value['$$type'] );
+
+			if ( ! $prop_type ) {
+				return null;
+			}
+		}
+
+		if ( $prop_type instanceof Object_Prop_Type ) {
+			if ( ! is_array( $value['value'] ) ) {
+				return null;
+			}
+
+			$value['value'] = $this->resolve(
+				$prop_type->get_shape(),
+				$value['value']
+			);
+		}
+
+		if ( $prop_type instanceof Array_Prop_Type ) {
+			if ( ! is_array( $value['value'] ) ) {
+				return null;
+			}
+
 			$value['value'] = array_map(
-				fn( $item ) => $this->transform( $item ),
+				fn( $item ) => $this->transform( $item, $prop_type->get_item_type() ),
 				$value['value']
 			);
 		}
@@ -114,7 +128,7 @@ class Props_Resolver {
 		try {
 			$transformed_value = $transformer->transform( $value['value'] );
 
-			return $this->transform( $transformed_value, $depth + 1 );
+			return $this->transform( $transformed_value, $prop_type, $depth + 1 );
 		} catch ( Exception $e ) {
 			return null;
 		}
@@ -124,13 +138,6 @@ class Props_Resolver {
 		return (
 			! empty( $value['$$type'] ) &&
 			array_key_exists( 'value', $value )
-		);
-	}
-
-	private function is_nested_transformable( $value ): bool {
-		return (
-			$this->is_transformable( $value ) &&
-			is_array( $value['value'] )
 		);
 	}
 }

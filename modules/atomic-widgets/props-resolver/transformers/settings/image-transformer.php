@@ -3,7 +3,6 @@
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
