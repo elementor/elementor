@@ -108,6 +108,10 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		return [ 'widget-heading' ];
 	}
 
+	public function has_widget_container(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Remove data attributes from the html.
 	 *

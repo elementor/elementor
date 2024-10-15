@@ -81,6 +81,10 @@ class Widget_Button extends Widget_Base {
 		return false;
 	}
 
+	public function has_widget_container(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Get widget upsale data.
 	 *
