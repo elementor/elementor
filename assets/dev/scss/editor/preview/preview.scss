@@ -520,7 +520,8 @@ html.elementor-html {
 		}
 	}
 
-	> .elementor-widget-container, > .elementor-widget-wrap {
+	> .elementor-widget-container, > .elementor-widget-wrap,
+	&:not(:has(> .elementor-widget-container)) {
 		filter: opacity(0.4) saturate(0);
 	}
 
