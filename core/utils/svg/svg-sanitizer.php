@@ -105,6 +105,7 @@ class Svg_Sanitizer {
 
 		// Export sanitized svg to string
 		// Using documentElement to strip out <?xml version="1.0" encoding="UTF-8"...
+        if (!isset($this->svg_dom->documentElement)) return false;
 		$sanitized = $this->svg_dom->saveXML( $this->svg_dom->documentElement, LIBXML_NOEMPTYTAG );
 
 		// Restore defaults
@@ -179,10 +180,11 @@ class Svg_Sanitizer {
 		if ( false === $allowed_tags ) {
 			$allowed_tags = $this->get_allowed_elements();
 		}
-
-		$tag_name = $element->tagName; // phpcs:ignore -- php DomDocument
-
-		if ( ! in_array( strtolower( $tag_name ), $allowed_tags ) ) {
+		$tag_name = isset($element->tagName) && @$element->tagName ? @$element->tagName : null; // phpcs:ignore -- php DomDocument
+        if (!$element) {
+            return  false;
+        }
+		if ($element && (is_string($element) ? ! in_array( strtolower( $tag_name ), $allowed_tags ) : false)) {
 			$this->remove_element( $element );
 			return false;
 		}
@@ -451,21 +453,24 @@ class Svg_Sanitizer {
 
 		for ( $index = $element->attributes->length - 1; $index >= 0; $index-- ) {
 			// get attribute name
-			$attr_name = $element->attributes->item( $index )->name;
-			$attr_name_lowercase = strtolower( $attr_name );
-			// Remove attribute if not in whitelist
-			if ( ! in_array( $attr_name_lowercase, $allowed_attributes ) && ! $this->is_a_attribute( $attr_name_lowercase, 'aria' ) && ! $this->is_a_attribute( $attr_name_lowercase, 'data' ) ) {
-				$element->removeAttribute( $attr_name );
-				continue;
-			}
+            if (($celement = $element->attributes->item( $index )) && isset($celement->name)) {
+                $attr_name = $celement->name;
+                $attr_name_lowercase = strtolower( $attr_name );
+                // Remove attribute if not in whitelist
+                if ( ! in_array( $attr_name_lowercase, $allowed_attributes ) && ! $this->is_a_attribute( $attr_name_lowercase, 'aria' ) && ! $this->is_a_attribute( $attr_name_lowercase, 'data' ) ) {
+                    $element->removeAttribute( $attr_name );
+                    continue;
+                }
 
-			$attr_value = $element->attributes->item( $index )->value;
+                $attr_value = $element->attributes->item( $index )->value;
 
-			// Remove attribute if it has a remote reference or js or data-URI/base64
-			if ( ! empty( $attr_value ) && ( $this->is_remote_value( $attr_value ) || $this->has_js_value( $attr_value ) ) ) {
-				$element->removeAttribute( $attr_name );
-				continue;
-			}
+                // Remove attribute if it has a remote reference or js or data-URI/base64
+                if ( ! empty( $attr_value ) && ( $this->is_remote_value( $attr_value ) || $this->has_js_value( $attr_value ) ) ) {
+                    $element->removeAttribute( $attr_name );
+                    continue;
+                }
+            }else
+                continue;
 		}
 	}
 
@@ -599,7 +604,7 @@ class Svg_Sanitizer {
 
 			$this->strip_xlinks( $current_element );
 
-			if ( 'use' === strtolower( $current_element->tagName ) ) { // phpcs:ignore -- php DomDocument
+			if (isset($current_element->tagName) &&  'use' === strtolower( $current_element->tagName ) ) { // phpcs:ignore -- php DomDocument
 				$this->validate_use_tag( $current_element );
 			}
 		}
