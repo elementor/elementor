@@ -144,6 +144,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 				'template_id' => $this->fake_post_id,
 			]
 		);
+
 		$this->assertEquals( $ret, [ 'content' => [] ] );
 	}
 
