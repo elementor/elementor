@@ -478,9 +478,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 	private function add_content_style_section() {
 		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
 
-		$low_specificity_accordion_item_selector = $optimized_markup
-			? ':where( {{WRAPPER}} > .e-n-accordion > .e-n-accordion-item ) > .e-con'
-			: ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item ) > .e-con';
+		$widget_container_selector = $optimized_markup ? '' : ' > .elementor-widget-container';
+
+		$low_specificity_accordion_item_selector = ":where( {{WRAPPER}}{ $widget_container_selector } > .e-n-accordion > .e-n-accordion-item ) > .e-con";
 
 		$this->start_controls_section(
 			'section_content_style',
@@ -563,15 +563,13 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
 
-		$title_typography_selector = $optimized_markup
-			? ':where( {{WRAPPER}} > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text'
-			: ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text';
+		$widget_container_selector = $optimized_markup ? '' : ' > .elementor-widget-container';
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'title_typography',
-				'selector' => $title_typography_selector,
+				'selector' => ":where( {{WRAPPER}}{ $widget_container_selector } > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text",
 				'fields_options' => [
 					'font_size' => [
 						'selectors' => [
@@ -661,24 +659,20 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$variable = '--n-accordion-' . $context . '-' . $state . '-color';
 		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
 
+		$widget_container_selector = $optimized_markup ? '' : ' > .elementor-widget-container';
+
 		switch ( $state ) {
 			case 'hover':
 				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
-				$translated_tab_css_selector = $optimized_markup
-					? ':where( {{WRAPPER}} > .e-n-accordion > .e-n-accordion-item:not([open]) > .e-n-accordion-item-title:hover > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text'
-					: ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item:not([open]) > .e-n-accordion-item-title:hover > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text';
+				$translated_tab_css_selector = ":where( {{WRAPPER}}{ $widget_container_selector } > .e-n-accordion > .e-n-accordion-item:not([open]) > .e-n-accordion-item-title:hover > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text";
 				break;
 			case 'active':
 				$translated_tab_text = esc_html__( 'Active', 'elementor' );
-				$translated_tab_css_selector = $optimized_markup
-					? ':where( {{WRAPPER}} > .e-n-accordion > .e-n-accordion-item[open] > .e-n-accordion-item-title > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text'
-					: ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item[open] > .e-n-accordion-item-title > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text';
+				$translated_tab_css_selector = ":where( {{WRAPPER}}{ $widget_container_selector } > .e-n-accordion > .e-n-accordion-item[open] > .e-n-accordion-item-title > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text";
 				break;
 			default:
 				$translated_tab_text = esc_html__( 'Normal', 'elementor' );
-				$translated_tab_css_selector = $optimized_markup
-					? ':where( {{WRAPPER}} > .e-n-accordion > .e-n-accordion-item:not([open]) > .e-n-accordion-item-title:not(hover) > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text'
-					: ':where( {{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item:not([open]) > .e-n-accordion-item-title:not(hover) > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text';
+				$translated_tab_css_selector = ":where( {{WRAPPER}}{ $widget_container_selector } > .e-n-accordion > .e-n-accordion-item:not([open]) > .e-n-accordion-item-title:not(hover) > .e-n-accordion-item-title-header ) > .e-n-accordion-item-title-text";
 				break;
 		}
 
@@ -732,9 +726,9 @@ class Nested_Accordion extends Widget_Nested_Base {
 	private function add_border_and_radius_style( $state ) {
 		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
 
-		$selector = $optimized_markup
-			? '{{WRAPPER}} > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title'
-			: '{{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title';
+		$widget_container_selector = $optimized_markup ? '' : ' > .elementor-widget-container';
+
+		$selector = "{{WRAPPER}}{ $widget_container_selector } > .e-n-accordion > .e-n-accordion-item > .e-n-accordion-item-title";
 
 		$translated_tab_text = esc_html__( 'Normal', 'elementor' );
 
@@ -744,9 +738,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				$translated_tab_text = esc_html__( 'Hover', 'elementor' );
 				break;
 			case 'active':
-				$selector = $optimized_markup
-					? '{{WRAPPER}} > .e-n-accordion > .e-n-accordion-item[open] > .e-n-accordion-item-title'
-					: '{{WRAPPER}} > .elementor-widget-container > .e-n-accordion > .e-n-accordion-item[open] > .e-n-accordion-item-title';
+				$selector = "{{WRAPPER}}{ $widget_container_selector } > .e-n-accordion > .e-n-accordion-item[open] > .e-n-accordion-item-title";
 				$translated_tab_text = esc_html__( 'Active', 'elementor' );
 				break;
 		}

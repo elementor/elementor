@@ -90,21 +90,15 @@ class NestedTabs extends Widget_Nested_Base {
 
 		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
 
-		$heading_selector_non_touch_device = $optimized_markup
-			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading'
-			: '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
+		$widget_container_selector = $optimized_markup ? '' : ' > .elementor-widget-container';
 
-		$heading_selector_touch_device = $optimized_markup
-			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading'
-			: '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading';
+		$heading_selector_non_touch_device = "{WRAPPER}}.elementor-widget-n-tabs{ $widget_container_selector } > .e-n-tabs[data-touch-mode='false'] > .e-n-tabs-heading";
 
-		$heading_selector = $optimized_markup
-			? '{{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs > .e-n-tabs-heading'
-			: '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
+		$heading_selector_touch_device = "{{WRAPPER}}.elementor-widget-n-tabs{ $widget_container_selector } > .e-n-tabs[data-touch-mode='true'] > .e-n-tabs-heading";
 
-		$content_selector = $optimized_markup
-			? ':where( {{WRAPPER}}.elementor-widget-n-tabs > .e-n-tabs > .e-n-tabs-content ) > .e-con'
-			: ':where( {{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
+		$heading_selector = "{{WRAPPER}}.elementor-widget-n-tabs{ $widget_container_selector } > .e-n-tabs > .e-n-tabs-heading";
+
+		$content_selector = ":where( {{WRAPPER}}.elementor-widget-n-tabs{ $widget_container_selector } > .e-n-tabs > .e-n-tabs-content ) > .e-con";
 
 		$this->start_controls_section( 'section_tabs', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
@@ -497,17 +491,13 @@ class NestedTabs extends Widget_Nested_Base {
 			]
 		);
 
-		$tabs_title_bg_color_selector = $optimized_markup
-			? '{{WRAPPER}} > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected="false"]:not( :hover )'
-			: '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected="false"]:not( :hover )';
-
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
 			[
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => $tabs_title_bg_color_selector,
+				'selector' => "{{WRAPPER}}{ $widget_container_selector } > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected='false']:not( :hover )",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),

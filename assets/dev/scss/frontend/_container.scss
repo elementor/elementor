@@ -263,12 +263,9 @@
 
 		& > .elementor-widget {
 
-			& > .elementor-widget-container {
-				// Fix align-self:stretch (ED-7359)
-				height: 100%;
-			}
-
+			& > .elementor-widget-container,
 			&:not(:has(> .elementor-widget-container)) {
+				// Fix align-self:stretch (ED-7359)
 				height: 100%;
 			}
 		}

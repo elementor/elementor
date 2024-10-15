@@ -26,10 +26,6 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return 'eicon-image';
 	}
 
-	public function has_widget_container(): bool {
-		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
-	}
-
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 

@@ -3,11 +3,7 @@
 //
 .elementor-widget-video {
 
-	.elementor-widget-container {
-		overflow: hidden;
-		transform: translate3d(0, 0, 0); // Allow border-radius in Safari
-	}
-
+	.elementor-widget-container,
 	&:not(:has(.elementor-widget-container)) {
 		overflow: hidden;
 		transform: translate3d(0, 0, 0); // Allow border-radius in Safari
