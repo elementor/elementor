@@ -19,9 +19,10 @@ async function checklistStartup() {
 	if ( shouldHide ) {
 		$e.commands.run( 'checklist/toggle-icon', false );
 	} else {
-		const userProgress = await fetchUserProgress();
+		const userProgress = await fetchUserProgress(),
+			editorVisitCount = userProgress?.[ USER_PROGRESS.EDITOR_VISIT_COUNT ] || null;
 
-		if ( userProgress?.[ USER_PROGRESS.SHOULD_OPEN_IN_EDITOR ] ) {
+		if ( 2 === editorVisitCount ) {
 			toggleChecklistPopup();
 		}
 	}
