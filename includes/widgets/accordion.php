@@ -104,6 +104,10 @@ class Widget_Accordion extends Widget_Base {
 		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
 
+	public function has_widget_container(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register accordion widget controls.
 	 *
