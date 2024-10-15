@@ -71,9 +71,9 @@ class Loader extends Module {
 	}
 
 	private function get_animations(): array {
-		$grouped_animations = Control_Animation::get_animations();
-		$grouped_animations['hover'] = Control_Hover_Animation::get_animations();
-		$exit_animations = Control_Exit_Animation::get_animations();
+		$grouped_animations = Control_Animation::get_default_animations();
+		$grouped_animations['hover'] = Control_Hover_Animation::get_default_animations();
+		$exit_animations = Control_Exit_Animation::get_default_animations();
 
 		$grouped_animations = array_merge( $grouped_animations, $exit_animations );
 
