@@ -1,15 +1,14 @@
 name: Run Pro Tests
 
 on:
-  push:
   pull_request:
     types: [ labeled ]
-  repository_dispatch:
-    types: [remote-tests]
+
+env:
+  RUN_TESTS: ${{ github.event.label.name == 'run-pro-tests' }}
 
 jobs:
   init-core-checks:
-    if: github.event.label.name == 'run-pro-tests'
     name: Init Core Checks
     runs-on: ubuntu-latest
     strategy:
