@@ -20,6 +20,7 @@ export async function setup( wpAdmin: WpAdminPage, customExperiment: {[ n: strin
 	let experiments = {
 		container: 'active',
 		'nested-elements': 'active',
+		e_optimized_markup: 'active',
 	};
 
 	experiments = { ...experiments, ...customExperiment };
