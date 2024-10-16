@@ -171,6 +171,7 @@ test.describe( 'Video tests inside a section', () => {
 
 		await wpAdmin.setExperiments( {
 			container: false,
+			e_optimized_markup: true,
 		} );
 	} );
 

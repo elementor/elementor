@@ -12,6 +12,7 @@ test.describe( 'Container tests @container', () => {
 			container: true,
 			e_nested_atomic_repeaters: true,
 			'nested-elements': true,
+			e_optimized_markup: true,
 		} );
 		await page.close();
 	} );

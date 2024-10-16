@@ -10,6 +10,7 @@ test.describe( 'Section tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: false,
+			e_optimized_markup: true,
 		} );
 		await page.close();
 	} );

@@ -12,6 +12,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			container: 'active',
 			'nested-elements': 'active',
 			e_nested_atomic_repeaters: 'active',
+			e_optimized_markup: 'active',
 		} );
 
 		await page.close();
@@ -25,6 +26,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			'nested-elements': 'inactive',
 			container: 'inactive',
 			e_nested_atomic_repeaters: 'inactive',
+			e_optimized_markup: 'inactive',
 		} );
 
 		await page.close();

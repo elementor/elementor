@@ -14,6 +14,7 @@ test.describe( 'Image carousel tests', () => {
 
 		await wpAdmin.setExperiments( {
 			e_swiper_latest: false,
+			e_optimized_markup: true,
 		} );
 	} );
 
@@ -88,6 +89,7 @@ test.describe( 'Image carousel tests', () => {
 
 		await wpAdmin.setExperiments( {
 			additional_custom_breakpoints: true,
+			e_optimized_markup: true,
 		} );
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
@@ -126,6 +128,7 @@ test.describe( 'Image carousel tests', () => {
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
 		await wpAdmin.setExperiments( {
 			additional_custom_breakpoints: 'inactive',
+			e_optimized_markup: true,
 		} );
 	} );
 

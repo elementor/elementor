@@ -7,6 +7,7 @@ export async function beforeAll( browser, apiRequests, testInfo, iconExperimentS
 	await wpAdmin.setExperiments( {
 		container: 'active',
 		e_font_icon_svg: 'active' === iconExperimentState,
+		e_optimized_markup: 'active',
 	} );
 
 	await page.close();
@@ -19,6 +20,7 @@ export async function afterAll( browser, apiRequests, testInfo ) {
 	await wpAdmin.setExperiments( {
 		container: 'inactive',
 		e_font_icon_svg: 'inactive',
+		e_optimized_markup: 'inactive',
 	} );
 
 	await page.close();

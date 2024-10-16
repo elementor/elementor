@@ -21,6 +21,7 @@ test.describe( 'Atomic Widgets', () => {
 
 		await wpAdmin.setExperiments( {
 			atomic_widgets: 'active',
+			e_optimized_markup: 'active',
 		} );
 
 		editor = await wpAdmin.openNewPage();

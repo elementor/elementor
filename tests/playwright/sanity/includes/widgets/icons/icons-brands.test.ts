@@ -9,7 +9,7 @@ test.describe( 'Icons (FA Brands)', () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( { container: 'active' } );
+		await wpAdmin.setExperiments( { container: 'active', e_optimized_markup: 'active' } );
 
 		await page.close();
 	} );
@@ -24,6 +24,7 @@ test.describe( 'Icons (FA Brands)', () => {
 			// Act.
 			await wpAdmin.setExperiments( {
 				e_font_icon_svg: status,
+				e_optimized_markup: 'active',
 			} );
 
 			await wpAdmin.openNewPage();

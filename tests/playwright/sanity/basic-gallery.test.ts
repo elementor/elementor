@@ -30,6 +30,7 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page, apiReque
 
 	await wpAdmin.setExperiments( {
 		e_swiper_latest: true,
+		e_optimized_markup: true,
 	} );
 
 	const editor = await wpAdmin.openNewPage();
@@ -42,6 +43,7 @@ test( 'Basic Gallery Lightbox test with latest Swiper', async ( { page, apiReque
 
 	await wpAdmin.setExperiments( {
 		e_swiper_latest: false,
+		e_optimized_markup: false,
 	} );
 } );
 

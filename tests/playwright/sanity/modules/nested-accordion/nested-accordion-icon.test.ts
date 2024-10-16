@@ -12,6 +12,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		await wpAdmin.setExperiments( {
 			container: 'active',
 			'nested-elements': 'active',
+			e_optimized_markup: 'active',
 		} );
 
 		await page.close();
@@ -25,6 +26,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			'nested-elements': 'inactive',
 			container: 'inactive',
 			e_font_icon_svg: 'default',
+			e_optimized_markup: 'inactive',
 		} );
 
 		await page.close();
@@ -37,6 +39,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( {
 				e_font_icon_svg: 'inactive',
+				e_optimized_markup: 'active',
 			} );
 			const editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -63,6 +66,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( {
 				e_font_icon_svg: 'active',
+				e_optimized_markup: 'active',
 			} );
 			const editor = await wpAdmin.openNewPage();
 

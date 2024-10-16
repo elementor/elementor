@@ -11,6 +11,7 @@ test.describe( 'Tabs widget tests', () => {
 		await wpAdmin.setExperiments( {
 			container: 'active',
 			'nested-elements': 'active',
+			e_optimized_markup: 'active',
 		} );
 		const editor = await wpAdmin.openNewPage();
 
@@ -24,6 +25,7 @@ test.describe( 'Tabs widget tests', () => {
 		await wpAdmin.setExperiments( {
 			container: 'inactive',
 			'nested-elements': 'inactive',
+			e_optimized_markup: 'inactive',
 		} );
 	} );
 

@@ -14,6 +14,7 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 			await wpAdmin.setExperiments( {
 				additional_custom_breakpoints: false,
 				container: false,
+				e_optimized_markup: true,
 			} );
 		} );
 		for ( const testDevice of Breakpoints.getBasic() ) {
@@ -42,6 +43,7 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 			await wpAdmin.setExperiments( {
 				additional_custom_breakpoints: true,
 				container: false,
+				e_optimized_markup: true,
 			} );
 			const reverseColumns = new ReverseColumns( page, testInfo, apiRequests );
 			await reverseColumns.initAdditionalBreakpoints();
