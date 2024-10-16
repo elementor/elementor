@@ -17,7 +17,7 @@ jobs:
         with:
           github-auth-token: ${{ secrets.GITHUB_TOKEN }}
           workflow-org: 'elementor'
-          workflow-repo: 'elementor/elementor-pro'
+          workflow-repo: 'elementor-pro'
           workflow-yaml: 'pro-tests-remote-workflow.yaml'  # Name of the workflow file in Elementor-Pro repo
           # TODO change branch name after test
           workflow-branch: 'internal/ED-15774-internal-execute-custom-core-tests-from-core-repo'  # Branch to trigger in Elementor-Pro
