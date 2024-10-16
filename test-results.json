@@ -74,10 +74,10 @@
 								{
 									"workerIndex": 0,
 									"status": "failed",
-									"duration": 4061,
+									"duration": 4961,
 									"error": {
-										"message": "Error: \u001b[31mScreenshot comparison failed:\u001b[39m\n\n  Expected an image 650px by 209px, received 646px by 297px. 10024 pixels (ratio 0.06 of all image pixels) are different.\n\nExpected: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts-snapshots/accordion-darwin.jpeg\u001b[39m\nReceived: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-actual.jpeg\u001b[39m\n    Diff: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-diff.jpeg\u001b[39m\n",
-										"stack": "Error: \u001b[31mScreenshot comparison failed:\u001b[39m\n\n  Expected an image 650px by 209px, received 646px by 297px. 10024 pixels (ratio 0.06 of all image pixels) are different.\n\nExpected: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts-snapshots/accordion-darwin.jpeg\u001b[39m\nReceived: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-actual.jpeg\u001b[39m\n    Diff: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-diff.jpeg\u001b[39m\n\n    at /Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts:19:4",
+										"message": "Error: \u001b[31mScreenshot comparison failed:\u001b[39m\n\n  Expected an image 650px by 209px, received 646px by 297px. 10040 pixels (ratio 0.06 of all image pixels) are different.\n\nExpected: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts-snapshots/accordion-darwin.jpeg\u001b[39m\nReceived: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-actual.jpeg\u001b[39m\n    Diff: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-diff.jpeg\u001b[39m\n",
+										"stack": "Error: \u001b[31mScreenshot comparison failed:\u001b[39m\n\n  Expected an image 650px by 209px, received 646px by 297px. 10040 pixels (ratio 0.06 of all image pixels) are different.\n\nExpected: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts-snapshots/accordion-darwin.jpeg\u001b[39m\nReceived: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-actual.jpeg\u001b[39m\n    Diff: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-diff.jpeg\u001b[39m\n\n    at /Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts:19:4",
 										"location": {
 											"file": "/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts",
 											"column": 4,
@@ -92,13 +92,13 @@
 												"column": 4,
 												"line": 19
 											},
-											"message": "Error: \u001b[31mScreenshot comparison failed:\u001b[39m\n\n  Expected an image 650px by 209px, received 646px by 297px. 10024 pixels (ratio 0.06 of all image pixels) are different.\n\nExpected: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts-snapshots/accordion-darwin.jpeg\u001b[39m\nReceived: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-actual.jpeg\u001b[39m\n    Diff: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-diff.jpeg\u001b[39m\n\n\n\u001b[0m \u001b[90m 17 |\u001b[39m \t\t\u001b[33m.\u001b[39mlocator( \u001b[32m'.elementor-widget-wrap > .elementor-background-overlay'\u001b[39m )\u001b[0m\n\u001b[0m \u001b[90m 18 |\u001b[39m \t\t\u001b[33m.\u001b[39mscreenshot( { type\u001b[33m:\u001b[39m \u001b[32m'jpeg'\u001b[39m\u001b[33m,\u001b[39m quality\u001b[33m:\u001b[39m \u001b[35m90\u001b[39m } ) )\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 19 |\u001b[39m \t\t\u001b[33m.\u001b[39mtoMatchSnapshot( \u001b[32m'accordion.jpeg'\u001b[39m )\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m    |\u001b[39m \t\t \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 20 |\u001b[39m } )\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 21 |\u001b[39m\u001b[0m\n\n\u001b[2m    at /Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts:19:4\u001b[22m"
+											"message": "Error: \u001b[31mScreenshot comparison failed:\u001b[39m\n\n  Expected an image 650px by 209px, received 646px by 297px. 10040 pixels (ratio 0.06 of all image pixels) are different.\n\nExpected: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts-snapshots/accordion-darwin.jpeg\u001b[39m\nReceived: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-actual.jpeg\u001b[39m\n    Diff: \u001b[33m/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/accordion-Accordion/accordion-diff.jpeg\u001b[39m\n\n\n\u001b[0m \u001b[90m 17 |\u001b[39m \t\t\u001b[33m.\u001b[39mlocator( \u001b[32m'.elementor-widget-wrap > .elementor-background-overlay'\u001b[39m )\u001b[0m\n\u001b[0m \u001b[90m 18 |\u001b[39m \t\t\u001b[33m.\u001b[39mscreenshot( { type\u001b[33m:\u001b[39m \u001b[32m'jpeg'\u001b[39m\u001b[33m,\u001b[39m quality\u001b[33m:\u001b[39m \u001b[35m90\u001b[39m } ) )\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 19 |\u001b[39m \t\t\u001b[33m.\u001b[39mtoMatchSnapshot( \u001b[32m'accordion.jpeg'\u001b[39m )\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m    |\u001b[39m \t\t \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 20 |\u001b[39m } )\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 21 |\u001b[39m\u001b[0m\n\n\u001b[2m    at /Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/accordion.test.ts:19:4\u001b[22m"
 										}
 									],
 									"stdout": [],
 									"stderr": [],
 									"retry": 0,
-									"startTime": "2024-10-14T21:08:28.057Z",
+									"startTime": "2024-10-15T07:43:02.386Z",
 									"attachments": [
 										{
 											"name": "accordion-expected.jpeg",
@@ -146,7 +146,7 @@
 			"specs": [
 				{
 					"title": "$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom selector",
-					"ok": false,
+					"ok": true,
 					"tags": [],
 					"tests": [
 						{
@@ -158,47 +158,17 @@
 							"results": [
 								{
 									"workerIndex": 1,
-									"status": "failed",
-									"duration": 7981,
-									"error": {
-										"message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active')\nExpected: visible\nReceived: hidden\nCall log:\n  \u001b[2m- expect.toBeVisible with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active')\u001b[22m\n",
-										"stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active')\nExpected: visible\nReceived: hidden\nCall log:\n  \u001b[2m- expect.toBeVisible with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active')\u001b[22m\n\n    at /Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/assets/dev/js/editor/components/documents/commands/internal/attach-preview.test.ts:22:141",
-										"location": {
-											"file": "/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/assets/dev/js/editor/components/documents/commands/internal/attach-preview.test.ts",
-											"column": 141,
-											"line": 22
-										},
-										"snippet": "\u001b[0m \u001b[90m 20 |\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 21 |\u001b[39m \t\u001b[90m// Assert - Ensure the tabs are duplicated.\u001b[39m\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 22 |\u001b[39m \t\u001b[36mawait\u001b[39m expect( editor\u001b[33m.\u001b[39mgetPreviewFrame()\u001b[33m.\u001b[39mlocator( \u001b[32m'.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active'\u001b[39m ) )\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m    |\u001b[39m \t                                                                                                                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 23 |\u001b[39m \t\u001b[36mconst\u001b[39m tabCount \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m editor\u001b[33m.\u001b[39mgetPreviewFrame()\u001b[33m.\u001b[39mlocator( \u001b[32m'.elementor-tab-title'\u001b[39m )\u001b[33m.\u001b[39mcount()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 24 |\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 25 |\u001b[39m \t\u001b[90m// It will be duplicated since, the same widget tabs gonna be inside the first tab content.\u001b[39m\u001b[0m"
-									},
-									"errors": [
-										{
-											"location": {
-												"file": "/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/assets/dev/js/editor/components/documents/commands/internal/attach-preview.test.ts",
-												"column": 141,
-												"line": 22
-											},
-											"message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active')\nExpected: visible\nReceived: hidden\nCall log:\n  \u001b[2m- expect.toBeVisible with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active')\u001b[22m\n\n\n\u001b[0m \u001b[90m 20 |\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 21 |\u001b[39m \t\u001b[90m// Assert - Ensure the tabs are duplicated.\u001b[39m\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 22 |\u001b[39m \t\u001b[36mawait\u001b[39m expect( editor\u001b[33m.\u001b[39mgetPreviewFrame()\u001b[33m.\u001b[39mlocator( \u001b[32m'.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active'\u001b[39m ) )\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m    |\u001b[39m \t                                                                                                                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 23 |\u001b[39m \t\u001b[36mconst\u001b[39m tabCount \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m editor\u001b[33m.\u001b[39mgetPreviewFrame()\u001b[33m.\u001b[39mlocator( \u001b[32m'.elementor-tab-title'\u001b[39m )\u001b[33m.\u001b[39mcount()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 24 |\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 25 |\u001b[39m \t\u001b[90m// It will be duplicated since, the same widget tabs gonna be inside the first tab content.\u001b[39m\u001b[0m\n\n\u001b[2m    at /Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/assets/dev/js/editor/components/documents/commands/internal/attach-preview.test.ts:22:141\u001b[22m"
-										}
-									],
+									"status": "passed",
+									"duration": 3032,
+									"errors": [],
 									"stdout": [],
 									"stderr": [],
 									"retry": 0,
-									"startTime": "2024-10-14T21:08:33.135Z",
-									"attachments": [
-										{
-											"name": "trace",
-											"contentType": "application/zip",
-											"path": "/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/assets-dev-js-editor-compo-540b4-e-loaded-in-custom-selector/trace.zip"
-										}
-									],
-									"errorLocation": {
-										"file": "/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/assets/dev/js/editor/components/documents/commands/internal/attach-preview.test.ts",
-										"column": 141,
-										"line": 22
-									}
+									"startTime": "2024-10-15T07:43:08.359Z",
+									"attachments": []
 								}
 							],
-							"status": "unexpected"
+							"status": "expected"
 						}
 					],
 					"id": "7127b3c0978570cd60f3-b1a6a15c9b5f9de6b497",
@@ -227,14 +197,14 @@
 							"projectName": "",
 							"results": [
 								{
-									"workerIndex": 2,
+									"workerIndex": 1,
 									"status": "passed",
-									"duration": 5382,
+									"duration": 5498,
 									"errors": [],
 									"stdout": [],
 									"stderr": [],
 									"retry": 0,
-									"startTime": "2024-10-14T21:08:41.773Z",
+									"startTime": "2024-10-15T07:43:11.537Z",
 									"attachments": []
 								}
 							],
@@ -267,14 +237,14 @@
 							"projectName": "",
 							"results": [
 								{
-									"workerIndex": 2,
+									"workerIndex": 1,
 									"status": "passed",
-									"duration": 4166,
+									"duration": 6509,
 									"errors": [],
 									"stdout": [],
 									"stderr": [],
 									"retry": 0,
-									"startTime": "2024-10-14T21:08:47.324Z",
+									"startTime": "2024-10-15T07:43:17.043Z",
 									"attachments": []
 								}
 							],
@@ -314,14 +284,14 @@
 									"projectName": "",
 									"results": [
 										{
-											"workerIndex": 2,
+											"workerIndex": 1,
 											"status": "passed",
-											"duration": 2976,
+											"duration": 3799,
 											"errors": [],
 											"stdout": [],
 											"stderr": [],
 											"retry": 0,
-											"startTime": "2024-10-14T21:08:51.497Z",
+											"startTime": "2024-10-15T07:43:23.560Z",
 											"attachments": []
 										}
 									],
@@ -346,14 +316,14 @@
 									"projectName": "",
 									"results": [
 										{
-											"workerIndex": 2,
+											"workerIndex": 1,
 											"status": "passed",
-											"duration": 2551,
+											"duration": 3102,
 											"errors": [],
 											"stdout": [],
 											"stderr": [],
 											"retry": 0,
-											"startTime": "2024-10-14T21:08:54.476Z",
+											"startTime": "2024-10-15T07:43:27.362Z",
 											"attachments": []
 										}
 									],
@@ -378,14 +348,14 @@
 									"projectName": "",
 									"results": [
 										{
-											"workerIndex": 2,
+											"workerIndex": 1,
 											"status": "passed",
-											"duration": 3170,
+											"duration": 3188,
 											"errors": [],
 											"stdout": [],
 											"stderr": [],
 											"retry": 0,
-											"startTime": "2024-10-14T21:08:57.030Z",
+											"startTime": "2024-10-15T07:43:30.469Z",
 											"attachments": []
 										}
 									],
@@ -410,14 +380,14 @@
 									"projectName": "",
 									"results": [
 										{
-											"workerIndex": 2,
+											"workerIndex": 1,
 											"status": "passed",
-											"duration": 2505,
+											"duration": 3008,
 											"errors": [],
 											"stdout": [],
 											"stderr": [],
 											"retry": 0,
-											"startTime": "2024-10-14T21:09:00.202Z",
+											"startTime": "2024-10-15T07:43:33.659Z",
 											"attachments": []
 										}
 									],
@@ -442,14 +412,14 @@
 									"projectName": "",
 									"results": [
 										{
-											"workerIndex": 2,
+											"workerIndex": 1,
 											"status": "passed",
-											"duration": 3362,
+											"duration": 3845,
 											"errors": [],
 											"stdout": [],
 											"stderr": [],
 											"retry": 0,
-											"startTime": "2024-10-14T21:09:02.711Z",
+											"startTime": "2024-10-15T07:43:36.670Z",
 											"attachments": []
 										}
 									],
@@ -478,14 +448,14 @@
 									"projectName": "",
 									"results": [
 										{
-											"workerIndex": 2,
+											"workerIndex": 1,
 											"status": "skipped",
 											"duration": 0,
 											"errors": [],
 											"stdout": [],
 											"stderr": [],
 											"retry": 0,
-											"startTime": "2024-10-14T21:09:06.076Z",
+											"startTime": "2024-10-15T07:43:40.518Z",
 											"attachments": []
 										}
 									],
@@ -527,14 +497,14 @@
 									"projectName": "",
 									"results": [
 										{
-											"workerIndex": 2,
+											"workerIndex": 1,
 											"status": "passed",
-											"duration": 2687,
+											"duration": 2818,
 											"errors": [],
 											"stdout": [],
 											"stderr": [],
 											"retry": 0,
-											"startTime": "2024-10-14T21:09:06.080Z",
+											"startTime": "2024-10-15T07:43:40.525Z",
 											"attachments": []
 										}
 									],
@@ -559,18 +529,48 @@
 									"projectName": "",
 									"results": [
 										{
-											"workerIndex": 2,
-											"status": "passed",
-											"duration": 2632,
-											"errors": [],
+											"workerIndex": 1,
+											"status": "interrupted",
+											"duration": 110,
+											"error": {
+												"message": "Error: apiRequestContext.post: Test ended.\nCall log:\n  \u001b[2m- → POST http://localhost:8888/index.php?rest_route=%2Fwp%2Fv2%2Fpages\u001b[22m\n\u001b[2m  -   user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/124.0.6367.29 Safari/537.36\u001b[22m\n\u001b[2m  -   accept: */*\u001b[22m\n\u001b[2m  -   accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m  -   X-WP-Nonce: 2317a97132\u001b[22m\n\u001b[2m  -   content-type: multipart/form-data; boundary=----WebKitFormBoundaryq9BSsymmuASKddJA\u001b[22m\n\u001b[2m  -   content-length: 172\u001b[22m\n\u001b[2m  -   cookie: wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_cd9b744c619529c4988e0e94344eaf12=admin%7C1729150988%7COsqY1L0mm8wJ970lSxqW9RnUrkXWAHvQqyuUORT59bk%7C6adbc2564617bc85a51e8912c5c27f34ace9dafa09a5bc22a5ed9bfdeceda999\u001b[22m\n",
+												"stack": "Error: apiRequestContext.post: Test ended.\nCall log:\n  \u001b[2m- → POST http://localhost:8888/index.php?rest_route=%2Fwp%2Fv2%2Fpages\u001b[22m\n\u001b[2m  -   user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/124.0.6367.29 Safari/537.36\u001b[22m\n\u001b[2m  -   accept: */*\u001b[22m\n\u001b[2m  -   accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m  -   X-WP-Nonce: 2317a97132\u001b[22m\n\u001b[2m  -   content-type: multipart/form-data; boundary=----WebKitFormBoundaryq9BSsymmuASKddJA\u001b[22m\n\u001b[2m  -   content-length: 172\u001b[22m\n\u001b[2m  -   cookie: wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_cd9b744c619529c4988e0e94344eaf12=admin%7C1729150988%7COsqY1L0mm8wJ970lSxqW9RnUrkXWAHvQqyuUORT59bk%7C6adbc2564617bc85a51e8912c5c27f34ace9dafa09a5bc22a5ed9bfdeceda999\u001b[22m\n\n    at ApiRequests.create (/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/assets/api-requests.ts:14:34)\n    at WpAdminPage.createNewPostWithAPI (/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/pages/wp-admin-page.ts:92:36)\n    at WpAdminPage.openNewPage (/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/pages/wp-admin-page.ts:71:15)\n    at /Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/assets/dev/js/editor/introduction-tooltips/global-color-introduction.test.ts:31:27",
+												"location": {
+													"file": "/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/assets/api-requests.ts",
+													"column": 34,
+													"line": 14
+												},
+												"snippet": "\u001b[90m   at \u001b[39m../assets/api-requests.ts:14\n\n\u001b[0m \u001b[90m 12 |\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 13 |\u001b[39m \t\u001b[36mpublic\u001b[39m \u001b[36masync\u001b[39m create( request\u001b[33m:\u001b[39m \u001b[33mAPIRequestContext\u001b[39m\u001b[33m,\u001b[39m entity\u001b[33m:\u001b[39m string\u001b[33m,\u001b[39m data\u001b[33m:\u001b[39m \u001b[33mPost\u001b[39m ) {\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 14 |\u001b[39m \t\t\u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m request\u001b[33m.\u001b[39mpost( \u001b[32m`${ this.baseUrl }/index.php`\u001b[39m\u001b[33m,\u001b[39m {\u001b[0m\n\u001b[0m \u001b[90m    |\u001b[39m \t\t                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 15 |\u001b[39m \t\t\tparams\u001b[33m:\u001b[39m { rest_route\u001b[33m:\u001b[39m \u001b[32m`/wp/v2/${ entity }`\u001b[39m }\u001b[33m,\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 16 |\u001b[39m \t\t\theaders\u001b[33m:\u001b[39m {\u001b[0m\n\u001b[0m \u001b[90m 17 |\u001b[39m \t\t\t\t\u001b[32m'X-WP-Nonce'\u001b[39m\u001b[33m:\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mnonce\u001b[33m,\u001b[39m\u001b[0m"
+											},
+											"errors": [
+												{
+													"location": {
+														"file": "/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/assets/api-requests.ts",
+														"column": 34,
+														"line": 14
+													},
+													"message": "Error: apiRequestContext.post: Test ended.\nCall log:\n  \u001b[2m- → POST http://localhost:8888/index.php?rest_route=%2Fwp%2Fv2%2Fpages\u001b[22m\n\u001b[2m  -   user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/124.0.6367.29 Safari/537.36\u001b[22m\n\u001b[2m  -   accept: */*\u001b[22m\n\u001b[2m  -   accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m  -   X-WP-Nonce: 2317a97132\u001b[22m\n\u001b[2m  -   content-type: multipart/form-data; boundary=----WebKitFormBoundaryq9BSsymmuASKddJA\u001b[22m\n\u001b[2m  -   content-length: 172\u001b[22m\n\u001b[2m  -   cookie: wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_cd9b744c619529c4988e0e94344eaf12=admin%7C1729150988%7COsqY1L0mm8wJ970lSxqW9RnUrkXWAHvQqyuUORT59bk%7C6adbc2564617bc85a51e8912c5c27f34ace9dafa09a5bc22a5ed9bfdeceda999\u001b[22m\n\n\n\u001b[90m   at \u001b[39m../assets/api-requests.ts:14\n\n\u001b[0m \u001b[90m 12 |\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 13 |\u001b[39m \t\u001b[36mpublic\u001b[39m \u001b[36masync\u001b[39m create( request\u001b[33m:\u001b[39m \u001b[33mAPIRequestContext\u001b[39m\u001b[33m,\u001b[39m entity\u001b[33m:\u001b[39m string\u001b[33m,\u001b[39m data\u001b[33m:\u001b[39m \u001b[33mPost\u001b[39m ) {\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 14 |\u001b[39m \t\t\u001b[36mconst\u001b[39m response \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m request\u001b[33m.\u001b[39mpost( \u001b[32m`${ this.baseUrl }/index.php`\u001b[39m\u001b[33m,\u001b[39m {\u001b[0m\n\u001b[0m \u001b[90m    |\u001b[39m \t\t                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 15 |\u001b[39m \t\t\tparams\u001b[33m:\u001b[39m { rest_route\u001b[33m:\u001b[39m \u001b[32m`/wp/v2/${ entity }`\u001b[39m }\u001b[33m,\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 16 |\u001b[39m \t\t\theaders\u001b[33m:\u001b[39m {\u001b[0m\n\u001b[0m \u001b[90m 17 |\u001b[39m \t\t\t\t\u001b[32m'X-WP-Nonce'\u001b[39m\u001b[33m:\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mnonce\u001b[33m,\u001b[39m\u001b[0m\n\n\u001b[2m    at ApiRequests.create (/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/assets/api-requests.ts:14:34)\u001b[22m\n\u001b[2m    at WpAdminPage.createNewPostWithAPI (/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/pages/wp-admin-page.ts:92:36)\u001b[22m\n\u001b[2m    at WpAdminPage.openNewPage (/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/pages/wp-admin-page.ts:71:15)\u001b[22m\n\u001b[2m    at /Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/sanity/assets/dev/js/editor/introduction-tooltips/global-color-introduction.test.ts:31:27\u001b[22m"
+												}
+											],
 											"stdout": [],
 											"stderr": [],
 											"retry": 0,
-											"startTime": "2024-10-14T21:09:08.769Z",
-											"attachments": []
+											"startTime": "2024-10-15T07:43:43.346Z",
+											"attachments": [
+												{
+													"name": "trace",
+													"contentType": "application/zip",
+													"path": "/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/assets-dev-js-editor-intro-73374-s-not-being-triggered-twice/trace.zip"
+												}
+											],
+											"errorLocation": {
+												"file": "/Users/svitlanadykun/WebstormProjects/elementor-at1/tests/playwright/assets/api-requests.ts",
+												"column": 34,
+												"line": 14
+											}
 										}
 									],
-									"status": "expected"
+									"status": "skipped"
 								}
 							],
 							"id": "a66786f010d67d39df35-25cb928521f7eb3260dd",
@@ -606,20 +606,8 @@
 									"expectedStatus": "passed",
 									"projectId": "",
 									"projectName": "",
-									"results": [
-										{
-											"workerIndex": 2,
-											"status": "passed",
-											"duration": 2205,
-											"errors": [],
-											"stdout": [],
-											"stderr": [],
-											"retry": 0,
-											"startTime": "2024-10-14T21:09:11.407Z",
-											"attachments": []
-										}
-									],
-									"status": "expected"
+									"results": [],
+									"status": "skipped"
 								}
 							],
 							"id": "17ec75500086d3c2040f-bb2a9e6e43a829f843e5",
@@ -638,20 +626,8 @@
 									"expectedStatus": "passed",
 									"projectId": "",
 									"projectName": "",
-									"results": [
-										{
-											"workerIndex": 2,
-											"status": "passed",
-											"duration": 2153,
-											"errors": [],
-											"stdout": [],
-											"stderr": [],
-											"retry": 0,
-											"startTime": "2024-10-14T21:09:13.615Z",
-											"attachments": []
-										}
-									],
-									"status": "expected"
+									"results": [],
+									"status": "skipped"
 								}
 							],
 							"id": "17ec75500086d3c2040f-9fd0fd9cc985467b0c33",
@@ -680,20 +656,8 @@
 							"expectedStatus": "passed",
 							"projectId": "",
 							"projectName": "",
-							"results": [
-								{
-									"workerIndex": 2,
-									"status": "passed",
-									"duration": 12319,
-									"errors": [],
-									"stdout": [],
-									"stderr": [],
-									"retry": 0,
-									"startTime": "2024-10-14T21:09:15.774Z",
-									"attachments": []
-								}
-							],
-							"status": "expected"
+							"results": [],
+							"status": "skipped"
 						}
 					],
 					"id": "00a21d8bbd6cfb3d3154-9740946406e77bfda143",
@@ -720,20 +684,8 @@
 							"expectedStatus": "passed",
 							"projectId": "",
 							"projectName": "",
-							"results": [
-								{
-									"workerIndex": 2,
-									"status": "passed",
-									"duration": 3496,
-									"errors": [],
-									"stdout": [],
-									"stderr": [],
-									"retry": 0,
-									"startTime": "2024-10-14T21:09:28.101Z",
-									"attachments": []
-								}
-							],
-							"status": "expected"
+							"results": [],
+							"status": "skipped"
 						}
 					],
 					"id": "585a7ccb4bfd3b18dc80-585afdfd77b06d621b82",
@@ -767,20 +719,8 @@
 									"expectedStatus": "passed",
 									"projectId": "",
 									"projectName": "",
-									"results": [
-										{
-											"workerIndex": 2,
-											"status": "passed",
-											"duration": 3593,
-											"errors": [],
-											"stdout": [],
-											"stderr": [],
-											"retry": 0,
-											"startTime": "2024-10-14T21:09:31.603Z",
-											"attachments": []
-										}
-									],
-									"status": "expected"
+									"results": [],
+									"status": "skipped"
 								}
 							],
 							"id": "31f04f2fcc401a7b06f7-0c6c43ffcd75e83c49fe",
@@ -809,20 +749,8 @@
 							"expectedStatus": "passed",
 							"projectId": "",
 							"projectName": "",
-							"results": [
-								{
-									"workerIndex": 2,
-									"status": "passed",
-									"duration": 2107,
-									"errors": [],
-									"stdout": [],
-									"stderr": [],
-									"retry": 0,
-									"startTime": "2024-10-14T21:09:35.200Z",
-									"attachments": []
-								}
-							],
-							"status": "expected"
+							"results": [],
+							"status": "skipped"
 						}
 					],
 					"id": "3ff4f9128d95931b2a04-7b2ef4e1cd2aaf906be7",
@@ -849,20 +777,8 @@
 							"expectedStatus": "passed",
 							"projectId": "",
 							"projectName": "",
-							"results": [
-								{
-									"workerIndex": 2,
-									"status": "passed",
-									"duration": 2506,
-									"errors": [],
-									"stdout": [],
-									"stderr": [],
-									"retry": 0,
-									"startTime": "2024-10-14T21:09:37.312Z",
-									"attachments": []
-								}
-							],
-							"status": "expected"
+							"results": [],
+							"status": "skipped"
 						}
 					],
 					"id": "ab11af064b4e3e679b84-565c839f275d9ec09bab",
@@ -896,25 +812,7 @@
 									"expectedStatus": "passed",
 									"projectId": "",
 									"projectName": "",
-									"results": [
-										{
-											"workerIndex": 2,
-											"status": "interrupted",
-											"duration": 3564,
-											"errors": [],
-											"stdout": [],
-											"stderr": [],
-											"retry": 0,
-											"startTime": "2024-10-14T21:09:39.823Z",
-											"attachments": [
-												{
-													"name": "trace",
-													"contentType": "application/zip",
-													"path": "/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results/assets-js-frontend-utils-u-40828-st-Lightbox-and-URL-Actions/trace.zip"
-												}
-											]
-										}
-									],
+									"results": [],
 									"status": "skipped"
 								}
 							],
@@ -8826,11 +8724,11 @@
 	],
 	"errors": [],
 	"stats": {
-		"startTime": "2024-10-14T21:08:27.049Z",
-		"duration": 76584.113,
-		"expected": 16,
-		"skipped": 319,
-		"unexpected": 2,
+		"startTime": "2024-10-15T07:43:01.305Z",
+		"duration": 42268.515,
+		"expected": 9,
+		"skipped": 327,
+		"unexpected": 1,
 		"flaky": 0
 	}
 }

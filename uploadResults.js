@@ -1,18 +1,12 @@
 const fs = require( 'fs' );
 const { Client } = require( '@elastic/elasticsearch' );
 
-// Create Elasticsearch client
 const esClient = new Client( { node: 'http://localhost:9200' } );
 
-// Function to remove ANSI codes from text
 function removeANSI( text ) {
-	return text.replace(
-		/\u001b\[[0-9;]*m/g,
-		'',
-	);
+	return text.replace( /\u001b\[[0-9;]*m/g, '' );
 }
 
-// Function to process and upload test results to Elasticsearch
 async function run() {
 	try {
 		// Read and parse the test results file
@@ -21,31 +15,6 @@ async function run() {
 
 		// Define the Elasticsearch index name
 		const indexName = 'playwright-test-results';
-
-		// Check if the index exists in Elasticsearch
-		const existsResponse = await esClient.indices.exists( { index: indexName } );
-		const exists = existsResponse.body; // For version 7.x returns { body: true/false, ... }
-
-		if ( ! exists ) {
-			// Create the index with the specified mapping if it does not exist
-			await esClient.indices.create( {
-				index: indexName,
-				body: {
-					mappings: {
-						properties: {
-							suiteTitle: { type: 'keyword' },
-							specTitle: { type: 'keyword' },
-							testName: { type: 'keyword' },
-							status: { type: 'keyword' },
-							duration: { type: 'long' },
-							errorMessage: { type: 'text' },
-							errorStack: { type: 'text' },
-							timestamp: { type: 'date' },
-						},
-					},
-				},
-			} );
-		}
 
 		// Prepare the bulk indexing body
 		const bulkBody = [];
@@ -75,9 +44,15 @@ async function run() {
 										const errorStack = result.error ? removeANSI( result.error.stack ) : null;
 										const timestamp = new Date( result.startTime || Date.now() ).toISOString();
 
+										// Use unique ID to ensure each test run is recorded separately
+										const docId = `${ testName }-${ timestamp }`;
+
 										// Add index action and corresponding document to the bulk body
 										bulkBody.push( {
-											index: { _index: indexName },
+											index: {
+												_index: indexName,
+												_id: docId, // Use unique ID for each document
+											},
 										} );
 										bulkBody.push( {
 											suiteTitle,
@@ -113,10 +88,8 @@ async function run() {
 			}
 		}
 	} catch ( error ) {
-		// Log any unexpected errors that occur during the process
 		console.error( 'An error occurred:', error );
 	}
 }
 
-// Execute the run function
 run();
