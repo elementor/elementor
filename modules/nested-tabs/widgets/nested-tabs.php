@@ -46,7 +46,7 @@ class NestedTabs extends Widget_Nested_Base {
 		return [ 'widget-nested-tabs' ];
 	}
 
-	public function has_widget_container(): bool {
+	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
@@ -86,7 +86,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 	protected function register_controls() {
 		if ( null === $this->optimized_markup ) {
-			$this->optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_container();
+			$this->optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_inner_wrapper();
 			$this->widget_container_selector = $this->optimized_markup ? '' : ' > .elementor-widget-container';
 		}
 

@@ -104,7 +104,7 @@ class Widget_Spacer extends Widget_Base {
 		return [ 'widget-spacer' ];
 	}
 
-	public function has_widget_container(): bool {
+	public function has_widget_inner_wrapper(): bool {
 		return true;
 	}
 
