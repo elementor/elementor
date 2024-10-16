@@ -137,9 +137,9 @@ export class ChecklistHelper {
 
 		await this.apiRequests.customPut( request, `wp-json/elementor/v1/checklist/user-progress`, {
 			first_closed_checklist_in_editor: true,
-			last_opened_timestamp: false,
+			last_opened_timestamp: -1,
 			is_popup_minimized: false,
-			e_editor_counter: null,
+			editor_visit_count: -1,
 			...alternativeValues,
 		} );
 

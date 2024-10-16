@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Checklist\Steps;
 
 use Elementor\Core\DocumentTypes\Page;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,7 +17,7 @@ class Set_Fonts_And_Colors extends Step_Base {
 	}
 
 	public function is_absolute_completed() : bool {
-		$settings = $this->elementor_adapter->get_kit_settings();
+		$settings = $this->kit_adapter->get_kit_settings();
 		$custom_color = $settings['custom_colors'] ?? '';
 		$custom_fonts = $settings['custom_typography'] ?? '';
 
@@ -36,7 +37,7 @@ class Set_Fonts_And_Colors extends Step_Base {
 	}
 
 	public function get_cta_url() : string {
-		$settings = $this->elementor_adapter->get_kit_settings();
+		$settings = $this->kit_adapter->get_kit_settings();
 
 		$tab = ! $settings['custom_colors'] ? 'global-typography' : 'global-colors';
 
