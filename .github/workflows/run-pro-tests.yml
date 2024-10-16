@@ -11,7 +11,7 @@ jobs:
   init-core-checks:
     if: github.event.label.name == 'run-pro-tests'
     name: Init Core Checks
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     steps:
