@@ -100,16 +100,6 @@ class Settings_Layout extends Tab_Base {
 			? esc_html__( 'Gaps', 'elementor' )
 			: esc_html__( 'Widgets Space', 'elementor' );
 
-		$optimized_markup = Plugin::instance()->experiments->is_feature_active( 'e_optimized_markup' );
-
-		$widget_spacing = $optimized_markup
-			? 'content: ""; display:block; height: {{ROW}}{{UNIT}}'
-			: 'margin-block-end: {{ROW}}{{UNIT}}';
-
-		$widget_spacing_selector = $optimized_markup
-			? '.elementor-widget:not(:last-child)::after'
-			: '.elementor-widget:not(:last-child)';
-
 		$this->add_control(
 			'space_between_widgets',
 			[
@@ -126,10 +116,7 @@ class Settings_Layout extends Tab_Base {
 					'column' => '20',
 				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
-				'selectors' => [
-					$widget_spacing_selector => $widget_spacing,
-					'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
-				],
+				'selectors' => $this->get_widget_spacing_selectors(),
 				'conversion_map' => [
 					'old_key' => 'size',
 					'new_key' => 'column',
@@ -254,6 +241,22 @@ class Settings_Layout extends Tab_Base {
 		$this->add_control( 'viewport_lg', [ 'type' => Controls_Manager::HIDDEN ] );
 
 		$this->end_controls_section();
+	}
+
+	private function get_widget_spacing_selectors(): array {
+		$is_optimized_markup = Plugin::instance()->experiments->is_feature_active( 'e_optimized_markup' );
+
+		if ( $is_optimized_markup ) {
+			return [
+				'.elementor-section .elementor-widget:not(:last-child)::after' => 'content: ""; display:block; height: {{ROW}}{{UNIT}}',
+				'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+			];
+		}
+
+		return [
+			'.elementor-widget:not(:last-child)' => 'margin-block-end: {{ROW}}{{UNIT}}',
+			'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+		];
 	}
 
 	/**
