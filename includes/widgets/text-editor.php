@@ -108,6 +108,10 @@ class Widget_Text_Editor extends Widget_Base {
 		return [ 'widget-text-editor' ];
 	}
 
+	public function has_widget_container(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register text editor widget controls.
 	 *
