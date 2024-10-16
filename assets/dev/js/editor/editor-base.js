@@ -290,7 +290,7 @@ export default class EditorBase extends Marionette.Application {
 				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
 
 				if ( ! this.widgetsCache[ widgetType ].has_widget_container && elementorCommon.config.experimentalFeatures.e_optimized_markup ) {
-					jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache['common-optimized'].controls );
+					jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache[ 'common-optimized' ].controls );
 				}
 
 				this.widgetsCache[ widgetType ].controls = elementor.hooks.applyFilters( 'elements/widget/controls/common', this.widgetsCache[ widgetType ].controls, widgetType, this.widgetsCache[ widgetType ] );
