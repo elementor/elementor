@@ -99,6 +99,11 @@ class Settings_Layout extends Tab_Base {
 		$widgets_space_label = $is_container_active
 			? esc_html__( 'Gaps', 'elementor' )
 			: esc_html__( 'Widgets Space', 'elementor' );
+		
+		$optimized_markup = Plugin::instance()->experiments->is_feature_active( 'e_optimized_markup' );
+		$widget_spacing = $optimized_markup
+			? 'content: ""; display:block; height: {{ROW}}{{UNIT}}'
+			: 'margin-block-end: {{ROW}}{{UNIT}}';
 
 		$this->add_control(
 			'space_between_widgets',
@@ -117,7 +122,7 @@ class Settings_Layout extends Tab_Base {
 				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
 				'selectors' => [
-					'.elementor-widget:not(:last-child)' => 'margin-block-end: {{ROW}}{{UNIT}}',
+					'.elementor-widget:not(:last-child)::after' => $widget_spacing,
 					'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
 				],
 				'conversion_map' => [
