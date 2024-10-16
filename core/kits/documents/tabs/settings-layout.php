@@ -99,13 +99,13 @@ class Settings_Layout extends Tab_Base {
 		$widgets_space_label = $is_container_active
 			? esc_html__( 'Gaps', 'elementor' )
 			: esc_html__( 'Widgets Space', 'elementor' );
-		
+
 		$optimized_markup = Plugin::instance()->experiments->is_feature_active( 'e_optimized_markup' );
 
 		$widget_spacing = $optimized_markup
 			? 'content: ""; display:block; height: {{ROW}}{{UNIT}}'
 			: 'margin-block-end: {{ROW}}{{UNIT}}';
-		
+
 		$widget_spacing_selector = $optimized_markup
 			? '.elementor-widget:not(:last-child)::after'
 			: '.elementor-widget:not(:last-child)';
