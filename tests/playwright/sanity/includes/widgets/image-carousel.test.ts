@@ -14,6 +14,7 @@ test.describe( 'Image carousel tests', () => {
 
 		await wpAdmin.setExperiments( {
 			e_swiper_latest: false,
+			e_optimized_markup: true,
 		} );
 	} );
 
