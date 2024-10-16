@@ -12,6 +12,7 @@ test.describe( 'Nested Tabs experiment is active @nested-atomic-repeaters', () =
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'active',
 			e_nested_atomic_repeaters: 'active',
+			e_optimized_markup: 'active',
 		} );
 
 		await page.close();
