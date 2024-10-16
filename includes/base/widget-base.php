@@ -389,6 +389,7 @@ abstract class Widget_Base extends Element_Base {
 			'hide_on_search' => $this->hide_on_search(),
 			'upsale_data' => $this->get_upsale_data(),
 			'is_dynamic_content' => $this->is_dynamic_content(),
+			'has_widget_container' => $this->has_widget_container(),
 		];
 
 		if ( isset( $config['upsale_data'] ) && is_array( $config['upsale_data'] ) ) {
@@ -401,10 +402,9 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		$stack = Plugin::$instance->controls_manager->get_element_stack( $this );
-		$with_common_controls = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 
 		if ( $stack ) {
-			$config['controls'] = $this->get_stack( $with_common_controls )['controls'];
+			$config['controls'] = $this->get_stack( false )['controls'];
 			$config['tabs_controls'] = $this->get_tabs_controls();
 		}
 
