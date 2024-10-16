@@ -118,6 +118,10 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 						} );
 					}
 
+					if ( this.shouldDoUpgradeValueMap( control, value ) ) {
+						value = control.value_conversion_map.new_value;
+					}
+
 					outputCssProperty = cssProperty.replace( /{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/g, ( originalPhrase, controlName, placeholder, fallbackControlName, fallbackValue ) => {
 						const externalControlMissing = controlName && ! controls[ controlName ];
 
@@ -232,6 +236,11 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 			!! value.hasOwnProperty( control.upgrade_conversion_map.old_key ) &&
 			'' !== value[ control.upgrade_conversion_map.old_key ] &&
 			! value.hasOwnProperty( control.upgrade_conversion_map.new_keys[ 0 ] );
+	},
+
+	shouldDoUpgradeValueMap( control, value ) {
+		return !! control.value_conversion_map &&
+			value === control.value_conversion_map.old_value;
 	},
 
 	parsePropertyPlaceholder( control, value, controls, values, placeholder, parserControlName ) {
