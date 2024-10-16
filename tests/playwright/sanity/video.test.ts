@@ -15,6 +15,7 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		await wpAdmin.setExperiments( {
 			container: true,
+			e_optimized_markup: true,
 		} );
 	} );
 
@@ -25,6 +26,7 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		await wpAdmin.setExperiments( {
 			container: false,
+			e_optimized_markup: false,
 		} );
 	} );
 
