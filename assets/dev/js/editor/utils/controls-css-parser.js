@@ -219,6 +219,7 @@ ControlsCSSParser = elementorModules.ViewModule.extend( {
 				}
 			}
 
+			console.log( selector );
 			this.stylesheet.addRules( selector, outputCssProperty, query );
 		} );
 	},
