@@ -13,6 +13,7 @@ use Elementor\Core\Isolation\Kit_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
+use Elementor\Modules\EditorAppBar\Module as AppBarModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -254,5 +255,11 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 	private function update_user_progress_in_db() : void {
 		$this->wordpress_adapter->update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
+	}
+
+	public static function should_display_checklist_toggle_control() : bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ID ) &&
+			Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) &&
+			current_user_can( 'manage_options' );
 	}
 }

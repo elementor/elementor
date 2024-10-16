@@ -168,7 +168,7 @@ class Model extends BaseModel {
 			]
 		);
 
-		if ( Plugin::$instance->experiments->is_feature_active( ChecklistModule::EXPERIMENT_ID ) && Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) ) {
+		if ( ChecklistModule::should_display_checklist_toggle_control() ) {
 			$this->add_control(
 				'get_started_heading',
 				[
