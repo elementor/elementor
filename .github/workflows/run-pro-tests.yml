@@ -1,8 +1,11 @@
 name: Run Pro Tests
 
 on:
+  push:
   pull_request:
     types: [ labeled ]
+  repository_dispatch:
+    types: [ remote-tests ]
 
 env:
   RUN_TESTS: ${{ github.event.label.name == 'run-pro-tests' }}
@@ -57,31 +60,31 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-      - name: Clone & Build Core
+      - name: Clone & Build Pro
         run: |
           cd ~/
-          git clone 'https://github.com/${{ github.event.client_payload.repository }}' elementor
-          cd elementor
+          git clone 'https://github.com/${{ github.event.client_payload.repository }}' elementor-pro
+          cd elementor-pro
           git checkout ${{ github.event.client_payload.sha }}
           npm ci && npx grunt
-      - name: Save Core Build to Cache
-        uses: actions/cache@v2
-        env:
-          key: ${{ github.sha }}-${{ github.event.client_payload.sha }}-core
-        with:
-          path: ~/elementor/*
-          key: ${{ env.key }}
-          restore-keys: ${{ env.key }}
-      - name: Checkout Pro source code
-        uses: actions/checkout@v2
-      - name: Build Pro
-        run: |
-          ln -s ~/elementor ../elementor
-          npm i && grunt
       - name: Save Pro Build to Cache
         uses: actions/cache@v2
         env:
-          key: build-${{ github.sha }}-pro
+          key: ${{ github.sha }}-${{ github.event.client_payload.sha }}-pro
+        with:
+          path: ~/elementor-pro/*
+          key: ${{ env.key }}
+          restore-keys: ${{ env.key }}
+      - name: Checkout Core source code
+        uses: actions/checkout@v2
+      - name: Build Core
+        run: |
+          ln -s ~/elementor ../elementor-pro
+          npm i && grunt
+      - name: Save Core Build to Cache
+        uses: actions/cache@v2
+        env:
+          key: build-${{ github.sha }}
         with:
           path: ./*
           key: ${{ env.key }}
@@ -107,12 +110,12 @@ jobs:
         env:
           key: ${{ github.sha }}-${{ github.event.client_payload.sha }}-core
         with:
-          path: ~/elementor/*
+          path: ~/elementor-pro/*
           key: ${{ env.key }}
-      - name: Replace Default Core
+      - name: Replace Default Pro
         run: |
-          rm -rf /tmp/wordpress/wp-content/plugins/elementor
-          ln -s ~/elementor /tmp/wordpress/wp-content/plugins/elementor
+          rm -rf /tmp/wordpress/wp-content/plugins/elementor-pro
+          ln -s ~/elementor-pro /tmp/wordpress/wp-content/plugins/elementor-pro
       - name: PHP7.4
         run: php7.4 /tmp/phpunit-7
       - name: PHP7.4 - Multisite
@@ -124,86 +127,12 @@ jobs:
         with:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
-      - name: Set Core check-run status
+      - name: Set Pro check-run status
         uses: LouisBrunner/checks-action@2a1af428dc34afcf0f8eda00ff832f69678fef76 # v1.1.2
         if: always()
         with:
-          name: Elementor Tests / PHPUnit
-          repo: elementor/elementor
-          sha: ${{ github.event.client_payload.sha }}
-          token: ${{ steps.get_token.outputs.token }}
-          status: completed
-          conclusion: ${{ job.status }}
-          details_url: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
-
-  screenshotter:
-    name: Screenshotter
-    timeout-minutes: 20
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    env:
-      screenshotter_config_path: ${{ github.workspace }}/tests/screenshotter/config.js
-      PLUGIN_PATH: /tmp/elementor-core.zip
-    steps:
-      - name: Startup MySQL service
-        run: sudo /etc/init.d/mysql start
-      - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Restore Pro Build From Cache
-        uses: actions/cache@v2
-        env:
-          key: build-${{ github.sha }}-pro
-        with:
-          path: ./*
-          key: ${{ env.key }}
-      - name: Restore Core Build From Cache
-        uses: actions/cache@v2
-        env:
-          key: ${{ github.sha }}-${{ github.event.client_payload.sha }}-core
-        with:
-          path: ~/elementor/*
-          key: ${{ env.key }}
-      - name: Compress Core
-        run: |
-          ln -s ~/elementor ../elementor
-          cd ~
-          zip -r /tmp/elementor-core.zip elementor
-      - name: Install Elementor-ScreenShotter
-        run: | ##### TO DO: Remove all sudo
-          sudo ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
-          sudo chown -R $USER /usr/local/lib/node_modules
-          sudo chown -R $USER /usr/local/bin/
-          npm i -g @elementor/screenshotter
-      - name: Install Dependencies
-        run: |
-          elementor-screenshotter-install --config=${screenshotter_config_path} --debug=true
-      - name: Import Templates
-        run: |
-          elementor-screenshotter-import-templates --config=${screenshotter_config_path} --debug=true
-      - name: Build Package & Run Test
-        run: |
-          elementor-screenshotter-run-test --config=${screenshotter_config_path} --debug=true --deepDebug=true
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: backstop-output
-          path: /tmp/wordpress/backstop_data
-          retention-days: 3
-      - name: Get Github-App token
-        if: always()
-        id: get_token
-        uses: getsentry/action-github-app-token@38e217dc0fddb8008773820fae0875f439a614de # v1.0.4
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-      - name: Set Core check-run status
-        uses: LouisBrunner/checks-action@2a1af428dc34afcf0f8eda00ff832f69678fef76 # v1.1.2
-        if: always()
-        with:
-          name: Elementor Tests / Screenshotter
-          repo: elementor/elementor
+          name: Elementor Pro Tests / PHPUnit
+          repo: elementor/elementor-pro
           sha: ${{ github.event.client_payload.sha }}
           token: ${{ steps.get_token.outputs.token }}
           status: completed
