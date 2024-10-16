@@ -13,8 +13,11 @@
 	transform-origin: var( --e-#{$modifier}transform-origin-y )  var( --e-#{$modifier}transform-origin-x );
 }
 
-.e-transform .elementor-widget-container {
-	@include transform-styling('');
+.e-transform {
+	.elementor-widget-container,
+	&:not(:has(.elementor-widget-container)) {
+		@include transform-styling('');
+	}
 }
 
 .e-con.e-transform {
