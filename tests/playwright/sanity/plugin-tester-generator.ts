@@ -85,7 +85,9 @@ export const generatePluginTests = ( testType: string ) => {
 				await page.goto( '/law-firm-about/?elementor', {
 					waitUntil: 'load',
 				} );
-				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
+				await editor.getPreviewFrame()
+					.locator( '[data-elementor-setting-key="title"]', { hasText: 'About Us' } )
+					.waitFor( { timeout: 15000 } );
 
 				await wpAdmin.closeAnnouncementsIfVisible();
 
