@@ -8,7 +8,7 @@ on:
 
 jobs:
   check-label:
-    if: contains(github.event.label.name, 'run-pro-tests')
+    if: contains(github.event.pull_request.labels.*.name, 'run-pro-tests')
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Elementor-Pro Tests From Core
