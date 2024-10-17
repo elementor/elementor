@@ -1325,6 +1325,20 @@ class Controls_Manager {
 		);
 	}
 
+	public function add_header_promotion_control( Controls_Stack $controls_stack ) {
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
+		$controls_stack->add_control(
+			'animated_heading_promotion',
+			[
+				'type'      => self::RAW_HTML,
+				'raw'       => $this->react_promotion_control( esc_html__( 'Animated Headline widget', 'elementor' ), 'animated_headline' ),
+			]
+		);
+	}
+
 	private function promotion_switcher_control( $title, $id ): string {
 		return '<div class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
 			<div class="elementor-control-content">
@@ -1342,6 +1356,29 @@ class Controls_Manager {
 							<span class="elementor-switch-handle"></span>
 						</label>
 					</div>
+				</div>
+			</div>
+		</div>';
+	}
+
+	private function react_promotion_control( $title, $id ): string {
+		return '<div data-promotion="' . $id . '" class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
+			<div class="elementor-control-content">
+				<div class="elementor-control-field">
+					<label>
+						' . $title . '
+					</label>
+					<span class="e-control-motion-effects-promotion__lock-wrapper">
+						<i class="eicon-lock"></i>
+					</span>
+					<div class="elementor-control-input-wrapper">
+						<label class="elementor-switch elementor-control-unit-2 e-control-' . $id . '-promotion">
+							<input type="checkbox" class="elementor-switch-input" disabled>
+							<span class="elementor-switch-label" data-off="Off"></span>
+							<span class="elementor-switch-handle"></span>
+						</label>
+					</div>
+					<div class="e-promotion-react" data-promotion="' . $id . '"></div>
 				</div>
 			</div>
 		</div>';

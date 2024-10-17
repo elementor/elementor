@@ -139,27 +139,6 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	}
 
 	/**
-	 * Get widget upsale data.
-	 *
-	 * Retrieve the widget promotion data.
-	 *
-	 * @since 3.18.0
-	 * @access protected
-	 *
-	 * @return array Widget promotion data.
-	 */
-	protected function get_upsale_data() {
-		return [
-			'condition' => ! Utils::has_pro(),
-			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
-			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
-			'description' => esc_html__( 'Create captivating headings that rotate with the Animated Headline Widget.', 'elementor' ),
-			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-heading-widget/' ),
-			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-		];
-	}
-
-	/**
 	 * Register heading widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -244,6 +223,8 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				'default' => 'h2',
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_header_promotion_control( $this );
 
 		$this->end_controls_section();
 
