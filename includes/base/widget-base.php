@@ -205,7 +205,7 @@ abstract class Widget_Base extends Element_Base {
 
 	private function get_common_widget_name() {
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) ) {
-			return $this->has_widget_container() ? 'common' : 'common-optimized';
+			return $this->has_widget_inner_wrapper() ? 'common' : 'common-optimized';
 		}
 
 		return 'common';
@@ -389,7 +389,7 @@ abstract class Widget_Base extends Element_Base {
 			'hide_on_search' => $this->hide_on_search(),
 			'upsale_data' => $this->get_upsale_data(),
 			'is_dynamic_content' => $this->is_dynamic_content(),
-			'has_widget_container' => $this->has_widget_container(),
+			'has_widget_inner_wrapper' => $this->has_widget_inner_wrapper(),
 		];
 
 		if ( isset( $config['upsale_data'] ) && is_array( $config['upsale_data'] ) ) {
@@ -431,11 +431,11 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $template_content Template content.
 	 */
 	protected function print_template_content( $template_content ) {
-		if ( $this->has_widget_container() ) : ?>
+		if ( $this->has_widget_inner_wrapper() ) : ?>
 		<div class="elementor-widget-container">
 		<?php endif;
 			echo $template_content; // XSS ok.
-		if ( $this->has_widget_container() ) : ?>
+		if ( $this->has_widget_inner_wrapper() ) : ?>
 		</div>
 		<?php endif;
 	}
@@ -649,7 +649,7 @@ abstract class Widget_Base extends Element_Base {
 		if ( empty( $widget_content ) ) {
 			return;
 		}
-		if ( $this->has_widget_container() ) : ?>
+		if ( $this->has_widget_inner_wrapper() ) : ?>
 		<div class="elementor-widget-container">
 		<?php endif; ?>
 			<?php
@@ -675,7 +675,7 @@ abstract class Widget_Base extends Element_Base {
 
 			echo $widget_content; // XSS ok.
 			?>
-		<?php if ( $this->has_widget_container() ) : ?>
+		<?php if ( $this->has_widget_inner_wrapper() ) : ?>
 		</div>
 		<?php endif;
 	}
