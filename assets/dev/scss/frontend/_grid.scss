@@ -143,12 +143,12 @@
 		&.elementor-absolute {
 			margin-bottom: 0;
 		}
-	}
 
-	&:not(:last-child)::after {
-		content: "";
-		display: block;
-		height: var(--margin-block-end);
+		&::after {
+			content: "";
+			display: block;
+			height: var(--margin-block-end, 0px);
+		}
 	}
 }
 
