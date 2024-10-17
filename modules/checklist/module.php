@@ -14,6 +14,7 @@ use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
 use Elementor\Core\Utils\Isolation_Manager;
+use Elementor\Modules\EditorAppBar\Module as AppBarModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -267,5 +268,11 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		add_action( 'elementor/editor/init', function () {
 			$this->wordpress_adapter->set_user_preferences( self::VISIBILITY_SWITCH_ID, '' );
 		}, 11 );
+	}
+
+	public static function should_display_checklist_toggle_control() : bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ID ) &&
+			Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) &&
+			current_user_can( 'manage_options' );
 	}
 }
