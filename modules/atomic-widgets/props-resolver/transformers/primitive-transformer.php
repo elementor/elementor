@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Primitive_Transformer extends Transformer_Base {
-	public function transform( $value ) {
+	public function transform( $value, $key ) {
 		return $value;
 	}
 }

@@ -16,7 +16,7 @@ class Dynamic_Transformer extends Transformer_Base {
 		$this->dynamic_manager = $dynamic_manager;
 	}
 
-	public function transform( $value ) {
+	public function transform( $value, $key ) {
 		if ( ! isset( $value['name'] ) || ! is_string( $value['name'] ) ) {
 			throw new \Exception( 'Dynamic tag name must be a string' );
 		}

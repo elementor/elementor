@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Classes_Transformer extends Transformer_Base {
-	public function transform( $value ) {
+	public function transform( $value, $key ) {
 		if ( ! is_array( $value ) ) {
 			throw new \Exception( 'Value must be an array, ' . gettype( $value ) . ' given.' );
 		}
