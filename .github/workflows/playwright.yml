@@ -39,12 +39,13 @@ concurrency:
 jobs:
   build-plugin:
     name: Build plugin
+    if: ${{ github.event.pull_request.title == 'no run' }}
     uses: ./.github/workflows/build.yml
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
     runs-on: ubuntu-latest
     needs: [build-plugin]
-    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    if: ${{ github.event.pull_request.title == 'no run' }}
     strategy:
       fail-fast: ${{ inputs.fail_fast || true }}
       matrix:
@@ -102,6 +103,21 @@ jobs:
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
+  trigger-pro-workflow:
+    name: Trigger Pro Workflow
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'trigger-pro-tests')
+    steps:
+      - name: Trigger Custom Core Workflow
+        uses: anecdotes-ai/remote-workflow-control@latest
+        with:
+          github-auth-token: ${{ secrets.GITHUB_TOKEN }}
+          workflow-org: 'elementor'
+          workflow-repo: 'elementor-pro'
+          workflow-yaml: '.github/workflows/playwright-custom-core.yml'
+          workflow-branch: 'main'
+          workflow-inputs: '{\"core_branch\": ${{ github.head_ref }}}'
+          wait-timeout-in-minutes: '10'
 
   test-result:
     needs: Playwright
