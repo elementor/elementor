@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * This file registers definitions for PHP-DI used by Elementor.
  *
- * @since 3.24.0
+ * @since 3.25.0
  */
 
 return [];
