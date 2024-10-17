@@ -134,7 +134,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	 * @covers \Elementor\TemplateLibrary\Manager::get_template_data()
 	 */
 	public function test_should_return_data_from_get_template_data() {
-]		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
+		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
 		$wordpress_adapter_mock->method( 'current_user_can' )->willReturn( true );
 		self::$manager->set_wordpress_adapter( $wordpress_adapter_mock );
 
