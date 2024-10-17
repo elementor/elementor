@@ -111,7 +111,7 @@ class Widget_Image_Gallery extends Widget_Base {
 		];
 	}
 
-	public function has_widget_container(): bool {
+	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 

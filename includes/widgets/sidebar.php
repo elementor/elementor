@@ -70,7 +70,7 @@ class Widget_Sidebar extends Widget_Base {
 		return [ 'sidebar', 'widget' ];
 	}
 
-	public function has_widget_container(): bool {
+	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
