@@ -26,8 +26,7 @@
 			font-family: eicons;
 			position: absolute;
 			@include end( spacing( 10 ) );
-			top: 0;
-			bottom: 0;
+			inset: 0;
 			color: tints(500);
 			display: flex;
 			align-items: center;
