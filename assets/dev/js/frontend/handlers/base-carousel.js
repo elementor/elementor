@@ -367,10 +367,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 			if ( ! isSlideInsideWrapper ) {
 				slide.setAttribute( 'aria-hidden', true );
-				slide.setAttribute( 'inert', '' );
 			} else {
 				slide.removeAttribute( 'aria-hidden' );
-				slide.removeAttribute( 'inert' );
 			}
 		} );
 	}
