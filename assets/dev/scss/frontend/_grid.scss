@@ -136,13 +136,19 @@
 	position: relative;
 
 	&:not(:last-child) {
-		margin-bottom: 20px;
+		//margin-bottom: var(--margin-block-end);
 
 		&.elementor-widget__width-auto,
 		&.elementor-widget__width-initial,
 		&.elementor-absolute {
 			margin-bottom: 0;
 		}
+	}
+
+	&:not(:last-child)::after {
+		content: "";
+		display: block;
+		height: var(--margin-block-end);
 	}
 }
 
