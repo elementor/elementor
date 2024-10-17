@@ -3,8 +3,7 @@ name: Trigger Elementor Pro Tests
 on:
   push:
   pull_request:
-    types:
-      -labeled
+    types: [labeled]
 
 jobs:
   check-label:
