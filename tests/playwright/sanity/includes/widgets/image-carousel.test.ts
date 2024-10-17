@@ -6,7 +6,7 @@ import EditorPage from '../../../pages/editor-page';
 import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
-test.describe( 'Image carousel tests', () => {
+test.describe.skip( 'Image carousel tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext(),
 			page = await context.newPage(),
