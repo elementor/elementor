@@ -69,8 +69,13 @@ const frontendRulesPresets = [ [
 		targets: {
 			browsers: [
 				'last 3 versions',
+				'Chrome >= 100',
+				'Firefox >= 100',
+				'Edge >= 100',
 				'Safari >= 15.5',
 				'iOS >= 15.5',
+				'Android >= 100',
+				'ChromeAndroid >= 100',
 				'not dead',
 			],
 		},
