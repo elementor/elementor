@@ -136,6 +136,7 @@
 	position: relative;
 
 	&:not(:last-child) {
+		margin-bottom: 20px;
 
 		&.elementor-widget__width-auto,
 		&.elementor-widget__width-initial,
