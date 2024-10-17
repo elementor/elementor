@@ -3,27 +3,18 @@ name: Trigger Elementor Pro Tests
 on:
   push:
   pull_request:
-    types: [labeled]
-    paths:
-      - '**'
+    types:
+      -labeled
 
 jobs:
   check-label:
-    if: contains(github.event.pull_request.labels.*.name, 'run-pro-tests')
+    if: contains(github.event.label.name, 'run-pro-tests')
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Elementor-Pro Workflow
-        uses: anecdotes-ai/remote-workflow-control@v1.0.0
-        with:
-          github-auth-token: ${{ secrets.GITHUB_TOKEN }}
-          workflow-org: 'elementor'
-          workflow-repo: 'elementor-pro'
-          workflow-yaml: 'pro-tests-remote-workflow.yaml'  # Name of the workflow file in Elementor-Pro repo
-          # TODO change branch name after test
-          workflow-branch: 'internal/ED-15774-internal-execute-custom-core-tests-from-core-repo'  # Branch to trigger in Elementor-Pro
-          workflow-inputs: '{\"trigger_uuid\": \"${{ github.sha }}\"}'
-          wait-timeout-in-minutes: '20'
-      - name: Check Test Results
+      - name: Trigger Elementor-Pro Tests From Core
         run: |
-          # We can add conditional actions based on the result of Elementor-Pro tests.
-          echo "Elementor-Pro tests completed."
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/elementor/elementor-pro/actions/workflows/pro-tests-remote-workflow.yaml/dispatches \
+            -d '{"ref":"main","inputs":{"trigger_uuid":"${{ github.sha }}"}}'
