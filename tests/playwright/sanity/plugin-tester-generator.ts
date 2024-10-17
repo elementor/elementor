@@ -83,7 +83,8 @@ export const generatePluginTests = ( testType: string ) => {
 				}
 
 				await page.goto( '/law-firm-about/?elementor', {
-					waitUntil: 'load',
+					waitUntil: 'domcontentloaded',
+					timeout: 15000,
 				} );
 				await editor.getPreviewFrame()
 					.locator( '[data-elementor-setting-key="title"]', { hasText: 'About Us' } )
