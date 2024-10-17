@@ -22,6 +22,7 @@ class Widget_Common_Base extends Widget_Base {
 	const MASK_SELECTOR_DEFAULT = '{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container';
 	const MASK_SELECTOR_IMG = '{{WRAPPER}}.elementor-widget-image .elementor-widget-container img';
 	const TRANSFORM_SELECTOR_CLASS = ' > .elementor-widget-container';
+	const MARGIN = 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};';
 
 	/**
 	 * Get widget name.
@@ -200,7 +201,7 @@ class Widget_Common_Base extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					static::WRAPPER_SELECTOR_CHILD => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					static::WRAPPER_SELECTOR_CHILD => static::MARGIN,
 				],
 			]
 		);

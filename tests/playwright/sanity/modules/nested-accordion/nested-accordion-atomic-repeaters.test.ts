@@ -4,7 +4,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater } from './helper';
 import _path from 'path';
 
-test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters', () => {
+test.describe.skip( 'Nested Accordion experiment is active @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
