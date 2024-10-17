@@ -6,11 +6,16 @@
 	&.elementor#{$device}-position- {
 
 		&left,
-		&right {
-
-			.elementor-icon-box-wrapper	 {
-				display: flex;
+		&right,
+		&top,
+		&bottom {
+			.elementor-icon-box-wrapper {
+				gap: var(--icon-box-gap, 15px);
 			}
+		}
+
+		&left,
+		&right {
 
 			.elementor-icon-box-icon {
 				display: inline-flex;
@@ -24,12 +29,6 @@
 				text-align: end;
 				flex-direction: getValueByDirection(row-reverse, row);
 			}
-
-			.elementor-icon-box-icon {
-				margin-left: var(--icon-box-icon-margin, 15px);
-				margin-right: 0;
-				margin-bottom: unset;
-			}
 		}
 
 		&left {
@@ -38,26 +37,32 @@
 				text-align: start;
 				flex-direction: getValueByDirection(row, row-reverse);
 			}
+		}
+
+		&top,
+		&bottom {
+
+			.elementor-icon-box-wrapper {
+				text-align: center;
+			}
 
 			.elementor-icon-box-icon {
-				margin-right: var(--icon-box-icon-margin, 15px);
-				margin-left: 0;
-				margin-bottom: unset;
+				margin-right: auto;
+				margin-left: auto;
 			}
 		}
 
 		&top {
 
 			.elementor-icon-box-wrapper {
-				display: block;
-				text-align: center;
-				flex-direction: unset;
+				flex-direction: column;
 			}
+		}
 
-			.elementor-icon-box-icon {
-				margin-bottom: var(--icon-box-icon-margin, 15px);
-				margin-right: auto;
-				margin-left: auto;
+		&bottom {
+
+			.elementor-icon-box-wrapper {
+				flex-direction: column-reverse;
 			}
 		}
 	}
@@ -66,12 +71,12 @@
 .elementor-widget-icon-box {
 
 	.elementor-icon-box-wrapper {
-		display: block;
+		display: flex;
+		gap: var(--icon-box-gap, 15px);
 		text-align: center;
 	}
 
 	.elementor-icon-box-icon {
-		margin-bottom: var(--icon-box-icon-margin, 15px);
 		margin-right: auto;
 		margin-left: auto;
 	}
@@ -134,8 +139,7 @@
 			&right {
 
 				.elementor-icon-box-icon {
-					display: block;
-					flex: unset;
+					flex-direction: column;
 				}
 			}
 		}
