@@ -82,13 +82,9 @@ export const generatePluginTests = ( testType: string ) => {
 					await page.goto( '/wp-admin/index.php' );
 				}
 
-				async function goToPage() {
-					await page.goto( '/law-firm-about/?elementor', {
-						waitUntil: 'load',
-					} );
-				}
-
-				await goToPage();
+				await page.goto( '/law-firm-about/?elementor', {
+					waitUntil: 'load',
+				} );
 				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 15000 } );
 
 				await wpAdmin.closeAnnouncementsIfVisible();
