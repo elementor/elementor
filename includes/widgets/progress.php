@@ -92,7 +92,7 @@ class Widget_Progress extends Widget_Base {
 	}
 
 	public function has_widget_inner_wrapper(): bool {
-		return true;
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**

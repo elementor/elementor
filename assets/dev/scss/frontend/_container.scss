@@ -280,6 +280,13 @@
 			max-width: 100%;
 		}
 	}
+
+	.elementor-widget {
+	
+		&:not(:last-child) {
+			--kit-widget-spacing: 0px;
+		}
+	}
 }
 
 @media (max-width: $editor-screen-sm-max) {

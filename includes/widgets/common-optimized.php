@@ -14,6 +14,7 @@ class Widget_Common_Optimized extends Widget_Common_Base {
 	const MASK_SELECTOR_DEFAULT = '{{WRAPPER}}:not( .elementor-widget-image )';
 	const MASK_SELECTOR_IMG = '{{WRAPPER}}.elementor-widget-image img';
 	const TRANSFORM_SELECTOR_CLASS = '';
+	const MARGIN = 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} calc(var(--kit-widget-spacing, 0px) + {{BOTTOM}}{{UNIT}}) {{LEFT}}{{UNIT}};';
 
 	public function get_name() {
 		return 'common-optimized';
