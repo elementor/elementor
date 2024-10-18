@@ -86,7 +86,11 @@ export const generatePluginTests = ( testType: string ) => {
 					waitUntil: 'domcontentloaded',
 					timeout: 15000,
 				} );
-				await page.locator( '[data-elementor-setting-key="title"]', { hasText: 'About Us' } ).waitFor( { timeout: 15000 } );
+
+				await editor.closeNavigatorIfOpen();
+				await editor.getPreviewFrame()
+					.locator( '[data-elementor-setting-key="title"]', { hasText: 'About Us' } )
+					.waitFor( { timeout: 15000 } );
 
 				await wpAdmin.closeAnnouncementsIfVisible();
 
