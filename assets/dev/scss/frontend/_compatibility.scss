@@ -1,9 +1,3 @@
 .elementor-post__thumbnail__link {
 	transition: none; // Avoid size calculation failures on some themes
 }
-
-#left-area ul.elementor-icon-list-items,
-.elementor .elementor-element ul.elementor-icon-list-items,
-.elementor-edit-area .elementor-element ul.elementor-icon-list-items {
-	padding: 0;
-}
