@@ -136,7 +136,7 @@
 	position: relative;
 
 	&:not(:last-child) {
-		margin-bottom: var(--margin-block-end, 0px);
+		margin-bottom: var(--kit-widget-spacing, 0px);
 
 		&.elementor-widget__width-auto,
 		&.elementor-widget__width-initial,
