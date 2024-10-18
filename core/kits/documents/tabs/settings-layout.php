@@ -246,6 +246,18 @@ class Settings_Layout extends Tab_Base {
 		$this->end_controls_section();
 	}
 
+	private function get_spacing_selectors(): array {
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+		$sections_widget_spacing = $optimized_markup
+			? '--kit-widget-spacing: {{ROW}}{{UNIT}}'
+			: 'margin-block-end: {{ROW}}{{UNIT}}';
+
+		return [
+			'.elementor-widget:not(:last-child)' => $sections_widget_spacing,
+			'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}};--widgets-spacing-row: {{ROW}}{{UNIT}};--widgets-spacing-column: {{COLUMN}}{{UNIT}};',
+		];
+	}
+
 	/**
 	 * Before Save
 	 *
