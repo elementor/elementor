@@ -31,6 +31,8 @@
 	--z-index: revert;
 	--overflow: visible;
 	--gap: var(--widgets-spacing, 20px); // Use the gap from `Site Settings` or default to 20px.
+	--row-gap: var(--widgets-spacing-row, 20px);
+	--column-gap: var(--widgets-spacing-column, 20px);
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
@@ -161,7 +163,7 @@
 	}
 
 	& > .e-con-inner {
-		gap: var(--gap);
+		gap: var(--row-gap) var(--column-gap);
 		width: 100%;
 		max-width: var(--content-width);
 		margin: 0 auto;
