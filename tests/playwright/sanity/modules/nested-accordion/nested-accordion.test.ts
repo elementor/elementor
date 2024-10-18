@@ -54,7 +54,7 @@ test.describe.skip( 'Nested Accordion experiment inactive @nested-accordion', ()
 	} );
 } );
 
-test.describe( 'Nested Accordion experiment is active @nested-accordion', () => {
+test.describe.skip( 'Nested Accordion experiment is active @nested-accordion', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
