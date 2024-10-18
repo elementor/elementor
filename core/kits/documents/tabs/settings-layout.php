@@ -116,10 +116,7 @@ class Settings_Layout extends Tab_Base {
 					'column' => '20',
 				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
-				'selectors' => [
-					'.elementor-widget:not(:last-child)' => '--kit-widget-spacing: {{ROW}}{{UNIT}}',
-					'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}};--widgets-spacing-row: {{ROW}}{{UNIT}};--widgets-spacing-column: {{COLUMN}}{{UNIT}};',
-				],
+				'selectors' => $this->get_spacing_selectors(),
 				'conversion_map' => [
 					'old_key' => 'size',
 					'new_key' => 'column',
