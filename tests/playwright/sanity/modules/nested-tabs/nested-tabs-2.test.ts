@@ -4,7 +4,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { setup } from './helper';
 import _path from 'path';
 
-test.describe.skip( 'Nested Tabs tests @nested-tabs', () => {
+test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
