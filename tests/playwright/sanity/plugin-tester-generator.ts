@@ -86,7 +86,7 @@ export const generatePluginTests = ( testType: string ) => {
 					waitUntil: 'domcontentloaded',
 					timeout: 15000,
 				} );
-				await page.waitForSelector( '[id="elementor-preview-iframe"]' );
+				await page.waitForSelector( 'iframe[name="elementor-preview-iframe"]' );
 				await ( editor.getPreviewFrame() )
 					.locator( '[data-elementor-setting-key="title"]', { hasText: 'About Us' } )
 					.waitFor( { timeout: 15000 } );
