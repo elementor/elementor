@@ -87,10 +87,8 @@ export const generatePluginTests = ( testType: string ) => {
 					timeout: 15000,
 				} );
 
-				await editor.closeNavigatorIfOpen();
-				await editor.getPreviewFrame()
-					.locator( '[data-elementor-setting-key="title"]', { hasText: 'About Us' } )
-					.waitFor( { timeout: 15000 } );
+				await page.locator( '[id="elementor-preview-iframe"]' ).waitFor();
+				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
 
 				await wpAdmin.closeAnnouncementsIfVisible();
 
