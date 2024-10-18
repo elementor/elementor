@@ -10,10 +10,15 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'run-pro-tests')
     runs-on: ubuntu-latest
     steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
       - name: Trigger Elementor-Pro Tests From Core
         run: |
-          curl -X POST \
+          response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/elementor/elementor-pro/actions/workflows/pro-tests-remote-workflow.yaml/dispatches \
-            -d '{"ref":"main","inputs":{"trigger_uuid":"${{ github.sha }}"}}'
+            -d '{"event_type": "run-from-core", "client_payload": {"branch": "${{ steps.extract_branch.outputs.branch }}"}}' \
+            https://api.github.com/repos/elementor/elementor-pro/dispatches)
