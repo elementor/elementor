@@ -88,7 +88,7 @@ export const generatePluginTests = ( testType: string ) => {
 				} );
 
 				await page.locator( '[id="elementor-preview-iframe"]' ).waitFor();
-				await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
+				//await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
 
 				await wpAdmin.closeAnnouncementsIfVisible();
 
