@@ -46,6 +46,10 @@ class NestedTabs extends Widget_Nested_Base {
 		return [ 'widget-nested-tabs' ];
 	}
 
+	public function get_script_depends(): array {
+		return [ 'import-script-nested-tabs' ];
+	}
+
 	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
