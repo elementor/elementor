@@ -206,3 +206,10 @@
 		@include align-list('-mobile');
 	}
 }
+
+// Historical compatibility styles with higher specificity
+#left-area ul.elementor-icon-list-items,
+.elementor .elementor-element ul.elementor-icon-list-items,
+.elementor-edit-area .elementor-element ul.elementor-icon-list-items {
+	padding: 0;
+}
