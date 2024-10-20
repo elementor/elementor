@@ -4,7 +4,6 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter;
-use Elementor\Modules\Checklist\Steps_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
