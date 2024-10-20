@@ -749,6 +749,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						[
 							'props' => [
 								'font-size' => 'not-a-size',
+								'width' => [ // Missing unit
+									'$$type' => 'size',
+									'value' => [ 'size' => 16 ],
+								],
+								'height' => [ // Missing size
+									'$$type' => 'size',
+									'value' => [ 'unit' => 'px' ],
+								],
 							],
 							'meta' => [
 								'breakpoint' => 'desktop',
@@ -762,7 +770,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: font-size' );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: width, height, font-size' );
 
 		// Act.
 		$widget->get_data_for_save();
