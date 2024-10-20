@@ -94,7 +94,7 @@ class Utils {
 	 * Variables for free to pro upsale modal promotions
 	 */
 
-	const ANIMATED_HEADLINE='animated_headline';
+	const ANIMATED_HEADLINE = 'animated_headline';
 
 	/**
 	 * Is WP CLI.
