@@ -719,9 +719,9 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 */
 	public function before_render() {
-		?>
+		if ( $this->has_widget_wrapper() ) : ?>
 		<div <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
-		<?php
+		<?php endif;
 	}
 
 	/**
@@ -733,9 +733,9 @@ abstract class Widget_Base extends Element_Base {
 	 * @access public
 	 */
 	public function after_render() {
-		?>
+		if ( $this->has_widget_wrapper() ) : ?>
 		</div>
-		<?php
+		<?php endif;
 	}
 
 	/**
