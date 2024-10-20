@@ -2,14 +2,14 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * @mixin Transformable_Prop_Type
+ * @mixin Prop_Type
  */
 trait Has_Default {
 	protected $default = null;
