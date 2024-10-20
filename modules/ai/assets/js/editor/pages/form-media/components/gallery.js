@@ -27,6 +27,7 @@ const GalleryImage = ( {
 	aspectRatio = '1:1',
 	variant = 'contained',
 	OverlayBarProps = {},
+	numImagesInRow = 2,
 	...props
 } ) => {
 	const style = {};
@@ -52,7 +53,7 @@ const GalleryImage = ( {
 				alignItems="center"
 				sx={ {
 					bgcolor: 'action.selected',
-					height: 'contained' === variant ? 336 : 'auto',
+					height: 'contained' === variant ? 672 / numImagesInRow : 'auto',
 					position: 'relative',
 					overflow: 'hidden',
 				} }
@@ -82,6 +83,7 @@ GalleryImage.propTypes = {
 	OverlayBarProps: PropTypes.object,
 	aspectRatio: PropTypes.oneOf( aspectRatios ),
 	variant: PropTypes.oneOf( [ 'contained', 'thumbnail' ] ),
+	numImagesInRow: PropTypes.number,
 };
 
 Gallery.Image = GalleryImage;

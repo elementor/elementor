@@ -20,9 +20,10 @@ Container.propTypes = {
 const ImagesDisplay = ( {
 	images,
 	aspectRatio = '1:1',
-	onUseImage,
-	onEditImage,
+	onUseImage = null,
+	onEditImage = null,
 	transparentContainer = false,
+	cols = 2,
 } ) => {
 	const { zoomIndex, setZoomIndex, actions } = useImageNavigation( images );
 
@@ -38,8 +39,8 @@ const ImagesDisplay = ( {
 					onNext={ actions.next }
 				>
 					<ImageSlider.Actions startAction={ <BackButton onClick={ actions.reset } /> }>
-						<ImageActions.EditImage onClick={ () => onEditImage( currentImage ) } />
-						<ImageActions.UseImage onClick={ () => onUseImage( currentImage ) } />
+						{ onEditImage && <ImageActions.EditImage onClick={ () => onEditImage( currentImage ) } /> }
+						{ onUseImage && <ImageActions.UseImage onClick={ () => onUseImage( currentImage ) } /> }
 					</ImageSlider.Actions>
 
 					<ImageSlider.Image src={ currentImage.image_url } style={ { maxWidth: '630px', width: '100%', height: 'auto' } } />
@@ -61,8 +62,8 @@ const ImagesDisplay = ( {
 				<SingleImagePreview>
 					<SingleImagePreview.Image src={ image.image_url || image.url } style={ singleImageStyle } alt="generated-image">
 						<SingleImagePreview.Actions>
-							<ImageActions.EditImage onClick={ () => onEditImage( image ) } />
-							<ImageActions.UseImage onClick={ () => onUseImage( image ) } />
+							{ onEditImage && <ImageActions.EditImage onClick={ () => onEditImage( image ) } /> }
+							{ onUseImage && <ImageActions.UseImage onClick={ () => onUseImage( image ) } /> }
 						</SingleImagePreview.Actions>
 					</SingleImagePreview.Image>
 				</SingleImagePreview>
@@ -72,7 +73,7 @@ const ImagesDisplay = ( {
 
 	return (
 		<Container>
-			<Gallery>
+			<Gallery cols={ cols }>
 				{
 					images.map( ( image, index ) => (
 						<Gallery.Image
@@ -81,13 +82,15 @@ const ImagesDisplay = ( {
 							src={ image.image_url }
 							aspectRatio={ aspectRatio }
 							data-testid="e-gallery-image"
+							numImagesInRow={ cols }
 						>
 							<ImageActions>
-								<ImageActions.UseImage onClick={ () => onUseImage( image ) } size="medium" fullWidth />
+								{ onUseImage && <ImageActions.UseImage onClick={ () => onUseImage( image ) } size="medium"
+									fullWidth /> }
 
 								<Stack direction="row" spacing={ 0.25 } alignItems="center">
 									<ImageActions.ZoomIcon onClick={ () => setZoomIndex( index ) } size="medium" />
-									<ImageActions.EditIcon onClick={ () => onEditImage( image ) } size="medium" />
+									{ onEditImage && <ImageActions.EditIcon onClick={ () => onEditImage( image ) } size="medium" /> }
 								</Stack>
 							</ImageActions>
 						</Gallery.Image>
@@ -104,6 +107,7 @@ ImagesDisplay.propTypes = {
 	onUseImage: PropTypes.func,
 	onEditImage: PropTypes.func,
 	transparentContainer: PropTypes.bool,
+	cols: PropTypes.number,
 };
 
 ImagesDisplay.Container = Container;
