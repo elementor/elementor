@@ -11,12 +11,12 @@ import {
 } from '@elementor/ui';
 
 const PromotionCard = ( { doClose, promotionsData } ) => {
-	const title = promotionsData?.title;
-	const description = promotionsData?.description;
-	const imgSrc = promotionsData?.image;
-	const imgAlt = promotionsData?.image_alt;
-	const ctaText = promotionsData?.upgrade_text;
-	const ctaUrl = promotionsData?.upgrade_url;
+	const title = promotionsData?.title,
+		description = promotionsData?.description,
+		imgSrc = promotionsData?.image,
+		imgAlt = promotionsData?.image_alt,
+		ctaText = promotionsData?.upgrade_text,
+		ctaUrl = promotionsData?.upgrade_url;
 
 	const redirectHandler = () => {
 		window.open( ctaUrl, '_blank' );
