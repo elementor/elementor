@@ -10,6 +10,18 @@ test.describe( `Plugin tester tests: containers`, () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 
+		await wpAdmin.setExperiments( {
+			e_optimized_markup: 'active',
+		} );
+
+		await page.close();
+	} );
+
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
