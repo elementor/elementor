@@ -1,4 +1,5 @@
 import ReactPromotionBehavior from './behavior';
+
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior );
