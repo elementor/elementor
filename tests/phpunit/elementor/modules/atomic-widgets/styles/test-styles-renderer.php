@@ -394,20 +394,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											'unit' => 'px'
 										]
 									],
-									'right' => [
-										'$$type' => 'size',
-										'value' => [
-											'size' => 1,
-											'unit' => 'px'
-										]
-									],
-									'bottom' => [
-										'$$type' => 'size',
-										'value' => [
-											'size' => 5,
-											'unit' => 'px'
-										]
-									],
+									'bottom' => null,
 									'left' => [
 										'$$type' => 'size',
 										'value' => [
@@ -528,7 +515,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	private function make_mock_faulty_transformer() {
 		return new class() extends Transformer_Base {
-			public function transform( $value ): string {
+			public function transform( $value, $key ): string {
 				throw new \Exception( 'Faulty transformer' );
 			}
 		};
