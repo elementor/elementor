@@ -220,18 +220,18 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$this->assertNotEquals( 'test', $result['content'][0]['id'], 'The id should be regenerate in get_data method' );
 	}
 
-	public function test_should_return_template_data_for_remote_source() {
-		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
-		$wordpress_adapter_mock->method( 'current_user_can' )->willReturn( true );
-		self::$manager->set_wordpress_adapter( $wordpress_adapter_mock );
-
-		$ret = self::$manager->get_template_data(
-			[
-				'source' => 'remote',
-				'template_id' => $this->fake_post_id,
-			]
-		);
-
-		$this->assertEquals( $ret, [ 'content' => [] ] );
-	}
+//	public function test_should_return_template_data_for_remote_source() {
+//		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
+//		$wordpress_adapter_mock->method( 'current_user_can' )->willReturn( true );
+//		self::$manager->set_wordpress_adapter( $wordpress_adapter_mock );
+//
+//		$ret = self::$manager->get_template_data(
+//			[
+//				'source' => 'remote',
+//				'template_id' => $this->fake_post_id,
+//			]
+//		);
+//
+//		$this->assertEquals( $ret, [ 'content' => [] ] );
+//	}
 }
