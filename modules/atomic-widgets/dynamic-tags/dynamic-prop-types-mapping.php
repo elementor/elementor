@@ -50,22 +50,22 @@ class Dynamic_Prop_Types_Mapping {
 
 		$categories = [];
 
-		foreach ( $transformable_prop_types as $p ) {
-			if ( $p instanceof Object_Prop_Type ) {
-				$p->set_shape(
-					$this->get_modified_prop_types( $p->get_shape() )
+		foreach ( $transformable_prop_types as $transformable_prop_type ) {
+			if ( $transformable_prop_type instanceof Object_Prop_Type ) {
+				$transformable_prop_type->set_shape(
+					$this->get_modified_prop_types( $transformable_prop_type->get_shape() )
 				);
 			}
 
-			if ( $p instanceof Array_Prop_Type ) {
-				$p->set_item_type(
-					$this->get_modified_prop_type( $p->get_item_type() )
+			if ( $transformable_prop_type instanceof Array_Prop_Type ) {
+				$transformable_prop_type->set_item_type(
+					$this->get_modified_prop_type( $transformable_prop_type->get_item_type() )
 				);
 			}
 
 			// When the prop type is originally a union, we need to merge all the categories
 			// of each prop type in the union and create one dynamic prop type with all the categories.
-			$categories = array_merge( $categories, $this->get_related_categories( $p ) );
+			$categories = array_merge( $categories, $this->get_related_categories( $transformable_prop_type ) );
 		}
 
 		if ( empty( $categories ) ) {

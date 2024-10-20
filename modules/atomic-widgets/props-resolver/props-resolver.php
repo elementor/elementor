@@ -58,10 +58,10 @@ class Props_Resolver {
 		self::$instances = [];
 	}
 
-	public function resolve( array $prop_types, array $props ): array {
+	public function resolve( array $schema, array $props ): array {
 		$resolved = [];
 
-		foreach ( $prop_types as $key => $prop_type ) {
+		foreach ( $schema as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				continue;
 			}
