@@ -232,7 +232,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 			]
 		);
 
-		$this->assertIsArray($ret);
-		$this->assertEquals( $ret, [ 'content' => [] ] );
+		$this->assertIsObject($ret);
+		$this->assertEquals($ret, (object)['content' => []]);
 	}
 }
