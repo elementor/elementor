@@ -13,6 +13,7 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 	const title = promotionsData?.title;
 	const description = promotionsData?.description;
 	const imgSrc = promotionsData?.image;
+	const imgAlt = promotionsData?.image_alt;
 	const ctaText = promotionsData?.upgrade_text;
 	const ctaUrl = promotionsData?.upgrade_url;
 
@@ -36,8 +37,7 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 						},
 					} } onClick={ handleClose } />
 				</Stack>
-				<Image src={ imgSrc } sx={ { height: 150, width: '100%' } }
-				/>
+				<Image src={ imgSrc } alt={ imgAlt } sx={ { height: 150, width: '100%' } } />
 				<Stack py={ 1 } px={ 2 }>
 					{ description.map( ( e, index ) => {
 						return ( <Typography key={ index } variant="body2" color="secondary">&bull; { e }</Typography> );
