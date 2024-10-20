@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import {
 	ClickAwayListener,
 	Image,
@@ -27,7 +28,7 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 			<Box sx={ { width: 296 } }>
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>
-					<Chip label="PRO" size="small" variant="outlined" color="promotion" sx={ { ml: 1 } } />
+					<Chip label={ __( 'PRO', 'elementor' ) } size="small" variant="outlined" color="promotion" sx={ { ml: 1 } } />
 					<CloseButton edge="end" sx={ { ml: 'auto' } } slotProps={ {
 						icon: {
 							fontSize: 'small',
