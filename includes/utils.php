@@ -548,7 +548,7 @@ class Utils {
 		 * @since 2.5.0
 		 *
 		 * @param string $meta_tag Viewport meta tag.
-		 * @param string $context Page context.
+		 * @param string $context  Page context.
 		 */
 		$meta_tag = apply_filters( 'elementor/template/viewport_tag', $meta_tag, $context );
 
