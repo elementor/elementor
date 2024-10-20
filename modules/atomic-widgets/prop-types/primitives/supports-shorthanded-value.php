@@ -17,9 +17,13 @@ trait Supports_Shorthanded_Value {
 			return ! $this->is_required();
 		}
 
+		if ( $this->validate_value( $value ) ) {
+			return true;
+		}
+
 		return (
-			$this->validate_value( $value ) ||
-			$this->validate_transformable( $value )
+			$this->is_transformable( $value ) &&
+			$this->validate_value( $value['value'] )
 		);
 	}
 

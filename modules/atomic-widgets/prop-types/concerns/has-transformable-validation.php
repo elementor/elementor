@@ -12,15 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @mixin Transformable_Prop_Type
  */
 trait Has_Transformable_Validation {
-	protected function validate_transformable( $value ): bool {
+	protected function is_transformable( $value ): bool {
 		return (
 			isset( $value['$$type'] ) &&
 			static::get_key() === $value['$$type'] &&
 			isset( $value['value'] ) &&
-			( ! isset( $value['disabled'] ) || is_bool( $value['disabled'] ) ) &&
-			$this->validate_value( $value['value'] )
+			( ! isset( $value['disabled'] ) || is_bool( $value['disabled'] ) )
 		);
 	}
-
-	abstract protected function validate_value( $value ): bool;
 }

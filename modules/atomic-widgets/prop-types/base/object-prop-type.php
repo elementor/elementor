@@ -64,7 +64,8 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 			return ! $this->is_required();
 		}
 
-		return $this->validate_transformable( $value );
+		return $this->is_transformable( $value )
+			&& $this->validate_value( $value['value'] );
 	}
 
 	protected function validate_value( $value ): bool {

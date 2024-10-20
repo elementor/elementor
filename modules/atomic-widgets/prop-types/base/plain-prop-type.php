@@ -36,7 +36,8 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 			return ! $this->is_required();
 		}
 
-		return $this->validate_transformable( $value );
+		return $this->is_transformable( $value )
+			&& $this->validate_value( $value['value'] );
 	}
 
 	public function jsonSerialize(): array {
