@@ -78,13 +78,10 @@ class Props_Resolver {
 			}
 		}
 
-		return array_map(
-			fn( $value ) => $this->transform( $value ),
-			$resolved_props
-		);
+		return $this->assign_values( $resolved_props );
 	}
 
-	private function transform( $value, int $depth = 0 ) {
+	private function transform( $value, $key, int $depth = 0 ) {
 		if ( ! $value || ! $this->is_transformable( $value ) ) {
 			return $value;
 		}
@@ -99,10 +96,7 @@ class Props_Resolver {
 
 		// Transform nested transformable values recursively.
 		if ( is_array( $value['value'] ) ) {
-			$value['value'] = array_map(
-				fn( $item ) => $this->transform( $item ),
-				$value['value']
-			);
+			$value['value'] = $this->assign_values( $value['value'] );
 		}
 
 		$transformer = $this->transformers->get( $value['$$type'] );
@@ -112,9 +106,9 @@ class Props_Resolver {
 		}
 
 		try {
-			$transformed_value = $transformer->transform( $value['value'] );
+			$transformed_value = $transformer->transform( $value['value'], $key );
 
-			return $this->transform( $transformed_value, $depth + 1 );
+			return $this->transform( $transformed_value, $key, $depth + 1 );
 		} catch ( Exception $e ) {
 			return null;
 		}
@@ -132,5 +126,23 @@ class Props_Resolver {
 			$this->is_transformable( $value ) &&
 			is_array( $value['value'] )
 		);
+	}
+
+	private function assign_values( $values ) {
+		$assigned = [];
+
+		foreach ( $values as $key => $value ) {
+			$transformed_value = $this->transform( $value, $key );
+
+			if ( Multi_Props::is( $transformed_value ) ) {
+				$assigned = array_merge( $assigned, Multi_Props::get_value( $transformed_value ) );
+
+				continue;
+			}
+
+			$assigned[ $key ] = $transformed_value;
+		}
+
+		return $assigned;
 	}
 }
