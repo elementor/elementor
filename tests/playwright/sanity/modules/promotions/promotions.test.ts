@@ -67,7 +67,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await editor.openPanelTab( 'content' );
 
 		await test.step( 'Free to Pro - react modals screenshot tests', async () => {
-			const promotionControls = [ 'animated_heading_promotion' ];
+			const promotionControls = [ 'animated_headline_promotion' ];
 			for ( const effect of promotionControls ) {
 				await promotionsHelper.modalPromotionModalVisibilityTest( effect );
 			}

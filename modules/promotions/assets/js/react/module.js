@@ -5,7 +5,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerControlBehavior( behaviors, view ) {
-		const promotionsToSkip = [ 'animated_heading_promotion' ];
+		const promotionsToSkip = [ 'animated_headline_promotion' ];
 
 		if ( ! promotionsToSkip.includes( view.options.model.get( 'name' ) ) ) {
 			return behaviors;

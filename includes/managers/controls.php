@@ -1325,16 +1325,16 @@ class Controls_Manager {
 		);
 	}
 
-	public function add_header_promotion_control( Controls_Stack $controls_stack ) {
+	public function add_react_modal_promotion_control( Controls_Stack $controls_stack, $title, $id ) {
 		if ( Utils::has_pro() ) {
 			return;
 		}
 
 		$controls_stack->add_control(
-			'animated_heading_promotion',
+			'' . $id . '_promotion',
 			[
 				'type'      => self::RAW_HTML,
-				'raw'       => $this->react_promotion_control( esc_html__( 'Animated Headline widget', 'elementor' ), 'animated_headline' ),
+				'raw'       => $this->react_promotion_control( esc_html__( $title, 'elementor' ), $id ),
 			]
 		);
 	}
@@ -1362,13 +1362,13 @@ class Controls_Manager {
 	}
 
 	private function react_promotion_control( $title, $id ): string {
-		return '<div data-promotion="' . $id . '" class="elementor-control-type-switcher elementor-label-inline e-control-motion-effects-promotion__wrapper">
+		return '<div data-promotion="' . $id . '" class="elementor-control-type-switcher elementor-label-inline e-control-' . $id . '-promotion__wrapper">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label>
 						' . $title . '
 					</label>
-					<span class="e-control-motion-effects-promotion__lock-wrapper">
+					<span class="e-control-' . $id . '-promotion__lock-wrapper">
 						<i class="eicon-lock"></i>
 					</span>
 					<div class="elementor-control-input-wrapper">

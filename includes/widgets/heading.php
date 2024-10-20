@@ -220,7 +220,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			]
 		);
 
-		Plugin::$instance->controls_manager->add_header_promotion_control( $this );
+		Plugin::$instance->controls_manager->add_react_modal_promotion_control( $this, 'Animated Headline widget', 'animated_headline' );
 
 		$this->end_controls_section();
 
