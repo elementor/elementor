@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
+use Elementor\Utils;
 
 /**
  * Elementor heading widget.
@@ -220,7 +221,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			]
 		);
 
-		Plugin::$instance->controls_manager->add_react_modal_promotion_control( $this, 'Animated Headline widget', 'animated_headline' );
+		Plugin::$instance->controls_manager->add_react_modal_promotion_control( $this, 'Animated Headline widget', Utils::ANIMATED_HEADLINE );
 
 		$this->end_controls_section();
 

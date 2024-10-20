@@ -20,7 +20,7 @@ class PromotionData extends EditorAssetsAPI {
 		$assets_data = self::transform_assets_data( $force_request );
 
 		return [
-			'animated_headline' => self::get_animated_headline_data( $assets_data ),
+			Utils::ANIMATED_HEADLINE => self::get_animated_headline_data( $assets_data ),
 		];
 	}
 
@@ -37,7 +37,7 @@ class PromotionData extends EditorAssetsAPI {
 
 	private static function get_animated_headline_data( $assets_data ) {
 		$data = [
-			'image' => esc_url( $assets_data['animated-headline'] ) ?? '',
+			'image' => esc_url( $assets_data[ Utils::ANIMATED_HEADLINE ] ) ?? '',
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( 'Bring Headlines to Life', 'elementor' ),
 			'description' => [
@@ -49,7 +49,7 @@ class PromotionData extends EditorAssetsAPI {
 			'upgrade_url' => 'https://go.elementor.com/go-pro-heading-widget/',
 		];
 
-		return self::filter_data( 'animated-headline', $data );
+		return self::filter_data( Utils::ANIMATED_HEADLINE, $data );
 	}
 
 	private static function filter_data( $widget_name, $asset_data ) {

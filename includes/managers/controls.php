@@ -1285,6 +1285,20 @@ class Controls_Manager {
 		);
 	}
 
+	public function add_react_modal_promotion_control( Controls_Stack $controls_stack, $title, $id ) {
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
+		$controls_stack->add_control(
+			'' . $id . '_promotion',
+			[
+				'type'      => self::RAW_HTML,
+				'raw'       => $this->react_promotion_control( esc_html__( $title, 'elementor' ), $id ),
+			]
+		);
+	}
+
 	public function add_motion_effects_promotion_control( Controls_Stack $controls_stack ) {
 		if ( Utils::has_pro() ) {
 			return;
@@ -1321,20 +1335,6 @@ class Controls_Manager {
 			'motion_effects_promotion_divider',
 			[
 				'type' => self::DIVIDER,
-			]
-		);
-	}
-
-	public function add_react_modal_promotion_control( Controls_Stack $controls_stack, $title, $id ) {
-		if ( Utils::has_pro() ) {
-			return;
-		}
-
-		$controls_stack->add_control(
-			'' . $id . '_promotion',
-			[
-				'type'      => self::RAW_HTML,
-				'raw'       => $this->react_promotion_control( esc_html__( $title, 'elementor' ), $id ),
 			]
 		);
 	}
