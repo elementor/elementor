@@ -78,7 +78,7 @@ class Widget_Html extends Widget_Base {
 		return User::is_current_user_can_use_custom_html();
 	}
 
-	public function has_widget_container(): bool {
+	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
