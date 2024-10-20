@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import {
 	ClickAwayListener,
 	Image,
@@ -10,12 +11,12 @@ import {
 } from '@elementor/ui';
 
 const PromotionCard = ( { doClose, promotionsData } ) => {
-	const title = promotionsData?.title;
-	const description = promotionsData?.description;
-	const imgSrc = promotionsData?.image;
-	const imgAlt = promotionsData?.image_alt;
-	const ctaText = promotionsData?.upgrade_text;
-	const ctaUrl = promotionsData?.upgrade_url;
+	const title = promotionsData?.title,
+		description = promotionsData?.description,
+		imgSrc = promotionsData?.image,
+		imgAlt = promotionsData?.image_alt,
+		ctaText = promotionsData?.upgrade_text,
+		ctaUrl = promotionsData?.upgrade_url;
 
 	const redirectHandler = () => {
 		window.open( ctaUrl, '_blank' );
@@ -27,7 +28,7 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 			<Box sx={ { width: 296 } }>
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>
-					<Chip label="PRO" size="small" variant="outlined" color="promotion" sx={ { ml: 1 } } />
+					<Chip label={ __( 'PRO', 'elementor' ) } size="small" variant="outlined" color="promotion" sx={ { ml: 1 } } />
 					<CloseButton edge="end" sx={ { ml: 'auto' } } slotProps={ {
 						icon: {
 							fontSize: 'small',

@@ -1,6 +1,9 @@
-import { DirectionProvider, LocalizationProvider, ThemeProvider } from '@elementor/ui';
-
-import Infotip from '@elementor/ui/Infotip';
+import {
+	DirectionProvider,
+	Infotip,
+	LocalizationProvider,
+	ThemeProvider,
+} from '@elementor/ui';
 import PromotionCard from './components/promotion-card';
 
 const App = ( props ) => {
