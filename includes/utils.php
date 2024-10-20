@@ -263,7 +263,6 @@ class Utils {
 		 * @param bool $is_supported Whether the post type supports editing with Elementor.
 		 * @param int $post_id Post ID.
 		 * @param string $post_type Post type.
-		 *
 		 */
 		$is_supported = apply_filters( 'elementor/utils/is_post_type_support', $is_supported, $post_id, $post_type );
 
@@ -546,10 +545,10 @@ class Utils {
 		 * This hook can be used to change the initial viewport meta tag set by Elementor
 		 * and replace it with a different viewport tag.
 		 *
-		 * @param string $meta_tag Viewport meta tag.
-		 * @param string $context Page context.
 		 * @since 2.5.0
 		 *
+		 * @param string $meta_tag Viewport meta tag.
+		 * @param string $context Page context.
 		 */
 		$meta_tag = apply_filters( 'elementor/template/viewport_tag', $meta_tag, $context );
 
