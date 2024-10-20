@@ -110,11 +110,11 @@ class Utils {
 	 *
 	 * Whether script debug is enabled or not.
 	 *
-	 * @return bool True if it's a script debug is active, false otherwise.
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
+	 * @return bool True if it's a script debug is active, false otherwise.
 	 */
 	public static function is_script_debug() {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
@@ -138,13 +138,13 @@ class Utils {
 	 *
 	 * Retrieve the link to Elementor Pro.
 	 *
-	 * @param string $link URL to Elementor pro.
-	 *
-	 * @return string Elementor pro link.
 	 * @since 1.7.0
 	 * @access public
 	 * @static
 	 *
+	 * @param string $link URL to Elementor pro.
+	 *
+	 * @return string Elementor pro link.
 	 */
 	public static function get_pro_link( $link ) {
 		static $theme_name = false;
@@ -170,15 +170,15 @@ class Utils {
 	 *
 	 * Replace old URLs to new URLs. This method also updates all the Elementor data.
 	 *
+	 * @since 2.1.0
+	 * @static
+	 * @access public
+	 *
 	 * @param $from
 	 * @param $to
 	 *
 	 * @return string
 	 * @throws \Exception
-	 * @since 2.1.0
-	 * @static
-	 * @access public
-	 *
 	 */
 	public static function replace_urls( $from, $to ) {
 		$from = trim( $from );
@@ -239,13 +239,13 @@ class Utils {
 	 *
 	 * Whether the post supports editing with Elementor.
 	 *
-	 * @param int $post_id Optional. Post ID. Default is `0`.
-	 *
-	 * @return string True if post supports editing with Elementor, false otherwise.
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
+	 * @param int $post_id Optional. Post ID. Default is `0`.
+	 *
+	 * @return string True if post supports editing with Elementor, false otherwise.
 	 */
 	public static function is_post_support( $post_id = 0 ) {
 		$post_type = get_post_type( $post_id );
@@ -271,11 +271,11 @@ class Utils {
 		 *
 		 * Filters whether the post supports editing with Elementor.
 		 *
+		 * @since 2.2.0
+		 *
 		 * @param bool $is_supported Whether the post type supports editing with Elementor.
 		 * @param int $post_id Post ID.
 		 * @param string $post_type Post type.
-		 * @since 2.2.0
-		 *
 		 */
 		$is_supported = apply_filters( 'elementor/utils/is_post_support', $is_supported, $post_id, $post_type );
 
@@ -288,13 +288,13 @@ class Utils {
 	 *
 	 * Whether the post type supports editing with Elementor.
 	 *
-	 * @param string $post_type Post Type.
-	 *
-	 * @return string True if post type supports editing with Elementor, false otherwise.
 	 * @since 2.2.0
 	 * @access public
 	 * @static
 	 *
+	 * @param string $post_type Post Type.
+	 *
+	 * @return string True if post type supports editing with Elementor, false otherwise.
 	 */
 	public static function is_post_type_support( $post_type ) {
 		if ( ! post_type_exists( $post_type ) ) {
@@ -313,11 +313,11 @@ class Utils {
 	 *
 	 * Retrieve the source of the placeholder image.
 	 *
-	 * @return string The source of the default placeholder image used by Elementor.
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
+	 * @return string The source of the default placeholder image used by Elementor.
 	 */
 	public static function get_placeholder_image_src() {
 		$placeholder_image = ELEMENTOR_ASSETS_URL . 'images/placeholder.png';
@@ -327,9 +327,9 @@ class Utils {
 		 *
 		 * Filters the source of the default placeholder image used by Elementor.
 		 *
-		 * @param string $placeholder_image The source of the default placeholder image.
 		 * @since 1.0.0
 		 *
+		 * @param string $placeholder_image The source of the default placeholder image.
 		 */
 		$placeholder_image = apply_filters( 'elementor/utils/get_placeholder_image_src', $placeholder_image );
 
@@ -341,11 +341,11 @@ class Utils {
 	 *
 	 * Returns a string containing a hexadecimal representation of random number.
 	 *
-	 * @return string Random string.
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
+	 * @return string Random string.
 	 */
 	public static function generate_random_string() {
 		return dechex( rand() );
@@ -390,11 +390,11 @@ class Utils {
 	 *
 	 * Retrieve timezone string from the WordPress database.
 	 *
-	 * @return string Timezone string.
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
+	 * @return string Timezone string.
 	 */
 	public static function get_timezone_string() {
 		$current_offset = (float) get_option( 'gmt_offset' );
@@ -417,15 +417,15 @@ class Utils {
 	 *
 	 * Retrieve a custom URL for creating a new post/page using Elementor.
 	 *
+	 * @since 1.9.0
+	 * @access public
+	 * @deprecated 3.3.0 Use `Plugin::$instance->documents->get_create_new_post_url()` instead.
+	 * @static
+	 *
 	 * @param string $post_type Optional. Post type slug. Default is 'page'.
 	 * @param string|null $template_type Optional. Query arg 'template_type'. Default is null.
 	 *
 	 * @return string A URL for creating new post using Elementor.
-	 * @deprecated 3.3.0 Use `Plugin::$instance->documents->get_create_new_post_url()` instead.
-	 * @static
-	 *
-	 * @since 1.9.0
-	 * @access public
 	 */
 	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __FUNCTION__, '3.3.0', 'Plugin::$instance->documents->get_create_new_post_url()' );
@@ -438,14 +438,14 @@ class Utils {
 	 *
 	 * Retrieve an autosave for any given post.
 	 *
-	 * @param int $post_id Post ID.
-	 * @param int $user_id Optional. User ID. Default is `0`.
-	 *
-	 * @return \WP_Post|false Post autosave or false.
 	 * @since 1.9.2
 	 * @access public
 	 * @static
 	 *
+	 * @param int $post_id Post ID.
+	 * @param int $user_id Optional. User ID. Default is `0`.
+	 *
+	 * @return \WP_Post|false Post autosave or false.
 	 */
 	public static function get_post_autosave( $post_id, $user_id = 0 ) {
 		global $wpdb;
@@ -474,11 +474,11 @@ class Utils {
 	 *
 	 * Whether the Custom Post Type supports templates.
 	 *
-	 * @return bool True is templates are supported, False otherwise.
 	 * @since 2.0.0
 	 * @access public
 	 * @static
 	 *
+	 * @return bool True is templates are supported, False otherwise.
 	 */
 	public static function is_cpt_custom_templates_supported() {
 		require_once ABSPATH . '/wp-admin/includes/theme.php';
@@ -710,11 +710,11 @@ class Utils {
 	 *
 	 * Fired by `admin_menu` action.
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param $menu_slug
 	 * @param $new_label
 	 * @access public
-	 * @since 3.1.0
-	 *
 	 */
 	public static function change_submenu_first_item_label( $menu_slug, $new_label ) {
 		global $submenu;
@@ -808,7 +808,7 @@ class Utils {
 				// `untrailingslashit` in order to include other plugins prefixed with elementor.
 				return untrailingslashit( wp_normalize_path( $p ) );
 			} )
-			->find( function ( $p ) use ( $path ) {
+			->find(function ( $p ) use ( $path ) {
 				return false !== strpos( $path, $p );
 			} );
 	}
@@ -841,7 +841,7 @@ class Utils {
 	}
 
 	private static function sanitize_multi_upload( $fields ) {
-		return array_map( function ( $field ) {
+		return array_map( function( $field ) {
 			return array_map( 'self::sanitize_file_name', $field );
 		}, $fields );
 	}
