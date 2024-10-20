@@ -1294,7 +1294,7 @@ class Controls_Manager {
 			'' . $id . '_promotion',
 			[
 				'type'      => self::RAW_HTML,
-				'raw'       => $this->react_promotion_control( esc_html__( $title, 'elementor' ), $id ),
+				'raw'       => $this->react_promotion_control( $title, $id ),
 			]
 		);
 	}
