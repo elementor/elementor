@@ -23,17 +23,16 @@ class Image_Prop_Type extends Object_Prop_Type {
 	}
 
 	public function default_url( string $url ): self {
-		$this->default( [
-			'src' => [
-				'url' => $url,
-			],
+		$this->get_shape_item( 'src' )->default( [
+			'id' => null,
+			'url' => Url_Prop_Type::generate( $url ),
 		] );
 
 		return $this;
 	}
 
 	public function default_size( string $size ): self {
-		$this->default( [ 'size' => $size ] );
+		$this->get_shape_item( 'size' )->default( $size );
 
 		return $this;
 	}

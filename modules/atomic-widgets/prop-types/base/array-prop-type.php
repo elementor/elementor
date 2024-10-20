@@ -17,7 +17,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		Concerns\Has_Settings,
 		Concerns\Has_Default,
 		Concerns\Has_Transformable_Validation,
-		Concerns\Has_Required_Validation;
+		Concerns\Has_Required_Setting;
 
 	protected Prop_Type $item_type;
 
@@ -45,20 +45,6 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 
 	public function get_item_type(): Prop_Type {
 		return $this->item_type;
-	}
-
-	/**
-	 * @param $value
-	 *
-	 * @return $this
-	 */
-	public function default( $value ) {
-		$this->default = [
-			'$$type' => static::get_key(),
-			'value' => $value,
-		];
-
-		return $this;
 	}
 
 	public function validate( $value ): bool {

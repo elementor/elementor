@@ -14,8 +14,9 @@ class Union_Prop_Type implements Prop_Type {
 
 	use Concerns\Has_Meta,
 		Concerns\Has_Settings,
-		Concerns\Has_Required_Validation,
-		Concerns\Has_Default;
+		Concerns\Has_Required_Setting;
+
+	protected $default = null;
 
 	/** @var Array<string, Transformable_Prop_Type> */
 	protected array $prop_types = [];
@@ -53,6 +54,10 @@ class Union_Prop_Type implements Prop_Type {
 			];
 
 		return $this;
+	}
+
+	public function get_default() {
+		return $this->default;
 	}
 
 	public function validate( $value ): bool {

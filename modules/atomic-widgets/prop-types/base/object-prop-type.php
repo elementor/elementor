@@ -18,7 +18,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		Concerns\Has_Settings,
 		Concerns\Has_Default,
 		Concerns\Has_Transformable_Validation,
-		Concerns\Has_Required_Validation;
+		Concerns\Has_Required_Setting;
 
 	/**
 	 * @var array<Prop_Type>
@@ -53,23 +53,6 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 
 	public function get_shape_item( $key ): ?Prop_Type {
 		return $this->shape[ $key ] ?? null;
-	}
-
-	/**
-	 * @param array $value
-	 *
-	 * @return $this
-	 */
-	public function default( array $value ) {
-		foreach ( $this->get_shape() as $key => $prop_type ) {
-			if ( ! isset( $value[ $key ] ) ) {
-				continue;
-			}
-
-			$prop_type->default( $value[ $key ] );
-		}
-
-		return $this;
 	}
 
 	public function validate( $value ): bool {

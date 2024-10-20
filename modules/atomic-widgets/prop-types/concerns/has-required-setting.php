@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @mixin Prop_Type
  * @mixin Has_Settings
  */
-trait Has_Required_Validation {
+trait Has_Required_Setting {
 	protected function is_required(): bool {
 		return $this->get_setting( 'required', false );
 	}

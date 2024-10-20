@@ -219,6 +219,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$settings = $widget->get_atomic_settings();
 
 		// Assert.
+
 		$this->assertSame( [
 			'src' => 'https://example.com/default-image.jpg',
 		], $settings['image'] );

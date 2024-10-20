@@ -16,27 +16,13 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		Concerns\Has_Settings,
 		Concerns\Has_Default,
 		Concerns\Has_Transformable_Validation,
-		Concerns\Has_Required_Validation;
+		Concerns\Has_Required_Setting;
 
 	/**
 	 * @return static
 	 */
 	public static function make() {
 		return new static();
-	}
-
-	/**
-	 * @param $value
-	 *
-	 * @return $this
-	 */
-	public function default( $value ) {
-		$this->default = [
-			'$$type' => static::get_key(),
-			'value' => $value,
-		];
-
-		return $this;
 	}
 
 	public function validate( $value ): bool {

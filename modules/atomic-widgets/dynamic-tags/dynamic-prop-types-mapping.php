@@ -43,6 +43,13 @@ class Dynamic_Prop_Types_Mapping {
 		return $result;
 	}
 
+	/**
+	 * Change prop type into a union prop type if the original prop type supports dynamic tags.
+	 *
+	 * @param Prop_Type $prop_type
+	 *
+	 * @return Prop_Type|Union_Prop_Type
+	 */
 	private function get_modified_prop_type( Prop_Type $prop_type ) {
 		$transformable_prop_types = $prop_type instanceof Union_Prop_Type ?
 			$prop_type->get_prop_types() :
