@@ -9,6 +9,9 @@ import UnifyProductImages from './unify-product-images';
 	$( '#bulk-action-selector-top, #bulk-action-selector-bottom' ).on( 'change', function() {
 		const selectedAction = $( this ).val();
 		if ( 'elementor-ai-unify-product-images' === selectedAction ) {
+			window.ElementorAiConfig.is_get_started = window.UnifyProductImagesConfig.is_get_started;
+			window.ElementorAiConfig.connect_url = window.UnifyProductImagesConfig.connect_url;
+
 			$( '#doaction, #doaction2' ).on( 'click', function( e ) {
 				try {
 					e.preventDefault();
@@ -37,7 +40,7 @@ import UnifyProductImages from './unify-product-images';
 								container.id = 'e-ai-woocommerce-unify-product-images';
 								wpContentContainer.appendChild( container );
 								const root = createRoot( container );
-								root.render( <UnifyProductImages productImageUrls={ response.data.product_images } /> );
+								root.render( <UnifyProductImages productsImages={ response.data.product_images } /> );
 							}
 						},
 					);

@@ -78,6 +78,7 @@ class Module extends BaseModule {
 				'ai_get_history' => [ $this, 'ajax_ai_get_history' ],
 				'ai_delete_history_item' => [ $this, 'ajax_ai_delete_history_item' ],
 				'ai_toggle_favorite_history_item' => [ $this, 'ajax_ai_toggle_favorite_history_item' ],
+				'ai_get_product_image_unification' => [ $this, 'ajax_ai_get_product_image_unification' ],
 			];
 
 			foreach ( $handlers as $tag => $callback ) {
@@ -164,6 +165,7 @@ class Module extends BaseModule {
 				'elementor-v2-ui',
 				'elementor-v2-icons',
 				'wp-components',
+				'elementor-common',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -175,6 +177,8 @@ class Module extends BaseModule {
 			[
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 				'nonce' => wp_create_nonce( 'elementor-ai-unify-product-images_nonce' ),
+				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+				'connect_url' => $this->get_ai_connect_url(),
 			]
 		);
 
@@ -204,18 +208,34 @@ class Module extends BaseModule {
 			wp_send_json_error( [ 'message' => __( 'No products selected', 'elementor' ) ] );
 		}
 
-		$image_urls = [];
+		$image_ids = [];
 
 		foreach ( $post_ids as $post_id ) {
-			$thumbnail_id = get_post_thumbnail_id( $post_id );
-			$image_url = $thumbnail_id ? wp_get_attachment_url( $thumbnail_id ) : 'No Image';
-			$image_urls[] = [
+			$image_id = get_post_thumbnail_id( $post_id );
+
+			if ( ! $image_id ) {
+				$product = wc_get_product( $post_id );
+				$gallery_image_ids = $product->get_gallery_image_ids();
+				if ( ! empty( $gallery_image_ids ) ) {
+					$image_id = $gallery_image_ids[0];
+				}
+			}
+
+			$image_ids[] = [
 				'product_id' => $post_id,
-				'image_url' => $image_url,
+				'id'   => $image_id ? $image_id : 'No Image',
+				'image_url' => $image_id ? wp_get_attachment_url( $image_id ) : 'No Image',
 			];
 		}
 
-		wp_send_json_success( [ 'product_images' => $image_urls ] );
+		$supported_post_types = get_option( 'elementor_cpt_support', [] );
+		$new_post_type = 'product';
+		if ( ! in_array( $new_post_type, $supported_post_types, true ) ) {
+			$supported_post_types[] = $new_post_type;
+			update_option( 'elementor_cpt_support', $supported_post_types );
+		}
+
+		wp_send_json_success( [ 'product_images' => $image_ids ] );
 
 		wp_die();
 	}
@@ -1191,6 +1211,51 @@ class Module extends BaseModule {
 		}
 
 		return [];
+	}
+
+	public function ajax_ai_get_product_image_unification( $data ): array {
+		ob_start();
+		print_r($data);
+		$objectString = ob_get_clean();
+		error_log("Object: " . $objectString);
+		$data['editor_post_id'] = $data['payload']['postId'];
+		$this->verify_upload_permissions( $data );
+
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
+			throw new \Exception( 'Missing Image' );
+		}
+
+		if ( empty( $data['payload']['settings'] ) ) {
+			throw new \Exception( 'Missing prompt settings' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+
+		$result = $app->get_unify_product_images( [
+			'promptSettings' => $data['payload']['settings'],
+			'attachment_id' => $data['payload']['image']['id'],
+		], $context, $request_ids );
+
+		$this->throw_on_error( $result );
+
+		ob_start();
+		print_r($result);
+		$objectString = ob_get_clean();
+		error_log("Object: " . $objectString);
+
+		return [
+			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
 	}
 
 	/**

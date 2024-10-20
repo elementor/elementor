@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { setStatusFeedback } from '../api';
 import { useRequestIds } from '../context/requests-ids';
 
@@ -38,7 +38,7 @@ const usePrompt = ( fetchData, initialState ) => {
 
 	const { setRequest, editorSessionId, sessionId, generateId, batchId } = useRequestIds();
 
-	const send = async ( payload ) => new Promise( ( resolve, reject ) => {
+	const send = useCallback( async ( payload ) => new Promise( ( resolve, reject ) => {
 		setError( '' );
 		setIsLoading( true );
 		const requestId = setRequest();
@@ -67,7 +67,7 @@ const usePrompt = ( fetchData, initialState ) => {
 				reject( finalError );
 			} )
 			.finally( () => setIsLoading( false ) );
-	} );
+	} ), [ batchId, editorSessionId, fetchData, generateId, sessionId, setRequest ] );
 
 	const sendUsageData = ( usageData = data ) => usageData.responseId && setStatusFeedback( usageData.responseId );
 

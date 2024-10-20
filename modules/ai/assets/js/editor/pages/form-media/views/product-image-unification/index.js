@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
@@ -7,28 +7,74 @@ import useImageActions from '../../hooks/use-image-actions';
 import { useEditImage } from '../../context/edit-image-context';
 import usePromptSettings, { IMAGE_BACKGROUND_COLOR, IMAGE_RATIO } from '../../hooks/use-prompt-settings';
 import { useRequestIds } from '../../../../context/requests-ids';
-import useProductImageUnification from './hooks/use-produc-image-unification';
 import ImageRatioSelect from '../../components/image-ratio-select';
 import ColorInput from '../../components/color-picker';
 import GenerateAgainSubmit from '../../components/generate-again-submit';
 import GenerateSubmit from '../../components/generate-submit';
 import ImagesDisplay from '../../components/images-display';
+import ProductImage from './components/product-image';
 
 const ProductImageUnification = () => {
 	const { setGenerate } = useRequestIds();
-	const { editImage } = useEditImage();
+	const { editImage: products } = useEditImage();
 	const { settings, updateSettings } = usePromptSettings( );
-	const { data, send, isLoading: isGenerating, error } = useProductImageUnification( );
+	const [ productsData, setProductsData ] = useState( );
+	const [ data, setData ] = useState( [] );
+	const [ send, setSend ] = useState( [] );
+	const [ isGenerating, setIsGenerating ] = useState( false );
+	const [ error, setError ] = useState( false );
 	const { use, edit, isLoading: isUploading } = useImageActions();
 	const isLoading = isGenerating || isUploading;
 	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ settings ] );
 	const generatedBgColor = useMemo( () => settings[ IMAGE_BACKGROUND_COLOR ], [ settings ] );
+	const onProductUpdate = useCallback( ( res, isLoadingResult, errorGenerating, req, productId, ratio, bgColor, image ) => {
+		setProductsData( ( prevState ) => ( { ...prevState, [ productId ]: {
+			productId,
+			res,
+			isLoadingResult,
+			errorGenerating,
+			req: ( () => req( {
+				postId: productId,
+				settings: {
+					[ IMAGE_RATIO ]: ratio,
+					[ IMAGE_BACKGROUND_COLOR ]: bgColor,
+				},
+				image,
+			} ) ) } } ) );
+	}, [] );
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 		setGenerate();
-		send( { settings: { [ IMAGE_RATIO ]: settings[ IMAGE_RATIO ], [ IMAGE_BACKGROUND_COLOR ]: settings[ IMAGE_BACKGROUND_COLOR ] }, urls: editImage.urls } );
+		send.forEach( ( req ) => req() );
 	};
+
+	useEffect( () => {
+		if ( ! productsData ) {
+			return;
+		}
+
+		const newData = Object.values( productsData ).map( ( { res } ) => res );
+		const newSend = Object.values( productsData ).map( ( { req } ) => req );
+		const newIsGenerating = Object.values( productsData ).some( ( { isLoadingResult } ) => isLoadingResult );
+		const newError = Object.values( productsData ).every( ( { errorGenerating } ) => errorGenerating );
+
+		setData( ( prevData ) => {
+			return JSON.stringify( prevData ) !== JSON.stringify( newData ) ? newData : prevData;
+		} );
+
+		setSend( ( prevSend ) => {
+			return JSON.stringify( prevSend ) !== JSON.stringify( newSend ) ? newSend : prevSend;
+		} );
+
+		setIsGenerating( ( prevIsGenerating ) => {
+			return prevIsGenerating !== newIsGenerating ? newIsGenerating : prevIsGenerating;
+		} );
+
+		setError( ( prevError ) => {
+			return prevError !== newError ? newError : prevError;
+		} );
+	}, [ productsData ] );
 
 	const getCols = ( dataLength = 1 ) => {
 		return Math.min( Math.ceil( Math.sqrt( dataLength ?? 1 ) ), 4 );
@@ -78,12 +124,20 @@ const ProductImageUnification = () => {
 						/>
 					) : (
 						<ImagesDisplay
-							images={ editImage.urls }
-							cols={ getCols( editImage.urls?.length ?? 1 ) }
+							images={ products.images }
+							cols={ getCols( products.images?.length ?? 1 ) }
 						/>
 					)
 				}
 			</View.Content>
+			{ products.images
+				?.filter( ( img ) => img.product_id )
+				.map( ( ( img ) => <ProductImage key={ `product-${ img.product_id }` }
+					productId={ img.product_id }
+					ratio={ settings[ IMAGE_RATIO ] }
+					bgColor={ settings[ IMAGE_BACKGROUND_COLOR ] }
+					image={ img }
+					onUpdate={ onProductUpdate } /> ) ) }
 		</View>
 	);
 };

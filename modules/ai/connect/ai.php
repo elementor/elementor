@@ -19,6 +19,8 @@ class Ai extends Library {
 	const ASPECT_RATIO = 'ratio';
 	const IMAGE_RESOLUTION = 'image_resolution';
 
+	const IMAGE_BACKGROUND_COLOR = 'background_color';
+
 	const PROMPT = 'prompt';
 
 	public function get_title() {
@@ -394,6 +396,33 @@ class Ai extends Library {
 			$image_file,
 			'image'
 		);
+
+		return $result;
+	}
+
+
+	public function get_unify_product_images( $image_data, $context, $request_ids ) {
+		$image_file = get_attached_file( $image_data['attachment_id'] );
+
+		if ( ! $image_file ) {
+			throw new \Exception( 'Image file not found' );
+		}
+		error_log('ajax_ai_get_product_image_unification');
+		$result = $this->ai_request(
+			'POST',
+			'image/image-to-image/unify-product-images',
+			[
+				self::ASPECT_RATIO => $image_data['promptSettings'][ self::ASPECT_RATIO ],
+				self::IMAGE_BACKGROUND_COLOR => $image_data['promptSettings'][ self::IMAGE_BACKGROUND_COLOR ],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			$image_file,
+			'image'
+		);
+		error_log('ajax_ai_get_product_image_unification');
 
 		return $result;
 	}
