@@ -24,7 +24,7 @@ class Union_Prop_Type implements Prop_Type {
 		return new static();
 	}
 
-	public static function create_from( Transformable_Prop_Type $prop_type ) {
+	public static function create_from( Transformable_Prop_Type $prop_type ): self {
 		return static::make()
 			->add_prop_type( $prop_type )
 			->default( $prop_type->get_default() );

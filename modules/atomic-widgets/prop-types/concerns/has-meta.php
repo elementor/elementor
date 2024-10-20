@@ -14,7 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Meta {
 	protected array $meta = [];
 
-	public function meta( $key, $value = null ): self {
+	/**
+	 * @param $key
+	 * @param $value
+	 *
+	 * @return $this
+	 */
+	public function meta( $key, $value = null ) {
 		$is_tuple = is_array( $key ) && 2 === count( $key );
 
 		if ( $is_tuple ) {

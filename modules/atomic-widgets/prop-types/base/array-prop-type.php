@@ -25,11 +25,19 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		$this->item_type = $this->define_item_type();
 	}
 
-	public static function make(): self {
+	/**
+	 * @return static
+	 */
+	public static function make() {
 		return new static();
 	}
 
-	public function set_item_type( Prop_Type $item_type ): self {
+	/**
+	 * @param Prop_Type $item_type
+	 *
+	 * @return $this
+	 */
+	public function set_item_type( Prop_Type $item_type ) {
 		$this->item_type = $item_type;
 
 		return $this;
@@ -39,7 +47,12 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		return $this->item_type;
 	}
 
-	public function default( $value ): self {
+	/**
+	 * @param $value
+	 *
+	 * @return $this
+	 */
+	public function default( $value ) {
 		$this->default = [
 			'$$type' => static::get_key(),
 			'value' => $value,

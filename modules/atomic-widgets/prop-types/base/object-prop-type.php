@@ -29,11 +29,19 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		$this->shape = $this->define_shape();
 	}
 
-	public static function make(): self {
+	/**
+	 * @return static
+	 */
+	public static function make() {
 		return new static();
 	}
 
-	public function set_shape( array $shape ): self {
+	/**
+	 * @param array $shape
+	 *
+	 * @return $this
+	 */
+	public function set_shape( array $shape ) {
 		$this->shape = $shape;
 
 		return $this;
@@ -47,7 +55,12 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		return $this->shape[ $key ] ?? null;
 	}
 
-	public function default( array $value ): self {
+	/**
+	 * @param array $value
+	 *
+	 * @return $this
+	 */
+	public function default( array $value ) {
 		foreach ( $this->get_shape() as $key => $prop_type ) {
 			if ( ! isset( $value[ $key ] ) ) {
 				continue;

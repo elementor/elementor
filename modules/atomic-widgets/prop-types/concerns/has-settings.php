@@ -14,7 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Settings {
 	protected array $settings = [];
 
-	public function setting( $key, $value ): self {
+	/**
+	 * @param $key
+	 * @param $value
+	 *
+	 * @return $this
+	 */
+	public function setting( $key, $value ) {
 		$this->settings[ $key ] = $value;
 
 		return $this;
