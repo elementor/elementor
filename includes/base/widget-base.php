@@ -191,9 +191,9 @@ abstract class Widget_Base extends Element_Base {
 	public function get_stack( $with_common_controls = true ) {
 		$stack = parent::get_stack();
 
-		if ( $with_common_controls && 'common' !== $this->get_unique_name() ) {
-			/** @var Widget_Common $common_widget */
-			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( 'common' );
+		if ( $with_common_controls && ! $this instanceof Widget_Common_Base ) {
+			/** @var Widget_Common_Base $common_widget */
+			$common_widget = Plugin::$instance->widgets_manager->get_widget_types( $this->get_common_widget_name() );
 
 			$stack['controls'] = array_merge( $stack['controls'], $common_widget->get_controls() );
 
@@ -201,6 +201,14 @@ abstract class Widget_Base extends Element_Base {
 		}
 
 		return $stack;
+	}
+
+	private function get_common_widget_name() {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) ) {
+			return $this->has_widget_inner_wrapper() ? 'common' : 'common-optimized';
+		}
+
+		return 'common';
 	}
 
 	/**
@@ -381,6 +389,7 @@ abstract class Widget_Base extends Element_Base {
 			'hide_on_search' => $this->hide_on_search(),
 			'upsale_data' => $this->get_upsale_data(),
 			'is_dynamic_content' => $this->is_dynamic_content(),
+			'has_widget_inner_wrapper' => $this->has_widget_inner_wrapper(),
 		];
 
 		if ( isset( $config['upsale_data'] ) && is_array( $config['upsale_data'] ) ) {
@@ -422,13 +431,13 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $template_content Template content.
 	 */
 	protected function print_template_content( $template_content ) {
-		?>
+		if ( $this->has_widget_inner_wrapper() ) : ?>
 		<div class="elementor-widget-container">
-			<?php
+		<?php endif;
 			echo $template_content; // XSS ok.
-			?>
+		if ( $this->has_widget_inner_wrapper() ) : ?>
 		</div>
-		<?php
+		<?php endif;
 	}
 
 	/**
@@ -640,8 +649,9 @@ abstract class Widget_Base extends Element_Base {
 		if ( empty( $widget_content ) ) {
 			return;
 		}
-		?>
+		if ( $this->has_widget_inner_wrapper() ) : ?>
 		<div class="elementor-widget-container">
+		<?php endif; ?>
 			<?php
 			if ( $this->is_widget_first_render( $this->get_group_name() ) ) {
 				$this->register_runtime_widget( $this->get_group_name() );
@@ -665,8 +675,9 @@ abstract class Widget_Base extends Element_Base {
 
 			echo $widget_content; // XSS ok.
 			?>
+		<?php if ( $this->has_widget_inner_wrapper() ) : ?>
 		</div>
-		<?php
+		<?php endif;
 	}
 
 	protected function is_widget_first_render( $widget_name ) {

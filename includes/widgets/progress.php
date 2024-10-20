@@ -91,6 +91,10 @@ class Widget_Progress extends Widget_Base {
 		return [ 'widget-progress' ];
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return true;
+	}
+
 	/**
 	 * Register progress widget controls.
 	 *
