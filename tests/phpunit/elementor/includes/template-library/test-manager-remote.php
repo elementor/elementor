@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
@@ -94,5 +95,19 @@ class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
 				'favorite' => $is_favorite,
 			]
 		);
+	}
+	public function test_should_return_template_data_for_remote_source() {
+		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
+		$wordpress_adapter_mock->method( 'current_user_can' )->willReturn( true );
+		self::$manager->set_wordpress_adapter( $wordpress_adapter_mock );
+
+		$ret = self::$manager->get_template_data(
+			[
+				'source' => 'remote',
+				'template_id' => $this->fake_post_id,
+			]
+		);
+
+		$this->assertEquals( $ret, [ 'content' => [] ] );
 	}
 }
