@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\Image_Sizes;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,16 +23,17 @@ class Image_Prop_Type extends Object_Prop_Type {
 	}
 
 	public function default_url( string $url ): self {
-		$this->get_shape_item( 'src' )->default( [
-			'id' => null,
-			'url' => $url,
+		$this->default( [
+			'src' => [
+				'url' => $url,
+			],
 		] );
 
 		return $this;
 	}
 
 	public function default_size( string $size ): self {
-		$this->get_shape_item( 'size' )->default( $size );
+		$this->default( [ 'size' => $size ] );
 
 		return $this;
 	}

@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Persistable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Utils;
 
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Object_Prop_Type implements Persistable_Prop_Type {
+abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	const TYPE = 'object';
 
 	use Concerns\Has_Meta,
@@ -45,6 +45,18 @@ abstract class Object_Prop_Type implements Persistable_Prop_Type {
 
 	public function get_shape_item( $key ): ?Prop_Type {
 		return $this->shape[ $key ] ?? null;
+	}
+
+	public function default( array $value ): self {
+		foreach ( $this->get_shape() as $key => $prop_type ) {
+			if ( ! isset( $value[ $key ] ) ) {
+				continue;
+			}
+
+			$prop_type->default( $value[ $key ] );
+		}
+
+		return $this;
 	}
 
 	public function validate( $value ): bool {

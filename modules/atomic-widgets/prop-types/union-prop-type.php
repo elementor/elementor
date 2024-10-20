@@ -1,10 +1,9 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes\Utils;
+namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Persistable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,30 +14,23 @@ class Union_Prop_Type implements Prop_Type {
 
 	use Concerns\Has_Meta,
 		Concerns\Has_Settings,
-		Concerns\Has_Required_Validation;
+		Concerns\Has_Required_Validation,
+		Concerns\Has_Default;
 
-	protected $default = null;
-
-	/** @var Array<string, Persistable_Prop_Type> */
+	/** @var Array<string, Transformable_Prop_Type> */
 	protected array $prop_types = [];
 
 	public static function make(): self {
 		return new static();
 	}
 
-	public static function create_from( Persistable_Prop_Type $prop_type ) {
-		$instance = static::make()->add_prop_type( $prop_type );
-
-		$default = $prop_type->get_default() ?? null;
-
-		if ( $default ) {
-			$instance->default( $default );
-		}
-
-		return $instance;
+	public static function create_from( Transformable_Prop_Type $prop_type ) {
+		return static::make()
+			->add_prop_type( $prop_type )
+			->default( $prop_type->get_default() );
 	}
 
-	public function add_prop_type( Persistable_Prop_Type $prop_type ): self {
+	public function add_prop_type( Transformable_Prop_Type $prop_type ): self {
 		$this->prop_types[ $prop_type::get_key() ] = $prop_type;
 
 		return $this;
@@ -48,7 +40,7 @@ class Union_Prop_Type implements Prop_Type {
 		return $this->prop_types;
 	}
 
-	public function get_prop_type( $type ): ?Persistable_Prop_Type {
+	public function get_prop_type( $type ): ?Transformable_Prop_Type {
 		return $this->prop_types[ $type ] ?? null;
 	}
 
@@ -61,10 +53,6 @@ class Union_Prop_Type implements Prop_Type {
 			];
 
 		return $this;
-	}
-
-	public function get_default() {
-		return $this->default;
 	}
 
 	public function validate( $value ): bool {

@@ -2,7 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {

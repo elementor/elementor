@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes\Traits;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Primitives;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
 
@@ -23,12 +23,7 @@ trait Supports_Shorthanded_Value {
 		);
 	}
 
-	/**
-	 * @param $value
-	 *
-	 * @return $this
-	 */
-	public function default( $value ) {
+	public function default( $value ): self {
 		$this->default = $value;
 
 		return $this;

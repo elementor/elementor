@@ -4,12 +4,12 @@ namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Persistable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\DynamicTags\Module as V1_Dynamic_Tags_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,13 +44,13 @@ class Dynamic_Prop_Types_Mapping {
 	}
 
 	private function get_modified_prop_type( Prop_Type $prop_type ) {
-		$persistable_prop_types = $prop_type instanceof Union_Prop_Type ?
+		$transformable_prop_types = $prop_type instanceof Union_Prop_Type ?
 			$prop_type->get_prop_types() :
 			[ $prop_type ];
 
 		$categories = [];
 
-		foreach ( $persistable_prop_types as $p ) {
+		foreach ( $transformable_prop_types as $p ) {
 			if ( $p instanceof Object_Prop_Type ) {
 				$p->set_shape(
 					$this->get_modified_prop_types( $p->get_shape() )
@@ -63,6 +63,8 @@ class Dynamic_Prop_Types_Mapping {
 				);
 			}
 
+			// When the prop type is originally a union, we need to merge all the categories
+			// of each prop type in the union and create one dynamic prop type with all the categories.
 			$categories = array_merge( $categories, $this->get_related_categories( $p ) );
 		}
 
@@ -70,7 +72,7 @@ class Dynamic_Prop_Types_Mapping {
 			return $prop_type;
 		}
 
-		$union_prop_type = $prop_type instanceof Persistable_Prop_Type ?
+		$union_prop_type = $prop_type instanceof Transformable_Prop_Type ?
 			Union_Prop_Type::create_from( $prop_type ) :
 			$prop_type;
 
@@ -81,7 +83,7 @@ class Dynamic_Prop_Types_Mapping {
 		return $union_prop_type;
 	}
 
-	private function get_related_categories( Persistable_Prop_Type $prop_type ): array {
+	private function get_related_categories( Transformable_Prop_Type $prop_type ): array {
 		if ( ! $prop_type->get_meta_item( Dynamic_Prop_Type::META_KEY, true ) ) {
 			return [];
 		}

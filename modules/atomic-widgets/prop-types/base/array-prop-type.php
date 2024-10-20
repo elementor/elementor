@@ -3,14 +3,14 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Persistable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Array_Prop_Type implements Persistable_Prop_Type {
+abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	const TYPE = 'array';
 
 	use Concerns\Has_Meta,
@@ -37,6 +37,15 @@ abstract class Array_Prop_Type implements Persistable_Prop_Type {
 
 	public function get_item_type(): Prop_Type {
 		return $this->item_type;
+	}
+
+	public function default( $value ): self {
+		$this->default = [
+			'$$type' => static::get_key(),
+			'value' => $value,
+		];
+
+		return $this;
 	}
 
 	public function validate( $value ): bool {

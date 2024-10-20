@@ -36,11 +36,11 @@ class Dynamic_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
-		$is_valid_structure = ! ! (
-			isset( $value['name'] )
-			&& is_string( $value['name'] )
-			&& isset( $value['settings'] )
-			&& is_array( $value['settings'] )
+		$is_valid_structure = (
+			isset( $value['name'] ) &&
+			is_string( $value['name'] ) &&
+			isset( $value['settings'] ) &&
+			is_array( $value['settings'] )
 		);
 
 		if ( ! $is_valid_structure ) {

@@ -6,6 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-interface Persistable_Prop_Type extends Prop_Type {
+interface Transformable_Prop_Type extends Prop_Type {
 	public static function get_key(): string;
 }

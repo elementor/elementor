@@ -1,9 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Primitives;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Supports_Shorthanded_Value;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
