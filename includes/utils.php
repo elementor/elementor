@@ -228,7 +228,7 @@ class Utils {
 		Plugin::$instance->files_manager->clear_cache();
 
 		return sprintf(
-		/* translators: %d: Number of rows. */
+			/* translators: %d: Number of rows. */
 			_n( '%d database row affected.', '%d database rows affected.', $rows_affected, 'elementor' ),
 			$rows_affected
 		);
@@ -257,12 +257,13 @@ class Utils {
 		 *
 		 * Filters whether the post type supports editing with Elementor.
 		 *
+		 * @since 1.0.0
+		 * @deprecated 2.2.0 Use `elementor/utils/is_post_support` hook Instead.
+		 *
 		 * @param bool $is_supported Whether the post type supports editing with Elementor.
 		 * @param int $post_id Post ID.
 		 * @param string $post_type Post type.
-		 * @deprecated 2.2.0 Use `elementor/utils/is_post_support` hook Instead.
 		 *
-		 * @since 1.0.0
 		 */
 		$is_supported = apply_filters( 'elementor/utils/is_post_type_support', $is_supported, $post_id, $post_type );
 
