@@ -1,6 +1,6 @@
 <?php
 
-namespace elementor\modules\checklist\assets;
+namespace Elementor\Modules\Checklist;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter;
