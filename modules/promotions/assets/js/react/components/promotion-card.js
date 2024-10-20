@@ -13,19 +13,17 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 	const title = promotionsData?.title;
 	const description = promotionsData?.description;
 	const imgSrc = promotionsData?.image;
+	const imgAlt = promotionsData?.image_alt;
 	const ctaText = promotionsData?.upgrade_text;
 	const ctaUrl = promotionsData?.upgrade_url;
 
-	const handleClose = () => {
+	const redirectHandler = () => {
+		window.open( ctaUrl, '_blank' );
 		return doClose();
 	};
 
-	const redirectHandler = () => {
-		return window.open( ctaUrl, '_blank' );
-	};
-
 	return (
-		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ handleClose }>
+		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ doClose }>
 			<Box sx={ { width: 296 } }>
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>
@@ -34,10 +32,9 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 						icon: {
 							fontSize: 'small',
 						},
-					} } onClick={ handleClose } />
+					} } onClick={ doClose } />
 				</Stack>
-				<Image src={ imgSrc } sx={ { height: 150, width: '100%' } }
-				/>
+				<Image src={ imgSrc } alt={ imgAlt } sx={ { height: 150, width: '100%' } } />
 				<Stack py={ 1 } px={ 2 }>
 					{ description.map( ( e, index ) => {
 						return ( <Typography key={ index } variant="body2" color="secondary">&bull; { e }</Typography> );
