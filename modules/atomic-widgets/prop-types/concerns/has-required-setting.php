@@ -26,4 +26,6 @@ trait Has_Required_Setting {
 	}
 
 	abstract public function get_setting( string $key, $default = null );
+
+	abstract public function setting( $key, $value );
 }
