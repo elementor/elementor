@@ -118,10 +118,10 @@ class Module extends Base_Module {
 	}
 
 	private function get_app_js_config(): array {
-		$editorAssetsAPI = new EditorAssetsAPI( $this->get_api_config() );
-		$promotionData = new PromotionData( $editorAssetsAPI );
+		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
+		$promotion_data = new PromotionData( $editor_assets_api );
 
-		return $promotionData->get_promotion_data();
+		return $promotion_data->get_promotion_data();
 	}
 
 	private function get_api_config(): array {
