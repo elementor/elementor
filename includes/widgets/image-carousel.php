@@ -133,6 +133,15 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_control(
+			'carousel_name',
+			[
+				'label' => esc_html__( 'Carousel Name', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => esc_html__( 'Image Carousel', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
 			'carousel',
 			[
 				'label' => esc_html__( 'Add Images', 'elementor' ),
@@ -975,6 +984,9 @@ class Widget_Image_Carousel extends Widget_Base {
 			],
 			'carousel-wrapper' => [
 				'class' => 'elementor-image-carousel-wrapper ' . $swiper_class,
+				'role' => 'region',
+				'aria-roledescription' => 'carousel',
+				'aria-label' => $settings['carousel_name'],
 				'dir' => $settings['direction'],
 			],
 		] );
