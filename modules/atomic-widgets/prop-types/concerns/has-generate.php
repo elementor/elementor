@@ -8,9 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-/**
- * @mixin Transformable_Prop_Type
- */
 trait Has_Generate {
 	public static function generate( $value ) {
 		return [
@@ -18,4 +15,6 @@ trait Has_Generate {
 			'value' => $value,
 		];
 	}
+
+	abstract public static function get_key(): string;
 }

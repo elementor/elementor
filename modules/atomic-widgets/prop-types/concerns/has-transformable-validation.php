@@ -8,9 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-/**
- * @mixin Transformable_Prop_Type
- */
 trait Has_Transformable_Validation {
 	protected function is_transformable( $value ): bool {
 		return (

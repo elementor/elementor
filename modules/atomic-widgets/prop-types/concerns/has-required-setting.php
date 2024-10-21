@@ -8,10 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-/**
- * @mixin Prop_Type
- * @mixin Has_Settings
- */
 trait Has_Required_Setting {
 	protected function is_required(): bool {
 		return $this->get_setting( 'required', false );
@@ -28,4 +24,6 @@ trait Has_Required_Setting {
 
 		return $this;
 	}
+
+	abstract public function get_setting( $key, $default = null );
 }

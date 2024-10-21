@@ -8,9 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-/**
- * @mixin Prop_Type
- */
 trait Has_Meta {
 	protected array $meta = [];
 

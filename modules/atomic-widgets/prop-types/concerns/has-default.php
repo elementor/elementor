@@ -8,9 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-/**
- * @mixin Transformable_Prop_Type
- */
 trait Has_Default {
 	protected $default = null;
 
