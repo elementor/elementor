@@ -18,7 +18,7 @@ jobs:
           workflow-repo: 'elementor-pro'
           workflow-yaml: 'playwright.yaml'
           workflow-branch: 'ED-15774-internal-execute-custom-core-tests-from-core-repo'
-          workflow-inputs: '{\"event_types\": \"run-from-core\"}'
+          workflow-inputs: '{\"event_type\": \"run-from-core\"}'
           wait-timeout-in-minutes: '20'
 
       # Step 2: Handle success/failure
