@@ -3,7 +3,7 @@ namespace Elementor\Includes;
 
 class EditorAssetsAPI {
 	protected array $config;
-
+    const ASSETS_DATA_KEY = 'ASSETS_DATA_TRANSIENT_KEY';
 	public function __construct( array $config ) {
 		$this->config = $config;
 	}
