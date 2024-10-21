@@ -1285,7 +1285,7 @@ class Controls_Manager {
 		);
 	}
 
-	public function add_react_modal_promotion_control( Controls_Stack $controls_stack, $title, $id ) {
+	public function add_free_to_pro_upsale_promotion_control( Controls_Stack $controls_stack, $title, $id ) {
 		if ( Utils::has_pro() ) {
 			return;
 		}
@@ -1294,7 +1294,7 @@ class Controls_Manager {
 			'' . $id . '_promotion',
 			[
 				'type'      => self::RAW_HTML,
-				'raw'       => $this->react_promotion_control( $title, $id ),
+				'raw'       => $this->free_to_pro_upsale_promotion_control( $title, $id ),
 			]
 		);
 	}
@@ -1361,7 +1361,7 @@ class Controls_Manager {
 		</div>';
 	}
 
-	private function react_promotion_control( $title, $id ): string {
+	private function free_to_pro_upsale_promotion_control( $title, $id ): string {
 		return '<div data-promotion="' . $id . '" class="elementor-control-type-switcher elementor-label-inline e-control-' . $id . '-promotion__wrapper">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
