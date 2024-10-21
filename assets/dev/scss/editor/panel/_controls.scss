@@ -107,7 +107,7 @@
 		}
 	}
 
-	&.elementor-hidden-control {
+	&.elementor-hidden-control:not( .elementor-control-type-promotion_control ) {
 		display: none;
 	}
 

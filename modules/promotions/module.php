@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Promotions;
 
 use Elementor\Api;
+use Elementor\Controls_Manager;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
@@ -11,6 +12,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
@@ -58,6 +60,10 @@ class Module extends Base_Module {
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
+
+		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
+			$controls_manager->register( new Promotion_Control() );
+		} );
 	}
 
 	private function handle_external_redirects() {
