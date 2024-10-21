@@ -16,12 +16,6 @@ class String_Prop_Type extends Plain_Prop_Type {
 		return 'string';
 	}
 
-	protected function validate_value( $value ): bool {
-		return is_string( $value )
-			&& ( ! $this->get_enum() || $this->validate_enum( $value ) )
-			&& ( ! $this->get_regex() || $this->validate_regex( $value ) );
-	}
-
 	public function enum( array $allowed_values ): self {
 		$all_are_strings = array_reduce(
 			$allowed_values,
@@ -38,6 +32,10 @@ class String_Prop_Type extends Plain_Prop_Type {
 		return $this;
 	}
 
+	public function get_enum() {
+		return $this->settings['enum'] ?? null;
+	}
+
 	public function regex( $pattern ) {
 		if ( ! is_string( $pattern ) ) {
 			Utils::safe_throw( 'Pattern must be a string, and valid regex pattern' );
@@ -48,12 +46,16 @@ class String_Prop_Type extends Plain_Prop_Type {
 		return $this;
 	}
 
-	public function get_enum() {
-		return $this->settings['enum'] ?? null;
-	}
-
 	public function get_regex() {
 		return $this->settings['regex'] ?? null;
+	}
+
+	protected function validate_value( $value ): bool {
+		return (
+			is_string( $value ) &&
+			( ! $this->get_enum() || $this->validate_enum( $value ) ) &&
+			( ! $this->get_regex() || $this->validate_regex( $value ) )
+		);
 	}
 
 	private function validate_enum( $value ): bool {
