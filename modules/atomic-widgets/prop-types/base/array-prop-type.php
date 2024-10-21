@@ -17,7 +17,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		Concerns\Has_Settings,
 		Concerns\Has_Default,
 		Concerns\Has_Transformable_Validation,
-		Concerns\Has_Required_Setting;
+		Concerns\Has_Required_Validation;
 
 	protected Prop_Type $item_type;
 
@@ -48,12 +48,11 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function validate( $value ): bool {
-		if ( is_null( $value ) ) {
-			return ! $this->is_required();
-		}
-
-		return $this->is_transformable( $value )
-			&& $this->validate_value( $value['value'] );
+		return (
+			$this->validate_required( $value ) &&
+			$this->is_transformable( $value ) &&
+			$this->validate_value( $value['value'] )
+		);
 	}
 
 	protected function validate_value( $value ): bool {

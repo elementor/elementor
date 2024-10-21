@@ -14,7 +14,7 @@ class Union_Prop_Type implements Prop_Type {
 
 	use Concerns\Has_Meta,
 		Concerns\Has_Settings,
-		Concerns\Has_Required_Setting;
+		Concerns\Has_Required_Validation;
 
 	protected $default = null;
 
@@ -61,11 +61,10 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	public function validate( $value ): bool {
-		if ( is_null( $value ) ) {
-			return ! $this->is_required();
-		}
-
-		return $this->validate_prop_types( $value );
+		return (
+			$this->validate_required( $value ) &&
+			$this->validate_prop_types( $value )
+		);
 	}
 
 	protected function validate_prop_types( $value ): bool {
