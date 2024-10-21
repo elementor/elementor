@@ -29,7 +29,7 @@ jobs:
       - name: Clone Elementor-Pro Repository
         run: |
           cd ${{ github.workspace }}  # Ensure you are in the correct working directory
-          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/elementor/elementor-pro.git
+          git clone "https://${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/elementor/elementor-pro.git" elementor-pro
           cd elementor-pro
           git checkout ${{ github.sha }}  # Checkout the SHA that triggered the workflow
 
