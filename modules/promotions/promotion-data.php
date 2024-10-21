@@ -33,7 +33,7 @@ class PromotionData {
 
 	private function get_animated_headline_data( $assets_data ) {
 		$data = [
-			'image' => esc_url( $assets_data[ Utils::ANIMATED_HEADLINE ] ) ?? '',
+			'image' => esc_url( $assets_data[ Utils::ANIMATED_HEADLINE ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( 'Bring Headlines to Life', 'elementor' ),
 			'description' => [
