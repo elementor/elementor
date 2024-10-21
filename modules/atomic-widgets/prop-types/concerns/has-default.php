@@ -28,4 +28,6 @@ trait Has_Default {
 	public function get_default() {
 		return $this->default;
 	}
+
+	abstract public static function generate( $value );
 }
