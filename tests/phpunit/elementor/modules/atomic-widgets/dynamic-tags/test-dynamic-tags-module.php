@@ -156,14 +156,14 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'props_schema' => [
 					'before' => [
-						'type' => 'plain',
+						'kind' => 'plain',
 						'key' => 'string',
 						'default' => '',
 						'settings' => [],
 						'meta' => [],
 					],
 					'key' => [
-						'type' => 'plain',
+						'kind' => 'plain',
 						'key' => 'string',
 						'default' => '',
 						'settings' => [
