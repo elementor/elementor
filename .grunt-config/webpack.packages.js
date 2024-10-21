@@ -6,7 +6,7 @@ const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externa
 
 const usingLocalRepo = process.env.ELEMENTOR_PACKAGES_USE_LOCAL;
 
-const packages = usingLocalRepo ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries()
+const packages = usingLocalRepo ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries();
 
 const common = {
 	name: 'packages',
