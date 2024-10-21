@@ -1,24 +1,33 @@
-name: Trigger Elementor Pro Tests
+name: Trigger Remote Workflow and Wait
 
 on:
   push:
   pull_request:
-    types: [labeled]
 
 jobs:
-  check-label:
-    if: contains(github.event.pull_request.labels.*.name, 'run-pro-tests')
+  trigger_and_wait:
     runs-on: ubuntu-latest
-    steps:
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-        id: extract_branch
 
-      - name: Trigger Elementor-Pro Tests From Core
-        run: |
-          response=$(curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKE }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d '{"event_type": "run-from-core", "client_payload": {"branch": "${{ steps.extract_branch.outputs.branch }}"}}' \
-            https://api.github.com/repos/elementor/elementor-pro/dispatches)
+    steps:
+      # Step 1: Trigger the remote workflow and wait for its completion
+      - name: Trigger remote workflow and wait
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          owner: elementor
+          repo: elementor-pro
+          workflow: playwright.yml
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          inputs: '{"event_type":"run-from-core"}'
+          wait: true
+          interval: 10
+          timeout: 1200
+
+      # Step 2: Handle success/failure
+      - name: Check conclusion
+        if: success()
+        run: echo "Remote workflow completed successfully!"
+
+      - name: Handle failure
+        if: failure()
+        run: echo "Remote workflow failed!" && exit 1
