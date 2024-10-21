@@ -23,6 +23,8 @@ class PromotionData extends EditorAssetsAPI {
 			Utils::ANIMATED_HEADLINE => self::get_animated_headline_data( $assets_data ),
 			Utils::VIDEO_PLAYLIST => self::get_video_playlist_data( $assets_data ),
 			Utils::CTA => self::get_cta_button_data( $assets_data ),
+			Utils::IMAGE_CAROUSEL => self::get_image_carousel_data( $assets_data ),
+			Utils:: TESTIMONIAL_WIDGET => self::get_testimonial_widget_data( $assets_data ),
 		];
 	}
 
@@ -86,6 +88,40 @@ class PromotionData extends EditorAssetsAPI {
 		];
 
 		return self::filter_data( Utils::CTA, $data );
+	}
+
+	private static function get_image_carousel_data( $assets_data ) {
+		$data = [
+			'image' => esc_url( $assets_data[ Utils::IMAGE_CAROUSEL ] ) ?? '',
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'title' => esc_html__( 'Design Custom Carousels', 'elementor' ),
+			'description' => [
+				esc_html__( 'Create flexible custom carousels.', 'elementor' ),
+				esc_html__( 'Adjust transitions and animations easily.', 'elementor' ),
+				esc_html__( 'Showcase multiple items with style.', 'elementor' ),
+			],
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+			'upgrade_url' => 'https://go.elementor.com/go-pro-image-carousel-widget/',
+		];
+
+		return self::filter_data( Utils::IMAGE_CAROUSEL, $data );
+	}
+
+	private static function get_testimonial_widget_data( $assets_data ) {
+		$data = [
+			'image' => esc_url( $assets_data[ Utils::TESTIMONIAL_WIDGET ] ) ?? '',
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'title' => esc_html__( 'Upgrade Your Testimonials', 'elementor' ),
+			'description' => [
+				esc_html__( 'Display reviews in a rotating carousel.', 'elementor' ),
+				esc_html__( 'Boost credibility with dynamic testimonials.', 'elementor' ),
+				esc_html__( 'Customize layouts for visual appeal.', 'elementor' ),
+			],
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+			'upgrade_url' => 'https://go.elementor.com/go-pro-testimonial-widget/',
+		];
+
+		return self::filter_data( Utils::TESTIMONIAL_WIDGET, $data );
 	}
 
 	private static function filter_data( $widget_name, $asset_data ) {

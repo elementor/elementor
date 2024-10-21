@@ -79,6 +79,19 @@ test.describe( 'Promotion tests @promotions', () => {
 			await editor.openPanelTab( 'content' );
 			await promotionsHelper.modalPromotionModalVisibilityTest( 'cta_promotion' );
 		} );
+
+		await test.step( 'Free to Pro - react image carousel modal visible', async () => {
+			await editor.addWidget( 'image-carousel', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'image_carousel_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react testimonial modal visible', async () => {
+			await editor.addWidget( 'testimonial', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'testimonial_widget_promotion' );
+		} );
+
 	} );
 
 	test( 'Context Menu Promotions - Free to Pro', async ( { page, apiRequests }, testInfo ) => {
