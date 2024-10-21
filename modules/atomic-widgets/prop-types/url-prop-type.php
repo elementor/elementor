@@ -8,12 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Color_Prop_Type extends Plain_Prop_Type {
+class Url_Prop_Type extends Plain_Prop_Type {
 	public static function get_key(): string {
-		return 'color';
+		return 'url';
 	}
 
 	protected function validate_value( $value ): bool {
-		return is_string( $value );
+		return ! ! wp_http_validate_url( $value );
 	}
 }

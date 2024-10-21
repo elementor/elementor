@@ -2,33 +2,25 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Linked_Dimensions_Prop_Type extends Transformable_Prop_Type {
-	public function __construct() {
-		$this->internal_types['dimension'] = Size_Prop_Type::make();
-	}
-
+class Linked_Dimensions_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
 		return 'linked-dimensions';
 	}
 
-	public function validate_value( $value ): void {
-		if ( ! is_array( $value ) ) {
-			throw new \Exception( 'Value must be an array, ' . gettype( $value ) . ' given.' );
-		}
-
-		$dimensions = [ 'top', 'right', 'bottom', 'left' ];
-
-		foreach ( $dimensions as $dimension ) {
-			if ( ! isset( $value[ $dimension ] ) ) {
-				continue;
-			}
-
-			$this->internal_types['dimension']->validate_with_additional( $value[ $dimension ] );
-		}
-
+	protected function define_shape(): array {
+		return [
+			'isLinked' => Boolean_Prop_Type::make(),
+			'top' => Size_Prop_Type::make(),
+			'right' => Size_Prop_Type::make(),
+			'bottom' => Size_Prop_Type::make(),
+			'left' => Size_Prop_Type::make(),
+		];
 	}
 }

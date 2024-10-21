@@ -11,51 +11,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Classes_Prop_Type extends Elementor_Test_Base {
 
-	public function test_validate__throws_when_passing_non_array() {
+	public function test_validate__fail_when_passing_non_array() {
 		// Arrange.
 		$prop_type = Classes_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Value must be an array, string given.' );
-
 		// Act.
-		$prop_type->validate( [
+		$this->assertFalse( $prop_type->validate( [
 			'$$type' => 'classes',
 			'value' => 'string',
-		] );
+		] ) );
 	}
 
 	/**
 	 * @dataProvider invalid_classes_data_provider
 	 */
-	public function test_validate__throws_when_passing_a_class_that_starts_with_number( $classes ) {
+	public function test_validate__fail_when_passing_class_with_invalid_chars( $classes ) {
 		// Arrange.
 		$prop_type = Classes_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'All classes must start with an english letter, and contain only english letters, numbers, hyphens, and underscores.' );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'classes',
 			'value' => $classes,
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
 	public function test_validate() {
 		// Arrange.
 		$prop_type = Classes_Prop_Type::make();
 
-		// Expect - Make sure that the validation does not throw any exceptions.
-		$this->expectNotToPerformAssertions();
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'classes',
 			'value' => [ 'a', 'b-123', 'c_123' ],
 		] );
+
+		// Assert.
+		$this->assertTrue( $result );
 	}
 
 	public function invalid_classes_data_provider() {

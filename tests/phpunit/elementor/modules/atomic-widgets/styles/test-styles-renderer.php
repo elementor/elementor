@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
@@ -23,6 +24,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		parent::set_up();
 
 		remove_all_actions( 'elementor/atomic-widgets/styles/transformers/register' );
+
+		Props_Resolver::reset();
 	}
 
 	public function test_render__basic_style() {
@@ -435,7 +438,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'font-size' => [
+							'z-index' => [
 								'$$type' => 'faulty',
 								'value' => true // no matter what the value here is really...
 							],

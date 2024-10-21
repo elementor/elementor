@@ -5,6 +5,10 @@ namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Plugin;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 class Dynamic_Tags_Module {
 
 	private static ?self $instance = null;
@@ -35,7 +39,7 @@ class Dynamic_Tags_Module {
 
 		add_filter(
 			'elementor/atomic-widgets/props-schema',
-			fn( array $schema ) => Dynamic_Prop_Types_Mapping::make()->add_to_schema( $schema )
+			fn( array $schema ) => Dynamic_Prop_Types_Mapping::make()->get_modified_prop_types( $schema )
 		);
 
 		add_action(

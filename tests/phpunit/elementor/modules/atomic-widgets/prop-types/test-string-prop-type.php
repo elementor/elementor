@@ -2,7 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,28 +23,37 @@ class Test_String_Prop_Type extends Elementor_Test_Base {
 		$prop_type->enum( [ 'string', 123 ] );
 	}
 
-	public function test_validate__throws_when_value_is_not_a_string() {
+	public function test_validate() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make()->enum( [ 'a', 'b', 'c' ] );
+
+		// Act.
+		$result = $prop_type->validate( 'a' );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	public function test_validate__fail_when_value_is_not_a_string() {
 		// Arrange.
 		$prop_type = String_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Value must be a string, integer given.' );
-
 		// Act.
-		$prop_type->validate( 123 );
+		$result = $prop_type->validate( 123 );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
-	public function test_validate__throws_when_value_is_not_in_allowed_values() {
+	public function test_validate__fail_when_value_is_not_in_allowed_values() {
 		// Arrange.
 		$prop_type = String_Prop_Type::make()
 			->enum( [ 'a', 'b', 'c' ] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( '`d` is not in the list of allowed values (`a`, `b`, `c`).' );
-
 		// Act.
-		$prop_type->validate( 'd' );
+		$result = $prop_type->validate( 'd' );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 }

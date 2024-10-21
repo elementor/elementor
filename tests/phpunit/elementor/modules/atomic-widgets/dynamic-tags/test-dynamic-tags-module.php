@@ -5,11 +5,12 @@ use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\DynamicTags\Module as V1DynamicTags;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -154,25 +155,23 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'props_schema' => [
 					'before' => [
-						'type' => [
-							'key' => 'string',
-							'default' => '',
-							'settings' => [],
-						],
-						'additional_types' => [],
+						'kind' => 'plain',
+						'key' => 'string',
+						'default' => '',
+						'settings' => [],
+						'meta' => [],
 					],
 					'key' => [
-						'type' => [
-							'key' => 'string',
-							'default' => '',
-							'settings' => [
-								'enum' => [
-									'name',
-									'email',
-								],
+						'kind' => 'plain',
+						'key' => 'string',
+						'default' => '',
+						'settings' => [
+							'enum' => [
+								'name',
+								'email',
 							],
 						],
-						'additional_types' => [],
+						'meta' => [],
 					],
 				],
 			],
@@ -304,11 +303,11 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 	public function test_add_dynamic_prop_type__skips_prop_types_that_ignore_dynamic() {
 		// Act.
 		$prop1 = String_Prop_Type::make()
-			->add_meta( Dynamic_Prop_Type::ignore() )
+			->meta( Dynamic_Prop_Type::ignore() )
 			->default( 'default-value' );
 
 		$prop2 = String_Prop_Type::make()
-			->add_meta( 'dynamic', false )
+			->meta( 'dynamic', false )
 			->default( 'default-value' );
 
 		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
@@ -318,8 +317,6 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [ 'prop1' => $prop1, 'prop2' => $prop2 ], $schema );
-		$this->assertEmpty( $prop1->get_additional_types() );
-		$this->assertEmpty( $prop2->get_additional_types() );
 	}
 
 	/**
@@ -327,44 +324,51 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 	 */
 	public function test_add_dynamic_prop_type( Prop_Type $prop, array $expected_categories ) {
 		// Act.
-		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
-			'prop' => $prop,
-		] );
+		$schema = apply_filters(
+			'elementor/atomic-widgets/props-schema',
+			[ 'prop' => $prop ]
+		);
 
 		// Assert.
-		$expected = empty( $expected_categories )
-			? []
-			: [ Dynamic_Prop_Type::make()->categories( $expected_categories ) ];
+		$has_categories = ! empty( $expected_categories );
 
-		$this->assertSame( [ 'prop' => $prop ], $schema );
-		$this->assertEquals( $expected, $prop->get_additional_types() );
+		if ( $has_categories ) {
+			$this->assertInstanceof( Union_Prop_Type::class, $schema['prop'] );
+			$this->assertEquals( $prop->get_default(), $schema['prop']->get_default() );
+			$this->assertInstanceof( Dynamic_Prop_Type::class, $schema['prop']->get_prop_type( 'dynamic' ) );
+			$this->assertEquals( $expected_categories, $schema['prop']->get_prop_type( 'dynamic' )->get_categories() );
+		} else {
+			$this->assertEquals( $prop, $schema['prop'] );
+		}
 	}
 
-	public function test_add_dynamic_prop_type__adds_recursively_to_internal_types() {
+	public function test_add_dynamic_prop_type__adds_recursively_to_object_types() {
 		// Act.
-		$prop = new class extends Transformable_Prop_Type {
-			public function __construct() {
-				$this->internal_types['internal'] = String_Prop_Type::make()->default( 'test' );
-			}
-
+		$prop = new class extends Object_Prop_Type {
 			public static function get_key(): string {
 				return 'test';
 			}
 
-			protected function validate_value( $value ): void {}
+			protected function define_shape(): array {
+				return [
+					'internal' => String_Prop_Type::make()->default( 'test' ),
+				];
+			}
 		};
 
-		$schema = apply_filters( 'elementor/atomic-widgets/props-schema', [
-			'prop' => $prop,
-		] );
+		$schema = apply_filters(
+			'elementor/atomic-widgets/props-schema',
+			[ 'prop' => $prop ]
+		);
 
 		// Assert.
-		$this->assertSame( [ 'prop' => $prop ], $schema );
-		$this->assertEquals( [], $prop->get_additional_types() );
+		$this->assertSame( $schema['prop'], $prop );
 
-		$this->assertEquals( [
-			Dynamic_Prop_Type::make()->categories( [ V1DynamicTags::TEXT_CATEGORY ] ),
-		], $prop->get_internal_types()['internal']->get_additional_types() );
+		$internal = $prop->get_shape_field( 'internal' );
+
+		$this->assertInstanceof( Union_Prop_Type::class, $internal );
+		$this->assertInstanceof( Dynamic_Prop_Type::class, $internal->get_prop_type( 'dynamic' ) );
+		$this->assertEquals( [ V1DynamicTags::TEXT_CATEGORY ], $internal->get_prop_type( 'dynamic' )->get_categories() );
 	}
 
 	public function add_dynamic_prop_type_data_provider() {

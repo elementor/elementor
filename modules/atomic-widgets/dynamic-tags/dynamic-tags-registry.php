@@ -5,9 +5,13 @@ namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Dynamic_Tags_Registry {
 
@@ -43,7 +47,7 @@ class Dynamic_Tags_Registry {
 	 *       label: string,
 	 *       group: string,
 	 *       atomic_controls: array,
-	 *       props_schema: array<string, Prop_Type>
+	 *       props_schema: array<string, Transformable_Prop_Type>
 	 *  }
 	 */
 	public function get_tag( string $name ): ?array {
