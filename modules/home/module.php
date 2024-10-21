@@ -107,7 +107,7 @@ class Module extends BaseApp {
 		return [
 			'ASSETS_DATA_URL' => 'https://assets.elementor.com/home-screen/v1/home-screen.json',
 			'ASSETS_DATA_TRANSIENT_KEY' => '_elementor_home_screen_data',
-			'ASSETS_DATA_KEY' => 'home-screen',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'home-screen',
 		];
 	}
 
