@@ -36,7 +36,7 @@ class EditorAssetsAPI {
 			return [];
 		}
 
-		return $data[ $this->config( 'ASSETS_DATA_KEY' ) ];
+		return $data[ $this->config( static::ASSETS_DATA_KEY ) ];
 	}
 
 	private function get_transient( $cache_key ) {
