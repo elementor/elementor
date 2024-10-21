@@ -2,30 +2,26 @@
 namespace Elementor\Modules\Promotions;
 
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
-use Elementor\Data\EditorAssets\EditorAssetsAPI;
+use Elementor\Includes\ApiRequests\EditorAssets;
 use Elementor\Utils;
 
-class PromotionData extends EditorAssetsAPI {
-	public static function config( $key ): string {
-		$config = [
-			'ASSETS_DATA_URL' => 'https://assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
-			'ASSETS_DATA_TRANSIENT_KEY' => '_elementor_free_to_pro_upsell',
-			'ASSETS_DATA_KEY' => 'free-to-pro-upsell',
-		];
+class PromotionData {
+	protected EditorAssets $editorAssets;
 
-		return $config[ $key ] ?? '';
+	public function __construct( EditorAssets $editorAssets ) {
+		$this->editorAssets = $editorAssets;
 	}
 
-	public static function get_promotion_data( $force_request = false ): array {
-		$assets_data = self::transform_assets_data( $force_request );
+	public function get_promotion_data( $force_request = false ): array {
+		$assets_data = $this->transform_assets_data( $force_request );
 
 		return [
-			Utils::ANIMATED_HEADLINE => self::get_animated_headline_data( $assets_data ),
+			Utils::ANIMATED_HEADLINE => $this->get_animated_headline_data( $assets_data ),
 		];
 	}
 
-	private static function transform_assets_data( $force_request = false ) {
-		$assets_data = static::get_assets_data( $force_request );
+	private function transform_assets_data( $force_request = false ) {
+		$assets_data = $this->editorAssets->get_assets_data( $force_request );
 		$transformed_data = [];
 
 		foreach ( $assets_data as $asset ) {
@@ -35,7 +31,7 @@ class PromotionData extends EditorAssetsAPI {
 		return $transformed_data;
 	}
 
-	private static function get_animated_headline_data( $assets_data ) {
+	private function get_animated_headline_data( $assets_data ) {
 		$data = [
 			'image' => esc_url( $assets_data[ Utils::ANIMATED_HEADLINE ] ) ?? '',
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
@@ -49,10 +45,10 @@ class PromotionData extends EditorAssetsAPI {
 			'upgrade_url' => 'https://go.elementor.com/go-pro-heading-widget/',
 		];
 
-		return self::filter_data( Utils::ANIMATED_HEADLINE, $data );
+		return $this->filter_data( Utils::ANIMATED_HEADLINE, $data );
 	}
 
-	private static function filter_data( $widget_name, $asset_data ) {
+	private function filter_data( $widget_name, $asset_data ): array {
 		return Filtered_Promotions_Manager::get_filtered_promotion_data( $asset_data, "elementor/widgets/{$widget_name}/custom_promotion", 'upgrade_url' );
 	}
 }

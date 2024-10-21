@@ -13,6 +13,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
+use Elementor\Includes\ApiRequests\EditorAssets;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -111,6 +112,17 @@ class Module extends Base_Module {
 	}
 
 	private function get_app_js_config(): array {
-		return PromotionData::get_promotion_data();
+		$editorAssets = new EditorAssets( $this->get_api_config() );
+		$promotionData = new PromotionData( $editorAssets );
+
+		return $promotionData->get_promotion_data();
+	}
+
+	private function get_api_config(): array {
+		return [
+			'ASSETS_DATA_URL' => 'https://assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
+			'ASSETS_DATA_TRANSIENT_KEY' => '_elementor_free_to_pro_upsell',
+			'ASSETS_DATA_KEY' => 'free-to-pro-upsell',
+		];
 	}
 }
