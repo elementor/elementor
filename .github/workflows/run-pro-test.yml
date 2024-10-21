@@ -14,10 +14,10 @@ jobs:
         uses: anecdotes-ai/remote-workflow-control@latest
         with:
           github-auth-token: ${{  secrets.GITHUB_TOKEN }}
-          workflow-org: 'elementor'
+          workflow-org: 'baghdasarovelementor'
           workflow-repo: 'elementor-pro'
           workflow-yaml: 'playwright.yaml'
-          workflow-branch: 'main'
+          workflow-branch: 'ED-15774-internal-execute-custom-core-tests-from-core-repo'
           workflow-inputs: '{\"types\": \"run-from-core\"}'
           wait-timeout-in-minutes: '20'
 
