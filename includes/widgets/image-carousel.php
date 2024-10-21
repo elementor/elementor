@@ -137,6 +137,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Carousel Name', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
+				'default' => esc_html__( 'Image Carousel', 'elementor' ),
 			]
 		);
 
@@ -983,15 +984,12 @@ class Widget_Image_Carousel extends Widget_Base {
 			],
 			'carousel-wrapper' => [
 				'class' => 'elementor-image-carousel-wrapper ' . $swiper_class,
+				'role' => 'region',
+				'aria-roledescription' => 'carousel',
+				'aria-label' => $settings['carousel_name'],
 				'dir' => $settings['direction'],
 			],
 		] );
-
-		if ( $settings['carousel_name'] ) {
-			$this->add_render_attribute( 'carousel-wrapper', 'role', 'region' );
-			$this->add_render_attribute( 'carousel-wrapper', 'aria-roledescription', 'carousel' );
-			$this->add_render_attribute( 'carousel-wrapper', 'aria-label', $settings['carousel_name'] );
-		}
 
 		$show_dots = ( in_array( $settings['navigation'], [ 'dots', 'both' ] ) );
 		$show_arrows = ( in_array( $settings['navigation'], [ 'arrows', 'both' ] ) );
