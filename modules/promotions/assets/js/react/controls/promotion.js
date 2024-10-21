@@ -18,7 +18,7 @@ export default class extends ControlBaseDataView {
 
 	events() {
 		return {
-			'click @ui.switcher': 'onClickControlButtonAnimatedHeadline',
+			'click @ui.switcher': 'onClickControlSwitcher',
 		};
 	}
 
@@ -26,7 +26,7 @@ export default class extends ControlBaseDataView {
 		return elementorPromotionsData[ promotionType ] || {};
 	}
 
-	onClickControlButtonAnimatedHeadline( event ) {
+	onClickControlSwitcher( event ) {
 		event.stopPropagation();
 		this.mount( event.target );
 	}
