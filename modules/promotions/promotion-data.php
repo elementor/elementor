@@ -41,7 +41,7 @@ class PromotionData extends EditorAssetsAPI {
 
 	private static function get_animated_headline_data( $assets_data ) {
 		$data = [
-			'image' => esc_url( $assets_data[ Utils::ANIMATED_HEADLINE ] ) ?? '',
+			'image' => esc_url( $assets_data[ Utils::ANIMATED_HEADLINE ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( 'Bring Headlines to Life', 'elementor' ),
 			'description' => [
@@ -58,7 +58,7 @@ class PromotionData extends EditorAssetsAPI {
 
 	private static function get_video_playlist_data( $assets_data ) {
 		$data = [
-			'image' => esc_url( $assets_data[ Utils::VIDEO_PLAYLIST ] ) ?? '',
+			'image' => esc_url( $assets_data[ Utils::VIDEO_PLAYLIST ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( 'Showcase Video Playlists', 'elementor' ),
 			'description' => [
@@ -75,7 +75,7 @@ class PromotionData extends EditorAssetsAPI {
 
 	private static function get_cta_button_data( $assets_data ) {
 		$data = [
-			'image' => esc_url( $assets_data[ Utils::CTA ] ) ?? '',
+			'image' => esc_url( $assets_data[ Utils::CTA ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( 'Boost Conversions with CTAs', 'elementor' ),
 			'description' => [
@@ -92,7 +92,7 @@ class PromotionData extends EditorAssetsAPI {
 
 	private static function get_image_carousel_data( $assets_data ) {
 		$data = [
-			'image' => esc_url( $assets_data[ Utils::IMAGE_CAROUSEL ] ) ?? '',
+			'image' => esc_url( $assets_data[ Utils::IMAGE_CAROUSEL ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( 'Design Custom Carousels', 'elementor' ),
 			'description' => [
@@ -109,7 +109,7 @@ class PromotionData extends EditorAssetsAPI {
 
 	private static function get_testimonial_widget_data( $assets_data ) {
 		$data = [
-			'image' => esc_url( $assets_data[ Utils::TESTIMONIAL_WIDGET ] ) ?? '',
+			'image' => esc_url( $assets_data[ Utils::TESTIMONIAL_WIDGET ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'title' => esc_html__( 'Upgrade Your Testimonials', 'elementor' ),
 			'description' => [
