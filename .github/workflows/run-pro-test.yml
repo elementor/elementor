@@ -1,42 +1,31 @@
-name: Trigger Elementor Pro Tests
+name: Trigger Remote Workflow and Wait
 
 on:
   push:
   pull_request:
-  #   types: [labeled]
 
 jobs:
-  check-label:
-    # if: contains(github.event.pull_request.labels.*.name, 'run-pro-tests')
+  trigger_and_wait:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Extract branch name
-        id: extract_branch
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+      # Step 1: Trigger the remote workflow and wait for its completion
+      - name: Trigger remote workflow and wait
+        uses: anecdotes-ai/remote-workflow-control@latest
+        with:
+          github-auth-token: ${{ secrets.GITHUB_TOKEN }}
+          workflow-org: 'elementor'
+          workflow-repo: 'elementor-pro'
+          workflow-yaml: 'playwright.yaml'
+          workflow-branch: 'main'
+#          workflow-inputs: '{\"event_type\": \"run-from-core\"}'
+          wait-timeout-in-minutes: '20'
 
-      - name: Trigger Elementor-Pro Tests From Core
-        run: |
-          # Print environment for debugging purposes
-          echo "Branch: ${{ env.branch }}"
+      # Step 2: Handle success/failure
+      - name: Check conclusion
+        if: success()
+        run: echo "Remote workflow completed successfully!"
 
-          # Set the response and capture the HTTP status code
-          response=$(curl -w "%{http_code}" -o response.txt -s -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d '{"event_type": "run-from-core", "client_payload": {"branch": "${{ env.branch }}"}}' \
-            https://api.github.com/repos/elementor/elementor-pro/dispatches)
-
-          # Read the response body
-          body=$(cat response.txt)
-
-          # Print the response body and status code
-          echo "Response Body: $body"
-          echo "HTTP Status Code: $response"
-
-          # Check if the HTTP status code indicates an error (non-2xx response)
-          if [[ "$response" -ge 400 ]]; then
-            echo "Error occurred: $body" >&2
-            exit 1
-          fi
-
-          echo "Triggered Elementor-Pro tests successfully."
+      - name: Handle failure
+        if: failure()
+        run: echo "Remote workflow failed!" && exit 1
