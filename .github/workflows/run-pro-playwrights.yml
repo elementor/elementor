@@ -1,0 +1,59 @@
+name: Run Elementor Pro Playwrights
+
+on:
+  push:
+
+jobs:
+  clone-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Elementor Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Cache Elementor Node Modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-elementor-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Clone Elementor-Pro Repository
+        run: |
+          cd ${{ github.workspace }}  # Ensure you are in the correct working directory
+          git clone https://github.com/elementor/elementor-pro.git
+          cd elementor-pro
+          git checkout ${{ github.sha }}  # Checkout the SHA that triggered the workflow
+
+      - name: Install & Build Elementor-Pro
+        run: |
+          cd ${{ github.workspace }}/elementor-pro
+          npm ci  # Install dependencies
+          npx grunt  # Build Elementor-Pro
+
+      - name: Cache Elementor-Pro Node Modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-elementor-pro-node-modules
+        with:
+          path: ${{ github.workspace }}/elementor-pro/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('elementor-pro/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Trigger Playwright Workflow
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"event_type": "trigger-from-core", "client_payload": {"branch": "${{ github.sha }}"}}' \
+            https://api.github.com/repos/elementor/elementor-pro/dispatches
