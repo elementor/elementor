@@ -16,7 +16,7 @@ jobs:
           github-auth-token: ${{ secrets.DEVOPS_TOKEN }}
           workflow-org: 'elementor'
           workflow-repo: 'elementor-pro'
-          workflow-yaml: 'playwright.yaml'
+          workflow-yaml: 'playwright.yml'
           workflow-branch: 'main'
           workflow-inputs: '{\"event_type\": \"run-from-core\"}'
           wait-timeout-in-minutes: '20'
