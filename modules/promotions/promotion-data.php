@@ -121,6 +121,6 @@ class PromotionData {
 	}
 
 	private function filter_data( $widget_name, $asset_data ): array {
-		return Filtered_Promotions_Manager::get_filtered_promotion_data( $asset_data, "elementor/widgets/{$widget_name}/custom_promotion", 'upgrade_url');
+		return Filtered_Promotions_Manager::get_filtered_promotion_data( $asset_data, "elementor/widgets/{$widget_name}/custom_promotion", 'upgrade_url' );
 	}
 }
