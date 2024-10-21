@@ -4,7 +4,7 @@ namespace Elementor\Modules\Home;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Includes\EditorAssetsApi;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Settings;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -97,8 +97,8 @@ class Module extends BaseApp {
 	}
 
 	private function get_app_js_config(): array {
-		$editorAssetsApi = new EditorAssetsApi( $this->get_api_config() );
-		$api = new API( $editorAssetsApi);
+		$editorAssetsAPI = new EditorAssetsAPI( $this->get_api_config() );
+		$api = new API( $editorAssetsAPI);
 
 		return $api->get_home_screen_items();
 	}
