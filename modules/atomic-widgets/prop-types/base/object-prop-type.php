@@ -14,11 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	const KIND = 'object';
 
-	use Concerns\Has_Meta,
+	use Concerns\Has_Default,
+		Concerns\Has_Generate,
+		Concerns\Has_Meta,
+		Concerns\Has_Required_Setting,
 		Concerns\Has_Settings,
-		Concerns\Has_Default,
-		Concerns\Has_Transformable_Validation,
-		Concerns\Has_Required_Setting;
+		Concerns\Has_Transformable_Validation;
 
 	/**
 	 * @var array<Prop_Type>

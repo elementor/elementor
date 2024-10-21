@@ -12,11 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	const KIND = 'plain';
 
-	use Concerns\Has_Meta,
+	use Concerns\Has_Default,
+		Concerns\Has_Generate,
+		Concerns\Has_Meta,
+		Concerns\Has_Required_Setting,
 		Concerns\Has_Settings,
-		Concerns\Has_Default,
-		Concerns\Has_Transformable_Validation,
-		Concerns\Has_Required_Setting;
+		Concerns\Has_Transformable_Validation;
 
 	/**
 	 * @return static

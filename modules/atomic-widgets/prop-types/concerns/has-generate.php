@@ -11,21 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * @mixin Transformable_Prop_Type
  */
-trait Has_Default {
-	protected $default = null;
-
-	/**
-	 * @param $value
-	 *
-	 * @return $this
-	 */
-	public function default( $value ) {
-		$this->default = static::generate( $value );
-
-		return $this;
-	}
-
-	public function get_default() {
-		return $this->default;
+trait Has_Generate {
+	public static function generate( $value ) {
+		return [
+			'$$type' => static::get_key(),
+			'value' => $value,
+		];
 	}
 }
