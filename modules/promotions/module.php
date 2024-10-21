@@ -59,6 +59,10 @@ class Module extends Base_Module {
 			}
 		} );
 
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
