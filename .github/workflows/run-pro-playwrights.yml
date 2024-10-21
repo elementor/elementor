@@ -31,6 +31,7 @@ jobs:
         with:
           repository: 'elementor/elementor-pro'
           path: ${{ github.workspace }}
+          ref: 'main'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install & Build Elementor-Pro
