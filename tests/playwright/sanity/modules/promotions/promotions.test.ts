@@ -56,6 +56,24 @@ test.describe( 'Promotion tests @promotions', () => {
 		} );
 	} );
 
+	test( 'Widgets React Modal Promotions', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage(),
+			promotionsHelper = new PromotionsHelper( page, testInfo ),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await editor.addWidget( 'heading', container );
+
+		await editor.openPanelTab( 'content' );
+
+		await test.step( 'Free to Pro - react modals screenshot tests', async () => {
+			const promotionControls = [ 'animated_headline_promotion' ];
+			for ( const effect of promotionControls ) {
+				await promotionsHelper.modalPromotionModalVisibilityTest( effect );
+			}
+		} );
+	} );
+
 	test( 'Context Menu Promotions - Free to Pro', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
