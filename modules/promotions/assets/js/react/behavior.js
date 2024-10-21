@@ -5,6 +5,7 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 	promotionInfoTip = null;
 
 	selectors = {
+		switcherElement: '.elementor-control-type-switcher',
 		reactAnchor: '.e-promotion-react-wrapper',
 	};
 
@@ -26,15 +27,16 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 
 	onClickControlButtonAnimatedHeadline( event ) {
 		event.stopPropagation();
-		this.mount();
+		this.mount( event.target );
 	}
 
-	mount() {
+	mount( targetNode ) {
 		if ( this.promotionInfoTip ) {
 			return;
 		}
 
-		const rootElement = document.querySelector( this.selectors.reactAnchor );
+		const wrapperElement = targetNode?.closest( this.selectors.switcherElement );
+		const rootElement = wrapperElement?.querySelector( this.selectors.reactAnchor );
 
 		if ( ! rootElement ) {
 			return;
