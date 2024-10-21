@@ -80,8 +80,7 @@
 /* a11y */
 .swiper-container .swiper-notification {
 	position: absolute;
-	left: 0;
-	top: 0;
+	inset: 0;
 	pointer-events: none;
 	opacity: 0;
 	z-index: -1000;
@@ -228,8 +227,7 @@ button.swiper-pagination-bullet {
 	.swiper-pagination-progressbar-fill {
 		background: #000;
 		position: absolute;
-		left: 0;
-		top: 0;
+		inset: 0;
 		width: 100%;
 		height: 100%;
 		transform: scale(0);
@@ -279,8 +277,7 @@ button.swiper-pagination-bullet {
 
 	.swiper-slide-shadow-left, .swiper-slide-shadow-right, .swiper-slide-shadow-top, .swiper-slide-shadow-bottom {
 		position: absolute;
-		left: 0;
-		top: 0;
+		inset: 0;
 		width: 100%;
 		height: 100%;
 		pointer-events: none;
@@ -354,8 +351,7 @@ button.swiper-pagination-bullet {
 
 	.swiper-cube-shadow {
 		position: absolute;
-		left: 0;
-		bottom: 0;
+		inset: 0;
 		width: 100%;
 		height: 100%;
 		background: #000;
@@ -435,13 +431,12 @@ button.swiper-pagination-bullet {
 }
 
 .swiper-scrollbar-drag {
-	height: 100%;
 	width: 100%;
+	height: 100%;
 	position: relative;
+	inset: 0;
 	background: rgba(0, 0, 0, 0.5);
 	border-radius: 10px;
-	left: 0;
-	top: 0;
 }
 
 .swiper-scrollbar-cursor-drag {
