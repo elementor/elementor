@@ -1399,7 +1399,6 @@ class Frontend extends App {
 				'previous' => esc_html__( 'Previous', 'elementor' ),
 				'next' => esc_html__( 'Next', 'elementor' ),
 				'close' => esc_html__( 'Close', 'elementor' ),
-				'a11yCarouselWrapperAriaLabel' => __( 'Carousel | Horizontal scrolling: Arrow Left & Right', 'elementor' ),
 				'a11yCarouselPrevSlideMessage' => __( 'Previous slide', 'elementor' ),
 				'a11yCarouselNextSlideMessage' => __( 'Next slide', 'elementor' ),
 				'a11yCarouselFirstSlideMessage' => __( 'This is the first slide', 'elementor' ),
