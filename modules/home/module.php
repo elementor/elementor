@@ -97,8 +97,8 @@ class Module extends BaseApp {
 	}
 
 	private function get_app_js_config(): array {
-		$editorAssetsAPI = new EditorAssetsAPI( $this->get_api_config() );
-		$api = new API( $editorAssetsAPI);
+		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
+		$api = new API( $editor_assets_api);
 
 		return $api->get_home_screen_items();
 	}

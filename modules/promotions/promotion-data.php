@@ -6,10 +6,10 @@ use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
 
 class PromotionData {
-	protected EditorAssetsAPI $editorAssetsAPI;
+	protected EditorAssetsAPI $editor_assets_api;
 
-	public function __construct( EditorAssetsAPI $editorAssetsAPI ) {
-		$this->editorAssetsAPI = $editorAssetsAPI;
+	public function __construct( EditorAssetsAPI $editor_assets_api ) {
+		$this->editor_assets_api = $editor_assets_api;
 	}
 
 	public function get_promotion_data( $force_request = false ): array {
@@ -21,7 +21,7 @@ class PromotionData {
 	}
 
 	private function transform_assets_data( $force_request = false ) {
-		$assets_data = $this->editorAssetsAPI->get_assets_data( $force_request );
+		$assets_data = $this->editor_assets_api->get_assets_data( $force_request );
 		$transformed_data = [];
 
 		foreach ( $assets_data as $asset ) {
