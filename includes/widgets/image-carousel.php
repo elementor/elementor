@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 /**
  * Elementor image carousel widget.
@@ -374,7 +375,13 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		Plugin::$instance->controls_manager->add_free_to_pro_upsale_promotion_control( $this, esc_html__( 'Carousel PRO widget', 'elementor' ), Utils::IMAGE_CAROUSEL );
+		$this->add_control(
+			Utils::IMAGE_CAROUSEL . '_promotion',
+			[
+				'label' => esc_html__( 'Carousel PRO widget', 'elementor' ),
+				'type' => Promotion_Control::TYPE,
+			]
+		);
 
 		$this->end_controls_section();
 

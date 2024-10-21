@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 /**
  * Elementor testimonial widget.
@@ -241,7 +242,13 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		Plugin::$instance->controls_manager->add_free_to_pro_upsale_promotion_control( $this, esc_html__( 'Loop Carousel widget', 'elementor' ), Utils::TESTIMONIAL_WIDGET );
+		$this->add_control(
+			Utils::TESTIMONIAL_WIDGET . '_promotion',
+			[
+				'label' => esc_html__( 'Loop Carousel widget', 'elementor' ),
+				'type' => Promotion_Control::TYPE,
+			]
+		);
 
 		$this->end_controls_section();
 

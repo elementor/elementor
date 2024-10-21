@@ -2,34 +2,30 @@
 namespace Elementor\Modules\Promotions;
 
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
-use Elementor\Data\EditorAssets\EditorAssetsAPI;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
 
-class PromotionData extends EditorAssetsAPI {
-	public static function config( $key ): string {
-		$config = [
-			'ASSETS_DATA_URL' => 'https://assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
-			'ASSETS_DATA_TRANSIENT_KEY' => '_elementor_free_to_pro_upsell',
-			'ASSETS_DATA_KEY' => 'free-to-pro-upsell',
-		];
+class PromotionData {
+	protected EditorAssetsAPI $editorAssetsAPI;
 
-		return $config[ $key ] ?? '';
+	public function __construct( EditorAssetsAPI $editorAssetsAPI ) {
+		$this->editorAssetsAPI = $editorAssetsAPI;
 	}
 
-	public static function get_promotion_data( $force_request = false ): array {
-		$assets_data = self::transform_assets_data( $force_request );
+	public function get_promotion_data( $force_request = false ): array {
+		$assets_data = $this->transform_assets_data( $force_request );
 
 		return [
-			Utils::ANIMATED_HEADLINE => self::get_animated_headline_data( $assets_data ),
-			Utils::VIDEO_PLAYLIST => self::get_video_playlist_data( $assets_data ),
-			Utils::CTA => self::get_cta_button_data( $assets_data ),
-			Utils::IMAGE_CAROUSEL => self::get_image_carousel_data( $assets_data ),
-			Utils:: TESTIMONIAL_WIDGET => self::get_testimonial_widget_data( $assets_data ),
+			Utils::ANIMATED_HEADLINE => $this->get_animated_headline_data( $assets_data ),
+			Utils::VIDEO_PLAYLIST => $this->get_video_playlist_data( $assets_data ),
+			Utils::CTA => $this->get_cta_button_data( $assets_data ),
+			Utils::IMAGE_CAROUSEL => $this->get_image_carousel_data( $assets_data ),
+			Utils::TESTIMONIAL_WIDGET => $this->get_testimonial_widget_data( $assets_data ),
 		];
 	}
 
-	private static function transform_assets_data( $force_request = false ) {
-		$assets_data = static::get_assets_data( $force_request );
+	private function transform_assets_data( $force_request = false ) {
+		$assets_data = $this->editorAssetsAPI->get_assets_data( $force_request );
 		$transformed_data = [];
 
 		foreach ( $assets_data as $asset ) {
@@ -39,7 +35,7 @@ class PromotionData extends EditorAssetsAPI {
 		return $transformed_data;
 	}
 
-	private static function get_animated_headline_data( $assets_data ) {
+	private function get_animated_headline_data( $assets_data ) {
 		$data = [
 			'image' => esc_url( $assets_data[ Utils::ANIMATED_HEADLINE ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
@@ -53,10 +49,10 @@ class PromotionData extends EditorAssetsAPI {
 			'upgrade_url' => 'https://go.elementor.com/go-pro-heading-widget/',
 		];
 
-		return self::filter_data( Utils::ANIMATED_HEADLINE, $data );
+		return $this->filter_data( Utils::ANIMATED_HEADLINE, $data );
 	}
 
-	private static function get_video_playlist_data( $assets_data ) {
+	private function get_video_playlist_data( $assets_data ) {
 		$data = [
 			'image' => esc_url( $assets_data[ Utils::VIDEO_PLAYLIST ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
@@ -70,10 +66,10 @@ class PromotionData extends EditorAssetsAPI {
 			'upgrade_url' => 'https://go.elementor.com/go-pro-video-widget/',
 		];
 
-		return self::filter_data( Utils::VIDEO_PLAYLIST, $data );
+		return $this->filter_data( Utils::VIDEO_PLAYLIST, $data );
 	}
 
-	private static function get_cta_button_data( $assets_data ) {
+	private function get_cta_button_data( $assets_data ) {
 		$data = [
 			'image' => esc_url( $assets_data[ Utils::CTA ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
@@ -87,10 +83,10 @@ class PromotionData extends EditorAssetsAPI {
 			'upgrade_url' => 'https://go.elementor.com/go-pro-button-widget/',
 		];
 
-		return self::filter_data( Utils::CTA, $data );
+		return $this->filter_data( Utils::CTA, $data );
 	}
 
-	private static function get_image_carousel_data( $assets_data ) {
+	private function get_image_carousel_data( $assets_data ) {
 		$data = [
 			'image' => esc_url( $assets_data[ Utils::IMAGE_CAROUSEL ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
@@ -104,10 +100,10 @@ class PromotionData extends EditorAssetsAPI {
 			'upgrade_url' => 'https://go.elementor.com/go-pro-image-carousel-widget/',
 		];
 
-		return self::filter_data( Utils::IMAGE_CAROUSEL, $data );
+		return $this->filter_data( Utils::IMAGE_CAROUSEL, $data );
 	}
 
-	private static function get_testimonial_widget_data( $assets_data ) {
+	private function get_testimonial_widget_data( $assets_data ) {
 		$data = [
 			'image' => esc_url( $assets_data[ Utils::TESTIMONIAL_WIDGET ] ?? '' ),
 			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
@@ -121,10 +117,10 @@ class PromotionData extends EditorAssetsAPI {
 			'upgrade_url' => 'https://go.elementor.com/go-pro-testimonial-widget/',
 		];
 
-		return self::filter_data( Utils::TESTIMONIAL_WIDGET, $data );
+		return $this->filter_data( Utils::TESTIMONIAL_WIDGET, $data );
 	}
 
-	private static function filter_data( $widget_name, $asset_data ) {
-		return Filtered_Promotions_Manager::get_filtered_promotion_data( $asset_data, "elementor/widgets/{$widget_name}/custom_promotion", 'upgrade_url' );
+	private function filter_data( $widget_name, $asset_data ): array {
+		return Filtered_Promotions_Manager::get_filtered_promotion_data( $asset_data, "elementor/widgets/{$widget_name}/custom_promotion", 'upgrade_url');
 	}
 }

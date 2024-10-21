@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 use Elementor\Utils;
 
 /**
@@ -225,7 +226,13 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			]
 		);
 
-		Plugin::$instance->controls_manager->add_free_to_pro_upsale_promotion_control( $this, esc_html__( 'Animated Headline widget', 'elementor' ), Utils::ANIMATED_HEADLINE );
+		$this->add_control(
+			Utils::ANIMATED_HEADLINE . '_promotion',
+			[
+				'label' => esc_html__( 'Animated Headline widget', 'elementor' ),
+				'type' => Promotion_Control::TYPE,
+			]
+		);
 
 		$this->end_controls_section();
 

@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Modules\DynamicTags\Module as TagsModule;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -604,7 +605,13 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		Plugin::$instance->controls_manager->add_free_to_pro_upsale_promotion_control( $this, esc_html__( 'Video Playlist widget', 'elementor' ), Utils::VIDEO_PLAYLIST );
+		$this->add_control(
+			Utils::VIDEO_PLAYLIST . '_promotion',
+			[
+				'label' => esc_html__( 'Video Playlist widget', 'elementor' ),
+				'type' => Promotion_Control::TYPE,
+			]
+		);
 
 		$this->end_controls_section();
 

@@ -5,7 +5,7 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 	promotionInfoTip = null;
 
 	selectors = {
-		reactAnchor: '.e-free-to-pro-upsale-promotion',
+		reactAnchor: '.e-promotion-react-wrapper',
 	};
 
 	ui() {
@@ -46,7 +46,7 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
 			isRTL = elementorCommon.config.isRTL,
-			promotionType = rootElement.getAttribute( 'data-promotion' );
+			promotionType = rootElement.getAttribute( 'data-promotion' )?.replace( '_promotion', '' );
 
 		this.promotionInfoTip.render(
 			<App

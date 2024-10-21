@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Promotions;
 
 use Elementor\Api;
+use Elementor\Controls_Manager;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
@@ -11,8 +12,10 @@ use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
+use Elementor\Includes\EditorAssetsAPI;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -57,6 +60,10 @@ class Module extends Base_Module {
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
+
+		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
+			$controls_manager->register( new Promotion_Control() );
+		} );
 	}
 
 	private function handle_external_redirects() {
@@ -111,6 +118,17 @@ class Module extends Base_Module {
 	}
 
 	private function get_app_js_config(): array {
-		return PromotionData::get_promotion_data();
+		$editorAssetsAPI = new EditorAssetsAPI( $this->get_api_config() );
+		$promotionData = new PromotionData( $editorAssetsAPI );
+
+		return $promotionData->get_promotion_data();
+	}
+
+	private function get_api_config(): array {
+		return [
+			'ASSETS_DATA_URL' => 'https://assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
+			'ASSETS_DATA_TRANSIENT_KEY' => '_elementor_free_to_pro_upsell',
+			'ASSETS_DATA_KEY' => 'free-to-pro-upsell',
+		];
 	}
 }

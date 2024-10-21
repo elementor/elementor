@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Includes\Widgets\Traits\Button_Trait;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -95,7 +96,13 @@ class Widget_Button extends Widget_Base {
 
 		$this->register_button_content_controls();
 
-		Plugin::$instance->controls_manager->add_free_to_pro_upsale_promotion_control( $this, esc_html__( 'Call to Action widget', 'elementor' ), Utils::CTA );
+		$this->add_control(
+			Utils::CTA . '_promotion',
+			[
+				'label' => esc_html__( 'Call to Action widget', 'elementor' ),
+				'type' => Promotion_Control::TYPE,
+			]
+		);
 
 		$this->end_controls_section();
 

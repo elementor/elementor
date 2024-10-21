@@ -4,6 +4,7 @@ namespace Elementor\Modules\Home;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Settings;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -96,7 +97,18 @@ class Module extends BaseApp {
 	}
 
 	private function get_app_js_config(): array {
-		return API::get_home_screen_items();
+		$editorAssetsAPI = new EditorAssetsAPI( $this->get_api_config() );
+		$api = new API( $editorAssetsAPI);
+
+		return $api->get_home_screen_items();
+	}
+
+	private function get_api_config(): array {
+		return [
+			'ASSETS_DATA_URL' => 'https://assets.elementor.com/home-screen/v1/home-screen.json',
+			'ASSETS_DATA_TRANSIENT_KEY' => '_elementor_home_screen_data',
+			'ASSETS_DATA_KEY' => 'home-screen',
+		];
 	}
 
 	public static function get_elementor_settings_page_id(): string {
