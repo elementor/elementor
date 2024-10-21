@@ -21,6 +21,8 @@ class PromotionData extends EditorAssetsAPI {
 
 		return [
 			Utils::ANIMATED_HEADLINE => self::get_animated_headline_data( $assets_data ),
+			Utils::VIDEO_PLAYLIST => self::get_video_playlist_data( $assets_data ),
+			Utils::CTA => self::get_cta_button_data( $assets_data ),
 		];
 	}
 
@@ -50,6 +52,40 @@ class PromotionData extends EditorAssetsAPI {
 		];
 
 		return self::filter_data( Utils::ANIMATED_HEADLINE, $data );
+	}
+
+	private static function get_video_playlist_data( $assets_data ) {
+		$data = [
+			'image' => esc_url( $assets_data[ Utils::VIDEO_PLAYLIST ] ) ?? '',
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'title' => esc_html__( 'Showcase Video Playlists', 'elementor' ),
+			'description' => [
+				esc_html__( 'Embed videos with full control.', 'elementor' ),
+				esc_html__( 'Adjust layout and playback settings.', 'elementor' ),
+				esc_html__( 'Seamlessly customize video appearance.', 'elementor' ),
+			],
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+			'upgrade_url' => 'https://go.elementor.com/go-pro-video-widget/',
+		];
+
+		return self::filter_data( Utils::VIDEO_PLAYLIST, $data );
+	}
+
+	private static function get_cta_button_data( $assets_data ) {
+		$data = [
+			'image' => esc_url( $assets_data[ Utils::CTA ] ) ?? '',
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'title' => esc_html__( 'Boost Conversions with CTAs', 'elementor' ),
+			'description' => [
+				esc_html__( 'Combine text, buttons, and images.', 'elementor' ),
+				esc_html__( 'Add hover animations and CSS effects.', 'elementor' ),
+				esc_html__( 'Create unique, interactive designs.', 'elementor' ),
+			],
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+			'upgrade_url' => 'https://go.elementor.com/go-pro-button-widget/',
+		];
+
+		return self::filter_data( Utils::CTA, $data );
 	}
 
 	private static function filter_data( $widget_name, $asset_data ) {

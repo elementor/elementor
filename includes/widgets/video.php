@@ -115,28 +115,6 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 3.19.0
-	 * @access protected
-	 *
-	 * @return array Widget promotion data.
-	 */
-	protected function get_upsale_data() {
-		return [
-			'condition' => ! Utils::has_pro(),
-			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
-			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
-			'title' => esc_html__( "Grab your visitors' attention", 'elementor' ),
-			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro.', 'elementor' ),
-			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/' ),
-			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-		];
-	}
-
-	/**
-	 * Register video widget controls.
-	 *
-	 * Adds different input fields to allow the user to change and customize the widget settings.
-	 *
 	 * @since 3.1.0
 	 * @access protected
 	 */
@@ -625,6 +603,8 @@ class Widget_Video extends Widget_Base {
 				],
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_free_to_pro_upsale_promotion_control( $this, esc_html__( 'Video Playlist widget', 'elementor' ), Utils::VIDEO_PLAYLIST );
 
 		$this->end_controls_section();
 
