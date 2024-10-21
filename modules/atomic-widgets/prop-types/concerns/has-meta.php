@@ -34,6 +34,6 @@ trait Has_Meta {
 	}
 
 	public function get_meta_item( $key, $default = null ) {
-		return $this->meta[ $key ] ?? $default;
+		return array_key_exists( $key, $this->meta ) ? $this->meta[ $key ] : $default;
 	}
 }
