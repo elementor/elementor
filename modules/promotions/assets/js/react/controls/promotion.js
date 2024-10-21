@@ -12,13 +12,13 @@ export default class extends ControlBaseDataView {
 
 	ui() {
 		return {
-			animatedHeadlineButton: '[data-promotion].elementor-control-type-switcher',
+			switcher: '[data-promotion].elementor-control-type-switcher',
 		};
 	}
 
 	events() {
 		return {
-			'click @ui.animatedHeadlineButton': 'onClickControlButtonAnimatedHeadline',
+			'click @ui.switcher': 'onClickControlButtonAnimatedHeadline',
 		};
 	}
 
