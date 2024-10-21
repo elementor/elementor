@@ -1362,23 +1362,23 @@ class Controls_Manager {
 	}
 
 	private function free_to_pro_upsale_promotion_control( $title, $id ): string {
-		return '<div data-promotion="' . $id . '" class="elementor-control-type-switcher elementor-label-inline e-control-' . $id . '-promotion__wrapper">
+		return '<div data-promotion="' . $id . '" class="elementor-control-type-switcher elementor-label-inline e-control-free-to-pro-upsale-promotion__wrapper e-control-' . $id . '-promotion__wrapper">
 			<div class="elementor-control-content">
 				<div class="elementor-control-field">
 					<label>
 						' . $title . '
 					</label>
-					<span class="e-control-' . $id . '-promotion__lock-wrapper">
+					<span class="e-control-free-to-pro-upsale-promotion__lock-wrapper e-control-' . $id . '-promotion__lock-wrapper">
 						<i class="eicon-lock"></i>
 					</span>
 					<div class="elementor-control-input-wrapper">
-						<label class="elementor-switch elementor-control-unit-2 e-control-' . $id . '-promotion">
+						<label class="elementor-switch elementor-control-unit-2 e-control-free-to-pro-upsale-promotion e-control-' . $id . '-promotion">
 							<input type="checkbox" class="elementor-switch-input" disabled>
 							<span class="elementor-switch-label" data-off="Off"></span>
 							<span class="elementor-switch-handle"></span>
 						</label>
 					</div>
-					<div class="e-promotion-react" data-promotion="' . $id . '"></div>
+					<div class="e-free-to-pro-upsale-promotion" data-promotion="' . $id . '"></div>
 				</div>
 			</div>
 		</div>';

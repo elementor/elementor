@@ -5,7 +5,7 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 	promotionInfoTip = null;
 
 	selectors = {
-		reactAnchor: '.e-promotion-react',
+		reactAnchor: '.e-free-to-pro-upsale-promotion',
 	};
 
 	ui() {
