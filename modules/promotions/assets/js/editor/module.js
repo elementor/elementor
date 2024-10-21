@@ -2,8 +2,6 @@ import PromotionBehavior from './behavior';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		// elementor.addControlView( 'promotion_control', require( './controls/promotion' ) );
-
 		if ( ! elementor.config?.promotionWidgets || ! elementor.config.promotionWidgets.length ) {
 			return;
 		}
