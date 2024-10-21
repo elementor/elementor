@@ -112,7 +112,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		];
 	}
 
-	public function has_widget_container(): bool {
+	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
@@ -129,6 +129,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			'section_image_carousel',
 			[
 				'label' => esc_html__( 'Image Carousel', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'carousel_name',
+			[
+				'label' => esc_html__( 'Carousel Name', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => esc_html__( 'Image Carousel', 'elementor' ),
 			]
 		);
 
@@ -975,6 +984,9 @@ class Widget_Image_Carousel extends Widget_Base {
 			],
 			'carousel-wrapper' => [
 				'class' => 'elementor-image-carousel-wrapper ' . $swiper_class,
+				'role' => 'region',
+				'aria-roledescription' => 'carousel',
+				'aria-label' => $settings['carousel_name'],
 				'dir' => $settings['direction'],
 			],
 		] );
