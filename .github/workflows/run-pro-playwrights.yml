@@ -19,7 +19,7 @@ jobs:
         with:
           repository: 'elementor/elementor-pro'
           path: ${{ github.workspace }}
-          token: ${{ secrets.GITHUB_AUTH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Clone Elementor-Pro Repository
         run: |
