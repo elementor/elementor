@@ -2,6 +2,6 @@
   "deployment" : {
     "repository_owner" : "elementor",
     "environment" : "prod",
-    "permitted" : "Batsirai-muchareva,TzviRabinovitch,davseve,louiswol94,mykytamurzin,ronenelementor,hein-obox,MichaelLiamin"
+    "permitted" : "Batsirai-muchareva,TzviRabinovitch,davseve,louiswol94,mykytamurzin,ronenelementor,hein-obox,MichaelLiamin,elchugreeva"
   }
 }
