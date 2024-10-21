@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Plain_Prop_Type implements Transformable_Prop_Type {
-	const TYPE = 'plain';
+	const KIND = 'plain';
 
 	use Concerns\Has_Meta,
 		Concerns\Has_Settings,
@@ -36,7 +36,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
-			'type' => static::TYPE,
+			'kind' => static::KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),
 			'meta' => $this->get_meta(),

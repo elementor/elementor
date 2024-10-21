@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Object_Prop_Type implements Transformable_Prop_Type {
-	const TYPE = 'object';
+	const KIND = 'object';
 
 	use Concerns\Has_Meta,
 		Concerns\Has_Settings,
@@ -51,7 +51,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		return $this->shape;
 	}
 
-	public function get_shape_item( $key ): ?Prop_Type {
+	public function get_shape_field( $key ): ?Prop_Type {
 		return $this->shape[ $key ] ?? null;
 	}
 
@@ -84,7 +84,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
-			'type' => static::TYPE,
+			'kind' => static::KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),
 			'meta' => $this->get_meta(),

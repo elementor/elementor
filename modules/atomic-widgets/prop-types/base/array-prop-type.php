@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Array_Prop_Type implements Transformable_Prop_Type {
-	const TYPE = 'array';
+	const KIND = 'array';
 
 	use Concerns\Has_Meta,
 		Concerns\Has_Settings,
@@ -74,7 +74,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
-			'type' => static::TYPE,
+			'kind' => static::KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),
 			'meta' => $this->get_meta(),

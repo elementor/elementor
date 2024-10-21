@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Union_Prop_Type implements Prop_Type {
-	const TYPE = 'union';
+	const KIND = 'union';
 
 	use Concerns\Has_Meta,
 		Concerns\Has_Settings,
@@ -80,7 +80,7 @@ class Union_Prop_Type implements Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
-			'type' => static::TYPE,
+			'kind' => static::KIND,
 			'default' => $this->get_default(),
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),

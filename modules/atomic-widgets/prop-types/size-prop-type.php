@@ -25,7 +25,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 	}
 
 	public function units( array $units ): self {
-		$this->get_shape_item( 'unit' )->enum( $units );
+		$this->get_shape_field( 'unit' )->enum( $units );
 
 		return $this;
 	}

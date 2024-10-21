@@ -365,7 +365,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( $schema['prop'], $prop );
 
-		$internal = $prop->get_shape_item( 'internal' );
+		$internal = $prop->get_shape_field( 'internal' );
 
 		$this->assertInstanceof( Union_Prop_Type::class, $internal );
 		$this->assertInstanceof( Dynamic_Prop_Type::class, $internal->get_prop_type( 'dynamic' ) );
