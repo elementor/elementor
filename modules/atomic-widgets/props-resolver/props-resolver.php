@@ -111,6 +111,8 @@ class Props_Resolver {
 
 			$value['value'] = $this->assign_values(
 				$value['value'],
+				// Create an array of prop types that corresponds to the original array length.
+				// in order to validate each item in the array.
 				array_map( fn() => $prop_type->get_item_type(), $value['value'] )
 			);
 		}

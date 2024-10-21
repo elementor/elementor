@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Prop_Type extends Object_Prop_Type {
-	const DEFAULT_UNITS = [ 'px', 'em', 'rem', '%' ];
+	const SUPPORTED_UNITS = [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax' ];
 
 	public static function get_key(): string {
 		return 'size';
@@ -20,13 +20,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'size' => Number_Prop_Type::make()->required(),
-			'unit' => String_Prop_Type::make()->enum( static::DEFAULT_UNITS )->required(),
+			'unit' => String_Prop_Type::make()->enum( static::SUPPORTED_UNITS )->required(),
 		];
-	}
-
-	public function units( array $units ): self {
-		$this->get_shape_field( 'unit' )->enum( $units );
-
-		return $this;
 	}
 }

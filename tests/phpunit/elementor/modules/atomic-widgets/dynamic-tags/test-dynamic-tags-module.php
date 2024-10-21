@@ -14,7 +14,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\DynamicTags\Module as V1DynamicTags;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
-use function ElementorDeps\DI\value;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
