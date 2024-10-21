@@ -102,10 +102,14 @@ class Module extends BaseModule {
 
 		if ( ! ElementorUtils::has_pro() ) {
 			add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-				$documents_manager->register_document_type(
-					static::FLOATING_BUTTONS_DOCUMENT_TYPE,
-					Floating_Buttons::get_class_full_name()
-				);
+				// we need to allow pro to override this if the license is active.
+				$install_floating_elements_doc = apply_filters( 'elementor/document/register/floating_elements', true );
+				if ( $install_floating_elements_doc ) {
+					$documents_manager->register_document_type(
+						static::FLOATING_BUTTONS_DOCUMENT_TYPE,
+						Floating_Buttons::get_class_full_name()
+					);
+				}
 			} );
 		}
 
