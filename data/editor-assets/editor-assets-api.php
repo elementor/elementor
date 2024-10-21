@@ -56,7 +56,7 @@ class EditorAssetsAPI {
 	private static function set_transient( $cache_key, $value, $expiration = '+12 hours' ): bool {
 		$data = [
 			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
-			'value' => json_encode( $value ),
+			'value' => wp_json_encode( $value ),
 		];
 
 		return update_option( $cache_key, $data, false );
