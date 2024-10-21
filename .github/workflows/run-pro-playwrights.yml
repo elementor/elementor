@@ -1,6 +1,7 @@
 name: Run Elementor Pro Playwrights
 
 on:
+  pull_request:
   push:
 
 jobs:
