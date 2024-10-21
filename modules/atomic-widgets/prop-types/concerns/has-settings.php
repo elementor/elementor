@@ -28,6 +28,6 @@ trait Has_Settings {
 	}
 
 	public function get_setting( string $key, $default = null ) {
-		return $this->settings[ $key ] ?? $default;
+		return array_key_exists( $key, $this->settings ) ? $this->settings[ $key ] : $default;
 	}
 }
