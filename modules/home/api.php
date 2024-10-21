@@ -5,11 +5,11 @@ use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\Home\Classes\Transformations_Manager;
 
 class API {
-    protected EditorAssetsAPI $editor_assets_api;
+	protected EditorAssetsAPI $editor_assets_api;
 
-    public function __construct( EditorAssetsAPI $editor_assets_api ) {
-        $this->editor_assets_api = $editor_assets_api;
-    }
+	public function __construct( EditorAssetsAPI $editor_assets_api ) {
+		$this->editor_assets_api = $editor_assets_api;
+	}
 
 	public function get_home_screen_items( $force_request = false ): array {
 		$assets_data = $this->editor_assets_api->get_assets_data( $force_request );

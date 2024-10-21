@@ -4,7 +4,7 @@ namespace Elementor\Includes;
 class EditorAssetsAPI {
 	protected array $config;
 
-    const ASSETS_DATA_TRANSIENT_KEY = 'ASSETS_DATA_TRANSIENT_KEY';
+	const ASSETS_DATA_TRANSIENT_KEY = 'ASSETS_DATA_TRANSIENT_KEY';
 
 	const ASSETS_DATA_URL = 'ASSETS_DATA_URL';
 
