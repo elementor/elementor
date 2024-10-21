@@ -15,16 +15,11 @@ jobs:
           fetch-depth: 0
 
       - name: Cache Elementor Node Modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-elementor-node-modules
+        uses: actions/checkout@v3
         with:
-          path: node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          repository: 'elementor/elementor-pro'
+          path: ${{ github.workspace }}
+          token: ${{ secrets.GITHUB_AUTH_TOKEN }}
 
       - name: Clone Elementor-Pro Repository
         run: |
