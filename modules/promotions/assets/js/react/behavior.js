@@ -25,16 +25,14 @@ export default class ReactPromotionBehavior extends Marionette.Behavior {
 	}
 
 	onClickControlButtonAnimatedHeadline( event ) {
-		console.log( event );
-
 		event.stopPropagation();
 		this.mount();
 	}
 
 	mount() {
-		// if ( this.promotionInfoTip ) {
-		// 	return;
-		// }
+		if ( this.promotionInfoTip ) {
+			return;
+		}
 
 		const rootElement = document.querySelector( this.selectors.reactAnchor );
 
