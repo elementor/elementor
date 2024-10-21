@@ -1,4 +1,11 @@
 // Shared button style.
+.elementor-widget-button {
+	--button-flex-direction: row;
+	--button-align-self: initial;
+	--button-icon-transition: all 0.3s;
+	--button-icon-display: initial;
+}
+
 .elementor-button {
 	display: inline-block;
 	line-height: 1;
@@ -9,7 +16,7 @@
 	color: #fff;
 	fill: #fff;
 	text-align: center;
-	transition: $transition-hover;
+	transition: var(--button-icon-transition);
 
 	&:hover,
 	&:focus,
@@ -20,18 +27,24 @@
 	&-content-wrapper {
 		display: flex;
 		justify-content: center;
-		flex-direction: row;
+		flex-direction: var(--button-flex-direction);
 		gap: 5px;
 	}
 
 	&-icon {
-		svg {
-			width: 1em;
-			height: auto;
+		display: var(--button-icon-display);
+
+		i {
+			color: var(--button-icon-color, inherit);
+			font-size: var(--button-icon-size);
+			transition: var(--button-icon-transition);
 		}
 
-		.e-font-icon-svg {
-			height: 1em;
+		svg {
+			height: var(--button-icon-size, 1em);
+			width: auto;
+			fill: var(--button-icon-color, inherit);
+			transition: var(--button-icon-transition);
 		}
 	}
 
@@ -71,6 +84,21 @@
 
 	span {
 		text-decoration: inherit; //fix for conflict with text-decoration & inline-block
+		align-self: var(--button-align-self);
+	}
+
+	&:hover {
+
+		.elementor-button-icon {
+
+			i {
+				color: var(--button-icon-color-hover);
+			}
+
+			svg {
+				fill: var(--button-icon-color-hover);
+			}
+		}
 	}
 }
 
