@@ -13,7 +13,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
-use Elementor\Includes\ApiRequests\EditorAssets;
+use Elementor\Includes\EditorAssetsApi;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -112,8 +112,8 @@ class Module extends Base_Module {
 	}
 
 	private function get_app_js_config(): array {
-		$editorAssets = new EditorAssets( $this->get_api_config() );
-		$promotionData = new PromotionData( $editorAssets );
+		$editorAssetsApi = new EditorAssetsApi( $this->get_api_config() );
+		$promotionData = new PromotionData( $editorAssetsApi );
 
 		return $promotionData->get_promotion_data();
 	}

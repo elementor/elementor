@@ -1,18 +1,18 @@
 <?php
 namespace Elementor\Modules\Home;
 
-use Elementor\Includes\ApiRequests\EditorAssets;
+use Elementor\Includes\EditorAssetsApi;
 use Elementor\Modules\Home\Classes\Transformations_Manager;
 
 class API {
-    protected EditorAssets $editorAssets;
+    protected EditorAssetsApi $editorAssetsApi;
 
-    public function __construct( EditorAssets $editorAssets ) {
-        $this->editorAssets = $editorAssets;
+    public function __construct( EditorAssetsApi $editorAssetsApi ) {
+        $this->editorAssetsApi = $editorAssetsApi;
     }
 
 	public function get_home_screen_items( $force_request = false ): array {
-		$assets_data = $this->editorAssets->get_assets_data( $force_request );
+		$assets_data = $this->editorAssetsApi->get_assets_data( $force_request );
 
 		return $this->transform_home_screen_data( $assets_data );
 	}

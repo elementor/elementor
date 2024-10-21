@@ -2,14 +2,14 @@
 namespace Elementor\Modules\Promotions;
 
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
-use Elementor\Includes\ApiRequests\EditorAssets;
+use Elementor\Includes\EditorAssetsApi;
 use Elementor\Utils;
 
 class PromotionData {
-	protected EditorAssets $editorAssets;
+	protected EditorAssetsApi $editorAssetsApi;
 
-	public function __construct( EditorAssets $editorAssets ) {
-		$this->editorAssets = $editorAssets;
+	public function __construct( EditorAssetsApi $editorAssetsApi ) {
+		$this->editorAssetsApi = $editorAssetsApi;
 	}
 
 	public function get_promotion_data( $force_request = false ): array {
@@ -21,7 +21,7 @@ class PromotionData {
 	}
 
 	private function transform_assets_data( $force_request = false ) {
-		$assets_data = $this->editorAssets->get_assets_data( $force_request );
+		$assets_data = $this->editorAssetsApi->get_assets_data( $force_request );
 		$transformed_data = [];
 
 		foreach ( $assets_data as $asset ) {

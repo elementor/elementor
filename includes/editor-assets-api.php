@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\Includes\ApiRequests;
+namespace Elementor\Includes;
 
-class EditorAssets {
+class EditorAssetsAPI {
 	protected array $config;
 
 	public function __construct( array $config ) {
