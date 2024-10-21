@@ -227,7 +227,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		);
 
 		$this->add_control(
-			'animated_headline_promotion',
+			Utils::ANIMATED_HEADLINE . '_headline',
 			[
 				'label' => esc_html__( 'Animated Headline widget', 'elementor' ),
 				'type' => Promotion_Control::TYPE,
