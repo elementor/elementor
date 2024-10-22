@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-22.04
     name: File Diff
     steps:
-      - name: Checkout source code
+      - name: Checkout GithubActions repo
         uses: actions/checkout@v4
         with:
-          repository: elementor/elementor-devops-automation
+          repository: elementor/elementor-cloud-github-actions
           token: ${{ secrets.MAINTAIN_TOKEN }}
