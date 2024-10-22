@@ -97,17 +97,17 @@ class Module extends BaseApp {
 	}
 
 	private function get_app_js_config(): array {
-		$editorAssetsAPI = new EditorAssetsAPI( $this->get_api_config() );
-		$api = new API( $editorAssetsAPI);
+		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
+		$api = new API( $editor_assets_api );
 
 		return $api->get_home_screen_items();
 	}
 
 	private function get_api_config(): array {
 		return [
-			'ASSETS_DATA_URL' => 'https://assets.elementor.com/home-screen/v1/home-screen.json',
-			'ASSETS_DATA_TRANSIENT_KEY' => '_elementor_home_screen_data',
-			'ASSETS_DATA_KEY' => 'home-screen',
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/home-screen/v1/home-screen.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_home_screen_data',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'home-screen',
 		];
 	}
 

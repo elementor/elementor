@@ -59,11 +59,15 @@ class Module extends Base_Module {
 			}
 		} );
 
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
+		if ( Utils::has_pro() ) {
+			return;
+		}
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
-			$controls_manager->register( new Promotion_Control() );
+			$controls_manager->register( new Controls\Promotion_Control() );
 		} );
+
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 	}
 
 	private function handle_external_redirects() {
@@ -118,17 +122,17 @@ class Module extends Base_Module {
 	}
 
 	private function get_app_js_config(): array {
-		$editorAssetsAPI = new EditorAssetsAPI( $this->get_api_config() );
-		$promotionData = new PromotionData( $editorAssetsAPI );
+		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
+		$promotion_data = new PromotionData( $editor_assets_api );
 
-		return $promotionData->get_promotion_data();
+		return $promotion_data->get_promotion_data();
 	}
 
 	private function get_api_config(): array {
 		return [
-			'ASSETS_DATA_URL' => 'https://assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
-			'ASSETS_DATA_TRANSIENT_KEY' => '_elementor_free_to_pro_upsell',
-			'ASSETS_DATA_KEY' => 'free-to-pro-upsell',
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_free_to_pro_upsell',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'free-to-pro-upsell',
 		];
 	}
 }

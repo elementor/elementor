@@ -68,14 +68,15 @@ const frontendRulesPresets = [ [
 	{
 		targets: {
 			browsers: [
-				'last 1 Android versions',
-				'last 1 ChromeAndroid versions',
-				'last 2 Chrome versions',
-				'last 2 Firefox versions',
-				'Safari >= 14',
-				'iOS >= 14',
-				'last 2 Edge versions',
-				'last 2 Opera versions',
+				'last 3 versions',
+				'Chrome >= 100',
+				'Firefox >= 100',
+				'Edge >= 100',
+				'Safari >= 15.5',
+				'iOS >= 15.5',
+				'Android >= 100',
+				'ChromeAndroid >= 100',
+				'not dead',
 			],
 		},
 		"useBuiltIns": "usage",
