@@ -111,9 +111,7 @@ class Props_Resolver {
 
 			$value['value'] = $this->assign_values(
 				$value['value'],
-				// Create an array of prop types that corresponds to the original array length.
-				// in order to validate each item in the array.
-				array_map( fn() => $prop_type->get_item_type(), $value['value'] )
+				$prop_type->get_item_type()
 			);
 		}
 
@@ -139,11 +137,13 @@ class Props_Resolver {
 		);
 	}
 
-	private function assign_values( $values, array $schema ) {
+	private function assign_values( $values, $schema ) {
 		$assigned = [];
 
 		foreach ( $values as $key => $value ) {
-			$transformed = $this->transform( $value, $key, $schema[ $key ] );
+			$prop_type = $schema instanceof Prop_Type ? $schema : $schema[ $key ];
+
+			$transformed = $this->transform( $value, $key, $prop_type );
 
 			if ( Multi_Props::is( $transformed ) ) {
 				$assigned = array_merge( $assigned, Multi_Props::get_value( $transformed ) );
