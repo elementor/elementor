@@ -65,9 +65,6 @@ test.describe( 'Promotion tests @promotions', () => {
 		await test.step( 'Free to Pro - react animated headline modal visible', async () => {
 			await editor.addWidget( 'heading', container );
 			await editor.openPanelTab( 'content' );
-
-			await page.pause();
-
 			await promotionsHelper.modalPromotionModalVisibilityTest( 'animated_headline_promotion' );
 		} );
 
