@@ -17,5 +17,5 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
         with:
-          repository: elementor-pro
+          repository: elementor-devops-automation
           token: ${secrets.MAINTAIN_TOKEN}
