@@ -16,7 +16,7 @@ trait Has_Transformable_Validation {
 		);
 
 		$supports_disabling = (
-			! array_key_exists( 'disabled', $value ) ||
+			! isset( $value['disabled'] ) ||
 			is_bool( $value['disabled'] )
 		);
 
