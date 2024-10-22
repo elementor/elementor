@@ -384,13 +384,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			Utils::IMAGE_CAROUSEL . '_promotion',
-			[
-				'label' => esc_html__( 'Carousel PRO widget', 'elementor' ),
-				'type' => Promotion_Control::TYPE,
-			]
-		);
+		if ( ! Utils::has_pro() ) {
+			$this->add_control(
+				Utils::IMAGE_CAROUSEL . '_promotion',
+				[
+					'label' => esc_html__( 'Carousel PRO widget', 'elementor' ),
+					'type' => Promotion_Control::TYPE,
+				]
+			);
+		}
 
 		$this->end_controls_section();
 

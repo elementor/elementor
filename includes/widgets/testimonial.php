@@ -242,13 +242,15 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			Utils::TESTIMONIAL_WIDGET . '_promotion',
-			[
-				'label' => esc_html__( 'Loop Carousel widget', 'elementor' ),
-				'type' => Promotion_Control::TYPE,
-			]
-		);
+		if ( ! Utils::has_pro() ) {
+			$this->add_control(
+				Utils::TESTIMONIAL_WIDGET . '_promotion',
+				[
+					'label' => esc_html__( 'Loop Carousel widget', 'elementor' ),
+					'type' => Promotion_Control::TYPE,
+				]
+			);
+		}
 
 		$this->end_controls_section();
 

@@ -96,13 +96,15 @@ class Widget_Button extends Widget_Base {
 
 		$this->register_button_content_controls();
 
-		$this->add_control(
-			Utils::CTA . '_promotion',
-			[
-				'label' => esc_html__( 'Call to Action widget', 'elementor' ),
-				'type' => Promotion_Control::TYPE,
-			]
-		);
+		if ( ! Utils::has_pro() ) {
+			$this->add_control(
+				Utils::CTA . '_promotion',
+				[
+					'label' => esc_html__( 'Call to Action widget', 'elementor' ),
+					'type' => Promotion_Control::TYPE,
+				]
+			);
+		}
 
 		$this->end_controls_section();
 

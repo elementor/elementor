@@ -605,13 +605,15 @@ class Widget_Video extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			Utils::VIDEO_PLAYLIST . '_promotion',
-			[
-				'label' => esc_html__( 'Video Playlist widget', 'elementor' ),
-				'type' => Promotion_Control::TYPE,
-			]
-		);
+		if ( ! Utils::has_pro() ) {
+			$this->add_control(
+				Utils::VIDEO_PLAYLIST . '_promotion',
+				[
+					'label' => esc_html__( 'Video Playlist widget', 'elementor' ),
+					'type' => Promotion_Control::TYPE,
+				]
+			);
+		}
 
 		$this->end_controls_section();
 

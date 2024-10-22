@@ -56,7 +56,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		} );
 	} );
 
-	test( 'Widgets React Modal Promotions', async ( { page, apiRequests }, testInfo ) => {
+	test.only( 'Widgets React Modal Promotions', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			promotionsHelper = new PromotionsHelper( page, testInfo ),
@@ -65,6 +65,9 @@ test.describe( 'Promotion tests @promotions', () => {
 		await test.step( 'Free to Pro - react animated headline modal visible', async () => {
 			await editor.addWidget( 'heading', container );
 			await editor.openPanelTab( 'content' );
+
+			await page.pause();
+
 			await promotionsHelper.modalPromotionModalVisibilityTest( 'animated_headline_promotion' );
 		} );
 
