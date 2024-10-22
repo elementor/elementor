@@ -13,6 +13,7 @@ import GenerateAgainSubmit from '../../components/generate-again-submit';
 import GenerateSubmit from '../../components/generate-submit';
 import ImagesDisplay from '../../components/images-display';
 import ProductImage from './components/product-image';
+import ImageActions from '../../components/image-actions';
 
 const ProductImageUnification = () => {
 	const { setGenerate } = useRequestIds();
@@ -20,10 +21,10 @@ const ProductImageUnification = () => {
 	const { settings, updateSettings } = usePromptSettings( );
 	const [ productsData, setProductsData ] = useState( );
 	const [ data, setData ] = useState( [] );
-	const [ send, setSend ] = useState( [] );
 	const [ isGenerating, setIsGenerating ] = useState( false );
-	const [ error, setError ] = useState( false );
-	const { use, edit, isLoading: isUploading } = useImageActions();
+	const [ error, setError ] = useState( '' );
+	const [ wasGeneratedOnce, setWasGeneratedOnce ] = useState( false );
+	const { use, isLoading: isUploading } = useImageActions();
 	const isLoading = isGenerating || isUploading;
 	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ settings ] );
 	const generatedBgColor = useMemo( () => settings[ IMAGE_BACKGROUND_COLOR ], [ settings ] );
@@ -46,7 +47,8 @@ const ProductImageUnification = () => {
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 		setGenerate();
-		send.forEach( ( req ) => req() );
+		setWasGeneratedOnce( true );
+		Object.values( productsData ).forEach( ( product ) => product.req() );
 	};
 
 	useEffect( () => {
@@ -54,25 +56,25 @@ const ProductImageUnification = () => {
 			return;
 		}
 
-		const newData = Object.values( productsData ).map( ( { res } ) => res );
-		const newSend = Object.values( productsData ).map( ( { req } ) => req );
+		const newData = Object.values( productsData ).map( ( productData ) => {
+			const resultElement = productData.res?.result?.[ 0 ];
+			return resultElement ? { ...resultElement, productId: productData.productId, seed: productData.productId }
+				: { ...productData.res?.image, seed: productData.productId };
+		} );
 		const newIsGenerating = Object.values( productsData ).some( ( { isLoadingResult } ) => isLoadingResult );
-		const newError = Object.values( productsData ).every( ( { errorGenerating } ) => errorGenerating );
+		const isError = Object.values( productsData ).every( ( { errorGenerating } ) => errorGenerating );
 
 		setData( ( prevData ) => {
 			return JSON.stringify( prevData ) !== JSON.stringify( newData ) ? newData : prevData;
 		} );
 
-		setSend( ( prevSend ) => {
-			return JSON.stringify( prevSend ) !== JSON.stringify( newSend ) ? newSend : prevSend;
-		} );
-
-		setIsGenerating( ( prevIsGenerating ) => {
-			return prevIsGenerating !== newIsGenerating ? newIsGenerating : prevIsGenerating;
-		} );
+		setIsGenerating( newIsGenerating );
 
 		setError( ( prevError ) => {
-			return prevError !== newError ? newError : prevError;
+			if ( isError ) {
+				return Object.values( productsData )[ 0 ].errorGenerating;
+			}
+			return prevError;
 		} );
 	}, [ productsData ] );
 
@@ -102,7 +104,7 @@ const ProductImageUnification = () => {
 						/>
 						<Stack gap={ 2 } sx={ { my: 2.5 } }>
 							{
-								data?.result ? (
+								wasGeneratedOnce ? (
 									<GenerateAgainSubmit disabled={ isLoading } />
 								) : (
 									<GenerateSubmit disabled={ isLoading } />
@@ -113,22 +115,12 @@ const ProductImageUnification = () => {
 
 				</ImageForm>
 			</View.Panel>
-			<View.Content isGenerating={ isLoading }>
-				{
-					data?.result ? (
-						<ImagesDisplay
-							images={ data.result }
-							onUseImage={ use }
-							onEditImage={ edit }
-							cols={ getCols( data.result?.length ) }
-						/>
-					) : (
-						<ImagesDisplay
-							images={ products.images }
-							cols={ getCols( products.images?.length ?? 1 ) }
-						/>
-					)
-				}
+			<View.Content isGenerating={ false }>
+				<ImagesDisplay
+					images={ data }
+					cols={ getCols( data.length ?? 1 ) }
+				/>
+				{ wasGeneratedOnce && ! error && ! isLoading && <ImageActions.UseImage onClick={ () => use( date ) } /> }
 			</View.Content>
 			{ products.images
 				?.filter( ( img ) => img.product_id )

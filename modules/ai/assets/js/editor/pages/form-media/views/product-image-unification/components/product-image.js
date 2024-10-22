@@ -20,8 +20,8 @@ const ProductImage = ( { productId, ratio, bgColor, image, onUpdate } ) => {
 };
 
 ProductImage.propTypes = {
-	productId: PropTypes.string,
-	ratio: PropTypes.number,
+	productId: PropTypes.number,
+	ratio: PropTypes.string,
 	bgColor: PropTypes.string,
 	image: PropTypes.object,
 	onUpdate: PropTypes.func,

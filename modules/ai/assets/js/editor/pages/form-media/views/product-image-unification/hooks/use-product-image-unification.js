@@ -1,11 +1,11 @@
 import useImagePrompt from '../../../hooks/use-image-prompt';
 import { getProductImageUnification } from '../../../../../api';
-import { useCallback } from 'react';
+import { useRef } from 'react';
 
 const useProductImageUnification = ( initialValue ) => {
-	const fetchAction = useCallback( ( payload ) => getProductImageUnification( payload ), [] );
+	const fetchAction = useRef( ( payload ) => getProductImageUnification( payload, true ) );
 
-	return useImagePrompt( fetchAction, initialValue );
+	return useImagePrompt( fetchAction.current, initialValue );
 };
 
 export default useProductImageUnification;

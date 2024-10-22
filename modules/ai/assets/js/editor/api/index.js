@@ -66,7 +66,7 @@ export const getImageToImageRemoveText = ( image ) => request( 'ai_get_image_to_
 
 export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_prompt_enhancer', { prompt } );
 
-export const getProductImageUnification = ( payload ) => request( 'ai_get_product_image_unification', { payload } );
+export const getProductImageUnification = ( payload, immediately ) => request( 'ai_get_product_image_unification', { payload }, immediately );
 
 export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );
 

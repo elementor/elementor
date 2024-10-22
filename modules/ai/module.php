@@ -1214,10 +1214,6 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_product_image_unification( $data ): array {
-		ob_start();
-		print_r($data);
-		$objectString = ob_get_clean();
-		error_log("Object: " . $objectString);
 		$data['editor_post_id'] = $data['payload']['postId'];
 		$this->verify_upload_permissions( $data );
 
@@ -1245,11 +1241,6 @@ class Module extends BaseModule {
 		], $context, $request_ids );
 
 		$this->throw_on_error( $result );
-
-		ob_start();
-		print_r($result);
-		$objectString = ob_get_clean();
-		error_log("Object: " . $objectString);
 
 		return [
 			'images' => $result['images'],
