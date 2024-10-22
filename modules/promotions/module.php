@@ -12,7 +12,6 @@ use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
-use Elementor\Modules\Promotions\Controls\Promotion_Control;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
