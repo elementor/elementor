@@ -34,53 +34,78 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		Plugin::$instance->wp = $this->original_wp_api;
 	}
 
-	public function test_validate__throws_when_passing_non_src() {
+	public function test_validate() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
+		// Act.
+		$result = $prop_type->validate( [
+			'$$type' => 'image',
+			'value' => [
+				'src' => [
+					'$$type' => 'image-src',
+					'value' => [
+						'id' => null,
+						'url' => [
+							'$$type' => 'url',
+							'value' => 'https://example.com/image.jpg'
+						],
+					],
+				],
+				'size' => 'full',
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	public function test_validate__fail_when_passing_non_src() {
+		// Arrange.
+		$prop_type = Image_Prop_Type::make();
 
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'image',
 			'value' => [
 				'src' => [
 					'$$type' => 'not-an-src',
 					'value' => [],
 				],
+				'size' => 'full',
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
-	public function test_validate__throws_when_passing_src_without_id_and_url() {
+	public function test_validate__fail_when_passing_src_without_id_and_url() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'image',
 			'value' => [
 				'src' => [
 					'$$type' => 'image-src',
 					'value' => [],
 				],
+				'size' => 'full',
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
-	public function test_validate__throws_when_passing_src_with_null_id_and_url() {
+	public function test_validate__fail_when_passing_src_with_null_id_and_url() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'image',
 			'value' => [
 				'src' => [
@@ -90,137 +115,196 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 						'url' => null,
 					],
 				],
+				'size' => 'full',
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
-	public function test_validate__throws_when_passing_src_with_non_numeric_attachment_id() {
+	public function test_validate__fail_when_passing_src_with_non_numeric_attachment_id() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'image',
 			'value' => [
 				'src' => [
 					'$$type' => 'image-src',
 					'value' => [
-						'id' => 'not-a-number',
-						'url' => 'https://example.com/image.jpg',
+						'id' => [
+							'$$type' => 'image-attachment-id',
+							'value' => 'not-a-number'
+						],
+						'url' => null,
 					],
 				],
+				'size' => 'full',
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
-	public function test_validate__throws_when_passing_src_with_non_existing_attachment_id() {
+	public function test_validate__fail_when_passing_src_with_non_existing_attachment_id() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'image',
 			'value' => [
 				'src' => [
 					'$$type' => 'image-src',
 					'value' => [
-						'id' => -1,
-						'url' => 'https://example.com/image.jpg',
+						'id' => [
+							'$$type' => 'image-attachment-id',
+							'value' => -1
+						],
+						'url' => null,
 					],
 				],
+				'size' => 'full',
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
-	public function test_validate__throws_when_passing_src_with_non_string_url() {
+	public function test_validate__fail_when_passing_src_with_non_string_url() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'image',
 			'value' => [
 				'src' => [
 					'$$type' => 'image-src',
 					'value' => [
-						'id' => 123,
-						'url' => 123
+						'id' => null,
+						'url' => [
+							'$$type' => 'url',
+							'value' => 123
+						],
 					],
 				],
+				'size' => 'full',
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
-	public function test_validate__throws_when_passing_src_with_invalid_url() {
+	public function test_validate__fail_when_passing_src_with_invalid_url() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'image',
 			'value' => [
 				'src' => [
 					'$$type' => 'image-src',
 					'value' => [
-						'id' => 123,
-						'url' => 'not-a-url'
+						'id' => null,
+						'url' => [
+							'$$type' => 'url',
+							'value' => 'invalid-url'
+						]
 					],
 				],
+				'size' => 'full',
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
-	public function test_validate__throws_when_passing_non_string_size() {
+	public function test_validate__fail_when_passing_non_string_size() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'image',
 			'value' => [
+				'src' => [
+					'$$type' => 'image-src',
+					'value' => [
+						'id' => [
+							'$$type' => 'image-attachment-id',
+							'value' => 123
+						],
+						'url' => null,
+					]
+				],
 				'size' => 123,
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
-	public function test_validate__throws_when_passing_size_that_is_not_in_the_allowed_sizes() {
+	public function test_validate__fails_when_passing_size_that_is_not_in_the_allowed_sizes() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();
 
-		$wp_sizes = Collection::make ( [
-			'thumbnail',
-			'medium',
-			'medium_large',
-			'large',
-			'1536x1536',
-			'2048x2048',
-			'post-thumbnail',
-		] )->map( fn( $size ) => "`$size`" )->implode( ', ' );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'image',
 			'value' => [
+				'src' => [
+					'$$type' => 'image-src',
+					'value' => [
+						'id' => [
+							'$$type' => 'image-attachment-id',
+							'value' => 123
+						],
+						'url' => null,
+					]
+				],
 				'size' => 'unknown-size',
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
+	}
+
+	public function test_validate__fails_when_passing_size_and_url() {
+		// Arrange.
+		$prop_type = Image_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->validate( [
+			'$$type' => 'image',
+			'value' => [
+				'src' => [
+					'$$type' => 'image-src',
+					'value' => [
+						'id' => [
+							'$$type' => 'image-attachment-id',
+							'value' => 123
+						],
+						'url' => [
+							'$$type' => 'url',
+							'value' => 'https://example.com/image.jpg'
+						],
+					]
+				],
+				'size' => 'full',
+			],
+		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 }
