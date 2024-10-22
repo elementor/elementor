@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Validators;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -35,21 +35,24 @@ class Props_Validator {
 	public function validate( array $props ): array {
 		$validated = [];
 
-		foreach ( $props as $key => $value ) {
-			$prop_type = $this->schema[ $key ] ?? null;
-
+		foreach ( $this->schema as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				continue;
 			}
 
-			try {
-				$prop_type->validate_with_additional( $value );
-			} catch ( \Exception $e ) {
+			$value = $props[ $key ] ?? null;
+
+			$is_valid = $prop_type->validate( $value ?? $prop_type->get_default() );
+
+			if ( ! $is_valid ) {
 				$this->errors_bag[] = $key;
+
 				continue;
 			}
 
-			$validated[ $key ] = $value;
+			if ( $value ) {
+				$validated[ $key ] = $value;
+			}
 		}
 
 		$is_valid = empty( $this->errors_bag );
