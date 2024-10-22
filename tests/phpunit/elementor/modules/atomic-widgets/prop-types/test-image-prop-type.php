@@ -278,4 +278,33 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		// Assert.
 		$this->assertFalse( $result );
 	}
+
+	public function test_validate__fails_when_passing_size_and_url() {
+		// Arrange.
+		$prop_type = Image_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->validate( [
+			'$$type' => 'image',
+			'value' => [
+				'src' => [
+					'$$type' => 'image-src',
+					'value' => [
+						'id' => [
+							'$$type' => 'image-attachment-id',
+							'value' => 123
+						],
+						'url' => [
+							'$$type' => 'url',
+							'value' => 'https://example.com/image.jpg'
+						],
+					]
+				],
+				'size' => 'full',
+			],
+		] );
+
+		// Assert.
+		$this->assertFalse( $result );
+	}
 }
