@@ -56,7 +56,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		} );
 	} );
 
-	test.only( 'Widgets React Modal Promotions', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Widgets React Modal Promotions', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			promotionsHelper = new PromotionsHelper( page, testInfo ),
