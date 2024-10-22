@@ -29,7 +29,7 @@ module.exports = function( $ ) {
 	// TODO: Remove this check after the Elementor 3.28 release [ED-15983].
 	const isNestedExperimentActive = elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ];
 
-	if ( !! document.querySelector( 'body.e-import-script-nested-tabs' ).length || isNestedExperimentActive ) {
+	if ( !! document.querySelector( 'body.e-import-script-nested-tabs' )?.length || isNestedExperimentActive ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
 	}
 

@@ -22,7 +22,7 @@ elementorModules.frontend = {
 // TODO: Remove this check after Elementor 3.28 release.
 const isVersionLowerThan3Point28 = true;
 
-if ( !! document.querySelector( 'body.e-import-script-nested-tabs' ).length || isVersionLowerThan3Point28 ) {
+if ( !! document.querySelector( 'body.e-import-script-nested-tabs' )?.length || isVersionLowerThan3Point28 ) {
 	( async () => {
 		const { default: NestedTabs } = await import( /* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
 		elementorModules.frontend.handlers.NestedTabs = NestedTabs;
