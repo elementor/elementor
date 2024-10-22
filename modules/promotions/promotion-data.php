@@ -9,7 +9,7 @@ class PromotionData {
 	protected EditorAssetsAPI $editor_assets_api;
 
 	public function __construct( EditorAssetsAPI $editor_assets_api ) {
-		$this->editorAssetsAPI = $editor_assets_api;
+		$this->editor_assets_api = $editor_assets_api;
 	}
 
 	public function get_promotion_data( $force_request = false ): array {
