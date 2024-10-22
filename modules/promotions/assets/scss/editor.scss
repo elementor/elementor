@@ -42,7 +42,7 @@
 	}
 }
 
-.e-control-motion-effects-promotion {
+.e-control-motion-effects-promotion, .e-control-promotion {
 	&__wrapper {
 		&:hover {
 			.eicon-lock {
@@ -75,7 +75,6 @@
 		align-items: center;
 	}
 }
-
 
 .e-link-promotion {
 	font-family: 'Roboto', sans-serif;
