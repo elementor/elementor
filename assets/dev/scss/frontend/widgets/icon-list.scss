@@ -14,9 +14,14 @@
 	}
 
 	.elementor-icon-list-items.elementor-inline-items {
-
+		display: flex;
+		flex-wrap: wrap;	
 		margin-right: -8px;
 		margin-left: -8px;
+
+		.elementor-inline-item {
+			word-break: break-word;
+		}
 
 		.elementor-icon-list-item {
 			margin-right: 8px;
@@ -200,4 +205,11 @@
 	@media (max-width: $screen-mobile-max) {
 		@include align-list('-mobile');
 	}
+}
+
+// Historical compatibility styles with higher specificity
+#left-area ul.elementor-icon-list-items,
+.elementor .elementor-element ul.elementor-icon-list-items,
+.elementor-edit-area .elementor-element ul.elementor-icon-list-items {
+	padding: 0;
 }
