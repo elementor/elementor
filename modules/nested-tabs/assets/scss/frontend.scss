@@ -321,14 +321,14 @@
 	}
 }
 
-.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover, .elementor .elementor-element.elementor-widget-n-tabs:not(:has(> .elementor-widget-container)) > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
 	background-color: var(--n-tabs-title-background-color-hover);
 	background-image: initial;
 }
 
 // TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
 .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"],
-.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover, .elementor .elementor-element.elementor-widget-n-tabs:not(:has(> .elementor-widget-container)) > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"], .elementor .elementor-element.elementor-widget-n-tabs:not(:has(> .elementor-widget-container)) > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
 	background-color: var(--n-tabs-title-background-color-active);
 	background-image: initial;
 }

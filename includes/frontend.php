@@ -670,11 +670,6 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'elementor-frontend' );
 
-			// TODO: Update in version 3.26.0 [ED-15471]
-			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_swiper_css_conditional_loading' ) ) {
-				wp_enqueue_style( 'e-swiper' );
-			}
-
 			if ( is_admin_bar_showing() ) {
 				wp_enqueue_style( 'elementor-wp-admin-bar' );
 			}
@@ -1404,7 +1399,6 @@ class Frontend extends App {
 				'previous' => esc_html__( 'Previous', 'elementor' ),
 				'next' => esc_html__( 'Next', 'elementor' ),
 				'close' => esc_html__( 'Close', 'elementor' ),
-				'a11yCarouselWrapperAriaLabel' => __( 'Carousel | Horizontal scrolling: Arrow Left & Right', 'elementor' ),
 				'a11yCarouselPrevSlideMessage' => __( 'Previous slide', 'elementor' ),
 				'a11yCarouselNextSlideMessage' => __( 'Next slide', 'elementor' ),
 				'a11yCarouselFirstSlideMessage' => __( 'This is the first slide', 'elementor' ),

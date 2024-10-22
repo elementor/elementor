@@ -91,6 +91,20 @@ class Utils {
 	];
 
 	/**
+	 * Variables for free to pro upsale modal promotions
+	 */
+
+	const ANIMATED_HEADLINE = 'animated_headline';
+
+	const CTA = 'cta';
+
+	const VIDEO_PLAYLIST = 'video_playlist';
+
+	const TESTIMONIAL_WIDGET = 'testimonial_widget';
+
+	const IMAGE_CAROUSEL = 'image_carousel';
+
+	/**
 	 * Is WP CLI.
 	 *
 	 * @return bool

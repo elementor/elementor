@@ -184,7 +184,7 @@
 		justify-content: var( --justify-content );
 		align-items: var( --align-items );
 		align-content: var( --align-content );
-		gap: var( --gap );
+		gap: var( --row-gap ) var( --column-gap );
 	}
 
 	// Flex item.
