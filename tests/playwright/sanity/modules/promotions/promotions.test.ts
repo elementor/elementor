@@ -91,7 +91,6 @@ test.describe( 'Promotion tests @promotions', () => {
 			await editor.openPanelTab( 'content' );
 			await promotionsHelper.modalPromotionModalVisibilityTest( 'testimonial_widget_promotion' );
 		} );
-
 	} );
 
 	test( 'Context Menu Promotions - Free to Pro', async ( { page, apiRequests }, testInfo ) => {
