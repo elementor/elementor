@@ -100,9 +100,8 @@ class Control_URL extends Control_Base_Multiple {
 				<?php // PHPCS - Nonces don't require escaping. ?>
 				<input id="_ajax_linking_nonce" type="hidden" value="<?php echo wp_create_nonce( 'internal-linking' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" />
 				<# if ( !! data.options ) { #>
-				<button class="elementor-control-url-more tooltip-target elementor-control-unit-1" data-tooltip="<?php echo esc_attr__( 'Link Options', 'elementor' ); ?>">
+				<button class="elementor-control-url-more tooltip-target elementor-control-unit-1" data-tooltip="<?php echo esc_attr__( 'Link Options', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Link Options', 'elementor' ); ?>">
 					<i class="eicon-cog" aria-hidden="true"></i>
-					<span class="elementor-screen-only"><?php echo esc_html__( 'Link Options', 'elementor' ); ?></span>
 				</button>
 				<# } #>
 			</div>
