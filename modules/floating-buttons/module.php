@@ -107,7 +107,6 @@ class Module extends BaseModule {
 			);
 		} );
 
-
 		add_action( 'current_screen', function() {
 			$screen = get_current_screen();
 			if ( $screen && 'edit-e-floating-buttons' === $screen->id ) {
