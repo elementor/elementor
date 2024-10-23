@@ -9,17 +9,13 @@ function removeANSI( text ) {
 
 async function run() {
 	try {
-		// Read and parse the test results file
 		const rawData = fs.readFileSync( 'tests/playwright/test-results.json', 'utf-8' );
 		const testResults = JSON.parse( rawData );
 
-		// Define the Elasticsearch index name
 		const indexName = 'playwright-test-results';
 
-		// Prepare the bulk indexing body
 		const bulkBody = [];
 
-		// Iterate through each suite in the test results
 		if ( testResults.suites && Array.isArray( testResults.suites ) ) {
 			testResults.suites.forEach( ( suite ) => {
 				const suiteTitle = suite.title || 'Untitled Suite';
@@ -82,12 +78,14 @@ async function run() {
 			if ( bulkResponse.body && bulkResponse.body.errors ) {
 				bulkResponse.body.items.forEach( ( item, index ) => {
 					if ( item.index && item.index.error ) {
+						// eslint-disable-next-line no-console
 						console.error( `Indexing error for document ${ index }:`, item.index.error );
 					}
 				} );
 			}
 		}
 	} catch ( error ) {
+		// eslint-disable-next-line no-console
 		console.error( 'An error occurred:', error );
 	}
 }
