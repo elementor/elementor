@@ -173,14 +173,15 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 					this.changeVideoSize();
 
 					this.startVideoLoop( true );
-
 					this.player.playVideo();
 				},
 				onStateChange: ( event ) => {
 					switch ( event.data ) {
+						case YT.PlayerState.BUFFERING:
+							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
+							break;
 						case startStateCode:
 							$backgroundVideoContainer.removeClass( 'elementor-invisible elementor-loading' );
-
 							break;
 						case YT.PlayerState.ENDED:
 							if ( 'function' === typeof this.player.seekTo ) {
@@ -229,6 +230,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 
 			this.apiProvider.onApiReady( ( apiObject ) => {
 				if ( 'youtube' === this.videoType ) {
+					console.log( apiObject, videoID );
 					this.prepareYTVideo( apiObject, videoID );
 				}
 
