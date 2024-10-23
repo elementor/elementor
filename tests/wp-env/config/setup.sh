@@ -24,3 +24,6 @@ wp option update elementor_checklist '{"last_opened_timestamp":null,"first_close
 for id in $(wp user list --field=ID)
 do wp user meta add "$id" "announcements_user_counter" 999
 done
+
+wp plugin install wordpress-importer --activate
+wp import /var/www/html/elementor-playwright/sample-data/elementor-floating-buttons.xml --authors=skip --quiet --allow-root

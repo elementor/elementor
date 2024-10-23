@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { type APIRequestContext } from '@playwright/test';
+
 import { Image, Post, WpPage, User } from '../types/types';
 
 export default class ApiRequests {
@@ -219,15 +220,15 @@ export default class ApiRequests {
 
 	public async deleteUser( request: APIRequestContext, userId: string ) {
 		const response = await request.delete( `${ this.baseUrl }/index.php`, {
-				headers: {
-					'X-WP-Nonce': this.nonce,
-				},
-				params: {
-					rest_route: `/wp/v2/users/${ userId }`,
-					force: true,
-					reassign: '-1',
-				},
-			} );
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			params: {
+				rest_route: `/wp/v2/users/${ userId }`,
+				force: true,
+				reassign: '-1',
+			},
+		} );
 
 		if ( ! response.ok() ) {
 			throw new Error( `
