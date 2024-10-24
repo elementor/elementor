@@ -126,7 +126,7 @@ class Loader extends Module {
 
 				if ( 'scripts' === $assets_type ) {
 					if ( $this->maybe_add_script_to_body_class( $asset_name ) ) {
-						break;
+						continue;
 					}
 
 					wp_enqueue_script( $asset_name );
@@ -197,7 +197,7 @@ class Loader extends Module {
 
 	public function maybe_add_script_to_body_class( $script ) {
 		if ( false !== strpos( $script, 'import-script-' ) ) {
-			$this->import_script = $script;
+			$this->set_import_script( $script );
 			add_filter( 'body_class', [ $this, 'add_body_class' ] );
 
 			return true;
@@ -206,8 +206,13 @@ class Loader extends Module {
 		return false;
 	}
 
+	private function set_import_script( $script ) {
+		$script_separator = empty( $this->import_script ) ? '' : ' ';
+		$this->import_script .= $script_separator . 'e-' . $script;
+	}
+
 	public function add_body_class( $classes = [] ) {
-		$classes[] = 'e-' . $this->import_script;
+		$classes[] = $this->import_script;
 
 		return $classes;
 	}
