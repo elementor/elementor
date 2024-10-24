@@ -87,7 +87,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		expect( await editor.getPreviewFrame().getByText( 'New Item #' + customFontsCount + fontsContentText ).count() ).toEqual( 1 );
 
 		// Arrange 2.
-		const listItem = page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).last().getByText( 'Edit Remove Reorder' );
+		const listItem = page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).last().locator( '.elementor-control-input-wrapper' ).nth( 1 );
 		const remove = listItem.locator( '.eicon-trash-o' );
 
 		// Act 2 - Click on remove.
