@@ -1551,6 +1551,10 @@ abstract class Element_Base extends Controls_Stack {
 		return true;
 	}
 
+	public function has_widget_wrapper(): bool {
+		return true;
+	}
+
 	/**
 	 * Element base constructor.
 	 *
