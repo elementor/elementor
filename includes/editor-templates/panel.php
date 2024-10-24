@@ -89,7 +89,7 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 		echo $is_app_bar_active
 			? esc_attr__( 'Structure', 'elementor' )
 			: esc_attr__( 'Navigator', 'elementor' );
-	?>">
+?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
 	</button>
 	<# } #>
