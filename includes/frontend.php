@@ -452,9 +452,7 @@ class Frontend extends App {
 		wp_register_script(
 			'share-link',
 			$this->get_js_assets_url( 'share-link', 'assets/lib/share-link/' ),
-			[
-				'jquery',
-			],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
