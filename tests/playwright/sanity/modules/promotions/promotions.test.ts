@@ -62,15 +62,34 @@ test.describe( 'Promotion tests @promotions', () => {
 			promotionsHelper = new PromotionsHelper( page, testInfo ),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.addWidget( 'heading', container );
+		await test.step( 'Free to Pro - react animated headline modal visible', async () => {
+			await editor.addWidget( 'heading', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'animated_headline_promotion' );
+		} );
 
-		await editor.openPanelTab( 'content' );
+		await test.step( 'Free to Pro - react video playlist modal visible', async () => {
+			await editor.addWidget( 'video', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'video_playlist_promotion' );
+		} );
 
-		await test.step( 'Free to Pro - react modals screenshot tests', async () => {
-			const promotionControls = [ 'animated_headline_promotion' ];
-			for ( const effect of promotionControls ) {
-				await promotionsHelper.modalPromotionModalVisibilityTest( effect );
-			}
+		await test.step( 'Free to Pro - react cta button modal visible', async () => {
+			await editor.addWidget( 'button', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'cta_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react image carousel modal visible', async () => {
+			await editor.addWidget( 'image-carousel', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'image_carousel_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react testimonial modal visible', async () => {
+			await editor.addWidget( 'testimonial', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'testimonial_widget_promotion' );
 		} );
 	} );
 
