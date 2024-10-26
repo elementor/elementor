@@ -52,8 +52,9 @@ $eps-dark-tip-background-color: dark-theme-colors(info-bg);
 	&__overlay {
 		background: $eps-modal-overlay;
 		position: fixed;
-		inset: 0;
 		display: flex;
+		top: 0;
+		@include start(0);
 		width: 100%;
 		height: 100%;
 		align-items: center;
