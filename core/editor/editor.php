@@ -12,7 +12,6 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 use Elementor\Core\Editor\Data;
-use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -32,13 +31,6 @@ class Editor {
 	 * User capability required to access Elementor editor.
 	 */
 	const EDITING_CAPABILITY = 'edit_posts';
-
-	/**
-	 * The const is deprecated, it remains here for backward compatibility.
-	 *
-	 * @deprecated Use App_Bar_Module::EXPERIMENT_NAME instead
-	 */
-	const EDITOR_V2_EXPERIMENT_NAME = App_Bar_Module::EXPERIMENT_NAME;
 
 	/**
 	 * Post ID.
