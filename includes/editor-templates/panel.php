@@ -78,15 +78,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<i class="eicon-cog" aria-hidden="true"></i>
 	</button>
 	<# if ( $e.components.get( 'document/elements' ).utils.showNavigator() ) { #>
-	<button id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php
-		echo $is_app_bar_active
-			? esc_attr__( 'Structure', 'elementor' )
-			: esc_attr__( 'Navigator', 'elementor' );
-	?>" aria-label="<?php
-		echo $is_app_bar_active
-			? esc_attr__( 'Structure', 'elementor' )
-			: esc_attr__( 'Navigator', 'elementor' );
-?>">
+	<button id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php echo esc_attr__( 'Structure', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Structure', 'elementor' ); ?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
 	</button>
 	<# } #>
