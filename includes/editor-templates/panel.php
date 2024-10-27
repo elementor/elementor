@@ -66,51 +66,42 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-header">
-	<button id="elementor-panel-header-menu-button" class="elementor-header-button">
-		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Menu', 'elementor' ); ?></span>
+	<button id="elementor-panel-header-menu-button" class="elementor-header-button" aria-label="<?php echo esc_attr__( 'Menu', 'elementor' ); ?>">
+		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php echo esc_attr__( 'Menu', 'elementor' ); ?>"></i>
 	</button>
 	<h2 id="elementor-panel-header-title"></h2>
 	<# const extraClass = $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ? '' : 'elementor-visibility-hidden'; #>
-	<button id="elementor-panel-header-add-button" class="elementor-header-button {{{ extraClass }}}">
-		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Widgets Panel', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Widgets Panel', 'elementor' ); ?></span>
+	<button id="elementor-panel-header-add-button" class="elementor-header-button {{{ extraClass }}}" aria-label="<?php echo esc_attr__( 'Widgets Panel', 'elementor' ); ?>">
+		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php echo esc_attr__( 'Widgets Panel', 'elementor' ); ?>"></i>
 	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<button id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
+	<button id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo esc_attr__( 'Settings', 'elementor' ); ?>" aria-label="<?php printf( esc_attr__( '%s Settings', 'elementor' ), esc_attr( $document::get_title() ) ); ?>">
 		<i class="eicon-cog" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), esc_html( $document::get_title() ) ); ?></span>
 	</button>
 	<# if ( $e.components.get( 'document/elements' ).utils.showNavigator() ) { #>
 	<button id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php
 		echo $is_app_bar_active
 			? esc_attr__( 'Structure', 'elementor' )
 			: esc_attr__( 'Navigator', 'elementor' );
-	?>">
+	?>" aria-label="<?php
+		echo $is_app_bar_active
+			? esc_attr__( 'Structure', 'elementor' )
+			: esc_attr__( 'Navigator', 'elementor' );
+?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php
-			echo $is_app_bar_active
-				? esc_html__( 'Structure', 'elementor' )
-				: esc_html__( 'Navigator', 'elementor' );
-		?></span>
 	</button>
 	<# } #>
-	<button id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
+	<button id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo esc_attr__( 'History', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'History', 'elementor' ); ?>">
 		<i class="eicon-history" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'History', 'elementor' ); ?></span>
 	</button>
-	<button id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state tooltip-target" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>">
+	<button id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state tooltip-target" data-tooltip="<?php echo esc_attr__( 'Responsive Mode', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Responsive Mode', 'elementor' ); ?>">
 		<i class="eicon-device-responsive" aria-hidden="true"></i>
-		<span class="elementor-screen-only">
-			<?php echo esc_html__( 'Responsive Mode', 'elementor' ); ?>
-		</span>
 	</button>
-	<button id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
+	<button id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php echo esc_attr__( 'Preview Changes', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Preview Changes', 'elementor' ); ?>">
 		<span id="elementor-panel-footer-saver-preview-label">
 			<i class="eicon-preview-medium" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php echo esc_html__( 'Preview Changes', 'elementor' ); ?></span>
 		</span>
 	</button>
 	<div id="elementor-panel-footer-saver-publish" class="elementor-panel-footer-tool">
@@ -125,9 +116,8 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 		</button>
 	</div>
 	<div id="elementor-panel-footer-saver-options" class="elementor-panel-footer-tool elementor-toggle-state">
-		<button id="elementor-panel-saver-button-save-options" class="elementor-button e-primary tooltip-target elementor-disabled" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>" data-tooltip-offset="7">
+		<button id="elementor-panel-saver-button-save-options" class="elementor-button e-primary tooltip-target elementor-disabled" data-tooltip="<?php echo esc_attr__( 'Save Options', 'elementor' ); ?>" data-tooltip-offset="7" aria-label="<?php echo esc_attr__( 'Save Options', 'elementor' ); ?>">
 			<i class="eicon-chevron-right" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php echo esc_html__( 'Save Options', 'elementor' ); ?></span>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<p class="elementor-last-edited-wrapper">
@@ -158,7 +148,7 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 </script>
 
 <script type="text/template" id="tmpl-elementor-mode-switcher-content">
-	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview" title="<?php esc_attr_e( 'Hide Panel', 'elementor' ); ?>">
+	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview" title="<?php echo esc_attr__( 'Hide Panel', 'elementor' ); ?>">
 		<i class="eicon" aria-hidden="true" tabindex="0"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Hide Panel', 'elementor' ); ?></span>
 	</label>
@@ -293,9 +283,8 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 				var deviceLabel = 'desktop' === device ? '<?php esc_html_e( 'Desktop', 'elementor' ); ?>' : activeBreakpoints[ device ].label,
 					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
 			#>
-				<button class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
+				<button class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}" aria-label="{{ deviceLabel }}">
 					<i class="{{ elementor.config.responsive.icons_map[ device ] }}" aria-hidden="true"></i>
-					<span class="elementor-screen-only">{{ deviceLabel }}</span>
 				</button>
 			<# } );
 		#>
@@ -304,16 +293,14 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
-	<button class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo esc_attr__( 'Dynamic Tags', 'elementor' ); ?>">
+	<button class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo esc_attr__( 'Dynamic Tags', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Dynamic Tags', 'elementor' ); ?>">
 		<i class="eicon-database" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Dynamic Tags', 'elementor' ); ?></span>
 	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-element-color-picker">
-	<button class="elementor-control-element-color-picker e-control-tool" data-tooltip="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>">
+	<button class="elementor-control-element-color-picker e-control-tool" data-tooltip="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>">
 		<i class="eicon-eyedropper" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Color Sampler', 'elementor' ); ?></span>
 	</button>
 </script>
 
