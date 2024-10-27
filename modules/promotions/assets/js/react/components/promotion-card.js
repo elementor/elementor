@@ -8,6 +8,8 @@ import {
 	Button,
 	CloseButton,
 	Stack,
+	List,
+	ListItem,
 } from '@elementor/ui';
 
 const PromotionCard = ( { doClose, promotionsData } ) => {
@@ -36,10 +38,15 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 					} } onClick={ doClose } />
 				</Stack>
 				<Image src={ imgSrc } alt={ imgAlt } sx={ { height: 150, width: '100%' } } />
-				<Stack py={ 1 } px={ 2 }>
-					{ description.map( ( e, index ) => {
-						return ( <Typography key={ index } variant="body2" color="secondary">&bull; { e }</Typography> );
-					} ) }
+				<Stack px={ 2 }>
+					<List sx={ { listStyle: 'disc', listStylePosition: 'outside', pl: 1 } }>
+						{ description.map( ( e, index ) => { return (
+							<ListItem key={ index } sx={ { listStyle: 'disc', display: 'list-item', color: 'text.secondary', p: 0 } }>
+								<Typography variant="body2" color="secondary">{ e }</Typography>
+							</ListItem>
+						)
+						} ) }
+					</List>
 				</Stack>
 				<Stack pt={ 1 } pb={ 1.5 } px={ 2 }>
 					<Button
