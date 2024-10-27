@@ -503,14 +503,13 @@ class Widget_Alert extends Widget_Base {
 			<?php endif; ?>
 
 			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
-			<button type="button" class="elementor-alert-dismiss">
+			<button type="button" class="elementor-alert-dismiss" aria-label="<?php echo esc_attr__( 'Dismiss this alert.', 'elementor' ); ?>">
 				<?php
 				if ( ! empty( $settings['dismiss_icon']['value'] ) ) {
 					Icons_Manager::render_icon( $settings['dismiss_icon'], [ 'aria-hidden' => 'true' ] );
 				} else { ?>
 					<span aria-hidden="true">&times;</span>
 				<?php } ?>
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
 			</button>
 			<?php endif; ?>
 
@@ -559,13 +558,12 @@ class Widget_Alert extends Widget_Base {
 			<# } #>
 
 			<# if ( 'show' === settings.show_dismiss ) { #>
-			<button type="button" class="elementor-alert-dismiss">
+			<button type="button" class="elementor-alert-dismiss" aria-label="<?php echo esc_attr__( 'Dismiss this alert.', 'elementor' ); ?>">
 				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 				{{{ iconHTML.value }}}
 				<# } else { #>
 					<span aria-hidden="true">&times;</span>
 				<# } #>
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
 			</button>
 			<# } #>
 
