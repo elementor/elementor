@@ -29,7 +29,7 @@ class Create_Pages extends Step_Base {
 	}
 
 	public function get_description() : string {
-		return esc_html__( 'Jumpstart your creation with professional designs form the Template Library or start from scratch.', 'elementor' );
+		return esc_html__( 'Jumpstart your creation with professional designs from the Template Library or start from scratch.', 'elementor' );
 	}
 
 	public function get_cta_text() : string {
