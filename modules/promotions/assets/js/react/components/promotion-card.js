@@ -40,11 +40,12 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 				<Image src={ imgSrc } alt={ imgAlt } sx={ { height: 150, width: '100%' } } />
 				<Stack px={ 2 }>
 					<List sx={ { listStyle: 'disc', listStylePosition: 'outside', pl: 1 } }>
-						{ description.map( ( e, index ) => { return (
+						{ description.map( ( e, index ) => {
+							return (
 							<ListItem key={ index } sx={ { listStyle: 'disc', display: 'list-item', color: 'text.secondary', p: 0 } }>
 								<Typography variant="body2" color="secondary">{ e }</Typography>
 							</ListItem>
-						)
+						);
 						} ) }
 					</List>
 				</Stack>
