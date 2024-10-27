@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import TextField from '@elementor/ui/TextField';
 import { useEffect, useRef, useState } from 'react';
 
-const { ColorPicker, ColorIndicator } = wp.components;
+const { ColorPicker, ColorIndicator } = wp?.components ?? {};
 
 const ColorInput = ( { label, color, onChange } ) => {
 	const [ isOpened, setIsOpened ] = useState( false );

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useState } from '@wordpress/element';
 import { LOCATIONS } from '../editor/pages/form-media/constants';
 
-const UnifyProductImages = ( { productsImages } ) => {
+const UnifyProductImages = ( { productsImages, setProductImages } ) => {
 	const [ isOpen, setIsOpen ] = useState( true );
 
 	const handleClose = () => {
@@ -20,7 +20,10 @@ const UnifyProductImages = ( { productsImages } ) => {
 					getControlValue={ () => ( {
 						images: productsImages,
 					} ) }
-					setControlValue={ () => {} }
+					setControlValue={ ( productImage ) => setProductImages(
+						productImage.url,
+						productImage.image.productId,
+					) }
 					onClose={ handleClose }
 					isRTL={ elementorCommon.config.isRTL }
 					additionalOptions={ {
@@ -33,6 +36,7 @@ const UnifyProductImages = ( { productsImages } ) => {
 
 UnifyProductImages.propTypes = {
 	productsImages: PropTypes.arrayOf( PropTypes.object ),
+	setProductImages: PropTypes.func,
 };
 
 export default UnifyProductImages;

@@ -25,10 +25,25 @@ import UnifyProductImages from './unify-product-images';
 						return;
 					}
 
+					async function setProductImages( url, productId ) {
+						$.post(
+							window.UnifyProductImagesConfig.set_product_images_url,
+							{
+								action: 'elementor-ai-set-product-images',
+								nonce: window.UnifyProductImagesConfig.nonce,
+								product_id: productId,
+								image_url: url,
+							},
+							function( response ) {
+								return !! ( response.success && response.data.product_images );
+							},
+						);
+					}
+
 					$.post(
-						window.UnifyProductImagesConfig.ajax_url,
+						window.UnifyProductImagesConfig.get_product_images_url,
 						{
-							action: selectedAction,
+							action: 'elementor-ai-get-product-images',
 							nonce: window.UnifyProductImagesConfig.nonce,
 							post_ids: postIds,
 						},
@@ -40,7 +55,7 @@ import UnifyProductImages from './unify-product-images';
 								container.id = 'e-ai-woocommerce-unify-product-images';
 								wpContentContainer.appendChild( container );
 								const root = createRoot( container );
-								root.render( <UnifyProductImages productsImages={ response.data.product_images } /> );
+								root.render( <UnifyProductImages productsImages={ response.data.product_images } setProductImages={ setProductImages } /> );
 							}
 						},
 					);

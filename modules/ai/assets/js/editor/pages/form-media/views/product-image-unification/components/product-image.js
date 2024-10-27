@@ -2,9 +2,11 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import useProductImageUnification from '../hooks/use-product-image-unification';
 import { IMAGE_BACKGROUND_COLOR, IMAGE_RATIO } from '../../../hooks/use-prompt-settings';
+import useImageActions from '../../../hooks/use-image-actions';
 
 const ProductImage = ( { productId, ratio, bgColor, image, onUpdate } ) => {
-	const { data, isLoading, error, send } = useProductImageUnification( {
+	const { isLoading: isUploading } = useImageActions();
+	const { data, isLoading: isGenerating, error, send } = useProductImageUnification( {
 		productId,
 		[ IMAGE_RATIO ]: ratio,
 		[ IMAGE_BACKGROUND_COLOR ]: bgColor,
@@ -12,9 +14,9 @@ const ProductImage = ( { productId, ratio, bgColor, image, onUpdate } ) => {
 
 	useEffect( () => {
 		if ( onUpdate ) {
-			onUpdate( data, isLoading, error, send, productId, ratio, bgColor, image );
+			onUpdate( data, isGenerating || isUploading, error, send, productId, ratio, bgColor, image );
 		}
-	}, [ data, isLoading, error, send, productId, ratio, bgColor, image, onUpdate ] );
+	}, [ data, isGenerating, error, send, productId, ratio, bgColor, image, isUploading, onUpdate ] );
 
 	return <div style={ { visibility: 'hidden' } }></div>;
 };

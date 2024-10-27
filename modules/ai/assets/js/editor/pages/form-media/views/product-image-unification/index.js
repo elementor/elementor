@@ -3,7 +3,6 @@ import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
-import useImageActions from '../../hooks/use-image-actions';
 import { useEditImage } from '../../context/edit-image-context';
 import usePromptSettings, { IMAGE_BACKGROUND_COLOR, IMAGE_RATIO } from '../../hooks/use-prompt-settings';
 import { useRequestIds } from '../../../../context/requests-ids';
@@ -14,6 +13,7 @@ import GenerateSubmit from '../../components/generate-submit';
 import ImagesDisplay from '../../components/images-display';
 import ProductImage from './components/product-image';
 import ImageActions from '../../components/image-actions';
+import useImageActions from '../../hooks/use-image-actions';
 
 const ProductImageUnification = () => {
 	const { setGenerate } = useRequestIds();
@@ -21,11 +21,10 @@ const ProductImageUnification = () => {
 	const { settings, updateSettings } = usePromptSettings( );
 	const [ productsData, setProductsData ] = useState( );
 	const [ data, setData ] = useState( [] );
-	const [ isGenerating, setIsGenerating ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( false );
 	const [ error, setError ] = useState( '' );
 	const [ wasGeneratedOnce, setWasGeneratedOnce ] = useState( false );
-	const { use, isLoading: isUploading } = useImageActions();
-	const isLoading = isGenerating || isUploading;
+	const { useMultipleImages } = useImageActions();
 	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ settings ] );
 	const generatedBgColor = useMemo( () => settings[ IMAGE_BACKGROUND_COLOR ], [ settings ] );
 	const onProductUpdate = useCallback( ( res, isLoadingResult, errorGenerating, req, productId, ratio, bgColor, image ) => {
@@ -61,14 +60,14 @@ const ProductImageUnification = () => {
 			return resultElement ? { ...resultElement, productId: productData.productId, seed: productData.productId }
 				: { ...productData.res?.image, seed: productData.productId };
 		} );
-		const newIsGenerating = Object.values( productsData ).some( ( { isLoadingResult } ) => isLoadingResult );
+		const newIsLoading = Object.values( productsData ).some( ( { isLoadingResult } ) => isLoadingResult );
 		const isError = Object.values( productsData ).every( ( { errorGenerating } ) => errorGenerating );
 
 		setData( ( prevData ) => {
 			return JSON.stringify( prevData ) !== JSON.stringify( newData ) ? newData : prevData;
 		} );
 
-		setIsGenerating( newIsGenerating );
+		setIsLoading( newIsLoading );
 
 		setError( ( prevError ) => {
 			if ( isError ) {
@@ -120,16 +119,27 @@ const ProductImageUnification = () => {
 					images={ data }
 					cols={ getCols( data.length ?? 1 ) }
 				/>
-				{ wasGeneratedOnce && ! error && ! isLoading && <ImageActions.UseImage onClick={ () => use( date ) } /> }
+				{ wasGeneratedOnce && ! error && data.length &&
+					<ImageActions.UseImage onClick={ async () => {
+						const imagesToSave = data.filter( ( img ) => img.productId !== undefined )
+							.map( ( img ) => ( {
+								...img,
+								editor_post_id: img.productId,
+								unique_id: `ai-product-unification-${ img.productId }`,
+							} ) );
+						// eslint-disable-next-line react-hooks/rules-of-hooks
+						await useMultipleImages( imagesToSave );
+					} } />
+				}
 			</View.Content>
 			{ products.images
 				?.filter( ( img ) => img.product_id )
-				.map( ( ( img ) => <ProductImage key={ `product-${ img.product_id }` }
+				.map( ( img ) => <ProductImage key={ `product-${ img.product_id }` }
 					productId={ img.product_id }
 					ratio={ settings[ IMAGE_RATIO ] }
 					bgColor={ settings[ IMAGE_BACKGROUND_COLOR ] }
 					image={ img }
-					onUpdate={ onProductUpdate } /> ) ) }
+					onUpdate={ onProductUpdate } /> ) }
 		</View>
 	);
 };
