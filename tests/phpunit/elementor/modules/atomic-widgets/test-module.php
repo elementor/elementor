@@ -3,9 +3,6 @@ namespace Elementor\Testing\Modules\AtomicWidgets;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Types_Registry;
-use Elementor\Modules\AtomicWidgets\PropTypes\String_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 

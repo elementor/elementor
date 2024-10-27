@@ -161,7 +161,7 @@ class Steps_Manager {
 	}
 
 	/**
-	 * Using step data->id, instanciates and returns the step class or null if the class does not exist
+	 * Using step data->id, instantiates and returns the step class or null if the class does not exist
 	 *
 	 * @param $step_data
 	 *
@@ -175,7 +175,7 @@ class Steps_Manager {
 		}
 
 		/** @var Step_Base $step */
-		return new $class_name( $this->module, $this->module->get_wordpress_adapter(), $this->module->get_kit_adapter() );
+		return new $class_name( $this->module, $this->module->get_wordpress_adapter(), $this->module->get_elementor_adapter() );
 	}
 
 	private function filter_steps() {
