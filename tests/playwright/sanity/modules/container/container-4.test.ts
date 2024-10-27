@@ -53,19 +53,11 @@ test.describe( 'Container tests @container', () => {
 	test( 'Convert to container does not show when only containers are on the page', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
-		const hasTopBar = await editor.hasTopBar();
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await editor.addWidget( widgets.button, containerId );
-
-		if ( hasTopBar ) {
-			await editor.publishPage();
-			await page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
-		} else {
-			await page.locator( '#elementor-panel-saver-button-publish-label' ).click();
-			await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
-		}
-
+		await editor.publishPage();
+		await page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
 		await page.reload();
 		await editor.waitForPanelToLoad();
 
