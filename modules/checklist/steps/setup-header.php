@@ -63,7 +63,7 @@ class Setup_Header extends Step_Base {
 	}
 
 	public function get_description() : string {
-		return esc_html__( 'This element apply across different pages, so visitors can easily navigate around your site.', 'elementor' );
+		return esc_html__( 'This element applies across different pages, so visitors can easily navigate around your site.', 'elementor' );
 	}
 
 	public function get_cta_text() : string {
