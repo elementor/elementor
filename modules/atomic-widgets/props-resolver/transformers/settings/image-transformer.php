@@ -3,14 +3,13 @@
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Image_Transformer extends Transformer_Base {
-	public function transform( $value ) {
+	public function transform( $value, $key ) {
 		if ( ! empty( $value['src']['id'] ) ) {
 			$image_src = wp_get_attachment_image_src(
 				(int) $value['src']['id'],

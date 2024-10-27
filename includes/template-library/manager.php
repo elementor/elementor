@@ -70,10 +70,6 @@ class Manager {
 		$this->add_actions();
 	}
 
-	public function set_wordpress_adapter( Wordpress_Adapter_Interface $wordpress_adapter ) {
-		$this->wordpress_adapter = $wordpress_adapter;
-	}
-
 	/**
 	 * @since 2.3.0
 	 * @access public
@@ -99,6 +95,10 @@ class Manager {
 		}
 
 		return $this->_import_images;
+	}
+
+	public function set_wordpress_adapter( Wordpress_Adapter_Interface $wordpress_adapter ) {
+		$this->wordpress_adapter = $wordpress_adapter;
 	}
 
 	/**
@@ -366,15 +366,7 @@ class Manager {
 			return $validate_args;
 		}
 
-		if ( null === $this->wordpress_adapter ) {
-			$this->set_wordpress_adapter( new WordPress_Adapter() );
-		}
-
-		$post_id = intval( $args['template_id'] );
-		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
-		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status && ! $this->wordpress_adapter->current_user_can( 'edit_post', $post_id ) );
-
-		if ( $is_private_or_non_published || ! $this->wordpress_adapter->current_user_can( 'edit_post', $post_id ) ) {
+		if ( ! $this->is_allowed_to_read_template( $args ) ) {
 			return new \WP_Error(
 				'template_error',
 				esc_html__( 'You do not have permission to access this template.', 'elementor' )
@@ -763,5 +755,21 @@ class Manager {
 		}
 
 		return true;
+	}
+
+	private function is_allowed_to_read_template( array $args ): bool {
+		if ( 'remote' === $args['source'] ) {
+			return true;
+		}
+
+		if ( null === $this->wordpress_adapter ) {
+			$this->set_wordpress_adapter( new WordPress_Adapter() );
+		}
+
+		$post_id = intval( $args['template_id'] );
+		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
+		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status );
+
+		return $is_private_or_non_published || ! $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
 	}
 }
