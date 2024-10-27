@@ -1832,13 +1832,7 @@ class Container extends Element_Base {
 					? $control_name . '_' . $breakpoint
 					: $control_name;
 
-			if ( ! isset( $element['settings'][ $control ] ) ) {
-				continue;
-			}
-
-			$already_using_gaps_control = isset( $element['settings'][ $control ]['isLinked'] ); // Slider control won't have the 'isLinked' property.
-
-			if ( ! $already_using_gaps_control ) {
+			if ( isset( $element['settings'][ $control ] ) ) {
 				$old_size = strval( $element['settings'][ $control ]['size'] );
 
 				$element['settings'][ $control ]['column'] = $old_size;
