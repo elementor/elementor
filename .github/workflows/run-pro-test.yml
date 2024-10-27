@@ -9,17 +9,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Trigger the remote workflow and wait for its completion
       - name: Trigger remote workflow and wait
-        uses: anecdotes-ai/remote-workflow-control@latest
+        uses: convictional/trigger-workflow-and-wait@v1.6.5
         with:
-          github-auth-token: ${{ secrets.MAINTAIN_TOKEN }}
-          workflow-org: 'elementor'
-          workflow-repo: 'elementor-pro'
-          workflow-yaml: 'playwright.yml'
-          workflow-branch: 'main'
-          workflow-inputs: '{\"event_type\": \"run-from-core\"}'
-          wait-timeout-in-minutes: '20'
+          owner: elementor
+          repo: elementor-pro
+          github_token: ${{ secrets.MAINTAIN_TOKEN }}
+          github_user: elementorbot
+          workflow_file_name: playwright.yml
+          ref: main
+          wait_interval: 10
+          client_payload: '{"event_type": "run-from-core"}'
+          propagate_failure: true
+          trigger_workflow: true
+          wait_workflow: true
 
       # Step 2: Handle success/failure
       - name: Check conclusion
