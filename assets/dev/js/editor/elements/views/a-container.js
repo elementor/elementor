@@ -77,6 +77,44 @@ const AContainerView = BaseElementView.extend( {
 
 		this.$el.addClass( this.getContainer().settings.get( 'classes' ).value[ 0 ] );
 	},
+
+	onRender() {
+		BaseElementView.prototype.onRender.apply( this, arguments );
+
+		// Defer to wait for everything to render.
+		setTimeout( () => {
+			this.droppableInitialize();
+		} );
+	},
+
+	droppableInitialize( settings ) {
+		this.$el.html5Droppable( this.getDroppableOptions() );
+	},
+
+	isDroppingAllowed() {
+		return true;
+	},
+
+	getDroppableOptions() {
+		return {
+			items: ' > .elementor-empty-view > .elementor-first-add',
+			axis: [ 'vertical' ],
+			groups: [ 'elementor-element' ],
+			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
+			currentElementClass: 'elementor-html5dnd-current-element',
+			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
+			hasDraggingOnChildClass: 'elementor-dragging-on-child',
+			onDropping: ( side, event ) => {
+				// Triggering drag end manually, since it won't fired above iframe
+				elementor.getPreviewView().onPanelElementDragEnd();
+	
+				this.onDrop(
+					event,
+					{ side, at: 0 },
+				);
+			},
+		}
+	},
 } );
 
 module.exports = AContainerView;
