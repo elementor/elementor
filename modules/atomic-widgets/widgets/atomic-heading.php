@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,8 +30,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$tag = $settings['tag'];
 		$title = $settings['title'];
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			echo $title;
+			return;
+		}
+
+		$tag = $settings['tag'];
 		$attrs = array_filter( [
 			'class' => $settings['classes'] ?? '',
 		] );
