@@ -8,17 +8,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Corners_Prop_Type extends Object_Prop_Type {
+class Border_Width_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'corners';
+		return 'border-width';
 	}
 
 	protected function define_shape(): array {
 		return [
-			'topLeft' => Size_Prop_Type::make(),
-			'topRight' => Size_Prop_Type::make(),
-			'bottomRight' => Size_Prop_Type::make(),
-			'bottomLeft' => Size_Prop_Type::make(),
+			'top' => Size_Prop_Type::make(),
+			'right' => Size_Prop_Type::make(),
+			'bottom' => Size_Prop_Type::make(),
+			'left' => Size_Prop_Type::make(),
 		];
 	}
 }
