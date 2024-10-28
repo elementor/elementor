@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Widgets;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -47,6 +48,31 @@ class Atomic_Container extends Atomic_Element_Base {
 
 	protected function content_template() {
 		?>
+		<?php
+	}
+
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+		$settings = $this->get_atomic_settings();
+
+		$this->add_render_attribute( '_wrapper', [
+			'class' => [
+				'e-con',
+				'a-con',
+				$settings['classes'] ?? '',
+			],
+		] );
+	}
+
+	public function before_render() {
+		?>
+		<div <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
+		<?php
+	}
+
+	public function after_render() {
+		?>
+		</div>
 		<?php
 	}
 }
