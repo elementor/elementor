@@ -6,6 +6,10 @@ const AContainerView = BaseElementView.extend( {
 
 	emptyView: AEmptyView,
 
+	tagName() {
+		return this.model.getSetting( 'tag' ) || 'div';
+	},
+
 	getChildViewContainer() {
 		this.childViewContainer = '';
 

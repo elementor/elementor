@@ -2,7 +2,10 @@
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -28,13 +31,34 @@ class Atomic_Container extends Atomic_Element_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		return [];
+		return [
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_items( [
+					Select_Control::bind_to( 'tag' )
+						->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
+						->set_options( [
+							[
+								'value' => 'div',
+								'label' => 'Div',
+							],
+							[
+								'value' => 'header',
+								'label' => 'Header',
+							],
+						]),
+				]),
+		];
 	}
 
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
+
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'div', 'header' ] )
+				->default( 'div' ),
 		];
 	}
 
@@ -42,7 +66,7 @@ class Atomic_Container extends Atomic_Element_Base {
 		if ( 'a-container' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( 'a-container' );
 		}
-		
+
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 
@@ -66,13 +90,29 @@ class Atomic_Container extends Atomic_Element_Base {
 
 	public function before_render() {
 		?>
-		<div <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
+		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
 	}
 
 	public function after_render() {
 		?>
 		</div>
+		</<?php $this->print_html_tag(); ?>>
 		<?php
+	}
+
+	/**
+	 * Print safe HTML tag for the element based on the element settings.
+	 *
+	 * @return void
+	 */
+	protected function print_html_tag() {
+		$html_tag = $this->get_atomic_settings()['tag'] ?? null;
+
+		if ( empty( $html_tag ) ) {
+			$html_tag = 'div';
+		}
+
+		Utils::print_validated_html_tag( $html_tag );
 	}
 }
