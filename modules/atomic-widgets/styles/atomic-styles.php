@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Base\Atomic_Element_Base;
 use Elementor\Plugin;
 
 class Atomic_Styles {
@@ -48,7 +49,10 @@ class Atomic_Styles {
 	}
 
 	private function parse_element_style( Post $post, Element_Base $element ) {
-		if ( ! ( $element instanceof Atomic_Widget_Base ) || Post::class !== get_class( $post ) ) {
+		if ( 
+			! ( $element instanceof Atomic_Widget_Base || $element instanceof Atomic_Element_Base ) 
+			|| Post::class !== get_class( $post ) 
+		) {
 			return;
 		}
 
