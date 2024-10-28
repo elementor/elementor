@@ -2,10 +2,10 @@
 namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
-use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Validators\Styles_Validator;
 use Elementor\Utils;
 use Elementor\Widget_Base;
