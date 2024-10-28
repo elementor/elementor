@@ -71,6 +71,12 @@ const AContainerView = BaseElementView.extend( {
 			this.ui.percentsTooltip.hide();
 		}
 	},
+
+	renderOnChange( settings ) {
+		BaseElementView.prototype.renderOnChange.apply( this, arguments );
+
+		this.$el.addClass( this.getContainer().settings.get( 'classes' ).value[ 0 ] );
+	},
 } );
 
 module.exports = AContainerView;
