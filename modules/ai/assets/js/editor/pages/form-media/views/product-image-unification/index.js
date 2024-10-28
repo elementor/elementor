@@ -19,19 +19,30 @@ const ProductImageUnification = () => {
 	const { setGenerate } = useRequestIds();
 	const { editImage: products } = useEditImage();
 	const { settings, updateSettings } = usePromptSettings( );
-	const [ productsData, setProductsData ] = useState( );
-	const [ data, setData ] = useState( [] );
+	const [ productsData, setProductsData ] = useState( {} );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ error, setError ] = useState( '' );
 	const [ wasGeneratedOnce, setWasGeneratedOnce ] = useState( false );
 	const { useMultipleImages } = useImageActions();
+	const [ isSavingImages, setIsSavingImages ] = useState( false );
+	const use = useCallback( async () => {
+		setIsSavingImages( true );
+		const imagesToSave = Object.values( productsData )
+			.filter( ( product ) => product.data?.isChecked && product.data?.productId !== undefined )
+			.map( ( product ) => ( {
+				...product.data,
+				editor_post_id: product.data.productId,
+				unique_id: `ai-product-unification-${ product.data.productId }`,
+			} ) );
+		// eslint-disable-next-line react-hooks/rules-of-hooks
+		await useMultipleImages( imagesToSave );
+	}, [ productsData, setIsSavingImages, useMultipleImages ] );
 	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ settings ] );
 	const generatedBgColor = useMemo( () => settings[ IMAGE_BACKGROUND_COLOR ], [ settings ] );
 	const onProductUpdate = useCallback( ( res, isLoadingResult, errorGenerating, req, productId, ratio, bgColor, image ) => {
 		setProductsData( ( prevState ) => ( { ...prevState, [ productId ]: {
 			productId,
 			res,
-			isLoadingResult,
 			errorGenerating,
 			req: ( () => req( {
 				postId: productId,
@@ -40,32 +51,32 @@ const ProductImageUnification = () => {
 					[ IMAGE_BACKGROUND_COLOR ]: bgColor,
 				},
 				image,
-			} ) ) } } ) );
+			} ) ),
+			data: {
+				productId,
+				...( ! errorGenerating ? res?.result?.[ 0 ] ?? image : {} ),
+				seed: productId,
+				isChecked: prevState?.data?.isChecked ?? true,
+				isLoading: isLoadingResult,
+			} } } ) );
 	}, [] );
+	const errorlessProducts = Object.values( productsData ).filter( ( product ) => ! product.errorGenerating );
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
 		setGenerate();
 		setWasGeneratedOnce( true );
-		Object.values( productsData ).forEach( ( product ) => product.req() );
+		errorlessProducts.filter( ( product ) => product.data?.isChecked && product.req )
+			.forEach( ( product ) => product.req() );
 	};
 
 	useEffect( () => {
-		if ( ! productsData ) {
+		if ( ! errorlessProducts.length ) {
 			return;
 		}
 
-		const newData = Object.values( productsData ).map( ( productData ) => {
-			const resultElement = productData.res?.result?.[ 0 ];
-			return resultElement ? { ...resultElement, productId: productData.productId, seed: productData.productId }
-				: { ...productData.res?.image, seed: productData.productId };
-		} );
-		const newIsLoading = Object.values( productsData ).some( ( { isLoadingResult } ) => isLoadingResult );
+		const newIsLoading = errorlessProducts.some( ( { data } ) => data?.isLoadingResult );
 		const isError = Object.values( productsData ).every( ( { errorGenerating } ) => errorGenerating );
-
-		setData( ( prevData ) => {
-			return JSON.stringify( prevData ) !== JSON.stringify( newData ) ? newData : prevData;
-		} );
 
 		setIsLoading( newIsLoading );
 
@@ -95,6 +106,7 @@ const ProductImageUnification = () => {
 							label={ __( 'Background Color', 'elementor' ) }
 							color={ generatedBgColor }
 							onChange={ ( color ) => updateSettings( { [ IMAGE_BACKGROUND_COLOR ]: color } ) }
+							disabled={ isLoading }
 						/>
 						<ImageRatioSelect
 							disabled={ isLoading }
@@ -114,28 +126,26 @@ const ProductImageUnification = () => {
 
 				</ImageForm>
 			</View.Panel>
-			<View.Content isGenerating={ false }>
+			<View.Content isGenerating={ isSavingImages }>
 				<ImagesDisplay
-					images={ data }
-					cols={ getCols( data.length ?? 1 ) }
+					images={ errorlessProducts.map( ( product ) => product.data ) }
+					cols={ getCols( errorlessProducts.length ?? 1 ) }
+					overlay={ false }
+					onSelectChange={ ( productId, isChecked ) => setProductsData( ( prevState ) => {
+						if ( prevState[ productId ]?.data ) {
+							prevState[ productId ].data.isChecked = isChecked;
+						}
+						return { ...prevState };
+					} ) }
 				/>
-				{ wasGeneratedOnce && ! error && data.length &&
-					<ImageActions.UseImage onClick={ async () => {
-						const imagesToSave = data.filter( ( img ) => img.productId !== undefined )
-							.map( ( img ) => ( {
-								...img,
-								editor_post_id: img.productId,
-								unique_id: `ai-product-unification-${ img.productId }`,
-							} ) );
-						// eslint-disable-next-line react-hooks/rules-of-hooks
-						await useMultipleImages( imagesToSave );
-					} } />
+				{ wasGeneratedOnce && ! error && errorlessProducts.length &&
+					<ImageActions.UseImage onClick={ use } />
 				}
 			</View.Content>
 			{ products.images
-				?.filter( ( img ) => img.product_id )
-				.map( ( img ) => <ProductImage key={ `product-${ img.product_id }` }
-					productId={ img.product_id }
+				?.filter( ( img ) => img.productId )
+				.map( ( img ) => <ProductImage key={ `product-${ img.productId }` }
+					productId={ img.productId }
 					ratio={ settings[ IMAGE_RATIO ] }
 					bgColor={ settings[ IMAGE_BACKGROUND_COLOR ] }
 					image={ img }

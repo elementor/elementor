@@ -24,6 +24,8 @@ const ImagesDisplay = ( {
 	onEditImage = null,
 	transparentContainer = false,
 	cols = 2,
+	overlay = true,
+	onSelectChange = null,
 } ) => {
 	const { zoomIndex, setZoomIndex, actions } = useImageNavigation( images );
 
@@ -83,6 +85,9 @@ const ImagesDisplay = ( {
 							aspectRatio={ aspectRatio }
 							data-testid="e-gallery-image"
 							numImagesInRow={ cols }
+							overlay={ overlay }
+							onSelectChange={ onSelectChange ? ( isChecked ) => onSelectChange( image.productId, isChecked ) : null }
+							isLoading={ image.isLoading }
 						>
 							<ImageActions>
 								{ onUseImage && <ImageActions.UseImage onClick={ () => onUseImage( image ) } size="medium"
@@ -108,6 +113,8 @@ ImagesDisplay.propTypes = {
 	onEditImage: PropTypes.func,
 	transparentContainer: PropTypes.bool,
 	cols: PropTypes.number,
+	overlay: PropTypes.bool,
+	onSelectChange: PropTypes.func,
 };
 
 ImagesDisplay.Container = Container;

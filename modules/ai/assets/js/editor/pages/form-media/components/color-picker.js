@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const { ColorPicker, ColorIndicator } = wp?.components ?? {};
 
-const ColorInput = ( { label, color, onChange } ) => {
+const ColorInput = ( { label, color, onChange, disabled } ) => {
 	const [ isOpened, setIsOpened ] = useState( false );
 	const anchorEl = useRef( );
 	const [ zIndex, setZIndex ] = useState( 170001 );
@@ -57,7 +57,7 @@ const ColorInput = ( { label, color, onChange } ) => {
 	return (
 		<div
 			className="el-ai-color-input-wrapper"
-			style={ { display: 'flex', alignItems: 'center' } }
+			style={ { display: 'flex', alignItems: 'center', ...( disabled ? { pointerEvents: 'none', opacity: 0.5 } : {} ) } }
 		>
 			<FormLabel sx={ { whiteSpace: 'nowrap', flex: 4 } }>{ label }</FormLabel>
 			<ColorIndicator
@@ -138,6 +138,7 @@ ColorInput.propTypes = {
 	label: PropTypes.string,
 	color: PropTypes.string,
 	onChange: PropTypes.func.isRequired,
+	disabled: PropTypes.bool,
 };
 
 export default ColorInput;

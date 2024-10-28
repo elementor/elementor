@@ -31,11 +31,13 @@ import UnifyProductImages from './unify-product-images';
 							{
 								action: 'elementor-ai-set-product-images',
 								nonce: window.UnifyProductImagesConfig.nonce,
-								product_id: productId,
+								productId,
 								image_url: url,
 							},
 							function( response ) {
-								return !! ( response.success && response.data.product_images );
+								if ( response.success && response.data.refresh ) {
+									location.reload();
+								}
 							},
 						);
 					}
@@ -59,7 +61,7 @@ import UnifyProductImages from './unify-product-images';
 							}
 						},
 					);
-				} finally {
+				} catch ( _ ) {
 					$( this ).off( 'click' );
 				}
 			} );

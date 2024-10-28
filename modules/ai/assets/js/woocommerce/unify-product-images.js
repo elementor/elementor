@@ -28,6 +28,7 @@ const UnifyProductImages = ( { productsImages, setProductImages } ) => {
 					isRTL={ elementorCommon.config.isRTL }
 					additionalOptions={ {
 						location: LOCATIONS.PRODUCT_IMAGE_UNIFICATION,
+						withoutHistory: true,
 					} }
 				/> }
 			</RequestIdsProvider>

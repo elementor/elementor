@@ -224,7 +224,7 @@ class Module extends BaseModule {
 			}
 
 			$image_ids[] = [
-				'product_id' => $post_id,
+				'productId' => $post_id,
 				'id'   => $image_id ? $image_id : 'No Image',
 				'image_url' => $image_id ? wp_get_attachment_url( $image_id ) : 'No Image',
 			];
@@ -253,7 +253,7 @@ class Module extends BaseModule {
 	public function set_product_images_ajax() {
 		check_ajax_referer( 'elementor-ai-unify-product-images_nonce', 'nonce' );
 
-		$product_id = $_POST['product_id'];
+		$product_id = $_POST['productId'];
 		$image_url = $_POST['image_url'];
 
 		if (!$product_id || !$image_url) {
@@ -273,7 +273,7 @@ class Module extends BaseModule {
 		$product->set_image_id($attachment_id);
 		$product->save();
 
-		return rest_ensure_response(['message' => 'Image added successfully']);
+		wp_send_json_success(['message' => 'Image added successfully', 'refresh' => true]);
 	}
 
 	public function enqueue_ai_media_library() {

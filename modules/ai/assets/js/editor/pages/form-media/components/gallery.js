@@ -1,9 +1,10 @@
-import { ImageList, ImageListItem, Box } from '@elementor/ui';
+import { Box, Checkbox, ImageList, ImageListItem, Skeleton } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import Overlay from '../../../components/ui/overlay';
 import OverlayBar from '../../../components/ui/overlay-bar';
 import OverlayBarText from '../../../components/ui/overlay-bar-text';
 import { IMAGE_ASPECT_RATIO } from '../constants';
+import { useState } from 'react';
 
 const aspectRatios = Object.keys( IMAGE_ASPECT_RATIO );
 
@@ -28,8 +29,12 @@ const GalleryImage = ( {
 	variant = 'contained',
 	OverlayBarProps = {},
 	numImagesInRow = 2,
+	overlay = true,
+	onSelectChange = null,
+	isLoading = false,
 	...props
 } ) => {
+	const [ isChecked, setIsChecked ] = useState( true );
 	const style = {};
 
 	if ( 'thumbnail' === variant ) {
@@ -53,15 +58,31 @@ const GalleryImage = ( {
 				alignItems="center"
 				sx={ {
 					bgcolor: 'action.selected',
-					height: 'contained' === variant ? 672 / numImagesInRow : 'auto',
+					height: 'contained' === variant && numImagesInRow <= 2 ? 336 : 'auto',
 					position: 'relative',
 					overflow: 'hidden',
 				} }
 			>
-				<img alt={ alt } src={ src } style={ style } />
+				<>
+					{ isLoading
+						? <Skeleton sx={ { ...style, width: '100%' } } animation={ 'wave' } variant={ 'rounded' } />
+						: ( <>
+							{ onSelectChange &&
+								<Checkbox color={ 'default' }
+									onClick={ () => {
+										const newVal = ! isChecked;
+										setIsChecked( newVal );
+										onSelectChange( newVal );
+									} }
+									checked={ isChecked }
+									sx={ { position: 'absolute', top: 0, left: 0 } } /> }
+							<img alt={ alt } src={ src } style={ style } />
+						</> )
+					}
+				</>
 			</Box>
 
-			{ children && (
+			{ overlay && children && (
 				<Overlay>
 					<OverlayBar gap={ 1 } position="bottom" { ...OverlayBarProps }>
 						{ text && <OverlayBarText>{ text }</OverlayBarText> }
@@ -84,6 +105,9 @@ GalleryImage.propTypes = {
 	aspectRatio: PropTypes.oneOf( aspectRatios ),
 	variant: PropTypes.oneOf( [ 'contained', 'thumbnail' ] ),
 	numImagesInRow: PropTypes.number,
+	overlay: PropTypes.bool,
+	onSelectChange: PropTypes.func,
+	isLoading: PropTypes.bool,
 };
 
 Gallery.Image = GalleryImage;
