@@ -20,7 +20,7 @@ class Module extends \Elementor\Core\Base\Module {
 				esc_html__( 'Create a rich user experience by layering widgets together inside "Nested" Tabs, etc. When turned on, we’ll automatically enable new nested features. Your old widgets won’t be affected.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'dependencies' => [
 				'container',
