@@ -385,8 +385,7 @@ class Admin_Notices extends Module {
 		$notice_id = 'site_mailer_promotion';
 
 		if (
-			Utils::has_pro()
-			&& ! defined( 'WPFORMS_VERSION' )
+			! defined( 'WPFORMS_VERSION' )
 			&& ! defined( 'WPCF7_VERSION' )
 			&& ! defined( 'FLUENTFORM_VERSION' )
 			&& ! class_exists( '\GFCommon' )
@@ -396,7 +395,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( Utils::has_pro() || ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
 
