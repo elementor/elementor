@@ -100,6 +100,7 @@ class Widgets_Manager {
 			'read-more',
 			'rating',
 			'share-buttons',
+			'playing-cards'
 		];
 
 		$this->_widget_types = [];
@@ -580,6 +581,7 @@ class Widgets_Manager {
 			'testimonial',
 			'text-editor',
 			'video',
+			'playing-cards'
 		];
 	}
 
