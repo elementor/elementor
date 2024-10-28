@@ -701,6 +701,14 @@ class Admin extends App {
 
 		$post_data = Utils::get_super_global_value( $_GET, 'post_data' ) ?? [];
 
+		if ( isset( $post_data['post_status'] ) && $post_data['post_status'] === 'publish' && !current_user_can( 'publish_posts' ) ) {
+			$post_data['post_status'] = 'draft';
+		}
+
+		$allowed_post_data_keys = ['post_title', 'post_content', 'post_excerpt', 'post_status', 'post_type'];
+		$post_data = array_intersect_key( $post_data, array_flip( $allowed_post_data_keys ) );
+		$post_data = array_map( 'sanitize_text_field', $post_data );
+
 		/**
 		 * Create new post meta data.
 		 *
