@@ -801,14 +801,9 @@ class Controls_Manager {
 			'index' => null,
 		];
 
-		$control_type = 'controls';
-		if (
-			Performance::is_optimized_control_loading_feature_enabled()
-			&& Performance::should_optimize_controls()
-			&& $this->is_style_control( $control_data )
-		) {
-			$control_type = 'style_controls';
-		}
+		$control_type = ( Performance::should_optimize_controls() && $this->is_style_control( $control_data ) )
+			? 'style_controls'
+			: 'controls';
 
 		$options = array_merge( $default_options, $options );
 
