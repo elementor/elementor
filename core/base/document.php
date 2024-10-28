@@ -1176,7 +1176,7 @@ abstract class Document extends Controls_Stack {
 		$converted_blocks = [
 			[
 				'id' => Utils::generate_random_string(),
-				'elType' => Widget_Base::get_type(),
+				'elType' => $widget_type::get_type(),
 				'widgetType' => $widget_type->get_name(),
 				'settings' => $settings,
 			],
