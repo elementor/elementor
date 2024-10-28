@@ -79,7 +79,10 @@ const AContainerView = BaseElementView.extend( {
 	renderOnChange( settings ) {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
-		this.$el.addClass( this.getContainer().settings.get( 'classes' ).value[ 0 ] );
+		const classes = this.getContainer().settings.get( 'classes' );
+		if ( classes && classes.value && classes.value[ 0 ] ) {
+			this.$el.addClass( classes.value[ 0 ] );
+		}
 	},
 
 	onRender() {
