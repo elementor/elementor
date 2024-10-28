@@ -148,6 +148,19 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$this->assertEquals( $ret, [ 'content' => [] ] );
 	}
 
+	public function test_should_return_error_from_get_template_data() {
+		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
+		$wordpress_adapter_mock->method( 'current_user_can' )->willReturnOnConsecutiveCalls( [ false, false ] );
+		self::$manager->set_wordpress_adapter( $wordpress_adapter_mock );
+
+		$this->assertWPError( self::$manager->get_template_data(
+			[
+				'source' => 'local',
+				'template_id' => $this->fake_post_id,
+			]
+		), 'template_error' );
+	}
+
 	public function test_get_data__document_without_data() {
 		// Arrange
 		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
