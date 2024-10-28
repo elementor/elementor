@@ -14,6 +14,10 @@ BaseSectionsContainerView = BaseContainer.extend( {
 			case 'container':
 				ChildView = require( 'elementor-elements/views/container' );
 				break;
+
+			case 'a-container':
+				ChildView = require( 'elementor-elements/views/a-container' );
+				break;
 		}
 
 		return ChildView;
@@ -38,7 +42,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	getChildType() {
-		return [ 'section', 'container' ];
+		return [ 'section', 'container', 'a-container' ];
 	},
 
 	initialize() {

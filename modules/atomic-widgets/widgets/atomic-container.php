@@ -44,4 +44,9 @@ class Atomic_Container extends Atomic_Element_Base {
 		
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
+
+	protected function content_template() {
+		?>
+		<?php
+	}
 }

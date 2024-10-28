@@ -93,6 +93,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
+		$config['show_in_panel'] = true;
+		$config['categories'] = [ 'layout' ];
+		$config['hide_on_search'] = false;
+		$config['controls'] = [];
 
 		return $config;
 	}
