@@ -15,9 +15,22 @@ class Corners_Transformer extends Transformer_Base {
 		$dimensions = Collection::make( $value )
 			->only( [ 'topLeft', 'topRight', 'bottomRight', 'bottomLeft' ] )
 			->filter()
-			->map_with_keys( fn( $dimension, $side ) => [ $key . '-' . $side => $dimension ] )
+			->map_with_keys( fn( $dimension, $corner ) => [
+				$this->convertToStyleAttribute( $key, $corner ) => $dimension
+			] )
 			->all();
 
 		return Multi_Props::generate( $dimensions );
+	}
+
+	private function convertToStyleAttribute( $key, $corner ): string {
+		$corner_dash_case = strtolower( preg_replace( '/([a-z])([A-Z])/', '$1-$2', $corner ) );
+		switch( $key ) {
+			case 'border-radius':
+				return 'border-' . $corner_dash_case . '-radius';
+			default:
+				// currently no known CSS attributes that use corner values - so this is just a future-proof fallback
+				return $key . '-' . $corner_dash_case;
+		}
 	}
 }
