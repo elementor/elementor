@@ -731,6 +731,7 @@ abstract class Document extends Controls_Stack {
 			if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 				$container_config = [
 					'container' => Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config(),
+					'a-container' => Plugin::$instance->elements_manager->get_element_types( 'a-container' )->get_config(),
 				];
 			}
 
@@ -1175,7 +1176,7 @@ abstract class Document extends Controls_Stack {
 		$converted_blocks = [
 			[
 				'id' => Utils::generate_random_string(),
-				'elType' => $widget_type::get_type(),
+				'elType' => Widget_Base::get_type(),
 				'widgetType' => $widget_type->get_name(),
 				'settings' => $settings,
 			],
