@@ -364,6 +364,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.24.8 - 2024-10-28 =
+
+* Security Fix: Improved code security enforcement in Template Library
+
 = 3.24.7 - 2024-10-15 =
 
 * Fix: Flow issue preventing progress beyond the Features screen in Onboarding wizard
