@@ -108,6 +108,9 @@ class Manager {
 		$this->wordpress_adapter = $wordpress_adapter;
 	}
 
+	public function set_elementor_adapter( Elementor_Adapter_Interface $elementor_adapter ): void {
+		$this->elementor_adapter = $elementor_adapter;
+	}
 	/**
 	 * Register template source.
 	 *
