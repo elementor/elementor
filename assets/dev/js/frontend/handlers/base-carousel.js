@@ -62,7 +62,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			};
 
 			if ( elementSettings.image_spacing_custom ) {
-				swiperOptions.breakpoints[ elementorBreakpoints[ breakpointName ].value ].spaceBetween = this.getSpaceBetween( breakpointName ) || 0;
+				swiperOptions.breakpoints[ elementorBreakpoints[ breakpointName ].value ].spaceBetween = this.getSpaceBetween( breakpointName );
 			}
 
 			lastBreakpointSlidesToShowValue = +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow;
