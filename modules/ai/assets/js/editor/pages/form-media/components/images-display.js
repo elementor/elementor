@@ -9,7 +9,7 @@ import BackButton from './back-button';
 import SingleImagePreview from './single-image-preview';
 
 const Container = ( { children, sx = {}, ...props } ) => (
-	<Box flexGrow={ 1 } { ...props } sx={ { overflowY: 'scroll', ...sx } }>{ children }</Box>
+	<Box flexGrow={ 1 } { ...props } sx={ { overflowY: 'auto', ...sx } }>{ children }</Box>
 );
 
 Container.propTypes = {
@@ -26,6 +26,7 @@ const ImagesDisplay = ( {
 	cols = 2,
 	overlay = true,
 	onSelectChange = null,
+	checkboxColor,
 } ) => {
 	const { zoomIndex, setZoomIndex, actions } = useImageNavigation( images );
 
@@ -87,6 +88,7 @@ const ImagesDisplay = ( {
 							numImagesInRow={ cols }
 							overlay={ overlay }
 							onSelectChange={ onSelectChange ? ( isChecked ) => onSelectChange( image.productId, isChecked ) : null }
+							checkboxColor={ checkboxColor }
 							isLoading={ image.isLoading }
 						>
 							<ImageActions>
@@ -115,6 +117,7 @@ ImagesDisplay.propTypes = {
 	cols: PropTypes.number,
 	overlay: PropTypes.bool,
 	onSelectChange: PropTypes.func,
+	checkboxColor: PropTypes.string,
 };
 
 ImagesDisplay.Container = Container;

@@ -31,6 +31,7 @@ const GalleryImage = ( {
 	numImagesInRow = 2,
 	overlay = true,
 	onSelectChange = null,
+	checkboxColor = 'rgba(0, 0, 0, 0.54)',
 	isLoading = false,
 	...props
 } ) => {
@@ -68,14 +69,20 @@ const GalleryImage = ( {
 						? <Skeleton sx={ { ...style, width: '100%' } } animation={ 'wave' } variant={ 'rounded' } />
 						: ( <>
 							{ onSelectChange &&
-								<Checkbox color={ 'default' }
+								<Checkbox
 									onClick={ () => {
 										const newVal = ! isChecked;
 										setIsChecked( newVal );
 										onSelectChange( newVal );
 									} }
 									checked={ isChecked }
-									sx={ { position: 'absolute', top: 0, left: 0 } } /> }
+									sx={ {
+										position: 'absolute',
+										top: 0,
+										left: 0,
+										'& .MuiSvgIcon-root': {
+											color: checkboxColor,
+										} } } /> }
 							<img alt={ alt } src={ src } style={ style } />
 						</> )
 					}
@@ -108,6 +115,7 @@ GalleryImage.propTypes = {
 	overlay: PropTypes.bool,
 	onSelectChange: PropTypes.func,
 	isLoading: PropTypes.bool,
+	checkboxColor: PropTypes.string,
 };
 
 Gallery.Image = GalleryImage;
