@@ -364,84 +364,35 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.24.7 - 2024-10-15 =
+= 3.25.1 - 2024-10-28 =
 
-* Fix: Flow issue preventing progress beyond the Features screen in Onboarding wizard
+* Fix: Custom template fails to insert into the page and displays a permission error ([#29076](https://github.com/elementor/elementor/issues/29076))
+* Fix: Global Widgets not displaying correctly on the frontend ([#29076](https://github.com/elementor/elementor/issues/29076))
 
-= 3.24.6 - 2024-10-09 =
+= 3.25.0 - 2024-10-28 =
 
-* Security Fix: Improved code security enforcement in Notices
-* Security Fix: Improved code security enforcement in Media control
-
-= 3.24.5 - 2024-10-01 =
-
-* Fix: Responsive styles not loading properly for Apple WebKit
-* Fix: Responsive styles not loading properly for Lightbox
-
-= 3.24.4 - 2024-09-23 =
-
-* Security Fix: Improved code security enforcement in Heading and Counter widgets
-* Security Fix: Improved code security enforcement in Template Library
-
-= 3.24.3 - 2024-09-18 =
-
-* Fix: 404 console error when loading custom animations ([#28727](https://github.com/elementor/elementor/issues/28727))
-
-= 3.24.2 - 2024-09-13 =
-
-* Fix: Widget styles not loading correctly affecting the layout on front ([#28693](https://github.com/elementor/elementor/issues/28693))
-
-= 3.24.1 - 2024-09-12 =
-
-* Fix: Widget styles not loading correctly on front causing alignment inconsistencies ([#28676](https://github.com/elementor/elementor/issues/28676))
-
-= 3.24.0 - 2024-09-10 =
-
-* New: Introducing Floating Bars - including Call to Action, Ticker, and Coupon Bars, to enhance visitor engagement and boost conversions
-* New: Added Cleanup image edit tool with AI
-* Tweak: Improved performance by loading nested element styles only when they are in use
-* Tweak: Load wp-admin-bar styles only when the user is logged in
-* Tweak: Improved performance by loading Lightbox styles only when they are in use
-* Tweak: Load floating button styles only when they are in use
-* Tweak: Load Link-in-bio styles only when they are in use
-* Tweak: Load text-path styles only when they are in use
-* Tweak: Load shape dividers styles only when they are in use
-* Tweak: Load `flatpickr-calendar` styles only when forms are in use
-* Tweak: Load social icons compatibility styles only when they are in use
-* Tweak: Load dialog styles only when they are in use
-* Tweak: Split `animations.min.css` into multiple CSS files and load them conditionally
-* Tweak: Conditionally loading widget styles only when the respective widgets are used
-* Tweak: Load `get_style_depends()` CSS files in the body to improve CLS
-* Tweak: Removed inline CSS from the "Improved CSS Loading" experiment
-* Tweak: Removed `waypoints.js` library from the code
-* Tweak: Ensured consistent icon shapes in Icon, Icon Box and Social Icons widgets
-* Tweak: Merged "Lazy Load Background Images" feature and moved to the Performance tab
-* Tweak: Merged "Floating Buttons" feature into the version
-* Tweak: Merged "Link In Bio" feature into the version
-* Tweak: Merged "Improved CSS Loading" feature into the version
-* Tweak: Promoted "Editor Top Bar" feature to Stable status
-* Tweak: Activated "Nested Elements" feature by default for new sites
-* Tweak: Removed Floating Elements document from the query control
-* Tweak: Added "Performance" and "Integrations" links to Elementor Finder
-* Tweak: Removed Floating Elements from post types list
-* Tweak: Updated minimum required WordPress version to 6.3
-* Tweak: Updated `flatpickr` library to v4.6.13
-* Tweak: Updated `eicons` library to v5.31.0
-* Tweak: Added the ability for users to opt out of AI features on a per-user basis ([#22796](https://github.com/elementor/elementor/issues/22796), [#22853](https://github.com/elementor/elementor/issues/22853))
-* Tweak: Added the ability to generate container names in the Structure feature using AI
-* Tweak: Added preview functionality in the AI CSS feature
-* Tweak: Enhanced prompts in the Custom CSS feature for improved usability
-* Fix: Similar widgets in subsequent pop-ups do not load properly when Improved CSS Loading is activated ([#21488](https://github.com/elementor/elementor/issues/21488), [#25436](https://github.com/elementor/elementor/issues/25436), [#25436](https://github.com/elementor/elementor/issues/25436))
-* Fix: Element Caching prevented the repeater control from loading Dynamic Tags ([#28137](https://github.com/elementor/elementor/issues/28137))
-* Fix: Improved CSS loading experiment overrides child theme styles and breaks the cascade due to higher specificity ([#15746](https://github.com/elementor/elementor/issues/15746))
-* Fix: Lottie Animation settings inside Popups are overridden when the Improved CSS Loading experiment is activated ([#17814](https://github.com/elementor/elementor/issues/17814))
-* Fix: Prevent duplicate trailing slash from landing pages (props [@diiegopereira](https://github.com/diiegopereira))
-* Fix: Corrected typos in the code (props [@szepeviktor](https://github.com/szepeviktor))
-* Fix: User consent modal is being loaded after the request has been made in Text feature in Elementor AI
-* Fix: Improved code security enforcement in Testimonial widget
-* Fix: Modal doesn't adjust height to content in AI Text
-* Fix: "Full width on mobile" isn't working in the "Single Bar" floating Button
-* Fix: Lightbox video aspect ratio issues on the front
-* Fix: PHP errors caused by using Global Color for container background gradient
+* New: Introducing Optimized Markup as an Alpha experiment - Reduce DOM size by eliminating unnecessary HTML wrappers in various elements and widgets
+* Tweak: Reduced the use of JavaScript for smooth scrolling by implementing a modern CSS-based solution ([#13773](https://github.com/elementor/elementor/issues/13773))
+* Tweak: Updated smooth scroll behavior to respect the user's reduced motion preference setting
+* Tweak: Removed `elementor-button-wrapper` div from Button widget as part of the Optimized Markup experiment
+* Tweak: Load styles for Floating Elements separately to enhance performance
+* Tweak: Load styles for Link in Bio widgets separately to enhance performance
+* Tweak: Optimized `global.css` to exclude style generation for unused widgets
+* Tweak: Removed the Floating Elements modules from `module.js`
+* Tweak: Added "Edit with Elementor" button to WooCommerce's new product editor
+* Tweak: Merged "Build with AI" feature to version
+* Tweak: Merged "Grid Container" to "Flexbox Container" feature
+* Tweak: Activated "Editor Top Bar" feature for existing sites
+* Tweak: Activated "Optimized Control Loading" for existing sites and promoted the feature to stable
+* Tweak: Activated "Nested Elements" feature for existing sites
+* Tweak: Removed compatibility CSS support for the Twenty Fifteen theme
+* Tweak: Renamed the "Flexbox Container" feature to "Container" feature
+* Fix: Expand Icon in the Accordion widget would not display when nested inside another Accordion widget ([#24086](https://github.com/elementor/elementor/issues/24086))
+* Fix: Swiper incorrectly applied the `inert` attribute to a slide in the Nested Carousel ([#23039](https://github.com/elementor/elementor/issues/23039))
+* Fix: Footer would overlap the Archive Posts, Portfolio, and Gallery widgets in mobile view when using the Archive template
+* Fix: "Edit with Elementor AI" button is visible for unsupported file types
+* Fix: Structure panel indicator color is not visible in dark mode
+* Fix: Indentation issue with empty elements in the Structure panel
+* Fix: "Reference a website" feature in Elementor AI failed to work in Safari 17
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
