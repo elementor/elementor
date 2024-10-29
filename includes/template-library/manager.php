@@ -785,9 +785,9 @@ class Manager {
 		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
 		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status );
 
-		$can_edit_template = $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
+		$can_read_template = $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
 
-		return apply_filters( 'elementor/template-library/is_allowed_to_read_template', $can_edit_template, $args );
+		return apply_filters( 'elementor/template-library/is_allowed_to_read_template', $can_read_template, $args );
 	}
 
 	private function should_check_permissions( array $args ): bool {
