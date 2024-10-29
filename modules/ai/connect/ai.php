@@ -401,13 +401,51 @@ class Ai extends Library {
 	}
 
 
+	private function resizeImageIfNeeded($original_url) {
+		try {
+			$max_file_size = 4194304;
+			$current_size = filesize($original_url);
+
+			if ($current_size <= $max_file_size) {
+				return $original_url;
+			}
+
+			$image_editor = wp_get_image_editor($original_url);
+
+			if (is_wp_error($image_editor)) {
+				return $original_url;
+			}
+
+			$dimensions = $image_editor->get_size();
+			$original_width = $dimensions['width'];
+			$original_height = $dimensions['height'];
+
+			$scaling_factor = sqrt($max_file_size / $current_size);
+
+			$new_width = (int)($original_width * $scaling_factor);
+			$new_height = (int)($original_height * $scaling_factor);
+
+			$image_editor->resize($new_width, $new_height, true);
+
+			$file_extension = pathinfo($original_url, PATHINFO_EXTENSION);
+			$temp_image = tempnam(sys_get_temp_dir(), 'resized_') . '.' . $file_extension;
+
+			$image_editor->save($temp_image);
+			return $temp_image;
+		} catch (\Exception $e) {
+			return $original_url;
+		}
+	}
+
 	public function get_unify_product_images( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
 
 		if ( ! $image_file ) {
 			throw new \Exception( 'Image file not found' );
 		}
-		error_log('ajax_ai_get_product_image_unification');
+
+		$finalPath = $this->resizeImageIfNeeded($image_file);
+
 		$result = $this->ai_request(
 			'POST',
 			'image/image-to-image/unify-product-images',
@@ -419,10 +457,13 @@ class Ai extends Library {
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
-			$image_file,
+			$finalPath,
 			'image'
 		);
-		error_log('ajax_ai_get_product_image_unification');
+
+		if ( $image_file !== $finalPath ) {
+			unlink( $finalPath );
+		}
 
 		return $result;
 	}

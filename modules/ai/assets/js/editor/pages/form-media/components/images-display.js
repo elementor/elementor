@@ -63,7 +63,7 @@ const ImagesDisplay = ( {
 		return (
 			<Container flexDirection="column">
 				<SingleImagePreview>
-					<SingleImagePreview.Image src={ image.image_url || image.url } style={ singleImageStyle } alt="generated-image">
+					<SingleImagePreview.Image src={ image.image_url || image.url } style={ singleImageStyle } alt="generated-image" isLoading={ image.isLoading }>
 						<SingleImagePreview.Actions>
 							{ onEditImage && <ImageActions.EditImage onClick={ () => onEditImage( image ) } /> }
 							{ onUseImage && <ImageActions.UseImage onClick={ () => onUseImage( image ) } /> }
