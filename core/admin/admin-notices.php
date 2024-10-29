@@ -395,6 +395,10 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
+		if ( ! $this->is_elementor_page() && ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true ) ) {
+			return false;
+		}
+
 		if ( Utils::has_pro() || ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
@@ -417,11 +421,21 @@ class Admin_Notices extends Module {
 				'url' => $cta_data['url'],
 				'type' => 'cta',
 			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/sm-core-form/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
 		];
 
 		$this->print_admin_notice( $options );
 
 		return true;
+	}
+
+	private function is_elementor_page(): bool {
+		return 0 === strpos( $this->current_screen_id, 'elementor_page' );
 	}
 
 	private function get_plugin_cta_data( $plugin_slug, $plugin_file_path ) {
