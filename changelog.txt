@@ -12,6 +12,7 @@
 
 = 3.25.0 - 2024-10-28 =
 
+
 * New: Introducing Optimized Markup as an Alpha experiment - Reduce DOM size by eliminating unnecessary HTML wrappers in various elements and widgets
 * Tweak: Reduced the use of JavaScript for smooth scrolling by implementing a modern CSS-based solution ([#13773](https://github.com/elementor/elementor/issues/13773))
 * Tweak: Updated smooth scroll behavior to respect the user's reduced motion preference setting
