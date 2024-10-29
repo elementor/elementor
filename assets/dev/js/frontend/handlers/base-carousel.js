@@ -62,7 +62,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 			};
 
 			if ( elementSettings.image_spacing_custom ) {
-				swiperOptions.breakpoints[ elementorBreakpoints[ breakpointName ].value ].spaceBetween = this.getSpaceBetween( breakpointName );
+				swiperOptions.breakpoints[ elementorBreakpoints[ breakpointName ].value ].spaceBetween = this.getSpaceBetween( breakpointName ) || 0;
 			}
 
 			lastBreakpointSlidesToShowValue = +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow;
@@ -294,7 +294,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	getSpaceBetween( device = null ) {
-		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device ) || 0;
+		const responsiveControlValue = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device );
+		return parseInt( responsiveControlValue ) || 0;
 	}
 
 	updateSpaceBetween( propertyName ) {
