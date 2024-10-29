@@ -795,7 +795,7 @@ class Manager {
 			$this->set_elementor_adapter( new Elementor_Adapter() );
 		}
 
-		if( ! isset( $args['check_permissions'] ) ) {
+		if ( ! isset( $args['check_permissions'] ) ) {
 			return true;
 		}
 
