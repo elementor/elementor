@@ -803,6 +803,7 @@ class Manager {
 		if ( 'widget' !== $this->elementor_adapter->get_template_type( $args['template_id'] ) ) {
 			return false;
 		}
+
 		return (bool) $args['check_permissions'];
 	}
 }
