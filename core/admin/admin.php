@@ -705,7 +705,7 @@ class Admin extends App {
 			$post_data['post_status'] = 'draft';
 		}
 
-		sanitaze_post_data( $post_data );
+		$post_data = $this->sanitaze_post_data( $post_data );
 
 		/**
 		 * Create new post meta data.
@@ -742,6 +742,7 @@ class Admin extends App {
 		$post_data = array_intersect_key( $post_data, array_flip( $allowed_post_data_keys ) );
 		$post_data = array_map( 'sanitize_text_field', $post_data );
 
+		return $post_data;
 	}
 	/**
 	 * @since 2.3.0
