@@ -5,6 +5,8 @@ use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
@@ -52,6 +54,11 @@ class Manager {
 	 * @var Wordpress_Adapter_Interface
 	 */
 	protected $wordpress_adapter = null;
+
+	/**
+	 * @var Elementor_Adapter_Interface
+	 */
+	protected $elementor_adapter = null;
 
 	/**
 	 * Template library manager constructor.
@@ -766,10 +773,22 @@ class Manager {
 			$this->set_wordpress_adapter( new WordPress_Adapter() );
 		}
 
+		if ( $this->is_global_widget( $args ) ) {
+			return true;
+		}
+
 		$post_id = intval( $args['template_id'] );
 		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
 		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status );
 
 		return $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
 	}
+
+	private function is_global_widget( array $args ): bool {
+		if ( null === $this->elementor_adapter ) {
+			$this->set_elementor_adapter( new Elementor_Adapter() );
+		}
+
+		// TODO: Remove the second condition in 3.28.0 as there is a Pro dependency
+		return isset( $args['global_widget'] ) || 'widget' === $this->elementor_adapter->get_template_type( $args['template_id'] );
 }
