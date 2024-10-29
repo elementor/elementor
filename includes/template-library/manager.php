@@ -773,7 +773,7 @@ class Manager {
 			$this->set_wordpress_adapter( new WordPress_Adapter() );
 		}
 
-		if ( $this->is_global_widget( $args ) ) {
+		if ( ! $this->should_check_permissions( $args ) ) {
 			return true;
 		}
 
@@ -781,14 +781,24 @@ class Manager {
 		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
 		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status );
 
-		return $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
-	}
+		$can_read_template = $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
 
-	private function is_global_widget( array $args ): bool {
+		return apply_filters( 'elementor/template-library/is_allowed_to_read_template', $can_read_template, $args );	}
+
+	private function should_check_permissions( array $args ): bool {
 		if ( null === $this->elementor_adapter ) {
 			$this->set_elementor_adapter( new Elementor_Adapter() );
 		}
 
-		// TODO: Remove the second condition in 3.28.0 as there is a Pro dependency
-		return isset( $args['global_widget'] ) || 'widget' === $this->elementor_adapter->get_template_type( $args['template_id'] );
+		if ( ! isset( $args['check_permissions'] ) ) {
+			return true;
+		}
+
+		// TODO: Remove in 3.28.0 as there is a Pro dependency
+		if ( 'widget' !== $this->elementor_adapter->get_template_type( $args['template_id'] ) ) {
+			return false;
+		}
+
+		return (bool) $args['check_permissions'];
+	}
 }
