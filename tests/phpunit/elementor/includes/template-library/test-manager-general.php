@@ -127,8 +127,9 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_wp_error_massage_template_error_from_get_template_data() {
-		$active_kit_mock = $this->getMockBuilder( Elementor_Adapter_Interface::class )->getMock();
-		$active_kit_mock->method( 'get_template_type' )->willReturn( 'page' );
+		$elementor_mock = $this->getMockBuilder( Elementor_Adapter_Interface::class )->getMock();
+		$elementor_mock->method( 'get_template_type' )->willReturn( 'page' );
+		self::$manager->set_elementor_adapter( $elementor_mock );
 
 		$this->assertWPError(
 			self::$manager->get_template_data(
