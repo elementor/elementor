@@ -134,6 +134,14 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				} );
 			} );
 
+			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="site_mailer_promotion"] a.e-button--cta' ).on( 'click', function() {
+				elementorCommon.ajax.addRequest( 'elementor_core_site_mailer_campaign', {
+					data: {
+						source: 'sm-core-form-install',
+					},
+				} );
+			} );
+
 			$( '#elementor-clear-cache-button' ).on( 'click', function( event ) {
 				event.preventDefault();
 				var $thisButton = $( this );
