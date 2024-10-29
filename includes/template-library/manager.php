@@ -797,7 +797,7 @@ class Manager {
 
 		// TODO: Remove $isWidgetTemplate in 3.28.0 as there is a Pro dependency
 		$checkPermissions = isset( $args['check_permissions'] ) && false === $args['check_permissions'];
-		$isWidgetTemplate =  'widget' === $this->elementor_adapter->get_template_type( $args['template_id'] );
+		$isWidgetTemplate = 'widget' === $this->elementor_adapter->get_template_type( $args['template_id'] );
 
 		if ( $checkPermissions || $isWidgetTemplate ) {
 			return false;
