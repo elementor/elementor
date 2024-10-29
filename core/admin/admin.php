@@ -701,7 +701,7 @@ class Admin extends App {
 
 		$post_data = Utils::get_super_global_value( $_GET, 'post_data' ) ?? [];
 
-		if ( ! current_user_can( 'publish_posts' ) && isset( $post_data['post_status'] ) && $post_data['post_status'] === 'publish' ) {
+		if ( ! current_user_can( 'publish_posts' ) && isset( $post_data['post_status'] ) && 'publish' === $post_data['post_status'] ) {
 			$post_data['post_status'] = 'draft';
 		}
 
