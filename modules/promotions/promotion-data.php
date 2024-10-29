@@ -93,7 +93,7 @@ class PromotionData {
 			'title' => esc_html__( 'Design Custom Carousels', 'elementor' ),
 			'description' => [
 				esc_html__( 'Create flexible custom carousels.', 'elementor' ),
-				esc_html__( 'Adjust transitions and animations easily.', 'elementor' ),
+				esc_html__( 'Adjust transitions and animations.', 'elementor' ),
 				esc_html__( 'Showcase multiple items with style.', 'elementor' ),
 			],
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
