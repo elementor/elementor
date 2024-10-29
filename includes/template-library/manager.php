@@ -794,15 +794,14 @@ class Manager {
 			$this->set_elementor_adapter( new Elementor_Adapter() );
 		}
 
-		if ( ! isset( $args['check_permissions'] ) ) {
-			return true;
-		}
+		// TODO: Remove $isWidgetTemplate in 3.28.0 as there is a Pro dependency
+		$check_permissions = isset( $args['check_permissions'] ) && false === $args['check_permissions'];
+		$is_widget_template = 'widget' === $this->elementor_adapter->get_template_type( $args['template_id'] );
 
-		// TODO: Remove in 3.28.0 as there is a Pro dependency
-		if ( 'widget' !== $this->elementor_adapter->get_template_type( $args['template_id'] ) ) {
+		if ( $check_permissions || $is_widget_template ) {
 			return false;
 		}
 
-		return (bool) $args['check_permissions'];
+		return true;
 	}
 }
