@@ -5,6 +5,8 @@ use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
@@ -54,6 +56,11 @@ class Manager {
 	protected $wordpress_adapter = null;
 
 	/**
+	 * @var Elementor_Adapter_Interface
+	 */
+	protected $elementor_adapter = null;
+
+	/**
 	 * Template library manager constructor.
 	 *
 	 * Initializing the template library manager by registering default template
@@ -99,6 +106,10 @@ class Manager {
 
 	public function set_wordpress_adapter( Wordpress_Adapter_Interface $wordpress_adapter ) {
 		$this->wordpress_adapter = $wordpress_adapter;
+	}
+
+	public function set_elementor_adapter( Elementor_Adapter_Interface $elementor_adapter ): void {
+		$this->elementor_adapter = $elementor_adapter;
 	}
 
 	/**
@@ -259,16 +270,10 @@ class Manager {
 	 * @return \WP_Error|int The ID of the saved/updated template.
 	 */
 	public function save_template( array $args ) {
-
 		$validate_args = $this->ensure_args( [ 'post_id', 'source', 'content', 'type' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
-		}
-
-		if ( ! current_user_can( 'edit_post', $args['post_id'] ) || ( $args[ 'global_widget' ]  && current_user_can( 'edit_posts' ) ) ) {
-			// add error
-			return false;
 		}
 
 		$source = $this->get_source( $args['source'] );
@@ -784,7 +789,10 @@ class Manager {
 	}
 
 	private function is_global_widget( array $args ): bool {
-		// TODO: Remove the second condition in 3.28.0 as there is a Pro dependency
-		return isset( $args['global_widget'] ) || Plugin::$instance->documents->get( $args['template_id'] )->get_template_type() === 'widget';
+		if ( null === $this->elementor_adapter ) {
+			$this->set_elementor_adapter( new Elementor_Adapter() );
+		}
+
+		return isset( $args['global_widget'] ) || 'widget' === $this->elementor_adapter->get_template_type( $args['template_id'] );
 	}
 }
