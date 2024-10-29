@@ -793,6 +793,7 @@ class Manager {
 			$this->set_elementor_adapter( new Elementor_Adapter() );
 		}
 
+		// TODO: Remove the second condition in 3.28.0 as there is a Pro dependency
 		return isset( $args['global_widget'] ) || 'widget' === $this->elementor_adapter->get_template_type( $args['template_id'] );
 	}
 }
