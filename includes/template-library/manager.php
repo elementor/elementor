@@ -777,7 +777,7 @@ class Manager {
 			$this->set_wordpress_adapter( new WordPress_Adapter() );
 		}
 
-		if ( ! $this->is_permissions_allowed( $args ) ) {
+		if ( ! $this->should_check_permissions( $args ) ) {
 			return true;
 		}
 
@@ -790,12 +790,19 @@ class Manager {
 		return apply_filters( 'elementor/template-library/is_allowed_to_read_template', $can_edit_template, $args );
 	}
 
-	private function is_permissions_allowed( array $args ): bool {
+	private function should_check_permissions( array $args ): bool {
 		if ( null === $this->elementor_adapter ) {
 			$this->set_elementor_adapter( new Elementor_Adapter() );
 		}
 
-		// TODO: Remove the second condition in 3.28.0 as there is a Pro dependency
-		return isset( $args['is_permissions_allowed'] ) || 'widget' === $this->elementor_adapter->get_template_type( $args['template_id'] );
+		if( ! isset( $args['check_permissions'] ) ) {
+			return true;
+		}
+
+		// TODO: Remove in 3.28.0 as there is a Pro dependency
+		if ( 'widget' !== $this->elementor_adapter->get_template_type( $args['template_id'] ) ) {
+			return false;
+		}
+		return (bool) $args['check_permissions'];
 	}
 }
