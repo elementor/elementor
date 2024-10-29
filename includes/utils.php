@@ -910,6 +910,12 @@ class Utils {
 	}
 
 	public static function has_invalid_post_permissions( $post ): bool {
+		$is_image_attachment = 'attachment' === $post->post_type && strpos( $post->post_mime_type, 'image/' ) === 0;
+
+		if ( $is_image_attachment ) {
+			return false;
+		}
+
 		$is_private = 'private' === $post->post_status
 			&& ! current_user_can( 'read_private_posts', $post->ID );
 
