@@ -787,7 +787,7 @@ class Manager {
 
 		$can_edit_template = $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
 
-		return apply_filter( 'elementor/template-library/is_allowed_to_read_template', $can_edit_template, $args );
+		return apply_filters( 'elementor/template-library/is_allowed_to_read_template', $can_edit_template, $args );
 	}
 
 	private function is_permissions_allowed( array $args ): bool {
