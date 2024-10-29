@@ -28,6 +28,7 @@ class Admin_Notices extends Module {
 		'rate_us_feedback',
 		'role_manager_promote',
 		'experiment_promotion',
+		'site_mailer_promotion',
 		'design_not_appearing',
 		'plugin_image_optimization',
 	];
@@ -380,6 +381,82 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
+	private function notice_site_mailer_promotion() {
+		$notice_id = 'site_mailer_promotion';
+
+		if (
+			! defined( 'WPFORMS_VERSION' )
+			&& ! defined( 'WPCF7_VERSION' )
+			&& ! defined( 'FLUENTFORM_VERSION' )
+			&& ! class_exists( '\GFCommon' )
+			&& ! class_exists( '\Ninja_Forms' )
+			&& ! function_exists( 'load_formidable_forms' )
+		) {
+			return false;
+		}
+
+		if ( ! $this->is_elementor_page() && ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true ) ) {
+			return false;
+		}
+
+		if ( Utils::has_pro() || ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$plugin_file_path = 'site-mailer/site-mailer.php';
+		$plugin_slug = 'site-mailer';
+
+		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
+		if ( empty( $cta_data ) ) {
+			return false;
+		}
+
+		$options = [
+			'title' => esc_html__( 'Ensure your form emails avoid the spam folder!', 'elementor' ),
+			'description' => esc_html__( 'Use Site Mailer for improved email deliverability, detailed email logs, and an easy setup.', 'elementor' ),
+			'id' => $notice_id,
+			'type' => 'cta',
+			'button' => [
+				'text' => $cta_data['text'],
+				'url' => $cta_data['url'],
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/sm-core-form/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
+	private function is_elementor_page(): bool {
+		return 0 === strpos( $this->current_screen_id, 'elementor_page' );
+	}
+
+	private function get_plugin_cta_data( $plugin_slug, $plugin_file_path ) {
+		if ( is_plugin_active( $plugin_file_path ) ) {
+			return false;
+		}
+
+		if ( $this->is_plugin_installed( $plugin_file_path ) ) {
+			$url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $plugin_file_path . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $plugin_file_path );
+			$cta_text = esc_html__( 'Activate Plugin', 'elementor' );
+		} else {
+			$url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $plugin_slug ), 'install-plugin_' . $plugin_slug );
+			$cta_text = esc_html__( 'Install Plugin', 'elementor' );
+		}
+
+		return [
+			'url' => $url,
+			'text' => $cta_text,
+		];
+	}
+
 	private function notice_design_not_appearing() {
 		$installs_history = get_option( 'elementor_install_history', [] );
 		$is_first_install = 1 === count( $installs_history );
@@ -450,16 +527,10 @@ class Admin_Notices extends Module {
 		$plugin_file_path = 'image-optimization/image-optimization.php';
 		$plugin_slug = 'image-optimization';
 
-		if ( is_plugin_active( $plugin_file_path ) ) {
-			return false;
-		}
+		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
 
-		if ( $this->is_plugin_installed( $plugin_file_path ) ) {
-			$url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $plugin_file_path . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $plugin_file_path );
-			$cta_text = esc_html__( 'Activate Plugin', 'elementor' );
-		} else {
-			$url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $plugin_slug ), 'install-plugin_' . $plugin_slug );
-			$cta_text = esc_html__( 'Install Plugin', 'elementor' );
+		if ( empty( $cta_data ) ) {
+			return false;
 		}
 
 		$options = [
@@ -468,8 +539,8 @@ class Admin_Notices extends Module {
 			'id' => $notice_id,
 			'type' => 'cta',
 			'button_secondary' => [
-				'text' => $cta_text,
-				'url' => $url,
+				'text' => $cta_data['text'],
+				'url' => $cta_data['url'],
 				'type' => 'cta',
 			],
 		];
