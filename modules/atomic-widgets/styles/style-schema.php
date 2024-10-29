@@ -3,9 +3,9 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 class Style_Schema {
 	public static function get() {
@@ -73,6 +73,10 @@ class Style_Schema {
 				'capitalize',
 				'uppercase',
 				'lowercase',
+			]),
+			'direction' => String_Prop_Type::make()->enum([
+				'ltr',
+				'rtl',
 			]),
 		];
 	}

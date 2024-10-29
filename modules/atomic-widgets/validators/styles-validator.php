@@ -69,7 +69,7 @@ class Styles_Validator {
 		];
 	}
 
-	public function validate_meta( array $meta ) {
+	public function validate_meta( $meta ) {
 		if ( ! is_array( $meta ) ) {
 			$this->errors_bag[] = 'meta';
 		}

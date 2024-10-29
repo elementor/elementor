@@ -89,6 +89,10 @@ class Widget_Menu_Anchor extends Widget_Base {
 		return [ 'widget-menu-anchor' ];
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register menu anchor widget controls.
 	 *
