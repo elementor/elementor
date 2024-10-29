@@ -259,10 +259,16 @@ class Manager {
 	 * @return \WP_Error|int The ID of the saved/updated template.
 	 */
 	public function save_template( array $args ) {
+
 		$validate_args = $this->ensure_args( [ 'post_id', 'source', 'content', 'type' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
+		}
+
+		if ( ! current_user_can( 'edit_post', $args['post_id'] ) || ( $args[ 'global_widget' ]  && current_user_can( 'edit_posts' ) ) ) {
+			// add error
+			return false;
 		}
 
 		$source = $this->get_source( $args['source'] );
@@ -766,10 +772,19 @@ class Manager {
 			$this->set_wordpress_adapter( new WordPress_Adapter() );
 		}
 
+		if ( $this->is_global_widget( $args ) ) {
+			return true;
+		}
+
 		$post_id = intval( $args['template_id'] );
 		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
 		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status );
 
 		return $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
+	}
+
+	private function is_global_widget( array $args ): bool {
+		// TODO: Remove the second condition in 3.28.0 as there is a Pro dependency
+		return isset( $args['global_widget'] ) || Plugin::$instance->documents->get( $args['template_id'] )->get_template_type() === 'widget';
 	}
 }
