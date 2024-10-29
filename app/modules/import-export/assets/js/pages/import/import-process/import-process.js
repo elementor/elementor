@@ -14,6 +14,15 @@ import useKit from '../../../hooks/use-kit';
 import useImportActions from '../hooks/use-import-actions';
 import { useImportKitLibraryApplyAllPlugins } from '../import-kit/hooks/use-import-kit-library-apply-all-plugins';
 
+function isValidRedirectUrl( url ) {
+	try {
+		const parsedUrl = new URL( url );
+		return parsedUrl.hostname === window.location.hostname;
+	} catch ( e ) {
+		return false;
+	}
+}
+
 export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
@@ -141,7 +150,7 @@ export default function ImportProcess() {
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || ( isResolvedData && 'apply-all' === importContext.data.actionType ) ) {
 			if ( importedData ) { // After kit upload.
-				if ( returnTo ) {
+				if ( returnTo && isValidRedirectUrl( decodeURIComponent( returnTo ) ) ) {
 					window.location.href = decodeURIComponent( returnTo );
 					return;
 				}
