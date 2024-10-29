@@ -40,4 +40,8 @@ class Elementor_Adapter implements Elementor_Adapter_Interface {
 	public function is_key_allowed( $key ): bool {
 		return Elementor_Counter_Module::instance()->is_key_allowed( $key );
 	}
+
+	public function get_template_type( $template_id ): string {
+		return Plugin::$instance->documents->get( $template_id )->get_template_type();
+	}
 }
