@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Stroke_Transformer extends Transformer_Base {
-	public function transform( $value, $key ): string {
+	public function transform( $value, $key ) {
 		$width = $value['width'];
 		$color = $value['color'];
 
