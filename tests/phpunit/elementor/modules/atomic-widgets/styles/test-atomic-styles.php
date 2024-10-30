@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
 use Elementor\Widget_Base;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Files\CSS\Post;
@@ -18,9 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Atomic_Styles extends Elementor_Test_Base {
 	use MatchesSnapshots;
-
 	public function set_up() {
 		parent::set_up();
+
+		require_once __DIR__ . '/../props-factory.php';
 
 		remove_all_filters( 'elementor/atomic-widgets/styles/transformers' );
 		remove_all_actions( 'elementor/element/parse_css' );
@@ -151,11 +153,6 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 	public function test_parse_atomic_widget_styles__append_css_of_styles_with_transformable_values() {
 		// Arrange.
-		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
-			$registry->register( Size_Prop_Type::get_key(), new Size_Transformer() );
-			$registry->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
-		});
-
 		( new Atomic_Styles() )->register_hooks();
 		$post = $this->make_mock_post();
 		$element = $this->make_mock_widget([
@@ -169,17 +166,26 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
-								'color' => [
-									'$$type' => 'color',
-									'value' => 'red',
-								],
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'unit' => 'px',
-										'size' => 16,
-									],
-								],
+								'color' => Props_Factory::color( 'red' ),
+								'font-size' => Props_Factory::size( 16 ),
+								'box-shadow' => Props_Factory::box_shadow( [
+									Props_Factory::shadow( [
+										null,
+										Props_Factory::size( 10 ),
+										Props_Factory::size( 5, 'rem' ),
+										Props_Factory::size( 5 ),
+										Props_Factory::size( 20 ),
+										Props_Factory::color( 'rgba(0, 0, 0, 0.1)' ),
+									] ),
+									Props_Factory::shadow( [
+										'inset',
+										Props_Factory::size( 0 ),
+										Props_Factory::size( 0 ),
+										Props_Factory::size( 10 ),
+										null,
+										Props_Factory::color( 'blue' ),
+									] ),
+								] ),
 							],
 							'meta' => [],
 						],
