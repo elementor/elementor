@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Border_Width_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
-		$dimensions = Collection::make( $value )
+		$sides = Collection::make( $value )
 			->only( [ 'top', 'right', 'bottom', 'left' ] )
 			->filter()
-			->map_with_keys( fn( $dimension, $side ) => [ 'border-' . $side . '-width' => $dimension ] )
+			->map_with_keys( fn( $side, $side_key ) => [ 'border-' . $side_key . '-width' => $side ] )
 			->all();
 
-		return Multi_Props::generate( $dimensions );
+		return Multi_Props::generate( $sides );
 	}
 }
