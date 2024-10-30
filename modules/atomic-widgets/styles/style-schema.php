@@ -13,7 +13,8 @@ class Style_Schema {
 			self::get_size_props(),
 			self::get_position_props(),
 			self::get_typography_props(),
-			self::get_spacing_props()
+			self::get_spacing_props(),
+			self::get_background_props(),
 		);
 	}
 
@@ -78,7 +79,6 @@ class Style_Schema {
 				'ltr',
 				'rtl',
 			]),
-			'background-color' => Color_Prop_Type::make(),
 		];
 	}
 
@@ -86,6 +86,12 @@ class Style_Schema {
 		return [
 			'padding' => Linked_Dimensions_Prop_Type::make(),
 			'margin' => Linked_Dimensions_Prop_Type::make(),
+		];
+	}
+
+	private static function get_background_props() {
+		return [
+			'background-color' => Color_Prop_Type::make(),
 		];
 	}
 }
