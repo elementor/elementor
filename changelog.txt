@@ -1,5 +1,40 @@
 == Changelog ==
 
+= 3.25.1 - 2024-10-28 =
+
+* Fix: Custom template fails to insert into the page and displays a permission error ([#29076](https://github.com/elementor/elementor/issues/29076))
+* Fix: Global Widgets not displaying correctly on the frontend ([#29076](https://github.com/elementor/elementor/issues/29076))
+
+= 3.25.0 - 2024-10-28 =
+
+* New: Introducing Optimized Markup as an Alpha experiment - Reduce DOM size by eliminating unnecessary HTML wrappers in various elements and widgets
+* Tweak: Reduced the use of JavaScript for smooth scrolling by implementing a modern CSS-based solution ([#13773](https://github.com/elementor/elementor/issues/13773))
+* Tweak: Updated smooth scroll behavior to respect the user's reduced motion preference setting
+* Tweak: Removed `elementor-button-wrapper` div from Button widget as part of the Optimized Markup experiment
+* Tweak: Load styles for Floating Elements separately to enhance performance
+* Tweak: Load styles for Link in Bio widgets separately to enhance performance
+* Tweak: Optimized `global.css` to exclude style generation for unused widgets
+* Tweak: Removed the Floating Elements modules from `module.js`
+* Tweak: Added "Edit with Elementor" button to WooCommerce's new product editor
+* Tweak: Merged "Build with AI" feature to version
+* Tweak: Merged "Grid Container" to "Flexbox Container" feature
+* Tweak: Activated "Editor Top Bar" feature for existing sites
+* Tweak: Activated "Optimized Control Loading" for existing sites and promoted the feature to stable
+* Tweak: Activated "Nested Elements" feature for existing sites
+* Tweak: Removed compatibility CSS support for the Twenty Fifteen theme
+* Tweak: Renamed the "Flexbox Container" feature to "Container" feature
+* Fix: Expand Icon in the Accordion widget would not display when nested inside another Accordion widget ([#24086](https://github.com/elementor/elementor/issues/24086))
+* Fix: Swiper incorrectly applied the `inert` attribute to a slide in the Nested Carousel ([#23039](https://github.com/elementor/elementor/issues/23039))
+* Fix: Footer would overlap the Archive Posts, Portfolio, and Gallery widgets in mobile view when using the Archive template
+* Fix: "Edit with Elementor AI" button is visible for unsupported file types
+* Fix: Structure panel indicator color is not visible in dark mode
+* Fix: Indentation issue with empty elements in the Structure panel
+* Fix: "Reference a website" feature in Elementor AI failed to work in Safari 17
+
+= 3.24.8 - 2024-10-28 =
+
+* Security Fix: Improved code security enforcement in Template Library
+
 = 3.24.7 - 2024-10-15 =
 
 * Fix: Flow issue preventing progress beyond the Features screen in Onboarding wizard
