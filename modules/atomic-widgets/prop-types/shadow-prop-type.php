@@ -16,12 +16,12 @@ class Shadow_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'position' => String_Prop_Type::make()->enum( [ 'inset' ] ),
 			'hOffset' => Size_Prop_Type::make()->required(),
 			'vOffset' => Size_Prop_Type::make()->required(),
 			'blur' => Size_Prop_Type::make()->required(),
-			'spread' => Size_Prop_Type::make(),
+			'spread' => Size_Prop_Type::make()->required(),
 			'color' => Color_Prop_Type::make()->required(),
+			'position' => String_Prop_Type::make()->enum( [ 'inset' ] ),
 		];
 	}
 }

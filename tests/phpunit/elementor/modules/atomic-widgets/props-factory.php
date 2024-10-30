@@ -24,14 +24,14 @@ class Props_Factory {
 		return Color_Prop_Type::generate( $value );
 	}
 
-	public static function shadow( array $value ) {
+	public static function shadow( ...$args ) {
 		return Shadow_Prop_Type::generate( [
-			'position' => $value[0],
-			'hOffset' => $value[1],
-			'vOffset' => $value[2],
-			'blur' => $value[3],
-			'spread' => $value[4],
-			'color' => $value[5],
+			'hOffset' => $args[0],
+			'vOffset' => $args[1],
+			'blur' => $args[2],
+			'spread' => $args[3],
+			'color' => $args[4],
+			'position' => $args[5],
 		] );
 	}
 

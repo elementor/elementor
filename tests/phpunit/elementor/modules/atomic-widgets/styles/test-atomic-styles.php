@@ -1,10 +1,6 @@
 <?php
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
@@ -17,12 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+require_once __DIR__ . '/../props-factory.php';
+
 class Test_Atomic_Styles extends Elementor_Test_Base {
 	use MatchesSnapshots;
 	public function set_up() {
 		parent::set_up();
-
-		require_once __DIR__ . '/../props-factory.php';
 
 		remove_all_filters( 'elementor/atomic-widgets/styles/transformers' );
 		remove_all_actions( 'elementor/element/parse_css' );
@@ -169,22 +165,22 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 								'color' => Props_Factory::color( 'red' ),
 								'font-size' => Props_Factory::size( 16 ),
 								'box-shadow' => Props_Factory::box_shadow( [
-									Props_Factory::shadow( [
-										null,
+									Props_Factory::shadow(
 										Props_Factory::size( 10 ),
 										Props_Factory::size( 5, 'rem' ),
 										Props_Factory::size( 5 ),
 										Props_Factory::size( 20 ),
 										Props_Factory::color( 'rgba(0, 0, 0, 0.1)' ),
-									] ),
-									Props_Factory::shadow( [
-										'inset',
+										null,
+									),
+									Props_Factory::shadow(
 										Props_Factory::size( 0 ),
 										Props_Factory::size( 0 ),
 										Props_Factory::size( 10 ),
-										null,
+										Props_Factory::size( 0 ),
 										Props_Factory::color( 'blue' ),
-									] ),
+										'inset',
+									),
 								] ),
 							],
 							'meta' => [],
