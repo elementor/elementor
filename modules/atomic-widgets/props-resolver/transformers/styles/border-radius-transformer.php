@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Border_Radius_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
-		$dimensions = Collection::make( $value )
+		$corners = Collection::make( $value )
 			->only( [ 'top-left', 'top-right', 'bottom-right', 'bottom-left' ] )
 			->filter()
-			->map_with_keys( fn( $dimension, $corner ) => [ 'border-' . $corner . '-radius' => $dimension ] )
+			->map_with_keys( fn( $corner, $corner_key ) => [ 'border-' . $corner_key . '-radius' => $corner ] )
 			->all();
 
-		return Multi_Props::generate( $dimensions );
+		return Multi_Props::generate( $corners );
 	}
 }
