@@ -663,6 +663,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										],
 									],
 								],
+								'border-radius' => [
+									'$$type' => 'border-radius',
+									'value' => [
+										'top-left' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 0,
+											],
+										],
+										'top-right' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 0,
+											],
+										],
+									],
+								],
 							],
 							'meta' => [
 								'breakpoint' => 'desktop',
@@ -713,6 +732,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										],
 									],
 									'right' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 0,
+										],
+									],
+								],
+							],
+							'border-radius' => [
+								'$$type' => 'border-radius',
+								'value' => [
+									'top-left' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 0,
+										],
+									],
+									'top-right' => [
 										'$$type' => 'size',
 										'value' => [
 											'unit' => 'px',
@@ -923,7 +961,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 											]
 										],
 									]
-								],
+								]
 							],
 							'meta' => [
 								'breakpoint' => 'desktop',
@@ -938,6 +976,61 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Expect.
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: padding' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
+	public function test_get_data_for_save__throws_on_styles_border_radius_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'border-radius' => [
+									'$$type' => 'border-radius',
+									'value' => [
+										'top-left' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 0,
+											],
+										],
+										'top-right' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 0,
+											],
+										],
+										'bottom-left' => 'not-a-size',
+									],
+								]
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: border-radius' );
 
 		// Act.
 		$widget->get_data_for_save();
