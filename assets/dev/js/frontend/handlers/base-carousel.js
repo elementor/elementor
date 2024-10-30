@@ -67,7 +67,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 			lastBreakpointSlidesToShowValue = +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow;
 		} );
-		// Dummy commit.
 
 		if ( 'yes' === elementSettings.autoplay ) {
 			swiperOptions.autoplay = {
@@ -296,7 +295,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 	getSpaceBetween( device = null ) {
 		const responsiveControlValue = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device );
-		return parseInt( responsiveControlValue ) || 0;
+		return Number( responsiveControlValue ) || 0;
 	}
 
 	updateSpaceBetween( propertyName ) {
