@@ -78,6 +78,7 @@ class Style_Schema {
 				'ltr',
 				'rtl',
 			]),
+			'background-color' => Color_Prop_Type::make(),
 		];
 	}
 
