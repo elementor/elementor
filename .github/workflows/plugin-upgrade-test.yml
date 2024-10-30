@@ -2,6 +2,14 @@ name: Upgrade Elementor test
 
 on:
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'composer.lock'
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       version:

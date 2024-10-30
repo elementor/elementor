@@ -3,6 +3,14 @@ name: Build
 on:
   workflow_dispatch:
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'composer.lock'
+      - 'docs/**'
   workflow_call:
     outputs:
       artifact_name:
