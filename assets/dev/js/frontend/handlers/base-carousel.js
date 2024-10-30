@@ -67,6 +67,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 			lastBreakpointSlidesToShowValue = +elementSettings[ 'slides_to_show_' + breakpointName ] || defaultSlidesToShow;
 		} );
+		// Dummy commit.
 
 		if ( 'yes' === elementSettings.autoplay ) {
 			swiperOptions.autoplay = {
