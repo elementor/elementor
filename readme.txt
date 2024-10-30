@@ -364,6 +364,15 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.25.3 - 2024-10-30 =
+
+* Fix: Global Widgets are not displaying correctly in both the editor and frontend ([#29112](https://github.com/elementor/elementor/issues/29112))
+
+= 3.25.2 - 2024-10-29 =
+
+* Fix: Global Widgets are not displaying correctly in the editor ([#29092](https://github.com/elementor/elementor/issues/29092))
+* Fix: Image captions are not displaying for non-logged-in users in Image Carousel widget
+
 = 3.25.1 - 2024-10-28 =
 
 * Fix: Custom template fails to insert into the page and displays a permission error ([#29076](https://github.com/elementor/elementor/issues/29076))
