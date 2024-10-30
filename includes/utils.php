@@ -893,8 +893,8 @@ class Utils {
 	}
 
 	public static function is_sale_time(): bool {
-		$sale_start_time = gmmktime( 12, 0, 0, 5, 28, 2024 );
-		$sale_end_time = gmmktime( 4, 59, 0, 6, 4, 2024 );
+		$sale_start_time = gmmktime( 13, 0, 0, 11, 26, 2024 );
+		$sale_end_time = gmmktime( 9, 59, 0, 12, 4, 2024 );
 
 		$now_time = gmdate( 'U' );
 
@@ -910,6 +910,12 @@ class Utils {
 	}
 
 	public static function has_invalid_post_permissions( $post ): bool {
+		$is_image_attachment = 'attachment' === $post->post_type && strpos( $post->post_mime_type, 'image/' ) === 0;
+
+		if ( $is_image_attachment ) {
+			return false;
+		}
+
 		$is_private = 'private' === $post->post_status
 			&& ! current_user_can( 'read_private_posts', $post->ID );
 
