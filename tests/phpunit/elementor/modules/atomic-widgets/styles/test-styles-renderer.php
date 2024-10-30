@@ -375,6 +375,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
 			$registry->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 			$registry->register( Linked_Dimensions_Prop_Type::get_key(), new Linked_Dimensions_Transformer() );
+			$registry->register( Border_Radius_Prop_Type::get_key(), new Border_Radius_Transformer() );
+			$registry->register( Border_Width_Prop_Type::get_key(), new Border_Width_Transformer() );
 		});
 
 		$styles = [
