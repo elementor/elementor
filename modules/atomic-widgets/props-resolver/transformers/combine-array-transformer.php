@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Combine_Array_Transformer extends Transformer_Base {
 	private string $separator;
 
-	public function __construct( string $separator = ' ' ) {
+	public function __construct( string $separator ) {
 		$this->separator = $separator;
 	}
 
