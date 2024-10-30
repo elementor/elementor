@@ -29,6 +29,8 @@ class Api {
 
 	const TRANSIENT_KEY_PREFIX = 'elementor_remote_info_api_data_';
 
+	const INSTALL_ID_OPTION_KEY = '_elementor_install_id';
+
 
 	/**
 	 * API info URL.
@@ -40,7 +42,7 @@ class Api {
 	 *
 	 * @var string API info URL.
 	 */
-	public static $api_info_url = 'https://my.elementor.com/api/v1/info/';
+	public static $api_info_url = 'https://my.stg.elementor.red/api/v1/info/';
 
 	/**
 	 * API feedback URL.
@@ -76,14 +78,21 @@ class Api {
 		if ( $force_update || false === $info_data ) {
 			$timeout = ( $force_update ) ? 25 : 8;
 
+			$body_request = [
+				// Which API version is used.
+				'api_version' => ELEMENTOR_VERSION,
+				// Which language to return.
+				'site_lang' => get_bloginfo( 'language' ),
+			];
+
+			$install_id = self::get_install_id();
+			if ( ! empty( $install_id ) ) {
+				$body_request['install_id'] = $install_id;
+			}
+
 			$response = wp_remote_get( self::$api_info_url, [
 				'timeout' => $timeout,
-				'body' => [
-					// Which API version is used.
-					'api_version' => ELEMENTOR_VERSION,
-					// Which language to return.
-					'site_lang' => get_bloginfo( 'language' ),
-				],
+				'body' => $body_request,
 			] );
 
 			if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
@@ -112,10 +121,20 @@ class Api {
 				unset( $info_data['feed'] );
 			}
 
+			if ( empty( $install_id ) && ! empty( $info_data['install_id'] ) ) {
+				update_option( self::INSTALL_ID_OPTION_KEY, $info_data['install_id'] );
+
+				unset( $info_data['install_id'] );
+			}
+
 			set_transient( $cache_key, $info_data, 12 * HOUR_IN_SECONDS );
 		}
 
 		return $info_data;
+	}
+
+	public static function get_install_id() {
+		return get_option( self::INSTALL_ID_OPTION_KEY );
 	}
 
 	/**
