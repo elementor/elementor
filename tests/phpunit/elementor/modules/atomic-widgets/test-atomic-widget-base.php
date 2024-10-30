@@ -663,6 +663,22 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										],
 									],
 								],
+								'-webkit-text-stroke' => [
+									'$$type' => 'stroke',
+									'value' => [
+										'color' => [
+											'$$type' => 'color',
+											'value' => '#ff0000',
+										],
+										'width' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 10,
+											],
+										],
+									],
+								],
 							],
 							'meta' => [
 								'breakpoint' => 'desktop',
@@ -677,6 +693,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Act.
 		$data_for_save = $widget->get_data_for_save();
 
+		var_dump($data_for_save);
 		// Assert.
 		$this->assertSame( [
 			'string_prop' => 'valid-string',
@@ -701,6 +718,22 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'color' => [
 								'$$type' => 'color',
 								'value' => 'red',
+							],
+							'-webkit-text-stroke' => [
+								'$$type' => 'stroke',
+								'value' => [
+									'color' => [
+										'$$type' => 'color',
+										'value' => '#ff0000',
+									],
+									'width' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 10,
+										],
+									],
+								],
 							],
 							'padding' => [
 								'$$type' => 'linked-dimensions',
@@ -999,6 +1032,55 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Act.
 		$widget->get_data_for_save();
 	}
+
+	public function test_get_data_for_save__throws_on_styles_stroke_prop_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'-webkit-text-stroke' => [
+									'$$type' => 'stroke',
+									'value' => [
+										'color' => null,
+										'width' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 'test',
+											],
+										],
+									],
+								],
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: -webkit-text-stroke' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
 
 	/**
 	 * @param array{controls: array, props_schema: array, settings: array} $options

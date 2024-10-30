@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 
 class Style_Schema {
 	public static function get() {
@@ -78,6 +79,7 @@ class Style_Schema {
 				'ltr',
 				'rtl',
 			]),
+			'-webkit-text-stroke' => Stroke_Prop_Type::make(),
 		];
 	}
 
