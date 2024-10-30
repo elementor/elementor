@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
@@ -14,6 +15,7 @@ class Style_Schema {
 			self::get_position_props(),
 			self::get_typography_props(),
 			self::get_spacing_props(),
+			self::get_border_props(),
 			self::get_background_props(),
 		);
 	}
@@ -86,6 +88,12 @@ class Style_Schema {
 		return [
 			'padding' => Linked_Dimensions_Prop_Type::make(),
 			'margin' => Linked_Dimensions_Prop_Type::make(),
+		];
+	}
+
+	private static function get_border_props() {
+		return [
+			'border-radius' => Border_Radius_Prop_Type::make(),
 		];
 	}
 
