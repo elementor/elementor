@@ -16,7 +16,8 @@ class Style_Schema {
 			self::get_position_props(),
 			self::get_typography_props(),
 			self::get_spacing_props(),
-			self::get_border_props()
+			self::get_border_props(),
+			self::get_background_props(),
 		);
 	}
 
@@ -116,6 +117,12 @@ class Style_Schema {
 				'inset',
 				'outset',
 			]),
+		];
+	}
+
+	private static function get_background_props() {
+		return [
+			'background-color' => Color_Prop_Type::make(),
 		];
 	}
 }
