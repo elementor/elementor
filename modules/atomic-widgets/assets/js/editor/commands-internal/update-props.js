@@ -22,31 +22,21 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 		}
 	}
 
-	updateExistingVariant( style, variant, props ) {
-		variant.props = {
-			...variant.props,
-			...props,
-		};
-
-		Object.entries( variant.props ).forEach( ( [ key, value ] ) => {
+	updateExistingVariant( variant, props ) {
+		Object.entries( props ).forEach( ( [ key, value ] ) => {
 			if ( null === value || undefined === value ) {
 				delete variant.props[ key ];
+			} else {
+				variant.props[ key ] = value;
 			}
 		} );
-
-		return {
-			...style,
-			variants: style.variants.map( ( v ) =>
-				variant.meta.breakpoint === v.breakpoint && variant.meta.state === v.state ? variant : v,
-			),
-		};
 	}
 
 	apply( args ) {
 		const { container, styleDefID, meta, props } = args;
 
-		const oldStyles = container.model.get( 'styles' ) || {};
-		let style = oldStyles[ styleDefID ];
+		const styles = container.model.get( 'styles' ) || {};
+		const style = styles[ styleDefID ];
 
 		if ( ! style ) {
 			throw new Error( 'Style Def not found' );
@@ -58,14 +48,7 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 			throw new Error( 'Style Variant not found' );
 		}
 
-		style = this.updateExistingVariant( style, variant, props );
-
-		const newStyles = {
-			...oldStyles,
-			[ style.id ]: style,
-		};
-
-		container.model.set( 'styles', newStyles );
+		this.updateExistingVariant( variant, props );
 	}
 }
 
