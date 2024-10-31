@@ -17,4 +17,6 @@ interface Elementor_Adapter_Interface {
 	public function increment( $key ) : void;
 
 	public function is_key_allowed( $key ) : bool;
+
+	public function get_template_type( $template_id ) : string;
 }
