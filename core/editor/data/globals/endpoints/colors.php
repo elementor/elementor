@@ -30,13 +30,14 @@ class Colors extends Base {
 		$items = array_merge( $system_items, $custom_items );
 
 		foreach ( $items as $index => $item ) {
-			$id = $item['_id'];
-			$result[ $id ] = [
-				'id' => $id,
-				'title' => $item['title'],
-				'value' => $item['color'],
-			];
-		}
+    			$id = $item['_id'];
+   			$result[ $id ] = [
+        		'id' => $id,
+       			'title' => isset($item['title']) ? $item['title'] : '', // Ensure title key exists
+        		'value' => isset($item['color']) ? $item['color'] : '', // Ensure color key exists
+    ];
+}
+
 
 		return $result;
 	}
