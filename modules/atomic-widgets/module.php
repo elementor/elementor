@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Border_Rad
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Border_Width_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
@@ -26,6 +27,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
@@ -116,6 +118,7 @@ class Module extends BaseModule {
 		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Border_Radius_Prop_Type::get_key(), new Border_Radius_Transformer() );
 		$transformers->register( Border_Width_Prop_Type::get_key(), new Border_Width_Transformer() );
+		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 	}
 
 	/**
