@@ -450,8 +450,8 @@ class Ai extends Library {
 			'POST',
 			'image/image-to-image/unify-product-images',
 			[
-				self::ASPECT_RATIO => $image_data['promptSettings'][ self::ASPECT_RATIO ],
-				self::IMAGE_BACKGROUND_COLOR => $image_data['promptSettings'][ self::IMAGE_BACKGROUND_COLOR ],
+				'aspectRatio' => $image_data['promptSettings'][ self::ASPECT_RATIO ],
+				'backgroundColor' => $image_data['promptSettings'][ self::IMAGE_BACKGROUND_COLOR ],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,

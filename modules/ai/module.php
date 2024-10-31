@@ -179,6 +179,7 @@ class Module extends BaseModule {
 				'get_product_images_url' => admin_url( 'admin-ajax.php' ),
 				'set_product_images_url' => admin_url( 'admin-ajax.php' ),
 				'nonce' => wp_create_nonce( 'elementor-ai-unify-product-images_nonce' ),
+				'placeholder' => ELEMENTOR_ASSETS_URL . 'images/app/ai/product-image-unification-example.gif?' . ELEMENTOR_VERSION,
 				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 				'connect_url' => $this->get_ai_connect_url(),
 			]

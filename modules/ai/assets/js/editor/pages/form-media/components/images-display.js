@@ -26,7 +26,6 @@ const ImagesDisplay = ( {
 	cols = 2,
 	overlay = true,
 	onSelectChange = null,
-	checkboxColor,
 } ) => {
 	const { zoomIndex, setZoomIndex, actions } = useImageNavigation( images );
 
@@ -88,7 +87,7 @@ const ImagesDisplay = ( {
 							numImagesInRow={ cols }
 							overlay={ overlay }
 							onSelectChange={ onSelectChange ? ( isChecked ) => onSelectChange( image.productId, isChecked ) : null }
-							checkboxColor={ checkboxColor }
+							checkboxColor={ image.checkboxColor }
 							isLoading={ image.isLoading }
 						>
 							<ImageActions>
@@ -117,7 +116,6 @@ ImagesDisplay.propTypes = {
 	cols: PropTypes.number,
 	overlay: PropTypes.bool,
 	onSelectChange: PropTypes.func,
-	checkboxColor: PropTypes.string,
 };
 
 ImagesDisplay.Container = Container;

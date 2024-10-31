@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Stack } from '@elementor/ui';
+import { useCallback, useMemo, useState } from 'react';
+import { Avatar, Box, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
@@ -22,6 +22,7 @@ const ProductImageUnification = () => {
 	const [ productsData, setProductsData ] = useState( {} );
 	const [ loadingMap, setLoadingMap ] = useState( {} );
 	const [ errorMap, setErrorMap ] = useState( {} );
+	const [ checkboxColorMap, setCheckboxColorMap ] = useState( {} );
 	const [ wasGeneratedOnce, setWasGeneratedOnce ] = useState( false );
 	const { useMultipleImages } = useImageActions();
 	const [ isSavingImages, setIsSavingImages ] = useState( false );
@@ -58,18 +59,21 @@ const ProductImageUnification = () => {
 			wasGenerated: res?.result?.[ 0 ] !== undefined,
 			data: {
 				productId,
-				...( ! errorGenerating ? res?.result?.[ 0 ] ?? image ?? prevState[ productId ].image : {} ),
+				...( ! errorGenerating ? res?.result?.[ 0 ] ?? image ?? prevState[ productId ]?.image : {} ),
 				seed: productId,
-				isChecked: prevState?.data?.isChecked ?? true,
+				isChecked: prevState[ productId ]?.data?.isChecked ?? true,
 				isLoading: isLoadingResult,
+				checkboxColor: checkboxColorMap[ productId ] ?? 'rgba(0, 0, 0, 0.54)',
 			} } } ) );
-	}, [] );
+	}, [ checkboxColorMap ] );
 	const errorlessProducts = Object.values( productsData ).filter( ( { productId } ) => ! errorMap[ productId ]?.errorGenerating );
 	const isLoading = errorlessProducts.some( ( { productId } ) => loadingMap[ productId ] );
 	const isError = Object.values( errorMap ).length && Object.values( errorMap ).every( ( { errorGenerating } ) => errorGenerating );
-	const [ checkboxColor, setCheckboxColor ] = useState( 'rgba(0, 0, 0, 0.54)' );
+	const handleSubmit = useCallback( ( event ) => {
+		event.preventDefault();
 
-	useEffect( () => {
+		setGenerate();
+		setWasGeneratedOnce( true );
 		const isLightColor = ( color ) => {
 			const rgb = parseInt( color.slice( 1 ), 16 ); // Convert hex to decimal
 			// eslint-disable-next-line no-bitwise
@@ -82,19 +86,21 @@ const ProductImageUnification = () => {
 			return luminance > 128;
 		};
 
-		if ( isLightColor( generatedBgColor ) ) {
-			setCheckboxColor( 'rgba(0, 0, 0, 0.54)' );
-		} else {
-			setCheckboxColor( 'rgba( 255, 255, 255, 0.7 )' );
+		const productsToUnify = errorlessProducts.filter( ( product ) => product.data?.isChecked && product.req );
+
+		const newCheckboxColor = isLightColor( generatedBgColor ) ? 'rgba(0, 0, 0, 0.54)' : 'rgba( 255, 255, 255, 0.7 )';
+		if ( productsToUnify.find( ( product ) => checkboxColorMap[ product.productId ] !== newCheckboxColor ) ) {
+			setCheckboxColorMap( ( prevState ) => {
+				const newColorMap = { ...prevState };
+				productsToUnify.forEach( ( product ) => {
+					newColorMap[ product.productId ] = newCheckboxColor;
+				} );
+				return newColorMap;
+			} );
 		}
-	}, [ generatedBgColor ] );
-	const handleSubmit = ( event ) => {
-		event.preventDefault();
-		setGenerate();
-		setWasGeneratedOnce( true );
-		errorlessProducts.filter( ( product ) => product.data?.isChecked && product.req )
-			.forEach( ( product ) => product.req().catch( ( ) => {} ) );
-	};
+
+		productsToUnify.forEach( ( product ) => product.req().catch( ( ) => {} ) );
+	}, [ checkboxColorMap, errorlessProducts, generatedBgColor, setGenerate ] );
 
 	const getCols = ( dataLength = 1 ) => {
 		return Math.min( Math.ceil( Math.sqrt( dataLength ?? 1 ) ), 4 );
@@ -108,34 +114,62 @@ const ProductImageUnification = () => {
 					secondary={ __( 'Select a set of parameters and AI will automate your adjustments:', 'elementor' ) }
 				/>
 				{ isError && <View.ErrorMessage error={ Object.values( errorMap )?.[ 0 ]?.errorGenerating } onRetry={ handleSubmit } /> }
-				<ImageForm onSubmit={ handleSubmit }>
-					<Stack gap={ 2 } sx={ { my: 2.5 } }>
-						<ColorInput
-							label={ __( 'Background Color', 'elementor' ) }
-							color={ generatedBgColor }
-							onChange={ ( color ) => updateSettings( { [ IMAGE_BACKGROUND_COLOR ]: color } ) }
-							disabled={ isLoading }
-						/>
-						<ImageRatioSelect
-							disabled={ isLoading }
-							value={ generatedAspectRatio }
-							onChange={ ( event ) => updateSettings( { [ IMAGE_RATIO ]: event.target.value } ) }
-						/>
+				<Stack gap={ 2 }>
+					{ ! wasGeneratedOnce && products?.images?.length &&
+					<Box
+						sx={ {
+							display: 'flex',
+							flexWrap: 'wrap',
+							width: '100%',
+							'& .MuiAvatar-root': {
+								margin: 0.5,
+							},
+						} }
+					>
+						{ products?.images.slice( 0, 9 ).map( ( img ) =>
+							<Avatar
+								key={ img.productId }
+								alt={ img.productId }
+								src={ img.image_url }
+								variant="square"
+								sx={ {
+									width: 50,
+									height: 50,
+								} } /> ) }
+						{ ( ( products?.images?.length ?? 0 ) - 9 > 0 ) && <Avatar variant="square" sx={ { bgcolor: 'lightgray', width: 50, height: 50 } }>
+							{ ( products?.images?.length ?? 0 ) - 9 }
+						</Avatar> }
+					</Box>
+					}
+					<ImageForm onSubmit={ handleSubmit }>
 						<Stack gap={ 2 } sx={ { my: 2.5 } }>
-							{
-								wasGeneratedOnce ? (
-									<GenerateAgainSubmit disabled={ isLoading } />
-								) : (
-									<GenerateSubmit disabled={ isLoading } />
-								)
-							}
+							<ColorInput
+								label={ __( 'Background Color', 'elementor' ) }
+								color={ generatedBgColor }
+								onChange={ ( color ) => updateSettings( { [ IMAGE_BACKGROUND_COLOR ]: color } ) }
+								disabled={ isLoading }
+							/>
+							<ImageRatioSelect
+								disabled={ isLoading }
+								value={ generatedAspectRatio }
+								onChange={ ( event ) => updateSettings( { [ IMAGE_RATIO ]: event.target.value } ) }
+							/>
+							<Stack gap={ 2 } sx={ { my: 2.5 } }>
+								{
+									wasGeneratedOnce ? (
+										<GenerateAgainSubmit disabled={ isLoading } />
+									) : (
+										<GenerateSubmit disabled={ isLoading } />
+									)
+								}
+							</Stack>
 						</Stack>
-					</Stack>
 
-				</ImageForm>
+					</ImageForm>
+				</Stack>
 			</View.Panel>
 			<View.Content isGenerating={ isSavingImages }>
-				<ImagesDisplay
+				{ wasGeneratedOnce ? <ImagesDisplay
 					images={ errorlessProducts.map( ( product ) => product.data ) }
 					cols={ getCols( errorlessProducts.length ?? 1 ) }
 					overlay={ false }
@@ -145,8 +179,16 @@ const ProductImageUnification = () => {
 						}
 						return { ...prevState };
 					} ) }
-					checkboxColor={ checkboxColor }
-				/>
+				/> : <Box
+					component="img"
+					src={ window.UnifyProductImagesConfig.placeholder }
+					alt="Example GIF"
+					sx={ {
+						width: '50%',
+						display: 'block',
+						margin: '0 auto',
+					} }
+				/> }
 				{ wasGeneratedOnce && ! isError && errorlessProducts.length &&
 					errorlessProducts.some( ( { data, errorGenerating, wasGenerated } ) =>
 						data?.isChecked && ! data?.isLoadingResult && ! errorGenerating && wasGenerated ) &&
