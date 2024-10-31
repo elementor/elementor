@@ -991,10 +991,6 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides_count = count( $settings['carousel'] );
 		?>
 		<div <?php $this->print_render_attribute_string( 'carousel-wrapper' ); ?>>
-			<div <?php $this->print_render_attribute_string( 'carousel' ); ?>>
-				<?php // PHPCS - $slides contains the slides content, all the relevant content is escaped above. ?>
-				<?php echo implode( '', $slides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</div>
 			<?php if ( 1 < $slides_count ) : ?>
 				<?php if ( $show_arrows ) : ?>
 					<div class="elementor-swiper-button elementor-swiper-button-prev" role="button" tabindex="0">
@@ -1009,6 +1005,10 @@ class Widget_Image_Carousel extends Widget_Base {
 					<div class="swiper-pagination"></div>
 				<?php endif; ?>
 			<?php endif; ?>
+			<div <?php $this->print_render_attribute_string( 'carousel' ); ?>>
+				<?php // PHPCS - $slides contains the slides content, all the relevant content is escaped above. ?>
+				<?php echo implode( '', $slides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
 		</div>
 		<?php
 	}
