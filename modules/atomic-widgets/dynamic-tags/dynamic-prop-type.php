@@ -2,21 +2,23 @@
 
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Dynamic_Prop_Type extends Transformable_Prop_Type {
+class Dynamic_Prop_Type extends Plain_Prop_Type {
+
+	const META_KEY = 'dynamic';
 
 	/**
 	 * Return a tuple that lets the developer ignore the dynamic prop type in the props schema
 	 * using `Prop_Type::add_meta()`, e.g. `String_Prop_Type::make()->add_meta( Dynamic_Prop_Type::ignore() )`.
 	 */
 	public static function ignore(): array {
-		return [ 'dynamic', false ];
+		return [ static::META_KEY, false ];
 	}
 
 	public static function get_key(): string {
@@ -33,42 +35,27 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 		return $this->settings['categories'] ?? [];
 	}
 
-	protected function validate_value( $value ): void {
-		if ( ! isset( $value['name'] ) ) {
-			throw new \Exception( 'Property `name` is required' );
-		}
+	protected function validate_value( $value ): bool {
+		$is_valid_structure = (
+			isset( $value['name'] ) &&
+			is_string( $value['name'] ) &&
+			isset( $value['settings'] ) &&
+			is_array( $value['settings'] )
+		);
 
-		if ( ! is_string( $value['name'] ) ) {
-			throw new \Exception( 'Property `name` must be a string' );
-		}
-
-		if ( ! isset( $value['settings'] ) ) {
-			throw new \Exception( 'Property `settings` is required' );
-		}
-
-		if ( ! is_array( $value['settings'] ) ) {
-			throw new \Exception( 'Property `settings` must be an array' );
+		if ( ! $is_valid_structure ) {
+			return false;
 		}
 
 		$tag = Dynamic_Tags_Module::instance()->registry->get_tag( $value['name'] );
 
-		if ( ! $tag ) {
-			throw new \Exception( "Dynamic tag `{$value['name']}` does not exist" );
+		if ( ! $tag || ! $this->is_tag_in_supported_categories( $tag ) ) {
+			return false;
 		}
 
-		if ( ! $this->is_tag_in_supported_categories( $tag ) ) {
-			throw $this->unsupported_tag( $tag );
-		}
+		[ $is_valid ] = Props_Validator::make( $tag['props_schema'] )->validate( $value['settings'] );
 
-		$validator = Props_Validator::make( $tag['props_schema'] );
-
-		[ $is_valid, , $errors ] = $validator->validate( $value['settings'] );
-
-		if ( ! $is_valid ) {
-			$errors = join( ', ', $errors );
-
-			throw new \Exception( 'Dynamic tag settings validation failed. Invalid keys: ' . $errors );
-		}
+		return $is_valid;
 	}
 
 	private function is_tag_in_supported_categories( array $tag ): bool {
@@ -78,12 +65,5 @@ class Dynamic_Prop_Type extends Transformable_Prop_Type {
 		);
 
 		return ! empty( $intersection );
-	}
-
-	private function unsupported_tag( array $tag ): \Exception {
-		$tag_categories = implode( ', ', $tag['categories'] );
-		$prop_categories = implode( ', ', $this->get_categories() );
-
-		return new \Exception( "Dynamic tag `{$tag['name']}` categories ($tag_categories) are not in supported categories ($prop_categories)" );
 	}
 }

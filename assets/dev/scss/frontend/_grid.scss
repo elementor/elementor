@@ -136,7 +136,7 @@
 	position: relative;
 
 	&:not(:last-child) {
-		margin-bottom: 20px;
+		margin-bottom: var(--kit-widget-spacing, 20px);
 
 		&.elementor-widget__width-auto,
 		&.elementor-widget__width-initial,
@@ -292,17 +292,6 @@
 
 	.elementor-column {
 		width: 100%; //Default width for mobile
-	}
-}
-
-// Minimal simple Grid
-
-ul.elementor-icon-list-items.elementor-inline-items {
-	display: flex;
-	flex-wrap: wrap;
-
-	.elementor-inline-item {
-		word-break: break-word;
 	}
 }
 

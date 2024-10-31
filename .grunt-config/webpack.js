@@ -68,14 +68,15 @@ const frontendRulesPresets = [ [
 	{
 		targets: {
 			browsers: [
-				'last 1 Android versions',
-				'last 1 ChromeAndroid versions',
-				'last 2 Chrome versions',
-				'last 2 Firefox versions',
-				'Safari >= 14',
-				'iOS >= 14',
-				'last 2 Edge versions',
-				'last 2 Opera versions',
+				'last 3 versions',
+				'Chrome >= 100',
+				'Firefox >= 100',
+				'Edge >= 100',
+				'Safari >= 15.5',
+				'iOS >= 15.5',
+				'Android >= 100',
+				'ChromeAndroid >= 100',
+				'not dead',
 			],
 		},
 		"useBuiltIns": "usage",
@@ -137,6 +138,7 @@ const entry = {
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
+	'e-react-promotions': path.resolve( __dirname, '../modules/promotions/assets/js/react/index.js' ),
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 };

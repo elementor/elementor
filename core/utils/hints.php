@@ -141,9 +141,8 @@ class Hints {
 		}
 
 		if ( $notice_settings['dismissible'] ) {
-			$dismissible = '<button class="elementor-control-notice-dismiss tooltip-target" data-event="' . $notice_settings['dismissible'] . '" data-tooltip="' . esc_attr__( 'Don’t show again.', 'elementor' ) . '">
+			$dismissible = '<button class="elementor-control-notice-dismiss tooltip-target" data-event="' . $notice_settings['dismissible'] . '" data-tooltip="' . esc_attr__( 'Don’t show again.', 'elementor' ) . '" aria-label="' . esc_attr__( 'Don’t show again.', 'elementor' ) . '">
 				<i class="eicon eicon-close" aria-hidden="true"></i>
-				<span class="elementor-screen-only">' . esc_html__( 'Don’t show again.', 'elementor' ) . '</span>
 			</button>';
 		}
 
