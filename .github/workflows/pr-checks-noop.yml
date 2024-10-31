@@ -1,0 +1,35 @@
+name: PR Checks Noop
+# This workflow is meant to send success to required pr checks. this is a workaround for the issue https://github.com/orgs/community/discussions/142210
+on:
+  pull_request:
+    paths:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+jobs:
+  build-plugin:
+    name: Build plugin
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          exit 0
+  test-result:
+    name: Playwright - Test Results
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          exit 0
+  test-result-phpunit:
+    name: PHPUnit - Test Results
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          exit 0
+  pr_name_lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          exit 0
