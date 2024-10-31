@@ -109,11 +109,11 @@ class Module extends BaseModule {
 		$transformers->register( Boolean_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Number_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 
 		// Other
 		$transformers->register( Linked_Dimensions_Prop_Type::get_key(), new Linked_Dimensions_Transformer() );
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
+		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Border_Radius_Prop_Type::get_key(), new Border_Radius_Transformer() );
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 	}

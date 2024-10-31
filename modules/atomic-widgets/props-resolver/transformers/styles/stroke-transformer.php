@@ -13,6 +13,6 @@ class Stroke_Transformer extends Transformer_Base {
 		$width = $value['width'];
 		$color = $value['color'];
 
-		return $width . $color;
+		return $width . ' ' . $color;
 	}
 }
