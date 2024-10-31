@@ -4,15 +4,18 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Border_Radius_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Border_Width_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -377,6 +380,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			$registry->register( Linked_Dimensions_Prop_Type::get_key(), new Linked_Dimensions_Transformer() );
 			$registry->register( Border_Radius_Prop_Type::get_key(), new Border_Radius_Transformer() );
 			$registry->register( Border_Width_Prop_Type::get_key(), new Border_Width_Transformer() );
+			$registry->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
+			$registry->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 		});
 
 		$styles = [
@@ -459,7 +464,23 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										]
 									],
 								]
-							]
+							],
+							'-webkit-text-stroke' => [
+								'$$type' => 'stroke',
+								'value' => [
+									'color' => [
+										'$$type' => 'color',
+										'value' => '#ff0000',
+									],
+									'width' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 10,
+										],
+									],
+								],
+							],
 						],
 						'meta' => [],
 					],
