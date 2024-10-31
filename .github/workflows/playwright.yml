@@ -8,7 +8,6 @@ on:
       - '.github/config.json'
       - 'bin/**'
       - '.gitignore'
-      - 'composer.lock'
       - 'docs/**'
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'

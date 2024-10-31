@@ -9,7 +9,6 @@ on:
       - '.github/config.json'
       - 'bin/**'
       - '.gitignore'
-      - 'composer.lock'
       - 'docs/**'
   workflow_call:
     outputs:
