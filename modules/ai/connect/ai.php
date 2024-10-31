@@ -412,7 +412,7 @@ class Ai extends Library {
 
 			$image_editor = wp_get_image_editor( $original_url );
 
-			if ( is_wp_error($image_editor) ) {
+			if ( is_wp_error( $image_editor ) ) {
 				return $original_url;
 			}
 
@@ -422,8 +422,8 @@ class Ai extends Library {
 
 			$scaling_factor = sqrt( $max_file_size / $current_size );
 
-			$new_width = ( int )( $original_width * $scaling_factor );
-			$new_height = ( int )( $original_height * $scaling_factor );
+			$new_width = (int) ( $original_width * $scaling_factor );
+			$new_height = (int) ( $original_height * $scaling_factor );
 
 			$image_editor->resize( $new_width, $new_height, true );
 
@@ -444,7 +444,7 @@ class Ai extends Library {
 			throw new \Exception( 'Image file not found' );
 		}
 
-		$final_path = $this->resizeImageIfNeeded ($image_file );
+		$final_path = $this->resizeImageIfNeeded( $image_file );
 
 		$result = $this->ai_request(
 			'POST',
