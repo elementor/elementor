@@ -33,6 +33,14 @@ class Style_Schema {
 
 	private static function get_position_props() {
 		return [
+			'position' => String_Prop_Type::make()->enum([
+				'static',
+				'relative',
+			]),
+			'top' => Size_Prop_Type::make(),
+			'right' => Size_Prop_Type::make(),
+			'bottom' => Size_Prop_Type::make(),
+			'left' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make(),
 		];
 	}
