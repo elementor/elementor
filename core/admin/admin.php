@@ -738,10 +738,11 @@ class Admin extends App {
 	}
 
 	private function sanitize_post_data( $post_data ) {
-		$allowed_post_data_keys = [ 'post_title', 'post_content', 'post_excerpt', 'post_status', 'post_type' ];
-		$post_data = array_intersect_key( $post_data, array_flip( $allowed_post_data_keys ) );
-		$post_data = array_map( 'sanitize_text_field', $post_data );
-
+		$post_data = [
+			'post_title' => isset( $post_data['post_title'] ) ? sanitize_text_field( $post_data['post_title'] ) : '',
+			'post_content' => isset( $post_data['post_content'] ) ? sanitize_textarea_field( $post_data['post_content'] ) : '',
+			'post_status' => isset( $post_data['post_status'] ) ? $post_data['post_status'] : 'draft',
+		];
 		return $post_data;
 	}
 	/**
