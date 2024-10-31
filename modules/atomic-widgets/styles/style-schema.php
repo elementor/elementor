@@ -3,7 +3,6 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Position_Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -31,11 +30,14 @@ class Style_Schema {
 
 	private static function get_position_props() {
 		return [
-			'position' => String_Prop_Type::make(),
-			'top' => Position_Transform_Prop_Type::make(),
-			'right' => Position_Transform_Prop_Type::make(),
-			'bottom' => Position_Transform_Prop_Type::make(),
-			'left' => Position_Transform_Prop_Type::make(),
+			'position' => String_Prop_Type::make()->enum([
+				'static',
+				'relative',
+			]),
+			'top' => Size_Prop_Type::make(),
+			'right' => Size_Prop_Type::make(),
+			'bottom' => Size_Prop_Type::make(),
+			'left' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make(),
 		];
 	}
