@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
@@ -16,7 +17,8 @@ class Style_Schema {
 			self::get_position_props(),
 			self::get_typography_props(),
 			self::get_spacing_props(),
-			self::get_border_props()
+			self::get_border_props(),
+			self::get_background_props(),
 		);
 	}
 
@@ -33,6 +35,14 @@ class Style_Schema {
 
 	private static function get_position_props() {
 		return [
+			'position' => String_Prop_Type::make()->enum([
+				'static',
+				'relative',
+			]),
+			'top' => Size_Prop_Type::make(),
+			'right' => Size_Prop_Type::make(),
+			'bottom' => Size_Prop_Type::make(),
+			'left' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make(),
 		];
 	}
@@ -95,6 +105,26 @@ class Style_Schema {
 	private static function get_border_props() {
 		return [
 			'border-radius' => Border_Radius_Prop_Type::make(),
+			'border-width' => Border_Width_Prop_Type::make(),
+			'border-color' => Color_Prop_Type::make(),
+			'border-style' => String_Prop_Type::make()->enum([
+				'none',
+				'hidden',
+				'dotted',
+				'dashed',
+				'solid',
+				'double',
+				'groove',
+				'ridge',
+				'inset',
+				'outset',
+			]),
+		];
+	}
+
+	private static function get_background_props() {
+		return [
+			'background-color' => Color_Prop_Type::make(),
 		];
 	}
 }
