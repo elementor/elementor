@@ -10,12 +10,14 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Sr
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Border_Radius_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Border_Width_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
@@ -118,6 +120,7 @@ class Module extends BaseModule {
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
 		$transformers->register( Border_Radius_Prop_Type::get_key(), new Border_Radius_Transformer() );
+		$transformers->register( Border_Width_Prop_Type::get_key(), new Border_Width_Transformer() );
 	}
 
 	/**
