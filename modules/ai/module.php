@@ -112,8 +112,8 @@ class Module extends BaseModule {
 		if ( is_admin() ) {
 			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
 			add_action( 'admin_init', [ $this, 'enqueue_ai_woocommerce' ] );
-			add_action('wp_ajax_elementor-ai-get-product-images',[ $this, 'get_product_images_ajax']);
-			add_action('wp_ajax_elementor-ai-set-product-images',[ $this, 'set_product_images_ajax']);
+			add_action( 'wp_ajax_elementor-ai-get-product-images',[ $this, 'get_product_images_ajax'] );
+			add_action( 'wp_ajax_elementor-ai-set-product-images',[ $this, 'set_product_images_ajax'] );
 		}
 
 		add_action( 'enqueue_block_editor_assets', function() {
@@ -243,7 +243,7 @@ class Module extends BaseModule {
 		wp_die();
 	}
 
-	private function get_attachment_id_by_url($url) {
+	private function get_attachment_id_by_url( $url ) {
 		global $wpdb;
 		return $wpdb->get_var($wpdb->prepare(
 			"SELECT ID FROM $wpdb->posts WHERE guid = %s AND post_type = 'attachment'",
@@ -254,27 +254,27 @@ class Module extends BaseModule {
 	public function set_product_images_ajax() {
 		check_ajax_referer( 'elementor-ai-unify-product-images_nonce', 'nonce' );
 
-		$product_id = $_POST['productId'];
-		$image_url = $_POST['image_url'];
+		$product_id = isset($_POST['productId']) ? sanitize_text_field(wp_unslash($_POST['productId'])) : '';
+		$image_url = isset($_POST['image_url']) ? sanitize_text_field(wp_unslash($_POST['image_url'])) : '';
 
-		if (!$product_id || !$image_url) {
+		if ( !$product_id || !$image_url ) {
 			throw new \Exception('Product ID and Image URL are required');
 		}
 
-		$product = wc_get_product($product_id);
-		if (!$product) {
-			throw new \Exception('Product not found' );
+		$product = wc_get_product( $product_id );
+		if ( !$product ) {
+			throw new \Exception( 'Product not found' );
 		}
 
-		$attachment_id = $this->get_attachment_id_by_url($image_url);
-		if (is_wp_error($attachment_id)) {
-			throw new \Exception('Image upload failed');
+		$attachment_id = $this->get_attachment_id_by_url( $image_url );
+		if ( is_wp_error( $attachment_id ) ) {
+			throw new \Exception( 'Image upload failed' );
 		}
 
-		$product->set_image_id($attachment_id);
+		$product->set_image_id( $attachment_id );
 		$product->save();
 
-		wp_send_json_success(['message' => 'Image added successfully', 'refresh' => true]);
+		wp_send_json_success( ['message' => 'Image added successfully', 'refresh' => true] );
 	}
 
 	public function enqueue_ai_media_library() {
@@ -1270,7 +1270,6 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
-
 
 		$result = $app->get_unify_product_images( [
 			'promptSettings' => $data['payload']['settings'],
