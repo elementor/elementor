@@ -275,7 +275,8 @@ class Module extends BaseModule {
 		$product->save();
 
 		wp_send_json_success( [
-			'message' => 'Image added successfully', 'refresh' => true
+			'message' => 'Image added successfully',
+			'refresh' => true
 		] );
 	}
 
