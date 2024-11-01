@@ -22,6 +22,10 @@ class Wp_Api {
 	 * @return Collection
 	 */
 	public function get_plugins() {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		if ( ! $this->plugins ) {
 			$this->plugins = new Collection( get_plugins() );
 		}
@@ -33,10 +37,6 @@ class Wp_Api {
 	 * @return Collection
 	 */
 	public function get_active_plugins() {
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
 		return $this->get_plugins()
 			->only( get_option( 'active_plugins' ) );
 	}
