@@ -144,6 +144,8 @@ export default class extends elementorModules.ViewModule {
 	getAnchorTarget( element ) {
 		const hash = element?.hash;
 
+		console.log( hash );
+
 		if ( '' === hash ) {
 			return null;
 		} else if ( ! this.isValidSelector( hash ) ) {
