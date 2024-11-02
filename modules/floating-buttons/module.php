@@ -293,6 +293,10 @@ class Module extends BaseModule {
 				continue;
 			}
 
+			if ( 'publish' !== get_post_status( $post_id ) ) {
+				continue;
+			}
+
 			update_post_meta( $post_id, static::META_CLICK_TRACKING, $clicks );
 		}
 
