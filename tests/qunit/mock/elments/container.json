@@ -361,7 +361,7 @@
 			"label": "Align Content",
 			"label_block": true,
 			"options": {
-				"start": {
+				"flex-start": {
 					"title": "Start",
 					"icon": "eicon-justify-start-v"
 				},
@@ -369,7 +369,7 @@
 					"title": "Middle",
 					"icon": "eicon-justify-center-v"
 				},
-				"end": {
+				"flex-end": {
 					"title": "End",
 					"icon": "eicon-justify-end-v"
 				},
@@ -406,7 +406,7 @@
 			"label": "Align Content",
 			"label_block": true,
 			"options": {
-				"start": {
+				"flex-start": {
 					"title": "Start",
 					"icon": "eicon-justify-start-v"
 				},
@@ -414,7 +414,7 @@
 					"title": "Middle",
 					"icon": "eicon-justify-center-v"
 				},
-				"end": {
+				"flex-end": {
 					"title": "End",
 					"icon": "eicon-justify-end-v"
 				},
@@ -451,7 +451,7 @@
 			"label": "Align Content",
 			"label_block": true,
 			"options": {
-				"start": {
+				"flex-start": {
 					"title": "Start",
 					"icon": "eicon-justify-start-v"
 				},
@@ -459,7 +459,7 @@
 					"title": "Middle",
 					"icon": "eicon-justify-center-v"
 				},
-				"end": {
+				"flex-end": {
 					"title": "End",
 					"icon": "eicon-justify-end-v"
 				},

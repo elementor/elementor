@@ -206,7 +206,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			'label_block' => true,
 			'default' => '',
 			'options' => [
-				'start' => [
+				'flex-start' => [
 					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => 'eicon-justify-start-v',
 				],
@@ -214,7 +214,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 					'title' => esc_html__( 'Middle', 'elementor' ),
 					'icon' => 'eicon-justify-center-v',
 				],
-				'end' => [
+				'flex-end' => [
 					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => 'eicon-justify-end-v',
 				],
