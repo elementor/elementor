@@ -112,10 +112,13 @@ class Module extends BaseModule {
 
 		if ( is_admin() ) {
 			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
-			add_action( 'admin_init', [ $this, 'enqueue_ai_woocommerce' ] );
-			add_action( 'wp_ajax_elementor-ai-get-product-images', [ $this, 'get_product_images_ajax' ] );
-			add_action( 'wp_ajax_elementor-ai-set-product-images', [ $this, 'set_product_images_ajax' ] );
-			Product_Image_Unification_Intro::add_hooks();
+
+			if ( current_user_can( 'edit_products' ) || current_user_can( 'publish_products' ) ) {
+				add_action( 'admin_init', [$this, 'enqueue_ai_woocommerce'] );
+				add_action( 'wp_ajax_elementor-ai-get-product-images', [$this, 'get_product_images_ajax'] );
+				add_action( 'wp_ajax_elementor-ai-set-product-images', [$this, 'set_product_images_ajax'] );
+				Product_Image_Unification_Intro::add_hooks();
+			}
 		}
 
 		add_action( 'enqueue_block_editor_assets', function() {
@@ -204,15 +207,6 @@ class Module extends BaseModule {
 		check_ajax_referer( 'elementor-ai-unify-product-images_nonce', 'nonce' );
 
 		$post_ids = isset( $_POST['post_ids'] ) ? array_map( 'intval', $_POST['post_ids'] ) : [];
-
-		if ( ! current_user_can( 'edit_products' ) ) {
-			wp_send_json_error( [ 'message' => __( 'You do not have permission to edit products', 'elementor' ) ] );
-		}
-
-		if ( empty( $post_ids ) ) {
-			wp_send_json_error( [ 'message' => __( 'No products selected', 'elementor' ) ] );
-		}
-
 		$image_ids = [];
 
 		foreach ( $post_ids as $post_id ) {
@@ -259,7 +253,7 @@ class Module extends BaseModule {
 			'numberposts' => 1,
 		] );
 
-		return !empty( $attachments ) ? $attachments[0] : null;
+		return ! empty( $attachments ) ? $attachments[0] : null;
 	}
 
 	public function set_product_images_ajax() {
@@ -1279,7 +1273,7 @@ class Module extends BaseModule {
 		}
 
 		if ( ! $app->is_connected() ) {
-			throw new \Exception( __( 'not_connected', 'elementor' ));
+			throw new \Exception( __( 'not_connected', 'elementor' ) );
 		}
 
 		$context = $this->get_request_context( $data );
