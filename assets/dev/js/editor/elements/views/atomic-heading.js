@@ -9,7 +9,12 @@ const AtomicHeadingView = Widget.extend( {
 	},
 
 	className() {
-		return ( this.model.getSetting( 'classes' )?.value || [] ).join( ' ' );
+		// elementor-element-edit-mode
+
+		const atomicClasses = [ 'elementor-widget-v2' ];
+		const widgetClasses = ( this.model.getSetting( 'classes' )?.value || [] );
+
+		return atomicClasses.concat( widgetClasses ).join( ' ' );
 		// let classes = BaseWidgetView.prototype.className.apply( this, arguments );
 		// let widgetClasses = ( this.model.getSetting( 'classes' )?.value || [] ).join( ' ' );
 		//

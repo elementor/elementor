@@ -222,6 +222,7 @@
 	// TODO: Find a better solution.
 	& > &,
 	&-inner > &,
+	.elementor-widget-v2 &,
 	.elementor-widget & {
 
 		> .elementor-element-overlay {
