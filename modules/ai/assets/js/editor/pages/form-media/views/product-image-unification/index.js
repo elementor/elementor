@@ -26,6 +26,7 @@ const ProductImageUnification = () => {
 	const [ wasGeneratedOnce, setWasGeneratedOnce ] = useState( false );
 	const { useMultipleImages } = useImageActions();
 	const [ isSavingImages, setIsSavingImages ] = useState( false );
+	const errorlessProducts = Object.values( productsData ).filter( ( { productId } ) => ! errorMap[ productId ]?.errorGenerating );
 	const use = useCallback( async () => {
 		setIsSavingImages( true );
 		const imagesToSave = errorlessProducts
@@ -37,7 +38,7 @@ const ProductImageUnification = () => {
 			} ) );
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		await useMultipleImages( imagesToSave );
-	}, [ productsData, setIsSavingImages, useMultipleImages ] );
+	}, [ errorlessProducts, useMultipleImages ] );
 	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ settings ] );
 	const generatedBgColor = useMemo( () => settings[ IMAGE_BACKGROUND_COLOR ], [ settings ] );
 	const onProductUpdate = useCallback( ( res, isLoadingResult, errorGenerating, req, productId, ratio, bgColor, image ) => {
@@ -66,7 +67,6 @@ const ProductImageUnification = () => {
 				checkboxColor: checkboxColorMap[ productId ] ?? 'rgba(0, 0, 0, 0.54)',
 			} } } ) );
 	}, [ checkboxColorMap ] );
-	const errorlessProducts = Object.values( productsData ).filter( ( { productId } ) => ! errorMap[ productId ]?.errorGenerating );
 	const isLoading = errorlessProducts.some( ( { productId } ) => loadingMap[ productId ] );
 	const isError = Object.values( errorMap ).length && Object.values( errorMap ).every( ( { errorGenerating } ) => errorGenerating );
 	const handleSubmit = useCallback( ( event ) => {
@@ -129,7 +129,7 @@ const ProductImageUnification = () => {
 						{ products?.images.slice( 0, 9 ).map( ( img ) =>
 							<Avatar
 								key={ img.productId }
-								alt={ img.productId }
+								alt={ img.productId + '' }
 								src={ img.image_url }
 								variant="square"
 								sx={ {
@@ -169,31 +169,30 @@ const ProductImageUnification = () => {
 				</Stack>
 			</View.Panel>
 			<View.Content isGenerating={ isSavingImages }>
-				{ wasGeneratedOnce ? <ImagesDisplay
-					images={ errorlessProducts.map( ( product ) => product.data ) }
-					cols={ getCols( errorlessProducts.length ?? 1 ) }
-					overlay={ false }
-					onSelectChange={ ( productId, isChecked ) => setProductsData( ( prevState ) => {
-						if ( prevState[ productId ]?.data ) {
-							prevState[ productId ].data.isChecked = isChecked;
-						}
-						return { ...prevState };
-					} ) }
-				/> : <Box
-					component="img"
-					src={ window.UnifyProductImagesConfig.placeholder }
-					alt="Example GIF"
-					sx={ {
-						width: '50%',
-						display: 'block',
-						margin: '0 auto',
-					} }
-				/> }
-				{ wasGeneratedOnce && ! isError && errorlessProducts.length &&
+				<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center' } }>
+					<Box sx={ { flex: 1, overflowY: 'auto' } }>
+						{ wasGeneratedOnce ? <ImagesDisplay
+							images={ errorlessProducts.map( ( product ) => product.data ) }
+							cols={ getCols( errorlessProducts.length ?? 1 ) }
+							overlay={ false }
+							onSelectChange={ ( productId, isChecked ) => setProductsData( ( prevState ) => {
+								if ( prevState[ productId ]?.data ) {
+									prevState[ productId ].data.isChecked = isChecked;
+								}
+								return { ...prevState };
+							} ) }
+						/> : <Box
+							component="img"
+							src={ window.UnifyProductImagesConfig.placeholder }
+							alt="Example GIF"
+						/> }
+					</Box>
+					{ wasGeneratedOnce && ! isError && errorlessProducts.length &&
 					errorlessProducts.some( ( { data, errorGenerating, wasGenerated } ) =>
 						data?.isChecked && ! data?.isLoadingResult && ! errorGenerating && wasGenerated ) &&
-						<ImageActions.UseImage onClick={ use } sx={ { float: 'right' } } />
-				}
+						<ImageActions.UseImage onClick={ use } sx={ { alignSelf: 'flex-end', mt: 2 } } />
+					}
+				</Box>
 			</View.Content>
 			{ products.images
 				?.filter( ( img ) => img.productId )

@@ -31,7 +31,8 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 	useEffect( () => {
 		if ( anchorEl.current && isOpened ) {
 			const timeout = setTimeout( () => {
-				document.querySelector( '.el-ai-custom-color-picker>.components-color-picker > *:not(.react-colorful)' )?.remove();
+				const irrelevantComponents = document.querySelector( '.el-ai-custom-color-picker>.components-color-picker > *:not(.react-colorful)' );
+				irrelevantComponents?.remove();
 			}, 10 );
 
 			return () => clearTimeout( timeout );

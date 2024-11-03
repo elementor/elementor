@@ -244,11 +244,20 @@ class Module extends BaseModule {
 	}
 
 	private function get_attachment_id_by_url( $url ) {
-		global $wpdb;
-		return $wpdb->get_var($wpdb->prepare(
-			"SELECT ID FROM $wpdb->posts WHERE guid = %s AND post_type = 'attachment'",
-			$url
-		));
+		$attachments = get_posts( [
+			'post_type'  => 'attachment',
+			'meta_query' => [
+				[
+					'key'   => '_wp_attached_file',
+					'value' => basename( $url ),
+					'compare' => 'LIKE',
+				],
+			],
+			'fields'     => 'ids',
+			'numberposts' => 1,
+		] );
+
+		return !empty( $attachments ) ? $attachments[0] : null;
 	}
 
 	public function set_product_images_ajax() {
@@ -275,8 +284,8 @@ class Module extends BaseModule {
 		$product->save();
 
 		wp_send_json_success( [
-			'message' => 'Image added successfully',
-			'refresh' => true
+			'message' => __( 'Image added successfully', 'elementor' ),
+			'refresh' => true,
 		] );
 	}
 
@@ -1260,15 +1269,15 @@ class Module extends BaseModule {
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
-			throw new \Exception( 'Missing Image' );
+			throw new \Exception( __( 'Missing Image', 'elementor' ) );
 		}
 
 		if ( empty( $data['payload']['settings'] ) ) {
-			throw new \Exception( 'Missing prompt settings' );
+			throw new \Exception( __( 'Missing prompt settings', 'elementor' ) );
 		}
 
 		if ( ! $app->is_connected() ) {
-			throw new \Exception( 'not_connected' );
+			throw new \Exception( __( 'not_connected', 'elementor' ));
 		}
 
 		$context = $this->get_request_context( $data );

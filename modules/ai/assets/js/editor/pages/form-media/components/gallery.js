@@ -66,7 +66,7 @@ const GalleryImage = ( {
 			>
 				<>
 					{ isLoading
-						? <Skeleton sx={ { ...style, width: '100%' } } animation={ 'wave' } variant={ 'rounded' } />
+						? <Skeleton sx={ { ...style, width: '100%', height: '100% ' } } animation={ 'wave' } variant={ 'rounded' } />
 						: ( <>
 							{ onSelectChange &&
 								<Checkbox
