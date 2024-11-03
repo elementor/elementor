@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,6 +23,8 @@ class Style_Schema {
 			self::get_typography_props(),
 			self::get_spacing_props(),
 			self::get_border_props(),
+			self::get_border_props(),
+			self::get_background_props(),
 			self::get_effects_props(),
 		);
 	}
@@ -95,6 +98,7 @@ class Style_Schema {
 				'ltr',
 				'rtl',
 			]),
+			'-webkit-text-stroke' => Stroke_Prop_Type::make(),
 		];
 	}
 
@@ -122,6 +126,12 @@ class Style_Schema {
 				'inset',
 				'outset',
 			]),
+		];
+	}
+
+	private static function get_background_props() {
+		return [
+			'background-color' => Color_Prop_Type::make(),
 		];
 	}
 
