@@ -355,18 +355,36 @@
 			"default": ""
 		},
 		"container_align_content": {
-			"type": "select",
+			"type": "choose",
 			"tab": "content",
 			"section": "section_content_container",
 			"label": "Align Content",
+			"label_block": true,
 			"options": {
-				"": "Default",
-				"center": "Center",
-				"flex-start": "Flex Start",
-				"flex-end": "Flex End",
-				"space-between": "Space Between",
-				"space-around": "Space Around",
-				"space-evenly": "Space Evenly"
+				"flex-start": {
+					"title": "Start",
+					"icon": "eicon-justify-start-v"
+				},
+				"center": {
+					"title": "Middle",
+					"icon": "eicon-justify-center-v"
+				},
+				"flex-end": {
+					"title": "End",
+					"icon": "eicon-justify-end-v"
+				},
+				"space-between": {
+					"title": "Space Between",
+					"icon": "eicon-justify-space-between-v"
+				},
+				"space-around": {
+					"title": "Space Around",
+					"icon": "eicon-justify-space-around-v"
+				},
+				"space-evenly": {
+					"title": "Space Evenly",
+					"icon": "eicon-justify-space-evenly-v"
+				}
 			},
 			"selectors": {
 				"{{WRAPPER}}": "--align-content: {{VALUE}};"
@@ -382,18 +400,36 @@
 			"name": "container_align_content"
 		},
 		"container_align_content_tablet": {
-			"type": "select",
+			"type": "choose",
 			"tab": "content",
 			"section": "section_content_container",
 			"label": "Align Content",
+			"label_block": true,
 			"options": {
-				"": "Default",
-				"center": "Center",
-				"flex-start": "Flex Start",
-				"flex-end": "Flex End",
-				"space-between": "Space Between",
-				"space-around": "Space Around",
-				"space-evenly": "Space Evenly"
+				"flex-start": {
+					"title": "Start",
+					"icon": "eicon-justify-start-v"
+				},
+				"center": {
+					"title": "Middle",
+					"icon": "eicon-justify-center-v"
+				},
+				"flex-end": {
+					"title": "End",
+					"icon": "eicon-justify-end-v"
+				},
+				"space-between": {
+					"title": "Space Between",
+					"icon": "eicon-justify-space-between-v"
+				},
+				"space-around": {
+					"title": "Space Around",
+					"icon": "eicon-justify-space-around-v"
+				},
+				"space-evenly": {
+					"title": "Space Evenly",
+					"icon": "eicon-justify-space-evenly-v"
+				}
 			},
 			"selectors": {
 				"{{WRAPPER}}": "--align-content: {{VALUE}};"
@@ -409,18 +445,36 @@
 			"default": ""
 		},
 		"container_align_content_mobile": {
-			"type": "select",
+			"type": "choose",
 			"tab": "content",
 			"section": "section_content_container",
 			"label": "Align Content",
+			"label_block": true,
 			"options": {
-				"": "Default",
-				"center": "Center",
-				"flex-start": "Flex Start",
-				"flex-end": "Flex End",
-				"space-between": "Space Between",
-				"space-around": "Space Around",
-				"space-evenly": "Space Evenly"
+				"flex-start": {
+					"title": "Start",
+					"icon": "eicon-justify-start-v"
+				},
+				"center": {
+					"title": "Middle",
+					"icon": "eicon-justify-center-v"
+				},
+				"flex-end": {
+					"title": "End",
+					"icon": "eicon-justify-end-v"
+				},
+				"space-between": {
+					"title": "Space Between",
+					"icon": "eicon-justify-space-between-v"
+				},
+				"space-around": {
+					"title": "Space Around",
+					"icon": "eicon-justify-space-around-v"
+				},
+				"space-evenly": {
+					"title": "Space Evenly",
+					"icon": "eicon-justify-space-evenly-v"
+				}
 			},
 			"selectors": {
 				"{{WRAPPER}}": "--align-content: {{VALUE}};"
