@@ -86,7 +86,8 @@ const ProductImageUnification = () => {
 			return luminance > 128;
 		};
 
-		const productsToUnify = errorlessProducts.filter( ( product ) => product.data?.isChecked && product.req );
+		const productsToUnify = ( errorlessProducts.length ? errorlessProducts : Object.values( productsData ) )
+			.filter( ( product ) => product.data?.isChecked && product.req );
 
 		const newCheckboxColor = isLightColor( generatedBgColor ) ? 'rgba(0, 0, 0, 0.54)' : 'rgba( 255, 255, 255, 0.7 )';
 		if ( productsToUnify.find( ( product ) => checkboxColorMap[ product.productId ] !== newCheckboxColor ) ) {
@@ -150,7 +151,7 @@ const ProductImageUnification = () => {
 								disabled={ isLoading }
 							/>
 							<ImageRatioSelect
-								disabled={ isLoading }
+								disabled={ true }
 								value={ generatedAspectRatio }
 								onChange={ ( event ) => updateSettings( { [ IMAGE_RATIO ]: event.target.value } ) }
 							/>

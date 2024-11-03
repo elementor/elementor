@@ -114,7 +114,7 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 					<ColorPicker
 						color={ color }
 						onChangeComplete={ handleColorPickerChange }
-						disableAlpha={ false }
+						disableAlpha={ true }
 					/>
 				</div>
 			</Popover>
