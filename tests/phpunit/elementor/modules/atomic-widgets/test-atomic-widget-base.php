@@ -64,6 +64,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'text' => 'This text is more great than the greatest text',
 						'tag' => 'h2',
 						'transformable_string' => 'This is awesome!',
+						'classes' => ' elementor-widget-v2 elementor-widget-v2-1',
 					],
 				]
 			],
@@ -88,6 +89,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'result' => [
 						'non_disabled_prop' => 'Awesome!',
 						'disabled_prop' => null,
+						'classes' => ' elementor-widget-v2 elementor-widget-v2-1',
 					]
 				]
 			],
@@ -104,6 +106,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					],
 					'result' => [
 						'text' => null,
+						'classes' => ' elementor-widget-v2 elementor-widget-v2-1',
 					],
 				]
 			],
@@ -117,7 +120,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'settings' => [
 						'classes' => [
 							'$$type' => 'classes',
-							'value' => [ 'one', 'two', 'three' ],
+							'value' => [ 'one', 'two', 'three', 'elementor-widget-v2', 'elementor-widget-v2-1' ],
 						],
 						'outer_classes' => [
 							'$$type' => 'classes',
@@ -176,6 +179,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'text_2' => null,
 						'invalid_name' => null,
 						'invalid_settings' => null,
+						'classes' => ' elementor-widget-v2 elementor-widget-v2-1',
 					],
 				],
 				'arrange_cb' => function() {
