@@ -114,9 +114,9 @@ class Module extends BaseModule {
 			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
 
 			if ( current_user_can( 'edit_products' ) || current_user_can( 'publish_products' ) ) {
-				add_action( 'admin_init', [$this, 'enqueue_ai_woocommerce'] );
-				add_action( 'wp_ajax_elementor-ai-get-product-images', [$this, 'get_product_images_ajax'] );
-				add_action( 'wp_ajax_elementor-ai-set-product-images', [$this, 'set_product_images_ajax'] );
+				add_action( 'admin_init', [ $this, 'enqueue_ai_woocommerce' ] );
+				add_action( 'wp_ajax_elementor-ai-get-product-images', [ $this, 'get_product_images_ajax' ] );
+				add_action( 'wp_ajax_elementor-ai-set-product-images', [ $this, 'set_product_images_ajax' ] );
 				Product_Image_Unification_Intro::add_hooks();
 			}
 		}
