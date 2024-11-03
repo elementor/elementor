@@ -291,6 +291,27 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'paragraph_spacing',
+			[
+				'label' => esc_html__( 'Paragraph Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+					'em' => [
+						'min' => 0.1,
+						'max' => 20,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+				],
+			]
+		);
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
