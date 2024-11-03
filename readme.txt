@@ -346,6 +346,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.25.4 - 2024-11-03 =
+
+* Fix: Console warning errors related to popups ([#29137](https://github.com/elementor/elementor/issues/29137), [#29141](https://github.com/elementor/elementor/issues/29141))
+
 = 3.25.3 - 2024-10-30 =
 
 * Fix: Global Widgets are not displaying correctly in both the editor and frontend ([#29112](https://github.com/elementor/elementor/issues/29112))
