@@ -43,7 +43,7 @@ test.describe( 'Atomic Widgets', () => {
 
 			test( 'Widget is displayed in canvas after being added', async () => {
 				const widgetId = await editor.addWidget( widget.name );
-				const widgetSelector = '.elementor-element-' + widgetId;
+				const widgetSelector = '.elementor-widget-v2-' + widgetId;
 				await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
 			} );
 		} );

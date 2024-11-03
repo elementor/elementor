@@ -130,7 +130,12 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
 
-		return Props_Resolver::for_settings()->resolve( $schema, $props );
+		$resolved_settings = Props_Resolver::for_settings()->resolve( $schema, $props );
+		$classes = $resolved_settings['classes'] ?? '';
+		$classes = $classes . ' elementor-widget-v2 elementor-widget-v2-' . $this->get_id();
+		$resolved_settings['classes'] = $classes;
+
+		return $resolved_settings;
 	}
 
 	public static function get_props_schema(): array {
