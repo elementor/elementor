@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
@@ -10,6 +11,10 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 class Style_Schema {
 	public static function get() {
 		return array_merge(
@@ -18,7 +23,9 @@ class Style_Schema {
 			self::get_typography_props(),
 			self::get_spacing_props(),
 			self::get_border_props(),
+			self::get_border_props(),
 			self::get_background_props(),
+			self::get_effects_props(),
 		);
 	}
 
@@ -125,6 +132,12 @@ class Style_Schema {
 	private static function get_background_props() {
 		return [
 			'background-color' => Color_Prop_Type::make(),
+		];
+	}
+
+	private static function get_effects_props() {
+		return [
+			'box-shadow' => Box_Shadow_Prop_Type::make(),
 		];
 	}
 }
