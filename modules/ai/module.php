@@ -157,10 +157,6 @@ class Module extends BaseModule {
 		} );
 	}
 
-	public function add_button_before_product_image() {
-		echo '<button class="custom-product-button">Your Button Text</button>';
-	}
-
 	public function enqueue_ai_woocommerce() {
 
 		if ( ! class_exists( 'WooCommerce' ) || ! post_type_exists( 'product' ) ||
