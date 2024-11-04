@@ -30,7 +30,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		$title = $settings['title'];
+		$title = esc_html( $settings['title'] );
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
 			echo $title;
 			return;
@@ -46,7 +46,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			// TODO: we should avoid using `validate html tag` and use the enum validation instead.
 			Utils::validate_html_tag( $tag ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			Utils::render_html_attributes( $attrs ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			esc_html( $title )
+			$title
 		);
 	}
 
