@@ -24,7 +24,7 @@ class Product_Image_Unification_Intro {
 		}
 
 		$screen = get_current_screen();
-		if ( ! isset( $screen->post_type ) || $screen->post_type !== 'product' ) {
+		if ( ! isset( $screen->post_type ) || 'product' !== $screen->post_type ) {
 			return;
 		}
 
@@ -54,7 +54,7 @@ class Product_Image_Unification_Intro {
 						close: function () {
 							elementorCommon.ajax.addRequest( 'introduction_viewed', {
 								data: {
-									introductionKey: '<?php echo esc_attr(static::CURRENT_POINTER_SLUG); ?>',
+									introductionKey: '<?php echo esc_attr( static::CURRENT_POINTER_SLUG ); ?>',
 								},
 							} );
 						}
