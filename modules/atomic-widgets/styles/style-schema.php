@@ -23,7 +23,6 @@ class Style_Schema {
 			self::get_typography_props(),
 			self::get_spacing_props(),
 			self::get_border_props(),
-			self::get_border_props(),
 			self::get_background_props(),
 			self::get_effects_props(),
 		);
