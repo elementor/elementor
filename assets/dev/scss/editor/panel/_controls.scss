@@ -46,6 +46,7 @@
 
 
 		.elementor-control-content {
+			margin-inline: 20px;
 			border-width: 0;
 			border-block-start: var(--e-a-border);
 
@@ -63,23 +64,20 @@
 			&:before {
 				content: '';
 				position: absolute;
+				inset: 0 20px auto;
 				height: 1px;
-				width: calc(100% - 40px);
-				top: 0;
-				@include start(20px);
 				background-color: var(--e-a-border-color);
 			}
 		}
 
 		&after {
+			padding-block-end: 15px;
 
 			&:after {
 				content: '';
 				position: absolute;
+				inset: auto 20px 0;
 				height: 1px;
-				width: calc(100% - 40px);
-				bottom: 0;
-				@include start(20px);
 				background-color: var(--e-a-border-color);
 			}
 

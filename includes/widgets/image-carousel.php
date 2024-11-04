@@ -634,6 +634,26 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
+			'dots_gap',
+			[
+				'label' => esc_html__( 'Space Between Dots', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 20,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .swiper-pagination-bullet' => '--swiper-pagination-bullet-horizontal-gap: {{SIZE}}{{UNIT}}; --swiper-pagination-bullet-vertical-gap: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'navigation' => [ 'dots', 'both' ],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
 			'dots_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
