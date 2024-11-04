@@ -37,6 +37,7 @@ const GalleryImage = ( {
 } ) => {
 	const [ isChecked, setIsChecked ] = useState( true );
 	const style = {};
+	const isRTL = elementorCommon?.config?.isRTL ?? true;
 
 	if ( 'thumbnail' === variant ) {
 		style.width = '100%';
@@ -81,7 +82,8 @@ const GalleryImage = ( {
 									sx={ {
 										position: 'absolute',
 										top: 0,
-										left: 0,
+										left: isRTL ? 0 : undefined,
+										right: isRTL ? undefined : 0,
 										'& .MuiSvgIcon-root': {
 											color: checkboxColor,
 										} } } /> }

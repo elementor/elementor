@@ -9,6 +9,7 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 	const [ isOpened, setIsOpened ] = useState( false );
 	const anchorEl = useRef( );
 	const [ zIndex, setZIndex ] = useState( 170001 );
+	const isRTL = elementorCommon?.config?.isRTL ?? true;
 
 	useEffect( () => {
 		if ( anchorEl.current ) {
@@ -99,11 +100,11 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 				id={ id }
 				anchorOrigin={ {
 					vertical: 'bottom',
-					horizontal: 'left',
+					horizontal: isRTL ? 'left' : 'right',
 				} }
 				transformOrigin={ {
 					vertical: 'top',
-					horizontal: 'left',
+					horizontal: isRTL ? 'left' : 'right',
 				} }
 				onClose={ handleClose }
 				open={ isOpened }
