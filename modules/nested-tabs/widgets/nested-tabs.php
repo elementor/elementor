@@ -47,7 +47,7 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	public function get_script_depends(): array {
-		return [ 'import-script-nested-tabs' ];
+		return [ 'import-script-nested-tabs', '12345' ];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
