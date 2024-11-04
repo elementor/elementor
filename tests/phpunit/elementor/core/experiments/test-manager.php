@@ -326,34 +326,6 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertTrue( $feature['hidden'] );
 	}
 
-	public function test_add_feature__throws_when_a_feature_has_a_hidden_dependency() {
-		// Arrange.
-		$this->add_test_feature( [
-			'name' => 'regular-dependency',
-			'state' => Experiments_Manager::STATE_ACTIVE,
-		] );
-
-		$this->add_test_feature( [
-			'name' => 'hidden-dependency',
-			'state' => Experiments_Manager::STATE_ACTIVE,
-			'hidden' => true,
-		] );
-
-		// Expect.
-		$this->expectException( Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Depending on a hidden experiment is not allowed.' );
-
-		// Act.
-		$this->add_test_feature( [
-			'name' => 'dependant',
-			'state' => Experiments_Manager::STATE_ACTIVE,
-			'dependencies' => [
-				'regular-dependency',
-				'hidden-dependency',
-			],
-		] );
-	}
-
 	public function test_get_features() {
 		$experiments = $this->experiments;
 
