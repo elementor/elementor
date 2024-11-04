@@ -100,11 +100,11 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 				id={ id }
 				anchorOrigin={ {
 					vertical: 'bottom',
-					horizontal: isRTL ? 'left' : 'right',
+					horizontal: isRTL ? 'right' : 'left',
 				} }
 				transformOrigin={ {
 					vertical: 'top',
-					horizontal: isRTL ? 'left' : 'right',
+					horizontal: isRTL ? 'right' : 'left',
 				} }
 				onClose={ handleClose }
 				open={ isOpened }

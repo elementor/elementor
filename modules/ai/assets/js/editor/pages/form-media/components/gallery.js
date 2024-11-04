@@ -82,8 +82,8 @@ const GalleryImage = ( {
 									sx={ {
 										position: 'absolute',
 										top: 0,
-										left: isRTL ? 0 : undefined,
-										right: isRTL ? undefined : 0,
+										left: isRTL ? undefined : 0,
+										right: isRTL ? 0 : undefined,
 										'& .MuiSvgIcon-root': {
 											color: checkboxColor,
 										} } } /> }
