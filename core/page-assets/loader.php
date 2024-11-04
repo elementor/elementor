@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Loader extends Module {
 	private array $assets = [];
 
-	private $import_script = '';
+	private $import_scripts = [];
 
 	public function get_name(): string {
 		return 'assets-loader';
@@ -125,7 +125,7 @@ class Loader extends Module {
 				$this->assets[ $assets_type ][ $asset_name ]['enabled'] = true;
 
 				if ( 'scripts' === $assets_type ) {
-					if ( $this->maybe_import_script( $asset_name ) ) {
+					if ( $this->should_import_script( $asset_name ) ) {
 						continue;
 					}
 
@@ -195,25 +195,17 @@ class Loader extends Module {
 		$this->register_assets();
 	}
 
-	public function maybe_import_script( $script ) {
+	public function should_import_script( $script ) {
 		if ( false !== strpos( $script, 'import-script-' ) ) {
-			$this->set_import_script( $script );
-			add_filter( 'body_class', [ $this, 'add_body_class' ] );
-
+			$script_name = str_replace( 'import-script-', '', $script );
+			$this->add_import_script( $script_name );
 			return true;
 		}
 
 		return false;
 	}
 
-	private function set_import_script( $script ) {
-		$script_separator = empty( $this->import_script ) ? '' : ' ';
-		$this->import_script .= $script_separator . 'e-' . $script;
-	}
-
-	public function add_body_class( $classes = [] ) {
-		$classes[] = $this->import_script;
-
-		return $classes;
+	private function add_import_script( $script_name ) {
+		$this->import_scripts[] = $script_name;
 	}
 }
