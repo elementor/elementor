@@ -26,7 +26,10 @@ class Module extends BaseModule {
 
 		$this->register_experiment();
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+		$is_atomic_widgets_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
+
+		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 		}
 	}
@@ -39,7 +42,6 @@ class Module extends BaseModule {
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-			'dependencies' => [ Atomic_Widgets_Module::EXPERIMENT_NAME ],
 		] );
 	}
 

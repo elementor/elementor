@@ -121,6 +121,10 @@ class Manager extends Base_Object {
 			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 				$feature = $this->get_features( $dependency );
 
+				if ( ! empty( $feature[ static::TYPE_HIDDEN ] ) ) {
+					throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
+				}
+
 				$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
 			}
 		}
