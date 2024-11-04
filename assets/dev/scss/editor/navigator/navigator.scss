@@ -19,9 +19,7 @@ body {
 	display: none;
 
 	body.elementor-navigator-docked & {
-		top: 0;
-		@include end(0);
-		height: 100%;
+		inset: 0;
 	}
 
 	body:not(.elementor-navigator-docked) & {
