@@ -7,7 +7,7 @@ class AtomicHeadingView extends WidgetView {
 	}
 
 	className() {
-		const atomicClasses = [ 'elementor-widget-v2' ];
+		const atomicClasses = [ 'elementor-widget-v2', `elementor-widget-v2-${ this.model.id }` ];
 		const widgetClasses = ( this.model.getSetting( 'classes' )?.value || [] );
 
 		return atomicClasses.concat( widgetClasses ).join( ' ' );
