@@ -1,4 +1,4 @@
-import WidgetView from './widget';
+const WidgetView = require( 'elementor-elements/views/widget' );
 
 class AtomicHeadingView extends WidgetView {
 	tagName() {
