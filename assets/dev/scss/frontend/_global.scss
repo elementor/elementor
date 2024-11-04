@@ -2,7 +2,7 @@
 // Global selectors for Elementor Front-End
 //
 
-.elementor :not(.elementor-widget-v2) {
+.elementor {
 
 	* {
 		&, &:before, &:after {
@@ -20,7 +20,7 @@
 		background-color: transparent;
 	}
 
-	&.img {
+	img:not(.elementor-widget-v2) {
 		height: auto;
 		max-width: 100%;
 		border: none;
