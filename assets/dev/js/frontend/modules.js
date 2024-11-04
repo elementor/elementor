@@ -23,7 +23,7 @@ elementorModules.frontend = {
 // const isUpdateJsLoadingActive = !! elementorCommon.config.experimentalFeatures.update_core_js_modules_loading;
 const isUpdateJsLoadingActive = false;
 
-if ( !! document.querySelector( 'body.e-import-script-mega-menu' ) || ! isUpdateJsLoadingActive ) {
+if ( !! elementorScriptImports?.includes( 'nested-tabs' ) || ! isUpdateJsLoadingActive ) {
 	( async () => {
 		const { default: NestedTabs } = await import(
 			/* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs'

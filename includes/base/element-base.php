@@ -78,8 +78,6 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	private $depended_styles = [];
 
-	private $import_scripts = [];
-
 	/**
 	 * Add script depends.
 	 *
@@ -141,33 +139,8 @@ abstract class Element_Base extends Controls_Stack {
 				Utils::handle_deprecation( $script, $deprecated_scripts[ $script ]['version'], $deprecated_scripts[ $script ]['replacement'] );
 			}
 
-			if ( $this->should_import_script( $script ) ) {
-				continue;
-			}
-
 			wp_enqueue_script( $script );
 		}
-
-		if ( ! empty( $this->import_scripts ) ) {
-			wp_register_script( 'script-import-list', '', [], '', true );
-			wp_enqueue_script( 'script-import-list'  );
-			wp_add_inline_script( 'script-import-list', 'const elementorScriptImports = ' . wp_json_encode( $this->import_scripts ) . ';' );
-		}
-	}
-
-	public function should_import_script( $script ) {
-		if ( false !== strpos( $script, 'import-script-' ) ) {
-			$script_name = str_replace( 'import-script-', '', $script );
-			$this->add_import_script( $script_name );
-			return true;
-		}
-
-		return false;
-	}
-
-
-	private function add_import_script( $script_name ) {
-		$this->import_scripts[] = $script_name;
 	}
 
 	/**
