@@ -80,7 +80,7 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 				ref={ anchorEl }
 			/>
 			<StyledTextField
-				value={ color.substring( 1 ) }
+				value={ color.substring( 1, 7 ) }
 				color="secondary"
 				fullWidth
 				InputProps={ {
