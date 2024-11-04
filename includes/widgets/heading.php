@@ -327,7 +327,13 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'mix-blend-mode: {{VALUE}}',
 				],
-				'separator' => 'after',
+			]
+		);
+
+		$this->add_control(
+			'separator',
+			[
+				'type' => Controls_Manager::DIVIDER,
 			]
 		);
 
