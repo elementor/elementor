@@ -490,7 +490,7 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( `.select2-results__option:has-text("${ value }")` ).first().click();
 		}
 
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
 
 	/**
@@ -950,6 +950,12 @@ export default class EditorPage extends BasePage {
 			await this.openMenuPanel( 'view-page' );
 		}
 
+		await this.page.waitForLoadState();
+	}
+
+	async viewPage() {
+		const pageId = await this.getPageId();
+		await this.page.goto( `/?p=${ pageId }` );
 		await this.page.waitForLoadState();
 	}
 

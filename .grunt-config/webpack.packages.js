@@ -4,7 +4,9 @@ const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generat
 const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-expressions-webpack-plugin' );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
 
-const packages = process.env.ELEMENTOR_PACKAGES_USE_LOCAL ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries()
+const usingLocalRepo = process.env.ELEMENTOR_PACKAGES_USE_LOCAL;
+
+const packages = usingLocalRepo ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries();
 
 const common = {
 	name: 'packages',
@@ -61,7 +63,7 @@ const common = {
 const devConfig = {
 	...common,
 	mode: 'development',
-	devtool: false, // TODO: Need to check what to do with source maps.
+	devtool: usingLocalRepo ? 'source-map' : false,
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
 	optimization: {
 		...( common.optimization || {} ),

@@ -22,6 +22,8 @@ export default class extends BaseManager {
 	toggleChecklistIconVisibility( switcherValue ) {
 		const shouldShow = 'yes' === switcherValue;
 
+		this.addMixpanelTrackingChecklist( shouldShow );
+
 		$e.run( 'checklist/toggle-icon', shouldShow );
 	}
 
@@ -58,5 +60,29 @@ export default class extends BaseManager {
 
 	onShowHiddenElementsChange() {
 		elementorFrontend.elements.$body.toggleClass( 'e-preview--show-hidden-elements' );
+	}
+
+	addMixpanelTrackingChecklist( shouldShow ) {
+		const name = shouldShow ? 'checklistShow' : 'checklistHide';
+		const postId = elementor.getPreviewContainer().document.config.id;
+		const postTitle = elementor.getPreviewContainer().model.attributes.settings.attributes.post_title;
+		const postTypeTitle = elementor.getPreviewContainer().document.config.post_type_title;
+		const documentType = elementor.getPreviewContainer().document.config.type;
+
+		return (
+			elementor.editorEvents.dispatchEvent(
+				elementor.editorEvents.config.names.elementorEditor.userPreferences[ name ],
+				{
+					location: elementor.editorEvents.config.locations.elementorEditor,
+					secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
+					trigger: elementor.editorEvents.config.triggers.toggleClick,
+					element: elementor.editorEvents.config.elements.toggle,
+					postId,
+					postTitle,
+					postTypeTitle,
+					documentType,
+				},
+			)
+		);
 	}
 }

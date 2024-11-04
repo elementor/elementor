@@ -7,6 +7,7 @@ use Elementor\Modules\Checklist\Steps\Create_Pages;
 use Elementor\Modules\Checklist\Steps\Setup_Header;
 use Elementor\Modules\Checklist\Steps\Add_Logo;
 use Elementor\Modules\Checklist\Steps\Step_Base;
+use Elementor\Modules\Checklist\Steps\Set_Fonts_And_Colors;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,7 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
-	private static array $step_ids = [ Add_Logo::STEP_ID, Create_Pages::STEP_ID, Setup_Header::STEP_ID, Assign_Homepage::STEP_ID ];
+
+	private static array $step_ids = [
+		Add_Logo::STEP_ID,
+		Set_Fonts_And_Colors::STEP_ID,
+		Create_Pages::STEP_ID,
+		Setup_Header::STEP_ID,
+		Assign_Homepage::STEP_ID,
+	];
 
 	private Checklist_Module_Interface $module;
 
@@ -153,7 +161,7 @@ class Steps_Manager {
 	}
 
 	/**
-	 * Using step data->id, instanciates and returns the step class or null if the class does not exist
+	 * Using step data->id, instantiates and returns the step class or null if the class does not exist
 	 *
 	 * @param $step_data
 	 *
@@ -167,7 +175,7 @@ class Steps_Manager {
 		}
 
 		/** @var Step_Base $step */
-		return new $class_name( $this->module, $this->module->get_wordpress_adapter() );
+		return new $class_name( $this->module, $this->module->get_wordpress_adapter(), $this->module->get_elementor_adapter() );
 	}
 
 	private function filter_steps() {
@@ -176,6 +184,10 @@ class Steps_Manager {
 
 		foreach ( $filtered_steps as $step_id => $step_instance ) {
 			if ( ! $step_instance instanceof Step_Base ) {
+				continue;
+			}
+
+			if ( ! $step_instance->is_visible() ) {
 				continue;
 			}
 
