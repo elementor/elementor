@@ -185,7 +185,7 @@ const ProductImageUnification = () => {
 						/> : <Box
 							component="img"
 							src={ window.UnifyProductImagesConfig.placeholder }
-							alt="Example GIF"
+							alt={ __( 'Example GIF', 'elementor' ) }
 						/> }
 					</Box>
 					{ wasGeneratedOnce && ! isError && errorlessProducts.length &&

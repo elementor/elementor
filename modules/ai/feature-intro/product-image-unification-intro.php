@@ -12,7 +12,7 @@ class Product_Image_Unification_Intro {
 
 	const RELEASE_VERSION = '3.26.0';
 
-	const CURRENT_POINTER_SLUG = 'e-apps';
+	const CURRENT_POINTER_SLUG = 'e-ai-product-image-unification';
 
 	public static function add_hooks() {
 		add_action( 'admin_print_footer_scripts', [ __CLASS__, 'product_image_unification_intro_script' ] );
