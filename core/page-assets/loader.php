@@ -125,7 +125,7 @@ class Loader extends Module {
 				$this->assets[ $assets_type ][ $asset_name ]['enabled'] = true;
 
 				if ( 'scripts' === $assets_type ) {
-					if ( $this->maybe_add_script_to_body_class( $asset_name ) ) {
+					if ( $this->maybe_import_script( $asset_name ) ) {
 						continue;
 					}
 
@@ -195,7 +195,7 @@ class Loader extends Module {
 		$this->register_assets();
 	}
 
-	public function maybe_add_script_to_body_class( $script ) {
+	public function maybe_import_script( $script ) {
 		if ( false !== strpos( $script, 'import-script-' ) ) {
 			$this->set_import_script( $script );
 			add_filter( 'body_class', [ $this, 'add_body_class' ] );
