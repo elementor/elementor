@@ -23,6 +23,11 @@ class Product_Image_Unification_Intro {
 			return;
 		}
 
+		$screen = get_current_screen();
+		if ( ! isset( $screen->post_type ) || $screen->post_type !== 'product' ) {
+			return;
+		}
+
 		wp_enqueue_script( 'wp-pointer' );
 		wp_enqueue_style( 'wp-pointer' );
 
@@ -38,21 +43,23 @@ class Product_Image_Unification_Intro {
 		?>
 		<script>
 			jQuery( document ).ready( function( $ ) {
-				const pointer = $( '#menu-posts-product' ).pointer( {
-					content: '<?php echo $pointer_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>',
-					position: {
-						edge: <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
-						align: 'center'
-					},
-					pointerWidth: 360,
-					close: function() {
-						elementorCommon.ajax.addRequest( 'introduction_viewed', {
-							data: {
-								introductionKey: '<?php echo esc_attr( static::CURRENT_POINTER_SLUG ); ?>',
-							},
-						} );
-					}
-				} ).pointer( 'open' );
+				setTimeout( function () {
+					$( '#bulk-action-selector-top' ).pointer( {
+						content: '<?php echo $pointer_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>',
+						position: {
+							edge: <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
+							align: 'center'
+						},
+						pointerWidth: 360,
+						close: function () {
+							elementorCommon.ajax.addRequest( 'introduction_viewed', {
+								data: {
+									introductionKey: '<?php echo esc_attr(static::CURRENT_POINTER_SLUG); ?>',
+								},
+							} );
+						}
+					} ).pointer( 'open' );
+				}, 10 );
 			} );
 		</script>
 		<?php

@@ -116,7 +116,6 @@ const ProductImageUnification = () => {
 				/>
 				{ isError && <View.ErrorMessage error={ Object.values( errorMap )?.[ 0 ]?.errorGenerating } onRetry={ handleSubmit } /> }
 				<Stack gap={ 2 }>
-					{ ! wasGeneratedOnce && products?.images?.length &&
 					<Box
 						sx={ {
 							display: 'flex',
@@ -141,7 +140,6 @@ const ProductImageUnification = () => {
 							{ ( products?.images?.length ?? 0 ) - 9 }
 						</Avatar> }
 					</Box>
-					}
 					<ImageForm onSubmit={ handleSubmit }>
 						<Stack gap={ 2 } sx={ { my: 2.5 } }>
 							<ColorInput
@@ -170,8 +168,8 @@ const ProductImageUnification = () => {
 				</Stack>
 			</View.Panel>
 			<View.Content isGenerating={ isSavingImages }>
-				<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center' } }>
-					<Box sx={ { flex: 1, overflowY: 'auto' } }>
+				<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center', minHeight: '76vh' } }>
+					<Box sx={ { flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center' } }>
 						{ wasGeneratedOnce ? <ImagesDisplay
 							images={ errorlessProducts.map( ( product ) => product.data ) }
 							cols={ getCols( errorlessProducts.length ?? 1 ) }
