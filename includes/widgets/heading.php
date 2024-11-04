@@ -331,10 +331,10 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			]
 		);
 
-		$this->start_controls_tabs( 'text_colors' );
+		$this->start_controls_tabs( 'title_colors' );
 
 		$this->start_controls_tab(
-			'text_colors_normal',
+			'title_colors_normal',
 			[
 				'label' => esc_html__( 'Normal', 'elementor' ),
 				'condition' => [
@@ -360,7 +360,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
-			'text_colors_hover',
+			'title_colors_hover',
 			[
 				'label' => esc_html__( 'Hover', 'elementor' ),
 				'condition' => [
