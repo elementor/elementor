@@ -552,8 +552,6 @@ trait Button_Trait {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 
-		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
-
 		if ( $optimized_markup ) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-button-content-wrapper' );
 		}
@@ -609,8 +607,6 @@ trait Button_Trait {
 		if ( '' !== settings.hover_animation ) {
 			view.addRenderAttribute( 'button', 'class', 'elementor-animation-' + settings.hover_animation );
 		}
-
-		const optimized_markup = elementorCommon.config.experimentalFeatures.e_optimized_markup;
 
 		if ( optimized_markup ) {
 			view.addRenderAttribute( 'button', 'class', 'elementor-button-content-wrapper' );
