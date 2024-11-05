@@ -560,6 +560,11 @@ class Tracker {
 			'install_time' => Plugin::instance()->get_install_time(),
 		];
 
+		$install_id = Api::get_install_id();
+		if ( ! empty( $install_id ) ) {
+			$params['install_id'] = $install_id;
+		}
+
 		/**
 		 * Tracker send tracking data params.
 		 *
