@@ -9,7 +9,7 @@ import BackButton from './back-button';
 import SingleImagePreview from './single-image-preview';
 
 const Container = ( { children, sx = {}, ...props } ) => (
-	<Box flexGrow={ 1 } { ...props } sx={ { overflowY: 'scroll', ...sx } }>{ children }</Box>
+	<Box flexGrow={ 1 } { ...props } sx={ { overflowY: 'auto', ...sx } }>{ children }</Box>
 );
 
 Container.propTypes = {
@@ -20,9 +20,12 @@ Container.propTypes = {
 const ImagesDisplay = ( {
 	images,
 	aspectRatio = '1:1',
-	onUseImage,
-	onEditImage,
+	onUseImage = null,
+	onEditImage = null,
 	transparentContainer = false,
+	cols = 2,
+	overlay = true,
+	onSelectChange = null,
 } ) => {
 	const { zoomIndex, setZoomIndex, actions } = useImageNavigation( images );
 
@@ -38,8 +41,8 @@ const ImagesDisplay = ( {
 					onNext={ actions.next }
 				>
 					<ImageSlider.Actions startAction={ <BackButton onClick={ actions.reset } /> }>
-						<ImageActions.EditImage onClick={ () => onEditImage( currentImage ) } />
-						<ImageActions.UseImage onClick={ () => onUseImage( currentImage ) } />
+						{ onEditImage && <ImageActions.EditImage onClick={ () => onEditImage( currentImage ) } /> }
+						{ onUseImage && <ImageActions.UseImage onClick={ () => onUseImage( currentImage ) } /> }
 					</ImageSlider.Actions>
 
 					<ImageSlider.Image src={ currentImage.image_url } style={ { maxWidth: '630px', width: '100%', height: 'auto' } } />
@@ -59,10 +62,10 @@ const ImagesDisplay = ( {
 		return (
 			<Container flexDirection="column">
 				<SingleImagePreview>
-					<SingleImagePreview.Image src={ image.image_url || image.url } style={ singleImageStyle } alt="generated-image">
+					<SingleImagePreview.Image src={ image.image_url || image.url } style={ singleImageStyle } alt="generated-image" isLoading={ image.isLoading }>
 						<SingleImagePreview.Actions>
-							<ImageActions.EditImage onClick={ () => onEditImage( image ) } />
-							<ImageActions.UseImage onClick={ () => onUseImage( image ) } />
+							{ onEditImage && <ImageActions.EditImage onClick={ () => onEditImage( image ) } /> }
+							{ onUseImage && <ImageActions.UseImage onClick={ () => onUseImage( image ) } /> }
 						</SingleImagePreview.Actions>
 					</SingleImagePreview.Image>
 				</SingleImagePreview>
@@ -72,7 +75,7 @@ const ImagesDisplay = ( {
 
 	return (
 		<Container>
-			<Gallery>
+			<Gallery cols={ cols }>
 				{
 					images.map( ( image, index ) => (
 						<Gallery.Image
@@ -81,13 +84,19 @@ const ImagesDisplay = ( {
 							src={ image.image_url }
 							aspectRatio={ aspectRatio }
 							data-testid="e-gallery-image"
+							numImagesInRow={ cols }
+							overlay={ overlay }
+							onSelectChange={ onSelectChange ? ( isChecked ) => onSelectChange( image.productId, isChecked ) : null }
+							checkboxColor={ image.checkboxColor }
+							isLoading={ image.isLoading }
 						>
 							<ImageActions>
-								<ImageActions.UseImage onClick={ () => onUseImage( image ) } size="medium" fullWidth />
+								{ onUseImage && <ImageActions.UseImage onClick={ () => onUseImage( image ) } size="medium"
+									fullWidth /> }
 
 								<Stack direction="row" spacing={ 0.25 } alignItems="center">
 									<ImageActions.ZoomIcon onClick={ () => setZoomIndex( index ) } size="medium" />
-									<ImageActions.EditIcon onClick={ () => onEditImage( image ) } size="medium" />
+									{ onEditImage && <ImageActions.EditIcon onClick={ () => onEditImage( image ) } size="medium" /> }
 								</Stack>
 							</ImageActions>
 						</Gallery.Image>
@@ -104,6 +113,9 @@ ImagesDisplay.propTypes = {
 	onUseImage: PropTypes.func,
 	onEditImage: PropTypes.func,
 	transparentContainer: PropTypes.bool,
+	cols: PropTypes.number,
+	overlay: PropTypes.bool,
+	onSelectChange: PropTypes.func,
 };
 
 ImagesDisplay.Container = Container;
