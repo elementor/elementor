@@ -26,6 +26,65 @@ class Module extends BaseModule {
 
 		$this->register_experiment();
 
+		$new_class = [
+				'id' => 's-100',
+				'label' => 'pinky',
+				'variants' => [
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => [
+						'color' => 'pink',
+					],
+				],
+			];
+
+		$new_class_1 =
+			[
+				'id' => 's-200',
+				'label' => 'orangy',
+				'variants' => [
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => [
+						'color' => 'orange',
+					],
+				],
+			];
+
+		$classes_repository = new Repository();
+
+		$classes_repository->create( $new_class );
+
+		$classes_repository->create( $new_class_1 );
+		echo '<pre>';
+		var_dump('get_all');
+		var_dump( $classes_repository->get_all() );
+
+		$classes_repository->patch( 's-100', [ 'label' => 'pinky-winky' ] );
+
+		var_dump('get_all_pinky-winky');
+		var_dump( $classes_repository->get_all() );
+
+		$classes_repository->arrange( [ 's-200', 's-100' ] );
+
+		var_dump('get_all_arranged');
+		var_dump( $classes_repository->get_all() );
+
+		$classes_repository->delete( 's-100' );
+
+		var_dump('get_all_deleted');
+		var_dump( $classes_repository->get_all() );
+
+		$classes_repository->delete( 's-200' );
+
+		var_dump('get_all_deleted');
+		var_dump( $classes_repository->get_all() );
+		die;
+
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 		$is_atomic_widgets_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 
