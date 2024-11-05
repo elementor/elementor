@@ -3,4 +3,4 @@ export { default as Document } from './document';
 export { default as InnerSection } from './inner-section';
 export { default as Section } from './section';
 export { default as Widget } from './widget';
-export { default as AtomicHeading } from './atomic-heading';
+export { AtomicHeading, AtomicImage } from './atomic-widgets';

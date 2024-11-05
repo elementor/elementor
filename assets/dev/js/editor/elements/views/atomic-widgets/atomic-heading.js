@@ -1,19 +1,15 @@
-const WidgetView = require( 'elementor-elements/views/widget' );
+const BaseElementView = require( 'elementor-elements/views/base' );
 
-class AtomicHeadingView extends WidgetView {
+const AtomicWidgetBaseView = require( 'elementor-elements/views/atomic-widget-base' );
+
+class AtomicHeadingView extends AtomicWidgetBaseView {
 	tagName() {
 		const tag = this.model.getSetting( 'tag' );
 		return undefined !== tag && '' !== tag ? tag : 'h2';
 	}
 
-	className() {
-		const atomicClasses = [ 'elementor-widget-v2', `elementor-widget-v2-${ this.model.id }` ];
-		const widgetClasses = ( this.model.getSetting( 'classes' )?.value || [] );
-
-		return atomicClasses.concat( widgetClasses ).join( ' ' );
-	}
-
 	renderOnChange( settings ) {
+		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 		if ( settings.changed.tag ) {
 			// Because the entire element needs to be re-rendered if the HTML tag is to change.
 			// Maybe we can re-render only the specific child?

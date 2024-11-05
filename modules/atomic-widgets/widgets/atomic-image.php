@@ -41,8 +41,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 		Utils::print_wp_kses_extended(
 			sprintf(
-				'<img %1$s >',
-				Utils::render_html_attributes( $attrs )
+				'<img %1$s xxx="%2s">',
+				Utils::render_html_attributes( $attrs ),
+				time()
 			),
 			[ 'image' ]
 		);
