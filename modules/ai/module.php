@@ -114,8 +114,8 @@ class Module extends BaseModule {
 			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
 
 			if ( current_user_can( 'edit_products' ) || current_user_can( 'publish_products' ) ) {
-				add_action( 'admin_init', [ $this, 'enqueue_ai_products_page_scripts'] );
-				add_action( 'current_screen', [ $this, 'enqueue_ai_single_product_page_scripts'] );
+				add_action( 'admin_init', [ $this, 'enqueue_ai_products_page_scripts' ] );
+				add_action( 'current_screen', [ $this, 'enqueue_ai_single_product_page_scripts' ] );
 				add_action( 'wp_ajax_elementor-ai-get-product-images', [ $this, 'get_product_images_ajax' ] );
 				add_action( 'wp_ajax_elementor-ai-set-product-images', [ $this, 'set_product_images_ajax' ] );
 				Product_Image_Unification_Intro::add_hooks();
@@ -160,9 +160,9 @@ class Module extends BaseModule {
 
 	public function enqueue_ai_products_page_scripts() {
 
-		$isNoWC = !class_exists('WooCommerce') || !post_type_exists('product');
-		$isProductsPage = isset($_GET['post_type']) && 'product' === $_GET['post_type'];
-		if ( $isNoWC || ! $isProductsPage ) {
+		$is_no_wc = ! class_exists('WooCommerce' ) || ! post_type_exists( 'product' );
+		$is_products_page = isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'];
+		if ( $is_no_wc || ! $is_products_page ) {
 			return;
 		}
 
@@ -172,11 +172,11 @@ class Module extends BaseModule {
 
 	public function enqueue_ai_single_product_page_scripts() {
 
-		$isNoWC = !class_exists('WooCommerce') || !post_type_exists('product');
-		$isProductsPage = isset($_GET['post_type']) && 'product' === $_GET['post_type'];
+		$is_no_wc = ! class_exists('WooCommerce' ) || ! post_type_exists( 'product' );
+		$is_products_page = isset($_GET['post_type']) && 'product' === $_GET['post_type'];
 		$screen = get_current_screen();
-		$isSingleProductPage = isset( $screen->post_type ) && ( 'product' === $screen->post_type && 'post' === $screen->base );
-		if ( $isNoWC || ! ( $isProductsPage || $isSingleProductPage) ) {
+		$is_single_product_page = isset( $screen->post_type ) && ( 'product' === $screen->post_type && 'post' === $screen->base );
+		if ( $is_no_wc || ! ( $is_products_page || $is_single_product_page) ) {
 			return;
 		}
 
@@ -223,7 +223,7 @@ class Module extends BaseModule {
 
 			$image_ids[] = [
 				'productId' => $post_id,
-				'id'   => $image_id ?: 'No Image',
+				'id' => $image_id ?: 'No Image',
 				'image_url' => $image_id ? wp_get_attachment_url( $image_id ) : 'No Image',
 			];
 		}
@@ -1316,10 +1316,9 @@ class Module extends BaseModule {
 	/**
 	 * @return void
 	 */
-	public function add_wc_scripts(): void
-	{
-		wp_enqueue_script('elementor-ai-unify-product-images',
-			$this->get_js_assets_url('ai-unify-product-images'),
+	public function add_wc_scripts(): void {
+		wp_enqueue_script( 'elementor-ai-unify-product-images',
+			$this->get_js_assets_url( 'ai-unify-product-images' ),
 			[
 				'jquery',
 				'elementor-v2-ui',
@@ -1335,20 +1334,20 @@ class Module extends BaseModule {
 			'elementor-ai-unify-product-images',
 			'UnifyProductImagesConfig',
 			[
-				'get_product_images_url' => admin_url('admin-ajax.php'),
-				'set_product_images_url' => admin_url('admin-ajax.php'),
-				'nonce' => wp_create_nonce('elementor-ai-unify-product-images_nonce'),
+				'get_product_images_url' => admin_url( 'admin-ajax.php' ),
+				'set_product_images_url' => admin_url( 'admin-ajax.php' ),
+				'nonce' => wp_create_nonce( 'elementor-ai-unify-product-images_nonce' ),
 				'placeholder' => ELEMENTOR_ASSETS_URL . 'images/app/ai/product-image-unification-example.gif?' . ELEMENTOR_VERSION,
-				'is_get_started' => User::get_introduction_meta('ai_get_started'),
+				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 				'connect_url' => $this->get_ai_connect_url(),
 			]
 		);
 
-		add_filter('bulk_actions-edit-product', function ($data) {
-			return $this->add_products_bulk_action($data);
+		add_filter( 'bulk_actions-edit-product', function ( $data ) {
+			return $this->add_products_bulk_action( $data );
 		});
 
-		wp_set_script_translations('elementor-ai-unify-product-images', 'elementor');
+		wp_set_script_translations( 'elementor-ai-unify-product-images', 'elementor' );
 	}
 
 	/**
@@ -1358,13 +1357,12 @@ class Module extends BaseModule {
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function update_product_gallery($product, ?int $image_to_remove, ?int $image_to_add ): void
-	{
+	private function update_product_gallery( $product, ?int $image_to_remove, ?int $image_to_add ): void {
 		$gallery_image_ids = $product->get_gallery_image_ids();
 
 		$index = array_search( $image_to_remove, $gallery_image_ids );
-		if ( $index !== false ) {
-			unset( $gallery_image_ids[$index] );
+		if ( false !== $index ) {
+			unset( $gallery_image_ids[ $index ] );
 		}
 
 		if ( ! in_array( $image_to_add, $gallery_image_ids ) ) {
