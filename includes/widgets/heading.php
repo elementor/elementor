@@ -273,20 +273,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->add_control(
-			'title_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'global' => [
-					'default' => Global_Colors::COLOR_PRIMARY,
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
-				],
+				'separator' => 'after',
 			]
 		);
 
@@ -342,6 +329,84 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				],
 			]
 		);
+
+		$this->add_control(
+			'separator',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+
+		$this->start_controls_tabs( 'title_colors' );
+
+		$this->start_controls_tab(
+			'title_colors_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+				'condition' => [
+					'link[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'title_colors_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+				'condition' => [
+					'link[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_hover_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title:hover' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'link[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_hover_color_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 's',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'transition-duration: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 	}
