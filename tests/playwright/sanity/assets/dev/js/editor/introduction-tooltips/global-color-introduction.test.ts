@@ -18,7 +18,7 @@ test.describe( 'Global color introduction tests', () => {
 		// Act.
 		await editor.addWidget( 'heading' );
 		await editor.openPanelTab( 'style' );
-		await page.click( '.pickr' );
+		await page.click( '.elementor-control-title_color .pickr' );
 		const tooltipDialogCounter = await page.getByText( 'Check out Global Colors' ).count();
 
 		// Assert.
@@ -40,7 +40,7 @@ test.describe( 'Global color introduction tests', () => {
 		// Act.
 		await editor.addWidget( 'heading' );
 		await editor.openPanelTab( 'style' );
-		await page.click( '.pickr' );
+		await page.click( '.elementor-control-title_color .pickr' );
 		const tooltipDialogCounter = await page.getByText( 'Check out Global Colors' ).count();
 
 		// Assert.
