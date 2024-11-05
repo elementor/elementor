@@ -159,8 +159,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_ai_products_page_scripts() {
-
-		$is_no_wc = ! class_exists('WooCommerce' ) || ! post_type_exists( 'product' );
+		$is_no_wc = ! class_exists( 'WooCommerce' ) || ! post_type_exists( 'product' );
 		$is_products_page = isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'];
 		if ( $is_no_wc || ! $is_products_page ) {
 			return;
@@ -171,12 +170,11 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_ai_single_product_page_scripts() {
-
-		$is_no_wc = ! class_exists('WooCommerce' ) || ! post_type_exists( 'product' );
-		$is_products_page = isset($_GET['post_type']) && 'product' === $_GET['post_type'];
+		$is_no_wc = ! class_exists( 'WooCommerce' ) || ! post_type_exists( 'product' );
+		$is_products_page = isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'];
 		$screen = get_current_screen();
 		$is_single_product_page = isset( $screen->post_type ) && ( 'product' === $screen->post_type && 'post' === $screen->base );
-		if ( $is_no_wc || ! ( $is_products_page || $is_single_product_page) ) {
+		if ( $is_no_wc || ! ( $is_products_page || $is_single_product_page ) ) {
 			return;
 		}
 
@@ -223,7 +221,7 @@ class Module extends BaseModule {
 
 			$image_ids[] = [
 				'productId' => $post_id,
-				'id' => $image_id ?: 'No Image',
+				'id' => $image_id ? $image_id : 'No Image',
 				'image_url' => $image_id ? wp_get_attachment_url( $image_id ) : 'No Image',
 			];
 		}
@@ -264,7 +262,7 @@ class Module extends BaseModule {
 		$image_url = isset( $_POST['image_url'] ) ? sanitize_text_field( wp_unslash( $_POST['image_url'] ) ) : '';
 		$image_to_add = isset( $_POST['image_to_add'] ) ? intval( wp_unslash( $_POST['image_to_add'] ) ) : null;
 		$image_to_remove = isset( $_POST['image_to_remove'] ) ? intval( wp_unslash( $_POST['image_to_remove'] ) ) : null;
-		$is_product_gallery = isset( $_POST['is_product_gallery'] ) && wp_unslash( $_POST['is_product_gallery'] ) === 'true';
+		$is_product_gallery = isset( $_POST['is_product_gallery'] ) && sanitize_text_field( wp_unslash( $_POST['is_product_gallery'] ) ) === 'true';
 
 		if ( ! $product_id || ! $image_url ) {
 			throw new \Exception( 'Product ID and Image URL are required' );
