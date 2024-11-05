@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\EditorGlobalClasses;
+namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -18,7 +18,7 @@ class Module extends BaseModule {
 	const PACKAGES = [];
 
 	public function get_name() {
-		return 'editor-global-classes';
+		return 'global-classes';
 	}
 
 	public function __construct() {
