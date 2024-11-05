@@ -4,7 +4,7 @@ import { getUniqueId } from '../editor/context/requests-ids';
 import UnifyProductImages from './unify-product-images';
 import UnifySingleProductImages from './unify-single-product-images';
 
-( function( $ ) {
+( async function( $ ) {
 	'use strict';
 
 	async function setProductImages( url, productId, currentImage = null, newImage = null, isProductGallery = false ) {
@@ -27,11 +27,16 @@ import UnifySingleProductImages from './unify-single-product-images';
 		);
 	}
 
+	function setConfig() {
+		window.ElementorAiConfig = window.ElementorAiConfig ?? {};
+		window.ElementorAiConfig.is_get_started = window.UnifyProductImagesConfig.is_get_started;
+		window.ElementorAiConfig.connect_url = window.UnifyProductImagesConfig.connect_url;
+	}
+
 	$( '#bulk-action-selector-top, #bulk-action-selector-bottom' ).on( 'change', function() {
 		const selectedAction = $( this ).val();
 		if ( 'elementor-ai-unify-product-images' === selectedAction ) {
-			window.ElementorAiConfig.is_get_started = window.UnifyProductImagesConfig.is_get_started;
-			window.ElementorAiConfig.connect_url = window.UnifyProductImagesConfig.connect_url;
+			setConfig();
 
 			$( '#doaction, #doaction2' ).on( 'click', function( e ) {
 				try {
@@ -73,70 +78,62 @@ import UnifySingleProductImages from './unify-single-product-images';
 	} );
 
 	const productThumbnail = $( '#postimagediv > .inside' );
+
 	if ( productThumbnail.length ) {
-		window.ElementorAiConfig = window.ElementorAiConfig ?? {};
-		window.ElementorAiConfig.is_get_started = window.UnifyProductImagesConfig.is_get_started;
-		window.ElementorAiConfig.connect_url = window.UnifyProductImagesConfig.connect_url;
+		setConfig();
 
 		const urlParams = new URLSearchParams( window.location.search );
 		const postId = urlParams.get( 'post' );
 
-		$.post(
-			window.UnifyProductImagesConfig.get_product_images_url,
+		const response = await $.post( window.UnifyProductImagesConfig.get_product_images_url,
 			{
 				action: 'elementor-ai-get-product-images',
 				nonce: window.UnifyProductImagesConfig.nonce,
 				post_ids: [ postId ],
-			},
-			function( response ) {
-				if ( response.success && response.data?.product_images?.length ) {
-					window.EDITOR_SESSION_ID = getUniqueId( 'woocommerce-unify-single-product-image' );
-					const container = document.createElement( 'div' );
-					container.id = 'e-ai-woocommerce-unify-single-product-image';
-					container.style.width = '100%';
-					container.style.height = 'auto';
-					container.style.overflow = 'hidden';
-					const wpContentContainer = productThumbnail[ 0 ];
-					wpContentContainer.insertBefore( container, wpContentContainer.firstChild );
-					const root = createRoot( container );
-					root.render( <UnifySingleProductImages productsImages={ response.data.product_images } setProductImages={ setProductImages } /> );
-				}
-			},
-		);
+			} );
+
+		if ( response.success && response.data?.product_images?.length ) {
+			window.EDITOR_SESSION_ID = getUniqueId( 'woocommerce-unify-single-product-image' );
+			const container = document.createElement( 'div' );
+			container.id = 'e-ai-woocommerce-unify-single-product-image';
+			container.style.width = '100%';
+			container.style.height = 'auto';
+			container.style.overflow = 'hidden';
+			const wpContentContainer = productThumbnail[ 0 ];
+			wpContentContainer.insertBefore( container, wpContentContainer.firstChild );
+			const root = createRoot( container );
+			root.render( <UnifySingleProductImages productsImages={ response.data.product_images } setProductImages={ setProductImages } /> );
+		}
 	}
 
 	const productGallery = $( '#woocommerce-product-images > .inside' );
 	if ( productGallery.length ) {
-		window.ElementorAiConfig = window.ElementorAiConfig ?? {};
-		window.ElementorAiConfig.is_get_started = window.UnifyProductImagesConfig.is_get_started;
-		window.ElementorAiConfig.connect_url = window.UnifyProductImagesConfig.connect_url;
+		setConfig();
 
 		const urlParams = new URLSearchParams( window.location.search );
 		const postId = urlParams.get( 'post' );
 
-		$.post(
+		const response = await $.post(
 			window.UnifyProductImagesConfig.get_product_images_url,
 			{
 				action: 'elementor-ai-get-product-images',
 				nonce: window.UnifyProductImagesConfig.nonce,
 				post_ids: [ postId ],
 				is_galley_only: true,
-			},
-			function( response ) {
-				if ( response.success && response.data?.product_images?.length ) {
-					window.EDITOR_SESSION_ID = getUniqueId( 'woocommerce-unify-single-product-images' );
-					const container = document.createElement( 'div' );
-					container.id = 'e-ai-woocommerce-unify-single-product-images';
-					container.style.width = '100%';
-					container.style.height = 'auto';
-					container.style.overflow = 'hidden';
-					const wpContentContainer = productGallery[ 0 ];
-					wpContentContainer.insertBefore( container, wpContentContainer.firstChild );
-					const root = createRoot( container );
-					root.render( <UnifySingleProductImages productsImages={ response.data.product_images } setProductImages={ setProductImages } isProductGallery /> );
-				}
-			},
-		);
+			} );
+
+		if ( response.success && response.data?.product_images?.length ) {
+			window.EDITOR_SESSION_ID = getUniqueId( 'woocommerce-unify-single-product-images' );
+			const container = document.createElement( 'div' );
+			container.id = 'e-ai-woocommerce-unify-single-product-images';
+			container.style.width = '100%';
+			container.style.height = 'auto';
+			container.style.overflow = 'hidden';
+			const wpContentContainer = productGallery[ 0 ];
+			wpContentContainer.insertBefore( container, wpContentContainer.firstChild );
+			const root = createRoot( container );
+			root.render( <UnifySingleProductImages productsImages={ response.data.product_images } setProductImages={ setProductImages } isProductGallery /> );
+		}
 	}
 } )( jQuery );
 

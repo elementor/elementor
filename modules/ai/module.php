@@ -158,10 +158,28 @@ class Module extends BaseModule {
 		} );
 	}
 
-	public function enqueue_ai_products_page_scripts() {
-		$is_no_wc = ! class_exists( 'WooCommerce' ) || ! post_type_exists( 'product' );
+	private function get_current_screen() {
+		$is_wc = class_exists( 'WooCommerce' ) && post_type_exists( 'product' );
+		if ( ! $is_wc ) {
+			return 'other';
+		}
+
 		$is_products_page = isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'];
-		if ( $is_no_wc || ! $is_products_page ) {
+		if ( $is_products_page ) {
+			return 'wc-products';
+		}
+
+		$screen = get_current_screen();
+		$is_single_product_page = isset( $screen->post_type ) && ( 'product' === $screen->post_type && 'post' === $screen->base );
+		if ( $is_single_product_page ) {
+			return 'wc-single-product';
+		}
+
+		return 'other';
+	}
+
+	public function enqueue_ai_products_page_scripts() {
+		if ( 'wc-products' !== $this->get_current_screen() ) {
 			return;
 		}
 
@@ -170,11 +188,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_ai_single_product_page_scripts() {
-		$is_no_wc = ! class_exists( 'WooCommerce' ) || ! post_type_exists( 'product' );
-		$is_products_page = isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'];
-		$screen = get_current_screen();
-		$is_single_product_page = isset( $screen->post_type ) && ( 'product' === $screen->post_type && 'post' === $screen->base );
-		if ( $is_no_wc || ! ( $is_products_page || $is_single_product_page ) ) {
+		if ( 'wc-single-product' !== $this->get_current_screen() ) {
 			return;
 		}
 

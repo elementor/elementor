@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Avatar, Box, Button, Stack, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
 import { useEditImage } from '../../context/edit-image-context';
@@ -69,8 +69,9 @@ const ProductImageUnification = () => {
 	}, [ checkboxColorMap ] );
 	const isLoading = errorlessProducts.some( ( { productId } ) => loadingMap[ productId ] );
 	const isError = Object.values( errorMap ).length && Object.values( errorMap ).every( ( { errorGenerating } ) => errorGenerating );
-	const avatarThreshold = 10;
-	const overAvatarThreshold = ( products?.images?.length ?? 0 ) - avatarThreshold > 0;
+	const thumbnailThreshold = 10;
+	const exceedThumbnailThreshold = ( products?.images?.length ?? 0 ) - thumbnailThreshold > 0;
+	const selectedProducts = errorlessProducts.filter( ( { data } ) => data.isChecked && ! data.isLoading ).length;
 	const handleSubmit = useCallback( ( event ) => {
 		event.preventDefault();
 
@@ -128,7 +129,7 @@ const ProductImageUnification = () => {
 							},
 						} }
 					>
-						{ products?.images.slice( 0, ( overAvatarThreshold ? avatarThreshold - 1 : avatarThreshold ) ).map( ( img ) =>
+						{ products?.images.slice( 0, ( exceedThumbnailThreshold ? thumbnailThreshold - 1 : thumbnailThreshold ) ).map( ( img ) =>
 							<Avatar
 								key={ img.productId }
 								alt={ img.productId + '' }
@@ -138,8 +139,8 @@ const ProductImageUnification = () => {
 									width: 50,
 									height: 50,
 								} } /> ) }
-						{ ( overAvatarThreshold ) && <Avatar variant="square" sx={ { bgcolor: 'lightgray', width: 50, height: 50 } }>
-							{ ( products?.images?.length ?? 0 ) - ( avatarThreshold - 1 ) }
+						{ ( exceedThumbnailThreshold ) && <Avatar variant="square" sx={ { bgcolor: 'lightgray', width: 50, height: 50 } }>
+							{ ( products?.images?.length ?? 0 ) - ( thumbnailThreshold - 1 ) }
 						</Avatar> }
 					</Box>
 					<ImageForm onSubmit={ handleSubmit }>
@@ -181,7 +182,10 @@ const ProductImageUnification = () => {
 								width: '100%',
 							} }>
 								<Typography variant="body2" color="secondary">
-									{ `${ errorlessProducts.filter( ( { data } ) => data.isChecked && ! data.isLoading ).length }/${ products?.images?.length ?? 0 } ${ __( 'selected', 'elementor' ) }` }
+									{
+										// Translators: %1$d is the number of selected products, %2$d is the total number of products
+										sprintf( __( '%1$d/%2$d selected', 'elementor' ), selectedProducts, products?.images?.length ?? 0 )
+									}
 								</Typography>
 								<Button
 									variant="text"
