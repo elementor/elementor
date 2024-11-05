@@ -29,7 +29,6 @@ class Admin_Notices extends Module {
 		'role_manager_promote',
 		'experiment_promotion',
 		'site_mailer_promotion',
-		'design_not_appearing',
 		'plugin_image_optimization',
 	];
 
@@ -395,6 +394,10 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
+		if ( ! $this->is_elementor_page() && ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true ) ) {
+			return false;
+		}
+
 		if ( Utils::has_pro() || ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
@@ -417,11 +420,21 @@ class Admin_Notices extends Module {
 				'url' => $cta_data['url'],
 				'type' => 'cta',
 			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/sm-core-form/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
 		];
 
 		$this->print_admin_notice( $options );
 
 		return true;
+	}
+
+	private function is_elementor_page(): bool {
+		return 0 === strpos( $this->current_screen_id, 'elementor_page' );
 	}
 
 	private function get_plugin_cta_data( $plugin_slug, $plugin_file_path ) {
@@ -441,47 +454,6 @@ class Admin_Notices extends Module {
 			'url' => $url,
 			'text' => $cta_text,
 		];
-	}
-
-	private function notice_design_not_appearing() {
-		$installs_history = get_option( 'elementor_install_history', [] );
-		$is_first_install = 1 === count( $installs_history );
-
-		if ( $is_first_install || ! current_user_can( 'update_plugins' ) ) {
-			return false;
-		}
-
-		$notice_id          = 'design_not_appearing';
-		$notice             = User::get_user_notices()[ $notice_id ] ?? [];
-		$notice_version     = $notice['meta']['version'] ?? null;
-		$is_version_changed = $this->get_elementor_version() !== $notice_version;
-
-		if ( $is_version_changed ) {
-			User::set_user_notice( $notice_id, false, [ 'version' => $this->get_elementor_version() ] );
-		}
-
-		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard', 'update-core', 'plugins' ], true ) ) {
-			return false;
-		}
-
-		if ( User::is_user_notice_viewed( $notice_id ) ) {
-			return false;
-		}
-
-		$options = [
-			'title' => esc_html__( 'The version was updated successfully!', 'elementor' ),
-			'description' => sprintf(
-				esc_html__( 'Encountering issues after updating the version? Don’t worry - we’ve collected all the fixes for troubleshooting common issues. %1$sFind a solution%2$s', 'elementor' ),
-				'<a href="https://go.elementor.com/wp-dash-changes-do-not-appear-online/" target="_blank">',
-				'</a>'
-			),
-			'id' => $notice_id,
-		];
-
-		$excluded_pages = [];
-		$this->print_admin_notice( $options, $excluded_pages );
-
-		return true;
 	}
 
 	// For testing purposes
