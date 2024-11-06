@@ -58,8 +58,8 @@ jobs:
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
-        shardIndex: [1,2,3,4,5,6,7,8,9,10]
-        shardTotal: [10]
+        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+        shardTotal: [ 10 ]
         include:
           - shardIndex: "elements-regression"
     steps:
@@ -101,11 +101,8 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
-        env:
-          KEYWORD: ${{ github.event.inputs.tag }}
-          REPORTER: ${{ github.event.inputs.reporter || 'list,github' }}
         run: |
-            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=$REPORTER
+            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ github.event.inputs.reporter || 'list,github' }}
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
@@ -161,11 +158,8 @@ jobs:
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
-        env:
-          KEYWORD: ${{ github.event.inputs.tag }}
-          REPORTER: ${{ github.event.inputs.reporter || 'list,github' }}
         run: |
-          npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep "$KEYWORD" --reporter=$REPORTER
+          npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep="${{ inputs.tag }}" --reporter=${{ github.event.inputs.reporter || 'list,github' }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
