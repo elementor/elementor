@@ -41,19 +41,11 @@ export default class HorizontalScroll extends elementorModules.frontend.handlers
 	horizontalScroll() {
 		const stickyPosition = this.horizontalContainer.getBoundingClientRect().top;
 
-		console.log( 'stickyPosition', stickyPosition );
-
-		if ( stickyPosition > 1  ) {
+		if ( stickyPosition > 1 ) {
 			return;
 		}
 
 		const scrolledDistance = this.horizontalParentContainer.getBoundingClientRect().top;
 		this.horizontalContainer.scrollLeft = ( this.scrollWidth / this.verticalScrollHeight ) * ( -scrolledDistance ) * 0.85;
-
-
-		console.log( 'scrolledDistance', scrolledDistance );
-		console.log( 'scrollWidth', this.scrollWidth );
-		console.log( 'verticalScrollHeight', this.verticalScrollHeight );
-		console.log( 'scroll someting', ( this.scrollWidth / this.verticalScrollHeight ) );
 	}
 }
