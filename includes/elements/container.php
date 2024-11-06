@@ -275,7 +275,7 @@ class Container extends Element_Base {
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
 
-		if ( $settings['horizontal_scroll'] === 'yes') { ?>
+		if ( 'yes' === $settings['horizontal_scroll'] ) { ?>
 			<div class="e-con-horizontal-sticky"><div class="e-con-horizontal">
 		<?php }
 
@@ -315,7 +315,7 @@ class Container extends Element_Base {
 		</<?php $this->print_html_tag(); ?>>
 
 		<?php
-		if ( $settings['horizontal_scroll'] === 'yes' ) { ?>
+		if ( 'yes' === $settings['horizontal_scroll'] ) { ?>
 			</div></div>
 		<?php }
 	}
