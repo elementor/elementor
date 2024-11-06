@@ -1123,7 +1123,6 @@ class Widget_Video extends Widget_Base {
 							}
 							Icons_Manager::render_icon( $settings['play_icon'], [ 'aria-hidden' => 'true' ] );
 							?>
-							<span class="elementor-screen-only"><?php $this->print_a11y_text( $settings['image_overlay'] ); ?></span>
 						</div>
 					<?php endif; ?>
 				</div>

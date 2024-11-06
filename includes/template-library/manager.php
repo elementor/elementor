@@ -3,6 +3,10 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
@@ -47,6 +51,16 @@ class Manager {
 	private $_import_images = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
+	 * @var Wordpress_Adapter_Interface
+	 */
+	protected $wordpress_adapter = null;
+
+	/**
+	 * @var Elementor_Adapter_Interface
+	 */
+	protected $elementor_adapter = null;
+
+	/**
 	 * Template library manager constructor.
 	 *
 	 * Initializing the template library manager by registering default template
@@ -88,6 +102,14 @@ class Manager {
 		}
 
 		return $this->_import_images;
+	}
+
+	public function set_wordpress_adapter( Wordpress_Adapter_Interface $wordpress_adapter ) {
+		$this->wordpress_adapter = $wordpress_adapter;
+	}
+
+	public function set_elementor_adapter( Elementor_Adapter_Interface $elementor_adapter ): void {
+		$this->elementor_adapter = $elementor_adapter;
 	}
 
 	/**
@@ -353,6 +375,13 @@ class Manager {
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
+		}
+
+		if ( ! $this->is_allowed_to_read_template( $args ) ) {
+			return new \WP_Error(
+				'template_error',
+				esc_html__( 'You do not have permission to access this template.', 'elementor' )
+			);
 		}
 
 		if ( isset( $args['edit_mode'] ) ) {
@@ -734,6 +763,44 @@ class Manager {
 
 		if ( $not_specified_args ) {
 			return new \WP_Error( 'arguments_not_specified', sprintf( 'The required argument(s) "%s" not specified.', implode( ', ', $not_specified_args ) ) );
+		}
+
+		return true;
+	}
+
+	private function is_allowed_to_read_template( array $args ): bool {
+		if ( 'remote' === $args['source'] ) {
+			return true;
+		}
+
+		if ( null === $this->wordpress_adapter ) {
+			$this->set_wordpress_adapter( new WordPress_Adapter() );
+		}
+
+		if ( ! $this->should_check_permissions( $args ) ) {
+			return true;
+		}
+
+		$post_id = intval( $args['template_id'] );
+		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
+		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status );
+
+		$can_read_template = $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
+
+		return apply_filters( 'elementor/template-library/is_allowed_to_read_template', $can_read_template, $args );
+	}
+
+	private function should_check_permissions( array $args ): bool {
+		if ( null === $this->elementor_adapter ) {
+			$this->set_elementor_adapter( new Elementor_Adapter() );
+		}
+
+		// TODO: Remove $isWidgetTemplate in 3.28.0 as there is a Pro dependency
+		$check_permissions = isset( $args['check_permissions'] ) && false === $args['check_permissions'];
+		$is_widget_template = 'widget' === $this->elementor_adapter->get_template_type( $args['template_id'] );
+
+		if ( $check_permissions || $is_widget_template ) {
+			return false;
 		}
 
 		return true;
