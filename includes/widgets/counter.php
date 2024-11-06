@@ -105,6 +105,10 @@ class Widget_Counter extends Widget_Base {
 		return [ 'widget-counter' ];
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register counter widget controls.
 	 *

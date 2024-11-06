@@ -27,17 +27,17 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
 	{ pluginName: 'metform', installSource: 'api' },
 	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
-	// { pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
+	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
 	// { pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
 	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
-	// { pluginName: 'royal-elementor-addons', installSource: 'cli' },
+	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
 	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
 	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
-	// { pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
+	{ pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
 	{ pluginName: 'visibility-logic-elementor', installSource: 'api' },
 	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
 	{ pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
@@ -81,14 +81,13 @@ export const generatePluginTests = ( testType: string ) => {
 				if ( 'astra-sites' === plugin.pluginName ) {
 					await page.goto( '/wp-admin/index.php' );
 				}
-				await page.goto( '/law-firm-about/?elementor' );
 
-				try {
-					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
-				} catch ( error ) {
-					await page.reload();
-					await editor.getPreviewFrame().getByRole( 'heading', { name: 'About Us' } ).waitFor( { timeout: 10000 } );
-				}
+				await page.goto( '/law-firm-about/?elementor', {
+					waitUntil: 'load',
+					timeout: 15000,
+				} );
+
+				await page.locator( '[id="elementor-preview-iframe"]' ).waitFor( { state: 'visible', timeout: 15000 } );
 
 				await wpAdmin.closeAnnouncementsIfVisible();
 

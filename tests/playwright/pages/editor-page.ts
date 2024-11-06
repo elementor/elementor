@@ -490,7 +490,7 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( `.select2-results__option:has-text("${ value }")` ).first().click();
 		}
 
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
 
 	/**

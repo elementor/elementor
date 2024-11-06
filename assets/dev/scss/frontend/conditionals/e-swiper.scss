@@ -27,7 +27,7 @@
 			~ .elementor-swiper-button {
 				position: absolute;
 				display: inline-flex; // Position exactly in center
-				z-index: 1;
+				z-index: 10;
 				cursor: pointer;
 				font-size: 25px;
 				color: $slides_gui;
@@ -116,14 +116,6 @@
 					top: calc(50% - #{$caption-space} / 2);
 				}
 			}
-		}
-
-		.elementor-swiper {
-			position: relative;
-		}
-
-		.elementor-main-swiper {
-			position: static;
 		}
 
 		&.elementor-arrows-position- {

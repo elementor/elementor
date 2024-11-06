@@ -59,20 +59,6 @@ test( 'Verify button Id control', async ( { page, apiRequests }, testInfo ) => {
 	expect( await buttonWidget.getButtonId( defaultBtnName ) ).toBe( buttonId );
 } );
 
-test( 'Verify Button Promotions', async ( { page, apiRequests }, testInfo ) => {
-	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-	const editor = await wpAdmin.openNewPage();
-	await editor.addWidget( 'button' );
-	await editor.closeSection( 'section_button' );
-	const promotion = page.locator( '.elementor-nerd-box--upsale' );
-
-	// Assert
-	expect.soft( await promotion.screenshot( {
-		type: 'png',
-	} ) ).toMatchSnapshot( 'button-widget-sidebar-promotion.png' );
-} );
-
 test( 'Verify Button with Icon styling', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

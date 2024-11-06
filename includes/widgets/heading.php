@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
+use Elementor\Utils;
 
 /**
  * Elementor heading widget.
@@ -108,6 +110,10 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		return [ 'widget-heading' ];
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Remove data attributes from the html.
 	 *
@@ -132,27 +138,6 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		}
 
 		return wp_kses( $content, $allowed_tags_for_heading );
-	}
-
-	/**
-	 * Get widget upsale data.
-	 *
-	 * Retrieve the widget promotion data.
-	 *
-	 * @since 3.18.0
-	 * @access protected
-	 *
-	 * @return array Widget promotion data.
-	 */
-	protected function get_upsale_data() {
-		return [
-			'condition' => ! Utils::has_pro(),
-			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
-			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
-			'description' => esc_html__( 'Create captivating headings that rotate with the Animated Headline Widget.', 'elementor' ),
-			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-heading-widget/' ),
-			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-		];
 	}
 
 	/**
@@ -241,6 +226,16 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			]
 		);
 
+		if ( ! Utils::has_pro() ) {
+			$this->add_control(
+				Utils::ANIMATED_HEADLINE . '_promotion',
+				[
+					'label' => esc_html__( 'Animated Headline widget', 'elementor' ),
+					'type' => Promotion_Control::TYPE,
+				]
+			);
+		}
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -278,20 +273,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->add_control(
-			'title_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'global' => [
-					'default' => Global_Colors::COLOR_PRIMARY,
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
-				],
+				'separator' => 'after',
 			]
 		);
 
@@ -347,6 +329,84 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				],
 			]
 		);
+
+		$this->add_control(
+			'separator',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+
+		$this->start_controls_tabs( 'title_colors' );
+
+		$this->start_controls_tab(
+			'title_colors_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+				'condition' => [
+					'link[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'title_colors_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+				'condition' => [
+					'link[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_hover_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title:hover' => 'color: {{VALUE}};',
+				],
+				'condition' => [
+					'link[url]!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_hover_color_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 's',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'transition-duration: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 	}

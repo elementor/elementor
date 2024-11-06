@@ -37,54 +37,76 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 		Plugin::$instance->dynamic_tags = $this->original_dynamic_tags;
 	}
 
+	public function test_validate() {
+		// Arrange.
+		$prop_type = Dynamic_Prop_Type::make()->categories( [
+			V1DynamicTags::TEXT_CATEGORY,
+		] );
+
+		$dynamic_tag = new Mock_Dynamic_Tag();
+
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+
+		Dynamic_Tags_Module::fresh();
+
+		// Act.
+		$result = $prop_type->validate( [
+			'$$type' => 'dynamic',
+			'value' => [
+				'name' => 'mock-dynamic-tag',
+				'settings' => [
+					'mock-control-1' => 'mock-value-1',
+					'mock-control-2' => 'valid-value',
+				],
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
 	/**
 	 * @dataProvider invalid_value_data_provider
 	 */
-	public function test_validate__throws_for_invalid_value( array $value, string $message ) {
+	public function test_validate__fail_for_invalid_value( array $value ) {
 		// Arrange.
 		$prop_type = Dynamic_Prop_Type::make();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( $message );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'dynamic',
 			'value' => $value,
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
 	public function invalid_value_data_provider() {
 		return [
 			'missing name' => [
 				[ 'settings' => [], ],
-				'Property `name` is required',
 			],
 
 			'non-string name' => [
 				[ 'name' => 123, 'settings' => [], ],
-				'Property `name` must be a string',
 			],
 
 			'missing settings' => [
 				[ 'name' => 'test', ],
-				'Property `settings` is required',
 			],
 
 			'non-array settings' => [
 				[ 'name' => 'test', 'settings' => 'not-an-array', ],
-				'Property `settings` must be an array',
 			],
 
 			'non-existing tag' => [
 				[ 'name' => 'non-existing-tag', 'settings' => [], ],
-				'Dynamic tag `non-existing-tag` does not exist',
 			],
 		];
 	}
 
-	public function test_validate__throws_for_unsupported_categories() {
+	public function test_validate__fail_for_unsupported_categories() {
 		// Arrange.
 		$prop_type = Dynamic_Prop_Type::make()->categories( [
 			V1DynamicTags::NUMBER_CATEGORY,
@@ -97,21 +119,20 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 
 		Dynamic_Tags_Module::fresh();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Dynamic tag `mock-dynamic-tag` categories (text, url) are not in supported categories (number, datetime)' );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'dynamic',
 			'value' => [
 				'name' => 'mock-dynamic-tag',
 				'settings' => [],
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 
-	public function test_validate__throws_for_invalid_settings() {
+	public function test_validate__fail_for_invalid_settings() {
 		// Arrange.
 		$prop_type = Dynamic_Prop_Type::make()->categories( [
 			V1DynamicTags::TEXT_CATEGORY,
@@ -123,12 +144,8 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 
 		Dynamic_Tags_Module::fresh();
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Dynamic tag settings validation failed. Invalid keys: mock-control-1' );
-
 		// Act.
-		$prop_type->validate( [
+		$result = $prop_type->validate( [
 			'$$type' => 'dynamic',
 			'value' => [
 				'name' => 'mock-dynamic-tag',
@@ -138,5 +155,8 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 				],
 			],
 		] );
+
+		// Assert.
+		$this->assertFalse( $result );
 	}
 }
