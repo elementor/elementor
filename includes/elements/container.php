@@ -274,6 +274,7 @@ class Container extends Element_Base {
 	 */
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
+
 		if( $settings['horizontal_scroll'] === 'yes') {
 			?>
 			<div class="e-con-horizontal-sticky">
@@ -293,6 +294,12 @@ class Container extends Element_Base {
 			<div class="e-con-inner">
 		<?php }
 
+		if( $settings['horizontal_scroll'] === 'yes') {
+			?>
+			</div>
+			</div>
+		<?php }
+
 		$this->render_video_background();
 
 		if ( ! empty( $settings['shape_divider_top'] ) ) {
@@ -301,13 +308,6 @@ class Container extends Element_Base {
 
 		if ( ! empty( $settings['shape_divider_bottom'] ) ) {
 			$this->render_shape_divider( 'bottom' );
-		}
-
-		if( $settings['horizontal_scroll'] === 'yes') {
-			?>
-			</div>
-	</div>
-		<?php }
 		}
 	}
 
