@@ -18,7 +18,7 @@ export default class HorizontalScroll extends elementorModules.frontend.handlers
 		return {
 			horizontalParentContainer: this.$element[ 0 ].closest( selectors.horizontalParentContainer ),
 			horizontalContainer: this.$element[ 0 ].closest( selectors.horizontalContainer ),
-		}
+		};
 	}
 
 	onInit() {
@@ -27,18 +27,26 @@ export default class HorizontalScroll extends elementorModules.frontend.handlers
 		this.horizontalParentContainer = elements.horizontalParentContainer;
 		this.horizontalContainer = elements.horizontalContainer;
 
-		if ( ! this.horizontalParentContainer ) {
+		if ( ! this.horizontalContainer ) {
 			return;
 		}
 
 		this.scrollWidth = this.horizontalContainer.scrollWidth;
-		this.wrapperWidth = this.horizontalParentContainer.getBoundingClientRect().width;
+		this.wrapperWidth = this.horizontalContainer.getBoundingClientRect().width;
+		this.offsetTop = this.horizontalContainer.getBoundingClientRect().top;
+		this.offsetLeft = this.horizontalContainer.getBoundingClientRect().left;
+		this.adminBarHeight = this.getAdminBarHeight();
 
 		const containerHeight = this.horizontalContainer.getBoundingClientRect().height;
 		const scrollHeight = this.wrapperWidth + containerHeight;
-		this.horizontalParentContainer.style.setProperty( '--horizontal-scroll-height', `${ scrollHeight }px` );
 
+		this.horizontalParentContainer.style.setProperty( '--horizontal-scroll-height', `${ scrollHeight }px` );
 		document.addEventListener( 'scroll', this.horizontalScroll.bind( this ) );
+	}
+
+	getAdminBarHeight() {
+		const adminBar = document.getElementById( 'wpadminbar' );
+		return !! adminBar ? adminBar.offsetHeight : 0;
 	}
 
 	horizontalScroll() {
@@ -48,7 +56,10 @@ export default class HorizontalScroll extends elementorModules.frontend.handlers
 			return;
 		}
 
-		const scrolledDistance = this.horizontalParentContainer.getBoundingClientRect().top;
-		this.horizontalContainer.scrollLeft = ( this.scrollWidth / this.wrapperWidth ) * ( -scrolledDistance ) * 0.85;
+		const relativeScrolledDistance = this.horizontalContainer.offsetTop;
+		const scrolledDistance = this.offsetTop - this.adminBarHeight - relativeScrolledDistance;
+		const scrollSpeed = this.scrollWidth / this.wrapperWidth;
+
+		this.horizontalContainer.scrollLeft = scrollSpeed * -scrolledDistance * 0.85 + this.offsetLeft;
 	}
 }
