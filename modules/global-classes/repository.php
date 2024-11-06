@@ -46,34 +46,50 @@ class Repository {
 			throw new \Exception( "Global class with id ${id} not found" );
 		}
 
-		$this->kit->update_json_meta( self::META_KEY, [
+		$updated = $this->kit->update_json_meta( self::META_KEY, [
 			'data' => $all->get_data()->merge( [ $id => $updated ] )->all(),
 			'order' => $all->get_order()->all(),
 		] );
 
-		return true;
+		if ( ! $updated ) {
+			throw new \Exception( 'Failed to update global class' );
+		}
+
+		return $this->get( $id );
 	}
 
 	public function create( array $class ) {
-		if ( ! isset( $class['id'] ) ) {
-			throw new \Exception( 'Global class id is required' );
-		}
-
 		$all = $this->all();
 		$id = $class['id'];
 
-		$this->kit->update_json_meta( self::META_KEY, [
-			$all->get_data()->merge( [ $id => $class ] )->all(),
-			$all->get_order()->push( $id )->all(),
+		if ( isset( $all->get_data()[ $id ] ) ) {
+			throw new \Exception( "Global class with id ${id} already exists" );
+		}
+
+		$updated = $this->kit->update_json_meta( self::META_KEY, [
+			'data' => $all->get_data()->merge( [ $id => $class ] )->all(),
+			'order' => $all->get_order()->push( $id )->all(),
 		] );
+
+		if ( ! $updated ) {
+			throw new \Exception( 'Failed to create global class' );
+		}
+
+		return $this->get( $id );
 	}
 
 	public function arrange( array $order ) {
 		$all = $this->all();
 
-		$this->kit->update_json_meta( self::META_KEY, [
+		$updated = $this->kit->update_json_meta( self::META_KEY, [
 			'data' => $all->get_data()->all(),
 			'order' => $order,
 		] );
+
+		if ( ! $updated ) {
+			throw new \Exception( 'Failed to arrange global classes' );
+		}
+
+		return $this->all()->get_order()->all();
 	}
 }
