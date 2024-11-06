@@ -275,12 +275,9 @@ class Container extends Element_Base {
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
 
-		if( $settings['horizontal_scroll'] === 'yes') {
-			?>
-			<div class="e-con-horizontal-sticky">
-			 <div class="e-con-horizontal">
-		<?php
-		}
+		if ( $settings['horizontal_scroll'] === 'yes') { ?>
+			<div class="e-con-horizontal-sticky"><div class="e-con-horizontal">
+		<?php }
 
 		$link = $settings['link'];
 
@@ -292,12 +289,6 @@ class Container extends Element_Base {
 		<?php
 		if ( $this->is_boxed_container( $settings ) ) { ?>
 			<div class="e-con-inner">
-		<?php }
-
-		if( $settings['horizontal_scroll'] === 'yes') {
-			?>
-			</div>
-			</div>
 		<?php }
 
 		$this->render_video_background();
@@ -322,7 +313,11 @@ class Container extends Element_Base {
 			</div>
 		<?php } ?>
 		</<?php $this->print_html_tag(); ?>>
+
 		<?php
+		if ( $settings['horizontal_scroll'] === 'yes' ) { ?>
+			</div></div>
+		<?php }
 	}
 
 	protected function is_boxed_container( array $settings ) {
@@ -504,14 +499,9 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Horizontal Scroll', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => esc_html__( 'Off', 'elementor' ),
-				'label_on' => esc_html__( 'On', 'elementor' ),
-				'return_value' => 'horizontal',
-				'default' => 'no',
 				'description' => sprintf(
 					esc_html__( 'Enable horizontal scrolling of container elements. The height will be defined by the height of the biggest element.', 'elementor' ),
 				),
-//				'prefix_class' => 'e-con-',
 			]
 		);
 
