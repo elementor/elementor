@@ -301,13 +301,8 @@
 		overflow-y: hidden;
 
 		> .e-con {
-			display: flex;
-			flex-direction: row !important;
-			width: 200vw !important;
-
-			.elementor-element {
-				width: 100vw !important;
-			}
+			--flex-direction: row;
+			--width: max-content;
 		}
 	}
 }

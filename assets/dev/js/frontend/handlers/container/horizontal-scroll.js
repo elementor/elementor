@@ -32,8 +32,11 @@ export default class HorizontalScroll extends elementorModules.frontend.handlers
 		}
 
 		this.scrollWidth = this.horizontalContainer.scrollWidth;
-		this.verticalScrollHeight = this.horizontalParentContainer.getBoundingClientRect().width + this.horizontalContainer.getBoundingClientRect().height;
-		this.horizontalParentContainer.style.setProperty( '--horizontal-scroll-height', `${ this.verticalScrollHeight }px` );
+		this.wrapperWidth = this.horizontalParentContainer.getBoundingClientRect().width;
+
+		const containerHeight = this.horizontalContainer.getBoundingClientRect().height;
+		const scrollHeight = this.wrapperWidth + containerHeight;
+		this.horizontalParentContainer.style.setProperty( '--horizontal-scroll-height', `${ scrollHeight }px` );
 
 		document.addEventListener( 'scroll', this.horizontalScroll.bind( this ) );
 	}
@@ -46,6 +49,6 @@ export default class HorizontalScroll extends elementorModules.frontend.handlers
 		}
 
 		const scrolledDistance = this.horizontalParentContainer.getBoundingClientRect().top;
-		this.horizontalContainer.scrollLeft = ( this.scrollWidth / this.verticalScrollHeight ) * ( -scrolledDistance ) * 0.85;
+		this.horizontalContainer.scrollLeft = ( this.scrollWidth / this.wrapperWidth ) * ( -scrolledDistance ) * 0.85;
 	}
 }
