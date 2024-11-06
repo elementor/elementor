@@ -102,14 +102,14 @@ jobs:
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
         env:
-          TEST_TAG: ${{ inputs.test_tag }}
-          REPORTER: ${{ inputs.reporter || 'list,github' }}
+          TEST_TAG: ${{ github.event.inputs.test_tag }}
+          REPORTER: ${{ github.event.inputs.reporter || 'list,github' }}
         run: |
           if [ -z "$TEST_TAG" ]; then
-            echo "Running shard ${matrix.shardIndex}/${matrix.shardTotal} with reporter: $REPORTER"
+            echo "Running shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} with reporter: $REPORTER"
             npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=$REPORTER
           else
-            echo "Running shard ${matrix.shardIndex}/${matrix.shardTotal} with tag: $TEST_TAG and reporter: $REPORTER"
+            echo "Running shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} with tag: $TEST_TAG and reporter: $REPORTER"
             npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep "$TEST_TAG" --reporter=$REPORTER
           fi
       - name: Run element regression tests
