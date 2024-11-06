@@ -107,8 +107,6 @@ common-steps: &common-steps
       path: ${{ inputs.path-to-results || 'test-results/' }}
       if-no-files-found: ignore
       retention-days: 2
-
-
 jobs:
   build-plugin:
     name: Build plugin
