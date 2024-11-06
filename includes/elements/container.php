@@ -274,6 +274,14 @@ class Container extends Element_Base {
 	 */
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
+
+		if( $settings['horizontal_scroll'] === 'yes') {
+			?>
+			<div class="e-con-horizontal-sticky">
+			 <div class="e-con-horizontal">
+		<?php
+		}
+
 		$link = $settings['link'];
 
 		if ( ! empty( $link['url'] ) ) {
@@ -284,6 +292,12 @@ class Container extends Element_Base {
 		<?php
 		if ( $this->is_boxed_container( $settings ) ) { ?>
 			<div class="e-con-inner">
+		<?php }
+
+		if( $settings['horizontal_scroll'] === 'yes') {
+			?>
+			</div>
+			</div>
 		<?php }
 
 		$this->render_video_background();
@@ -482,6 +496,22 @@ class Container extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--min-height: {{SIZE}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->add_control(
+			'horizontal_scroll',
+			[
+				'label' => esc_html__( 'Horizontal Scroll', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
+				'return_value' => 'horizontal',
+				'default' => 'no',
+				'description' => sprintf(
+					esc_html__( 'Enable horizontal scrolling of container elements. The height will be defined by the height of the biggest element.', 'elementor' ),
+				),
+//				'prefix_class' => 'e-con-',
 			]
 		);
 
@@ -886,6 +916,11 @@ class Container extends Element_Base {
 				],
 			]
 		);
+
+
+
+
+
 
 		$this->add_responsive_control(
 			'background_overlay_hover_opacity',
