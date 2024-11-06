@@ -4,7 +4,7 @@ import Overlay from '../../../components/ui/overlay';
 import OverlayBar from '../../../components/ui/overlay-bar';
 import OverlayBarText from '../../../components/ui/overlay-bar-text';
 import { IMAGE_ASPECT_RATIO } from '../constants';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const aspectRatios = Object.keys( IMAGE_ASPECT_RATIO );
 
@@ -33,11 +33,16 @@ const GalleryImage = ( {
 	onSelectChange = null,
 	checkboxColor = 'rgba(0, 0, 0, 0.54)',
 	isLoading = false,
+	initialChecked = false,
 	...props
 } ) => {
-	const [ isChecked, setIsChecked ] = useState( true );
+	const [ isChecked, setIsChecked ] = useState( initialChecked );
 	const style = {};
 	const isRTL = elementorCommon?.config?.isRTL ?? true;
+
+	useEffect( () => {
+		setIsChecked( initialChecked );
+	}, [ initialChecked ] );
 
 	if ( 'thumbnail' === variant ) {
 		style.width = '100%';
@@ -118,8 +123,9 @@ GalleryImage.propTypes = {
 	numImagesInRow: PropTypes.number,
 	overlay: PropTypes.bool,
 	onSelectChange: PropTypes.func,
-	isLoading: PropTypes.bool,
 	checkboxColor: PropTypes.string,
+	initialChecked: PropTypes.bool,
+	isLoading: PropTypes.bool,
 };
 
 Gallery.Image = GalleryImage;
