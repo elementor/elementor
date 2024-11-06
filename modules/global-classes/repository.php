@@ -76,7 +76,5 @@ class Repository {
 			'data' => $all->get_data()->all(),
 			'order' => $order,
 		] );
-
-		return true;
 	}
 }
