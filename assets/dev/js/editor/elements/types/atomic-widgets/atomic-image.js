@@ -1,4 +1,4 @@
-import AtomicWidgetBase from "../atomic-widget-base";
+import AtomicWidgetBase from '../atomic-widget-base';
 
 export default class AtomicImage extends AtomicWidgetBase {
 	getType() {
