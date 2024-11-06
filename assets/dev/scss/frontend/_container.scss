@@ -289,9 +289,10 @@
 	}
 
 	&-horizontal {
+		--horizontal-scroll-height: 700vh;
 
 		&-sticky {
-			height: 700vh;
+			height: var(--horizontal-scroll-height);
 		}
 
 		position: sticky;
