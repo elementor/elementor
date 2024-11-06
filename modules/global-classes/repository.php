@@ -1,8 +1,7 @@
 <?php
-namespace Elementor\Modules\EditorGlobalClasses;
+namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\EditorGlobalClasses\Global_Classes as Data;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,7 +19,7 @@ class Repository {
 	public function all() {
 		$all = $this->kit->get_json_meta( self::META_KEY );
 
-		return Data::make( $all['data'] ?? [], $all['order'] ?? [] );
+		return Global_Classes::make( $all['data'] ?? [], $all['order'] ?? [] );
 	}
 
 	public function get( string $id ) {

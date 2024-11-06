@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\EditorGlobalClasses;
+namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
 
