@@ -105,13 +105,7 @@ jobs:
           KEYWORD: ${{ github.event.inputs.tag }}
           REPORTER: ${{ github.event.inputs.reporter || 'list,github' }}
         run: |
-          if [ -z "$KEYWORD" ]; then
-            echo "Running shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} with reporter: $REPORTER"
             npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=$REPORTER
-          else
-            echo "Running shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} with tag: $KEYWORD and reporter: $REPORTER"
-            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep "$KEYWORD" --reporter=$REPORTER
-          fi
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
@@ -171,16 +165,7 @@ jobs:
           KEYWORD: ${{ github.event.inputs.tag }}
           REPORTER: ${{ github.event.inputs.reporter || 'list,github' }}
         run: |
-          if [ -z "$KEYWORD" ]; then
-            echo "Running shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} with reporter: $REPORTER"
-            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=$REPORTER
-          else
-            echo "Running shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} with tag: $KEYWORD and reporter: $REPORTER"
-            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep "$KEYWORD" --reporter=$REPORTER
-          fi
-      - name: Run element regression tests
-        if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
+          npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep "$KEYWORD" --reporter=$REPORTER
       - uses: actions/upload-artifact@v4
         if: always()
         with:
