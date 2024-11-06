@@ -6,6 +6,7 @@ on:
       - labeled
       - opened
       - reopened
+      -
 
 permissions:
   contents: write
