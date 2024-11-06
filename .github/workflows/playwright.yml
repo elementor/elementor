@@ -103,14 +103,13 @@ jobs:
         if: ${{ matrix.shardIndex != 'elements-regression' }}
         env:
           TEST_TAG: ${{ github.event.inputs.test_tag }}
-          REPORTER: ${{ github.event.inputs.reporter || 'list,github' }}
         run: |
           if [ -z "$TEST_TAG" ]; then
             echo "Running shard ${matrix.shardIndex}/${matrix.shardTotal} with reporter: $REPORTER"
-            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=$REPORTER
+            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}  --reporter=${{ inputs.reporter || 'list,github' }}
           else
             echo "Running shard ${matrix.shardIndex}/${matrix.shardTotal} with tag: $TEST_TAG and reporter: $REPORTER"
-            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep "$TEST_TAG" --reporter=$REPORTER
+            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep "$TEST_TAG" --reporter=${{ inputs.reporter || 'list,github' }}
           fi
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
