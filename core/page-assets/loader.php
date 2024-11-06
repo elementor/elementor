@@ -137,8 +137,8 @@ class Loader extends Module {
 		}
 
 		if ( ! empty( $this->import_scripts ) ) {
-			wp_register_script( 'script-module-import-list', '', [], '', true );
-			wp_enqueue_script( 'script-module-import-list'  );
+			wp_register_script( 'script-module-import-list', '', [], '', ELEMENTOR_VERSION );
+			wp_enqueue_script( 'script-module-import-list' );
 			wp_add_inline_script( 'script-module-import-list', 'elementorScriptModuleImports = ' . wp_json_encode( $this->import_scripts ) . ';' );
 		}
 	}
