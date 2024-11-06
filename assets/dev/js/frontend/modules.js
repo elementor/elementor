@@ -20,10 +20,10 @@ elementorModules.frontend = {
 };
 
 // TODO: Remove this check after the Elementor 3.28 release [ED-15983].
-// const isUpdateJsLoadingActive = !! elementorCommon.config.experimentalFeatures.update_core_js_modules_loading;
-const isUpdateJsLoadingActive = false;
+const isUpdateJsLoadingActive = !! elementorCommon.config.experimentalFeatures.update_core_js_modules_loading;
+const isMegaMenuExperimentActive = !! elementorCommon.config.experimentalFeatures.mega_menu;
 
-if ( !! elementorScriptImports?.includes( 'nested-tabs' ) || ! isUpdateJsLoadingActive ) {
+if ( elementorScriptModuleImports?.includes( 'mega-menu' ) || ( isMegaMenuExperimentActive && ! isUpdateJsLoadingActive ) ) {
 	( async () => {
 		const { default: NestedTabs } = await import(
 			/* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs'

@@ -137,10 +137,9 @@ class Loader extends Module {
 		}
 
 		if ( ! empty( $this->import_scripts ) ) {
-			wp_register_script( 'script-import-list', '', [], '', true );
-			wp_enqueue_script( 'script-import-list'  );
-			wp_add_inline_script( 'script-import-list', 'elementorScriptImports = ' . wp_json_encode( $this->import_scripts ) . ';' );
-//			wp_add_inline_script( 'script-import-list', 'console.log("elementorScriptImports", ' . wp_json_encode( $this->import_scripts ) . ');' );
+			wp_register_script( 'script-module-import-list', '', [], '', true );
+			wp_enqueue_script( 'script-module-import-list'  );
+			wp_add_inline_script( 'script-module-import-list', 'elementorScriptModuleImports = ' . wp_json_encode( $this->import_scripts ) . ';' );
 		}
 	}
 
