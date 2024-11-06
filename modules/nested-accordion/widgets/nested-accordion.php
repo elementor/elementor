@@ -51,10 +51,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return [ 'widget-nested-accordion' ];
 	}
 
-	public function get_script_depends(): array {
-		return [ 'import-script-nested-accordion' ];
-	}
-
 	public function show_in_panel(): bool {
 		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
