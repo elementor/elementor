@@ -61,7 +61,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		expect( await editor.getPreviewFrame().getByText( /New Item #1#594833/i ).count() ).toEqual( 1 );
 
 		// Arrange 2.
-		const listItem = page.locator( '.elementor-repeater-fields' ).nth( 4 ).getByText( 'Reorder Remove' );
+		const listItem = page.locator( '.elementor-repeater-fields' ).nth( 4 ).locator( '.elementor-control-input-wrapper' ).nth( 1 );
 		const remove = listItem.locator( '.eicon-trash-o' );
 
 		// Act 2 - Click on remove.
@@ -87,7 +87,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		expect( await editor.getPreviewFrame().getByText( 'New Item #' + customFontsCount + fontsContentText ).count() ).toEqual( 1 );
 
 		// Arrange 2.
-		const listItem = page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).last().getByText( 'Edit Remove Reorder' );
+		const listItem = page.locator( '.elementor-control-custom_typography .elementor-repeater-fields' ).last().locator( '.elementor-control-input-wrapper' ).nth( 1 );
 		const remove = listItem.locator( '.eicon-trash-o' );
 
 		// Act 2 - Click on remove.

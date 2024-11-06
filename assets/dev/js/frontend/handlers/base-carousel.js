@@ -294,7 +294,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	getSpaceBetween( device = null ) {
-		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device ) || 0;
+		const responsiveControlValue = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device );
+		return Number( responsiveControlValue ) || 0;
 	}
 
 	updateSpaceBetween( propertyName ) {
