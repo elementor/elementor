@@ -37,6 +37,9 @@ on:
             required: true
             description: 'Cancel tests when one of them fails'
             default: false
+        test_tag:
+          description: 'Tag to filter tests (e.g., smoke, regression)'
+          required: false
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -58,7 +61,7 @@ jobs:
         shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
         shardTotal: [ 10 ]
         include:
-        - shardIndex: "elements-regression"
+          - shardIndex: "elements-regression"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -98,7 +101,17 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
-        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ inputs.reporter || 'list,github' }}
+        env:
+          TEST_TAG: ${{ github.event.inputs.test_tag }}
+          REPORTER: ${{ github.event.inputs.reporter || 'list,github' }}
+        run: |
+          if [ -z "$TEST_TAG" ]; then
+            echo "Running shard ${matrix.shardIndex}/${matrix.shardTotal} with reporter: $REPORTER"
+            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=$REPORTER
+          else
+            echo "Running shard ${matrix.shardIndex}/${matrix.shardTotal} with tag: $TEST_TAG and reporter: $REPORTER"
+            npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep "$TEST_TAG" --reporter=$REPORTER
+          fi
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
