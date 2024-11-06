@@ -5,6 +5,7 @@ on:
     types:
       - labeled
       - opened
+      - reopened
 
 permissions:
   contents: write
