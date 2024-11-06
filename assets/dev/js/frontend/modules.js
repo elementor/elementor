@@ -21,7 +21,7 @@ elementorModules.frontend = {
 
 // TODO: Remove this check after the Elementor 3.28 release [ED-15983].
 const isUpdateJsLoadingActive = !! elementorCommon.config.experimentalFeatures.update_core_js_modules_loading;
-const isMegaMenuExperimentActive = !! elementorCommon.config.experimentalFeatures.mega_menu;
+const isMegaMenuExperimentActive = !! elementorCommon.config.experimentalFeatures[ 'mega-menu' ];
 
 if ( elementorScriptModuleImports?.includes( 'mega-menu' ) || ( isMegaMenuExperimentActive && ! isUpdateJsLoadingActive ) ) {
 	( async () => {
