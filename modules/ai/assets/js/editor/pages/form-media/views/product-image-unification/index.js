@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Avatar, Box, Stack } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { Avatar, Box, Button, Stack, Typography } from '@elementor/ui';
+import { __, sprintf } from '@wordpress/i18n';
 import View from '../../components/view';
 import ImageForm from '../../components/image-form';
 import { useEditImage } from '../../context/edit-image-context';
@@ -69,6 +69,9 @@ const ProductImageUnification = () => {
 	}, [ checkboxColorMap ] );
 	const isLoading = errorlessProducts.some( ( { productId } ) => loadingMap[ productId ] );
 	const isError = Object.values( errorMap ).length && Object.values( errorMap ).every( ( { errorGenerating } ) => errorGenerating );
+	const thumbnailThreshold = 10;
+	const exceedThumbnailThreshold = ( products?.images?.length ?? 0 ) - thumbnailThreshold > 0;
+	const selectedProducts = errorlessProducts.filter( ( { data } ) => data.isChecked && ! data.isLoading ).length;
 	const handleSubmit = useCallback( ( event ) => {
 		event.preventDefault();
 
@@ -101,7 +104,7 @@ const ProductImageUnification = () => {
 		}
 
 		productsToUnify.forEach( ( product ) => product.req().catch( ( ) => {} ) );
-	}, [ checkboxColorMap, errorlessProducts, generatedBgColor, setGenerate ] );
+	}, [ checkboxColorMap, errorlessProducts, generatedBgColor, productsData, setGenerate ] );
 
 	const getCols = ( dataLength = 1 ) => {
 		return Math.min( Math.ceil( Math.sqrt( dataLength ?? 1 ) ), 4 );
@@ -126,7 +129,7 @@ const ProductImageUnification = () => {
 							},
 						} }
 					>
-						{ products?.images.slice( 0, 9 ).map( ( img ) =>
+						{ products?.images.slice( 0, ( exceedThumbnailThreshold ? thumbnailThreshold - 1 : thumbnailThreshold ) ).map( ( img ) =>
 							<Avatar
 								key={ img.productId }
 								alt={ img.productId + '' }
@@ -136,8 +139,8 @@ const ProductImageUnification = () => {
 									width: 50,
 									height: 50,
 								} } /> ) }
-						{ ( ( products?.images?.length ?? 0 ) - 9 > 0 ) && <Avatar variant="square" sx={ { bgcolor: 'lightgray', width: 50, height: 50 } }>
-							{ ( products?.images?.length ?? 0 ) - 9 }
+						{ ( exceedThumbnailThreshold ) && <Avatar variant="square" sx={ { bgcolor: 'lightgray', width: 50, height: 50 } }>
+							{ ( products?.images?.length ?? 0 ) - ( thumbnailThreshold - 1 ) }
 						</Avatar> }
 					</Box>
 					<ImageForm onSubmit={ handleSubmit }>
@@ -169,18 +172,53 @@ const ProductImageUnification = () => {
 			</View.Panel>
 			<View.Content isGenerating={ isSavingImages }>
 				<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center', minHeight: '76vh' } }>
-					<Box sx={ { flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center' } }>
-						{ wasGeneratedOnce ? <ImagesDisplay
-							images={ errorlessProducts.map( ( product ) => product.data ) }
-							cols={ getCols( errorlessProducts.length ?? 1 ) }
-							overlay={ false }
-							onSelectChange={ ( productId, isChecked ) => setProductsData( ( prevState ) => {
-								if ( prevState[ productId ]?.data ) {
-									prevState[ productId ].data.isChecked = isChecked;
-								}
-								return { ...prevState };
-							} ) }
-						/> : <Box
+					<Box sx={ { flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center', overflowX: 'hidden' } }>
+						{ wasGeneratedOnce ? <>
+							{ ! isError && errorlessProducts.length > 1 && <Box sx={ {
+								display: 'flex',
+								flexDirection: 'row',
+								alignItems: 'inherit',
+								justifyContent: 'space-between',
+								width: '100%',
+							} }>
+								<Typography variant="body2" color="secondary">
+									{
+										// Translators: %1$d is the number of selected products, %2$d is the total number of products
+										sprintf( __( '%1$d/%2$d selected', 'elementor' ), selectedProducts, products?.images?.length ?? 0 )
+									}
+								</Typography>
+								<Button
+									variant="text"
+									color="secondary"
+									onClick={ () => {
+										setProductsData( ( prevState ) => {
+											const newState = { ...prevState };
+											Object.values( newState ).forEach( ( product ) => {
+												if ( product.data?.isChecked ) {
+													newState[ product.productId ] = {
+														...product,
+														data: { ...product.data, isChecked: false },
+													};
+												}
+											} );
+											return newState;
+										} );
+									} }>
+									{ __( 'Clear all', 'elementor' ) }
+								</Button>
+							</Box> }
+							<ImagesDisplay
+								images={ errorlessProducts.map( ( product ) => product.data ) }
+								cols={ getCols( errorlessProducts.length ?? 1 ) }
+								overlay={ false }
+								onSelectChange={ ( productId, isChecked ) => setProductsData( ( prevState ) => {
+									if ( prevState[ productId ]?.data ) {
+										prevState[ productId ].data.isChecked = isChecked;
+									}
+									return { ...prevState };
+								} ) }
+							/>
+						</> : <Box
 							component="img"
 							src={ window.UnifyProductImagesConfig.placeholder }
 							alt={ __( 'Example GIF', 'elementor' ) }
