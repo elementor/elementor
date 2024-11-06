@@ -511,7 +511,7 @@ class Container extends Element_Base {
 				'description' => sprintf(
 					esc_html__( 'Enable horizontal scrolling of container elements. The height will be defined by the height of the biggest element.', 'elementor' ),
 				),
-				'prefix_class' => 'e-con-',
+//				'prefix_class' => 'e-con-',
 			]
 		);
 
