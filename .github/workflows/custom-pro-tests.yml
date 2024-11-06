@@ -30,7 +30,7 @@ jobs:
           repository: elementor/elementor-pro
       - name: Build Plugin Pro
         id: build_plugin_pro
-        uses: elementor/elementor-pro/.github/workflows/build.yml
+        uses: elementor/elementor-pro/.github/workflows/build.yml@${{ steps.parse_pro_label_branch.outputs.pro_branch }}
       - name: Checkout Core code
         uses: actions/checkout@v4
         with:
