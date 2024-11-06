@@ -104,7 +104,7 @@ const ProductImageUnification = () => {
 		}
 
 		productsToUnify.forEach( ( product ) => product.req().catch( ( ) => {} ) );
-	}, [ checkboxColorMap, errorlessProducts, generatedBgColor, setGenerate ] );
+	}, [ checkboxColorMap, errorlessProducts, generatedBgColor, productsData, setGenerate ] );
 
 	const getCols = ( dataLength = 1 ) => {
 		return Math.min( Math.ceil( Math.sqrt( dataLength ?? 1 ) ), 4 );
@@ -172,7 +172,7 @@ const ProductImageUnification = () => {
 			</View.Panel>
 			<View.Content isGenerating={ isSavingImages }>
 				<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center', minHeight: '76vh' } }>
-					<Box sx={ { flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center' } }>
+					<Box sx={ { flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center', overflowX: 'hidden' } }>
 						{ wasGeneratedOnce ? <>
 							{ ! isError && errorlessProducts.length > 1 && <Box sx={ {
 								display: 'flex',
