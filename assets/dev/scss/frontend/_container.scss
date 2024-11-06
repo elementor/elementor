@@ -282,11 +282,22 @@
 	}
 
 	.elementor-widget {
-	
+
 		&:not(:last-child) {
 			--kit-widget-spacing: 0px;
 		}
 	}
+
+	//&-horizontal,
+	//&-horizontal > .e-con-inner {
+	//	flex-direction: row !important;
+	//	//width: 200vw;
+	//
+	//	& > .elementor-element {
+	//		width: 100vw;
+	//		//flex: none;
+	//	}
+	//}
 }
 
 @media (max-width: $editor-screen-sm-max) {
