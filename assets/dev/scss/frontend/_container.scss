@@ -288,16 +288,17 @@
 		}
 	}
 
-	//&-horizontal,
-	//&-horizontal > .e-con-inner {
-	//	flex-direction: row !important;
-	//	//width: 200vw;
-	//
-	//	& > .elementor-element {
-	//		width: 100vw;
-	//		//flex: none;
-	//	}
-	//}
+	&-horizontal {
+
+		&-sticky {
+			height: 700vh;
+		}
+
+		position: sticky;
+		top: 0px;
+		overflow-x: hidden;
+		overflow-y: hidden;
+	}
 }
 
 @media (max-width: $editor-screen-sm-max) {

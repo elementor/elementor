@@ -1,21 +1,30 @@
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
 export default class HorizontalScroll extends elementorModules.frontend.handlers.Base {
 	onInit() {
-		gsap.registerPlugin( ScrollTrigger );
 
-		gsap.to( '.e-con-horizontal .elementor-element', {
-			xPercent: -100, // Moves the content to the left to create the scroll effect
-			ease: 'none',
-			scrollTrigger: {
-				trigger: '.e-con-horizontal',
-				start: 'top top', // Start when the element is at the top of the viewport
-				end: () => '+=' + document.querySelector( '.e-con-horizontal' ).offsetWidth,
-				scrub: true, // Smooth scroll effect
-				pin: true, // Pin the section in place while scrolling
-				anticipatePin: 1,
-			},
-		} );
+// Adding scroll event listener
+		document.addEventListener( 'scroll', this.horizontalScroll );
+
+//Selecting Elements
+		let sticky = document.querySelector('.e-con-horizontal');
+		let stickyParent = document.querySelector('.e-con-horizontal-sticky');
+
+		let scrollWidth = sticky.scrollWidth;
+		let verticalScrollHeight = stickyParent.getBoundingClientRect().height - sticky.getBoundingClientRect().height;
+	}
+
+
+//Scroll function
+	horizontalScroll() {
+		console.log( 'test ');
+
+		//Checking whether the sticky element has entered into view or not
+		let stickyPosition = sticky.getBoundingClientRect().top;
+		if (stickyPosition > 1) {
+			return;
+		} else {
+			let scrolled = stickyParent.getBoundingClientRect().top; //how much is scrolled?
+			sticky.scrollLeft = (scrollWidth / verticalScrollHeight) * (-scrolled) * 0.85;
+
+		}
 	}
 }
