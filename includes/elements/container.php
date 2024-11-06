@@ -274,6 +274,13 @@ class Container extends Element_Base {
 	 */
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
+		if( $settings['horizontal_scroll'] === 'yes') {
+			?>
+			<div class="e-con-horizontal-sticky">
+			 <div class="e-con-horizontal">
+		<?php
+		}
+
 		$link = $settings['link'];
 
 		if ( ! empty( $link['url'] ) ) {
@@ -294,6 +301,13 @@ class Container extends Element_Base {
 
 		if ( ! empty( $settings['shape_divider_bottom'] ) ) {
 			$this->render_shape_divider( 'bottom' );
+		}
+
+		if( $settings['horizontal_scroll'] === 'yes') {
+			?>
+			</div>
+	</div>
+		<?php }
 		}
 	}
 
@@ -902,6 +916,11 @@ class Container extends Element_Base {
 				],
 			]
 		);
+
+
+
+
+
 
 		$this->add_responsive_control(
 			'background_overlay_hover_opacity',
