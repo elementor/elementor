@@ -38,7 +38,7 @@ on:
             description: 'Cancel tests when one of them fails'
             default: false
         tag:
-          description: 'Tag to filter tests (e.g., smoke, regression)'
+          description: 'Provide @tag or a keyword'
           required: false
 
 # This allows a subsequently queued workflow run to interrupt previous runs
