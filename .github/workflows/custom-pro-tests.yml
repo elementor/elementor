@@ -14,23 +14,34 @@ env:
   SPREADSHEET_ID: '19K69k2H_NciROVMxu7_3efswiocQxaVvkTj-1zOviys'
 
 jobs:
-  prepare-env:
-    name: Build plugin
+  parse-pro-label-branch:
+    name: Parse pro label branch
     runs-on: ubuntu-22.04
     if: startsWith( github.event.pull_request.labels.*.name, 'pw-pro' )
+    outputs:
+      pro_branch: ${{ steps.parse_pro_label_branch.outputs.pro_branch }}
     steps:
       - name: parse pro label branch
         id: parse_pro_label_branch
         run: echo "pro_branch=$(echo ${{ github.event.pull_request.labels.*.name }} | cut -d'/' -f2)\n" >> $GITHUB_OUTPUT
-
+  checkout-pro:
+    name: Checkout pro source code
+    runs-on: ubuntu-22.04
+    if: startsWith( github.event.pull_request.labels.*.name, 'pw-pro' )
+    needs: parse-pro-label-branch
+    steps:
       - name: Checkout pro source code with custom branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.parse_pro_label_branch.outputs.pro_branch }}
+          ref: ${{ jobs.parse-pro-label-branch.outputs.pro_branch }}
           repository: elementor/elementor-pro
-      - name: Build Plugin Pro
-        id: build_plugin_pro
-        uses: elementor/elementor-pro/.github/workflows/build.yml@${{ steps.parse_pro_label_branch.outputs.pro_branch }}
+  build-pro-plugin:
+    name: Build Plugin Pro
+    uses: elementor/elementor-pro/.github/workflows/build.yml@${{ jobs.parse-pro-label-branch.outputs.pro_branch }}
+  build-core-plugin:
+    name: Build Plugin Core
+    runs-on: ubuntu-latest
+    steps:
       - name: Checkout Core code
         uses: actions/checkout@v4
         with:
