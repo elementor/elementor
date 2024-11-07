@@ -705,7 +705,7 @@ class Admin extends App {
 			$post_data['post_status'] = 'draft';
 		}
 
-		$post_data = $this->sanitize_post_data( $post_data );
+		$post_data = $this->filter_post_data( $post_data );
 
 		/**
 		 * Create new post meta data.
@@ -737,13 +737,36 @@ class Admin extends App {
 		die;
 	}
 
-	private function sanitize_post_data( $post_data ) {
-		$post_data = [
-			'post_title' => isset( $post_data['post_title'] ) ? sanitize_text_field( $post_data['post_title'] ) : '',
-			'post_content' => isset( $post_data['post_content'] ) ? sanitize_textarea_field( $post_data['post_content'] ) : '',
-			'post_status' => isset( $post_data['post_status'] ) ? $post_data['post_status'] : 'draft',
-		];
-		return $post_data;
+	private function get_allowed_fields_for_role() {
+		$allowed_fields = array(
+			'post_title',
+			'post_content',
+			'post_excerpt',
+			'post_category',
+			'post_type',
+			'tags_input',
+		);
+
+		if ( current_user_can( 'publish_posts' ) ) {
+			$allowed_fields[] = 'post_status';
+		}
+
+		if ( current_user_can( 'edit_others_posts' ) ) {
+			$allowed_fields[] = 'post_author';
+		}
+
+		return $allowed_fields;
+	}
+
+	private function filter_post_data( $post_data ) {
+		$allowed_fields = $this->get_allowed_fields_for_role();
+		return array_filter(
+			$post_data,
+			function( $key ) use ( $allowed_fields ) {
+				return in_array( $key, $allowed_fields, true );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
 	}
 	/**
 	 * @since 2.3.0
