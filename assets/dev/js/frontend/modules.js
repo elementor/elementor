@@ -18,18 +18,3 @@ elementorModules.frontend = {
 		CarouselBase,
 	},
 };
-
-// TODO: Remove this check after the Elementor 3.28 release [ED-15983].
-const isUpdateJsLoadingActive = !! elementorCommon.config.experimentalFeatures.update_script_loading_pro;
-const isMegaMenuExperimentActive = !! elementorCommon.config.experimentalFeatures[ 'mega-menu' ];
-const shouldLoadMegaMenuOnOlderProVersions = isMegaMenuExperimentActive && ! isUpdateJsLoadingActive;
-
-if ( elementorScriptModuleImports?.includes( 'mega-menu' ) || shouldLoadMegaMenuOnOlderProVersions ) {
-	( async () => {
-		const { default: NestedTabsModule } = await import(
-			/* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs'
-		);
-
-		elementorModules.frontend.handlers.NestedTabs = NestedTabsModule;
-	} )();
-}

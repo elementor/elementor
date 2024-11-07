@@ -30,6 +30,21 @@ module.exports = function( $ ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
 	}
 
+	// TODO: Remove this check after the Elementor 3.28 release [ED-15983].
+	const isUpdateJsLoadingActive = !! elementorFrontendConfig.experimentalFeatures.update_script_loading_pro;
+	const isMegaMenuExperimentActive = !! elementorFrontendConfig.experimentalFeatures[ 'mega-menu' ];
+	const shouldLoadMegaMenuOnOlderProVersions = isMegaMenuExperimentActive && ! isUpdateJsLoadingActive;
+
+	if ( elementorScriptModuleImports?.includes( 'mega-menu' ) || shouldLoadMegaMenuOnOlderProVersions ) {
+		( async () => {
+			const { default: NestedTabsModule } = await import(
+				/* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs'
+			);
+
+			elementorModules.frontend.handlers.NestedTabs = NestedTabsModule;
+		} )();
+	}
+
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
 		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion' );
 	}
