@@ -5,7 +5,6 @@ import StretchedElement from './handlers/stretched-element';
 import BaseHandler from './handlers/base';
 import SwiperBase from './handlers/base-swiper';
 import CarouselBase from './handlers/base-carousel';
-import NestedTabs from 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs';
 
 elementorModules.frontend = {
 	Document,
@@ -17,6 +16,19 @@ elementorModules.frontend = {
 		StretchedElement,
 		SwiperBase,
 		CarouselBase,
-		NestedTabs,
 	},
 };
+
+// TODO: Remove this check after the Elementor 3.28 release [ED-15983].
+const isUpdateJsLoadingActive = !! elementorCommon.config.experimentalFeatures.update_script_loading_pro;
+const isMegaMenuExperimentActive = !! elementorCommon.config.experimentalFeatures[ 'mega-menu' ];
+
+if ( elementorScriptModuleImports?.includes( 'mega-menu' ) || ( isMegaMenuExperimentActive && ! isUpdateJsLoadingActive ) ) {
+	( async () => {
+		const { default: NestedTabs } = await import(
+			/* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs'
+			);
+
+		elementorModules.frontend.handlers.NestedTabs = NestedTabs;
+	} )();
+}
