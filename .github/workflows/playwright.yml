@@ -158,7 +158,7 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
-          npm run test:playwright -- --grep="${{ inputs.tag }}" --reporter=${{ inputs.reporter || 'list,github' }}
+          npm run test:playwright -- --grep="${{ inputs.tag }}" --reporter=${{ inputs.reporter || 'list,allure-playwright' }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
