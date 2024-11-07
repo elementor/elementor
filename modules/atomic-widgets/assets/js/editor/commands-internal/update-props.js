@@ -26,9 +26,11 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 		Object.entries( props ).forEach( ( [ key, value ] ) => {
 			if ( null === value || undefined === value ) {
 				delete variant.props[ key ];
-			} else {
-				variant.props[ key ] = value;
+
+				return;
 			}
+
+			variant.props[ key ] = value;
 		} );
 	}
 

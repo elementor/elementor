@@ -182,7 +182,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			} );
 		}
 
-		if ( oldStyle ) {
+		if ( null !== oldStyle ) {
 			const oldStyleDef = oldStyle[ styleDefID ];
 			const oldProps = oldStyleDef?.variants ? getVariantByMeta( oldStyleDef.variants, meta )?.props : {};
 
