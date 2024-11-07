@@ -27,7 +27,7 @@ if ( elementorScriptModuleImports?.includes( 'mega-menu' ) || ( isMegaMenuExperi
 	( async () => {
 		const { default: NestedTabs } = await import(
 			/* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs'
-			);
+		);
 
 		elementorModules.frontend.handlers.NestedTabs = NestedTabs;
 	} )();
