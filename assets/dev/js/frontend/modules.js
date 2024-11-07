@@ -24,6 +24,7 @@ const isUpdateJsLoadingActive = !! elementorCommon.config.experimentalFeatures.u
 const isMegaMenuExperimentActive = !! elementorCommon.config.experimentalFeatures[ 'mega-menu' ];
 
 // Handle: elementorScriptModuleImports?.includes( 'mega-menu' ) ||;
+// Abcd.
 
 if ( isMegaMenuExperimentActive && ! isUpdateJsLoadingActive ) {
 	( async () => {
