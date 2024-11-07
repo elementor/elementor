@@ -41,7 +41,7 @@ class API {
 		try {
 			$one = $this->repository->get( $id );
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Getting global class failed unexpectedly', [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', 'Deleting global class failed unexpectedly', [ 'status' => 500 ] );
 		}
 
 		if ( null === $one ) {
@@ -54,7 +54,7 @@ class API {
 			return new \WP_Error( 'unexpected_error', 'Deleting global class failed unexpectedly', [ 'status' => 500 ] );
 		}
 
-		return new \WP_REST_Response( [], 200 );
+		return new \WP_REST_Response( [ 'message' => 'Global class deleted successfully' ], 200 );
 	}
 
 	private function patch( \WP_REST_Request $request ) {
@@ -66,7 +66,7 @@ class API {
 		try {
 			$one = $this->repository->get( $id );
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Getting global class failed unexpectedly', [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', 'Updating global class failed unexpectedly', [ 'status' => 500 ] );
 		}
 
 		if ( null === $one ) {
@@ -101,7 +101,7 @@ class API {
 			return new \WP_Error( 'unexpected_error', 'Creating global class failed unexpectedly', [ 'status' => 500 ] );
 		}
 
-		return new \WP_REST_Response( $new, 200 );
+		return new \WP_REST_Response( $new, 201 );
 	}
 
 	private function arrange( $request ) {
