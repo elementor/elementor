@@ -2,6 +2,13 @@ name: Playwright
 
 on:
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
@@ -46,7 +53,7 @@ jobs:
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     strategy:
-      fail-fast: ${{ inputs.fail_fast || true }}
+      fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
         shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
         shardTotal: [ 10 ]
