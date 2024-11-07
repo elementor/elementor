@@ -114,7 +114,8 @@ class Module extends BaseModule {
 			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
 
 			if ( current_user_can( 'edit_products' ) || current_user_can( 'publish_products' ) ) {
-				add_action( 'admin_init', [ $this, 'enqueue_ai_woocommerce' ] );
+				add_action( 'admin_init', [ $this, 'enqueue_ai_products_page_scripts' ] );
+				add_action( 'current_screen', [ $this, 'enqueue_ai_single_product_page_scripts' ] );
 				add_action( 'wp_ajax_elementor-ai-get-product-images', [ $this, 'get_product_images_ajax' ] );
 				add_action( 'wp_ajax_elementor-ai-set-product-images', [ $this, 'set_product_images_ajax' ] );
 				Product_Image_Unification_Intro::add_hooks();
@@ -157,44 +158,41 @@ class Module extends BaseModule {
 		} );
 	}
 
-	public function enqueue_ai_woocommerce() {
+	private function get_current_screen() {
+		$is_wc = class_exists( 'WooCommerce' ) && post_type_exists( 'product' );
+		if ( ! $is_wc ) {
+			return 'other';
+		}
 
-		if ( ! class_exists( 'WooCommerce' ) || ! post_type_exists( 'product' ) ||
-			! isset( $_GET['post_type'] ) || 'product' !== $_GET['post_type'] ) {
+		$is_products_page = isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'];
+		if ( $is_products_page ) {
+			return 'wc-products';
+		}
+
+		$screen = get_current_screen();
+		$is_single_product_page = isset( $screen->post_type ) && ( 'product' === $screen->post_type && 'post' === $screen->base );
+		if ( $is_single_product_page ) {
+			return 'wc-single-product';
+		}
+
+		return 'other';
+	}
+
+	public function enqueue_ai_products_page_scripts() {
+		if ( 'wc-products' !== $this->get_current_screen() ) {
 			return;
 		}
 
-		wp_enqueue_script( 'elementor-ai-unify-product-images',
-			$this->get_js_assets_url( 'ai-unify-product-images' ),
-			[
-				'jquery',
-				'elementor-v2-ui',
-				'elementor-v2-icons',
-				'wp-components',
-				'elementor-common',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
+		$this->add_wc_scripts();
 
-		wp_localize_script(
-			'elementor-ai-unify-product-images',
-			'UnifyProductImagesConfig',
-			[
-				'get_product_images_url' => admin_url( 'admin-ajax.php' ),
-				'set_product_images_url' => admin_url( 'admin-ajax.php' ),
-				'nonce' => wp_create_nonce( 'elementor-ai-unify-product-images_nonce' ),
-				'placeholder' => ELEMENTOR_ASSETS_URL . 'images/app/ai/product-image-unification-example.gif?' . ELEMENTOR_VERSION,
-				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-				'connect_url' => $this->get_ai_connect_url(),
-			]
-		);
+	}
 
-		add_filter( 'bulk_actions-edit-product', function ( $data ) {
-			return $this->add_products_bulk_action( $data );
-		});
+	public function enqueue_ai_single_product_page_scripts() {
+		if ( 'wc-single-product' !== $this->get_current_screen() ) {
+			return;
+		}
 
-		wp_set_script_translations( 'elementor-ai-unify-product-images', 'elementor' );
+		$this->add_wc_scripts();
 
 	}
 
@@ -207,9 +205,24 @@ class Module extends BaseModule {
 		check_ajax_referer( 'elementor-ai-unify-product-images_nonce', 'nonce' );
 
 		$post_ids = isset( $_POST['post_ids'] ) ? array_map( 'intval', $_POST['post_ids'] ) : [];
+		$is_galley_only = isset( $_POST['is_galley_only'] ) && sanitize_text_field( wp_unslash( $_POST['is_galley_only'] ) );
+
 		$image_ids = [];
 
 		foreach ( $post_ids as $post_id ) {
+			if ( $is_galley_only ) {
+				$product = wc_get_product( $post_id );
+				$gallery_image_ids = $product->get_gallery_image_ids();
+				foreach ( $gallery_image_ids as $image_id ) {
+					$image_ids[] = [
+						'productId' => $post_id,
+						'id'   => $image_id,
+						'image_url' => wp_get_attachment_url( $image_id ),
+					];
+				}
+				continue;
+			}
+
 			$image_id = get_post_thumbnail_id( $post_id );
 
 			if ( ! $image_id ) {
@@ -222,7 +235,7 @@ class Module extends BaseModule {
 
 			$image_ids[] = [
 				'productId' => $post_id,
-				'id'   => $image_id ? $image_id : 'No Image',
+				'id' => $image_id ? $image_id : 'No Image',
 				'image_url' => $image_id ? wp_get_attachment_url( $image_id ) : 'No Image',
 			];
 		}
@@ -234,7 +247,7 @@ class Module extends BaseModule {
 			update_option( 'elementor_cpt_support', $supported_post_types );
 		}
 
-		wp_send_json_success( [ 'product_images' => $image_ids ] );
+		wp_send_json_success( [ 'product_images' => array_slice( $image_ids, 0, 10 ) ] );
 
 		wp_die();
 	}
@@ -261,6 +274,9 @@ class Module extends BaseModule {
 
 		$product_id = isset( $_POST['productId'] ) ? sanitize_text_field( wp_unslash( $_POST['productId'] ) ) : '';
 		$image_url = isset( $_POST['image_url'] ) ? sanitize_text_field( wp_unslash( $_POST['image_url'] ) ) : '';
+		$image_to_add = isset( $_POST['image_to_add'] ) ? intval( wp_unslash( $_POST['image_to_add'] ) ) : null;
+		$image_to_remove = isset( $_POST['image_to_remove'] ) ? intval( wp_unslash( $_POST['image_to_remove'] ) ) : null;
+		$is_product_gallery = isset( $_POST['is_product_gallery'] ) && sanitize_text_field( wp_unslash( $_POST['is_product_gallery'] ) ) === 'true';
 
 		if ( ! $product_id || ! $image_url ) {
 			throw new \Exception( 'Product ID and Image URL are required' );
@@ -276,8 +292,12 @@ class Module extends BaseModule {
 			throw new \Exception( 'Image upload failed' );
 		}
 
-		$product->set_image_id( $attachment_id );
-		$product->save();
+		if ( $is_product_gallery ) {
+			$this->update_product_gallery( $product, $image_to_remove, $image_to_add );
+		} else {
+			$product->set_image_id( $attachment_id );
+			$product->save();
+		}
 
 		wp_send_json_success( [
 			'message' => __( 'Image added successfully', 'elementor' ),
@@ -1303,5 +1323,65 @@ class Module extends BaseModule {
 				'extra_data' => $result->get_error_data(),
 			] );
 		}
+	}
+
+	/**
+	 * @return void
+	 */
+	public function add_wc_scripts(): void {
+		wp_enqueue_script( 'elementor-ai-unify-product-images',
+			$this->get_js_assets_url( 'ai-unify-product-images' ),
+			[
+				'jquery',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+				'wp-components',
+				'elementor-common',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'elementor-ai-unify-product-images',
+			'UnifyProductImagesConfig',
+			[
+				'get_product_images_url' => admin_url( 'admin-ajax.php' ),
+				'set_product_images_url' => admin_url( 'admin-ajax.php' ),
+				'nonce' => wp_create_nonce( 'elementor-ai-unify-product-images_nonce' ),
+				'placeholder' => ELEMENTOR_ASSETS_URL . 'images/app/ai/product-image-unification-example.gif?' . ELEMENTOR_VERSION,
+				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+				'connect_url' => $this->get_ai_connect_url(),
+			]
+		);
+
+		add_filter( 'bulk_actions-edit-product', function ( $data ) {
+			return $this->add_products_bulk_action( $data );
+		});
+
+		wp_set_script_translations( 'elementor-ai-unify-product-images', 'elementor' );
+	}
+
+	/**
+	 * @param $product
+	 * @param int|null $image_to_remove
+	 * @param int|null $image_to_add
+	 * @return void
+	 * @throws \Exception
+	 */
+	private function update_product_gallery( $product, ?int $image_to_remove, ?int $image_to_add ): void {
+		$gallery_image_ids = $product->get_gallery_image_ids();
+
+		$index = array_search( $image_to_remove, $gallery_image_ids );
+		if ( false !== $index ) {
+			unset( $gallery_image_ids[ $index ] );
+		}
+
+		if ( ! in_array( $image_to_add, $gallery_image_ids ) ) {
+			$gallery_image_ids[] = $image_to_add;
+		}
+
+		$product->set_gallery_image_ids( $gallery_image_ids );
+		$product->save();
 	}
 }

@@ -88,6 +88,7 @@ const ImagesDisplay = ( {
 							overlay={ overlay }
 							onSelectChange={ onSelectChange ? ( isChecked ) => onSelectChange( image.productId, isChecked ) : null }
 							checkboxColor={ image.checkboxColor }
+							initialChecked={ image.isChecked }
 							isLoading={ image.isLoading }
 						>
 							<ImageActions>
