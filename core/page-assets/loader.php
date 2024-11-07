@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Loader extends Module {
 	private array $assets = [];
 
+	private array $import_scripts = [];
+
 	public function get_name(): string {
 		return 'assets-loader';
 	}
@@ -123,12 +125,32 @@ class Loader extends Module {
 				$this->assets[ $assets_type ][ $asset_name ]['enabled'] = true;
 
 				if ( 'scripts' === $assets_type ) {
+					if ( $this->should_import_script( $asset_name ) ) {
+						continue;
+					}
+
 					wp_enqueue_script( $asset_name );
 				} else {
 					wp_enqueue_style( $asset_name );
 				}
 			}
 		}
+
+		if ( ! empty( $this->import_scripts ) ) {
+			wp_register_script( 'script-module-import-list', '', [], 1.0 );
+			wp_enqueue_script( 'script-module-import-list' );
+			wp_add_inline_script( 'script-module-import-list', 'const elementorScriptModuleImports = ' . wp_json_encode( $this->import_scripts ) . ';' );
+		}
+	}
+
+	public function should_import_script( $script ): bool {
+		if ( false !== strpos( $script, 'import-script-' ) ) {
+			$script_name = str_replace( 'import-script-', '', $script );
+			$this->import_scripts[] = $script_name;
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
