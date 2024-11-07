@@ -3,7 +3,7 @@ name: Playwright - Custom Pro
 on:
   pull_request:
     types:
-      - reopened
+      - labeled
 
 permissions:
   contents: write
