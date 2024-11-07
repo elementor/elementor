@@ -27,10 +27,10 @@ const isMegaMenuExperimentActive = !! elementorCommon.config.experimentalFeature
 
 if ( isMegaMenuExperimentActive && ! isUpdateJsLoadingActive ) {
 	( async () => {
-		const { default: NestedTabs } = await import(
+		const { default: NestedTabsModule } = await import(
 			/* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs'
 		);
 
-		elementorModules.frontend.handlers.NestedTabs = NestedTabs;
+		elementorModules.frontend.handlers.NestedTabs = NestedTabsModule;
 	} )();
 }
