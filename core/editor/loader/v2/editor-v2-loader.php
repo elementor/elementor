@@ -33,8 +33,6 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'ui',
 		'utils',
 		'wp-media',
-		'editor-props',
-		'editor-styles'
 	];
 
 	/**
