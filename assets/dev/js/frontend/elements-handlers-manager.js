@@ -26,16 +26,21 @@ module.exports = function( $ ) {
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
-	if ( elementorScriptModuleImports?.includes( 'nested-tabs' ) ) {
+	const elementorScriptModuleImportsExists = 'undefined' !== typeof elementorScriptModuleImports;
+	let shouldLoadNestedModule = elementorScriptModuleImportsExists ? elementorScriptModuleImports?.includes( 'nested-tabs' ) : elementorFrontend.isEditMode();
+
+	if ( shouldLoadNestedModule ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
 	}
+
+	shouldLoadNestedModule = elementorScriptModuleImportsExists ? elementorScriptModuleImports?.includes( 'mega-menu' ) : elementorFrontend.isEditMode();
 
 	// TODO: Remove this check after the Elementor 3.28 release [ED-15983].
 	const isUpdateJsLoadingActive = !! elementorFrontendConfig.experimentalFeatures.update_script_loading_pro;
 	const isMegaMenuExperimentActive = !! elementorFrontendConfig.experimentalFeatures[ 'mega-menu' ];
 	const shouldLoadMegaMenuOnOlderProVersions = isMegaMenuExperimentActive && ! isUpdateJsLoadingActive;
 
-	if ( elementorScriptModuleImports?.includes( 'mega-menu' ) || shouldLoadMegaMenuOnOlderProVersions ) {
+	if ( shouldLoadNestedModule || shouldLoadMegaMenuOnOlderProVersions ) {
 		( async () => {
 			const { default: NestedTabsModule } = await import(
 				/* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs'
