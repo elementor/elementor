@@ -26,14 +26,13 @@ module.exports = function( $ ) {
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
-	const elementorScriptModuleImportsExists = 'undefined' !== typeof elementorScriptModuleImports;
-	let shouldLoadNestedModule = elementorScriptModuleImportsExists ? elementorScriptModuleImports?.includes( 'nested-tabs' ) : true;
+	let shouldLoadNestedModule = elementorFrontend.isEditMode() ? true : elementorScriptModuleImports?.includes( 'nested-tabs' );
 
 	if ( shouldLoadNestedModule ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
 	}
 
-	shouldLoadNestedModule = elementorScriptModuleImportsExists ? elementorScriptModuleImports?.includes( 'mega-menu' ) : true;
+	shouldLoadNestedModule = elementorFrontend.isEditMode() ? true : elementorScriptModuleImports?.includes( 'mega-menu' );
 
 	// TODO: Remove this check after the Elementor 3.28 release [ED-15983].
 	const isUpdateJsLoadingActive = !! elementorFrontendConfig.experimentalFeatures.update_script_loading_pro;
