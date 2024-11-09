@@ -27,13 +27,13 @@ module.exports = function( $ ) {
 	};
 
 	const elementorScriptModuleImportsExists = 'undefined' !== typeof elementorScriptModuleImports;
-	let shouldLoadNestedModule = elementorScriptModuleImportsExists ? elementorScriptModuleImports?.includes( 'nested-tabs' ) : elementorFrontend.isEditMode();
+	let shouldLoadNestedModule = elementorScriptModuleImportsExists ? elementorScriptModuleImports?.includes( 'nested-tabs' ) : true;
 
 	if ( shouldLoadNestedModule ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
 	}
 
-	shouldLoadNestedModule = elementorScriptModuleImportsExists ? elementorScriptModuleImports?.includes( 'mega-menu' ) : elementorFrontend.isEditMode();
+	shouldLoadNestedModule = elementorScriptModuleImportsExists ? elementorScriptModuleImports?.includes( 'mega-menu' ) : true;
 
 	// TODO: Remove this check after the Elementor 3.28 release [ED-15983].
 	const isUpdateJsLoadingActive = !! elementorFrontendConfig.experimentalFeatures.update_script_loading_pro;
