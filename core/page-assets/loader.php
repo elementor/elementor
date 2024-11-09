@@ -124,7 +124,11 @@ class Loader extends Module {
 			foreach ( $assets_list as $asset_name ) {
 				$this->assets[ $assets_type ][ $asset_name ]['enabled'] = true;
 
-				if ( 'scripts' === $assets_type && ! $this->should_import_script( $asset_name ) ) {
+				if ( 'scripts' === $assets_type ) {
+					if ( $this->should_import_script( $asset_name ) ) {
+						continue;
+					}
+
 					wp_enqueue_script( $asset_name );
 				} else if ( 'styles' === $assets_type ) {
 					wp_enqueue_style( $asset_name );
