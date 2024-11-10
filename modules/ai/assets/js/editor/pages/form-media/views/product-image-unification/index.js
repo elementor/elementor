@@ -226,8 +226,8 @@ const ProductImageUnification = () => {
 											} );
 										} }>
 										{ selectedProducts.some( ( product ) => product.data?.isChecked )
-											? 'Clear all'
-											: 'Select all' }
+											? __( 'Clear all', 'elementor' )
+											: __( 'Select all', 'elementor' ) }
 									</Button>
 								</Box> }
 							<ImagesDisplay
