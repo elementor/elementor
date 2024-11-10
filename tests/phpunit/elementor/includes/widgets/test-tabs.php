@@ -11,15 +11,15 @@ class Test_Tabs extends Elementor_Test_Base
 	public function test_widget_display_in_panel__depends_on_nested_elements_experiment() {
 		$manager = Plugin::instance()->experiments;
 		$is_active_nested_elements = isset( $manager->get_active_features()['nested-elements'] );
-		$is_active_container = isset( $manager->get_active_features()['container'] );
+		$manager->set_feature_default_state( 'container',Experiments_Manager::STATE_ACTIVE );
 		$manager->set_feature_default_state( 'nested-elements',Experiments_Manager::STATE_ACTIVE );
-		$tabs= Plugin::instance()->widgets_manager->get_widget_types( 'tabs' );
+		$tabs = Plugin::instance()->widgets_manager->get_widget_types( 'tabs' );
 		$this->assertFalse( $tabs->show_in_panel() );
 		$manager->set_feature_default_state( 'nested-elements',Experiments_Manager::STATE_INACTIVE );
 		$this->assertTrue( $tabs->show_in_panel() );
 		// return to previous state
 		Plugin::instance()->experiments->set_feature_default_state( 'nested-elements',
-			$is_active_nested_elements && $is_active_container ? Experiments_Manager::STATE_ACTIVE :  Experiments_Manager::STATE_INACTIVE );
+			$is_active_nested_elements ? Experiments_Manager::STATE_ACTIVE :  Experiments_Manager::STATE_INACTIVE );
 
 	}
 }
