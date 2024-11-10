@@ -20,55 +20,57 @@ class Repository {
 	public function all() {
 		$all = $this->kit->get_json_meta( self::META_KEY );
 
-		return Global_Classes::make( $all['data'] ?? [], $all['order'] ?? [] );
+		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
 	}
 
 	public function get( string $id ) {
-		return $this->all()->get_data()->get( $id );
+		return $this->all()->get_items()->get( $id );
 	}
 
 	public function delete( string $id ) {
 		$all = $this->all();
 
-		if ( ! isset( $all->get_data()[ $id ] ) ) {
+		if ( ! isset( $all->get_items()[ $id ] ) ) {
 			throw new \Exception( "Global class with id ${id} not found" );
 		}
 
 		$this->kit->update_json_meta( self::META_KEY, [
-			'data' => $all->get_data()->except( [ $id ] )->all(),
+			'items' => $all->get_items()->except( [ $id ] )->all(),
 			'order' => $all->get_order()->filter( fn( $item ) => $item !== $id )->all(),
 		] );
 	}
 
-	public function patch( string $id, array $updated ) {
+	public function patch( string $id, array $value ) {
 		$all = $this->all();
 
-		if ( ! isset( $all->get_data()[ $id ] ) ) {
+		unset( $value['id'] );
+
+		if ( ! isset( $all->get_items()[ $id ] ) ) {
 			throw new \Exception( "Global class with id ${id} not found" );
 		}
 
-		$updated = $this->kit->update_json_meta( self::META_KEY, [
-			'data' => $all->get_data()->merge( [ $id => $updated ] )->all(),
+		$value = $this->kit->update_json_meta( self::META_KEY, [
+			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
 			'order' => $all->get_order()->all(),
 		] );
 
-		if ( ! $updated ) {
+		if ( ! $value ) {
 			throw new \Exception( 'Failed to update global class' );
 		}
 
 		return $this->get( $id );
 	}
 
-	public function create( array $class ) {
+	public function create( array $value ) {
 		$all = $this->all();
-		$id = Atomic_Styles_Utils::generate_id();
+		$id = $this->generate_global_class_id();
 
-		if ( isset( $all->get_data()[ $id ] ) ) {
+		if ( isset( $all->get_items()[ $id ] ) ) {
 			throw new \Exception( "Global class with id ${id} already exists" );
 		}
 
 		$updated = $this->kit->update_json_meta( self::META_KEY, [
-			'data' => $all->get_data()->merge( [ $id => $class ] )->all(),
+			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
 			'order' => $all->get_order()->push( $id )->all(),
 		] );
 
@@ -79,12 +81,12 @@ class Repository {
 		return $this->get( $id );
 	}
 
-	public function arrange( array $order ) {
+	public function arrange( array $value ) {
 		$all = $this->all();
 
 		$updated = $this->kit->update_json_meta( self::META_KEY, [
-			'data' => $all->get_data()->all(),
-			'order' => $order,
+			'items' => $all->get_items()->all(),
+			'order' => $value,
 		] );
 
 		if ( ! $updated ) {
@@ -92,5 +94,12 @@ class Repository {
 		}
 
 		return $this->all()->get_order()->all();
+	}
+
+	private function generate_global_class_id() {
+		$existing_ids = array_keys( $this->all()->get_items()->all() );
+		$kit_id = $this->kit->get_id();
+
+		return Atomic_Styles_Utils::generate_id( 'g-' . $kit_id . '-', $existing_ids );
 	}
 }

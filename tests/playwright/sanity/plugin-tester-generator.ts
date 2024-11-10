@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import EditorPage from '../pages/editor-page';
-import wpAdminPage from '../pages/wp-admin-page';
+import WpAdminPage from '../pages/wp-admin-page';
 import { wpEnvCli } from '../assets/wp-env-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
@@ -66,7 +66,7 @@ export const generatePluginTests = ( testType: string ) => {
 
 			try {
 				const editor = new EditorPage( page, testInfo );
-				const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
+				const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 				const adminBar = 'wpadminbar';
 
 				await page.goto( '/law-firm-about/' );
