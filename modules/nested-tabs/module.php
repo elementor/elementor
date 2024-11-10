@@ -1,17 +1,18 @@
 <?php
 namespace Elementor\Modules\NestedTabs;
 
+use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
-use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Module extends \Elementor\Core\Base\Module {
+class Module extends BaseModule {
 
 	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( NestedElementsModule::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( 'container' )
+			&& Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
 	}
 
 	public function get_name() {
