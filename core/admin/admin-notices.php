@@ -439,7 +439,7 @@ class Admin_Notices extends Module {
 			// And add a new one to distinguish between the two types of notices
 			$options['classes'] = [ 'notice', 'e-notice', 'sm-notice-wc' ];
 			$options['title'] = esc_html__( 'Improve Transactional Email Deliverability', 'elementor' );
-			$options['description'] = esc_html__( 'Use Elementor\'s Site Mailer to ensure your store emails like purchase confirmations, shipping updates, and more are reliably delivered.', 'elementor' );
+			$options['description'] = esc_html__( 'Use Elementor\'s Site Mailer to ensure your store emails like purchase confirmations, shipping updates and more are reliably delivered.', 'elementor' );
 		}
 
 		$this->print_admin_notice( $options );
