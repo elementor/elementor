@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Validators\Styles_Validator;
+
 class API {
 	private Repository $repository;
 
@@ -30,6 +33,10 @@ class API {
 			$one = $this->repository->get( $id );
 		} catch ( \Exception $e ) {
 			return new \WP_Error( 'unexpected_error', 'Getting global class failed unexpectedly', [ 'status' => 500 ] );
+		}
+
+		if ( null === $one ) {
+			return new \WP_Error( Module::NAME . '_not_found', 'Global class not found', [ 'status' => 404 ] );
 		}
 
 		return $one;
@@ -61,7 +68,7 @@ class API {
 		$id = $request->get_param( 'id' );
 		$updated = $request->get_params();
 
-		// [OPEN QUESTION] should we check if the ids match?
+		unset( $updated['id'] );
 
 		try {
 			$one = $this->repository->get( $id );
@@ -84,16 +91,6 @@ class API {
 
 	private function create( \WP_REST_Request $request ) {
 		$class = $request->get_params();
-
-		try {
-			$one = $this->repository->get( $class['id'] );
-		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Getting global class failed unexpectedly', [ 'status' => 500 ] );
-		}
-
-		if ( null !== $one ) {
-			return new \WP_Error( Module::NAME . '_exists', 'Global class already exists', [ 'status' => 409 ] );
-		}
 
 		try {
 			$new = $this->repository->create( $class );
@@ -130,6 +127,12 @@ class API {
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => fn( $request ) => $this->get( $request ),
+				'args' => [
+					'id' => [
+						'type' => 'string',
+						'required' => true,
+					],
+				],
 			],
 		] );
 
@@ -150,10 +153,11 @@ class API {
 			[
 				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => fn( $request ) => $this->patch( $request ),
-				'args' => [
-					'type' => 'array',
-					'required' => true,
-				],
+				'validate_callback' => function( \WP_REST_Request $request ) {
+					[, , $errors ] = Styles_Validator::make( Style_Schema::get() )->validate_style( $request->get_params() );
+
+					return [ 'id' ] === $errors;
+				},
 			],
 		] );
 
@@ -161,11 +165,11 @@ class API {
 			[
 				'methods' => \WP_REST_Server::CREATABLE,
 				'callback' => fn( $request ) => $this->create( $request ),
-				'args' => [
-					'id' => [
-						'type' => 'string',
-					],
-				],
+				'validate_callback' => function( \WP_REST_Request $request ) {
+					[ , , $errors ] = Styles_Validator::make( Style_Schema::get() )->validate_style( $request->get_params() );
+
+					return [ 'id' ] === $errors;
+				},
 			],
 		] );
 

@@ -2,13 +2,14 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\AtomicWidgets\Styles\Utils as Atomic_Styles_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Repository {
-	const META_KEY = 'elementor_global_classes';
+	const META_KEY = '_elementor_global_classes';
 
 	private Kit $kit;
 
@@ -60,7 +61,7 @@ class Repository {
 
 	public function create( array $class ) {
 		$all = $this->all();
-		$id = $class['id'];
+		$id = Atomic_Styles_Utils::generate_id();
 
 		if ( isset( $all->get_data()[ $id ] ) ) {
 			throw new \Exception( "Global class with id ${id} already exists" );

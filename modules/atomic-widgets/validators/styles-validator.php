@@ -16,8 +16,6 @@ class Styles_Validator {
 
 	private array $schema;
 
-	private array $errors_bag = [];
-
 	public function __construct( array $schema ) {
 		$this->schema = $schema;
 	}
@@ -38,49 +36,75 @@ class Styles_Validator {
 	 * }
 	 */
 	public function validate( array $styles ): array {
+		$errors_bag = [];
 		foreach ( $styles as $style_id => $style ) {
-			if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
-				$this->errors_bag[] = 'id';
+			if ( $style_id !== $style['id'] ) {
+				$errors_bag[] = 'id';
 				$styles[ $style_id ] = [];
 				continue;
 			}
 
-			foreach ( $style['variants'] as $variant_index => $variant ) {
-				if ( ! isset( $variant['meta'] ) ) {
-					$this->errors_bag[] = 'meta';
-					continue;
-				}
-
-				$this->validate_meta( $variant['meta'] );
-
-				[,$validated_props, $variant_errors] = Props_Validator::make( $this->schema )->validate( $variant['props'] );
-				$styles[ $style_id ]['variants'][ $variant_index ]['props'] = $validated_props;
-
-				$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
-			}
+			$this->validate_style( $style );
 		}
 
-		$is_valid = empty( $this->errors_bag );
+		$is_valid = empty( $errors_bag );
 
 		return [
 			$is_valid,
 			$styles,
-			$this->errors_bag,
+			$errors_bag,
 		];
 	}
 
-	public function validate_meta( $meta ) {
+	public function validate_style( $style, $errors_bag = [], $styles = [] ): array {
+		if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
+			$errors_bag[] = 'id';
+			$styles[ $style['id'] ] = [];
+
+			return [
+				false,
+				$styles,
+				$errors_bag,
+			];
+		}
+
+		foreach ( $style['variants'] as $variant_index => $variant ) {
+			if ( ! isset( $variant['meta'] ) ) {
+				$errors_bag[] = 'meta';
+				continue;
+			}
+
+			$errors_bag = $this->validate_meta( $variant['meta'] );
+
+			[,$validated_props, $variant_errors] = Props_Validator::make( $this->schema )->validate( $variant['props'] );
+			$styles[ $style['id'] ]['variants'][ $variant_index ]['props'] = $validated_props;
+
+			$errors_bag = array_merge( $errors_bag, $variant_errors );
+		}
+
+		$is_valid = empty( $errors_bag );
+
+		return [
+			$is_valid,
+			$styles,
+			$errors_bag,
+		];
+	}
+
+	public function validate_meta( $meta, $errors_bag = [] ) {
 		if ( ! is_array( $meta ) ) {
-			$this->errors_bag[] = 'meta';
+			$errors_bag[] = 'meta';
 		}
 
 		if ( ! array_key_exists( 'state', $meta ) || ! in_array( $meta['state'], self::VALID_STATES, true ) ) {
-			$this->errors_bag[] = 'meta';
+			$errors_bag[] = 'meta';
 		}
 
 		// TODO: Validate breakpoint based on the existing breakpoints in the system [EDS-528]
 		if ( ! isset( $meta['breakpoint'] ) || ! is_string( $meta['breakpoint'] ) ) {
-			$this->errors_bag[] = 'meta';
+			$errors_bag[] = 'meta';
 		}
+
+		return $errors_bag;
 	}
 }
