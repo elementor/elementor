@@ -21,6 +21,7 @@ const UnifyProductImages = ( { productsImages, setProductImages } ) => {
 				setControlValue={ ( productImage ) => setProductImages(
 					productImage.url,
 					productImage.image.productId,
+					productImage.id,
 				) }
 				onClose={ handleClose }
 				isRTL={ elementorCommon.config.isRTL }
