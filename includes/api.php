@@ -29,9 +29,6 @@ class Api {
 
 	const TRANSIENT_KEY_PREFIX = 'elementor_remote_info_api_data_';
 
-	const INSTALL_ID_OPTION_KEY = '_elementor_install_id';
-
-
 	/**
 	 * API info URL.
 	 *
@@ -85,9 +82,9 @@ class Api {
 				'site_lang' => get_bloginfo( 'language' ),
 			];
 
-			$install_id = self::get_install_id();
-			if ( ! empty( $install_id ) ) {
-				$body_request['install_id'] = $install_id;
+			$site_key = self::get_site_key();
+			if ( ! empty( $site_key ) ) {
+				$body_request['site_key'] = $site_key;
 			}
 
 			$response = wp_remote_get( self::$api_info_url, [
@@ -121,20 +118,21 @@ class Api {
 				unset( $info_data['feed'] );
 			}
 
-			if ( empty( $install_id ) && ! empty( $info_data['install_id'] ) ) {
-				update_option( self::INSTALL_ID_OPTION_KEY, $info_data['install_id'] );
-
-				unset( $info_data['install_id'] );
-			}
-
 			set_transient( $cache_key, $info_data, 12 * HOUR_IN_SECONDS );
 		}
 
 		return $info_data;
 	}
 
-	public static function get_install_id() {
-		return get_option( self::INSTALL_ID_OPTION_KEY );
+	public static function get_site_key() {
+		/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
+		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+
+		if ( ! $library || ! method_exists( $library, 'get_site_key' ) ) {
+			return false;
+		}
+
+		return $library->get_site_key();
 	}
 
 	/**
