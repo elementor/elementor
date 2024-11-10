@@ -104,7 +104,16 @@ class API {
 	private function arrange( $request ) {
 		$order = $request->get_params();
 
-		// [OPEN QUESTION] Should we check if all global classes exist?
+		try {
+			$all = $this->repository->all();
+		} catch ( \Exception $e ) {
+			return new \WP_Error( 'unexpected_error', 'Arranging global classes failed unexpectedly', [ 'status' => 500 ] );
+		}
+
+		if ( ! empty( array_diff( $order, $all->get_order()->all() ) ) ) {
+			return new \WP_Error( 'invalid_order', 'Invalid order', [ 'status' => 400 ] );
+		}
+
 		try {
 			$updated = $this->repository->arrange( $order );
 		} catch ( \Exception $e ) {
