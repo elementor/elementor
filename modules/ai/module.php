@@ -308,7 +308,7 @@ class Module extends BaseModule {
 
 	public function enqueue_ai_media_library_upload_screen() {
 		$screen = get_current_screen();
-		if ( 'upload' !== $screen->id ) {
+		if ( ! $screen || 'upload' !== $screen->id ) {
 			return;
 		}
 
