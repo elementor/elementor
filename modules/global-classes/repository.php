@@ -95,7 +95,7 @@ class Repository {
 	}
 
 	private function generate_global_class_id() {
-		$existing_ids = array_keys( $this->all()->get_items()->all() );
+		$existing_ids = $this->all()->get_items()->keys();
 		$kit_id = $this->kit->get_id();
 
 		return Atomic_Styles_Utils::generate_id( 'g-' . $kit_id . '-', $existing_ids );
