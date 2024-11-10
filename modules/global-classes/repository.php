@@ -65,9 +65,7 @@ class Repository {
 		$all = $this->all();
 		$id = $this->generate_global_class_id();
 
-		if ( isset( $all->get_items()[ $id ] ) ) {
-			throw new \Exception( "Global class with id ${id} already exists" );
-		}
+		$value['id'] = $id;
 
 		$updated = $this->kit->update_json_meta( self::META_KEY, [
 			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
