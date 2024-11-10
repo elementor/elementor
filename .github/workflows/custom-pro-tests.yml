@@ -37,7 +37,7 @@ jobs:
           repository: elementor/elementor-pro
   build-pro-plugin:
     name: Build Plugin Pro
-    uses: 'elementor/elementor-pro/.github/workflows/build.yml@main'
+    uses: elementor/elementor-pro/.github/workflows/build.yml@main
   build-core-plugin:
     name: Build Plugin Core
     runs-on: ubuntu-latest
