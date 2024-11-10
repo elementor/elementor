@@ -36,7 +36,7 @@ class API {
 		}
 
 		if ( null === $one ) {
-			return new \WP_Error( Module::NAME . '_not_found', 'Global class not found', [ 'status' => 404 ] );
+			return new \WP_Error( 'entity_not_found', 'Global class not found', [ 'status' => 404 ] );
 		}
 
 		return $one;
@@ -52,7 +52,7 @@ class API {
 		}
 
 		if ( null === $one ) {
-			return new \WP_Error( Module::NAME . '_not_found', 'Global class not found', [ 'status' => 404 ] );
+			return new \WP_Error( 'entity_not_found', 'Global class not found', [ 'status' => 404 ] );
 		}
 
 		try {
@@ -61,7 +61,7 @@ class API {
 			return new \WP_Error( 'unexpected_error', 'Deleting global class failed unexpectedly', [ 'status' => 500 ] );
 		}
 
-		return new \WP_REST_Response( [ 'message' => 'Global class deleted successfully' ], 200 );
+		return new \WP_REST_Response( null, 204 );
 	}
 
 	private function patch( \WP_REST_Request $request ) {
@@ -77,7 +77,7 @@ class API {
 		}
 
 		if ( null === $one ) {
-			return new \WP_Error( Module::NAME . '_not_found', 'Global class not found', [ 'status' => 404 ] );
+			return new \WP_Error( 'entity_not_found', 'Global class not found', [ 'status' => 404 ] );
 		}
 
 		try {
