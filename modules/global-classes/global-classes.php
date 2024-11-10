@@ -27,7 +27,7 @@ class Global_Classes implements \JsonSerializable {
 
 	public function get() {
 		return [
-			'data' => $this->get_items()->all(),
+			'items' => $this->get_items()->all(),
 			'order' => $this->get_order()->all(),
 		];
 	}
