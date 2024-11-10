@@ -39,7 +39,7 @@ class Api {
 	 *
 	 * @var string API info URL.
 	 */
-	public static $api_info_url = 'https://my.stg.elementor.red/api/v1/info/';
+	public static $api_info_url = 'https://my.elementor.com/api/v1/info/';
 
 	/**
 	 * API feedback URL.
