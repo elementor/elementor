@@ -19,9 +19,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 * Packages that should only be registered, unless some other asset depends on them.
 	 */
 	const LIBS = [
-		'editor-props',
 		'editor-responsive',
-		'editor-styles',
 		'editor-v1-adapters',
 		self::ENV_PACKAGE,
 		'icons',
