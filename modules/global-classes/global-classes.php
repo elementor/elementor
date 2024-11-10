@@ -5,20 +5,20 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Core\Utils\Collection;
 
 class Global_Classes implements \JsonSerializable {
-	private Collection $data;
+	private Collection $items;
 	private Collection $order;
 
-	public static function make( array $data = [], array $order = [] ) {
-		return new static( $data, $order );
+	public static function make( array $items = [], array $order = [] ) {
+		return new static( $items, $order );
 	}
 
 	private function __construct( array $data = [], array $order = [] ) {
-		$this->data = Collection::make( $data );
+		$this->items = Collection::make( $data );
 		$this->order = Collection::make( $order );
 	}
 
-	public function get_data() {
-		return $this->data;
+	public function get_items() {
+		return $this->items;
 	}
 
 	public function get_order() {
@@ -27,7 +27,7 @@ class Global_Classes implements \JsonSerializable {
 
 	public function get() {
 		return [
-			'data' => $this->get_data()->all(),
+			'data' => $this->get_items()->all(),
 			'order' => $this->get_order()->all(),
 		];
 	}

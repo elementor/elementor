@@ -20,22 +20,22 @@ class Repository {
 	public function all() {
 		$all = $this->kit->get_json_meta( self::META_KEY );
 
-		return Global_Classes::make( $all['data'] ?? [], $all['order'] ?? [] );
+		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
 	}
 
 	public function get( string $id ) {
-		return $this->all()->get_data()->get( $id );
+		return $this->all()->get_items()->get( $id );
 	}
 
 	public function delete( string $id ) {
 		$all = $this->all();
 
-		if ( ! isset( $all->get_data()[ $id ] ) ) {
+		if ( ! isset( $all->get_items()[ $id ] ) ) {
 			throw new \Exception( "Global class with id ${id} not found" );
 		}
 
 		$this->kit->update_json_meta( self::META_KEY, [
-			'data' => $all->get_data()->except( [ $id ] )->all(),
+			'items' => $all->get_items()->except( [ $id ] )->all(),
 			'order' => $all->get_order()->filter( fn( $item ) => $item !== $id )->all(),
 		] );
 	}
@@ -45,12 +45,12 @@ class Repository {
 
 		unset( $value['id'] );
 
-		if ( ! isset( $all->get_data()[ $id ] ) ) {
+		if ( ! isset( $all->get_items()[ $id ] ) ) {
 			throw new \Exception( "Global class with id ${id} not found" );
 		}
 
 		$value = $this->kit->update_json_meta( self::META_KEY, [
-			'data' => $all->get_data()->merge( [ $id => $value ] )->all(),
+			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
 			'order' => $all->get_order()->all(),
 		] );
 
@@ -65,12 +65,12 @@ class Repository {
 		$all = $this->all();
 		$id = $this->generate_global_class_id();
 
-		if ( isset( $all->get_data()[ $id ] ) ) {
+		if ( isset( $all->get_items()[ $id ] ) ) {
 			throw new \Exception( "Global class with id ${id} already exists" );
 		}
 
 		$updated = $this->kit->update_json_meta( self::META_KEY, [
-			'data' => $all->get_data()->merge( [ $id => $value ] )->all(),
+			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
 			'order' => $all->get_order()->push( $id )->all(),
 		] );
 
@@ -85,7 +85,7 @@ class Repository {
 		$all = $this->all();
 
 		$updated = $this->kit->update_json_meta( self::META_KEY, [
-			'data' => $all->get_data()->all(),
+			'items' => $all->get_items()->all(),
 			'order' => $value,
 		] );
 
@@ -97,8 +97,9 @@ class Repository {
 	}
 
 	private function generate_global_class_id() {
-		$existing_ids = array_keys( $this->all()->get_data()->all() );
+		$existing_ids = array_keys( $this->all()->get_items()->all() );
+		$kit_id = $this->kit->get_id();
 
-		return Atomic_Styles_Utils::generate_id( 'g-', $existing_ids );
+		return Atomic_Styles_Utils::generate_id( 'g-' . $kit_id, $existing_ids );
 	}
 }
