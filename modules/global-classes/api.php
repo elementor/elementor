@@ -110,7 +110,7 @@ class API {
 			return new \WP_Error( 'unexpected_error', 'Arranging global classes failed unexpectedly', [ 'status' => 500 ] );
 		}
 
-		if ( ! empty( array_diff( $order, $all->get_order()->all() ) ) ) {
+		if ( ! empty( $all->get_order()->diff( $order ) ) ) {
 			return new \WP_Error( 'invalid_order', 'Invalid order', [ 'status' => 400 ] );
 		}
 

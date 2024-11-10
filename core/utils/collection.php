@@ -458,6 +458,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return false;
 	}
 
+	public function diff( $items ) {
+		return array_diff( $this->items, $items );
+	}
+
 	/**
 	 * @param mixed $offset
 	 *
