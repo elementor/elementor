@@ -1,6 +1,6 @@
 import Kit from '../models/kit';
 import useSelectedTaxonomies from './use-selected-taxonomies';
-import { taxonomyType } from '../models/taxonomy';
+import Taxonomy, { taxonomyType } from '../models/taxonomy';
 import { useQuery } from 'react-query';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 
@@ -76,7 +76,9 @@ const kitsPipeFunctions = {
 			.filter( ( taxonomies ) => taxonomies.length )
 			.reduce( ( current, taxonomies ) => current.filter( ( item ) =>
 				taxonomies.some( ( taxonomy ) =>
-					item.taxonomies.some( ( itemTaxonomy ) => taxonomy === itemTaxonomy ),
+					item.taxonomies
+						.map( Taxonomy.taxonomyFilterTransformer )
+						.some( ( itemTaxonomy ) => taxonomy === itemTaxonomy ),
 				) ), data );
 	},
 

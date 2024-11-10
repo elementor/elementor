@@ -12,12 +12,35 @@ export default function TaxonomiesFilter( props ) {
 				return [];
 			}
 
-			return taxonomyType
-				.map( ( tagType ) => ( {
-					...tagType,
-					data: props.taxonomies.filter( ( item ) => item.type === tagType.key ),
-				} ) )
-				.filter( ( { data } ) => data.length > 0 );
+			const taxonomies = [ ...props.taxonomies ];
+
+			return taxonomyType.reduce( ( carry, taxonomyItem ) => {
+				const formattedTaxonomyItem = {
+					...taxonomyItem,
+					data: [],
+				};
+
+				for ( let i = 0; i < taxonomies.length; i++ ) {
+					const currentTaxonomy = Taxonomy.getFormattedTaxonomyItem( taxonomies[ i ] );
+
+					if ( currentTaxonomy.type !== taxonomyItem.key ) {
+						continue;
+					}
+
+					if ( ! formattedTaxonomyItem.data.find( ( { text } ) => text === currentTaxonomy.text ) ) {
+						formattedTaxonomyItem.data.push( currentTaxonomy );
+					}
+
+					taxonomies.splice( i, 1 );
+					i--;
+				}
+
+				if ( formattedTaxonomyItem.data.length ) {
+					carry.push( formattedTaxonomyItem );
+				}
+
+				return carry;
+			}, [] );
 		}, [ props.taxonomies ] ),
 		eventTracking = ( command, search, section, eventType = 'click' ) => appsEventTrackingDispatch(
 			command,
