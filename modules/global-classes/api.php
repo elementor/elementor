@@ -111,7 +111,7 @@ class API {
 		}
 
 		if ( ! empty( $all->get_order()->diff( $order ) ) ) {
-			return new \WP_Error( 'invalid_order', 'Invalid order', [ 'status' => 400 ] );
+			return new \WP_Error( 'invalid_content', 'Global classes order invalid', [ 'status' => 422 ] );
 		}
 
 		try {
