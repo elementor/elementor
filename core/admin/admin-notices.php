@@ -385,10 +385,7 @@ class Admin_Notices extends Module {
 	}
 
 	private function site_has_woocommerce() {
-		if ( ! function_exists( 'is_plugin_active' ) ) {
-			include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-		}
-		return is_plugin_active( 'woocommerce/woocommerce.php');
+		return class_exists( 'WooCommerce' );
 	}
 
 	private function notice_site_mailer_promotion() {
