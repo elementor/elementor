@@ -701,6 +701,8 @@ class Admin extends App {
 
 		$post_data = Utils::get_super_global_value( $_GET, 'post_data' ) ?? [];
 
+		$post_data = $this->filter_post_data( $post_data );
+
 		/**
 		 * Create new post meta data.
 		 *
@@ -731,6 +733,37 @@ class Admin extends App {
 		die;
 	}
 
+	private function get_allowed_fields_for_role() {
+		$allowed_fields = array(
+			'post_title',
+			'post_content',
+			'post_excerpt',
+			'post_category',
+			'post_type',
+			'tags_input',
+		);
+
+		if ( current_user_can( 'publish_posts' ) ) {
+			$allowed_fields[] = 'post_status';
+		}
+
+		if ( current_user_can( 'edit_others_posts' ) ) {
+			$allowed_fields[] = 'post_author';
+		}
+
+		return $allowed_fields;
+	}
+
+	private function filter_post_data( $post_data ) {
+		$allowed_fields = $this->get_allowed_fields_for_role();
+		return array_filter(
+			$post_data,
+			function( $key ) use ( $allowed_fields ) {
+				return in_array( $key, $allowed_fields, true );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+	}
 	/**
 	 * @since 2.3.0
 	 * @access public
