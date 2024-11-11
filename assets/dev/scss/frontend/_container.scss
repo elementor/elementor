@@ -254,7 +254,7 @@
 		}
 
 		// Fix swiper-based widgets broken (ED-6849).
-		// TODO: Use `:has( .swiper )` or `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
+		// TODO: Use `:has( .swiper )` selector when available && remove this class from `frontend/utils/swiper.js`.
 		&.e-widget-swiper {
 			width: 100%;
 		}
