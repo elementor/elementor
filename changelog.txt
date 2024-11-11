@@ -1,5 +1,13 @@
 == Changelog ==
 
+= 3.25.5 - 2024-11-03 =
+
+* Fix: Console warning errors related to popups ([#29137](https://github.com/elementor/elementor/issues/29137), [#29141](https://github.com/elementor/elementor/issues/29141))
+
+= 3.25.5 - 2024-11-03 =
+
+* Fix: Console warning errors related to popups ([#29137](https://github.com/elementor/elementor/issues/29137), [#29141](https://github.com/elementor/elementor/issues/29141))
+
 = 3.25.4 - 2024-11-03 =
 
 * Fix: Console warning errors related to popups ([#29137](https://github.com/elementor/elementor/issues/29137), [#29141](https://github.com/elementor/elementor/issues/29141))
