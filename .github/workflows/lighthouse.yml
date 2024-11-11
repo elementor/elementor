@@ -2,6 +2,13 @@ name: Lighthouse
 
 on:
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -68,7 +75,7 @@ jobs:
 
       - name: Upload Lighthouse reports on failure
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
@@ -76,7 +83,7 @@ jobs:
 
       - name: Upload Lighthouse HTML dumps on failure
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lighthouseci-htmls
           path: ${{ github.workspace }}/.lighthouseci/dumps/**/*

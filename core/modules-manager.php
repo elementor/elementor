@@ -123,6 +123,7 @@ class Modules_Manager {
 			'content-sanitizer',
 			'editor-events',
 			'atomic-widgets',
+			'global-classes',
 			'wc-product-editor',
 			'checklist',
 		];
