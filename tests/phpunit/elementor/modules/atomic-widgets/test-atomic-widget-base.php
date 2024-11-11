@@ -682,6 +682,41 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										],
 									],
 								],
+								'border-width' => [
+									'$$type' => 'border-width',
+									'value' => [
+										'top' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 0,
+											],
+										],
+										'right' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 0,
+											],
+										],
+									],
+								],
+								'-webkit-text-stroke' => [
+									'$$type' => 'stroke',
+									'value' => [
+										'color' => [
+											'$$type' => 'color',
+											'value' => '#ff0000',
+										],
+										'width' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 10,
+											],
+										],
+									],
+								],
 							],
 							'meta' => [
 								'breakpoint' => 'desktop',
@@ -721,6 +756,22 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'$$type' => 'color',
 								'value' => 'red',
 							],
+							'-webkit-text-stroke' => [
+								'$$type' => 'stroke',
+								'value' => [
+									'color' => [
+										'$$type' => 'color',
+										'value' => '#ff0000',
+									],
+									'width' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 10,
+										],
+									],
+								],
+							],
 							'padding' => [
 								'$$type' => 'linked-dimensions',
 								'value' => [
@@ -751,6 +802,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										],
 									],
 									'top-right' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 0,
+										],
+									],
+								],
+							],
+							'border-width' => [
+								'$$type' => 'border-width',
+								'value' => [
+									'top' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 0,
+										],
+									],
+									'right' => [
 										'$$type' => 'size',
 										'value' => [
 											'unit' => 'px',
@@ -961,7 +1031,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 											]
 										],
 									]
-								]
+								],
 							],
 							'meta' => [
 								'breakpoint' => 'desktop',
@@ -1036,6 +1106,68 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_data_for_save();
 	}
 
+	public function test_get_data_for_save__throws_on_styles_border_width_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'border-width' => [
+									'$$type' => 'border-width',
+									'value' => [
+										'top' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => '14'
+											]
+										],
+										'right' => 'not-a-size',
+										'bottom' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => '14'
+											]
+										],
+										'left' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => '14'
+											]
+										],
+									]
+								]
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: border-width' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
 	public function test_get_data_for_save__throws_on_styles_color_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
@@ -1088,6 +1220,54 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Expect.
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Settings validation failed. Invalid keys: mock_prop_1, mock_prop_2' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
+	public function test_get_data_for_save__throws_on_styles_stroke_prop_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'-webkit-text-stroke' => [
+									'$$type' => 'stroke',
+									'value' => [
+										'color' => null,
+										'width' => [
+											'$$type' => 'size',
+											'value' => [
+												'unit' => 'px',
+												'size' => 'test',
+											],
+										],
+									],
+								],
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: -webkit-text-stroke' );
 
 		// Act.
 		$widget->get_data_for_save();

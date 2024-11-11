@@ -1,1 +1,1 @@
-.test-style{font-size:14px;padding-top:1px;padding-left:1px;border-top-left-radius:1px;border-top-right-radius:1px;border-bottom-left-radius:1px;}
+.test-style{font-size:14px;-webkit-text-stroke:10px #ff0000;padding-top:1px;padding-left:1px;border-top-left-radius:1px;border-top-right-radius:1px;border-bottom-left-radius:1px;border-top-width:1px;border-left-width:1px;}
