@@ -21,7 +21,7 @@ class Test_Container extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->container = Plugin::$instance->elementor_container();
+		$this->container = Plugin::$instance->get_elementor_container();
 	}
 
 	/**

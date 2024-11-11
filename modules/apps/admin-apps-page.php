@@ -47,7 +47,7 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_plugins() : array {
-		$container = Plugin::$instance->elementor_container();
+		$container = Plugin::$instance->get_elementor_container();
 
 		if ( $container->has( Wordpress_Adapter::class ) ) {
 			self::$wordpress_adapter = $container->get( Wordpress_Adapter::class );
