@@ -26,9 +26,9 @@ export const NEW_PLAN_TEXTS = {
 };
 
 export const PROMOTION_CHIP_TEXT = {
-	[ FREE ]: __( 'Free', 'elementor '),
-	[ ESSENTIAL ]: __( 'Essential', 'elementor '),
-	[ ADVANCED ]: __( 'Advanced', 'elementor '),
+	[ FREE ]: __( 'Free', 'elementor ' ),
+	[ ESSENTIAL ]: __( 'Essential', 'elementor ' ),
+	[ ADVANCED ]: __( 'Advanced', 'elementor ' ),
 };
 
 export const TIERS_TO_KEYS_MAP = {
