@@ -79,7 +79,7 @@ const TaxonomiesFilterList = ( props ) => {
 									props.onSelect( taxonomy.type, ( prev ) => {
 										return checked
 											? [ ...prev, taxonomy.id || taxonomy.text ]
-											: prev.filter( ( tagId ) => tagId !== taxonomy.id && tagId !== taxonomy.text );
+											: prev.filter( ( tagId ) => ! [ taxonomy.id, taxonomy.text ].includes( tagId ) );
 									} );
 								} } />
 							{ taxonomy.text }
