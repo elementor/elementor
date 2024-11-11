@@ -1,6 +1,6 @@
 import Kit from '../models/kit';
 import useSelectedTaxonomies from './use-selected-taxonomies';
-import Taxonomy, { taxonomyType } from '../models/taxonomy';
+import Taxonomy, { TAXONOMIES } from '../models/taxonomy';
 import { useQuery } from 'react-query';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 
@@ -14,7 +14,7 @@ export const KEY = 'kits';
 export const defaultQueryParams = {
 	favorite: false,
 	search: '',
-	taxonomies: taxonomyType.reduce( ( current, { key } ) => {
+	taxonomies: TAXONOMIES.reduce( ( current, { key } ) => {
 		return {
 			...current,
 			[ key ]: [],
@@ -72,12 +72,13 @@ const kitsPipeFunctions = {
 	 * @return {Array} filtered data
 	 */
 	taxonomiesFilter: ( data, queryParams ) => {
-		return Object.values( queryParams.taxonomies )
-			.filter( ( taxonomies ) => taxonomies.length )
-			.reduce( ( current, taxonomies ) => current.filter( ( item ) =>
-				taxonomies.some( ( taxonomy ) =>
-					item.taxonomies.some( ( itemTaxonomy ) => taxonomy === Taxonomy.taxonomyFilterTransformer( itemTaxonomy ) ),
-				) ), data );
+		const taxonomies = Object.keys( queryParams.taxonomies ).filter( ( taxonomyType ) => queryParams.taxonomies[ taxonomyType ].length );
+
+		return ! taxonomies.length
+			? data
+			: data.filter( ( kit ) =>
+				taxonomies.some( ( taxonomyType ) =>
+					Taxonomy.isKitInTaxonomy( kit, taxonomyType, queryParams.taxonomies[ taxonomyType ] ) ) );
 	},
 
 	/**

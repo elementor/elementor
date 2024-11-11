@@ -18,7 +18,6 @@ import { useCallback, useMemo, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
-import Taxonomy from '../../models/taxonomy';
 
 import './index.scss';
 
@@ -97,14 +96,6 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 			Object.entries( queryParams )
 				.filter( ( [ key, item ] ) => ! exclude.includes( key ) && item ),
 		);
-
-		if ( filteredQueryParams.taxonomies?.subscription_plans?.length ) {
-			filteredQueryParams.taxonomies.subscription_plans = filteredQueryParams.taxonomies.subscription_plans.reduce( ( carry, taxonomy ) => {
-				const transformedTaxonomy = Taxonomy.queryParamGetterTransformer( taxonomy );
-
-				return carry.includes( transformedTaxonomy ) ? carry : [ ...carry, transformedTaxonomy ];
-			}, [] );
-		}
 
 		setLastFilter( filteredQueryParams );
 

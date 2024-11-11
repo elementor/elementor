@@ -1,5 +1,5 @@
 import TaxonomiesFilterList from './taxonomies-filter-list';
-import Taxonomy, { taxonomyType } from '../models/taxonomy';
+import Taxonomy, { TAXONOMIES } from '../models/taxonomy';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './tags-filter.scss';
@@ -14,7 +14,7 @@ export default function TaxonomiesFilter( props ) {
 
 			const taxonomies = [ ...props.taxonomies ];
 
-			return taxonomyType.reduce( ( carry, taxonomyItem ) => {
+			return TAXONOMIES.reduce( ( carry, taxonomyItem ) => {
 				const formattedTaxonomyItem = {
 					...taxonomyItem,
 					data: [],

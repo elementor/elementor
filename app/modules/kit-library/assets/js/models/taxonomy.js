@@ -1,7 +1,45 @@
 import BaseModel from './base-model';
+import { TIERS } from 'elementor-utils/tiers'
 import { __ } from '@wordpress/i18n';
 
-export const taxonomyType = [
+const FREE = 'free',
+	ESSENTIAL = 'essential',
+	ADVANCED = 'advanced',
+	PRO = 'pro',
+	EXPERT = 'expert,',
+	AGENCY = 'agency';
+
+export const SUBSCRIPTION_PLAN = 'subscription_plans';
+
+export const OLD_PLAN_TEXTS = {
+	[ FREE ]: __( 'Free', 'elementor' ),
+	[ PRO ]: __( 'Pro', 'elementor' ),
+	[ ADVANCED ]: __( 'Advanced', 'elementor' ),
+	[ EXPERT ]: __( 'Expert', 'elementor' ),
+	[ AGENCY ]: __( 'Agency', 'elementor' ),
+};
+
+export const NEW_PLAN_TEXTS = {
+	[ FREE ]: __( 'Free', 'elementor' ),
+	[ ESSENTIAL ]: __( 'Essential', 'elementor' ),
+	[ ADVANCED ]: __( 'Advanced & Higher', 'elementor' ),
+};
+
+const TAXONOMY_TRANSFORM_MAP = {
+	[ PRO ]: ESSENTIAL,
+	[ EXPERT ]: ADVANCED,
+	[ AGENCY ]: ADVANCED,
+};
+
+const TIERS_TO_KEYS_MAP = {
+	[ TIERS.free ]: FREE,
+	[ TIERS.essential ]: ESSENTIAL,
+	[ TIERS[ 'essential-oct2023' ] ]: ADVANCED,
+	[ TIERS.expert ]: ADVANCED,
+	[ TIERS.agency ]: ADVANCED,
+};
+
+export const TAXONOMIES = [
 	{
 		key: 'categories',
 		label: __( 'Categories', 'elementor' ),
@@ -16,7 +54,7 @@ export const taxonomyType = [
 		label: __( 'Features', 'elementor' ),
 	},
 	{
-		key: 'subscription_plans',
+		key: SUBSCRIPTION_PLAN,
 		label: __( 'Kits by plan', 'elementor' ),
 	},
 ];
@@ -24,14 +62,7 @@ export const taxonomyType = [
 export default class Taxonomy extends BaseModel {
 	text = '';
 	type = 'tag';
-
-	static taxonomyTransformMap = {
-		[ __( 'Free', 'elementor' ) ]: __( 'Free', 'elementor' ),
-		[ __( 'Pro', 'elementor' ) ]: __( 'Essential', 'elementor' ),
-		[ __( 'Advanced', 'elementor' ) ]: __( 'Advanced & Higher', 'elementor' ),
-		[ __( 'Expert', 'elementor' ) ]: __( 'Advanced & Higher', 'elementor' ),
-		[ __( 'Agency', 'elementor' ) ]: __( 'Advanced & Higher', 'elementor' ),
-	};
+	id = null;
 
 	/**
 	 * Create a tag from server response
@@ -42,43 +73,39 @@ export default class Taxonomy extends BaseModel {
 		return new Taxonomy().init( {
 			text: taxonomy.text,
 			type: taxonomy.type,
+			id: taxonomy.id || null,
 		} );
 	}
 
 	static getFormattedTaxonomyItem( taxonomy ) {
-		if ( 'subscription_plans' !== taxonomy.type || ! Taxonomy.taxonomyTransformMap[ taxonomy.text ] ) {
+		if ( ! Taxonomy._isTaxonomySubscriptionByPlan( taxonomy ) ) {
 			return taxonomy;
 		}
 
 		const transformedTaxonomy = new Taxonomy();
 
-		transformedTaxonomy.text = Taxonomy.taxonomyTransformMap[ taxonomy.text ];
+		transformedTaxonomy.id = Taxonomy._getFormattedTaxonomyId( Taxonomy._getTaxonomyIdByText( taxonomy.text ) );
+		transformedTaxonomy.text = NEW_PLAN_TEXTS[ transformedTaxonomy.id ];
 		transformedTaxonomy.type = taxonomy.type;
 
 		return transformedTaxonomy;
 	}
 
-	static taxonomyFilterTransformer( taxonomy ) {
-		return Taxonomy.queryParamSetterTransformer( Taxonomy.taxonomyTransformMap[ taxonomy ] ?? taxonomy );
+	static isKitInTaxonomy( kit, taxonomyType, taxonomies ) {
+		return SUBSCRIPTION_PLAN === taxonomyType
+			? taxonomies.includes( TIERS_TO_KEYS_MAP[ kit.accessTier ] )
+			: taxonomies.some( ( taxonomy ) => kit.taxonomies.includes( taxonomy ) );
 	}
 
-	static queryParamSetterTransformer( taxonomy ) {
-		const taxonomyMap = {
-			[ __( 'Advanced & Higher', 'elementor' ) ]: 'Advanced',
-			[ __( 'Essential', 'elementor' ) ]: 'Essential',
-			[ __( 'Free', 'elementor' ) ]: 'Free',
-		};
-
-		return taxonomyMap[ taxonomy ] ?? taxonomy;
+	static _isTaxonomySubscriptionByPlan( taxonomy ) {
+		return SUBSCRIPTION_PLAN === taxonomy.type && Object.values( OLD_PLAN_TEXTS ).includes( taxonomy.text );
 	}
 
-	static queryParamGetterTransformer( taxonomy ) {
-		const taxonomyMap = {
-			Pro: 'Essential',
-			Expert: 'Advanced',
-			Agency: 'Advanced',
-		};
+	static _getTaxonomyIdByText( taxonomyText ) {
+		return Object.keys( OLD_PLAN_TEXTS ).find( ( id ) => OLD_PLAN_TEXTS[ id ] === taxonomyText );
+	}
 
-		return taxonomyMap[ taxonomy ] ?? taxonomy;
+	static _getFormattedTaxonomyId( taxonomyId ) {
+		return TAXONOMY_TRANSFORM_MAP[ taxonomyId ] || taxonomyId;
 	}
 }
