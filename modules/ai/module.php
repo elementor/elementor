@@ -112,6 +112,7 @@ class Module extends BaseModule {
 
 		if ( is_admin() ) {
 			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
+			add_action( 'admin_head', [ $this, 'enqueue_ai_media_library_upload_screen' ] );
 
 			if ( current_user_can( 'edit_products' ) || current_user_can( 'publish_products' ) ) {
 				add_action( 'admin_init', [ $this, 'enqueue_ai_products_page_scripts' ] );
@@ -303,6 +304,15 @@ class Module extends BaseModule {
 			'message' => __( 'Image added successfully', 'elementor' ),
 			'refresh' => true,
 		] );
+	}
+
+	public function enqueue_ai_media_library_upload_screen() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'upload' !== $screen->id ) {
+			return;
+		}
+
+		$this->enqueue_ai_media_library();
 	}
 
 	public function enqueue_ai_media_library() {
