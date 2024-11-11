@@ -2,7 +2,7 @@ import BaseModel from './base-model';
 import { TIERS } from 'elementor-utils/tiers';
 import { __ } from '@wordpress/i18n';
 
-const FREE = 'free',
+export const FREE = 'free',
 	ESSENTIAL = 'essential',
 	ADVANCED = 'advanced',
 	PRO = 'pro',
@@ -25,18 +25,24 @@ export const NEW_PLAN_TEXTS = {
 	[ ADVANCED ]: __( 'Advanced & Higher', 'elementor' ),
 };
 
-const TAXONOMY_TRANSFORM_MAP = {
-	[ PRO ]: ESSENTIAL,
-	[ EXPERT ]: ADVANCED,
-	[ AGENCY ]: ADVANCED,
+export const PROMOTION_CHIP_TEXT = {
+	[ FREE ]: __( 'Free', 'elementor '),
+	[ ESSENTIAL ]: __( 'Essential', 'elementor '),
+	[ ADVANCED ]: __( 'Advanced', 'elementor '),
 };
 
-const TIERS_TO_KEYS_MAP = {
+export const TIERS_TO_KEYS_MAP = {
 	[ TIERS.free ]: FREE,
 	[ TIERS.essential ]: ESSENTIAL,
 	[ TIERS[ 'essential-oct2023' ] ]: ADVANCED,
 	[ TIERS.expert ]: ADVANCED,
 	[ TIERS.agency ]: ADVANCED,
+};
+
+const TAXONOMY_TRANSFORM_MAP = {
+	[ PRO ]: ESSENTIAL,
+	[ EXPERT ]: ADVANCED,
+	[ AGENCY ]: ADVANCED,
 };
 
 export const TAXONOMIES = [
