@@ -431,7 +431,7 @@ class Admin_Notices extends Module {
 			],
 		];
 
-		if (  $this->should_render_woocommerce_hint( $has_forms, $has_woocommerce ) ) {
+		if ( $this->should_render_woocommerce_hint( $has_forms, $has_woocommerce ) ) {
 			// We include WP's default notice class so it will be properly handled by WP's js handler
 			// And add a new one to distinguish between the two types of notices
 			$options['classes'] = [ 'notice', 'e-notice', 'sm-notice-wc' ];
