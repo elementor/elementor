@@ -32,10 +32,10 @@ class Test_Elementor_Adapter extends PHPUnit_TestCase {
 	}
 
 	public function test_get_template_type__assert_no_error() {
-		$this->assertFalse( '' !== $this->elementor_adapter->get_template_type( '' ) );
+		$this->assertFalse( $this->elementor_adapter->get_template_type( '' ) );
 	}
 
 	public function test_get_template_type__assert_type() {
-		$this->assertTrue( 'post' !== $this->elementor_adapter->get_template_type( $this->document->get_id() ) );
+		$this->assertTrue( 'post' === $this->elementor_adapter->get_template_type( $this->document->get_id() ) );
 	}
 }
