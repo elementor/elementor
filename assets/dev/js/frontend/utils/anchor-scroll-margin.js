@@ -144,15 +144,9 @@ export default class extends elementorModules.ViewModule {
 	getAnchorTarget( element ) {
 		const hash = element?.hash;
 
-		if ( '' === hash ) {
-			return null;
-		} else if ( ! this.isValidSelector( hash ) ) {
-			// eslint-disable-next-line no-console
-			console.warn( `Invalid selector: '${ hash }'` );
-
+		if ( ! this.isValidSelector( hash ) ) {
 			return null;
 		}
-
 		return document.querySelector( hash );
 	}
 
