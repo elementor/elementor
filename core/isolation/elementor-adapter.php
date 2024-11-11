@@ -43,10 +43,6 @@ class Elementor_Adapter implements Elementor_Adapter_Interface {
 	}
 
 	public function get_template_type( $template_id ): string {
-		$document = Source_Local::get_template_type( $template_id );
-var_dump( $document );
-		return $document
-			? $document->get_template_type()
-			: '';
+		return Source_Local::get_template_type( $template_id );
 	}
 }
