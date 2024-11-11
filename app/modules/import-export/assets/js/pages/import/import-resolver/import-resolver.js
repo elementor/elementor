@@ -56,7 +56,10 @@ export default function ImportResolver() {
 					color="primary"
 					onClick={ () => {
 						eventTracking( 'kit-library/approve-selection' );
-						const url = importContext.data.plugins.length ? 'import/plugins-activation' : 'import/process?return_to=' + returnToParam;
+						let url = importContext.data.plugins.length ? 'import/plugins-activation' : 'import/process';
+						if ( 'import/process' === url && returnToParam ) {
+							url += '?return_to=' + returnToParam;
+						}
 						importContext.dispatch( { type: 'SET_IS_RESOLVED', payload: true } );
 						navigate( url );
 					} }

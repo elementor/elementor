@@ -160,7 +160,11 @@ export default function ImportProcess() {
 					importContext.dispatch( { type: 'SET_PLUGINS_STATE', payload: 'have' } );
 				}
 				if ( uploadedData.conflicts && Object.keys( uploadedData.conflicts ).length && ! isResolvedData ) {
-					navigate( '/import/resolver?return_to=' + returnTo );
+					if ( returnTo ) {
+						navigate( '/import/resolver?return_to=' + returnTo );
+					} else {
+						navigate( '/import/resolver' );
+					}
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
 					kitActions.reset();
