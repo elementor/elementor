@@ -28,7 +28,7 @@ class Widget_Toggle extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'toggle';
 	}
 
@@ -42,7 +42,7 @@ class Widget_Toggle extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Toggle', 'elementor' );
 	}
 
@@ -56,7 +56,7 @@ class Widget_Toggle extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-toggle';
 	}
 
@@ -70,7 +70,7 @@ class Widget_Toggle extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
@@ -116,7 +116,7 @@ class Widget_Toggle extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_toggle',
 			[
@@ -582,7 +582,7 @@ class Widget_Toggle extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
@@ -682,7 +682,7 @@ class Widget_Toggle extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<div class="elementor-toggle">
 			<#

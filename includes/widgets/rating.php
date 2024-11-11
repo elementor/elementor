@@ -14,19 +14,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Widget_Rating extends Widget_Base {
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'rating';
 	}
 
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Rating', 'elementor' );
 	}
 
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-rating';
 	}
 
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'star', 'rating', 'review', 'score', 'scale' ];
 	}
 
@@ -45,7 +45,7 @@ class Widget_Rating extends Widget_Base {
 	/**
 	 * @return void
 	 */
-	private function add_style_tab() {
+	private function add_style_tab(): void {
 		$this->start_controls_section(
 			'section_icon_style',
 			[
@@ -130,7 +130,7 @@ class Widget_Rating extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
 
@@ -292,7 +292,7 @@ class Widget_Rating extends Widget_Base {
 		return ob_get_clean();
 	}
 
-	protected function render() {
+	protected function render(): void {
 		$this->add_render_attribute( 'widget', [
 			'class' => 'e-rating',
 			'itemtype' => 'https://schema.org/Rating',

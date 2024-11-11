@@ -35,7 +35,7 @@ class Widget_Audio extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'audio';
 	}
 
@@ -49,7 +49,7 @@ class Widget_Audio extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'SoundCloud', 'elementor' );
 	}
 
@@ -63,7 +63,7 @@ class Widget_Audio extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-headphones';
 	}
 
@@ -77,7 +77,7 @@ class Widget_Audio extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'audio', 'player', 'soundcloud', 'embed' ];
 	}
 
@@ -97,7 +97,7 @@ class Widget_Audio extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_audio',
 			[
@@ -265,7 +265,7 @@ class Widget_Audio extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['link'] ) ) {
@@ -298,7 +298,7 @@ class Widget_Audio extends Widget_Base {
 	 *
 	 * @return string Filtered audio widget oEmbed HTML.
 	 */
-	public function filter_oembed_result( $html ) {
+	public function filter_oembed_result( $html ): string {
 		$param_keys = [
 			'auto_play',
 			'buying',
@@ -342,5 +342,5 @@ class Widget_Audio extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {}
+	protected function content_template(): void {}
 }

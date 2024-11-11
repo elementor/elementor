@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget_Common extends Widget_Common_Base {
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'common';
 	}
 }

@@ -28,7 +28,7 @@ class Widget_Divider extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'divider';
 	}
 
@@ -42,7 +42,7 @@ class Widget_Divider extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Divider', 'elementor' );
 	}
 
@@ -56,7 +56,7 @@ class Widget_Divider extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-divider';
 	}
 
@@ -72,7 +72,7 @@ class Widget_Divider extends Widget_Base {
 	 *
 	 * @return array Widget categories.
 	 */
-	public function get_categories() {
+	public function get_categories(): array {
 		return [ 'basic' ];
 	}
 
@@ -86,7 +86,7 @@ class Widget_Divider extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'divider', 'hr', 'line', 'border' ];
 	}
 
@@ -112,7 +112,7 @@ class Widget_Divider extends Widget_Base {
 		return [ 'widget-divider' ];
 	}
 
-	private static function get_additional_styles() {
+	private static function get_additional_styles(): array {
 		static $additional_styles = null;
 
 		if ( null !== $additional_styles ) {
@@ -132,7 +132,7 @@ class Widget_Divider extends Widget_Base {
 		return $additional_styles;
 	}
 
-	private function get_separator_styles() {
+	private function get_separator_styles(): array {
 		return array_merge(
 			self::get_additional_styles(),
 			[
@@ -328,13 +328,13 @@ class Widget_Divider extends Widget_Base {
 		);
 	}
 
-	private function filter_styles_by( $array, $key, $value ) {
+	private function filter_styles_by( $array, $key, $value ): array {
 		return array_filter( $array, function( $style ) use ( $key, $value ) {
 			return $value === $style[ $key ];
 		} );
 	}
 
-	private function get_options_by_groups( $styles, $group = false ) {
+	private function get_options_by_groups( $styles, $group = false ): array {
 		$groups = [
 			'line' => [
 				'label' => esc_html__( 'Line', 'elementor' ),
@@ -370,7 +370,7 @@ class Widget_Divider extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$styles = $this->get_separator_styles();
 		$this->start_controls_section(
 			'section_divider',
@@ -1047,7 +1047,7 @@ class Widget_Divider extends Widget_Base {
 	 * @since  2.7.0
 	 * @access private
 	 */
-	private function build_svg() {
+	private function build_svg(): string {
 		$settings = $this->get_settings_for_display();
 
 		if ( 'pattern' !== $settings['separator_type'] || empty( $settings['style'] ) ) {
@@ -1086,7 +1086,7 @@ class Widget_Divider extends Widget_Base {
 		return '<svg xmlns="http://www.w3.org/2000/svg" ' . $pattern_attribute_string . '>' . $shape . '</svg>';
 	}
 
-	public function svg_to_data_uri( $svg ) {
+	public function svg_to_data_uri( $svg ): string {
 		return str_replace(
 			[ '<', '>', '"', '#' ],
 			[ '%3C', '%3E', "'", '%23' ],
@@ -1102,7 +1102,7 @@ class Widget_Divider extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 		$svg_code = $this->build_svg();
 		$has_icon = 'line_icon' === ( $settings['look'] ) && ! empty( $settings['icon'] );

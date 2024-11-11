@@ -24,7 +24,7 @@ class Widget_Shortcode extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'shortcode';
 	}
 
@@ -38,7 +38,7 @@ class Widget_Shortcode extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Shortcode', 'elementor' );
 	}
 
@@ -52,7 +52,7 @@ class Widget_Shortcode extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-shortcode';
 	}
 
@@ -66,7 +66,7 @@ class Widget_Shortcode extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'shortcode', 'code' ];
 	}
 
@@ -80,7 +80,7 @@ class Widget_Shortcode extends Widget_Base {
 	 *
 	 * @return bool Whether the reload preview is required.
 	 */
-	public function is_reload_preview_required() {
+	public function is_reload_preview_required(): bool {
 		return true;
 	}
 
@@ -96,7 +96,7 @@ class Widget_Shortcode extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_shortcode',
 			[
@@ -131,7 +131,7 @@ class Widget_Shortcode extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$shortcode = $this->get_settings_for_display( 'shortcode' );
 
 		if ( empty( $shortcode ) ) {
@@ -152,7 +152,7 @@ class Widget_Shortcode extends Widget_Base {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function render_plain_content() {
+	public function render_plain_content(): void {
 		// In plain mode, render without shortcode
 		$this->print_unescaped_setting( 'shortcode' );
 	}
@@ -165,5 +165,5 @@ class Widget_Shortcode extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {}
+	protected function content_template(): void {}
 }

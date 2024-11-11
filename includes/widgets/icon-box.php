@@ -27,7 +27,7 @@ class Widget_Icon_Box extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'icon-box';
 	}
 
@@ -41,7 +41,7 @@ class Widget_Icon_Box extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Icon Box', 'elementor' );
 	}
 
@@ -55,7 +55,7 @@ class Widget_Icon_Box extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-icon-box';
 	}
 
@@ -69,7 +69,7 @@ class Widget_Icon_Box extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'icon box', 'icon' ];
 	}
 
@@ -103,7 +103,7 @@ class Widget_Icon_Box extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_icon',
 			[
@@ -703,7 +703,7 @@ class Widget_Icon_Box extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 		$has_link = ! empty( $settings['link']['url'] );
 		$html_tag = $has_link ? 'a' : 'span';
@@ -788,7 +788,7 @@ class Widget_Icon_Box extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<#
 		// For older version `settings.icon` is needed.
@@ -853,7 +853,7 @@ class Widget_Icon_Box extends Widget_Base {
 		<?php
 	}
 
-	public function on_import( $element ) {
+	public function on_import( $element ): array {
 		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon', true );
 	}
 }

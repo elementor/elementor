@@ -28,7 +28,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'text-editor';
 	}
 
@@ -42,7 +42,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Text Editor', 'elementor' );
 	}
 
@@ -56,7 +56,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-text';
 	}
 
@@ -72,7 +72,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * @return array Widget categories.
 	 */
-	public function get_categories() {
+	public function get_categories(): array {
 		return [ 'basic' ];
 	}
 
@@ -86,7 +86,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'text', 'editor' ];
 	}
 
@@ -120,7 +120,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_editor',
 			[
@@ -493,7 +493,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$should_render_inline_editing = Plugin::$instance->editor->is_edit_mode();
 
 		$editor_content = $this->get_settings_for_display( 'editor' );
@@ -528,7 +528,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function render_plain_content() {
+	public function render_plain_content(): void {
 		// In plain mode, render without shortcode
 		$this->print_unescaped_setting( 'editor' );
 	}
@@ -541,7 +541,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<#
 		if ( '' === settings.editor ) {

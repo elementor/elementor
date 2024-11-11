@@ -36,14 +36,14 @@ class Widget_Share_Buttons extends Widget_Base {
 	/**
 	 * @deprecated will be removed in version 3.24
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'share-buttons-dummy';
 	}
 
 	/**
 	 * @deprecated will be removed in version 3.24
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return 'share-buttons-dummy';
 	}
 

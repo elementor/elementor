@@ -30,7 +30,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'heading';
 	}
 
@@ -44,7 +44,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Heading', 'elementor' );
 	}
 
@@ -58,7 +58,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-t-letter';
 	}
 
@@ -74,7 +74,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 *
 	 * @return array Widget categories.
 	 */
-	public function get_categories() {
+	public function get_categories(): array {
 		return [ 'basic' ];
 	}
 
@@ -88,7 +88,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'heading', 'title', 'text' ];
 	}
 
@@ -148,7 +148,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_title',
 			[
@@ -419,7 +419,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 
 		if ( '' === $settings['title'] ) {
@@ -458,7 +458,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<#
 		let title = elementor.helpers.sanitize( settings.title, { ALLOW_DATA_ATTR: false } );

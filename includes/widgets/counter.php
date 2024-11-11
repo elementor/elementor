@@ -27,7 +27,7 @@ class Widget_Counter extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'counter';
 	}
 
@@ -41,7 +41,7 @@ class Widget_Counter extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Counter', 'elementor' );
 	}
 
@@ -55,7 +55,7 @@ class Widget_Counter extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-counter';
 	}
 
@@ -69,7 +69,7 @@ class Widget_Counter extends Widget_Base {
 	 *
 	 * @return array Widget scripts dependencies.
 	 */
-	public function get_script_depends() {
+	public function get_script_depends(): array {
 		return [ 'jquery-numerator' ];
 	}
 
@@ -83,7 +83,7 @@ class Widget_Counter extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'counter' ];
 	}
 
@@ -117,7 +117,7 @@ class Widget_Counter extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$start = is_rtl() ? 'right' : 'left';
 		$end = ! is_rtl() ? 'right' : 'left';
 
@@ -611,7 +611,7 @@ class Widget_Counter extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<#
 		view.addRenderAttribute( 'elementor-counter', 'class', 'elementor-counter' );
@@ -664,7 +664,7 @@ class Widget_Counter extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 
 		$this->add_render_attribute( 'elementor-counter', 'class', 'elementor-counter' );

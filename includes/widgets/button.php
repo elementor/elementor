@@ -30,7 +30,7 @@ class Widget_Button extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'button';
 	}
 
@@ -44,7 +44,7 @@ class Widget_Button extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Button', 'elementor' );
 	}
 
@@ -58,7 +58,7 @@ class Widget_Button extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-button';
 	}
 
@@ -74,7 +74,7 @@ class Widget_Button extends Widget_Base {
 	 *
 	 * @return array Widget categories.
 	 */
-	public function get_categories() {
+	public function get_categories(): array {
 		return [ 'basic' ];
 	}
 
@@ -86,7 +86,7 @@ class Widget_Button extends Widget_Base {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_button',
 			[
@@ -129,7 +129,7 @@ class Widget_Button extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$this->render_button();
 	}
 }

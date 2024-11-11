@@ -32,7 +32,7 @@ class Widget_WordPress extends Widget_Base {
 	 */
 	private $_widget_instance = null;
 
-	public function hide_on_search() {
+	public function hide_on_search(): bool {
 		return true;
 	}
 
@@ -46,7 +46,7 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'wp-widget-' . $this->get_widget_instance()->id_base;
 	}
 
@@ -60,7 +60,7 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return $this->get_widget_instance()->name;
 	}
 
@@ -76,7 +76,7 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @return array Widget categories. Returns either a WordPress category.
 	 */
-	public function get_categories() {
+	public function get_categories(): array {
 		return [ 'wordpress' ];
 	}
 
@@ -90,7 +90,7 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @return string Widget icon. Returns either a WordPress icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-wordpress';
 	}
 
@@ -104,11 +104,11 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'wordpress', 'widget' ];
 	}
 
-	public function get_help_url() {
+	public function get_help_url(): string {
 		return '';
 	}
 
@@ -122,7 +122,7 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @return bool Whether the reload preview is required.
 	 */
-	public function is_reload_preview_required() {
+	public function is_reload_preview_required(): bool {
 		return true;
 	}
 
@@ -136,7 +136,7 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @return string Widget form.
 	 */
-	public function get_form() {
+	public function get_form(): string {
 		$instance = $this->get_widget_instance();
 
 		ob_start();
@@ -161,7 +161,7 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @return \WP_Widget
 	 */
-	public function get_widget_instance() {
+	public function get_widget_instance(): \WP_Widget {
 		if ( is_null( $this->_widget_instance ) ) {
 			global $wp_widget_factory;
 
@@ -186,7 +186,7 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @return array Parsed settings.
 	 */
-	protected function get_init_settings() {
+	protected function get_init_settings(): array {
 		$settings = parent::get_init_settings();
 
 		if ( ! empty( $settings['wp'] ) ) {
@@ -207,7 +207,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->add_control(
 			'wp',
 			[
@@ -227,7 +227,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$default_widget_args = [
 			'widget_id' => $this->get_name(),
 			'before_widget' => '',
@@ -268,7 +268,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {}
+	protected function content_template(): void {}
 
 	/**
 	 * WordPress widget constructor.
@@ -297,5 +297,5 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @param array $instance Widget instance. Default is empty array.
 	 */
-	public function render_plain_content( $instance = [] ) {}
+	public function render_plain_content( $instance = [] ): void {}
 }

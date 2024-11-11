@@ -26,7 +26,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'image-gallery';
 	}
 
@@ -40,7 +40,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Basic Gallery', 'elementor' );
 	}
 
@@ -54,7 +54,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-gallery-grid';
 	}
 
@@ -68,7 +68,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'image', 'photo', 'visual', 'gallery' ];
 	}
 
@@ -100,7 +100,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 *
 	 * @return array Widget promotion data.
 	 */
-	protected function get_upsale_data() {
+	protected function get_upsale_data(): array {
 		return [
 			'condition' => ! Utils::has_pro(),
 			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
@@ -123,7 +123,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_gallery',
 			[
@@ -420,7 +420,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 
 		if ( ! $settings['wp_gallery'] ) {

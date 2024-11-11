@@ -29,7 +29,7 @@ trait Button_Trait {
 	 *
 	 * @return array An array containing button sizes.
 	 */
-	public static function get_button_sizes() {
+	public static function get_button_sizes(): array {
 		return [
 			'xs' => esc_html__( 'Extra Small', 'elementor' ),
 			'sm' => esc_html__( 'Small', 'elementor' ),
@@ -51,7 +51,7 @@ trait Button_Trait {
 	 *     @type array $icon_exclude_inline_options  Set of icon types to exclude from icon controls.
 	 * }
 	 */
-	protected function register_button_content_controls( $args = [] ) {
+	protected function register_button_content_controls( $args = [] ): void {
 		$default_args = [
 			'section_condition' => [],
 			'button_default_text' => esc_html__( 'Click here', 'elementor' ),
@@ -235,7 +235,7 @@ trait Button_Trait {
 	 *     @type string $content_alignment_default  Default alignment for the button content.
 	 * }
 	 */
-	protected function register_button_style_controls( $args = [] ) {
+	protected function register_button_style_controls( $args = [] ): void {
 		$default_args = [
 			'section_condition' => [],
 			'alignment_default' => '',
@@ -514,7 +514,7 @@ trait Button_Trait {
 	 * @since  3.4.0
 	 * @access protected
 	 */
-	protected function render_button( Widget_Base $instance = null ) {
+	protected function render_button( Widget_Base $instance = null ): void {
 		if ( empty( $instance ) ) {
 			$instance = $this;
 		}
@@ -572,7 +572,7 @@ trait Button_Trait {
 	 * @since  3.4.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<#
 		if ( '' === settings.text && '' === settings.selected_icon.value ) {
@@ -645,7 +645,7 @@ trait Button_Trait {
 	 * @since  3.4.0
 	 * @access protected
 	 */
-	protected function render_text( Widget_Base $instance = null ) {
+	protected function render_text( Widget_Base $instance = null ): void {
 		// The default instance should be `$this` (a Button widget), unless the Trait is being used from outside of a widget (e.g. `Skin_Base`) which should pass an `$instance`.
 		if ( empty( $instance ) ) {
 			$instance = $this;
@@ -688,7 +688,7 @@ trait Button_Trait {
 		<?php
 	}
 
-	public function on_import( $element ) {
+	public function on_import( $element ): array {
 		return Icons_Manager::on_import_migration( $element, 'icon', 'selected_icon' );
 	}
 }

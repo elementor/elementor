@@ -28,7 +28,7 @@ class Widget_Tabs extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'tabs';
 	}
 
@@ -42,7 +42,7 @@ class Widget_Tabs extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Tabs', 'elementor' );
 	}
 
@@ -56,7 +56,7 @@ class Widget_Tabs extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-tabs';
 	}
 
@@ -70,7 +70,7 @@ class Widget_Tabs extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
@@ -108,7 +108,7 @@ class Widget_Tabs extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$start = is_rtl() ? 'end' : 'start';
 		$end = is_rtl() ? 'start' : 'end';
 
@@ -497,7 +497,7 @@ class Widget_Tabs extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$tabs = $this->get_settings_for_display( 'tabs' );
 
 		$id_int = substr( $this->get_id_int(), 0, 3 );
@@ -580,7 +580,7 @@ class Widget_Tabs extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<div class="elementor-tabs" role="tablist" aria-orientation="vertical">
 			<# if ( settings.tabs ) {

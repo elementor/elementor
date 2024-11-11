@@ -24,7 +24,7 @@ class Widget_Sidebar extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'sidebar';
 	}
 
@@ -38,7 +38,7 @@ class Widget_Sidebar extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Sidebar', 'elementor' );
 	}
 
@@ -52,7 +52,7 @@ class Widget_Sidebar extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-sidebar';
 	}
 
@@ -66,7 +66,7 @@ class Widget_Sidebar extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'sidebar', 'widget' ];
 	}
 
@@ -82,7 +82,7 @@ class Widget_Sidebar extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		global $wp_registered_sidebars;
 
 		$options = [];
@@ -128,7 +128,7 @@ class Widget_Sidebar extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$sidebar = $this->get_settings_for_display( 'sidebar' );
 
 		if ( empty( $sidebar ) ) {
@@ -146,7 +146,7 @@ class Widget_Sidebar extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {}
+	protected function content_template(): void {}
 
 	/**
 	 * Render sidebar widget as plain content.
@@ -156,5 +156,5 @@ class Widget_Sidebar extends Widget_Base {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function render_plain_content() {}
+	public function render_plain_content(): void {}
 }

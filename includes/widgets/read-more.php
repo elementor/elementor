@@ -23,7 +23,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'read-more';
 	}
 
@@ -37,7 +37,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Read More', 'elementor' );
 	}
 
@@ -51,7 +51,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-post-excerpt';
 	}
 
@@ -65,7 +65,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'read', 'more', 'tag', 'excerpt' ];
 	}
 
@@ -85,7 +85,7 @@ class Widget_Read_More extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_title',
 			[
@@ -141,7 +141,7 @@ class Widget_Read_More extends Widget_Base {
 	 *
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		printf( '<!--more %s-->', wp_kses_post( $this->get_settings_for_display( 'link_text' ) ) );
 	}
 
@@ -153,7 +153,7 @@ class Widget_Read_More extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<!--more {{ settings.link_text }}-->
 		<?php

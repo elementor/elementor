@@ -28,7 +28,7 @@ class Widget_Testimonial extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'testimonial';
 	}
 
@@ -42,7 +42,7 @@ class Widget_Testimonial extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Testimonial', 'elementor' );
 	}
 
@@ -56,7 +56,7 @@ class Widget_Testimonial extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-testimonial';
 	}
 
@@ -70,7 +70,7 @@ class Widget_Testimonial extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'testimonial', 'blockquote' ];
 	}
 
@@ -104,7 +104,7 @@ class Widget_Testimonial extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_testimonial',
 			[
@@ -451,7 +451,7 @@ class Widget_Testimonial extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 
 		$has_content = ! empty( $settings['testimonial_content'] );
@@ -553,7 +553,7 @@ class Widget_Testimonial extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<#
 		if ( '' === settings.testimonial_content && '' === settings.testimonial_image.url && '' === settings.testimonial_name && '' === settings.testimonial_job ) {
@@ -607,7 +607,7 @@ class Widget_Testimonial extends Widget_Base {
 		<?php
 	}
 
-	protected function render_testimonial_description() {
+	protected function render_testimonial_description(): void {
 		?>
 		<#
 		if ( '' !== settings.testimonial_name ) {

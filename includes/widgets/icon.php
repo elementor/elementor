@@ -26,7 +26,7 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'icon';
 	}
 
@@ -40,7 +40,7 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Icon', 'elementor' );
 	}
 
@@ -54,7 +54,7 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-favorite';
 	}
 
@@ -70,7 +70,7 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * @return array Widget categories.
 	 */
-	public function get_categories() {
+	public function get_categories(): array {
 		return [ 'basic' ];
 	}
 
@@ -88,7 +88,7 @@ class Widget_Icon extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'icon' ];
 	}
 
@@ -104,7 +104,7 @@ class Widget_Icon extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_icon',
 			[
@@ -427,7 +427,7 @@ class Widget_Icon extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 
 		if ( empty( $settings['selected_icon']['value'] ) ) {
@@ -484,7 +484,7 @@ class Widget_Icon extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<#
 		if ( '' === settings.selected_icon.value ) {

@@ -34,7 +34,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'common-base';
 	}
 
@@ -48,7 +48,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return bool Whether to show the widget in the panel.
 	 */
-	public function show_in_panel() {
+	public function show_in_panel(): bool {
 		return false;
 	}
 
@@ -67,7 +67,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return array responsive device args
 	 */
-	protected function get_responsive_device_args( array $args, array $devices_to_exclude = [] ) {
+	protected function get_responsive_device_args( array $args, array $devices_to_exclude = [] ): array {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.7.0' );
 
 		$device_args = [];
@@ -98,7 +98,7 @@ class Widget_Common_Base extends Widget_Base {
 	 * @param string $breakpoint_key
 	 * @return array parsed device args
 	 */
-	private function parse_device_args_placeholders( array $args, $breakpoint_key ) {
+	private function parse_device_args_placeholders( array $args, $breakpoint_key ): array {
 		$parsed_args = [];
 
 		foreach ( $args as $arg_key => $arg_value ) {
@@ -119,7 +119,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return string The shape path in the assets folder.
 	 */
-	private function get_shape_url( $shape ) {
+	private function get_shape_url( $shape ): string {
 		return ELEMENTOR_ASSETS_URL . 'mask-shapes/' . $shape . '.svg';
 	}
 
@@ -130,7 +130,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return array Array of shapes with their URL as key.
 	 */
-	private function get_shapes( $add_custom = true ) {
+	private function get_shapes( $add_custom = true ): array {
 		$shapes = [
 			'circle' => esc_html__( 'Circle', 'elementor' ),
 			'flower' => esc_html__( 'Flower', 'elementor' ),
@@ -158,7 +158,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return array Selectors with the rules applied.
 	 */
-	private function get_mask_selectors( $rules ) {
+	private function get_mask_selectors( $rules ): array {
 		$mask_selectors = [
 			'default' => static::MASK_SELECTOR_DEFAULT,
 			'image' => static::MASK_SELECTOR_IMG,
@@ -175,7 +175,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	private function register_layout_section() {
+	private function register_layout_section(): void {
 		$this->start_controls_section(
 			'_section_style',
 			[
@@ -615,7 +615,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	private function register_effects_section() {
+	private function register_effects_section(): void {
 		$this->start_controls_section(
 			'section_effects',
 			[
@@ -676,7 +676,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	private function register_background_section() {
+	private function register_background_section(): void {
 		$this->start_controls_section(
 			'_section_background',
 			[
@@ -751,7 +751,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	private function register_border_section() {
+	private function register_border_section(): void {
 		$this->start_controls_section(
 			'_section_border',
 			[
@@ -866,7 +866,7 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @return void
 	 */
-	private function register_masking_section() {
+	private function register_masking_section(): void {
 		$this->start_controls_section(
 			'_section_masking',
 			[
@@ -1109,13 +1109,12 @@ class Widget_Common_Base extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-
 	/**
 	 * Register the Responsive section.
 	 *
 	 * @return void
 	 */
-	private function register_responsive_section() {
+	private function register_responsive_section(): void {
 		$this->start_controls_section(
 			'_section_responsive',
 			[
@@ -1150,8 +1149,10 @@ class Widget_Common_Base extends Widget_Base {
 	 *
 	 * @since 3.1.0
 	 * @access protected
+	 *
+	 * @return void
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->register_layout_section();
 
 		$this->register_effects_section();

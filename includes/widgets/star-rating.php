@@ -27,7 +27,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'star-rating';
 	}
 
@@ -41,7 +41,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Star Rating', 'elementor' );
 	}
 
@@ -55,7 +55,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-rating';
 	}
 
@@ -69,7 +69,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'star', 'rating', 'rate', 'review' ];
 	}
 
@@ -115,7 +115,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_rating',
 			[
@@ -402,7 +402,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 * @since 2.3.0
 	 * @access protected
 	 */
-	protected function get_rating() {
+	protected function get_rating(): array {
 		$settings = $this->get_settings_for_display();
 		$rating_scale = (int) $settings['rating_scale'];
 		$rating = (float) $settings['rating'] > $rating_scale ? $rating_scale : $settings['rating'];
@@ -443,7 +443,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 * @since 2.3.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 		$rating_data = $this->get_rating();
 		$textual_rating = $rating_data[0] . '/' . $rating_data[1];
@@ -487,7 +487,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-	protected function content_template() {
+	protected function content_template(): void {
 		?>
 		<#
 			var getRating = function() {

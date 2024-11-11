@@ -27,7 +27,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 */
-	public function get_name() {
+	public function get_name(): string {
 		return 'video';
 	}
 
@@ -41,7 +41,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 */
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Video', 'elementor' );
 	}
 
@@ -55,7 +55,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 */
-	public function get_icon() {
+	public function get_icon(): string {
 		return 'eicon-youtube';
 	}
 
@@ -71,7 +71,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * @return array Widget categories.
 	 */
-	public function get_categories() {
+	public function get_categories(): array {
 		return [ 'basic' ];
 	}
 
@@ -85,7 +85,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 */
-	public function get_keywords() {
+	public function get_keywords(): array {
 		return [ 'video', 'player', 'embed', 'youtube', 'vimeo', 'dailymotion', 'videopress' ];
 	}
 
@@ -119,7 +119,7 @@ class Widget_Video extends Widget_Base {
 	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function register_controls() {
+	protected function register_controls(): void {
 		$this->start_controls_section(
 			'section_video',
 			[
@@ -998,7 +998,7 @@ class Widget_Video extends Widget_Base {
 	 * @since 1.0.0
 	 * @access protected
 	 */
-	protected function render() {
+	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 
 		$video_url = $settings[ $settings['video_type'] . '_url' ];
@@ -1139,7 +1139,7 @@ class Widget_Video extends Widget_Base {
 	 * @since 1.4.5
 	 * @access public
 	 */
-	public function render_plain_content() {
+	public function render_plain_content(): void {
 		$settings = $this->get_settings_for_display();
 
 		if ( 'hosted' !== $settings['video_type'] ) {
@@ -1161,7 +1161,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * @return array Video embed parameters.
 	 */
-	public function get_embed_params() {
+	public function get_embed_params(): array {
 		$settings = $this->get_settings_for_display();
 
 		$params = [];
@@ -1256,7 +1256,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * @return bool Whether an image overlay was set for the video.
 	 */
-	protected function has_image_overlay() {
+	protected function has_image_overlay(): bool {
 		$settings = $this->get_settings_for_display();
 
 		return ! empty( $settings['image_overlay']['url'] ) && 'yes' === $settings['show_image_overlay'];
@@ -1266,7 +1266,7 @@ class Widget_Video extends Widget_Base {
 	 * @since 2.1.0
 	 * @access private
 	 */
-	private function get_embed_options() {
+	private function get_embed_options(): array {
 		$settings = $this->get_settings_for_display();
 
 		$embed_options = [];
@@ -1286,7 +1286,7 @@ class Widget_Video extends Widget_Base {
 	 * @since 2.1.0
 	 * @access private
 	 */
-	private function get_hosted_params() {
+	private function get_hosted_params(): array {
 		$settings = $this->get_settings_for_display();
 
 		$video_params = [];
@@ -1327,7 +1327,7 @@ class Widget_Video extends Widget_Base {
 	 * @since 2.1.0
 	 * @access private
 	 */
-	private function get_hosted_video_url() {
+	private function get_hosted_video_url(): string {
 		$settings = $this->get_settings_for_display();
 
 		if ( ! empty( $settings['insert_url'] ) ) {
@@ -1360,7 +1360,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * @return string
 	 */
-	private function get_videopress_video_url() {
+	private function get_videopress_video_url(): string {
 		$settings = $this->get_settings_for_display();
 
 		if ( ! empty( $settings['insert_url'] ) ) {
@@ -1375,7 +1375,7 @@ class Widget_Video extends Widget_Base {
 	 *
 	 * @return array
 	 */
-	private function get_params_dictionary_for_videopress() {
+	private function get_params_dictionary_for_videopress(): array {
 		return [
 			'controls',
 			'autoplay' => 'autoPlay',
@@ -1390,7 +1390,7 @@ class Widget_Video extends Widget_Base {
 	 * @since 2.1.0
 	 * @access private
 	 */
-	private function render_hosted_video() {
+	private function render_hosted_video(): void {
 		$video_url = $this->get_hosted_video_url();
 		if ( empty( $video_url ) ) {
 			return;

@@ -16,7 +16,7 @@ class Widget_Common_Optimized extends Widget_Common_Base {
 	const TRANSFORM_SELECTOR_CLASS = '';
 	const MARGIN = 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} calc(var(--kit-widget-spacing, 0px) + {{BOTTOM}}{{UNIT}}) {{LEFT}}{{UNIT}};';
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'common-optimized';
 	}
 }
