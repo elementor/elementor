@@ -28,6 +28,7 @@
 	"scripts": {
 		"lint": "phpcs --standard=ruleset.xml",
 		"test": "phpunit",
+		"format": "phpcbf --standard=ruleset.xml",
 		"test:install": "bash ./bin/install-wp-tests-local.sh",
 		"coverage": "composer run coverage:test && composer run coverage:check",
 		"coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
