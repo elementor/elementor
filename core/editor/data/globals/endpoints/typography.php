@@ -48,8 +48,8 @@ class Typography extends Base {
 			$id = $item['_id'];
 
 			$result[ $id ] = [
-				'title' => $item['title'],
 				'id' => $id,
+				'title' => $item['title'],
 			];
 
 			unset( $item['_id'], $item['title'] );
