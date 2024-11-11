@@ -21,6 +21,7 @@ class Kit_Library_Menu_Item implements Admin_Menu_Item {
 	public function get_label() {
 		return esc_html__( 'Kit Library', 'elementor' );
 	}
+	// some change
 
 	public function get_capability() {
 		return 'manage_options';

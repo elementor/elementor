@@ -1,5 +1,5 @@
 import BaseModel from './base-model';
-import { TIERS } from 'elementor-utils/tiers'
+import { TIERS } from 'elementor-utils/tiers';
 import { __ } from '@wordpress/i18n';
 
 const FREE = 'free',
