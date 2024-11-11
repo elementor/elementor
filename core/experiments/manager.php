@@ -290,8 +290,20 @@ class Manager extends Base_Object {
 	 *
 	 * @return bool
 	 */
-	public function is_feature_active( $feature_name ) {
+	public function is_feature_active( $feature_name, $check_dependencies = false ) {
+		$dependency_states = [];
 		$feature = $this->get_features( $feature_name );
+
+		if ( true === $check_dependencies ){
+			foreach ( $feature['dependencies'] as $dependency ) {
+				$dependent_feature = $this->get_features( $dependency->get_name() );
+				$dependency_states[] = self::STATE_ACTIVE === $this->get_feature_actual_state( $dependent_feature );
+
+				if ( in_array( false, $dependency_states ) ){
+					return false;
+				}
+			}
+		}
 
 		if ( ! $feature ) {
 			return false;
