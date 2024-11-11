@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Run action
-        uses: elementor/elementor-editor-github-actions/actions/trickle-down-changelog@ED-15962-changelog-action
+        uses: elementor/elementor-editor-github-actions/actions/trickle-down-changelog@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
