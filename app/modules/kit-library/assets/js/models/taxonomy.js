@@ -1,67 +1,32 @@
 import BaseModel from './base-model';
-import { TIERS } from 'elementor-utils/tiers';
 import { __ } from '@wordpress/i18n';
 
-export const FREE = 'free',
-	ESSENTIAL = 'essential',
-	ADVANCED = 'advanced',
-	PRO = 'pro',
-	EXPERT = 'expert,',
-	AGENCY = 'agency';
+export const CATEGORY = 'categories',
+	TAG = 'tags',
+	FEATURE = 'features',
+	SUBSCRIPTION_PLAN = 'subscription_plans';
 
-export const SUBSCRIPTION_PLAN = 'subscription_plans';
-
-export const OLD_PLAN_TEXTS = {
-	[ FREE ]: __( 'Free', 'elementor' ),
-	[ PRO ]: __( 'Pro', 'elementor' ),
-	[ ADVANCED ]: __( 'Advanced', 'elementor' ),
-	[ EXPERT ]: __( 'Expert', 'elementor' ),
-	[ AGENCY ]: __( 'Agency', 'elementor' ),
-};
-
-export const NEW_PLAN_TEXTS = {
-	[ FREE ]: __( 'Free', 'elementor' ),
-	[ ESSENTIAL ]: __( 'Essential', 'elementor' ),
-	[ ADVANCED ]: __( 'Advanced & Higher', 'elementor' ),
-};
-
-export const PROMOTION_CHIP_TEXT = {
-	[ FREE ]: __( 'Free', 'elementor ' ),
-	[ ESSENTIAL ]: __( 'Essential', 'elementor ' ),
-	[ ADVANCED ]: __( 'Advanced', 'elementor ' ),
-};
-
-export const TIERS_TO_KEYS_MAP = {
-	[ TIERS.free ]: FREE,
-	[ TIERS.essential ]: ESSENTIAL,
-	[ TIERS[ 'essential-oct2023' ] ]: ADVANCED,
-	[ TIERS.expert ]: ADVANCED,
-	[ TIERS.agency ]: ADVANCED,
-};
-
-const TAXONOMY_TRANSFORM_MAP = {
-	[ PRO ]: ESSENTIAL,
-	[ EXPERT ]: ADVANCED,
-	[ AGENCY ]: ADVANCED,
-};
-
-export const TAXONOMIES = [
+export const TaxonomyTypes = [
 	{
 		key: 'categories',
 		label: __( 'Categories', 'elementor' ),
 		isOpenByDefault: true,
+		data: [],
 	},
 	{
 		key: 'tags',
 		label: __( 'Tags', 'elementor' ),
+		data: [],
 	},
 	{
 		key: 'features',
 		label: __( 'Features', 'elementor' ),
+		data: [],
 	},
 	{
 		key: SUBSCRIPTION_PLAN,
 		label: __( 'Kits by plan', 'elementor' ),
+		data: [],
 	},
 ];
 
