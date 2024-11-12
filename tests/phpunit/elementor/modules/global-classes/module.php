@@ -72,7 +72,7 @@ class Test_Module extends Elementor_Test_Base {
 		$id = $response->get_data()['id'];
 		$classes = $kit->get_json_meta( Repository::META_KEY );
 
-		var_dump( $classes );
+		var_dump( 'classes', $classes );
 		die;
 		$this->assertArrayHasKey( 'items', $classes );
 		$this->assertArrayHasKey( 'order', $classes );
