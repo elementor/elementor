@@ -47,6 +47,7 @@ class Module extends BaseModule {
 
 	const PACKAGES = [
 		'editor-editing-panel',
+		'editor-elements', // TODO: Need to be registered and not enqueued.
 		'editor-panels',
 		'editor-props', // TODO: Need to be registered and not enqueued.
 		'editor-style',
