@@ -60,19 +60,21 @@ class Test_Module extends Elementor_Test_Base {
 		$repository = new Repository( $kit );
 		$api = new API( $repository );
 		$api->register_hooks();
+
+
+		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/global-classes' );
 		$request->set_body_params( $this->mock_global_class );
 		$response = rest_do_request( $request );
 
 
-		// Act
-		var_dump( $response->get_data() );
-		die;
-
-
-
 		// Assert
-		$this->assertEquals( $this->mock_global_classes, $module->get_global_classes() );
+		$id = $response->get_data()['id'];
+		$classes = $kit->get_json_meta( Repository::META_KEY );
+		$this->assertArrayHasKey( 'items', $classes );
+		$this->assertArrayHasKey( 'order', $classes );
+		$this->assertArrayHasKey( $id, $classes['items'] );
+
 	}
 
 	private function experiment_on() {
