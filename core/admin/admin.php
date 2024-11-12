@@ -629,7 +629,6 @@ class Admin extends App {
 			'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
 			'link' => 'https://go.elementor.com/overview-widget-ai/',
 		];
-		
 		$additions_actions['go-pro'] = [
 			'title' => esc_html__( 'Upgrade', 'elementor' ),
 			'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
