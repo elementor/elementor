@@ -55,29 +55,29 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_it__returns_all_global_classes() {
 		// Arrange
-//		$this->act_as_admin();
-//
-//		$kit = Plugin::$instance->kits_manager->get_active_kit();
-//		$repository = new Repository( $kit );
-//		$api = new API( $repository );
-//		$api->register_hooks();
-//
-//
-//		// Act
-//		$request = new \WP_REST_Request( 'POST', '/elementor/v1/global-classes' );
-//		$request->set_body_params( $this->mock_global_class );
-//		$response = rest_do_request( $request );
-//
-//
-//		// Assert
-//		$id = $response->get_data()['id'];
-//		$classes = $kit->get_json_meta( Repository::META_KEY );
-//
-//		var_dump( 'classes', $classes );
-//		die;
-//		$this->assertArrayHasKey( 'items', $classes );
-//		$this->assertArrayHasKey( 'order', $classes );
-//		$this->assertArrayHasKey( $id, $classes['items'] );
+		$this->act_as_admin();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Repository( $kit );
+		$api = new API( $repository );
+		$api->register_hooks();
+
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/global-classes' );
+		$request->set_body_params( $this->mock_global_class );
+		$response = rest_do_request( $request );
+
+
+		// Assert
+		$id = $response->get_data()['id'];
+		$classes = $kit->get_json_meta( Repository::META_KEY );
+
+		var_dump( 'classes', $classes );
+		die;
+		$this->assertArrayHasKey( 'items', $classes );
+		$this->assertArrayHasKey( 'order', $classes );
+		$this->assertArrayHasKey( $id, $classes['items'] );
 
 		$this->assertTrue( true );
 	}
