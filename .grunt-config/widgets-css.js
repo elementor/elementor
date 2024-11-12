@@ -84,7 +84,7 @@ class WidgetsCss {
 			return this.widgetsScssFilesList;
 		}
 
-		this.widgetsScssFilesList = this.getStandAloneWidgetsCssFilesList().concat( this.getModulesWidgetsScssFilesList() );
+		this.widgetsScssFilesList = this.getStandAloneWidgetsScssFilesList().concat( this.getModulesWidgetsScssFilesList() );
 
 		return this.widgetsScssFilesList;
 	}
@@ -99,7 +99,7 @@ class WidgetsCss {
 		return this.widgetsCssFileList;
 	}
 
-	getStandAloneWidgetsCssFilesList() {
+	getStandAloneWidgetsScssFilesList() {
 		const standAloneWidgetData = [],
 			standAloneWidgetsList = fs.existsSync( this.sourceScssFolder ) ? fs.readdirSync( this.sourceScssFolder ) : [];
 
@@ -138,27 +138,6 @@ class WidgetsCss {
 		return moduleWidgetData;
 	}
 
-	getModulesWidgetsCssFilesList() {
-		const moduleWidgetData = [],
-			moduleWidgetsList = this.getModulesFrontendCssFiles( this.cssDestinationFolder );
-
-		console.log( 'moduleWidgetsList', moduleWidgetsList );
-
-		moduleWidgetsList.forEach( ( filePath ) => {
-			const widgetData = this.getWidgetDataFromPath( this.cssDestinationFolder, filePath );
-
-			moduleWidgetData.push( {
-				widgetName: widgetData.name,
-				defaultFilename: widgetData.name + '.min.css',
-				rtlFilename: widgetData.name + '-rtl.min.css',
-				importPath: `../assets/css/${  widgetData.path }`,
-				filePath,
-			} );
-		} );
-
-		return moduleWidgetData;
-	}
-
 	getModulesFrontendScssFiles( filePath, frontendScssFiles = [] ) {
 		fs.readdirSync( filePath ).forEach( ( fileName ) => {
 			const fileFullPath = path.join( filePath, fileName );
@@ -173,6 +152,25 @@ class WidgetsCss {
 		} );
 
 		return frontendScssFiles;
+	}
+
+	getModulesWidgetsCssFilesList() {
+		const moduleWidgetData = [],
+			moduleWidgetsList = this.getModulesFrontendCssFiles( this.cssDestinationFolder );
+
+		moduleWidgetsList.forEach( ( filePath ) => {
+			const widgetData = this.getWidgetDataFromPath( this.cssDestinationFolder, filePath );
+
+			moduleWidgetData.push( {
+				widgetName: widgetData.name,
+				defaultFilename: widgetData.name + '.min.css',
+				rtlFilename: widgetData.name + '-rtl.min.css',
+				importPath: `../assets/css/${  widgetData.path }`,
+				filePath,
+			} );
+		} );
+
+		return moduleWidgetData;
 	}
 
 	getModulesFrontendCssFiles( filePath, frontendCssFiles = [] ) {
