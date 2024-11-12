@@ -346,6 +346,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.25.5 - 2024-11-12 =
+
+* Security Fix: Improved code security enforcement in Post functionality
+* Security Fix: Improved code security enforcement in Floating Elements
+* Security Fix: Improved code security enforcement in Import and Export functionality
+
 = 3.25.4 - 2024-11-03 =
 
 * Fix: Console warning errors related to popups ([#29137](https://github.com/elementor/elementor/issues/29137), [#29141](https://github.com/elementor/elementor/issues/29141))
