@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useSettingsContext } from '../context/settings-context';
 import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
-import { PROMOTION_CHIP_TEXT, TIERS_TO_KEYS_MAP } from '../models/taxonomy';
+import { PromotionChipText, TierToKeyMap } from '../models/taxonomy-transformer';
 
 export const TYPE_CONNECT = 'connect';
 export const TYPE_PROMOTION = 'promotion';
@@ -12,7 +12,7 @@ export default function useKitCallToAction( kitAccessTier ) {
 
 	// BC: When user has old Pro version which doesn't override the `free` access_tier.
 	let userAccessTier = settings.access_tier;
-	const tierKey = TIERS_TO_KEYS_MAP[ kitAccessTier ];
+	const tierKey = TierToKeyMap[ kitAccessTier ];
 	const hasActiveProLicense = settings.is_pro && settings.is_library_connected;
 	const shouldFallbackToLegacy = hasActiveProLicense && userAccessTier === TIERS.free;
 
@@ -25,7 +25,7 @@ export default function useKitCallToAction( kitAccessTier ) {
 	// SubscriptionPlan can be null when the context is not filled (can be happened when using back button in the browser.)
 	const subscriptionPlan = useMemo( () => settings.subscription_plans?.[ kitAccessTier ], [ settings, kitAccessTier ] );
 
-	subscriptionPlan.label = PROMOTION_CHIP_TEXT[ tierKey ];
+	subscriptionPlan.label = PromotionChipText[ tierKey ];
 	subscriptionPlan.color = TIERS.free === kitAccessTier ? '#467FF7' : '#92003B';
 
 	const type = useMemo( () => {

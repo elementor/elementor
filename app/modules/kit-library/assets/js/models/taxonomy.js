@@ -47,36 +47,4 @@ export default class Taxonomy extends BaseModel {
 			id: taxonomy.id || null,
 		} );
 	}
-
-	static getFormattedTaxonomyItem( taxonomy ) {
-		if ( ! Taxonomy._isTaxonomySubscriptionByPlan( taxonomy ) ) {
-			return taxonomy;
-		}
-
-		const transformedTaxonomy = new Taxonomy();
-
-		transformedTaxonomy.id = Taxonomy._getFormattedTaxonomyId( Taxonomy._getTaxonomyIdByText( taxonomy.text ) );
-		transformedTaxonomy.text = NEW_PLAN_TEXTS[ transformedTaxonomy.id ];
-		transformedTaxonomy.type = taxonomy.type;
-
-		return transformedTaxonomy;
-	}
-
-	static isKitInTaxonomy( kit, taxonomyType, taxonomies ) {
-		return SUBSCRIPTION_PLAN === taxonomyType
-			? taxonomies.includes( TIERS_TO_KEYS_MAP[ kit.accessTier ] )
-			: taxonomies.some( ( taxonomy ) => kit.taxonomies.includes( taxonomy ) );
-	}
-
-	static _isTaxonomySubscriptionByPlan( taxonomy ) {
-		return SUBSCRIPTION_PLAN === taxonomy.type && Object.values( OLD_PLAN_TEXTS ).includes( taxonomy.text );
-	}
-
-	static _getTaxonomyIdByText( taxonomyText ) {
-		return Object.keys( OLD_PLAN_TEXTS ).find( ( id ) => OLD_PLAN_TEXTS[ id ] === taxonomyText );
-	}
-
-	static _getFormattedTaxonomyId( taxonomyId ) {
-		return TAXONOMY_TRANSFORM_MAP[ taxonomyId ] || taxonomyId;
-	}
 }
