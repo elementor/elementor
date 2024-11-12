@@ -30,7 +30,7 @@ class WidgetsCss {
 	}
 
 	createWidgetsTempScssFiles() {
-		const widgetsCssFilesList = this.getWidgetsCssFilesList();
+		const widgetsCssFilesList = this.getWidgetsScssFilesList();
 
 		widgetsCssFilesList.forEach( ( item ) => {
 			const widgetScssFileDest = path.join( this.tempScssFolder, item.defaultFilename ),
@@ -79,14 +79,24 @@ class WidgetsCss {
 		} );
 	}
 
-	getWidgetsCssFilesList() {
+	getWidgetsScssFilesList() {
 		if ( Array.isArray( this.widgetsScssFilesList ) ) {
 			return this.widgetsScssFilesList;
 		}
 
-		this.widgetsScssFilesList = this.getStandAloneWidgetsCssFilesList().concat( this.getModulesWidgetsCssFilesList() );
+		this.widgetsScssFilesList = this.getStandAloneWidgetsCssFilesList().concat( this.getModulesWidgetsScssFilesList() );
 
 		return this.widgetsScssFilesList;
+	}
+
+	getWidgetsCssFilesList() {
+		if ( Array.isArray( this.widgetsCssFileList ) ) {
+			return this.widgetsCssFileList;
+		}
+
+		this.widgetsCssFileList = this.getModulesWidgetsCssFilesList();
+
+		return this.widgetsCssFileList;
 	}
 
 	getStandAloneWidgetsCssFilesList() {
@@ -108,7 +118,7 @@ class WidgetsCss {
 		return standAloneWidgetData;
 	}
 
-	getModulesWidgetsCssFilesList() {
+	getModulesWidgetsScssFilesList() {
 		const moduleWidgetData = [],
 			moduleWidgetsList = this.getModulesFrontendScssFiles( this.sourceModulesScssFolder );
 
@@ -121,6 +131,27 @@ class WidgetsCss {
 				defaultFilename: this.cssFilePrefix + widgetData.name + '.scss',
 				rtlFilename: this.cssFilePrefix + widgetData.name + '-rtl.scss',
 				importPath: `../../../../modules/${  widgetData.path }`,
+				filePath,
+			} );
+		} );
+
+		return moduleWidgetData;
+	}
+
+	getModulesWidgetsCssFilesList() {
+		const moduleWidgetData = [],
+			moduleWidgetsList = this.getModulesFrontendCssFiles( this.cssDestinationFolder );
+
+		console.log( 'moduleWidgetsList', moduleWidgetsList );
+
+		moduleWidgetsList.forEach( ( filePath ) => {
+			const widgetData = this.getWidgetDataFromPath( this.cssDestinationFolder, filePath );
+
+			moduleWidgetData.push( {
+				widgetName: widgetData.name,
+				defaultFilename: widgetData.name + '.min.css',
+				rtlFilename: widgetData.name + '-rtl.min.css',
+				importPath: `../assets/css/${  widgetData.path }`,
 				filePath,
 			} );
 		} );
@@ -144,13 +175,31 @@ class WidgetsCss {
 		return frontendScssFiles;
 	}
 
-	getWidgetDataFromPath( baseFolder, filePath, isFrontendScssFile ) {
+	getModulesFrontendCssFiles( filePath, frontendCssFiles = [] ) {
+		fs.readdirSync( filePath ).forEach( ( fileName ) => {
+			const fileFullPath = path.join( filePath, fileName );
+			const isWidgetsCssFile = fileName.endsWith( '.min.css' ) && fileName.includes( 'widget-' ) && ! fileName.includes( '-rtl' );
+
+			if ( isWidgetsCssFile ) {
+				frontendCssFiles.push( fileFullPath );
+			}
+		} );
+
+		return frontendCssFiles;
+	}
+
+	getWidgetDataFromPath( baseFolder, filePath, isFrontendScssFile = false ) {
 		// Removing base-folder and first slash so that the module name will be the first value in the path.
 		filePath = filePath.replace( baseFolder, '' ).substring(1);
 
+		const getCustomExtname = ( filePath ) => {
+			const match = filePath.match( /\.min\.css$/ );
+			return match ? '.min.css' : path.extname( filePath );
+		};
+
 		const widgetName = isFrontendScssFile
 			? filePath.split( path.sep )[ 0 ]
-			: path.basename( filePath, path.extname( filePath ) );
+			: path.basename( filePath, getCustomExtname( filePath ) );
 
 		return {
 			path: filePath.replace( /\\/g, '/' ),
@@ -191,7 +240,7 @@ class WidgetsCss {
 					return obj;
 				}
 
-				val = val.replace( this.cssFilePrefix, '' ).replace( '.scss', '' );
+				val = val.replace( this.cssFilePrefix, '' ).replace( '.min.css', '' ).replace( 'widget-', '' );
 
 				return { ...obj, [ val ]: true };
 			}, {} );
