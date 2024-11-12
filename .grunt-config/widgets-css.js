@@ -12,6 +12,9 @@ class WidgetsCss {
 		// List of the widgets .scss files.
 		this.widgetsScssFilesList;
 
+		// List of the widgets .css files.
+		this.widgetsCssFileList
+
 		// Can't be empty.
 		this.cssFilePrefix = 'widget-';
 
