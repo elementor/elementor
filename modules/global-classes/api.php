@@ -129,6 +129,7 @@ class API {
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => fn() => $this->all(),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 
@@ -142,6 +143,7 @@ class API {
 						'required' => true,
 					],
 				],
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 
@@ -155,6 +157,7 @@ class API {
 						'required' => true,
 					],
 				],
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 
@@ -167,6 +170,7 @@ class API {
 
 					return [ 'id' ] === $errors;
 				},
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 
@@ -179,6 +183,7 @@ class API {
 
 					return [ 'id' ] === $errors;
 				},
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 
@@ -190,6 +195,7 @@ class API {
 					'type' => 'array',
 					'required' => true,
 				],
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 	}
