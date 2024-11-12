@@ -44,8 +44,10 @@ class Styles_Validator {
 				continue;
 			}
 
-			[, $styles, $errors_bag] = $this->validate_style( $style, $errors_bag );
+			[, $style, $errors_bag] = $this->validate_style( $style, $errors_bag );
 
+			$styles[ $style_id ] = $style;
+			$errors_bag = array_merge( $errors_bag );
 		}
 
 		$is_valid = empty( $errors_bag );
