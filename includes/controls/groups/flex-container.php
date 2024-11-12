@@ -161,7 +161,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'separator' => 'before',
 			'selectors' => [
-				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}};--row-gap: {{ROW}}{{UNIT}};--column-gap: {{COLUMN}}{{UNIT}};',
 			],
 			'responsive' => true,
 			'conversion_map' => [
@@ -202,16 +202,34 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		$fields['align_content'] = [
 			'label' => esc_html__( 'Align Content', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
+			'type' => Controls_Manager::CHOOSE,
+			'label_block' => true,
 			'default' => '',
 			'options' => [
-				'' => esc_html__( 'Default', 'elementor' ),
-				'center' => esc_html__( 'Center', 'elementor' ),
-				'flex-start' => esc_html__( 'Start', 'elementor' ),
-				'flex-end' => esc_html__( 'End', 'elementor' ),
-				'space-between' => esc_html__( 'Space Between', 'elementor' ),
-				'space-around' => esc_html__( 'Space Around', 'elementor' ),
-				'space-evenly' => esc_html__( 'Space Evenly', 'elementor' ),
+				'flex-start' => [
+					'title' => esc_html__( 'Start', 'elementor' ),
+					'icon' => 'eicon-justify-start-v',
+				],
+				'center' => [
+					'title' => esc_html__( 'Middle', 'elementor' ),
+					'icon' => 'eicon-justify-center-v',
+				],
+				'flex-end' => [
+					'title' => esc_html__( 'End', 'elementor' ),
+					'icon' => 'eicon-justify-end-v',
+				],
+				'space-between' => [
+					'title' => esc_html__( 'Space Between', 'elementor' ),
+					'icon' => 'eicon-justify-space-between-v',
+				],
+				'space-around' => [
+					'title' => esc_html__( 'Space Around', 'elementor' ),
+					'icon' => 'eicon-justify-space-around-v',
+				],
+				'space-evenly' => [
+					'title' => esc_html__( 'Space Evenly', 'elementor' ),
+					'icon' => 'eicon-justify-space-evenly-v',
+				],
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--align-content: {{VALUE}};',

@@ -2,6 +2,13 @@ name: Lighthouse
 
 on:
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -57,7 +64,7 @@ jobs:
       - name: Install lhci
         run: |
           npm ci
-          npm install --no-package-lock --no-save @lhci/cli@0.11.1
+          npm install --no-package-lock --no-save @lhci/cli@0.14.0
       - name: WordPress debug information
         run: |
           npx wp-env run cli wp core version
@@ -73,7 +80,7 @@ jobs:
 
       - name: Upload Lighthouse reports on failure
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
@@ -81,7 +88,7 @@ jobs:
 
       - name: Upload Lighthouse HTML dumps on failure
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: lighthouseci-htmls
           path: ${{ github.workspace }}/.lighthouseci/dumps/**/*

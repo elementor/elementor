@@ -2,7 +2,7 @@ import { addElement, getElementSelector } from '../assets/elements-utils';
 import { expect, type Page, type Frame, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
-import _path from 'path';
+import _path, { resolve as pathResolve } from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
 import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
@@ -303,6 +303,10 @@ export default class EditorPage extends BasePage {
 		await this.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
 	}
 
+	async setWidgetTab( tab: 'content' | 'style' | 'advanced' ) {
+		await this.page.locator( `.elementor-tab-control-${ tab }` ).click();
+	}
+
 	/**
 	 * Paste styling setting on the element.
 	 *
@@ -418,7 +422,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setTextControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } input` ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } input` ).nth( 0 ).fill( value.toString() );
 	}
 
 	/**
@@ -450,11 +454,9 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @param {string} controlId - The control to set the value to.
 	 * @param {string} value     - The value to set.
-	 *
-	 * @return {Promise<void>}
 	 */
 	async setSliderControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value );
 	}
 
 	/**
@@ -488,7 +490,7 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( `.select2-results__option:has-text("${ value }")` ).first().click();
 		}
 
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
 
 	/**
@@ -951,6 +953,12 @@ export default class EditorPage extends BasePage {
 		await this.page.waitForLoadState();
 	}
 
+	async viewPage() {
+		const pageId = await this.getPageId();
+		await this.page.goto( `/?p=${ pageId }` );
+		await this.page.waitForLoadState();
+	}
+
 	/**
 	 * Save and reload the current page.
 	 *
@@ -1256,5 +1264,55 @@ export default class EditorPage extends BasePage {
 	 */
 	async isolatedIdNumber( idPrefix: string, itemID: string ): Promise<number> {
 		return Number( itemID.replace( idPrefix, '' ) );
+	}
+
+	async addImagesToGalleryControl( args?: { images?: string[], metaData?: boolean } ) {
+		const defaultImages = [ 'A.jpg', 'B.jpg', 'C.jpg', 'D.jpg', 'E.jpg' ];
+
+		await this.page.locator( EditorSelectors.galleryControl.addGalleryBtn ).nth( 0 ).click();
+		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
+
+		const _images = args?.images === undefined ? defaultImages : args.images;
+
+		for ( const i in _images ) {
+			await this.page.setInputFiles( EditorSelectors.media.imageInp, pathResolve( __dirname, `../resources/${ _images[ i ] }` ) );
+
+			if ( args?.metaData ) {
+				await this.addTestImageMetaData();
+			}
+		}
+
+		await this.page.locator( EditorSelectors.media.addGalleryButton ).click();
+		await this.page.locator( 'text=Insert gallery' ).click();
+	}
+
+	async addTestImageMetaData( args = { caption: 'Test caption!', description: 'Test description!' } ) {
+		await this.page.locator( EditorSelectors.media.images ).first().click();
+		await this.page.locator( EditorSelectors.media.imgCaption ).clear();
+		await this.page.locator( EditorSelectors.media.imgCaption ).type( args.caption );
+
+		await this.page.locator( EditorSelectors.media.images ).first().click();
+		await this.page.locator( EditorSelectors.media.imgDescription ).clear();
+		await this.page.locator( EditorSelectors.media.imgDescription ).type( args.description );
+	}
+
+	async saveSiteSettingsWithTopBar( toReload: boolean ) {
+		if ( await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).isEnabled() ) {
+			await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).click();
+		} else {
+			await this.page.evaluate( ( selector ) => {
+				const button: HTMLElement = document.evaluate( selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
+				button.click();
+			}, EditorSelectors.panels.siteSettings.saveButton );
+		}
+
+		if ( toReload ) {
+			await this.page.locator( EditorSelectors.refreshPopup.reloadButton ).click();
+		}
+	}
+
+	async saveSiteSettingsNoTopBar() {
+		await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
+		await this.page.locator( EditorSelectors.toast ).waitFor();
 	}
 }

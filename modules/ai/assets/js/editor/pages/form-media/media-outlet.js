@@ -10,6 +10,8 @@ import OutPainting from './views/out-painting';
 import Variations from './views/variations';
 import ReplaceBackground from './views/replace-background';
 import RemoveBackground from './views/remove-background';
+import Cleanup from './views/cleanup';
+
 import { useLocation } from './context/location-context';
 import { useEditImage } from './context/edit-image-context';
 import {
@@ -18,6 +20,7 @@ import {
 } from '../../components/prompt-history/context/prompt-history-action-context';
 import PropTypes from 'prop-types';
 import useTextToImage from './views/generate/hooks/use-text-to-image';
+import ProductImageUnification from './views/product-image-unification';
 
 const MediaOutlet = ( { additionalOptions = null } ) => {
 	const { editImage } = useEditImage();
@@ -66,6 +69,8 @@ const MediaOutlet = ( { additionalOptions = null } ) => {
 			{ current === LOCATIONS.RESIZE && <Resize /> }
 			{ current === LOCATIONS.REPLACE_BACKGROUND && <ReplaceBackground /> }
 			{ current === LOCATIONS.REMOVE_BACKGROUND && <RemoveBackground /> }
+			{ current === LOCATIONS.CLEANUP && <Cleanup /> }
+			{ current === LOCATIONS.PRODUCT_IMAGE_UNIFICATION && <ProductImageUnification /> }
 		</>
 	);
 };

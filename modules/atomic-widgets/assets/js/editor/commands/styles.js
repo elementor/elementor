@@ -1,3 +1,5 @@
+import { getVariantByMeta } from '../utils/get-variants';
+
 /**
  * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
@@ -9,16 +11,16 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		if ( ! args.bind && ! args.styleDefId ) {
-			throw new Error( 'Missing bind or styleDefId' );
+		if ( ! args.bind && ! args.styleDefID ) {
+			throw new Error( 'Missing bind or styleDefID' );
 		}
 
 		if ( args.bind && 'string' !== typeof args.bind ) {
 			throw new Error( 'Invalid bind arg' );
 		}
 
-		if ( args.styleDefId && 'string' !== typeof args.styleDefId ) {
-			throw new Error( 'Invalid styleDefId arg' );
+		if ( args.styleDefID && 'string' !== typeof args.styleDefID ) {
+			throw new Error( 'Invalid styleDefID arg' );
 		}
 	}
 
@@ -32,40 +34,62 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 	 */
 	static restore( historyItem, isRedo ) {
 		const container = historyItem.get( 'container' );
-		const changes = historyItem.get( 'data' ).changes;
+		const changes = historyItem.get( 'data' ).changes[ container.id ];
+		const {
+			bind,
+			styleDefID,
+			meta,
+		} = changes;
+		const { props } = isRedo ? changes.new : changes.old;
 
-		$e.internal( 'document/elements/set-settings', {
+		$e.run( 'document/atomic-widgets/styles', {
 			container,
-			options: {
-				render: false,
-			},
-			settings: isRedo ? changes.newSettings : changes.oldSettings,
+			bind,
+			styleDefID,
+			meta,
+			props,
 		} );
-
-		container.model.set( 'styles', isRedo ? changes.newStyles : changes.oldStyles );
 	}
 
 	/**
 	 * Function addToHistory().
 	 *
 	 * @param {Container} container
-	 * @param {{}}        oldSettings
-	 * @param {{}}        newSettings
-	 * @param {{}}        oldStyles
-	 * @param {{}}        newStyles
+	 * @param {string}    bind
+	 * @param {string}    styleDefID
+	 * @param {{}}        meta
+	 * @param {{}}        props
+	 * @param {{}}        oldProps
 	 */
-	addToHistory( container, oldSettings, newSettings, oldStyles, newStyles ) {
+	addToHistory(
+		container,
+		bind,
+		styleDefID,
+		meta,
+		props,
+		oldProps,
+	) {
+		const newPropsEmpty = Object.keys( props ).reduce( ( emptyValues, key ) => {
+			emptyValues[ key ] = undefined;
+			return emptyValues;
+		}, {} );
 		const changes = {
-				container,
-				oldSettings,
-				newSettings,
-				oldStyles,
-				newStyles,
+				[ container.id ]: {
+					bind,
+					styleDefID,
+					meta,
+					old: {
+						props: { ...newPropsEmpty, ...oldProps },
+					},
+					new: {
+						props,
+					},
+				},
 			},
 			historyItem = {
 				container,
 				data: { changes },
-				type: 'add',
+				type: 'change',
 				restore: Styles.restore,
 			};
 
@@ -79,68 +103,97 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		return {
 			container,
 			subTitle,
-			type: 'add',
+			type: 'change',
 		};
 	}
 
-	variantExists( style, meta ) {
-		return style.variants.some( ( variant ) => {
-			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
-		} );
-	}
-
 	apply( args ) {
-		const { container, bind, meta, props } = args;
-		let styleDefId = args.styleDefId ?? null;
+		let { container } = args;
+		const { bind, meta, props } = args;
+		container = container.lookup();
 
-		const oldStyles = container.model.get( 'styles' ) ?? {};
-		const oldBindSetting = container.settings.get( bind );
+		let styleDefID = args.styleDefID ?? null;
+
+		const currentStyle = container.model.get( 'styles' ) ?? {};
+
+		// Saving a deep clone of the style before it mutates, as part of this command
+		const oldStyle = this.isHistoryActive() ? structuredClone( currentStyle ) : null;
+
 		let style = {};
 
-		if ( ! styleDefId ) {
+		if ( ! styleDefID ) {
+			// Create a new style definition for the first time
 			style = $e.internal( 'document/atomic-widgets/create-style', {
 				container,
 				bind,
 			} );
 
-			styleDefId = style.id;
+			styleDefID = style.id;
+		} else if ( ! currentStyle[ styleDefID ] ) {
+			// Create a new style definition with the given ID
+			// used when the style is deleted and then re-applied (i.e. history undo/redo)
+			style = $e.internal( 'document/atomic-widgets/create-style', {
+				container,
+				styleDefID,
+				bind,
+			} );
 		} else {
-			if ( ! oldStyles[ styleDefId ] ) {
-				throw new Error( 'Style Def not found' );
-			}
-
-			style = oldStyles[ styleDefId ];
+			// Use the existing style definition
+			style = currentStyle[ styleDefID ];
 		}
 
-		if ( ! this.variantExists( style, meta ) ) {
+		const currentVariant = getVariantByMeta( style.variants, meta );
+		if ( ! currentVariant ) {
 			$e.internal( 'document/atomic-widgets/create-variant', {
 				container,
-				styleDefId,
+				styleDefID,
 				meta,
 			} );
 		}
 
-		$e.internal( 'document/atomic-widgets/update-props', {
-			container,
-			styleDefId,
-			bind,
-			meta,
-			props,
-		} );
+		const nonEmptyValues = Object.values( { ...currentVariant?.props, ...props } ).filter( ( value ) => value !== undefined );
+		if ( 0 === nonEmptyValues.length ) {
+			// Doesn't have any props to use for this variant
+			$e.internal( 'document/atomic-widgets/delete-variant', {
+				container,
+				styleDefID,
+				meta,
+			} );
 
-		if ( this.isHistoryActive() ) {
 			const newStyles = container.model.get( 'styles' );
-			const newBindSetting = container.settings.get( bind );
+			const newVariants = newStyles[ styleDefID ].variants;
 
-			const oldSettings = {
-				[ bind ]: oldBindSetting ?? null,
-			};
+			if ( 0 === newVariants.length ) {
+				// After deleting the variant, there are no variants left
+				$e.internal( 'document/atomic-widgets/delete-style', {
+					container,
+					styleDefID,
+					bind,
+				} );
+			}
+		} else {
+			// Has valid props in the current variant
+			$e.internal( 'document/atomic-widgets/update-props', {
+				container,
+				styleDefID,
+				bind,
+				meta,
+				props,
+			} );
+		}
 
-			const newSettings = {
-				[ bind ]: newBindSetting,
-			};
+		if ( null !== oldStyle ) {
+			const oldStyleDef = oldStyle[ styleDefID ];
+			const oldProps = oldStyleDef?.variants ? getVariantByMeta( oldStyleDef.variants, meta )?.props : {};
 
-			this.addToHistory( container, oldSettings, newSettings, oldStyles, newStyles );
+			this.addToHistory(
+				container,
+				bind,
+				styleDefID,
+				meta,
+				props,
+				oldProps,
+			);
 		}
 	}
 }

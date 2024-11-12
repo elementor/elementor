@@ -1,12 +1,10 @@
 <?php
 namespace Elementor\Core\Debug\Classes;
 
-use Elementor\Utils;
-
 class Shop_Page_Edit extends Inspection_Base {
 
 	public function run() {
-		return ! Utils::get_super_global_value( $_GET, 'post' ) == get_option( 'woocommerce_shop_page_id' );
+		return false;
 	}
 
 	public function get_name() {

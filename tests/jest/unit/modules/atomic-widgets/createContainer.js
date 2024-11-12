@@ -8,7 +8,7 @@ export default function createContainer( {
 } = {} ) {
 	const settingsModel = createModel( settings );
 
-	return {
+	const container = {
 		id,
 		label,
 		settings: settingsModel,
@@ -18,7 +18,10 @@ export default function createContainer( {
 			styles,
 			settings: settingsModel,
 		} ),
+		render: jest.fn(),
+		lookup: () => container,
 	};
+	return container;
 }
 
 function createModel( attributes ) {

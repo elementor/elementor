@@ -289,6 +289,10 @@ export default class EditorBase extends Marionette.Application {
 			if ( ! this.widgetsCache[ widgetType ].commonMerged && ! this.widgetsCache[ widgetType ].atomic_controls ) {
 				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
 
+				if ( ! this.widgetsCache[ widgetType ].has_widget_inner_wrapper && elementorCommon.config.experimentalFeatures.e_optimized_markup ) {
+					jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache[ 'common-optimized' ].controls );
+				}
+
 				this.widgetsCache[ widgetType ].controls = elementor.hooks.applyFilters( 'elements/widget/controls/common', this.widgetsCache[ widgetType ].controls, widgetType, this.widgetsCache[ widgetType ] );
 
 				// TODO: Move this code to own file.
@@ -445,13 +449,9 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.floatingButtonsLibraryModule = new FloatingButtonsLibraryModule();
 		}
 
-		if ( elementorCommon.config.experimentalFeatures[ 'link-in-bio' ] ) {
-			this.modules.linkInBioLibraryModule = new LinkInBioLibraryModule();
-		}
+		this.modules.linkInBioLibraryModule = new LinkInBioLibraryModule();
 
-		if ( elementorCommon.config.experimentalFeatures[ 'floating-bars' ] ) {
-			this.modules.floatingBarsLibraryModule = new FloatingBarsLibraryModule();
-		}
+		this.modules.floatingBarsLibraryModule = new FloatingBarsLibraryModule();
 
 		this.modules.elementsColorPicker = new ElementsColorPicker();
 

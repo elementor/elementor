@@ -51,7 +51,7 @@ describe( 'UpdateProps - apply', () => {
 
 		// Act & Assert
 		expect( () => {
-			command.apply( { container, styleDefId: 'not-exited-style-id', meta: { breakpoint: null, state: null }, props: { width: '10px' } } );
+			command.apply( { container, styleDefID: 'not-exited-style-id', meta: { breakpoint: null, state: null }, props: { width: '10px' } } );
 		} ).toThrowError( 'Style Def not found' );
 	} );
 
@@ -81,11 +81,11 @@ describe( 'UpdateProps - apply', () => {
 
 		// Act & Assert
 		expect( () => {
-			command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: null, state: null }, props: { width: '10px' } } );
+			command.apply( { container, styleDefID: 'style-id', meta: { breakpoint: null, state: null }, props: { width: '10px' } } );
 		} ).toThrowError( 'Style Variant not found' );
 	} );
 
-	it( 'should update exited variant with new props, update old ones and delete null or undefined props', () => {
+	it( 'should update exited variant with new props, mutate old ones and delete null or undefined props', () => {
 		const command = new UpdatePropsCommand();
 
 		const bind = 'classes';
@@ -117,11 +117,12 @@ describe( 'UpdateProps - apply', () => {
 				},
 			},
 		} );
+		const originalStyles = { ...container.model.get( 'styles' ) };
 
 		// Act
 		command.apply( {
 			container,
-			styleDefId: 'style-id',
+			styleDefID: 'style-id',
 			meta: { breakpoint: null, state: null },
 			props: {
 				nullToDelete: null,
@@ -151,5 +152,6 @@ describe( 'UpdateProps - apply', () => {
 
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( updatedStyles );
+		expect( container.model.get( 'styles' )[ 'style-id' ] ).toBe( originalStyles[ 'style-id' ] );
 	} );
 } );

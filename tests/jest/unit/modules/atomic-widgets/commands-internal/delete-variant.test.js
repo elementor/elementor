@@ -52,7 +52,7 @@ describe( 'DeleteVariant - apply', () => {
 
 		// Act & Assert
 		expect( () => {
-			command.apply( { container, styleDefId: 'not-exits-style-id', meta: { breakpoint: null, state: null } } );
+			command.apply( { container, styleDefID: 'not-exits-style-id', meta: { breakpoint: null, state: null } } );
 		} ).toThrowError( 'Style Def not found' );
 	} );
 
@@ -82,7 +82,7 @@ describe( 'DeleteVariant - apply', () => {
 		} );
 
 		// Act
-		command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: null, state: null } } );
+		command.apply( { container, styleDefID: 'style-id', meta: { breakpoint: null, state: null } } );
 
 		const updatedStyles = {
 			'style-id': {
@@ -132,7 +132,7 @@ describe( 'DeleteVariant - apply', () => {
 		} );
 
 		// Act
-		command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: 'sm', state: null } } );
+		command.apply( { container, styleDefID: 'style-id', meta: { breakpoint: 'sm', state: null } } );
 
 		const updatedStyles = {
 			'style-id': {
@@ -183,8 +183,8 @@ describe( 'DeleteVariant - apply', () => {
 		} );
 
 		// Act
-		command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: null, state: 'active' } } );
-		command.apply( { container, styleDefId: 'style-id', meta: { breakpoint: 'sm', state: null } } );
+		command.apply( { container, styleDefID: 'style-id', meta: { breakpoint: null, state: 'active' } } );
+		command.apply( { container, styleDefID: 'style-id', meta: { breakpoint: 'sm', state: null } } );
 
 		const updatedStyles = {
 			'style-id': {

@@ -76,7 +76,7 @@ abstract class Module extends Base_Object {
 	 * @access public
 	 * @static
 	 *
-	 * @return Module An instance of the class.
+	 * @return $this An instance of the class.
 	 */
 	public static function instance() {
 		$class_name = static::class_name();
@@ -284,6 +284,25 @@ abstract class Module extends Base_Object {
 		}
 
 		return $this->get_assets_url( $file_name, 'css', $relative_url, $add_min_suffix );
+	}
+
+	/**
+	 * Get Frontend File URL
+	 *
+	 * Returns the URL for the CSS file to be loaded in the front end. If requested via the second parameter, a custom
+	 * file is generated based on a passed template file name. Otherwise, the URL for the default CSS file is returned.
+	 *
+	 * @since 3.24.0
+	 *
+	 * @access public
+	 *
+	 * @param string $file_name
+	 * @param boolean $has_custom_breakpoints
+	 *
+	 * @return string frontend file URL
+	 */
+	public function get_frontend_file_url( $file_name, $has_custom_breakpoints ) {
+		return Plugin::$instance->frontend->get_frontend_file_url( $file_name, $has_custom_breakpoints );
 	}
 
 	/**

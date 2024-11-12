@@ -1,3 +1,5 @@
+import { getVariantByMeta } from '../utils/get-variants';
+
 /**
  * @typedef {import('elementor/assets/dev/js/editor/container/container')} Container
  */
@@ -5,7 +7,7 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		this.requireArgumentConstructor( 'styleDefId', String, args );
+		this.requireArgumentConstructor( 'styleDefID', String, args );
 
 		this.requireArgumentConstructor( 'meta', Object, args );
 
@@ -20,56 +22,35 @@ export class UpdateProps extends $e.modules.editor.CommandContainerInternalBase 
 		}
 	}
 
-	getVariantByMeta( variants, meta ) {
-		return variants.find( ( variant ) => {
-			return variant.meta.breakpoint === meta.breakpoint && variant.meta.state === meta.state;
-		} );
-	}
-
-	updateExistingVariant( style, variant, props ) {
-		variant.props = {
-			...variant.props,
-			...props,
-		};
-
-		Object.entries( variant.props ).forEach( ( [ key, value ] ) => {
+	updateExistingVariant( variant, props ) {
+		Object.entries( props ).forEach( ( [ key, value ] ) => {
 			if ( null === value || undefined === value ) {
 				delete variant.props[ key ];
-			}
-		} );
 
-		return {
-			...style,
-			variants: style.variants.map( ( v ) =>
-				variant.meta.breakpoint === v.breakpoint && variant.meta.state === v.state ? variant : v,
-			),
-		};
+				return;
+			}
+
+			variant.props[ key ] = value;
+		} );
 	}
 
 	apply( args ) {
-		const { container, styleDefId, meta, props } = args;
+		const { container, styleDefID, meta, props } = args;
 
-		const oldStyles = container.model.get( 'styles' ) || {};
-		let style = oldStyles[ styleDefId ];
+		const styles = container.model.get( 'styles' ) || {};
+		const style = styles[ styleDefID ];
 
 		if ( ! style ) {
 			throw new Error( 'Style Def not found' );
 		}
 
-		const variant = this.getVariantByMeta( style.variants, meta );
+		const variant = getVariantByMeta( style.variants, meta );
 
 		if ( ! variant ) {
 			throw new Error( 'Style Variant not found' );
 		}
 
-		style = this.updateExistingVariant( style, variant, props );
-
-		const newStyles = {
-			...oldStyles,
-			[ style.id ]: style,
-		};
-
-		container.model.set( 'styles', newStyles );
+		this.updateExistingVariant( variant, props );
 	}
 }
 

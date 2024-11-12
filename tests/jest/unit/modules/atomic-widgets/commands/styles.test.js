@@ -24,6 +24,8 @@ describe( 'Styles - apply', () => {
 		const CreateStyleCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/create-style' ) ).default;
 		const CreateVariantCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/create-variant' ) ).default;
 		const UpdatePropsCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/update-props' ) ).default;
+		const DeleteVariantCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/delete-variant' ) ).default;
+		const DeleteStyleCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands-internal/delete-style' ) ).default;
 		const SetSettingsCommand = ( await import( 'elementor-document/elements/commands-internal/set-settings' ) ).default;
 
 		// For mocking the randomId method
@@ -39,6 +41,12 @@ describe( 'Styles - apply', () => {
 
 				case 'document/atomic-widgets/update-props':
 					return new UpdatePropsCommand().apply( args );
+
+				case 'document/atomic-widgets/delete-variant':
+					return new DeleteVariantCommand().apply( args );
+
+				case 'document/atomic-widgets/delete-style':
+					return new DeleteStyleCommand().apply( args );
 
 				case 'document/elements/set-settings':
 					return new SetSettingsCommand().apply( args );
@@ -145,7 +153,7 @@ describe( 'Styles - apply', () => {
 		],
 		[
 			'add a new variant to existing style definition and update props',
-			{ styleDefId: 'existing-style-id', bind: 'classes', meta: { breakpoint: null, state: 'active' }, props: { color: 'black' } },
+			{ styleDefID: 'existing-style-id', bind: 'classes', meta: { breakpoint: null, state: 'active' }, props: { color: 'black' } },
 			{
 				label: 'Container',
 				settings: {
@@ -196,7 +204,7 @@ describe( 'Styles - apply', () => {
 		],
 		[
 			'update props without deleting old props',
-			{ styleDefId: 'existing-style-id', bind: 'classes', meta: { breakpoint: null, state: null }, props: { color: 'black' } },
+			{ styleDefID: 'existing-style-id', bind: 'classes', meta: { breakpoint: null, state: null }, props: { color: 'black' } },
 			{
 				label: 'Container',
 				settings: {
@@ -261,5 +269,170 @@ describe( 'Styles - apply', () => {
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( expectedStyles );
 		expect( container.model.get( 'settings' ).toJSON() ).toEqual( expectedSettings );
+	} );
+
+	it( 'should remove variant if empty, and style if no variants left', async () => {
+		const StylesCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands/styles' ) ).default;
+
+		// Arrange
+		// Mock generateId
+		createStyleCommand.randomId = () => 'new-style-id';
+		const container = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '123',
+			label: 'Container',
+			settings: {
+				text: 'Test text',
+			},
+			styles: {},
+		} );
+
+		// Act
+		new StylesCommand().apply( {
+			container,
+			bind: 'classes',
+			meta: { breakpoint: null, state: null },
+			props: { color: 'red' },
+		} );
+		new StylesCommand().apply( {
+			container,
+			bind: 'classes',
+			styleDefID: 'new-style-id',
+			meta: { breakpoint: null, state: 'hover' },
+			props: { color: 'blue' },
+		} );
+
+		// Assert
+		let expectedStyles = {
+			'new-style-id': {
+				id: 'new-style-id',
+				label: 'Container Style 1',
+				type: 'class',
+				variants: [
+					{
+						meta: { breakpoint: null, state: null },
+						props: { color: 'red' },
+					},
+					{
+						meta: { breakpoint: null, state: 'hover' },
+						props: { color: 'blue' },
+					},
+				],
+			},
+		};
+		expect( container.model.get( 'styles' ) ).toEqual( expectedStyles );
+
+		// Act
+		new StylesCommand().apply( {
+			container,
+			bind: 'classes',
+			styleDefID: 'new-style-id',
+			meta: { breakpoint: null, state: null },
+			props: {
+				color: undefined,
+			},
+		} );
+
+		// Assert
+		expectedStyles = {
+			'new-style-id': {
+				id: 'new-style-id',
+				label: 'Container Style 1',
+				type: 'class',
+				variants: [
+					{
+						meta: { breakpoint: null, state: 'hover' },
+						props: { color: 'blue' },
+					},
+				],
+			},
+		};
+		expect( container.model.get( 'styles' ) ).toEqual( expectedStyles );
+
+		// Act
+		new StylesCommand().apply( {
+			container,
+			bind: 'classes',
+			styleDefID: 'new-style-id',
+			meta: { breakpoint: null, state: 'hover' },
+			props: {
+				color: undefined,
+			},
+		} );
+
+		// Assert
+		expectedStyles = {};
+		expect( container.model.get( 'styles' ) ).toEqual( expectedStyles );
+	} );
+
+	it( 'should remove variant only if all props are undefined', async () => {
+		const StylesCommand = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/commands/styles' ) ).default;
+
+		// Arrange
+		// Mock generateId
+		createStyleCommand.randomId = () => 'new-style-id';
+		const container = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '123',
+			label: 'Container',
+			settings: {
+				text: 'Test text',
+			},
+			styles: {
+				'new-style-id': {
+					id: 'new-style-id',
+					label: 'Container Style 1',
+					type: 'class',
+					variants: [
+						{
+							meta: { breakpoint: null, state: null },
+							props: { color: 'red', fontWeight: 'bold' },
+						},
+						{
+							meta: { breakpoint: null, state: 'hover' },
+							props: { color: 'blue' },
+						},
+					],
+				},
+			},
+		} );
+
+		// Act
+		new StylesCommand().apply( {
+			container,
+			bind: 'classes',
+			styleDefID: 'new-style-id',
+			meta: { breakpoint: null, state: null },
+			props: {
+				color: undefined,
+			},
+		} );
+		new StylesCommand().apply( {
+			container,
+			bind: 'classes',
+			styleDefID: 'new-style-id',
+			meta: { breakpoint: null, state: 'hover' },
+			props: {
+				color: undefined,
+			},
+		} );
+
+		// Assert
+		const expectedStyles = {
+			'new-style-id': {
+				id: 'new-style-id',
+				label: 'Container Style 1',
+				type: 'class',
+				variants: [
+					{
+						meta: { breakpoint: null, state: null },
+						props: { fontWeight: 'bold' },
+					},
+				],
+			},
+		};
+		expect( container.model.get( 'styles' ) ).toEqual( expectedStyles );
 	} );
 } );

@@ -322,13 +322,10 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		jQuery.each( editButtons, ( toolName, tool ) => {
-			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title } ),
-				$icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } ),
-				$a11y = jQuery( '<span>', { class: 'elementor-screen-only' } );
+			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title, ariaLabel: tool.title } );
+			const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
 
-			$a11y.text( tool.title );
-
-			$item.append( $icon, $a11y );
+			$item.append( $icon );
 
 			$overlayList.append( $item );
 		} );

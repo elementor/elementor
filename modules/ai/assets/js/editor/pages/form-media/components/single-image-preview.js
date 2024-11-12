@@ -1,4 +1,4 @@
-import { Stack, Box } from '@elementor/ui';
+import { Stack, Box, Skeleton } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 const SingleImagePreview = ( { children, ...props } ) => (
@@ -24,15 +24,12 @@ Actions.propTypes = {
 	children: PropTypes.node.isRequired,
 };
 
-const Image = ( { src, alt, style = {}, children } ) => (
+const Image = ( { src, alt, style = {}, isLoading = false, children } ) => (
 	<Box margin="0 auto">
 		{ children }
-
-		<img
-			src={ src }
-			alt={ alt }
-			style={ { maxWidth: '100%', width: 'auto', maxHeight: '100%', ...style } }
-		/>
+		{ isLoading
+			? <Skeleton sx={ { maxWidth: '100%', width: 'auto', maxHeight: '100%', ...style } } animation={ 'wave' } variant={ 'rounded' } />
+			: <img src={ src } alt={ alt } style={ { maxWidth: '100%', width: 'auto', maxHeight: '100%', ...style } } /> }
 	</Box>
 );
 
@@ -41,6 +38,7 @@ Image.propTypes = {
 	children: PropTypes.node,
 	src: PropTypes.string.isRequired,
 	alt: PropTypes.string.isRequired,
+	isLoading: PropTypes.bool,
 };
 
 SingleImagePreview.Actions = Actions;

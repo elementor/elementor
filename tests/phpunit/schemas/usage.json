@@ -1085,16 +1085,6 @@
 								"css_print_method": "internal"
 							},
 							"experiments": {
-								"e_optimized_css_loading": {
-									"default": "inactive",
-									"state": "default",
-									"tags": [
-										{
-											"type": "default",
-											"label": "Performance"
-										}
-									]
-								},
 								"landing-pages": {
 									"default": "active",
 									"state": "default"

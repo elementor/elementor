@@ -335,23 +335,6 @@ class Manager extends Base_Object {
 
 	private function add_default_features() {
 		$this->add_feature( [
-			'name' => 'e_optimized_css_loading',
-			'title' => esc_html__( 'Improved CSS Loading', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => sprintf(
-				'%1$s <a href="https://go.elementor.com/wp-dash-improved-css-loading/" target="_blank">%2$s</a>',
-				esc_html__( 'Please Note! The “Improved CSS Loading” mode reduces the amount of CSS code that is loaded on the page by default. When activated, the CSS code will be loaded, rather inline or in a dedicated file, only when needed. Activating this experiment may cause conflicts with incompatible plugins.', 'elementor' ),
-				esc_html__( 'Learn more', 'elementor' )
-			),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.3.0',
-			],
-			'generator_tag' => true,
-		] );
-
-		$this->add_feature( [
 			'name' => 'e_font_icon_svg',
 			'title' => esc_html__( 'Inline Font Icons', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
@@ -383,15 +366,12 @@ class Manager extends Base_Object {
 
 		$this->add_feature( [
 			'name' => 'container',
-			'title' => esc_html__( 'Flexbox Container', 'elementor' ),
+			'title' => esc_html__( 'Container', 'elementor' ),
 			'description' => sprintf(
-				esc_html__(
-					'Create advanced layouts and responsive designs with the new %1$sFlexbox Container element%2$s.
-					This experiment replaces the current section/column structure, but you\'ll still keep your existing
-					Sections, Inner Sections and Columns and be able to edit them. Ready to give it a try? Check out the %3$sFlexbox playground%4$s.',
-					'elementor'
-				),
+				esc_html__( 'Create advanced layouts and responsive designs with %1$sFlexbox%2$s and %3$sGrid%4$s container elements. Give it a try using the %5$sContainer playground%6$s.', 'elementor' ),
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">',
+				'</a>',
+				'<a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">',
 				'</a>',
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container-playground/">',
 				'</a>'
@@ -412,30 +392,6 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'container_grid',
-			'title' => esc_html__( 'Grid Container', 'elementor' ),
-			'tag' => esc_html__( 'Feature', 'elementor' ),
-			'description' => sprintf(
-				'%1$s <a target="_blank" href="https://go.elementor.com/wp-dash-grid-container/">%2$s</a>',
-				esc_html__( 'Create pixel perfect layouts by placing elements in a customizable grid. Activate to add the CSS Grid option to container elements.', 'elementor' ),
-				esc_html__( 'Learn more', 'elementor' ),
-			),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-			'dependencies' => [
-				'container',
-			],
-		] );
-
-		$this->add_feature( [
-			'name' => 'e_swiper_latest',
-			'title' => esc_html__( 'Upgrade Swiper Library', 'elementor' ),
-			'description' => esc_html__( 'Prepare your website for future improvements to carousel features by upgrading the Swiper library integrated into your site from v5.36 to v8.45. This experiment includes markup changes so it might require updating custom code and cause compatibility issues with third party plugins.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'default' => self::STATE_ACTIVE,
-		] );
-
-		$this->add_feature( [
 			'name' => 'e_nested_atomic_repeaters',
 			'title' => esc_html__( 'Nested Elements Performance', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
@@ -446,26 +402,11 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'e_optimized_control_loading',
-			'title' => esc_html__( 'Optimized Control Loading', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Use this experiment to improve control loading. This experiment improves site performance by loading controls only when needed.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_BETA,
-			'default' => self::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.22.0',
-			],
-			'generator_tag' => true,
-		] );
-
-		$this->add_feature( [
 			'name' => 'e_optimized_markup',
 			'title' => esc_html__( 'Optimized Markup', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Reduce the DOM size by eliminating HTML tags in various elements and widgets. This experiment includes markup changes so it might require updating custom CSS/JS code and cause compatibility issues with third party plugins.', 'elementor' ),
-			static::TYPE_HIDDEN => true,
-			'release_status' => self::RELEASE_STATUS_DEV,
+			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
 		] );
 
@@ -476,6 +417,19 @@ class Manager extends Base_Object {
 			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_ACTIVE,
+		] );
+
+		// TODO: Possibly remove experiment in v3.27.0 [ED-15717].
+		// Check this reference in Pro: 'sticky_anchor_link_offset'.
+		$this->add_feature( [
+			'name' => 'e_css_smooth_scroll',
+			'title' => esc_html__( 'CSS Smooth Scroll', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'description' => esc_html__( 'Use CSS Smooth Scroll to improve the user experience on your site. This experiment replaces the default JavaScript-based smooth scroll with a CSS-based solution.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_DEV,
+			static::TYPE_HIDDEN => true,
+			'default' => self::STATE_ACTIVE,
+			'mutable' => false,
 		] );
 	}
 

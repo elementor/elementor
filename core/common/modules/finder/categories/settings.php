@@ -50,10 +50,20 @@ class Settings extends Base_Category {
 				'url' => ElementorSettings::get_settings_tab_url( 'general' ),
 				'keywords' => [ 'general', 'settings', 'elementor' ],
 			],
+			'integrations' => [
+				'title' => esc_html__( 'Integrations', 'elementor' ),
+				'url' => ElementorSettings::get_settings_tab_url( 'integrations' ),
+				'keywords' => [ 'integrations', 'settings', 'elementor' ],
+			],
 			'advanced' => [
 				'title' => esc_html__( 'Advanced', 'elementor' ),
 				'url' => ElementorSettings::get_settings_tab_url( 'advanced' ),
 				'keywords' => [ 'advanced', 'settings', 'elementor' ],
+			],
+			'performance' => [
+				'title' => esc_html__( 'Performance', 'elementor' ),
+				'url' => ElementorSettings::get_settings_tab_url( 'performance' ),
+				'keywords' => [ 'performance', 'settings', 'elementor' ],
 			],
 			'experiments' => [
 				'title' => esc_html__( 'Experiments', 'elementor' ),

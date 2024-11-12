@@ -14,6 +14,7 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 				success: resolve,
 				error: reject,
 				data,
+				unique_id: data.unique_id,
 			},
 			immediately,
 		);
@@ -50,6 +51,8 @@ export const getTextToImageGeneration = ( payload ) => request( 'ai_get_text_to_
 
 export const getImageToImageGeneration = ( payload ) => request( 'ai_get_image_to_image', { payload } );
 
+export const getImageToImageMaskCleanup = ( payload ) => request( 'ai_get_image_to_image_mask_cleanup', { payload } );
+
 export const getImageToImageMaskGeneration = ( payload ) => request( 'ai_get_image_to_image_mask', { payload } );
 
 export const getImageToImageOutPainting = ( payload ) => request( 'ai_get_image_to_image_outpainting', { payload } );
@@ -64,7 +67,13 @@ export const getImageToImageRemoveText = ( image ) => request( 'ai_get_image_to_
 
 export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_prompt_enhancer', { prompt } );
 
-export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );
+export const getProductImageUnification = ( payload, immediately ) => request( 'ai_get_product_image_unification', { payload }, immediately );
+
+export const uploadImage = ( image ) => request( 'ai_upload_image', {
+	...image,
+	editor_post_id: image.image.editor_post_id,
+	unique_id: image.image.unique_id,
+} );
 
 /**
  * @typedef {Object} AttachmentPropType - See ./types/attachment.js

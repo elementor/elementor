@@ -5,13 +5,13 @@ export class DeleteStyle extends $e.modules.editor.CommandContainerInternalBase 
 	validateArgs( args ) {
 		this.requireContainer( args );
 
-		this.requireArgumentConstructor( 'styleDefId', String, args );
+		this.requireArgumentConstructor( 'styleDefID', String, args );
 
 		this.requireArgumentConstructor( 'bind', String, args );
 	}
 
 	apply( args ) {
-		const { container, styleDefId, bind } = args;
+		const { container, styleDefID, bind } = args;
 
 		const oldBindSetting = container.settings.get( bind );
 
@@ -22,21 +22,18 @@ export class DeleteStyle extends $e.modules.editor.CommandContainerInternalBase 
 		const newBindSetting = {
 			[ bind ]: {
 				$$type: 'classes',
-				value: oldBindSetting.value.filter( ( id ) => id !== styleDefId ),
+				value: oldBindSetting.value.filter( ( id ) => id !== styleDefID ),
 			},
 		};
 
 		$e.internal( 'document/elements/set-settings', {
 			container,
-			options: {
-				render: false,
-			},
 			settings: newBindSetting,
 		} );
 
 		const styles = container.model.get( 'styles' ) || {};
 
-		delete styles[ styleDefId ];
+		delete styles[ styleDefID ];
 
 		container.model.set( 'styles', styles );
 	}

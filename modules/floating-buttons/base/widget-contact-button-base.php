@@ -29,10 +29,19 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 	}
 
 	public function get_style_depends(): array {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) ) {
-			return parent::get_style_depends();
+		$widget_name = $this->get_name();
+
+		$style_depends = Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' )
+			? parent::get_style_depends()
+			: [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+
+		$style_depends[] = 'widget-contact-buttons-base';
+
+		if ( 'contact-buttons' !== $widget_name ) {
+			$style_depends[] = "widget-{$widget_name}";
 		}
-		return [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+
+		return $style_depends;
 	}
 
 	public function hide_on_search(): bool {
@@ -1129,7 +1138,15 @@ JS;
 							'icon' => 'eicon-h-align-right',
 						],
 					],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons__chat-button svg' => 'order: {{VALUE}};',
+					],
+					'selectors_dictionary' => [
+						'start' => '-1',
+						'end' => '2',
+					],
 					'default' => 'start',
+					'mobile_default' => 'start',
 					'toggle' => true,
 				]
 			);
@@ -2910,7 +2927,7 @@ JS;
 				]
 			);
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'advanced_horizontal_position',
 				[
 					'label' => esc_html__( 'Horizontal Position', 'elementor' ),
@@ -2964,7 +2981,7 @@ JS;
 				);
 			}
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'advanced_vertical_position',
 				[
 					'label' => esc_html__( 'Vertical Position', 'elementor' ),

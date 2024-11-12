@@ -31,6 +31,8 @@
 	--z-index: revert;
 	--overflow: visible;
 	--gap: var(--widgets-spacing, 20px); // Use the gap from `Site Settings` or default to 20px.
+	--row-gap: var(--widgets-spacing-row, 20px);
+	--column-gap: var(--widgets-spacing-column, 20px);
 	--overlay-mix-blend-mode: initial;
 	--overlay-opacity: 1;
 	--overlay-transition: 0.3s;
@@ -161,7 +163,7 @@
 	}
 
 	& > .e-con-inner {
-		gap: var(--gap);
+		gap: var(--row-gap) var(--column-gap);
 		width: 100%;
 		max-width: var(--content-width);
 		margin: 0 auto;
@@ -227,7 +229,7 @@
 	}
 
 	@media (max-width: $screen-mobile-max) {
-		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-phone {
+		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-mobile {
 			display: none;
 		}
 	}
@@ -252,7 +254,7 @@
 		}
 
 		// Fix swiper-based widgets broken (ED-6849).
-		// TODO: Use `:has( .swiper )` or `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
+		// TODO: Use `:has( .swiper )` selector when available && remove this class from `frontend/utils/swiper.js`.
 		&.e-widget-swiper {
 			width: 100%;
 		}
@@ -278,11 +280,22 @@
 			max-width: 100%;
 		}
 	}
+
+	.elementor-widget {
+	
+		&:not(:last-child) {
+			--kit-widget-spacing: 0px;
+		}
+	}
 }
 
 @media (max-width: $editor-screen-sm-max) {
 	.e-con.e-flex {
 		--width: 100%;
 		--flex-wrap: var(--flex-wrap-mobile);
+
+		.elementor-widget-archive-posts {
+			width: 100%;
+		}
 	}
 }
