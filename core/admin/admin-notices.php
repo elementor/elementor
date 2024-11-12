@@ -444,7 +444,7 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
-	private function should_render_woocommerce_hint( $has_forms, $has_woocommerce ) {
+	private function should_render_woocommerce_hint( $has_forms, $has_woocommerce ): bool {
 		if ( ! $has_forms && ! $has_woocommerce ) {
 			return false;
 		}
@@ -453,7 +453,7 @@ class Admin_Notices extends Module {
 			return true;
 		}
 
-		return mt_rand( 0, 1 );
+		return (bool) mt_rand( 0, 1 );
 	}
 
 	private function is_elementor_page(): bool {
