@@ -46,7 +46,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 	// TODO: Replace this check with `is_active_feature` on 3.28.0 to support is_active_feature second parameter.
 	public function show_in_panel(): bool {
-		return  Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
 	}
 
 	protected function tab_content_container( int $index ) {
