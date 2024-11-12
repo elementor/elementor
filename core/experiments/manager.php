@@ -297,7 +297,7 @@ class Manager extends Base_Object {
 			return false;
 		}
 
-		if ( true === $check_dependencies ){
+		if ( $check_dependencies && isset( $feature['dependencies'] ) ){
 			foreach ( $feature['dependencies'] as $dependency ) {
 				$dependent_feature = $this->get_features( $dependency->get_name() );
 				$feature_state = self::STATE_ACTIVE === $this->get_feature_actual_state( $dependent_feature );
