@@ -49,6 +49,7 @@ class Style_Schema {
 			'position' => String_Prop_Type::make()->enum([
 				'static',
 				'relative',
+				'absolute',
 			]),
 			'top' => Size_Prop_Type::make(),
 			'right' => Size_Prop_Type::make(),
