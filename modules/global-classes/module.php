@@ -40,8 +40,6 @@ class Module extends BaseModule {
 			$this->api = new API( new Repository( Plugin::$instance->kits_manager->get_active_kit() ) );
 
 			$this->api->register_hooks();
-
-			do_action( 'rest_api_init' );
 		}
 	}
 

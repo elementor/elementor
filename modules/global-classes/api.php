@@ -170,7 +170,7 @@ class API {
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/create', [
+		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE, [
 			[
 				'methods' => \WP_REST_Server::CREATABLE,
 				'callback' => fn( $request ) => $this->create( $request ),
