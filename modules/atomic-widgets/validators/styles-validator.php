@@ -44,7 +44,7 @@ class Styles_Validator {
 				continue;
 			}
 
-			$this->validate_style( $style );
+			$this->validate_style( $style, $errors_bag, $styles );
 		}
 
 		$is_valid = empty( $errors_bag );
