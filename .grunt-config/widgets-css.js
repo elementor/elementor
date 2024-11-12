@@ -30,9 +30,9 @@ class WidgetsCss {
 	}
 
 	createWidgetsTempScssFiles() {
-		const widgetsCssFilesList = this.getWidgetsScssFilesList();
+		const widgetsScssFilesList = this.getWidgetsScssFilesList();
 
-		widgetsCssFilesList.forEach( ( item ) => {
+		widgetsScssFilesList.forEach( ( item ) => {
 			const widgetScssFileDest = path.join( this.tempScssFolder, item.defaultFilename ),
 				widgetScssRtlFileDest = path.join( this.tempScssFolder, item.rtlFilename );
 
@@ -89,16 +89,6 @@ class WidgetsCss {
 		return this.widgetsScssFilesList;
 	}
 
-	getWidgetsCssFilesList() {
-		if ( Array.isArray( this.widgetsCssFileList ) ) {
-			return this.widgetsCssFileList;
-		}
-
-		this.widgetsCssFileList = this.getModulesWidgetsCssFilesList();
-
-		return this.widgetsCssFileList;
-	}
-
 	getStandAloneWidgetsScssFilesList() {
 		const standAloneWidgetData = [],
 			standAloneWidgetsList = fs.existsSync( this.sourceScssFolder ) ? fs.readdirSync( this.sourceScssFolder ) : [];
@@ -152,6 +142,16 @@ class WidgetsCss {
 		} );
 
 		return frontendScssFiles;
+	}
+
+	getWidgetsCssFilesList() {
+		if ( Array.isArray( this.widgetsCssFileList ) ) {
+			return this.widgetsCssFileList;
+		}
+
+		this.widgetsCssFileList = this.getModulesWidgetsCssFilesList();
+
+		return this.widgetsCssFileList;
 	}
 
 	getModulesWidgetsCssFilesList() {
