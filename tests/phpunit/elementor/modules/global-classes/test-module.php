@@ -54,7 +54,6 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_it__returns_all_global_classes() {
-		$this->assertTrue( false );
 		// Arrange
 		$this->act_as_admin();
 
@@ -77,8 +76,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'items', $classes );
 		$this->assertArrayHasKey( 'order', $classes );
 		$this->assertArrayHasKey( $id, $classes['items'] );
-
-		$this->assertTrue( true );
 	}
 
 	private function experiment_on() {
