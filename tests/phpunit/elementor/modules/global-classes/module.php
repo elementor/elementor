@@ -54,6 +54,7 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_it__returns_all_global_classes() {
+		$this->assertTrue( false );
 		// Arrange
 		$this->act_as_admin();
 
@@ -73,8 +74,6 @@ class Test_Module extends Elementor_Test_Base {
 		$id = $response->get_data()['id'];
 		$classes = $kit->get_json_meta( Repository::META_KEY );
 
-		var_dump( 'classes', $classes );
-		die;
 		$this->assertArrayHasKey( 'items', $classes );
 		$this->assertArrayHasKey( 'order', $classes );
 		$this->assertArrayHasKey( $id, $classes['items'] );
