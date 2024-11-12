@@ -5,7 +5,7 @@ import { Text, Button, Grid } from '@elementor/app-ui';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './filter-indication-text.scss';
-import { NEW_PLAN_TEXTS } from '../models/taxonomy';
+import { NEW_PLAN_TEXTS } from '../models/taxonomy-transformer';
 
 export default function FilterIndicationText( props ) {
 	const selectedTaxonomies = useSelectedTaxonomies( props.queryParams.taxonomies );
