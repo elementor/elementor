@@ -53,7 +53,9 @@ class Test_Module extends Elementor_Test_Base {
 
 
 		// Assert
-		$id = $response->get_data()['id'];
+		$id = $response->get_data();
+		var_dump($response->get_data());
+		die;
 		$classes = $kit->get_json_meta( Repository::META_KEY );
 
 		$this->assertArrayHasKey( 'items', $classes );
