@@ -1,6 +1,6 @@
 import { TIERS } from 'elementor-utils/tiers';
 import { __ } from '@wordpress/i18n';
-import Taxonomy, { SubscriptionPlans, TaxonomyTypes } from './taxonomy';
+import Taxonomy, { SUBSCRIPTION_PLAN, TaxonomyTypes } from './taxonomy';
 
 const FREE = 'free',
 	ESSENTIAL = 'essential',
@@ -71,27 +71,19 @@ export function getTaxonomyFilterItems( taxonomies ) {
 }
 
 export function isKitInTaxonomy( kit, taxonomyType, taxonomies ) {
-	return SubscriptionPlans === taxonomyType
+	return SUBSCRIPTION_PLAN === taxonomyType
 		? taxonomies.includes( TierToKeyMap[ kit.accessTier ] )
 		: taxonomies.some( ( taxonomy ) => kit.taxonomies.includes( taxonomy ) );
 }
 
 function _getFormattedTaxonomyItem( taxonomy ) {
-	if ( ! _isTaxonomySubscriptionByPlan( taxonomy ) ) {
-		return taxonomy;
+	switch ( taxonomy.type ) {
+		case SUBSCRIPTION_PLAN:
+			return _getFormattedSubscriptionByPlanTaxonomy( taxonomy );
+
+		default:
+			return taxonomy;
 	}
-
-	const transformedTaxonomy = new Taxonomy();
-
-	transformedTaxonomy.id = _getFormattedTaxonomyId( _getTaxonomyIdByText( taxonomy.text ) );
-	transformedTaxonomy.text = NewPlanTexts[ transformedTaxonomy.id ];
-	transformedTaxonomy.type = taxonomy.type;
-
-	return transformedTaxonomy;
-}
-
-function _isTaxonomySubscriptionByPlan( taxonomy ) {
-	return SubscriptionPlans === taxonomy.type && Object.values( OldPlanTexts ).includes( taxonomy.text );
 }
 
 function _getTaxonomyIdByText( taxonomyText ) {
@@ -100,4 +92,14 @@ function _getTaxonomyIdByText( taxonomyText ) {
 
 function _getFormattedTaxonomyId( taxonomyId ) {
 	return TaxonomyTransformMap[ taxonomyId ] || taxonomyId;
+}
+
+function _getFormattedSubscriptionByPlanTaxonomy( taxonomy ) {
+	const transformedTaxonomy = new Taxonomy();
+
+	transformedTaxonomy.id = _getFormattedTaxonomyId( _getTaxonomyIdByText( taxonomy.text ) );
+	transformedTaxonomy.text = NewPlanTexts[ transformedTaxonomy.id ] || taxonomy.text;
+	transformedTaxonomy.type = taxonomy.type;
+
+	return transformedTaxonomy;
 }

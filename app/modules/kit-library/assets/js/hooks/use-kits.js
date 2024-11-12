@@ -73,12 +73,12 @@ const kitsPipeFunctions = {
 	 * @return {Array} filtered data
 	 */
 	taxonomiesFilter: ( data, queryParams ) => {
-		const taxonomies = Object.keys( queryParams.taxonomies ).filter( ( taxonomyType ) => queryParams.taxonomies[ taxonomyType ].length );
+		const taxonomyTypes = Object.keys( queryParams.taxonomies ).filter( ( taxonomyType ) => queryParams.taxonomies[ taxonomyType ].length );
 
-		return ! taxonomies.length
+		return ! taxonomyTypes.length
 			? data
 			: data.filter( ( kit ) =>
-				taxonomies.some( ( taxonomyType ) =>
+				taxonomyTypes.some( ( taxonomyType ) =>
 					isKitInTaxonomy( kit, taxonomyType, queryParams.taxonomies[ taxonomyType ] ) ) );
 	},
 

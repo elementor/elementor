@@ -1,7 +1,10 @@
 import BaseModel from './base-model';
 import { __ } from '@wordpress/i18n';
 
-export const SubscriptionPlans = 'subscription_plans';
+export const CATEGORY = 'categories',
+	TAG = 'tags',
+	FEATURE = 'features',
+	SUBSCRIPTION_PLAN = 'subscription_plans';
 
 export const TaxonomyTypes = [
 	{
@@ -21,7 +24,7 @@ export const TaxonomyTypes = [
 		data: [],
 	},
 	{
-		key: SubscriptionPlans,
+		key: SUBSCRIPTION_PLAN,
 		label: __( 'Kits by plan', 'elementor' ),
 		data: [],
 	},
