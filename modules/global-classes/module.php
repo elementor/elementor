@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const NAME = 'global_classes';
-	const API_NAMESPACE = '/elementor/v1';
+	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'global-classes';
 
 	private API $api;
