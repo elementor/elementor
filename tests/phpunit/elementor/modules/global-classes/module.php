@@ -48,6 +48,8 @@ class Test_Module extends Elementor_Test_Base {
 		global $wp_rest_server;
 		$wp_rest_server = false;
 
+		remove_all_actions( 'rest_api_init' );
+
 		Plugin::instance()->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAME, $this->atomic_widgets_experiment_default_state );
 		Plugin::instance()->experiments->set_feature_default_state( Module::NAME, $this->global_classes_experiment_default_state );
 	}
