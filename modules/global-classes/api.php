@@ -191,10 +191,9 @@ class API {
 			[
 				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => fn( $request ) => $this->arrange( $request ),
-				'args' => [
-					'type' => 'array',
-					'required' => true,
-				],
+				'validate_callback' => function( \WP_REST_Request $request ) {
+					return is_array( $request->get_params() );
+				},
 				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
