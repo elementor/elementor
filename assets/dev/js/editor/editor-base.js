@@ -287,7 +287,15 @@ export default class EditorBase extends Marionette.Application {
 			}
 
 			if ( ! this.widgetsCache[ widgetType ].commonMerged && ! this.widgetsCache[ widgetType ].atomic_controls ) {
-				const commonControls = elementor.hooks.applyFilters( 'elements/widget/controls/common/default', this.widgetsCache.common.controls, widgetType );
+				let commonControls = this.widgetsCache.common.controls;
+
+				/**
+				 * Filter widgets common controls.
+				 *
+				 * @param array  commonControls - An array of the default common controls.
+				 * @param string widgetType     - The widget type.
+				 */
+				commonControls = elementor.hooks.applyFilters( 'elements/widget/controls/common/default', commonControls, widgetType );
 				jQuery.extend( this.widgetsCache[ widgetType ].controls, commonControls );
 
 				if ( ! this.widgetsCache[ widgetType ].has_widget_inner_wrapper && elementorCommon.config.experimentalFeatures.e_optimized_markup ) {
