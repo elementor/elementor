@@ -47,7 +47,7 @@ class Test_Module extends Elementor_Test_Base {
 
 		global $wp_rest_server;
 		$wp_rest_server = false;
-		
+
 		Plugin::instance()->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAME, $this->atomic_widgets_experiment_default_state );
 		Plugin::instance()->experiments->set_feature_default_state( Module::NAME, $this->global_classes_experiment_default_state );
 	}
@@ -71,6 +71,9 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		$id = $response->get_data()['id'];
 		$classes = $kit->get_json_meta( Repository::META_KEY );
+
+		var_dump( $classes );
+		die;
 		$this->assertArrayHasKey( 'items', $classes );
 		$this->assertArrayHasKey( 'order', $classes );
 		$this->assertArrayHasKey( $id, $classes['items'] );
