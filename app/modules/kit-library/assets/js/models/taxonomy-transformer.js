@@ -9,7 +9,7 @@ const FREE = 'free',
 	EXPERT = 'expert,',
 	AGENCY = 'agency';
 
-export const OLD_PLAN_TEXTS = {
+export const OldPlanTexts = {
 	[ FREE ]: __( 'Free', 'elementor' ),
 	[ PRO ]: __( 'Pro', 'elementor' ),
 	[ ADVANCED ]: __( 'Advanced', 'elementor' ),
@@ -17,19 +17,19 @@ export const OLD_PLAN_TEXTS = {
 	[ AGENCY ]: __( 'Agency', 'elementor' ),
 };
 
-export const NEW_PLAN_TEXTS = {
+export const NewPlanTexts = {
 	[ FREE ]: __( 'Free', 'elementor' ),
 	[ ESSENTIAL ]: __( 'Essential', 'elementor' ),
 	[ ADVANCED ]: __( 'Advanced & Higher', 'elementor' ),
 };
 
-const TAXONOMY_TRANSFORM_MAP = {
+const TaxonomyTransformMap = {
 	[ PRO ]: ESSENTIAL,
 	[ EXPERT ]: ADVANCED,
 	[ AGENCY ]: ADVANCED,
 };
 
-const TIERS_TO_KEYS_MAP = {
+const TierToKeyMap = {
 	[ TIERS.free ]: FREE,
 	[ TIERS.essential ]: ESSENTIAL,
 	[ TIERS[ 'essential-oct2023' ] ]: ADVANCED,
@@ -72,7 +72,7 @@ export function getTaxonomyFilterItems( taxonomies ) {
 
 export function isKitInTaxonomy( kit, taxonomyType, taxonomies ) {
 	return SubscriptionPlans === taxonomyType
-		? taxonomies.includes( TIERS_TO_KEYS_MAP[ kit.accessTier ] )
+		? taxonomies.includes( TierToKeyMap[ kit.accessTier ] )
 		: taxonomies.some( ( taxonomy ) => kit.taxonomies.includes( taxonomy ) );
 }
 
@@ -84,20 +84,20 @@ function _getFormattedTaxonomyItem( taxonomy ) {
 	const transformedTaxonomy = new Taxonomy();
 
 	transformedTaxonomy.id = _getFormattedTaxonomyId( _getTaxonomyIdByText( taxonomy.text ) );
-	transformedTaxonomy.text = NEW_PLAN_TEXTS[ transformedTaxonomy.id ];
+	transformedTaxonomy.text = NewPlanTexts[ transformedTaxonomy.id ];
 	transformedTaxonomy.type = taxonomy.type;
 
 	return transformedTaxonomy;
 }
 
 function _isTaxonomySubscriptionByPlan( taxonomy ) {
-	return SubscriptionPlans === taxonomy.type && Object.values( OLD_PLAN_TEXTS ).includes( taxonomy.text );
+	return SubscriptionPlans === taxonomy.type && Object.values( OldPlanTexts ).includes( taxonomy.text );
 }
 
 function _getTaxonomyIdByText( taxonomyText ) {
-	return Object.keys( OLD_PLAN_TEXTS ).find( ( id ) => OLD_PLAN_TEXTS[ id ] === taxonomyText );
+	return Object.keys( OldPlanTexts ).find( ( id ) => OldPlanTexts[ id ] === taxonomyText );
 }
 
 function _getFormattedTaxonomyId( taxonomyId ) {
-	return TAXONOMY_TRANSFORM_MAP[ taxonomyId ] || taxonomyId;
+	return TaxonomyTransformMap[ taxonomyId ] || taxonomyId;
 }
