@@ -72,14 +72,14 @@ const TaxonomiesFilterList = ( props ) => {
 						// eslint-disable-next-line jsx-a11y/label-has-associated-control
 						<label key={ taxonomy.text } className="e-kit-library__tags-filter-list-item">
 							<Checkbox
-								checked={ props.selected[ taxonomy.type ]?.includes( taxonomy.text ) || false }
+								checked={ !! props.selected[ taxonomy.type ]?.includes( taxonomy.id || taxonomy.text ) }
 								onChange={ ( e ) => {
 									const checked = e.target.checked;
 									eventTracking( 'kit-library/filter', taxonomy.type, checked, taxonomy.text );
 									props.onSelect( taxonomy.type, ( prev ) => {
 										return checked
-											? [ ...prev, taxonomy.text ]
-											: prev.filter( ( tagId ) => tagId !== taxonomy.text );
+											? [ ...prev, taxonomy.id || taxonomy.text ]
+											: prev.filter( ( tagId ) => ! [ taxonomy.id, taxonomy.text ].includes( tagId ) );
 									} );
 								} } />
 							{ taxonomy.text }
