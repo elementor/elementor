@@ -125,14 +125,14 @@ class API {
 
 
 	private function register_routes() {
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/all', [
+		register_rest_route( Module::API_NAMESPACE, Module::API_BASE . '/all', [
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => fn() => $this->all(),
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/(?P<id>[\w-]+)', [
+		register_rest_route( Module::API_NAMESPACE, Module::API_BASE . '/(?P<id>[\w-]+)', [
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => fn( $request ) => $this->get( $request ),
@@ -145,7 +145,7 @@ class API {
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/delete/(?P<id>[\w-]+)', [
+		register_rest_route( Module::API_NAMESPACE, Module::API_BASE . '/delete/(?P<id>[\w-]+)', [
 			[
 				'methods' => \WP_REST_Server::DELETABLE,
 				'callback' => fn( $request ) => $this->delete( $request ),
@@ -158,7 +158,7 @@ class API {
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/patch/(?P<id>[\w-]+)', [
+		register_rest_route( Module::API_NAMESPACE, Module::API_BASE . '/patch/(?P<id>[\w-]+)', [
 			[
 				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => fn( $request ) => $this->patch( $request ),
@@ -170,7 +170,7 @@ class API {
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE, [
+		register_rest_route( Module::API_NAMESPACE, Module::API_BASE, [
 			[
 				'methods' => \WP_REST_Server::CREATABLE,
 				'callback' => fn( $request ) => $this->create( $request ),
@@ -182,7 +182,7 @@ class API {
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/arrange', [
+		register_rest_route( Module::API_NAMESPACE, Module::API_BASE . '/arrange', [
 			[
 				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => fn( $request ) => $this->arrange( $request ),
