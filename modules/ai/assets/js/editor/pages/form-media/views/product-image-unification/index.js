@@ -71,7 +71,7 @@ const ProductImageUnification = () => {
 	const isError = Object.values( errorMap ).length && Object.values( errorMap ).every( ( { errorGenerating } ) => errorGenerating );
 	const thumbnailThreshold = 10;
 	const exceedThumbnailThreshold = ( products?.images?.length ?? 0 ) - thumbnailThreshold > 0;
-	const selectedProducts = errorlessProducts.filter( ( { data } ) => data.isChecked && ! data.isLoading ).length;
+	const selectedProducts = errorlessProducts.filter( ( { data } ) => data.isChecked && ! data.isLoading );
 	const handleSubmit = useCallback( ( event ) => {
 		event.preventDefault();
 
@@ -117,7 +117,8 @@ const ProductImageUnification = () => {
 					primary={ __( 'Unify images', 'elementor' ) }
 					secondary={ __( 'Select a set of parameters and AI will automate your adjustments:', 'elementor' ) }
 				/>
-				{ isError && <View.ErrorMessage error={ Object.values( errorMap )?.[ 0 ]?.errorGenerating } onRetry={ handleSubmit } /> }
+				{ isError && <View.ErrorMessage error={ Object.values( errorMap )?.[ 0 ]?.errorGenerating }
+					onRetry={ handleSubmit } /> }
 				<Stack gap={ 2 }>
 					<Box
 						sx={ {
@@ -139,9 +140,10 @@ const ProductImageUnification = () => {
 									width: 50,
 									height: 50,
 								} } /> ) }
-						{ ( exceedThumbnailThreshold ) && <Avatar variant="square" sx={ { bgcolor: 'lightgray', width: 50, height: 50 } }>
-							{ ( products?.images?.length ?? 0 ) - ( thumbnailThreshold - 1 ) }
-						</Avatar> }
+						{ ( exceedThumbnailThreshold ) &&
+							<Avatar variant="square" sx={ { bgcolor: 'lightgray', width: 50, height: 50 } }>
+								{ ( products?.images?.length ?? 0 ) - ( thumbnailThreshold - 1 ) }
+							</Avatar> }
 					</Box>
 					<ImageForm onSubmit={ handleSubmit }>
 						<Stack gap={ 2 } sx={ { my: 2.5 } }>
@@ -171,42 +173,63 @@ const ProductImageUnification = () => {
 				</Stack>
 			</View.Panel>
 			<View.Content isGenerating={ isSavingImages }>
-				<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center', minHeight: '76vh' } }>
-					<Box sx={ { flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'center', justifyContent: 'center', overflowX: 'hidden' } }>
+				<Box sx={ {
+					display: 'flex',
+					flexDirection: 'column',
+					height: '100%',
+					alignItems: 'center',
+					justifyContent: 'center',
+					minHeight: '76vh',
+				} }>
+					<Box sx={ {
+						flex: 1,
+						overflowY: 'auto',
+						display: 'flex',
+						flexDirection: 'column',
+						height: '100%',
+						alignItems: 'center',
+						justifyContent: 'center',
+						overflowX: 'hidden',
+					} }>
 						{ wasGeneratedOnce ? <>
-							{ ! isError && errorlessProducts.length > 1 && <Box sx={ {
-								display: 'flex',
-								flexDirection: 'row',
-								alignItems: 'inherit',
-								justifyContent: 'space-between',
-								width: '100%',
-							} }>
-								<Typography variant="body2" color="secondary">
-									{
-										// Translators: %1$d is the number of selected products, %2$d is the total number of products
-										sprintf( __( '%1$d/%2$d selected', 'elementor' ), selectedProducts, products?.images?.length ?? 0 )
-									}
-								</Typography>
-								<Button
-									variant="text"
-									color="secondary"
-									onClick={ () => {
-										setProductsData( ( prevState ) => {
-											const newState = { ...prevState };
-											Object.values( newState ).forEach( ( product ) => {
-												if ( product.data?.isChecked ) {
-													newState[ product.productId ] = {
-														...product,
-														data: { ...product.data, isChecked: false },
-													};
-												}
+							{ errorlessProducts.length > 1 && errorlessProducts.some( ( { data } ) => ! data.isLoading ) &&
+								<Box sx={ {
+									display: 'flex',
+									flexDirection: 'row',
+									alignItems: 'inherit',
+									justifyContent: 'space-between',
+									width: '100%',
+								} }>
+									<Typography variant="body2" color="secondary">
+										{
+											// Translators: %1$d is the number of selected products, %2$d is the total number of products
+											sprintf( __( '%1$d/%2$d selected', 'elementor' ), selectedProducts.length, products?.images?.length ?? 0 )
+										}
+									</Typography>
+									<Button
+										variant="text"
+										color="secondary"
+										onClick={ () => {
+											const isChecked = ! selectedProducts.some( ( product ) => product.data?.isChecked );
+
+											setProductsData( ( prevState ) => {
+												const newState = { ...prevState };
+												Object.values( newState ).forEach( ( product ) => {
+													if ( isChecked !== product.data?.isChecked ) {
+														newState[ product.productId ] = {
+															...product,
+															data: { ...product.data, isChecked },
+														};
+													}
+												} );
+												return newState;
 											} );
-											return newState;
-										} );
-									} }>
-									{ __( 'Clear all', 'elementor' ) }
-								</Button>
-							</Box> }
+										} }>
+										{ selectedProducts.some( ( product ) => product.data?.isChecked )
+											? __( 'Clear all', 'elementor' )
+											: __( 'Select all', 'elementor' ) }
+									</Button>
+								</Box> }
 							<ImagesDisplay
 								images={ errorlessProducts.map( ( product ) => product.data ) }
 								cols={ getCols( errorlessProducts.length ?? 1 ) }
@@ -225,9 +248,9 @@ const ProductImageUnification = () => {
 						/> }
 					</Box>
 					{ wasGeneratedOnce && ! isError && errorlessProducts.length &&
-					errorlessProducts.some( ( { data, errorGenerating, wasGenerated } ) =>
-						data?.isChecked && ! data?.isLoadingResult && ! errorGenerating && wasGenerated ) &&
-						<ImageActions.UseImage onClick={ use } sx={ { alignSelf: 'flex-end', mt: 2 } } />
+						errorlessProducts.some( ( { data, errorGenerating, wasGenerated } ) =>
+							data?.isChecked && ! data?.isLoadingResult && ! errorGenerating && wasGenerated ) &&
+							<ImageActions.UseImage onClick={ use } sx={ { alignSelf: 'flex-end', mt: 2 } } />
 					}
 				</Box>
 			</View.Content>
