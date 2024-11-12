@@ -1,10 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\GlobalClasses;
 
-use Elementor\Core\DocumentTypes\Post;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Core\Kits\Manager;
 use Elementor\Modules\GlobalClasses\API;
 use Elementor\Modules\GlobalClasses\Repository;
 use Elementor\Modules\GlobalClasses\Module;
@@ -48,6 +45,9 @@ class Test_Module extends Elementor_Test_Base {
 	public function tear_down() {
 		parent::tear_down();
 
+		global $wp_rest_server;
+		$wp_rest_server = false;
+		
 		Plugin::instance()->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAME, $this->atomic_widgets_experiment_default_state );
 		Plugin::instance()->experiments->set_feature_default_state( Module::NAME, $this->global_classes_experiment_default_state );
 	}
