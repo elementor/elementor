@@ -10,7 +10,7 @@ class WidgetsCss {
 		this.responsiveWidgets;
 
 		// List of the widgets .scss files.
-		this.widgetsCssFilesList;
+		this.widgetsScssFilesList;
 
 		// Can't be empty.
 		this.cssFilePrefix = 'widget-';
