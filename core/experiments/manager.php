@@ -593,6 +593,7 @@ class Manager extends Base_Object {
 		);
 	}
 
+	
 	private function render_stable_section_title() {
 		?>
 		<hr>
