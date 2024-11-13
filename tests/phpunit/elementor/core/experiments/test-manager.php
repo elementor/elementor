@@ -811,7 +811,6 @@ class Test_Manager extends Elementor_Test_Base {
 			]
 		];
 
-
 		$this->add_test_feature( $dependant );
 		$this->add_test_feature( $dependency_a );
 		$this->add_test_feature( $dependency_b );

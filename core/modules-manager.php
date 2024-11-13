@@ -55,7 +55,7 @@ class Modules_Manager {
 			if ( $experimental_data ) {
 				Plugin::$instance->experiments->add_feature( $experimental_data );
 
-				if ( ! Plugin::$instance->experiments->is_feature_active( $experimental_data['name'], true ) ) {
+				if ( ! Plugin::$instance->experiments->is_feature_active( $experimental_data['name'] ) ) {
 					continue;
 				}
 			}
