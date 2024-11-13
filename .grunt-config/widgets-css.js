@@ -199,7 +199,7 @@ class WidgetsCss {
 					return obj;
 				}
 
-				val = val.replace( this.cssFilePrefix, '' ).replace( '.min.css', '' ).replace( 'widget-', '' );
+				val = val.replace( this.cssFilePrefix, '' ).replace( '.scss', '' );
 
 				return { ...obj, [ val ]: true };
 			}, {} );
