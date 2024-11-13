@@ -38,9 +38,9 @@ export const TierToKeyMap = {
 };
 
 export const PromotionChipText = {
-	[ FREE ]: __( 'Free', 'elementor ' ),
-	[ ESSENTIAL ]: __( 'Essential', 'elementor ' ),
-	[ ADVANCED ]: __( 'Advanced', 'elementor ' ),
+	[ FREE ]: __( 'Free', 'elementor' ),
+	[ ESSENTIAL ]: __( 'Essential', 'elementor' ),
+	[ ADVANCED ]: __( 'Advanced', 'elementor' ),
 };
 
 export function getTaxonomyFilterItems( taxonomies ) {

@@ -51,8 +51,7 @@ const KitListItem = ( props ) => {
 					{
 						<Badge
 							variant="sm"
-							className="e-kit-library__kit-item-subscription-plan-badge"
-							style={ { '--e-a-color-brand': subscriptionPlan.color } }
+							className={ `e-kit-library__kit-item-subscription-plan-badge ${ subscriptionPlan.isPromoted ? 'promoted' : '' }` }
 						>
 							{ badgeLabel }
 						</Badge>

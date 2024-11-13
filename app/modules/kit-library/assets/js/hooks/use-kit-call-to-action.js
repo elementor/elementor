@@ -26,7 +26,7 @@ export default function useKitCallToAction( kitAccessTier ) {
 	const subscriptionPlan = useMemo( () => settings.subscription_plans?.[ kitAccessTier ], [ settings, kitAccessTier ] );
 
 	subscriptionPlan.label = PromotionChipText[ tierKey ];
-	subscriptionPlan.color = TIERS.free === kitAccessTier ? '#467FF7' : '#92003B';
+	subscriptionPlan.isPromoted = TIERS.free !== kitAccessTier;
 
 	const type = useMemo( () => {
 		// The user can apply this kit (the user access level is equal or greater then the kit access level).
