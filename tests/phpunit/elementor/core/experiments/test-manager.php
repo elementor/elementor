@@ -781,6 +781,7 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	/**
+	 * If a feature is dependent on other features, it should be active only if all its dependencies are active.
 	 * @dataProvider get_dependency_data_provider
 	 */
 	public function test__feature_state_depends_on_dependency_states( $dependent_state, $dependency_states, $expected ) {
