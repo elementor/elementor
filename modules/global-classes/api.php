@@ -2,14 +2,15 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Validators\Styles_Validator;
 
 class API {
 	private Repository $repository;
 
-	public function __construct( Repository $repository ) {
-		$this->repository = $repository;
+	public function __construct( Kit $kit ) {
+		$this->repository = new Repository( $kit );
 	}
 
 	public function register_hooks() {
@@ -110,7 +111,9 @@ class API {
 			return new \WP_Error( 'unexpected_error', 'Arranging global classes failed unexpectedly', [ 'status' => 500 ] );
 		}
 
-		if ( ! empty( $all->get_order()->diff( $order ) ) ) {
+		$differences = array_merge( $all->get_order()->diff( $order ), array_diff( $order, $all->get_order()->all() ) );
+
+		if ( ! empty( $differences ) ) {
 			return new \WP_Error( 'invalid_content', 'Global classes order invalid', [ 'status' => 422 ] );
 		}
 
@@ -123,17 +126,17 @@ class API {
 		return new \WP_REST_Response( $updated, 200 );
 	}
 
-
+	// TODO: Add sanitization when implemented on prop types [EDS-574]
 	private function register_routes() {
-		register_rest_route( Module::API_NAMESPACE, Module::API_BASE . '/all', [
+		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE, [
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => fn() => $this->all(),
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, Module::API_BASE . '/(?P<id>[\w-]+)', [
+		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/(?P<id>[\w-]+)', [
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => fn( $request ) => $this->get( $request ),
@@ -143,11 +146,11 @@ class API {
 						'required' => true,
 					],
 				],
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, Module::API_BASE . '/delete/(?P<id>[\w-]+)', [
+		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/(?P<id>[\w-]+)', [
 			[
 				'methods' => \WP_REST_Server::DELETABLE,
 				'callback' => fn( $request ) => $this->delete( $request ),
@@ -157,44 +160,44 @@ class API {
 						'required' => true,
 					],
 				],
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, Module::API_BASE . '/patch/(?P<id>[\w-]+)', [
+		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/(?P<id>[\w-]+)', [
 			[
 				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => fn( $request ) => $this->patch( $request ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
-					[, , $errors ] = Styles_Validator::make( Style_Schema::get() )->validate_style( $request->get_params() );
+					[, , $errors ] = Styles_Validator::make( Style_Schema::get() )->validate_style( $request->get_body_params() );
 
-					return [ 'id' ] === $errors;
+					return empty( $errors ) || [ 'id' ] === $errors;
 				},
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, Module::API_BASE, [
+		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE, [
 			[
 				'methods' => \WP_REST_Server::CREATABLE,
 				'callback' => fn( $request ) => $this->create( $request ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
-					[ , , $errors ] = Styles_Validator::make( Style_Schema::get() )->validate_style( $request->get_params() );
+					[ , , $errors ] = Styles_Validator::make( Style_Schema::get() )->validate_style( $request->get_body_params() );
 
-					return [ 'id' ] === $errors;
+					return empty( $errors ) || [ 'id' ] === $errors;
 				},
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, Module::API_BASE . '/arrange', [
+		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '-order', [
 			[
 				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => fn( $request ) => $this->arrange( $request ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
 					return is_array( $request->get_params() );
 				},
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
 	}

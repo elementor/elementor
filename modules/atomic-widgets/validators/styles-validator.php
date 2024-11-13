@@ -62,10 +62,14 @@ class Styles_Validator {
 	public function validate_style( $style, $errors_bag = [] ): array {
 		if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
 			$errors_bag[] = 'id';
+		}
+
+		if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
+			$errors_bag[] = 'variants';
 
 			return [
 				false,
-				[],
+				$style,
 				$errors_bag,
 			];
 		}
@@ -76,7 +80,7 @@ class Styles_Validator {
 				continue;
 			}
 
-			$errors_bag = $this->validate_meta( $variant['meta'] );
+			$errors_bag = array_merge( $errors_bag, $this->validate_meta( $variant['meta'] ) );
 
 			[,$validated_props, $variant_errors] = Props_Validator::make( $this->schema )->validate( $variant['props'] );
 			$style['variants'][ $variant_index ]['props'] = $validated_props;
