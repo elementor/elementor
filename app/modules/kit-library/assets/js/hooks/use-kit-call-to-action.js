@@ -46,5 +46,5 @@ export default function useKitCallToAction( kitAccessTier ) {
 		return TYPE_APPLY;
 	}, [ settings, kitAccessTier ] );
 
-	return [ type, { subscriptionPlan, badgeLabel: subscriptionPlan.label } ];
+	return { type, subscriptionPlan };
 }

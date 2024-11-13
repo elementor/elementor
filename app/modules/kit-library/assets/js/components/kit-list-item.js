@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
-	const [ type, { subscriptionPlan, badgeLabel } ] = useKitCallToAction( props.model.accessTier );
+	const { type, subscriptionPlan } = useKitCallToAction( props.model.accessTier );
 	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, props.model.id, props.model.title );
 	const ctaText = __( 'Upgrade', 'elementor' );
 	const showPromotion = TYPE_PROMOTION === type;
@@ -53,7 +53,7 @@ const KitListItem = ( props ) => {
 							variant="sm"
 							className={ `e-kit-library__kit-item-subscription-plan-badge ${ subscriptionPlan.isPromoted ? 'promoted' : '' }` }
 						>
-							{ badgeLabel }
+							{ subscriptionPlan.label }
 						</Badge>
 					}
 					<CardOverlay>
