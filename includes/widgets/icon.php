@@ -493,7 +493,7 @@ class Widget_Icon extends Widget_Base {
 
 		let link = '';
 		if ( settings.link.url ) {
-			view.addRenderAttribute( 'link_url', 'href', settings.link.url );
+			view.addRenderAttribute( 'link_url', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
 			link = view.getRenderAttributeString( 'link_url' );
 		}
 
