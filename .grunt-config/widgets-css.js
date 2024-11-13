@@ -150,14 +150,14 @@ class WidgetsCss {
 		// Removing base-folder and first slash so that the module name will be the first value in the path.
 		filePath = filePath.replace( baseFolder, '' ).substring(1);
 
-		const getFileExtensione = ( filePath ) => {
+		const getFileExtension = ( filePath ) => {
 			const match = filePath.match( /\.min\.css$/ );
 			return match ? '.min.css' : path.extname( filePath );
 		};
 
 		const widgetName = isFrontendScssFile
 			? filePath.split( path.sep )[ 0 ]
-			: path.basename( filePath, getFileExtensione( filePath ) );
+			: path.basename( filePath, getFileExtension( filePath ) );
 
 		return {
 			path: filePath.replace( /\\/g, '/' ),
