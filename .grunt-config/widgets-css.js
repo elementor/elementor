@@ -105,6 +105,7 @@ class WidgetsCss {
 				rtlFilename: this.cssFilePrefix + filename.replace( '.scss', '-rtl.scss' ),
 				importPath: `../frontend/widgets/${ widgetName }`,
 				filePath: this.sourceScssFolder + '/' + filename,
+				cssFileName: `${ this.cssFilePrefix }${  filename.replace( '.scss', '' ) }`,
 			} );
 		} );
 
@@ -125,6 +126,7 @@ class WidgetsCss {
 				rtlFilename: this.cssFilePrefix + widgetData.name + '-rtl.scss',
 				importPath: `../../../../modules/${  widgetData.path }`,
 				filePath,
+				cssFileName: `${ this.cssFilePrefix }${ widgetData.name }`,
 			} );
 		} );
 
@@ -145,48 +147,6 @@ class WidgetsCss {
 		} );
 
 		return frontendScssFiles;
-	}
-
-	getWidgetsCssFilesList() {
-		if ( Array.isArray( this.widgetsCssFileList ) ) {
-			return this.widgetsCssFileList;
-		}
-
-		this.widgetsCssFileList = this.getModulesWidgetsCssFilesList();
-
-		return this.widgetsCssFileList;
-	}
-
-	getModulesWidgetsCssFilesList() {
-		const moduleWidgetData = [],
-			moduleWidgetsList = this.getModulesFrontendCssFiles( this.cssDestinationFolder );
-
-		moduleWidgetsList.forEach( ( filePath ) => {
-			const widgetData = this.getWidgetDataFromPath( this.cssDestinationFolder, filePath );
-
-			moduleWidgetData.push( {
-				widgetName: widgetData.name,
-				defaultFilename: widgetData.name + '.min.css',
-				rtlFilename: widgetData.name + '-rtl.min.css',
-				importPath: `../assets/css/${  widgetData.path }`,
-				filePath,
-			} );
-		} );
-
-		return moduleWidgetData;
-	}
-
-	getModulesFrontendCssFiles( filePath, frontendCssFiles = [] ) {
-		fs.readdirSync( filePath ).forEach( ( fileName ) => {
-			const fileFullPath = path.join( filePath, fileName );
-			const isWidgetsCssFile = fileName.endsWith( '.min.css' ) && fileName.includes( 'widget-' ) && ! fileName.includes( '-rtl' );
-
-			if ( isWidgetsCssFile ) {
-				frontendCssFiles.push( fileFullPath );
-			}
-		} );
-
-		return frontendCssFiles;
 	}
 
 	getWidgetDataFromPath( baseFolder, filePath, isFrontendScssFile = false ) {
@@ -215,11 +175,12 @@ class WidgetsCss {
 
 		this.responsiveWidgets = [];
 
-		const widgetsCssFilesList = this.getWidgetsCssFilesList();
+		const widgetsCssFilesList = this.getWidgetsScssFilesList();
 
 		widgetsCssFilesList.forEach( ( item ) => {
-			const widgetSourceFilePath = item.filePath,
-				fileContent = fs.readFileSync( widgetSourceFilePath ).toString();
+			const cssFolder = path.resolve( __dirname, '../assets/css' );
+			const widgetSourceFilePath = path.join( cssFolder, `${ item.cssFileName }.min.css` );
+			const fileContent = fs.readFileSync( widgetSourceFilePath ).toString();
 
 			// Collecting all widgets .scss files that has @media queries in order to create templates files for custom breakpoints.
 			if ( fileContent.indexOf( '@media' ) > -1 ) {
