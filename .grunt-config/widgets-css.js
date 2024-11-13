@@ -80,13 +80,13 @@ class WidgetsCss {
 	}
 
 	getWidgetsCssFilesList() {
-		if ( Array.isArray( this.widgetsCssFilesList ) ) {
-			return this.widgetsCssFilesList;
+		if ( Array.isArray( this.widgetsScssFilesList ) ) {
+			return this.widgetsScssFilesList;
 		}
 
-		this.widgetsCssFilesList = this.getStandAloneWidgetsCssFilesList().concat( this.getModulesWidgetsCssFilesList() );
+		this.widgetsScssFilesList = this.getStandAloneWidgetsCssFilesList().concat( this.getModulesWidgetsCssFilesList() );
 
-		return this.widgetsCssFilesList;
+		return this.widgetsScssFilesList;
 	}
 
 	getStandAloneWidgetsCssFilesList() {
