@@ -36,6 +36,11 @@ class Style_Schema {
 			'min-height' => Size_Prop_Type::make(),
 			'max-width' => Size_Prop_Type::make(),
 			'max-height' => Size_Prop_Type::make(),
+			'overflow' => String_Prop_Type::make()->enum([
+				'visible',
+				'hidden',
+				'auto',
+			]),
 		];
 	}
 
@@ -44,6 +49,8 @@ class Style_Schema {
 			'position' => String_Prop_Type::make()->enum([
 				'static',
 				'relative',
+				'absolute',
+				'fixed',
 			]),
 			'top' => Size_Prop_Type::make(),
 			'right' => Size_Prop_Type::make(),

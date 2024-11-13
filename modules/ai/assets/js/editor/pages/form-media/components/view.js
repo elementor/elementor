@@ -75,7 +75,7 @@ const Content = ( { isLoading = false, isGenerating = false, children, ...props 
 	}
 
 	return (
-		<Box sx={ { overflowY: 'scroll', p: 4 } } flexGrow={ 1 } { ...props }>
+		<Box sx={ { overflowY: 'auto', p: 4 } } flexGrow={ 1 } { ...props }>
 			{ children }
 		</Box>
 	);
