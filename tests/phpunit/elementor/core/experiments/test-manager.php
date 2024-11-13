@@ -817,7 +817,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		// Act.
 		$is_dependant_active = $this->experiments->is_feature_active( $dependant['name'], true );
-		var_dump('exp: ', $expected, 'received: ', $is_dependant_active);
+
 		// Assert.
 		$this->assertEquals( $expected, $is_dependant_active );
 	}
