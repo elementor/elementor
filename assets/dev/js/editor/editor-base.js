@@ -287,10 +287,27 @@ export default class EditorBase extends Marionette.Application {
 			}
 
 			if ( ! this.widgetsCache[ widgetType ].commonMerged && ! this.widgetsCache[ widgetType ].atomic_controls ) {
-				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
+				let commonControls = this.widgetsCache.common.controls;
+
+				/**
+				 * Filter widgets common controls.
+				 *
+				 * @param array  commonControls - An array of the default common controls.
+				 * @param string widgetType     - The widget type.
+				 */
+				commonControls = elementor.hooks.applyFilters( 'elements/widget/controls/common/default', commonControls, widgetType );
+				jQuery.extend( this.widgetsCache[ widgetType ].controls, commonControls );
 
 				if ( ! this.widgetsCache[ widgetType ].has_widget_inner_wrapper && elementorCommon.config.experimentalFeatures.e_optimized_markup ) {
-					jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache[ 'common-optimized' ].controls );
+					let commonOptimizedControls = this.widgetsCache[ 'common-optimized' ].controls;
+					/**
+					 * Filter widgets common-optimized controls.
+					 *
+					 * @param array  commonOptimizedControls - An array of the default common controls.
+					 * @param string widgetType     - The widget type.
+					 */
+					commonOptimizedControls = elementor.hooks.applyFilters( 'elements/widget/controls/common-optimized/default', commonOptimizedControls, widgetType );
+					jQuery.extend( this.widgetsCache[ widgetType ].controls, commonOptimizedControls );
 				}
 
 				this.widgetsCache[ widgetType ].controls = elementor.hooks.applyFilters( 'elements/widget/controls/common', this.widgetsCache[ widgetType ].controls, widgetType, this.widgetsCache[ widgetType ] );
