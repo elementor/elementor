@@ -780,7 +780,6 @@ class Test_Manager extends Elementor_Test_Base {
 
 	}
 
-
 	/**
 	 * If a feature is dependent on other features, it should be active only if all its dependencies are active.
 	 * @dataProvider get_dependency_data_provider
