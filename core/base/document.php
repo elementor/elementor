@@ -1862,13 +1862,13 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( ! empty( $cached_data['content'] ) ) {
-			$content = $cached_data['content'];
+			$content = do_shortcode( $cached_data['content'] );
 
 			if ( has_blocks( $content ) ) {
 				$content = do_blocks( $content );
 			}
 
-			echo do_shortcode( $content ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
