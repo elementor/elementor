@@ -94,7 +94,7 @@ export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
 	);
 }
 
-export function addMixpanelTrackingChecklistFirstAutoOpen() {
+export function dispatchChecklistOpenEvent() {
 	const documentMetaData = getDocumentMetaDataMixpanel();
 
 	return (
