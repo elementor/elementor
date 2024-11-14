@@ -346,6 +346,15 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.25.6 - 2024-11-13 =
+
+* Tweak: Updated `eicons` library to v5.32.0
+* Tweak: Adjusted Kit import flow to allow extendability
+* Tweak: Added extendability functionality to the common Advanced Tab controls
+* Fix: PHP error appears when an undefined color or typography value is used in Site Settings
+* Fix: Permanently deleting a global widget causes a fatal error on pages where it is used
+* Fix: Nested Elements are activated even when the Container experiment is inactive
+
 = 3.25.5 - 2024-11-12 =
 
 * Security Fix: Improved code security enforcement in Post functionality
