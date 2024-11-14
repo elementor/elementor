@@ -29,12 +29,18 @@ const TaxonomyTransformMap = {
 	[ AGENCY ]: ADVANCED,
 };
 
-const TierToKeyMap = {
+export const TierToKeyMap = {
 	[ TIERS.free ]: FREE,
 	[ TIERS.essential ]: ESSENTIAL,
 	[ TIERS[ 'essential-oct2023' ] ]: ADVANCED,
 	[ TIERS.expert ]: ADVANCED,
 	[ TIERS.agency ]: ADVANCED,
+};
+
+export const PromotionChipText = {
+	[ FREE ]: __( 'Free', 'elementor' ),
+	[ ESSENTIAL ]: __( 'Essential', 'elementor' ),
+	[ ADVANCED ]: __( 'Advanced', 'elementor' ),
 };
 
 export function getTaxonomyFilterItems( taxonomies ) {
