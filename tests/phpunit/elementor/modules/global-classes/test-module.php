@@ -75,6 +75,9 @@ class Test_Module extends Elementor_Test_Base {
 
 		global $wp_rest_server;
 		$wp_rest_server = false;
+
+		remove_all_actions( 'rest_api_init' );
+
 		Plugin::$instance->kits_manager->get_active_kit()->delete_meta( Repository::META_KEY );
 	}
 
