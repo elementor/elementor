@@ -78,7 +78,14 @@ class Test_Module extends Elementor_Test_Base {
 
 		remove_all_actions( 'rest_api_init' );
 
+
 		Plugin::$instance->kits_manager->get_active_kit()->delete_meta( Repository::META_KEY );
+	}
+
+	public static function tear_down_after_class() {
+		parent::tear_down_after_class();
+
+		update_option( Plugin::$instance->kits_manager::OPTION_ACTIVE, 0 );
 	}
 
 	public function test_get__returns_all_global_classes() {
