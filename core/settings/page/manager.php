@@ -138,6 +138,11 @@ class Manager extends CSS_Manager {
 		}
 
 		if ( isset( $data['post_featured_image'] ) && post_type_supports( $post->post_type, 'thumbnail' ) ) {
+			// Check if the user is at least an Author before allowing them to modify the thumbnail
+			if ( ! current_user_can( 'publish_posts' ) ) {
+				throw new \Exception( 'You do not have permission to modify the featured image.', Exceptions::FORBIDDEN );
+			}
+
 			if ( empty( $data['post_featured_image']['id'] ) ) {
 				delete_post_thumbnail( $post->ID );
 			} else {
@@ -341,6 +346,15 @@ class Manager extends CSS_Manager {
 		$post = get_post( $parent_id );
 
 		$allowed_post_statuses = get_post_statuses();
+
+		// Restrict contributors to only 'draft' or 'pending' statuses
+		if ( current_user_can( 'edit_posts' ) && ! current_user_can( 'publish_posts' ) ) {
+			if ( $status !== 'draft' && $status !== 'pending' ) {
+				// If the status is not allowed, set it to 'pending' by default
+				$status = 'pending';
+				$post->post_status = $status;
+			}
+		}
 
 		if ( isset( $allowed_post_statuses[ $status ] ) ) {
 			$post_type_object = get_post_type_object( $post->post_type );
