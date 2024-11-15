@@ -31,10 +31,7 @@ module.exports = function( $ ) {
 	}
 
 	// TODO: Remove this check after the Elementor 3.28 release [ED-15983].
-	const isMegaMenuHandlerUpdateExperimentActive = !! elementorFrontendConfig.experimentalFeatures.update_mega_menu_handler_class;
-	const isMegaMenuExperimentActive = !! elementorFrontendConfig.experimentalFeatures[ 'mega-menu' ];
-
-	if ( isMegaMenuExperimentActive && ! isMegaMenuHandlerUpdateExperimentActive ) {
+	if ( elementorFrontendConfig.experimentalFeatures[ 'mega-menu' ] ) {
 		( async () => {
 			const { default: NestedTabsModule } = await import(
 				/* webpackChunkName: 'nested-tabs-module' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs'
