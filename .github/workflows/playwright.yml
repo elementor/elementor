@@ -37,6 +37,9 @@ on:
             required: true
             description: 'Cancel tests when one of them fails'
             default: false
+        tag:
+          description: 'Provide @tag or a keyword'
+          required: false
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -51,7 +54,7 @@ jobs:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
     runs-on: ubuntu-latest
     needs: [build-plugin]
-    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    if: ${{ ( github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff ) && github.event.inputs.tag == '' }}
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
@@ -109,6 +112,56 @@ jobs:
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
+  PlaywrightWithTag:
+    name: Playwright test - tagged tests on PHP 8.0
+    runs-on: ubuntu-latest
+    needs: [ build-plugin ]
+    if: ${{ github.event.inputs.tag }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - name: Install dependencies
+        run: |
+          npm ci
+          sed -i -e "s/image: 'mariadb:lts'/image: 'mariadb:11.2.4-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
+      - name: Update wp-env.json file
+        env:
+          PHP_VERSION: '8.0'
+          WP_CORE_VERSION: 'latest'
+        run: node ./.github/scripts/build-wp-env.js
+      - name: Install WordPress environment
+        run: |
+          npm run start-local-server
+      - name: Setup test data
+        run: npm run test:setup:playwright
+      - name: WordPress debug information
+        run: |
+          npx wp-env run cli wp core version
+          npx wp-env run cli wp --info
+      - name: Install playwright/test
+        run: |
+          npx playwright install chromium
+      - name: Run Playwright tests
+        run: |
+          npm run test:playwright -- --grep="${{ inputs.tag }}" --reporter=list,allure-playwright
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-test-results-tagged-tests
+          path: ${{ inputs.path-to-results || 'test-results/' }}
+          if-no-files-found: ignore
+          retention-days: 2
+
 
   test-result:
     needs: Playwright
