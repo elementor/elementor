@@ -74,9 +74,9 @@ class Module extends BaseModule {
 	}
 
 	private function add_advanced_tab_actions() {
-		$hooks = array(
+		$hooks = [
 			'elementor/element/common/_section_style/after_section_end' => '_css_classes', // Widgets
-		);
+		];
 
 		foreach ( $hooks as $hook => $injection_position ) {
 			add_action(
