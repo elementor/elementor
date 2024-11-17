@@ -46,6 +46,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'atomic_widgets';
 
 	const PACKAGES = [
+		'editor-controls', // TODO: Need to be registered and not enqueued.
 		'editor-editing-panel',
 		'editor-elements', // TODO: Need to be registered and not enqueued.
 		'editor-panels',
