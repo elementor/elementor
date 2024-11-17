@@ -401,7 +401,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( Utils::has_pro() || ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ( Utils::has_pro() && ! $has_woocommerce ) || ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
 
@@ -450,6 +450,10 @@ class Admin_Notices extends Module {
 		}
 
 		if ( ! $has_forms && $has_woocommerce ) {
+			return true;
+		}
+
+		if ( $has_forms && $has_woocommerce && Utils::has_pro() ) {
 			return true;
 		}
 
