@@ -1093,12 +1093,27 @@ class Container extends Element_Base {
 					'relation' => 'or',
 					'terms' => [
 						[
-							'name' => 'background_background',
+							'name' => 'border_hover_border',
 							'operator' => '!==',
 							'value' => '',
 						],
 						[
-							'name' => 'border_hover_border',
+							'name' => 'border_radius_hover[top]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[right]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[bottom]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[left]',
 							'operator' => '!==',
 							'value' => '',
 						],
