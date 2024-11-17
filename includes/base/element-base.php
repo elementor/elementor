@@ -880,6 +880,7 @@ abstract class Element_Base extends Controls_Stack {
 					'type' => Controls_Manager::POPOVER_TOGGLE,
 					'prefix_class' => $transform_prefix_class,
 					'return_value' => $transform_return_value,
+					'control_type' => 'content',
 				]
 			);
 
@@ -920,6 +921,7 @@ abstract class Element_Base extends Controls_Stack {
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
 					],
+					'frontend_available' => true,
 				]
 			);
 
