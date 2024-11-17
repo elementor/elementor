@@ -57,7 +57,7 @@ class Plugins_Manager {
 			$api = Plugin::$instance->wp->plugins_api('plugin_information',
 				[
 					'slug' => $slug,
-					'fields' => array(
+					'fields' => [
 						'short_description' => false,
 						'sections' => false,
 						'requires' => false,
@@ -70,7 +70,7 @@ class Plugins_Manager {
 						'compatibility' => false,
 						'homepage' => false,
 						'donate_link' => false,
-					),
+					],
 				]
 			);
 

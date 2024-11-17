@@ -190,7 +190,7 @@ abstract class Controller extends WP_REST_Controller {
 		register_rest_route( $this->get_namespace(), '/' . $this->get_rest_base(), [
 			[
 				'methods' => WP_REST_Server::READABLE,
-				'callback' => array( $this, 'get_items' ),
+				'callback' => [ $this, 'get_items' ],
 				'args' => [],
 				'permission_callback' => function ( $request ) {
 					return $this->get_permission_callback( $request );
