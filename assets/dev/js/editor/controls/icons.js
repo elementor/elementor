@@ -32,8 +32,9 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 
 		if ( iconSetting.url ) {
-			elementor.helpers.enqueueEditorStylesheet( iconSetting.url );
-			elementor.helpers.enqueuePreviewStylesheet( iconSetting.url );
+			const versionAddedURL = iconSetting.url + '?ver=' + iconSetting?.ver || '';
+			elementor.helpers.enqueueEditorStylesheet( versionAddedURL );
+			elementor.helpers.enqueuePreviewStylesheet( versionAddedURL );
 		}
 	}
 
