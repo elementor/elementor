@@ -733,9 +733,6 @@ class Widget_Common_Base extends Widget_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
-				'condition' => [
-					'_background_hover_background' => [ 'classic', 'gradient' ],
-				],
 				'selectors' => [
 					static::WRAPPER_SELECTOR_CHILD => 'transition: background {{SIZE}}s',
 				],

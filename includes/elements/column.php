@@ -329,9 +329,6 @@ class Element_Column extends Element_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
-				'condition' => [
-					'background_hover_background' => [ 'classic', 'gradient' ],
-				],
 			]
 		);
 
@@ -467,6 +464,14 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
+			]
+		);
+
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
@@ -484,17 +489,6 @@ class Element_Column extends Element_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
-				'condition' => [
-					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'css_filters_hover',
-				'selector' => '{{WRAPPER}}:hover > .elementor-element-populated >  .elementor-background-overlay',
 			]
 		);
 
