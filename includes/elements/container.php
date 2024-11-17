@@ -221,35 +221,6 @@ class Container extends Element_Base {
 		</div><?php
 	}
 
-	protected function render_image_background() {
-		$settings = $this->get_settings_for_display();
-		if ( 'da28c48' !== $this->get_id() ) {
-			return;
-		}
-		?>
-
-			<img src="https://elementor.local/wp-content/uploads/2024/11/Building-hero-img.jpg"
-			     alt="background image"
-			     style="border: none;
-  bottom: 0;
-  box-shadow: none;
-  height: 100%;
-  left: 0;
-  margin: 0;
-  max-height: none;
-  max-width: none;
-  object-fit: cover;
-  outline: none;
-  padding: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 100%;"
-			/>
-
-		<?php
-	}
-
 	/**
 	 * Render the Container's shape divider.
 	 * TODO: Copied from `section.php`.
@@ -316,7 +287,6 @@ class Container extends Element_Base {
 		<?php }
 
 		$this->render_video_background();
-		$this->render_image_background();
 
 		if ( ! empty( $settings['shape_divider_top'] ) ) {
 			$this->render_shape_divider( 'top' );
