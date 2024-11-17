@@ -26,13 +26,14 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
-				elementor.helpers.enqueueEditorStylesheet( assetURL );
-				elementor.helpers.enqueuePreviewStylesheet( assetURL );
+				const versionAddedURL = `${ assetURL }${ iconSetting?.ver ? '?ver=' + iconSetting.ver : '' }`;
+				elementor.helpers.enqueueEditorStylesheet( versionAddedURL );
+				elementor.helpers.enqueuePreviewStylesheet( versionAddedURL );
 			} );
 		}
 
 		if ( iconSetting.url ) {
-			const versionAddedURL = iconSetting.url + '?ver=' + iconSetting?.ver || '';
+			const versionAddedURL = `${ iconSetting.url }${ iconSetting?.ver ? '?ver=' + iconSetting.ver : '' }`;
 			elementor.helpers.enqueueEditorStylesheet( versionAddedURL );
 			elementor.helpers.enqueuePreviewStylesheet( versionAddedURL );
 		}
