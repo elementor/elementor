@@ -404,7 +404,7 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'4.1.4',
+			'4.6.13',
 			true
 		);
 
@@ -521,7 +521,7 @@ class Frontend extends App {
 			'flatpickr',
 			$this->get_css_assets_url( 'flatpickr', 'assets/lib/flatpickr/' ),
 			[],
-			'4.1.4'
+			'4.6.13'
 		);
 
 		wp_register_style(
