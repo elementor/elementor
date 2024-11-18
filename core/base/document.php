@@ -1796,7 +1796,17 @@ abstract class Document extends Controls_Stack {
 	 */
 	protected function print_elements( $elements_data ) {
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
+			ob_start();
+
 			$this->do_print_elements( $elements_data );
+
+			$content = ob_get_clean();
+
+			if ( has_blocks( $content ) ) {
+				$content = do_blocks( $content );
+			}
+
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 			return;
 		}
@@ -1852,7 +1862,13 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( ! empty( $cached_data['content'] ) ) {
-			echo do_shortcode( $cached_data['content'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			$content = do_shortcode( $cached_data['content'] );
+
+			if ( has_blocks( $content ) ) {
+				$content = do_blocks( $content );
+			}
+
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 

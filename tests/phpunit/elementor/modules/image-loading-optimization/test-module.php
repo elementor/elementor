@@ -68,8 +68,10 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		$content = '<img width="800" height="530" src="featured_image.jpg" /><img width="640" height="471" src="image_1.jpg" /><img width="800" height="800" src="image_2.jpg" /><img width="566" height="541" src="image_3.jpg" /><img width="691" height="1024" src="image_4.jpg" />';
 
 		// Update the post content.
-		$updated_post = array( 'ID' => $document->get_main_id(), 'post_content' => $content );
-		wp_update_post( $updated_post );
+		wp_update_post( [
+			'ID' => $document->get_main_id(),
+			'post_content' => $content,
+		] );
 		$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
 		$document->update_main_meta( '_wp_page_template', $page_template );
 

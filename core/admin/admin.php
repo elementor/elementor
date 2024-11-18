@@ -725,14 +725,14 @@ class Admin extends App {
 	}
 
 	private function get_allowed_fields_for_role() {
-		$allowed_fields = array(
+		$allowed_fields = [
 			'post_title',
 			'post_content',
 			'post_excerpt',
 			'post_category',
 			'post_type',
 			'tags_input',
-		);
+		];
 
 		if ( current_user_can( 'publish_posts' ) ) {
 			$allowed_fields[] = 'post_status';
