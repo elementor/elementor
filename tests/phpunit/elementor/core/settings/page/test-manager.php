@@ -19,15 +19,15 @@ class Test_Manager extends Elementor_Test_Base {
      */
     private $manager;
 
-    public function setUp(): void {
-        parent::setUp();
-        $this->manager = new Manager();
-    }
+	public function setUp(): void {
+		parent::setUp();
+		$this->manager = new Manager();
+	}
 
-    public function tearDown(): void {
-        parent::tearDown();
-        $this->manager = null;
-    }
+	public function tearDown(): void {
+		parent::tearDown();
+		$this->manager = null;
+	}
 
 	public function test_ajax_before_save_settings__contributor_can_not_delete_post_thumbnail() {
         // Arrange
