@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Image_Control extends Atomic_Control_Base {
+	// Dummy push.
 
 	public function get_type(): string {
 		return 'image';
