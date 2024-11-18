@@ -6,11 +6,18 @@ use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Validators\Styles_Validator;
 
-class API {
-	private Repository $repository;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Global_Classes_REST_API {
+	const API_NAMESPACE = 'elementor/v1';
+	const API_BASE = 'global-classes';
+
+	private Global_Classes_Repository $repository;
 
 	public function __construct( Kit $kit ) {
-		$this->repository = new Repository( $kit );
+		$this->repository = new Global_Classes_Repository( $kit );
 	}
 
 	public function register_hooks() {
@@ -19,47 +26,47 @@ class API {
 
 	private function all() {
 		try {
-			$all = $this->repository->all();
+			$classes = $this->repository->all();
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Getting global classes failed unexpectedly', [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', __( 'Getting global classes failed unexpectedly', 'elementor' ), [ 'status' => 500 ] );
 		}
 
-		return $all->get();
+		return $classes->get();
 	}
 
-	private function get( $request ) {
+	private function get( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
 
 		try {
-			$one = $this->repository->get( $id );
+			$class = $this->repository->get( $id );
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Getting global class failed unexpectedly', [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', __( 'Getting global class failed unexpectedly', 'elementor' ), [ 'status' => 500 ] );
 		}
 
-		if ( null === $one ) {
-			return new \WP_Error( 'entity_not_found', 'Global class not found', [ 'status' => 404 ] );
+		if ( null === $class ) {
+			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
 		}
 
-		return $one;
+		return $class;
 	}
 
-	private function delete( $request ) {
+	private function delete( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
 
 		try {
-			$one = $this->repository->get( $id );
+			$class = $this->repository->get( $id );
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Deleting global class failed unexpectedly', [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', __( 'Deleting global class failed unexpectedly', 'elementor' ), [ 'status' => 500 ] );
 		}
 
-		if ( null === $one ) {
-			return new \WP_Error( 'entity_not_found', 'Global class not found', [ 'status' => 404 ] );
+		if ( null === $class ) {
+			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
 		}
 
 		try {
 			$this->repository->delete( $id );
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Deleting global class failed unexpectedly', [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', __( 'Deleting global class failed unexpectedly', 'elementor' ), [ 'status' => 500 ] );
 		}
 
 		return new \WP_REST_Response( null, 204 );
@@ -67,27 +74,27 @@ class API {
 
 	private function patch( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
-		$updated = $request->get_params();
+		$values = $request->get_params();
 
-		unset( $updated['id'] );
-
-		try {
-			$one = $this->repository->get( $id );
-		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Updating global class failed unexpectedly', [ 'status' => 500 ] );
-		}
-
-		if ( null === $one ) {
-			return new \WP_Error( 'entity_not_found', 'Global class not found', [ 'status' => 404 ] );
-		}
+		unset( $values['id'] );
 
 		try {
-			$updated = $this->repository->patch( $id, $updated );
+			$class = $this->repository->get( $id );
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Updating global class failed unexpectedly', [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', __( 'Updating global class failed unexpectedly', 'elementor' ), [ 'status' => 500 ] );
 		}
 
-		return new \WP_REST_Response( $updated, 200 );
+		if ( null === $class ) {
+			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
+		}
+
+		try {
+			$values = $this->repository->patch( $id, $values );
+		} catch ( \Exception $e ) {
+			return new \WP_Error( 'unexpected_error', __( 'Updating global class failed unexpectedly', 'elementor' ), [ 'status' => 500 ] );
+		}
+
+		return new \WP_REST_Response( $values, 200 );
 	}
 
 	private function create( \WP_REST_Request $request ) {
@@ -96,31 +103,31 @@ class API {
 		try {
 			$new = $this->repository->create( $class );
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Creating global class failed unexpectedly', [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', __( 'Creating global class failed unexpectedly', 'elementor' ), [ 'status' => 500 ] );
 		}
 
 		return new \WP_REST_Response( $new, 201 );
 	}
 
-	private function arrange( $request ) {
+	private function arrange( \WP_REST_Request $request ) {
 		$order = $request->get_params();
 
 		try {
-			$all = $this->repository->all();
+			$classes = $this->repository->all();
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Arranging global classes failed unexpectedly', [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', __( 'Arranging global classes failed unexpectedly', 'elementor' ), [ 'status' => 500 ] );
 		}
 
-		$differences = array_merge( $all->get_order()->diff( $order ), array_diff( $order, $all->get_order()->all() ) );
+		$differences = array_merge( $classes->get_order()->diff( $order ), array_diff( $order, $classes->get_order()->all() ) );
 
 		if ( ! empty( $differences ) ) {
-			return new \WP_Error( 'invalid_content', 'Global classes order invalid', [ 'status' => 422 ] );
+			return new \WP_Error( 'invalid_content', __( 'Global classes order invalid', 'elementor' ), [ 'status' => 422 ] );
 		}
 
 		try {
 			$updated = $this->repository->arrange( $order );
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', 'Arranging global classes failed unexpectedly', [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', __( 'Arranging global classes failed unexpectedly', 'elementor' ), [ 'status' => 500 ] );
 		}
 
 		return new \WP_REST_Response( $updated, 200 );
@@ -128,7 +135,7 @@ class API {
 
 	// TODO: Add sanitization when implemented on prop types [EDS-574]
 	private function register_routes() {
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE, [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => fn() => $this->all(),
@@ -136,7 +143,7 @@ class API {
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/(?P<id>[\w-]+)', [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => fn( $request ) => $this->get( $request ),
@@ -150,7 +157,7 @@ class API {
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/(?P<id>[\w-]+)', [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
 			[
 				'methods' => \WP_REST_Server::DELETABLE,
 				'callback' => fn( $request ) => $this->delete( $request ),
@@ -164,7 +171,7 @@ class API {
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '/(?P<id>[\w-]+)', [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
 			[
 				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => fn( $request ) => $this->patch( $request ),
@@ -177,7 +184,7 @@ class API {
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE, [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
 				'methods' => \WP_REST_Server::CREATABLE,
 				'callback' => fn( $request ) => $this->create( $request ),
@@ -190,7 +197,7 @@ class API {
 			],
 		] );
 
-		register_rest_route( Module::API_NAMESPACE, '/' . Module::API_BASE . '-order', [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '-order', [
 			[
 				'methods' => \WP_REST_Server::EDITABLE,
 				'callback' => fn( $request ) => $this->arrange( $request ),

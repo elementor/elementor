@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Repository {
+class Global_Classes_Repository {
 	const META_KEY = '_elementor_global_classes';
 
 	private Kit $kit;

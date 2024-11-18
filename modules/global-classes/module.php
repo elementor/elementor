@@ -13,10 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const NAME = 'global_classes';
-	const API_NAMESPACE = 'elementor/v1';
-	const API_BASE = 'global-classes';
 
-	private API $api;
+	private Global_Classes_REST_API $api;
 
 	// TODO: Add global classes package
 	const PACKAGES = [];
@@ -43,7 +41,7 @@ class Module extends BaseModule {
 				$kit = Plugin::$instance->kits_manager->get_active_kit();
 			}
 
-			$this->api = new API( $kit );
+			$this->api = new Global_Classes_REST_API( $kit );
 
 			$this->api->register_hooks();
 		}
