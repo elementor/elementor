@@ -120,7 +120,7 @@ class Test_Manager extends Elementor_Test_Base {
         $this->assertEquals( 0, get_post_thumbnail_id($post_id));
     }
 
-    public function test_save_post_status_admin__can_set_private_post_status() {
+    public function test_save_post_status__admin_can_set_private_post_status() {
         // Arrange
         $this->act_as_admin();
 
