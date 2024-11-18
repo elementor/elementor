@@ -368,7 +368,7 @@ class Manager extends CSS_Manager {
 	}
 
 	private function has_invalid_post_status_for_contributor( $status ): bool {
-		return $status !== 'draft' && $status !== 'pending';
+		return 'draft' !== $status && 'pending' !== $status;
 	}
 
 }
