@@ -19,30 +19,27 @@ class Test_Manager extends Elementor_Test_Base {
      */
     private $manager;
 
-    public function setUp(): void
-    {
+    public function setUp(): void {
         parent::setUp();
         $this->manager = new Manager();
     }
 
-    public function tearDown(): void
-    {
+    public function tearDown(): void {
         parent::tearDown();
-
         $this->manager = null;
     }
 
-	public function testContributorCanNotDeletePostThumbnail() {
+	public function test_ajax_before_save_settings_contributor_can_not_delete_post_thumbnail() {
         // Arrange
         $this->act_as('contributor');
 
-        $ost_data = [
+        $post_data = [
             'post_author' => get_current_user_id(),
             'post_status' => 'pending',
             'post_type' => 'post',
         ];
 
-		$document_post = $this->create_post_with_data( $ost_data );
+		$document_post = $this->create_post_with_data( $post_data );
 
 		$data = [
 			'post_title' => 'Test Post Title',
@@ -60,17 +57,17 @@ class Test_Manager extends Elementor_Test_Base {
         $this->manager->ajax_before_save_settings( $data, $post_id );
 	}
 
-    public function testContributorCanNotSetPostStatusPrivate() {
+    public function test_save_post_status_contributor_can_not_set_post_status_private() {
         // Arrange
         $this->act_as('contributor');
 
-        $ost_data = [
+        $post_data = [
             'post_author' => get_current_user_id(),
             'post_status' => 'pending',
             'post_type' => 'post',
         ];
 
-        $document_post = $this->create_post_with_data( $ost_data );
+        $document_post = $this->create_post_with_data( $post_data );
         $post_id = $document_post->get_id();
 
         $data = [
@@ -88,7 +85,7 @@ class Test_Manager extends Elementor_Test_Base {
         $this->assertEquals( 'pending', $post_status );
     }
 
-    public function testAdminCanDeletePostThumbnail() {
+    public function test_ajax_before_save_settings_admin_can_delete_post_thumbnail() {
         // Arrange
         $this->act_as_admin();
 
@@ -123,17 +120,17 @@ class Test_Manager extends Elementor_Test_Base {
         $this->assertEquals( 0, get_post_thumbnail_id($post_id));
     }
 
-    public function testAdminCanSetPrivatePostStatuses() {
+    public function test_save_post_status_admin_can_set_private_post_status() {
         // Arrange
         $this->act_as_admin();
 
-        $ost_data = [
+        $post_data = [
             'post_author' => get_current_user_id(),
             'post_status' => 'pending',
             'post_type' => 'post',
         ];
 
-        $document_post = $this->create_post_with_data( $ost_data );
+        $document_post = $this->create_post_with_data( $post_data );
         $post_id = $document_post->get_id();
 
         $data = [
