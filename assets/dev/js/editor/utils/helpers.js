@@ -138,14 +138,16 @@ module.exports = {
 
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
-				this.enqueuePreviewStylesheet( assetURL );
-				this.enqueueEditorStylesheet( assetURL );
+				const versionAddedURL = `${ assetURL }${ iconSetting?.ver ? '?ver=' + iconSetting.ver : '' }`;
+				this.enqueuePreviewStylesheet( versionAddedURL );
+				this.enqueueEditorStylesheet( versionAddedURL );
 			} );
 		}
 
 		if ( iconSetting.url ) {
-			this.enqueuePreviewStylesheet( iconSetting.url );
-			this.enqueueEditorStylesheet( iconSetting.url );
+			const versionAddedURL = `${ iconSetting.url }${ iconSetting?.ver ? '?ver=' + iconSetting.ver : '' }`;
+			this.enqueuePreviewStylesheet( versionAddedURL );
+			this.enqueueEditorStylesheet( versionAddedURL );
 		}
 
 		this._enqueuedIconFonts.push( iconType );
