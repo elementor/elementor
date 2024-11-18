@@ -126,6 +126,7 @@ class Modules_Manager {
 			'global-classes',
 			'wc-product-editor',
 			'checklist',
+			'playing-cards',
 		];
 	}
 
