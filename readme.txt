@@ -346,6 +346,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.25.7 - 2024-11-18 =
+
+* Security Fix: Improved code security enforcement in Post functionality
+
 = 3.25.6 - 2024-11-13 =
 
 * Tweak: Updated `eicons` library to v5.32.0
