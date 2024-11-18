@@ -51,10 +51,14 @@
 			.e-con-preset {
 				cursor: pointer;
 				flex-basis: 90px;
-				padding: 0;
-				margin: 0;
-				border: none;
-				outline: none;
+				padding: unset;
+				margin: unset;
+				border: unset;
+				border-radius: unset;
+				outline: unset;
+				box-shadow: unset;
+				text-shadow: unset;
+				background-color: unset;
 
 				svg {
 					width: 100%;
@@ -78,6 +82,11 @@
 
 				&:hover,
 				&:focus {
+					border: unset;
+					border-radius: unset;
+					box-shadow: unset;
+					text-shadow: unset;
+					border-radius: 50%;		
 					background-color: transparent;
 
 					path {
