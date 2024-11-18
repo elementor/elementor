@@ -98,6 +98,13 @@ const sass = {
 				dest: 'assets/css/templates',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'modules/playing-cards/assets/scss',
+				src: 'frontend.scss',
+				dest: 'assets/css/modules/playing-cards',
+				ext: '.css',
+			},
 		]
 	}
 };
