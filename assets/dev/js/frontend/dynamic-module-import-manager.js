@@ -11,7 +11,7 @@ export default class DynamicModuleImportManager extends elementorModules.ViewMod
 	}
 
 	getActiveModuleScripts() {
-		return !! elementorScriptModuleImports ? elementorScriptModuleImports : [];
+		return ! elementorFrontend.isEditMode() && !! elementorScriptModuleImports ? elementorScriptModuleImports : [];
 	}
 
 	getFrontendObject( objectName ) {
@@ -36,8 +36,10 @@ export default class DynamicModuleImportManager extends elementorModules.ViewMod
 	}
 
 	loadActiveModuleScripts() {
+		const isVersionBefore328 = true;
+
 		this.registeredModuleScripts.forEach( ( script ) => {
-			if ( this.activeModuleScripts.includes( script.moduleKey ) ) {
+			if ( isVersionBefore328 || elementorFrontend.isEditMode() || this.activeModuleScripts.includes( script.moduleKey ) ) {
 				( async () => {
 					const { default: ScriptModule } = await script.importFunction();
 
