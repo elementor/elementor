@@ -1,7 +1,7 @@
 /* global elementorFrontendConfig */
 import '../public-path';
 import DocumentsManager from './documents-manager';
-import DynamicModuleImportManager from "./dynamic-module-import-manager";
+import DynamicModuleImportManager from './dynamic-module-import-manager';
 import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';

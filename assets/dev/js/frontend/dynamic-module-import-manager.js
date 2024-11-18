@@ -4,7 +4,7 @@ export default class DynamicModuleImportManager extends elementorModules.ViewMod
 			{
 				moduleKey: 'carousel-base',
 				moduleName: 'CarouselBase',
-				frontendObject: 'frontend-handlers',
+				frontendObject: 'frontendHandlers',
 				importFunction: () => import( /* webpackChunkName: 'carouselBaseHandler' */ './handlers/base-carousel' ),
 			},
 		];
@@ -18,7 +18,7 @@ export default class DynamicModuleImportManager extends elementorModules.ViewMod
 		let frontendObject = null;
 
 		switch ( objectName ) {
-			case 'frontend-handlers':
+			case 'frontendHandlers':
 				frontendObject = elementorModules.frontend.handlers;
 				break;
 			case 'utils':
@@ -36,6 +36,7 @@ export default class DynamicModuleImportManager extends elementorModules.ViewMod
 	}
 
 	loadActiveModuleScripts() {
+		// TODO: Remove this in version 3.28 [ED-15983].
 		const isVersionBefore328 = true;
 
 		this.registeredModuleScripts.forEach( ( script ) => {
