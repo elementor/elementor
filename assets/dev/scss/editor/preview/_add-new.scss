@@ -91,7 +91,8 @@
 	transition: var(--e-a-transition-hover);
 	cursor: pointer;
 
-	&:hover {
+	&:hover,
+	&:focus {
 		background-color: var(--e-a-bg-active-bold);
 		color: var(--e-a-color-black);
 	}
@@ -104,7 +105,8 @@
 		background-color: var(--e-a-btn-bg-primary);
 		color: var(--e-a-btn-color);
 
-		&:hover {
+		&:hover,
+		&:focus {	
 			background-color: var(--e-a-btn-bg-primary-hover);
 			color: var(--e-a-btn-color);
 		}
@@ -131,52 +133,83 @@
 	text-transform: uppercase;
 }
 
+.elementor-add-section-close,
+.elementor-add-section-back,
+.flex-preset-button,
+.grid-preset-button {
+	padding: 0;
+	margin: 0;
+	border: none;
+	outline: none;
+	color: var(--e-a-color-txt);
+	background-color: transparent;
+}
+
 .elementor-add-section-close {
-	right: 40px;
+	inset-inline-end: 40px;
 }
 
 .elementor-add-section-back {
-	left: 40px;
+	inset-inline-start: 40px;
+	@if 'rtl' == $direction {
+		transform: scaleX(-1);
+	}
 }
 
-.elementor-wizard-icon {
+.elementor-add-section-close,
+.elementor-add-section-back {
 	position: absolute;
-	top: 40px;
+	inset-block-start: 40px;
 	font-size: 20px;
 	cursor: pointer;
 	line-height: 1;
 	color: var(--e-a-color-txt);
+	border-radius: 50%;
 
-	&:hover {
+	&:hover,
+	&:focus {
+		background-color: var(--e-a-bg-hover);
+		color: var(--e-a-color-txt-hover);
+	}
+}
+
+.flex-preset-button,
+.grid-preset-button {
+
+	&:hover,
+	&:focus {
+		background-color: transparent;
 		color: var(--e-a-color-txt-hover);
 	}
 }
 
 .elementor-select-preset-list {
-	list-style: none;
-	padding: 0 25px;
-	margin: 20px auto 0;
-	overflow: hidden;
+	display: flex;
+	gap: 20px;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+    margin: 20px auto 0;
 	max-width: 700px;
 
 	.elementor-preset {
 		cursor: pointer;
+		flex-basis: 90px;
+		padding: 0;
 		margin: 0;
-		padding: 10px;
-		float: $start;
-		max-width: 33.333%;
+		border: none;
+		outline: none;
 
-		&:not(:hover) {
-
-			path,
-			rect {
-				fill: var(--e-a-bg-active-bold);
-				transition: .3s all;
-			}
+		path,
+		rect {
+			fill: var(--e-a-bg-active-bold);
+			transition: .3s all;
 		}
 
-		&:hover {
-
+		&:hover,
+		&:focus {
+			background-color: transparent;
+	
 			path,
 			rect {
 				fill: var(--e-a-color-txt);
@@ -210,6 +243,7 @@
 		}
 	}
 }
+
 .elementor-add-section {
 
 	&[data-view="choose-action"] {

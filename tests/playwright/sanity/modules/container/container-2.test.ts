@@ -196,7 +196,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Test wizard flex container', async () => {
 			await frame.locator( '.elementor-add-section-button' ).click();
 			await frame.locator( '.flex-preset-button' ).click();
-			const flexList = frame.locator( '.e-con-select-preset__list' );
+			const flexList = frame.locator( '.e-con-select-preset-flex .e-con-select-preset__list' );
 			await expect.soft( flexList ).toBeVisible();
 			await frame.locator( '.elementor-add-section-close' ).click();
 		} );
@@ -204,7 +204,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Test wizard grid container', async () => {
 			await frame.locator( '.elementor-add-section-button' ).click();
 			await frame.locator( '.grid-preset-button' ).click();
-			const gridList = frame.locator( '.e-con-select-preset-grid__list' );
+			const gridList = frame.locator( '.e-con-select-preset-grid .e-con-select-preset__list' );
 			await expect.soft( gridList ).toBeVisible();
 		} );
 	} );
