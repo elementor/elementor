@@ -347,7 +347,7 @@ class Manager extends CSS_Manager {
 
 		$allowed_post_statuses = get_post_statuses();
 
-		if ( $this->is_contributor_user() &&  $this->has_invalid_post_status_for_contributor( $status ) ) {
+		if ( $this->is_contributor_user() && $this->has_invalid_post_status_for_contributor( $status ) ) {
 			// If the status is not allowed, set it to 'pending' by default
 			$status = 'pending';
 			$post->post_status = $status;
