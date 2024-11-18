@@ -402,6 +402,7 @@ class Manager extends Base_Object {
 			],
 		] );
 
+		// TODO: Remove this experiment in v3.28 [ED-15983].
 		$this->add_feature( [
 			'name' => 'e_swiper_latest',
 			'title' => esc_html__( 'Upgrade Swiper Library', 'elementor' ),
