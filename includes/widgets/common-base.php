@@ -624,6 +624,34 @@ class Widget_Common_Base extends Widget_Base {
 			]
 		);
 
+		if ( ! Utils::has_pro() ) {
+			$this->add_control(
+				'ai_animation',
+				[
+					'label' => esc_html__( 'Animate With AI', 'elementor' ),
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => '
+<style>
+  .elementor-control-ai_animation .elementor-control-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .elementor-control-ai_animation .elementor-control-raw-html {
+  	display: none;
+  }
+</style>',
+					'default' => '',
+					'render_type' => 'none',
+					'frontend_available' => true,
+					'ai' => [
+						'active' => true,
+						'type' => 'animation',
+					],
+				]
+			);
+		}
+
 		Plugin::$instance->controls_manager->add_motion_effects_promotion_control( $this );
 
 		$this->add_responsive_control(

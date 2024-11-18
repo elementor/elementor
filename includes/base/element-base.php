@@ -873,6 +873,34 @@ abstract class Element_Base extends Controls_Stack {
 				]
 			);
 
+			if ( $state === ':hover' ) {
+				$this->add_control(
+					'ai_hover_animation',
+					[
+						'label' => esc_html__( 'Animate With AI', 'elementor' ),
+						'type' => Controls_Manager::RAW_HTML,
+						'raw' => '
+<style>
+  .elementor-control-ai_hover_animation .elementor-control-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .elementor-control-ai_hover_animation .elementor-control-raw-html {
+  	display: none;
+  }
+</style>',
+						'default' => '',
+						'render_type' => 'none',
+						'frontend_available' => true,
+						'ai' => [
+							'active' => true,
+							'type' => 'hover_animation',
+						],
+					]
+				);
+			}
+
 			$this->add_control(
 				"_transform_rotate_popover{$tab}",
 				[

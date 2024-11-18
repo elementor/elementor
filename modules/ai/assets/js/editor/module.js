@@ -177,6 +177,28 @@ export default class Module extends elementorModules.editor.utils.Module {
 			};
 		}
 
+		if ( [ 'animation', 'hover_animation' ].includes( aiOptions.type ) ) {
+			behaviors = {
+				ai: {
+					behaviorClass: AiBehavior,
+					type: aiOptions.type,
+					getControlValue: () => '',
+					buttonLabel: __( 'Animate with AI', 'elementor' ),
+					setControlValue: ( settings ) => {
+						$e.run( 'document/elements/settings', {
+							container: view.container,
+							settings,
+						} );
+					},
+					isLabelBlock: true,
+					additionalOptions: {
+						defaultValue: view.options.model.get( 'default' ),
+					},
+					context: this.getContextData( view, controlType ),
+				},
+			};
+		}
+
 		return behaviors;
 	}
 

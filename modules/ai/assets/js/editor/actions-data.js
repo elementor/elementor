@@ -73,3 +73,11 @@ export const translateLanguages = [
 	{ label: __( 'Turkish', 'elementor' ), value: 'tr-TR' },
 	{ label: __( 'Vietnamese', 'elementor' ), value: 'vi-VN' },
 ];
+
+export const motionEffectAutocomplete = [
+	__( 'Create Fade out animation on scroll', 'elementor' ),
+	__( 'Create a Parallax effect on scroll', 'elementor' ),
+	__( 'Fade in with slight scaling up on scroll', 'elementor' ),
+	__( 'Move and tilt opposite to mouse position', 'elementor' ),
+	__( 'Slide in from the left on load ', 'elementor' ),
+];

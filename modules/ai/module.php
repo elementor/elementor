@@ -80,6 +80,7 @@ class Module extends BaseModule {
 				'ai_delete_history_item' => [ $this, 'ajax_ai_delete_history_item' ],
 				'ai_toggle_favorite_history_item' => [ $this, 'ajax_ai_toggle_favorite_history_item' ],
 				'ai_get_product_image_unification' => [ $this, 'ajax_ai_get_product_image_unification' ],
+				'ai_get_animation' => [ $this, 'ajax_ai_get_animation' ],
 			];
 
 			foreach ( $handlers as $tag => $callback ) {
@@ -1318,6 +1319,35 @@ class Module extends BaseModule {
 
 		return [
 			'images' => $result['images'],
+			'response_id' => $result['responseId'],
+			'usage' => $result['usage'],
+		];
+	}
+
+	public function ajax_ai_get_animation( $data ): array {
+		$app = $this->get_ai_app();
+
+		if ( empty( $data['payload']['prompt'] ) ) {
+			throw new \Exception( 'Missing prompt' );
+		}
+
+		if ( empty( $data['payload']['motionEffectType'] ) ) {
+			throw new \Exception( 'Missing animation type' );
+		}
+
+		if ( ! $app->is_connected() ) {
+			throw new \Exception( 'not_connected' );
+		}
+
+		$context = $this->get_request_context( $data );
+
+		$request_ids = $this->get_request_ids( $data['payload'] );
+
+		$result = $app->get_animation( $data, $context, $request_ids );
+		$this->throw_on_error( $result );
+
+		return [
+			'text' => $result['text'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
 		];
