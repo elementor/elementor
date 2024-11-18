@@ -92,6 +92,10 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'e-swiper', 'widget-image-carousel' ];
 	}
 
+	public function get_script_depends(): array {
+		return [ 'import-script-carousel-base' ];
+	}
+
 	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
