@@ -347,13 +347,10 @@ class Manager extends CSS_Manager {
 
 		$allowed_post_statuses = get_post_statuses();
 
-		// Restrict contributors to only 'draft' or 'pending' statuses
-		if ( current_user_can( 'edit_posts' ) && ! current_user_can( 'publish_posts' ) ) {
-			if ( $status !== 'draft' && $status !== 'pending' ) {
-				// If the status is not allowed, set it to 'pending' by default
-				$status = 'pending';
-				$post->post_status = $status;
-			}
+		if ( $this->is_contributor_user() &&  $this->has_invalid_post_status_for_contributor( $status ) ) {
+			// If the status is not allowed, set it to 'pending' by default
+			$status = 'pending';
+			$post->post_status = $status;
 		}
 
 		if ( isset( $allowed_post_statuses[ $status ] ) ) {
@@ -365,4 +362,13 @@ class Manager extends CSS_Manager {
 
 		wp_update_post( $post );
 	}
+
+	public function is_contributor_user(): bool {
+		return current_user_can( 'edit_posts' ) && ! current_user_can( 'publish_posts' );
+	}
+
+	public function has_invalid_post_status_for_contributor( $status ): bool {
+		return $status !== 'draft' && $status !== 'pending';
+	}
+
 }
