@@ -2,16 +2,31 @@ export default class DynamicModuleImportManager extends elementorModules.ViewMod
 	getRegisteredModuleScripts() {
 		return [
 			{
-				key: 'carousel-base',
-				jsObject: 'frontend-handlers',
+				moduleKey: 'carousel-base',
 				moduleName: 'CarouselBase',
-				importValue: () => import( /* webpackChunkName: 'carouselBaseHandler' */ './handlers/base-carousel' ),
+				frontendObject: 'frontend-handlers',
+				importFunction: () => import( /* webpackChunkName: 'carouselBaseHandler' */ './handlers/base-carousel' ),
 			},
 		];
 	}
 
 	getActiveModuleScripts() {
 		return !! elementorScriptModuleImports ? elementorScriptModuleImports : [];
+	}
+
+	getFrontendObject( objectName ) {
+		let frontendObject = null;
+
+		switch ( objectName ) {
+			case 'frontend-handlers':
+				frontendObject = elementorModules.frontend.handlers;
+				break;
+			case 'utils':
+				frontendObject = elementorFrontend.utils;
+				break;
+		}
+
+		return frontendObject;
 	}
 
 	onInit() {
@@ -22,11 +37,12 @@ export default class DynamicModuleImportManager extends elementorModules.ViewMod
 
 	loadActiveModuleScripts() {
 		this.registeredModuleScripts.forEach( ( script ) => {
-			if ( this.activeModuleScripts.includes( script.key ) ) {
+			if ( this.activeModuleScripts.includes( script.moduleKey ) ) {
 				( async () => {
-					const { default: ScriptModule } = await script.importValue();
+					const { default: ScriptModule } = await script.importFunction();
 
-					elementorModules.frontend.handlers[ script.moduleName ] = ScriptModule;
+					const frontendObject = this.getFrontendObject( script.frontendObject );
+					frontendObject[ script.moduleName ] = ScriptModule;
 				} )();
 			}
 		} );
