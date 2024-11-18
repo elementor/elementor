@@ -363,11 +363,11 @@ class Manager extends CSS_Manager {
 		wp_update_post( $post );
 	}
 
-	public function is_contributor_user(): bool {
+	private function is_contributor_user(): bool {
 		return current_user_can( 'edit_posts' ) && ! current_user_can( 'publish_posts' );
 	}
 
-	public function has_invalid_post_status_for_contributor( $status ): bool {
+	private function has_invalid_post_status_for_contributor( $status ): bool {
 		return $status !== 'draft' && $status !== 'pending';
 	}
 
