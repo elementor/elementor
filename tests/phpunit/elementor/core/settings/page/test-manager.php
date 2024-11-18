@@ -29,7 +29,7 @@ class Test_Manager extends Elementor_Test_Base {
         $this->manager = null;
     }
 
-	public function test_ajax_before_save_settings_contributor_can_not_delete_post_thumbnail() {
+	public function test_ajax_before_save_settings__contributor_can_not_delete_post_thumbnail() {
         // Arrange
         $this->act_as('contributor');
 
@@ -57,7 +57,7 @@ class Test_Manager extends Elementor_Test_Base {
         $this->manager->ajax_before_save_settings( $data, $post_id );
 	}
 
-    public function test_save_post_status_contributor_can_not_set_post_status_private() {
+    public function test_save_post_status__contributor_can_not_set_post_status_private() {
         // Arrange
         $this->act_as('contributor');
 
@@ -85,7 +85,7 @@ class Test_Manager extends Elementor_Test_Base {
         $this->assertEquals( 'pending', $post_status );
     }
 
-    public function test_ajax_before_save_settings_admin_can_delete_post_thumbnail() {
+    public function test_ajax_before_save_settings__admin_can_delete_post_thumbnail() {
         // Arrange
         $this->act_as_admin();
 
@@ -120,7 +120,7 @@ class Test_Manager extends Elementor_Test_Base {
         $this->assertEquals( 0, get_post_thumbnail_id($post_id));
     }
 
-    public function test_save_post_status_admin_can_set_private_post_status() {
+    public function test_save_post_status_admin__can_set_private_post_status() {
         // Arrange
         $this->act_as_admin();
 
