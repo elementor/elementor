@@ -14,10 +14,10 @@ class Test_Manager extends Elementor_Test_Base {
 
 	use Test_Upgrades_Trait;
 
-    /**
-     * @var Manager
-     */
-    private $manager;
+	/**
+	 * @var Manager
+	 */
+	private $manager;
 
 	public function setUp(): void {
 		parent::setUp();
