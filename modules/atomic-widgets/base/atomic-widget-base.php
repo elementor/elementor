@@ -164,7 +164,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		}
 
 		if ( ! empty( $errors_bag ) ) {
-			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
+			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
 		}
 
 		return $styles;
