@@ -1,15 +1,3 @@
-// Jest.mock( '@wordpress/components', () => ( {
-// 	ColorPicker: jest.fn( () => null ),
-// 	ColorIndicator: jest.fn( () => null ),
-// } ) );
-//
-// global.wp = {
-// 	components: {
-// 		ColorPicker: () => null,
-// 		ColorIndicator: () => null,
-// 	},
-// };
-
 import { render } from '@testing-library/react';
 import { useLocation } from 'elementor/modules/ai/assets/js/editor/pages/form-media/context/location-context';
 import { useEditImage } from 'elementor/modules/ai/assets/js/editor/pages/form-media/context/edit-image-context';
@@ -26,9 +14,8 @@ jest.mock( 'elementor/modules/ai/assets/js/editor/components/prompt-history/cont
 } ) );
 
 import MediaOutlet from 'elementor/modules/ai/assets/js/editor/pages/form-media/media-outlet';
-import { IMAGE_PLACEHOLDERS_HOSTS, LOCATIONS } from 'elementor/modules/ai/assets/js/editor/pages/form-media/constants';
+import { LOCATIONS } from 'elementor/modules/ai/assets/js/editor/pages/form-media/constants';
 
-// Mock the hooks
 jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/context/location-context', () => ( {
 	useLocation: jest.fn(),
 } ) );
@@ -37,7 +24,6 @@ jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/context/edit-
 	useEditImage: jest.fn(),
 } ) );
 
-// Mock the view components to simplify testing
 jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/components/view', () => ( {
 	__esModule: true,
 	default: ( { children } ) => <div>{ children }</div>,
@@ -66,10 +52,8 @@ describe( 'MediaOutlet', () => {
 	} );
 
 	beforeEach( () => {
-		// Reset mocks before each test
 		jest.clearAllMocks();
 
-		// Default mock implementation for useLocation
 		useLocation.mockImplementation( () => ( {
 			current: LOCATIONS.GENERATE,
 			navigate: mockNavigate,
