@@ -1,0 +1,61 @@
+@import "../../helpers/variables.scss";
+
+//
+// Playing Cards
+//
+
+.elementor-widget {
+
+	.elementor-playing-cards {
+		list-style: none;
+		padding-inline-start: 0;
+		display: flex;
+		flex-wrap: wrap;
+
+		.elementor-playing-card {
+			background-color: $e-pink-200;
+			color: $e-pink-900;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			padding: 10px;
+			border-radius: 15px;
+			min-width: 106px;
+			min-height: 156px;
+			box-shadow: 4px 3px 0px #c00bb987;
+			cursor: pointer;
+
+			header {
+				text-align: left;
+			}
+			main {
+				font-size: 80px;
+				line-height: 80px;
+				text-align: center;
+			}
+			footer {
+				text-align: right;
+			}
+		}
+
+		.elementor-playing-card.back {
+			position: relative;
+			box-shadow: 4px 3px 0 rgb(192 11 25 / 67%);
+		}
+
+		.elementor-playing-card.back::after {
+			content: ' ';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+
+			z-index: 2;
+			background-image: url('https://img.freepik.com/free-vector/flat-design-playing-cards-pattern_23-2151015495.jpg?semt=ais_hybrid');
+			background-repeat: no-repeat;
+			background-size: cover;
+			border-radius: 15px;
+		}
+	}
+}
