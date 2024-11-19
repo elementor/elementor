@@ -294,6 +294,65 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
 	}
 
+	public function test_add_feature__ensure_default_state_wrap_core_dependency() {
+		// Arrange.
+		$test_core_feature = [
+			'name' => 'core_feature',
+			'state' => Experiments_Manager::STATE_DEFAULT,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		];
+
+		$depended_feature = [
+			'name' => 'depended_feature',
+			'state' => Experiments_Manager::STATE_DEFAULT,
+			'dependencies' => [
+				'core_feature',
+			],
+			'default' => Experiments_Manager::STATE_ACTIVE,
+		];
+
+		$this->add_test_feature( $test_core_feature );
+
+		// Act.
+		$depended_feature = $this->add_test_feature( $depended_feature );
+
+		$depended_feature_dependency = $depended_feature['dependencies'][0];
+
+		// Assert.
+		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
+		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
+		$this->assertTrue( $depended_feature['default'] === Experiments_Manager::STATE_INACTIVE );
+	}
+
+	public function test_add_feature__ensure_state_wrap_core_dependency() {
+		// Arrange.
+		$test_core_feature = [
+			'name' => 'core_feature',
+			'state' => Experiments_Manager::STATE_DEFAULT,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		];
+
+		$depended_feature = [
+			'name' => 'depended_feature',
+			'state' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'core_feature',
+			],
+		];
+
+		$this->add_test_feature( $test_core_feature );
+
+		// Act.
+		$depended_feature = $this->add_test_feature( $depended_feature );
+
+		$depended_feature_dependency = $depended_feature['dependencies'][0];
+
+		// Assert.
+		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
+		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
+		$this->assertTrue( $depended_feature['state'] === Experiments_Manager::STATE_INACTIVE );
+	}
+
 	public function test_add_feature__adding_non_existing_dependency() {
 		// Arrange.
 		$test_feature_data = [
