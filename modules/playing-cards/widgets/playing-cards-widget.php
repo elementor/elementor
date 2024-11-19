@@ -124,15 +124,15 @@ class PlayingCardsWidget extends Widget_Base {
 			]
 		);
 
-		$repeater->add_responsive_control(
-			'card_padding',
+		$repeater->add_control(
+			'show_back',
 			[
-				'label' => esc_html__( 'Padding', 'elementor' ),
-				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'selectors' => [
-					'{{WRAPPER}} {{CURRENT_ITEM}}' => '--e-playing-cards-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
+				'label' => esc_html__( 'Card Presentation', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Back', 'elementor' ),
+				'label_off' => esc_html__( 'Suit', 'elementor' ),
+				'default' => false,
+
 			]
 		);
 
@@ -227,13 +227,16 @@ class PlayingCardsWidget extends Widget_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
+		$this->add_control(
+			'card_back_background_url',
 			[
-				'name' => 'playing_card_box_shadow',
-//				'selector' => '{{WRAPPER}} .e-playing-cards_card-box-shadow',
+				'label' => esc_html__( 'Card Back Background', 'elementor' ),
+				'type' => Controls_Manager::MEDIA,
+				'default' => [
+					'url' => 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Card_back_01.svg',
+				],
 				'selectors' => [
-					'{{CURRENT_ITEM}}' => 'box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}} {{box_shadow_position.VALUE}};',
+					'{{WRAPPER}} .e-playing-cards-item-back' => 'background: url({{URL}}) no-repeat center center;',
 				],
 			]
 		);
@@ -262,12 +265,20 @@ class PlayingCardsWidget extends Widget_Base {
 			$card_color_class,
 		]);
 
+		if (isset($card['show_back']) && 'yes' === $card['show_back']) {
+			$back_suit_class = ' e-playing-cards-item-back_suit';
+			$this->add_render_attribute( $card_id, 'class', $back_suit_class);
+		}
+
 		?>
-			<div <?php $this->print_render_attribute_string( $card_id ); ?>>
+		<div <?php $this->print_render_attribute_string( $card_id ); ?>>
+			<div class="e-playing-cards-item-face">
 				<div class="e-playing-cards-item-top"><?php echo esc_html( $card_suit ); ?></div>
 				<div class="e-playing-cards-item-center e-playing-cards-item-number"><?php echo esc_html( $card_number ); ?></div>
 				<div class="e-playing-cards-item-bottom"><?php echo esc_html( $card_suit ); ?></div>
 			</div>
+			<div class="e-playing-cards-item-back"></div>
+		</div>
 		<?php
 	}
 }

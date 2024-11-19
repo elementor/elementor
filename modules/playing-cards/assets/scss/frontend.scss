@@ -3,35 +3,64 @@
 	flex-wrap: wrap;
 	justify-content: center;
 	gap: var(--e-playing-cards-gap);
-	padding: var(--e-playing-cards-padding);
 
-	.e-playing-cards-item {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		align-items: center;
-		height: 400px;
-		box-shadow: 1px 3px 5px 0 rgba(184, 184, 184, 0.75);
-		font-size: 3rem;
-		font-weight: bold;
-		border-radius: 10px;
+	&-item {
 		width: var(--e-playing-card-width);
-		background: linear-gradient(145deg, #f4f4f4, #e0e0e0); // todo: configurable background
-		border: 2px solid #ddd; // todo: border
-		transition: transform 0.3s ease, box-shadow 0.3s ease; // todo: configurable transition
-	}
+		height: 400px;
+		border-radius: 10px;
+		border: 2px solid #ddd;
+		box-shadow: 1px 3px 5px rgba(184, 184, 184, 0.75);
+		transform-style: preserve-3d;
+		transition: transform 0.6s ease;
+		position: relative;
 
-	.e-playing-cards-item:hover {
-		transform: translateY(-10px) scale(1.05); // todo: transition
-		box-shadow: 4px 8px 15px rgba(0, 0, 0, 0.2); // todo: configurable shadow
-	}
+		&.e-playing-cards-item-back_suit {
+			transform: rotateY(180deg);
+		}
 
-	.e-playing-cards-item-bottom {
-		align-self: flex-end;
-	}
+		&-face {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
+			height: 100%;
+			border-radius: 10px;
+			background: linear-gradient(145deg, #f4f4f4, #e0e0e0);
+			backface-visibility: hidden;
+			position: absolute;
+			font-size: 3rem;
+			font-weight: bold;
+		}
 
-	.e-playing-cards-item-top {
-		align-self: flex-start;
+		&-back {
+			width: 100%;
+			height: 100%;
+			border-radius: 10px;
+			background-size: cover;
+			backface-visibility: hidden;
+			transform: rotateY(180deg);
+			position: absolute;
+		}
+
+		&-top {
+			align-self: flex-start;
+		}
+
+		&-center {
+			font-size: 5rem;
+			font-weight: bold;
+			transition: color 0.3s ease, transform 0.3s ease;
+
+			&:hover {
+				transform: scale(1.1);
+				color: #007acc;
+			}
+		}
+
+		&-bottom {
+			align-self: flex-end;
+		}
 	}
 
 	.red_suit {
@@ -42,23 +71,5 @@
 	.black_suit {
 		color: black;
 		text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-	}
-
-	.e-playing-cards-item:active {
-		// todo: configurable animation
-		transform: translateY(-5px) scale(1.02);
-		box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.3);
-		background: linear-gradient(145deg, #e0e0e0, #f4f4f4);
-	}
-
-	.e-playing-cards-item-top,
-	.e-playing-cards-item-center,
-	.e-playing-cards-item-bottom {
-		transition: color 0.3s ease, transform 0.3s ease; // todo: configurable transition
-	}
-
-	.e-playing-cards-item:hover .e-playing-cards-item-center {
-		transform: scale(1.1); // todo: configurable transition
-		color: #007acc; // todo: configurable color
 	}
 }

@@ -7,30 +7,39 @@ export default class PlayingCardHandler extends Base {
 		this.elements = this.getDefaultElements();
 	}
 	getDefaultSettings() {
-
-		return { selectors: { playingCard: '.e-playing-cards-wrapper-item' }, default_state: 'expanded' };
+		const cardItemPrefix = 'e-playing-cards-item';
+		return {
+			selectors: {
+				playingCardContainer: '.e-playing-cards',
+				playingCardItem: `.${ cardItemPrefix }`,
+			},
+			classes: {
+				playingCardBack: `${ cardItemPrefix }-back_suit`,
+			},
+		};
 	}
 
 	getDefaultElements() {
-		const settings = this.getSettings( 'selectors' );
-		console.log('!!_SETTING_!!', this.getSettings( 'selectors' ) );
+		const { selectors } = this.getSettings();
 
-		return { $playingCard: this.findElement( settings.playingCard ) };
-
+		return { $playingCardContainer: this.findElement( selectors.playingCardContainer ) };
 	}
 
 	bindEvents() {
-		console.log('!_bind_events_!')
-		this.elements.$playingCard.on( 'click', this.clickListener.bind( this ) );
+		this.elements.$playingCardContainer.on( 'click', this.onClick.bind( this ) );
 	}
 
 	unbindEvents() {
-		this.elements.$playingCard.off();
+		this.elements.$playingCardContainer.off();
 	}
 
-	clickListener( e ) {
+	onClick(e) {
 		e.preventDefault();
-		const t = e.currentTarget.querySelector( '.e-playing-cards-wrapper-item-number' );
-		console.log("The card number you chose is:" + t.innerHTML);
+		const { selectors, classes } = this.getSettings();
+		const clickedCard = e.target.closest( selectors.playingCardItem );
+
+		if ( clickedCard ) {
+			jQuery( clickedCard ).toggleClass( classes.playingCardBack );
+		}
 	}
 }
