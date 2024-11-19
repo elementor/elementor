@@ -458,8 +458,14 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return false;
 	}
 
-	public function diff( $items ) {
-		return array_diff( $this->items, $items );
+	public function every( callable $callback ) {
+		foreach ( $this->items as $key => $item ) {
+			if ( ! $callback( $item, $key ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

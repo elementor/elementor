@@ -34,14 +34,8 @@ class Module extends BaseModule {
 		// TODO: When the `Atomic_Widgets` feature is not hidden, add it as a dependency
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-			$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-			if ( $kit->get_id() === 0 ) {
-				Plugin::$instance->kits_manager->create_default_kit();
-				$kit = Plugin::$instance->kits_manager->get_active_kit();
-			}
-
-			$this->api = new Global_Classes_REST_API( $kit );
+			$this->api = new Global_Classes_REST_API();
 
 			$this->api->register_hooks();
 		}

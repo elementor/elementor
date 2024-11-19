@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
+use Elementor\Modules\AtomicWidgets\Validators\Style_Validator;
 use Elementor\Modules\AtomicWidgets\Validators\Styles_Validator;
 use Elementor\Utils;
 use Elementor\Widget_Base;
@@ -148,13 +149,25 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	private function sanitize_atomic_styles( array $styles ) {
-		[ , $validated, $errors ] = Styles_Validator::make( Style_Schema::get() )->validate( $styles );
+		$errors_bag = [];
+		foreach ( $styles as $style_id => $style ) {
+			if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
+				$errors_bag[] = 'id';
+				$styles[ $style_id ] = [];
+				continue;
+			}
 
-		if ( ! empty( $errors ) ) {
+			[, $sanitized_style, $style_errors_bag] = Style_Validator::make( Style_Schema::get() )->validate( $style );
+
+			$styles[ $style_id ] = $sanitized_style;
+			$errors_bag = array_merge( $style_errors_bag );
+		}
+
+		if ( ! empty( $errors_bag ) ) {
 			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
 
-		return $validated;
+		return $styles;
 	}
 
 	private function sanitize_atomic_settings( array $settings ): array {

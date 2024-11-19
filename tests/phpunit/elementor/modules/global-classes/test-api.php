@@ -2,6 +2,9 @@
 namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Module;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -70,16 +73,20 @@ class Test_API extends Elementor_Test_Base {
 		'order' => [ 'g-4-123', 'g-4-124' ],
 	];
 
+    public function set_up() {
+        parent::set_up();
+
+        $this->experiment_on();
+    }
+
 	public function tear_down() {
 		parent::tear_down();
 
-		global $wp_rest_server;
-		$wp_rest_server = false;
-
 		remove_all_actions( 'rest_api_init' );
 
-
 		Plugin::$instance->kits_manager->get_active_kit()->delete_meta( Global_Classes_Repository::META_KEY );
+
+        $this->experiment_off();
 	}
 
 	public static function tear_down_after_class() {
@@ -342,7 +349,7 @@ class Test_API extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 422, $response->get_status() );
+		$this->assertEquals( 400, $response->get_status() );
 	}
 
 	public function test_put_order__returns_error_when_class_not_exists_in_data(){
@@ -357,7 +364,7 @@ class Test_API extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 422, $response->get_status() );
+		$this->assertEquals( 400, $response->get_status() );
 	}
 
 	public function test_put_order__returns_error_when_unauthorized(){
@@ -374,4 +381,14 @@ class Test_API extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 403, $response->get_status() );
 	}
+
+    private function experiment_on() {
+        Plugin::instance()->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+        Plugin::instance()->experiments->set_feature_default_state( Module::NAME, Experiments_Manager::STATE_ACTIVE );
+    }
+
+    private function experiment_off() {
+        Plugin::instance()->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+        Plugin::instance()->experiments->set_feature_default_state( Module::NAME, Experiments_Manager::STATE_INACTIVE );
+    }
 }
