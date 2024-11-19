@@ -77,6 +77,8 @@ class Test_API extends Elementor_Test_Base {
         parent::set_up();
 
         $this->experiment_on();
+
+        do_action( 'rest_api_init' );
     }
 
 	public function tear_down() {
