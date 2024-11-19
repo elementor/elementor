@@ -11,7 +11,7 @@ export default class ScriptsImportManager extends elementorModules.ViewModule {
 	}
 
 	getActiveModuleScripts() {
-		return ! elementorFrontend.isEditMode() && !! elementorScriptModuleImports ? elementorScriptModuleImports : [];
+		return ! elementorFrontend.isEditMode() && !! elementorScriptsImports ? elementorScriptsImports : [];
 	}
 
 	getFrontendObject( objectName ) {
@@ -37,10 +37,10 @@ export default class ScriptsImportManager extends elementorModules.ViewModule {
 
 	loadActiveModuleScripts() {
 		// TODO: Remove this in version 3.28 [ED-15983].
-		const isVersionBefore328 = true;
+		const areAllScriptsLoadedByDefault = true;
 
 		this.registeredModuleScripts.forEach( ( script ) => {
-			if ( isVersionBefore328 || elementorFrontend.isEditMode() || this.activeModuleScripts.includes( script.moduleKey ) ) {
+			if ( areAllScriptsLoadedByDefault || elementorFrontend.isEditMode() || this.activeModuleScripts.includes( script.moduleKey ) ) {
 				( async () => {
 					const { default: ScriptModule } = await script.importFunction();
 
