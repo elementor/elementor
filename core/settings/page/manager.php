@@ -138,6 +138,11 @@ class Manager extends CSS_Manager {
 		}
 
 		if ( isset( $data['post_featured_image'] ) && post_type_supports( $post->post_type, 'thumbnail' ) ) {
+			// Check if the user is at least an Author before allowing them to modify the thumbnail
+			if ( ! current_user_can( 'publish_posts' ) ) {
+				throw new \Exception( 'You do not have permission to modify the featured image.', Exceptions::FORBIDDEN );
+			}
+
 			if ( empty( $data['post_featured_image']['id'] ) ) {
 				delete_post_thumbnail( $post->ID );
 			} else {
@@ -342,6 +347,12 @@ class Manager extends CSS_Manager {
 
 		$allowed_post_statuses = get_post_statuses();
 
+		if ( $this->is_contributor_user() && $this->has_invalid_post_status_for_contributor( $status ) ) {
+			// If the status is not allowed, set it to 'pending' by default
+			$status = 'pending';
+			$post->post_status = $status;
+		}
+
 		if ( isset( $allowed_post_statuses[ $status ] ) ) {
 			$post_type_object = get_post_type_object( $post->post_type );
 			if ( 'publish' !== $status || current_user_can( $post_type_object->cap->publish_posts ) ) {
@@ -351,4 +362,13 @@ class Manager extends CSS_Manager {
 
 		wp_update_post( $post );
 	}
+
+	private function is_contributor_user(): bool {
+		return current_user_can( 'edit_posts' ) && ! current_user_can( 'publish_posts' );
+	}
+
+	private function has_invalid_post_status_for_contributor( $status ): bool {
+		return 'draft' !== $status && 'pending' !== $status;
+	}
+
 }
