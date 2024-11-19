@@ -28,14 +28,19 @@ const MediaOutlet = ( { additionalOptions = null } ) => {
 	const { current, navigate } = useLocation( { current: additionalOptions?.location || LOCATIONS.GENERATE } );
 
 	useEffect( () => {
-		const placeholderHostRegex = new RegExp( IMAGE_PLACEHOLDERS_HOSTS.WIREFRAME );
-		const isNotWireframePlaceholder = editImage.url && ! placeholderHostRegex.test( new URL( editImage.url ).host );
-		const isNotPlaceholderImage = editImage.id && isNotWireframePlaceholder;
+		if ( editImage.url ) {
+			const wireframeHostRegex = new RegExp( IMAGE_PLACEHOLDERS_HOSTS.WIREFRAME );
+			const isWireframeHost = wireframeHostRegex.test( new URL( editImage.url ).host );
 
-		if ( isNotPlaceholderImage ) {
-			navigate( LOCATIONS.IMAGE_TOOLS );
+			if ( isWireframeHost ) {
+				navigate( LOCATIONS.GENERATE );
+			} else if ( 'url' === editImage.source || editImage.id ) {
+				navigate( LOCATIONS.IMAGE_TOOLS );
+			} else {
+				navigate( LOCATIONS.GENERATE );
+			}
 		}
-	}, [ editImage.id, editImage.url ] );
+	}, [ editImage.id, editImage.url, editImage.source ] );
 
 	useSubscribeOnPromptHistoryAction( [
 		{
