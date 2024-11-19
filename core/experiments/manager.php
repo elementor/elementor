@@ -126,6 +126,10 @@ class Manager extends Base_Object {
 				}
 
 				$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
+				// if one of the features is inactive, the main feature should be inactive as well.
+				if ( $this->get_feature_actual_state( $feature ) === self::STATE_INACTIVE ) {
+					$experimental_data['default'] = self::STATE_INACTIVE;
+				}
 			}
 		}
 
