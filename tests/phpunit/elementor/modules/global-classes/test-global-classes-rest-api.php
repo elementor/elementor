@@ -91,12 +91,6 @@ class Test_API extends Elementor_Test_Base {
         $this->experiment_off();
 	}
 
-	public static function tearDownAfterClass() {
-		parent::tearDownAfterClass();
-
-		update_option( Plugin::$instance->kits_manager::OPTION_ACTIVE, 0 );
-	}
-
 	public function test_get__returns_all_global_classes() {
 		// Arrange
 		$this->act_as_admin();
