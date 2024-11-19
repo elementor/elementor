@@ -63,6 +63,7 @@ class Style_Schema {
 
 	private static function get_typography_props() {
 		return [
+			'font-family' => String_Prop_Type::make(),
 			'font-weight' => String_Prop_Type::make()->enum([
 				'100',
 				'200',
