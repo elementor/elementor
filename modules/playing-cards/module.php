@@ -14,7 +14,7 @@ class Module extends BaseModule {
 
 	protected function get_widgets() {
 		return [
-			'PlayingCardsWidget',
+			'Playing_Cards',
 		];
 	}
 	public function __construct() {
@@ -24,7 +24,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_styles() {
-		wp_enqueue_style(
+		wp_register_style(
 			'playing-cards-frontend',
 			$this->get_css_assets_url( 'modules/playing-cards/frontend' ),
 			[],
@@ -33,7 +33,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_scripts() {
-		wp_enqueue_script(
+		wp_register_script(
 			'playing-cards-frontend',
 			$this->get_js_assets_url( 'playing-cards' ),
 			[ 'elementor-frontend' ],
