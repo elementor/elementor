@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.16.0
  */
-class PlayingCardsWidget extends Widget_Base {
+class Playing_Cards extends Widget_Base {
 	private const CARD_OPTIONS = [
 		'A' => 'A',
 		'2' => '2',
