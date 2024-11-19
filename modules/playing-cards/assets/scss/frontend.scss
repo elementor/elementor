@@ -1,6 +1,7 @@
 .e-playing-cards {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: center;
 	gap: var(--e-playing-cards-gap);
 	padding: var(--e-playing-cards-padding);
 

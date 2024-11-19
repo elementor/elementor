@@ -54,7 +54,7 @@ class PlayingCardsWidget extends Widget_Base {
 		],
 	];
 	public function get_name() {
-		return 'playing-card';
+		return 'playing-cards';
 	}
 
 	public function get_title() {
@@ -64,6 +64,12 @@ class PlayingCardsWidget extends Widget_Base {
 	public function get_icon() {
 		return 'eicon-shape';
 	}
+
+	public function get_style_depends(): array
+	{
+		return ['widget-playing-cards'];
+	}
+
 	protected function register_controls() {
 		$this->register_content_section();
 		$this->register_style_section();
