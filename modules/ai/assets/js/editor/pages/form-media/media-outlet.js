@@ -40,7 +40,7 @@ const MediaOutlet = ( { additionalOptions = null } ) => {
 				navigate( LOCATIONS.GENERATE );
 			}
 		}
-	}, [ editImage.url, editImage.source ] );
+	}, [ editImage.id, editImage.url, editImage.source ] );
 
 	useSubscribeOnPromptHistoryAction( [
 		{
