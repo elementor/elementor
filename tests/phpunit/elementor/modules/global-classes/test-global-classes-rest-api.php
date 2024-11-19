@@ -73,16 +73,16 @@ class Test_API extends Elementor_Test_Base {
 		'order' => [ 'g-4-123', 'g-4-124' ],
 	];
 
-    public function set_up() {
-        parent::set_up();
+    public function setUp(): void {
+        parent::setUp();
 
         $this->experiment_on();
 
         do_action( 'rest_api_init' );
     }
 
-	public function tear_down() {
-		parent::tear_down();
+	public function tearDown(): void {
+		parent::tearDown();
 
 		remove_all_actions( 'rest_api_init' );
 
