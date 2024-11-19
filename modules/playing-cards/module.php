@@ -2,6 +2,7 @@
 namespace Elementor\Modules\PlayingCards;
 
 use Elementor\Core\Base\Module AS BaseModule;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,20 +20,25 @@ class Module extends BaseModule {
 	}
 	public function __construct() {
 		parent::__construct();
-		add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
+		add_action( 'elementor/frontend/after_register_scripts', [ $this, 'register_scripts' ] );
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 	}
 
-	public function enqueue_styles() {
+	public function register_styles() {
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
+		$widget_style_name = 'widget-playing-cards';
+
 		wp_register_style(
-			'playing-cards-frontend',
-			$this->get_css_assets_url( 'modules/playing-cards/frontend' ),
-			[],
+			$widget_style_name,
+			$this->get_frontend_file_url( "{$widget_style_name}{$direction_suffix}.min.css", $has_custom_breakpoints ),
+			[ 'elementor-frontend', 'elementor-icons' ],
 			ELEMENTOR_VERSION
 		);
 	}
 
-	public function enqueue_scripts() {
+	public function register_scripts() {
 		wp_register_script(
 			'playing-cards-frontend',
 			$this->get_js_assets_url( 'playing-cards' ),

@@ -70,6 +70,11 @@ class Playing_Cards extends Widget_Base {
 		return ['widget-playing-cards'];
 	}
 
+	public function get_script_depends(): array
+	{
+		return ['playing-cards'];
+	}
+
 	protected function register_controls() {
 		$this->register_content_section();
 		$this->register_style_section();
@@ -101,7 +106,7 @@ class Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Card Value', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'A',
-				'options' => PlayingCardsWidget::CARD_OPTIONS,
+				'options' => Playing_Cards::CARD_OPTIONS,
 			]
 		);
 
@@ -111,7 +116,7 @@ class Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Card Suit', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '♦️',
-				'options' => array_map( fn ( $suite ) => $suite['name'], PlayingCardsWidget::SUITES ),
+				'options' => array_map( fn ( $suite ) => $suite['name'], Playing_Cards::SUITES ),
 			]
 		);
 
@@ -257,7 +262,7 @@ class Playing_Cards extends Widget_Base {
 	private function render_card_item( $card_id, $card ) {
 		$card_number      = $card['card_value'];
 		$card_suit        = $card['card_suit'];
-		$card_color_class = PlayingCardsWidget::SUITES[ $card_suit ]['color'] . '_suit';
+		$card_color_class = Playing_Cards::SUITES[ $card_suit ]['color'] . '_suit';
 
 		$this->add_render_attribute( $card_id, 'class', [
 			'e-playing-cards-item',

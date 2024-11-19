@@ -1,10 +1,8 @@
-import Base from 'elementor-frontend/handlers/base';
-
-// Export default class PlayingCardHandler extends elementorModules.frontend.handlers.Base {
-export default class PlayingCardHandler extends Base {
+export default class PlayingCardHandler extends elementorModules.frontend.handlers.Base {
 	onInit() {
 		super.onInit();
 		this.elements = this.getDefaultElements();
+		this.clickHandler = this.onClick.bind( this );
 	}
 	getDefaultSettings() {
 		const cardItemPrefix = 'e-playing-cards-item';
@@ -26,20 +24,20 @@ export default class PlayingCardHandler extends Base {
 	}
 
 	bindEvents() {
-		this.elements.$playingCardContainer.on( 'click', this.onClick.bind( this ) );
+		this.elements.$playingCardContainer.on( 'click', this.clickHandler );
 	}
 
 	unbindEvents() {
 		this.elements.$playingCardContainer.off();
 	}
 
-	onClick(e) {
+	onClick( e ) {
 		e.preventDefault();
 		const { selectors, classes } = this.getSettings();
 		const clickedCard = e.target.closest( selectors.playingCardItem );
 
 		if ( clickedCard ) {
-			jQuery( clickedCard ).toggleClass( classes.playingCardBack );
+			clickedCard.classList.toggle( classes.playingCardBack );
 		}
 	}
 }
