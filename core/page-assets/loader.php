@@ -184,6 +184,10 @@ class Loader extends Module {
 
 				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
 					if ( 'scripts' === $assets_type ) {
+						if ( $this->should_import_script( $asset_name ) ) {
+							continue;
+						}
+
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 					} else {
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
