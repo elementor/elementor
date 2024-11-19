@@ -38,7 +38,7 @@ class Styles_Validator {
 	public function validate( array $styles ): array {
 		$errors_bag = [];
 		foreach ( $styles as $style_id => $style ) {
-			if ( $style_id !== $style['id'] ) {
+			if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
 				$errors_bag[] = 'id';
 				$styles[ $style_id ] = [];
 				continue;
