@@ -37,13 +37,21 @@ class Test_PlayingCards_Widget extends Elementor_Test_Base {
 	}
 
 	public function test_register_controls() {
+		$reflection = new \ReflectionClass( Playing_Cards::class );
+		$method = $reflection->getMethod( 'register_controls' );
+		$method->setAccessible( true );
 		$widget = new Playing_Cards();
-		$widget->register_controls();
+		$method->invokeArgs( $widget, [] );
+
 		$controls = $widget->get_controls();
 		$this->assertNotEmpty($controls);
 	}
 
 	public function test_render() {
+		$reflection = new \ReflectionClass( Playing_Cards::class );
+		$method = $reflection->getMethod( 'render' );
+		$method->setAccessible( true );
+
 		$widget = new Playing_Cards();
 		$widget->set_settings([
 			'cards_list' => [
@@ -55,7 +63,7 @@ class Test_PlayingCards_Widget extends Elementor_Test_Base {
 			],
 		]);
 		ob_start();
-		$widget->render();
+		$method->invokeArgs( $widget, [] );
 		$output = ob_get_clean();
 		$this->assertStringContainsString('e-playing-cards', $output);
 		$this->assertStringContainsString('A', $output);
