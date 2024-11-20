@@ -870,9 +870,9 @@ class Test_Manager extends Elementor_Test_Base {
 			]
 		];
 
-		$this->add_test_feature( $dependant );
 		$this->add_test_feature( $dependency_a );
 		$this->add_test_feature( $dependency_b );
+		$this->add_test_feature( $dependant );
 
 		// Act.
 		$is_dependant_active = $this->experiments->is_feature_active( $dependant['name'], true );
