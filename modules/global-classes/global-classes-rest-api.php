@@ -152,7 +152,7 @@ class Global_Classes_REST_API {
 		$id = $request->get_param( 'id' );
 		$values = $request->get_params();
 
-		// Remove the id from the updated values, as it should not be updated
+		// Ignore id to simplify the patch, and allow passing the entity as it is
 		unset( $values['id'] );
 
 		$class = $this->get_repository()->get( $id );

@@ -14,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const NAME = 'global_classes';
 
-	private Global_Classes_REST_API $api;
-
 	// TODO: Add global classes package
 	const PACKAGES = [];
 
@@ -35,9 +33,8 @@ class Module extends BaseModule {
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
-			$this->api = new Global_Classes_REST_API();
-
-			$this->api->register_hooks();
+			$api = new Global_Classes_REST_API();
+			$api->register_hooks();
 		}
 	}
 

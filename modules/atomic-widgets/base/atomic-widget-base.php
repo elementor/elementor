@@ -149,18 +149,15 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	private function sanitize_atomic_styles( array $styles ) {
-		$errors_bag = [];
-		foreach ( $styles as $style_id => $style ) {
-			[, $sanitized_style, $style_errors_bag] = Style_Validator::make( Style_Schema::get() )->validate( $style );
+		foreach ( $styles as $style ) {
+			[$is_valid, $sanitized, $errors_bag] = Style_Validator::make( Style_Schema::get() )->validate( $style );
 
-			$styles[ $style_id ] = $sanitized_style;
-			$errors_bag = $style_errors_bag;
+			if ( ! $is_valid ) {
+				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
+			}
+
+			$styles[ $sanitized['id'] ] = $sanitized;
 		}
-
-		if ( ! empty( $errors_bag ) ) {
-			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
-		}
-
 		return $styles;
 	}
 
