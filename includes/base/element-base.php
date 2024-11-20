@@ -921,6 +921,7 @@ abstract class Element_Base extends Controls_Stack {
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
 					],
+					'frontend_available' => true,
 				]
 			);
 

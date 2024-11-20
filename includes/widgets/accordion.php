@@ -101,7 +101,7 @@ class Widget_Accordion extends Widget_Base {
 	 * @return bool
 	 */
 	public function show_in_panel(): bool {
-		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
+		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
 	}
 
 	/**
