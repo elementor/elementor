@@ -72,6 +72,12 @@ class Test_API extends Elementor_Test_Base {
 		'order' => [ 'g-4-123', 'g-4-124' ],
 	];
 
+	public function setUp(): void {
+		parent::setUp();
+
+		do_action( 'rest_api_init' );
+	}
+
 	public function tearDown(): void {
 		parent::tearDown();
 
@@ -85,7 +91,7 @@ class Test_API extends Elementor_Test_Base {
 		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
 		// Act
-		$request = new \WP_REST_Reqest( 'GET', '/elementor/v1/global-classes' );
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
 		$response = rest_do_request( $request );
 
 		// Assert
