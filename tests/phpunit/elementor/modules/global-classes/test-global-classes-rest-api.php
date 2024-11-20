@@ -126,15 +126,13 @@ class Test_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
-		$active_kit->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/g-4-123' );
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( $active_kit->get_id(), $response->get_data() );
 		$this->assertEquals( $this->mock_global_classes['items']['g-4-123'], $response->get_data() );
 		$this->assertEquals( 200, $response->get_status() );
 	}
