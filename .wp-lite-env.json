@@ -1,0 +1,21 @@
+{
+	"core": null,
+	"phpVersion": "8.0",
+	"plugins": {
+		"elementor": "./build"
+	},
+	"themes": {
+		"hello-elementor": "./hello-elementor"
+	},
+	"mappings": {
+		"elementor-templates": "./tests/playwright/templates",
+		"elementor-config": "./tests/wp-env/config",
+		"elementor-playwright-templates": "./templates/playwright",
+		"elementor-playwright": "./tests/playwright"
+	},
+	"config": {
+		"ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true,
+		"SCRIPT_DEBUG": false,
+		"WP_DEBUG": false
+	}
+}

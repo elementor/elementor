@@ -134,11 +134,10 @@ jobs:
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
-      - name: Update wp-env.json file
-        env:
-          PHP_VERSION: '8.0'
-          WP_CORE_VERSION: 'latest'
-        run: node ./.github/scripts/build-wp-env.js
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
       - name: Install WordPress environment
         run: |
           npm run start-local-server
@@ -146,8 +145,8 @@ jobs:
         run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          npx wp-env run cli wp core version
-          npx wp-env run cli wp --info
+          wp-lite-env cli config=./tests/.wp-lite-env.json -- port=8888 command="wp core version"
+          wp-lite-env cli config=./tests/.wp-lite-env.json -- port=8888 command="wp --info"
       - name: Install playwright/test
         run: |
           npx playwright install chromium
