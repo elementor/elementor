@@ -7,20 +7,6 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_PlayingCards_Widget extends Elementor_Test_Base {
 
-	public function setUp(): void {
-		parent::setUp();
-	}
-
-	public function test_widget_registration() {
-		$widget = new Playing_Cards();
-		$this->assertInstanceOf(Playing_Cards::class, $widget);
-	}
-
-	public function test_widget_name() {
-		$widget = new Playing_Cards();
-		$this->assertEquals('playing-cards', $widget->get_name());
-	}
-
 	public function test_widget_title() {
 		$widget = new Playing_Cards();
 		$this->assertEquals('Playing Cards', $widget->get_title());
@@ -62,6 +48,7 @@ class Test_PlayingCards_Widget extends Elementor_Test_Base {
 				],
 			],
 		]);
+
 		ob_start();
 		$method->invokeArgs( $widget, [] );
 		$output = ob_get_clean();

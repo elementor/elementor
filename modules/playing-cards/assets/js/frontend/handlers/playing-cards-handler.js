@@ -1,10 +1,11 @@
 export default class PlayingCardHandler extends elementorModules.frontend.handlers.Base {
 	onInit() {
+		this.clickHandler = this.onClick.bind( this );
 		super.onInit();
 
 		this.elements = this.getDefaultElements();
-		this.clickHandler = this.onClick.bind( this );
 	}
+
 	getDefaultSettings() {
 		const cardItemPrefix = 'e-playing-cards-item';
 		
@@ -34,7 +35,6 @@ export default class PlayingCardHandler extends elementorModules.frontend.handle
 	}
 
 	onClick( e ) {
-		e.preventDefault();
 		const { selectors, classes } = this.getSettings();
 		const clickedCard = e.target.closest( selectors.playingCardItem );
 

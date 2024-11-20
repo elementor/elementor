@@ -207,13 +207,9 @@ class Playing_Cards extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
-					'%' => [
-						'min' => 0,
-						'max' => 100,
-						'step' => 10,
-					],
 					'px' => [
-						'max' => 200,
+						'min' => 100,
+						'max' => 300,
 						'step' => 10,
 					],
 				],
@@ -229,6 +225,23 @@ class Playing_Cards extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-playing-card-width: {{SIZE}}{{UNIT}};',
 				],
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'card_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'default' => [
+					'size' => 10,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-playing-card-border-radius: {{SIZE}}{{UNIT}};',
+				],
+				'separator' => 'before',
 			]
 		);
 
@@ -241,7 +254,7 @@ class Playing_Cards extends Widget_Base {
 					'url' => 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Card_back_01.svg',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .e-playing-cards-item-back' => 'background: url({{URL}}) no-repeat center center;',
+					'{{WRAPPER}}' => '--e-playing-card-background-back-url: url({{URL}});',
 				],
 			]
 		);
@@ -282,7 +295,6 @@ class Playing_Cards extends Widget_Base {
 				<div class="e-playing-cards-item-center e-playing-cards-item-number"><?php echo esc_html( $card_number ); ?></div>
 				<div class="e-playing-cards-item-bottom"><?php echo esc_html( $card_suit ); ?></div>
 			</div>
-			<div class="e-playing-cards-item-back"></div>
 		</div>
 		<?php
 	}

@@ -6,8 +6,8 @@
 
 	&-item {
 		width: var(--e-playing-card-width);
-		height: 400px;
-		border-radius: 10px;
+		aspect-ratio: .5;
+		border-radius: var(--e-playing-card-border-radius);
 		border: 2px solid #ddd;
 		box-shadow: 1px 3px 5px rgba(184, 184, 184, 0.75);
 		transform-style: preserve-3d;
@@ -18,6 +18,18 @@
 			transform: rotateY(180deg);
 		}
 
+		&::before {
+			content: '';
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			border-radius: var(--e-playing-card-border-radius);
+			background: var(--e-playing-card-background-back-url) no-repeat center center;
+			background-size: cover;
+			backface-visibility: hidden;
+			transform: rotateY(180deg);
+		}
+
 		&-face {
 			display: flex;
 			flex-direction: column;
@@ -25,22 +37,12 @@
 			align-items: center;
 			width: 100%;
 			height: 100%;
-			border-radius: 10px;
+			border-radius: var(--e-playing-card-border-radius);
 			background: linear-gradient(145deg, #f4f4f4, #e0e0e0);
 			backface-visibility: hidden;
 			position: absolute;
 			font-size: 3rem;
 			font-weight: bold;
-		}
-
-		&-back {
-			width: 100%;
-			height: 100%;
-			border-radius: 10px;
-			background-size: cover;
-			backface-visibility: hidden;
-			transform: rotateY(180deg);
-			position: absolute;
 		}
 
 		&-top {
