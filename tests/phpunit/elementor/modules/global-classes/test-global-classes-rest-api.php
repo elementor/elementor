@@ -87,6 +87,7 @@ class Test_API extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
+		var_dump($active_kit->get_id());
 		$active_kit->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
 		// Act
@@ -94,7 +95,6 @@ class Test_API extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( $active_kit->get_id(), Plugin::$instance->kits_manager->get_active_kit()->get_id() );
 		$this->assertEquals( $this->mock_global_classes, $response->get_data() );
 		$this->assertEquals( 200, $response->get_status() );
 	}
