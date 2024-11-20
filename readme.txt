@@ -346,6 +346,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.25.9 - 2024-11-20 =
+
+* Fix: 3D Rotate transform is not functioning as expected when the Optimized Control Loading feature is activated
+
 = 3.25.8 - 2024-11-19 =
 
 * Security Fix: Improved code security enforcement in Icon widget
