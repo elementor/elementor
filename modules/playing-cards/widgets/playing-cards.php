@@ -5,6 +5,7 @@ namespace Elementor\Modules\PlayingCards\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Repeater;
+use Elementor\Utils;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,11 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor Playing Card widget.
+ * Playing Card widget.
  *
- * Elementor widget that displays a playing card with a number and a suit.
+ * Widget that displays a playing card with a number and a suit and allows to flip cards
  *
- * @since 3.16.0
  */
 class Playing_Cards extends Widget_Base {
 	private const CARD_OPTIONS = [
@@ -53,7 +53,7 @@ class Playing_Cards extends Widget_Base {
 			'color' => 'red',
 		],
 	];
-	
+
 	public function get_name() {
 		return 'playing-cards';
 	}
@@ -251,7 +251,7 @@ class Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Card Back Background', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'default' => [
-					'url' => 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Card_back_01.svg',
+					'url' => Utils::get_placeholder_image_src(),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-playing-card-background-back-url: url({{URL}});',
