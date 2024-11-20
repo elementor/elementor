@@ -2,9 +2,6 @@
 namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\Module;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -73,28 +70,17 @@ class Test_API extends Elementor_Test_Base {
 		'order' => [ 'g-4-123', 'g-4-124' ],
 	];
 
-    public function setUp(): void {
-        parent::setUp();
-
-        $this->experiment_on();
-
-        do_action( 'rest_api_init' );
-    }
-
 	public function tearDown(): void {
 		parent::tearDown();
 
-		remove_all_actions( 'rest_api_init' );
-
 		Plugin::$instance->kits_manager->get_active_kit()->delete_meta( Global_Classes_Repository::META_KEY );
-
-        $this->experiment_off();
 	}
 
 	public function test_get__returns_all_global_classes() {
 		// Arrange
 		$this->act_as_admin();
 
+		var_dump( Plugin::$instance->kits_manager->get_active_kit() );
 		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
 		// Act
@@ -125,6 +111,8 @@ class Test_API extends Elementor_Test_Base {
 	public function test_get__returns_error_when_unauthorized() {
 		// Arrange
 		$this->act_as_subscriber();
+
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
@@ -164,6 +152,8 @@ class Test_API extends Elementor_Test_Base {
 	public function test_get_by_id__returns_error_when_unauthorized() {
 		// Arrange
 		$this->act_as_subscriber();
+
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/g-4-123' );
@@ -205,6 +195,8 @@ class Test_API extends Elementor_Test_Base {
 	public function test_delete__returns_error_when_unauthorized() {
 		// Arrange
 		$this->act_as_subscriber();
+
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'DELETE', '/elementor/v1/global-classes/g-4-123' );
@@ -263,6 +255,8 @@ class Test_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_subscriber();
 
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
 		$request->set_body_params( $this->mock_global_class );
@@ -307,6 +301,8 @@ class Test_API extends Elementor_Test_Base {
 	public function test_post__returns_error_when_unauthorized() {
 		// Arrange
 		$this->act_as_subscriber();
+
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/global-classes' );
@@ -377,14 +373,4 @@ class Test_API extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 403, $response->get_status() );
 	}
-
-    private function experiment_on() {
-        Plugin::instance()->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-        Plugin::instance()->experiments->set_feature_default_state( Module::NAME, Experiments_Manager::STATE_ACTIVE );
-    }
-
-    private function experiment_off() {
-        Plugin::instance()->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
-        Plugin::instance()->experiments->set_feature_default_state( Module::NAME, Experiments_Manager::STATE_INACTIVE );
-    }
 }
