@@ -23,7 +23,7 @@ class Global_Classes_REST_API {
 
 	private function get_repository() {
 		if ( ! $this->repository ) {
-			$this->repository = new Global_Classes_Repository( Plugin::$instance->kits_manager->get_active_kit() );
+			$this->repository = new Global_Classes_Repository();
 		}
 
 		return $this->repository;

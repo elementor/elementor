@@ -146,6 +146,7 @@ class Test_API extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		var_dump(Plugin::$instance->kits_manager->get_active_kit()->get_id());
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/g-4-123' );
