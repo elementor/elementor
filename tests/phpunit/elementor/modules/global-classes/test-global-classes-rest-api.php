@@ -138,7 +138,7 @@ class Test_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		add_action( 'rest_api_init', fn() => Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes ) );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/g-4-123' );
@@ -177,7 +177,7 @@ class Test_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		add_action( 'rest_api_init', fn() => Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes ) );
 
 		// Act
 		$request = new \WP_REST_Request( 'DELETE', '/elementor/v1/global-classes/g-4-123' );
@@ -218,7 +218,7 @@ class Test_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		add_action( 'rest_api_init', fn() => Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes ) );
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
@@ -227,7 +227,7 @@ class Test_API extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
+		$classes = add_action( 'rest_api_init', fn() => Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY ) );
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( 'new label', $classes['items']['g-4-123']['label'] );
@@ -314,7 +314,7 @@ class Test_API extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
+		$classes = add_action( 'rest_api_init', fn() => Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY ) );
 		$id = $response->get_data()['id'];
 
 		$this->assertEquals( 201, $response->get_status() );
@@ -353,7 +353,7 @@ class Test_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		add_action( 'rest_api_init', fn() => Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes ) );
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
@@ -361,7 +361,7 @@ class Test_API extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
+		$classes = add_action( 'rest_api_init', fn() => Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY ) );
 
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( [ 'g-4-124', 'g-4-123' ], $classes['order'] );
@@ -384,7 +384,7 @@ class Test_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		add_action( 'rest_api_init', fn() => Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes ) );
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
@@ -399,7 +399,7 @@ class Test_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_subscriber();
 
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		add_action( 'rest_api_init', fn() => Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes ) );
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
