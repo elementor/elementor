@@ -128,10 +128,11 @@ class Global_Classes_REST_API {
 		$id = $request->get_param( 'id' );
 		$class = $this->get_repository()->get( $id );
 
-		return new \WP_Error( 'log', Plugin::instance()->kits_manager->get_active_kit(), [ 'status' => 404 ] );
-
 		if ( null === $class ) {
-			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [
+				'status' => 404,
+				'id' => Plugin::$instance->kits_manager->get_active_kit()->get_id(),
+			] );
 		}
 
 		return $class;
