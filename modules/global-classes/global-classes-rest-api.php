@@ -125,6 +125,8 @@ class Global_Classes_REST_API {
 	}
 
 	private function get( \WP_REST_Request $request ) {
+
+		var_dump( 'inner', Plugin::instance()->kits_manager->get_active_kit() );
 		$id = $request->get_param( 'id' );
 		$class = $this->get_repository()->get( $id );
 
