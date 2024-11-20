@@ -33,7 +33,7 @@ class Module extends BaseModule {
 		wp_register_style(
 			$widget_style_name,
 			$this->get_frontend_file_url( "{$widget_style_name}{$direction_suffix}.min.css", $has_custom_breakpoints ),
-			[ 'elementor-frontend', 'elementor-icons' ],
+			[ 'elementor-frontend' ],
 			ELEMENTOR_VERSION
 		);
 	}
