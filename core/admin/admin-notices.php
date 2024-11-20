@@ -381,17 +381,20 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
+	private function site_has_forms_plugins() {
+		return defined( 'WPFORMS_VERSION' ) || defined( 'WPCF7_VERSION' ) || defined( 'FLUENTFORM_VERSION' ) || class_exists( '\GFCommon' ) || class_exists( '\Ninja_Forms' ) || function_exists( 'load_formidable_forms' );
+	}
+
+	private function site_has_woocommerce() {
+		return class_exists( 'WooCommerce' );
+	}
+
 	private function notice_site_mailer_promotion() {
 		$notice_id = 'site_mailer_promotion';
+		$has_forms = $this->site_has_forms_plugins();
+		$has_woocommerce = $this->site_has_woocommerce();
 
-		if (
-			! defined( 'WPFORMS_VERSION' )
-			&& ! defined( 'WPCF7_VERSION' )
-			&& ! defined( 'FLUENTFORM_VERSION' )
-			&& ! class_exists( '\GFCommon' )
-			&& ! class_exists( '\Ninja_Forms' )
-			&& ! function_exists( 'load_formidable_forms' )
-		) {
+		if ( ! $has_forms && ! $has_woocommerce ) {
 			return false;
 		}
 
@@ -399,7 +402,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( Utils::has_pro() || ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ( Utils::has_pro() && ! $has_woocommerce ) || ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
 
@@ -429,9 +432,33 @@ class Admin_Notices extends Module {
 			],
 		];
 
+		if ( $this->should_render_woocommerce_hint( $has_forms, $has_woocommerce ) ) {
+			// We include WP's default notice class so it will be properly handled by WP's js handler
+			// And add a new one to distinguish between the two types of notices
+			$options['classes'] = [ 'notice', 'e-notice', 'sm-notice-wc' ];
+			$options['title'] = esc_html__( 'Improve Transactional Email Deliverability', 'elementor' );
+			$options['description'] = esc_html__( 'Use Elementor\'s Site Mailer to ensure your store emails like purchase confirmations, shipping updates and more are reliably delivered.', 'elementor' );
+		}
+
 		$this->print_admin_notice( $options );
 
 		return true;
+	}
+
+	private function should_render_woocommerce_hint( $has_forms, $has_woocommerce ): bool {
+		if ( ! $has_forms && ! $has_woocommerce ) {
+			return false;
+		}
+
+		if ( ! $has_forms && $has_woocommerce ) {
+			return true;
+		}
+
+		if ( $has_forms && $has_woocommerce && Utils::has_pro() ) {
+			return true;
+		}
+
+		return (bool) mt_rand( 0, 1 );
 	}
 
 	private function is_elementor_page(): bool {
