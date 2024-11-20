@@ -17,16 +17,16 @@ class Global_Classes_REST_API {
 
 	private $repository = null;
 
-	public function get_repository() {
+	public function register_hooks() {
+		add_action( 'rest_api_init', fn() => $this->register_routes() );
+	}
+
+	private function get_repository() {
 		if ( ! $this->repository ) {
 			$this->repository = new Global_Classes_Repository( Plugin::$instance->kits_manager->get_active_kit() );
 		}
 
 		return $this->repository;
-	}
-
-	public function register_hooks() {
-		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
 
 	// TODO: Add sanitization when implemented on prop types [EDS-574]
@@ -109,7 +109,9 @@ class Global_Classes_REST_API {
 					}
 
 					$classes = $this->get_repository()->all();
-					return Collection::make( $order )->every( fn( $id ) => $classes->get_order()->contains( $id ) );
+
+					return Collection::make( $order )
+							->every( fn( $id ) => $classes->get_order()->contains( $id ) );
 				},
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
@@ -150,6 +152,7 @@ class Global_Classes_REST_API {
 		$id = $request->get_param( 'id' );
 		$values = $request->get_params();
 
+		// Remove the id from the updated values, as it should not be updated
 		unset( $values['id'] );
 
 		$class = $this->get_repository()->get( $id );

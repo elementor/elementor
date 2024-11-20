@@ -151,16 +151,10 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	private function sanitize_atomic_styles( array $styles ) {
 		$errors_bag = [];
 		foreach ( $styles as $style_id => $style ) {
-			if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
-				$errors_bag[] = 'id';
-				$styles[ $style_id ] = [];
-				continue;
-			}
-
 			[, $sanitized_style, $style_errors_bag] = Style_Validator::make( Style_Schema::get() )->validate( $style );
 
 			$styles[ $style_id ] = $sanitized_style;
-			$errors_bag = array_merge( $style_errors_bag );
+			$errors_bag = $style_errors_bag;
 		}
 
 		if ( ! empty( $errors_bag ) ) {

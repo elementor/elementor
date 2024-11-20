@@ -71,7 +71,7 @@ class Style_Validator {
 			$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
 		}
 
-		$is_valid = empty( $errors_bag );
+		$is_valid = empty( $this->errors_bag );
 
 		return [
 			$is_valid,

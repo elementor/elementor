@@ -246,13 +246,45 @@ class Test_API extends Elementor_Test_Base {
 		$this->assertEquals( 404, $response->get_status() );
 	}
 
-	public function test_put__returns_error_when_data_invalid() {
+	public function test_put__returns_error_when_props_invalid() {
 		// Arrange
 		$this->act_as_admin();
+		$invalid_data = $this->mock_global_class;
+		$invalid_data['variants'][0]['props']['color'] = 'invalid';
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
-		$request->set_body_params( [] );
+		$request->set_body_params( $invalid_data );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+	}
+
+	public function test_put__returns_error_when_variants_invalid() {
+		// Arrange
+		$this->act_as_admin();
+		$invalid_data = $this->mock_global_class;
+		unset( $invalid_data['variants'] );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
+		$request->set_body_params( $invalid_data );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+	}
+
+	public function test_put__returns_error_when_meta_invalid() {
+		// Arrange
+		$this->act_as_admin();
+		$invalid_data = $this->mock_global_class;
+		$invalid_data['variants'][0]['meta'] = [];
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
+		$request->set_body_params( $invalid_data );
 		$response = rest_do_request( $request );
 
 		// Assert
