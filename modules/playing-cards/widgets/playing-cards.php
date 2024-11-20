@@ -53,6 +53,7 @@ class Playing_Cards extends Widget_Base {
 			'color' => 'red',
 		],
 	];
+	
 	public function get_name() {
 		return 'playing-cards';
 	}
