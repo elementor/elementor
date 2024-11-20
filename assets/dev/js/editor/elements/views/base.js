@@ -1059,7 +1059,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		this.$el.html5Draggable( {
+		this.$el.children(':first-child').html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 

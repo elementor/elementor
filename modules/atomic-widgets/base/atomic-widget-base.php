@@ -169,6 +169,10 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $validated;
 	}
 
+	public function before_render() {}
+
+	public function after_render() {}
+
 	/**
 	 * @return array<string, Prop_Type>
 	 */
