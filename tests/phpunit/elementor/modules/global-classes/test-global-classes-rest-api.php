@@ -72,24 +72,6 @@ class Test_API extends Elementor_Test_Base {
 		'order' => [ 'g-4-123', 'g-4-124' ],
 	];
 
-	public function setUp(): void {
-		parent::setUp();
-
-		$id = wp_insert_post( [
-			'post_title' => esc_html__( 'Default Kit', 'elementor' ),
-			'post_type' => Source_Local::CPT,
-			'post_status' => 'publish',
-			'meta_input' => [
-				'_elementor_edit_mode' => 'builder',
-				Document::TYPE_META_KEY => 'kit',
-			],
-		] );
-
-		update_option( 'elementor_active_kit', $id );
-
-		do_action( 'rest_api_init' );
-	}
-
 	public function tearDown(): void {
 		parent::tearDown();
 
@@ -103,7 +85,7 @@ class Test_API extends Elementor_Test_Base {
 		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
 		// Act
-		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
+		$request = new \WP_REST_Reqest( 'GET', '/elementor/v1/global-classes' );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -146,7 +128,6 @@ class Test_API extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
-		var_dump(Plugin::$instance->kits_manager->get_active_kit()->get_id());
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/g-4-123' );
