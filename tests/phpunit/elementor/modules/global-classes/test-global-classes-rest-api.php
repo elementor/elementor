@@ -134,7 +134,7 @@ class Test_API extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( $active_kit->get_id(), $response->get_data()['id'] );
+		$this->assertEquals( $active_kit->get_id(), $response->get_data() );
 		$this->assertEquals( $this->mock_global_classes['items']['g-4-123'], $response->get_data() );
 		$this->assertEquals( 200, $response->get_status() );
 	}
