@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Testing\Modules\GlobalClasses;
 
+use Elementor\Core\Base\Document;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -72,6 +74,18 @@ class Test_API extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
+
+		$id = wp_insert_post( [
+			'post_title' => esc_html__( 'Default Kit', 'elementor' ),
+			'post_type' => Source_Local::CPT,
+			'post_status' => 'publish',
+			'meta_input' => [
+				'_elementor_edit_mode' => 'builder',
+				Document::TYPE_META_KEY => 'kit',
+			],
+		] );
+
+		update_option( 'elementor_active_kit', $id );
 
 		do_action( 'rest_api_init' );
 	}
