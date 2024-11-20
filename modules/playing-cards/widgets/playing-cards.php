@@ -66,8 +66,7 @@ class Playing_Cards extends Widget_Base {
 		return 'eicon-shape';
 	}
 
-	public function get_style_depends(): array
-	{
+	public function get_style_depends(): array {
 		return ['widget-playing-cards'];
 	}
 
