@@ -1,6 +1,7 @@
 export default class PlayingCardHandler extends elementorModules.frontend.handlers.Base {
 	onInit() {
 		super.onInit();
+
 		this.elements = this.getDefaultElements();
 		this.clickHandler = this.onClick.bind( this );
 	}
