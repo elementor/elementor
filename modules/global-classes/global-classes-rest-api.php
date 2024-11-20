@@ -119,8 +119,6 @@ class Global_Classes_REST_API {
 	}
 
 	private function all() {
-		var_dump( 'internal', Plugin::$instance->kits_manager->get_active_kit()->get_id() );
-		die;
 		$classes = $this->get_repository()->all();
 
 		return $classes->get();

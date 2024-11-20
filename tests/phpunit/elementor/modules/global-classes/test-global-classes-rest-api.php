@@ -86,9 +86,7 @@ class Test_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
-		var_dump($active_kit->get_id());
-		$active_kit->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
