@@ -402,6 +402,16 @@ class Manager extends Base_Object {
 			],
 		] );
 
+		// TODO: Remove this experiment in v3.28 [ED-15983].
+		$this->add_feature( [
+			'name' => 'e_swiper_latest',
+			'title' => esc_html__( 'Upgrade Swiper Library', 'elementor' ),
+			'description' => esc_html__( 'Prepare your website for future improvements to carousel features by upgrading the Swiper library integrated into your site from v5.36 to v8.45. This experiment includes markup changes so it might require updating custom code and cause compatibility issues with third party plugins.', 'elementor' ),
+			'default' => self::STATE_ACTIVE,
+			static::TYPE_HIDDEN => true,
+			'mutable' => false,
+		] );
+
 		$this->add_feature( [
 			'name' => 'e_nested_atomic_repeaters',
 			'title' => esc_html__( 'Nested Elements Performance', 'elementor' ),
