@@ -34,10 +34,9 @@ class Module extends BaseModule {
 		// TODO: When the `Atomic_Widgets` feature is not hidden, add it as a dependency
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-			add_action( 'elementor/css-file/post/parse', fn( Post $post ) => $this->parse_kit_style( $post ) );
 
-			$api = new Global_Classes_REST_API();
-			$api->register_hooks();
+			( new Global_Classes_REST_API() )->register_hooks();
+			( new Global_Classes_Injector() )->register_hooks();
 		}
 	}
 
@@ -54,23 +53,5 @@ class Module extends BaseModule {
 
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
-	}
-
-	private function parse_kit_style( Post $post ) {
-		if ( ! Plugin::$instance->kits_manager->is_kit( $post->get_post_id() ) ) {
-			return;
-		}
-
-		$global_classes = Global_Classes_Repository::make()->all()->get_items()->all();
-
-		if ( empty( $global_classes ) ) {
-			return;
-		}
-
-		$css = Styles_Renderer::make( [
-			'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
-		] )->render( $global_classes );
-
-		$post->get_stylesheet()->add_raw_css( $css );
 	}
 }

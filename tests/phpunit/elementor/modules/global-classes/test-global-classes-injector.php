@@ -2,9 +2,10 @@
 
 namespace Elementor\Testing\Modules\GlobalClasses;
 
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Modules\GlobalClasses\Module;
+use Elementor\Modules\GlobalClasses\Global_Classes_Injector;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -12,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Module extends Elementor_Test_Base {
+class Test_Global_Classes_Injector extends Elementor_Test_Base {
 	private $mock_global_classes = [
 		'items' => [
 			'g-4-123' => [
@@ -51,65 +52,54 @@ class Test_Module extends Elementor_Test_Base {
 		'order' => [ 'g-4-123', 'g-4-124' ],
 	];
 
+	private Kit $kit;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		Plugin::$instance->kits_manager->create_new_kit( 'kit' );
+		$this->kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		remove_all_actions( 'elementor/css-file/post/parse' );
+
+		( new Global_Classes_Injector() )->register_hooks();
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 
-		Plugin::$instance->kits_manager->get_active_kit()->delete_meta( Global_Classes_Repository::META_KEY );
+		$this->kit->delete_meta( Global_Classes_Repository::META_KEY );
 	}
 
 	public function test_it__parses_global_classes_to_kit_css() {
 		// Arrange
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
 
-		$post = Post_CSS::create( Plugin::$instance->kits_manager->get_active_kit()->get_id() );
-
-		// Act
-		new Module();
+		$post = Post_CSS::create( $this->kit->get_id() );
 
 		// Assert
-		ob_start();
-		$post->print_css();
-		$css = ob_get_clean();
+		$css = $post->get_content();
 
-		$this->assertStringContainsString( '@media(max-width:767px){.g-4-123{color:pink;}}', $css );
-		$this->assertStringContainsString( '.g-4-124{color:blue;}', $css );
+		$this->assertEquals( '@media(max-width:767px){.g-4-123{color:pink;}}.g-4-124{color:blue;}', $css );
 	}
 
 	public function test_it__does_not_parse_global_classes_to_kit_css_if_no_classes() {
 		// Arrange
-		$post = Post_CSS::create( Plugin::$instance->kits_manager->get_active_kit()->get_id() );
-
-		// Act
-		new Module();
+		$post = Post_CSS::create( $this->kit->get_id() );
 
 		// Assert
-		ob_start();
-		$post->print_css();
-		$css = ob_get_clean();
+		$css = $post->get_content();
 
-		$this->assertEquals( '<style></style>', $css );
+		$this->assertEquals( '', $css );
 	}
 
 	public function test_it__does_not_parse_global_classes_to_post_css_if_no_kit() {
 		// Arrange
 		$post = Post_CSS::create( uniqid() );
 
-		// Act
-		new Module();
-
 		// Assert
-		ob_start();
-		$post->print_css();
-		$css = ob_get_clean();
+		$css = $post->get_content();
 
-		$this->assertEquals( '<style></style>', $css );
+		$this->assertEquals( '', $css );
 	}
 }
