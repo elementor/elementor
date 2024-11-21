@@ -12,6 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Classes_Repository {
 	const META_KEY = '_elementor_global_classes';
 
+	public static function make(): Global_Classes_Repository {
+		return new self();
+	}
+
 	public function all() {
 		$all = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( self::META_KEY );
 
