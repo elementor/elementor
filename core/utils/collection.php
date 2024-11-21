@@ -473,10 +473,6 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return false;
 	}
 
-	public function has( $key ) {
-		return array_key_exists( $key, $this->items );
-	}
-
 	/**
 	 * @param mixed $offset
 	 *
