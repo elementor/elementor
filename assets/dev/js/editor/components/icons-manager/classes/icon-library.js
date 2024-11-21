@@ -34,7 +34,7 @@ export default class {
 					.split( '-' )
 					.join( ' ' ),
 				filter: name.trim( ':' ),
-				displayPrefix: library.displayPrefix || library.prefix.replace( '-', '' ),
+				displayPrefix: library.displayPrefix || '',
 			};
 		} );
 
