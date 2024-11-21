@@ -188,7 +188,7 @@ export default class extends ControlBaseDataView {
 		const $color = jQuery( '<div>', { class: 'e-global__preview-item e-global__color', 'data-global-id': globalData.id } ),
 			$colorPreview = this.createColorPreviewBox( globalData.value ),
 			$colorTitle = jQuery( '<span>', { class: 'e-global__color-title' } )
-				.html( globalData.title ),
+				.html( _.escape( globalData.title ) ),
 			$colorHex = jQuery( '<span>', { class: 'e-global__color-hex' } )
 				.html( globalData.value );
 
