@@ -110,12 +110,11 @@ class Global_Classes_REST_API {
 
 					$classes = $this->get_repository()->all();
 
-					$differences = array_merge(
-						$classes->get_order()->diff( $order ),
-						Collection::make( $order )->diff( $classes->get_order()->all() )
+					$differences = $classes->get_order()->diff( $order )->merge(
+						Collection::make( $order )->diff( $classes->get_order() )
 					);
 
-					return empty( $differences );
+					return $differences->is_empty();
 				},
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],

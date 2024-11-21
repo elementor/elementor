@@ -5,6 +5,8 @@
  */
 namespace Elementor\Core\Utils;
 
+use Elementor\Core\Utils\Collection as Collection_Base;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -332,12 +334,18 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
-	 * @param callable $callback
+	 * Run array_diff between the collection and other array or collection.
 	 *
-	 * @return array
+	 * @param $filter
+	 *
+	 * @return $this
 	 */
-	public function diff( array $items ) {
-		return array_diff( $this->items, $items );
+	public function diff( $filter ) {
+		if ( $filter instanceof Collection_Base ) {
+			$filter = $filter->all();
+		}
+
+		return new static( array_diff( $this->all(), $filter ) );
 	}
 
 	/**
@@ -465,16 +473,6 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		}
 
 		return false;
-	}
-
-	public function every( callable $callback ) {
-		foreach ( $this->items as $key => $item ) {
-			if ( ! $callback( $item, $key ) ) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	public function has( $key ) {
