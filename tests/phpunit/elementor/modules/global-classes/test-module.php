@@ -22,7 +22,7 @@ class Test_Module extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'meta' => [
-							'breakpoint' => 'desktop',
+							'breakpoint' => 'mobile',
 							'state' => null,
 						],
 						'props' => [
@@ -79,7 +79,7 @@ class Test_Module extends Elementor_Test_Base {
 		$post->print_css();
 		$css = ob_get_clean();
 
-		$this->assertStringContainsString( '.g-4-123{color:pink;}', $css );
+		$this->assertStringContainsString( '@media(max-width:767px){.g-4-123{color:pink;}}', $css );
 		$this->assertStringContainsString( '.g-4-124{color:blue;}', $css );
 	}
 
