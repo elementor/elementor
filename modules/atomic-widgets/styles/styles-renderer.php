@@ -22,6 +22,10 @@ class Styles_Renderer {
 		$this->breakpoints = $config['breakpoints'];
 	}
 
+	public static function make( array $config ): self {
+		return new self( $config );
+	}
+
 	/**
 	 * Render the styles to a CSS string.
 	 *
