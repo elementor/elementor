@@ -5,8 +5,6 @@
  */
 namespace Elementor\Core\Utils;
 
-use Elementor\Core\Utils\Collection as Collection_Base;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -341,7 +339,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * @return $this
 	 */
 	public function diff( $filter ) {
-		if ( $filter instanceof Collection_Base ) {
+		if ( $filter instanceof self ) {
 			$filter = $filter->all();
 		}
 
