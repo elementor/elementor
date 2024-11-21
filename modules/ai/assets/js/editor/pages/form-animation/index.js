@@ -1,26 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
-import { Box, Button, Stack, styled } from '@elementor/ui';
+import { useEffect, useState } from 'react';
+import { Box, Button, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import ReactMarkdown from 'react-markdown';
-import { motionEffectAutocomplete } from '../../actions-data';
+import { hoverEffectAutocomplete, motionEffectAutocomplete } from '../../actions-data';
 import Loader from '../../components/loader';
 import PromptSearch from '../../components/prompt-search';
 import PromptSuggestions from '../../components/prompt-suggestions';
 import GenerateButton from '../../components/generate-button';
 import PromptErrorMessage from '../../components/prompt-error-message';
-import CodeBlock from './code-block';
 import { useRequestIds } from '../../context/requests-ids';
 import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
-import { splitText } from './splitTextResult';
 import useAnimationPrompt from '../../hooks/use-animation-prompt';
-
-const generateUniqueId = () => `custom-css-${ Math.random().toString( 36 ).substr( 2, 9 ) }`;
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
 		mb: '10px',
-		fontSize: '13px',
+		fontSize: '14px',
 		lineHeight: '1.5',
 	},
 	'& pre': {
@@ -33,68 +28,77 @@ const CodeDisplayWrapper = styled( Box )( () => ( {
 } ) );
 
 const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalOptions, credits, children } ) => {
-	const { data, isLoading, error, reset, send, sendUsageData } = useAnimationPrompt( additionalOptions.type, credits );
-	const { code, details } = splitText( data.result );
+	const { data, isLoading, error, reset, send, sendUsageData } = useAnimationPrompt( additionalOptions.animationType, additionalOptions.widgetType, credits );
 	const [ prompt, setPrompt ] = useState( '' );
 	const { setGenerate } = useRequestIds();
-	const styleTagId = useRef( generateUniqueId() );
+	const [ animationSummery, setAnimationSummery ] = useState( '' );
+	const [ prevControlValue, setPrevControlValue ] = useState();
 
-	const lastRun = useRef( () => {} );
-	const autocompleteItems = motionEffectAutocomplete;
+	const autocompleteItems = 'hover' === additionalOptions.animationType ? hoverEffectAutocomplete : motionEffectAutocomplete;
 
 	const showSuggestions = ! prompt;
 
 	const handleSubmit = async ( event ) => {
 		event.preventDefault();
 		setGenerate();
-		lastRun.current = () => send( { prompt } );
-		const response = await lastRun.current();
-
-		if ( 'css' === additionalOptions?.codeLanguage && response.result ) {
-			showCssPreview( splitText( response.result ).code );
-		}
+		send( { prompt } );
 	};
 
 	useEffect( () => {
+		if ( data.result ) {
+			showPreview( data.result );
+		}
+	}, [ data ] );
+
+	useEffect( () => {
 		return () => {
-			removeStyleTag();
+			restorePrevSettings();
 		};
 	}, [] );
 
-	const showCssPreview = ( cssCode ) => {
-		const parsedCssCode = parseCSS( cssCode );
-		insertStyleTag( parsedCssCode );
+	const showPreview = ( result ) => {
+		const summery = Object.keys( result )
+			.filter( ( key ) => result[ key ].label )
+			.map( ( key ) => {
+				const item = result[ key ];
+				const tabs = '&nbsp;'.repeat( item.tabs );
+				const bulletIcon = item.tabs > 0 ? '&#8226; ' : '';
+				// Const value = ! item.isParent && item.value && ! item.value.sizes?.length ? `<br/>&nbsp;&#8226;&nbsp;${ item.value.size ?? item.value }` : '';
+				const label = item.isParent ? `<br/><b>${ item.label }:</b>` : `${ bulletIcon } ${ item.label }`;
+				return `${ tabs }${ label }`;
+			} )
+			.join( '<br/>' );
+
+		const title = `${ __( 'Here’s a breakdown of what was done for creating the animation', 'elementor' ) }`;
+		setAnimationSummery( `<b>${ title }:</b><br/>${ summery }` );
+
+		const controlValue = getControlValue();
+		setPrevControlValue( controlValue );
+		elementor.documents.getCurrent().history.setActive( false );
+		setControlValue( getValidElementor( result ) );
 	};
 
-	const parseCSS = ( cssCode ) => {
-		const elementId = additionalOptions?.elementId;
-		const selector = 'document' === elementId
-			? elementor.config.document.settings.cssWrapperSelector
-			: `.elementor-element.elementor-element-${ elementId }`;
-
-		return cssCode && cssCode
-			.replace( /`/g, '' ) // Remove backticks if any
-			.replace( /^css\s*/i, '' ) // Remove "css" prefix if any, case-insensitive
-			.replace( /selector/g, selector ); // Replace `selector` with the actual selector
+	const restorePrevSettings = () => {
+		setControlValue( prevControlValue );
+		elementor.documents.getCurrent().history.setActive( false );
 	};
 
-	const insertStyleTag = ( cssCode ) => {
-		const style = document.createElement( 'style' );
-		style.id = styleTagId.current;
-		style.appendChild( document.createTextNode( cssCode ) );
-		elementorFrontend.elements.$body[ 0 ].appendChild( style );
+	const getValidElementor = ( result ) => {
+		return Object.entries( result )
+			.filter( ( [ , valueObj ] ) => valueObj.hasOwnProperty( 'value' ) )
+			.reduce( ( previousValue, [ key, valueObj ] ) => {
+				previousValue[ key ] = valueObj.value;
+				return previousValue;
+			}, {} );
 	};
 
-	const removeStyleTag = () => {
-		const styleTag = elementorFrontend.elements.$body[ 0 ].querySelector( `#${ styleTagId.current }` );
-		if ( styleTag ) {
-			styleTag.remove();
-		}
-	};
-
-	const applyPrompt = ( inputText ) => {
+	const applyPrompt = ( result ) => {
 		sendUsageData();
-		setControlValue( inputText );
+		restorePrevSettings();
+
+		const validElementorSettings = getValidElementor( result );
+
+		setControlValue( validElementorSettings );
 		onClose();
 	};
 
@@ -112,7 +116,7 @@ const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalO
 				<Box component="form" onSubmit={ handleSubmit }>
 					<Box sx={ { pb: 1.5 } }>
 						<PromptSearch
-							placeholder={ __( 'Describe the code you want to use...', 'elementor' ) }
+							placeholder={ __( 'Describe the animation you want to create...', 'elementor' ) }
 							name="prompt"
 							value={ prompt }
 							color="secondary"
@@ -134,24 +138,35 @@ const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalO
 				</Box>
 			) }
 
-			{ data.result && (
+			{ data.result && animationSummery && (
 				<CodeDisplayWrapper>
-					<ReactMarkdown components={ {
-						code: ( props ) => (
-							<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
-						),
-					} }>
-						{ code }
-					</ReactMarkdown>
-					{ details }
-					<VoicePromotionAlert introductionKey="ai-context-code-promotion" />
+					<Box
+						sx={ {
+							backgroundColor: 'rgba(0, 0, 0, 0.06); ',
+							padding: '1em',
+							borderRadius: '4px',
+							width: '100%',
+							height: '260px',
+							overflowX: 'auto',
+						} }
+					>
+						<Typography
+							variant="body1"
+							dangerouslySetInnerHTML={ { __html: animationSummery } } />
+					</Box>
+					<VoicePromotionAlert introductionKey="ai-context-animation-promotion" />
 
 					<Stack direction="row" alignItems="center" sx={ { mt: 4 } }>
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>
 							<Button size="small" color="secondary" variant="text" onClick={ () => {
-								removeStyleTag(); reset();
+								restorePrevSettings();
+								reset();
 							} }>
 								{ __( 'New prompt', 'elementor' ) }
+							</Button>
+							<Button size="small" variant="contained" color="primary"
+								onClick={ () => applyPrompt( data.result ) }>
+								{ __( 'Use animation', 'elementor' ) }
 							</Button>
 						</Stack>
 					</Stack>
@@ -166,11 +181,8 @@ FormAnimation.propTypes = {
 	getControlValue: PropTypes.func.isRequired,
 	setControlValue: PropTypes.func.isRequired,
 	additionalOptions: PropTypes.shape( {
-		codeLanguage: PropTypes.string,
-		htmlMarkup: PropTypes.string,
-		elementId: PropTypes.string,
-		initialCredits: PropTypes.number,
-		type: PropTypes.string,
+		animationType: PropTypes.string,
+		widgetType: PropTypes.string,
 	} ),
 	credits: PropTypes.number,
 	children: PropTypes.node,

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\Ai;
 
+use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Modules\Ai\Feature_Intro\Product_Image_Unification_Intro;
@@ -158,6 +159,80 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function ( $data ) {
 			return $this->remove_temporary_containers( $data );
 		} );
+
+		add_action( 'elementor/element/after_section_start', [ $this, 'register_ai_motion_effect_control'], 10, 2 );
+		add_action( 'elementor/element/after_section_end', [ $this, 'register_ai_hover_effect_control'], 10, 2 );
+	}
+
+	public function register_ai_hover_effect_control( $element, $section_id ) {
+		if ( '_section_transform' === $section_id ) {
+			$element->add_control(
+				'ai_hover_animation',
+				[
+					'section' => $section_id,
+					'tabs_wrapper' => '_tabs_positioning',
+					'inner_tab' => '_tab_positioning_hover',
+					'label' => esc_html__( 'Animate With AI', 'elementor' ),
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => '
+<style>
+  .elementor-control-ai_hover_animation .elementor-control-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .elementor-control-ai_hover_animation .elementor-control-raw-html {
+  	display: none;
+  }
+</style>',
+					'default' => '',
+					'render_type' => 'none',
+					'frontend_available' => true,
+					'ai' => [
+						'active' => true,
+						'type' => 'hover_animation',
+					],
+				],
+				[
+					'position' => [
+						'of' => '_transform_rotate_popover_hover',
+						'type' => 'control',
+						'at' => 'before',
+					],
+				]
+			);
+		}
+	}
+	public function register_ai_motion_effect_control( $element, $section_id ) {
+		if ( 'section_effects' === $section_id  && Utils::has_pro() ) {
+			$element->add_control(
+				'ai_animation',
+				[
+					'section' => $section_id,
+					'label' => esc_html__( 'Animate With AI', 'elementor' ),
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => '
+	<style>
+	.elementor-control-ai_animation .elementor-control-content {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		padding-bottom: 10px;
+	}
+	.elementor-control-ai_animation .elementor-control-raw-html {
+		display: none;
+	}
+	</style>',
+					'default' => '',
+					'render_type' => 'none',
+					'frontend_available' => true,
+					'ai' => [
+						'active' => true,
+						'type' => 'animation',
+					],
+				]
+			);
+		}
 	}
 
 	private function get_current_screen() {

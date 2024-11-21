@@ -55,6 +55,7 @@ const PageContent = (
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const [ sxStyle, setSxStyle ] = useState( { pointerEvents: 'none' } );
 	const timeoutRef = useRef( null );
+	const [ originalControlValue, setOriginalControlValue ] = useState();
 
 	const promptDialogStyleProps = {
 		sx: {
@@ -116,6 +117,12 @@ const PageContent = (
 			/>
 		);
 	};
+
+	useEffect( () => {
+		if ( ! originalControlValue ) {
+			setOriginalControlValue( getControlValue() );
+		}
+	}, [] );
 
 	if ( isLoading || ! isInitUsageDone ) {
 		return (
@@ -222,9 +229,14 @@ const PageContent = (
 	}
 
 	if ( 'animation' === type || 'hover_animation' === type ) {
+		const onCloseAnimationDialog = () => {
+			setControlValue( originalControlValue );
+			elementor.documents.getCurrent().history.setActive( false );
+			onClose();
+		};
 		return (
-			<PromptDialog onClose={ onClose } { ...codePromptDialogStyleProps }>
-				<PromptDialog.Header onClose={ onClose }>
+			<PromptDialog onClose={ onCloseAnimationDialog } { ...codePromptDialogStyleProps }>
+				<PromptDialog.Header onClose={ onCloseAnimationDialog }>
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
 
@@ -233,7 +245,7 @@ const PageContent = (
 						onClose={ onClose }
 						getControlValue={ getControlValue }
 						setControlValue={ setControlValue }
-						additionalOptions={ { ...additionalOptions, type: 'hover_animation' === type ? 'hover' : 'other' } }
+						additionalOptions={ { ...additionalOptions, animationType: 'hover_animation' === type ? 'hover' : 'other' } }
 						credits={ credits }
 						usagePercentage={ usagePercentage }
 					>

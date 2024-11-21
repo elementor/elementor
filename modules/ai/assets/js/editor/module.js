@@ -178,21 +178,34 @@ export default class Module extends elementorModules.editor.utils.Module {
 		}
 
 		if ( [ 'animation', 'hover_animation' ].includes( aiOptions.type ) ) {
+			const getControlValue = () => Object.values( elementor.widgetsCache.heading.controls )
+				.filter( ( control ) => 'hover_animation' === aiOptions.type
+					? '_tab_positioning_hover' === control.inner_tab
+					: 'section_effects' === control.section )
+				.map( ( control ) => ( { [ control.name ]: view.options.container.settings.get( control.name ) } ) )
+				.reduce( ( acc, control ) => ( { ...acc, ...control } ), {} );
+
+			const setControlValue = ( settings ) => {
+				$e.run( 'document/elements/settings', {
+					container: view.container,
+					settings,
+					options: {
+						external: true,
+					},
+				} );
+			};
+
 			behaviors = {
 				ai: {
 					behaviorClass: AiBehavior,
 					type: aiOptions.type,
-					getControlValue: () => '',
+					getControlValue,
 					buttonLabel: __( 'Animate with AI', 'elementor' ),
-					setControlValue: ( settings ) => {
-						$e.run( 'document/elements/settings', {
-							container: view.container,
-							settings,
-						} );
-					},
+					setControlValue,
 					isLabelBlock: true,
 					additionalOptions: {
-						defaultValue: view.options.model.get( 'default' ),
+						animationType: aiOptions.type,
+						widgetType: view.options.container.model.get( 'widgetType' ),
 					},
 					context: this.getContextData( view, controlType ),
 				},

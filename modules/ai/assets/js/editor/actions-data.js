@@ -79,5 +79,13 @@ export const motionEffectAutocomplete = [
 	__( 'Create a Parallax effect on scroll', 'elementor' ),
 	__( 'Fade in with slight scaling up on scroll', 'elementor' ),
 	__( 'Move and tilt opposite to mouse position', 'elementor' ),
-	__( 'Slide in from the left on load ', 'elementor' ),
+	__( 'Slide in from the left on load', 'elementor' ),
+];
+
+export const hoverEffectAutocomplete = [
+	__( 'Move down on hover', 'elementor' ),
+	__( 'Slightly shift right on hover', 'elementor' ),
+	__( 'Apply a subtle 3D tilt', 'elementor' ),
+	__( 'Rotate gently clockwise on hover', 'elementor' ),
+	__( 'Scale down and move up on hover', 'elementor' ),
 ];
