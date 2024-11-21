@@ -21,6 +21,7 @@ class Test_PlayingCards_Widget extends Elementor_Test_Base {
 		// Assert
 		$this->assertNotEmpty($controls);
 		$this->assertArrayHasKey( 'cards_list', $controls );
+
 		$this->assertArrayHasKey( 'card_value', $controls['cards_list'] );
 		$this->assertArrayHasKey( 'card_suit', $controls['cards_list'] );
 		$this->assertArrayHasKey( 'show_back', $controls['cards_list'] );
