@@ -58,7 +58,29 @@ class Atomic_Styles {
 			return;
 		}
 
+		$this->styles_enqueue_fonts( $styles );
+
 		$post->get_stylesheet()->add_raw_css( $this->convert_styles_to_css( $styles ) );
+	}
+
+	/**
+	 * @param array<int, array{
+	 *     id: string,
+	 *     type: string,
+	 *     variants: array<int, array{
+	 *         props: array<string, mixed>,
+	 *         meta: array<string, mixed>
+	 *     }>
+	 * }> $styles
+	 */
+	private function styles_enqueue_fonts( array $styles ): void {
+		foreach ( $styles as $style ) {
+			foreach ( $style['variants'] as $variant ) {
+				if ( isset( $variant['props']['font-family'] ) ) {
+					Plugin::$instance->frontend->enqueue_font( $variant['props']['font-family'] );
+				}
+			}
+		}
 	}
 
 	private function convert_styles_to_css( array $styles ): string {
