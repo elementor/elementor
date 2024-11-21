@@ -7,7 +7,6 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Validators\Style_Validator;
-use Elementor\Modules\AtomicWidgets\Validators\Styles_Validator;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
@@ -158,6 +157,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 			$styles[ $sanitized['id'] ] = $sanitized;
 		}
+
 		return $styles;
 	}
 
