@@ -710,8 +710,8 @@ module.exports = {
 	sanitizeUrl( url ) {
 		const isValidUrl = !! url ? isValidAttribute( 'a', 'href', url ) : false;
 
-		if ( isValidUrl ) {
-			return url;
+		if ( ! isValidUrl ) {
+			return '';
 		}
 
 		try {
