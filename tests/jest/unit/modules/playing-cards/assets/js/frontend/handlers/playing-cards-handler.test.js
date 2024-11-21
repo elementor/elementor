@@ -32,7 +32,7 @@ describe( 'PlayingCardsHandler', () => {
 	} );
 
 	it( 'should return default settings', () => {
-		// Arrange: Define the expected default settings
+		// Arrange.
 		const expectedSettings = {
 			selectors: {
 				playingCardContainer: '.e-playing-cards',
@@ -43,15 +43,15 @@ describe( 'PlayingCardsHandler', () => {
 			},
 		};
 
-		// Act: Get the default settings from the handler
+		// Act.
 		const defaultSettings = handler.getDefaultSettings();
 
-		// Assert: Verify that the default settings match the expected settings
+		// Assert.
 		expect( defaultSettings ).toEqual( expectedSettings );
 	} );
 
 	it( 'should bind click event', () => {
-		// Arrange: Mock the onInit method and findElement method
+		// Arrange.
 		jest.spyOn( handler, 'onInit' ).mockImplementation( () => {
 			handler.elements = handler.getDefaultElements();
 		} );
@@ -61,16 +61,16 @@ describe( 'PlayingCardsHandler', () => {
 			off: jest.fn(),
 		} );
 
-		// Act: Initialize the handler and bind events
+		// Act.
 		handler.onInit();
 		handler.bindEvents();
 
-		// Assert: Verify that the click event is bound to the clickHandler
+		// Assert.
 		expect( findElementMock().on ).toHaveBeenCalledWith( 'click', handler.clickHandler );
 	} );
 
 	it( 'should toggle back/face class for element', () => {
-		// Arrange: Mock the classList and closest methods
+		// Arrange.
 		const toggleMock = jest.fn();
 		const classListMock = {
 			toggle: toggleMock,
@@ -88,10 +88,10 @@ describe( 'PlayingCardsHandler', () => {
 			preventDefault: jest.fn(),
 		};
 
-		// Act: Simulate a click event on the handler
+		// Act.
 		handler.onClick( event );
 
-		// Assert: Verify that the class is toggled on the clicked card
+		// Assert.
 		expect( toggleMock ).toHaveBeenCalledWith( handler.getSettings().classes.playingCardBack );
 	} );
 } );

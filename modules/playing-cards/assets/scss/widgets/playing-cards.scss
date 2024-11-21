@@ -1,8 +1,10 @@
 .e-playing-cards {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: var(--e-playing-cards-gap);
+	.elementor-widget-container {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: var(--e-playing-cards-gap);
+	}
 
 	&-item {
 		width: var(--e-playing-card-width);

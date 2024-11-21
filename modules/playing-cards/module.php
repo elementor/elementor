@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\PlayingCards;
 
-use Elementor\Core\Base\Module AS BaseModule;
+use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,6 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+
+	public function __construct() {
+		parent::__construct();
+		add_action( 'elementor/frontend/after_register_scripts', [ $this, 'register_scripts' ] );
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
+	}
+
 	public function get_name() {
 		return 'playing-cards';
 	}
@@ -17,11 +24,6 @@ class Module extends BaseModule {
 		return [
 			'Playing_Cards',
 		];
-	}
-	public function __construct() {
-		parent::__construct();
-		add_action( 'elementor/frontend/after_register_scripts', [ $this, 'register_scripts' ] );
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 	}
 
 	public function register_styles() {

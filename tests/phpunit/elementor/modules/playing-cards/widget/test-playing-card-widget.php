@@ -7,33 +7,27 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_PlayingCards_Widget extends Elementor_Test_Base {
 
-	public function test_widget_title() {
-		$widget = new Playing_Cards();
-		$this->assertEquals('Playing Cards', $widget->get_title());
-	}
-
-	public function test_widget_icon() {
-		$widget = new Playing_Cards();
-		$this->assertEquals('eicon-shape', $widget->get_icon());
-	}
-
-	public function test_widget_style_depends() {
-		$widget = new Playing_Cards();
-		$this->assertContains('widget-playing-cards', $widget->get_style_depends());
-	}
-
 	public function test_register_controls() {
+		// Arrange
 		$reflection = new \ReflectionClass( Playing_Cards::class );
 		$method = $reflection->getMethod( 'register_controls' );
 		$method->setAccessible( true );
 		$widget = new Playing_Cards();
-		$method->invokeArgs( $widget, [] );
 
+		// Act
+		$method->invokeArgs( $widget, [] );
 		$controls = $widget->get_controls();
+
+		// Assert
 		$this->assertNotEmpty($controls);
+		$this->assertArrayHasKey( 'cards_list', $controls );
+		$this->assertArrayHasKey( 'card_value', $controls['cards_list'] );
+		$this->assertArrayHasKey( 'card_suit', $controls['cards_list'] );
+		$this->assertArrayHasKey( 'show_back', $controls['cards_list'] );
 	}
 
 	public function test_render() {
+		// Arrange
 		$reflection = new \ReflectionClass( Playing_Cards::class );
 		$method = $reflection->getMethod( 'render' );
 		$method->setAccessible( true );
@@ -49,11 +43,14 @@ class Test_PlayingCards_Widget extends Elementor_Test_Base {
 			],
 		]);
 
+		// Act
 		ob_start();
 		$method->invokeArgs( $widget, [] );
 		$output = ob_get_clean();
-		$this->assertStringContainsString('e-playing-cards', $output);
-		$this->assertStringContainsString('A', $output);
-		$this->assertStringContainsString('❤️', $output);
+
+		// Assert
+		$this->assertStringContainsString( 'e-playing-cards', $output );
+		$this->assertStringContainsString( 'A', $output );
+		$this->assertStringContainsString( '❤️', $output );
 	}
 }

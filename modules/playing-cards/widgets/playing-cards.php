@@ -44,7 +44,7 @@ class Playing_Cards extends Widget_Base {
 			'name' => 'Club',
 			'color' => 'black',
 		],
-		'♦️'=> [
+		'♦️' => [
 			'name' => 'Diamonds',
 			'color' => 'red',
 		],
@@ -67,12 +67,15 @@ class Playing_Cards extends Widget_Base {
 	}
 
 	public function get_style_depends(): array {
-		return ['widget-playing-cards'];
+		return [ 'widget-playing-cards' ];
 	}
 
-	public function get_script_depends(): array
-	{
-		return ['playing-cards'];
+	public function get_script_depends(): array {
+		return [ 'playing-cards' ];
+	}
+
+	protected function get_html_wrapper_class(): string {
+		return 'e-playing-cards';
 	}
 
 	protected function register_controls() {
@@ -87,7 +90,6 @@ class Playing_Cards extends Widget_Base {
 			'section_playing_cards',
 			[
 				'label' => esc_html__( 'Playing Cards', 'elementor' ),
-				''
 			]
 		);
 
@@ -106,7 +108,7 @@ class Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Card Value', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'A',
-				'options' => Playing_Cards::CARD_OPTIONS,
+				'options' => self::CARD_OPTIONS,
 			]
 		);
 
@@ -116,7 +118,7 @@ class Playing_Cards extends Widget_Base {
 				'label' => esc_html__( 'Card Suit', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '♦️',
-				'options' => array_map( fn ( $suite ) => $suite['name'], Playing_Cards::SUITES ),
+				'options' => array_map( fn ( $suite ) => $suite['name'], self::SUITES ),
 			]
 		);
 
@@ -169,13 +171,6 @@ class Playing_Cards extends Widget_Base {
 			[
 				'label' => esc_html__( 'Playing Cards', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_render_attribute(
-			'playing_cards_item',
-			[
-				'class' => 'e-playing-cards-item',
 			]
 		);
 
@@ -265,35 +260,34 @@ class Playing_Cards extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		echo '<div class="e-playing-cards">';
 		foreach ( $settings['cards_list'] as $index => $item ) {
 			$this->render_card_item( 'card_' . $index, $item );
 		}
-		echo '</div>';
 	}
 
 	private function render_card_item( $card_id, $card ) {
 		$card_number      = $card['card_value'];
 		$card_suit        = $card['card_suit'];
-		$card_color_class = Playing_Cards::SUITES[ $card_suit ]['color'] . '_suit';
+		$card_color_class = self::SUITES[ $card_suit ]['color'] . '_suit';
+		$wrapper_class    = $this->get_html_wrapper_class();
 
 		$this->add_render_attribute( $card_id, 'class', [
-			'e-playing-cards-item',
+			$wrapper_class . '-item',
 			'elementor-repeater-item-' . $card['_id'],
 			$card_color_class,
 		]);
 
-		if (isset($card['show_back']) && 'yes' === $card['show_back']) {
-			$back_suit_class = ' e-playing-cards-item-back_suit';
-			$this->add_render_attribute( $card_id, 'class', $back_suit_class);
+		if ( isset( $card['show_back'] ) && 'yes' === $card['show_back'] ) {
+			$back_suit_class = $wrapper_class . '-item-back_suit';
+			$this->add_render_attribute( $card_id, 'class', $back_suit_class );
 		}
 
 		?>
 		<div <?php $this->print_render_attribute_string( $card_id ); ?>>
-			<div class="e-playing-cards-item-face">
-				<div class="e-playing-cards-item-top"><?php echo esc_html( $card_suit ); ?></div>
-				<div class="e-playing-cards-item-center e-playing-cards-item-number"><?php echo esc_html( $card_number ); ?></div>
-				<div class="e-playing-cards-item-bottom"><?php echo esc_html( $card_suit ); ?></div>
+			<div class="<?php echo esc_attr( $wrapper_class . '-item-face' ); ?>">
+				<div class="<?php echo esc_attr( $wrapper_class . '-item-top' ); ?>"><?php echo esc_html( $card_suit ); ?></div>
+				<div class="<?php echo esc_attr( $wrapper_class . '-item-center ' . $wrapper_class . '-item-number' ); ?>"><?php echo esc_html( $card_number ); ?></div>
+				<div class="<?php echo esc_attr( $wrapper_class . '-item-bottom' ); ?>"><?php echo esc_html( $card_suit ); ?></div>
 			</div>
 		</div>
 		<?php

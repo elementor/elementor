@@ -8,7 +8,7 @@ export default class PlayingCardHandler extends elementorModules.frontend.handle
 
 	getDefaultSettings() {
 		const cardItemPrefix = 'e-playing-cards-item';
-		
+
 		return {
 			selectors: {
 				playingCardContainer: '.e-playing-cards',
