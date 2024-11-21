@@ -1,0 +1,38 @@
+[
+  {
+    "url": "http://localhost:8888/",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/idanm/Local Sites/test1/app/public/wp-content/plugins/elementor/localhost-_-2024_07_08_20_01_32.report.html",
+    "jsonPath": "/Users/idanm/Local Sites/test1/app/public/wp-content/plugins/elementor/localhost-_-2024_07_08_20_01_32.report.json",
+    "summary": {
+      "performance": 0.96,
+      "accessibility": 0.96,
+      "best-practices": 1,
+      "seo": 0.82
+    }
+  },
+  {
+    "url": "http://localhost:8888/",
+    "isRepresentativeRun": false,
+    "htmlPath": "/Users/idanm/Local Sites/test1/app/public/wp-content/plugins/elementor/localhost-_-2024_07_08_20_01_42.report.html",
+    "jsonPath": "/Users/idanm/Local Sites/test1/app/public/wp-content/plugins/elementor/localhost-_-2024_07_08_20_01_42.report.json",
+    "summary": {
+      "performance": 0.96,
+      "accessibility": 0.96,
+      "best-practices": 1,
+      "seo": 0.82
+    }
+  },
+  {
+    "url": "http://localhost:8888/",
+    "isRepresentativeRun": true,
+    "htmlPath": "/Users/idanm/Local Sites/test1/app/public/wp-content/plugins/elementor/localhost-_-2024_07_08_20_01_22.report.html",
+    "jsonPath": "/Users/idanm/Local Sites/test1/app/public/wp-content/plugins/elementor/localhost-_-2024_07_08_20_01_22.report.json",
+    "summary": {
+      "performance": 0.96,
+      "accessibility": 0.96,
+      "best-practices": 0.96,
+      "seo": 0.82
+    }
+  }
+]
