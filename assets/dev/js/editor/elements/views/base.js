@@ -921,6 +921,7 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderedEvent = new CustomEvent( event, { detail: { elementView: this } } );
 		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
+		window.top.dispatchEvent( renderedEvent );
 	},
 
 	onEditSettingsChanged( changedModel ) {

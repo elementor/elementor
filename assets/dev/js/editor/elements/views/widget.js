@@ -153,6 +153,7 @@ const WidgetView = BaseWidget.extend( {
 		return {
 			...attrs,
 			style: 'display: contents !important;',
+			[ 'data-v2' ]: true,
 		};
 	},
 } );
