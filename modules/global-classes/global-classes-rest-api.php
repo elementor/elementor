@@ -110,8 +110,8 @@ class Global_Classes_REST_API {
 
 					$classes = $this->get_repository()->all();
 
-					$missing_items = Collection::make( $order )->diff( $classes->get_order() );
-					$extra_items = Collection::make( $classes->get_items()->keys() )->diff( $order );
+					$missing_items = Collection::make( $classes->get_items()->keys() )->diff( $order );
+					$extra_items = Collection::make( $order )->diff( $classes->get_items()->keys() );
 
 					return $missing_items->is_empty() && $extra_items->is_empty();
 				},
