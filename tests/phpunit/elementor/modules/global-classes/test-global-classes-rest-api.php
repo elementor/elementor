@@ -75,6 +75,10 @@ class Test_API extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		global $wp_rest_server;
+
+		$wp_rest_server = new \WP_REST_Server();
+
 		do_action( 'rest_api_init' );
 	}
 
@@ -338,7 +342,7 @@ class Test_API extends Elementor_Test_Base {
 		$this->assertEquals( [ 'g-4-124', 'g-4-123' ], $classes['order'] );
 	}
 
-	public function test_put_order__returns_error_when_class_id_missing(){
+	public function test_put_order__returns_error_when_class_not_exists_in_data(){
 		// Arrange
 		$this->act_as_admin();
 
@@ -351,7 +355,7 @@ class Test_API extends Elementor_Test_Base {
 		$this->assertEquals( 400, $response->get_status() );
 	}
 
-	public function test_put_order__returns_error_when_class_not_exists_in_data(){
+	public function test_put_order__returns_error_when_class_not_exists_in_updated_order(){
 		// Arrange
 		$this->act_as_admin();
 
@@ -359,7 +363,22 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
-		$request->set_body_params( [ 'g-4-124', 'g-4-123', 'g-4-125' ] );
+		$request->set_body_params( [] );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+	}
+
+	public function test_put_order__returns_error_when_order_does_not_match(){
+		// Arrange
+		$this->act_as_admin();
+
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
+		$request->set_body_params( [ 'not-exist', 'g-4-124' ] );
 		$response = rest_do_request( $request );
 
 		// Assert

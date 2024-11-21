@@ -332,6 +332,15 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * @param callable $callback
+	 *
+	 * @return array
+	 */
+	public function diff( array $items ) {
+		return array_diff( $this->items, $items );
+	}
+
+	/**
 	 * Make sure all the values inside the array are uniques.
 	 *
 	 * @param null|string|string[] $keys
@@ -466,6 +475,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		}
 
 		return true;
+	}
+
+	public function has( $key ) {
+		return array_key_exists( $key, $this->items );
 	}
 
 	/**
