@@ -52,7 +52,7 @@ test( 'Editor Responsive Control Conditions', async ( { page, apiRequests }, tes
 	await page.waitForTimeout( 1000 );
 
 	// Check if previous image is already uploaded.
-	const mountainImageName = 'Picsum ID: 684',
+	const mountainImageName = 'mountain-image',
 		previousImage = page.getByRole( 'checkbox', { name: mountainImageName } );
 
 	if ( await previousImage.nth( 0 ).isVisible() ) {

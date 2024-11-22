@@ -42,16 +42,44 @@ jobs:
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
+          ls -l
       - name: Install dependencies
         run: |
             npm ci
-            cd ./tests/playwright/upgrade-test && npm ci
-      - name: Run upgrade test
-        run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor
+      - name: Install wp-test-server
+        run: |
+          cd wp-test-server
+          npm ci
+          npm run build
+          cd ..
+          npm link wp-test-server/
+      - name: Install WP
+        run: |
+          mkdir elementor
+          cp -r ./build/* elementor
+          rm -rf build
+          zip -r elementor elementor
+          mkdir plugin
+          mv ./elementor.zip plugin
+          npx wp-test-server start port=8888 config=tests/playwright/upgrade-test/.test-server.config.json
+          npx wp-test-server cli port=8888 command="bash wp-config/configure-wp.sh" config=tests/playwright/upgrade-test/.test-server.config.json
+          if [ -z $ELEMENTOR_PLUGIN_VERSION ]; then
+            npx wp-test-server cli port=8888 command="wp plugin install elementor --activate" config=tests/playwright/upgrade-test/.test-server.config.json
+          else
+            npx wp-test-server cli port=8888 command="bash -c 'wp plugin install elementor --version=$ELEMENTOR_PLUGIN_VERSION --activate --force'" config=tests/playwright/upgrade-test/.test-server.config.json
+          fi
+          npx wp-test-server cli port=8888 command="wp plugin list" config=tests/playwright/upgrade-test/.test-server.config.json
         env:
           ELEMENTOR_PLUGIN_VERSION: ${{inputs.version}}
-      - name: Setup playwright tests
-        run: cd ./tests/playwright/upgrade-test && npm run test:setup
+      - name: Upgrade site
+        run: |
+          npx wp-test-server cli port=8888 command="wp plugin install ./plugin/elementor.zip --force" config=tests/playwright/upgrade-test/.test-server.config.json
+          npx wp-test-server cli port=8888 command="wp plugin list" config=tests/playwright/upgrade-test/.test-server.config.json
+          npx wp-test-server cli port=8888 command="bash elementor-config/setup.sh" config=tests/playwright/upgrade-test/.test-server.config.json
       - name: Install chromium
         run: npx playwright install chromium
       - name: Run Playwright tests

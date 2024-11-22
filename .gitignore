@@ -7,6 +7,7 @@ vendor/
 /vendor_prefixed
 local-site/
 tmp/
+hello-elementor/
 
 # build outputs
 build/

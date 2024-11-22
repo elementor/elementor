@@ -5,8 +5,9 @@
         "lib": [
             "es2022"
         ],
-        "module": "commonjs",
-        "target": "ES6",
+		"outDir": "dist",
+        "module": "esnext",
+        "target": "ESNext",
         "declaration": true,
         "declarationMap": true,
         "esModuleInterop": true,

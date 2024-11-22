@@ -41,29 +41,34 @@ jobs:
         with:
           name: ${{ needs.build-plugin-lh.outputs.artifact_name }}
           path: ./elementor
-
-      - name: Setup wp-env
-        uses: elementor/elementor-editor-github-actions/actions/setup-wp-env@master
-        with:
-          php: '7.4'
-          active-theme: 'hello-elementor'
-          plugins: |-
-            ./elementor
-          themes: |-
-            https://downloads.wordpress.org/theme/hello-elementor.zip
-          mappings: |-
-            elementor-templates:./tests/playwright/templates
-
-      - name: Import Templates
-        uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@master
-        with:
-          env: 'testing'
-          templates: |-
-            elementor-templates
-
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
+          ls -l
+      - name: Install node modules
+        run: npm ci
+      - name: Install wp-test-server
+        run: |
+          cd wp-test-server
+          npm ci
+          npm run build
+          cd ..
+          npm link wp-test-server/
+      - name: Install WordPress environment
+        run: |
+          npm run start-local-server
+          npx wp-test-server cli port=8888 command="bash wp-config/configure-wp.sh" config=tests/.test-server.config.json
+          npx wp-test-server cli port=8889 command="bash wp-config/configure-wp.sh" config=tests/.test-server.config.json
+          npm run test:setup:playwright
       - name: Install lhci
-        run: npm install --no-package-lock --no-save @lhci/cli@0.14.0
-
+        run: |
+          npm ci
+          npm install --no-package-lock --no-save @lhci/cli@0.14.0
+      - name: WordPress debug information
+        run: |
+          npx wp-env run cli wp core version
+          npx wp-env run cli wp --info
       - name: Run Lighthouse tests
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"

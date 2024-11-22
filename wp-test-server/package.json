@@ -1,0 +1,29 @@
+{
+	"name": "wp-test-server",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"type": "module",
+	"types": "dist/index.d.ts",
+	"bin": {
+		"wp-test-server": "dist/index.js"
+	},
+	"scripts": {
+		"build": "tsc",
+		"cli": "node --enable-source-maps dist/index.js cli config=../tests/.test-server.config.json",
+		"start": "node --enable-source-maps dist/index.js start config=../tests/.test-server.config.json",
+		"stop": "node --enable-source-maps dist/index.js stop config=../tests/.test-server.config.json",
+		"cli:upgrade": "node --enable-source-maps dist/index.js cli config=../tests/playwright/upgrade-test/.test-server.config.json",
+		"start:upgrade": "node --enable-source-maps dist/index.js start config=../tests/playwright/upgrade-test/.test-server.config.json",
+		"stop:upgrade": "node --enable-source-maps dist/index.js stop config=../tests/playwright/upgrade-test/.test-server.config.json",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"docker-compose": "^0.24.8"
+	},
+	"devDependencies": {
+		"typescript": "^5.5.3"
+	}
+}
