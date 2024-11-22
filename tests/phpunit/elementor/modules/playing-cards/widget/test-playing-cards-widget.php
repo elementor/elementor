@@ -53,22 +53,22 @@ class Test_Playing_Cards_Widget extends Elementor_Test_Base {
 		$this->assertEquals( 'Suit', $controls['cards_list']['fields']['show_back']['label_off'] );
 	}
 
-	public function test_render() {
+	public function test_playing_cards_render() {
 		// Arrange
 		$reflection = new \ReflectionClass( Playing_Cards::class );
 		$method = $reflection->getMethod( 'render' );
 		$method->setAccessible( true );
-
-		$widget = new Playing_Cards();
-		$widget->set_settings([
+		$widget = new Playing_Cards([
+			'id' => 1,
+			'settings' => [
 			'cards_list' => [
-				[
+				'fields' => [
 					'card_value' => 'A',
 					'card_suit' => '❤️',
 					'show_back' => 'no',
 				],
 			],
-		]);
+		]], []);
 
 		// Act
 		ob_start();
