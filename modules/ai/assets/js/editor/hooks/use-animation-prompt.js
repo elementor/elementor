@@ -19,7 +19,7 @@ const useAnimationPrompt = ( motionEffectType, widgetType, initialValue ) => {
 	};
 
 	const processMotionEffects = ( jsonObject ) => {
-		const result = {};
+		const result = {}; // See UT for example result
 
 		const firstChildKey = Object.keys( jsonObject )[ 0 ];
 		const firstChild = jsonObject[ firstChildKey ];
@@ -34,7 +34,7 @@ const useAnimationPrompt = ( motionEffectType, widgetType, initialValue ) => {
 		};
 
 		// Process other properties
-		const processProps = ( props ) => {
+		const processOtherProps = ( props ) => {
 			for ( const [ key, value ] of Object.entries( props ) ) {
 				if ( 'enabled' === key && value ) {
 					const enableControlKey = Object.keys( value )[ 0 ];
@@ -58,7 +58,7 @@ const useAnimationPrompt = ( motionEffectType, widgetType, initialValue ) => {
 		// Process all other inner properties
 		for ( const [ propKey, propValue ] of Object.entries( jsonObject ) ) {
 			if ( propKey !== 'enabled' && 'object' === typeof propValue ) {
-				processProps( propValue );
+				processOtherProps( propValue );
 			}
 		}
 

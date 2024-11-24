@@ -1396,6 +1396,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_animation( $data ): array {
+		$this->verify_upload_permissions( $data );
+
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['payload']['prompt'] ) ) {

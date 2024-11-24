@@ -31,7 +31,7 @@ const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalO
 	const { data, isLoading, error, reset, send, sendUsageData } = useAnimationPrompt( additionalOptions.animationType, additionalOptions.widgetType, credits );
 	const [ prompt, setPrompt ] = useState( '' );
 	const { setGenerate } = useRequestIds();
-	const [ animationSummery, setAnimationSummery ] = useState( '' );
+	const [ animationSummary, setAnimationSummary ] = useState( '' );
 	const [ prevControlValue, setPrevControlValue ] = useState();
 
 	const autocompleteItems = 'hover' === additionalOptions.animationType ? hoverEffectAutocomplete : motionEffectAutocomplete;
@@ -57,20 +57,19 @@ const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalO
 	}, [] );
 
 	const showPreview = ( result ) => {
-		const summery = Object.keys( result )
+		const summary = Object.keys( result )
 			.filter( ( key ) => result[ key ].label )
 			.map( ( key ) => {
 				const item = result[ key ];
 				const tabs = '&nbsp;'.repeat( item.tabs );
 				const bulletIcon = item.tabs > 0 ? '&#8226; ' : '';
-				// Const value = ! item.isParent && item.value && ! item.value.sizes?.length ? `<br/>&nbsp;&#8226;&nbsp;${ item.value.size ?? item.value }` : '';
 				const label = item.isParent ? `<br/><b>${ item.label }:</b>` : `${ bulletIcon } ${ item.label }`;
 				return `${ tabs }${ label }`;
 			} )
 			.join( '<br/>' );
 
 		const title = `${ __( 'Here’s a breakdown of what was done for creating the animation', 'elementor' ) }`;
-		setAnimationSummery( `<b>${ title }:</b><br/>${ summery }` );
+		setAnimationSummary( `<b>${ title }:</b><br/>${ summary }` );
 
 		const controlValue = getControlValue();
 		setPrevControlValue( controlValue );
@@ -125,7 +124,6 @@ const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalO
 					</Box>
 
 					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt }>
-						{ /* <PromptLibraryLink libraryLink={ 'https://go.elementor.com/ai-prompt-library-animation/' } />*/ }
 					</PromptSuggestions> }
 
 					<Stack direction="row" alignItems="center" sx={ { py: 1.5, mt: 4 } }>
@@ -138,7 +136,7 @@ const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalO
 				</Box>
 			) }
 
-			{ data.result && animationSummery && (
+			{ data.result && animationSummary && (
 				<CodeDisplayWrapper>
 					<Box
 						sx={ {
@@ -152,7 +150,7 @@ const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalO
 					>
 						<Typography
 							variant="body1"
-							dangerouslySetInnerHTML={ { __html: animationSummery } } />
+							dangerouslySetInnerHTML={ { __html: animationSummary } } />
 					</Box>
 					<VoicePromotionAlert introductionKey="ai-context-animation-promotion" />
 

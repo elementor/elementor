@@ -77,7 +77,7 @@ export const translateLanguages = [
 export const motionEffectAutocomplete = [
 	__( 'Create Fade out animation on scroll', 'elementor' ),
 	__( 'Create a Parallax effect on scroll', 'elementor' ),
-	__( 'Fade in with slight scaling up on scroll', 'elementor' ),
+	__( 'On scroll, fade in with slight scaling up', 'elementor' ),
 	__( 'Move and tilt opposite to mouse position', 'elementor' ),
 	__( 'Slide in from the left on load', 'elementor' ),
 ];
