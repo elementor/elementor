@@ -157,8 +157,19 @@ class Style_Schema {
 	private static function get_layout_props() {
 		return [
 			'display' => String_Prop_Type::make()->enum([
-				'inline',
+				/* precomposed values */
 				'block',
+				'inline',
+				'inline-block',
+				'flex',
+				'inline-flex',
+				'grid',
+				'inline-grid',
+				'flow-root',
+
+				/* box generation */
+				'none',
+				'contents',
 			]),
 		];
 	}
