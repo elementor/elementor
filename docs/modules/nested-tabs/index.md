@@ -510,9 +510,14 @@ export default function SelectPreset( props ) {
 				<div className="e-con-select-preset__list">
 					{
 						elementor.presetsFactory.getContainerPresets().map( ( preset ) => (
-							<div onClick={() => onPresetSelected( preset, props.container )}
-								key={preset} className="e-con-preset" data-preset={preset}
-								dangerouslySetInnerHTML={{ __html: elementor.presetsFactory.generateContainerPreset( preset ) }}/>
+							<button
+                                type="button"
+                                className="e-con-preset"
+                                data-preset={preset}
+								key={preset}
+                                onClick={() => onPresetSelected( preset, props.container )}
+								dangerouslySetInnerHTML={{ __html: elementor.presetsFactory.generateContainerPreset( preset ) }}
+                            />
 						) )
 					}
 				</div>

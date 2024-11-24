@@ -779,4 +779,99 @@ class Test_Manager extends Elementor_Test_Base {
 		);
 
 	}
+
+	/**
+	 * If a feature is dependent on other features, it should be active only if all its dependencies are active.
+	 * @dataProvider get_dependency_data_provider
+	 */
+	public function test__feature_state_depends_on_dependency_states( $dependent_state, $dependency_states, $expected ) {
+		// Arrange.
+		$dependant = [
+			'name' => 'dependant',
+			'new_site' => [
+				'default_active' => $dependent_state,
+			],
+			'dependencies' => [
+				'dependency_a',
+				'dependency_b',
+			],
+		];
+
+		$dependency_a = [
+			'name' => 'dependency_a',
+			'new_site' => [
+				'default_active' => $dependency_states['dependency_a'],
+			]
+		];
+
+		$dependency_b = [
+			'name' => 'dependency_b',
+			'new_site' => [
+				'default_active' => $dependency_states['dependency_a'],
+			]
+		];
+
+		$this->add_test_feature( $dependant );
+		$this->add_test_feature( $dependency_a );
+		$this->add_test_feature( $dependency_b );
+
+		// Act.
+		$is_dependant_active = $this->experiments->is_feature_active( $dependant['name'], true );
+
+		// Assert.
+		$this->assertEquals( $expected, $is_dependant_active );
+	}
+
+	public function get_dependency_data_provider() : array {
+		return [
+			[
+				'dependent_state' => false,
+				'dependency_states' => [
+					'dependency_a' => false,
+					'dependency_b' => false,
+				],
+				'expected' => false,
+			],
+			[
+				'dependent_state' => false,
+				'dependency_states' => [
+					'dependency_a' => false,
+					'dependency_b' => true,
+				],
+				'expected' => false,
+			],
+			[
+				'dependent_state' => false,
+				'dependency_states' => [
+					'dependency_a' => true,
+					'dependency_b' => false,
+				],
+				'expected' => false,
+			],
+			[
+				'dependent_state' => true,
+				'dependency_states' => [
+					'dependency_a' => false,
+					'dependency_b' => true,
+				],
+				'expected' => false,
+			],
+			[
+				'dependent_state' => true,
+				'dependency_states' => [
+					'dependency_a' => false,
+					'dependency_b' => false,
+				],
+				'expected' => false,
+			],
+			[
+				'dependent_state' => true,
+				'dependency_states' => [
+					'dependency_a' => true,
+					'dependency_b' => true,
+				],
+				'expected' => true,
+			],
+		];
+	}
 }

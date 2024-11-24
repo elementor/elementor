@@ -4,6 +4,7 @@ namespace Elementor\Core\Isolation;
 
 use Elementor\Plugin;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter_Module;
+use Elementor\TemplateLibrary\Source_Local;
 
 class Elementor_Adapter implements Elementor_Adapter_Interface {
 
@@ -39,5 +40,9 @@ class Elementor_Adapter implements Elementor_Adapter_Interface {
 
 	public function is_key_allowed( $key ): bool {
 		return Elementor_Counter_Module::instance()->is_key_allowed( $key );
+	}
+
+	public function get_template_type( $template_id ): string {
+		return Source_Local::get_template_type( $template_id );
 	}
 }

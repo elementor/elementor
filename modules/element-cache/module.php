@@ -44,11 +44,7 @@ class Module extends BaseModule {
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Elements caching reduces loading times by serving up a copy of an element instead of rendering it fresh every time the page is loaded. When active, Elementor will determine which elements can benefit from static loading - but you can override this.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
-			'default' => ExperimentsManager::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.23.0',
-			],
+			'default' => ExperimentsManager::STATE_ACTIVE,
 			'generator_tag' => true,
 		] );
 	}
@@ -78,9 +74,9 @@ class Module extends BaseModule {
 	}
 
 	private function add_advanced_tab_actions() {
-		$hooks = array(
+		$hooks = [
 			'elementor/element/common/_section_style/after_section_end' => '_css_classes', // Widgets
-		);
+		];
 
 		foreach ( $hooks as $hook => $injection_position ) {
 			add_action(

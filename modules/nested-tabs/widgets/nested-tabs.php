@@ -50,6 +50,10 @@ class NestedTabs extends Widget_Nested_Base {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
+	public function show_in_panel(): bool {
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
+	}
+
 	protected function tab_content_container( int $index ) {
 		return [
 			'elType' => 'container',

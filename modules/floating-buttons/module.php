@@ -100,14 +100,12 @@ class Module extends BaseModule {
 
 		$this->register_contact_pages_cpt();
 
-		if ( ! ElementorUtils::has_pro() ) {
-			add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-				$documents_manager->register_document_type(
-					static::FLOATING_BUTTONS_DOCUMENT_TYPE,
-					Floating_Buttons::get_class_full_name()
-				);
-			} );
-		}
+		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
+			$documents_manager->register_document_type(
+				static::FLOATING_BUTTONS_DOCUMENT_TYPE,
+				Floating_Buttons::get_class_full_name()
+			);
+		} );
 
 		add_action( 'current_screen', function() {
 			$screen = get_current_screen();
@@ -289,6 +287,14 @@ class Module extends BaseModule {
 		}
 
 		foreach ( $posts_to_update as $post_id => $clicks ) {
+			if ( self::CPT_FLOATING_BUTTONS !== get_post_type( $post_id ) ) {
+				continue;
+			}
+
+			if ( 'publish' !== get_post_status( $post_id ) ) {
+				continue;
+			}
+
 			update_post_meta( $post_id, static::META_CLICK_TRACKING, $clicks );
 		}
 

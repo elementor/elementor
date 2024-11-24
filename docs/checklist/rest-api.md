@@ -13,7 +13,7 @@ Use this endpoint to get the checklist global config, as well as users progress.
 "config": {
 "id": "create_pages",
 "title": "Create your first 3 pages",
-"description": "Jumpstart your creation with professional designs form the Template Library or start from scratch.",
+"description": "Jumpstart your creation with professional designs from the Template Library or start from scratch.",
 "learn_more_text": "Learn more",
 "learn_more_url": "https://go.elementor.com/getting-started-with-elementor/",
 "cta_text": "Create a new page",

@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import EditorPage from '../pages/editor-page';
-import wpAdminPage from '../pages/wp-admin-page';
+import WpAdminPage from '../pages/wp-admin-page';
 import { wpEnvCli } from '../assets/wp-env-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
@@ -18,8 +18,8 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'anywhere-elementor', installSource: 'api' },
 	{ pluginName: 'astra-sites', installSource: 'api' },
 	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
-	// { pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
-	// { pluginName: 'elementskit-lite', installSource: 'api' },
+	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
+	{ pluginName: 'elementskit-lite', installSource: 'api' },
 	{ pluginName: 'envato-elements', installSource: 'api' },
 	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api' },
 	{ pluginName: 'header-footer-elementor', installSource: 'api' },
@@ -27,17 +27,17 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
 	{ pluginName: 'metform', installSource: 'api' },
 	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
-	// { pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
+	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
 	// { pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
 	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
-	// { pluginName: 'royal-elementor-addons', installSource: 'cli' },
+	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
 	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
 	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
-	// { pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
+	{ pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
 	{ pluginName: 'visibility-logic-elementor', installSource: 'api' },
 	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
 	{ pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
@@ -66,7 +66,7 @@ export const generatePluginTests = ( testType: string ) => {
 
 			try {
 				const editor = new EditorPage( page, testInfo );
-				const wpAdmin = new wpAdminPage( page, testInfo, apiRequests );
+				const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 				const adminBar = 'wpadminbar';
 
 				await page.goto( '/law-firm-about/' );

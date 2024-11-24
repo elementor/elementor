@@ -716,6 +716,9 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'condition' => [
+					'background_hover_background' => [ 'classic', 'gradient' ],
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--background-transition: {{SIZE}}s;',
 				],
@@ -910,14 +913,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'css_filters_hover',
-				'selector' => '{{WRAPPER}}:hover::before',
-			]
-		);
-
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
@@ -932,9 +927,20 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'condition' => [
+					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
+				],
 				'selectors' => [
 					'{{WRAPPER}}, {{WRAPPER}}::before' => '--overlay-transition: {{SIZE}}s;',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}}:hover::before',
 			]
 		);
 
@@ -1087,12 +1093,27 @@ class Container extends Element_Base {
 					'relation' => 'or',
 					'terms' => [
 						[
-							'name' => 'background_background',
+							'name' => 'border_hover_border',
 							'operator' => '!==',
 							'value' => '',
 						],
 						[
-							'name' => 'border_border',
+							'name' => 'border_radius_hover[top]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[right]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[bottom]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[left]',
 							'operator' => '!==',
 							'value' => '',
 						],
@@ -1832,7 +1853,13 @@ class Container extends Element_Base {
 					? $control_name . '_' . $breakpoint
 					: $control_name;
 
-			if ( isset( $element['settings'][ $control ] ) ) {
+			if ( ! isset( $element['settings'][ $control ] ) ) {
+				continue;
+			}
+
+			$already_using_gaps_control = isset( $element['settings'][ $control ]['isLinked'] ); // Slider control won't have the 'isLinked' property.
+
+			if ( ! $already_using_gaps_control ) {
 				$old_size = strval( $element['settings'][ $control ]['size'] );
 
 				$element['settings'][ $control ]['column'] = $old_size;
