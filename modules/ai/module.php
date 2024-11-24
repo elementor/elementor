@@ -185,9 +185,7 @@ class Module extends BaseModule {
   	display: none;
   }
 </style>',
-					'default' => '',
 					'render_type' => 'none',
-					'frontend_available' => true,
 					'ai' => [
 						'active' => true,
 						'type' => 'hover_animation',
@@ -223,9 +221,7 @@ class Module extends BaseModule {
 		display: none;
 	}
 	</style>',
-					'default' => '',
 					'render_type' => 'none',
-					'frontend_available' => true,
 					'ai' => [
 						'active' => true,
 						'type' => 'animation',
