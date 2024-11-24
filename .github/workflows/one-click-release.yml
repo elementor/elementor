@@ -11,6 +11,10 @@ on:
           - ga
           - beta
           - cloud
+      custom_core_executed:
+        type: boolean
+        description: 'Was the Custom Core process executed and completed successful?'
+        required: true
       pre_release:
         type: boolean
         description: 'Pre-release?'
@@ -28,6 +32,11 @@ jobs:
   release:
     runs-on: ubuntu-22.04
     steps:
+      - name: Check if Custom Core was executed
+        if: github.event.inputs.custom_core_executed == 'false'
+        run: |
+          echo "Custom Core was not executed. Please run Custom Core before running this workflow."
+          exit 1
       - name: checkout branch
         uses: actions/checkout@v4
         with:
