@@ -214,7 +214,6 @@ class Module extends BaseModule {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		padding-bottom: 10px;
 	}
 	.elementor-control-ai_animation .elementor-control-raw-html {
 		display: none;

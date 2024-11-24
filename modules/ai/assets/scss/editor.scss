@@ -52,3 +52,13 @@
 		}
 	}
 }
+
+.e-ai-border-button {
+	border-radius: var(--e-a-border-radius);
+	border: var(--e-a-border-bold);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: $control-unit;
+	height: $control-unit;
+}
