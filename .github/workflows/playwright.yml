@@ -145,8 +145,8 @@ jobs:
         run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          wp-lite-env cli config=./tests/.wp-lite-env.json -- port=8888 command="wp core version"
-          wp-lite-env cli config=./tests/.wp-lite-env.json -- port=8888 command="wp --info"
+          wp-lite-env cli config=./tests/playwright/.playwright-wp-lite-env.json -- port=8888 command="wp core version"
+          wp-lite-env cli config=./tests/playwright/.playwright-wp-lite-env.json -- port=8888 command="wp --info"
       - name: Install playwright/test
         run: |
           npx playwright install chromium
