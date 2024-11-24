@@ -180,7 +180,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 		if ( [ 'animation', 'hover_animation' ].includes( aiOptions.type ) ) {
 			const widgetType = view.options.container.model.get( 'widgetType' );
 
-			const getControlValue = () => Object.values( elementor.widgetsCache[ widgetType ].controls )
+			const getControlValue = () => Object.values( elementor?.widgetsCache?.[ widgetType ]?.controls )
 				.filter( ( control ) => 'hover_animation' === aiOptions.type
 					? '_tab_positioning_hover' === control.inner_tab
 					: 'section_effects' === control.section )
