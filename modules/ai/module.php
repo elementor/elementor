@@ -160,8 +160,8 @@ class Module extends BaseModule {
 			return $this->remove_temporary_containers( $data );
 		} );
 
-		add_action( 'elementor/element/after_section_start', [ $this, 'register_ai_motion_effect_control'], 10, 2 );
-		add_action( 'elementor/element/after_section_end', [ $this, 'register_ai_hover_effect_control'], 10, 2 );
+		add_action( 'elementor/element/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 2 );
+		add_action( 'elementor/element/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 2 );
 	}
 
 	public function register_ai_hover_effect_control( $element, $section_id ) {
@@ -202,7 +202,7 @@ class Module extends BaseModule {
 		}
 	}
 	public function register_ai_motion_effect_control( $element, $section_id ) {
-		if ( 'section_effects' === $section_id  && Utils::has_pro() ) {
+		if ( 'section_effects' === $section_id && Utils::has_pro() ) {
 			$element->add_control(
 				'ai_animation',
 				[
