@@ -125,50 +125,49 @@ jobs:
 
                 if (testResults.suites && Array.isArray(testResults.suites)) {
                   testResults.suites.forEach((suite) => {
-                    const suiteTitle = suite.title || 'Untitled Suite';
-
                     if (suite.specs && Array.isArray(suite.specs)) {
                       suite.specs.forEach((spec) => {
-                        const specTitle = spec.title || 'Untitled Spec';
-                        const testName = `${suiteTitle} / ${specTitle}`;
-
                         if (spec.tests && Array.isArray(spec.tests)) {
                           spec.tests.forEach((test) => {
                             if (test.results && Array.isArray(test.results)) {
                               test.results.forEach((result) => {
-                                const status = result.status || 'unknown';
-                                const duration = result.duration || 0;
-                                const errorMessage = result.error ? removeANSI(result.error.message) : null;
-                                const errorStack = result.error ? removeANSI(result.error.stack) : null;
-                                const timestamp = new Date(result.startTime || Date.now()).toISOString();
-                                const docId = `${testName}-${timestamp}`;
-
+                                console.log('Adding result to bulkBody:', test.title, result.status); // Добавляем лог
                                 bulkBody.push({
-                                  index: {
-                                    _index: indexName,
-                                    _id: docId,
-                                  },
+                                  index: { _index: indexName },
                                 });
                                 bulkBody.push({
-                                  suiteTitle,
-                                  specTitle,
-                                  testName,
-                                  status,
-                                  duration,
-                                  errorMessage,
-                                  errorStack,
-                                  timestamp,
-                                });
+                                suiteTitle: suite.title,
+                                specTitle: spec.title,
+                                testName: `${suite.title} / ${spec.title}`,
+                                status: result.status || 'unknown',
+                                duration: result.duration || 0,
+                                errorMessage: result.error ? removeANSI(result.error.message) : null,
+                                timestamp: new Date(result.startTime || Date.now()).toISOString(),
                               });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
+                            });
+                          }
+                        });
+                      }
+                    });
+                  }
+                });
+              }
 
-                if (bulkBody.length > 0) {
+            await esClient.index({
+                  index: 'playwright-test-results',
+                  document: {
+                    suiteTitle: 'Test Suite',
+                    specTitle: 'Test Spec',
+                    testName: 'Sample Test',
+                    status: 'passed',
+                    duration: 123,
+                    timestamp: new Date().toISOString(),
+                  },
+                });
+                console.log('Test document sent successfully!');
+
+
+            if (bulkBody.length > 0) {
                   const bulkResponse = await esClient.bulk({ refresh: true, body: bulkBody });
                   if (bulkResponse.body && bulkResponse.body.errors) {
                     bulkResponse.body.items.forEach((item, index) => {
