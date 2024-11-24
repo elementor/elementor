@@ -18,13 +18,13 @@ function echo_select_your_structure_title() {
 <script type="text/template" id="tmpl-elementor-add-section">
 	<# if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) { #>
 	<div class="elementor-add-section-inner">
-		<button type="button" class="elementor-add-section-close" aria-label="<?php echo esc_attr__( 'Close', 'elementor' ); ?>">
+		<button type="button" class="elementor-add-section-close" title="<?php echo esc_attr__( 'Close', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Close', 'elementor' ); ?>">
 			<i class="eicon-close" aria-hidden="true"></i>
 		</button>
 		<?php
 		$experiments_manager = Plugin::$instance->experiments;
 		if ( $experiments_manager->is_feature_active( 'container' ) ) { ?>
-			<button type="button" class="elementor-add-section-back" aria-label="<?php echo esc_attr__( 'Back', 'elementor' ); ?>">
+			<button type="button" class="elementor-add-section-back" title="<?php echo esc_attr__( 'Back', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Back', 'elementor' ); ?>">
 				<i class="eicon-chevron-left" aria-hidden="true"></i>
 			</button>
 		<?php } ?>
