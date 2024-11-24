@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Frontend;
-use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Plugin;
 use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
@@ -42,7 +42,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 	public function test_parse_atomic_widget_styles__append_css_of_multiple_widgets() {
 		// Arrange.
-		( new Atomic_Styles() )->register_hooks();
+		( new Atomic_Widget_Styles() )->register_hooks();
 		$post = $this->make_mock_post();
 		$element_1 = $this->make_mock_widget([
 			'controls' => [],
@@ -108,7 +108,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 	public function test_parse_atomic_widget_styles__append_css_of_styles_with_breakpoints() {
 		// Arrange.
-		( new Atomic_Styles() )->register_hooks();
+		( new Atomic_Widget_Styles() )->register_hooks();
 		$post = $this->make_mock_post();
 		$element_1 = $this->make_mock_widget([
 			'controls' => [],
@@ -165,7 +165,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 	public function test_parse_atomic_widget_styles__append_css_of_styles_with_transformable_values() {
 		// Arrange.
-		( new Atomic_Styles() )->register_hooks();
+		( new Atomic_Widget_Styles() )->register_hooks();
 		$post = $this->make_mock_post();
 		$element = $this->make_mock_widget([
 			'controls' => [],
@@ -215,7 +215,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 	public function test_parse_atomic_widget_styles__enqueue_font_family() {
 		// Arrange.
-		( new Atomic_Styles() )->register_hooks();
+		( new Atomic_Widget_Styles() )->register_hooks();
 		$post = $this->make_mock_post();
 		$element = $this->make_mock_widget([
 			'controls' => [],
@@ -249,7 +249,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 	public function test_parse_atomic_widget_styles__no_append_when_styles_are_empty() {
 		// Arrange.
-		( new Atomic_Styles() )->register_hooks();
+		( new Atomic_Widget_Styles() )->register_hooks();
 		$post = $this->make_mock_post();
 		$element = $this->make_mock_widget([
 			'controls' => [],
@@ -267,7 +267,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 	public function test_parse_atomic_widget_styles__invalid_non_atomic_widget() {
 		// Arrange.
-		( new Atomic_Styles() )->register_hooks();
+		( new Atomic_Widget_Styles() )->register_hooks();
 		$post = $this->make_mock_post();
 		$element = $this->mock_non_atomic_widget([
 			'styles' => [
