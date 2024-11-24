@@ -231,7 +231,7 @@ const PageContent = (
 	if ( 'animation' === type || 'hover_animation' === type ) {
 		const onCloseAnimationDialog = () => {
 			setControlValue( originalControlValue );
-			elementor.documents.getCurrent().history.setActive( false );
+			elementor.documents.getCurrent().history.setActive( true );
 			onClose();
 		};
 		return (

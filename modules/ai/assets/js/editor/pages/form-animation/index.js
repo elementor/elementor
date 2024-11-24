@@ -79,7 +79,7 @@ const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalO
 
 	const restorePrevSettings = () => {
 		setControlValue( prevControlValue );
-		elementor.documents.getCurrent().history.setActive( false );
+		elementor.documents.getCurrent().history.setActive( true );
 	};
 
 	const getValidElementor = ( result ) => {
