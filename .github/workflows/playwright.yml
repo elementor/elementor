@@ -101,10 +101,10 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
-        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ inputs.reporter || 'list,github' }}
+        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=json ./test-results/results.json
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
+        run: npm run test:playwright:elements-regression -- --reporter=json ./test-results/results.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -112,6 +112,36 @@ jobs:
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
+      # Convert Playwright JSON results to NDJSON format
+      - name: Convert Playwright JSON Results to NDJSON
+        run: |
+          node -e "
+          const fs = require('fs');
+          const results = JSON.parse(fs.readFileSync('./test-results/results.json', 'utf-8'));
+          const documents = results.suites.flatMap(suite => suite.tests.map(test => ({
+            suiteName: suite.title,
+            testName: test.title,
+            outcome: test.outcome,
+            duration: test.duration,
+            errors: test.errors,
+            startTime: suite.startTime,
+          })));
+          const ndjson = documents.map(doc => JSON.stringify({ index: {} }) + '\\n' + JSON.stringify(doc)).join('\\n');
+          fs.writeFileSync('./test-results/results.ndjson', ndjson);
+          "
+          # Upload results to Elasticsearch
+          - name: Upload Test Results to Elasticsearch
+            if: always() # Always attempt to upload results, even if tests fail
+            run: |
+              curl -X POST "https://e8cfc4f31c5e424cb57b05743dcf4ab4.us-central1.gcp.cloud.es.io/playwright-results/_bulk" \
+              -H "Content-Type: application/x-ndjson" \
+              -H "Authorization: ApiKey ${{ secrets.ELASTIC_API_KEY }}" \
+              --data-binary @./test-results/results.ndjson
+
+          # Debug: Check if the file was uploaded
+          - name: Verify Upload (Optional)
+            run: |
+              echo "Uploaded test results to Elasticsearch."
   PlaywrightWithTag:
     name: Playwright test - tagged tests on PHP 8.0
     runs-on: ubuntu-latest

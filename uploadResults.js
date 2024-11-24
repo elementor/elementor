@@ -1,7 +1,12 @@
 const fs = require( 'fs' );
 const { Client } = require( '@elastic/elasticsearch' );
 
-const esClient = new Client( { node: 'http://localhost:9200' } );
+const esClient = new Client( {
+	node: 'https://7b37ac31dc964212bb4a3e868ee14896.us-central1.gcp.cloud.es.io:443',
+	auth: {
+		apiKey: 'UDVjblg1TUI2NkhqYUtaWDJScUI6SUdYSjh0Qm9TSWlZcUVNdkJTVFVhZw==',
+	},
+} );
 
 function removeANSI( text ) {
 	return text.replace( /\u001b\[[0-9;]*m/g, '' );
@@ -78,14 +83,12 @@ async function run() {
 			if ( bulkResponse.body && bulkResponse.body.errors ) {
 				bulkResponse.body.items.forEach( ( item, index ) => {
 					if ( item.index && item.index.error ) {
-						// eslint-disable-next-line no-console
 						console.error( `Indexing error for document ${ index }:`, item.index.error );
 					}
 				} );
 			}
 		}
 	} catch ( error ) {
-		// eslint-disable-next-line no-console
 		console.error( 'An error occurred:', error );
 	}
 }

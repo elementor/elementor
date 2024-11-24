@@ -28,6 +28,8 @@ services:
 volumes:
   esdata:
     driver: local
+  es_snapshots:
+    driver: local
 
 networks:
   elk:
