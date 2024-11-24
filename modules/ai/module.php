@@ -165,7 +165,8 @@ class Module extends BaseModule {
 	}
 
 	public function register_ai_hover_effect_control( $element, $section_id ) {
-		if ( '_section_transform' === $section_id ) {
+		if ( '_section_transform' === $section_id && ! $element->get_controls( 'ai_hover_animation' )) {
+			error_log('bla2');
 			$element->add_control(
 				'ai_hover_animation',
 				[
@@ -202,7 +203,8 @@ class Module extends BaseModule {
 		}
 	}
 	public function register_ai_motion_effect_control( $element, $section_id ) {
-		if ( 'section_effects' === $section_id && Utils::has_pro() ) {
+		if ( 'section_effects' === $section_id && Utils::has_pro() && ! $element->get_controls( 'ai_animation' ) ) {
+			error_log('bla1');
 			$element->add_control(
 				'ai_animation',
 				[
