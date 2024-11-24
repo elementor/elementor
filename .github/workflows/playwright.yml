@@ -95,11 +95,11 @@ jobs:
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
-          - name: Upload results to Elasticsearch
-          env:
-            ELASTICSEARCH_NODE: 'https://7b37ac31dc964212bb4a3e868ee14896.us-central1.gcp.cloud.es.io:443'
-            ELASTICSEARCH_API_KEY: 'UDVjblg1TUI2NkhqYUtaWDJScUI6SUdYSjh0Qm9TSWlZcUVNdkJTVFVhZw=='
-          run: |
+      - name: Upload results to Elasticsearch
+        env:
+          ELASTICSEARCH_NODE: 'https://7b37ac31dc964212bb4a3e868ee14896.us-central1.gcp.cloud.es.io:443'
+          ELASTICSEARCH_API_KEY: 'UDVjblg1TUI2NkhqYUtaWDJScUI6SUdYSjh0Qm9TSWlZcUVNdkJTVFVhZw=='
+        run: |
             node <<'EOF'
             const fs = require('fs');
             const { Client } = require('@elastic/elasticsearch');
