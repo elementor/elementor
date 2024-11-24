@@ -165,12 +165,11 @@ class Module extends BaseModule {
 	}
 
 	public function register_ai_hover_effect_control( $element, $section_id ) {
-		if ( '_section_transform' === $section_id && ! $element->get_controls( 'ai_hover_animation' )) {
+		if ( '_section_transform' === $section_id && ! $element->get_controls( 'ai_hover_animation' ) ) {
 			error_log('bla2');
 			$element->add_control(
 				'ai_hover_animation',
 				[
-					'section' => $section_id,
 					'tabs_wrapper' => '_tabs_positioning',
 					'inner_tab' => '_tab_positioning_hover',
 					'label' => esc_html__( 'Animate With AI', 'elementor' ),
