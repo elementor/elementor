@@ -21,16 +21,16 @@ const WidgetView = BaseWidget.extend( {
 		var behaviors = BaseWidget.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
-			// InlineEditing: {
-			// 	behaviorClass: require( 'elementor-behaviors/inline-editing' ),
-			// 	inlineEditingClass: 'elementor-inline-editing',
-			// },
+			InlineEditing: {
+				behaviorClass: require( 'elementor-behaviors/inline-editing' ),
+				inlineEditingClass: 'elementor-inline-editing',
+			},
 			Draggable: {
 				behaviorClass: WidgetDraggable,
 			},
-			// Resizable: {
-			// 	behaviorClass: WidgetResizable,
-			// },
+			Resizable: {
+				behaviorClass: WidgetResizable,
+			},
 		} );
 
 		return elementor.hooks.applyFilters( 'elements/widget/behaviors', behaviors, this );
@@ -98,7 +98,7 @@ const WidgetView = BaseWidget.extend( {
 
 	attachElContent( html ) {
 		_.defer( () => {
-			elementorFrontend.elements.window.jQuery( this.el ).empty().append( this.getHTMLContent( html ) );
+			elementorFrontend.elements.window.jQuery( this.el ).empty().append( this.getHandlesOverlay(), this.getHTMLContent( html ) );
 
 			this.bindUIElements(); // Build again the UI elements since the content attached just now
 		} );
@@ -145,16 +145,6 @@ const WidgetView = BaseWidget.extend( {
 		if ( this.container?.isEditable() ) {
 			this.onEditButtonClick( event );
 		}
-	},
-
-	attributes() {
-		const attrs = BaseWidget.prototype.attributes.apply( this, arguments );
-
-		return {
-			...attrs,
-			style: 'display: contents !important;',
-			[ 'data-v2' ]: true,
-		};
 	},
 } );
 

@@ -921,6 +921,7 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderedEvent = new CustomEvent( event, { detail: { elementView: this } } );
 		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
+
 		window.top.dispatchEvent( renderedEvent );
 	},
 
@@ -1047,6 +1048,10 @@ BaseElementView = BaseContainer.extend( {
 		return helper;
 	},
 
+	getDraggableElement() {
+		return this.$el;
+	},
+
 	/**
 	 * Initialize the Droppable instance.
 	 */
@@ -1060,7 +1065,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		this.$el.children(':first-child').html5Draggable( {
+		this.getDraggableElement().html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 
