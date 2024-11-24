@@ -11,14 +11,14 @@ on:
           - ga
           - beta
           - cloud
+      custom_core_executed:
+        type: boolean
+        description: 'Was the Custom Core process executed and completed successful?'
+        required: true
       pre_release:
         type: boolean
         description: 'Pre-release?'
         required: false
-      custom_core_executed:
-        type: boolean
-        description: 'Was the Custom Core process executed and completed successfull?'
-        required: true
 
 env:
   CHANNEL: ${{inputs.channel}}
