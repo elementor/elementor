@@ -74,7 +74,7 @@ global.elementor = {
 };
 
 describe( 'digestResult', () => {
-	it( 'should process scrolling_effects correctly', () => {
+	it( 'should process AI effect result correctly', () => {
 		// Test Component to use the hook
 		const TestComponent = () => {
 			const { data } = useAnimationPrompt( 'hover', 'widgetType', '' );
