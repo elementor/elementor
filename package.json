@@ -17,7 +17,6 @@
 		"start-local-server": "npm run setup-templates && wp-lite-env start config=./tests/playwright/.playwright-wp-lite-env.json -- port=8888 && wp-lite-env start config=./tests/playwright/.playwright-wp-lite-env.json -- port=8889",
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
 		"test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
-		"test:setup:playwright_old": "wp-env run cli bash elementor-config/setup.sh && wp-env run tests-cli bash elementor-config/setup.sh",
 		"test:setup:playwright": "wp-lite-env cli config=./tests/playwright/.playwright-wp-lite-env.json -- port=8888 command=\"bash elementor-config/setup.sh\" && wp-lite-env cli config=./tests/playwright/.playwright-wp-lite-env.json -- port=8889 command=\"bash elementor-config/setup.sh\"",
 		"test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
 		"test:playwright:debug": "npm run test:playwright -- --debug",
