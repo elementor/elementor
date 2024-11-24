@@ -36,6 +36,7 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	runAction( url, ...restArgs ) {
+		url = decodeURI( url );
 		url = decodeURIComponent( url );
 
 		const actionMatch = url.match( /action=(.+?)&/ );
