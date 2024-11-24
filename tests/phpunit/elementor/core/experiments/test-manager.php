@@ -44,6 +44,14 @@ class Test_Manager extends Elementor_Test_Base {
 		$experiments_manager->set_feature_default_state( $experimental_data['name'], $original_experiment_state );
 	}
 
+	public function test_add_default_experiments() {
+		// we ensure that the default features are added, and no dependency is initialized incorrectly.
+		// what we are really testing here is no exceptions thrown on initialization.
+		$features = $this->experiments->get_features();
+
+		$this->assertNotEmpty( $features, 'Default registered features' );
+	}
+
 	public function test_add_feature() {
 		$test_feature_data = [
 			'default' => Experiments_Manager::STATE_ACTIVE,
@@ -330,19 +338,21 @@ class Test_Manager extends Elementor_Test_Base {
 			'name' => 'core_feature',
 			'state' => Experiments_Manager::STATE_DEFAULT,
 			'default' => Experiments_Manager::STATE_INACTIVE,
+			'mutable' => false,
 		];
 
 		$depended_feature = [
 			'name' => 'depended_feature',
 			'state' => Experiments_Manager::STATE_ACTIVE,
+			'mutable' => false,
 			'dependencies' => [
 				'core_feature',
 			],
 		];
 
-		$this->add_test_feature( $test_core_feature );
 
 		// Act.
+		$this->add_test_feature( $test_core_feature );
 		$depended_feature = $this->add_test_feature( $depended_feature );
 
 		$depended_feature_dependency = $depended_feature['dependencies'][0];
@@ -350,7 +360,8 @@ class Test_Manager extends Elementor_Test_Base {
 		// Assert.
 		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
 		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
-		$this->assertTrue( $depended_feature['state'] === Experiments_Manager::STATE_INACTIVE );
+		$this->assertTrue( $depended_feature['state'] === Experiments_Manager::STATE_DEFAULT );
+		$this->assertTrue( $depended_feature['default'] === Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function test_add_feature__adding_non_existing_dependency() {
@@ -363,15 +374,12 @@ class Test_Manager extends Elementor_Test_Base {
 			],
 		];
 
+		// Assert.
+		$this->expectException( \Elementor\Core\Experiments\Exceptions\Dependency_Exception::class );
+		$this->expectExceptionMessage( 'Feature test_feature cannot be initialized before dependency feature: feature-that-not-exists' );
+
 		// Act.
 		$this->add_test_feature( $test_feature_data );
-
-		// Assert.
-		$feature = $this->experiments->get_features( 'test_feature' );
-
-		$this->assertCount( 1, $feature['dependencies'] );
-		$this->assertInstanceOf( Non_Existing_Dependency::class, $feature['dependencies'][0] );
-		$this->assertEquals( 'feature-that-not-exists', $feature['dependencies'][0]->get_name() );
 	}
 
 	public function test_feature_can_be_added_as_hidden() {
@@ -606,12 +614,12 @@ class Test_Manager extends Elementor_Test_Base {
 				Module_B::class,
 			],
 		];
+		// Assert.
+		$this->expectException( \Elementor\Core\Experiments\Exceptions\Dependency_Exception::class );
+		$this->expectExceptionMessage( 'Feature module-a cannot be initialized before dependency feature: Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B' );
 
 		$this->add_test_feature( $test_feature_data );
 
-		// Assert.
-		$this->expectException( \WPDieException::class );
-		$this->expectExceptionMessage( '<p>The feature `module-a` has a dependency `module-b` that is not available.</p><p><a href="#" onclick="location.href=\'http://example.org/wp-admin/admin.php?page=elementor-settings#tab-experiments\'">Back</a></p>' );
 
 		// Act.
 		update_option(
@@ -625,7 +633,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$dependant = [
 			'name' => Module_A::instance()->get_name(),
 			'dependencies' => [
-				Module_B::class,
+				Module_B::instance()->get_name(),
 			],
 		];
 
@@ -633,11 +641,11 @@ class Test_Manager extends Elementor_Test_Base {
 			'name' => Module_B::instance()->get_name(),
 		];
 
-		$this->add_test_feature( $dependant );
-		$this->experiments->set_feature_default_state( $dependant['name'], Experiments_Manager::STATE_INACTIVE );
 
 		$this->add_test_feature( $dependency );
+		$this->add_test_feature( $dependant );
 		$this->experiments->set_feature_default_state( $dependency['name'], Experiments_Manager::STATE_INACTIVE );
+		$this->experiments->set_feature_default_state( $dependant['name'], Experiments_Manager::STATE_INACTIVE );
 
 		// Assert.
 		$this->expectException( \WPDieException::class );
@@ -655,7 +663,7 @@ class Test_Manager extends Elementor_Test_Base {
 		$dependant = [
 			'name' => Module_A::instance()->get_name(),
 			'dependencies' => [
-				Module_B::class,
+				Module_B::instance()->get_name(),
 			],
 		];
 
@@ -663,10 +671,10 @@ class Test_Manager extends Elementor_Test_Base {
 			'name' => Module_B::instance()->get_name(),
 		];
 
-		$this->add_test_feature( $dependant );
-		$this->experiments->set_feature_default_state( $dependant['name'], Experiments_Manager::STATE_ACTIVE );
 
 		$this->add_test_feature( $dependency );
+		$this->add_test_feature( $dependant );
+		$this->experiments->set_feature_default_state( $dependant['name'], Experiments_Manager::STATE_ACTIVE );
 		$this->experiments->set_feature_default_state( $dependency['name'], Experiments_Manager::STATE_ACTIVE );
 
 		// Act.
@@ -692,7 +700,6 @@ class Test_Manager extends Elementor_Test_Base {
 			'name' => 'test_B',
 			'dependencies' => [
 				'test_A',
-				'non-existing-dep-that-should-be-ignored',
 			],
 		] );
 
@@ -754,53 +761,6 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->experiments->remove_feature( 'test_C' );
 		$this->experiments->remove_feature( 'test_D' );
 		$this->experiments->remove_feature( 'test_E' );
-	}
-
-	public function test_sort_allowed_options_by_dependencies__circular_deps() {
-		// Arrange.
-		$this->experiments->add_feature( [
-			'name' => 'test_A',
-			'dependencies' => [ 'test_C' ],
-		] );
-
-		$this->experiments->add_feature( [
-			'name' => 'test_B',
-			'dependencies' => [ 'test_A' ],
-		] );
-
-		$this->experiments->add_feature( [
-			'name' => 'test_C',
-			'dependencies' => [ 'test_B' ],
-		] );
-
-		// Act.
-		$result = apply_filters(
-			'allowed_options',
-			[
-				'elementor' => [
-					'elementor_experiment-test_B',
-					'elementor_experiment-test_C',
-					'elementor_experiment-test_A',
-				],
-			]
-		);
-
-		// Assert.
-		$this->assertEqualSets(
-			[
-				'elementor' => [
-					'elementor_experiment-test_C',
-					'elementor_experiment-test_A',
-					'elementor_experiment-test_B',
-				],
-			],
-			$result
-		);
-
-		// Teardown.
-		$this->experiments->remove_feature( 'test_A' );
-		$this->experiments->remove_feature( 'test_B' );
-		$this->experiments->remove_feature( 'test_C' );
 	}
 
 	private function add_test_feature( array $args = [] ) {

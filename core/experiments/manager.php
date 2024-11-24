@@ -2,6 +2,7 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\System_Info\Module as System_Info;
@@ -121,14 +122,26 @@ class Manager extends Base_Object {
 			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 				$feature = $this->get_features( $dependency );
 
+				if ( ! isset( $feature ) ) {
+					// since we must validate the state of each dependency, we have to make sure that dependencies are initialized in the correct order, otherwise, error.
+					throw new Exceptions\Dependency_Exception( "Feature {$experimental_data['name']} cannot be initialized before dependency feature: {$dependency}." );
+				}
+
 				if ( ! empty( $feature[ static::TYPE_HIDDEN ] ) ) {
 					throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
 				}
 
 				$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
-				// if one of the features is inactive, the main feature should be inactive as well.
+				// we must validate the state:
+				// * A user can set a dependant feature to inactive and in upgrade we don't change users settings.
+				// * A developer can set the default state to be invalid (e.g. dependant feature is inactive).
+				// if one of the dependencies is inactive, the main feature should be inactive as well.
 				if ( $this->get_feature_actual_state( $feature ) === self::STATE_INACTIVE ) {
-					$experimental_data['default'] = self::STATE_INACTIVE;
+					if ( $experimental_data['state'] === self::STATE_ACTIVE ) {
+						$experimental_data['state'] = self::STATE_INACTIVE;
+					} elseif ( $experimental_data['state'] === self::STATE_DEFAULT ) {
+						$experimental_data['default'] = self::STATE_INACTIVE;
+					}
 				}
 			}
 		}
