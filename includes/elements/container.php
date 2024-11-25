@@ -170,7 +170,7 @@ class Container extends Element_Base {
 			#>
 			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
 				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
+				<video class="elementor-background-video-hosted" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
 		<div class="elementor-shape elementor-shape-top"></div>
@@ -216,7 +216,7 @@ class Container extends Element_Base {
 					$video_tag_attributes .= ' loop';
 				}
 				?>
-				<video class="elementor-background-video-hosted elementor-html5-video" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
+				<video class="elementor-background-video-hosted" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
 			<?php endif; ?>
 		</div><?php
 	}
@@ -716,6 +716,9 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'condition' => [
+					'background_hover_background' => [ 'classic', 'gradient' ],
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--background-transition: {{SIZE}}s;',
 				],
@@ -910,14 +913,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'css_filters_hover',
-				'selector' => '{{WRAPPER}}:hover::before',
-			]
-		);
-
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
@@ -932,9 +927,20 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'condition' => [
+					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
+				],
 				'selectors' => [
 					'{{WRAPPER}}, {{WRAPPER}}::before' => '--overlay-transition: {{SIZE}}s;',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}}:hover::before',
 			]
 		);
 
@@ -1087,12 +1093,27 @@ class Container extends Element_Base {
 					'relation' => 'or',
 					'terms' => [
 						[
-							'name' => 'background_background',
+							'name' => 'border_hover_border',
 							'operator' => '!==',
 							'value' => '',
 						],
 						[
-							'name' => 'border_hover_border',
+							'name' => 'border_radius_hover[top]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[right]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[bottom]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[left]',
 							'operator' => '!==',
 							'value' => '',
 						],
