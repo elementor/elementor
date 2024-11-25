@@ -137,9 +137,6 @@ class Assets extends Base {
 							$assets[ $assets_type ] = [];
 						}
 
-						$test = $assets[ $assets_type ];
-						$name = $dependency['name'];
-
 						$assets[ $assets_type ][] = $dependency['name'];
 					}
 				}
