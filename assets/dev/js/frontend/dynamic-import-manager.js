@@ -1,4 +1,4 @@
-export default class ScriptsImportManager extends elementorModules.ViewModule {
+export default class DynamicImportManager extends elementorModules.ViewModule {
 	getRegisteredModuleScripts() {
 		return [
 			{
