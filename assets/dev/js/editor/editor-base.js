@@ -29,10 +29,13 @@ import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
 import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
 import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/module';
-import LinksPageLibraryModule from 'elementor/modules/conversion-center/assets/js/editor/module';
+import FloatingButtonsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-buttons/editor/module';
+import FloatingBarsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-bars/editor/module';
+import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
+import { FontVariables } from './utils/font-variables';
 
 /**
  * @typedef {import('./container/container')} Container
@@ -283,8 +286,29 @@ export default class EditorBase extends Marionette.Application {
 				return false;
 			}
 
-			if ( ! this.widgetsCache[ widgetType ].commonMerged ) {
-				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
+			if ( ! this.widgetsCache[ widgetType ].commonMerged && ! this.widgetsCache[ widgetType ].atomic_controls ) {
+				let commonControls = this.widgetsCache.common.controls;
+
+				/**
+				 * Filter widgets common controls.
+				 *
+				 * @param array  commonControls - An array of the default common controls.
+				 * @param string widgetType     - The widget type.
+				 */
+				commonControls = elementor.hooks.applyFilters( 'elements/widget/controls/common/default', commonControls, widgetType );
+				jQuery.extend( this.widgetsCache[ widgetType ].controls, commonControls );
+
+				if ( ! this.widgetsCache[ widgetType ].has_widget_inner_wrapper && elementorCommon.config.experimentalFeatures.e_optimized_markup ) {
+					let commonOptimizedControls = this.widgetsCache[ 'common-optimized' ].controls;
+					/**
+					 * Filter widgets common-optimized controls.
+					 *
+					 * @param array  commonOptimizedControls - An array of the default common controls.
+					 * @param string widgetType     - The widget type.
+					 */
+					commonOptimizedControls = elementor.hooks.applyFilters( 'elements/widget/controls/common-optimized/default', commonOptimizedControls, widgetType );
+					jQuery.extend( this.widgetsCache[ widgetType ].controls, commonOptimizedControls );
+				}
 
 				this.widgetsCache[ widgetType ].controls = elementor.hooks.applyFilters( 'elements/widget/controls/common', this.widgetsCache[ widgetType ].controls, widgetType, this.widgetsCache[ widgetType ] );
 
@@ -438,9 +462,13 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
 		}
 
-		if ( elementorCommon.config.experimentalFeatures[ 'conversion-center' ] ) {
-			this.modules.linksPageLibraryModule = new LinksPageLibraryModule();
+		if ( elementorCommon.config.experimentalFeatures.container ) {
+			this.modules.floatingButtonsLibraryModule = new FloatingButtonsLibraryModule();
 		}
+
+		this.modules.linkInBioLibraryModule = new LinkInBioLibraryModule();
+
+		this.modules.floatingBarsLibraryModule = new FloatingBarsLibraryModule();
 
 		this.modules.elementsColorPicker = new ElementsColorPicker();
 
@@ -455,6 +483,8 @@ export default class EditorBase extends Marionette.Application {
 
 		// TODO: Remove, BC Since 2.9.0.
 		elementor.saver = $e.components.get( 'document/save' );
+
+		new FontVariables();
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
 	}

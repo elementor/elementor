@@ -373,7 +373,7 @@
 						"version": {
 							"$id": "#/system/wordpress/version",
 							"type": "string",
-							"title": "Wordpress version",
+							"title": "WordPress version",
 							"examples": [
 								"5.6.1"
 							]
@@ -994,6 +994,15 @@
 										"1",
 										"0"
 									]
+								},
+								"lazy_load_background_images": {
+									"$id": "#/usages/settings/performance/lazy_load_background_images",
+									"title": "Lazy Load Background Images",
+									"default": "1",
+									"enum": [
+										"1",
+										"0"
+									]
 								}
 							},
 							"additionalProperties": false
@@ -1076,16 +1085,6 @@
 								"css_print_method": "internal"
 							},
 							"experiments": {
-								"e_optimized_css_loading": {
-									"default": "inactive",
-									"state": "default",
-									"tags": [
-										{
-											"type": "default",
-											"label": "Performance"
-										}
-									]
-								},
 								"landing-pages": {
 									"default": "active",
 									"state": "default"
@@ -1292,6 +1291,15 @@
 					}
 				  },
 				  "additionalProperties": false
+				},
+				"onboarding_features": {
+					"$id": "#/usages/onboarding_features",
+					"title": "Elementor Onboarding Features usage",
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"additionalProperties": false
 				}
 			},
 			"additionalProperties": false
@@ -1305,6 +1313,12 @@
 			"$id": "#/install_time",
 			"type": "number",
 			"title": "Install timestamp"
+		},
+		"site_key": {
+			"$id": "#/site_key",
+			"type": "string",
+			"title": "Site key",
+			"description": "The site key is a unique identifier for the site."
 		},
 		"analytics_events": {
 			"$id": "#/analytics_events",

@@ -1,26 +1,22 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import widgets from '../enums/widgets';
 
 test.describe( 'Section tests', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: false,
 		} );
+		await page.close();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		new WpAdminPage( page, testInfo );
-	} );
-
-	test( 'Verify that elements are in the correct order after passing into a new section', async ( { page }, testInfo ) => {
+	test( 'Verify that elements are in the correct order after passing into a new section', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			sectionId1 = await editor.addElement( { elType: 'section' }, 'document' ),
 			sectionId2 = await editor.addElement( { elType: 'section' }, 'document' ),

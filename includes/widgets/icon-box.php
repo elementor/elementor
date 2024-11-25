@@ -77,6 +77,24 @@ class Widget_Icon_Box extends Widget_Base {
 		return false;
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-icon-box' ];
+	}
+
 	/**
 	 * Register icon box widget controls.
 	 *
@@ -130,8 +148,9 @@ class Widget_Icon_Box extends Widget_Base {
 				'label' => esc_html__( 'Shape', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'circle' => esc_html__( 'Circle', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
+					'circle' => esc_html__( 'Circle', 'elementor' ),
 				],
 				'default' => 'circle',
 				'condition' => [
@@ -789,7 +808,7 @@ class Widget_Icon_Box extends Widget_Base {
 		view.addRenderAttribute( 'icon', 'class', 'elementor-icon elementor-animation-' + settings.hover_animation );
 
 		if ( hasLink ) {
-			view.addRenderAttribute( 'link', 'href', settings.link.url );
+			view.addRenderAttribute( 'link', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
 			view.addRenderAttribute( 'icon', 'tabindex', '-1' );
 		}
 
@@ -804,9 +823,9 @@ class Widget_Icon_Box extends Widget_Base {
 			<div class="elementor-icon-box-icon">
 				<{{{ htmlTag }}} {{{ view.getRenderAttributeString( 'link' ) }}} {{{ view.getRenderAttributeString( 'icon' ) }}}>
 					<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
-						{{{ iconHTML.value }}}
+						{{{ elementor.helpers.sanitize( iconHTML.value ) }}}
 					<# } else { #>
-						<i class="{{ settings.icon }}" aria-hidden="true"></i>
+						<i class="{{ _.escape( settings.icon ) }}" aria-hidden="true"></i>
 					<# } #>
 				</{{{ htmlTag }}}>
 			</div>
@@ -818,13 +837,13 @@ class Widget_Icon_Box extends Widget_Base {
 				<# if ( settings.title_text ) { #>
 				<{{{ titleSizeTag }}} class="elementor-icon-box-title">
 					<{{{ htmlTag }}} {{{ view.getRenderAttributeString( 'link' ) }}} {{{ view.getRenderAttributeString( 'title_text' ) }}}>
-						{{{ settings.title_text }}}
+						{{{ elementor.helpers.sanitize( settings.title_text ) }}}
 					</{{{ htmlTag }}}>
 				</{{{ titleSizeTag }}}>
 				<# } #>
 
 				<# if ( settings.description_text ) { #>
-				<p {{{ view.getRenderAttributeString( 'description_text' ) }}}>{{{ settings.description_text }}}</p>
+				<p {{{ view.getRenderAttributeString( 'description_text' ) }}}>{{{ elementor.helpers.sanitize( settings.description_text ) }}}</p>
 				<# } #>
 
 			</div>

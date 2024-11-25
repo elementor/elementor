@@ -312,6 +312,16 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	public function get_controls( $control_id = null ) {
 		$stack = $this->get_stack();
+
+		if ( null !== $control_id ) {
+			$control_data = self::get_items( $stack['controls'], $control_id );
+			if ( null === $control_data && ! empty( $stack['style_controls'] ) ) {
+				$control_data = self::get_items( $stack['style_controls'], $control_id );
+			}
+
+			return $control_data;
+		}
+
 		$controls = $stack['controls'];
 
 		if ( Performance::is_use_style_controls() && ! empty( $stack['style_controls'] ) ) {

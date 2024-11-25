@@ -77,6 +77,20 @@ class Widget_Image_Gallery extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-image-gallery' ];
+	}
+
+	/**
 	 * Get widget upsale data.
 	 *
 	 * Retrieve the widget promotion data.
@@ -95,6 +109,10 @@ class Widget_Image_Gallery extends Widget_Base {
 			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-basic-gallery-widget/' ),
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
 		];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**

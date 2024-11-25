@@ -171,7 +171,6 @@ abstract class Base_App {
 
 	public function action_reset() {
 		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( static::OPTION_CONNECT_SITE_KEY );
 			delete_option( 'elementor_remote_info_library' );
 		}
 
@@ -471,7 +470,7 @@ abstract class Base_App {
 			$args
 		);
 
-		if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) && empty( $options['with_error_data'] ) ) {
 			// PHPCS - the variable $response does not contain a user input value.
 			wp_die( $response, [ 'back_link' => true ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
@@ -658,6 +657,10 @@ abstract class Base_App {
 			if ( opener && opener !== window ) {
 				opener.jQuery( 'body' ).trigger(
 					'elementor/connect/success/<?php echo esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here. ?>',
+					<?php echo wp_json_encode( $data ); ?>
+				);
+
+				opener.dispatchEvent( new CustomEvent( 'elementor/connect/success' ),
 					<?php echo wp_json_encode( $data ); ?>
 				);
 

@@ -82,13 +82,7 @@ class Container extends Element_Base {
 	}
 
 	public function get_keywords() {
-		$keywords = [ 'Container', 'Flex', 'Flexbox', 'Flexbox Container', 'Layout' ];
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
-			array_push( $keywords, 'Grid', 'Grid Container', 'CSS Grid' );
-		}
-
-		return $keywords;
+		return [ 'Container', 'Flex', 'Flexbox', 'Flexbox Container', 'Grid', 'Grid Container', 'CSS Grid', 'Layout' ];
 	}
 
 	public function get_panel_presets() {
@@ -171,12 +165,12 @@ class Container extends Element_Base {
 			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
 			if ( ! settings.background_play_on_mobile ) {
-				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
 			}
 			#>
 			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
 				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
+				<video class="elementor-background-video-hosted" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
 		<div class="elementor-shape elementor-shape-top"></div>
@@ -208,7 +202,7 @@ class Container extends Element_Base {
 		$this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
 
 		if ( ! $settings['background_play_on_mobile'] ) {
-			$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-phone' );
+			$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
 		}
 
 		?><div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
@@ -222,7 +216,7 @@ class Container extends Element_Base {
 					$video_tag_attributes .= ' loop';
 				}
 				?>
-				<video class="elementor-background-video-hosted elementor-html5-video" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
+				<video class="elementor-background-video-hosted" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
 			<?php endif; ?>
 		</div><?php
 	}
@@ -336,65 +330,6 @@ class Container extends Element_Base {
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 
-	protected function get_flex_control_options( $is_container_grid_active ) {
-		$flex_control_options = [
-			'name' => 'flex',
-			'selector' => '{{WRAPPER}}',
-			'fields_options' => [
-				'gap' => [
-					'label' => esc_html__( 'Gaps', 'elementor' ),
-					'device_args' => [
-						Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
-							// Use the default gap from the kit as a placeholder.
-							'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
-						],
-					],
-				],
-			],
-		];
-
-		if ( $is_container_grid_active ) {
-			$flex_control_options['condition'] = [
-				'container_type' => 'flex',
-			];
-		}
-
-		return $flex_control_options;
-	}
-
-	protected function get_container_type_control_options( $is_container_grid_active ) {
-		if ( $is_container_grid_active ) {
-			return [
-				'label' => esc_html__( 'Container Layout', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'flex',
-				'prefix_class' => 'e-',
-				'options' => [
-					'flex' => esc_html__( 'Flexbox', 'elementor' ),
-					'grid' => esc_html__( 'Grid', 'elementor' ),
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--display: {{VALUE}}',
-				],
-				'separator' => 'after',
-				'editor_available' => true,
-			];
-		}
-
-		// TODO: This can be removed when the 'Container Grid Experiment' is merged.
-		return [
-			'label' => esc_html__( 'Container Layout', 'elementor' ),
-			'type' => Controls_Manager::HIDDEN,
-			'render_type' => 'none',
-			'default' => 'flex',
-			'prefix_class' => 'e-',
-			'selectors' => [
-				'{{WRAPPER}}' => '--display: {{VALUE}}',
-			],
-			'separator' => 'after',
-		];
-	}
-
 	/**
 	 * Register the Container's layout controls.
 	 *
@@ -417,11 +352,23 @@ class Container extends Element_Base {
 			$min_affected_device = Breakpoints_Manager::BREAKPOINT_KEY_TABLET;
 		}
 
-		$is_container_grid_active = Plugin::$instance->experiments->is_feature_active( 'container_grid' );
-
 		$this->add_control(
 			'container_type',
-			$this->get_container_type_control_options( $is_container_grid_active )
+			[
+				'label' => esc_html__( 'Container Layout', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => 'flex',
+				'prefix_class' => 'e-',
+				'options' => [
+					'flex' => esc_html__( 'Flexbox', 'elementor' ),
+					'grid' => esc_html__( 'Grid', 'elementor' ),
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--display: {{VALUE}}',
+				],
+				'separator' => 'after',
+				'editor_available' => true,
+			]
 		);
 
 		$this->add_control(
@@ -540,21 +487,36 @@ class Container extends Element_Base {
 
 		$this->add_group_control(
 			Group_Control_Flex_Container::get_type(),
-			$this->get_flex_control_options( $is_container_grid_active )
+			[
+				'name' => 'flex',
+				'selector' => '{{WRAPPER}}',
+				'fields_options' => [
+					'gap' => [
+						'label' => esc_html__( 'Gaps', 'elementor' ),
+						'device_args' => [
+							Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP => [
+								// Use the default gap from the kit as a placeholder.
+								'placeholder' => $this->active_kit->get_settings_for_display( 'space_between_widgets' ),
+							],
+						],
+					],
+				],
+				'condition' => [
+					'container_type' => [ 'flex' ],
+				],
+			]
 		);
 
-		if ( $is_container_grid_active ) {
-			$this->add_group_control(
-				Group_Control_Grid_Container::get_type(),
-				[
-					'name' => 'grid',
-					'selector' => '{{WRAPPER}}',
-					'condition' => [
-						'container_type' => [ 'grid' ],
-					],
-				]
-			);
-		}
+		$this->add_group_control(
+			Group_Control_Grid_Container::get_type(),
+			[
+				'name' => 'grid',
+				'selector' => '{{WRAPPER}}',
+				'condition' => [
+					'container_type' => [ 'grid' ],
+				],
+			]
+		);
 
 		$this->end_controls_section();
 	}
@@ -694,6 +656,29 @@ class Container extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'handle_slideshow_asset_loading',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'assets' => [
+					'styles' => [
+						[
+							'name' => 'e-swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+					],
+				],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		/**
@@ -731,6 +716,9 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'condition' => [
+					'background_hover_background' => [ 'classic', 'gradient' ],
+				],
 				'selectors' => [
 					'{{WRAPPER}}' => '--background-transition: {{SIZE}}s;',
 				],
@@ -925,14 +913,6 @@ class Container extends Element_Base {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Css_Filter::get_type(),
-			[
-				'name' => 'css_filters_hover',
-				'selector' => '{{WRAPPER}}:hover::before',
-			]
-		);
-
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
@@ -947,9 +927,20 @@ class Container extends Element_Base {
 				],
 				'render_type' => 'ui',
 				'separator' => 'before',
+				'condition' => [
+					'background_overlay_hover_background' => [ 'classic', 'gradient' ],
+				],
 				'selectors' => [
 					'{{WRAPPER}}, {{WRAPPER}}::before' => '--overlay-transition: {{SIZE}}s;',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Css_Filter::get_type(),
+			[
+				'name' => 'css_filters_hover',
+				'selector' => '{{WRAPPER}}:hover::before',
 			]
 		);
 
@@ -1102,12 +1093,27 @@ class Container extends Element_Base {
 					'relation' => 'or',
 					'terms' => [
 						[
-							'name' => 'background_background',
+							'name' => 'border_hover_border',
 							'operator' => '!==',
 							'value' => '',
 						],
 						[
-							'name' => 'border_border',
+							'name' => 'border_radius_hover[top]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[right]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[bottom]',
+							'operator' => '!==',
+							'value' => '',
+						],
+						[
+							'name' => 'border_radius_hover[left]',
 							'operator' => '!==',
 							'value' => '',
 						],
@@ -1172,6 +1178,22 @@ class Container extends Element_Base {
 					'options' => $shapes_options,
 					'render_type' => 'none',
 					'frontend_available' => true,
+					'assets' => [
+						'styles' => [
+							[
+								'name' => 'e-shapes',
+								'conditions' => [
+									'terms' => [
+										[
+											'name' => $base_control_key,
+											'operator' => '!==',
+											'value' => '',
+										],
+									],
+								],
+							],
+						],
+					],
 				]
 			);
 
@@ -1831,7 +1853,13 @@ class Container extends Element_Base {
 					? $control_name . '_' . $breakpoint
 					: $control_name;
 
-			if ( isset( $element['settings'][ $control ] ) ) {
+			if ( ! isset( $element['settings'][ $control ] ) ) {
+				continue;
+			}
+
+			$already_using_gaps_control = isset( $element['settings'][ $control ]['isLinked'] ); // Slider control won't have the 'isLinked' property.
+
+			if ( ! $already_using_gaps_control ) {
 				$old_size = strval( $element['settings'][ $control ]['size'] );
 
 				$element['settings'][ $control ]['column'] = $old_size;

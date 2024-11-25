@@ -74,6 +74,10 @@ const SectionView = BaseElementView.extend( {
 	},
 
 	getEditButtons() {
+		if ( ! $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
+			return {};
+		}
+
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
 

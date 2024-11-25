@@ -2,10 +2,17 @@ name: Upgrade Elementor test
 
 on:
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       version:
-        description: 'Elementor version from Wordpress svn'
+        description: 'Elementor version from WordPress svn'
         required: false
         default: ''
 
@@ -49,7 +56,7 @@ jobs:
         run: npx playwright install chromium
       - name: Run Playwright tests
         run: npm run test:playwright:elements-regression -- --grep="Test heading template"
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-test-results-elements-regression

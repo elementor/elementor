@@ -1,9 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
-test( 'navigator empty placeholder should be in dark mode', async ( { page }, testInfo ) => {
+test( 'navigator empty placeholder should be in dark mode', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	await wpAdmin.setExperiments( {
 		container: true,
 	} );
@@ -12,7 +13,7 @@ test( 'navigator empty placeholder should be in dark mode', async ( { page }, te
 
 	// Act.
 	await editor.addElement( { elType: 'container' }, 'document' );
-	await editor.changeUiTheme( 'dark' );
+	await editor.setDisplayMode( 'dark' );
 	const navigator = editor.page.locator( '#elementor-navigator' );
 	await navigator.locator( '.elementor-navigator__element__list-toggle' ).click();
 

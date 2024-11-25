@@ -80,17 +80,23 @@ class Manager extends DB_Upgrades_Manager {
 
 		$time = time();
 
-		$installs_history[ ELEMENTOR_VERSION ] = $time;
+		$installs_history[ $this->get_new_version() ] = $time;
 
 		$old_version = $this->get_current_version();
 
 		// If there was an old version of Elementor, and there's no record for that install yet
 		if ( $old_version && empty( $installs_history[ $old_version ] ) ) {
-			$installs_history[ $old_version ] = $installs_history[ ELEMENTOR_VERSION ] - 1;
+			$installs_history[ $old_version ] = $installs_history[ $this->get_new_version() ] - 1;
 		}
 
 		uksort( $installs_history, 'version_compare' );
 
 		update_option( static::get_install_history_meta(), $installs_history );
+	}
+
+	public static function is_new_installation() : bool {
+		$installs_history = self::get_installs_history();
+
+		return empty( $installs_history ) || static::install_compare( ELEMENTOR_VERSION, '>=' );
 	}
 }

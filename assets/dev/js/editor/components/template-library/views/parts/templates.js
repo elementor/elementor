@@ -153,7 +153,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	setFiltersUI() {
-		if ( ! this.select2Instance ) {
+		if ( ! this.select2Instance && this.$( this.ui.selectFilter ).length ) {
 			const $filters = this.$( this.ui.selectFilter ),
 				select2Options = {
 					placeholder: __( 'Category', 'elementor' ),

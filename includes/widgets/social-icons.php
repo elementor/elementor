@@ -75,6 +75,24 @@ class Widget_Social_Icons extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-social-icons', 'e-apple-webkit' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	/**
 	 * Register social icons widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -263,8 +281,8 @@ class Widget_Social_Icons extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'rounded',
 				'options' => [
-					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'circle' => esc_html__( 'Circle', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-shape-',
@@ -296,6 +314,10 @@ class Widget_Social_Icons extends Widget_Base {
 		$start = is_rtl() ? 'end' : 'start';
 		$end = is_rtl() ? 'start' : 'end';
 
+		$align_selector = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_inner_wrapper()
+			? '{{WRAPPER}}'
+			: '{{WRAPPER}} .elementor-widget-container';
+
 		$this->add_responsive_control(
 			'align',
 			[
@@ -318,7 +340,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'prefix_class' => 'e-grid-align%s-',
 				'default' => 'center',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'text-align: {{VALUE}}',
+					$align_selector => 'text-align: {{VALUE}}',
 				],
 			]
 		);
@@ -660,7 +682,7 @@ class Widget_Social_Icons extends Widget_Base {
 					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
 				#>
 				<span class="elementor-grid-item">
-					<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ link }}">
+					<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ elementor.helpers.sanitizeUrl( link ) }}">
 						<span class="elementor-screen-only">{{{ social }}}</span>
 						<#
 							iconsHTML[ index ] = elementor.helpers.renderIcon( view, item.social_icon, {}, 'i', 'object' );

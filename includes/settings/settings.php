@@ -252,6 +252,13 @@ class Settings extends Settings_Page {
 				'label' => esc_html__( 'General', 'elementor' ),
 				'sections' => [
 					'general' => [
+						'label' => esc_html__( 'General', 'elementor' ),
+						'callback' => function() {
+							printf(
+								'<p>%s</p><br><hr><br>',
+								esc_html__( 'Tailor how Elementor enhances your site, from post types to other functions.', 'elementor' )
+							);
+						},
 						'fields' => [
 							self::UPDATE_TIME_FIELD => [
 								'full_field_id' => self::UPDATE_TIME_FIELD,
@@ -322,6 +329,13 @@ class Settings extends Settings_Page {
 				'label' => esc_html__( 'Advanced', 'elementor' ),
 				'sections' => [
 					'advanced' => [
+						'label' => esc_html__( 'Advanced', 'elementor' ),
+						'callback' => function() {
+							printf(
+								'<p>%s</p><br><hr><br>',
+								esc_html__( 'Personalize the way Elementor works on your website by choosing the advanced features and how they operate.', 'elementor' )
+							);
+						},
 						'fields' => [
 							'editor_break_lines' => [
 								'label' => esc_html__( 'Switch Editor Loader Method', 'elementor' ),
@@ -390,7 +404,7 @@ class Settings extends Settings_Page {
 						'callback' => function() {
 							printf(
 								'<p>%s</p><br><hr><br>',
-								esc_html__( 'Improve loading times on your site by selecting the optimization tools that best fit your requirements. ', 'elementor' )
+								esc_html__( 'Improve loading times on your site by selecting the optimization tools that best fit your requirements.', 'elementor' )
 							);
 						},
 						'fields' => [
@@ -404,11 +418,11 @@ class Settings extends Settings_Page {
 										'external' => esc_html__( 'External File', 'elementor' ),
 										'internal' => esc_html__( 'Internal Embedding', 'elementor' ),
 									],
-									'desc' => '<div class="description elementor-css-print-method-description" data-value="external" style="display: none">'
-										. esc_html__( 'Use external CSS files for all generated stylesheets. Choose this setting for better performance (recommended).', 'elementor' )
-										. '</div><div class="description elementor-css-print-method-description" data-value="internal" style="display: none">'
-										. esc_html__( 'Use internal CSS that is embedded in the head of the page. For troubleshooting server configuration conflicts and managing development environments.', 'elementor' )
-										. '</div>',
+									'desc' => sprintf(
+										/* translators: %s: <head> tag. */
+										esc_html__( 'Internal Embedding places all CSS in the %s which works great for troubleshooting, while External File uses external CSS file for better performance (recommended).', 'elementor' ),
+										'<code>&lt;head&gt;</code>',
+									),
 								],
 							],
 							'optimized_image_loading' => [
@@ -438,6 +452,18 @@ class Settings extends Settings_Page {
 										'0' => esc_html__( 'Disable', 'elementor' ),
 									],
 									'desc' => esc_html__( 'Reduce unnecessary render-blocking loads by dequeuing unused Gutenberg block editor scripts and styles.', 'elementor' ),
+								],
+							],
+							'lazy_load_background_images' => [
+								'label' => esc_html__( 'Lazy Load Background Images', 'elementor' ),
+								'field_args' => [
+									'type' => 'select',
+									'std' => '1',
+									'options' => [
+										'1' => esc_html__( 'Enable', 'elementor' ),
+										'0' => esc_html__( 'Disable', 'elementor' ),
+									],
+									'desc' => esc_html__( 'Improve initial page load performance by lazy loading all background images except the first one.', 'elementor' ),
 								],
 							],
 						],

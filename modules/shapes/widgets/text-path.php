@@ -6,8 +6,8 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\Shapes\Module as Shapes_Module;
-use Elementor\Utils;
 use Elementor\Group_Control_Text_Stroke;
+use Elementor\Plugin;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,6 +35,10 @@ class TextPath extends Widget_Base {
 	 */
 	public function get_name() {
 		return 'text-path';
+	}
+
+	public function get_group_name() {
+		return 'shapes';
 	}
 
 	/**
@@ -74,6 +78,20 @@ class TextPath extends Widget_Base {
 	 */
 	public function get_keywords() {
 		return [ 'text path', 'word path', 'text on path', 'wordart', 'word art' ];
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-text-path' ];
 	}
 
 	/**

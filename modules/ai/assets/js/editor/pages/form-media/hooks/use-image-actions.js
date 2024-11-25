@@ -16,7 +16,7 @@ const normalizeImageData = ( imageToUpload ) => {
 
 const useImageActions = () => {
 	const { editImage, setEditImage } = useEditImage();
-	const { setControlImage, saveAndClose } = useGlobalActions();
+	const { setControlValue, saveAndClose } = useGlobalActions();
 	const { attachmentData, isUploading, uploadError, upload: uploadImage, resetUpload } = useImageUpload();
 
 	const upload = ( imageToUpload, prompt ) => {
@@ -50,7 +50,17 @@ const useImageActions = () => {
 	const use = async ( imageToUpload, prompt ) => {
 		const result = await getFinalImage( imageToUpload, prompt );
 
-		setControlImage( result );
+		setControlValue( result );
+		saveAndClose();
+	};
+
+	const useMultipleImages = async ( imagesToUpload ) => {
+		const results = await Promise.all( imagesToUpload.map( async ( img ) => await ( getFinalImage( img, null ) )
+			// eslint-disable-next-line no-unused-vars
+			.catch( ( _ ) => null ) ) );
+
+		results.filter( ( result ) => result )
+			.forEach( ( result ) => setControlValue( result ) );
 		saveAndClose();
 	};
 
@@ -61,6 +71,7 @@ const useImageActions = () => {
 		error: uploadError,
 		data: attachmentData,
 		isLoading: isUploading,
+		useMultipleImages,
 	};
 };
 

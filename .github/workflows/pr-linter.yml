@@ -2,6 +2,13 @@ name: PR Linter
 on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -24,4 +31,6 @@ jobs:
         run: npm install --no-package-lock --no-save @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
       - name: Run PR name linter
         if: ${{ github.event.pull_request.title != null }}
-        run: echo "${{ github.event.pull_request.title }}" | npx commitlint
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: echo "$TITLE" | npx commitlint

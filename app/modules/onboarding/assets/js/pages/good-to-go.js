@@ -42,7 +42,7 @@ export default function GoodToGo() {
 					} }
 				/>
 			</Grid>
-			<FooterButtons skipButton={ skipButton } className="e-onboarding__good-to-go-footer" />
+			<FooterButtons skipButton={ { ...skipButton, target: '_self' } } className="e-onboarding__good-to-go-footer" />
 		</Layout>
 	);
 }

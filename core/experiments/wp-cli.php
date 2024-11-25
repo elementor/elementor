@@ -141,7 +141,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	}
 
 	/**
-	 * @param string $experiments_str comma delimeted string of experiments
+	 * @param string $experiments_str comma delimited string of experiments
 	 *
 	 * @return array array of experiments
 	 */

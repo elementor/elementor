@@ -1,15 +1,22 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../../../pages/wp-admin-page';
 
-test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom selector`, async ( { page }, testInfo ) => {
+test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom selector`, async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo ),
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
 
 	await editor.addWidget( 'tabs' );
 	await editor.getPreviewFrame().waitForSelector( '.elementor-tab-title.elementor-active' );
 
 	// Attach-preview inside the tab as a custom selector.
+	await editor.page.evaluate( () => {
+		// `Attach-preview` is a `tab_content` of the widget tabs.
+		$e.internal( 'editor/documents/attach-preview', {
+			selector: '.elementor-tab-content',
+		} );
+	} );
 	await editor.page.evaluate( () => {
 		// `Attach-preview` is a `tab_content` of the widget tabs.
 		$e.internal( 'editor/documents/attach-preview', {

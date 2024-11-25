@@ -305,11 +305,7 @@ export const App = () => {
 			</p>
 
 			{ ! noticeData.is_viewed && (
-				<p
-					style={ {
-						margin: '20px -15px',
-					} }
-				>
+				<p>
 					<Notice
 						onRemove={ () => {
 							markNoticeViewed( noticeData.notice_id );

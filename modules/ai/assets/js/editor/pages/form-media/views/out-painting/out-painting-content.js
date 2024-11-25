@@ -9,16 +9,30 @@ const OutPaintingContent = ( {
 	setMask,
 	editImage,
 	aspectRatio,
+	setImageSize,
+	setPosition,
 } ) => {
 	const cropperRef = useRef();
-
+	const position = useRef( { x: 0.5, y: 0.5 } );
 	const { width, height } = useImageSize( aspectRatio );
+	let imageSize = { width, height };
 
 	const updateMask = async () => {
 		const imageDataURL = await cropperRef.current.getImageScaledToCanvas().toDataURL();
 		setMask( imageDataURL );
 	};
 
+	const onPositionChange = async ( args ) => {
+		position.current = { x: args.x, y: args.y };
+		await updateMask();
+		setPosition( position.current );
+	};
+
+	const onImageChange = async () => {
+		imageSize = { width: imageSize.width * scale, height: imageSize.height * scale };
+		await updateMask();
+		setImageSize( imageSize );
+	};
 	return (
 		<Stack alignItems={ 'center' } spacing={ 0.5 } flexGrow={ 1 }>
 			<AvatarEditor
@@ -37,8 +51,8 @@ const OutPaintingContent = ( {
 				allowZoomOut={ true }
 				backgroundColor={ 'transparent' }
 				showGrid={ true }
-				onImageChange={ () => updateMask() }
-				onPositionChange={ () => updateMask() }
+				onImageChange={ onImageChange }
+				onPositionChange={ ( args ) => onPositionChange( args ) }
 				{ ... {
 					width,
 					height,
@@ -54,6 +68,8 @@ OutPaintingContent.propTypes = {
 	setMask: PropTypes.func.isRequired,
 	editImage: PropTypes.object.isRequired,
 	aspectRatio: PropTypes.string.isRequired,
+	setImageSize: PropTypes.func.isRequired,
+	setPosition: PropTypes.func.isRequired,
 };
 
 export default OutPaintingContent;

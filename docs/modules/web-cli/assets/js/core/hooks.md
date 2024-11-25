@@ -103,7 +103,7 @@ the hooks attached to $e.commands and each hook fired _after/before_ running a c
     - The hook file name should describe what it does and where it takes place. For example, if the hook is a part of the navigator mechanism and it toggles the navigator, it could be called:
     `navigator-toggle-state`.  
     ```javascript class:"lineNo"
-    1 // {FILE_PATH}/{FILE_NAME} - This is line should be deleted - just for the exmaple.
+    1 // {FILE_PATH}/{FILE_NAME} - This is line should be deleted - just for the example.
     2 import HookUIAfter from 'elementor-api/modules/hooks/{TYPE}/after';
     3  
     4 export class {FILE_NAME_CAMEL_CASE} extends HookUIAfter {
@@ -179,6 +179,6 @@ the hooks attached to $e.commands and each hook fired _after/before_ running a c
     30 export default FooterSaverRefreshMenu; // Required - comment should be deleted.
     ```
 
-###  **Note:** further information about how to use hooks, can be found at [`{$e.hooks.ui}`](hooks/ui.md) and [`{$e.hooks.data}`](hooks/data.md) accoridng to their type.
+###  **Note:** further information about how to use hooks, can be found at [`{$e.hooks.ui}`](hooks/ui.md) and [`{$e.hooks.data}`](hooks/data.md) according to their type.
 
 ### [Back](../index.md) 

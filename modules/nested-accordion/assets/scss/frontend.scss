@@ -101,11 +101,11 @@
 
 			&[open] {
 
-				.e-n-accordion-item-title {
+				> .e-n-accordion-item-title {
 					margin-block-end: var(--n-accordion-item-title-distance-from-content);
 					color: var(--n-accordion-title-active-color);
 
-					&-icon {
+					.e-n-accordion-item-title-icon {
 
 						.e-opened {
 							display: flex;
@@ -133,10 +133,10 @@
 
 				&:hover {
 
-					.e-n-accordion-item-title {
+					> .e-n-accordion-item-title {
 						color: var(--n-accordion-title-hover-color);
 
-						&-icon {
+						.e-n-accordion-item-title-icon {
 
 							span {
 

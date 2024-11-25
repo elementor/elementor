@@ -1,5 +1,6 @@
 import { ajaxResponses, elementorCommon } from './mock/elementor-common';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor, render } from '@testing-library/react';
+import TestThemeProvider from './mock/test-theme-provider';
 
 export const sleep = ( ms ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
 
@@ -45,3 +46,12 @@ export const mockEditorEnvironment = () => {
 };
 
 export const waitForNextTick = () => waitFor( () => Promise.resolve() );
+
+export const renderWithTheme = ( component, options = {} ) => {
+	return render(
+		component,
+		{
+			wrapper: ( { children } ) => <TestThemeProvider { ...options }>{ children }</TestThemeProvider>,
+		},
+	);
+};

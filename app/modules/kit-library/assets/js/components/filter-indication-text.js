@@ -5,6 +5,7 @@ import { Text, Button, Grid } from '@elementor/app-ui';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './filter-indication-text.scss';
+import { NewPlanTexts } from '../models/taxonomy-transformer';
 
 export default function FilterIndicationText( props ) {
 	const selectedTaxonomies = useSelectedTaxonomies( props.queryParams.taxonomies );
@@ -32,7 +33,7 @@ export default function FilterIndicationText( props ) {
 					<>
 						{ selectedTaxonomies.map( ( taxonomy ) => (
 							<Badge key={ taxonomy } className="e-kit-library__filter-indication-badge">
-								{ taxonomy }
+								{ NewPlanTexts[ taxonomy ] || taxonomy }
 								<Button
 									text={ __( 'Remove', 'elementor' ) }
 									hideText={ true }

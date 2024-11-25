@@ -49,8 +49,8 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'new_site' => [
-				'default_active' => false,
-				'minimum_installation_version' => '3.1.0',
+				'default_inactive' => true,
+				'minimum_installation_version' => '3.22.0',
 			],
 		];
 	}
@@ -317,7 +317,7 @@ class Module extends BaseModule {
 		}
 
 		// Any slug prefixes need to be removed from the post link.
-		return get_home_url() . '/' . $post->post_name . '/';
+		return trailingslashit( get_home_url() ) . trailingslashit( $post->post_name );
 	}
 
 	/**

@@ -170,7 +170,8 @@
 	.e-n-tab {
 
 		&-title {
-			all: unset;
+			background-color: initial;
+			border-style: none;
 			user-select: none;
 			display: flex;
 			align-items: var(--n-tabs-title-align-items-toggle, var(--n-tabs-title-align-items));
@@ -179,8 +180,6 @@
 			gap: var(--n-tabs-icon-gap);
 			border-width: var(--n-tabs-border-width);
 			position: relative;
-			cursor: pointer;
-			outline: none;
 			flex-grow: var(--n-tabs-title-flex-grow);
 			flex-basis: var(--n-tabs-title-flex-basis);
 			flex-shrink: var(--n-tabs-title-flex-shrink);
@@ -203,7 +202,9 @@
 				-webkit-text-stroke-color var(--n-tabs-title-transition ),
 				transform var(--n-tabs-title-transition);
 
-			@include button-focus-outline;
+			&:focus:not(:focus-visible) {
+				outline: none;
+			}
 
 			& span svg,
 			& span i {
@@ -320,14 +321,14 @@
 	}
 }
 
-.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover, .elementor .elementor-element.elementor-widget-n-tabs:not(:has(> .elementor-widget-container)) > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
 	background-color: var(--n-tabs-title-background-color-hover);
 	background-image: initial;
 }
 
 // TODO: Fix `Group_Control_Background` control. Currently the global default colours aren't generated inside CSS.
 .elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"],
-.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
+.elementor .elementor-element.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover, .elementor .elementor-element.elementor-widget-n-tabs:not(:has(> .elementor-widget-container)) > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"], .elementor .elementor-element.elementor-widget-n-tabs:not(:has(> .elementor-widget-container)) > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading .e-n-tab-title[aria-selected="false"]:hover {
 	background-color: var(--n-tabs-title-background-color-active);
 	background-image: initial;
 }

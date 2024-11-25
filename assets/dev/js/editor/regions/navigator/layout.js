@@ -18,6 +18,11 @@ export default class extends Marionette.LayoutView {
 		};
 	}
 
+	behaviors() {
+		const behaviors = {};
+		return elementor.hooks.applyFilters( 'navigator/layout/behaviors', behaviors, this );
+	}
+
 	events() {
 		return {
 			'click @ui.toggleButton': 'toggleElements',

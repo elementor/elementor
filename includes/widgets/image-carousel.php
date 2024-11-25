@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 /**
  * Elementor image carousel widget.
@@ -78,24 +79,21 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	/**
-	 * Get widget upsale data.
+	 * Get style dependencies.
 	 *
-	 * Retrieve the widget promotion data.
+	 * Retrieve the list of style dependencies the widget requires.
 	 *
-	 * @since 3.18.0
-	 * @access protected
+	 * @since 3.24.0
+	 * @access public
 	 *
-	 * @return array Widget promotion data.
+	 * @return array Widget style dependencies.
 	 */
-	protected function get_upsale_data() {
-		return [
-			'condition' => ! Utils::has_pro(),
-			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
-			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
-			'description' => esc_html__( 'Gain complete freedom to design every slide with Elementor"s Pro Carousel.', 'elementor' ),
-			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-image-carousel-widget/' ),
-			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-		];
+	public function get_style_depends(): array {
+		return [ 'e-swiper', 'widget-image-carousel' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**
@@ -111,6 +109,15 @@ class Widget_Image_Carousel extends Widget_Base {
 			'section_image_carousel',
 			[
 				'label' => esc_html__( 'Image Carousel', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'carousel_name',
+			[
+				'label' => esc_html__( 'Carousel Name', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => esc_html__( 'Image Carousel', 'elementor' ),
 			]
 		);
 
@@ -377,6 +384,16 @@ class Widget_Image_Carousel extends Widget_Base {
 			]
 		);
 
+		if ( ! Utils::has_pro() ) {
+			$this->add_control(
+				Utils::IMAGE_CAROUSEL . '_promotion',
+				[
+					'label' => esc_html__( 'Carousel PRO widget', 'elementor' ),
+					'type' => Promotion_Control::TYPE,
+				]
+			);
+		}
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -617,6 +634,26 @@ class Widget_Image_Carousel extends Widget_Base {
 		);
 
 		$this->add_responsive_control(
+			'dots_gap',
+			[
+				'label' => esc_html__( 'Space Between Dots', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 20,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} .swiper-pagination-bullet' => '--swiper-pagination-bullet-horizontal-gap: {{SIZE}}{{UNIT}}; --swiper-pagination-bullet-vertical-gap: {{SIZE}}{{UNIT}};',
+				],
+				'condition' => [
+					'navigation' => [ 'dots', 'both' ],
+				],
+			]
+		);
+
+		$this->add_responsive_control(
 			'dots_size',
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
@@ -724,7 +761,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			[
 				'label' => esc_html__( 'Image Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'size_units' => [ 'px' ],
 				'range' => [
 					'px' => [
 						'max' => 100,
@@ -947,7 +984,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			return;
 		}
 
-		$swiper_class = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container';
+		$swiper_class = 'swiper';
 		$has_autoplay_enabled = 'yes' === $this->get_settings_for_display( 'autoplay' );
 
 		$this->add_render_attribute( [
@@ -957,6 +994,9 @@ class Widget_Image_Carousel extends Widget_Base {
 			],
 			'carousel-wrapper' => [
 				'class' => 'elementor-image-carousel-wrapper ' . $swiper_class,
+				'role' => 'region',
+				'aria-roledescription' => 'carousel',
+				'aria-label' => $settings['carousel_name'],
 				'dir' => $settings['direction'],
 			],
 		] );
@@ -972,7 +1012,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		?>
 		<div <?php $this->print_render_attribute_string( 'carousel-wrapper' ); ?>>
 			<div <?php $this->print_render_attribute_string( 'carousel' ); ?>>
-				<?php // PHPCS - $slides contains the slides content, all the relevent content is escaped above. ?>
+				<?php // PHPCS - $slides contains the slides content, all the relevant content is escaped above. ?>
 				<?php echo implode( '', $slides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</div>
 			<?php if ( 1 < $slides_count ) : ?>
@@ -1040,6 +1080,10 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		$attachment_post = get_post( $attachment['id'] );
+
+		if ( Utils::has_invalid_post_permissions( $attachment_post ) ) {
+			return '';
+		}
 
 		if ( 'caption' === $caption_type ) {
 			return $attachment_post->post_excerpt;

@@ -38,7 +38,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				invisible: 'elementor-invisible',
 				preventClose: 'elementor-lightbox-prevent-close',
 				slideshow: {
-					container: elementorFrontend.config.swiperClass,
+					container: 'swiper',
 					slidesWrapper: 'swiper-wrapper',
 					prevButton: 'elementor-swiper-button elementor-swiper-button-prev',
 					nextButton: 'elementor-swiper-button elementor-swiper-button-next',
@@ -263,7 +263,14 @@ module.exports = elementorModules.ViewModule.extend( {
 				return;
 			}
 
-			$videoElement = $( '<iframe>', { src: apiProvider.getAutoplayURL( options.url ), allowfullscreen: 1 } );
+			$videoElement = $( '<iframe>', { allowfullscreen: 1 } );
+
+			if ( 'yes' === options.autoplay ) {
+				$videoElement.attr( 'allow', 'autoplay' );
+				$videoElement.attr( 'src', apiProvider.getAutoplayURL( options.url ) );
+			} else {
+				$videoElement.attr( 'src', options.url );
+			}
 		}
 
 		const classes = this.getSettings( 'classes' ),

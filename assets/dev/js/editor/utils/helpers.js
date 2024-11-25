@@ -1,7 +1,7 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
-import DOMPurify from 'dompurify';
+import DOMPurify, { isValidAttribute } from 'dompurify';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -138,14 +138,16 @@ module.exports = {
 
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
-				this.enqueuePreviewStylesheet( assetURL );
-				this.enqueueEditorStylesheet( assetURL );
+				const versionAddedURL = `${ assetURL }${ iconSetting?.ver ? '?ver=' + iconSetting.ver : '' }`;
+				this.enqueuePreviewStylesheet( versionAddedURL );
+				this.enqueueEditorStylesheet( versionAddedURL );
 			} );
 		}
 
 		if ( iconSetting.url ) {
-			this.enqueuePreviewStylesheet( iconSetting.url );
-			this.enqueueEditorStylesheet( iconSetting.url );
+			const versionAddedURL = `${ iconSetting.url }${ iconSetting?.ver ? '?ver=' + iconSetting.ver : '' }`;
+			this.enqueuePreviewStylesheet( versionAddedURL );
+			this.enqueueEditorStylesheet( versionAddedURL );
 		}
 
 		this._enqueuedIconFonts.push( iconType );
@@ -167,7 +169,7 @@ module.exports = {
 	 * @param {*}      icon       - icon control data
 	 * @param {*}      attributes - default {} - attributes to attach to rendered html tag
 	 * @param {string} tag        - default i - html tag to render
-	 * @param {*}      returnType - default value - retrun type
+	 * @param {*}      returnType - default value - return type
 	 * @return {string|undefined|*} result
 	 */
 	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {
@@ -703,5 +705,19 @@ module.exports = {
 
 	sanitize( value, options ) {
 		return DOMPurify.sanitize( value, options );
+	},
+
+	sanitizeUrl( url ) {
+		const isValidUrl = !! url ? isValidAttribute( 'a', 'href', url ) : false;
+
+		if ( ! isValidUrl ) {
+			return '';
+		}
+
+		try {
+			return encodeURI( url );
+		} catch ( e ) {
+			return '';
+		}
 	},
 };

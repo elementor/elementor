@@ -128,6 +128,7 @@ class Autoloader {
 			'Frontend' => 'includes/frontend.php',
 			'Group_Control_Base' => 'includes/controls/groups/base.php',
 			'Group_Control_Interface' => 'includes/interfaces/group-control.php',
+			'Has_Validation' => 'includes/interfaces/has-validation.php',
 			'Heartbeat' => 'includes/heartbeat.php',
 			'Images_Manager' => 'includes/managers/image.php',
 			'Maintenance' => 'includes/maintenance.php',
@@ -150,6 +151,7 @@ class Autoloader {
 			'TemplateLibrary\Source_Local' => 'includes/template-library/sources/local.php',
 			'TemplateLibrary\Source_Remote' => 'includes/template-library/sources/remote.php',
 			'Tools' => 'includes/settings/tools.php',
+			'Container\Container' => 'includes/container/container.php',
 			'Tracker' => 'includes/tracker.php',
 			'User' => 'includes/user.php',
 			'Utils' => 'includes/utils.php',
@@ -198,7 +200,7 @@ class Autoloader {
 	 * Init classes aliases.
 	 *
 	 * When Elementor classes renamed or moved to different folders, developers
-	 * can still use the old names by setting an aliase.
+	 * can still use the old names by setting an alias.
 	 *
 	 * While in deprecation period both classes will work. When the deprecation
 	 * period ends, the alies should be removed from the list of aliases.

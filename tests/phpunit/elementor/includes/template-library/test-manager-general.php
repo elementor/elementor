@@ -3,7 +3,8 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 
 use Elementor\Api;
 use Elementor\Core\Base\Document;
-use Elementor\Plugin;
+use Elementor\Core\Isolation\Elementor_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\TemplateLibrary\Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\TemplateLibrary\Source_Local;
@@ -126,6 +127,10 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_wp_error_massage_template_error_from_get_template_data() {
+		$elementor_mock = $this->getMockBuilder( Elementor_Adapter_Interface::class )->getMock();
+		$elementor_mock->method( 'get_template_type' )->willReturn( 'page' );
+		self::$manager->set_elementor_adapter( $elementor_mock );
+
 		$this->assertWPError(
 			self::$manager->get_template_data(
 				[

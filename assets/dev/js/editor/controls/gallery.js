@@ -258,6 +258,13 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 		if ( actionURL ) {
 			window.open( actionURL, '_blank' );
 		}
+
+		elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
+			data: {
+				source: 'io-editor-gallery-install',
+			},
+		} );
+
 		this.hidePromotion();
 	},
 

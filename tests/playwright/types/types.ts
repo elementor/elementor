@@ -7,34 +7,12 @@ export type Image = {
     filePath?: string
 }
 
-export type StorageState = {
-    cookies: Array<{
-        name: string;
-        value: string;
-        domain: string;
-        path: string;
-        expires: number;
-        httpOnly: boolean;
-        secure: boolean;
-        sameSite: 'Strict' | 'Lax' | 'None';
-    }>;
-    origins: Array<{
-        origin: string;
-        localStorage: Array<{
-            name: string;
-            value: string;
-        }>;
-    }>;
-};
-export type VideoParams = {
-        'autoplay': string,
-        'endscreen-enable': string,
-        'mute': string,
-        'start': string,
-        'playsinline': string,
-        'controls': string,
-        'ui-start-screen-info': string,
-        'ui-logo': string
+export type User = {
+	id?: string,
+	username: string,
+	password: string,
+	email: string,
+	roles?: string[],
 }
 
 export type LinkOptions = {
@@ -118,12 +96,10 @@ export type ElementorType = {
 		initial_document:{
 			id: string
 		}
-	}
+	},
+	isDeviceModeActive?: () => unknown
 }
 
-export type ElementorFrontendConfig = { post: { id: number } }
-export type el = {
-	dataset: {
-		widget_type: string
-	}
-};
+export type Device = 'mobile' | 'mobile_extra' | 'tablet' | 'tablet_extra' | 'laptop' | 'desktop' | 'widescreen';
+
+export type BreakpointEditableDevice = Exclude<Device, 'desktop'>;

@@ -25,7 +25,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 *
 	 * @var array
 	 */
-	private static $_animations;
+	protected static $_animations;
 
 	/**
 	 * Get hover animation control type.
@@ -54,35 +54,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 */
 	public static function get_animations() {
 		if ( is_null( self::$_animations ) ) {
-			self::$_animations = [
-				'grow' => 'Grow',
-				'shrink' => 'Shrink',
-				'pulse' => 'Pulse',
-				'pulse-grow' => 'Pulse Grow',
-				'pulse-shrink' => 'Pulse Shrink',
-				'push' => 'Push',
-				'pop' => 'Pop',
-				'bounce-in' => 'Bounce In',
-				'bounce-out' => 'Bounce Out',
-				'rotate' => 'Rotate',
-				'grow-rotate' => 'Grow Rotate',
-				'float' => 'Float',
-				'sink' => 'Sink',
-				'bob' => 'Bob',
-				'hang' => 'Hang',
-				'skew' => 'Skew',
-				'skew-forward' => 'Skew Forward',
-				'skew-backward' => 'Skew Backward',
-				'wobble-vertical' => 'Wobble Vertical',
-				'wobble-horizontal' => 'Wobble Horizontal',
-				'wobble-to-bottom-right' => 'Wobble To Bottom Right',
-				'wobble-to-top-right' => 'Wobble To Top Right',
-				'wobble-top' => 'Wobble Top',
-				'wobble-bottom' => 'Wobble Bottom',
-				'wobble-skew' => 'Wobble Skew',
-				'buzz' => 'Buzz',
-				'buzz-out' => 'Buzz Out',
-			];
+			self::$_animations = self::get_default_animations();
 
 			$additional_animations = [];
 
@@ -106,6 +78,38 @@ class Control_Hover_Animation extends Base_Data_Control {
 		return self::$_animations;
 	}
 
+	public static function get_default_animations(): array {
+		return [
+			'grow' => 'Grow',
+			'shrink' => 'Shrink',
+			'pulse' => 'Pulse',
+			'pulse-grow' => 'Pulse Grow',
+			'pulse-shrink' => 'Pulse Shrink',
+			'push' => 'Push',
+			'pop' => 'Pop',
+			'bounce-in' => 'Bounce In',
+			'bounce-out' => 'Bounce Out',
+			'rotate' => 'Rotate',
+			'grow-rotate' => 'Grow Rotate',
+			'float' => 'Float',
+			'sink' => 'Sink',
+			'bob' => 'Bob',
+			'hang' => 'Hang',
+			'skew' => 'Skew',
+			'skew-forward' => 'Skew Forward',
+			'skew-backward' => 'Skew Backward',
+			'wobble-vertical' => 'Wobble Vertical',
+			'wobble-horizontal' => 'Wobble Horizontal',
+			'wobble-to-bottom-right' => 'Wobble To Bottom Right',
+			'wobble-to-top-right' => 'Wobble To Top Right',
+			'wobble-top' => 'Wobble Top',
+			'wobble-bottom' => 'Wobble Bottom',
+			'wobble-skew' => 'Wobble Skew',
+			'buzz' => 'Buzz',
+			'buzz-out' => 'Buzz Out',
+		];
+	}
+
 	/**
 	 * Render hover animation control output in the editor.
 	 *
@@ -123,7 +127,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 			<div class="elementor-control-input-wrapper">
 				<select id="<?php $this->print_control_uid(); ?>" data-setting="{{ data.name }}">
 					<option value=""><?php echo esc_html__( 'None', 'elementor' ); ?></option>
-					<?php foreach ( self::get_animations() as $animation_name => $animation_title ) : ?>
+					<?php foreach ( static::get_animations() as $animation_name => $animation_title ) : ?>
 						<option value="<?php Utils::print_unescaped_internal_string( $animation_name ); ?>"><?php Utils::print_unescaped_internal_string( $animation_title ); ?></option>
 					<?php endforeach; ?>
 				</select>
@@ -158,7 +162,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 		}
 
 		return [
-			'styles' => [ 'e-animations' ],
+			'styles' => [ 'e-animation-' . $setting ],
 		];
 	}
 }

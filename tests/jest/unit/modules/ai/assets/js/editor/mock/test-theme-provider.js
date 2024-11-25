@@ -18,11 +18,27 @@ export default class TestThemeProvider extends React.Component {
 	render() {
 		const theme = createTheme( {
 			palette: {
+				primary: {
+					main: '#f0abfc',
+					light: '#f3bafd',
+					dark: '#eb8efb',
+					contrastText: '#0c0d0e',
+					__unstableAccessibleMain: '#f0abfc',
+					__unstableAccessibleLight: '#f3bafd',
+				},
+				global: {
+					main: '#5eead4',
+					light: '#99f6e4',
+					dark: '#2adfcd',
+					contrastText: '#0c0d0e',
+					__unstableAccessibleMain: '#5eead4',
+					__unstableAccessibleLight: '#99f6e4',
+				},
 				promotion: {
-					main: '#E3D026',
-					light: '#E9DB5D',
-					dark: '#A29415',
-					contrastText: '#242105',
+					main: '#93003f',
+					light: '#b51243',
+					dark: '#7e013b',
+					contrastText: '#ffffff',
 				},
 			},
 			components: {

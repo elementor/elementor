@@ -77,6 +77,24 @@ class Widget_Icon_List extends Widget_Base {
 		return false;
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-icon-list' ];
+	}
+
 	/**
 	 * Register icon list widget controls.
 	 *
@@ -806,7 +824,7 @@ class Widget_Icon_List extends Widget_Base {
 
 					<li {{{ view.getRenderAttributeString( 'list_item' ) }}}>
 						<# if ( item.link && item.link.url ) { #>
-							<a href="{{ item.link.url }}">
+							<a href="{{ elementor.helpers.sanitizeUrl( item.link.url ) }}">
 						<# } #>
 						<# if ( item.icon || item.selected_icon.value ) { #>
 						<span class="elementor-icon-list-icon">

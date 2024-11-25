@@ -47,7 +47,7 @@ h6,
 }
 
 // semantic sizing for text
-// todo: should be put !importatnt here? update code and remove comment
+// todo: should be put !important here? update code and remove comment
 .#{$eps-prefix}text-xxs {
 	@include create-atom(typography, text, xxs);
 }

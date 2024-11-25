@@ -74,6 +74,10 @@ class Widget_Icon extends Widget_Base {
 		return [ 'basic' ];
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Get widget keywords.
 	 *
@@ -142,8 +146,9 @@ class Widget_Icon extends Widget_Base {
 				'label' => esc_html__( 'Shape', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'circle' => esc_html__( 'Circle', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
+					'circle' => esc_html__( 'Circle', 'elementor' ),
 				],
 				'default' => 'circle',
 				'condition' => [
@@ -486,10 +491,16 @@ class Widget_Icon extends Widget_Base {
 			return;
 		}
 
-		const link = settings.link.url ? 'href="' + _.escape( settings.link.url ) + '"' : '',
-				iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-				migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
-				iconTag = link ? 'a' : 'div';
+		let link = '';
+
+		if ( settings.link.url ) {
+			view.addRenderAttribute( 'link_url', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
+			link = view.getRenderAttributeString( 'link_url' );
+		}
+
+		const iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
+			iconTag = link ? 'a' : 'div';
 		#>
 		<div class="elementor-icon-wrapper">
 			<{{{ iconTag }}} class="elementor-icon elementor-animation-{{ settings.hover_animation }}" {{{ link }}}>

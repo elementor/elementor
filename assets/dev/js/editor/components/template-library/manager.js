@@ -314,7 +314,9 @@ TemplateLibraryManager = function() {
 		}
 
 		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
-			templatesCollection = new TemplateLibraryCollection( result.data.templates );
+			templatesCollection = new TemplateLibraryCollection(
+				result.data.templates,
+			);
 
 			if ( result.data.config ) {
 				config = result.data.config;

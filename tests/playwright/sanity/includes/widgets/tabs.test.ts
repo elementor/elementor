@@ -1,12 +1,13 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import Content from '../../../pages/elementor-panel-tabs/content';
 
 test.describe( 'Tabs widget tests', () => {
-	test( 'Ensure the old tabs widget is telling deprecation warning message', async ( { page }, testInfo ) => {
+	test( 'Ensure the old tabs widget is telling deprecation warning message', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: 'active',
 			'nested-elements': 'active',
@@ -26,8 +27,8 @@ test.describe( 'Tabs widget tests', () => {
 		} );
 	} );
 
-	test( 'Tabs widget sanity test', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Tabs widget sanity test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		const contentTab = new Content( page, testInfo );
 		const tabText = 'Super tab content test';
