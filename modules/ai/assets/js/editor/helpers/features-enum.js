@@ -3,5 +3,4 @@ export const FREE_TRIAL_FEATURES_NAMES = {
 	IMAGES: __( 'Images', 'elementor' ),
 	CODE: __( 'Code', 'elementor' ),
 	CONTAINERS: __( 'Containers', 'elementor' ),
-	ANIMATION: __( 'Animation', 'elementor' ),
 };
