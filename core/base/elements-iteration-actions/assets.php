@@ -27,6 +27,7 @@ class Assets extends Base {
 		$element_assets_depend = [
 			'styles' => $element_data->get_style_depends(),
 			'scripts' => $element_data->get_script_depends(),
+			'dynamic_imports' => $element_data->get_dynamic_imports(),
 		];
 
 		if ( $element_assets_depend ) {
@@ -135,6 +136,9 @@ class Assets extends Base {
 						if ( ! isset( $assets[ $assets_type ] ) ) {
 							$assets[ $assets_type ] = [];
 						}
+
+						$test = $assets[ $assets_type ];
+						$name = $dependency['name'];
 
 						$assets[ $assets_type ][] = $dependency['name'];
 					}

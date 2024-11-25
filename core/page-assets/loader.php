@@ -130,13 +130,19 @@ class Loader extends Module {
 					}
 
 					wp_enqueue_script( $asset_name );
+				} else if ( 'dynamic_imports' === $assets_type ) {
+					$this->register_dynamic_import( $asset_name );
 				} else {
 					wp_enqueue_style( $asset_name );
 				}
 			}
 		}
 
-		$this->list_import_scripts();
+		$this->print_dynamic_imports();
+	}
+
+	private function register_dynamic_import( $script ): void {
+		$this->import_scripts[] = $script;
 	}
 
 	private function should_import_script( $script ): bool {
@@ -149,10 +155,10 @@ class Loader extends Module {
 		return false;
 	}
 
-	private function list_import_scripts(): void {
-		wp_register_script( 'scripts-import-list', '', [], 1.0 );
-		wp_enqueue_script( 'scripts-import-list' );
-		wp_add_inline_script( 'scripts-import-list', 'elementorScriptsImports = ' . wp_json_encode( $this->import_scripts ) . ';' );
+	private function print_dynamic_imports(): void {
+		wp_register_script( 'dynamic-import-list', '', [], 1.0 );
+		wp_enqueue_script( 'dynamic-import-list' );
+		wp_add_inline_script( 'dynamic-import-list', 'elementorDynamicImports = ' . wp_json_encode( $this->import_scripts ) . ';' );
 	}
 
 	/**
@@ -189,6 +195,8 @@ class Loader extends Module {
 						}
 
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
+					} else if ( 'dynamic_imports' === $assets_type ) {
+						$this->register_dynamic_import( $asset_name );
 					} else {
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					}

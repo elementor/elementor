@@ -7,11 +7,17 @@ export default class ScriptsImportManager extends elementorModules.ViewModule {
 				frontendObject: 'frontendHandlers',
 				importFunction: () => import( /* webpackChunkName: 'carouselBaseHandler' */ './handlers/base-carousel' ),
 			},
+			{
+				moduleKey: 'swiper-base',
+				moduleName: 'SwiperBase',
+				frontendObject: 'frontendHandlers',
+				importFunction: () => import( /* webpackChunkName: 'swiperBaseHandler' */ './handlers/base-swiper' ),
+			},
 		];
 	}
 
 	getActiveModuleScripts() {
-		return ! elementorFrontend.isEditMode() && !! elementorScriptsImports ? elementorScriptsImports : [];
+		return ! elementorFrontend.isEditMode() && !! elementorDynamicImports ? elementorDynamicImports : [];
 	}
 
 	getFrontendObject( objectName ) {

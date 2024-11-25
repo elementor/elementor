@@ -93,7 +93,12 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	public function get_script_depends(): array {
-		return [ 'import-script-carousel-base' ];
+//		return [ 'import-script-carousel-base' ];
+		return [];
+	}
+
+	public function get_dynamic_imports(): array {
+		return [ 'carousel-base' ];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
