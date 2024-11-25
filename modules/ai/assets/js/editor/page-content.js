@@ -19,7 +19,6 @@ import Loader from './components/loader';
 import { useEffect, useRef, useState } from 'react';
 import { useRequestIds } from './context/requests-ids';
 import { FREE_TRIAL_FEATURES_NAMES } from './helpers/features-enum';
-import FormAnimation from './pages/form-animation';
 
 const PageContent = (
 	{
@@ -55,7 +54,6 @@ const PageContent = (
 	const { showBadge } = useUpgradeMessage( { usagePercentage, hasSubscription } );
 	const [ sxStyle, setSxStyle ] = useState( { pointerEvents: 'none' } );
 	const timeoutRef = useRef( null );
-	const [ originalControlValue, setOriginalControlValue ] = useState();
 
 	const promptDialogStyleProps = {
 		sx: {
@@ -117,12 +115,6 @@ const PageContent = (
 			/>
 		);
 	};
-
-	useEffect( () => {
-		if ( ! originalControlValue ) {
-			setOriginalControlValue( getControlValue() );
-		}
-	}, [] );
 
 	if ( isLoading || ! isInitUsageDone ) {
 		return (
@@ -224,39 +216,6 @@ const PageContent = (
 						</PromptDialog.Content>
 					</PromptHistoryActionProvider>
 				</PromptHistoryProvider>
-			</PromptDialog>
-		);
-	}
-
-	if ( 'animation' === type || 'hover_animation' === type ) {
-		const onCloseAnimationDialog = () => {
-			setControlValue( originalControlValue );
-			elementor.documents.getCurrent().history.setActive( true );
-			onClose();
-		};
-		return (
-			<PromptDialog onClose={ onCloseAnimationDialog } { ...codePromptDialogStyleProps }>
-				<PromptDialog.Header onClose={ onCloseAnimationDialog }>
-					{ maybeRenderUpgradeChip() }
-				</PromptDialog.Header>
-
-				<PromptDialog.Content className="e-ai-dialog-content" dividers>
-					<FormAnimation
-						onClose={ onClose }
-						getControlValue={ getControlValue }
-						setControlValue={ setControlValue }
-						additionalOptions={ { ...additionalOptions, animationType: 'hover_animation' === type ? 'hover' : 'other' } }
-						credits={ credits }
-						usagePercentage={ usagePercentage }
-					>
-						<UsageMessages
-							hasSubscription={ hasSubscription }
-							usagePercentage={ usagePercentage }
-							sx={ { mb: 2 } }
-							feature={ FREE_TRIAL_FEATURES_NAMES.ANIMATION }
-						/>
-					</FormAnimation>
-				</PromptDialog.Content>
 			</PromptDialog>
 		);
 	}
