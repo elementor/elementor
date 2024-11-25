@@ -5,6 +5,7 @@ use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Experiments\Non_Existing_Dependency;
 use Elementor\Core\Experiments\Wrap_Core_Dependency;
+use Elementor\Core\Modules_Manager;
 use Elementor\Core\Upgrade\Manager;
 use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_A;
 use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B;
@@ -42,6 +43,52 @@ class Test_Manager extends Elementor_Test_Base {
 	public function reset_experiments_state( Experiments_Manager $experiments_manager, array $experimental_data ) {
 		$original_experiment_state = $this->experiments_state[ $experimental_data['name'] ];
 		$experiments_manager->set_feature_default_state( $experimental_data['name'], $original_experiment_state );
+	}
+
+	public function test_features_dependencies_initial_state_mismatches() {
+		new \Elementor\Core\Modules_Manager();
+		$features = \Elementor\Plugin::$instance->experiments->get_features();
+		$this->assertNotEmpty( $features );
+		foreach ( $features as $feat ) {
+			if ( ! isset( $feat['dependencies'] ) ) {
+				continue;
+			}
+			$dependencies = $feat['dependencies'];
+
+			$main_feature_states = $this->get_feature_initial_state( $feat );
+
+			foreach ( $dependencies as $dependency ) {
+				$dep_states = $this->get_feature_initial_state( $features[ $dependency->get_name() ] );
+				if ( $main_feature_states['default'] === Experiments_Manager::STATE_ACTIVE ) {
+					$this->assertEquals( Experiments_Manager::STATE_ACTIVE, $dep_states['default'], "Default state of main feature {$feat['name']} and dependency {$dependency->get_name()} need to match" );
+				}
+				$main_feature_newsite = $main_feature_states['new_site'] || $main_feature_states['default'];
+				$dep_newsite = $dep_states['new_site'] || $dep_states['default'];
+
+				if ( $main_feature_newsite === Experiments_Manager::STATE_ACTIVE ) {
+					$this->assertEquals( Experiments_Manager::STATE_ACTIVE, $dep_newsite, "New site state of main feature {$feat['name']} and dependency {$dependency->get_name()} need to match" );
+				}
+			}
+		}
+	}
+
+	private function get_feature_initial_state( $feature ) {
+		$results = [ 'new_site' => null, 'default' => null ];
+		if ( isset( $feature['new_site'] ) ) {
+			$new_site = $feature['new_site'];
+			if ( isset( $new_site['default_active'] )) {
+				if ( $new_site['always_active'] ) {
+					$results['new_site'] = Experiments_Manager::STATE_ACTIVE;
+				} elseif ( $new_site['default_active'] ) {
+					$results['new_site'] = Experiments_Manager::STATE_ACTIVE;
+				} elseif ( $new_site['default_inactive'] ) {
+					$results['new_site'] = Experiments_Manager::STATE_INACTIVE;
+				}
+			}
+		}
+
+		$results['default'] = \Elementor\Plugin::$instance->experiments->is_feature_active( $feature['name'] ) ? Experiments_Manager::STATE_ACTIVE : Experiments_Manager::STATE_INACTIVE;
+		return $results;
 	}
 
 	public function test_add_feature() {
