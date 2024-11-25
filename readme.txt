@@ -1,4 +1,4 @@
-=== Elementor Website Builder - More than Just a Page Builder ===
+=== Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.3
@@ -345,6 +345,23 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.25.10 - 2024-11-24 =
+
+* Security Fix: Improved code security enforcement in Typography control
+* Fix: Link URL actions not functioning as expected inside the editor
+
+= 3.25.9 - 2024-11-20 =
+
+* Fix: 3D Rotate transform is not functioning as expected when the Optimized Control Loading feature is activated
+
+= 3.25.8 - 2024-11-19 =
+
+* Security Fix: Improved code security enforcement in Icon widget
+
+= 3.25.7 - 2024-11-18 =
+
+* Security Fix: Improved code security enforcement in Post functionality
 
 = 3.25.6 - 2024-11-13 =
 

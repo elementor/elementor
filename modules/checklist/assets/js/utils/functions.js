@@ -64,7 +64,7 @@ export function addMixpanelTrackingChecklistHeader( name ) {
 
 	return (
 		elementor.editorEvents.dispatchEvent(
-			elementor.editorEvents.config.names.elementorEditor[ name ],
+			elementor.editorEvents.config.names.elementorEditor.checklist[ name ],
 			{
 				location: elementor.editorEvents.config.locations.elementorEditor,
 				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistHeader,
@@ -88,6 +88,23 @@ export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
 				secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
 				trigger: elementor.editorEvents.config.triggers.toggleClick,
 				element: elementor.editorEvents.config.elements.buttonIcon,
+				...documentMetaData,
+			},
+		)
+	);
+}
+
+export function dispatchChecklistOpenEvent() {
+	const documentMetaData = getDocumentMetaDataMixpanel();
+
+	return (
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names.elementorEditor.checklist.checklistFirstPopup,
+			{
+				location: elementor.editorEvents.config.locations.elementorEditor,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
+				trigger: elementor.editorEvents.config.triggers.editorLoaded,
+				element: elementor.editorEvents.config.elements.launchpadChecklist,
 				...documentMetaData,
 			},
 		)
