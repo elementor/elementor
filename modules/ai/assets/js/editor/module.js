@@ -208,7 +208,6 @@ export default class Module extends elementorModules.editor.utils.Module {
 					additionalOptions: {
 						animationType: aiOptions.type,
 						widgetType,
-						buttonBorder: true,
 					},
 					context: this.getContextData( view, controlType ),
 				},
