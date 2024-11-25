@@ -1,12 +1,12 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Validators;
+namespace Elementor\Modules\AtomicWidgets\Parsers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Style_Validator {
+class Style_Parser {
 	const VALID_STATES = [
 		'hover',
 		'active',
@@ -42,7 +42,7 @@ class Style_Validator {
 	 *     2: array<string>
 	 * }
 	 */
-	public function validate( array $style ): array {
+	public function parse( array $style ): array {
 		if ( $this->should_validate_id && ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) ) {
 			$this->errors_bag[] = 'id';
 		}
@@ -65,8 +65,8 @@ class Style_Validator {
 
 			$this->validate_meta( $variant['meta'] );
 
-			[,$validated_props, $variant_errors] = Props_Validator::make( $this->schema )->validate( $variant['props'] );
-			$style['variants'][ $variant_index ]['props'] = $validated_props;
+			[, , $variant_errors, $sanitized] = Props_Parser::make( $this->schema )->parse( $variant['props'] );
+			$style['variants'][ $variant_index ]['props'] = $sanitized;
 
 			$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
 		}

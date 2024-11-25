@@ -78,6 +78,24 @@ class Union_Prop_Type implements Prop_Type {
 		return false;
 	}
 
+	public function sanitize( $value ) {
+		if ( ! $this->validate( $value ) ) {
+			return $this->get_default();
+		}
+
+		return $this->sanitize_prop_types( $value );
+	}
+
+	protected function sanitize_prop_types( $value ) {
+		foreach ( $this->get_prop_types() as $prop_type ) {
+			if ( $prop_type->validate( $value ) ) {
+				return $prop_type->sanitize( $value );
+			}
+		}
+
+		return $this->get_default();
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'kind' => static::KIND,
