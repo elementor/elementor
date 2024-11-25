@@ -81,6 +81,8 @@ class App extends BaseApp {
 
 		$this->enqueue_assets();
 
+		remove_action( 'wp_print_styles', 'print_emoji_styles' );
+
 		// Setup default heartbeat options
 		// TODO: Enable heartbeat.
 		add_filter( 'heartbeat_settings', function( $settings ) {
