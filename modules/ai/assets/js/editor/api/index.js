@@ -69,6 +69,8 @@ export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_promp
 
 export const getProductImageUnification = ( payload, immediately ) => request( 'ai_get_product_image_unification', { payload }, immediately );
 
+export const getAnimation = ( payload ) => request( 'ai_get_animation', { payload } );
+
 export const uploadImage = ( image ) => request( 'ai_upload_image', {
 	...image,
 	editor_post_id: image.image.editor_post_id,
