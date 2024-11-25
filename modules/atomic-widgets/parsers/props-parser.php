@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Validators;
+namespace Elementor\Modules\AtomicWidgets\Parsers;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Props_Validator {
+class Props_Parser {
 
 	private array $schema;
 	private array $errors_bag = [];
@@ -28,12 +28,14 @@ class Props_Validator {
 	 *
 	 * @return array{
 	 *     0: bool,
-	 *     1: array<string, mixed>,
-	 *     2: array<string>
+	 *     1: array<string, bool>,
+	 *     2: array<string>,
+	 *     3: array<string, mixed>
 	 * }
 	 */
-	public function validate( array $props ): array {
+	public function parse( array $props ): array {
 		$validated = [];
+		$sanitized = [];
 
 		foreach ( $this->schema as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
@@ -46,12 +48,15 @@ class Props_Validator {
 
 			if ( ! $is_valid ) {
 				$this->errors_bag[] = $key;
+				$validated[ $key ] = false;
 
 				continue;
 			}
 
+			$validated[ $key ] = true;
+
 			if ( $value ) {
-				$validated[ $key ] = $value;
+				$sanitized[ $key ] = $prop_type->sanitize( $value );
 			}
 		}
 
@@ -61,6 +66,7 @@ class Props_Validator {
 			$is_valid,
 			$validated,
 			$this->errors_bag,
+			$sanitized,
 		];
 	}
 }

@@ -75,6 +75,24 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		return true;
 	}
 
+	public function sanitize( $value ) {
+		if ( ! $this->validate( $value ) ) {
+			return $this->get_default();
+		}
+
+		$value[ 'value' ] = $this->sanitize_value( $value[ 'value' ] );
+
+		return $value;
+	}
+
+	public function sanitize_value( $value ) {
+		$prop_type = $this->get_item_type();
+
+		return array_map( function ( $item ) use ( $prop_type ) {
+			return $prop_type->sanitize( $item );
+		}, $value );
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'kind' => static::KIND,
