@@ -4,6 +4,7 @@ namespace Elementor\Modules\Ai;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
+use Elementor\Element_Base;
 use Elementor\Modules\Ai\Feature_Intro\Product_Image_Unification_Intro;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
@@ -160,12 +161,12 @@ class Module extends BaseModule {
 			return $this->remove_temporary_containers( $data );
 		} );
 
-		add_action( 'elementor/element/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 2 );
-		add_action( 'elementor/element/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 2 );
+		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/common/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
 	}
 
-	public function register_ai_hover_effect_control( $element, $section_id ) {
-		if ( '_section_transform' === $section_id && ! $element->get_controls( 'ai_hover_animation' ) ) {
+	public function register_ai_hover_effect_control( Element_Base $element ) {
+		if ( ! $element->get_controls( 'ai_hover_animation' ) ) {
 			$element->add_control(
 				'ai_hover_animation',
 				[
@@ -200,12 +201,11 @@ class Module extends BaseModule {
 			);
 		}
 	}
-	public function register_ai_motion_effect_control( $element, $section_id ) {
-		if ( 'section_effects' === $section_id && Utils::has_pro() && ! $element->get_controls( 'ai_animation' ) ) {
+	public function register_ai_motion_effect_control( $element ) {
+		if ( Utils::has_pro() && ! $element->get_controls( 'ai_animation' ) ) {
 			$element->add_control(
 				'ai_animation',
 				[
-					'section' => $section_id,
 					'label' => esc_html__( 'Animate With AI', 'elementor' ),
 					'type' => Controls_Manager::RAW_HTML,
 					'raw' => '
