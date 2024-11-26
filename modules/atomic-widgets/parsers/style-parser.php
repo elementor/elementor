@@ -63,12 +63,15 @@ class Style_Parser {
 				continue;
 			}
 
-			$this->validate_meta( $variant['meta'] );
+			$is_variant_valid = $this->validate_meta( $variant['meta'] );
 
-			[, , $variant_errors, $sanitized] = Props_Parser::make( $this->schema )->parse( $variant['props'] );
-			$style['variants'][ $variant_index ]['props'] = $sanitized;
-
-			$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
+			if ( $is_variant_valid ) {
+				[ , , $variant_errors, $sanitized ] = Props_Parser::make( $this->schema )->parse( $variant[ 'props' ] );
+				$style[ 'variants' ][ $variant_index ][ 'props' ] = $sanitized;
+				$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
+			} else {
+				unset ( $style[ 'variants' ][ $variant_index ] );
+			}
 		}
 
 		$is_valid = empty( $this->errors_bag );
@@ -80,18 +83,23 @@ class Style_Parser {
 		];
 	}
 
-	public function validate_meta( $meta ) {
+	public function validate_meta( $meta ): bool {
 		if ( ! is_array( $meta ) ) {
 			$this->errors_bag[] = 'meta';
+			return false;
 		}
 
 		if ( ! array_key_exists( 'state', $meta ) || ! in_array( $meta['state'], self::VALID_STATES, true ) ) {
 			$this->errors_bag[] = 'meta';
+			return false;
 		}
 
 		// TODO: Validate breakpoint based on the existing breakpoints in the system [EDS-528]
 		if ( ! isset( $meta['breakpoint'] ) || ! is_string( $meta['breakpoint'] ) ) {
 			$this->errors_bag[] = 'meta';
+			return false;
 		}
+
+		return true;
 	}
 }
