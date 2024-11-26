@@ -137,9 +137,9 @@ class Manager extends Base_Object {
 				// * A developer can set the default state to be invalid (e.g. dependant feature is inactive).
 				// if one of the dependencies is inactive, the main feature should be inactive as well.
 				if ( $this->get_feature_actual_state( $feature ) === self::STATE_INACTIVE ) {
-					if ( $experimental_data['state'] === self::STATE_ACTIVE ) {
+					if ( self::STATE_ACTIVE === $experimental_data['state'] ) {
 						$experimental_data['state'] = self::STATE_INACTIVE;
-					} elseif ( $experimental_data['state'] === self::STATE_DEFAULT ) {
+					} elseif ( self::STATE_DEFAULT === $experimental_data['state']) {
 						$experimental_data['default'] = self::STATE_INACTIVE;
 					}
 				}
