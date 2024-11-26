@@ -75,8 +75,6 @@ add_action( 'elementor/experiments/feature-registered', function ( Experiments_M
 	if ( ! $experimental_data['mutable'] || in_array( $experimental_data['name'], $exclude, true ) ) {
 		return;
 	}
-
-	$experiments_manager->set_feature_default_state( $experimental_data['name'], $experiments_manager::STATE_ACTIVE );
 }, 10, 2 );
 
 // Make sure the main class is running

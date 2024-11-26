@@ -32,7 +32,6 @@ class Test_Manager extends Elementor_Test_Base {
 		add_action( 'elementor/experiments/feature-registered', [ $this, 'set_original_experiments_state' ], 1, 2 );
 
 		add_action( 'elementor/experiments/feature-registered', [ $this, 'reset_experiments_state' ], 9999, 2 );
-
 		$this->experiments = new Experiments_Manager();
 	}
 
@@ -46,7 +45,6 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_features_dependencies_initial_state_mismatches() {
-		new \Elementor\Core\Modules_Manager();
 		$features = \Elementor\Plugin::$instance->experiments->get_features();
 		$this->assertNotEmpty( $features );
 		foreach ( $features as $feat ) {
