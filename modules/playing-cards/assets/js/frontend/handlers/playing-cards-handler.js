@@ -27,7 +27,7 @@ export default class PlayingCardHandler extends elementorModules.frontend.handle
 	}
 
 	bindEvents() {
-		this.elements.$playingCardContainer.on( 'click', this.clickHandler );
+		this.$element.on( 'click', this.clickHandler );
 	}
 
 	unbindEvents() {
