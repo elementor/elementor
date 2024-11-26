@@ -1,20 +1,22 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\Base;
 
+use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Atomic_Base;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Validators\Styles_Validator;
 use Elementor\Utils;
-use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Atomic_Widget_Base extends Widget_Base {
+abstract class Atomic_Element_Base extends Element_Base {
+
 	use Has_Atomic_Base;
 
 	protected $version = '0.0';
@@ -67,17 +69,21 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	abstract protected function define_atomic_controls(): array;
 
+
 	final public function get_initial_config() {
 		$config = parent::get_initial_config();
 
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
+		$config['show_in_panel'] = true;
+		$config['categories'] = [ 'layout' ];
+		$config['hide_on_search'] = false;
+		$config['controls'] = [];
 
 		return $config;
 	}
 
-	// TODO: Move to a `Schema_Validator` class?
 	private static function validate_schema( array $schema ) {
 		$widget_name = static::class;
 
@@ -89,17 +95,13 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	private function sanitize_atomic_styles( array $styles ) {
-		foreach ( $styles as $style ) {
-			[$is_valid, $sanitized, $errors_bag] = Styles_Validator::make( Style_Schema::get() )->validate( $style );
+		[ , $validated, $errors ] = Styles_Validator::make( Style_Schema::get() )->validate( $styles );
 
-			if ( ! $is_valid ) {
-				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
-			}
-
-			$styles[ $sanitized['id'] ] = $sanitized;
+		if ( ! empty( $errors ) ) {
+			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
 
-		return $styles;
+		return $validated;
 	}
 
 	private function sanitize_atomic_settings( array $settings ): array {

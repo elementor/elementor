@@ -1,6 +1,6 @@
-import ElementBase from './types/base/element-base';
+import ElementBase from '../elements/types/base/element-base';
 
-import * as elementsTypes from './types/';
+import * as elementsTypes from '../elements/types/';
 
 export default class ElementsManager {
 	/**
@@ -66,9 +66,11 @@ export default class ElementsManager {
 
 		// TODO: Find better place, since container is not module.
 		if ( elementorCommon.config.experimentalFeatures.container ) {
-			const ContainerClass = require( './types/container' ).default;
+			const ContainerClass = require( '../elements/types/container' ).default;
+			const AContainerClass = require( './types/a-container' ).default;
 
 			this.registerElementType( new ContainerClass() );
+			this.registerElementType( new AContainerClass() );
 		}
 	}
 }

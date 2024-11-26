@@ -731,6 +731,7 @@ abstract class Document extends Controls_Stack {
 			if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 				$container_config = [
 					'container' => Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config(),
+					'a-container' => Plugin::$instance->elements_manager->get_element_types( 'a-container' )->get_config(),
 				];
 			}
 
