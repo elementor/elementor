@@ -29,7 +29,7 @@ class Images_Manager {
 	 * @access public
 	 */
 	public function get_images_details() {
-		if ( ! current_user_can( Editor::EDITING_CAPABILITY ) ) {
+		if ( ! current_user_can( 'publish_posts' ) ) {
 			wp_send_json_error( 'Permission denied' );
 		}
 
