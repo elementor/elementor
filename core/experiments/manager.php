@@ -139,7 +139,7 @@ class Manager extends Base_Object {
 				if ( $this->get_feature_actual_state( $feature ) === self::STATE_INACTIVE ) {
 					if ( self::STATE_ACTIVE === $experimental_data['state'] ) {
 						$experimental_data['state'] = self::STATE_INACTIVE;
-					} elseif ( self::STATE_DEFAULT === $experimental_data['state']) {
+					} elseif ( self::STATE_DEFAULT === $experimental_data['state'] ) {
 						$experimental_data['default'] = self::STATE_INACTIVE;
 					}
 				}
