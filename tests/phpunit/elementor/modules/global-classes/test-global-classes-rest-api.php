@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_API extends Elementor_Test_Base {
+class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	private $mock_global_class = [
 		"label" => "flexy",
 		"variants" => [
