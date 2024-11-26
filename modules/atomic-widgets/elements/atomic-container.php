@@ -41,11 +41,7 @@ class Atomic_Container extends Atomic_Element_Base {
 							[
 								'value' => 'div',
 								'label' => 'Div',
-							],
-							[
-								'value' => 'header',
-								'label' => 'Header',
-							],
+							]
 						]),
 				]),
 		];

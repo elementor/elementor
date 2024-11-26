@@ -1,5 +1,4 @@
 import AEmptyView from './container/a-empty-view';
-import WidgetResizable from '../../elements/views/behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
@@ -104,39 +103,10 @@ const AContainerView = BaseElementView.extend( {
 		return true;
 	},
 
-	filterSettings( newItem ) {
-		if ( 'container' !== newItem?.elType ) {
-			return;
-		}
-
-		const parentContainer = this;
-
-		if ( parentContainer.isBoxedWidth() ) {
-			newItem.settings.content_width = 'full';
-		} else if ( 0 !== parentContainer.getNestingLevel() ) {
-			newItem.settings.content_width = 'full';
-		}
-	},
-
 	childViewOptions() {
 		return {
 			emptyViewOwner: this,
 		};
-	},
-
-	getCurrentUiStates() {
-		const currentDeviceMode = elementor.channels.deviceMode.request( 'currentMode' ),
-			deviceSuffix = 'desktop' === currentDeviceMode ? '' : '_' + currentDeviceMode,
-			directionSettingKey = this.getDirectionSettingKey() + deviceSuffix,
-			currentDirection = this.container.settings.get( directionSettingKey );
-
-		return {
-			directionMode: currentDirection || ContainerHelper.DIRECTION_DEFAULT,
-		};
-	},
-
-	onDeviceModeChange() {
-		SetDirectionMode.set( this.getContainer() );
 	},
 
 	getDirectionSettingKey() {
@@ -152,13 +122,9 @@ const AContainerView = BaseElementView.extend( {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
 		_.extend( behaviors, {
-			// TODO: Remove. It's a temporary solution for the Navigator sortable.
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
 				elChildType: 'widget',
-			},
-			Resizable: {
-				behaviorClass: WidgetResizable,
 			},
 		} );
 
@@ -172,12 +138,9 @@ const AContainerView = BaseElementView.extend( {
 	},
 
 	/**
-	 * TODO: Remove. It's a temporary solution for the Navigator sortable.
-	 *
 	 * @return {{}} options
 	 */
 	getSortableOptions() {
-		// TODO: Temporary hack.
 		return {
 			preventInit: true,
 		};
@@ -199,15 +162,13 @@ const AContainerView = BaseElementView.extend( {
 	},
 
 	getDroppableOptions() {
-		const items = this.isBoxedWidth()
-			? '> .elementor-widget, > .e-con-full, > .e-con > .e-con-inner, > .elementor-empty-view > .elementor-first-add'
-			: '> .elementor-element, > .elementor-empty-view .elementor-first-add';
+		const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 		return {
 			axis: this.getDroppableAxis(),
 			items,
 			groups: [ 'elementor-element' ],
-			horizontalThreshold: 5, // TODO: Stop the magic.
+			horizontalThreshold: 5,
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
@@ -221,8 +182,7 @@ const AContainerView = BaseElementView.extend( {
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 					draggingInSameParent = ( draggedView?.parent === this ),
-					hasInnerContainer = jQuery( event.currentTarget ).hasClass( 'e-con-inner' ),
-					containerSelector = hasInnerContainer ? event.currentTarget.parentElement.parentElement : event.currentTarget.parentElement;
+					containerSelector = event.currentTarget.parentElement;
 
 				let $elements = jQuery( containerSelector ).find( '> .elementor-element' );
 
@@ -233,7 +193,7 @@ const AContainerView = BaseElementView.extend( {
 
 				const widgetsArray = Object.values( $elements );
 
-				let newIndex = hasInnerContainer ? widgetsArray.indexOf( event.currentTarget.parentElement ) : widgetsArray.indexOf( event.currentTarget );
+				let newIndex = widgetsArray.indexOf( event.currentTarget );
 
 				// Plus one in order to insert it after the current target element.
 				if ( this.shouldIncrementIndex( side ) ) {
@@ -312,10 +272,6 @@ const AContainerView = BaseElementView.extend( {
 		return editTools;
 	},
 
-	isBoxedWidth() {
-		return 'boxed' === this.getContainer().settings.get( 'content_width' );
-	},
-
 	shouldIncrementIndex( side ) {
 		if ( ! this.draggingOnBottomOrRightSide( side ) ) {
 			return false;
@@ -333,13 +289,9 @@ const AContainerView = BaseElementView.extend( {
 	},
 
 	emptyViewIsCurrentlyBeingDraggedOver() {
-		return this.getCorrectContainerElement().find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
-	},
-
-	getCorrectContainerElement() {
-		return this.isBoxedWidth()
-			? this.$el.find( '> .e-con-inner' )
-			: this.$el;
+		return this.$el.find(
+			'> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element'
+		).length > 0;
 	},
 
 } );
