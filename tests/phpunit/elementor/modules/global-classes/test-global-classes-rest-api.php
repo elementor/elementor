@@ -226,7 +226,7 @@ class Test_API extends Elementor_Test_Base {
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
 		$updated_class = array_merge( $this->mock_global_class, [ 'label' => 'new label' ] );
-		$request->set_body_params( $updated_class );
+		$request->set_body( json_encode( $updated_class ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -242,7 +242,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
-		$request->set_body_params( $this->mock_global_class );
+		$request->set_body( json_encode( $this->mock_global_class ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -255,7 +255,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
-		$request->set_body_params( [] );
+		$request->set_body( json_encode( [] ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -270,7 +270,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
-		$request->set_body_params( $this->mock_global_class );
+		$request->set_body( json_encode( $this->mock_global_class ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -283,7 +283,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/global-classes' );
-		$request->set_body_params( $this->mock_global_class );
+		$request->set_body( json_encode( $this->mock_global_class ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -302,7 +302,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/global-classes' );
-		$request->set_body_params( [] );
+		$request->set_body( json_encode( [] ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -317,7 +317,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/global-classes' );
-		$request->set_body_params( $this->mock_global_class );
+		$request->set_body( json_encode( $this->mock_global_class ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -332,7 +332,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
-		$request->set_body_params( [ 'g-4-124', 'g-4-123' ] );
+		$request->set_body( json_encode( [ 'g-4-124', 'g-4-123' ] ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -348,7 +348,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
-		$request->set_body_params( [ 'g-4-124' ] );
+		$request->set_body( json_encode( [ 'g-4-124' ] ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -363,7 +363,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
-		$request->set_body_params( [] );
+		$request->set_body( json_encode( [] ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -378,7 +378,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
-		$request->set_body_params( [ 'not-exist', 'g-4-124' ] );
+		$request->set_body( json_encode( [ 'not-exist', 'g-4-124' ] ) );
 		$response = rest_do_request( $request );
 
 		// Assert
@@ -393,7 +393,7 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
-		$request->set_body_params( [ 'g-4-124', 'g-4-123' ] );
+		$request->set_body( json_encode( [ 'g-4-124', 'g-4-123' ] ) );
 		$response = rest_do_request( $request );
 
 		// Assert

@@ -5,7 +5,6 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Validators\Style_Validator;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -74,7 +73,7 @@ class Global_Classes_REST_API {
 				'validate_callback' => function( \WP_REST_Request $request ) {
 					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
 						->without_id()
-						->validate( $request->get_body_params() );
+						->validate( json_decode( $request->get_body(), true ) );
 
 					return $is_valid;
 				},
@@ -87,9 +86,11 @@ class Global_Classes_REST_API {
 				'methods' => 'POST',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->create( $request ) ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
+					$json = json_decode( $request->get_body(), true );
+
 					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
 						->without_id()
-						->validate( $request->get_body_params() );
+						->validate( $json );
 
 					return $is_valid;
 				},
@@ -102,7 +103,7 @@ class Global_Classes_REST_API {
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->arrange( $request ) ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
-					$order = $request->get_body_params();
+					$order = json_decode( $request->get_body(), true );
 
 					if ( ! is_array( $order ) ) {
 						return false;
@@ -152,7 +153,7 @@ class Global_Classes_REST_API {
 
 	private function put( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
-		$values = $request->get_body_params();
+		$values = json_decode( $request->get_body(), true );
 
 		// Ignore id to simplify the patch, and allow passing the entity as it is
 		unset( $values['id'] );
@@ -169,14 +170,14 @@ class Global_Classes_REST_API {
 	}
 
 	private function create( \WP_REST_Request $request ) {
-		$class = $request->get_body_params();
-		$new = $this->get_repository()->create( $class );
+		$value = json_decode( $request->get_body(), true );
+		$new = $this->get_repository()->create( $value );
 
 		return new \WP_REST_Response( $new, 201 );
 	}
 
 	private function arrange( \WP_REST_Request $request ) {
-		$order = $request->get_body_params();
+		$order = json_decode( $request->get_body(), true );
 		$updated = $this->get_repository()->arrange( $order );
 
 		return new \WP_REST_Response( $updated, 200 );
