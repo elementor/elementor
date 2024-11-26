@@ -54,7 +54,7 @@
 		"@elementor/externalize-wordpress-assets-webpack-plugin": "^0.3.3",
 		"@elementor/extract-i18n-wordpress-expressions-webpack-plugin": "^0.3.3",
 		"@elementor/generate-wordpress-asset-file-webpack-plugin": "^0.3.3",
-		"@elementor/wp-lite-env": "^0.0.11",
+		"@elementor/wp-lite-env": "^0.0.13",
 		"@lodder/grunt-postcss": "^3.1.1",
 		"@playwright/test": "^1.43.1",
 		"@testing-library/dom": "^9.3.3",
