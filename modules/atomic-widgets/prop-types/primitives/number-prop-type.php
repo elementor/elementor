@@ -20,6 +20,6 @@ class Number_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
-		return (double) $value;
+		return ( int ) $value;
 	}
 }

@@ -147,13 +147,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		}
 	}
 
-	private function sanitize_atomic_styles( array $styles ) {
+	private function sanitize_atomic_styles( array $styles ): array {
 		foreach ( $styles as $style ) {
-			[$is_valid, $sanitized, $errors_bag] = Style_Parser::make( Style_Schema::get() )->parse( $style );
-
-			if ( ! $is_valid ) {
-				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
-			}
+			[, $sanitized] = Style_Parser::make( Style_Schema::get() )->parse( $style );
 
 			$styles[ $sanitized['id'] ] = $sanitized;
 		}
@@ -164,11 +160,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	private function sanitize_atomic_settings( array $settings ): array {
 		$schema = static::get_props_schema();
 
-		[ , , $errors, $sanitized ] = Props_Parser::make( $schema )->parse( $settings );
-
-		if ( ! empty( $errors ) ) {
-			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
-		}
+		[ , , , $sanitized ] = Props_Parser::make( $schema )->parse( $settings );
 
 		return $sanitized;
 	}

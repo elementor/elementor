@@ -840,6 +840,31 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $data_for_save['styles'] );
 	}
 
+	public function test_get_data_for_save__sanitize_settings() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+				'number_prop' => Number_Prop_Type::make()->default( 0 ),
+				'boolean_prop' => Boolean_Prop_Type::make()->default( false ),
+			],
+			'settings' => [
+				'string_prop' => '<b>invalid HTML string</b>',
+				'number_prop' => '123',
+				'boolean_prop' => 'a',
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'string_prop' => 'invalid HTML string',
+			'number_prop' => 123,
+		], $data_for_save['settings'] );
+	}
+
 	public function test_get_data_for_save__throws_on_styles_size_prop_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
@@ -876,12 +901,23 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: width, height, font-size' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Expect.
+		$this->assertSame( [
+			'id' => 's-1234',
+			'type' => 'class',
+			'variants' => [
+				[
+					'props' => [],
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+				],
+			],
+		], $data_for_save['styles']['s-1234']);
 	}
 
 	public function test_get_data_for_save__throws_on_styles_meta_state_validation_error() {
@@ -910,12 +946,15 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: meta' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Expect.
+		$this->assertSame( [
+			'id' => 's-1234',
+			'type' => 'class',
+			'variants' => [],
+		], $data_for_save['styles']['s-1234']);
 	}
 
 	public function test_get_data_for_save__throws_on_styles_meta_breakpoint_validation_error() {
@@ -944,12 +983,15 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: meta' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'id' => 's-1234',
+			'type' => 'class',
+			'variants' => [],
+		], $data_for_save['styles']['s-1234']);
 	}
 
 	public function test_get_data_for_save__throws_on_styles_id_validation_error() {
@@ -978,15 +1020,23 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: id' );
-
 		// Act.
-		$data = $widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame($data['styles']['1234'], []);
+		$this->assertSame( [
+			'id' => 12344,
+			'type' => 'class',
+			'variants' => [
+				[
+					'props' => [],
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+				],
+			],
+		], $data_for_save['styles']['1234']);
 	}
 
 	public function test_get_data_for_save__throws_on_styles_linked_dimensions_validation_error() {
@@ -1043,12 +1093,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: padding' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			's-1234' => [
+				'id' => 's-1234',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [],
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => null,
+						],
+					],
+				],
+			]
+		], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__throws_on_styles_border_radius_validation_error() {
@@ -1098,12 +1161,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: border-radius' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			's-1234' => [
+				'id' => 's-1234',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [],
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => null,
+						],
+					],
+				],
+			]
+		], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__throws_on_styles_border_width_validation_error() {
@@ -1160,12 +1236,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: border-width' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			's-1234' => [
+				'id' => 's-1234',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [],
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => null,
+						],
+					],
+				],
+			]
+		], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__throws_on_styles_color_validation_error() {
@@ -1196,12 +1285,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: color' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			's-1234' => [
+				'id' => 's-1234',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [],
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => null,
+						],
+					],
+				],
+			]
+		], $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__throws_on_settings_validation_error() {
@@ -1217,12 +1319,11 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			],
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Settings validation failed. Invalid keys: mock_prop_1, mock_prop_2' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [], $data_for_save['settings'] );
 	}
 
 	public function test_get_data_for_save__throws_on_styles_stroke_prop_validation_error() {
@@ -1265,12 +1366,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: -webkit-text-stroke' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			's-1234' => [
+				'id' => 's-1234',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [],
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => null,
+						],
+					],
+				],
+			]
+		], $data_for_save['styles'] );
 	}
 
 	/**
