@@ -70,11 +70,11 @@ class Global_Classes_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
 			[
 				'methods' => 'PUT',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->patch( $request ) ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
 					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
 						->without_id()
-						->validate( $request->get_body_params() );
+						->validate( $request->get_json_params() );
 
 					return $is_valid;
 				},
@@ -89,7 +89,7 @@ class Global_Classes_REST_API {
 				'validate_callback' => function( \WP_REST_Request $request ) {
 					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
 						->without_id()
-						->validate( $request->get_body_params() );
+						->validate( $request->get_json_params() );
 
 					return $is_valid;
 				},
@@ -102,7 +102,7 @@ class Global_Classes_REST_API {
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->arrange( $request ) ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
-					$order = $request->get_params();
+					$order = $request->get_json_params();
 
 					if ( ! is_array( $order ) ) {
 						return false;
@@ -150,9 +150,9 @@ class Global_Classes_REST_API {
 		return new \WP_REST_Response( null, 204 );
 	}
 
-	private function patch( \WP_REST_Request $request ) {
+	private function put( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
-		$values = $request->get_params();
+		$values = $request->get_json_params();
 
 		// Ignore id to simplify the patch, and allow passing the entity as it is
 		unset( $values['id'] );
@@ -163,20 +163,20 @@ class Global_Classes_REST_API {
 			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
 		}
 
-		$values = $this->get_repository()->patch( $id, $values );
+		$values = $this->get_repository()->put( $id, $values );
 
 		return new \WP_REST_Response( $values, 200 );
 	}
 
 	private function create( \WP_REST_Request $request ) {
-		$class = $request->get_params();
+		$class = $request->get_json_params();
 		$new = $this->get_repository()->create( $class );
 
 		return new \WP_REST_Response( $new, 201 );
 	}
 
 	private function arrange( \WP_REST_Request $request ) {
-		$order = $request->get_params();
+		$order = $request->get_json_params();
 		$updated = $this->get_repository()->arrange( $order );
 
 		return new \WP_REST_Response( $updated, 200 );
