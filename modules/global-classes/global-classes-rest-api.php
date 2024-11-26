@@ -4,7 +4,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Validators\Style_Validator;
+use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -87,9 +87,9 @@ class Global_Classes_REST_API {
 				'methods' => 'POST',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->create( $request ) ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
-					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
+					[ $is_valid ] = Style_Parser::make( Style_Schema::get() )
 						->without_id()
-						->validate( $request->get_body_params() );
+						->parse( $request->get_body_params() );
 
 					return $is_valid;
 				},
