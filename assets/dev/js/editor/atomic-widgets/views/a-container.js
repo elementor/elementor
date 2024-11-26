@@ -1,5 +1,5 @@
 import AEmptyView from './container/a-empty-view';
-import WidgetResizable from "../../elements/views/behaviors/widget-resizeable";
+import WidgetResizable from '../../elements/views/behaviors/widget-resizeable';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
@@ -78,7 +78,7 @@ const AContainerView = BaseElementView.extend( {
 		}
 	},
 
-	renderOnChange( settings ) {
+	renderOnChange() {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
 		const classes = this.getContainer().settings.get( 'classes' );

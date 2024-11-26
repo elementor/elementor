@@ -90,7 +90,7 @@ export default class Component extends ComponentBase {
 			if ( ! controlsTabs[ defaultTab ] ) {
 				defaultTab = Object.keys( controlsTabs )[ 0 ];
 			}
-console.log("defaultTab-- ", defaultTab, "controlsTabs-- ", controlsTabs);
+
 			this.setDefaultRoute( defaultTab );
 
 			return true;
