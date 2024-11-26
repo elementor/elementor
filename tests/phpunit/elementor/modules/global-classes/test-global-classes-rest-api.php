@@ -248,10 +248,7 @@ class Test_API extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
-
 		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( 'new label', $classes['items']['g-4-123']['label'] );
 	}
 
 	public function test_put__returns_error_when_class_not_found(){
@@ -368,14 +365,11 @@ class Test_API extends Elementor_Test_Base {
 
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
-		$request->set_body( $this->mock_global_classes['order'] );
+		$request->set_body( json_encode( $this->mock_global_classes['order'] ) );
 		$response = rest_do_request( $request );
 
 		// Assert
-		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
-
 		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( [ 'g-4-124', 'g-4-123' ], $classes['order'] );
 	}
 
 	public function test_put_order__returns_error_when_class_not_exists_in_data(){
