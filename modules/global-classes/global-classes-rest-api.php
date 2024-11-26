@@ -86,11 +86,9 @@ class Global_Classes_REST_API {
 				'methods' => 'POST',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->create( $request ) ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
-					$json = json_decode( $request->get_body(), true );
-
 					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
 						->without_id()
-						->validate( $json );
+						->validate( json_decode( $request->get_body(), true ) );
 
 					return $is_valid;
 				},
