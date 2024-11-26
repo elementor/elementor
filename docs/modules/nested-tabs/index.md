@@ -432,15 +432,22 @@ export default function AddSectionArea( props ) {
 	}, [] );
 
 	return (
-		<div className="elementor-add-section" onClick={() => containerHelper.openEditMode( props.container )}
-				ref={addAreaElementRef}>
+		<div
+			className="elementor-add-section"
+			onClick={() => containerHelper.openEditMode( props.container )}
+			ref={addAreaElementRef}
+		>
 			<div className="elementor-add-section-inner">
 				<div className="e-view elementor-add-new-section">
-					<div className="elementor-add-section-area-button elementor-add-section-button"
+					<button
+						type="button"
+						className="elementor-add-section-area-button elementor-add-section-button"
+						title={__( 'Add new container', 'elementor' )}
+						aria-label={__( 'Add new container', 'elementor' )}
 						onClick={() => props.setIsRenderPresets( true )}
-						title={__( 'Add new container', 'elementor' )}>
-						<i className="eicon-plus"/>
-					</div>
+					>
+						<i className="eicon-plus" aria-hidden="true" />
+					</button>
 					<div className="elementor-add-section-drag-title">
 						{__( 'Drag widgets here.', 'elementor' )}
 					</div>
@@ -501,23 +508,28 @@ export default function SelectPreset( props ) {
 
 	return (
 		<>
-			<div className="elementor-add-section-close">
-				<i onClick={() => props.setIsRenderPresets( false )} className="eicon-close" aria-hidden="true"/>
-				<span className="elementor-screen-only">{__( 'Close', 'elementor' )}</span>
-			</div>
+			<button
+				type="button"
+				className="elementor-add-section-close"
+				title={ __( 'Close', 'elementor' ) }
+				aria-label={ __( 'Close', 'elementor' ) }
+				onClick={() => props.setIsRenderPresets( false )}
+			>
+				<i className="eicon-close" aria-hidden="true"/>
+			</button>
 			<div className="e-view e-con-select-preset">
 				<div className="e-con-select-preset__title">{__( 'Select your Structure', 'elementor' )}</div>
 				<div className="e-con-select-preset__list">
 					{
 						elementor.presetsFactory.getContainerPresets().map( ( preset ) => (
 							<button
-                                type="button"
-                                className="e-con-preset"
-                                data-preset={preset}
+								type="button"
+								className="e-con-preset"
+								data-preset={preset}
 								key={preset}
-                                onClick={() => onPresetSelected( preset, props.container )}
+								onClick={() => onPresetSelected( preset, props.container )}
 								dangerouslySetInnerHTML={{ __html: elementor.presetsFactory.generateContainerPreset( preset ) }}
-                            />
+							/>
 						) )
 					}
 				</div>
