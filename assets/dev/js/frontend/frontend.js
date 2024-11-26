@@ -203,14 +203,8 @@ export default class Frontend extends elementorModules.ViewModule {
 			escapeHTML,
 			events: Events,
 			controls: new Controls(),
+			anchor_scroll_margin: new AnchorScrollMargin(),
 		};
-
-		// TODO: Remove experiment in v3.27.0 [ED-15717].
-		if ( this.config.experimentalFeatures.e_css_smooth_scroll ) {
-			this.utils.anchor_scroll_margin = new AnchorScrollMargin();
-		} else {
-			this.utils.anchors = new AnchorsModule();
-		}
 
 		// TODO: BC since 2.4.0
 		this.modules = {
