@@ -289,9 +289,7 @@ const AContainerView = BaseElementView.extend( {
 	},
 
 	emptyViewIsCurrentlyBeingDraggedOver() {
-		return this.$el.find(
-			'> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element'
-		).length > 0;
+		return this.$el.find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
 	},
 
 } );
