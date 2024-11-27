@@ -35,7 +35,7 @@ async function run() {
 										bulkBody.push({
 											suiteTitle: suite.title,
 											specTitle: spec.title,
-											testName: `${suite.title} / ${spec.title}`,
+											testName: `${suite.title} / ${spec.title} / ${test.title}`,
 											status: result.status || 'unknown',
 											duration: result.duration || 0,
 											errorMessage: result.error ? removeANSI(result.error.message) : null,
@@ -48,7 +48,7 @@ async function run() {
 					});
 				}
 			});
-		});
+		}
 
 		if (bulkBody.length > 0) {
 			const bulkResponse = await esClient.bulk({ refresh: true, body: bulkBody });
