@@ -1,4 +1,6 @@
-export default class ImageCarousel extends elementorModules.frontend.handlers.CarouselBase {
+import CarouselBase from './base-carousel';
+
+export default class ImageCarousel extends CarouselBase {
 	getDefaultSettings() {
 		const settings = super.getDefaultSettings();
 
