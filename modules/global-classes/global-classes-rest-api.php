@@ -88,7 +88,7 @@ class Global_Classes_REST_API {
 				'validate_callback' => function( \WP_REST_Request $request ) {
 					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
 						->without_id()
-						->validate( json_decode( $request->get_body(), true ) );
+						->validate( $request->get_json_params() );
 
 					return $is_valid;
 				},
@@ -101,7 +101,7 @@ class Global_Classes_REST_API {
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->arrange( $request ) ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
-					$order = json_decode( $request->get_body(), true );
+					$order = $request->get_json_params();
 
 					if ( ! is_array( $order ) ) {
 						return false;
@@ -151,7 +151,7 @@ class Global_Classes_REST_API {
 
 	private function put( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
-		$values = json_decode( $request->get_body(), true );
+		$values = $request->get_json_params();
 
 		// Ignore id to simplify the patch, and allow passing the entity as it is
 		unset( $values['id'] );
@@ -168,14 +168,14 @@ class Global_Classes_REST_API {
 	}
 
 	private function create( \WP_REST_Request $request ) {
-		$value = json_decode( $request->get_body(), true );
+		$value = $request->get_json_params();
 		$new = $this->get_repository()->create( $value );
 
 		return new \WP_REST_Response( $new, 201 );
 	}
 
 	private function arrange( \WP_REST_Request $request ) {
-		$order = json_decode( $request->get_body(), true );
+		$order = $request->get_json_params();
 		$updated = $this->get_repository()->arrange( $order );
 
 		return new \WP_REST_Response( $updated, 200 );
