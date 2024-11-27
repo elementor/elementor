@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Styles_Validator {
+class Style_Validator {
 	const VALID_STATES = [
 		'hover',
 		'active',
