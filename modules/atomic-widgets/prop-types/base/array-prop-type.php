@@ -80,7 +80,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 			return $this->get_default();
 		}
 
-		$value[ 'value' ] = $this->sanitize_value( $value[ 'value' ] );
+		$value['value'] = $this->sanitize_value( $value['value'] );
 
 		return $value;
 	}

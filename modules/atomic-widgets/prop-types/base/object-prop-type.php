@@ -91,12 +91,12 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		}
 
 		foreach ( $this->get_shape() as $key => $prop_type ) {
-			$sanitized_value = $prop_type->sanitize( $value[ 'value' ][ $key ] ?? null );
+			$sanitized_value = $prop_type->sanitize( $value['value'][ $key ] ?? null );
 
-			if( is_null( $sanitized_value ) ) {
-				unset( $value[ 'value' ][ $key ] );
+			if ( is_null( $sanitized_value ) ) {
+				unset( $value['value'][ $key ] );
 			} else {
-				$value[ 'value' ][ $key ] = $sanitized_value;
+				$value['value'][ $key ] = $sanitized_value;
 			}
 		}
 
