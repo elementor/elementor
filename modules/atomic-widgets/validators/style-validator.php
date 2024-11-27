@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Style_Validator {
+class Styles_Validator {
 	const VALID_STATES = [
 		'hover',
 		'active',
@@ -33,8 +33,9 @@ class Style_Validator {
 	}
 
 	/**
-	 * @param array $style
-	 * the style object to validate
+	 * @param array $styles
+	 * The key of each item represents the style id,
+	 * and the value is the style object to validate
 	 *
 	 * @return array{
 	 *     0: bool,
@@ -42,40 +43,34 @@ class Style_Validator {
 	 *     2: array<string>
 	 * }
 	 */
-	public function validate( array $style ): array {
-		if ( $this->should_validate_id && ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) ) {
-			$this->errors_bag[] = 'id';
-		}
-
-		if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
-			$this->errors_bag[] = 'variants';
-
-			return [
-				false,
-				$style,
-				$this->errors_bag,
-			];
-		}
-
-		foreach ( $style['variants'] as $variant_index => $variant ) {
-			if ( ! isset( $variant['meta'] ) ) {
-				$this->errors_bag[] = 'meta';
+	public function validate( array $styles ): array {
+		foreach ( $styles as $style_id => $style ) {
+			if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
+				$this->errors_bag[] = 'id';
+				$styles[ $style_id ] = [];
 				continue;
 			}
 
-			$this->validate_meta( $variant['meta'] );
+			foreach ( $style['variants'] as $variant_index => $variant ) {
+				if ( ! isset( $variant['meta'] ) ) {
+					$this->errors_bag[] = 'meta';
+					continue;
+				}
 
-			[,$validated_props, $variant_errors] = Props_Validator::make( $this->schema )->validate( $variant['props'] );
-			$style['variants'][ $variant_index ]['props'] = $validated_props;
+				$this->validate_meta( $variant['meta'] );
 
-			$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
+				[,$validated_props, $variant_errors] = Props_Validator::make( $this->schema )->validate( $variant['props'] );
+				$styles[ $style_id ]['variants'][ $variant_index ]['props'] = $validated_props;
+
+				$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
+			}
 		}
 
 		$is_valid = empty( $this->errors_bag );
 
 		return [
 			$is_valid,
-			$style,
+			$styles,
 			$this->errors_bag,
 		];
 	}
