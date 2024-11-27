@@ -73,7 +73,7 @@ class Global_Classes_REST_API {
 				'validate_callback' => function( \WP_REST_Request $request ) {
 					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
 						->without_id()
-						->validate( json_decode( $request->get_body(), true ) );
+						->validate( $request->get_json_params() );
 
 					return $is_valid;
 				},

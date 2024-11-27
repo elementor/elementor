@@ -227,7 +227,7 @@ class Test_API extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
 		$updated_class = array_merge( $this->mock_global_class, [ 'label' => 'new label' ] );
 		$request->add_header( 'Content-Type', 'application/json' );
-		$request->set_body_params();_params( $updated_class );
+		$request->set_body_params( $updated_class );
 		$response = rest_do_request( $request );
 
 		// Assert
