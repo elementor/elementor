@@ -85,7 +85,7 @@ class Manager extends Base_Object {
 		}
 
 		if ( ! empty( $experimental_data['dependencies'] ) ) {
-			$experimental_data = $this->check_dependencies( $experimental_data );
+			$experimental_data = $this->initialize_feature_dependencies( $experimental_data );
 		}
 
 		$this->features[ $options['name'] ] = $experimental_data;
@@ -958,7 +958,7 @@ class Manager extends Base_Object {
 	 * @return array
 	 * @throws Dependency_Exception
 	 */
-	private function check_dependencies( array $experimental_data ): array {
+	private function initialize_feature_dependencies( array $experimental_data ): array {
 		foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
 			$feature = $this->get_features( $dependency );
 
