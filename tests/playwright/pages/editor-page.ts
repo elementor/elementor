@@ -1315,4 +1315,9 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
 		await this.page.locator( EditorSelectors.toast ).waitFor();
 	}
+
+	async convertVwToPx( vw: number = 100 ): Promise<string> {
+		const viewport = this.page.viewportSize();
+		return `${ ( viewport.width * vw / 100 ).toFixed( 0 ) }px`;
+	}
 }
