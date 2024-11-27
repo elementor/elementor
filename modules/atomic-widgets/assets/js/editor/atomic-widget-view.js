@@ -1,4 +1,16 @@
 export class AtomicWidgetView extends elementor.modules.elements.views.Widget {
+	onRender( ...args ) {
+		super.onRender( ...args );
+
+		this._dispatchEvent( 'elementor/preview/atomic-widget/render' );
+	}
+
+	onDestroy( ...args ) {
+		super.onDestroy( ...args );
+
+		this._dispatchEvent( 'elementor/preview/atomic-widget/destroy' );
+	}
+
 	/**
 	 * TODO: Explain why?
 	 */
@@ -34,5 +46,9 @@ export class AtomicWidgetView extends elementor.modules.elements.views.Widget {
 			style: 'display: contents !important;',
 			'data-atomic': '',
 		};
+	}
+
+	_dispatchEvent( type ) {
+		window.top.dispatchEvent( new CustomEvent( type, { detail: { id: this.model.get( 'id' ) } } ) );
 	}
 }
