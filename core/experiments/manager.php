@@ -985,9 +985,9 @@ class Manager extends Base_Object {
 			}
 
 			$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
-
 			$experimental_data = $this->set_feature_default_state_to_match_dependencies( $feature, $experimental_data );
 		}
+
 		return $experimental_data;
 	}
 
@@ -1002,13 +1002,14 @@ class Manager extends Base_Object {
 	 * if one of the dependencies is inactive, the main feature should be inactive as well.
 	 */
 	private function set_feature_default_state_to_match_dependencies( array $feature, array $experimental_data ): array {
-		if ( $this->get_feature_actual_state( $feature ) === self::STATE_INACTIVE ) {
+		if ( self::STATE_INACTIVE === $this->get_feature_actual_state( $feature ) ) {
 			if ( self::STATE_ACTIVE === $experimental_data['state'] ) {
 				$experimental_data['state'] = self::STATE_INACTIVE;
 			} elseif ( self::STATE_DEFAULT === $experimental_data['state'] ) {
 				$experimental_data['default'] = self::STATE_INACTIVE;
 			}
 		}
+
 		return $experimental_data;
 	}
 
@@ -1018,12 +1019,9 @@ class Manager extends Base_Object {
 	 * @return array
 	 */
 	private function set_new_site_default_state( $new_site, array $experimental_data ): array {
-		$is_new_installation = $this->install_compare( $new_site['minimum_installation_version'] );
-
-		if ( $is_new_installation ) {
+		if ( $this->install_compare( $new_site['minimum_installation_version'] ) ) {
 			if ( $new_site['always_active'] ) {
 				$experimental_data['state'] = self::STATE_ACTIVE;
-
 				$experimental_data['mutable'] = false;
 			} elseif ( $new_site['default_active'] ) {
 				$experimental_data['default'] = self::STATE_ACTIVE;
@@ -1031,6 +1029,7 @@ class Manager extends Base_Object {
 				$experimental_data['default'] = self::STATE_INACTIVE;
 			}
 		}
+
 		return $experimental_data;
 	}
 
@@ -1058,7 +1057,6 @@ class Manager extends Base_Object {
 		];
 
 		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag', 'messages' ];
-
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
 		return $this->unify_feature_tags( $experimental_data );
