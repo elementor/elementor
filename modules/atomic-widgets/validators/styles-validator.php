@@ -15,8 +15,8 @@ class Styles_Validator {
 	];
 
 	private array $schema;
-
 	private array $errors_bag = [];
+	private $should_validate_id = true;
 
 	public function __construct( array $schema ) {
 		$this->schema = $schema;
@@ -24,6 +24,12 @@ class Styles_Validator {
 
 	public static function make( array $schema ): self {
 		return new static( $schema );
+	}
+
+	public function without_id() {
+		$this->should_validate_id = false;
+
+		return $this;
 	}
 
 	/**

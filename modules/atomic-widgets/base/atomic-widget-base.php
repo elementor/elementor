@@ -89,17 +89,13 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	private function sanitize_atomic_styles( array $styles ) {
-		foreach ( $styles as $style ) {
-			[$is_valid, $sanitized, $errors_bag] = Styles_Validator::make( Style_Schema::get() )->validate( $style );
+		[ , $validated, $errors ] = Styles_Validator::make( Style_Schema::get() )->validate( $styles );
 
-			if ( ! $is_valid ) {
-				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
-			}
-
-			$styles[ $sanitized['id'] ] = $sanitized;
+		if ( ! empty( $errors ) ) {
+			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
 
-		return $styles;
+		return $validated;
 	}
 
 	private function sanitize_atomic_settings( array $settings ): array {

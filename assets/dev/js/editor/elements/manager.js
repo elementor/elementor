@@ -67,10 +67,8 @@ export default class ElementsManager {
 		// TODO: Find better place, since container is not module.
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			const ContainerClass = require( './types/container' ).default;
-			const AContainerClass = require( '../atomic-widgets/types/a-container' ).default;
 
 			this.registerElementType( new ContainerClass() );
-			this.registerElementType( new AContainerClass() );
 		}
 	}
 }
