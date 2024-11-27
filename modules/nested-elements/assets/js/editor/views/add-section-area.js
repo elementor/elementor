@@ -34,15 +34,15 @@ export default function AddSectionArea( props ) {
 		>
 			<div className="elementor-add-section-inner">
 				<div className="e-view elementor-add-new-section">
-					<div
+					<button
+						type="button"
 						className="elementor-add-section-area-button elementor-add-section-button"
-						onClick={ () => props.setIsRenderPresets( true ) }
 						title={ __( 'Add new container', 'elementor' ) }
-						role="button"
-						tabIndex="0"
+						aria-label={ __( 'Add new container', 'elementor' ) }
+						onClick={ () => props.setIsRenderPresets( true ) }
 					>
-						<i className="eicon-plus" />
-					</div>
+						<i className="eicon-plus" aria-hidden="true" />
+					</button>
 					<div className="elementor-add-section-drag-title">
 						{ __( 'Drag widgets here.', 'elementor' ) }
 					</div>
