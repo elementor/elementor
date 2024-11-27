@@ -24,10 +24,16 @@ export default defineConfig( {
 	retries: process.env.CI ? 1 : 0,
 	workers: process.env.CI ? 2 : 1,
 	fullyParallel: false,
-	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : [
-		[ 'list' ],
-		[ 'json', { outputFile: 'test-results.json' } ],
-	],
+	reporter: process.env.CI
+		? [
+			[ 'github' ], // GitHub reporter for CI
+			[ 'list' ], // Minimal output in CI logs
+		]
+		: [
+			[ 'list' ], // Detailed output for local runs
+			[ 'github' ], // Include GitHub integration if desired locally
+			[ 'json', { outputFile: 'tests/playwright/test-results.json' } ], // Write JSON results locally
+		],
 	use: {
 		launchOptions: {
 			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],

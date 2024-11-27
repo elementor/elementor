@@ -91,7 +91,7 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
-        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ 'list,github,json=tests/playwright/test-results.json' }}
+        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Check if test-results.json exists
         run: |
           if [ -f tests/playwright/test-results.json ]; then
