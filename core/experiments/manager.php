@@ -1002,12 +1002,14 @@ class Manager extends Base_Object {
 	 * if one of the dependencies is inactive, the main feature should be inactive as well.
 	 */
 	private function set_feature_default_state_to_match_dependencies( array $feature, array $experimental_data ): array {
-		if ( self::STATE_INACTIVE === $this->get_feature_actual_state( $feature ) ) {
-			if ( self::STATE_ACTIVE === $experimental_data['state'] ) {
-				$experimental_data['state'] = self::STATE_INACTIVE;
-			} elseif ( self::STATE_DEFAULT === $experimental_data['state'] ) {
-				$experimental_data['default'] = self::STATE_INACTIVE;
-			}
+		if ( self::STATE_INACTIVE !== $this->get_feature_actual_state( $feature ) ) {
+			return $experimental_data;
+		}
+
+		if ( self::STATE_ACTIVE === $experimental_data['state'] ) {
+			$experimental_data['state'] = self::STATE_INACTIVE;
+		} elseif ( self::STATE_DEFAULT === $experimental_data['state'] ) {
+			$experimental_data['default'] = self::STATE_INACTIVE;
 		}
 
 		return $experimental_data;
@@ -1019,15 +1021,17 @@ class Manager extends Base_Object {
 	 * @return array
 	 */
 	private function set_new_site_default_state( $new_site, array $experimental_data ): array {
-		if ( $this->install_compare( $new_site['minimum_installation_version'] ) ) {
-			if ( $new_site['always_active'] ) {
-				$experimental_data['state'] = self::STATE_ACTIVE;
-				$experimental_data['mutable'] = false;
-			} elseif ( $new_site['default_active'] ) {
-				$experimental_data['default'] = self::STATE_ACTIVE;
-			} elseif ( $new_site['default_inactive'] ) {
-				$experimental_data['default'] = self::STATE_INACTIVE;
-			}
+		if ( ! $this->install_compare( $new_site['minimum_installation_version'] ) ) {
+			return $experimental_data;
+		}
+
+		if ( $new_site['always_active'] ) {
+			$experimental_data['state'] = self::STATE_ACTIVE;
+			$experimental_data['mutable'] = false;
+		} elseif ( $new_site['default_active'] ) {
+			$experimental_data['default'] = self::STATE_ACTIVE;
+		} elseif ( $new_site['default_inactive'] ) {
+			$experimental_data['default'] = self::STATE_INACTIVE;
 		}
 
 		return $experimental_data;
