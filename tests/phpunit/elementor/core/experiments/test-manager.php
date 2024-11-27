@@ -304,22 +304,33 @@ class Test_Manager extends Elementor_Test_Base {
 
 	public function test_add_feature__ensure_default_state_wrap_core_dependency() {
 		// Arrange.
-		$test_core_feature = [
-			'name' => 'core_feature',
+		$dependency_feature_1 = [
+			'name' => 'dependency_feature_1',
+			'state' => Experiments_Manager::STATE_DEFAULT,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'mutable' => false,
+		];
+
+		$dependency_feature_2 = [
+			'name' => 'dependency_feature_2',
 			'state' => Experiments_Manager::STATE_DEFAULT,
 			'default' => Experiments_Manager::STATE_INACTIVE,
+			'mutable' => false,
 		];
+
 
 		$depended_feature = [
 			'name' => 'depended_feature',
 			'state' => Experiments_Manager::STATE_DEFAULT,
 			'dependencies' => [
-				'core_feature',
+				'dependency_feature_1',
+				'dependency_feature_2',
 			],
 			'default' => Experiments_Manager::STATE_ACTIVE,
 		];
 
-		$this->add_test_feature( $test_core_feature );
+		$dependency_feature_1 = $this->add_test_feature( $dependency_feature_1 );
+		$dependency_feature_2 = $this->add_test_feature( $dependency_feature_2 );
 
 		// Act.
 		$depended_feature = $this->add_test_feature( $depended_feature );
@@ -328,40 +339,10 @@ class Test_Manager extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
-		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
+		$this->assertEquals( 'dependency_feature_1', $depended_feature_dependency->get_name() );
 		$this->assertTrue( $depended_feature['default'] === Experiments_Manager::STATE_INACTIVE );
-	}
-
-	public function test_add_feature__ensure_state_wrap_core_dependency() {
-		// Arrange.
-		$test_core_feature = [
-			'name' => 'core_feature',
-			'state' => Experiments_Manager::STATE_DEFAULT,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'mutable' => false,
-		];
-
-		$depended_feature = [
-			'name' => 'depended_feature',
-			'state' => Experiments_Manager::STATE_ACTIVE,
-			'mutable' => false,
-			'dependencies' => [
-				'core_feature',
-			],
-		];
-
-
-		// Act.
-		$this->add_test_feature( $test_core_feature );
-		$depended_feature = $this->add_test_feature( $depended_feature );
-
-		$depended_feature_dependency = $depended_feature['dependencies'][0];
-
-		// Assert.
-		$this->assertTrue( $depended_feature_dependency instanceof Wrap_Core_Dependency );
-		$this->assertEquals( 'core_feature', $depended_feature_dependency->get_name() );
-		$this->assertTrue( $depended_feature['state'] === Experiments_Manager::STATE_DEFAULT );
-		$this->assertTrue( $depended_feature['default'] === Experiments_Manager::STATE_INACTIVE );
+		$this->assertEquals( Experiments_Manager::STATE_DEFAULT, $dependency_feature_1['state'] );
+		$this->assertEquals( Experiments_Manager::STATE_ACTIVE, $dependency_feature_1['default'] );
 	}
 
 	public function test_add_feature__adding_non_existing_dependency() {
