@@ -17,7 +17,7 @@ async function run() {
 		const rawData = fs.readFileSync('tests/playwright/test-results.json', 'utf-8');
 		const testResults = JSON.parse(rawData);
 
-		const indexName = 'playwright-test-results';
+		const indexName = 'playwright-test-results-v2';
 		const bulkBody = [];
 
 		if (testResults.suites && Array.isArray(testResults.suites)) {
