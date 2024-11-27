@@ -1,5 +1,5 @@
 import { addElement, getElementSelector } from '../assets/elements-utils';
-import {expect, type Page, type Frame, type TestInfo, Locator} from '@playwright/test';
+import { expect, type Page, type Frame, type TestInfo, Locator } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
