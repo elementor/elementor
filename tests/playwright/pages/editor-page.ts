@@ -1316,11 +1316,6 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( EditorSelectors.toast ).waitFor();
 	}
 
-	async convertVwToPx( vw: number = 100 ): Promise<string> {
-		const viewport = this.page.viewportSize();
-		return `${ ( viewport.width * vw / 100 ).toFixed( 0 ) }px`;
-	}
-
 	async assertCorrectVwWidthStylingOfElement( element: Locator, vwValue: number = 100 ): Promise<void> {
 		const viewport = this.page.viewportSize();
 		const vwConvertedToPxUnit = viewport.width * vwValue / 100;
