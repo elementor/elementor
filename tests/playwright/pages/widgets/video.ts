@@ -23,7 +23,7 @@ export default class VideoWidget extends Content {
 		await expect( page.locator( EditorSelectors.video.lightBoxDialog ) ).toBeVisible();
 
 		if ( isPublished ) {
-			await expect( page.locator( EditorSelectors.video.videoWrapper ) ).toHaveCSS( 'width', await this.editor.convertVwToPx( 85 ) );
+			await this.editor.assertCorrectVwWidthStylingOfElement( page.locator( EditorSelectors.video.videoWrapper ), 85 );
 		}
 	}
 }
