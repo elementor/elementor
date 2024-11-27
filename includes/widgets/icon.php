@@ -332,7 +332,7 @@ class Widget_Icon extends Widget_Base {
 					'selected_icon[library]' => 'svg',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-wrapper svg' => 'width: 100%;',
+					'{{WRAPPER}} .elementor-icon-wrapper svg' => 'width: auto;',
 				],
 			]
 		);
