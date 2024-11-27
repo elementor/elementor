@@ -1,19 +1,19 @@
 export class AtomicWidgetView extends elementor.modules.elements.views.Widget {
+	// Dispatch `render` event for so the overlay layer can be updated
 	onRender( ...args ) {
 		super.onRender( ...args );
 
 		this._dispatchEvent( 'elementor/preview/atomic-widget/render' );
 	}
 
+	// Dispatch `destroy` event for so the overlay layer can be updated
 	onDestroy( ...args ) {
 		super.onDestroy( ...args );
 
 		this._dispatchEvent( 'elementor/preview/atomic-widget/destroy' );
 	}
 
-	/**
-	 * TODO: Explain why?
-	 */
+	// Removes behaviors that are not needed for atomic widgets (Should be reimplemented in the overlay layer).
 	behaviors() {
 		const disabledBehaviors = [ 'InlineEditing', 'Draggable', 'Resizable' ];
 
@@ -23,23 +23,18 @@ export class AtomicWidgetView extends elementor.modules.elements.views.Widget {
 		return Object.fromEntries( behaviorsAsEntries );
 	}
 
-	/**
-	 * TODO: Explain why?
-	 */
+	// Change the drag handle because the $el is not the draggable element (`display: contents`).
 	getDraggableElement() {
 		return this.$el.find( ':first-child' );
 	}
 
-	/**
-	 * TODO: Explain why?
-	 */
+	// Remove the overlay, so we can use the new overlay layer.
 	getHandlesOverlay() {
 		return null;
 	}
 
-	/**
-	 * TODO: Explain why?
-	 */
+	// Set the `data-atomic` attribute to the widget element + `display: contents;`.
+	// The css will behave like the wrapper `div` is not exists and with that we can remove this `div` in the frontend.
 	attributes() {
 		return {
 			...super.attributes(),
