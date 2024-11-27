@@ -20,6 +20,6 @@ class Boolean_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
-		return $this->validate_value( $value ) ? ( bool )$value : null;
+		return $this->validate_value( $value ) ? (bool) $value : null;
 	}
 }

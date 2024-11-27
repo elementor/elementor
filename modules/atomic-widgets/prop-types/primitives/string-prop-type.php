@@ -67,7 +67,7 @@ class String_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
-		if( ! $this->validate( $value ) ) {
+		if ( ! $this->validate( $value ) ) {
 			return $this->get_default();
 		}
 

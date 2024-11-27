@@ -66,11 +66,11 @@ class Style_Parser {
 			$is_variant_valid = $this->validate_meta( $variant['meta'] );
 
 			if ( $is_variant_valid ) {
-				[ , , $variant_errors, $sanitized ] = Props_Parser::make( $this->schema )->parse( $variant[ 'props' ] );
-				$style[ 'variants' ][ $variant_index ][ 'props' ] = $sanitized;
+				[ , , $variant_errors, $sanitized ] = Props_Parser::make( $this->schema )->parse( $variant['props'] );
+				$style['variants'][ $variant_index ]['props'] = $sanitized;
 				$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
 			} else {
-				unset ( $style[ 'variants' ][ $variant_index ] );
+				unset( $style['variants'][ $variant_index ] );
 			}
 		}
 
