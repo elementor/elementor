@@ -45,22 +45,30 @@ export class Close extends $e.modules.CommandBase {
 			return this.confirmDialog;
 		}
 
-		const onHide = () => window.top.$e.internal( 'panel/state-ready' );
-
 		this.confirmDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-document-save-on-close',
-			headerMessage: __( 'Sure you want to leave without saving?', 'elementor' ),
-			message: __( 'You need to save before moving on because the current document and the one you’re moving to are separate site parts.', 'elementor' ),
+			headerMessage: __( 'You are leaving to a separate site part.', 'elementor' ),
+			message: __( 'Save your changes before moving on because the current document and the one you’re moving to are separate site parts.', 'elementor' ),
 			position: {
 				my: 'center center',
 				at: 'center center',
 			},
 			strings: {
-				confirm: __( 'Save changes', 'elementor' ),
+				confirm: __( 'Save & leave', 'elementor' ),
 				cancel: __( 'Don\'t leave', 'elementor' ),
 			},
-			onHide: onHide,
-			onCancel: onHide,
+			onHide: () => {
+				// If still not action chosen. use `defer` because onHide is called before onConfirm/onCancel.
+				_.defer( () => {
+					if ( ! this.args.mode ) {
+						deferred.reject( 'Close document has been canceled.' );
+					}
+				} );
+			},
+			onCancel: () => {
+				window.top.$e.internal( 'panel/state-ready' );
+				deferred.reject( 'Close document has been canceled.' );
+			},
 			onConfirm: () => {
 				this.args.mode = 'save';
 
