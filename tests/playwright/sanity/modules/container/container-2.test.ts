@@ -121,8 +121,8 @@ test.describe( 'Container tests @container', () => {
 	test( 'Verify pasting of elements into the Container Element Add section', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const contextMenu = new ContextMenu( page, testInfo );
 		const editor = await wpAdmin.openNewPage(),
-			contextMenu = new ContextMenu( page, testInfo ),
 			containerId1 = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerId2 = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerId3 = await editor.addElement( { elType: 'container' }, 'document' );
