@@ -31,10 +31,7 @@
 		"scripts:packages:local": "npx cross-env ELEMENTOR_PACKAGES_USE_LOCAL=1 grunt scripts:packages",
 		"styles": "grunt styles",
 		"styles:watch": "grunt watch_styles",
-		"lint:js": "eslint .",
-		"import-sample-data": "npm run import-sample-data:install-importer && npm run import-sample-data:import-floating-elements",
-		"import-sample-data:install-importer": "wp-env run cli wp plugin install wordpress-importer --activate",
-		"import-sample-data:import-floating-elements": "wp-env run cli wp import elementor-playwright/sample-data/elementor-floating-buttons.xml --authors=skip --quiet --allow-root"
+		"lint:js": "eslint ."
 	},
 	"engines": {
 		"node": ">=16.0.0",
