@@ -8,7 +8,7 @@ import ReactUtils from 'elementor-utils/react';
 	 * Add the app into the page.
 	 */
 	async function mount() {
-		const { default: App } = await import( './frontend/app' );
+		const { default: App } = await import( /* webpackChunkName: 'styleguide-app' */ './frontend/app' );
 
 		document.body.classList.add( styleguideBodyClass );
 
