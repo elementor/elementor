@@ -1,107 +1,73 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const { InfluxDB, Point } = require( '@influxdata/influxdb-client' );
+const axios = require( 'axios' );
 
-// Конфигурация InfluxDB
-const url = 'http://localhost:8086'; // URL InfluxDB
-const token = 'HS1jkb8L8sEMUEwPMFAr3jPExTrt3jZRHRd_3Hje2pP6uhqem1f-tFgurYeagnJcqDqhB-vzfqh-roU6WUsOKw=='; // Замените на ваш токен
-const org = 'elementor'; // Замените на вашу организацию
-const bucket = 'elementor'; // Замените на вашу корзину
+const elasticsearchUrl = 'https://e8cfc4f31c5e424cb57b05743dcf4ab4.us-central1.gcp.cloud.es.io/';
+const index = 'playwright-test-results-v2';
 
-const influxDB = new InfluxDB( { url, token } );
-const writeApi = influxDB.getWriteApi( org, bucket, 'ms' ); // 'ms' - единица времени
+const resultsPath = path.resolve( __dirname, '../../test-results.json' );
 
-// Путь к файлу с результатами тестов
-const resultsPath = path.resolve( __dirname, '/Users/svitlanadykun/WebstormProjects/elementor-at1/test-results.json' );
-
-// Проверка существования файла
 if ( ! fs.existsSync( resultsPath ) ) {
-	console.error( `Файл ${ resultsPath } не найден.` );
+	console.error( `File ${ resultsPath } not found.` );
 	process.exit( 1 );
 }
 
-// Чтение и парсинг файла
 let results;
 try {
 	const rawData = fs.readFileSync( resultsPath, 'utf-8' );
 	results = JSON.parse( rawData );
 } catch ( err ) {
-	console.error( `Ошибка при чтении или парсинге файла ${ resultsPath }:`, err );
+	console.error( `Error reading or parsing file ${ resultsPath }:`, err );
 	process.exit( 1 );
 }
 
 const failedTests = [];
 
-// Функция для проверки неудачных статусов
-const isFailedStatus = ( status ) => {
+const isFailedStatus = ( status: string ) => {
 	const failedStatuses = [ 'failed', 'timedOut', 'interrupted', 'unexpected' ];
 	return failedStatuses.includes( status );
 };
 
-// Проход по всем тестам и сбор неудачных
 if ( results.suites && Array.isArray( results.suites ) ) {
-	results.suites.forEach( ( suite ) => {
+	results.suites.forEach( ( suite: any ) => {
 		if ( suite.specs && Array.isArray( suite.specs ) ) {
-			suite.specs.forEach( ( spec ) => {
-				if ( spec.status && isFailedStatus( spec.status ) ) {
-					spec.tests.forEach( ( test ) => {
-						test.results.forEach( ( result ) => {
-							if ( result.status && isFailedStatus( result.status ) ) {
-								failedTests.push( {
-									title: `${ spec.title } - ${ test.title }`,
-									status: result.status,
-									duration: result.duration,
-									file: result.error?.location?.file || spec.file,
-									line: result.error?.location?.line || spec.line,
-									column: result.error?.location?.column || spec.column,
-									error: result.error?.message || 'Unknown error',
-								} );
-							}
-						} );
+			suite.specs.forEach( ( spec: any ) => {
+				spec.tests.forEach( ( test: any ) => {
+					test.results.forEach( ( result: any ) => {
+						if ( isFailedStatus( result.status ) ) {
+							const failedTest = {
+								suite: suite.title,
+								test: `${ spec.title } - ${ test.title }`,
+								status: result.status,
+								duration: result.duration,
+								file: result.error?.location?.file || spec.file,
+								line: result.error?.location?.line || spec.line,
+								column: result.error?.location?.column || spec.column,
+								error: result.error?.message || 'Unknown error',
+								timestamp: result.startTime,
+							};
+							failedTests.push( failedTest );
+						}
 					} );
-				}
+				} );
 			} );
 		}
 	} );
 } else {
-	console.warn( 'В JSON нет раздела "suites" или он не является массивом.' );
+	console.warn( 'No "suites" section found or it is not an array.' );
 }
 
-// Вывод и отправка данных в InfluxDB
-if ( 0 === failedTests.length ) {
-	console.log( 'Неудачные тесты:' );
-	failedTests.forEach( ( test ) => {
-		console.log( `- ${ test.title }` );
-		console.log( `  Статус: ${ test.status }` );
-		console.log( `  Время выполнения: ${ test.duration }ms` );
-		console.log( `  Файл: ${ test.file }:${ test.line }:${ test.column }` );
-		if ( test.error ) {
-			console.log( `  Ошибка: ${ test.error }` );
+if ( failedTests.length > 0 ) {
+	console.log( 'Failed tests:', failedTests.length );
+
+	failedTests.forEach( async ( test ) => {
+		try {
+			await axios.post( `${ elasticsearchUrl }/${ index }/_doc`, test );
+			console.log( `Sent test: ${ test.test }` );
+		} catch ( error ) {
+			console.error( 'Error sending data to Elasticsearch:', error );
 		}
-		console.log( '' ); // Пустая строка для разделения тестов
-
-		// Создание точки данных для InfluxDB
-		const point = new Point( 'test_result' )
-			.tag( 'test', test.title )
-			.tag( 'status', test.status )
-			.floatField( 'duration', test.duration )
-			.tag( 'file', test.file )
-			.intField( 'line', test.line )
-			.intField( 'column', test.column )
-			.stringField( 'error', test.error || '' );
-
-		writeApi.writePoint( point );
 	} );
-
-	// Отправка данных
-	writeApi
-		.close()
-		.then( () => {
-			console.log( 'Данные успешно отправлены в InfluxDB.' );
-		} )
-		.catch( ( e ) => {
-			console.error( 'Ошибка при отправке данных в InfluxDB', e );
-		} );
 } else {
-	console.log( 'Все тесты прошли успешно.' );
+	console.log( 'All tests passed successfully.' );
 }
