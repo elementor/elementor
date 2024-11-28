@@ -136,6 +136,7 @@ const entry = {
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
+	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
 	'e-react-promotions': path.resolve( __dirname, '../modules/promotions/assets/js/react/index.js' ),
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
@@ -143,7 +144,6 @@ const entry = {
 };
 
 const frontendEntries = {
-	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
 };
@@ -208,8 +208,6 @@ const devSharedConfig = {
 		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'development' ),
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
-		// Prevents the collision of chunk names between different bundles.
-		uniqueName: 'elementor',
 	},
 	watch: true,
 };
@@ -223,6 +221,11 @@ const webpackConfig = [
 		],
 		name: 'base',
 		entry: entry,
+		output: {
+			...devSharedConfig.output,
+			// Prevents the collision of chunk names between base and frontend bundles.
+			uniqueName: 'elementor',
+		},
 	},
 	{
 		...devSharedConfig,
@@ -239,6 +242,11 @@ const webpackConfig = [
 			splitChunks: {
 				minChunks: 2,
 			},
+		},
+		output: {
+			...devSharedConfig.output,
+			// Prevents the collision of chunk names between base and frontend bundles.
+			uniqueName: 'elementorFrontend',
 		},
 		entry: frontendEntries,
 	},
