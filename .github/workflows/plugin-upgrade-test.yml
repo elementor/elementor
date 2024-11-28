@@ -54,7 +54,7 @@ jobs:
           npm run setup-templates
           npx wp-lite-env start config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json -- port=8888
       - name: Setup test data
-        run: wp-lite-env cli config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json -- port=8888 command="bash elementor-config/setup.sh"
+        run: npx wp-lite-env cli config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json -- port=8888 command="bash elementor-config/setup.sh"
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json command="wp core version" -- port=8888
