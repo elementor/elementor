@@ -31,6 +31,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'ui',
 		'utils',
 		'wp-media',
+		'http',
 	];
 
 	/**
@@ -56,6 +57,17 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		foreach ( $packages_with_app as $package ) {
 			$this->assets_config_provider->load( $package );
 		}
+
+		add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
+			$env['@elementor/http'] = [
+				'base_url' => rest_url( 'elementor/v1' ),
+				'headers' => [
+					'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),
+				],
+			];
+
+			return $env;
+		} );
 
 		do_action( 'elementor/editor/v2/init' );
 	}
