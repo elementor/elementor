@@ -46,7 +46,7 @@ class PromotionData {
 				esc_html__( 'Fully customize your headlines.', 'elementor' ),
 			],
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-heading-widget/',
+			'upgrade_url' => 'https://go.elementor.com/go-pro-heading-widget-control/',
 		];
 
 		return $this->filter_data( Utils::ANIMATED_HEADLINE, $data );
@@ -63,7 +63,7 @@ class PromotionData {
 				esc_html__( 'Seamlessly customize video appearance.', 'elementor' ),
 			],
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-video-widget/',
+			'upgrade_url' => 'https://go.elementor.com/go-pro-video-widget-control/',
 		];
 
 		return $this->filter_data( Utils::VIDEO_PLAYLIST, $data );
@@ -80,7 +80,7 @@ class PromotionData {
 				esc_html__( 'Create unique, interactive designs.', 'elementor' ),
 			],
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-button-widget/',
+			'upgrade_url' => 'https://go.elementor.com/go-pro-button-widget-control/',
 		];
 
 		return $this->filter_data( Utils::CTA, $data );
@@ -97,7 +97,7 @@ class PromotionData {
 				esc_html__( 'Showcase multiple items with style.', 'elementor' ),
 			],
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-image-carousel-widget/',
+			'upgrade_url' => 'https://go.elementor.com/go-pro-image-carousel-widget-control/',
 		];
 
 		return $this->filter_data( Utils::IMAGE_CAROUSEL, $data );
@@ -114,7 +114,7 @@ class PromotionData {
 				esc_html__( 'Customize layouts for visual appeal.', 'elementor' ),
 			],
 			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-testimonial-widget/',
+			'upgrade_url' => 'https://go.elementor.com/go-pro-testimonial-widget-control/',
 		];
 
 		return $this->filter_data( Utils::TESTIMONIAL_WIDGET, $data );
