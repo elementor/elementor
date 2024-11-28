@@ -117,7 +117,7 @@ jobs:
           fi
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }} --reporter=list,json=test-results.json
+        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }} --reporter="list,json=tests/playwright/test-results.json"
       - name: Upload results to Elasticsearch
         env:
           ELASTICSEARCH_NODE: 'https://7b37ac31dc964212bb4a3e868ee14896.us-central1.gcp.cloud.es.io:443'
