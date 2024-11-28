@@ -212,23 +212,31 @@ const devSharedConfig = {
 	watch: true,
 };
 
+const baseOutputUniqueName = 'elementor';
+const frontendOutputUniqueName = 'elementorFrontend';
+
 const webpackConfig = [
 	{
 		...devSharedConfig,
+		output: {
+			...devSharedConfig.output,
+			// Prevents the collision of chunk names between base and frontend bundles.
+			uniqueName: baseOutputUniqueName,
+		},
 		module: moduleRules,
 		plugins: [
 			...plugins,
 		],
 		name: 'base',
 		entry: entry,
-		output: {
-			...devSharedConfig.output,
-			// Prevents the collision of chunk names between base and frontend bundles.
-			uniqueName: 'elementor',
-		},
 	},
 	{
 		...devSharedConfig,
+		output: {
+			...devSharedConfig.output,
+			// Prevents the collision of chunk names between base and frontend bundles.
+			uniqueName: frontendOutputUniqueName,
+		},
 		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.js' ),
@@ -242,11 +250,6 @@ const webpackConfig = [
 			splitChunks: {
 				minChunks: 2,
 			},
-		},
-		output: {
-			...devSharedConfig.output,
-			// Prevents the collision of chunk names between base and frontend bundles.
-			uniqueName: 'elementorFrontend',
 		},
 		entry: frontendEntries,
 	},
@@ -279,6 +282,11 @@ const prodSharedConfig = {
 const webpackProductionConfig = [
 	{
 		...prodSharedConfig,
+		output: {
+			...prodSharedConfig.output,
+			// Prevents the collision of chunk names between base and frontend bundles.
+			uniqueName: baseOutputUniqueName,
+		},
 		module: moduleRules,
 		plugins: [
 			...plugins,
@@ -288,17 +296,17 @@ const webpackProductionConfig = [
 			// Clone.
 			...entry,
 		},
-		output: {
-			...prodSharedConfig.output,
-			// Prevents the collision of chunk names between base and frontend bundles.
-			uniqueName: 'elementor',
-		},
 		optimization: {
 			...prodSharedOptimization,
 		},
 	},
 	{
 		...prodSharedConfig,
+		output: {
+			...prodSharedConfig.output,
+			// Prevents the collision of chunk names between base and frontend bundles.
+			uniqueName: frontendOutputUniqueName,
+		},
 		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.min.js' ),
@@ -308,11 +316,6 @@ const webpackProductionConfig = [
 		entry: {
 			// Clone.
 			...frontendEntries,
-		},
-		output: {
-			...prodSharedConfig.output,
-			// Prevents the collision of chunk names between base and frontend bundles.
-			uniqueName: 'elementorFrontend',
 		},
 		optimization: {
 			...prodSharedOptimization,
