@@ -62,6 +62,17 @@ class Atomic_Widget_Styles {
 			return;
 		}
 
+		foreach ( $styles as $style ) {
+			if ( isset( $style['variants'] ) ) {
+				foreach ( $style['variants'] as $variant ) {
+					if ( isset( $variant['props']['font-family'] ) ) {
+						// Enqueue the font.
+						Plugin::$instance->frontend->enqueue_font( $variant['props']['font-family'] );
+					}
+				}
+			}
+		}
+
 		$post->get_stylesheet()->add_raw_css( $this->convert_styles_to_css( $styles ) );
 	}
 
