@@ -1,5 +1,5 @@
 import { addElement, getElementSelector } from '../assets/elements-utils';
-import { expect, type Page, type Frame, type TestInfo } from '@playwright/test';
+import { expect, type Page, type Frame, type TestInfo, Locator } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
@@ -1314,5 +1314,13 @@ export default class EditorPage extends BasePage {
 	async saveSiteSettingsNoTopBar() {
 		await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
 		await this.page.locator( EditorSelectors.toast ).waitFor();
+	}
+
+	async assertCorrectVwWidthStylingOfElement( element: Locator, vwValue: number = 100 ): Promise<void> {
+		const viewport = this.page.viewportSize();
+		const vwConvertedToPxUnit = viewport.width * vwValue / 100;
+		const elementWidthInPxUnit = await element.boundingBox().then( ( box ) => box?.width ?? 0 );
+		const vwAndPxValuesAreEqual = Math.abs( vwConvertedToPxUnit - elementWidthInPxUnit ) <= 1;
+		expect( vwAndPxValuesAreEqual ).toBeTruthy();
 	}
 }

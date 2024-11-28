@@ -12,10 +12,15 @@ export default function SelectPreset( props ) {
 
 	return (
 		<>
-			<div className="elementor-add-section-close">
-				<i onClick={ () => props.setIsRenderPresets( false ) } className="eicon-close" aria-hidden="true" />
-				<span className="elementor-screen-only">{ __( 'Close', 'elementor' ) }</span>
-			</div>
+			<button
+				type="button"
+				className="elementor-add-section-close"
+				title={ __( 'Close', 'elementor' ) }
+				aria-label={ __( 'Close', 'elementor' ) }
+				onClick={ () => props.setIsRenderPresets( false ) }
+			>
+				<i className="eicon-close" aria-hidden="true" />
+			</button>
 			<div className="e-view e-con-select-preset">
 				<div className="e-con-select-preset__title">{ __( 'Select your Structure', 'elementor' ) }</div>
 				<div className="e-con-select-preset__list">

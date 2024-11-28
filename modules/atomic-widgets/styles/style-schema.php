@@ -26,6 +26,7 @@ class Style_Schema {
 			self::get_border_props(),
 			self::get_background_props(),
 			self::get_effects_props(),
+			self::get_layout_props(),
 		);
 	}
 
@@ -150,6 +151,23 @@ class Style_Schema {
 	private static function get_effects_props() {
 		return [
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
+		];
+	}
+
+	private static function get_layout_props() {
+		return [
+			'display' => String_Prop_Type::make()->enum([
+				'block',
+				'inline',
+				'inline-block',
+				'flex',
+				'inline-flex',
+				'grid',
+				'inline-grid',
+				'flow-root',
+				'none',
+				'contents',
+			]),
 		];
 	}
 }
