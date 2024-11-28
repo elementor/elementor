@@ -23,7 +23,7 @@ class Atomic_Container extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Container', 'elementor' );
+		return esc_html__( 'Div Block', 'elementor' );
 	}
 
 	public function get_icon() {
