@@ -43,34 +43,40 @@ class Styles_Validator {
 	 *     2: array<string>
 	 * }
 	 */
-	public function validate( array $styles ): array {
-		foreach ( $styles as $style_id => $style ) {
-			if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
-				$this->errors_bag[] = 'id';
-				$styles[ $style_id ] = [];
+	public function validate( array $style ): array {
+		if ( $this->should_validate_id && ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) ) {
+			$this->errors_bag[] = 'id';
+		}
+
+		if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
+			$this->errors_bag[] = 'variants';
+
+			return [
+				false,
+				$style,
+				$this->errors_bag,
+			];
+		}
+
+		foreach ( $style['variants'] as $variant_index => $variant ) {
+			if ( ! isset( $variant['meta'] ) ) {
+				$this->errors_bag[] = 'meta';
 				continue;
 			}
 
-			foreach ( $style['variants'] as $variant_index => $variant ) {
-				if ( ! isset( $variant['meta'] ) ) {
-					$this->errors_bag[] = 'meta';
-					continue;
-				}
+			$this->validate_meta( $variant['meta'] );
 
-				$this->validate_meta( $variant['meta'] );
+			[,$validated_props, $variant_errors] = Props_Validator::make( $this->schema )->validate( $variant['props'] );
+			$style['variants'][ $variant_index ]['props'] = $validated_props;
 
-				[,$validated_props, $variant_errors] = Props_Validator::make( $this->schema )->validate( $variant['props'] );
-				$styles[ $style_id ]['variants'][ $variant_index ]['props'] = $validated_props;
-
-				$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
-			}
+			$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
 		}
 
 		$is_valid = empty( $this->errors_bag );
 
 		return [
 			$is_valid,
-			$styles,
+			$style,
 			$this->errors_bag,
 		];
 	}

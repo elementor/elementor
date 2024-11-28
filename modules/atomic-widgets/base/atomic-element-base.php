@@ -95,13 +95,17 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	private function sanitize_atomic_styles( array $styles ) {
-		[ , $validated, $errors ] = Styles_Validator::make( Style_Schema::get() )->validate( $styles );
+		foreach ( $styles as $style ) {
+			[$is_valid, $sanitized, $errors_bag] = Styles_Validator::make( Style_Schema::get() )->validate( $style );
 
-		if ( ! empty( $errors ) ) {
-			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
+			if ( ! $is_valid ) {
+				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
+			}
+
+			$styles[ $sanitized['id'] ] = $sanitized;
 		}
 
-		return $validated;
+		return $styles;
 	}
 
 	private function sanitize_atomic_settings( array $settings ): array {
