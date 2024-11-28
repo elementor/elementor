@@ -104,7 +104,7 @@ export const generatePluginTests = ( testType: string ) => {
 					await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
 					await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
 				} else {
-					wpEnvCli( `wp plugin uninstall ${ plugin.pluginName } --deactivate` );
+					await wpEnvCli( `wp plugin uninstall ${ plugin.pluginName } --deactivate` );
 				}
 			}
 		} );
