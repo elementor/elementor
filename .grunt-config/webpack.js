@@ -272,8 +272,6 @@ const prodSharedConfig = {
 		path: path.resolve( __dirname, '../assets/js' ),
 		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'production' ),
 		filename: '[name].js',
-		// Prevents the collision of chunk names between different bundles.
-		uniqueName: 'elementor',
 	},
 	performance: { hints: false },
 };
@@ -290,6 +288,11 @@ const webpackProductionConfig = [
 			// Clone.
 			...entry,
 		},
+		output: {
+			...prodSharedConfig.output,
+			// Prevents the collision of chunk names between base and frontend bundles.
+			uniqueName: 'elementor',
+		},
 		optimization: {
 			...prodSharedOptimization,
 		},
@@ -305,6 +308,11 @@ const webpackProductionConfig = [
 		entry: {
 			// Clone.
 			...frontendEntries,
+		},
+		output: {
+			...prodSharedConfig.output,
+			// Prevents the collision of chunk names between base and frontend bundles.
+			uniqueName: 'elementorFrontend',
 		},
 		optimization: {
 			...prodSharedOptimization,
