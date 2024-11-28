@@ -14,10 +14,10 @@ function removeANSI( text ) {
 
 async function run() {
 	try {
-		const rawData = fs.readFileSync( 'tests/playwright/test-results.json', 'utf-8' );
+		const rawData = fs.readFileSync( 'tests/playwright/tests/playwright/test-results.json', 'utf-8' );
 		const testResults = JSON.parse( rawData );
 
-		const indexName = 'playwright-test-results';
+		const indexName = 'playwright-test-results-v2';
 
 		const bulkBody = [];
 
