@@ -192,6 +192,10 @@ const plugins = [
 	new WatchTimePlugin(),
 ];
 
+// Prevents the collision of chunk names between base and frontend bundles.
+const baseOutputUniqueName = 'elementor';
+const frontendOutputUniqueName = 'elementorFrontend';
+
 const baseConfig = {
 	target: 'web',
 	context: __dirname,
@@ -212,15 +216,11 @@ const devSharedConfig = {
 	watch: true,
 };
 
-const baseOutputUniqueName = 'elementor';
-const frontendOutputUniqueName = 'elementorFrontend';
-
 const webpackConfig = [
 	{
 		...devSharedConfig,
 		output: {
 			...devSharedConfig.output,
-			// Prevents the collision of chunk names between base and frontend bundles.
 			uniqueName: baseOutputUniqueName,
 		},
 		module: moduleRules,
@@ -234,7 +234,6 @@ const webpackConfig = [
 		...devSharedConfig,
 		output: {
 			...devSharedConfig.output,
-			// Prevents the collision of chunk names between base and frontend bundles.
 			uniqueName: frontendOutputUniqueName,
 		},
 		module: frontendModuleRules,
@@ -284,7 +283,6 @@ const webpackProductionConfig = [
 		...prodSharedConfig,
 		output: {
 			...prodSharedConfig.output,
-			// Prevents the collision of chunk names between base and frontend bundles.
 			uniqueName: baseOutputUniqueName,
 		},
 		module: moduleRules,
@@ -304,7 +302,6 @@ const webpackProductionConfig = [
 		...prodSharedConfig,
 		output: {
 			...prodSharedConfig.output,
-			// Prevents the collision of chunk names between base and frontend bundles.
 			uniqueName: frontendOutputUniqueName,
 		},
 		module: frontendModuleRules,
