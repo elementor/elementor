@@ -1,4 +1,4 @@
-import CarouselBase from './base-carousel';
+import CarouselBase from 'elementor-frontend/handlers/base-carousel';
 
 export default class ImageCarousel extends CarouselBase {
 	getDefaultSettings() {
