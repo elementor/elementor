@@ -52,7 +52,7 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run setup-templates
-          wp-lite-env start config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json -- port=8888
+          npx wp-lite-env start config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json -- port=8888
       - name: Setup test data
         run: npm run test:setup:playwright
       - name: WordPress debug information
