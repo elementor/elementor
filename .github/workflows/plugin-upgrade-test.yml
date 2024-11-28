@@ -37,6 +37,9 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
+      - name: Install dependencies
+        run: |
+          npm ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -46,15 +49,12 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
-      - name: Install dependencies
-        run: |
-            npm ci
       - name: Install WordPress environment
         run: |
           npm run setup-templates
           npx wp-lite-env start config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json -- port=8888
       - name: Setup test data
-        run: npm run test:setup:playwright
+        run: wp-lite-env cli config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json -- port=8888 command="bash elementor-config/setup.sh"
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json command="wp core version" -- port=8888
