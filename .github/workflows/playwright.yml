@@ -97,7 +97,7 @@ jobs:
           if [ -f tests/playwright/test-results.json ]; then
             echo "✅ test-results.json found."
             echo "Contents of test-results.json:"
-            cat tests/playwright/test-results.json | jq '.' || cat tests/playwright/test-results.json
+            cat tests/playwright/test-results.json | jq '.' || cat tests/playwright/tests/playwright/test-results.json
           else
             echo "❌ test-results.json not found."
             exit 1
@@ -108,9 +108,9 @@ jobs:
         run: echo "File exists, proceeding with next steps."
       - name: Verify test-results.json structure
         run: |
-          if [ -f tests/playwright/test-results.json ]; then
+          if [ -f tests/playwright/tests/playwright/test-results.json ]; then
             echo "test-results.json found. Displaying contents:"
-            cat tests/playwright/test-results.json | jq '.'
+            cat tests/playwright/tests/playwright/test-results.json | jq '.'
           else
             echo "test-results.json not found!"
             exit 1
