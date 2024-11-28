@@ -1,11 +1,11 @@
 #!/bin/bash
 set -eox pipefail
 
-# Remove Akismet as it is pre-installed in the Docker image
-wp plugin uninstall akismet --deactivate
-
 wp plugin activate elementor
 wp theme activate hello-elementor
+
+# Remove Akismet as it is pre-installed in the Docker image
+wp plugin uninstall akismet --deactivate
 
 WP_CLI_CONFIG_PATH=elementor-config/wp-cli.yml wp rewrite structure '/%postname%/' --hard
 
