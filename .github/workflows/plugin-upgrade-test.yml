@@ -42,18 +42,30 @@ jobs:
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
       - name: Install dependencies
         run: |
             npm ci
-            cd ./tests/playwright/upgrade-test && npm ci
-      - name: Run upgrade test
-        run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor
-        env:
-          ELEMENTOR_PLUGIN_VERSION: ${{inputs.version}}
-      - name: Setup playwright tests
-        run: cd ./tests/playwright/upgrade-test && npm run test:setup
-      - name: Install chromium
-        run: npx playwright install chromium
+      - name: Install WordPress environment
+        run: |
+          npm run setup-templates
+          wp-lite-env start config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json -- port=8888
+      - name: Setup test data
+        run: npm run test:setup:playwright
+      - name: WordPress debug information
+        run: |
+          npx wp-lite-env cli config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json command="wp core version" -- port=8888
+          npx wp-lite-env cli config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json command="wp --info" -- port=8888
+      - name: Install playwright/test
+        run: |
+          npx playwright install chromium
+      - name: Upgrade site
+        run: |
+          npx wp-lite-env cli config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json command=wp plugin install ./plugin/elementor.zip --force" -- port=8888
+          npx wp-lite-env cli config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json command=wp plugin list" -- port=8888
       - name: Run Playwright tests
         run: npm run test:playwright:elements-regression -- --grep="Test heading template"
       - uses: actions/upload-artifact@v4
