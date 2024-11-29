@@ -161,7 +161,14 @@ jobs:
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
-
+      - uses: actions/upload-artifact@v4
+        name: Upload Allure result
+        if: always()
+        with:
+          name: allure-results-${{ matrix.shardIndex }}
+          path: allure-results
+          if-no-files-found: ignore
+          retention-days: 1
 
   test-result:
     needs: Playwright
@@ -174,6 +181,21 @@ jobs:
       - name: Checkout source code
         if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
         uses: actions/checkout@v4
+      - name: Download allure data
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: allure-results
+          merge-multiple: true
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        name: Upload generated Allure report
+        with:
+          name: allure-report
+          path: allure-report
+          if-no-files-found: ignore
+          retention-days: 1
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
         uses: ./.github/workflows/post-to-slack
