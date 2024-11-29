@@ -16,7 +16,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 				break;
 
 			case 'a-container':
-				ChildView = require( '../atomic-widgets/views/a-container' );
+				ChildView = require( '../../../../../modules/atomic-widgets/assets/js/editor/a-container-view' );
 				break;
 		}
 

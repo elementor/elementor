@@ -1,4 +1,4 @@
-import { default as ElementModel } from '../../elements/models/element';
+import { default as ElementModel } from '../../../../../assets/dev/js/editor/elements/models/element';
 
 export default class AtomicContainer extends ElementModel {
 	/**
