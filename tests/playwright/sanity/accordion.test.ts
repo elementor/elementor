@@ -9,7 +9,6 @@ test( 'Accordion', async ( { page, apiRequests }, testInfo ) => {
 
 	// Act.
 	await editor.addWidget( 'accordion' );
-	await page.pause();
 
 	// Assert
 	await editor.togglePreviewMode();
