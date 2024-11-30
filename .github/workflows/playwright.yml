@@ -106,6 +106,7 @@ jobs:
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression
       - name: Check if test-results.json exists
+        if: always()
         run: |
           if [ -f tests/playwright/test-results.json ]; then
             echo "✅ test-results.json found."
