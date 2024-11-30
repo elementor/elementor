@@ -9,6 +9,7 @@ const EditorSelectors = {
 	pageTitle: '.entry-title >> nth=0',
 	pageHeader: '.page-header',
 	toast: '#elementor-toast',
+	addNewSection: '#elementor-add-new-section',
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
@@ -162,6 +163,7 @@ const EditorSelectors = {
 		lightBoxDialog: '.elementor-lightbox',
 		iframe: 'iframe[class*="elementor-video"]',
 		playIcon: '[aria-label="Play"]',
+		videoWrapper: '.elementor-video-wrapper',
 	},
 	socialIcons: {
 		widget: '[data-widget_type="social-icons.default"]',
@@ -211,6 +213,21 @@ const EditorSelectors = {
 			reuseButton: 'button[aria-label="Reuse prompt"]',
 			restoreButton: 'button[aria-label="Restore"]',
 			editButton: 'button[aria-label="Edit result"]',
+		},
+	},
+	floatingElements: {
+		floatingButtons: {
+			controls: {
+				advanced: {
+					sections: [
+						'.elementor-control-advanced_layout_section',
+						'.elementor-control-advanced_responsive_section',
+						'.elementor-control-advanced_custom_controls_section',
+						'.elementor-control-section_custom_css_pro',
+						'.elementor-control-section_custom_attributes_pro',
+					],
+				},
+			},
 		},
 	},
 	contextMenu: {

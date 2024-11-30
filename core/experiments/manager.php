@@ -2,6 +2,7 @@
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Base\Base_Object;
+use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\System_Info\Module as System_Info;
@@ -67,46 +68,12 @@ class Manager extends Base_Object {
 			return null;
 		}
 
-		$default_experimental_data = [
-			'tag' => '', // Deprecated, use 'tags' instead.
-			'tags' => [],
-			'description' => '',
-			'release_status' => self::RELEASE_STATUS_ALPHA,
-			'default' => self::STATE_INACTIVE,
-			'mutable' => true,
-			static::TYPE_HIDDEN => false,
-			'new_site' => [
-				'always_active' => false,
-				'default_active' => false,
-				'default_inactive' => false,
-				'minimum_installation_version' => null,
-			],
-			'on_state_change' => null,
-			'generator_tag' => false,
-		];
-
-		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag', 'messages' ];
-
-		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
-
-		$experimental_data = $this->unify_feature_tags( $experimental_data );
+		$experimental_data = $this->set_feature_initial_options( $options );
 
 		$new_site = $experimental_data['new_site'];
 
 		if ( $new_site['default_active'] || $new_site['always_active'] || $new_site['default_inactive'] ) {
-			$is_new_installation = $this->install_compare( $new_site['minimum_installation_version'] );
-
-			if ( $is_new_installation ) {
-				if ( $new_site['always_active'] ) {
-					$experimental_data['state'] = self::STATE_ACTIVE;
-
-					$experimental_data['mutable'] = false;
-				} elseif ( $new_site['default_active'] ) {
-					$experimental_data['default'] = self::STATE_ACTIVE;
-				} elseif ( $new_site['default_inactive'] ) {
-					$experimental_data['default'] = self::STATE_INACTIVE;
-				}
-			}
+			$experimental_data = $this->set_new_site_default_state( $new_site, $experimental_data );
 		}
 
 		if ( $experimental_data['mutable'] ) {
@@ -118,15 +85,7 @@ class Manager extends Base_Object {
 		}
 
 		if ( ! empty( $experimental_data['dependencies'] ) ) {
-			foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
-				$feature = $this->get_features( $dependency );
-
-				if ( ! empty( $feature[ static::TYPE_HIDDEN ] ) ) {
-					throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
-				}
-
-				$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
-			}
+			$experimental_data = $this->initialize_feature_dependencies( $experimental_data );
 		}
 
 		$this->features[ $options['name'] ] = $experimental_data;
@@ -438,19 +397,6 @@ class Manager extends Base_Object {
 			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_ACTIVE,
-		] );
-
-		// TODO: Possibly remove experiment in v3.27.0 [ED-15717].
-		// Check this reference in Pro: 'sticky_anchor_link_offset'.
-		$this->add_feature( [
-			'name' => 'e_css_smooth_scroll',
-			'title' => esc_html__( 'CSS Smooth Scroll', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Use CSS Smooth Scroll to improve the user experience on your site. This experiment replaces the default JavaScript-based smooth scroll with a CSS-based solution.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_DEV,
-			static::TYPE_HIDDEN => true,
-			'default' => self::STATE_ACTIVE,
-			'mutable' => false,
 		] );
 	}
 
@@ -1005,5 +951,105 @@ class Manager extends Base_Object {
 		if ( Utils::is_wp_cli() ) {
 			\WP_CLI::add_command( 'elementor experiments', WP_CLI::class );
 		}
+	}
+
+	/**
+	 * @param array $experimental_data
+	 * @return array
+	 * @throws Dependency_Exception
+	 */
+	private function initialize_feature_dependencies( array $experimental_data ): array {
+		foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
+			$feature = $this->get_features( $dependency );
+
+			if ( ! isset( $feature ) ) {
+				// since we must validate the state of each dependency, we have to make sure that dependencies are initialized in the correct order, otherwise, error.
+				throw new Exceptions\Dependency_Exception( "Feature {$experimental_data['name']} cannot be initialized before dependency feature: {$dependency}." );
+			}
+
+			if ( ! empty( $feature[ static::TYPE_HIDDEN ] ) ) {
+				throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
+			}
+
+			$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
+			$experimental_data = $this->set_feature_default_state_to_match_dependencies( $feature, $experimental_data );
+		}
+
+		return $experimental_data;
+	}
+
+	/**
+	 * @param array $feature
+	 * @param array $experimental_data
+	 * @return array
+	 *
+	 * we must validate the state:
+	 * * A user can set a dependant feature to inactive and in upgrade we don't change users settings.
+	 * * A developer can set the default state to be invalid (e.g. dependant feature is inactive).
+	 * if one of the dependencies is inactive, the main feature should be inactive as well.
+	 */
+	private function set_feature_default_state_to_match_dependencies( array $feature, array $experimental_data ): array {
+		if ( self::STATE_INACTIVE !== $this->get_feature_actual_state( $feature ) ) {
+			return $experimental_data;
+		}
+
+		if ( self::STATE_ACTIVE === $experimental_data['state'] ) {
+			$experimental_data['state'] = self::STATE_INACTIVE;
+		} elseif ( self::STATE_DEFAULT === $experimental_data['state'] ) {
+			$experimental_data['default'] = self::STATE_INACTIVE;
+		}
+
+		return $experimental_data;
+	}
+
+	/**
+	 * @param $new_site
+	 * @param array $experimental_data
+	 * @return array
+	 */
+	private function set_new_site_default_state( $new_site, array $experimental_data ): array {
+		if ( ! $this->install_compare( $new_site['minimum_installation_version'] ) ) {
+			return $experimental_data;
+		}
+
+		if ( $new_site['always_active'] ) {
+			$experimental_data['state'] = self::STATE_ACTIVE;
+			$experimental_data['mutable'] = false;
+		} elseif ( $new_site['default_active'] ) {
+			$experimental_data['default'] = self::STATE_ACTIVE;
+		} elseif ( $new_site['default_inactive'] ) {
+			$experimental_data['default'] = self::STATE_INACTIVE;
+		}
+
+		return $experimental_data;
+	}
+
+	/**
+	 * @param array $options
+	 * @return array
+	 */
+	private function set_feature_initial_options( array $options ): array {
+		$default_experimental_data = [
+			'tag' => '', // Deprecated, use 'tags' instead.
+			'tags' => [],
+			'description' => '',
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+			'mutable' => true,
+			static::TYPE_HIDDEN => false,
+			'new_site' => [
+				'always_active' => false,
+				'default_active' => false,
+				'default_inactive' => false,
+				'minimum_installation_version' => null,
+			],
+			'on_state_change' => null,
+			'generator_tag' => false,
+		];
+
+		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag', 'messages' ];
+		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
+
+		return $this->unify_feature_tags( $experimental_data );
 	}
 }

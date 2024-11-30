@@ -12,6 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Classes_Repository {
 	const META_KEY = '_elementor_global_classes';
 
+	public static function make(): Global_Classes_Repository {
+		return new self();
+	}
+
 	public function all() {
 		$all = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( self::META_KEY );
 
@@ -35,13 +39,17 @@ class Global_Classes_Repository {
 		] );
 	}
 
-	public function patch( string $id, array $value ) {
+	public function put( string $id, array $value ) {
 		$all = $this->all();
 
 		unset( $value['id'] );
 
 		if ( ! isset( $all->get_items()[ $id ] ) ) {
 			throw new \Exception( "Global class with id ${id} not found" );
+		}
+
+		if ( $value === $all->get_items()[ $id ] ) {
+			return $value;
 		}
 
 		$value = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
@@ -76,6 +84,10 @@ class Global_Classes_Repository {
 
 	public function arrange( array $value ) {
 		$all = $this->all();
+
+		if ( $all->get_order()->all() === $value ) {
+			return $value;
+		}
 
 		$updated = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
 			'items' => $all->get_items()->all(),
