@@ -46,7 +46,7 @@ jobs:
         run: mv ./build/node_modules ./node_modules
       - name: Install dependencies
         run: |
-            npm ci
+            # npm ci
             cd ./tests/playwright/upgrade-test && npm ci
       - name: Run upgrade test
         run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor
