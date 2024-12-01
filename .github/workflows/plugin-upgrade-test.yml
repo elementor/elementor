@@ -44,7 +44,7 @@ jobs:
           path: ./build
       - name: Install dependencies
         run: |
-            npm ci
+            npm ci --only=dev
             cd ./tests/playwright/upgrade-test && npm ci
       - name: Run upgrade test
         run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor
