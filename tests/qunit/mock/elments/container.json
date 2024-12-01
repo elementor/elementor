@@ -938,7 +938,23 @@
 			"frontend_available": true,
 			"classes": "elementor-group-control-background elementor-group-control elementor-group-control-background",
 			"name": "background_background",
-			"default": ""
+			"default": "",
+			"assets": {
+				"styles": [
+					{
+						"name": "e-background",
+						"conditions": {
+							"terms": [
+								{
+									"name": "background",
+									"operator": "!==",
+									"value": ""
+								}
+							]
+						}
+					}
+				]
+			}
 		},
 		"background_color": {
 			"type": "color",

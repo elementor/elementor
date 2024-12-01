@@ -6116,7 +6116,23 @@
 			},
 			"classes": "elementor-group-control-background elementor-group-control elementor-group-control-background",
 			"name": "_background_background",
-			"default": ""
+			"default": "",
+			"assets": {
+				"styles": [
+					{
+						"name": "e-background",
+						"conditions": {
+							"terms": [
+								{
+									"name": "background",
+									"operator": "!==",
+									"value": ""
+								}
+							]
+						}
+					}
+				]
+			}
 		},
 		"_background_color": {
 			"type": "color",
