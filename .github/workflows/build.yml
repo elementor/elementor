@@ -84,10 +84,13 @@ jobs:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
 
+      - name: Move node_modules
+        shell: bash
+        run: mv node_modules elementor
+
       - uses: actions/upload-artifact@v4
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         with:
           name: ${{ env.PLUGIN_FOLDER_FILENAME }}
           path: |
             elementor
-            node_modules
