@@ -11,7 +11,7 @@ export default class promotionsHelper extends Content {
 
 	async modalPromotionModalVisibilityTest( element: string ) {
 		await this.page.locator( `.elementor-control-${ element }` ).click( { force: true } );
-		const modalContainer = this.page.getByRole( 'tooltip' );
+		const modalContainer = this.page.getByTestId( 'e-promotion-card' );
 		await expect.soft( modalContainer ).toBeVisible();
 		await modalContainer.getByRole( 'button', { name: 'close' } ).click();
 		await expect.soft( modalContainer ).toBeHidden();
