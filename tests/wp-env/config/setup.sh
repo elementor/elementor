@@ -28,3 +28,6 @@ wp rewrite flush --hard
 wp elementor flush-css
 
 wp post list --post_type=page
+
+wp plugin install wordpress-importer --activate
+wp import /var/www/html/elementor-playwright/sample-data/elementor-floating-buttons.xml --authors=skip --quiet --allow-root
