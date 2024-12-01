@@ -42,9 +42,11 @@ jobs:
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
+      - name: Move node_modules
+        run: mv ./build/node_modules ./node_modules
       - name: Install dependencies
         run: |
-            npm ci --audit=false --fund=false
+            npm ci
             cd ./tests/playwright/upgrade-test && npm ci
       - name: Run upgrade test
         run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor

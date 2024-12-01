@@ -88,4 +88,6 @@ jobs:
         if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
         with:
           name: ${{ env.PLUGIN_FOLDER_FILENAME }}
-          path: elementor
+          path: |
+            elementor
+            node_modules
