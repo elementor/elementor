@@ -259,36 +259,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Copy an element inside the editor.
-	 *
-	 * @param {string} elementId - Element ID.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async copyElement( elementId: string ) {
-		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
-		await element.click( { button: 'right' } );
-
-		const copyListItemSelector = '.elementor-context-menu-list__item-copy:visible';
-		await this.page.waitForSelector( copyListItemSelector );
-		await this.page.locator( copyListItemSelector ).click();
-	}
-
-	/**
-	 * Paste an element inside the editor.
-	 *
-	 * @param {string} selector - Element selector.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async pasteElement( selector: string ) {
-		await this.getPreviewFrame().locator( selector ).click( { button: 'right' } );
-
-		const pasteSelector = '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste';
-		await this.page.locator( pasteSelector ).click();
-	}
-
-	/**
 	 * Open the section that adds a new element.
 	 *
 	 * @param {string} elementId - Element ID.
@@ -305,22 +275,6 @@ export default class EditorPage extends BasePage {
 
 	async setWidgetTab( tab: 'content' | 'style' | 'advanced' ) {
 		await this.page.locator( `.elementor-tab-control-${ tab }` ).click();
-	}
-
-	/**
-	 * Paste styling setting on the element.
-	 *
-	 * @param {string} elementId - Element ID.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async pasteStyleElement( elementId: string ) {
-		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
-		await element.click( { button: 'right' } );
-
-		const pasteListItemSelector = '.elementor-context-menu-list__item-pasteStyle:visible';
-		await this.page.waitForSelector( pasteListItemSelector );
-		await this.page.locator( pasteListItemSelector ).click();
 	}
 
 	/**
