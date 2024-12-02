@@ -135,7 +135,7 @@
 		"@elementor/query": "0.2.2",
 		"@elementor/schema": "0.1.1",
 		"@elementor/store": "0.8.5",
-		"@elementor/ui": "1.21.7",
+		"@elementor/ui": "1.21.13",
 		"@elementor/utils": "0.2.1",
 		"@elementor/wp-media": "0.2.0",
 		"@reach/router": "1.3.4",
