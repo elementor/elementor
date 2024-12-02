@@ -13,33 +13,33 @@ on:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
     inputs:
-      reporter:
-        required: false
-        description: 'Select a reporter'
-        type: choice
-        options:
-          - allure-playwright
-          - html
-          - blob
-          - list
-        default: allure-playwright
-      path-to-results:
-        required: false
-        description: 'Provide path to reporter files'
-        default: allure-results
-        type: choice
-        options:
-          - test-results/
-          - tests/playwright/blob-report
-          - allure-results
-      fail_fast:
-        type: boolean
-        required: true
-        description: 'Cancel tests when one of them fails'
-        default: false
-      tag:
-        description: 'Provide @tag or a keyword'
-        required: false
+        reporter:
+          required: false
+          description: 'Select a reporter'
+          type: choice
+          options:
+            - allure-playwright
+            - html
+            - blob
+            - list
+          default: allure-playwright
+        path-to-results:
+          required: false
+          description: 'Provide path to reporter files'
+          default: allure-results
+          type: choice
+          options:
+            - test-results/
+            - tests/playwright/blob-report
+            - allure-results
+        fail_fast:
+          type: boolean
+          required: true
+          description: 'Cancel tests when one of them fails'
+          default: false
+        tag:
+          description: 'Provide @tag or a keyword'
+          required: false
 
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
@@ -61,7 +61,7 @@ jobs:
         shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         shardTotal: [10]
         include:
-          - shardIndex: "elements-regression"
+        - shardIndex: "elements-regression"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
