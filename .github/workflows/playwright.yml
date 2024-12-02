@@ -100,11 +100,11 @@ jobs:
 
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
-        run: npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ inputs.reporter || 'list,github' }},json=test-results.json
+        run: npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ inputs.reporter || 'list,github' }},json="test-results.json"
 
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
+        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }},'json'
 
       - name: Upload Playwright test results to Elasticsearch
         if: always()
