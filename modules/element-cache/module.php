@@ -119,12 +119,13 @@ class Module extends BaseModule {
 			Settings::TAB_PERFORMANCE,
 			'element_cache_ttl',
 			[
-				'label' => esc_html__( 'Element Cache Expiration', 'elementor' ),
+				'label' => esc_html__( 'Element Cache', 'elementor' ),
 				'field_args' => [
 					'class' => 'elementor-element-cache-ttl',
 					'type' => 'select',
 					'std' => '24',
 					'options' => [
+						'disable' => esc_html__( 'Disable', 'elementor' ),
 						'1' => esc_html__( '1 Hour', 'elementor' ),
 						'6' => esc_html__( '6 Hours', 'elementor' ),
 						'12' => esc_html__( '12 Hours', 'elementor' ),
@@ -146,10 +147,11 @@ class Module extends BaseModule {
 		add_action( 'deactivated_plugin', [ $this, 'clear_cache' ] );
 		add_action( 'switch_theme', [ $this, 'clear_cache' ] );
 		add_action( 'upgrader_process_complete', [ $this, 'clear_cache' ] );
+
+		add_action( 'update_option_elementor_element_cache_ttl', [ $this, 'clear_cache' ] );
 	}
 
 	public function clear_cache() {
 		Plugin::$instance->files_manager->clear_cache();
-
 	}
 }
