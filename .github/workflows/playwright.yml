@@ -100,19 +100,18 @@ jobs:
 
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
-        run: npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ inputs.reporter || 'list,github' }},json="test-results.json"
+        run: npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ inputs.reporter || 'list,github' }},json=test-results.json
 
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }},'json'
+        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
 
       - name: Upload Playwright test results to Elasticsearch
         if: always()
         run: node uploadResults.js
         env:
-          ELASTICSEARCH_NODE: 'https://7b37ac31dc964212bb4a3e868ee14896.us-central1.gcp.cloud.es.io:443'
-          ELASTICSEARCH_API_KEY: 'UDVjblg1TUI2NkhqYUtaWDJScUI6SUdYSjh0Qm9TSWlZcUVNdkJTVFVhZw=='
-          WORKFLOW_NAME: 'Playwright Core'
+          ELASTICSEARCH_NODE: ${{ secrets.ELASTICSEARCH_NODE }}
+          ELASTICSEARCH_API_KEY: ${{ secrets.ELASTICSEARCH_API_KEY }}
 
       - uses: actions/upload-artifact@v4
         if: always()

@@ -26,14 +26,14 @@ export default defineConfig( {
 	fullyParallel: false,
 	reporter: process.env.CI
 		? [
-			[ 'github' ], // GitHub reporter for CI
-			[ 'list' ], // Minimal output in CI logs
+			[ 'github' ],
+			[ 'list' ],
 			[ 'json', { outputFile: 'test-results.json' } ],
 		]
 		: [
-			[ 'list' ], // Detailed output for local runs
-			[ 'github' ], // Include GitHub integration if desired locally
-			[ 'json', { outputFile: 'test-results.json' } ], // Write JSON results locally
+			[ 'list' ],
+			[ 'github' ],
+			[ 'json', { outputFile: 'test-results.json' } ],
 		],
 	use: {
 		launchOptions: {
