@@ -27,7 +27,7 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 
 	return (
 		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ doClose }>
-			<Box sx={ { width: 296 } }>
+			<Box sx={ { width: 296 } } data-testid="e-promotion-card">
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>
 					<Chip label={ __( 'PRO', 'elementor' ) } size="small" variant="outlined" color="promotion" sx={ { ml: 1 } } />
