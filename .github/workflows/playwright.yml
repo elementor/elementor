@@ -12,34 +12,34 @@ on:
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
-    inputs:
-      reporter:
-        required: false
-        description: 'Select a reporter'
-        type: choice
-        options:
-          - allure-playwright
-          - html
-          - blob
-          - list
-        default: allure-playwright
-      path-to-results:
-        required: false
-        description: 'Provide path to reporter files'
-        default: allure-results
-        type: choice
-        options:
-          - test-results/
-          - tests/playwright/blob-report
-          - allure-results
-      fail_fast:
-        type: boolean
-        required: true
-        description: 'Cancel tests when one of them fails'
-        default: false
-      tag:
-        description: 'Provide @tag or a keyword'
-        required: false
+      inputs:
+        reporter:
+          required: false
+          description: 'Select a reporter'
+          type: choice
+          options:
+            - allure-playwright
+            - html
+            - blob
+            - list
+          default: allure-playwright
+        path-to-results:
+          required: false
+          description: 'Provide path to reporter files'
+          default: allure-results
+          type: choice
+          options:
+            - test-results/
+            - tests/playwright/blob-report
+            - allure-results
+        fail_fast:
+          type: boolean
+          required: true
+          description: 'Cancel tests when one of them fails'
+          default: false
+        tag:
+          description: 'Provide @tag or a keyword'
+          required: false
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -102,11 +102,9 @@ jobs:
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
         run: npm run test:playwright -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
-
       - name: Upload Playwright test results to Elasticsearch
         if: always()
         run: node uploadResults.js
@@ -121,7 +119,6 @@ jobs:
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
-
   PlaywrightWithTag:
     name: Playwright test - tagged tests on PHP 8.0
     runs-on: ubuntu-latest
@@ -171,7 +168,6 @@ jobs:
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
-
 
   test-result:
     needs: Playwright
