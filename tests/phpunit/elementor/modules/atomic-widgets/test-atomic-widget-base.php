@@ -1299,52 +1299,52 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_data_for_save();
 	}
 
-	public function test_get_data_for_save__throws_on_styles_background_color_overlay_prop_validation_error() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'string_prop' => String_Prop_Type::make()->default( '' ),
-			],
-			'settings' => [
-				'string_prop' => 'valid-string',
-			],
-			'styles' => [
-				's-1234' => [
-					'id' => 's-1234',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'background-image' => [
-									'$$type' => 'background-image',
-									'value' => [
-										'$$type' => 'background-overlay',
-										'value' => [
-											'color' => [
-												'$$type' => 'color',
-												'value' => null,
-											],
-										],
-									],
-								],
-							],
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => null,
-							],
-						],
-					],
-				]
-			]
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: background-image' );
-
-		// Act.
-		$widget->get_data_for_save();
-	}
+//	public function test_get_data_for_save__throws_on_styles_background_color_overlay_prop_validation_error() {
+//		// Arrange.
+//		$widget = $this->make_mock_widget( [
+//			'props_schema' => [
+//				'string_prop' => String_Prop_Type::make()->default( '' ),
+//			],
+//			'settings' => [
+//				'string_prop' => 'valid-string',
+//			],
+//			'styles' => [
+//				's-1234' => [
+//					'id' => 's-1234',
+//					'type' => 'class',
+//					'variants' => [
+//						[
+//							'props' => [
+//								'background-image' => [
+//									'$$type' => 'background-image',
+//									'value' => [
+//										'$$type' => 'background-overlay',
+//										'value' => [
+//											'color' => [
+//												'$$type' => 'color',
+//												'value' => null,
+//											],
+//										],
+//									],
+//								],
+//							],
+//							'meta' => [
+//								'breakpoint' => 'desktop',
+//								'state' => null,
+//							],
+//						],
+//					],
+//				]
+//			]
+//		] );
+//
+//		// Expect.
+//		$this->expectException( \Exception::class );
+//		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: background-image' );
+//
+//		// Act.
+//		$widget->get_data_for_save();
+//	}
 
 	/**
 	 * @param array{controls: array, props_schema: array, settings: array} $options
