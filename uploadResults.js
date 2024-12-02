@@ -1,10 +1,17 @@
 const fs = require( 'fs' );
 const { Client } = require( '@elastic/elasticsearch' );
 
+const esNode = process.env.ELASTICSEARCH_NODE;
+const esApiKey = process.env.ELASTICSEARCH_API_KEY;
+
+if ( ! esNode || ! esApiKey ) {
+	throw new Error( 'Elasticsearch node or API key is missing' );
+}
+
 const esClient = new Client( {
-	node: process.env.ELASTICSEARCH_NODE,
+	node: esNode,
 	auth: {
-		apiKey: process.env.ELASTICSEARCH_API_KEY,
+		apiKey: esApiKey,
 	},
 } );
 
