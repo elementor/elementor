@@ -119,6 +119,7 @@
 		"webpack": "^5.95.0"
 	},
 	"dependencies": {
+		"@elastic/elasticsearch": "^8.16.2",
 		"@elementor/editor": "0.15.0",
 		"@elementor/editor-app-bar": "0.20.0",
 		"@elementor/editor-documents": "0.11.10",
