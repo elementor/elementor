@@ -37,7 +37,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
-use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 
@@ -70,7 +70,7 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
 
-			( new Atomic_Styles() )->register_hooks();
+			( new Atomic_Widget_Styles() )->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );

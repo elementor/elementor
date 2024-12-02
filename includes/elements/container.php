@@ -170,7 +170,7 @@ class Container extends Element_Base {
 			#>
 			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
 				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted elementor-html5-video" {{ videoAttributes }}></video>
+				<video class="elementor-background-video-hosted" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
 		<div class="elementor-shape elementor-shape-top"></div>
@@ -216,7 +216,7 @@ class Container extends Element_Base {
 					$video_tag_attributes .= ' loop';
 				}
 				?>
-				<video class="elementor-background-video-hosted elementor-html5-video" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
+				<video class="elementor-background-video-hosted" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
 			<?php endif; ?>
 		</div><?php
 	}
