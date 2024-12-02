@@ -32,7 +32,6 @@ export default defineConfig( {
 		]
 		: [
 			[ 'list' ],
-			[ 'github' ],
 			[ 'json', { outputFile: 'test-results.json' } ],
 		],
 	use: {
