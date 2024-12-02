@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import ContextMenu from '../../../pages/widgets/context-menu';
 import widgets from '../../../enums/widgets';
 import Breakpoints from '../../../assets/breakpoints';
 import EditorPage from '../../../pages/editor-page';
@@ -120,6 +121,7 @@ test.describe( 'Container tests @container', () => {
 	test( 'Verify pasting of elements into the Container Element Add section', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const contextMenu = new ContextMenu( page, testInfo );
 		const editor = await wpAdmin.openNewPage(),
 			containerId1 = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerId2 = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -131,19 +133,19 @@ test.describe( 'Container tests @container', () => {
 		await editor.addWidget( widgets.spacer, containerId3 );
 
 		// Copy container 2 and paste it at the top of the page.
-		await editor.copyElement( containerId2 );
+		await contextMenu.copyElement( containerId2 );
 		await editor.openAddElementSection( containerId1 );
-		await editor.pasteElement( '.elementor-add-section-inline' );
+		await contextMenu.pasteElement( '.elementor-add-section-inline' );
 
 		// Copy container 3 and paste it above container 2.
-		await editor.copyElement( containerId3 );
+		await contextMenu.copyElement( containerId3 );
 		await editor.openAddElementSection( containerId2 );
-		await editor.pasteElement( '.elementor-add-section-inline' );
+		await contextMenu.pasteElement( '.elementor-add-section-inline' );
 
 		// Copy the heading widget and paste it above container 3.
-		await editor.copyElement( headingId );
+		await contextMenu.copyElement( headingId );
 		await editor.openAddElementSection( containerId3 );
-		await editor.pasteElement( '.elementor-add-section-inline' );
+		await contextMenu.pasteElement( '.elementor-add-section-inline' );
 
 		// Assert.
 		// Expected order:
