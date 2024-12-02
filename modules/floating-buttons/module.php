@@ -287,6 +287,14 @@ class Module extends BaseModule {
 		}
 
 		foreach ( $posts_to_update as $post_id => $clicks ) {
+			if ( self::CPT_FLOATING_BUTTONS !== get_post_type( $post_id ) ) {
+				continue;
+			}
+
+			if ( 'publish' !== get_post_status( $post_id ) ) {
+				continue;
+			}
+
 			update_post_meta( $post_id, static::META_CLICK_TRACKING, $clicks );
 		}
 
@@ -430,8 +438,9 @@ class Module extends BaseModule {
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'show_in_nav_menus' => false,
-			'capability_type' => 'page',
+			'capability_type' => 'post',
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
+			'show_in_rest' => true,
 			'supports' => [
 				'title',
 				'editor',

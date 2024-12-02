@@ -9,8 +9,7 @@
 		--swiper-pagination-bullet-size: 6px;
 		--swiper-pagination-bullet-horizontal-gap: 6px;
 
-		.swiper,
-		.swiper-container {
+		.swiper {
 
 			.swiper-slide {
 
@@ -84,7 +83,7 @@
 		}
 
 		// `:where()` is used to decrease the specificity of the selectors.
-		:where( .swiper-container-horizontal ) {
+		:where( .swiper-horizontal ) {
 
 			~ .swiper-pagination-bullets {
 				bottom: 5px;
@@ -107,8 +106,7 @@
 		&.elementor-pagination-position-outside {
 			$caption-space: 30px;
 
-			.swiper,
-			.swiper-container {
+			.swiper {
 				padding-bottom: $caption-space;
 
 				.elementor-swiper-button,
@@ -122,8 +120,7 @@
 
 			&outside {
 
-				.swiper,
-				.swiper-container {
+				.swiper {
 					width: calc(100% - 60px);
 
 					.elementor-swiper-button,

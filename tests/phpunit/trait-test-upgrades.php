@@ -49,6 +49,26 @@ trait Test_Upgrades_Trait {
 		return $document;
 	}
 
+	protected function create_post_with_data( $data = [ 'post_author' => null, 'post_type' => 'post' ] ) {
+
+		if ( $data['post_author'] === null ) {
+			$admin = $this->factory()->create_and_get_administrator_user();
+
+			$data = [
+				'post_author' => $admin->ID,
+			];
+		}
+
+		wp_set_current_user( $data[ 'post_author' ] );
+
+		$post = $this->factory()->create_and_get_custom_post( $data );
+
+		$document = self::elementor()->documents->get( $post->ID );
+		$document->save_template_type();
+
+		return $document;
+	}
+
 	/**
 	 * @param array|null $data Optional
 	 *

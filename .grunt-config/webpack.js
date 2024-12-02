@@ -132,6 +132,7 @@ const entry = {
 	'element-manager-admin': path.resolve( __dirname, '../modules/element-manager/assets/js/admin.js' ),
 	'media-hints': path.resolve( __dirname, '../assets/dev/js/admin/hints/media.js' ),
 	'ai-media-library': path.resolve( __dirname, '../modules/ai/assets/js/media-library/index.js' ),
+	'ai-unify-product-images': path.resolve( __dirname, '../modules/ai/assets/js/woocommerce/index.js' ),
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
@@ -191,6 +192,10 @@ const plugins = [
 	new WatchTimePlugin(),
 ];
 
+// Prevents the collision of chunk names between base and frontend bundles.
+const baseOutputUniqueName = 'elementor';
+const frontendOutputUniqueName = 'elementorFrontend';
+
 const baseConfig = {
 	target: 'web',
 	context: __dirname,
@@ -207,8 +212,6 @@ const devSharedConfig = {
 		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'development' ),
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
-		// Prevents the collision of chunk names between different bundles.
-		uniqueName: 'elementor',
 	},
 	watch: true,
 };
@@ -216,6 +219,10 @@ const devSharedConfig = {
 const webpackConfig = [
 	{
 		...devSharedConfig,
+		output: {
+			...devSharedConfig.output,
+			uniqueName: baseOutputUniqueName,
+		},
 		module: moduleRules,
 		plugins: [
 			...plugins,
@@ -225,6 +232,10 @@ const webpackConfig = [
 	},
 	{
 		...devSharedConfig,
+		output: {
+			...devSharedConfig.output,
+			uniqueName: frontendOutputUniqueName,
+		},
 		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.js' ),
@@ -263,8 +274,6 @@ const prodSharedConfig = {
 		path: path.resolve( __dirname, '../assets/js' ),
 		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'production' ),
 		filename: '[name].js',
-		// Prevents the collision of chunk names between different bundles.
-		uniqueName: 'elementor',
 	},
 	performance: { hints: false },
 };
@@ -272,6 +281,10 @@ const prodSharedConfig = {
 const webpackProductionConfig = [
 	{
 		...prodSharedConfig,
+		output: {
+			...prodSharedConfig.output,
+			uniqueName: baseOutputUniqueName,
+		},
 		module: moduleRules,
 		plugins: [
 			...plugins,
@@ -287,6 +300,10 @@ const webpackProductionConfig = [
 	},
 	{
 		...prodSharedConfig,
+		output: {
+			...prodSharedConfig.output,
+			uniqueName: frontendOutputUniqueName,
+		},
 		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.min.js' ),
