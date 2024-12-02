@@ -48,6 +48,7 @@ const EditorSelectors = {
 			closeButton: '#elementor-navigator__close',
 			footerButton: '#elementor-panel-footer-navigator i',
 		},
+		promotionCard: '[data-testid="e-promotion-card"]',
 	},
 	refreshPopup: {
 		reloadButton: '#elementor-save-kit-refresh-page .dialog-button.dialog-ok.dialog-alert-ok',
