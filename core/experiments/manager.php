@@ -678,6 +678,9 @@ class Manager extends Base_Object {
 			<?php foreach ( $feature['tags'] as $tag ) { ?>
 				<span class="e-experiment__title__tag e-experiment__title__tag__<?php echo $tag['type']; ?>"><?php echo $tag['label']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 			<?php } ?>
+			<?php if ( $feature['deprecated'] ) { ?>
+				<span class="e-experiment__title__tag e-experiment__title__tag__deprecated"><?php echo esc_html__( 'Deprecated', 'elementor' ); ?></span>
+			<?php } ?>
 		</div>
 		<?php
 
@@ -1045,9 +1048,10 @@ class Manager extends Base_Object {
 			],
 			'on_state_change' => null,
 			'generator_tag' => false,
+			'deprecated' => false,
 		];
 
-		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag', 'messages' ];
+		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag', 'messages', 'deprecated' ];
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
 		return $this->unify_feature_tags( $experimental_data );
