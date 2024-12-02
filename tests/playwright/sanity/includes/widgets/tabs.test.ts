@@ -16,7 +16,6 @@ test.describe( 'Tabs widget tests', () => {
 
 		// Act.
 		await editor.addWidget( 'tabs' );
-		expect( true ).toBe( false );
 
 		// Assert.
 		await expect( editor.page.locator( '.elementor-control-alert.elementor-panel-alert.elementor-panel-alert-info' ) )
