@@ -9,8 +9,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Gradient_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
@@ -719,18 +717,18 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										],
 									],
 								],
-								'background-image' => [
-									'$$type' => 'background-image',
-									'value' => [
-										'$$type' => 'background-overlay',
-										'value' => [
-											'color' => [
-												'$$type' => 'color',
-												'value' => 'rgba(0, 0, 0, 0.2)',
-											],
-										],
-									],
-								],
+//								'background-image' => [
+//									'$$type' => 'background-image',
+//									'value' => [
+//										'$$type' => 'background-overlay',
+//										'value' => [
+//											'color' => [
+//												'$$type' => 'color',
+//												'value' => 'rgba(0, 0, 0, 0.2)',
+//											],
+//										],
+//									],
+//								],
 							],
 							'meta' => [
 								'breakpoint' => 'desktop',
@@ -843,18 +841,18 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 									],
 								],
 							],
-							'background-image' => [
-								'$$type' => 'background-image',
-								'value' => [
-									'$$type' => 'background-overlay',
-									'value' => [
-										'color' => [
-											'$$type' => 'color',
-											'value' => 'rgba(0, 0, 0, 0.2)',
-										],
-									],
-								],
-							],
+//							'background-image' => [
+//								'$$type' => 'background-image',
+//								'value' => [
+//									'$$type' => 'background-overlay',
+//									'value' => [
+//										'color' => [
+//											'$$type' => 'color',
+//											'value' => 'rgba(0, 0, 0, 0.2)',
+//										],
+//									],
+//								],
+//							],
 						],
 						'meta' => [
 							'breakpoint' => 'desktop',
@@ -1299,52 +1297,52 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_data_for_save();
 	}
 
-//	public function test_get_data_for_save__throws_on_styles_background_color_overlay_prop_validation_error() {
-//		// Arrange.
-//		$widget = $this->make_mock_widget( [
-//			'props_schema' => [
-//				'string_prop' => String_Prop_Type::make()->default( '' ),
-//			],
-//			'settings' => [
-//				'string_prop' => 'valid-string',
-//			],
-//			'styles' => [
-//				's-1234' => [
-//					'id' => 's-1234',
-//					'type' => 'class',
-//					'variants' => [
-//						[
-//							'props' => [
-//								'background-image' => [
-//									'$$type' => 'background-image',
-//									'value' => [
-//										'$$type' => 'background-overlay',
-//										'value' => [
-//											'color' => [
-//												'$$type' => 'color',
-//												'value' => null,
-//											],
-//										],
-//									],
-//								],
-//							],
-//							'meta' => [
-//								'breakpoint' => 'desktop',
-//								'state' => null,
-//							],
-//						],
-//					],
-//				]
-//			]
-//		] );
-//
-//		// Expect.
-//		$this->expectException( \Exception::class );
-//		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: background-image' );
-//
-//		// Act.
-//		$widget->get_data_for_save();
-//	}
+	public function test_get_data_for_save__throws_on_styles_background_color_overlay_prop_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'background-image' => [
+									'$$type' => 'background-image',
+									'value' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											'color' => [
+												'$$type' => 'color',
+												'value' => 'not-a-color',
+											],
+										],
+									],
+								],
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: background-image' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
 
 	/**
 	 * @param array{controls: array, props_schema: array, settings: array} $options
