@@ -717,18 +717,20 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										],
 									],
 								],
-//								'background-image' => [
-//									'$$type' => 'background-image',
-//									'value' => [
-//										'$$type' => 'background-overlay',
-//										'value' => [
-//											'color' => [
-//												'$$type' => 'color',
-//												'value' => 'rgba(0, 0, 0, 0.2)',
-//											],
-//										],
-//									],
-//								],
+								'background-image' => [
+									'$$type' => 'background-image',
+									'value' => [
+										[
+											'$$type' => 'background-overlay',
+											'value' => [
+												'color' => [
+													'$$type' => 'color',
+													'value' => 'rgba(0, 0, 0, 0.2)',
+												],
+											],
+										],
+									],
+								],
 							],
 							'meta' => [
 								'breakpoint' => 'desktop',
@@ -780,6 +782,20 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										'value' => [
 											'unit' => 'px',
 											'size' => 10,
+										],
+									],
+								],
+							],
+							'background-image' => [
+								'$$type' => 'background-image',
+								'value' => [
+									[
+										'$$type' => 'background-overlay',
+										'value' => [
+											'color' => [
+												'$$type' => 'color',
+												'value' => 'rgba(0, 0, 0, 0.2)',
+											],
 										],
 									],
 								],
@@ -841,18 +857,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 									],
 								],
 							],
-//							'background-image' => [
-//								'$$type' => 'background-image',
-//								'value' => [
-//									'$$type' => 'background-overlay',
-//									'value' => [
-//										'color' => [
-//											'$$type' => 'color',
-//											'value' => 'rgba(0, 0, 0, 0.2)',
-//										],
-//									],
-//								],
-//							],
 						],
 						'meta' => [
 							'breakpoint' => 'desktop',
@@ -1316,11 +1320,13 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'background-image' => [
 									'$$type' => 'background-image',
 									'value' => [
-										'$$type' => 'background-overlay',
-										'value' => [
-											'color' => [
-												'$$type' => 'color',
-												'value' => 'not-a-color',
+										[
+											'$$type' => 'background-overlay',
+											'value' => [
+												'color' => [
+													'$$type' => 'color',
+													'value' => 'not-a-color',
+												],
 											],
 										],
 									],

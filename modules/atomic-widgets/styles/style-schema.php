@@ -26,6 +26,7 @@ class Style_Schema {
 			self::get_spacing_props(),
 			self::get_border_props(),
 			self::get_background_props(),
+			self::get_background_overlay_props(),
 			self::get_effects_props(),
 			self::get_layout_props(),
 			self::get_alignment_props(),
@@ -147,6 +148,11 @@ class Style_Schema {
 	private static function get_background_props() {
 		return [
 			'background-color' => Color_Prop_Type::make(),
+		];
+	}
+
+	private static function get_background_overlay_props() {
+		return [
 			'background-image' => Background_Image_Prop_Type::make(),
 		];
 	}
