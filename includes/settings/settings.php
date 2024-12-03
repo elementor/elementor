@@ -389,7 +389,7 @@ class Settings extends Settings_Page {
 										'fallback' => esc_html__( 'Fallback', 'elementor' ),
 										'optional' => esc_html__( 'Optional', 'elementor' ),
 									],
-									'desc' => esc_html__( 'Font-display property defines how font files are loaded and displayed by the browser.', 'elementor' ) . '<br>' . esc_html__( 'Set the way Google Fonts are being loaded by selecting the font-display property (Default: Auto).', 'elementor' ),
+									'desc' => esc_html__( 'Font-display property defines how font files are loaded and displayed by the browser.', 'elementor' ) . '<br>' . esc_html__( 'Set the way Google Fonts are being loaded by selecting the font-display property (Recommended: Swap).', 'elementor' ),
 								],
 							],
 						],
