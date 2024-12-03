@@ -1,16 +1,16 @@
 import { AtomicWidgetView } from './atomic-widget-view';
 
 export class AtomicWidgetType extends elementor.modules.elements.types.Widget {
-	_type;
+	#type;
 
 	constructor( type ) {
 		super();
 
-		this._type = type;
+		this.#type = type;
 	}
 
 	getType() {
-		return this._type;
+		return this.#type;
 	}
 
 	getView() {

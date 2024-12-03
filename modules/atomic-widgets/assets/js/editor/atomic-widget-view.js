@@ -1,19 +1,19 @@
 export class AtomicWidgetView extends elementor.modules.elements.views.Widget {
-	// Dispatch `render` event for so the overlay layer can be updated
+	// Dispatch `render` event so the overlay layer will be updated
 	onRender( ...args ) {
 		super.onRender( ...args );
 
-		this._dispatchEvent( 'elementor/preview/atomic-widget/render' );
+		this.#dispatchEvent( 'elementor/preview/atomic-widget/render' );
 	}
 
-	// Dispatch `destroy` event for so the overlay layer can be updated
+	// Dispatch `destroy` event so the overlay layer will be updated
 	onDestroy( ...args ) {
 		super.onDestroy( ...args );
 
-		this._dispatchEvent( 'elementor/preview/atomic-widget/destroy' );
+		this.#dispatchEvent( 'elementor/preview/atomic-widget/destroy' );
 	}
 
-	// Removes behaviors that are not needed for atomic widgets (Should be reimplemented in the overlay layer).
+	// Removes behaviors that are not needed for atomic widgets (that are implemented in the overlay layer).
 	behaviors() {
 		const disabledBehaviors = [ 'InlineEditing', 'Draggable', 'Resizable' ];
 
@@ -33,17 +33,19 @@ export class AtomicWidgetView extends elementor.modules.elements.views.Widget {
 		return null;
 	}
 
-	// Set the `data-atomic` attribute to the widget element + `display: contents;`.
-	// The css will behave like the wrapper `div` is not exists and with that we can remove this `div` in the frontend.
 	attributes() {
 		return {
 			...super.attributes(),
-			style: 'display: contents !important;',
+
+			// Mark the widget as atomic, so the overlay layer can identify it.
 			'data-atomic': '',
+
+			// Make the wrapper non-existent in terms of CSS to mimic the frontend DOM tree.
+			style: 'display: contents !important;',
 		};
 	}
 
-	_dispatchEvent( type ) {
+	#dispatchEvent( type ) {
 		window.top.dispatchEvent( new CustomEvent( type, { detail: { id: this.model.get( 'id' ) } } ) );
 	}
 }
