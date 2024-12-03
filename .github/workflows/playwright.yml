@@ -68,6 +68,11 @@ jobs:
         run: |
           npm ci
           sed -i -e "s/image: 'mariadb:lts'/image: 'mariadb:11.2.4-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
+      - name: Upload dependencies as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PLUGIN_FOLDER_FILENAME }}
+          path: elementor/dependencies
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.0
     runs-on: ubuntu-latest
@@ -81,6 +86,18 @@ jobs:
         include:
         - shardIndex: "elements-regression"
     steps:
+        - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download dependencies artifact
+        uses: actions/download-artifact@v4
+        with:
+        name: dependencies
+      - name: Restore dependencies
+        run: |
+          # Replace with the command to restore dependencies
+          echo "Restoring dependencies"
+          cp -r path_to_dependencies/* ./local_dependencies/
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
