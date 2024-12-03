@@ -15,6 +15,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dim
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
@@ -31,6 +32,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Gradient_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
@@ -46,6 +49,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'atomic_widgets';
 
 	const PACKAGES = [
+		'editor-canvas',
 		'editor-controls', // TODO: Need to be registered and not enqueued.
 		'editor-editing-panel',
 		'editor-elements', // TODO: Need to be registered and not enqueued.
@@ -127,6 +131,8 @@ class Module extends BaseModule {
 		$transformers->register( Border_Radius_Prop_Type::get_key(), new Corner_Sizes_Transformer( fn( $corner ) => 'border-' . $corner . '-radius' ) );
 		$transformers->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
+		$transformers->register( Color_Gradient_Prop_Type::get_key(), new Background_Overlay_Transformer() );
+		$transformers->register( Background_Image_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 	}
 
 	/**

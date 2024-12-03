@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import Content from '../elementor-panel-tabs/content';
+import EditorSelectors from '../../selectors/editor-selectors';
 
 export default class promotionsHelper extends Content {
 	async widgetControlPromotionModalScreenshotTest( element: string ) {
@@ -11,8 +12,9 @@ export default class promotionsHelper extends Content {
 
 	async modalPromotionModalVisibilityTest( element: string ) {
 		await this.page.locator( `.elementor-control-${ element }` ).click( { force: true } );
-		const modalContainer = this.page.getByRole( 'tooltip' );
+		const modalContainer = this.page.locator( EditorSelectors.panels.promotionCard );
 		await expect.soft( modalContainer ).toBeVisible();
+		await expect( modalContainer.getByText( 'PRO' ) ).toBeVisible();
 		await modalContainer.getByRole( 'button', { name: 'close' } ).click();
 		await expect.soft( modalContainer ).toBeHidden();
 	}

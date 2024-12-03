@@ -70,7 +70,7 @@ class Global_Classes_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
 			[
 				'methods' => 'PUT',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->patch( $request ) ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
 				'validate_callback' => function( \WP_REST_Request $request ) {
 					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
 						->without_id()
@@ -150,7 +150,7 @@ class Global_Classes_REST_API {
 		return new \WP_REST_Response( null, 204 );
 	}
 
-	private function patch( \WP_REST_Request $request ) {
+	private function put( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
 		$values = $request->get_params();
 
@@ -163,7 +163,7 @@ class Global_Classes_REST_API {
 			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
 		}
 
-		$values = $this->get_repository()->patch( $id, $values );
+		$values = $this->get_repository()->put( $id, $values );
 
 		return new \WP_REST_Response( $values, 200 );
 	}
