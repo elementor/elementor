@@ -164,7 +164,7 @@ jobs:
 
 
   test-result:
-    needs: Playwright
+    needs: [ Playwright, PlaywrightWithTag ]
     if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
