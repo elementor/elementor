@@ -68,14 +68,15 @@ const frontendRulesPresets = [ [
 	{
 		targets: {
 			browsers: [
-				'last 1 Android versions',
-				'last 1 ChromeAndroid versions',
-				'last 2 Chrome versions',
-				'last 2 Firefox versions',
-				'Safari >= 14',
-				'iOS >= 14',
-				'last 2 Edge versions',
-				'last 2 Opera versions',
+				'last 3 versions',
+				'Chrome >= 100',
+				'Firefox >= 100',
+				'Edge >= 100',
+				'Safari >= 15.5',
+				'iOS >= 15.5',
+				'Android >= 100',
+				'ChromeAndroid >= 100',
+				'not dead',
 			],
 		},
 		"useBuiltIns": "usage",
@@ -131,11 +132,13 @@ const entry = {
 	'element-manager-admin': path.resolve( __dirname, '../modules/element-manager/assets/js/admin.js' ),
 	'media-hints': path.resolve( __dirname, '../assets/dev/js/admin/hints/media.js' ),
 	'ai-media-library': path.resolve( __dirname, '../modules/ai/assets/js/media-library/index.js' ),
+	'ai-unify-product-images': path.resolve( __dirname, '../modules/ai/assets/js/woocommerce/index.js' ),
 	// Temporary solution for the AI App in the Admin.
 	'ai-admin': path.resolve( __dirname, '../modules/ai/assets/js/admin/index.js' ),
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
+	'e-react-promotions': path.resolve( __dirname, '../modules/promotions/assets/js/react/index.js' ),
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 };
@@ -189,6 +192,10 @@ const plugins = [
 	new WatchTimePlugin(),
 ];
 
+// Prevents the collision of chunk names between base and frontend bundles.
+const baseOutputUniqueName = 'elementor';
+const frontendOutputUniqueName = 'elementorFrontend';
+
 const baseConfig = {
 	target: 'web',
 	context: __dirname,
@@ -205,8 +212,6 @@ const devSharedConfig = {
 		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'development' ),
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
-		// Prevents the collision of chunk names between different bundles.
-		uniqueName: 'elementor',
 	},
 	watch: true,
 };
@@ -214,6 +219,10 @@ const devSharedConfig = {
 const webpackConfig = [
 	{
 		...devSharedConfig,
+		output: {
+			...devSharedConfig.output,
+			uniqueName: baseOutputUniqueName,
+		},
 		module: moduleRules,
 		plugins: [
 			...plugins,
@@ -223,6 +232,10 @@ const webpackConfig = [
 	},
 	{
 		...devSharedConfig,
+		output: {
+			...devSharedConfig.output,
+			uniqueName: frontendOutputUniqueName,
+		},
 		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.js' ),
@@ -261,8 +274,6 @@ const prodSharedConfig = {
 		path: path.resolve( __dirname, '../assets/js' ),
 		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'production' ),
 		filename: '[name].js',
-		// Prevents the collision of chunk names between different bundles.
-		uniqueName: 'elementor',
 	},
 	performance: { hints: false },
 };
@@ -270,6 +281,10 @@ const prodSharedConfig = {
 const webpackProductionConfig = [
 	{
 		...prodSharedConfig,
+		output: {
+			...prodSharedConfig.output,
+			uniqueName: baseOutputUniqueName,
+		},
 		module: moduleRules,
 		plugins: [
 			...plugins,
@@ -285,6 +300,10 @@ const webpackProductionConfig = [
 	},
 	{
 		...prodSharedConfig,
+		output: {
+			...prodSharedConfig.output,
+			uniqueName: frontendOutputUniqueName,
+		},
 		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.min.js' ),

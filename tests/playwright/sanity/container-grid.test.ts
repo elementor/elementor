@@ -9,7 +9,6 @@ test.describe( 'Container Grid tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
-			container_grid: true,
 		} );
 	} );
 
@@ -19,7 +18,6 @@ test.describe( 'Container Grid tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: false,
-			container_grid: false,
 		} );
 	} );
 
@@ -673,7 +671,7 @@ test.describe( 'Container Grid tests @container', () => {
 			// Act
 			await frame.locator( '.elementor-add-section-area-button' ).first().click();
 			await frame.locator( '.e-con-select-type__icons__icon.flex-preset-button' ).click();
-			await frame.locator( '.e-con-select-preset__list .e-con-preset' ).first().click();
+			await frame.locator( '.e-con-select-preset-flex .e-con-preset' ).first().click();
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
@@ -684,7 +682,7 @@ test.describe( 'Container Grid tests @container', () => {
 			// Act
 			await frame.locator( '.elementor-add-section-area-button' ).first().click();
 			await frame.locator( '.e-con-select-type__icons__icon.grid-preset-button' ).click();
-			await frame.locator( '.e-con-select-preset-grid__list .e-con-choose-grid-preset' ).first().click();
+			await frame.locator( '.e-con-select-preset-grid .e-con-preset' ).first().click();
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );

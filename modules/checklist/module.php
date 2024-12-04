@@ -4,13 +4,17 @@ namespace Elementor\Modules\Checklist;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager;
-use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
-use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Elementor_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Counter_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
+use Elementor\Core\Utils\Isolation_Manager;
+use Elementor\Modules\EditorAppBar\Module as AppBarModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,22 +26,29 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
 	const FIRST_CLOSED_CHECKLIST_IN_EDITOR = 'first_closed_checklist_in_editor';
 	const LAST_OPENED_TIMESTAMP = 'last_opened_timestamp';
+	const SHOULD_OPEN_IN_EDITOR = 'should_open_in_editor';
+	const IS_POPUP_MINIMIZED_KEY = 'is_popup_minimized';
 
 	private Steps_Manager $steps_manager;
 	private Wordpress_Adapter_Interface $wordpress_adapter;
+	private Elementor_Adapter_Interface $elementor_adapter;
+	private Elementor_Counter_Adapter_Interface $counter_adapter;
 	private $user_progress = null;
-	private static $instance = null;
 
 	/**
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
+	 * @param ?Elementor_Adapter_Interface $elementor_adapter
 	 *
 	 * @return void
 	 */
-	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
-		static::$instance = $this;
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
-		parent::__construct();
+	public function __construct(
+		?Wordpress_Adapter_Interface $wordpress_adapter = null,
+		?Elementor_Adapter_Interface $elementor_adapter = null
+	) {
+		$this->wordpress_adapter = $wordpress_adapter ?? Isolation_Manager::get_adapter( Wordpress_Adapter::class );
+		$this->elementor_adapter = $elementor_adapter ?? Isolation_Manager::get_adapter( Elementor_Adapter::class );
 
+		parent::__construct();
 		$this->register_experiment();
 		$this->init_user_progress();
 
@@ -47,12 +58,14 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
+		$this->handle_checklist_visibility_with_kit();
 		$this->steps_manager = new Steps_Manager( $this );
-		$this->enqueue_editor_scripts();
-	}
 
-	public static function instance() : self {
-		return static::$instance ?? new self();
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$this->enqueue_editor_scripts();
 	}
 
 	/**
@@ -89,7 +102,15 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *  }
 	 */
 	public function get_user_progress_from_db() : array {
-		return json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true );
+		$db_progress = json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true );
+		$db_progress = is_array( $db_progress ) ? $db_progress : [];
+
+		$progress = array_merge( $this->get_default_user_progress(), $db_progress );
+
+		$editor_visit_count = $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
+		$progress[ self::SHOULD_OPEN_IN_EDITOR ] = 2 === $editor_visit_count && ! $progress[ self::LAST_OPENED_TIMESTAMP ];
+
+		return $progress;
 	}
 
 	/**
@@ -123,15 +144,20 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$allowed_properties = [
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
 			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
+			self::IS_POPUP_MINIMIZED_KEY => $new_data[ self::IS_POPUP_MINIMIZED_KEY ] ?? null,
 		];
 
 		foreach ( $allowed_properties as $key => $value ) {
 			if ( null !== $value ) {
-				$this->user_progress[ $key ] = $value;
+				$this->user_progress[ $key ] = $this->get_formatted_value( $key, $value );
 			}
 		}
 
 		$this->update_user_progress_in_db();
+
+		if ( isset( $new_data[ Elementor_Counter::EDITOR_COUNTER_KEY ] ) ) {
+			$this->elementor_adapter->set_count( Elementor_Counter::EDITOR_COUNTER_KEY, $new_data[ Elementor_Counter::EDITOR_COUNTER_KEY ] );
+		}
 	}
 
 	/**
@@ -146,6 +172,13 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 */
 	public function get_wordpress_adapter() : Wordpress_Adapter {
 		return $this->wordpress_adapter;
+	}
+
+	/**
+	 * @return Elementor_Adapter
+	 */
+	public function get_elementor_adapter() : Elementor_Adapter {
+		return $this->elementor_adapter;
 	}
 
 	public function enqueue_editor_scripts() : void {
@@ -172,14 +205,18 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		} );
 	}
 
-	public static function is_preference_switch_on() : bool {
-		$user_preferences = SettingsManager::get_settings_managers( 'editorPreferences' )
-			->get_model()
-			->get_settings( self::VISIBILITY_SWITCH_ID );
-		$is_new_installation = Upgrade_Manager::is_new_installation() ? 'yes' : '';
-		$is_preference_switch_on = $user_preferences ?? $is_new_installation;
+	public function is_preference_switch_on() : bool {
+		if ( $this->should_switch_preferences_off() ) {
+			return false;
+		}
 
-		return 'yes' === $is_preference_switch_on;
+		$user_preferences = $this->wordpress_adapter->get_user_preferences( self::VISIBILITY_SWITCH_ID );
+
+		return 'yes' === $user_preferences || $this->wordpress_adapter->is_new_installation();
+	}
+
+	public function should_switch_preferences_off() : bool {
+		return ! $this->elementor_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 	}
 
 	private function register_experiment() : void {
@@ -189,20 +226,53 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
 			'release_status' => Manager::RELEASE_STATUS_ALPHA,
 			'hidden' => true,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.25.0',
+			],
 		] );
 	}
 
 	private function init_user_progress() : void {
-		$default_settings = [
-			self::LAST_OPENED_TIMESTAMP => -1,
-			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
-			'steps' => [],
-		];
+		$default_settings = $this->get_default_user_progress();
 
 		$this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
 	}
 
+	private function get_default_user_progress() : array {
+		return [
+			self::LAST_OPENED_TIMESTAMP => null,
+			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
+			self::IS_POPUP_MINIMIZED_KEY => false,
+			'steps' => [],
+		];
+	}
+
 	private function update_user_progress_in_db() : void {
 		$this->wordpress_adapter->update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
+	}
+
+	private function get_formatted_value( $key, $value ) {
+		if ( self::LAST_OPENED_TIMESTAMP === $key ) {
+			return $value ? time() : null;
+		}
+
+		return $value;
+	}
+
+	private function handle_checklist_visibility_with_kit() {
+		if ( ! $this->should_switch_preferences_off() ) {
+			return;
+		}
+
+		add_action( 'elementor/editor/init', function () {
+			$this->wordpress_adapter->set_user_preferences( self::VISIBILITY_SWITCH_ID, '' );
+		}, 11 );
+	}
+
+	public static function should_display_checklist_toggle_control() : bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ID ) &&
+			Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) &&
+			current_user_can( 'manage_options' );
 	}
 }

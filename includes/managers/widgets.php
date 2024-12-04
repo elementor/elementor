@@ -65,7 +65,9 @@ class Widgets_Manager {
 	*/
 	private function init_widgets() {
 		$build_widgets_filename = [
+			'common-base',
 			'common',
+			'common-optimized',
 			'inner-section',
 			'heading',
 			'image',
@@ -97,7 +99,6 @@ class Widgets_Manager {
 			'sidebar',
 			'read-more',
 			'rating',
-			'share-buttons',
 		];
 
 		$this->_widget_types = [];

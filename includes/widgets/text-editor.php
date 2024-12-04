@@ -108,6 +108,10 @@ class Widget_Text_Editor extends Widget_Base {
 		return [ 'widget-text-editor' ];
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register text editor widget controls.
 	 *
@@ -284,6 +288,27 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'name' => 'text_shadow',
 				'selector' => '{{WRAPPER}}',
+			]
+		);
+
+		$this->add_responsive_control(
+			'paragraph_spacing',
+			[
+				'label' => esc_html__( 'Paragraph Spacing', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
+				'range' => [
+					'px' => [
+						'max' => 100,
+					],
+					'em' => [
+						'min' => 0.1,
+						'max' => 20,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+				],
 			]
 		);
 

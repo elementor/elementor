@@ -22,10 +22,19 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 	}
 
 	public function get_style_depends(): array {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) ) {
-			return parent::get_style_depends();
+		$widget_name = $this->get_name();
+
+		$style_depends = Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' )
+			? parent::get_style_depends()
+			: [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+
+		$style_depends[] = 'widget-link-in-bio-base';
+
+		if ( 'link-in-bio' !== $widget_name ) {
+			$style_depends[] = "widget-{$widget_name}";
 		}
-		return [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+
+		return $style_depends;
 	}
 
 	public static function get_configuration() {

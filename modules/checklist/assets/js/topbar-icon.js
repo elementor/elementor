@@ -6,22 +6,18 @@ import { Infotip } from '@elementor/ui';
 import ReminderModal from './app/components/reminder-modal';
 import * as React from 'react';
 import { USER_PROGRESS } from './utils/consts';
+import { fetchUserProgress } from './utils/functions';
 
 const { CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME } = USER_PROGRESS;
-
-const fetchStatus = async () => {
-	const response = await $e.data.get( 'checklist/user-progress', {}, { refresh: true } );
-
-	return response?.data?.data?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ] || false;
-};
 
 const TopBarIcon = () => {
 	const [ hasRoot, setHasRoot ] = useState( false ),
 		[ open, setOpen ] = useState( false ),
-		{ error, data: closedForFirstTime } = useQuery( {
+		{ error, data: userProgress } = useQuery( {
 			queryKey: [ 'closedForFirstTime' ],
-			queryFn: fetchStatus,
-		} );
+			queryFn: fetchUserProgress,
+		} ),
+		closedForFirstTime = userProgress?.[ CHECKLIST_CLOSED_IN_THE_EDITOR_FOR_FIRST_TIME ];
 
 	useEffect( () => {
 		return listenTo( commandEndEvent( 'checklist/toggle-popup' ), ( e ) => {
