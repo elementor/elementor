@@ -24,9 +24,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			'grid_row_custom',
 		];
 
-		const gridControls = gridSuffixes
-			.map( ( suffix ) => `[class*="elementor-control-${suffix}"]` )
-			.join( ', ' );
+		const gridControls = gridSuffixes.map( ( suffix ) => `[class*="elementor-control-${ suffix }"]` ).join( ', ' );
 
 		return {
 			selectors: {
@@ -38,7 +36,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			classes: {
 				outline: 'e-grid-outline',
 				outlineItem: 'e-grid-outline-item',
-				gridControls: gridControls,
+				gridControls,
 			},
 		};
 	}
