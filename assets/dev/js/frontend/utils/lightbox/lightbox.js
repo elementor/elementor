@@ -989,6 +989,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				autoplay: true,
 				transparent: false,
 				playsinline: false,
+				cc_load_policy: false,
 			};
 
 		this.player = new Vimeo.Player( $videoWrapper, vimeoOptions );

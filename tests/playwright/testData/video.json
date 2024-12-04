@@ -6,6 +6,7 @@
             "muteInp",
             "loopInp",
             "modestbrandingInp",
+            "ccLoadPolicyInp",
             "privacyInp",
             "lazyLoadInp"
         ],
@@ -16,6 +17,7 @@
             "start": 10,
             "end": 20,
             "modestbranding": "1",
+            "cc_load_policy": "1",
             "playsinline": "1"
         },
         "link": "https://youtu.be/6KNISw9RPTc"
