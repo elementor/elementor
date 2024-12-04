@@ -21,7 +21,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			classes: {
 				outline: 'e-grid-outline',
 				outlineItem: 'e-grid-outline-item',
-				gridControls: '[class*="elementor-control-_heading_grid"], [class*="elementor-control-_grid_row"], [class*="elementor-control-_grid_column"], [class*="elementor-control-heading_grid"], [class*="elementor-control-grid_row"], [class*="elementor-control-grid_column"]',
+				gridControls: '[class*="elementor-control-"]:is([class*="heading_grid"], [class*="grid_row"], [class*="grid_column"])',
 			},
 		};
 	}
@@ -62,7 +62,13 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	isItemInGridCell( editor ) {
-		return 'grid' === editor?.options?.editedElementView?.container?.parent?.model?.attributes?.settings?.attributes?.container_type
+		const container = editor?.getOption( 'editedElementView' )?.getContainer();
+
+		if ( 'function' !== typeof container?.parent?.model?.getSetting ) {
+			return false;
+		}
+
+		return 'grid' === container?.parent?.model?.getSetting('container_type');
 	}
 
 	hideGridControls( editor ) {
