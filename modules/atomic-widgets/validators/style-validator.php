@@ -33,9 +33,8 @@ class Style_Validator {
 	}
 
 	/**
-	 * @param array $styles
-	 * The key of each item represents the style id,
-	 * and the value is the style object to validate
+	 * @param array $style
+	 * the style object to validate
 	 *
 	 * @return array{
 	 *     0: bool,
