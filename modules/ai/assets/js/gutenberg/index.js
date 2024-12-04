@@ -139,3 +139,9 @@ import { getUniqueId } from '../editor/context/requests-ids';
 
 	window.addEventListener( 'beforeunload', clearElementorAiCurrentContext );
 } )();
+
+window.addEventListener( 'DOMContentLoaded', () => {
+	if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
+		elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
+	}
+} );
