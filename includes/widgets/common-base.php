@@ -255,7 +255,7 @@ class Widget_Common_Base extends Widget_Base {
 		$this->add_responsive_control(
 			'_grid_column',
 			[
-				'label' => esc_html__( 'Column Span', 'elementor-pro' ),
+				'label' => esc_html__( 'Column Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '1',
 				'options' => [
@@ -299,7 +299,7 @@ class Widget_Common_Base extends Widget_Base {
 		$this->add_responsive_control(
 			'_grid_row',
 			[
-				'label' => esc_html__( 'Row Span', 'elementor-pro' ),
+				'label' => esc_html__( 'Row Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '1',
 				'options' => [
