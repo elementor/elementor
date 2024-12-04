@@ -68,14 +68,14 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			return false;
 		}
 
-		return 'grid' === container?.parent?.model?.getSetting('container_type');
+		return 'grid' === container?.parent?.model?.getSetting( 'container_type' );
 	}
 
 	hideGridControls( editor ) {
 		const classes = this.getSettings( 'classes' );
 		const gridControls = editor?.el.querySelectorAll( classes.gridControls );
 
-		gridControls.forEach( element => {
+		gridControls.forEach( ( element ) => {
 			element.style.display = 'none';
 		} );
 	}
