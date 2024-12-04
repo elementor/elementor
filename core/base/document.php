@@ -1795,7 +1795,8 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
+		$is_element_cache_active = Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) && 'disable' !== get_option( 'elementor_element_cache_ttl', '' );
+		if ( ! $is_element_cache_active ) {
 			ob_start();
 
 			$this->do_print_elements( $elements_data );
