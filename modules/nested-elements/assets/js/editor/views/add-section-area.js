@@ -44,7 +44,7 @@ export default function AddSectionArea( props ) {
 						<i className="eicon-plus" aria-hidden="true" />
 					</button>
 					<div className="elementor-add-section-drag-title">
-						{ __( 'Drag widgets here.', 'elementor' ) }
+						{ __( 'Drag widget here', 'elementor' ) }
 					</div>
 				</div>
 			</div>
