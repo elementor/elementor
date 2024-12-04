@@ -562,7 +562,7 @@ class Module extends BaseModule {
 			}
 		} else {
 			if ( ! current_user_can( 'edit_post', $editor_post_id ) ) {
-				throw new \Exception('Access denied');
+				throw new \Exception( 'Access denied' );
 			}
 		}
 	}
