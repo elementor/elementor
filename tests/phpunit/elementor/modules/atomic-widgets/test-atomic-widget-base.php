@@ -611,165 +611,22 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 	public function test_get_data_for_save() {
 		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'string_prop' => String_Prop_Type::make()->default( '' ),
-				'number_prop' => Number_Prop_Type::make()->default( 0 ),
-				'boolean_prop' => Boolean_Prop_Type::make()->default( false ),
-				'in_schema_not_in_settings' => String_Prop_Type::make()->default( '' ),
-				'not_a_prop_type' => 'not-a-prop-type',
-			],
-			'settings' => [
-				'string_prop' => 'valid-string',
-				'number_prop' => 123,
-				'boolean_prop' => true,
-				'not_in_schema' => 'not-in-schema',
-				'not_a_prop_type' => 'not-a-prop-type',
-			],
-			'styles' => [
-				's-1234' => [
-					'id' => 's-1234',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'color' => [
-									'$$type' => 'color',
-									'value' => 'red',
-								],
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'unit' => 'px',
-										'size' => 16,
-									],
-								],
-								'padding' => [
-									'$$type' => 'linked-dimensions',
-									'value' => [
-										'top' => [
-											'$$type' => 'size',
-											'value' => [
-												'unit' => 'px',
-												'size' => 0,
-											],
-										],
-										'right' => [
-											'$$type' => 'size',
-											'value' => [
-												'unit' => 'px',
-												'size' => 0,
-											],
-										],
-									],
-								],
-								'border-radius' => [
-									'$$type' => 'border-radius',
-									'value' => [
-										'top-left' => [
-											'$$type' => 'size',
-											'value' => [
-												'unit' => 'px',
-												'size' => 0,
-											],
-										],
-										'top-right' => [
-											'$$type' => 'size',
-											'value' => [
-												'unit' => 'px',
-												'size' => 0,
-											],
-										],
-									],
-								],
-								'border-width' => [
-									'$$type' => 'border-width',
-									'value' => [
-										'top' => [
-											'$$type' => 'size',
-											'value' => [
-												'unit' => 'px',
-												'size' => 0,
-											],
-										],
-										'right' => [
-											'$$type' => 'size',
-											'value' => [
-												'unit' => 'px',
-												'size' => 0,
-											],
-										],
-									],
-								],
-								'-webkit-text-stroke' => [
-									'$$type' => 'stroke',
-									'value' => [
-										'color' => [
-											'$$type' => 'color',
-											'value' => '#ff0000',
-										],
-										'width' => [
-											'$$type' => 'size',
-											'value' => [
-												'unit' => 'px',
-												'size' => 10,
-											],
-										],
-									],
-								],
-							],
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => null,
-							],
-						],
-					],
-				]
-			]
-		] );
-
-		// Act.
-		$data_for_save = $widget->get_data_for_save();
-
-		// Assert.
-		$this->assertSame( [
-			'string_prop' => 'valid-string',
-			'number_prop' => 123,
-			'boolean_prop' => true,
-		], $data_for_save['settings'] );
-
-		$this->assertSame( [
+		$widget_styles = [
 			's-1234' => [
 				'id' => 's-1234',
 				'type' => 'class',
 				'variants' => [
 					[
 						'props' => [
+							'color' => [
+								'$$type' => 'color',
+								'value' => 'red',
+							],
 							'font-size' => [
 								'$$type' => 'size',
 								'value' => [
 									'unit' => 'px',
 									'size' => 16,
-								],
-							],
-							'color' => [
-								'$$type' => 'color',
-								'value' => 'red',
-							],
-							'-webkit-text-stroke' => [
-								'$$type' => 'stroke',
-								'value' => [
-									'color' => [
-										'$$type' => 'color',
-										'value' => '#ff0000',
-									],
-									'width' => [
-										'$$type' => 'size',
-										'value' => [
-											'unit' => 'px',
-											'size' => 10,
-										],
-									],
 								],
 							],
 							'padding' => [
@@ -829,6 +686,26 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 									],
 								],
 							],
+							'-webkit-text-stroke' => [
+								'$$type' => 'stroke',
+								'value' => [
+									'color' => [
+										'$$type' => 'color',
+										'value' => '#ff0000',
+									],
+									'width' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 10,
+										],
+									],
+								],
+							],
+							'background-image' => [
+								'$$type' => 'background-image',
+								'value' => [ [ '$$type' => 'background-overlay', 'value' => [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ] ] ]
+							],
 						],
 						'meta' => [
 							'breakpoint' => 'desktop',
@@ -837,7 +714,37 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					],
 				],
 			]
-		], $data_for_save['styles'] );
+		];
+
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+				'number_prop' => Number_Prop_Type::make()->default( 0 ),
+				'boolean_prop' => Boolean_Prop_Type::make()->default( false ),
+				'in_schema_not_in_settings' => String_Prop_Type::make()->default( '' ),
+				'not_a_prop_type' => 'not-a-prop-type',
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+				'number_prop' => 123,
+				'boolean_prop' => true,
+				'not_in_schema' => 'not-in-schema',
+				'not_a_prop_type' => 'not-a-prop-type',
+			],
+			'styles' => $widget_styles
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'string_prop' => 'valid-string',
+			'number_prop' => 123,
+			'boolean_prop' => true,
+		], $data_for_save['settings'] );
+
+		$this->assertTrue( $widget_styles == $data_for_save['styles'] );
 	}
 
 	public function test_get_data_for_save__throws_on_styles_size_prop_validation_error() {
@@ -1268,6 +1175,55 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Expect.
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: -webkit-text-stroke' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
+	public function test_get_data_for_save__throws_on_styles_background_color_overlay_prop_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => 'valid-string',
+			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'background-image' => [
+									'$$type' => 'background-image',
+									'value' => [
+										[
+											'$$type' => 'background-overlay',
+											'value' => [
+												'color' => [
+													'$$type' => 'color',
+													'value' => 4,
+												],
+											],
+										],
+									],
+								],
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: background-image' );
 
 		// Act.
 		$widget->get_data_for_save();

@@ -76,6 +76,7 @@ class Test_Manager extends Elementor_Test_Base {
 			'hidden' => false,
 			'generator_tag' => false,
 			'tags' => [],
+			'deprecated' => false,
 		];
 
 		$new_feature = $this->add_test_feature( $test_feature_data );

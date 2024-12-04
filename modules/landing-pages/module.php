@@ -52,6 +52,7 @@ class Module extends BaseModule {
 				'default_inactive' => true,
 				'minimum_installation_version' => '3.22.0',
 			],
+			'deprecated' => true,
 		];
 	}
 
