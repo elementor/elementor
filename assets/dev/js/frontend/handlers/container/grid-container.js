@@ -11,7 +11,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	getDefaultSettings() {
-		const gridSuffixes = [
+		const gridItemSuffixes = [
 			'_heading_grid_item',
 			'_grid_column',
 			'_grid_column_custom',
@@ -24,7 +24,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			'grid_row_custom',
 		];
 
-		const gridControls = gridSuffixes.map( ( suffix ) => `[class*="elementor-control-${ suffix }"]` ).join( ', ' );
+		const gridItemControls = gridItemSuffixes.map( ( suffix ) => `[class*="elementor-control-${ suffix }"]` ).join( ', ' );
 
 		return {
 			selectors: {
@@ -36,7 +36,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			classes: {
 				outline: 'e-grid-outline',
 				outlineItem: 'e-grid-outline-item',
-				gridControls,
+				gridItemControls,
 			},
 		};
 	}
@@ -87,7 +87,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 	hideGridControls( editor ) {
 		const classes = this.getSettings( 'classes' );
-		const gridControls = editor?.el.querySelectorAll( classes.gridControls );
+		const gridControls = editor?.el.querySelectorAll( classes.gridItemControls );
 
 		gridControls.forEach( ( element ) => {
 			element.style.display = 'none';
