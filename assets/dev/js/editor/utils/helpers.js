@@ -49,9 +49,9 @@ module.exports = {
 				widget: null,
 				container: null,
 			},
-			'a-container': {
+			'div-block': {
 				widget: null,
-				'a-container': null,
+				'div-block': null,
 			},
 		},
 	},

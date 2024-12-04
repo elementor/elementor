@@ -13,13 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Container extends Atomic_Element_Base {
+class Div_Block extends Atomic_Element_Base {
 	public static function get_type() {
-		return 'a-container';
+		return 'div-block';
 	}
 
 	public function get_name() {
-		return 'a-container';
+		return 'div-block';
 	}
 
 	public function get_title() {
@@ -59,8 +59,8 @@ class Atomic_Container extends Atomic_Element_Base {
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
-		if ( 'a-container' === $element_data['elType'] ) {
-			return Plugin::$instance->elements_manager->get_element_types( 'a-container' );
+		if ( 'div-block' === $element_data['elType'] ) {
+			return Plugin::$instance->elements_manager->get_element_types( 'div-block' );
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
@@ -77,7 +77,7 @@ class Atomic_Container extends Atomic_Element_Base {
 
 		$this->add_render_attribute( '_wrapper', [
 			'class' => [
-				'a-con',
+				'div-block',
 				$settings['classes'] ?? '',
 			],
 		] );

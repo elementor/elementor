@@ -8,7 +8,7 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerAtomicDivBlockType() {
-		const AContainerClass = require( './a-container-type' ).default;
+		const AContainerClass = require( './div-block-type' ).default;
 
 		elementor.elementsManager.registerElementType( new AContainerClass() );
 	}

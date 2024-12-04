@@ -1,11 +1,10 @@
-import AEmptyView from './container/a-empty-view';
-import ContainerHelper from 'elementor-editor-utils/container-helper';
+import DivBlockEmptyView from './container/div-block-empty-view';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
-const AContainerView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-a-container-content' ),
+const DivBlockView = BaseElementView.extend( {
+	template: Marionette.TemplateCache.get( '#tmpl-elementor-div-block-content' ),
 
-	emptyView: AEmptyView,
+	emptyView: DivBlockEmptyView,
 
 	tagName() {
 		return this.model.getSetting( 'tag' ) || 'div';
@@ -18,7 +17,7 @@ const AContainerView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con a-con`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con div-block`;
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -109,15 +108,6 @@ const AContainerView = BaseElementView.extend( {
 		};
 	},
 
-	getDirectionSettingKey() {
-		const containerType = this.container.settings.get( 'container_type' ),
-			directionSettingKey = 'grid' === containerType
-				? 'grid_auto_flow'
-				: 'flex_direction';
-
-		return directionSettingKey;
-	},
-
 	behaviors() {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
@@ -146,26 +136,10 @@ const AContainerView = BaseElementView.extend( {
 		};
 	},
 
-	getDroppableAxis() {
-		const isColumnDefault = ( ContainerHelper.DIRECTION_DEFAULT === ContainerHelper.DIRECTION_COLUMN ),
-			currentDirection = this.getContainer().settings.get( this.getDirectionSettingKey() );
-
-		const axisMap = {
-			[ ContainerHelper.DIRECTION_COLUMN ]: 'vertical',
-			[ ContainerHelper.DIRECTION_COLUMN_REVERSED ]: 'vertical',
-			[ ContainerHelper.DIRECTION_ROW ]: 'horizontal',
-			[ ContainerHelper.DIRECTION_ROW_REVERSED ]: 'horizontal',
-			'': isColumnDefault ? 'vertical' : 'horizontal',
-		};
-
-		return axisMap[ currentDirection ];
-	},
-
 	getDroppableOptions() {
 		const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 		return {
-			axis: this.getDroppableAxis(),
 			items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5,
@@ -277,15 +251,11 @@ const AContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		return ! ( this.isGridContainer() && this.emptyViewIsCurrentlyBeingDraggedOver() );
+		return ! this.emptyViewIsCurrentlyBeingDraggedOver();
 	},
 
 	draggingOnBottomOrRightSide( side ) {
 		return [ 'bottom', 'right' ].includes( side );
-	},
-
-	isGridContainer() {
-		return 'grid' === this.getContainer().settings.get( 'container_type' );
 	},
 
 	emptyViewIsCurrentlyBeingDraggedOver() {
@@ -294,4 +264,4 @@ const AContainerView = BaseElementView.extend( {
 
 } );
 
-module.exports = AContainerView;
+module.exports = DivBlockView;

@@ -6,7 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Atomic_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
-use Elementor\Modules\AtomicWidgets\Validators\Styles_Validator;
+use Elementor\Modules\AtomicWidgets\Validators\Style_Validator;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
@@ -91,7 +91,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	private function sanitize_atomic_styles( array $styles ) {
 		foreach ( $styles as $style ) {
-			[$is_valid, $sanitized, $errors_bag] = Styles_Validator::make( Style_Schema::get() )->validate( $style );
+			[$is_valid, $sanitized, $errors_bag] = Style_Validator::make( Style_Schema::get() )->validate( $style );
 
 			if ( ! $is_valid ) {
 				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
