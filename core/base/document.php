@@ -727,9 +727,8 @@ abstract class Document extends Controls_Stack {
 
 		if ( static::get_property( 'has_elements' ) ) {
 			$container_config = [];
-			$experiments_manager = Plugin::$instance->experiments;
 
-			if ( $experiments_manager->is_feature_active( 'container' ) ) {
+			if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 				$container_config = [
 					'container' => Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config(),
 				];
@@ -1035,7 +1034,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	public function update_json_meta( $key, $value ) {
-		$this->update_meta(
+		return $this->update_meta(
 			$key,
 			// `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 			wp_slash( wp_json_encode( $value ) )
@@ -1796,8 +1795,19 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
+		$is_element_cache_active = Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) && 'disable' !== get_option( 'elementor_element_cache_ttl', '' );
+		if ( ! $is_element_cache_active ) {
+			ob_start();
+
 			$this->do_print_elements( $elements_data );
+
+			$content = ob_get_clean();
+
+			if ( has_blocks( $content ) ) {
+				$content = do_blocks( $content );
+			}
+
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 			return;
 		}
@@ -1853,7 +1863,13 @@ abstract class Document extends Controls_Stack {
 		}
 
 		if ( ! empty( $cached_data['content'] ) ) {
-			echo do_shortcode( $cached_data['content'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			$content = do_shortcode( $cached_data['content'] );
+
+			if ( has_blocks( $content ) ) {
+				$content = do_blocks( $content );
+			}
+
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 

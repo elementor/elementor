@@ -322,13 +322,10 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		jQuery.each( editButtons, ( toolName, tool ) => {
-			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title } ),
-				$icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } ),
-				$a11y = jQuery( '<span>', { class: 'elementor-screen-only' } );
+			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title, 'aria-label': tool.title } );
+			const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
 
-			$a11y.text( tool.title );
-
-			$item.append( $icon, $a11y );
+			$item.append( $icon );
 
 			$overlayList.append( $item );
 		} );
@@ -924,6 +921,8 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderedEvent = new CustomEvent( event, { detail: { elementView: this } } );
 		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
+
+		window.top.dispatchEvent( renderedEvent );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -1049,6 +1048,10 @@ BaseElementView = BaseContainer.extend( {
 		return helper;
 	},
 
+	getDraggableElement() {
+		return this.$el;
+	},
+
 	/**
 	 * Initialize the Droppable instance.
 	 */
@@ -1062,7 +1065,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		this.$el.html5Draggable( {
+		this.getDraggableElement().html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 

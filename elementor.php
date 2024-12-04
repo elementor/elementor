@@ -4,7 +4,7 @@
  * Description: The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!
  * Plugin URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Author: Elementor.com
- * Version: 3.25.0
+ * Version: 3.27.0
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  *
  * Text Domain: elementor
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_VERSION', '3.25.0' );
+define( 'ELEMENTOR_VERSION', '3.27.0' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
@@ -42,6 +42,13 @@ if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
 define( 'ELEMENTOR_MODULES_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) . '/modules' );
 define( 'ELEMENTOR_ASSETS_PATH', ELEMENTOR_PATH . 'assets/' );
 define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
+
+if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
+	require_once ELEMENTOR_PATH . 'vendor/autoload.php';
+	// We need this file because of the DI\create function that we are using.
+	// Autoload classmap doesn't include this file.
+	require_once ELEMENTOR_PATH . 'vendor_prefixed/php-di/php-di/src/functions.php';
+}
 
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );

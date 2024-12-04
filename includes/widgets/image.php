@@ -107,6 +107,10 @@ class Widget_Image extends Widget_Base {
 		return [ 'widget-image' ];
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register image widget controls.
 	 *

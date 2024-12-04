@@ -4,7 +4,9 @@ namespace Elementor\Modules\Checklist\Steps;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Core\Utils\Constants;
+use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Elementor_Adapter_Interface;
+use Elementor\Core\Utils\Isolation_Manager;
 use Elementor\Modules\Checklist\Module as Checklist_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,6 +25,7 @@ abstract class Step_Base {
 
 	private array $user_progress;
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
+	protected Elementor_Adapter_Interface $elementor_adapter;
 	protected ?array $promotion_data;
 	protected Checklist_Module $module;
 
@@ -74,14 +77,24 @@ abstract class Step_Base {
 	 *
 	 * @param Checklist_Module $module
 	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
-
-	 * @return void
+	 * @param ?Elementor_Adapter_Interface $elementor_adapter
+ * @return void
 	 */
-	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null, $promotion_data = null ) {
+	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Elementor_Adapter_Interface $elementor_adapter = null, $promotion_data = null ) {
 		$this->module = $module;
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
+		$this->wordpress_adapter = $wordpress_adapter ?? Isolation_Manager::get_adapter( Wordpress_Adapter::class );
+		$this->elementor_adapter = $elementor_adapter ?? Isolation_Manager::get_adapter( Elementor_Adapter::class );
 		$this->promotion_data = $promotion_data;
 		$this->user_progress = $module->get_step_progress( $this->get_id() ) ?? $this->get_step_initial_progress();
+	}
+
+	/**
+	 * Returns step visibility (by-default step is visible)
+	 *
+	 * @return bool
+	 */
+	public function is_visible() : bool {
+		return true;
 	}
 
 	public function get_learn_more_text() : string {

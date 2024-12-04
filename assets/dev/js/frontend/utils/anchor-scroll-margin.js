@@ -142,14 +142,12 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	getAnchorTarget( element ) {
-		if ( ! this.isValidSelector( element.hash ) ) {
-			// eslint-disable-next-line no-console
-			console.warn( `Invalid selector: '${ element.hash }'` );
+		const hash = element?.hash;
 
+		if ( ! this.isValidSelector( hash ) ) {
 			return null;
 		}
-
-		return document.querySelector( element.hash );
+		return document.querySelector( hash );
 	}
 
 	getElementSettings( element ) {

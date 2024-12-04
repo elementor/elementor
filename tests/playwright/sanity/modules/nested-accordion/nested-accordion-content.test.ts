@@ -286,11 +286,10 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Change to mobile mode', async () => {
 			// Act
 			await editor.selectElement( nestedAccordionWidgetId );
-			await page.getByText( 'Desktop Tablet Portrait Mobile Portrait' ).first().click();
-			await page.getByRole( 'button', { name: 'Mobile Portrait' } ).first().click();
+			await editor.changeResponsiveView( 'mobile' );
 		} );
 
-		await test.step( 'Mobile -Check that the title icon is displayed', async () => {
+		await test.step( 'Mobile - Check that the title icon is displayed', async () => {
 			// Assert
 			await expect.soft( nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
 			await expect.soft( nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();

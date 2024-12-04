@@ -342,9 +342,8 @@ class Frontend extends App {
 	}
 
 	public function init_swiper_settings() {
-		$e_swiper_latest = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' );
-		$this->e_swiper_asset_path = $e_swiper_latest ? 'assets/lib/swiper/v8/' : 'assets/lib/swiper/';
-		$this->e_swiper_version = $e_swiper_latest ? '8.4.5' : '5.3.6';
+		$this->e_swiper_asset_path = 'assets/lib/swiper/v8/';
+		$this->e_swiper_version = '8.4.5';
 	}
 
 	/**
@@ -405,7 +404,7 @@ class Frontend extends App {
 			[
 				'jquery',
 			],
-			'4.1.4',
+			'4.6.13',
 			true
 		);
 
@@ -522,7 +521,7 @@ class Frontend extends App {
 			'flatpickr',
 			$this->get_css_assets_url( 'flatpickr', 'assets/lib/flatpickr/' ),
 			[],
-			'4.1.4'
+			'4.6.13'
 		);
 
 		wp_register_style(
@@ -534,9 +533,9 @@ class Frontend extends App {
 
 		wp_register_style(
 			'e-apple-webkit',
-			$this->get_css_assets_url( 'apple-webkit', 'assets/css/conditionals/' ),
+			$this->get_frontend_file_url( 'apple-webkit.min.css', $has_custom_breakpoints, 'conditionals/' ),
 			[],
-			ELEMENTOR_VERSION
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -558,6 +557,13 @@ class Frontend extends App {
 			$this->get_css_assets_url( 'admin-bar', 'assets/css/' ),
 			[],
 			ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
+			'e-lightbox',
+			$this->get_frontend_file_url( 'lightbox.min.css', $has_custom_breakpoints, 'conditionals/' ),
+			[],
+			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
@@ -663,11 +669,6 @@ class Frontend extends App {
 
 			wp_enqueue_style( 'elementor-frontend' );
 
-			// TODO: Update in version 3.26.0 [ED-15471]
-			if ( ! Plugin::$instance->experiments->is_feature_active( 'e_swiper_css_conditional_loading' ) ) {
-				wp_enqueue_style( 'e-swiper' );
-			}
-
 			if ( is_admin_bar_showing() ) {
 				wp_enqueue_style( 'elementor-wp-admin-bar' );
 			}
@@ -712,13 +713,13 @@ class Frontend extends App {
 	 *
 	 * @return string frontend file URL
 	 */
-	public function get_frontend_file_url( $frontend_file_name, $custom_file ) {
+	public function get_frontend_file_url( $frontend_file_name, $custom_file, $css_subfolder = '' ) {
 		if ( $custom_file ) {
 			$frontend_file = $this->get_frontend_file( $frontend_file_name );
 
 			$frontend_file_url = $frontend_file->get_url();
 		} else {
-			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $frontend_file_name;
+			$frontend_file_url = ELEMENTOR_ASSETS_URL . 'css/' . $css_subfolder . $frontend_file_name;
 		}
 
 		return $frontend_file_url;
@@ -1397,7 +1398,6 @@ class Frontend extends App {
 				'previous' => esc_html__( 'Previous', 'elementor' ),
 				'next' => esc_html__( 'Next', 'elementor' ),
 				'close' => esc_html__( 'Close', 'elementor' ),
-				'a11yCarouselWrapperAriaLabel' => __( 'Carousel | Horizontal scrolling: Arrow Left & Right', 'elementor' ),
 				'a11yCarouselPrevSlideMessage' => __( 'Previous slide', 'elementor' ),
 				'a11yCarouselNextSlideMessage' => __( 'Next slide', 'elementor' ),
 				'a11yCarouselFirstSlideMessage' => __( 'This is the first slide', 'elementor' ),
@@ -1410,6 +1410,7 @@ class Frontend extends App {
 			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
 			'responsive' => [
 				'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
+				'hasCustomBreakpoints' => Plugin::$instance->breakpoints->has_custom_breakpoints(),
 			],
 			'version' => ELEMENTOR_VERSION,
 			'is_static' => $this->is_static_render_mode(),
@@ -1417,11 +1418,12 @@ class Frontend extends App {
 			'urls' => [
 				'assets' => $assets_url,
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'uploadUrl' => wp_upload_dir()['baseurl'],
 			],
 			'nonces' => [
 				'floatingButtonsClickTracking' => wp_create_nonce( Module::CLICK_TRACKING_NONCE ),
 			],
-			'swiperClass' => Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container',
+			'swiperClass' => 'swiper',
 		];
 
 		$settings['settings'] = SettingsManager::get_settings_frontend_config();

@@ -66,14 +66,6 @@ const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : 
 
 const pluginVersion = elementorFrontendConfig.version;
 
-const swiperJsSource = elementorFrontendConfig.experimentalFeatures.e_swiper_latest
-	? `${ assetsUrl }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
-	: `${ assetsUrl }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
-
-const swiperCssSource = elementorFrontendConfig.experimentalFeatures.e_swiper_latest
-	? `${ assetsUrl }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`
-	: `${ assetsUrl }lib/swiper/css/swiper${ fileSuffix }.css?ver=5.3.6`;
-
 AssetsLoader.assets = {
 	script: {
 		dialog: {
@@ -83,16 +75,18 @@ AssetsLoader.assets = {
 			src: `${ assetsUrl }lib/share-link/share-link${ fileSuffix }.js?ver=${ pluginVersion }`,
 		},
 		swiper: {
-			src: swiperJsSource,
+			src: `${ assetsUrl }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`,
 		},
 	},
 	style: {
 		swiper: {
-			src: swiperCssSource,
+			src: `${ assetsUrl }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`,
 			parent: 'head',
 		},
 		'e-lightbox': {
-			src: `${ assetsUrl }css/conditionals/lightbox${ fileSuffix }.css?ver=${ pluginVersion }`,
+			src: elementorFrontendConfig?.responsive?.hasCustomBreakpoints
+				? `${ elementorFrontendConfig.urls.uploadUrl }/elementor/css/custom-lightbox.min.css?ver=${ pluginVersion }`
+				: `${ assetsUrl }css/conditionals/lightbox${ fileSuffix }.css?ver=${ pluginVersion }`,
 		},
 		dialog: {
 			src: `${ assetsUrl }css/conditionals/dialog${ fileSuffix }.css?ver=${ pluginVersion }`,

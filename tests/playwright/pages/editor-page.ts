@@ -1,5 +1,5 @@
 import { addElement, getElementSelector } from '../assets/elements-utils';
-import { expect, type Page, type Frame, type TestInfo } from '@playwright/test';
+import { expect, type Page, type Frame, type TestInfo, Locator } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
@@ -259,36 +259,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Copy an element inside the editor.
-	 *
-	 * @param {string} elementId - Element ID.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async copyElement( elementId: string ) {
-		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
-		await element.click( { button: 'right' } );
-
-		const copyListItemSelector = '.elementor-context-menu-list__item-copy:visible';
-		await this.page.waitForSelector( copyListItemSelector );
-		await this.page.locator( copyListItemSelector ).click();
-	}
-
-	/**
-	 * Paste an element inside the editor.
-	 *
-	 * @param {string} selector - Element selector.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async pasteElement( selector: string ) {
-		await this.getPreviewFrame().locator( selector ).click( { button: 'right' } );
-
-		const pasteSelector = '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste';
-		await this.page.locator( pasteSelector ).click();
-	}
-
-	/**
 	 * Open the section that adds a new element.
 	 *
 	 * @param {string} elementId - Element ID.
@@ -305,22 +275,6 @@ export default class EditorPage extends BasePage {
 
 	async setWidgetTab( tab: 'content' | 'style' | 'advanced' ) {
 		await this.page.locator( `.elementor-tab-control-${ tab }` ).click();
-	}
-
-	/**
-	 * Paste styling setting on the element.
-	 *
-	 * @param {string} elementId - Element ID.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async pasteStyleElement( elementId: string ) {
-		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
-		await element.click( { button: 'right' } );
-
-		const pasteListItemSelector = '.elementor-context-menu-list__item-pasteStyle:visible';
-		await this.page.waitForSelector( pasteListItemSelector );
-		await this.page.locator( pasteListItemSelector ).click();
 	}
 
 	/**
@@ -490,7 +444,7 @@ export default class EditorPage extends BasePage {
 			await this.page.locator( `.select2-results__option:has-text("${ value }")` ).first().click();
 		}
 
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
 
 	/**
@@ -953,6 +907,12 @@ export default class EditorPage extends BasePage {
 		await this.page.waitForLoadState();
 	}
 
+	async viewPage() {
+		const pageId = await this.getPageId();
+		await this.page.goto( `/?p=${ pageId }` );
+		await this.page.waitForLoadState();
+	}
+
 	/**
 	 * Save and reload the current page.
 	 *
@@ -1308,5 +1268,13 @@ export default class EditorPage extends BasePage {
 	async saveSiteSettingsNoTopBar() {
 		await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
 		await this.page.locator( EditorSelectors.toast ).waitFor();
+	}
+
+	async assertCorrectVwWidthStylingOfElement( element: Locator, vwValue: number = 100 ): Promise<void> {
+		const viewport = this.page.viewportSize();
+		const vwConvertedToPxUnit = viewport.width * vwValue / 100;
+		const elementWidthInPxUnit = await element.boundingBox().then( ( box ) => box?.width ?? 0 );
+		const vwAndPxValuesAreEqual = Math.abs( vwConvertedToPxUnit - elementWidthInPxUnit ) <= 1;
+		expect( vwAndPxValuesAreEqual ).toBeTruthy();
 	}
 }

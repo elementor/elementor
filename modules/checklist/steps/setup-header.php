@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\Checklist\Steps;
 
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Modules\Checklist\Module as Checklist_Module;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -12,20 +12,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Setup_Header extends Step_Base {
 	const STEP_ID = 'setup_header';
 
-	public function __construct( $module, $wordpress_adapter = null, $should_promote = true ) {
+	public function __construct( $module, $wordpress_adapter = null, $elementor_adapter = null, $should_promote = true ) {
 		$promotion_data = $should_promote
-			? [
-				'url' => 'http://go.elementor.com/app-website-checklist-header-article',
-				'text' => esc_html__( 'Upgrade Now', 'elementor' ),
-				'icon' => 'default',
-			]
+			? $this->render_promotion()
 			: null;
 
-		parent::__construct( $module, $wordpress_adapter, $promotion_data );
+		parent::__construct( $module, $wordpress_adapter, $elementor_adapter, $promotion_data );
 	}
 
 	public function get_id() : string {
 		return self::STEP_ID;
+	}
+
+	public function is_visible() : bool {
+		if ( Utils::has_pro() ) {
+			return false;
+		}
+
+		return parent::is_visible();
 	}
 
 	public function is_absolute_completed() : bool {
@@ -59,7 +63,7 @@ class Setup_Header extends Step_Base {
 	}
 
 	public function get_description() : string {
-		return esc_html__( 'This element apply across different pages, so visitors can easily navigate around your site.', 'elementor' );
+		return esc_html__( 'This element applies across different pages, so visitors can easily navigate around your site.', 'elementor' );
 	}
 
 	public function get_cta_text() : string {
@@ -79,6 +83,20 @@ class Setup_Header extends Step_Base {
 	}
 
 	public function get_learn_more_url() : string {
-		return 'https://elementor.com/help/header-site-part/';
+		return 'https://go.elementor.com/app-website-checklist-header-article';
 	}
+
+	private function render_promotion() {
+			return Filtered_Promotions_Manager::get_filtered_promotion_data(
+				[
+					'url' => 'https://go.elementor.com/go-pro-website-checklist-header',
+					'text' => esc_html__( 'Upgrade Now', 'elementor' ),
+					'icon' => 'default',
+				],
+				'elementor/checklist/promotion',
+				'upgrade_url'
+			);
+
+	}
+
 }

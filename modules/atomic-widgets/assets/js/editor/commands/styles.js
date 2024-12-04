@@ -114,7 +114,10 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 
 		let styleDefID = args.styleDefID ?? null;
 
-		const currentStyle = structuredClone( container.model.get( 'styles' ) ) ?? {};
+		const currentStyle = container.model.get( 'styles' ) ?? {};
+
+		// Saving a deep clone of the style before it mutates, as part of this command
+		const oldStyle = this.isHistoryActive() ? structuredClone( currentStyle ) : null;
 
 		let style = {};
 
@@ -139,7 +142,8 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			style = currentStyle[ styleDefID ];
 		}
 
-		if ( ! getVariantByMeta( style.variants, meta ) ) {
+		const currentVariant = getVariantByMeta( style.variants, meta );
+		if ( ! currentVariant ) {
 			$e.internal( 'document/atomic-widgets/create-variant', {
 				container,
 				styleDefID,
@@ -147,7 +151,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			} );
 		}
 
-		const nonEmptyValues = Object.values( props ).filter( ( value ) => value !== undefined );
+		const nonEmptyValues = Object.values( { ...currentVariant?.props, ...props } ).filter( ( value ) => value !== undefined );
 		if ( 0 === nonEmptyValues.length ) {
 			// Doesn't have any props to use for this variant
 			$e.internal( 'document/atomic-widgets/delete-variant', {
@@ -178,8 +182,8 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			} );
 		}
 
-		if ( this.isHistoryActive() ) {
-			const oldStyleDef = currentStyle[ styleDefID ];
+		if ( null !== oldStyle ) {
+			const oldStyleDef = oldStyle[ styleDefID ];
 			const oldProps = oldStyleDef?.variants ? getVariantByMeta( oldStyleDef.variants, meta )?.props : {};
 
 			this.addToHistory(

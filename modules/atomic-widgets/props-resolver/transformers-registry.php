@@ -10,14 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Transformers_Registry extends Collection {
-	public function register( Transformer_Base $transformer ): self {
-		if ( isset( $this->items[ $transformer->get_type() ] ) ) {
-			Utils::safe_throw( "{$transformer->get_type()} transformer is already registered." );
+	public function register( string $key, Transformer_Base $transformer ): self {
+		if ( isset( $this->items[ $key ] ) ) {
+			Utils::safe_throw( "{$key} transformer is already registered." );
 
 			return $this;
 		}
 
-		$this->items[ $transformer->get_type() ] = $transformer;
+		$this->items[ $key ] = $transformer;
 
 		return $this;
 	}
