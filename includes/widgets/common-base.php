@@ -255,7 +255,34 @@ class Widget_Common_Base extends Widget_Base {
 		$this->add_responsive_control(
 			'_grid_column',
 			[
-				'label' => esc_html__( 'Grid Column', 'elementor' ),
+				'label' => esc_html__( 'Column Span', 'elementor-pro' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '1',
+				'options' => [
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+					'custom' => 'Custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-column: span {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_grid_column_custom',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'ai' => [
 					'active' => false,
@@ -263,13 +290,43 @@ class Widget_Common_Base extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'grid-column: {{VALUE}}',
 				],
+				'condition' => [
+					'_grid_column' => 'custom',
+				],
 			]
 		);
 
 		$this->add_responsive_control(
 			'_grid_row',
 			[
-				'label' => esc_html__( 'Grid Row', 'elementor' ),
+				'label' => esc_html__( 'Row Span', 'elementor-pro' ),
+				'type' => Controls_Manager::SELECT,
+				'default' => '1',
+				'options' => [
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+					'custom' => 'Custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-row: span {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_grid_row_custom',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'separator' => 'after',
 				'ai' => [
@@ -277,6 +334,9 @@ class Widget_Common_Base extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'grid-row: {{VALUE}}',
+				],
+				'condition' => [
+					'_grid_row' => 'custom',
 				],
 			]
 		);

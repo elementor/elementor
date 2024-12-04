@@ -11,6 +11,23 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	getDefaultSettings() {
+		const gridSuffixes = [
+			'_heading_grid_item',
+			'_grid_column',
+			'_grid_column_custom',
+			'_grid_row',
+			'_grid_row_custom',
+			'heading_grid_item',
+			'grid_column',
+			'grid_column_custom',
+			'grid_row',
+			'grid_row_custom',
+		];
+
+		const gridControls = gridSuffixes
+			.map( ( suffix ) => `[class*="elementor-control-${suffix}"]` )
+			.join( ', ' );
+
 		return {
 			selectors: {
 				gridOutline: '.e-grid-outline',
@@ -21,7 +38,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			classes: {
 				outline: 'e-grid-outline',
 				outlineItem: 'e-grid-outline-item',
-				gridControls: '[class*="elementor-control-"]:is([class*="heading_grid"], [class*="grid_row"], [class*="grid_column"])',
+				gridControls: gridControls,
 			},
 		};
 	}
