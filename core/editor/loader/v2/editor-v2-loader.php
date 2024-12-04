@@ -22,6 +22,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'editor-responsive',
 		'editor-v1-adapters',
 		self::ENV_PACKAGE,
+		'http',
 		'icons',
 		'locations',
 		'menus',
@@ -31,7 +32,6 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'ui',
 		'utils',
 		'wp-media',
-		'http',
 	];
 
 	/**
