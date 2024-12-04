@@ -43,7 +43,6 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		this.initLayoutOverlay();
 		this.updateEmptyViewHeight();
 		elementor.hooks.addAction( 'panel/open_editor/container', this.onPanelShow );
-		elementor.channels.editor.on( 'section:activated', this.handleGridControls.bind( this ) );
 	}
 
 	handleGridControls( sectionName, editor ) {
@@ -97,12 +96,14 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange );
 		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewHeight );
 		this.addChildLifeCycleEventListeners();
+		elementor.channels.editor.on( 'section:activated', this.handleGridControls.bind( this ) );
 	}
 
 	unbindEvents() {
 		this.removeChildLifeCycleEventListeners();
 		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange );
 		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewHeight );
+		elementor.channels.editor.off( 'section:activated', this.handleGridControls.bind( this ) );
 	}
 
 	initLayoutOverlay() {
