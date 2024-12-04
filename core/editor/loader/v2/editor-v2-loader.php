@@ -58,17 +58,6 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			$this->assets_config_provider->load( $package );
 		}
 
-		add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
-			$env['@elementor/http'] = [
-				'base_url' => rest_url( 'elementor/v1' ),
-				'headers' => [
-					'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),
-				],
-			];
-
-			return $env;
-		} );
-
 		do_action( 'elementor/editor/v2/init' );
 	}
 
@@ -134,7 +123,14 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		$env_config = $this->assets_config_provider->get( self::ENV_PACKAGE );
 
 		if ( $env_config ) {
-			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
+			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [
+				'@elementor/env' => [
+					'base_url' => rest_url( 'elementor/v1' ),
+					'headers' => [
+						'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),
+					],
+				],
+			] );
 
 			Utils::print_js_config(
 				$env_config['handle'],
