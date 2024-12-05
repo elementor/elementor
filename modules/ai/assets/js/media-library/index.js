@@ -68,10 +68,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai-insert-media';
 				compatMeta.insertAdjacentElement( 'beforeend', container );
-
-				if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
-					elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
-				}
+				addEditorPostIdRequestConstant();
 
 				window.dispatchEvent( new CustomEvent( 'renderInsertMediaEvent' ) );
 				return content.innerHTML;
@@ -94,10 +91,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai-attachment-details';
 				details.appendChild( container );
-
-				if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
-					elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
-				}
+				addEditorPostIdRequestConstant();
 
 				window.dispatchEvent( new CustomEvent( 'renderAttachmentsDetailsEvent' ) );
 				return content.innerHTML;
@@ -107,4 +101,10 @@ const addEventListener = ( eventName, containerId, Component ) => {
 	addEventListener( 'renderInsertMediaEvent', 'e-image-ai-insert-media', AIMediaEditAppLinkWrapper );
 	addEventListener( 'renderAttachmentsDetailsEvent', 'e-image-ai-attachment-details', AIMediaEditAppButtonWrapper );
 	insertStyleTag();
+
+	const addEditorPostIdRequestConstant = () => {
+		if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
+			elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
+		}
+	};
 } )();
