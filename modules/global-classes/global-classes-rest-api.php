@@ -74,7 +74,7 @@ class Global_Classes_REST_API {
 				'validate_callback' => function( \WP_REST_Request $request ) {
 					[ $is_valid ] = Style_Parser::make( Style_Schema::get() )
 						->without_id()
-						->parse( $request->get_body_params() );
+						->validate( $request->get_body_params() );
 
 					return $is_valid;
 				},
@@ -89,7 +89,7 @@ class Global_Classes_REST_API {
 				'validate_callback' => function( \WP_REST_Request $request ) {
 					[ $is_valid ] = Style_Parser::make( Style_Schema::get() )
 						->without_id()
-						->parse( $request->get_body_params() );
+						->validate( $request->get_body_params() );
 
 					return $is_valid;
 				},
