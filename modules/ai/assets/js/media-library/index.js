@@ -69,6 +69,10 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				container.id = 'e-image-ai-insert-media';
 				compatMeta.insertAdjacentElement( 'beforeend', container );
 
+				if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
+					elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
+				}
+
 				window.dispatchEvent( new CustomEvent( 'renderInsertMediaEvent' ) );
 				return content.innerHTML;
 			},
@@ -91,6 +95,10 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				container.id = 'e-image-ai-attachment-details';
 				details.appendChild( container );
 
+				if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
+					elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
+				}
+
 				window.dispatchEvent( new CustomEvent( 'renderAttachmentsDetailsEvent' ) );
 				return content.innerHTML;
 			},
@@ -100,9 +108,3 @@ const addEventListener = ( eventName, containerId, Component ) => {
 	addEventListener( 'renderAttachmentsDetailsEvent', 'e-image-ai-attachment-details', AIMediaEditAppButtonWrapper );
 	insertStyleTag();
 } )();
-
-window.addEventListener( 'DOMContentLoaded', () => {
-	if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
-		elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
-	}
-} );
