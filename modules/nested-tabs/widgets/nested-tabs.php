@@ -179,7 +179,7 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'title_field' => '{{{ tab_title }}}',
-			'button_text' => 'Add Tab',
+			'button_text' => esc_html__( 'Add Tab', 'elementor' ),
 		] );
 
 		$styling_block_start = '--n-tabs-direction: column; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial; --n-tabs-title-flex-basis: content; --n-tabs-title-flex-shrink: 0;';
