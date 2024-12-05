@@ -88,8 +88,6 @@ class Union_Prop_Type implements Prop_Type {
 				return $prop_type->sanitize( $value );
 			}
 		}
-
-		return $this->get_default();
 	}
 
 	public function jsonSerialize(): array {
