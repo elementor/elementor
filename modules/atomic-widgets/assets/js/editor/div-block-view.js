@@ -57,25 +57,6 @@ const DivBlockView = BaseElementView.extend( {
 		return width.toFixed( 1 ) + '%';
 	},
 
-	onResizeStart() {
-		if ( this.ui.percentsTooltip ) {
-			this.ui.percentsTooltip.show();
-		}
-	},
-
-	onResize() {
-		// TODO: Copied from `views/column.js`.
-		if ( this.ui.percentsTooltip ) {
-			this.ui.percentsTooltip.text( this.getPercentsForDisplay() );
-		}
-	},
-
-	onResizeStop() {
-		if ( this.ui.percentsTooltip ) {
-			this.ui.percentsTooltip.hide();
-		}
-	},
-
 	renderOnChange() {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
 
@@ -102,12 +83,6 @@ const DivBlockView = BaseElementView.extend( {
 		return true;
 	},
 
-	childViewOptions() {
-		return {
-			emptyViewOwner: this,
-		};
-	},
-
 	behaviors() {
 		const behaviors = BaseElementView.prototype.behaviors.apply( this, arguments );
 
@@ -119,12 +94,6 @@ const DivBlockView = BaseElementView.extend( {
 		} );
 
 		return elementor.hooks.applyFilters( 'elements/div-block/behaviors', behaviors, this );
-	},
-
-	onDestroy() {
-		BaseElementView.prototype.onDestroy.apply( this, arguments );
-
-		elementor.stopListening( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
 	/**
