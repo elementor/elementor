@@ -100,3 +100,9 @@ const addEventListener = ( eventName, containerId, Component ) => {
 	addEventListener( 'renderAttachmentsDetailsEvent', 'e-image-ai-attachment-details', AIMediaEditAppButtonWrapper );
 	insertStyleTag();
 } )();
+
+window.addEventListener( 'DOMContentLoaded', () => {
+	if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
+		elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
+	}
+} );
