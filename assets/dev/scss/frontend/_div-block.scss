@@ -1,6 +1,10 @@
 // TODO remove in feature [ED-16336]
 .e-div-block {
-	display: block;
-	padding-block-start: var(--padding-block-start);
-	padding-block-end: var(--padding-block-end);
+	--e-div-block-default-padding-block-start: 10px;
+	--e-div-block-default-padding-block-end: 10px;
+	--e-div-block-default-display: block;
+
+	display: var(--e-div-block-default-display);
+	padding-block-start: var(--e-div-block-default-padding-block-start);
+	padding-block-end: var(--e-div-block-default-padding-block-end);
 }
