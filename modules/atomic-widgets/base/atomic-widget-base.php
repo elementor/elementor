@@ -39,43 +39,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $config;
 	}
 
-	// TODO: Move to a `Schema_Validator` class?
-	private static function validate_schema( array $schema ) {
-		$widget_name = static::class;
-
-		foreach ( $schema as $key => $prop ) {
-			if ( ! ( $prop instanceof Prop_Type ) ) {
-				Utils::safe_throw( "Prop `$key` must be an instance of `Prop_Type` in `{$widget_name}`." );
-			}
-		}
-	}
-
-	private function sanitize_atomic_styles( array $styles ) {
-		foreach ( $styles as $style ) {
-			[$is_valid, $sanitized, $errors_bag] = Style_Validator::make( Style_Schema::get() )->validate( $style );
-
-			if ( ! $is_valid ) {
-				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
-			}
-
-			$styles[ $sanitized['id'] ] = $sanitized;
-		}
-
-		return $styles;
-	}
-
-	private function sanitize_atomic_settings( array $settings ): array {
-		$schema = static::get_props_schema();
-
-		[ , $validated, $errors ] = Props_Validator::make( $schema )->validate( $settings );
-
-		if ( ! empty( $errors ) ) {
-			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
-		}
-
-		return $validated;
-	}
-
 	// Removes the wrapper div from the widget.
 	public function before_render() {}
 	public function after_render() {}
