@@ -64,7 +64,7 @@ test.describe( 'Div Block tests @div-block', () => {
 			buttonInsideParentDivBlock = getElementSelector( button ),
 			imageInsideChildDivBlock = getElementSelector( image ),
 
-			divBlockChildrenCount = await locatorParentDivBlock.locator(  `${ headingInsideChildDivBlock }, ${ elChildDivBlock }, ${ buttonInsideParentDivBlock }, ${ imageInsideChildDivBlock }` ).count(),
+			divBlockChildrenCount = await locatorParentDivBlock.locator( `${ headingInsideChildDivBlock }, ${ elChildDivBlock }, ${ buttonInsideParentDivBlock }, ${ imageInsideChildDivBlock }` ).count(),
 			childDivBlockChildrenCount = await locatorChildDivBlock.locator( `${ headingInsideChildDivBlock }, ${ imageInsideChildDivBlock }` ).count();
 
 		// Assert
