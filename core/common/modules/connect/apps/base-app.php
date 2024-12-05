@@ -584,6 +584,16 @@ abstract class Base_App {
 				'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
 			] );
 
+		$utm_campaign = get_transient( 'elementor_core_campaign' );
+
+		if ( ! empty( $utm_campaign ) ) {
+			foreach ( [ 'source', 'medium', 'campaign' ] as $key ) {
+				if ( ! empty( $utm_campaign[ $key ] ) ) {
+					$query_params->offsetSet( 'utm_' . $key, $utm_campaign[ $key ] );
+				}
+			}
+		}
+
 		return add_query_arg( $query_params->all(), $this->get_remote_site_url() );
 	}
 
