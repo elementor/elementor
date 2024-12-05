@@ -51,7 +51,7 @@ class Style_Parser {
 
 		if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
 			$this->errors_bag[] = 'variants';
-			unset ( $validated_style['variants'] );
+			unset( $validated_style['variants'] );
 			return [
 				false,
 				$validated_style,
