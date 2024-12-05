@@ -1,4 +1,5 @@
 import DivBlockEmptyView from './container/div-block-empty-view';
+import AddSectionView from 'elementor-views/add-section/inline';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const DivBlockView = BaseElementView.extend( {
@@ -229,6 +230,39 @@ const DivBlockView = BaseElementView.extend( {
 
 	emptyViewIsCurrentlyBeingDraggedOver() {
 		return this.$el.find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
+	},
+
+	/**
+	 * Toggle the `New Section` view when clicking the `add` button in the edit tools.
+	 *
+	 * @return {void}
+	 */
+	onAddButtonClick() {
+		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
+			this.addSectionView.fadeToDeath();
+
+			return;
+		}
+
+		const addSectionView = new AddSectionView( {
+			at: this.model.collection.indexOf( this.model ),
+		} );
+
+		addSectionView.render();
+
+		this.$el.before( addSectionView.$el );
+
+		addSectionView.$el.hide();
+
+		// Delaying the slide down for slow-render browsers (such as FF)
+		setTimeout( function() {
+			addSectionView.$el.slideDown( null, function() {
+				// Remove inline style, for preview mode.
+				jQuery( this ).css( 'display', '' );
+			} );
+		} );
+
+		this.addSectionView = addSectionView;
 	},
 
 } );
