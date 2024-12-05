@@ -158,7 +158,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 					],
 				],
 				'title_field' => '{{{ item_title }}}',
-				'button_text' => 'Add Item',
+				'button_text' => esc_html__( 'Add Item', 'elementor' ),
 			]
 		);
 

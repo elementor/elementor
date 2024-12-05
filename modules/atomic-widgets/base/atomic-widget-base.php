@@ -90,6 +90,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	final public function get_initial_config() {
 		$config = parent::get_initial_config();
 
+		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
@@ -173,6 +174,10 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 		return Props_Parser::make( $schema )->sanitize( $validated );
 	}
+
+	// Removes the wrapper div from the widget.
+	public function before_render() {}
+	public function after_render() {}
 
 	/**
 	 * @return array<string, Prop_Type>
