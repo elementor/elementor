@@ -40,6 +40,12 @@ const addEventListener = ( eventName, containerId, Component ) => {
 	} );
 };
 
+const addEditorPostIdRequestConstant = () => {
+	if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
+		elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
+	}
+};
+
 ( function() {
 	if ( isMediaLibrary() ) {
 		window.EDITOR_SESSION_ID = getUniqueId( 'wp-media-lib-session' );
@@ -101,10 +107,4 @@ const addEventListener = ( eventName, containerId, Component ) => {
 	addEventListener( 'renderInsertMediaEvent', 'e-image-ai-insert-media', AIMediaEditAppLinkWrapper );
 	addEventListener( 'renderAttachmentsDetailsEvent', 'e-image-ai-attachment-details', AIMediaEditAppButtonWrapper );
 	insertStyleTag();
-
-	const addEditorPostIdRequestConstant = () => {
-		if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
-			elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
-		}
-	};
 } )();
