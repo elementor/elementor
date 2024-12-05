@@ -76,10 +76,6 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function sanitize( $value ) {
-		if ( ! $this->validate( $value ) ) {
-			return $this->get_default();
-		}
-
 		$value['value'] = $this->sanitize_value( $value['value'] );
 
 		return $value;
