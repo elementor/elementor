@@ -118,7 +118,7 @@ const DivBlockView = BaseElementView.extend( {
 			},
 		} );
 
-		return elementor.hooks.applyFilters( 'elements/container/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( 'elements/div-block/behaviors', behaviors, this );
 	},
 
 	onDestroy() {
