@@ -1,4 +1,5 @@
 import Component from './component';
+import { AtomicWidgetType } from './atomic-widget-type';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
@@ -18,9 +19,9 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerAtomicDivBlockType() {
-		const AContainerClass = require( './div-block-type' ).default;
+		const DivBlock = require( './div-block-type' ).default;
 
-		elementor.elementsManager.registerElementType( new AContainerClass() );
+		elementor.elementsManager.registerElementType( new DivBlock() );
 	}
 }
 

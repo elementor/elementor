@@ -1,4 +1,4 @@
-import EmptyComponent from '../../../../../assets/dev/js/editor/elements/views/container/empty-component';
+import EmptyComponent from 'elementor-elements/views/container/empty-component';
 import Model from './div-block-model';
 import { default as View } from './div-block-view';
 

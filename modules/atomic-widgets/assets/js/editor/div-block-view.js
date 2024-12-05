@@ -17,7 +17,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con div-block`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con e-div-block`;
 	},
 
 	// TODO: Copied from `views/column.js`.

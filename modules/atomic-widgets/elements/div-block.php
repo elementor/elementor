@@ -77,7 +77,7 @@ class Div_Block extends Atomic_Element_Base {
 
 		$this->add_render_attribute( '_wrapper', [
 			'class' => [
-				'div-block',
+				'e-div-block',
 				$settings['classes'] ?? '',
 			],
 		] );
