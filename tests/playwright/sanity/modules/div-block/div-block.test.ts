@@ -1,8 +1,8 @@
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import widgets from "../../../enums/widgets";
-import {getElementSelector} from "../../../assets/elements-utils";
-import {expect} from "@playwright/test";
+import widgets from '../../../enums/widgets';
+import { getElementSelector } from '../../../assets/elements-utils';
+import { expect } from '@playwright/test';
 
 test.describe( 'Div Block tests @div-block', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -44,7 +44,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		// Assert.
 		// Test that the image is between the heading & button.
 		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
-	})
+	} );
 
 	test( 'Nested Div block with widget', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -64,11 +64,11 @@ test.describe( 'Div Block tests @div-block', () => {
 			buttonInsideChildDivBlock = getElementSelector( button ),
 			imageInsideChildDivBlock = getElementSelector( image ),
 
-			divBlockChildrenCount = await locatorParentDivBlock.locator( `${headingInsideParentDivBlock}, ${elChildDivBlock}, ${buttonInsideChildDivBlock}, ${imageInsideChildDivBlock}` ).count(),
-			childDivBlockChildrenCount = await locatorChildDivBlock.locator( `${buttonInsideChildDivBlock}, ${imageInsideChildDivBlock}` ).count();
+			divBlockChildrenCount = await locatorParentDivBlock.locator(  `${ headingInsideParentDivBlock }, ${ elChildDivBlock }, ${ buttonInsideChildDivBlock }, ${ imageInsideChildDivBlock }` ).count(),
+			childDivBlockChildrenCount = await locatorChildDivBlock.locator( `${ buttonInsideChildDivBlock }, ${ imageInsideChildDivBlock }` ).count();
 
 		// Assert
-		expect( divBlockChildrenCount ).toBe(4);
-		expect( childDivBlockChildrenCount ).toBe(2);
-	})
+		expect( divBlockChildrenCount ).toBe( 4 );
+		expect( childDivBlockChildrenCount ).toBe( 2 );
+	} );
 } );
