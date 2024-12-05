@@ -28,45 +28,69 @@ class Props_Parser {
 	 *
 	 * @return array{
 	 *     0: bool,
-	 *     1: array<string, bool>,
-	 *     2: array<string>,
-	 *     3: array<string, mixed>
+	 *     1: array<string, mixed>,
+	 *     2: array<string>
 	 * }
 	 */
-	public function parse( array $props ): array {
+	public function validate( array $props ): array {
 		$validated = [];
-		$sanitized = [];
 
 		foreach ( $this->schema as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				continue;
 			}
-
 			$value = $props[ $key ] ?? null;
-
 			$is_valid = $prop_type->validate( $value ?? $prop_type->get_default() );
 
 			if ( ! $is_valid ) {
 				$this->errors_bag[] = $key;
-				$validated[ $key ] = false;
 
 				continue;
 			}
 
-			$validated[ $key ] = true;
-
 			if ( $value ) {
-				$sanitized[ $key ] = $prop_type->sanitize( $value );
+				$validated[ $key ] = $value;
 			}
 		}
 
 		$is_valid = empty( $this->errors_bag );
-
 		return [
 			$is_valid,
 			$validated,
 			$this->errors_bag,
-			$sanitized,
 		];
+	}
+
+	/**
+	 * @param array $props
+	 * The key of each item represents the prop name (should match the schema),
+	 * and the value is the prop value to sanitize
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function sanitize( array $props ): array {
+		$sanitized = [];
+
+		foreach ( $this->schema as $key => $prop_type ) {
+			if ( ! isset( $props[ $key ] ) ) {
+				continue;
+			}
+
+			$sanitized[ $key ] = $prop_type->sanitize( $props[ $key ] );
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * @param array $props
+	 * The key of each item represents the prop name (should match the schema),
+	 * and the value is the prop value to parse
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function parse( array $props ): array {
+		[ , , $validated] = $this->validate( $props );
+		return $this->sanitize( $validated );
 	}
 }

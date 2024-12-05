@@ -38,14 +38,10 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function sanitize( $value ) {
-		if ( ! $this->validate( $value ) ) {
-			return $this->get_default();
-		}
-
 		if ( $this->is_transformable( $value ) ) {
-			$value['value'] = $this->sanitize_value( $value['value'] );
+			$value['value'] = wp_kses_post( $value['value'] );
 		} else {
-			$value = $this->sanitize_value( $value );
+			$value = wp_kses_post( $value );
 		}
 
 		return $value;

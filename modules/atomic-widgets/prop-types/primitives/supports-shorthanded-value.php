@@ -27,6 +27,16 @@ trait Supports_Shorthanded_Value {
 		);
 	}
 
+	public function sanitize( $value ) {
+		if ( $this->is_transformable( $value ) ) {
+			$value['value'] = $this->sanitize_value( $value['value'] );
+		} else {
+			$value = $this->sanitize_value( $value );
+		}
+
+		return $value;
+	}
+
 	/**
 	 * @param $value
 	 *

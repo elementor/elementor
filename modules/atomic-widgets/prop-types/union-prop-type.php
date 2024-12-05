@@ -79,10 +79,6 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	public function sanitize( $value ) {
-		if ( ! $this->validate( $value ) ) {
-			return $this->get_default();
-		}
-
 		return $this->sanitize_prop_types( $value );
 	}
 
