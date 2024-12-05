@@ -60,12 +60,12 @@ test.describe( 'Div Block tests @div-block', () => {
 			locatorParentDivBlock = page.locator( getElementSelector( parentDivBlock ) ),
 			locatorChildDivBlock = page.locator( getElementSelector( childDivBlock ) ),
 			elChildDivBlock = getElementSelector( childDivBlock ),
-			headingInsideParentDivBlock = getElementSelector( heading ),
-			buttonInsideChildDivBlock = getElementSelector( button ),
+			headingInsideChildDivBlock = getElementSelector( heading ),
+			buttonInsideParentDivBlock = getElementSelector( button ),
 			imageInsideChildDivBlock = getElementSelector( image ),
 
-			divBlockChildrenCount = await locatorParentDivBlock.locator(  `${ headingInsideParentDivBlock }, ${ elChildDivBlock }, ${ buttonInsideChildDivBlock }, ${ imageInsideChildDivBlock }` ).count(),
-			childDivBlockChildrenCount = await locatorChildDivBlock.locator( `${ buttonInsideChildDivBlock }, ${ imageInsideChildDivBlock }` ).count();
+			divBlockChildrenCount = await locatorParentDivBlock.locator(  `${ headingInsideChildDivBlock }, ${ elChildDivBlock }, ${ buttonInsideParentDivBlock }, ${ imageInsideChildDivBlock }` ).count(),
+			childDivBlockChildrenCount = await locatorChildDivBlock.locator( `${ headingInsideChildDivBlock }, ${ imageInsideChildDivBlock }` ).count();
 
 		// Assert
 		expect( divBlockChildrenCount ).toBe( 4 );
