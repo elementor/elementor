@@ -485,8 +485,14 @@ class Module extends BaseModule {
 			throw new \Exception( 'Document not found' );
 		}
 
-		if ( ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'Access denied' );
+		if ( $document->is_built_with_elementor() ) {
+			if ( ! $document->is_editable_by_current_user() ) {
+				throw new \Exception( 'Access denied' );
+			}
+		} else {
+			if ( ! current_user_can( 'edit_post', $editor_post_id ) ) {
+				throw new \Exception( 'Access denied' );
+			}
 		}
 	}
 
