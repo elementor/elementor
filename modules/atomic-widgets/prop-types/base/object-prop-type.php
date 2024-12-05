@@ -90,7 +90,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 			return null;
 		}
 
-		$value['value'] = $this->is_transformable( $value ) ? $this->sanitize_value( $value[ 'value' ] ) : null;
+		$value['value'] = $this->is_transformable( $value ) ? $this->sanitize_value( $value['value'] ) : null;
 
 		return $value;
 	}
