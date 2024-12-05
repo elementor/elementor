@@ -161,7 +161,7 @@ class Group_Control_Background extends Group_Control_Base {
 						'conditions' => [
 							'terms' => [
 								[
-									'name' => $fields['background'],
+									'name' => 'background',
 									'operator' => '!==',
 									'value' => '',
 								],
