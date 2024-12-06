@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Validators;
+namespace Elementor\Modules\AtomicWidgets\Parsers;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Props_Validator {
+class Props_Parser {
 
 	private array $schema;
 	private array $errors_bag = [];
@@ -39,9 +39,7 @@ class Props_Validator {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				continue;
 			}
-
 			$value = $props[ $key ] ?? null;
-
 			$is_valid = $prop_type->validate( $value ?? $prop_type->get_default() );
 
 			if ( ! $is_valid ) {
@@ -56,11 +54,43 @@ class Props_Validator {
 		}
 
 		$is_valid = empty( $this->errors_bag );
-
 		return [
 			$is_valid,
 			$validated,
 			$this->errors_bag,
 		];
+	}
+
+	/**
+	 * @param array $props
+	 * The key of each item represents the prop name (should match the schema),
+	 * and the value is the prop value to sanitize
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function sanitize( array $props ): array {
+		$sanitized = [];
+
+		foreach ( $this->schema as $key => $prop_type ) {
+			if ( ! isset( $props[ $key ] ) ) {
+				continue;
+			}
+
+			$sanitized[ $key ] = $prop_type->sanitize( $props[ $key ] );
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * @param array $props
+	 * The key of each item represents the prop name (should match the schema),
+	 * and the value is the prop value to parse
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function parse( array $props ): array {
+		[ , , $validated] = $this->validate( $props );
+		return $this->sanitize( $validated );
 	}
 }

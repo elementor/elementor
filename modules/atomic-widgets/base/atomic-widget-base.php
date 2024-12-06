@@ -4,9 +4,9 @@ namespace Elementor\Modules\AtomicWidgets\Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
-use Elementor\Modules\AtomicWidgets\Validators\Style_Validator;
+use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
@@ -148,15 +148,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		}
 	}
 
-	private function sanitize_atomic_styles( array $styles ) {
-		foreach ( $styles as $style ) {
-			[$is_valid, $sanitized, $errors_bag] = Style_Validator::make( Style_Schema::get() )->validate( $style );
-
+	private function sanitize_atomic_styles( array $styles ): array {
+		foreach ( $styles as $style_id => $style ) {
+			[ $is_valid, $validated, $errors_bag  ] = Style_Parser::make( Style_Schema::get() )->validate( $style );
 			if ( ! $is_valid ) {
 				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
 			}
 
-			$styles[ $sanitized['id'] ] = $sanitized;
+			$sanitized = Style_Parser::make( Style_Schema::get() )->sanitize( $validated );
+
+			$styles[ $style_id ] = $sanitized;
 		}
 
 		return $styles;
@@ -165,13 +166,13 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	private function sanitize_atomic_settings( array $settings ): array {
 		$schema = static::get_props_schema();
 
-		[ , $validated, $errors ] = Props_Validator::make( $schema )->validate( $settings );
+		[ , $validated, $errors ] = Props_Parser::make( $schema )->validate( $settings );
 
 		if ( ! empty( $errors ) ) {
 			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
 
-		return $validated;
+		return Props_Parser::make( $schema )->sanitize( $validated );
 	}
 
 	// Removes the wrapper div from the widget.
