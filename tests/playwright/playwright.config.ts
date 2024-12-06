@@ -24,7 +24,16 @@ export default defineConfig( {
 	retries: process.env.CI ? 1 : 0,
 	workers: process.env.CI ? 2 : 1,
 	fullyParallel: false,
-	reporter: process.env.CI ? [ [ 'github' ], [ 'list' ] ] : 'list',
+	reporter: process.env.CI
+		? [
+			[ 'github' ],
+			[ 'list' ],
+			[ 'json', { outputFile: 'test-results.json' } ],
+		]
+		: [
+			[ 'list' ],
+			[ 'json', { outputFile: 'test-results.json' } ],
+		],
 	use: {
 		launchOptions: {
 			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
