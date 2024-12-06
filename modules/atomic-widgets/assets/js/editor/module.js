@@ -14,6 +14,14 @@ class Module extends elementorModules.editor.utils.Module {
 			.forEach(
 				( [ type ] ) => elementor.elementsManager.registerElementType( new AtomicWidgetType( type ) ),
 			);
+
+		this.registerAtomicDivBlockType();
+	}
+
+	registerAtomicDivBlockType() {
+		const DivBlock = require( './div-block-type' ).default;
+
+		elementor.elementsManager.registerElementType( new DivBlock() );
 	}
 }
 
