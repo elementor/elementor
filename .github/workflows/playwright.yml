@@ -13,16 +13,6 @@ on:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
       inputs:
-        reporter:
-          required: false
-          description: 'Select a reporter'
-          type: choice
-          options:
-            - allure-playwright
-            - html
-            - blob
-            - list
-          default: allure-playwright
         path-to-results:
           required: false
           description: 'Provide path to reporter files'
@@ -101,10 +91,10 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
-        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=${{ inputs.reporter || 'list,github' }}
+        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression -- --reporter=${{ inputs.reporter || 'list,github' }}
+        run: npm run test:playwright:elements-regression
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -153,7 +143,7 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         run: |
-          npm run test:playwright -- --grep="${{ inputs.tag }}" --reporter=list,allure-playwright
+          npm run test:playwright -- --grep="${{ inputs.tag }}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
