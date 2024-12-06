@@ -852,5 +852,23 @@ class Ai extends Library {
 		);
 	}
 
+	public function get_animation( $data, $context, $request_ids ) {
+		return $this->ai_request(
+			'POST',
+			'text/get-motion-effect',
+			[
+				'prompt' => $data['payload']['prompt'],
+				'motionEffectType' => $data['payload']['motionEffectType'],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
 	protected function init() {}
 }

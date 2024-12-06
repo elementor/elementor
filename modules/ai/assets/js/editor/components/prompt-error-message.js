@@ -93,6 +93,10 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 				text: <AlertTitle>{ __( 'The file is too large.', 'elementor' ) }</AlertTitle>,
 				description: __( 'Please upload a file that is less than 4MB.', 'elementor' ),
 			},
+			image_resolution_maximum_exceeded: {
+				text: <AlertTitle>{ __( 'The image resolution exceeds the maximum allowed size.', 'elementor' ) }</AlertTitle>,
+				description: __( 'Please upload a file with dimensions less than 2048x2048 pixels.', 'elementor' ),
+			},
 		};
 
 		return messages[ errMsg ] || messages.default;

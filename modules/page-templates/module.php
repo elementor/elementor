@@ -406,16 +406,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Support `wp_body_open` action, available since WordPress 5.2.
-	 *
-	 * @since 2.7.0
-	 * @access public
-	 */
-	public static function body_open() {
-		wp_body_open();
-	}
-
-	/**
 	 * Page templates module constructor.
 	 *
 	 * Initializing Elementor page templates module.

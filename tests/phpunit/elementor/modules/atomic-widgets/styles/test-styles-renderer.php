@@ -5,15 +5,19 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Border_Radius_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Border_Width_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corner_Sizes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Gradient_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -378,10 +382,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
 			$registry->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 			$registry->register( Linked_Dimensions_Prop_Type::get_key(), new Linked_Dimensions_Transformer() );
-			$registry->register( Border_Radius_Prop_Type::get_key(), new Border_Radius_Transformer() );
-			$registry->register( Border_Width_Prop_Type::get_key(), new Border_Width_Transformer() );
+			$registry->register( Border_Radius_Prop_Type::get_key(), new Corner_Sizes_Transformer( fn( $corner ) => 'border-' . $corner . '-radius' ) );
+			$registry->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
 			$registry->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 			$registry->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
+			$registry->register( Color_Gradient_Prop_Type::get_key(), new Background_Overlay_Transformer() );
+			$registry->register( Background_Image_Prop_Type::get_key(), new Combine_Array_Transformer(', ') );
 		});
 
 		$styles = [
@@ -477,6 +483,20 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'value' => [
 											'unit' => 'px',
 											'size' => 10,
+										],
+									],
+								],
+							],
+							'background-image' => [
+								'$$type' => 'background-image',
+								'value' => [
+									[
+										'$$type' => 'background-overlay',
+										'value' => [
+											'color' => [
+												'$$type' => 'color',
+												'value' => 'rgba(0, 0, 0, 0.2)',
+											],
 										],
 									],
 								],

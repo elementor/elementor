@@ -57,11 +57,11 @@ class Loader extends Module {
 	}
 
 	private function getSwiperPath(): string {
-		return Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'assets/lib/swiper/v8/css/' : 'assets/lib/swiper/css/';
+		return 'assets/lib/swiper/v8/css/';
 	}
 
 	private function getSwiperVersion(): string {
-		return Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? '8.4.5' : '5.3.6';
+		return '8.4.5';
 	}
 
 	private function get_animations(): array {

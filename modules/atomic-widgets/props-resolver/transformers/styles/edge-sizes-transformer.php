@@ -10,14 +10,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Border_Width_Transformer extends Transformer_Base {
+class Edge_Sizes_Transformer extends Transformer_Base {
+	private $key_generator;
+
+	public function __construct( callable $key_generator ) {
+		$this->key_generator = $key_generator;
+	}
+
 	public function transform( $value, $key ) {
-		$sides = Collection::make( $value )
+		$edges = Collection::make( $value )
 			->only( [ 'top', 'right', 'bottom', 'left' ] )
 			->filter()
-			->map_with_keys( fn( $side, $side_key ) => [ 'border-' . $side_key . '-width' => $side ] )
+			->map_with_keys( fn( $edge, $edge_key ) => [ call_user_func( $this->key_generator, $edge_key ) => $edge ] )
 			->all();
 
-		return Multi_Props::generate( $sides );
+		return Multi_Props::generate( $edges );
 	}
 }

@@ -4,6 +4,7 @@ const eventsConfig = {
 		accordionClick: 'Accordion Click',
 		toggleClick: 'Toggle Click',
 		dropdownClick: 'Click Dropdown',
+		editorLoaded: 'Editor Loaded',
 	},
 
 	locations: {
@@ -51,6 +52,7 @@ const eventsConfig = {
 		link: 'Link',
 		dropdown: 'Dropdown',
 		toggle: 'Toggle',
+		launchpadChecklist: 'Checklist popup',
 	},
 
 	names: {
@@ -89,7 +91,10 @@ const eventsConfig = {
 		},
 		// ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
 		elementorEditor: {
-			checklistHeaderClose: 'checklist_header_close_icon',
+			checklist: {
+				checklistHeaderClose: 'checklist_header_close_icon',
+				checklistFirstPopup: 'checklist popup triggered',
+			},
 			userPreferences: {
 				checklistShow: 'checklist_userpreferences_toggle_show',
 				checklistHide: 'checklist_userpreferences_toggle_hide',

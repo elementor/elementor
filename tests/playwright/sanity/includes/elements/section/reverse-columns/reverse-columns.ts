@@ -31,7 +31,7 @@ export default class ReverseColumns {
 		await this.editor.closeNavigatorIfOpen();
 		await this.editor.getPreviewFrame().locator( '.elementor-add-section-inner' ).click( { button: 'right' } );
 		await this.editor.getPreviewFrame().click( '.elementor-add-section-button', { delay: 500, clickCount: 2 } );
-		await this.editor.getPreviewFrame().click( '.elementor-select-preset-list li:nth-child(2)' );
+		await this.editor.getPreviewFrame().click( '.elementor-select-preset-list button:nth-child(2)' );
 	}
 
 	async initAdditionalBreakpoints() {

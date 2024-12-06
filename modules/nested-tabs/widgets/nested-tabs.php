@@ -50,6 +50,10 @@ class NestedTabs extends Widget_Nested_Base {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
+	public function show_in_panel(): bool {
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
+	}
+
 	protected function tab_content_container( int $index ) {
 		return [
 			'elType' => 'container',
@@ -175,7 +179,7 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'title_field' => '{{{ tab_title }}}',
-			'button_text' => 'Add Tab',
+			'button_text' => esc_html__( 'Add Tab', 'elementor' ),
 		] );
 
 		$styling_block_start = '--n-tabs-direction: column; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial; --n-tabs-title-flex-basis: content; --n-tabs-title-flex-shrink: 0;';

@@ -275,7 +275,7 @@ class Module extends BaseModule {
 			delete_option( self::OPTION_NAME );
 		}
 
-		$post_types = get_post_types( array( 'public' => true ) );
+		$post_types = get_post_types( [ 'public' => true ] );
 
 		$query = new \WP_Query( [
 			'no_found_rows' => true,

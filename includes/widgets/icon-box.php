@@ -708,7 +708,11 @@ class Widget_Icon_Box extends Widget_Base {
 		$has_link = ! empty( $settings['link']['url'] );
 		$html_tag = $has_link ? 'a' : 'span';
 
-		$this->add_render_attribute( 'icon', 'class', [ 'elementor-icon', 'elementor-animation-' . $settings['hover_animation'] ] );
+		$this->add_render_attribute( 'icon', 'class', 'elementor-icon' );
+
+		if ( ! empty( $settings['hover_animation'] ) ) {
+			$this->add_render_attribute( 'icon', 'class', 'elementor-animation-' . $settings['hover_animation'] );
+		}
 
 		$has_icon = ! empty( $settings['selected_icon']['value'] );
 		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
@@ -805,7 +809,11 @@ class Widget_Icon_Box extends Widget_Base {
 			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
 			titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
-		view.addRenderAttribute( 'icon', 'class', 'elementor-icon elementor-animation-' + settings.hover_animation );
+		view.addRenderAttribute( 'icon', 'class', 'elementor-icon' );
+
+		if ( '' !== settings.hover_animation ) {
+			view.addRenderAttribute( 'icon', 'class', 'elementor-animation-' + settings.hover_animation );
+		}
 
 		if ( hasLink ) {
 			view.addRenderAttribute( 'link', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );

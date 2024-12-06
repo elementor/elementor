@@ -38,7 +38,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				invisible: 'elementor-invisible',
 				preventClose: 'elementor-lightbox-prevent-close',
 				slideshow: {
-					container: elementorFrontend.config.swiperClass,
+					container: 'swiper',
 					slidesWrapper: 'swiper-wrapper',
 					prevButton: 'elementor-swiper-button elementor-swiper-button-prev',
 					nextButton: 'elementor-swiper-button elementor-swiper-button-next',

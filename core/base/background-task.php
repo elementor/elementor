@@ -305,14 +305,14 @@ abstract class Background_Task extends WP_Background_Process {
 		$interval = apply_filters( $this->identifier . '_cron_interval', 5 );
 
 		// Adds every 5 minutes to the existing schedules.
-		$schedules[ $this->identifier . '_cron_interval' ] = array(
+		$schedules[ $this->identifier . '_cron_interval' ] = [
 			'interval' => MINUTE_IN_SECONDS * $interval,
 			'display' => sprintf(
 				/* translators: %d: Interval in minutes. */
 				esc_html__( 'Every %d minutes', 'elementor' ),
 				$interval
 			),
-		);
+		];
 
 		return $schedules;
 	}

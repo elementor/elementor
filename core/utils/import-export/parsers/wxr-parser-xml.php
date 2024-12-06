@@ -190,7 +190,7 @@ class WXR_Parser_XML {
 			return new WP_Error( 'WXR_parse_error', esc_html__( 'This does not appear to be a WXR file, missing/invalid WXR version number', 'elementor' ) );
 		}
 
-		return array(
+		return [
 			'authors' => $this->authors,
 			'posts' => $this->posts,
 			'categories' => $this->category,
@@ -199,7 +199,7 @@ class WXR_Parser_XML {
 			'base_url' => $this->base_url,
 			'base_blog_url' => $this->base_blog_url,
 			'version' => $this->wxr_version,
-		);
+		];
 	}
 
 	private function tag_open( $tag, $attr ) {
