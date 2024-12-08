@@ -78,6 +78,11 @@ class Global_Classes_REST_API {
 
 					return $is_valid;
 				},
+				'sanitize_callback' => function( \WP_REST_Request $request ) {
+					Style_Parser::make( Style_Schema::get() )
+						->without_id()
+						->sanitize( $request->get_body_params() );
+				},
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
