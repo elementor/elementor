@@ -473,7 +473,11 @@ abstract class Element_Base extends Controls_Stack {
 		 */
 		do_action( "elementor/frontend/{$element_type}/before_render", $this );
 
+
+        if(apply_filters("elementor/frontend/{$element_type}/should_process",true, $this)){
+
 		ob_start();
+
 
 		if ( $this->has_own_method( '_print_content', self::class ) ) {
 			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_print_content', '3.1.0', __CLASS__ . '::print_content()' );
@@ -518,6 +522,8 @@ abstract class Element_Base extends Controls_Stack {
 			$this->enqueue_scripts();
 			$this->enqueue_styles();
 		}
+
+        }
 
 		/**
 		 * After frontend element render.
@@ -825,7 +831,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access protected
 	 * @return void
 	 */
-	protected function register_transform_section( $element_selector = '', $transform_selector_class = ' > .elementor-widget-container' ) {
+	protected function register_transform_section( $element_selector = '' ) {
 		$default_unit_values_deg = [];
 		$default_unit_values_ms = [];
 
@@ -856,6 +862,7 @@ abstract class Element_Base extends Controls_Stack {
 
 		$transform_prefix_class = 'e-';
 		$transform_return_value = 'transform';
+		$transform_selector_class = ' > .elementor-widget-container';
 		$transform_css_modifier = '';
 
 		if ( 'con' === $element_selector ) {
@@ -920,7 +927,6 @@ abstract class Element_Base extends Controls_Stack {
 					'condition' => [
 						"_transform_rotate_popover{$tab}!" => '',
 					],
-					'frontend_available' => true,
 				]
 			);
 
@@ -1546,10 +1552,6 @@ abstract class Element_Base extends Controls_Stack {
 
 			$this->add_child( $child_data );
 		}
-	}
-
-	public function has_widget_inner_wrapper(): bool {
-		return true;
 	}
 
 	/**
