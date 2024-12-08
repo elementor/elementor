@@ -84,7 +84,9 @@ class Union_Prop_Type implements Prop_Type {
 
 	protected function sanitize_prop_types( $value ) {
 		foreach ( $this->get_prop_types() as $prop_type ) {
-			return $prop_type->sanitize( $value );
+			if ( $prop_type->validate( $value ) ) {
+				return $prop_type->sanitize( $value );
+			}
 		}
 
 		return null;
