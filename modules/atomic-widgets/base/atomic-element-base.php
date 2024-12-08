@@ -1,15 +1,17 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\Base;
 
+use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Atomic_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Atomic_Widget_Base extends Widget_Base {
+abstract class Atomic_Element_Base extends Element_Base {
+
 	use Has_Atomic_Base;
 
 	protected $version = '0.0';
@@ -27,17 +29,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	final public function get_initial_config() {
 		$config = parent::get_initial_config();
 
-		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
+		$config['show_in_panel'] = true;
+		$config['categories'] = [ 'layout' ];
+		$config['hide_on_search'] = false;
+		$config['controls'] = [];
 
 		return $config;
 	}
-
-	// Removes the wrapper div from the widget.
-	public function before_render() {}
-	public function after_render() {}
 
 	/**
 	 * @return array<string, Prop_Type>
