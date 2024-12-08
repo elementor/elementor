@@ -299,6 +299,21 @@
 			"name": "modestbranding",
 			"default": ""
 		},
+		"cc_load_policy": {
+			"type": "switcher",
+			"tab": "content",
+			"section": "section_video",
+			"label": "Captions",
+			"condition": {
+				"video_type": [
+					"youtube"
+				],
+				"controls": "yes"
+			},
+			"frontend_available": true,
+			"name": "cc_load_policy",
+			"default": ""
+		},
 		"logo": {
 			"type": "switcher",
 			"tab": "content",
