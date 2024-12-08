@@ -95,7 +95,7 @@ class Ai extends Library {
 	 *     }
 	 * }
 	 */
-	public function send_event(array $event_data ): void{
+	public function send_event( array $event_data ) : void {
 		$this->ai_request(
 			'POST',
 			'client-events/events',

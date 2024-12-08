@@ -168,11 +168,11 @@ class Module extends BaseModule {
 	}
 
 	public function handle_kit_install( $imported_data ) {
-		if ( $imported_data['status'] !== 'success' ) {
+		if ( 'success' !== $imported_data['status'] ) {
 			return;
 		}
 
-		if ( $imported_data['runner'] !== 'site-settings' ) {
+		if ( 'site-settings' !== $imported_data['runner'] ) {
 			return;
 		}
 
@@ -186,8 +186,8 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$lastImportedSession = $imported_data['configData']['lastImportedSession'];
-		$imported_ai_data = $lastImportedSession['instance_data']['site_settings']['settings']['ai'];
+		$last_imported_session = $imported_data['configData']['lastImportedSession'];
+		$imported_ai_data = $last_imported_session['instance_data']['site_settings']['settings']['ai'];
 
 		if ( $is_connected ) {
 			$this->get_ai_app()->send_event( [
@@ -196,7 +196,7 @@ class Module extends BaseModule {
 				'client' => [
 					'name' => 'elementor',
 					'version' => ELEMENTOR_VERSION,
-					'session_id' => $lastImportedSession['session_id'],
+					'session_id' => $last_imported_session['session_id'],
 				],
 			] );
 		}
