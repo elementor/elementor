@@ -10,7 +10,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		originalActiveTheme = await wpAdmin.getActiveTheme();
-		wpAdmin.activateTheme( 'twentytwentytwo' );
+		wpAdmin.activateTheme( 'twentytwentyfive' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
