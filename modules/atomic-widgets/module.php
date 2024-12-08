@@ -39,6 +39,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
+use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -103,6 +104,7 @@ class Module extends BaseModule {
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
+		$widgets_manager->register( new Atomic_Svg() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
