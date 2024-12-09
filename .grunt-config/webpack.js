@@ -192,6 +192,10 @@ const plugins = [
 	new WatchTimePlugin(),
 ];
 
+// Prevents the collision of chunk names between base and frontend bundles.
+const baseOutputUniqueName = 'elementor';
+const frontendOutputUniqueName = 'elementorFrontend';
+
 const baseConfig = {
 	target: 'web',
 	context: __dirname,
@@ -208,8 +212,6 @@ const devSharedConfig = {
 		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'development' ),
 		filename: '[name].js',
 		devtoolModuleFilenameTemplate: '../[resource]',
-		// Prevents the collision of chunk names between different bundles.
-		uniqueName: 'elementor',
 	},
 	watch: true,
 };
@@ -217,6 +219,10 @@ const devSharedConfig = {
 const webpackConfig = [
 	{
 		...devSharedConfig,
+		output: {
+			...devSharedConfig.output,
+			uniqueName: baseOutputUniqueName,
+		},
 		module: moduleRules,
 		plugins: [
 			...plugins,
@@ -226,6 +232,10 @@ const webpackConfig = [
 	},
 	{
 		...devSharedConfig,
+		output: {
+			...devSharedConfig.output,
+			uniqueName: frontendOutputUniqueName,
+		},
 		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.js' ),
@@ -264,8 +274,6 @@ const prodSharedConfig = {
 		path: path.resolve( __dirname, '../assets/js' ),
 		chunkFilename: ( chunkData ) => getChunkName( chunkData, 'production' ),
 		filename: '[name].js',
-		// Prevents the collision of chunk names between different bundles.
-		uniqueName: 'elementor',
 	},
 	performance: { hints: false },
 };
@@ -273,6 +281,10 @@ const prodSharedConfig = {
 const webpackProductionConfig = [
 	{
 		...prodSharedConfig,
+		output: {
+			...prodSharedConfig.output,
+			uniqueName: baseOutputUniqueName,
+		},
 		module: moduleRules,
 		plugins: [
 			...plugins,
@@ -288,6 +300,10 @@ const webpackProductionConfig = [
 	},
 	{
 		...prodSharedConfig,
+		output: {
+			...prodSharedConfig.output,
+			uniqueName: frontendOutputUniqueName,
+		},
 		module: frontendModuleRules,
 		plugins: [
 			new RemoveChunksPlugin( '.bundle.min.js' ),
