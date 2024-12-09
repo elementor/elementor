@@ -1314,6 +1314,12 @@
 			"type": "number",
 			"title": "Install timestamp"
 		},
+		"site_key": {
+			"$id": "#/site_key",
+			"type": "string",
+			"title": "Site key",
+			"description": "The site key is a unique identifier for the site."
+		},
 		"analytics_events": {
 			"$id": "#/analytics_events",
 			"type": "array",
