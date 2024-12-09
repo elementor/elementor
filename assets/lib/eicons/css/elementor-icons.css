@@ -1,7 +1,7 @@
 @font-face {
   font-family: "eicons";
-  src: url("../fonts/eicons.eot?5.31.0");
-  src: url("../fonts/eicons.eot?5.31.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.31.0") format("woff2"), url("../fonts/eicons.woff?5.31.0") format("woff"), url("../fonts/eicons.ttf?5.31.0") format("truetype"), url("../fonts/eicons.svg?5.31.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.34.0");
+  src: url("../fonts/eicons.eot?5.34.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.34.0") format("woff2"), url("../fonts/eicons.woff?5.34.0") format("woff"), url("../fonts/eicons.ttf?5.34.0") format("truetype"), url("../fonts/eicons.svg?5.34.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -1835,6 +1835,10 @@
   content: "\eb84";
 }
 
+.eicon-div-block:before {
+  content: "\eb95";
+}
+
 .eicon-notification:before {
   content: "\e9c3";
 }
@@ -1857,6 +1861,22 @@
 
 .eicon-speakerphone:before {
   content: "\e9c9";
+}
+
+.eicon-ehp-cta:before {
+  content: "\e9cb";
+}
+
+.eicon-ehp-forms:before {
+  content: "\e9bc";
+}
+
+.eicon-ehp-hero:before {
+  content: "\e9ca";
+}
+
+.eicon-ehp-zigzag:before {
+  content: "\e9cc";
 }
 
 .eicon-eye:before {

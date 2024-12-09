@@ -54,7 +54,7 @@ export default class WpAdminPage extends BasePage {
 
 		await this.page.fill( 'input[name="log"]', username );
 		await this.page.fill( 'input[name="pwd"]', password );
-		await this.page.click( 'text=Log In' );
+		await this.page.locator( 'text=Log In' ).last().click();
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
