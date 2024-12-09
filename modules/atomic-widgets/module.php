@@ -33,7 +33,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Gradient_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
@@ -132,7 +132,7 @@ class Module extends BaseModule {
 		$transformers->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register( Color_Gradient_Prop_Type::get_key(), new Background_Overlay_Transformer() );
-		$transformers->register( Background_Image_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
+		$transformers->register( Background_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 	}
 
 	/**
