@@ -69,13 +69,9 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	protected function validate_prop_types( $value ): bool {
-		foreach ( $this->get_prop_types() as $prop_type ) {
-			if ( $prop_type->validate( $value ) ) {
-				return true;
-			}
-		}
+		$prop_type = $this->get_prop_type( $value[ '$$type' ] );
 
-		return false;
+		return $prop_type->validate( $value );
 	}
 
 	public function sanitize( $value ) {
@@ -83,13 +79,9 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	protected function sanitize_prop_types( $value ) {
-		foreach ( $this->get_prop_types() as $prop_type ) {
-			if ( $prop_type->validate( $value ) ) {
-				return $prop_type->sanitize( $value );
-			}
-		}
+		$prop_type = $this->get_prop_type( $value[ '$$type' ] );
 
-		return null;
+		return $prop_type->sanitize( $value );
 	}
 
 	public function jsonSerialize(): array {
