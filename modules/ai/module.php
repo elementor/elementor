@@ -311,12 +311,12 @@ class Module extends BaseModule {
 			];
 		}
 
-		$supported_post_types = get_option( 'elementor_cpt_support', [] );
-		$new_post_type = 'product';
-		if ( ! in_array( $new_post_type, $supported_post_types, true ) ) {
-			$supported_post_types[] = $new_post_type;
-			update_option( 'elementor_cpt_support', $supported_post_types );
-		}
+//		$supported_post_types = get_option( 'elementor_cpt_support', [] );
+//		$new_post_type = 'product';
+//		if ( ! in_array( $new_post_type, $supported_post_types, true ) ) {
+//			$supported_post_types[] = $new_post_type;
+//			update_option( 'elementor_cpt_support', $supported_post_types );
+//		}
 
 		wp_send_json_success( [ 'product_images' => array_slice( $image_ids, 0, 10 ) ] );
 
