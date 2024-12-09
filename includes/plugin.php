@@ -576,7 +576,7 @@ class Plugin {
 	 * @since 3.24.0
 	 * @var DIContainer
 	 */
-	private $container;
+	private static $container;
 
 	/**
 	 * Clone.
@@ -628,6 +628,8 @@ class Plugin {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 
+			self::$container = Container::get_instance();
+
 			/**
 			 * Elementor loaded.
 			 *
@@ -641,21 +643,15 @@ class Plugin {
 		return self::$instance;
 	}
 
-	public function initialize_container() {
-		Container::initialize_instance();
-
-		$this->container = Container::get_instance();
-	}
-
 	/**
 	 * Get the Elementor container or resolve a dependency.
 	 */
-	public function elementor_container( $abstract = null ) {
+	public function get_elementor_container( $abstract = null ) {
 		if ( is_null( $abstract ) ) {
-			return $this->container;
+			return self::$container;
 		}
 
-		return $this->container->make( $abstract );
+		return self::$container->make( $abstract );
 	}
 
 	/**
@@ -883,7 +879,5 @@ class Plugin {
 
 if ( ! defined( 'ELEMENTOR_TESTS' ) ) {
 	// In tests we run the instance manually.
-	$plugin_instance = Plugin::instance();
-
-	$plugin_instance->initialize_container();
+	Plugin::instance();
 }
