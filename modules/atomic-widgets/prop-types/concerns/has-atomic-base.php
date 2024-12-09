@@ -7,8 +7,8 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
-use Elementor\Modules\AtomicWidgets\Validators\Style_Validator;
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,14 +69,16 @@ trait Has_Atomic_Base {
 	}
 
 	private function sanitize_atomic_styles( array $styles ) {
+		$style_parser = Style_Parser::make( Style_Schema::get() );
+
 		foreach ( $styles as $style ) {
-			[$is_valid, $sanitized, $errors_bag] = Style_Validator::make( Style_Schema::get() )->validate( $style );
+			[$is_valid, $validated, $errors_bag] = $style_parser->validate( $style );
 
 			if ( ! $is_valid ) {
 				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
 			}
 
-			$styles[ $sanitized['id'] ] = $sanitized;
+			$styles[ $validated['id'] ] = $style_parser->sanitize( $validated );
 		}
 
 		return $styles;
@@ -85,13 +87,15 @@ trait Has_Atomic_Base {
 	private function sanitize_atomic_settings( array $settings ): array {
 		$schema = static::get_props_schema();
 
-		[ , $validated, $errors ] = Props_Validator::make( $schema )->validate( $settings );
+		$props_parser = Props_Parser::make( $schema );
+
+		[ , $validated, $errors ] = $props_parser->validate( $settings );
 
 		if ( ! empty( $errors ) ) {
 			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
 
-		return $validated;
+		return $props_parser->sanitize( $validated );
 	}
 
 	public function get_atomic_controls() {
