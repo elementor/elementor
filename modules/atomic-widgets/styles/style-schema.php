@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Gap_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -183,7 +184,7 @@ class Style_Schema {
 				'column',
 				'column-reverse',
 			]),
-			'gap' => Size_Prop_Type::make(),
+			'gap' => Gap_Prop_Type::make(),
 			'flex-wrap' => String_Prop_Type::make()->enum([
 				'wrap',
 				'nowrap',
