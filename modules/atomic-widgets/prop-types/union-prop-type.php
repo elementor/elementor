@@ -87,13 +87,13 @@ class Union_Prop_Type implements Prop_Type {
 
 		$prop_type = $this->get_prop_type_from_value( $value );
 
-		return $prop_type->validate( $value );
+		return $prop_type && $prop_type->validate( $value );
 	}
 
 	public function sanitize( $value ) {
 		$prop_type = $this->get_prop_type_from_value( $value );
 
-		return $prop_type->sanitize( $value );
+		return $prop_type?->sanitize( $value );
 	}
 
 	public function jsonSerialize(): array {
