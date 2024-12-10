@@ -28,7 +28,7 @@ export default class EditorPage extends BasePage {
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
-		this.preview = this.preview;
+		this.preview = this.getPreviewFrame();
 		this.postId = cleanPostId;
 	}
 
