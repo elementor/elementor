@@ -29,13 +29,11 @@ export default class AssetsLoader {
 	}
 
 	isAssetLoaded( assetData, assetType ) {
-		const tag = 'script' === assetType ? 'script' : 'link';
-
-		const filePath = 'script' === assetType
-			? `${ tag }[src="${ assetData.src }"]`
-			: `${ tag }[href="${ assetData.src }"]`;
-
-		const assetElements = document.querySelectorAll( filePath );
+		const tag = 'script' === assetType ? 'script' : 'link',
+			filePath = 'script' === assetType
+				? `${ tag }[src="${ assetData.src }"]`
+				: `${ tag }[href="${ assetData.src }"]`,
+			assetElements = document.querySelectorAll( filePath );
 
 		return !! assetElements?.length;
 	}
