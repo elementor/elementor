@@ -530,7 +530,7 @@ class Test_Common_App extends Elementor_Test_Base {
 		return $user;
 	}
 
-	public function test_ge111t_remote_authorize_url() {
+	public function test_get_remote_authorize_url_with_plg_data() {
 		// Arrange
 		$_GET['utm_source'] = 'test-source';
 		$_GET['utm_medium'] = 'test-medium';
