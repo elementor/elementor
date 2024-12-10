@@ -27,8 +27,5 @@ test( 'Minimalist widget basic sanity test with content in bio tab', async ( { b
 	await page.locator( '[data-setting="bio_title"]' ).fill( 'This is a test' );
 	await page.locator( '[data-setting="bio_description"]' ).fill( 'This is a test' );
 	await editor.togglePreviewMode();
-	expect( await editor.getPreviewFrame()
-		.locator( '.e-link-in-bio__content' )
-		.screenshot( { type: 'jpeg', quality: 90 } ) )
-		.toMatchSnapshot( 'minimalist.jpeg' );
+	await expect.soft( editor.getPreviewFrame().locator( '.e-link-in-bio__content' ) ).toHaveScreenshot( 'minimalist.png' );
 } );
