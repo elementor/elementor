@@ -14,8 +14,6 @@ test( 'Minimalist widget basic sanity test with content in bio tab', async ( { b
 
 	// Act.
 	await editor.addWidget( 'link-in-bio' );
-
-	// Assert.
 	await page.locator( '.elementor-control-media__preview' ).click();
 	await page.locator( 'text=Media Library' ).click();
 	await page.waitForSelector( 'text=Insert Media' );
@@ -23,9 +21,11 @@ test( 'Minimalist widget basic sanity test with content in bio tab', async ( { b
 	await page.getByRole( 'button', { name: 'Insert Media' } )
 		.or( page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	await page.locator( '[data-collapse_id="bio_section"]' ).click();
-	await page.locator( '[data-setting="bio_heading"]' ).fill( 'This is a test' );
-	await page.locator( '[data-setting="bio_title"]' ).fill( 'This is a test' );
-	await page.locator( '[data-setting="bio_description"]' ).fill( 'This is a test' );
+	await page.locator( '[data-setting="bio_heading"]' ).fill( 'This is a heading' );
+	await page.locator( '[data-setting="bio_title"]' ).fill( 'This is a title' );
+	await page.locator( '[data-setting="bio_description"]' ).fill( 'Test description' );
 	await editor.togglePreviewMode();
+
+	// Assert.
 	await expect.soft( editor.getPreviewFrame().locator( '.e-link-in-bio__content' ) ).toHaveScreenshot( 'minimalist.png' );
 } );
