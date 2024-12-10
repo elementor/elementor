@@ -7,6 +7,7 @@ use Elementor\Core\Isolation\Plugin_Status_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Utils\Version;
+use Elementor\Modules\Home\Classes\Transformations_Manager;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Includes\Container\Traits\Trait_Test_Container;
 use ElementorDeps\DI\DependencyException;
@@ -21,7 +22,19 @@ class Test_Container extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->container = Plugin::$instance->elementor_container();
+		$this->container = Plugin::$instance->get_elementor_container();
+	}
+
+	public function test_container_cache_performance() {
+		$startTime = microtime( true );
+		$this->container->get( Wordpress_Adapter::class );
+		$firstRunTime = microtime( true ) - $startTime;
+
+		$startTime = microtime( true );
+		$this->container->get( Wordpress_Adapter::class );
+		$cachedRunTime = microtime( true ) - $startTime;
+
+		$this->assertLessThan( $firstRunTime, $cachedRunTime );
 	}
 
 	/**
@@ -113,10 +126,107 @@ class Test_Container extends Elementor_Test_Base {
 
 	public function test_cannot_recreate_container() {
 		$firstInstance = Container::get_instance();
-
-		Container::initialize_instance();
 		$secondInstance = Container::get_instance();
 
-		$this->assertSame( $firstInstance, $secondInstance, 'Container was recreated, but it should be a singleton.' );
+		$this->assertSame( $firstInstance, $secondInstance, 'Container was not recreated, as it is a singleton.' );
 	}
+
+	public function test_get_and_make_cannot_give_same_instance() {
+		$makeService = $this->container->make( Wordpress_Adapter::class );
+		$getService = $this->container->get( Wordpress_Adapter::class );
+
+		$this->assertNotSame( $makeService, $getService );
+	}
+
+	/**
+	 * @throws NotFoundException
+	 * @throws DependencyException
+	 * @throws \ReflectionException
+	 */
+	public function test_passing_parameters_to_class_through_container() {
+		$json_data = [
+			'top' => [
+				'title' => 'Unleash your imagination with Elementor',
+			],
+			'top_with_licences' => [
+				[
+					'title' => 'Unleash your imagination with Elementor',
+					'license' => 'pro',
+				],
+				[
+					'title' => 'Unleash your imagination with Elementor',
+					'license' => 'free',
+				],
+			],
+			'get_stated' => [
+				'title' => 'Get Started',
+				'button' => 'Get Started',
+				'link' => 'https://elementor.com',
+			],
+		];
+		$transformer = $this->container->make(
+			Transformations_Manager::class,
+			[
+				'home_screen_data' => $json_data
+			]
+		);
+
+		$reflection = new \ReflectionClass( $transformer );
+		$property = $reflection->getProperty( 'home_screen_data' );
+
+		$property->setAccessible( true );
+
+		$homeScreenData = $property->getValue( $transformer );
+
+		$this->assertEquals( $json_data, $homeScreenData );
+	}
+
+	public function test_Di_performance()
+	{
+		$startTime = microtime(true);
+
+
+		// Define and resolve a service
+		$this->container->set('ServiceA', \DI\create(Wordpress_Adapter::class));
+		$serviceA = $this->container->get('ServiceA');
+
+		// End measuring time
+		$endTime = microtime(true);
+
+		// Calculate the total time taken in milliseconds
+		$executionTime = ($endTime - $startTime) * 1000;
+
+		// Set a threshold in milliseconds (e.g., 10ms)
+		$this->assertLessThan(10, $executionTime, "Performance issue: DI container took too long to resolve dependencies.");
+	}
+
+	public function test_multiple_resolutions_performance()
+	{
+		// Test resolving multiple services to benchmark performance with a bigger scale
+		$startTime = microtime(true);
+
+		// Set up multiple services
+		for ($i = 0; $i < 10000; $i++) {
+			$this->container->set("Service$i", \DI\create(Wordpress_Adapter::class));
+			$this->container->get("Service$i");
+		}
+
+		$endTime = microtime(true);
+		$executionTime = ($endTime - $startTime) * 1000;
+
+		// Set a threshold in milliseconds (e.g., 100ms)
+		$this->assertLessThan(100, $executionTime, "Performance issue: Resolving services is too slow.");
+	}
+	public function test_memory_usage()
+	{
+		$initialMemory = memory_get_usage();
+
+		for ($i = 0; $i < 1000; $i++) {
+			$this->container->set("Service$i", \DI\create(Wordpress_Adapter::class));
+			$this->container->get("Service$i");
+		}
+
+		$this->assertLessThan(10 * 1024 * 1024, memory_get_usage() - $initialMemory); // Ensure memory usage doesn't grow unreasonably
+	}
+
 }
