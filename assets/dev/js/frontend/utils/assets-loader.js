@@ -30,9 +30,7 @@ export default class AssetsLoader {
 
 	isAssetLoaded( assetData, assetType ) {
 		const filePath = 'script' === assetType ? `script[src="${ assetData.src }"]` : `link[href="${ assetData.src }"]`;
-		const assetElements = document.querySelectorAll( filePath );
-
-		return !! assetElements?.length;
+		return !! document.querySelectorAll( filePath )?.length;
 	}
 
 	loadAsset( assetData, assetType ) {
