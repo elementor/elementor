@@ -53,6 +53,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Elementor Editor Events', 'elementor' ),
 			'description' => esc_html__( 'Editor events processing', 'elementor' ),
 			'hidden' => true,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		] );
 	}
