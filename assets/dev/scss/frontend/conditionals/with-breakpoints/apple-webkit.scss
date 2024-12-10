@@ -1,5 +1,5 @@
 @import "../../../helpers/variables";
-@import "../../breakpoints/templates";
+@import "../../../frontend/breakpoints/proxy";
 
 .e--ua-appleWebkit {
 	// Fix glitch in Apple webkit browsers (inline-block items with word-spacing + text-align right)
