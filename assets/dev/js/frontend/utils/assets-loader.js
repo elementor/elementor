@@ -79,10 +79,6 @@ AssetsLoader.assets = {
 		},
 	},
 	style: {
-		'e-swiper': {
-			src: `${ assetsUrl }css/conditionals/e-swiper${ fileSuffix }.css?ver=${ pluginVersion }`,
-			parent: 'head',
-		},
 		swiper: {
 			src: `${ assetsUrl }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`,
 			parent: 'head',
