@@ -101,6 +101,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 	test( 'Test Lightbox', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
+		const preview = editor.getPreviewFrame();
 		const image = 'About-Pic-3-1';
 
 		await wpAdmin.openNewPage();
@@ -110,17 +111,17 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		await editor.setSelectControlValue( 'caption_source', 'attachment' );
 		await editor.setSelectControlValue( 'link_to', 'file' );
 		await editor.setSelectControlValue( 'open_lightbox', 'yes' );
-		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
+		expect( await preview.locator( EditorSelectors.image.link ).
 			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
-		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
-		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.lightBox ) ).toBeVisible();
+		await preview.locator( EditorSelectors.image.image ).click( );
+		await expect( preview.locator( EditorSelectors.image.lightBox ) ).toBeVisible();
 
-		const title = editor.getPreviewFrame().locator( '.elementor-slideshow__title' );
-		const description = editor.getPreviewFrame().locator( '.elementor-slideshow__description' );
+		const title = preview.locator( '.elementor-slideshow__title' );
+		const description = preview.locator( '.elementor-slideshow__description' );
 		await expect( title ).toHaveCSS( 'text-align', 'center' );
 		await expect( description ).toHaveCSS( 'text-align', 'center' );
 
-		const imageSrc = await editor.getPreviewFrame().locator( EditorSelectors.image.image ).getAttribute( 'src' );
+		const imageSrc = await preview.locator( EditorSelectors.image.image ).getAttribute( 'src' );
 		await editor.removeElement( widgetId );
 		await editor.addWidget( 'heading' );
 		await editor.setTextControlValue( 'link', imageSrc );

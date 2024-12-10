@@ -12,6 +12,8 @@ test.describe( 'URL Actions', () => {
 
 		const editor = await wpAdmin.openNewPage();
 
+		const preview = editor.getPreviewFrame();
+
 		const wpMediaAddButtonSelector = '.button.media-button';
 
 		/**
@@ -49,7 +51,7 @@ test.describe( 'URL Actions', () => {
 		await page.click( wpMediaAddButtonSelector );
 
 		// Get the image's source.
-		const mountainImg = editor.getPreviewFrame().locator( '.elementor-widget-image img[src*="mountain-image"]' );
+		const mountainImg = preview.locator( '.elementor-widget-image img[src*="mountain-image"]' );
 		const src = await mountainImg.getAttribute( 'src' );
 
 		// Test that the image has been successfully inserted into the page.
@@ -58,7 +60,7 @@ test.describe( 'URL Actions', () => {
 		// Click on the image to open the lightbox.
 		await mountainImg.click();
 
-		const singlelightboxImage = editor.getPreviewFrame().locator( '.elementor-lightbox-image' );
+		const singlelightboxImage = preview.locator( '.elementor-lightbox-image' );
 
 		// Test that the lightbox appeared.
 		await expect( singlelightboxImage ).toBeVisible();
@@ -118,7 +120,7 @@ test.describe( 'URL Actions', () => {
 		// Insert the gallery.
 		await page.click( 'text=Insert gallery', { delay: 500, clickCount: 2 } );
 
-		const galleryItems = editor.getPreviewFrame().locator( '.elementor-image-gallery figure.gallery-item' );
+		const galleryItems = preview.locator( '.elementor-image-gallery figure.gallery-item' );
 
 		// Check that a gallery with two images has been added to the page.
 		await expect( galleryItems ).toHaveCount( 2 );
@@ -126,7 +128,7 @@ test.describe( 'URL Actions', () => {
 		// Open the gallery's slideshow in a lightbox.
 		await galleryItems.first().click();
 
-		const slideshowLightboxImage = editor.getPreviewFrame().locator( 'img[alt="mountain-image"].elementor-lightbox-image, img[alt="field-image"].elementor-lightbox-image' );
+		const slideshowLightboxImage = preview.locator( 'img[alt="mountain-image"].elementor-lightbox-image, img[alt="field-image"].elementor-lightbox-image' );
 
 		// Test that the lightbox appeared.
 		await expect( slideshowLightboxImage.first() ).toBeVisible();

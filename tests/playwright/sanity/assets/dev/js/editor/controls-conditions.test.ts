@@ -9,14 +9,15 @@ test( 'Editor Responsive Control Conditions', async ( { page, apiRequests }, tes
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
+	const preview = editor.getPreviewFrame();
 
 	await editor.addWidget( 'heading' );
 
-	const heading = await editor.getPreviewFrame().waitForSelector( 'text=Add Your Heading Text Here' );
+	const heading = await preview.waitForSelector( 'text=Add Your Heading Text Here' );
 
 	await heading.hover();
 
-	const sectionEditButton = await editor.getPreviewFrame().waitForSelector( '.elementor-editor-element-edit' );
+	const sectionEditButton = await preview.waitForSelector( '.elementor-editor-element-edit' );
 
 	// Open the containing section.
 	await sectionEditButton.click();

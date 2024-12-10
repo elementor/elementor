@@ -9,20 +9,21 @@ test( 'Stretch section', async ( { page, apiRequests }, testInfo ) => {
 
 	try {
 		let editor = await wpAdmin.openNewPage();
-		await testStretchedSection( page, editor, 'ltr' );
+		const preview = editor.getPreviewFrame();
+		await testStretchedSection( page, editor, preview, 'ltr' );
 
 		await wpAdmin.setSiteLanguage( 'he_IL' );
 		editor = await wpAdmin.openNewPage();
-		await testStretchedSection( page, editor, 'rtl' );
+		await testStretchedSection( page, editor, preview, 'rtl' );
 	} finally {
 		await wpAdmin.setSiteLanguage( '' );
 	}
 } );
 
-async function testStretchedSection( page: Page, editor: EditorPage, direction: string ) {
+async function testStretchedSection( page: Page, editor: EditorPage, preview, direction: string ) {
 	await editor.closeNavigatorIfOpen();
 
-	await editor.getPreviewFrame().evaluate( () => {
+	await preview.evaluate( () => {
 		const sectionWrap: HTMLElement = document.querySelector( '.elementor-section-wrap:first-child' );
 
 		sectionWrap.style.width = '800px';
@@ -31,7 +32,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 
 	// Act.
 	const sectionID = await editor.addElement( { elType: 'section' }, 'document' ),
-		sectionElement = editor.getPreviewFrame().locator( `.elementor-element-${ sectionID }` );
+		sectionElement = preview.locator( `.elementor-element-${ sectionID }` );
 
 	await editor.selectElement( sectionID );
 	await editor.openPanelTab( 'style' );
@@ -71,7 +72,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 	} ) ).toMatchSnapshot( `section-stretched${ directionSuffix }.jpeg` );
 
 	if ( 'rtl' === direction ) {
-		const isSectionConsideringScrollbar = await editor.getPreviewFrame().evaluate( ( { selector } ) => {
+		const isSectionConsideringScrollbar = await preview.evaluate( ( { selector } ) => {
 			const section = document.querySelector( '.elementor-element-' + selector ),
 				sectionBoundingBox = section.getBoundingClientRect(),
 				scrollbarWidth = window.innerWidth - document.body.clientWidth;

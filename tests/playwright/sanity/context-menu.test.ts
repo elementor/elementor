@@ -43,6 +43,7 @@ test.describe( 'Context menu', () => {
 	test( 'Reset widget style test', async ( { page, apiRequests }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const preview = editor.getPreviewFrame();
 		const contextMenu = new ContextMenu( page, testInfo );
 		const styleTab = new Style( page, testInfo );
 		const headingSelector = '.elementor-heading-title';
@@ -50,9 +51,9 @@ test.describe( 'Context menu', () => {
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'heading' );
 		await styleTab.setColorPicker( 'heading', '#E46E6E' );
-		await expect( editor.getPreviewFrame().locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(228, 110, 110)' );
+		await expect( preview.locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(228, 110, 110)' );
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Reset style' );
-		await expect( editor.getPreviewFrame().locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(110, 193, 228)' );
+		await expect( preview.locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(110, 193, 228)' );
 	} );
 
 	test( 'Open Navigator test', async ( { page, apiRequests }, testInfo ) => {

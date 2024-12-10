@@ -22,9 +22,10 @@ test.describe( 'Icon and social icon widget tests', () => {
 
 	test( 'Enable SVG fit-to-size', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const editor = await wpAdmin.openNewPage(),
-			iconWidget = await editor.addWidget( 'icon' ),
-			iconSelector = '.elementor-element-' + iconWidget + ' .elementor-icon';
+		const editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
+		const iconWidget = await editor.addWidget( 'icon' );
+		const iconSelector = '.elementor-element-' + iconWidget + ' .elementor-icon';
 		const contentTab = new Content( page, testInfo );
 
 		await test.step( 'Fit Aspect hidden for Icons', async () => {
@@ -42,7 +43,7 @@ test.describe( 'Icon and social icon widget tests', () => {
 		await test.step( 'Editor Fit-to-size enabled', async () => {
 			await editor.togglePreviewMode();
 
-			const iconSVG = editor.getPreviewFrame().locator( iconSelector ),
+			const iconSVG = preview.locator( iconSelector ),
 				iconDimensions = await iconSVG.boundingBox();
 
 			expect( iconDimensions.height !== iconDimensions.width ).toBeTruthy(); // Not 1-1 proportion
@@ -64,12 +65,13 @@ test.describe( 'Icon and social icon widget tests', () => {
 	test( 'Social icons: upload svg', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
+		const preview = editor.getPreviewFrame();
 		const contentTab = new Content( page, testInfo );
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'social-icons' );
 		await page.locator( EditorSelectors.item ).first().click();
 		await contentTab.uploadSVG();
-		await expect( editor.getPreviewFrame().locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
+		await expect( preview.locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
 		await editor.publishAndViewPage();
 		await expect( page.locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
 	} );

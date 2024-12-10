@@ -11,6 +11,7 @@ test.describe( 'Widget tests', () => {
 
 		// Arrange.
 		const editor = await wpAdmin.openNewPage(),
+			preview = editor.getPreviewFrame(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
 			widgetId = await editor.addWidget( 'heading', containerId ),
 			widgetContainerSelector = '.elementor-edit-mode .elementor-element-' + widgetId + ' > .elementor-widget-container';
@@ -29,7 +30,7 @@ test.describe( 'Widget tests', () => {
 
 		// Assert.
 		// Check rotate and scale value.
-		await expect( editor.getPreviewFrame().locator( widgetContainerSelector ) ).toHaveCSS( '--e-transform-rotateZ', '2deg' );
-		await expect( editor.getPreviewFrame().locator( widgetContainerSelector ) ).toHaveCSS( '--e-transform-scale', '2' );
+		await expect( preview.locator( widgetContainerSelector ) ).toHaveCSS( '--e-transform-rotateZ', '2deg' );
+		await expect( preview.locator( widgetContainerSelector ) ).toHaveCSS( '--e-transform-scale', '2' );
 	} );
 } );

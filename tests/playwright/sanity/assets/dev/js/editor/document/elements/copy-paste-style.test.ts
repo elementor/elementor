@@ -9,6 +9,7 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page,
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const contextMenu = new ContextMenu( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
+	const preview = editor.getPreviewFrame();
 	const hasTopBar = await editor.hasTopBar();
 	const heading1 = await editor.addWidget( 'heading' );
 	const heading2 = await editor.addWidget( 'heading' );
@@ -23,7 +24,7 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page,
 	await contextMenu.copyElement( heading1 );
 	await contextMenu.pasteStyleElement( heading2 );
 
-	const heading2Title = editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
+	const heading2Title = preview.locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
 
 	// Assert.
 	await expect( heading2Title ).toHaveCSS( 'color', 'rgb(119, 165, 189)' );

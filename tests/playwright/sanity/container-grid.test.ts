@@ -34,8 +34,8 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.setSelectControlValue( 'container_type', 'grid' );
 		} );
 
-		const frame = editor.getPreviewFrame();
-		let container = frame.locator( '.e-grid .e-con-inner' );
+		const preview = editor.getPreviewFrame();
+		let container = preview.locator( '.e-grid .e-con-inner' );
 
 		await test.step( 'Assert gaps', async () => {
 			await page.locator( '.elementor-control-grid_gaps .elementor-link-gaps' ).first().click();
@@ -115,7 +115,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.setSelectControlValue( 'content_width', 'full' );
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Start"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Start"]' ).click();
-			container = frame.locator( `.elementor-element-${ containerId }` );
+			container = preview.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'start' );
 			await expect( container ).toHaveCSS( 'align-content', 'start' );
 		} );
@@ -123,7 +123,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Assert justify align and content middle on full width', async () => {
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="Middle"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="Middle"]' ).click();
-			container = frame.locator( `.elementor-element-${ containerId }` );
+			container = preview.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'center' );
 			await expect( container ).toHaveCSS( 'align-content', 'center' );
 		} );
@@ -131,15 +131,14 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Assert justify align and content end on full width', async () => {
 			await page.locator( '.elementor-control-grid_justify_content [data-tooltip="End"]' ).click();
 			await page.locator( '.elementor-control-grid_align_content [data-tooltip="End"]' ).click();
-			container = frame.locator( `.elementor-element-${ containerId }` );
+			container = preview.locator( `.elementor-element-${ containerId }` );
 			await expect( container ).toHaveCSS( 'justify-content', 'end' );
 			await expect( container ).toHaveCSS( 'align-content', 'end' );
 		} );
 
 		await test.step( 'Assert that the drag area is visible when using boxed width', async () => {
 			await editor.setSelectControlValue( 'content_width', 'boxed' );
-			const dragAreaIsVisible = await editor.getPreviewFrame()
-				.locator( '.elementor-empty-view' )
+			const dragAreaIsVisible = await preview.locator( '.elementor-empty-view' )
 				.evaluate( ( element: HTMLElement ) => {
 					return 99 < element.offsetWidth; // The min-width is 100px.
 				} );
@@ -154,21 +153,18 @@ test.describe( 'Container Grid tests @container', () => {
 			const flexContainerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 			// Assert.
-			const gridDragAreaOffsetLeft = await editor.getPreviewFrame()
-					.locator( '.e-grid .elementor-empty-view' )
+			const gridDragAreaOffsetLeft = await preview.locator( '.e-grid .elementor-empty-view' )
 					.evaluate( ( gridContent: HTMLElement ) => gridContent.offsetLeft ),
-				flexDragAreaOffsetLeft = await editor.getPreviewFrame()
-					.locator( '.e-flex .elementor-empty-view' )
+				flexDragAreaOffsetLeft = await preview.locator( '.e-flex .elementor-empty-view' )
 					.evaluate( ( flexContent: HTMLElement ) => flexContent.offsetLeft );
 			expect( gridDragAreaOffsetLeft ).toEqual( flexDragAreaOffsetLeft );
 
 			// Add heading.
 			await editor.addWidget( 'heading', flexContainerId );
-			await editor.getPreviewFrame().waitForSelector( '.elementor-widget-heading' );
+			await preview.waitForSelector( '.elementor-widget-heading' );
 
 			// Assert.
-			const headingOffsetLeft = await editor.getPreviewFrame()
-				.locator( '.elementor-widget-heading' )
+			const headingOffsetLeft = await preview.locator( '.elementor-widget-heading' )
 				.evaluate( ( heading: HTMLElement ) => heading.offsetLeft );
 			expect( gridDragAreaOffsetLeft ).toEqual( headingOffsetLeft );
 
@@ -178,18 +174,18 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert correct positioning of the grid preset container when using the Add Container functionality', async () => {
 			// Assert that the first container has data-id = containerId.
-			expect( await frame.locator( '.e-con' ).first().getAttribute( 'data-id' ) ).toEqual( containerId );
+			expect( await preview.locator( '.e-con' ).first().getAttribute( 'data-id' ) ).toEqual( containerId );
 
 			await editor.openAddElementSection( containerId );
-			await frame.locator( '.elementor-add-section-inline .elementor-add-section-button' ).click();
-			await frame.locator( '.elementor-add-section-inline .grid-preset-button' ).click();
-			await frame.locator( `.elementor-add-section-inline [data-structure="2-1"]` ).click();
+			await preview.locator( '.elementor-add-section-inline .elementor-add-section-button' ).click();
+			await preview.locator( '.elementor-add-section-inline .grid-preset-button' ).click();
+			await preview.locator( `.elementor-add-section-inline [data-structure="2-1"]` ).click();
 
 			// First container should be the new container.
-			const newContainerId = await frame.locator( '.e-con >> nth=0' ).getAttribute( 'data-id' );
+			const newContainerId = await preview.locator( '.e-con >> nth=0' ).getAttribute( 'data-id' );
 			expect( newContainerId ).not.toEqual( containerId );
 			// The second container should be the existing container.
-			expect( await frame.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
+			expect( await preview.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
 
 			await editor.removeElement( newContainerId );
 		} );
@@ -235,7 +231,7 @@ test.describe( 'Container Grid tests @container', () => {
 			// Act
 			const buttonID = await editor.addWidget( 'button', containerId ),
 				buttonSelector = `.elementor-element-${ buttonID }`,
-				buttonHandle = frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
+				buttonHandle = preview.locator( buttonSelector ).locator( '.ui-resizable-e' );
 
 			// Assert
 			await expect( buttonHandle ).not.toBeVisible();
@@ -250,7 +246,7 @@ test.describe( 'Container Grid tests @container', () => {
 			const flexContainerId = await editor.addElement( { elType: 'container' }, 'document' ),
 				buttonID = await editor.addWidget( 'button', flexContainerId ),
 				buttonSelector = `.elementor-element-${ buttonID }`,
-				buttonHandle = frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
+				buttonHandle = preview.locator( buttonSelector ).locator( '.ui-resizable-e' );
 
 			// Assert
 			await expect( buttonHandle ).toBeVisible();
@@ -264,30 +260,30 @@ test.describe( 'Container Grid tests @container', () => {
 	test( 'Grid container presets', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
-		const frame = editor.getPreviewFrame();
+		const preview = editor.getPreviewFrame();
 
 		await test.step( 'Assert preset: rows-1 columns-2', async () => {
-			await testPreset( frame, editor, 1, 2 );
+			await testPreset( preview, editor, 1, 2 );
 		} );
 
 		await test.step( 'Assert preset: rows-2 columns-1', async () => {
-			await testPreset( frame, editor, 2, 1 );
+			await testPreset( preview, editor, 2, 1 );
 		} );
 
 		await test.step( 'Assert preset: rows-1 columns-3', async () => {
-			await testPreset( frame, editor, 1, 3 );
+			await testPreset( preview, editor, 1, 3 );
 		} );
 
 		await test.step( 'Assert preset: rows-3 columns-1', async () => {
-			await testPreset( frame, editor, 3, 1 );
+			await testPreset( preview, editor, 3, 1 );
 		} );
 
 		await test.step( 'Assert preset: rows-2 columns-2', async () => {
-			await testPreset( frame, editor, 2, 2 );
+			await testPreset( preview, editor, 2, 2 );
 		} );
 
 		await test.step( 'Assert preset: rows-2 columns-3', async () => {
-			await testPreset( frame, editor, 2, 3 );
+			await testPreset( preview, editor, 2, 3 );
 		} );
 	} );
 
@@ -302,9 +298,9 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.setSelectControlValue( 'container_type', 'grid' );
 		} );
 
-		const frame = editor.getPreviewFrame(),
-			gridOutline = frame.locator( '.e-grid-outline' ),
-			gridOutlineChildren = frame.locator( '.e-grid-outline-item' );
+		const preview = editor.getPreviewFrame(),
+			gridOutline = preview.locator( '.e-grid-outline' ),
+			gridOutlineChildren = preview.locator( '.e-grid-outline-item' );
 
 		let gridOutlineChildrenInitialValue = 6;
 
@@ -378,8 +374,8 @@ test.describe( 'Container Grid tests @container', () => {
 	test( 'Test grid outline multiple controls', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
-			frame = editor.getPreviewFrame(),
-			gridOutline = frame.locator( '.e-grid-outline' );
+			preview = editor.getPreviewFrame(),
+			gridOutline = preview.locator( '.e-grid-outline' );
 
 		// Arrange.
 		await test.step( 'Arrange', async () => {
@@ -418,8 +414,8 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.setSelectControlValue( 'container_type', 'grid' );
 		} );
 
-		const frame = editor.getPreviewFrame(),
-			emptyView = frame.locator( '.elementor-empty-view' ),
+		const preview = editor.getPreviewFrame(),
+			emptyView = preview.locator( '.elementor-empty-view' ),
 			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' );
 
 		await test.step( 'Empty view min-height should be auto when grid-rows unit is set to custom', async () => {
@@ -482,32 +478,32 @@ test.describe( 'Container Grid tests @container', () => {
 	test( 'Test grid back arrow', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
-		const frame = editor.getPreviewFrame();
-		await frame.locator( '.elementor-add-section-button' ).click();
+		const preview = editor.getPreviewFrame();
+		await preview.locator( '.elementor-add-section-button' ).click();
 
 		await test.step( 'Assert back arrow in flex presets', async () => {
-			await frame.locator( '.flex-preset-button' ).click();
-			const backArrow = frame.locator( '.elementor-add-section-back' );
+			await preview.locator( '.flex-preset-button' ).click();
+			const backArrow = preview.locator( '.elementor-add-section-back' );
 			await expect( backArrow ).toBeVisible();
 			await backArrow.click();
-			const selectTypeView = frame.locator( '[data-view="select-type"]' );
+			const selectTypeView = preview.locator( '[data-view="select-type"]' );
 			await expect( selectTypeView ).toBeVisible();
 		} );
 
 		await test.step( 'Assert back arrow in grid presets', async () => {
-			await frame.locator( '.grid-preset-button' ).click();
-			const backArrow = frame.locator( '.elementor-add-section-back' );
+			await preview.locator( '.grid-preset-button' ).click();
+			const backArrow = preview.locator( '.elementor-add-section-back' );
 			await expect( backArrow ).toBeVisible();
 			await backArrow.click();
-			const selectTypeView = frame.locator( '[data-view="select-type"]' );
+			const selectTypeView = preview.locator( '[data-view="select-type"]' );
 			await expect( selectTypeView ).toBeVisible();
 		} );
 
 		await test.step( 'Assert back arrow in not visible when clicked on plus button', async () => {
-			await frame.locator( '.grid-preset-button' ).click();
-			await frame.locator( '[data-structure="2-2"]' ).click();
-			await frame.locator( '.elementor-editor-element-add' ).click();
-			const backArrow = frame.locator( '.elementor-add-section-back' ).first();
+			await preview.locator( '.grid-preset-button' ).click();
+			await preview.locator( '[data-structure="2-2"]' ).click();
+			await preview.locator( '.elementor-editor-element-add' ).click();
+			const backArrow = preview.locator( '.elementor-add-section-back' ).first();
 			await expect( backArrow ).not.toBeVisible();
 		} );
 	} );
@@ -515,13 +511,13 @@ test.describe( 'Container Grid tests @container', () => {
 	test( 'Test grid auto flow on different breakpoints', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.closeNavigatorIfOpen();
 		await editor.setSelectControlValue( 'container_type', 'grid' );
 
-		const frame = editor.getPreviewFrame();
-		const container = frame.locator( '.e-grid .e-con-inner' );
+		const container = preview.locator( '.e-grid .e-con-inner' );
 
 		await test.step( 'Assert auto flow on desktop', async () => {
 			await testAutoFlowByDevice( editor, container, 'desktop' );
@@ -539,6 +535,7 @@ test.describe( 'Container Grid tests @container', () => {
 	test( 'Test Empty View should show', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		await test.step( 'Arrange', async () => {
 			await editor.closeNavigatorIfOpen();
@@ -548,19 +545,20 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'After a widget is added', async () => {
-			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+			await expect( preview.locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 
 		await test.step( 'On initial page load when container is not empty', async () => {
 			await editor.saveAndReloadPage();
 			await editor.waitForPanelToLoad();
-			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+			await expect( preview.locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 	} );
 
 	test( 'Test Empty View should not distorse preview', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		let containerId;
 		let gridRowsControl;
@@ -582,12 +580,12 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Empty item should not be presented', async () => {
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
+			await expect( preview.locator( '.elementor-empty-view' ) ).toBeHidden();
 		} );
 
 		await test.step( 'Add one more item to see empty item', async () => {
 			const latestAddedWidgetId = await editor.addWidget( 'heading', containerId );
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
+			await expect( preview.locator( '.elementor-empty-view' ) ).toBeVisible();
 
 			await editor.removeElement( latestAddedWidgetId );
 		} );
@@ -595,13 +593,14 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Increase number of rows to see empty item', async () => {
 			await editor.selectElement( containerId );
 			await gridRowsControl.locator( '.elementor-slider-input input' ).fill( '3' );
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
+			await expect( preview.locator( '.elementor-empty-view' ) ).toBeVisible();
 		} );
 	} );
 
 	test( 'Test Empty View should not distorse preview on tablet', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		let containerId;
 		await test.step( 'Arrange', async () => {
@@ -621,12 +620,12 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Empty item should not be presented', async () => {
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
+			await expect( preview.locator( '.elementor-empty-view' ) ).toBeHidden();
 		} );
 		//
 		await test.step( 'Empty item should not be present in tablet', async () => {
 			await editor.changeResponsiveView( 'tablet' );
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeHidden();
+			await expect( preview.locator( '.elementor-empty-view' ) ).toBeHidden();
 		} );
 
 		await test.step( 'Change number of rows and columns to see empty item', async () => {
@@ -637,7 +636,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			await gridRowsControlTablet.locator( '.elementor-slider-input input' ).fill( '2' );
 			await columnsRowControlTablet.locator( '.elementor-slider-input input' ).fill( '4' );
-			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
+			await expect( preview.locator( '.elementor-empty-view' ) ).toBeVisible();
 		} );
 	} );
 
@@ -645,7 +644,7 @@ test.describe( 'Container Grid tests @container', () => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
-			frame = editor.getPreviewFrame(),
+			preview = editor.getPreviewFrame(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.selectElement( containerId );
 
@@ -669,9 +668,9 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Add a flex container', async () => {
 			// Act
-			await frame.locator( '.elementor-add-section-area-button' ).first().click();
-			await frame.locator( '.e-con-select-type__icons__icon.flex-preset-button' ).click();
-			await frame.locator( '.e-con-select-preset-flex .e-con-preset' ).first().click();
+			await preview.locator( '.elementor-add-section-area-button' ).first().click();
+			await preview.locator( '.e-con-select-type__icons__icon.flex-preset-button' ).click();
+			await preview.locator( '.e-con-select-preset-flex .e-con-preset' ).first().click();
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
@@ -680,9 +679,9 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Add a grid container', async () => {
 			// Act
-			await frame.locator( '.elementor-add-section-area-button' ).first().click();
-			await frame.locator( '.e-con-select-type__icons__icon.grid-preset-button' ).click();
-			await frame.locator( '.e-con-select-preset-grid .e-con-preset' ).first().click();
+			await preview.locator( '.elementor-add-section-area-button' ).first().click();
+			await preview.locator( '.e-con-select-type__icons__icon.grid-preset-button' ).click();
+			await preview.locator( '.e-con-select-preset-grid .e-con-preset' ).first().click();
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
@@ -706,12 +705,12 @@ function hasWhiteSpace( s ) {
 	return /\s/g.test( s );
 }
 
-async function testPreset( frame, editor, rows, cols ) {
-	await frame.locator( '.elementor-add-section-button' ).click();
-	await frame.locator( '.grid-preset-button' ).click();
-	await frame.locator( `[data-structure="${ rows }-${ cols }"]` ).click();
+async function testPreset( preview, editor, rows, cols ) {
+	await preview.locator( '.elementor-add-section-button' ).click();
+	await preview.locator( '.grid-preset-button' ).click();
+	await preview.locator( `[data-structure="${ rows }-${ cols }"]` ).click();
 
-	const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
+	const container = await preview.locator( '.e-con.e-grid > .e-con-inner' );
 
 	// Because the browser will parse repeat(x, xfr) as pixels.
 	// We need to get the initial value in pixels and compare it with the new value in repeat()

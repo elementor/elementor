@@ -21,6 +21,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			const customAttributes = { key: 'mykey', value: 'myValue' };
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = await wpAdmin.openNewPage();
+			const preview = editor.getPreviewFrame();
 			const contentTab = new Content( page, testInfo );
 
 			await editor.addWidget( data[ widget ].title );
@@ -38,7 +39,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 
 			await contentTab.setLink( link,
 				{ targetBlank: true, noFollow: true, customAttributes, linkTo: data[ widget ].linkTo, linkInpSelector: EditorSelectors.button.url } );
-			const widgetInEditor = editor.getPreviewFrame().locator( data[ widget ].selector ).first();
+			const widgetInEditor = preview.locator( data[ widget ].selector ).first();
 			await contentTab.verifyLink( widgetInEditor,
 				{ target: '_blank', href: link, rel: 'nofollow', customAttributes, widget: data[ widget ].title } );
 			await editor.publishAndViewPage();

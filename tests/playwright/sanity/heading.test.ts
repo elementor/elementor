@@ -6,6 +6,7 @@ import EditorSelectors from '../selectors/editor-selectors';
 test( 'Heading widget added using shortcode with non-correct payload', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
+	const preview = editor.getPreviewFrame();
 
 	const jsInPayload = '<script>alert(1)</script>',
 		payloadRaw = '{"id":"22823c6","elType":"widget","isInner":false,"isLocked":false,"settings":{"content_width":"full","title":"Howdy ' + jsInPayload + 'owdy"},"elements":[],"widgetType":"heading"}',
@@ -19,9 +20,9 @@ test( 'Heading widget added using shortcode with non-correct payload', async ( {
 	} );
 
 	await editor.addWidget( 'shortcode' );
-	await page.locator( '.elementor-control-shortcode textarea' ).fill( testShortcode );
-	await editor.getPreviewFrame().waitForSelector( EditorSelectors.heading.h2 );
+	await editor.setTextareaControlValue( 'shortcode', testShortcode );
+	await preview.waitForSelector( EditorSelectors.heading.h2 );
 
 	expect( alertDetected ).toBe( false );
-	expect( await editor.getPreviewFrame().locator( EditorSelectors.heading.h2 ).textContent() ).toBe( 'Howdy alert(1)owdy' );
+	expect( await preview.locator( EditorSelectors.heading.h2 ).textContent() ).toBe( 'Howdy alert(1)owdy' );
 } );

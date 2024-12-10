@@ -14,7 +14,7 @@ let Backbone: BackboneType;
 let window: WindowType;
 
 export default class EditorPage extends BasePage {
-	readonly previewFrame: Frame;
+	readonly preview: Frame;
 	postId: number | null;
 
 	/**
@@ -28,7 +28,7 @@ export default class EditorPage extends BasePage {
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
-		this.previewFrame = this.getPreviewFrame();
+		this.preview = this.preview;
 		this.postId = cleanPostId;
 	}
 
@@ -169,7 +169,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async addWidget( widgetType: string, container = null, isContainerASection = false ): Promise<string> {
 		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
-		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
+		await this.preview.waitForSelector( `[data-id='${ widgetId }']` );
 
 		return widgetId;
 	}
@@ -230,7 +230,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<ElementHandle<SVGElement | HTMLElement> | null>} element handle
 	 */
 	async getElementHandle( id: string ) {
-		return this.getPreviewFrame().$( getElementSelector( id ) );
+		return this.preview.$( getElementSelector( id ) );
 	}
 
 	/**
@@ -254,8 +254,8 @@ export default class EditorPage extends BasePage {
 			} );
 		}, { id: elementId } );
 
-		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + '.elementor-element-editable' );
-		return this.getPreviewFrame().locator( '.elementor-element-' + elementId );
+		await this.preview.waitForSelector( '.elementor-element-' + elementId + '.elementor-element-editable' );
+		return this.preview.locator( '.elementor-element-' + elementId );
 	}
 
 	/**
@@ -266,11 +266,11 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openAddElementSection( elementId: string ) {
-		const element = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId }` );
+		const element = this.preview.locator( `.elementor-edit-mode .elementor-element-${ elementId }` );
 		await element.hover();
-		const elementAddButton = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId } > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-add` );
+		const elementAddButton = this.preview.locator( `.elementor-edit-mode .elementor-element-${ elementId } > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-add` );
 		await elementAddButton.click();
-		await this.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
+		await this.preview.waitForSelector( '.elementor-add-section-inline' );
 	}
 
 	async setWidgetTab( tab: 'content' | 'style' | 'advanced' ) {
@@ -588,9 +588,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async hideVideoControls() {
-		await this.getPreviewFrame().waitForSelector( '.elementor-video' );
+		await this.preview.waitForSelector( '.elementor-video' );
 
-		const videoFrame = this.getPreviewFrame().frameLocator( '.elementor-video' ),
+		const videoFrame = this.preview.frameLocator( '.elementor-video' ),
 			videoButton = videoFrame.locator( 'button.ytp-large-play-button.ytp-button.ytp-large-play-button-red-bg' ),
 			videoGradient = videoFrame.locator( '.ytp-gradient-top' ),
 			videoTitle = videoFrame.locator( '.ytp-show-cards-title' ),
@@ -608,9 +608,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async hideMapControls() {
-		await this.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
+		await this.preview.waitForSelector( '.elementor-widget-google_maps iframe' );
 
-		const mapFrame = this.getPreviewFrame().frameLocator( '.elementor-widget-google_maps iframe' ),
+		const mapFrame = this.preview.frameLocator( '.elementor-widget-google_maps iframe' ),
 			mapText = mapFrame.locator( '.gm-style iframe + div + div' ),
 			mapInset = mapFrame.locator( 'button.gm-inset-map.gm-inset-light' ),
 			mapControls = mapFrame.locator( '.gmnoprint.gm-bundled-control.gm-bundled-control-on-bottom' );
@@ -779,7 +779,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen() {
-		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
+		const isOpen = await this.preview.evaluate( () => elementor.navigator.isOpen() );
 
 		if ( ! isOpen ) {
 			return;
@@ -815,14 +815,14 @@ export default class EditorPage extends BasePage {
 		}
 
 		// Check if the template is already set
-		if ( await this.getPreviewFrame().$( templateClass ) ) {
+		if ( await this.preview.$( templateClass ) ) {
 			return;
 		}
 
 		// Select the template
 		await this.openPageSettingsPanel();
 		await this.setSelectControlValue( 'template', templateValue );
-		await this.getPreviewFrame().waitForSelector( templateClass );
+		await this.preview.waitForSelector( templateClass );
 	}
 
 	/**
@@ -1008,7 +1008,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<number>}
 	 */
 	async getWidgetCount(): Promise<number> {
-		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
+		return ( await this.preview.$$( EditorSelectors.widget ) ).length;
 	}
 
 	async waitForIframeToLoaded( widgetType: string, isPublished = false ) {
@@ -1029,7 +1029,7 @@ export default class EditorPage extends BasePage {
 				await this.page.frameLocator( frames[ widgetType ][ 0 ] ).nth( i ).locator( frames[ widgetType ][ 1 ] ).waitFor();
 			}
 		} else {
-			const frame = this.getPreviewFrame();
+			const frame = this.preview;
 			await frame.waitForLoadState();
 			await frame.waitForSelector( frames[ widgetType ][ 0 ] );
 			await frame.frameLocator( frames[ widgetType ][ 0 ] ).first().locator( frames[ widgetType ][ 1 ] ).waitFor();
@@ -1058,7 +1058,7 @@ export default class EditorPage extends BasePage {
 		if ( isPublished ) {
 			await this.page.waitForSelector( selector );
 		} else {
-			const frame = this.getPreviewFrame();
+			const frame = this.preview;
 			await frame.waitForLoadState();
 			await frame.waitForSelector( selector );
 		}
@@ -1079,7 +1079,7 @@ export default class EditorPage extends BasePage {
 		if ( args.isPublished ) {
 			await expect( this.page.locator( args.selector ) ).toHaveClass( regex );
 		} else {
-			await expect( this.getPreviewFrame().locator( args.selector ) ).toHaveClass( regex );
+			await expect( this.preview.locator( args.selector ) ).toHaveClass( regex );
 		}
 	}
 
@@ -1097,7 +1097,7 @@ export default class EditorPage extends BasePage {
 	async verifyImageSize( args: { selector: string, width: number, height: number, isPublished: boolean } ) {
 		const imageSize = args.isPublished
 			? await this.page.locator( args.selector ).boundingBox()
-			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
+			: await this.preview.locator( args.selector ).boundingBox();
 		expect( imageSize.width ).toEqual( args.width );
 		expect( imageSize.height ).toEqual( args.height );
 	}

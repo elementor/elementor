@@ -34,6 +34,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
+		const preview = editor.getPreviewFrame();
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 
@@ -45,9 +46,9 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.openPanelTab( 'advanced' );
 		await editor.setDimensionsValue( 'padding', '0' );
 
-		const container = editor.getPreviewFrame().locator( `.elementor-element-${ containerId }` );
+		const container = preview.locator( `.elementor-element-${ containerId }` );
 		const containerHeight = await container.boundingBox();
-		const videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();
+		const videoIframeHeight = await preview.locator( `.elementor-element-${ videoId } iframe` ).boundingBox();
 
 		// Assert.
 		// Verify that the container has an equal height to the video iFrame.
@@ -153,8 +154,9 @@ test.describe( 'Video tests inside a section', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
+			preview = editor.getPreviewFrame(),
 			sectionId = await editor.addElement( { elType: 'section' }, 'document' ),
-			column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
+			column = preview.locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
 			columnId = await column.getAttribute( 'data-id' ),
 			videoId = await editor.addWidget( widgets.video, columnId );
 
@@ -164,7 +166,7 @@ test.describe( 'Video tests inside a section', () => {
 		await editor.setDimensionsValue( 'padding', '0' );
 
 		const columnHeight = await column.boundingBox(),
-			videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();
+			videoIframeHeight = await preview.locator( `.elementor-element-${ videoId } iframe` ).boundingBox();
 
 		// Assert.
 		// Verify that the container has an equal height to the video iFrame.

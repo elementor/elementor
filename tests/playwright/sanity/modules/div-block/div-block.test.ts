@@ -26,12 +26,13 @@ test.describe( 'Div Block tests @div-block', () => {
 	test( 'Sort items in a Div Block using DnD', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
+			preview = editor.getPreviewFrame(),
 			divBlock = await editor.addElement( { elType: 'div-block' }, 'document' ),
 			heading = await editor.addWidget( widgets.heading, divBlock ),
 			button = await editor.addWidget( widgets.button, divBlock ),
 			image = await editor.addWidget( widgets.image, divBlock );
 
-		await editor.previewFrame.dragAndDrop(
+		await preview.dragAndDrop(
 			getElementSelector( button ),
 			getElementSelector( image ),
 		);
