@@ -3,7 +3,6 @@ import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorPage from '../pages/editor-page';
 import ContextMenu from '../pages/widgets/context-menu';
-import Style from '../pages/elementor-panel-tabs/style';
 
 test.describe( 'Context menu', () => {
 	test( 'Edit widget test', async ( { page, apiRequests }, testInfo ) => {
@@ -45,12 +44,12 @@ test.describe( 'Context menu', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const preview = editor.getPreviewFrame();
 		const contextMenu = new ContextMenu( page, testInfo );
-		const styleTab = new Style( page, testInfo );
 		const headingSelector = '.elementor-heading-title';
 
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'heading' );
-		await styleTab.setColorPicker( 'heading', '#E46E6E' );
+		await editor.openPanelTab( 'style' );
+		await editor.setColorControlValue( 'title_color', '#E46E6E' );
 		await expect( preview.locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(228, 110, 110)' );
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Reset style' );
 		await expect( preview.locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(110, 193, 228)' );
