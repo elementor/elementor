@@ -535,7 +535,6 @@ test.describe( 'Container Grid tests @container', () => {
 	test( 'Test Empty View should show', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
-		const preview = editor.getPreviewFrame();
 
 		await test.step( 'Arrange', async () => {
 			await editor.closeNavigatorIfOpen();
@@ -545,13 +544,13 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'After a widget is added', async () => {
-			await expect( preview.locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 
 		await test.step( 'On initial page load when container is not empty', async () => {
 			await editor.saveAndReloadPage();
 			await editor.waitForPanelToLoad();
-			await expect( preview.locator( '.elementor-first-add' ) ).toHaveCount( 1 );
+			await expect( editor.getPreviewFrame().locator( '.elementor-first-add' ) ).toHaveCount( 1 );
 		} );
 	} );
 

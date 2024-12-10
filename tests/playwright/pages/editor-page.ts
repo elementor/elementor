@@ -169,7 +169,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async addWidget( widgetType: string, container = null, isContainerASection = false ): Promise<string> {
 		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
-		await this.preview.waitForSelector( `[data-id='${ widgetId }']` );
+		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
 
 		return widgetId;
 	}
@@ -779,7 +779,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen() {
-		const isOpen = await this.preview.evaluate( () => elementor.navigator.isOpen() );
+		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( ! isOpen ) {
 			return;
