@@ -45,6 +45,26 @@ class Union_Prop_Type implements Prop_Type {
 		return $this->prop_types[ $type ] ?? null;
 	}
 
+	private function get_prop_type_from_value( $value ): ?Prop_Type {
+		if ( is_string( $value ) ) {
+			return $this->get_prop_type( 'string' );
+		}
+
+		if ( is_numeric( $value ) ) {
+			return $this->get_prop_type( 'number' );
+		}
+
+		if ( is_bool( $value ) ) {
+			return $this->get_prop_type( 'boolean' );
+		}
+
+		if ( isset( $value['$$type'] ) ) {
+			return $this->get_prop_type( $value['$$type'] );
+		}
+
+		return null;
+	}
+
 	public function default( $value, ?string $type = null ): self {
 		$this->default = ! $type ?
 			$value :
@@ -65,37 +85,15 @@ class Union_Prop_Type implements Prop_Type {
 			return ! $this->is_required();
 		}
 
-		return $this->validate_prop_types( $value );
-	}
-
-	protected function validate_prop_types( $value ): bool {
-		$prop_type = $this->get_prop_type( $value[ '$$type' ] );
+		$prop_type = $this->get_prop_type_from_value( $value );
 
 		return $prop_type->validate( $value );
 	}
 
 	public function sanitize( $value ) {
-		return $this->sanitize_prop_types( $value );
-	}
-
-	protected function sanitize_prop_types( $value ) {
-		$prop_type = $this->get_prop_type( $value[ '$$type' ] );
+		$prop_type = $this->get_prop_type_from_value( $value );
 
 		return $prop_type->sanitize( $value );
-	}
-
-	public function sanitize( $value ) {
-		return $this->sanitize_prop_types( $value );
-	}
-
-	protected function sanitize_prop_types( $value ) {
-		foreach ( $this->get_prop_types() as $prop_type ) {
-			if ( $prop_type->validate( $value ) ) {
-				return $prop_type->sanitize( $value );
-			}
-		}
-
-		return null;
 	}
 
 	public function jsonSerialize(): array {
