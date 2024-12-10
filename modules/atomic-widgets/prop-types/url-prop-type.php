@@ -18,6 +18,6 @@ class Url_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
-		return sanitize_url( $value );
+		return esc_url_raw( $value );
 	}
 }
