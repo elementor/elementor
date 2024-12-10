@@ -10,7 +10,7 @@ test( 'Minimalist widget basic sanity test with content in bio tab', async ( { b
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = new EditorPage( page, testInfo );
 	await wpAdmin.openNewPage();
-	await editor.closeNavigatorIfOpen();   
+	await editor.closeNavigatorIfOpen();
 
 	// Act.
 	await editor.addWidget( 'link-in-bio' );
