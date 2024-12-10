@@ -42,11 +42,12 @@ test.describe( 'Context menu', () => {
 	test( 'Reset widget style test', async ( { page, apiRequests }, testInfo ) => {
 		const editor = new EditorPage( page, testInfo );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const preview = editor.getPreviewFrame();
 		const contextMenu = new ContextMenu( page, testInfo );
 		const headingSelector = '.elementor-heading-title';
 
 		await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
+
 		await editor.addWidget( 'heading' );
 		await editor.openPanelTab( 'style' );
 		await editor.setColorControlValue( 'title_color', '#E46E6E' );

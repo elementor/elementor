@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, Frame, type Page } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
@@ -9,18 +9,19 @@ test( 'Stretch section', async ( { page, apiRequests }, testInfo ) => {
 
 	try {
 		let editor = await wpAdmin.openNewPage();
-		const preview = editor.getPreviewFrame();
+		let preview = editor.getPreviewFrame();
 		await testStretchedSection( page, editor, preview, 'ltr' );
 
 		await wpAdmin.setSiteLanguage( 'he_IL' );
 		editor = await wpAdmin.openNewPage();
+		preview = editor.getPreviewFrame();
 		await testStretchedSection( page, editor, preview, 'rtl' );
 	} finally {
 		await wpAdmin.setSiteLanguage( '' );
 	}
 } );
 
-async function testStretchedSection( page: Page, editor: EditorPage, preview, direction: string ) {
+async function testStretchedSection( page: Page, editor: EditorPage, preview: null|Frame, direction: string ) {
 	await editor.closeNavigatorIfOpen();
 
 	await preview.evaluate( () => {
