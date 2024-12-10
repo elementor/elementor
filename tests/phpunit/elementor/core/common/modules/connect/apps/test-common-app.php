@@ -529,4 +529,39 @@ class Test_Common_App extends Elementor_Test_Base {
 
 		return $user;
 	}
+
+	public function test_get_remote_authorize_url_with_plg_data() {
+		// Arrange
+		$_GET['utm_source'] = 'test-source';
+		$_GET['utm_medium'] = 'test-medium';
+		$_GET['utm_campaign'] = 'test-campaign';
+		$_GET['utm_not_allowed_param'] = 'test-test';
+
+		$utm_campaign = [
+			'source' => 'transient-source',
+			'medium' => 'transient-medium',
+			'campaign' => 'transient-campaign',
+		];
+
+		set_transient( 'elementor_core_campaign', $utm_campaign );
+
+		// Act
+		$url = $this->app_stub->proxy_get_remote_authorize_url();
+
+		// Assert
+		$parsed_url = parse_url( $url );
+		$parsed_query_params = [];
+		parse_str( $parsed_url['query'], $parsed_query_params );
+
+		$this->assertEquals( 'my.elementor.com', $parsed_url['host'] );
+		$this->assertEquals( '/connect/v1/mock-app', $parsed_url['path'] );
+		$this->assertEquals( 'authorize', $parsed_query_params['action'] );
+		$this->assertEquals( 'transient-source', $parsed_query_params['utm_source'] );
+		$this->assertEquals( 'transient-medium', $parsed_query_params['utm_medium'] );
+		$this->assertEquals( 'transient-campaign', $parsed_query_params['utm_campaign'] );
+
+		$this->assertArrayNotHasKey( 'utm_not_allowed_param', $parsed_query_params );
+		$this->assertArrayNotHasKey( 'utm_term', $parsed_query_params );
+		$this->assertArrayNotHasKey( 'utm_content', $parsed_query_params );
+	}
 }
