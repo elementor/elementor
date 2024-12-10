@@ -69,13 +69,19 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	protected function validate_prop_types( $value ): bool {
-		foreach ( $this->get_prop_types() as $prop_type ) {
-			if ( $prop_type->validate( $value ) ) {
-				return true;
-			}
-		}
+		$prop_type = $this->get_prop_type( $value[ '$$type' ] );
 
-		return false;
+		return $prop_type->validate( $value );
+	}
+
+	public function sanitize( $value ) {
+		return $this->sanitize_prop_types( $value );
+	}
+
+	protected function sanitize_prop_types( $value ) {
+		$prop_type = $this->get_prop_type( $value[ '$$type' ] );
+
+		return $prop_type->sanitize( $value );
 	}
 
 	public function sanitize( $value ) {
