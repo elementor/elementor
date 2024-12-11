@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\Ai;
 
 use Elementor\Modules\Ai\Module;
-use Elementor\Testing\ElementorTestCase;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Module extends ElementorTestCase {
 
