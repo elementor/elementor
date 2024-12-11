@@ -168,7 +168,7 @@ class Module extends BaseModule {
 	}
 
 	public function handle_kit_install( $imported_data ) {
-		if ( 'success' !== $imported_data['status'] ) {
+		if ( isset( $imported_data['status'] ) && 'success' !== $imported_data['status'] ) {
 			return;
 		}
 
@@ -178,7 +178,7 @@ class Module extends BaseModule {
 
 		$is_connected = $this->get_ai_app()->is_connected() && User::get_introduction_meta( 'ai_get_started' );
 
-		if ( ! Tracker::is_allow_track() && ! $is_connected ) {
+		if ( ! $is_connected ) {
 			return;
 		}
 
@@ -346,13 +346,6 @@ class Module extends BaseModule {
 				'id' => $image_id ? $image_id : 'No Image',
 				'image_url' => $image_id ? wp_get_attachment_url( $image_id ) : 'No Image',
 			];
-		}
-
-		$supported_post_types = get_option( 'elementor_cpt_support', [] );
-		$new_post_type = 'product';
-		if ( ! in_array( $new_post_type, $supported_post_types, true ) ) {
-			$supported_post_types[] = $new_post_type;
-			update_option( 'elementor_cpt_support', $supported_post_types );
 		}
 
 		wp_send_json_success( [ 'product_images' => array_slice( $image_ids, 0, 10 ) ] );
