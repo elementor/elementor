@@ -82,6 +82,7 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
+			add_action( 'elementor/frontend/after_enqueue_styles', fn() => $this->enqueue_styles() );
 		}
 	}
 
@@ -154,6 +155,19 @@ class Module extends BaseModule {
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
+		);
+	}
+
+	private function enqueue_styles() {
+		wp_register_style(
+			'div-block',
+			$this->get_css_assets_url( 'div-block', 'assets/css/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_enqueue_style(
+			'div-block'
 		);
 	}
 }
