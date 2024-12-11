@@ -346,6 +346,14 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.25.11 - 2024-12-10 =
+
+* Tweak: Updated `eicons` library to v5.34.0
+* Security Fix: Improved code security enforcement in Image widget
+* Security Fix: Improved code security enforcement in Connect process
+* Security Fix: Improved code security enforcement in Progress bar widget
+* Fix: YouTube video in lightbox is not presented as expected in Video widget ([#29241](https://github.com/elementor/elementor/issues/29241))
+
 = 3.25.10 - 2024-11-24 =
 
 * Security Fix: Improved code security enforcement in Typography control

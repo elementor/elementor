@@ -241,9 +241,21 @@
 			font-size: var(--lightbox-navigation-icons-size);
 		}
 
+		@media (max-width: $screen-tablet-max) {
+			&:active {
+				-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
+				-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+			}
+		}
+
 		@media (max-width: $screen-mobile-max) {
 			&:focus {
 				outline: none;
+			}
+
+			&:active {
+				-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
+				-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
 			}
 
 			&-prev, &-next {
