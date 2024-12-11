@@ -1,6 +1,7 @@
 /* global elementorFrontendConfig */
 import '../public-path';
 import DocumentsManager from './documents-manager';
+import DynamicImportManager from './dynamic-import-manager';
 import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
@@ -362,6 +363,8 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.initOnReadyElements();
 
 		this.initOnReadyComponents();
+
+		new DynamicImportManager();
 	}
 
 	onDocumentLoaded() {

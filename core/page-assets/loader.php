@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Loader extends Module {
 	private array $assets = [];
 
+	private array $import_scripts = [];
+
 	public function get_name(): string {
 		return 'assets-loader';
 	}
@@ -123,12 +125,40 @@ class Loader extends Module {
 				$this->assets[ $assets_type ][ $asset_name ]['enabled'] = true;
 
 				if ( 'scripts' === $assets_type ) {
+					if ( $this->should_import_script( $asset_name ) ) {
+						continue;
+					}
+
 					wp_enqueue_script( $asset_name );
+				} else if ( 'dynamic_imports' === $assets_type ) {
+					$this->register_dynamic_import( $asset_name );
 				} else {
 					wp_enqueue_style( $asset_name );
 				}
 			}
 		}
+
+		$this->print_dynamic_imports();
+	}
+
+	private function register_dynamic_import( $script ): void {
+		$this->import_scripts[] = $script;
+	}
+
+	private function should_import_script( $script ): bool {
+		if ( false !== strpos( $script, 'import-script-' ) ) {
+			$script_name = str_replace( 'import-script-', '', $script );
+			$this->import_scripts[] = $script_name;
+			return true;
+		}
+
+		return false;
+	}
+
+	private function print_dynamic_imports(): void {
+		wp_register_script( 'dynamic-import-list', '', [], 1.0 );
+		wp_enqueue_script( 'dynamic-import-list' );
+		wp_add_inline_script( 'dynamic-import-list', 'elementorDynamicImports = ' . wp_json_encode( $this->import_scripts ) . ';' );
 	}
 
 	/**
@@ -160,7 +190,13 @@ class Loader extends Module {
 
 				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
 					if ( 'scripts' === $assets_type ) {
+						if ( $this->should_import_script( $asset_name ) ) {
+							continue;
+						}
+
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
+					} else if ( 'dynamic_imports' === $assets_type ) {
+						$this->register_dynamic_import( $asset_name );
 					} else {
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					}
