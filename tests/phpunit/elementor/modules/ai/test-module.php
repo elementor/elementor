@@ -5,7 +5,7 @@ namespace Elementor\Testing\Modules\Ai;
 use Elementor\Modules\Ai\Module;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Test_Module extends ElementorTestCase {
+class Test_Module extends Elementor_Test_Base {
 
 	private $module;
 	private $ai_app_mock;
