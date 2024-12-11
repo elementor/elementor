@@ -1,11 +1,15 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Linkable;
+use Elementor\Modules\AtomicWidgets\Controls\Dynamic_Section;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 
@@ -13,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Heading extends Atomic_Widget_Base {
+class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkable {
 	public function get_name() {
 		return 'a-heading';
 	}
@@ -28,6 +32,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	protected function render() {
 		$settings = $this->get_atomic_settings();
+		$is_link_enabled = ! empty( $settings['link']['enabled'] );
+
+		if ( $is_link_enabled ) {
+			echo $this->get_link_template( $settings );
+			return;
+		}
 
 		$tag = $settings['tag'];
 		$title = $settings['title'];
@@ -41,6 +51,28 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Utils::validate_html_tag( $tag ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			Utils::render_html_attributes( $attrs ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			esc_html( $title )
+		);
+	}
+
+	public function get_link_template( array $settings ): string
+	{
+		$tag = $settings['tag'];
+		$title = $settings['title'];
+		$attrs = array_filter( [
+			'class' => $settings['classes'] ?? '',
+		] );
+
+		$link_attrs = [
+			'href' => esc_url( $settings['link']['href'] ) ?? '',
+			'target' => $settings['link']['targetBlank'] ? '_blank' : '',
+		];
+
+		return sprintf(
+			'<%1$s %2$s><a %4$s>%3$s</a></%1$s>',
+			Utils::validate_html_tag( $tag ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			Utils::render_html_attributes( $attrs ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			esc_html( $title ),
+			Utils::render_html_attributes( array_filter( $link_attrs ) )
 		);
 	}
 
@@ -81,7 +113,11 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					Textarea_Control::bind_to( 'title' )
 						->set_label( __( 'Title', 'elementor' ) )
 						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
-				]),
+
+					Link_Control::bind_to( 'link' )
+						->set_label( __( 'Link', 'elementor' ) )
+						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+				] ),
 		];
 	}
 
@@ -96,6 +132,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 			'title' => String_Prop_Type::make()
 				->default( __( 'Your Title Here', 'elementor' ) ),
+
+			'link' => Link_Prop_type::make(),
 		];
 	}
 }
