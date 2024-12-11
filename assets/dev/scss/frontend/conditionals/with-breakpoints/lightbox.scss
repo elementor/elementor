@@ -232,6 +232,11 @@
 			outline-width: 1px;
 		}
 
+		&:active {
+			-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+			-webkit-tap-highlight-color: transparent; /* For some Androids */
+		}
+
 		&-prev, &-next {
 			height: 100%;
 			display: flex;
@@ -239,6 +244,16 @@
 			width: 15%;
 			justify-content: center;
 			font-size: var(--lightbox-navigation-icons-size);
+		}
+
+		@media (max-width: $screen-tablet-max) {
+			&-prev, &-next {
+				& svg, i {
+					&:active {
+						background: rgba( 0, 0, 0, 0.5 );
+					}
+				}
+			}
 		}
 
 		@media (max-width: $screen-mobile-max) {
@@ -251,6 +266,12 @@
 				i {
 					padding: 10px;
 					background-color: rgba(0, 0, 0, 0.5);
+				}
+
+				& svg, i {
+					&:active {
+						background: rgba( 0, 0, 0, 0.5 );
+					}
 				}
 			}
 
