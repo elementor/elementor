@@ -20,10 +20,10 @@ test( 'Minimalist widget basic sanity test with content in bio tab', async ( { b
 	await page.click( '[aria-label="mountain-image"], li[tabindex="0"]' );
 	await page.getByRole( 'button', { name: 'Insert Media' } )
 		.or( page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
-	await page.locator( '[data-collapse_id="bio_section"]' ).click();
-	await page.locator( '[data-setting="bio_heading"]' ).fill( 'This is a heading' );
-	await page.locator( '[data-setting="bio_title"]' ).fill( 'This is a title' );
-	await page.locator( '[data-setting="bio_description"]' ).fill( 'Test description' );
+	await editor.openSection( 'bio_section' );
+	await editor.setTextareaControlValue( 'bio_heading', 'This is a heading' );
+	await editor.setTextareaControlValue( 'bio_title', 'This is a title' );
+	await editor.setTextareaControlValue( 'bio_description', 'Test description' );
 	await editor.togglePreviewMode();
 
 	// Assert.
