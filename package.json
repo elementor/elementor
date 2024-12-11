@@ -29,6 +29,7 @@
 		"scripts:watch": "grunt watch_scripts",
 		"scripts:packages": "grunt scripts:packages",
 		"scripts:packages:local": "npx cross-env ELEMENTOR_PACKAGES_USE_LOCAL=1 grunt scripts:packages",
+		"scripts:watch:packages:local": "npx cross-env ELEMENTOR_PACKAGES_USE_LOCAL=1 npm run scripts:watch",
 		"styles": "grunt styles",
 		"styles:watch": "grunt watch_styles",
 		"lint:js": "eslint ."
