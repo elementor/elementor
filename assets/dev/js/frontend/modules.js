@@ -16,7 +16,7 @@ elementorModules.frontend = {
 		Base: BaseHandler,
 		StretchedElement,
 		SwiperBase,
-		CarouselBase,
-		NestedTabs,
+		CarouselBase, // TODO: Remove this in Elementor v3.29 [ED-16272]
+		NestedTabs, // TODO: Remove this in Elementor v3.28 [ED-16258]
 	},
 };
