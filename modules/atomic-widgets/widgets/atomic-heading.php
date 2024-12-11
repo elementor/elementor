@@ -32,7 +32,7 @@ class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkabl
 
 	protected function render() {
 		$settings = $this->get_atomic_settings();
-		$is_link_enabled = ! empty( $settings['link']['enabled'] );
+		$is_link_enabled = ! empty( $settings['link']['enabled'] ) && ! empty( $settings['link']['href'] );
 
 		if ( $is_link_enabled ) {
 			echo $this->get_link_template( $settings );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
