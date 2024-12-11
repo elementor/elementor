@@ -18,6 +18,17 @@ class Test_Module extends Elementor_Test_Base {
 			->disableOriginalConstructor()
 			->getMock();
 
+		// Create User mock
+		$this->user_mock = $this->getMockBuilder('\Elementor\User')
+			->disableOriginalConstructor()
+			->setMethods(['get_introduction_viewed'])  // Specify the method we want to mock
+			->getMock();
+
+		// Configure User mock
+		$this->user_mock->method('get_introduction_viewed')
+			->willReturn(['ai_get_started' => true]);
+
+		// Create module instance
 		$this->module = new Module();
 
 		// Use reflection to set private ai_app property
@@ -52,9 +63,6 @@ class Test_Module extends Elementor_Test_Base {
 		// Mock is_connected() to return true
 		$this->ai_app_mock->method('is_connected')
 			->willReturn(true);
-
-		// Mock User class
-		\Elementor\User::set_introduction_meta(['ai_get_started' => true]);
 
 		$imported_data = [
 			'status' => 'success',
