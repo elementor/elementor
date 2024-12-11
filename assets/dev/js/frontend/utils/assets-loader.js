@@ -29,11 +29,9 @@ export default class AssetsLoader {
 	}
 
 	isAssetLoaded( assetData, assetType ) {
-		const tag = 'script' === assetType ? 'script' : 'link',
-			filePath = `${ tag }[src="${ assetData.src }"]`,
-			assetElements = document.querySelectorAll( filePath );
+		const filePath = 'script' === assetType ? `script[src="${ assetData.src }"]` : `link[href="${ assetData.src }"]`;
 
-		return !! assetElements?.length;
+		return !! document.querySelectorAll( filePath )?.length;
 	}
 
 	loadAsset( assetData, assetType ) {
@@ -79,6 +77,7 @@ AssetsLoader.assets = {
 		},
 	},
 	style: {
+		// TODO: Remove 'swiper' in v3.28.0 [ED-16258].
 		swiper: {
 			src: `${ assetsUrl }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`,
 			parent: 'head',

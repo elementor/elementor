@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, Frame, Page } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorPage from '../pages/editor-page';
@@ -69,12 +69,20 @@ async function testBasicSwiperGallery( editor: EditorPage ) {
 	await editor.addImagesToGalleryControl();
 
 	await editor.togglePreviewMode();
-	await editor.getPreviewFrame().locator( 'div#gallery-1 img' ).first().click();
-	await editor.page.waitForTimeout( 1000 );
-	await editor.getPreviewFrame().locator( '.swiper-slide-active img[data-title="A"]' ).waitFor();
-	await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ).first().click();
-	await editor.getPreviewFrame().locator( '.swiper-slide-active img[data-title="B"]' ).waitFor();
+	await assertLightboxStyling( editor, editor.getPreviewFrame() );
+	await editor.togglePreviewMode();
 
-	await expect( editor.getPreviewFrame().locator( '.elementor-lightbox' ) )
-		.toHaveScreenshot( 'gallery-lightbox-swiper.png' );
+	await editor.publishAndViewPage();
+	await assertLightboxStyling( editor, editor.page, '-frontend' );
+}
+
+async function assertLightboxStyling( editor: EditorPage, context: Page | Frame, suffix = '' ): Promise<void> {
+	await context.locator( 'div#gallery-1 img' ).first().click();
+	await editor.page.waitForTimeout( 1000 );
+	await context.locator( '.swiper-slide-active img[data-title="A"]' ).waitFor();
+	await context.locator( '.elementor-swiper-button-next' ).first().click();
+	await context.locator( '.swiper-slide-active img[data-title="B"]' ).waitFor();
+
+	await expect( context.locator( '.elementor-lightbox' ) )
+		.toHaveScreenshot( `gallery-lightbox-swiper${ suffix }.png` );
 }

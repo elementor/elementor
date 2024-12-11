@@ -108,6 +108,20 @@ class Widget_WordPress extends Widget_Base {
 		return [ 'wordpress', 'widget' ];
 	}
 
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.26.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'e-swiper' ];
+	}
+
 	public function get_help_url() {
 		return '';
 	}
