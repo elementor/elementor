@@ -178,7 +178,7 @@ class Module extends BaseModule {
 
 		$is_connected = $this->get_ai_app()->is_connected() && User::get_introduction_meta( 'ai_get_started' );
 
-		if ( ! Tracker::is_allow_track() && ! $is_connected ) {
+		if ( ! $is_connected ) {
 			return;
 		}
 
