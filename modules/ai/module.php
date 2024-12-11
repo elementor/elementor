@@ -168,7 +168,7 @@ class Module extends BaseModule {
 	}
 
 	public function handle_kit_install( $imported_data ) {
-		if ( 'success' !== $imported_data['status'] ) {
+		if ( isset( $imported_data['status'] ) && 'success' !== $imported_data['status'] ) {
 			return;
 		}
 
