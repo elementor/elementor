@@ -4,4 +4,5 @@ import BackgroundVideo from './background-video';
 export default [
 	BackgroundSlideshow,
 	BackgroundVideo,
+	// HorizontalScroll,
 ];
