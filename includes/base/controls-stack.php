@@ -1570,6 +1570,10 @@ abstract class Controls_Stack extends Base_Object {
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/before_section_start", $this, $args );
 
+		if ( 'common-optimized' === $stack_name ) {
+			do_action( "elementor/element/common/{$section_id}/before_section_start", $this, $args );
+		}
+
 		$args['type'] = Controls_Manager::SECTION;
 
 		$this->add_control( $section_id, $args );
@@ -1610,6 +1614,10 @@ abstract class Controls_Stack extends Base_Object {
 		 * @param array          $args Section arguments.
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/after_section_start", $this, $args );
+
+		if ( 'common-optimized' === $stack_name ) {
+			do_action( "elementor/element/common/{$section_id}/after_section_start", $this, $args );
+		}
 	}
 
 	/**
@@ -1660,6 +1668,10 @@ abstract class Controls_Stack extends Base_Object {
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/before_section_end", $this, $args );
 
+		if ( 'common-optimized' === $stack_name ) {
+			do_action( "elementor/element/common/{$section_id}/before_section_end", $this, $args );
+		}
+
 		$this->current_section = null;
 
 		/**
@@ -1688,6 +1700,10 @@ abstract class Controls_Stack extends Base_Object {
 		 * @param array          $args Section arguments.
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/after_section_end", $this, $args );
+
+		if ( 'common-optimized' === $stack_name ) {
+			do_action( "elementor/element/common/{$section_id}/after_section_end", $this, $args );
+		}
 	}
 
 	/**
