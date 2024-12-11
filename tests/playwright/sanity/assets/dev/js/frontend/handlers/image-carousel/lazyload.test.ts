@@ -5,6 +5,7 @@ import WpAdminPage from '../../../../../../../pages/wp-admin-page';
 test( 'Image Carousel widget sanity test lazyload', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
+	const preview = editor.getPreviewFrame();
 	const images = [ 'elementor1.png', 'elementor2.png', 'elementor3.png', 'elementor4.png' ];
 
 	await editor.addWidget( 'image-carousel' );
@@ -18,7 +19,7 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page, apiRequests 
 	await page.click( '#elementor-controls >> text=Image Carousel' );
 	await editor.setSelectControlValue( 'slides_to_show', '1' );
 
-	const widget = await editor.getPreviewFrame().waitForSelector( '.elementor-image-carousel' );
+	const widget = await preview.waitForSelector( '.elementor-image-carousel' );
 	const widgetImages = await widget.$$( '.swiper-slide >> img' );
 
 	// The lazyload loads images from data-src into src.

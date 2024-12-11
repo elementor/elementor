@@ -7,6 +7,7 @@ test.describe( 'Icon List', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		// Act.
 		await editor.addWidget( 'icon-list' );
@@ -16,7 +17,7 @@ test.describe( 'Icon List', () => {
 		await editor.setSliderControlValue( 'icon_vertical_offset', '10' );
 
 		// Assert.
-		await expect( editor.getPreviewFrame().locator( '.elementor-icon-list-item' ).first() ).toHaveCSS( 'align-items', 'flex-start' );
-		await expect( editor.getPreviewFrame().locator( '.elementor-icon-list-icon' ).first() ).toHaveCSS( 'top', '10px' );
+		await expect( preview.locator( '.elementor-icon-list-item' ).first() ).toHaveCSS( 'align-items', 'flex-start' );
+		await expect( preview.locator( '.elementor-icon-list-icon' ).first() ).toHaveCSS( 'top', '10px' );
 	} );
 } );

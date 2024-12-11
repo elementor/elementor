@@ -14,12 +14,12 @@ test.describe( 'Document tests', async () => {
 			await addElement( wpAdmin, 'list' );
 			await addElement( wpAdmin, 'heading' );
 			const editor = await wpAdmin.convertFromGutenberg();
-			const previewFrame = editor.getPreviewFrame();
-			const sections = await previewFrame.locator( '[data-element_type="section"]' ).count();
+			const preview = editor.getPreviewFrame();
+			const sections = await preview.locator( '[data-element_type="section"]' ).count();
 			expect( sections ).toEqual( 1 );
-			const columns = await previewFrame.locator( '[data-element_type="column"]' ).count();
+			const columns = await preview.locator( '[data-element_type="column"]' ).count();
 			expect( columns ).toEqual( 1 );
-			const textEditors = await previewFrame.locator( '.elementor-widget-text-editor' ).count();
+			const textEditors = await preview.locator( '.elementor-widget-text-editor' ).count();
 			expect( textEditors ).toEqual( 1 );
 		} );
 
@@ -34,10 +34,10 @@ test.describe( 'Document tests', async () => {
 			await addElement( wpAdmin, 'list' );
 			await addElement( wpAdmin, 'heading' );
 			const editor = await wpAdmin.convertFromGutenberg();
-			const previewFrame = editor.getPreviewFrame();
-			const containers = await previewFrame.locator( '[data-element_type="container"]' ).count();
+			const preview = editor.getPreviewFrame();
+			const containers = await preview.locator( '[data-element_type="container"]' ).count();
 			expect( containers ).toEqual( 1 );
-			const textEditors = await previewFrame.locator( '.elementor-widget-text-editor ' ).count();
+			const textEditors = await preview.locator( '.elementor-widget-text-editor ' ).count();
 			expect( textEditors ).toEqual( 1 );
 		} );
 } );

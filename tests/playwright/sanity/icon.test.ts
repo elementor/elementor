@@ -7,9 +7,10 @@ test( 'Icon widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
+	const preview = editor.getPreviewFrame();
 
 	await editor.addWidget( 'icon' );
-	let icon = await editor.getPreviewFrame().waitForSelector( 'i.fa-star' );
+	let icon = await preview.waitForSelector( 'i.fa-star' );
 	let style = await getComputedStyle( icon, 'before' );
 	expect( style.content.charCodeAt() ).toBe( 34 );
 
@@ -17,7 +18,7 @@ test( 'Icon widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	await page.click( '.elementor-icons-manager__tab__item__icon.fas.fa-surprise' );
 	await page.click( 'button:has-text("Insert")' );
 
-	icon = await editor.getPreviewFrame().waitForSelector( 'i.fa-surprise' );
+	icon = await preview.waitForSelector( 'i.fa-surprise' );
 	await editor.setSelectControlValue( 'view', 'stacked' );
 	await editor.setSelectControlValue( 'shape', 'square' );
 
@@ -27,7 +28,7 @@ test( 'Icon widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	await editor.setSliderControlValue( 'size', width );
 
 	await expect.poll( async () => {
-		icon = await editor.getPreviewFrame().waitForSelector( '.elementor-icon:first-child' );
+		icon = await preview.waitForSelector( '.elementor-icon:first-child' );
 		style = await getComputedStyle( icon, '' );
 		return style.fontSize;
 	} ).toBe( `${ width }px` );

@@ -6,13 +6,14 @@ test( 'Accordion', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
+	const preview = editor.getPreviewFrame();
 
 	// Act.
 	await editor.addWidget( 'accordion' );
 
 	// Assert
 	await editor.togglePreviewMode();
-	expect( await editor.getPreviewFrame()
+	expect( await preview
 		.locator( '.elementor-widget-wrap > .elementor-background-overlay' )
 		.screenshot( { type: 'jpeg', quality: 90 } ) )
 		.toMatchSnapshot( 'accordion.jpeg' );

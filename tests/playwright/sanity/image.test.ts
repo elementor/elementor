@@ -5,6 +5,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 test( 'Image widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
+	const preview = editor.getPreviewFrame();
 
 	await editor.addWidget( 'image' );
 
@@ -25,7 +26,7 @@ test( 'Image widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 
 	await page.click( '.button.media-button' );
 	await page.waitForLoadState( 'networkidle' );
-	const img = await editor.getPreviewFrame().waitForSelector( 'img' );
+	const img = await preview.waitForSelector( 'img' );
 	const src = await img.getAttribute( 'src' );
 	expect( src ).toContain( '.jpeg' );
 } );

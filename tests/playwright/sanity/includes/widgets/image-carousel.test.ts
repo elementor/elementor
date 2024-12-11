@@ -20,6 +20,7 @@ test.describe( 'Image carousel tests', () => {
 	test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
+		const preview = editor.getPreviewFrame();
 
 		await wpAdmin.openNewPage();
 		await editor.setPageTemplate( 'canvas' );
@@ -33,7 +34,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.setSwitcherControlValue( 'autoplay', false );
 
 		await test.step( 'Verify image population', async () => {
-			expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper.swiper-initialized' ).screenshot( {
+			expect( await preview.locator( 'div.elementor-image-carousel-wrapper.swiper.swiper-initialized' ).screenshot( {
 				type: 'jpeg',
 				quality: 90,
 			} ) ).toMatchSnapshot( 'carousel.jpeg' );
@@ -56,7 +57,7 @@ test.describe( 'Image carousel tests', () => {
 			await editor.setSelectControlValue( 'arrows_position', 'outside' );
 
 			// Assert
-			expect( await editor.getPreviewFrame().locator( '.elementor-widget-image-carousel div.elementor-widget-container' ).screenshot( {
+			expect( await preview.locator( '.elementor-widget-image-carousel div.elementor-widget-container' ).screenshot( {
 				type: 'jpeg',
 				quality: 100,
 			} ) ).toMatchSnapshot( 'carousel-arrows-position.jpeg' );
@@ -75,6 +76,7 @@ test.describe( 'Image carousel tests', () => {
 	test( 'Image Carousel Responsive Spacing', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
+		const preview = editor.getPreviewFrame();
 
 		await wpAdmin.setExperiments( {
 			additional_custom_breakpoints: true,
@@ -99,21 +101,21 @@ test.describe( 'Image carousel tests', () => {
 		// Test Desktop
 		await editor.setSliderControlValue( 'image_spacing_custom', '100' );
 		await editor.togglePreviewMode();
-		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
+		await expect( preview.locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '100px' );
 
 		// Test Tablet Extra
 		await editor.togglePreviewMode();
 		await editor.changeResponsiveView( 'tablet_extra' );
 		await editor.setSliderControlValue( 'image_spacing_custom_tablet_extra', '50' );
 		await editor.togglePreviewMode();
-		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
+		await expect( preview.locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '50px' );
 
 		// Test Tablet
 		await editor.togglePreviewMode();
 		await editor.changeResponsiveView( 'tablet' );
 		await editor.setSliderControlValue( 'image_spacing_custom_tablet', '10' );
 		await editor.togglePreviewMode();
-		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
+		await expect( preview.locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
 		await wpAdmin.setExperiments( {
 			additional_custom_breakpoints: 'inactive',
 		} );

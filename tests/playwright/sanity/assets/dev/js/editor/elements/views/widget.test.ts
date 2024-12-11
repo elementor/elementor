@@ -7,13 +7,14 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		// Act.
 		await editor.addWidget( 'image-carousel' );
 		await page.waitForTimeout( 500 );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-image-carousel .elementor-widget-empty-icon' );
+		await preview.waitForSelector( '.elementor-widget-image-carousel .elementor-widget-empty-icon' );
 
-		const emptyViewPlaceholderCount = await editor.getPreviewFrame().evaluate( () => document.querySelectorAll( '.elementor-widget-image-carousel .elementor-widget-empty-icon' ).length );
+		const emptyViewPlaceholderCount = await preview.evaluate( () => document.querySelectorAll( '.elementor-widget-image-carousel .elementor-widget-empty-icon' ).length );
 
 		// Assert.
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
@@ -23,14 +24,15 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		// Act.
 		await editor.addWidget( 'sidebar' );
 		await editor.closeNavigatorIfOpen();
 		await page.waitForTimeout( 500 );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
+		await preview.waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
-		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-sidebar .elementor-widget-empty-icon' ).count();
+		const emptyViewPlaceholderCount = await preview.locator( '.elementor-widget-sidebar .elementor-widget-empty-icon' ).count();
 
 		// Assert.
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
@@ -40,6 +42,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		// Act.
 		await editor.addWidget( 'image-box' );
@@ -49,9 +52,9 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		await editor.setTextControlValue( 'title_text', '' );
 		await editor.setTextareaControlValue( 'description_text', '' );
 		await page.waitForTimeout( 500 );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
+		await preview.waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
-		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-image-box > .elementor-widget-empty-icon.eicon-image-box' ).count();
+		const emptyViewPlaceholderCount = await preview.locator( '.elementor-widget-image-box > .elementor-widget-empty-icon.eicon-image-box' ).count();
 
 		// Assert.
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
@@ -61,13 +64,14 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		// Act.
 		await editor.addWidget( 'image-gallery' );
 		await page.waitForTimeout( 500 );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-image-gallery .elementor-widget-empty-icon' );
+		await preview.waitForSelector( '.elementor-widget-image-gallery .elementor-widget-empty-icon' );
 
-		const emptyViewPlaceholderCount = await editor.getPreviewFrame().evaluate( () => document.querySelectorAll( '.elementor-widget-image-gallery .elementor-widget-empty-icon' ).length );
+		const emptyViewPlaceholderCount = await preview.evaluate( () => document.querySelectorAll( '.elementor-widget-image-gallery .elementor-widget-empty-icon' ).length );
 
 		// Assert.
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
@@ -77,14 +81,15 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		// Act.
 		await editor.addWidget( 'video' );
 		await editor.setSelectControlValue( 'video_type', 'hosted' );
 		await page.waitForTimeout( 500 );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
+		await preview.waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
-		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-video .elementor-widget-empty-icon' ).count();
+		const emptyViewPlaceholderCount = await preview.locator( '.elementor-widget-video .elementor-widget-empty-icon' ).count();
 
 		// Assert.
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
@@ -94,15 +99,16 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
 
 		// Act.
 		await editor.addWidget( 'google_maps' );
 		await editor.setTextControlValue( 'address', '' );
 		await editor.page.waitForLoadState( 'domcontentloaded' );
 		await page.waitForTimeout( 500 );
-		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
+		await preview.waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
 
-		const emptyViewPlaceholderCount = await editor.getPreviewFrame().locator( '.elementor-widget-google_maps .elementor-widget-empty-icon' ).count();
+		const emptyViewPlaceholderCount = await preview.locator( '.elementor-widget-google_maps .elementor-widget-empty-icon' ).count();
 
 		// Assert.
 		expect( emptyViewPlaceholderCount ).toBe( 1 );

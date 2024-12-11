@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, Frame } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorPage from '../pages/editor-page';
@@ -9,6 +9,7 @@ test( 'Basic Gallery', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
+	const preview = editor.getPreviewFrame();
 
 	await editor.closeNavigatorIfOpen();
 	await editor.addWidget( 'image-gallery' );
@@ -18,7 +19,7 @@ test( 'Basic Gallery', async ( { page, apiRequests }, testInfo ) => {
 	await editor.addImagesToGalleryControl();
 
 	await editor.togglePreviewMode();
-	expect( await editor.getPreviewFrame()
+	expect( await preview
 		.locator( 'div#gallery-1' )
 		.screenshot( { type: 'jpeg', quality: 90 } ) )
 		.toMatchSnapshot( 'gallery.jpeg' );
@@ -28,12 +29,13 @@ test( 'Basic Gallery Lightbox', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
+	const preview = editor.getPreviewFrame();
 
 	await editor.closeNavigatorIfOpen();
 	await editor.addWidget( 'image-gallery' );
 
 	// Act.
-	await testBasicSwiperGallery( editor );
+	await testBasicSwiperGallery( editor, preview );
 } );
 
 test( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRequests }, testInfo ) => {
@@ -63,18 +65,17 @@ test( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRequest
 	await expect( page.locator( '.elementor-lightbox-item.swiper-slide-active' ) ).toHaveScreenshot( 'gallery-lightbox-breakpoint.png' );
 } );
 
-async function testBasicSwiperGallery( editor: EditorPage ) {
+async function testBasicSwiperGallery( editor: EditorPage, preview: null|Frame ) {
 	// Act.
 	await editor.openPanelTab( 'content' );
 	await editor.addImagesToGalleryControl();
 
 	await editor.togglePreviewMode();
-	await editor.getPreviewFrame().locator( 'div#gallery-1 img' ).first().click();
+	await preview.locator( 'div#gallery-1 img' ).first().click();
 	await editor.page.waitForTimeout( 1000 );
-	await editor.getPreviewFrame().locator( '.swiper-slide-active img[data-title="A"]' ).waitFor();
-	await editor.getPreviewFrame().locator( '.elementor-swiper-button-next' ).first().click();
-	await editor.getPreviewFrame().locator( '.swiper-slide-active img[data-title="B"]' ).waitFor();
+	await preview.locator( '.swiper-slide-active img[data-title="A"]' ).waitFor();
+	await preview.locator( '.elementor-swiper-button-next' ).first().click();
+	await preview.locator( '.swiper-slide-active img[data-title="B"]' ).waitFor();
 
-	await expect( editor.getPreviewFrame().locator( '.elementor-lightbox' ) )
-		.toHaveScreenshot( 'gallery-lightbox-swiper.png' );
+	await expect( preview.locator( '.elementor-lightbox' ) ).toHaveScreenshot( 'gallery-lightbox-swiper.png' );
 }

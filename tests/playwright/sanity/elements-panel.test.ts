@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, Frame } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorPage from '../pages/editor-page';
@@ -7,15 +7,16 @@ test( 'add widgets from the panel by click', async ( { page, apiRequests }, test
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
+	const preview = editor.getPreviewFrame();
 
 	// Act.
-	const heading = await addWidgetByClick( editor, 'heading' );
+	const heading = await addWidgetByClick( editor, preview, 'heading' );
 
-	await addWidgetByClick( editor, 'button' );
+	await addWidgetByClick( editor, preview, 'button' );
 
 	await editor.selectElement( heading );
 
-	await addWidgetByClick( editor, 'icon' );
+	await addWidgetByClick( editor, preview, 'icon' );
 
 	// Assert.
 	type dataset = Element & {
@@ -23,7 +24,7 @@ test( 'add widgets from the panel by click', async ( { page, apiRequests }, test
 			widget_type: string
 		}
 	}
-	const orderedWidgets = await editor.getPreviewFrame().evaluate( () => {
+	const orderedWidgets = await preview.evaluate( () => {
 		// Build a string that represents the widgets order in the page, since
 		// evaluate() must return a primitive value.
 		return [ ...document.querySelectorAll( '.elementor-widget' ) ]
@@ -49,12 +50,12 @@ test( 'block adding from panel an inner section inside an inner section', async 
 	expect( secondInnerSection ).not.toBeDefined();
 } );
 
-async function addWidgetByClick( editor: EditorPage, widgetType: string ) {
+async function addWidgetByClick( editor: EditorPage, preview: null|Frame, widgetType: string ) {
 	const title = widgetType.charAt( 0 ).toUpperCase() + widgetType.slice( 1 );
 	const elementsPanelItem = `.elementor-panel-category-items :text-is('${ title }')`;
 
 	await editor.openElementsPanel();
 	await editor.page.locator( elementsPanelItem ).click();
 
-	return editor.getPreviewFrame().locator( `.elementor-widget-${ widgetType }` ).getAttribute( 'data-id' );
+	return preview.locator( `.elementor-widget-${ widgetType }` ).getAttribute( 'data-id' );
 }

@@ -46,12 +46,14 @@ test.describe( 'Context menu', () => {
 		const headingSelector = '.elementor-heading-title';
 
 		await wpAdmin.openNewPage();
+		const preview = editor.getPreviewFrame();
+
 		await editor.addWidget( 'heading' );
 		await editor.openPanelTab( 'style' );
 		await editor.setColorControlValue( 'title_color', '#E46E6E' );
-		await expect( editor.getPreviewFrame().locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(228, 110, 110)' );
+		await expect( preview.locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(228, 110, 110)' );
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Reset style' );
-		await expect( editor.getPreviewFrame().locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(110, 193, 228)' );
+		await expect( preview.locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(110, 193, 228)' );
 	} );
 
 	test( 'Open Navigator test', async ( { page, apiRequests }, testInfo ) => {

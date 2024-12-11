@@ -14,7 +14,7 @@ let Backbone: BackboneType;
 let window: WindowType;
 
 export default class EditorPage extends BasePage {
-	readonly previewFrame: Frame;
+	readonly preview: Frame;
 	postId: number | null;
 
 	/**
@@ -28,7 +28,7 @@ export default class EditorPage extends BasePage {
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
-		this.previewFrame = this.getPreviewFrame();
+		this.preview = this.getPreviewFrame();
 		this.postId = cleanPostId;
 	}
 
