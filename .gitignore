@@ -31,6 +31,7 @@ Thumbs.db
 coverage/
 .zimud.json
 .phpunit.result.cache
+.npmrc
 
 # playwright
 test-results/
