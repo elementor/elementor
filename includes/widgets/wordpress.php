@@ -113,7 +113,7 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * Retrieve the list of style dependencies the widget requires.
 	 *
-	 * @since 3.25.11
+	 * @since 3.26.0
 	 * @access public
 	 *
 	 * @return array Widget style dependencies.
