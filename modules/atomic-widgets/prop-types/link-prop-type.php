@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Link_Prop_type extends Object_Prop_Type {
+class Link_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
 		return 'link';
 	}

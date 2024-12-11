@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-interface Atomic_Widget_Linkable
-{
+interface Atomic_Widget_Linkable {
 	public function get_link_template( array $settings ): string;
 }

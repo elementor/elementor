@@ -22,7 +22,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
@@ -121,7 +121,7 @@ class Module extends BaseModule {
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Image_Attachment_Id_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Url_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( Link_Prop_type::get_key(), new Primitive_Transformer() );
+		$transformers->register( Link_Prop_Type::get_key(), new Primitive_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {

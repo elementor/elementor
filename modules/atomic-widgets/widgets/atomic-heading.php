@@ -9,7 +9,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 
@@ -35,7 +35,7 @@ class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkabl
 		$is_link_enabled = ! empty( $settings['link']['enabled'] );
 
 		if ( $is_link_enabled ) {
-			echo $this->get_link_template( $settings );
+			echo $this->get_link_template( $settings );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			return;
 		}
 
@@ -54,8 +54,7 @@ class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkabl
 		);
 	}
 
-	public function get_link_template( array $settings ): string
-	{
+	public function get_link_template( array $settings ): string {
 		$tag = $settings['tag'];
 		$title = $settings['title'];
 		$attrs = array_filter( [
@@ -69,8 +68,8 @@ class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkabl
 
 		return sprintf(
 			'<%1$s %2$s><a %4$s>%3$s</a></%1$s>',
-			Utils::validate_html_tag( $tag ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			Utils::render_html_attributes( $attrs ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			Utils::validate_html_tag( $tag ),
+			Utils::render_html_attributes( $attrs ),
 			esc_html( $title ),
 			Utils::render_html_attributes( array_filter( $link_attrs ) )
 		);
@@ -114,9 +113,7 @@ class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkabl
 						->set_label( __( 'Title', 'elementor' ) )
 						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
 
-					Link_Control::bind_to( 'link' )
-						->set_label( __( 'Link', 'elementor' ) )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+					Link_Control::bind_to( 'link' ),
 				] ),
 		];
 	}
@@ -133,7 +130,7 @@ class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkabl
 			'title' => String_Prop_Type::make()
 				->default( __( 'Your Title Here', 'elementor' ) ),
 
-			'link' => Link_Prop_type::make(),
+			'link' => Link_Prop_Type::make(),
 		];
 	}
 }
