@@ -62,6 +62,6 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	abstract protected function validate_value( $value ): bool;
 
 	protected function sanitize_value( $value ) {
-		return ! is_null ( $value ) ? wp_kses_post( $value ) : null;
+		return ! is_null( $value ) ? wp_kses_post( $value ) : null;
 	}
 }

@@ -78,7 +78,7 @@ trait Has_Atomic_Base {
 				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
 			}
 
-			$styles[ $style_id ] =  $style_parser->sanitize( $validated );
+			$styles[ $style_id ] = $style_parser->sanitize( $validated );
 		}
 
 		return $styles;
