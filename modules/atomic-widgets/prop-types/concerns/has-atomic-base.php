@@ -68,17 +68,17 @@ trait Has_Atomic_Base {
 		}
 	}
 
-	private function sanitize_atomic_styles( array $styles ) {
+	private function sanitize_atomic_styles( array $styles ): array {
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 
-		foreach ( $styles as $style ) {
-			[$is_valid, $validated, $errors_bag] = $style_parser->validate( $style );
+		foreach ( $styles as $style_id => $style ) {
+			[ $is_valid, $validated, $errors_bag  ] = $style_parser->validate( $style );
 
 			if ( ! $is_valid ) {
 				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
 			}
 
-			$styles[ $validated['id'] ] = $style_parser->sanitize( $validated );
+			$styles[ $style_id ] =  $style_parser->sanitize( $validated );
 		}
 
 		return $styles;
@@ -86,12 +86,11 @@ trait Has_Atomic_Base {
 
 	private function sanitize_atomic_settings( array $settings ): array {
 		$schema = static::get_props_schema();
-
 		$props_parser = Props_Parser::make( $schema );
 
-		[ , $validated, $errors ] = $props_parser->validate( $settings );
+		[ $is_valid, $validated, $errors ] = $props_parser->validate( $settings );
 
-		if ( ! empty( $errors ) ) {
+		if ( ! $is_valid ) {
 			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
 

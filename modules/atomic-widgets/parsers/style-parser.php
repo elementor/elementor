@@ -52,26 +52,29 @@ class Style_Parser {
 		if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
 			$this->errors_bag[] = 'variants';
 			unset( $validated_style['variants'] );
+
 			return [
 				false,
 				$validated_style,
 				$this->errors_bag,
 			];
 		}
+
+		$props_parser = Props_Parser::make( $this->schema );
+
 		foreach ( $style['variants'] as $variant_index => $variant ) {
 			if ( ! isset( $variant['meta'] ) ) {
 				$this->errors_bag[] = 'meta';
 				continue;
 			}
 
-			$is_variant_valid = $this->validate_meta( $variant['meta'] );
+			$is_variant_meta_valid = $this->validate_meta( $variant['meta'] );
 
-			if ( $is_variant_valid ) {
-
-				[, $validated_props, $variant_errors] = Props_Parser::make( $this->schema )->validate( $variant['props'] );
+			if ( $is_variant_meta_valid ) {
+				[$is_variant_props_valid, $validated_props, $variant_errors] = $props_parser->validate( $variant['props'] );
 				$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
 
-				if ( ! empty( $validated_props ) ) {
+				if ( $is_variant_props_valid ) {
 					$validated_style['variants'][ $variant_index ]['meta'] = $variant['meta'];
 					$validated_style['variants'][ $variant_index ]['props'] = $validated_props;
 				}
@@ -79,6 +82,7 @@ class Style_Parser {
 		}
 
 		$is_valid = empty( $this->errors_bag );
+
 		return [
 			$is_valid,
 			$validated_style,
@@ -113,8 +117,10 @@ class Style_Parser {
 	 * @return array<string, mixed>
 	 */
 	public function sanitize( array $style ): array {
+		$props_parser = Props_Parser::make( $this->schema );
+
 		foreach ( $style['variants'] as $variant_index => $variant ) {
-			$style['variants'][ $variant_index ]['props'] = Props_Parser::make( $this->schema )->sanitize( $variant['props'] );
+			$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] );
 		}
 
 		return $style;
@@ -127,10 +133,12 @@ class Style_Parser {
 	 * @return array<string, mixed>
 	 */
 	public function parse( array $style ): array {
+		$props_parser = Props_Parser::make( $this->schema );
+
 		[ , $validated_style ] = $this->validate( $style );
 
 		foreach ( $validated_style['variants'] as $variant_index => $variant ) {
-			$validated_style['variants'][ $variant_index ]['props'] = Props_Parser::make( $this->schema )->sanitize( $variant );
+			$validated_style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant );
 		}
 
 		return $validated_style;

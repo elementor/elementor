@@ -67,13 +67,6 @@ class String_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
-		if (
-			! $this->get_enum() &&
-			! $this->get_regex()
-		) {
-			return sanitize_text_field( $value );
-		}
-
-		return $value;
+		return ! empty( $value ) ? sanitize_text_field( $value ) : null;
 	}
 }

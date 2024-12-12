@@ -39,7 +39,9 @@ class Props_Parser {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
 				continue;
 			}
+
 			$value = $props[ $key ] ?? null;
+
 			$is_valid = $prop_type->validate( $value ?? $prop_type->get_default() );
 
 			if ( ! $is_valid ) {
@@ -54,6 +56,7 @@ class Props_Parser {
 		}
 
 		$is_valid = empty( $this->errors_bag );
+
 		return [
 			$is_valid,
 			$validated,

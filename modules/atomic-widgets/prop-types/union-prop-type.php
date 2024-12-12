@@ -46,8 +46,8 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	private function get_prop_type_from_value( $value ): ?Prop_Type {
-		if ( is_string( $value ) ) {
-			return $this->get_prop_type( 'string' );
+		if ( isset( $value['$$type'] ) ) {
+			return $this->get_prop_type( $value['$$type'] );
 		}
 
 		if ( is_numeric( $value ) ) {
@@ -58,8 +58,8 @@ class Union_Prop_Type implements Prop_Type {
 			return $this->get_prop_type( 'boolean' );
 		}
 
-		if ( isset( $value['$$type'] ) ) {
-			return $this->get_prop_type( $value['$$type'] );
+		if ( is_string( $value ) ) {
+			return $this->get_prop_type( 'string' );
 		}
 
 		return null;

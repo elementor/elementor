@@ -39,9 +39,9 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 
 	public function sanitize( $value ) {
 		if ( $this->is_transformable( $value ) ) {
-			$value['value'] = wp_kses_post( $value['value'] );
+			$value['value'] = $this->sanitize_value( $value['value'] );
 		} else {
-			$value = wp_kses_post( $value );
+			$value = $this->sanitize_value( $value );
 		}
 
 		return $value;
@@ -61,5 +61,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 
 	abstract protected function validate_value( $value ): bool;
 
-	abstract protected function sanitize_value( $value );
+	protected function sanitize_value( $value ) {
+		return ! empty ( $value ) ? wp_kses_post( $value ) : null;
+	}
 }
