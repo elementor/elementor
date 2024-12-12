@@ -74,8 +74,10 @@ class Style_Parser {
 				[, $validated_props, $variant_errors] = $props_parser->validate( $variant['props'] );
 				$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
 
-				$validated_style['variants'][ $variant_index ]['meta'] = $variant['meta'];
 				$validated_style['variants'][ $variant_index ]['props'] = $validated_props;
+			}
+			else {
+				unset( $validated_style['variants'][ $variant_index ] );
 			}
 		}
 
