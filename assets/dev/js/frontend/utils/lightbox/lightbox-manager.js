@@ -9,7 +9,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			dialogScriptPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
 			dialogStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'dialog' ),
 			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' ),
-			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' ),
+			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' ), // TODO: Remove in v3.28.0 [ED-16258].
 			lightboxStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox' );
 
 		return Promise.all( [

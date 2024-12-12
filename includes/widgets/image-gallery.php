@@ -214,6 +214,27 @@ class Widget_Image_Gallery extends Widget_Base {
 				'condition' => [
 					'gallery_link' => 'file',
 				],
+				'assets' => [
+					'styles' => [
+						[
+							'name' => 'e-swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'gallery_link',
+										'operator' => '===',
+										'value' => 'file',
+									],
+									[
+										'name' => 'open_lightbox',
+										'operator' => '!==',
+										'value' => 'no',
+									],
+								],
+							],
+						],
+					],
+				],
 			]
 		);
 
