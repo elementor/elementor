@@ -50,7 +50,7 @@ class Props_Parser {
 				continue;
 			}
 
-			if ( $value ) {
+			if ( ! is_null( $value ) ) {
 				$validated[ $key ] = $value;
 			}
 		}

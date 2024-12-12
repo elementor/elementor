@@ -71,13 +71,11 @@ class Style_Parser {
 			$is_variant_meta_valid = $this->validate_meta( $variant['meta'] );
 
 			if ( $is_variant_meta_valid ) {
-				[$is_variant_props_valid, $validated_props, $variant_errors] = $props_parser->validate( $variant['props'] );
+				[, $validated_props, $variant_errors] = $props_parser->validate( $variant['props'] );
 				$this->errors_bag = array_merge( $this->errors_bag, $variant_errors );
 
-				if ( $is_variant_props_valid ) {
-					$validated_style['variants'][ $variant_index ]['meta'] = $variant['meta'];
-					$validated_style['variants'][ $variant_index ]['props'] = $validated_props;
-				}
+				$validated_style['variants'][ $variant_index ]['meta'] = $variant['meta'];
+				$validated_style['variants'][ $variant_index ]['props'] = $validated_props;
 			}
 		}
 
