@@ -97,7 +97,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [];
 	}
 
-	public function get_dynamic_imports(): array {
+	public function get_import_depends(): array {
 		return [ 'carousel-base' ];
 	}
 

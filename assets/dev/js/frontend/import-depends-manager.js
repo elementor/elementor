@@ -1,4 +1,4 @@
-export default class DynamicImportManager extends elementorModules.ViewModule {
+export default class ImportDependsManager extends elementorModules.ViewModule {
 	getRegisteredModuleScripts() {
 		return [
 			{
@@ -13,7 +13,24 @@ export default class DynamicImportManager extends elementorModules.ViewModule {
 				frontendObject: 'frontendHandlers',
 				importFunction: () => import( /* webpackChunkName: 'swiperBaseHandler' */ './handlers/base-swiper' ),
 			},
+			// {
+			// 	moduleKey: 'background-slideshow',
+			// 	moduleName: 'BackgroundSlideshow',
+			// 	frontendObject: 'container',
+			// 	importFunction: () => import( /* webpackChunkName: 'swiperBaseHandler' */ './handlers/background-slideshow' ),
+			// },
+			{
+				moduleKey: 'e-swiper',
+				moduleName: 'swiper',
+				frontendObject: 'utils',
+				importFunction: () => import( /* webpackChunkName: 'swiperClass' */ './utils/swiper' ),
+			},
 		];
+	}
+
+	getRegisteredScriptsByObjectName( objectName ) {
+		const registeredScripts = this.getRegisteredModuleScripts();
+		return registeredScripts.filter( ( script ) => script.frontendObject === objectName );
 	}
 
 	getActiveModuleScripts() {
@@ -29,6 +46,9 @@ export default class DynamicImportManager extends elementorModules.ViewModule {
 				break;
 			case 'utils':
 				frontendObject = elementorFrontend.utils;
+				break;
+			case 'container':
+				frontendObject = this.elementsHandlers.container;
 				break;
 		}
 
@@ -55,5 +75,22 @@ export default class DynamicImportManager extends elementorModules.ViewModule {
 				} )();
 			}
 		} );
+	}
+
+	async load( objectName, frontendObject ) {
+		const importDepends = this.getRegisteredScriptsByObjectName( objectName );
+
+		// TODO: Remove this in version 3.28 [ED-15983].
+		const areAllScriptsLoadedByDefault = false;
+
+		for ( const script of importDepends ) {
+			if (
+				areAllScriptsLoadedByDefault ||
+				elementorFrontend.isEditMode() ||
+				this.activeModuleScripts.includes( script.moduleKey )
+			) {
+				frontendObject[ script.moduleName ] = await script.importFunction();
+			}
+		}
 	}
 }

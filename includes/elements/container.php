@@ -675,9 +675,21 @@ class Container extends Element_Base {
 							],
 						],
 					],
-					'dynamic_imports' => [
+					'imports' => [
 						[
-							'name' => 'swiper-base',
+							'name' => 'background-slideshow',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+						[
+							'name' => 'e-swiper',
 							'conditions' => [
 								'terms' => [
 									[

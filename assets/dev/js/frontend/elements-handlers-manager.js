@@ -1,5 +1,6 @@
 import globalHandler from './handlers/global';
 import backgroundHandlers from './handlers/background';
+import backgroundSlideshow from './handlers/background-slideshow';
 import containerHandlers from './handlers/container/container';
 import columnHandlers from './handlers/column';
 
@@ -49,7 +50,11 @@ module.exports = function( $ ) {
 			Shapes,
 		];
 
-		this.elementsHandlers.container = [ ...backgroundHandlers ];
+		// this.elementsHandlers.container = [ ...backgroundHandlers ];
+		// this.elementsHandlers.container.push( BackgroundSlideshow );
+
+		this.elementsHandlers.container = [];
+		this.elementsHandlers.container.push( () => import( /* webpackChunkName: 'background-slideshow-module' */ './handlers/background-slideshow' ) );
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {

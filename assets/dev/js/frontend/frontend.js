@@ -1,14 +1,14 @@
 /* global elementorFrontendConfig */
 import '../public-path';
 import DocumentsManager from './documents-manager';
-import DynamicImportManager from './dynamic-import-manager';
+import ImportDependsManager from './import-depends-manager';
 import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import BaseVideoLoader from './utils/video-api/base-loader';
 import URLActions from './utils/url-actions';
-import Swiper from './utils/swiper';
+// import Swiper from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
@@ -189,7 +189,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		};
 	}
 
-	initOnReadyComponents() {
+	async initOnReadyComponents() {
 		this.utils = {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
@@ -198,13 +198,16 @@ export default class Frontend extends elementorModules.ViewModule {
 				return LightboxManager.getLightbox();
 			},
 			urlActions: new URLActions(),
-			swiper: Swiper,
+			// swiper: Swiper,
 			environment,
 			assetsLoader: new AssetsLoader(),
 			escapeHTML,
 			events: Events,
 			controls: new Controls(),
+			importDependsManager: new ImportDependsManager(),
 		};
+
+		await elementorFrontend.utils.importDependsManager.load( 'utils', this.utils );
 
 		// TODO: Remove experiment in v3.27.0 [ED-15717].
 		if ( this.config.experimentalFeatures.e_css_smooth_scroll ) {
@@ -341,7 +344,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		} );
 	}
 
-	init() {
+	async init() {
 		this.hooks = new EventManager();
 
 		this.breakpoints = new Breakpoints( this.config.responsive );
@@ -369,9 +372,9 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.initOnReadyElements();
 
-		this.initOnReadyComponents();
+		await this.initOnReadyComponents();
 
-		new DynamicImportManager();
+		new ImportDependsManager();
 	}
 
 	onDocumentLoaded() {
@@ -386,5 +389,5 @@ export default class Frontend extends elementorModules.ViewModule {
 window.elementorFrontend = new Frontend();
 
 if ( ! elementorFrontend.isEditMode() ) {
-	jQuery( () => elementorFrontend.init() );
+	jQuery( async () => await elementorFrontend.init() );
 }
