@@ -33,7 +33,7 @@ class Transformations_Manager {
 	protected array $transformation_classes = [];
 
 	public function __construct( $home_screen_data ) {
-		$container = Plugin::$instance->elementor_container();
+		$container = Plugin::$instance->get_elementor_container();
 
 		if ( $container->has( Wordpress_Adapter::class ) ) {
 			$this->wordpress_adapter = $container->get( Wordpress_Adapter::class );

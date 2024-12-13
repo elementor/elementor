@@ -2,8 +2,8 @@
 
 namespace Elementor\Container;
 
-use ElementorDeps\DI\ContainerBuilder;
 use ElementorDeps\DI\Container as DIContainer;
+use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -26,28 +26,37 @@ class Container {
 
 	private function __clone() {}
 
-	private static function initialize(): DIContainer {
-		if ( isset( self::$instance ) ) {
-			return self::$instance;
+	/**
+	 * @throws Exception
+	 */
+	public function create_container(): DIContainer {
+		$builder = new Container_Builder();
+
+		switch ( $this->is_hidden_experiment_active() ) {
+			case true:
+				$builder->with_experiment_configurations();
+				break;
+			case false:
+				$builder->with_configurations();
+				break;
 		}
 
-		$builder = new ContainerBuilder();
-
-		self::register_configuration( $builder );
 		return $builder->build();
 	}
 
-	private static function register_configuration( ContainerBuilder $builder ) {
-		$builder->addDefinitions( __DIR__ . '/config.php' );
+	private function is_hidden_experiment_active(): bool {
+		return defined( 'ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS' ) && ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS;
 	}
 
-	public static function initialize_instance() {
-		static::$instance = self::initialize();
+	private function initialize(): void {
+		if ( ! isset( self::$instance ) ) {
+			self::$instance = $this->create_container();
+		}
 	}
 
 	public static function get_instance() {
 		if ( is_null( static::$instance ) ) {
-			self::initialize_instance();
+			( new Container )->initialize();
 		}
 
 		return static::$instance;
