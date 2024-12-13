@@ -76,7 +76,9 @@ export const generatePluginTests = ( testType: string ) => {
 					admin.remove();
 				}, adminBar );
 				await editor.removeClasses( 'elementor-motion-effects-element' );
-				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
+				await page.locator( 'text=making a start' ).scrollIntoViewIfNeeded();
+				await page.waitForTimeout( 1000 );
+				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true, threshold: 0.01 } );
 
 				if ( 'astra-sites' === plugin.pluginName ) {
 					await page.goto( '/wp-admin/index.php' );
