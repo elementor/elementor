@@ -13,12 +13,12 @@ export default class ImportDependsManager extends elementorModules.ViewModule {
 				frontendObject: 'frontendHandlers',
 				importFunction: () => import( /* webpackChunkName: 'swiperBaseHandler' */ './handlers/base-swiper' ),
 			},
-			// {
-			// 	moduleKey: 'background-slideshow',
-			// 	moduleName: 'BackgroundSlideshow',
-			// 	frontendObject: 'container',
-			// 	importFunction: () => import( /* webpackChunkName: 'swiperBaseHandler' */ './handlers/background-slideshow' ),
-			// },
+			{
+				moduleKey: 'background-slideshow',
+				moduleName: 'BackgroundSlideshow',
+				frontendObject: 'container',
+				importFunction: () => import( /* webpackChunkName: 'swiperBaseHandler' */ './handlers/background-slideshow' ),
+			},
 			{
 				moduleKey: 'e-swiper',
 				moduleName: 'swiper',
@@ -36,48 +36,47 @@ export default class ImportDependsManager extends elementorModules.ViewModule {
 	getActiveModuleScripts() {
 		return ! elementorFrontend.isEditMode() && !! elementorDynamicImports ? elementorDynamicImports : [];
 	}
-
-	getFrontendObject( objectName ) {
-		let frontendObject = null;
-
-		switch ( objectName ) {
-			case 'frontendHandlers':
-				frontendObject = elementorModules.frontend.handlers;
-				break;
-			case 'utils':
-				frontendObject = elementorFrontend.utils;
-				break;
-			case 'container':
-				frontendObject = this.elementsHandlers.container;
-				break;
-		}
-
-		return frontendObject;
-	}
+	//
+	// getFrontendObject( objectName ) {
+	// 	let frontendObject = null;
+	//
+	// 	switch ( objectName ) {
+	// 		case 'frontendHandlers':
+	// 			frontendObject = elementorModules.frontend.handlers;
+	// 			break;
+	// 		case 'utils':
+	// 			frontendObject = elementorFrontend.utils;
+	// 			break;
+	// 		case 'container':
+	// 			frontendObject = this.elementsHandlers.container;
+	// 			break;
+	// 	}
+	//
+	// 	return frontendObject;
+	// }
 
 	onInit() {
-		this.registeredModuleScripts = this.getRegisteredModuleScripts();
 		this.activeModuleScripts = this.getActiveModuleScripts();
-		this.loadActiveModuleScripts();
 	}
 
-	loadActiveModuleScripts() {
+	load( objectName, frontendObject ) {
+		const importDepends = this.getRegisteredScriptsByObjectName( objectName );
+
 		// TODO: Remove this in version 3.28 [ED-15983].
-		const areAllScriptsLoadedByDefault = true;
+		const areAllScriptsLoadedByDefault = false;
 
-		this.registeredModuleScripts.forEach( ( script ) => {
-			if ( areAllScriptsLoadedByDefault || elementorFrontend.isEditMode() || this.activeModuleScripts.includes( script.moduleKey ) ) {
-				( async () => {
-					const { default: ScriptModule } = await script.importFunction();
-
-					const frontendObject = this.getFrontendObject( script.frontendObject );
-					frontendObject[ script.moduleName ] = ScriptModule;
-				} )();
+		for ( const script of importDepends ) {
+			if (
+				areAllScriptsLoadedByDefault ||
+				elementorFrontend.isEditMode() ||
+				this.activeModuleScripts.includes( script.moduleKey )
+			) {
+				frontendObject.push(() => script.importFunction());
 			}
-		} );
+		}
 	}
 
-	async load( objectName, frontendObject ) {
+	async loadAsync( objectName, frontendObject ) {
 		const importDepends = this.getRegisteredScriptsByObjectName( objectName );
 
 		// TODO: Remove this in version 3.28 [ED-15983].

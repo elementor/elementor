@@ -207,7 +207,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			importDependsManager: new ImportDependsManager(),
 		};
 
-		await elementorFrontend.utils.importDependsManager.load( 'utils', this.utils );
+		await elementorFrontend.utils.importDependsManager.loadAsync( 'utils', this.utils );
 
 		// TODO: Remove experiment in v3.27.0 [ED-15717].
 		if ( this.config.experimentalFeatures.e_css_smooth_scroll ) {

@@ -50,11 +50,8 @@ module.exports = function( $ ) {
 			Shapes,
 		];
 
-		// this.elementsHandlers.container = [ ...backgroundHandlers ];
-		// this.elementsHandlers.container.push( BackgroundSlideshow );
-
 		this.elementsHandlers.container = [];
-		this.elementsHandlers.container.push( () => import( /* webpackChunkName: 'background-slideshow-module' */ './handlers/background-slideshow' ) );
+		elementorFrontend.utils.importDependsManager.load( 'container', this.elementsHandlers.container );
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {
