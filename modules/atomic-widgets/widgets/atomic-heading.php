@@ -67,11 +67,11 @@ class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkabl
 		];
 
 		return sprintf(
-			'<%1$s %2$s><a %4$s>%3$s</a></%1$s>',
+			'<%1$s %2$s><a %3$s>%4$s</a></%1$s>',
 			Utils::validate_html_tag( $tag ),
 			Utils::render_html_attributes( $attrs ),
-			esc_html( $title ),
-			Utils::render_html_attributes( array_filter( $link_attrs ) )
+			Utils::render_html_attributes( array_filter( $link_attrs ) ),
+			esc_html( $title )
 		);
 	}
 
