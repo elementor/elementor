@@ -23,7 +23,7 @@ async function run( tag ) {
 		process.env.CI ? '' : '--tty',
 	];
 	const image = `mcr.microsoft.com/playwright:v${ playwrightVersion.replace( '^', '' ) }-jammy`;
-	const commandToRun = `/bin/bash -c "npm run test:playwright -- --grep="${ tag }""`;
+	const commandToRun = `/bin/bash -c "pnpm run test:playwright -- --grep="${ tag }""`;
 
 	spawn( `${ command } ${ options.join( ' ' ) } ${ image } ${ commandToRun }`, {
 		stdio: 'inherit',
