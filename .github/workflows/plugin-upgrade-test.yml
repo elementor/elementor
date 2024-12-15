@@ -45,6 +45,10 @@ jobs:
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
+      - name: Download stable Elementor plugin
+        run: |
+          curl -L --output elementor.zip "https://downloads.wordpress.org/plugin/elementor.zip"
+          unzip elementor
       - name: Download hello-elementor theme
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
@@ -64,9 +68,9 @@ jobs:
           npx playwright install chromium
       - name: Upgrade site
         run: |
-          ls -l
-          ls -l ./plugin
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install ./plugin/elementor.zip --force" --port=8888
+          rm elementor.zip
+          zip -r ./build/ elementor.zip
+          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install ./elementor.zip --force" --port=8888
           npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin list" --port=8888
       - name: Run Playwright tests
         run: npm run test:playwright:elements-regression -- --grep="Test heading template"
