@@ -85,7 +85,7 @@ export default class EditorPage extends BasePage {
 	 * @param {boolean} updateDatesForImages - Optional. Whether to update images dates. Default is false.
 	 */
 	async loadTemplate( filePath: string, updateDatesForImages = false ) {
-		const rawFileData = await readFile( new URL( filePath, import.meta.url ) );
+		const rawFileData = await readFile( filePath );
 		let templateData = JSON.parse( rawFileData.toString() );
 
 		// For templates that use images, date when image is uploaded is hardcoded in template.
