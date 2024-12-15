@@ -13,10 +13,10 @@ for TEMPLATE_FILE_NAME in $TEMPLATES_FILE_NAMES
 do
    TEMPLATE_NAME=$(basename "$TEMPLATE_FILE_NAME" .json)
    export TEMPLATE_NAME=${TEMPLATE_NAME}
-   npx lhci collect --url="http://localhost:8889/${TEMPLATE_NAME}/"
-   npx lhci assert
+   pnpm exec lhci collect --url="http://localhost:8889/${TEMPLATE_NAME}/"
+   pnpm exec lhci assert
    set_max_exit
-   npx lhci upload --outputDir="${GITHUB_WORKSPACE}/.lighthouseci/reports/${TEMPLATE_NAME}/"
+   pnpm exec lhci upload --outputDir="${GITHUB_WORKSPACE}/.lighthouseci/reports/${TEMPLATE_NAME}/"
 done
 
 exit "$max_exit"

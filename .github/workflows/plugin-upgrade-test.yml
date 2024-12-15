@@ -57,7 +57,7 @@ jobs:
       - name: Setup playwright tests
         run: cd ./tests/playwright/upgrade-test && pnpm run test:setup
       - name: Install chromium
-        run: npx playwright install chromium
+        run: pnpm exec playwright install chromium
       - name: Run Playwright tests
         run: pnpm run test:playwright:elements-regression -- --grep="Test heading template"
       - uses: actions/upload-artifact@v4

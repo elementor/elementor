@@ -55,6 +55,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm i --frozen-lockfile
       - name: "Grunt Scripts"
-        run: npx grunt scripts
+        run: pnpm exec grunt scripts
       - name: "Run Qunit"
-        run: npx grunt karma:unit
+        run: pnpm exec grunt karma:unit

@@ -38,4 +38,4 @@ jobs:
         if: ${{ github.event.pull_request.title != null }}
         env:
           TITLE: ${{ github.event.pull_request.title }}
-        run: echo "$TITLE" | npx commitlint
+        run: echo "$TITLE" | pnpm exec commitlint

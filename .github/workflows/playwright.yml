@@ -83,16 +83,16 @@ jobs:
           pnpm run start-local-server
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' }}
-        run: npx wp-env run cli wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip
+        run: pnpm exec wp-env run cli wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip
       - name: Setup test data
         run: pnpm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          npx wp-env run cli wp core version
-          npx wp-env run cli wp --info
+          pnpm exec wp-env run cli wp core version
+          pnpm exec wp-env run cli wp --info
       - name: Install playwright/test
         run: |
-          npx playwright install chromium
+          pnpm exec playwright install chromium
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
         run: pnpm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
@@ -144,11 +144,11 @@ jobs:
         run: pnpm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          npx wp-env run cli wp core version
-          npx wp-env run cli wp --info
+          pnpm exec wp-env run cli wp core version
+          pnpm exec wp-env run cli wp --info
       - name: Install playwright/test
         run: |
-          npx playwright install chromium
+          pnpm exec playwright install chromium
       - name: Run Playwright tests
         run: |
           pnpm run test:playwright -- --grep="${{ inputs.tag }}"
