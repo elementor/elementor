@@ -69,7 +69,7 @@ jobs:
       - name: Upgrade site
         run: |
           rm elementor.zip
-          zip -r ./build/ elementor.zip
+          zip -r elementor.zip ./build
           npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install ./elementor.zip --force" --port=8888
           npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin list" --port=8888
       - name: Run Playwright tests
