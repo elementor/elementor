@@ -2,7 +2,7 @@ import { type APIRequestContext, type Page, Response, type TestInfo } from '@pla
 import BasePage from './base-page';
 import EditorPage from './editor-page';
 import { ElementorType, WindowType } from '../types/types';
-import { wpEnvCli } from '../assets/wp-env-cli';
+import { wpCli } from '../assets/wp-cli';
 import ApiRequests from '../assets/api-requests';
 let elementor: ElementorType;
 
@@ -292,8 +292,8 @@ export default class WpAdminPage extends BasePage {
 		return themeData[ 0 ].stylesheet;
 	}
 
-	activateTheme( theme: string ) {
-		wpEnvCli( `wp theme activate ${ theme }` );
+	async activateTheme( theme: string ) {
+		await wpCli( `wp theme activate ${ theme }` );
 	}
 
 	/**

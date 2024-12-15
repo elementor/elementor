@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import EditorPage from '../pages/editor-page';
 import WpAdminPage from '../pages/wp-admin-page';
-import { wpEnvCli } from '../assets/wp-env-cli';
+import { wpCli } from '../assets/wp-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
 const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean }[] = [
@@ -57,10 +57,10 @@ export const generatePluginTests = ( testType: string ) => {
 					pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
 					break;
 				case 'cli':
-					wpEnvCli( `wp plugin install ${ plugin.pluginName } --activate` );
+					await wpCli( `wp plugin install ${ plugin.pluginName } --activate` );
 					break;
 				case 'zip':
-					wpEnvCli( `wp plugin install elementor-playwright/plugin-tester-plugins/${ plugin.pluginName }.zip --activate` );
+					await wpCli( `wp plugin install elementor-playwright/plugin-tester-plugins/${ plugin.pluginName }.zip --activate` );
 					break;
 			}
 
@@ -104,7 +104,7 @@ export const generatePluginTests = ( testType: string ) => {
 					await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
 					await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
 				} else {
-					await wpEnvCli( `wp plugin uninstall ${ plugin.pluginName } --deactivate` );
+					await wpCli( `wp plugin uninstall ${ plugin.pluginName } --deactivate` );
 				}
 			}
 		} );
