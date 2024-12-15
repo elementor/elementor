@@ -81,8 +81,8 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Load a template from a file.
 	 *
-	 * @param filePath             - Path to the template file.
-	 * @param updateDatesForImages - Optional. Whether to update images dates. Default is false.
+	 * @param {string}  filePath             - Path to the template file.
+	 * @param {boolean} updateDatesForImages - Optional. Whether to update images dates. Default is false.
 	 */
 	async loadTemplate( filePath: string, updateDatesForImages = false ) {
 		const rawFileData = await readFile( new URL( filePath, import.meta.url ) );
