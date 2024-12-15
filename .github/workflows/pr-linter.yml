@@ -33,7 +33,7 @@ jobs:
           cache: 'pnpm'
       - name: Install Dependencies
         if: ${{ github.event.pull_request.title != null }}
-        run: pnpm install --no-package-lock --no-save @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
+        run: pnpm add @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
       - name: Run PR name linter
         if: ${{ github.event.pull_request.title != null }}
         env:
