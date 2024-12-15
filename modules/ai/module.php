@@ -168,11 +168,11 @@ class Module extends BaseModule {
 	}
 
 	public function handle_kit_install( $imported_data ) {
-		if ( isset( $imported_data['status'] ) && 'success' !== $imported_data['status'] ) {
+		if ( ! isset( $imported_data['status'] ) || 'success' !== $imported_data['status'] ) {
 			return;
 		}
 
-		if ( 'site-settings' !== $imported_data['runner'] ) {
+		if ( ! isset( $imported_data['runner'] ) || 'site-settings' !== $imported_data['runner'] ) {
 			return;
 		}
 
@@ -189,17 +189,15 @@ class Module extends BaseModule {
 		$last_imported_session = $imported_data['configData']['lastImportedSession'];
 		$imported_ai_data = $last_imported_session['instance_data']['site_settings']['settings']['ai'];
 
-		if ( $is_connected ) {
-			$this->get_ai_app()->send_event( [
-				'name' => 'kit_installed',
-				'data' => $imported_ai_data,
-				'client' => [
-					'name' => 'elementor',
-					'version' => ELEMENTOR_VERSION,
-					'session_id' => $last_imported_session['session_id'],
-				],
-			] );
-		}
+		$this->get_ai_app()->send_event( [
+			'name' => 'kit_installed',
+			'data' => $imported_ai_data,
+			'client' => [
+				'name' => 'elementor',
+				'version' => ELEMENTOR_VERSION,
+				'session_id' => $last_imported_session['session_id'],
+			],
+		] );
 	}
 
 	public function register_ai_hover_effect_control( Element_Base $element ) {
