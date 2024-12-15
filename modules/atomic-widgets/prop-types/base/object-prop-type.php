@@ -86,7 +86,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function sanitize( $value ) {
-		if( ! $this->is_transformable( $value ) ) {
+		if ( ! $this->is_transformable( $value ) ) {
 			return null;
 		}
 
