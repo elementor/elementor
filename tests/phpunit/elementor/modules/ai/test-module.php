@@ -15,20 +15,22 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 	private $module;
 	private $ai_app_mock;
-	private $user_mock;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		// Create mock for AI app
 		$this->ai_app_mock = $this->getMockBuilder('\Elementor\Modules\Ai\Connect\Ai')
 			->disableOriginalConstructor()
 			->getMock();
 
 		$this->act_as_admin();
 
-		$this->module = new Module();
+		$this->mock_connect_module();
 
+		$this->module = new Module();
+	}
+
+	private function mock_connect_module() {
 		$module_mock = $this->getMockBuilder( \Elementor\Core\Common\Modules\Connect\Module::class )
 			->setMethods( [ 'get_app' ] )
 			->getMock();
@@ -67,24 +69,8 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	public function test_handle_kit_install_should_send_event_when_connected() {
 		$this->act_as_connected_and_started_user();
 
-		$imported_data = [
-			'status' => 'success',
-			'runner' => 'site-settings',
-			'configData' => [
-				'lastImportedSession' => [
-					'session_id' => '123',
-					'instance_data' => [
-						'site_settings' => [
-							'settings' => [
-								'ai' => ['some_setting' => 'value']
-							]
-						]
-					]
-				]
-			]
-		];
+		$imported_data = $this->get_valid_import();
 
-		// Expect send_event() to be called with correct params
 		$this->ai_app_mock->expects($this->once())
 			->method('send_event')
 			->with([
@@ -102,6 +88,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 	public function test_handle_kit_install_should_return_early_if_not_success_status() {
 		$this->act_as_connected_and_started_user();
+
 		$imported_data = $this->get_valid_import();
 		$imported_data['status'] = 'error';
 
@@ -113,6 +100,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 	public function test_handle_kit_install_should_return_early_if_not_site_settings_runner() {
 		$this->act_as_connected_and_started_user();
+
 		$imported_data = $this->get_valid_import();
 		$imported_data['runner'] = 'other-runner';
 
@@ -149,7 +137,8 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$this->act_as_connected_and_started_user();
 
 		$imported_data = $this->get_valid_import();
-		unset($imported_data['configData']['lastImportedSession']['instance_data']['site_settings']['settings']['ai']);
+
+		unset( $imported_data['configData']['lastImportedSession']['instance_data']['site_settings']['settings']['ai'] );
 
 		$this->ai_app_mock->expects($this->never())
 			->method('send_event');
