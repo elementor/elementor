@@ -9,7 +9,6 @@ use Elementor\Modules\Ai\Feature_Intro\Product_Image_Unification_Intro;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
-use Elementor\Tracker;
 use Elementor\User;
 use Elementor\Utils;
 
