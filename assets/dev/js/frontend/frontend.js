@@ -374,7 +374,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		await this.initOnReadyComponents();
 
-		new ImportDependsManager();
+		await elementorFrontend.utils.importDependsManager.loadAsync( 'frontendHandlers', elementorModules.frontend.handlers );
 	}
 
 	onDocumentLoaded() {

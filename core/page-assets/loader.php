@@ -23,6 +23,8 @@ class Loader extends Module {
 
 	private array $dynamic_imports = [];
 
+	private bool $is_dynamic_imports_localized = false;
+
 	public function get_name(): string {
 		return 'assets-loader';
 	}
@@ -126,7 +128,7 @@ class Loader extends Module {
 
 				if ( 'scripts' === $assets_type ) {
 					wp_enqueue_script( $asset_name );
-				} else if ( 'imports' === $assets_type ) {
+				} else if ( 'dynamic_imports' === $assets_type ) {
 					$this->register_dynamic_import( $asset_name );
 				} else {
 					wp_enqueue_style( $asset_name );
@@ -142,11 +144,17 @@ class Loader extends Module {
 	}
 
 	private function add_dynamic_imports_to_localize_script(): void {
+		if ( $this->is_dynamic_imports_localized ) {
+			return;
+		}
+
 		wp_localize_script(
 			'elementor-frontend',
 			'elementorDynamicImports',
 			$this->dynamic_imports
 		);
+
+		$this->is_dynamic_imports_localized = true;
 	}
 
 	/**
@@ -179,7 +187,7 @@ class Loader extends Module {
 				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
-					} else if ( 'imports' === $assets_type ) {
+					} else if ( 'dynamic_imports' === $assets_type ) {
 						$this->register_dynamic_import( $asset_name );
 					} else {
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );

@@ -67,7 +67,7 @@ abstract class Element_Base extends Controls_Stack {
 	private $depended_scripts = [];
 
 
-	private $dynamic_imports = [];
+	private $depended_dynamic_imports = [];
 
 	/**
 	 * Depended styles.
@@ -123,8 +123,8 @@ abstract class Element_Base extends Controls_Stack {
 		return $this->depended_scripts;
 	}
 
-	public function get_dynamic_import_depends() {
-		return $this->dynamic_imports;
+	public function get_dynamic_import_depends(): array {
+		return $this->depended_dynamic_imports;
 	}
 
 	/**
