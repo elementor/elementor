@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Loader extends Module {
 	private array $assets = [];
 
-	private array $import_scripts = [];
+	private array $dynamic_imports = [];
 
 	public function get_name(): string {
 		return 'assets-loader';
@@ -125,10 +125,6 @@ class Loader extends Module {
 				$this->assets[ $assets_type ][ $asset_name ]['enabled'] = true;
 
 				if ( 'scripts' === $assets_type ) {
-					if ( $this->should_import_script( $asset_name ) ) {
-						continue;
-					}
-
 					wp_enqueue_script( $asset_name );
 				} else if ( 'imports' === $assets_type ) {
 					$this->register_dynamic_import( $asset_name );
@@ -138,27 +134,19 @@ class Loader extends Module {
 			}
 		}
 
-		$this->print_import_depends();
+		$this->add_dynamic_imports_to_localize_script();
 	}
 
 	private function register_dynamic_import( $script ): void {
-		$this->import_scripts[] = $script;
+		$this->dynamic_imports[] = $script;
 	}
 
-	private function should_import_script( $script ): bool {
-		if ( false !== strpos( $script, 'import-script-' ) ) {
-			$script_name = str_replace( 'import-script-', '', $script );
-			$this->import_scripts[] = $script_name;
-			return true;
-		}
-
-		return false;
-	}
-
-	private function print_import_depends(): void {
-		wp_register_script( 'dynamic-import-list', '', [], 1.0 );
-		wp_enqueue_script( 'dynamic-import-list' );
-		wp_add_inline_script( 'dynamic-import-list', 'elementorDynamicImports = ' . wp_json_encode( $this->import_scripts ) . ';' );
+	private function add_dynamic_imports_to_localize_script(): void {
+		wp_localize_script(
+			'elementor-frontend',
+			'elementorDynamicImports',
+			$this->dynamic_imports
+		);
 	}
 
 	/**
@@ -190,10 +178,6 @@ class Loader extends Module {
 
 				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
 					if ( 'scripts' === $assets_type ) {
-						if ( $this->should_import_script( $asset_name ) ) {
-							continue;
-						}
-
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 					} else if ( 'imports' === $assets_type ) {
 						$this->register_dynamic_import( $asset_name );
