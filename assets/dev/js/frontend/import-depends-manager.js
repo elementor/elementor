@@ -88,7 +88,7 @@ export default class ImportDependsManager extends elementorModules.ViewModule {
 				elementorFrontend.isEditMode() ||
 				this.activeModuleScripts.includes( script.moduleKey )
 			) {
-				frontendObject[ script.moduleName ] = await script.importFunction();
+				frontendObject[ script.moduleName ] = ( await script.importFunction() ).default;
 			}
 		}
 	}
