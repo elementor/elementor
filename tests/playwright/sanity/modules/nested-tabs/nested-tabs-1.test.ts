@@ -8,7 +8,7 @@ import EditorPage from '../../../pages/editor-page';
 import _path from "path";
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	const templatePath = _path.resolve( __dirname, '../templates/nested-tabs-with-icons.json' );
+	const templatePath = _path.resolve( __dirname, '../../../templates/nested-tabs-with-icons.json' );
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
