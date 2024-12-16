@@ -186,7 +186,8 @@ export default class EditorPage extends BasePage {
 	 */
 	async loadJsonPageTemplate( dirName: string, fileName: string, widgetSelector: string, updateDatesForImages = false ) {
 		const filePath = _path.resolve( dirName, `./templates/${ fileName }.json` );
-		const templateData = await import( filePath ) as JSON;
+		const rawFileData = await readFile( filePath );
+		const templateData = JSON.parse( rawFileData.toString() );
 		const pageTemplateData =
 		{
 			content: templateData,
