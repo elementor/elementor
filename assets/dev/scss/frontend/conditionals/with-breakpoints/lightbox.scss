@@ -252,7 +252,7 @@
 					cursor: pointer;
 					&:active {
 						outline: none;
-						-webkit-tap-highlight-color: initial !important;
+						background-color: rgba(0, 0, 0, 0.5);
 					}
 				}
 			}
@@ -279,7 +279,7 @@
 					cursor: pointer;
 					&:active {
 						outline: none;
-						-webkit-tap-highlight-color: initial !important;
+						background-color: rgba(0, 0, 0, 0.5);
 					}
 				}
 			}
