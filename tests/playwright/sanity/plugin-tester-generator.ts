@@ -2,10 +2,10 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import EditorPage from '../pages/editor-page';
 import WpAdminPage from '../pages/wp-admin-page';
-import { wpEnvCli } from '../assets/wp-env-cli';
+import { wpCli } from '../assets/wp-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
-const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[] = [
+const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean }[] = [
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
@@ -16,12 +16,12 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'addons-for-elementor', installSource: 'api' },
 	{ pluginName: 'anywhere-elementor', installSource: 'api' },
-	{ pluginName: 'astra-sites', installSource: 'api' },
+	{ pluginName: 'astra-sites', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
 	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
 	{ pluginName: 'elementskit-lite', installSource: 'api' },
 	{ pluginName: 'envato-elements', installSource: 'api' },
-	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api' },
+	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'header-footer-elementor', installSource: 'api' },
 	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
 	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
@@ -43,7 +43,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
 	{ pluginName: 'code-block-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetwidgets-for-elementor', installSource: 'api' },
-	{ pluginName: 'happy-elementor-addons', installSource: 'cli' },
+	{ pluginName: 'happy-elementor-addons', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
 ];
@@ -57,10 +57,10 @@ export const generatePluginTests = ( testType: string ) => {
 					pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
 					break;
 				case 'cli':
-					wpEnvCli( `wp plugin install ${ plugin.pluginName } --activate` );
+					await wpCli( `wp plugin install ${ plugin.pluginName } --activate` );
 					break;
 				case 'zip':
-					wpEnvCli( `wp plugin install elementor-playwright/plugin-tester-plugins/${ plugin.pluginName }.zip --activate` );
+					await wpCli( `wp plugin install elementor-playwright/plugin-tester-plugins/${ plugin.pluginName }.zip --activate` );
 					break;
 			}
 
@@ -78,7 +78,7 @@ export const generatePluginTests = ( testType: string ) => {
 				await editor.removeClasses( 'elementor-motion-effects-element' );
 				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
-				if ( 'astra-sites' === plugin.pluginName ) {
+				if ( plugin.hasInstallationPage ) {
 					await page.goto( '/wp-admin/index.php' );
 				}
 
@@ -104,7 +104,7 @@ export const generatePluginTests = ( testType: string ) => {
 					await apiRequests.deactivatePlugin( page.context().request, pluginTechnicalName );
 					await apiRequests.deletePlugin( page.context().request, pluginTechnicalName );
 				} else {
-					wpEnvCli( `wp plugin uninstall ${ plugin.pluginName } --deactivate` );
+					await wpCli( `wp plugin uninstall ${ plugin.pluginName } --deactivate` );
 				}
 			}
 		} );
