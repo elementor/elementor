@@ -125,11 +125,7 @@ class Api {
 	}
 
 	public static function get_site_key() {
-		if ( null === Plugin::$instance->common ) {
-			return get_option( Library::OPTION_CONNECT_SITE_KEY );
-		}
-
-		/** @var Library $library */
+		/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
 		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
 
 		if ( ! $library || ! method_exists( $library, 'get_site_key' ) ) {
