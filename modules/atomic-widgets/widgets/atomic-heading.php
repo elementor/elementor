@@ -63,7 +63,7 @@ class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkabl
 
 		$link_attrs = [
 			'href' => esc_url( $settings['link']['href'] ) ?? '',
-			'target' => $settings['link']['targetBlank'] ? '_blank' : '',
+			'target' => $settings['link']['isTargetBlank'] ? '_blank' : '',
 		];
 
 		return sprintf(

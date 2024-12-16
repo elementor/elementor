@@ -20,7 +20,7 @@ class Link_Prop_Type extends Object_Prop_Type {
 		return [
 			'enabled' => Boolean_Prop_Type::make(),
 			'href' => Url_Prop_Type::make(),
-			'targetBlank' => Boolean_Prop_Type::make(),
+			'isTargetBlank' => Boolean_Prop_Type::make(),
 		];
 	}
 }
