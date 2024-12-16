@@ -5,7 +5,7 @@ import { viewportSize } from '../../../enums/viewport-sizes';
 import { testIconCount } from './tests/icons';
 import { clickTab, setup, setTabItemColor, selectDropdownContainer } from './helper';
 import EditorPage from '../../../pages/editor-page';
-import _path from "path";
+import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	const templatePath = _path.resolve( __dirname, '../../../templates/nested-tabs-with-icons.json' );
