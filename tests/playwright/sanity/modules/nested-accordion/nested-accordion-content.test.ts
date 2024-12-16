@@ -184,7 +184,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 				await editor.isUiStable( editorFirstItem );
 				// Sometimes a single click doesn't work with Playwright, so we need to click twice
 				const accordionItemTitle = await frame.locator( '.e-n-accordion-item[open="true"] > .e-n-accordion-item-title' ).all();
-				if ( accordionItemTitle.length > 1 ) {
+				if ( accordionItemTitle.length > 0 ) {
 					await accordionItemTitle[ 0 ].click();
 				}
 				await expectScreenshotToMatchLocator( 'nested-accordion-no-icons.png', editorFirstItem );
