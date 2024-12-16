@@ -311,13 +311,6 @@ class Module extends BaseModule {
 			];
 		}
 
-		$supported_post_types = get_option( 'elementor_cpt_support', [] );
-		$new_post_type = 'product';
-		if ( ! in_array( $new_post_type, $supported_post_types, true ) ) {
-			$supported_post_types[] = $new_post_type;
-			update_option( 'elementor_cpt_support', $supported_post_types );
-		}
-
 		wp_send_json_success( [ 'product_images' => array_slice( $image_ids, 0, 10 ) ] );
 
 		wp_die();
@@ -548,6 +541,7 @@ class Module extends BaseModule {
 		}
 		$this->verify_permissions( $data['editor_post_id'] );
 	}
+
 	private function verify_permissions( $editor_post_id ) {
 		$document = Plugin::$instance->documents->get( $editor_post_id );
 
@@ -555,8 +549,14 @@ class Module extends BaseModule {
 			throw new \Exception( 'Document not found' );
 		}
 
-		if ( ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'Access denied' );
+		if ( $document->is_built_with_elementor() ) {
+			if ( ! $document->is_editable_by_current_user() ) {
+				throw new \Exception( 'Access denied' );
+			}
+		} else {
+			if ( ! current_user_can( 'edit_post', $editor_post_id ) ) {
+				throw new \Exception( 'Access denied' );
+			}
 		}
 	}
 

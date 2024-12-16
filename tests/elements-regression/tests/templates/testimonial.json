@@ -209,7 +209,7 @@
                         "image_border_border": "groove",
                         "testimonial_image": {
                             "id": "",
-                            "url": "http:\/\/localhost:8888\/wp-content\/plugins\/build\/assets\/images\/placeholder.png"
+                            "url": "http:\/\/localhost:8888\/wp-content\/plugins\/elementor\/assets\/images\/placeholder.png"
                         }
                     },
                     "elements": [],
