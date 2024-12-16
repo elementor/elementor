@@ -1,4 +1,3 @@
-import EditorSelectors from '../../selectors/editor-selectors';
 import Content from '../elementor-panel-tabs/content';
 
 export default class GoogleMaps extends Content {
