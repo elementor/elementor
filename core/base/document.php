@@ -729,9 +729,13 @@ abstract class Document extends Controls_Stack {
 			$container_config = [];
 
 			if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
-				$container_config = [
-					'container' => Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config(),
-				];
+				$container_config['container'] =
+					Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config();
+			}
+
+			if ( Plugin::$instance->experiments->is_feature_active( 'atomic_widgets' ) ) {
+				$container_config['div-block'] =
+					Plugin::$instance->elements_manager->get_element_types( 'div-block' )->get_config();
 			}
 
 			$config['elements'] = $this->get_elements_raw_data( null, true );

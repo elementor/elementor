@@ -37,23 +37,38 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
+      - name: Install dependencies
+        run: |
+          npm ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
-      - name: Install dependencies
+      - name: Download hello-elementor theme
         run: |
-            npm ci
-            cd ./tests/playwright/upgrade-test && npm ci
-      - name: Run upgrade test
-        run:  cd ./tests/playwright/upgrade-test && npm run test:upgrade:elementor
-        env:
-          ELEMENTOR_PLUGIN_VERSION: ${{inputs.version}}
-      - name: Setup playwright tests
-        run: cd ./tests/playwright/upgrade-test && npm run test:setup
-      - name: Install chromium
-        run: npx playwright install chromium
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
+      - name: Install WordPress environment
+        run: |
+          npm run setup-templates
+          npx wp-lite-env start --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --port=8888
+      - name: Setup test data
+        run: |
+          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install elementor" --port=8888
+          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="bash elementor-config/setup.sh" --port=8888
+      - name: WordPress debug information
+        run: |
+          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp core version" --port=8888
+          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp --info" --port=8888
+      - name: Install playwright/test
+        run: |
+          npx playwright install chromium
+      - name: Upgrade site
+        run: |
+          zip -r ./templates/playwright/elementor.zip ./build
+          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install ./elementor-playwright-templates/elementor.zip --force" --port=8888
+          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin list" --port=8888
       - name: Run Playwright tests
         run: npm run test:playwright:elements-regression -- --grep="Test heading template"
       - uses: actions/upload-artifact@v4
@@ -74,5 +89,3 @@ jobs:
       - name: Check Playwright matrix status
         if: ${{ needs.run-upgrade-test.result != 'success' && needs.run-upgrade-test.result != 'skipped' }}
         run: exit 1
-
-
