@@ -13,15 +13,30 @@ export default class ImportTemplatesModal {
 		this.importTemplatesButton = '.tp-button tp-do-it-button';
 	}
 
-	async skipTemplatesImport() {
+	/**
+	 * Skip the templates import.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async skipTemplatesImport(): Promise<void> {
 		await this.page.locator( this.skipButton ).last().click();
 	}
 
-	async importTemplates() {
+	/**
+	 * Import the templates.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async importTemplates(): Promise<void> {
 		await this.page.locator( this.importTemplatesButton ).last().click();
 	}
 
-	async skipTemplatesImportIfVisible() {
+	/**
+	 * Skip the templates import if visible.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async skipTemplatesImportIfVisible(): Promise<void> {
 		const modalVisible = await this.page.isVisible( this.modal );
 		if ( modalVisible ) {
 			await this.skipTemplatesImport();
