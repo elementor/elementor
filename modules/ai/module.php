@@ -39,6 +39,7 @@ class Module extends BaseModule {
 
 		if ( is_admin() ) {
 			( new Preferences() )->register();
+			add_action( 'elementor/import-export/import-kit/runner/after-run', [ $this, 'handle_kit_install' ] );
 		}
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
@@ -163,6 +164,39 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
 		add_action( 'elementor/element/common/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
+	}
+
+	public function handle_kit_install( $imported_data ) {
+		if ( ! isset( $imported_data['status'] ) || 'success' !== $imported_data['status'] ) {
+			return;
+		}
+
+		if ( ! isset( $imported_data['runner'] ) || 'site-settings' !== $imported_data['runner'] ) {
+			return;
+		}
+
+		$is_connected = $this->get_ai_app()->is_connected() && User::get_introduction_meta( 'ai_get_started' );
+
+		if ( ! $is_connected ) {
+			return;
+		}
+
+		if ( ! isset( $imported_data['configData']['lastImportedSession']['instance_data']['site_settings']['settings']['ai'] ) ) {
+			return;
+		}
+
+		$last_imported_session = $imported_data['configData']['lastImportedSession'];
+		$imported_ai_data = $last_imported_session['instance_data']['site_settings']['settings']['ai'];
+
+		$this->get_ai_app()->send_event( [
+			'name' => 'kit_installed',
+			'data' => $imported_ai_data,
+			'client' => [
+				'name' => 'elementor',
+				'version' => ELEMENTOR_VERSION,
+				'session_id' => $last_imported_session['session_id'],
+			],
+		] );
 	}
 
 	public function register_ai_hover_effect_control( Element_Base $element ) {
