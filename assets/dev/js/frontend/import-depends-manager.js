@@ -25,13 +25,13 @@ export default class ImportDependsManager extends elementorModules.ViewModule {
 				frontendObject: 'utils',
 				importFunction: () => import( /* webpackChunkName: 'swiperClass' */ './utils/swiper' ),
 			},
-			// {
-			// 	moduleKey: 'url-actions',
-			// 	moduleName: 'urlActions',
-			// 	frontendObject: 'utils',
-			// 	importFunction: () => import( /* webpackChunkName: 'urlActions' */ './utils/url-actions' ),
-			// 	initializeClass: true,
-			// },
+			{
+				moduleKey: 'url-actions',
+				moduleName: 'urlActions',
+				frontendObject: 'utils',
+				importFunction: () => import( /* webpackChunkName: 'urlActions' */ './utils/url-actions' ),
+				initializeClass: true,
+			},
 		];
 	}
 

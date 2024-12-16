@@ -51,7 +51,7 @@ module.exports = function( $ ) {
 		];
 
 		this.elementsHandlers.container = [];
-		elementorFrontend.utils.importDependsManager.load( 'container', this.elementsHandlers.container );
+		elementorFrontend.utils.importDependsManager?.load( 'container', this.elementsHandlers.container );
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {

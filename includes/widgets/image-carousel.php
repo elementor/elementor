@@ -93,7 +93,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	public function get_dynamic_import_depends(): array {
-		return [ 'e-swiper', 'carousel-base' ];
+		return [ 'e-swiper', 'carousel-base' ]; // For testing purposes.
 	}
 
 	public function has_widget_inner_wrapper(): bool {

@@ -1,7 +1,6 @@
 /* global elementorFrontendConfig */
 import '../public-path';
 import DocumentsManager from './documents-manager';
-import ImportDependsManager from './import-depends-manager';
 import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
@@ -189,39 +188,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		};
 	}
 
-	async initOnReadyComponents() {
-		this.utils = {
-			youtube: new YouTubeApiLoader(),
-			vimeo: new VimeoApiLoader(),
-			baseVideoLoader: new BaseVideoLoader(),
-			get lightbox() {
-				return LightboxManager.getLightbox();
-			},
-			// urlActions: new URLActions(),
-			// swiper: Swiper,
-			environment,
-			assetsLoader: new AssetsLoader(),
-			escapeHTML,
-			events: Events,
-			controls: new Controls(),
-			importDependsManager: new ImportDependsManager(),
-		};
-
-		await elementorFrontend.utils.importDependsManager.loadAsync( 'utils', this.utils );
-
-		// TODO: Remove experiment in v3.27.0 [ED-15717].
-		if ( this.config.experimentalFeatures.e_css_smooth_scroll ) {
-			this.utils.anchor_scroll_margin = new AnchorScrollMargin();
-		} else {
-			this.utils.anchors = new AnchorsModule();
-		}
-
-		// TODO: BC since 2.4.0
-		this.modules = {
-			StretchElement: elementorModules.frontend.tools.StretchElement,
-			Masonry: elementorModules.utils.Masonry,
-		};
-
+	initOnReadyComponents() {
 		this.elementsHandler.init();
 
 		if ( this.isEditMode() ) {
@@ -345,6 +312,8 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	async init() {
+		await this.importJsFiles();
+
 		this.hooks = new EventManager();
 
 		this.breakpoints = new Breakpoints( this.config.responsive );
@@ -372,9 +341,47 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.initOnReadyElements();
 
-		// await elementorFrontend.utils.importDependsManager.loadAsync( 'frontendHandlers', elementorModules.frontend.handlers );
+		this.initOnReadyComponents();
+	}
 
-		await this.initOnReadyComponents();
+	async importJsFiles() {
+		this.utils = {
+			youtube: new YouTubeApiLoader(),
+			vimeo: new VimeoApiLoader(),
+			baseVideoLoader: new BaseVideoLoader(),
+			get lightbox() {
+				return LightboxManager.getLightbox();
+			},
+			// urlActions: new URLActions(),
+			// swiper: Swiper,
+			environment,
+			assetsLoader: new AssetsLoader(),
+			escapeHTML,
+			events: Events,
+			controls: new Controls(),
+		};
+
+		if ( ! elementorFrontend.isEditMode() && !! elementorDynamicImports ) {
+			const importClass = ( await import( './import-depends-manager' ) ).default;
+			this.utils.importDependsManager = new importClass;
+		}
+
+		await elementorFrontend.utils.importDependsManager?.loadAsync( 'utils', this.utils );
+
+		await elementorFrontend.utils.importDependsManager?.loadAsync( 'frontendHandlers', elementorModules.frontend.handlers );
+
+		// TODO: Remove experiment in v3.27.0 [ED-15717].
+		if ( this.config.experimentalFeatures.e_css_smooth_scroll ) {
+			this.utils.anchor_scroll_margin = new AnchorScrollMargin();
+		} else {
+			this.utils.anchors = new AnchorsModule();
+		}
+
+		// TODO: BC since 2.4.0
+		this.modules = {
+			StretchElement: elementorModules.frontend.tools.StretchElement,
+			Masonry: elementorModules.utils.Masonry,
+		};
 	}
 
 	onDocumentLoaded() {
