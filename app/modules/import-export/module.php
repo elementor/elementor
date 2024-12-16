@@ -694,6 +694,8 @@ class Module extends BaseModule {
 			);
 		}
 
+		do_action( 'elementor/import-export/import-kit/runner/after-run', $import );
+
 		wp_send_json_success( $import );
 	}
 
