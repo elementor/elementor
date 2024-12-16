@@ -19,7 +19,7 @@ class Link_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'enabled' => Boolean_Prop_Type::make(),
-			'href' => String_Prop_Type::make(),
+			'href' => Url_Prop_Type::make(),
 			'targetBlank' => Boolean_Prop_Type::make(),
 		];
 	}
