@@ -235,7 +235,7 @@ class Preview extends App {
 
 		Plugin::$instance->frontend->enqueue_styles();
 
-		Plugin::$instance->elements_manager->enqueue_element_styles();
+		Plugin::$instance->elements_manager->enqueue_elements_styles();
 
 		Plugin::$instance->widgets_manager->enqueue_widgets_styles();
 
