@@ -97,6 +97,12 @@ const PromptErrorMessage = ( { error, onRetry = () => {}, actionPosition = 'defa
 				text: <AlertTitle>{ __( 'The image resolution exceeds the maximum allowed size.', 'elementor' ) }</AlertTitle>,
 				description: __( 'Please upload a file with dimensions less than 2048x2048 pixels.', 'elementor' ),
 			},
+			external_service_unavailable: {
+				text: <AlertTitle>{ __( 'Temporary external service issue', 'elementor' ) }</AlertTitle>,
+				description: __( 'It seems that one of our partner services is temporarily unavailable. Please try again in a few minutes.', 'elementor' ),
+				buttonText: __( 'Try Again', 'elementor' ),
+				buttonAction: onRetry,
+			},
 		};
 
 		return messages[ errMsg ] || messages.default;
