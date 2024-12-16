@@ -25,6 +25,13 @@ export default class ImportDependsManager extends elementorModules.ViewModule {
 				frontendObject: 'utils',
 				importFunction: () => import( /* webpackChunkName: 'swiperClass' */ './utils/swiper' ),
 			},
+			// {
+			// 	moduleKey: 'url-actions',
+			// 	moduleName: 'urlActions',
+			// 	frontendObject: 'utils',
+			// 	importFunction: () => import( /* webpackChunkName: 'urlActions' */ './utils/url-actions' ),
+			// 	initializeClass: true,
+			// },
 		];
 	}
 
@@ -88,7 +95,8 @@ export default class ImportDependsManager extends elementorModules.ViewModule {
 				elementorFrontend.isEditMode() ||
 				this.activeModuleScripts.includes( script.moduleKey )
 			) {
-				frontendObject[ script.moduleName ] = ( await script.importFunction() ).default;
+				const importClass = ( await script.importFunction() ).default;
+				frontendObject[ script.moduleName ] = script.hasOwnProperty( 'initializeClass' ) && script?.initializeClass ? new importClass : importClass;
 			}
 		}
 	}

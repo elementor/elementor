@@ -7,7 +7,7 @@ import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import BaseVideoLoader from './utils/video-api/base-loader';
-import URLActions from './utils/url-actions';
+// import URLActions from './utils/url-actions';
 // import Swiper from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
@@ -197,7 +197,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			get lightbox() {
 				return LightboxManager.getLightbox();
 			},
-			urlActions: new URLActions(),
+			// urlActions: new URLActions(),
 			// swiper: Swiper,
 			environment,
 			assetsLoader: new AssetsLoader(),
@@ -372,9 +372,9 @@ export default class Frontend extends elementorModules.ViewModule {
 
 		this.initOnReadyElements();
 
-		await this.initOnReadyComponents();
+		// await elementorFrontend.utils.importDependsManager.loadAsync( 'frontendHandlers', elementorModules.frontend.handlers );
 
-		await elementorFrontend.utils.importDependsManager.loadAsync( 'frontendHandlers', elementorModules.frontend.handlers );
+		await this.initOnReadyComponents();
 	}
 
 	onDocumentLoaded() {
