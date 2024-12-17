@@ -31,10 +31,6 @@ export async function expectScreenshotToMatchLocator( fileName: string, locator:
 	} ) ).toMatchSnapshot( fileName );
 }
 
-async function getChoicesButtonSelector( choicesControlId: string, icon: string ): Promise<string> {
-	return '.elementor-control-accordion_' + choicesControlId + ' ' + icon;
-}
-
 /**
  * Set nested accordion title icon position.
  *
@@ -45,14 +41,12 @@ async function getChoicesButtonSelector( choicesControlId: string, icon: string 
  * @return {Promise<void>}
  */
 export async function setTitleIconPosition( direction: string, editor: EditorPage, breakpoint: string = 'desktop' ): Promise<void> {
+	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? `_${ breakpoint }` : '';
 	const icon = Object.freeze( {
 		right: '.eicon-h-align-right',
 		left: '.eicon-h-align-left',
 	} );
-
-	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? '_' + breakpoint : '';
-	const locator = await getChoicesButtonSelector( 'item_title_icon_position' + controlBreakpoint, icon[ direction ] );
-	await editor.page.locator( locator ).click();
+	await editor.page.locator( `.elementor-control-accordion_item_title_icon_position${ controlBreakpoint } ${ icon[ direction ] }` ).click();
 }
 
 /**
@@ -65,6 +59,7 @@ export async function setTitleIconPosition( direction: string, editor: EditorPag
  * @return {Promise<void>}
  */
 export async function setTitleHorizontalAlignment( direction: string, editor: EditorPage, breakpoint: string = 'desktop' ): Promise<void> {
+	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? `_${ breakpoint }` : '';
 	const icon = Object.freeze( {
 		start: '.eicon-align-start-h',
 		end: '.eicon-align-end-h',
@@ -72,10 +67,7 @@ export async function setTitleHorizontalAlignment( direction: string, editor: Ed
 		stretch: '.eicon-h-align-stretch',
 		justify: '.eicon-h-align-stretch',
 	} );
-
-	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? '_' + breakpoint : '';
-	const locator = await getChoicesButtonSelector( 'item_title_position_horizontal' + controlBreakpoint, icon[ direction ] );
-	await editor.page.locator( locator ).click();
+	await editor.page.locator( `.elementor-control-accordion_item_title_position_horizontal${ controlBreakpoint } ${ icon[ direction ] }` ).click();
 }
 
 export async function setBorderAndBackground( editor: EditorPage, state: string, color: string, borderType: string, borderColor: string ): Promise<void> {
