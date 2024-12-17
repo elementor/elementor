@@ -129,17 +129,29 @@ class Style_Parser {
 	 * @param array $style
 	 * the style object to parse
 	 *
-	 * @return array<string, mixed>
+	 * @return array{
+	 *      0: bool,
+	 *      1: array<string, mixed>,
+	 *      2: array<string>
+	 *  }
 	 */
 	public function parse( array $style ): array {
 		$props_parser = Props_Parser::make( $this->schema );
 
-		[ , $validated_style ] = $this->validate( $style );
+		[ $is_valid, $validated, $errors_bag  ] = $this->validate( $style );
 
-		foreach ( $validated_style['variants'] as $variant_index => $variant ) {
-			$validated_style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant );
+		if ( ! $is_valid ) {
+			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
 		}
 
-		return $validated_style;
+		foreach ( $validated['variants'] as $variant_index => $variant ) {
+			$validated['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] );
+		}
+
+		return [
+			$is_valid,
+			$validated,
+			$errors_bag
+		];
 	}
 }

@@ -38,11 +38,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function sanitize( $value ) {
-		if ( $this->is_transformable( $value ) ) {
-			$value['value'] = $this->sanitize_value( $value['value'] );
-		} else {
-			$value = $this->sanitize_value( $value );
-		}
+		$value['value'] = $this->sanitize_value( $value['value'] );
 
 		return $value;
 	}

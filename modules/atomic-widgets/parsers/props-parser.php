@@ -90,10 +90,23 @@ class Props_Parser {
 	 * The key of each item represents the prop name (should match the schema),
 	 * and the value is the prop value to parse
 	 *
-	 * @return array<string, mixed>
+	 * @return array{
+	 *      0: bool,
+	 *      1: array<string, mixed>,
+	 *      2: array<string>
+	 *  }
 	 */
 	public function parse( array $props ): array {
-		[ , , $validated] = $this->validate( $props );
-		return $this->sanitize( $validated );
+		[ $is_valid, $validated, $errors_bag  ] = $this->validate( $props );
+
+		if ( ! $is_valid ) {
+			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
+		}
+
+		return [
+			$is_valid,
+			$this->sanitize( $validated ),
+			$errors_bag
+		];
 	}
 }

@@ -68,33 +68,25 @@ trait Has_Atomic_Base {
 		}
 	}
 
-	private function sanitize_atomic_styles( array $styles ): array {
+	private function parse_atomic_styles( array $styles ): array {
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 
 		foreach ( $styles as $style_id => $style ) {
-			[ $is_valid, $validated, $errors_bag  ] = $style_parser->validate( $style );
+			[ , $sanitized_style, ] = $style_parser->parse( $style );
 
-			if ( ! $is_valid ) {
-				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
-			}
-
-			$styles[ $style_id ] = $style_parser->sanitize( $validated );
+			$styles[ $style_id ] = $sanitized_style;
 		}
 
 		return $styles;
 	}
 
-	private function sanitize_atomic_settings( array $settings ): array {
+	private function parse_atomic_settings( array $settings ): array {
 		$schema = static::get_props_schema();
 		$props_parser = Props_Parser::make( $schema );
 
-		[ $is_valid, $validated, $errors ] = $props_parser->validate( $settings );
+		[ , $parsed ] = $props_parser->parse( $settings );
 
-		if ( ! $is_valid ) {
-			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
-		}
-
-		return $props_parser->sanitize( $validated );
+		return $parsed;
 	}
 
 	public function get_atomic_controls() {
@@ -119,8 +111,8 @@ trait Has_Atomic_Base {
 		$data = parent::get_data_for_save();
 
 		$data['version'] = $this->version;
-		$data['settings'] = $this->sanitize_atomic_settings( $data['settings'] );
-		$data['styles'] = $this->sanitize_atomic_styles( $data['styles'] );
+		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
+		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
 
 		return $data;
 	}
