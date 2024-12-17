@@ -99,10 +99,6 @@ class Props_Parser {
 	public function parse( array $props ): array {
 		[ $is_valid, $validated, $errors_bag  ] = $this->validate( $props );
 
-		if ( ! $is_valid ) {
-			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
-		}
-
 		return [
 			$is_valid,
 			$this->sanitize( $validated ),

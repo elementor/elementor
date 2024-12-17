@@ -140,10 +140,6 @@ class Style_Parser {
 
 		[ $is_valid, $validated, $errors_bag  ] = $this->validate( $style );
 
-		if ( ! $is_valid ) {
-			throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
-		}
-
 		foreach ( $validated['variants'] as $variant_index => $variant ) {
 			$validated['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] );
 		}
