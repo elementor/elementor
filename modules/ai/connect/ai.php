@@ -85,6 +85,32 @@ class Ai extends Library {
 	}
 
 	/**
+	 * @param array $event_data {
+	 *     @type string $name
+	 *     @type array $data
+	 *     @type array $client {
+	 *         @type string $name
+	 *         @type string $version
+	 *         @type string $session_id
+	 *     }
+	 * }
+	 */
+	public function send_event( array $event_data ) : void {
+		$this->ai_request(
+			'POST',
+			'client-events/events',
+			[
+				'payload' => $event_data,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
+	/**
 	 * get_file_payload
 	 * @param $filename
 	 * @param $file_type
@@ -849,6 +875,24 @@ class Ai extends Library {
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
+		);
+	}
+
+	public function get_animation( $data, $context, $request_ids ) {
+		return $this->ai_request(
+			'POST',
+			'text/get-motion-effect',
+			[
+				'prompt' => $data['payload']['prompt'],
+				'motionEffectType' => $data['payload']['motionEffectType'],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 

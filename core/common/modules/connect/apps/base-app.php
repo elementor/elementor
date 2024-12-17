@@ -171,7 +171,6 @@ abstract class Base_App {
 
 	public function action_reset() {
 		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( static::OPTION_CONNECT_SITE_KEY );
 			delete_option( 'elementor_remote_info_library' );
 		}
 
@@ -584,6 +583,16 @@ abstract class Base_App {
 				'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
 				'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
 			] );
+
+		$utm_campaign = get_transient( 'elementor_core_campaign' );
+
+		if ( ! empty( $utm_campaign ) ) {
+			foreach ( [ 'source', 'medium', 'campaign' ] as $key ) {
+				if ( ! empty( $utm_campaign[ $key ] ) ) {
+					$query_params->offsetSet( 'utm_' . $key, $utm_campaign[ $key ] );
+				}
+			}
+		}
 
 		return add_query_arg( $query_params->all(), $this->get_remote_site_url() );
 	}

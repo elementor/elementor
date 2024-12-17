@@ -4,11 +4,14 @@ import PropTypes from 'prop-types';
 import { useState } from '@wordpress/element';
 import { LOCATIONS } from '../editor/pages/form-media/constants';
 
-const UnifyProductImages = ( { productsImages, setProductImages } ) => {
+const UnifyProductImages = ( { productsImages, setProductImages, onClose } ) => {
 	const [ isOpen, setIsOpen ] = useState( true );
 
 	const handleClose = () => {
 		setIsOpen( false );
+		if ( onClose ) {
+			onClose();
+		}
 	};
 
 	return (
@@ -36,6 +39,7 @@ const UnifyProductImages = ( { productsImages, setProductImages } ) => {
 UnifyProductImages.propTypes = {
 	productsImages: PropTypes.arrayOf( PropTypes.object ),
 	setProductImages: PropTypes.func,
+	onClose: PropTypes.func,
 };
 
 export default UnifyProductImages;

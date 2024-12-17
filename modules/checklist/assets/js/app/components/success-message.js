@@ -1,4 +1,5 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import { useEffect } from 'react';
 import { addMixpanelTrackingChecklistSteps } from '../../utils/functions';

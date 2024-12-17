@@ -196,6 +196,7 @@ export default class BackgroundVideo extends elementorModules.frontend.handlers.
 				controls: 0,
 				rel: 0,
 				playsinline: 1,
+				cc_load_policy: 0,
 			},
 		};
 
