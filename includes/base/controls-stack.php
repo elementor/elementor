@@ -1725,7 +1725,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return bool
 	 */
-	private function should_manually_trigger_common_action( $stack_name ): bool { 
+	private function should_manually_trigger_common_action( $stack_name ): bool {
 		return 'common-optimized' === $stack_name && Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
