@@ -30,6 +30,10 @@ class Div_Block extends Atomic_Element_Base {
 		return 'eicon-div-block';
 	}
 
+	public function get_style_depends() {
+		return [ 'div-block' ];
+	}
+
 	protected function define_atomic_controls(): array {
 		return [
 			Section::make()
