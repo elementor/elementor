@@ -1,4 +1,3 @@
-import { playAudit } from 'playwright-lighthouse';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import _path from 'path';
@@ -17,6 +16,7 @@ test.describe( 'Lighthouse tests', () => {
 		await editor.publishAndViewPage();
 
 		const { desktopConfig } = await import('lighthouse');
+		const { playAudit } = await import('playwright-lighthouse');
 
 		await playAudit( {
 			page,
