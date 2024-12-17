@@ -172,7 +172,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.openPanelTab( 'style' );
 		await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
 		await editor.setSelectControlValue( 'tabs_title_border_hover_border', 'solid' );
-		await editor.setShadowControlValue( 'tabs_title_box_shadow_hover_box_shadow_type', 'text' );
+		await editor.setShadowControlValue( 'tabs_title_box_shadow_hover', 'box' );
 		await editor.setDimensionsValue( 'tabs_title_border_radius', '15' );
 
 		// Act.
