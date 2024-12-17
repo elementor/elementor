@@ -242,9 +242,23 @@
 		}
 
 		@media (max-width: $screen-tablet-max) {
-			&:active {
-				-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
-				-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+			&-prev,
+			&-next {
+				&:active {
+					-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
+					-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+				}
+
+				& svg,
+				i {
+					cursor: pointer;
+
+
+					&:active {
+						outline: none;
+						background-color: rgba(0, 0, 0, 0.5);
+					}
+				}
 			}
 		}
 
@@ -253,16 +267,28 @@
 				outline: none;
 			}
 
-			&:active {
-				-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
-				-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
-			}
+			&-prev,
+			&-next {
+				&:active {
+					-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
+					-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+				}
 
-			&-prev, &-next {
 				width: 20%;
+
 				i {
 					padding: 10px;
 					background-color: rgba(0, 0, 0, 0.5);
+				}
+
+				& svg,
+				i {
+					cursor: pointer;
+
+					&:active {
+						outline: none;
+						background-color: rgba(0, 0, 0, 0.5);
+					}
 				}
 			}
 
