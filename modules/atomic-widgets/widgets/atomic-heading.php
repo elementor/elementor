@@ -35,7 +35,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$format = $this->get_heading_template( ! empty( $settings['link']['href'] ) );
 		$args = $this->get_template_args( $settings );
 
-		echo sprintf( $format, ...$args );
+		echo sprintf( $format, ...$args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	private function get_heading_template( bool $is_link_enabled ): string {
@@ -51,13 +51,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 		$default_args = [
 			Utils::validate_html_tag( $tag ),
-			Utils::render_html_attributes( $attrs )
+			Utils::render_html_attributes( $attrs ),
 		];
 
 		if ( ! empty( $settings['link']['href'] ) ) {
 			$link_args = [
 				Utils::render_html_attributes( $settings['link'] ),
-				esc_html( $title )
+				esc_html( $title ),
 			];
 
 			return array_merge( $default_args, $link_args );
