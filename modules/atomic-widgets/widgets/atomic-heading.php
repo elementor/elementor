@@ -38,7 +38,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		echo sprintf( $format, ...$args );
 	}
 
-	private function get_heading_template(bool $is_link_enabled): string {
+	private function get_heading_template( bool $is_link_enabled ): string {
 		return $is_link_enabled ? '<%1$s %2$s><a %3$s>%4$s</a></%1$s>' : '<%1$s %2$s>%3$s</%1$s>';
 	}
 
