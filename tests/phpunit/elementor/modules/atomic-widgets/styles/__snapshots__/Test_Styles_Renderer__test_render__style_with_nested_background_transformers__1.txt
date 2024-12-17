@@ -1,0 +1,1 @@
+.test-style{background:linear-gradient(blue, blue), linear-gradient(green), url("https://ex.com/img-1.jpeg") no-repeat top left initial red;}
