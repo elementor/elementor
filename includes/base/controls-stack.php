@@ -1719,7 +1719,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * This method checks whether the 'elementor/element/common/...' hooks should be manually executed
 	 * to prevent third parties from needing to add equivalent hooks for 'elementor/element/common-optimized/...'.
 	 *
-	 * @todo Remove this function and the manual execution of 'common' hooks when the feature is merged.
+	 * @todo Remove this method and the manual execution of 'common' hooks when the feature is merged.
 	 *
 	 * @access private
 	 *
