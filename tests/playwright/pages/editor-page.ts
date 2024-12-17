@@ -1,3 +1,4 @@
+import { readFile } from 'fs/promises';
 import { addElement, getElementSelector } from '../assets/elements-utils';
 import { expect, type Page, type Frame, type TestInfo, Locator } from '@playwright/test';
 import BasePage from './base-page';
@@ -82,11 +83,10 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @param {string}  filePath             - Path to the template file.
 	 * @param {boolean} updateDatesForImages - Optional. Whether to update images dates. Default is false.
-	 *
-	 * @return {Promise<void>}
 	 */
 	async loadTemplate( filePath: string, updateDatesForImages = false ) {
-		let templateData = await import( filePath ) as JSON;
+		const rawFileData = await readFile( filePath );
+		let templateData = JSON.parse( rawFileData.toString() );
 
 		// For templates that use images, date when image is uploaded is hardcoded in template.
 		// Element regression tests upload images before each test.
@@ -186,7 +186,8 @@ export default class EditorPage extends BasePage {
 	 */
 	async loadJsonPageTemplate( dirName: string, fileName: string, widgetSelector: string, updateDatesForImages = false ) {
 		const filePath = _path.resolve( dirName, `./templates/${ fileName }.json` );
-		const templateData = await import( filePath ) as JSON;
+		const rawFileData = await readFile( filePath );
+		const templateData = JSON.parse( rawFileData.toString() );
 		const pageTemplateData =
 		{
 			content: templateData,
