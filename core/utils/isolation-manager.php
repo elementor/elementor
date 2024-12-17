@@ -14,7 +14,7 @@ abstract class Isolation_Manager {
 	 */
 	public static function get_adapter( string $adapter_name ) {
 		try {
-			return PLugin::$instance->elementor_container()
+			return Plugin::$instance->elementor_container()
 				->get( $adapter_name );
 		} catch ( Exception $e ) {
 			return null;
