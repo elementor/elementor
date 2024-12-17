@@ -1,6 +1,5 @@
 import { playAudit } from 'playwright-lighthouse';
 import { parallelTest as test } from '../parallelTest';
-import { desktopConfig } from 'lighthouse';
 import WpAdminPage from '../pages/wp-admin-page';
 import _path from 'path';
 
@@ -16,6 +15,8 @@ test.describe( 'Lighthouse tests', () => {
 		await editor.closeNavigatorIfOpen();
 		await editor.loadTemplate( filePath, true );
 		await editor.publishAndViewPage();
+
+		const { desktopConfig } = await import('lighthouse');
 
 		await playAudit( {
 			page,
