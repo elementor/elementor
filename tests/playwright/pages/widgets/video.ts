@@ -41,7 +41,7 @@ export default class VideoWidget extends Content {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async toggleControls( controlSelectors: string[] ): Promise<void> {
+	async toggleVideoControls( controlSelectors: string[] ): Promise<void> {
 		for ( const i in controlSelectors ) {
 			await this.page.locator( controlSelectors[ i ] )
 				.locator( '..' )
