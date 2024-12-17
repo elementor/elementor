@@ -755,7 +755,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'number_prop' => Number_Prop_Type::make()->default( 0 ),
 			],
 			'settings' => [
-				'string_prop' => '<b>invalid HTML string</b>',
+				'string_prop' => '<script>invalid HTML string</script>',
 				'number_prop' => '123',
 			],
 		] );
@@ -889,7 +889,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [
+					'$$type' => 'string',
+					'value' => 'valid-string'
+				],
 			],
 			'styles' => [
 				'1234' => [
