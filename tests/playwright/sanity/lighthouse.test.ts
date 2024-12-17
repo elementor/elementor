@@ -1,6 +1,6 @@
 import { playAudit } from 'playwright-lighthouse';
 import { parallelTest as test } from '../parallelTest';
-import config from 'lighthouse/core/config/desktop-config';
+import { desktopConfig } from 'lighthouse';
 import WpAdminPage from '../pages/wp-admin-page';
 import _path from 'path';
 
@@ -19,7 +19,7 @@ test.describe( 'Lighthouse tests', () => {
 
 		await playAudit( {
 			page,
-			config,
+			config: desktopConfig,
 			thresholds: {
 				performance: 85,
 				accessibility: 85,
