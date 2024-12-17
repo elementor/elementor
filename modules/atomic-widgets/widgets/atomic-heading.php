@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Linkable;
 use Elementor\Modules\AtomicWidgets\Controls\Dynamic_Section;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
@@ -17,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkable {
+class Atomic_Heading extends Atomic_Widget_Base {
 	public function get_name() {
 		return 'a-heading';
 	}
@@ -32,47 +31,41 @@ class Atomic_Heading extends Atomic_Widget_Base implements Atomic_Widget_Linkabl
 
 	protected function render() {
 		$settings = $this->get_atomic_settings();
-		$is_link_enabled = ! empty( $settings['link']['enabled'] ) && ! empty( $settings['link']['href'] );
 
-		if ( $is_link_enabled ) {
-			echo $this->get_link_template( $settings );  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			return;
-		}
+		$format = $this->get_heading_template( ! empty( $settings['link']['href'] ) );
+		$args = $this->get_template_args( $settings );
 
-		$tag = $settings['tag'];
-		$title = $settings['title'];
-		$attrs = array_filter( [
-			'class' => $settings['classes'] ?? '',
-		] );
-
-		echo sprintf(
-			'<%1$s %2$s>%3$s</%1$s>',
-			// TODO: we should avoid using `validate html tag` and use the enum validation instead.
-			Utils::validate_html_tag( $tag ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			Utils::render_html_attributes( $attrs ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			esc_html( $title )
-		);
+		echo sprintf( $format, ...$args );
 	}
 
-	public function get_link_template( array $settings ): string {
+	private function get_heading_template(bool $is_link_enabled): string {
+		return $is_link_enabled ? '<%1$s %2$s><a %3$s>%4$s</a></%1$s>' : '<%1$s %2$s>%3$s</%1$s>';
+	}
+
+	private function get_template_args( array $settings ): array {
 		$tag = $settings['tag'];
-		$title = $settings['title'];
+		$title = esc_html( $settings['title'] );
 		$attrs = array_filter( [
 			'class' => $settings['classes'] ?? '',
 		] );
 
-		$link_attrs = [
-			'href' => esc_url( $settings['link']['href'] ) ?? '',
-			'target' => $settings['link']['isTargetBlank'] ? '_blank' : '',
+		$default_args = [
+			Utils::validate_html_tag( $tag ),
+			Utils::render_html_attributes( $attrs )
 		];
 
-		return sprintf(
-			'<%1$s %2$s><a %3$s>%4$s</a></%1$s>',
-			Utils::validate_html_tag( $tag ),
-			Utils::render_html_attributes( $attrs ),
-			Utils::render_html_attributes( array_filter( $link_attrs ) ),
-			esc_html( $title )
-		);
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$link_args = [
+				Utils::render_html_attributes( $settings['link'] ),
+				esc_html( $title )
+			];
+
+			return array_merge( $default_args, $link_args );
+		}
+
+		$default_args[] = $title;
+
+		return $default_args;
 	}
 
 	protected function define_atomic_controls(): array {
