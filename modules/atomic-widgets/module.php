@@ -78,7 +78,7 @@ class Module extends BaseModule {
 			( new Atomic_Widget_Styles() )->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-			add_filter('elementor/editor/localize_settings', fn( $settings ) => $this->add_atomic_config( $settings ) );
+			add_filter('elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
@@ -103,20 +103,16 @@ class Module extends BaseModule {
 		return array_merge( $packages, self::PACKAGES );
 	}
 
-	private function add_atomic_config( $settings ) {
+	private function add_styles_schema( $settings ) {
 		if ( ! isset( $settings['atomic'] ) ) {
 			$settings['atomic'] = [];
 		};
 
-		return $this->add_styles_schema( $settings );
-
-	}
-
-	private function add_styles_schema( $settings ) {
 		$settings['atomic']['styles_schema'] = Style_Schema::get();
-
+		
 		return $settings;
 	}
+
 
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
