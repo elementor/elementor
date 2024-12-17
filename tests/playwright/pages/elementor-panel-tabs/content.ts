@@ -13,13 +13,9 @@ export default class Content {
 		this.editor = new EditorPage( this.page, testInfo );
 	}
 
-	async selectLinkSource( option: string ) {
-		await this.editor.setSelectControlValue( EditorSelectors.image.linkSelect, option );
-	}
-
 	async setLink( link: string, options : LinkOptions = { targetBlank: false, noFollow: false, linkTo: false } ) {
 		if ( options.linkTo ) {
-			await this.selectLinkSource( 'Custom URL' );
+			await this.editor.setSelectControlValue( EditorSelectors.image.linkSelect, 'Custom URL' );
 		}
 
 		const urlInput = this.page.locator( options.linkInpSelector ).first();
@@ -48,30 +44,24 @@ export default class Content {
 	}
 
 	/**
-	 * @description Function verifies link ("a" HTML tag) attributes with expected values
-	 * @param {*}      element                  "a" HTML tag that contains link attributes
+	 * Verifies link (HTML `a` tag) attributes with expected values.
+	 *
+	 * @param {*}      element                  HTML `a` tag that contains link attributes.
 	 * @param {Object} options
-	 * @param {*}      options.target           link target attribute
-	 * @param {string} options.href             link href attribute
-	 * @param {string} options.rel              link rel attribute
-	 * @param {string} options.customAttributes link custom attribute: key|value
-	 * @param {string} options.widget           widget name where we test link attributes
+	 * @param {*}      options.target           Link `target` attribute
+	 * @param {string} options.href             Link `href` attribute
+	 * @param {string} options.rel              Link `rel` attribute
+	 * @param {string} options.customAttributes Link custom attribute: `key|value`
+	 * @param {string} options.widget           Widget name where we test link attributes
 	 */
 	async verifyLink( element: Locator,
-		options: { target:string, href: string, rel: string, customAttributes: {key: string, value: string}, widget: string } ) {
+		options: { target:string, href: string, rel: string, customAttributes: { key: string, value: string }, widget: string } ) {
 		await expect( element ).toHaveAttribute( 'target', options.target );
 		await expect( element ).toHaveAttribute( 'href', options.href );
 		await expect( element ).toHaveAttribute( 'rel', options.rel );
 		if ( options.widget !== 'text-path' ) {
 			await expect( element ).toHaveAttribute( options.customAttributes.key, options.customAttributes.value );
 		}
-	}
-
-	async chooseImage( imageTitle: string ): Promise<void> {
-		await this.page.locator( EditorSelectors.media.preview ).click();
-		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
-		await this.page.locator( EditorSelectors.media.imageByTitle( imageTitle ) ).click();
-		await this.page.locator( EditorSelectors.media.selectBtn ).click();
 	}
 
 	async selectImageSize( args: { widget: string, select: string, imageSize: string } ): Promise<void> {
@@ -101,11 +91,6 @@ export default class Content {
 		await response;
 	}
 
-	async setLightBox( option: string ): Promise<void> {
-		await this.page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( option );
-		await this.editor.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
-	}
-
 	async uploadSVG( options? : { icon?: string, widget?: string} ): Promise<void> {
 		const _icon = options?.icon === undefined ? 'test-svg-wide' : options.icon;
 		if ( 'text-path' === options?.widget ) {
@@ -125,19 +110,8 @@ export default class Content {
 			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
 
-	async addNewTab( tabName: string, text: string ): Promise<void> {
-		const itemCount = await this.page.locator( EditorSelectors.item ).count();
-		await this.page.getByRole( 'button', { name: 'Add Item' } ).click();
-		await this.page.getByRole( 'textbox', { name: 'Title' } ).click();
-		await this.page.getByRole( 'textbox', { name: 'Title' } ).fill( tabName );
-		const textEditor = this.page.frameLocator( EditorSelectors.tabs.textEditorIframe ).nth( itemCount );
-		await textEditor.locator( 'html' ).click();
-		await textEditor.getByText( 'Tab Content' ).click();
-		await textEditor.locator( EditorSelectors.tabs.body ).fill( text );
-	}
-
 	/**
-	 * Parse link (`a` tag) `src` attribute and gets Query Params and their values.
+	 * Parse link (HTML `a` tag) `src` attribute and gets Query Params and their values.
 	 * The same as you copy src attribute value and put in Postman
 	 *
 	 * @param {string} src - Link `src` attribute value.
