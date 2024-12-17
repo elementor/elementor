@@ -48,6 +48,7 @@ const EditorSelectors = {
 			closeButton: '#elementor-navigator__close',
 			footerButton: '#elementor-panel-footer-navigator i',
 		},
+		promotionCard: '[data-testid="e-promotion-card"]',
 	},
 	refreshPopup: {
 		reloadButton: '#elementor-save-kit-refresh-page .dialog-button.dialog-ok.dialog-alert-ok',
@@ -147,6 +148,7 @@ const EditorSelectors = {
 		loopInp: 'input[data-setting="loop"]',
 		playerControlInp: 'input[data-setting="controls"]',
 		modestbrandingInp: 'input[data-setting="modestbranding"]',
+		ccLoadPolicyInp: 'input[data-setting="cc_load_policy"]',
 		privacyInp: 'input[data-setting="yt_privacy"]',
 		switch: '.elementor-switch-handle',
 		suggestedVideoSelect: '[data-setting="rel"]',
