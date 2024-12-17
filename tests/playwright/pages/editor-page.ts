@@ -64,11 +64,11 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Upload SVG in the Media Library. Expects media library to be open.
 	 *
-	 * @param {string} svgFileName - SVG file name without extension.
+	 * @param {string} svgFileName - Optional. SVG file name, without extension.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async uploadSVG( svgFileName = undefined ): Promise<void> {
+	async uploadSVG( svgFileName?: string ): Promise<void> {
 		const _svgFileName = svgFileName === undefined ? 'test-svg-wide' : svgFileName;
 		const regex = new RegExp( _svgFileName );
 		const response = this.page.waitForResponse( regex );
