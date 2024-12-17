@@ -15,8 +15,8 @@ test.describe( 'Lighthouse tests', () => {
 		await editor.loadTemplate( filePath, true );
 		await editor.publishAndViewPage();
 
-		const { desktopConfig } = await import('lighthouse');
-		const { playAudit } = await import('playwright-lighthouse');
+		const { desktopConfig } = await import( 'lighthouse' );
+		const { playAudit } = await import( 'playwright-lighthouse' );
 
 		await playAudit( {
 			page,
