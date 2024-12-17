@@ -2,6 +2,7 @@ import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import EditorPage from '../pages/editor-page';
 import { expect } from '@playwright/test';
+import { resolve } from 'path';
 
 test( 'Minimalist widget basic sanity test with content in bio tab', async ( { browser, apiRequests }, testInfo ) => {
 	// Arrange.
@@ -17,9 +18,15 @@ test( 'Minimalist widget basic sanity test with content in bio tab', async ( { b
 	await page.locator( '.elementor-control-media__preview' ).click();
 	await page.locator( 'text=Media Library' ).click();
 	await page.waitForSelector( 'text=Insert Media' );
-	await page.click( '[aria-label="mountain-image"], li[tabindex="0"]' );
-	await page.getByRole( 'button', { name: 'Insert Media' } )
-		.or( page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
+	//await page.click( '[aria-label="mountain-image"], li[tabindex="0"]' );
+	//await page.locator( '[id="menu-item-upload"]' ).click();
+	//await page.locator( 'input[type="file"]' ).click();
+	await page.pause();
+	await page.setInputFiles( 'input[type="file"]', resolve( __dirname, '../../../../../resources/mountain-image.jpeg' ) );
+	await page.waitForSelector( 'text=mountain-image.jpeg' );
+	//await page.getByRole( 'button', { name: 'Insert Media' } )
+	//	.or( page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
+	await page.pause();
 	await editor.openSection( 'bio_section' );
 	await editor.setTextareaControlValue( 'bio_heading', 'This is a heading' );
 	await editor.setTextareaControlValue( 'bio_title', 'This is a title' );
