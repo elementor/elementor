@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Core\Page_Assets;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -40,9 +42,13 @@ class Dynamic_Imports_Manager {
 		return $this->group_transformed_imports( $transformed_imports );
 	}
 
+	private function is_experiment_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( 'e_load_js_files_conditionally' );
+	}
+
 	private function transform_queued_imports( array &$transformed_imports ): void {
 		foreach ( $this->queued_imports as $queued_import ) {
-			if ( isset( $this->registered_imports[ $queued_import ] ) ) {
+			if ( isset( $this->registered_imports[ $queued_import ] ) || ! $this->is_experiment_active() ) {
 				$transformed_imports[ $queued_import ] = $this->registered_imports[ $queued_import ];
 				$this->handle_dependencies( $transformed_imports, $queued_import );
 			}

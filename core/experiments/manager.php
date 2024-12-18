@@ -452,6 +452,14 @@ class Manager extends Base_Object {
 			'default' => self::STATE_ACTIVE,
 			'mutable' => false,
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_load_js_files_conditionally',
+			'title' => esc_html__( 'Conditionally Load JS Files', 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			static::TYPE_HIDDEN => true,
+			'default' => self::STATE_INACTIVE,
+		] );
 	}
 
 	/**
