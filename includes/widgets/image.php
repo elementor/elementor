@@ -108,7 +108,7 @@ class Widget_Image extends Widget_Base {
 	}
 
 	public function get_dynamic_import_depends(): array {
-		return [ 'url-actions' ]; // Just for testing purposes. We will need to find out if we can load this from the Dynamic Tags control settings.
+		return [ 'urlActions' ]; // Just for testing purposes. We will need to find out if we can load this from the Dynamic Tags control settings.
 	}
 
 	public function has_widget_inner_wrapper(): bool {

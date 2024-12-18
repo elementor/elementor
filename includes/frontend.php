@@ -1598,5 +1598,13 @@ class Frontend extends App {
 			'./handlers/background-slideshow',
 			[ 'swiper', 'SwiperBase' ],
 		);
+
+		$dynamic_import_manager->register_dynamic_import(
+			'urlActions',
+			'utils',
+			'./utils/url-actions',
+			[],
+			true
+		);
 	}
 }
