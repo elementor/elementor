@@ -49,8 +49,10 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @param {string} username - The username to log in with.
 	 * @param {string} password - The password to log in with.
+	 *
+	 * @return {Promise<void>}
 	 */
-	async customLogin( username: string, password: string ) {
+	async customLogin( username: string, password: string ): Promise<void> {
 		await this.gotoDashboard();
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 
@@ -89,8 +91,10 @@ export default class WpAdminPage extends BasePage {
 
 	/**
 	 * Create a new page with the API and open it in Elementor.
+	 *
+	 * @return {Promise<string>}
 	 */
-	async createNewPostWithAPI() {
+	async createNewPostWithAPI(): Promise<string> {
 		const request: APIRequestContext = this.page.context().request,
 			postDataInitial = {
 				title: 'Playwright Test Page - Uninitialized',
