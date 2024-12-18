@@ -27,7 +27,8 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip' }[]
 	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
 	{ pluginName: 'metform', installSource: 'api' },
 	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
-	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
+	// { pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
+	// unskip task: ED-16649
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
 	// { pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
 	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
