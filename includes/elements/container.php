@@ -677,18 +677,6 @@ class Container extends Element_Base {
 					],
 					'dynamic_imports' => [
 						[
-							'name' => 'background-slideshow',
-							'conditions' => [
-								'terms' => [
-									[
-										'name' => 'background_background',
-										'operator' => '===',
-										'value' => 'slideshow',
-									],
-								],
-							],
-						],
-						[
 							'name' => 'backgroundSlideshow',
 							'conditions' => [
 								'terms' => [
