@@ -37,7 +37,6 @@ class Dynamic_Imports_Manager {
 	public function get_enqueued_imports(): array {
 		$transformed_imports = [];
 		$this->transform_queued_imports( $transformed_imports );
-		$this->add_webpack_reference( $transformed_imports );
 		return $this->group_transformed_imports( $transformed_imports );
 	}
 
@@ -58,14 +57,6 @@ class Dynamic_Imports_Manager {
 				if ( isset( $this->registered_imports[ $dependency ] ) ) {
 					$transformed_imports[ $dependency ] = $this->registered_imports[ $dependency ];
 				}
-			}
-		}
-	}
-
-	private function add_webpack_reference( array &$transformed_imports ): void {
-		foreach ( $transformed_imports as $key => &$import ) {
-			if ( isset( $import['path'] ) ) {
-                $import['webpackChunkName'] = lcfirst( $key ) . 'Class';
 			}
 		}
 	}

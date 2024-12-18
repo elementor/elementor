@@ -17,7 +17,7 @@ export default class ImportDependsManager extends elementorModules.ViewModule {
 
 		for ( const importKey of Object.keys( importDepends ) ) {
 			const dynamicImport = importDepends[ importKey ];
-			const importFunction = () => import( /* webpackChunkName: dynamicImport.webpackChunkName */ `${ dynamicImport.path }` );
+			const importFunction = () => import( dynamicImport.path );
 
 			frontendObject.push( () => importFunction() );
 		}
@@ -32,7 +32,7 @@ export default class ImportDependsManager extends elementorModules.ViewModule {
 
 		for ( const importKey of Object.keys( importDepends ) ) {
 			const dynamicImport = importDepends[ importKey ];
-			const importFunction = () => import( /* webpackChunkName: dynamicImport.webpackChunkName */ `${ dynamicImport.path }` );
+			const importFunction = () => import( dynamicImport.path );
 			const importClass = ( await importFunction() ).default;
 
 			frontendObject[ importKey ] = dynamicImport.hasOwnProperty( 'initializeClass' ) && dynamicImport?.initializeClass
