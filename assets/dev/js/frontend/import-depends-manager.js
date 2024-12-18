@@ -1,103 +1,43 @@
 export default class ImportDependsManager extends elementorModules.ViewModule {
-	getRegisteredModuleScripts() {
-		return [
-			{
-				moduleKey: 'carousel-base',
-				moduleName: 'CarouselBase',
-				frontendObject: 'frontendHandlers',
-				importFunction: () => import( /* webpackChunkName: 'carouselBaseHandler' */ './handlers/base-carousel' ),
-			},
-			{
-				moduleKey: 'swiper-base',
-				moduleName: 'SwiperBase',
-				frontendObject: 'frontendHandlers',
-				importFunction: () => import( /* webpackChunkName: 'swiperBaseHandler' */ './handlers/base-swiper' ),
-			},
-			{
-				moduleKey: 'background-slideshow',
-				moduleName: 'BackgroundSlideshow',
-				frontendObject: 'container',
-				importFunction: () => import( /* webpackChunkName: 'swiperBaseHandler' */ './handlers/background-slideshow' ),
-			},
-			{
-				moduleKey: 'e-swiper',
-				moduleName: 'swiper',
-				frontendObject: 'utils',
-				importFunction: () => import( /* webpackChunkName: 'swiperClass' */ './utils/swiper' ),
-			},
-			{
-				moduleKey: 'url-actions',
-				moduleName: 'urlActions',
-				frontendObject: 'utils',
-				importFunction: () => import( /* webpackChunkName: 'urlActions' */ './utils/url-actions' ),
-				initializeClass: true,
-			},
-		];
-	}
-
-	getRegisteredScriptsByObjectName( objectName ) {
-		const registeredScripts = this.getRegisteredModuleScripts();
-		return registeredScripts.filter( ( script ) => script.frontendObject === objectName );
-	}
-
-	getActiveModuleScripts() {
-		return ! elementorFrontend.isEditMode() && !! elementorDynamicImports ? elementorDynamicImports : [];
-	}
-	//
-	// getFrontendObject( objectName ) {
-	// 	let frontendObject = null;
-	//
-	// 	switch ( objectName ) {
-	// 		case 'frontendHandlers':
-	// 			frontendObject = elementorModules.frontend.handlers;
-	// 			break;
-	// 		case 'utils':
-	// 			frontendObject = elementorFrontend.utils;
-	// 			break;
-	// 		case 'container':
-	// 			frontendObject = this.elementsHandlers.container;
-	// 			break;
-	// 	}
-	//
-	// 	return frontendObject;
-	// }
 
 	onInit() {
 		this.activeModuleScripts = this.getActiveModuleScripts();
 	}
 
+	getActiveModuleScripts() {
+		return ! elementorFrontend.isEditMode() && !! elementorDynamicImports ? elementorDynamicImports : [];
+	}
+
 	load( objectName, frontendObject ) {
-		const importDepends = this.getRegisteredScriptsByObjectName( objectName );
+		const importDepends = this.activeModuleScripts[ objectName ];
 
-		// TODO: Remove this in version 3.28 [ED-15983].
-		const areAllScriptsLoadedByDefault = false;
+		if ( ! importDepends ) {
+			return;
+		}
 
-		for ( const script of importDepends ) {
-			if (
-				areAllScriptsLoadedByDefault ||
-				elementorFrontend.isEditMode() ||
-				this.activeModuleScripts.includes( script.moduleKey )
-			) {
-				frontendObject.push(() => script.importFunction());
-			}
+		for ( const key of Object.keys( importDepends ) ) {
+			const dynamicImport = importDepends[ key ];
+			const importFunction = () => import( /* webpackChunkName: dynamicImport.webpackChunkName */ `${ dynamicImport.path }` );
+
+			frontendObject.push( () => importFunction() );
 		}
 	}
 
 	async loadAsync( objectName, frontendObject ) {
-		const importDepends = this.getRegisteredScriptsByObjectName( objectName );
+		const importDepends = this.activeModuleScripts[ objectName ];
 
-		// TODO: Remove this in version 3.28 [ED-15983].
-		const areAllScriptsLoadedByDefault = false;
+		if ( ! importDepends ) {
+			return;
+		}
 
-		for ( const script of importDepends ) {
-			if (
-				areAllScriptsLoadedByDefault ||
-				elementorFrontend.isEditMode() ||
-				this.activeModuleScripts.includes( script.moduleKey )
-			) {
-				const importClass = ( await script.importFunction() ).default;
-				frontendObject[ script.moduleName ] = script.hasOwnProperty( 'initializeClass' ) && script?.initializeClass ? new importClass : importClass;
-			}
+		for ( const key of Object.keys( importDepends ) ) {
+			const dynamicImport = importDepends[ key ];
+			const importFunction = () => import( /* webpackChunkName: dynamicImport.webpackChunkName */ `${ dynamicImport.path }` );
+			const importClass = ( await importFunction() ).default;
+
+			frontendObject[ dynamicImport.moduleName ] = dynamicImport.hasOwnProperty( 'initializeClass' ) && dynamicImport?.initializeClass
+				? new importClass()
+				: importClass;
 		}
 	}
 }

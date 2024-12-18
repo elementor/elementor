@@ -1,4 +1,5 @@
 /* global elementorFrontendConfig */
+import ImportDependsManager from './import-depends-manager';
 import '../public-path';
 import DocumentsManager from './documents-manager';
 import Storage from 'elementor-common/utils/storage';
@@ -346,6 +347,7 @@ export default class Frontend extends elementorModules.ViewModule {
 
 	async importJsFiles() {
 		this.utils = {
+			importDependsManager: new ImportDependsManager(),
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
 			baseVideoLoader: new BaseVideoLoader(),
@@ -361,10 +363,10 @@ export default class Frontend extends elementorModules.ViewModule {
 			controls: new Controls(),
 		};
 
-		if ( ! elementorFrontend.isEditMode() && !! elementorDynamicImports ) {
-			const importClass = ( await import( './import-depends-manager' ) ).default;
-			this.utils.importDependsManager = new importClass;
-		}
+		// if ( ! elementorFrontend.isEditMode() && !! elementorDynamicImports ) {
+		// 	const importClass = ( await import( './import-depends-manager' ) ).default;
+		// 	this.utils.importDependsManager = new importClass;
+		// }
 
 		await elementorFrontend.utils.importDependsManager?.loadAsync( 'utils', this.utils );
 

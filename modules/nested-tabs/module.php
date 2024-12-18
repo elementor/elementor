@@ -28,6 +28,8 @@ class Module extends \Elementor\Core\Base\Module {
 				'nested-elements',
 			], ELEMENTOR_VERSION, true );
 		} );
+
+		add_action( 'elementor/frontend/register_dynamic_imports', [ $this, 'register_dynamic_imports' ] );
 	}
 
 	/**
@@ -48,5 +50,45 @@ class Module extends \Elementor\Core\Base\Module {
 			[ 'elementor-frontend' ],
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
+	}
+
+	public function register_dynamic_imports( $dynamic_import_manager ): void {
+//		$dynamic_import_manager->register_dynamic_import( [
+//			'moduleName' => 'backgroundSlideshow',
+//			'importPath' => './handlers/background-slideshow',
+//		] );
+	}
+
+	public function abc() {
+
+		$registered_imports = [
+			'swiper-base' => [
+				'group' => 'frontendObject',
+				'path' => 'handlers/base-swiper',
+				'dependencies' => [],
+				'initializeClass' => false,
+			],
+			'swiper-base2' => [
+				'group' => 'frontendObject',
+				'path' => 'handlers/base-swiper2',
+				'dependencies' => [],
+				'initializeClass' => false,
+			],
+		];
+
+		$registered_imports = [
+			'frontendObject' => [
+				'swiper-base' => [
+					'group' => 'swiper-base',
+					'dependencies' => [],
+					'initializeClass' => false,
+				],
+				'swiper-base2' => [
+					'path' => 'handlers/base-swiper2',
+					'dependencies' => [],
+					'initializeClass' => false,
+				],
+			],
+		];
 	}
 }

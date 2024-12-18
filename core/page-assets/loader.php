@@ -21,9 +21,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Loader extends Module {
 	private array $assets = [];
 
-	private array $dynamic_imports = [];
+	private Dynamic_Imports_Manager $dynamic_imports_manager;
 
-	private bool $is_dynamic_imports_localized = false;
+	private bool $has_dynamic_imports_localize_script_been_loaded = false;
 
 	public function get_name(): string {
 		return 'assets-loader';
@@ -129,7 +129,7 @@ class Loader extends Module {
 				if ( 'scripts' === $assets_type ) {
 					wp_enqueue_script( $asset_name );
 				} else if ( 'dynamic_imports' === $assets_type ) {
-					$this->register_dynamic_import( $asset_name );
+					$this->dynamic_imports_manager->queue_dynamic_import( $asset_name );
 				} else {
 					wp_enqueue_style( $asset_name );
 				}
@@ -139,22 +139,19 @@ class Loader extends Module {
 		$this->add_dynamic_imports_to_localize_script();
 	}
 
-	private function register_dynamic_import( $script ): void {
-		$this->dynamic_imports[] = $script;
-	}
-
 	private function add_dynamic_imports_to_localize_script(): void {
-		if ( $this->is_dynamic_imports_localized ) {
+		if ( $this->has_dynamic_imports_localize_script_been_loaded ) {
 			return;
 		}
 
 		wp_localize_script(
 			'elementor-frontend',
 			'elementorDynamicImports',
-			$this->dynamic_imports
+//			$this->dynamic_imports
+			$this->dynamic_imports_manager->get_enqueued_imports()
 		);
 
-		$this->is_dynamic_imports_localized = true;
+		$this->has_dynamic_imports_localize_script_been_loaded = true;
 	}
 
 	/**
@@ -188,7 +185,7 @@ class Loader extends Module {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 					} else if ( 'dynamic_imports' === $assets_type ) {
-						$this->register_dynamic_import( $asset_name );
+						$this->dynamic_imports_manager->queue_dynamic_import( $asset_name );
 					} else {
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					}
@@ -211,9 +208,15 @@ class Loader extends Module {
 		}
 	}
 
+	private function register_dynamic_imports(): void {
+		$this->dynamic_imports_manager = new Dynamic_Imports_Manager();
+		$this->dynamic_imports_manager->create_registration_hook();
+	}
+
 	public function __construct() {
 		parent::__construct();
 
 		$this->register_assets();
+		$this->register_dynamic_imports();
 	}
 }
