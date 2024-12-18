@@ -55,7 +55,6 @@ class Dynamic_Imports_Manager {
 			foreach ( $dependencies as $dependency ) {
 				if ( isset( $this->registered_imports[ $dependency ] ) ) {
 					$transformed_imports[ $dependency ] = $this->registered_imports[ $dependency ];
-					unset( $transformed_imports[ $dependency ]['dependencies'] );
 				}
 			}
 		}
@@ -64,7 +63,7 @@ class Dynamic_Imports_Manager {
 	private function add_webpack_reference( array &$transformed_imports ): void {
 		foreach ( $transformed_imports as $key => &$import ) {
 			if ( isset( $import['path'] ) ) {
-                $import['webpackChunkName'] = $key . 'Class';
+                $import['webpackChunkName'] = lcfirst( $key ) . 'Class';
 			}
 		}
 	}

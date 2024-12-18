@@ -93,7 +93,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	}
 
 	public function get_dynamic_import_depends(): array {
-		return [ 'carouselBase' ]; // I prefer to keep loading this module, so that we make as few possible changes only.
+		return [ 'CarouselBase' ]; // I prefer to keep loading this module, so that we make as few possible changes only.
 	}
 
 	public function has_widget_inner_wrapper(): bool {

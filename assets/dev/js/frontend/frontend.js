@@ -7,7 +7,7 @@ import environment from 'elementor-common/utils/environment';
 import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import BaseVideoLoader from './utils/video-api/base-loader';
-// import URLActions from './utils/url-actions';
+import URLActions from './utils/url-actions';
 // import Swiper from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
@@ -354,7 +354,7 @@ export default class Frontend extends elementorModules.ViewModule {
 			get lightbox() {
 				return LightboxManager.getLightbox();
 			},
-			// urlActions: new URLActions(),
+			urlActions: new URLActions(),
 			// swiper: Swiper,
 			environment,
 			assetsLoader: new AssetsLoader(),
@@ -371,6 +371,8 @@ export default class Frontend extends elementorModules.ViewModule {
 		await elementorFrontend.utils.importDependsManager?.loadAsync( 'utils', this.utils );
 
 		await elementorFrontend.utils.importDependsManager?.loadAsync( 'frontendHandlers', elementorModules.frontend.handlers );
+
+		console.log( elementorModules.frontend.handlers );
 
 		// TODO: Remove experiment in v3.27.0 [ED-15717].
 		if ( this.config.experimentalFeatures.e_css_smooth_scroll ) {

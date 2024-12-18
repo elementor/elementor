@@ -689,7 +689,7 @@ class Container extends Element_Base {
 							],
 						],
 						[
-							'name' => 'e-swiper',
+							'name' => 'backgroundSlideshow',
 							'conditions' => [
 								'terms' => [
 									[

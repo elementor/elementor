@@ -1574,16 +1574,29 @@ class Frontend extends App {
 
 	public function register_dynamic_imports( $dynamic_import_manager ): void {
 		$dynamic_import_manager->register_dynamic_import(
-			'swiperBase',
+			'SwiperBase',
 			'frontendHandlers',
 			'./handlers/base-swiper',
 		);
 
 		$dynamic_import_manager->register_dynamic_import(
-			'carouselBase',
+			'CarouselBase',
 			'frontendHandlers',
 			'./handlers/base-carousel',
-			[ 'swiperBase' ],
+			[ 'swiper', 'SwiperBase' ],
+		);
+
+		$dynamic_import_manager->register_dynamic_import(
+			'swiper',
+			'utils',
+			'./utils/swiper',
+		);
+
+		$dynamic_import_manager->register_dynamic_import(
+			'backgroundSlideshow',
+			'container',
+			'./handlers/background-slideshow',
+			[ 'swiper', 'SwiperBase' ],
 		);
 	}
 }
