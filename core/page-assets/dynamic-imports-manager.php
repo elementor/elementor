@@ -19,9 +19,11 @@ class Dynamic_Imports_Manager {
 		do_action( 'elementor/frontend/register_dynamic_imports', $this );
 	}
 
-	public function register_dynamic_import( string $class_name, string $group_name, string $relative_path, array $dependencies = [], bool $initialize_class = false ): void {
-		$this->registered_imports[ $class_name ] = [
-			'group' => $group_name,
+	public function register_dynamic_import( string $class_name, string|array $group_names, string $relative_path, array $dependencies = [], bool $initialize_class = false ): void {
+        $groups = is_array( $group_names ) ? $group_names : [ $group_names ];
+
+        $this->registered_imports[ $class_name ] = [
+			'groups' => $groups,
 			'path' => $relative_path,
 			'dependencies' => $dependencies,
 			'initializeClass' => $initialize_class
@@ -72,9 +74,12 @@ class Dynamic_Imports_Manager {
 		$grouped_imports = [];
 
 		foreach ( $transformed_imports as $key => $import) {
-			$group = $import['group'] ?? null;
-			unset( $import['group'] );
-			$grouped_imports[ $group ][ $key ] = $import;
+            $groups = $import['groups'] ?? [];
+            unset( $import['groups'] );
+
+            foreach ( $groups as $group ) {
+                $grouped_imports[ $group ][ $key ] = $import;
+            }
 		}
 
 		return $grouped_imports;

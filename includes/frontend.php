@@ -1593,8 +1593,8 @@ class Frontend extends App {
 		);
 
 		$dynamic_import_manager->register_dynamic_import(
-			'backgroundSlideshow',
-			'container',
+			'BackgroundSlideshow',
+			[ 'container', 'column', 'section' ],
 			'./handlers/background-slideshow',
 			[ 'swiper', 'SwiperBase' ],
 		);
