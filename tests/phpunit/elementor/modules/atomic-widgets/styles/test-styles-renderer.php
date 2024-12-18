@@ -513,6 +513,53 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
+	public function test_render__style_with_background_overlay_transformers() {
+		// Arrange.
+		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
+			$this->attach_background_transformers( $transformers );
+		} );
+
+		$styles = [
+			[
+				'id' => 'test-background-overlay',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => 'blue',
+											],
+										],
+									],
+								],
+							],
+						],
+
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'breakpoints' => [],
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
+
 	private function attach_background_transformers( $transformers ) {
 		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
