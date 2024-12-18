@@ -397,16 +397,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_nested_background_transformers() {
 		// Arrange.
-		add_action('elementor/atomic-widgets/styles/transformers/register', function($transformers) {
-			$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
-			$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
-
-			$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
-			$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ', ' ) );
-
-			$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
-			$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
-			$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
+		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
+			$this->attach_background_transformers( $transformers );
 		} );
 
 		$styles = [
@@ -477,6 +469,60 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Assert.
 		$this->assertNotEmpty( $css, 'CSS should not be empty' );
 		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_with_background_color_transformers() {
+		// Arrange.
+		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
+			$this->attach_background_transformers( $transformers );
+		} );
+
+		$styles = [
+			[
+				'id' => 'test-background-color',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'color' => [
+										'$$type' => 'color',
+										'value' => 'red',
+									],
+								],
+							],
+						],
+
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'breakpoints' => [],
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	private function attach_background_transformers( $transformers ) {
+		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
+		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
+
+		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
+		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ', ' ) );
+
+		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
+		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
+		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
 	}
 
 	public function test_render__style_with_nested_transformers() {
