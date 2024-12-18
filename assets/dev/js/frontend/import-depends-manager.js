@@ -1,5 +1,4 @@
 export default class ImportDependsManager extends elementorModules.ViewModule {
-
 	onInit() {
 		this.activeModuleScripts = this.getActiveModuleScripts();
 	}
