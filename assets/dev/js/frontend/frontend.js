@@ -1,5 +1,4 @@
 /* global elementorFrontendConfig */
-// import ImportDependsManager from './import-depends-manager';
 import '../public-path';
 import DocumentsManager from './documents-manager';
 import Storage from 'elementor-common/utils/storage';
