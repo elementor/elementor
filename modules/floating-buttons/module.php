@@ -438,8 +438,9 @@ class Module extends BaseModule {
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'show_in_nav_menus' => false,
-			'capability_type' => 'page',
+			'capability_type' => 'post',
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
+			'show_in_rest' => true,
 			'supports' => [
 				'title',
 				'editor',

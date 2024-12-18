@@ -16,6 +16,7 @@ assets/lib/swiper/css/swiper*.css
 *.log
 *.map
 /templates/
+/hello-elementor/
 
 # build tools lock
 yarn.lock
@@ -31,6 +32,7 @@ Thumbs.db
 coverage/
 .zimud.json
 .phpunit.result.cache
+.npmrc
 
 # playwright
 test-results/

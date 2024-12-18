@@ -424,6 +424,19 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
+			'cc_load_policy',
+			[
+				'label' => esc_html__( 'Captions', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'condition' => [
+					'video_type' => [ 'youtube' ],
+					'controls' => 'yes',
+				],
+				'frontend_available' => true,
+			]
+		);
+
+		$this->add_control(
 			'logo',
 			[
 				'label' => esc_html__( 'Logo', 'elementor' ),
@@ -1183,6 +1196,7 @@ class Widget_Video extends Widget_Base {
 				'mute',
 				'rel',
 				'modestbranding',
+				'cc_load_policy',
 			];
 
 			if ( $settings['loop'] ) {

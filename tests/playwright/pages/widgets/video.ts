@@ -21,5 +21,9 @@ export default class VideoWidget extends Content {
 		await expect( page.locator( EditorSelectors.video.lightBoxSetting ) ).toBeVisible();
 		await page.locator( EditorSelectors.video.image ).click( );
 		await expect( page.locator( EditorSelectors.video.lightBoxDialog ) ).toBeVisible();
+
+		if ( isPublished ) {
+			await this.editor.assertCorrectVwWidthStylingOfElement( page.locator( EditorSelectors.video.videoWrapper ), 85 );
+		}
 	}
 }

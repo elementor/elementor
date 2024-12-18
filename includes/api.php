@@ -29,7 +29,6 @@ class Api {
 
 	const TRANSIENT_KEY_PREFIX = 'elementor_remote_info_api_data_';
 
-
 	/**
 	 * API info URL.
 	 *
@@ -76,14 +75,21 @@ class Api {
 		if ( $force_update || false === $info_data ) {
 			$timeout = ( $force_update ) ? 25 : 8;
 
+			$body_request = [
+				// Which API version is used.
+				'api_version' => ELEMENTOR_VERSION,
+				// Which language to return.
+				'site_lang' => get_bloginfo( 'language' ),
+			];
+
+			$site_key = self::get_site_key();
+			if ( ! empty( $site_key ) ) {
+				$body_request['site_key'] = $site_key;
+			}
+
 			$response = wp_remote_get( self::$api_info_url, [
 				'timeout' => $timeout,
-				'body' => [
-					// Which API version is used.
-					'api_version' => ELEMENTOR_VERSION,
-					// Which language to return.
-					'site_lang' => get_bloginfo( 'language' ),
-				],
+				'body' => $body_request,
 			] );
 
 			if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
@@ -116,6 +122,21 @@ class Api {
 		}
 
 		return $info_data;
+	}
+
+	public static function get_site_key() {
+		if ( null === Plugin::$instance->common ) {
+			return get_option( Library::OPTION_CONNECT_SITE_KEY );
+		}
+
+		/** @var Library $library */
+		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+
+		if ( ! $library || ! method_exists( $library, 'get_site_key' ) ) {
+			return false;
+		}
+
+		return $library->get_site_key();
 	}
 
 	/**

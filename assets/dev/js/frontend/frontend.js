@@ -19,8 +19,7 @@ import AnchorScrollMargin from './utils/anchor-scroll-margin';
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
-	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
-	AnchorsModule = require( 'elementor-frontend/utils/anchors' ); // // TODO: Remove anchors.js file in v3.27.0 [ED-15717].
+	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' );
 
 export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
@@ -189,6 +188,29 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	initOnReadyComponents() {
+		this.utils = {
+			youtube: new YouTubeApiLoader(),
+			vimeo: new VimeoApiLoader(),
+			baseVideoLoader: new BaseVideoLoader(),
+			get lightbox() {
+				return LightboxManager.getLightbox();
+			},
+			urlActions: new URLActions(),
+			swiper: Swiper,
+			environment,
+			assetsLoader: new AssetsLoader(),
+			escapeHTML,
+			events: Events,
+			controls: new Controls(),
+			anchor_scroll_margin: new AnchorScrollMargin(),
+		};
+
+		// TODO: BC since 2.4.0
+		this.modules = {
+			StretchElement: elementorModules.frontend.tools.StretchElement,
+			Masonry: elementorModules.utils.Masonry,
+		};
+
 		this.elementsHandler.init();
 
 		if ( this.isEditMode() ) {

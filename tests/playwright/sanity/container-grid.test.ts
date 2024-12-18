@@ -389,10 +389,11 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Check that gap control effects the grid outline ', async () => {
-			const desiredGapValue = '30px 30px';
+			const desiredGapValue = '30px';
 			await page.locator( '.elementor-control-grid_gaps .elementor-control-gap >> nth=0' ).locator( 'input' ).fill( '30' );
 
-			await expect( gridOutline ).toHaveCSS( 'grid-gap', desiredGapValue );
+			await expect( gridOutline ).toHaveCSS( 'row-gap', desiredGapValue );
+			await expect( gridOutline ).toHaveCSS( 'column-gap', desiredGapValue );
 		} );
 
 		await test.step( 'Check that Custom control is set to grid outline', async () => {

@@ -346,6 +346,12 @@ class Elements_Manager {
 		];
 	}
 
+	public function enqueue_elements_styles() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->enqueue_styles();
+		}
+	}
+
 	/**
 	 * Require files.
 	 *

@@ -3,9 +3,10 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { clickTab, setup } from './helper';
+import _path from 'path';
 
 test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () => {
-	const templatePath = `../templates/nested-tabs-with-icons.json`;
+	const templatePath = _path.resolve( __dirname, '../../../templates/nested-tabs-with-icons.json' );
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
