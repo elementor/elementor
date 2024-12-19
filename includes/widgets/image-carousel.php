@@ -92,6 +92,10 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'e-swiper', 'widget-image-carousel' ];
 	}
 
+	public function get_dynamic_import_depends(): array {
+		return [ 'CarouselBase' ]; // I prefer to keep loading this module, so that we make as few possible changes only.
+	}
+
 	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}

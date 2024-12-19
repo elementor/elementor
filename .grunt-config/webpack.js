@@ -21,7 +21,7 @@ const WatchTimePlugin = require('./plugins/watch-time/index');
 // Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
 const getChunkName = ( chunkData, environment ) => {
 	const minSuffix = 'production' === environment ? '.min' : '',
-		name = chunkData.chunk.name ? '[name].' : '';
+		name = chunkData.chunk.name ? '[name].' : path.basename( chunkData.chunk.files[0], '.js' );
 
 	return `${ name }[contenthash].bundle${ minSuffix }.js`;
 };

@@ -27,6 +27,7 @@ class Assets extends Base {
 		$element_assets_depend = [
 			'styles' => $element_data->get_style_depends(),
 			'scripts' => $element_data->get_script_depends(),
+			'dynamic_imports' => $element_data->get_dynamic_import_depends(),
 		];
 
 		if ( $element_assets_depend ) {

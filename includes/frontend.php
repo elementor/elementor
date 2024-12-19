@@ -177,6 +177,7 @@ class Frontend extends App {
 		add_action( 'template_redirect', [ $this, 'init' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
+		add_action( 'elementor/frontend/register_dynamic_imports', [ $this, 'register_dynamic_imports' ] );
 
 		$this->add_content_filter();
 		$this->init_swiper_settings();
@@ -477,6 +478,18 @@ class Frontend extends App {
 		 * @since 1.2.1
 		 */
 		do_action( 'elementor/frontend/after_register_scripts' );
+	}
+
+	public function elementor_register_dynamic_imports() {
+		$dynamic_imports = Plugin::$instance->assets_loader->get_assets()['dynamic_imports'];
+
+		if ( ! empty( $dynamic_imports ) ) {
+			wp_localize_script(
+				'elementor-frontend',
+				'elementorDynamicImports',
+				$dynamic_imports
+			);
+		}
 	}
 
 	/**
@@ -1557,5 +1570,41 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
+	}
+
+	public function register_dynamic_imports( $dynamic_import_manager ): void {
+		$dynamic_import_manager->register_dynamic_import(
+			'SwiperBase',
+			'frontendHandlers',
+			'./handlers/base-swiper',
+		);
+
+		$dynamic_import_manager->register_dynamic_import(
+			'CarouselBase',
+			'frontendHandlers',
+			'./handlers/base-carousel',
+			[ 'swiper', 'SwiperBase' ],
+		);
+
+		$dynamic_import_manager->register_dynamic_import(
+			'swiper',
+			'utils',
+			'./utils/swiper',
+		);
+
+		$dynamic_import_manager->register_dynamic_import(
+			'BackgroundSlideshow',
+			[ 'container', 'column', 'section' ],
+			'./handlers/background-slideshow',
+			[ 'swiper', 'SwiperBase' ],
+		);
+
+		$dynamic_import_manager->register_dynamic_import(
+			'urlActions',
+			'utils',
+			'./utils/url-actions',
+			[],
+			true
+		);
 	}
 }
