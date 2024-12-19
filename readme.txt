@@ -346,6 +346,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.26.1 - 2024-12-19
+
+* Tweak: Return a specific error to users when images provider is not working in Elementor AI
+* Fix: Typo in `Isolation Manager`
+
 = 3.26.0 - 2024-12-16 =
 
 * New: Unify product images seamlessly with AI
