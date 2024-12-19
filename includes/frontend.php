@@ -686,16 +686,33 @@ class Frontend extends App {
 				$post_id = get_the_ID();
 				// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
 				if ( $post_id && is_singular() ) {
-					$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
-					if ( ! empty( $page_assets ) ) {
-						Plugin::$instance->assets_loader->enable_assets( $page_assets );
-					}
+					$this->handle_page_assets( $post_id );
 
 					$css_file = Post_CSS::create( get_the_ID() );
 					$css_file->enqueue();
 				}
 			}
 		}
+	}
+
+	private function handle_page_assets( $post_id ): void {
+		$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
+		if ( ! empty( $page_assets ) ) {
+			Plugin::$instance->assets_loader->enable_assets( $page_assets );
+			return;
+		}
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_head_loading_styles' ) ) {
+			return;
+		}
+
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return;
+		}
+
+		$document->update_runtime_elements();
 	}
 
 	/**
