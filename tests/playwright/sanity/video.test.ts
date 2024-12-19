@@ -78,7 +78,7 @@ test.describe( 'Video tests inside a container @video', () => {
 				return EditorSelectors.video[ control ];
 			} );
 
-			await videoWidget.toggleControls( controls );
+			await videoWidget.toggleVideoControls( controls );
 			await videoWidget.setLink( player.link, { linkInpSelector: EditorSelectors.video[ video ].linkInp } );
 			let src = await videoWidget.getVideoSrc( false );
 			videoWidget.verifySrcParams( src, player.expected, video );
