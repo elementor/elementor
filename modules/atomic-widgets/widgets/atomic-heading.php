@@ -1,11 +1,14 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Modules\AtomicWidgets\Controls\Dynamic_Section;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 
@@ -29,19 +32,40 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
+		$format = $this->get_heading_template( ! empty( $settings['link']['href'] ) );
+		$args = $this->get_template_args( $settings );
+
+		echo sprintf( $format, ...$args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	private function get_heading_template( bool $is_link_enabled ): string {
+		return $is_link_enabled ? '<%1$s %2$s><a %3$s>%4$s</a></%1$s>' : '<%1$s %2$s>%3$s</%1$s>';
+	}
+
+	private function get_template_args( array $settings ): array {
 		$tag = $settings['tag'];
-		$title = $settings['title'];
+		$title = esc_html( $settings['title'] );
 		$attrs = array_filter( [
 			'class' => $settings['classes'] ?? '',
 		] );
 
-		echo sprintf(
-			'<%1$s %2$s>%3$s</%1$s>',
-			// TODO: we should avoid using `validate html tag` and use the enum validation instead.
-			Utils::validate_html_tag( $tag ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			Utils::render_html_attributes( $attrs ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			esc_html( $title )
-		);
+		$default_args = [
+			Utils::validate_html_tag( $tag ),
+			Utils::render_html_attributes( $attrs ),
+		];
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$link_args = [
+				Utils::render_html_attributes( $settings['link'] ),
+				esc_html( $title ),
+			];
+
+			return array_merge( $default_args, $link_args );
+		}
+
+		$default_args[] = $title;
+
+		return $default_args;
 	}
 
 	protected function define_atomic_controls(): array {
@@ -81,7 +105,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					Textarea_Control::bind_to( 'title' )
 						->set_label( __( 'Title', 'elementor' ) )
 						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
-				]),
+
+					Link_Control::bind_to( 'link' ),
+				] ),
 		];
 	}
 
@@ -96,6 +122,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 			'title' => String_Prop_Type::make()
 				->default( __( 'Your Title Here', 'elementor' ) ),
+
+			'link' => Link_Prop_Type::make(),
 		];
 	}
 }
