@@ -532,7 +532,6 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tabs_title_box_shadow',
-				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"false\"]:not( :hover )",
 			]
@@ -591,7 +590,6 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tabs_title_box_shadow_hover',
-				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
 				'selector' => "{$heading_selector_non_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 			]
@@ -676,7 +674,6 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tabs_title_box_shadow_active',
-				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"true\"], {$heading_selector_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 			]
 		);
@@ -757,11 +754,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_shadow',
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"false\"]:not( :hover )",
-				'fields_options' => [
-					'text_shadow_type' => [
-						'label' => esc_html__( 'Shadow', 'elementor' ),
-					],
-				],
 			]
 		);
 
@@ -770,11 +762,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_stroke',
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"false\"]:not( :hover ) :is( span, a, i )",
-				'fields_options' => [
-					'text_stroke_type' => [
-						'label' => esc_html__( 'Stroke', 'elementor' ),
-					],
-				],
 			]
 		);
 
@@ -803,12 +790,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_shadow_hover',
 				'selector' => "{$heading_selector_non_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
-				'fields_options' => [
-					'text_shadow_type' => [
-						'label' => esc_html__( 'Shadow', 'elementor' ),
-					],
-				],
-
 			]
 		);
 
@@ -817,11 +798,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_stroke_hover',
 				'selector' => "{$heading_selector_non_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover :is( span, a, i )",
-				'fields_options' => [
-					'text_stroke_type' => [
-						'label' => esc_html__( 'Stroke', 'elementor' ),
-					],
-				],
 			]
 		);
 
@@ -850,11 +826,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_shadow_active',
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"true\"], {$heading_selector_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
-				'fields_options' => [
-					'text_shadow_type' => [
-						'label' => esc_html__( 'Shadow', 'elementor' ),
-					],
-				],
 			]
 		);
 
@@ -863,11 +834,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_stroke_active',
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"true\"] :is( span, a, i ), {$heading_selector_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover :is( span, a, i )",
-				'fields_options' => [
-					'text_stroke_type' => [
-						'label' => esc_html__( 'Stroke', 'elementor' ),
-					],
-				],
 			]
 		);
 

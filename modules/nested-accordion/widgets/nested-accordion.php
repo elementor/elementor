@@ -697,11 +697,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 				[
 					'name' => $context . '_' . $state . '_text_shadow',
 					'selector' => '{{WRAPPER}} ' . $translated_tab_css_selector,
-					'fields_options' => [
-						'text_shadow_type' => [
-							'label' => esc_html__( 'Shadow', 'elementor' ),
-						],
-					],
 				]
 			);
 
