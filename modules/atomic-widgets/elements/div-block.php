@@ -30,6 +30,10 @@ class Div_Block extends Atomic_Element_Base {
 		return 'eicon-div-block';
 	}
 
+	public function get_style_depends() {
+		return [ 'div-block' ];
+	}
+
 	protected function define_atomic_controls(): array {
 		return [
 			Section::make()
@@ -42,6 +46,26 @@ class Div_Block extends Atomic_Element_Base {
 								'value' => 'div',
 								'label' => 'Div',
 							],
+							[
+								'value' => 'header',
+								'label' => 'Header',
+							],
+							[
+								'value' => 'section',
+								'label' => 'Section',
+							],
+							[
+								'value' => 'article',
+								'label' => 'Article',
+							],
+							[
+								'value' => 'aside',
+								'label' => 'Aside',
+							],
+							[
+								'value' => 'footer',
+								'label' => 'Footer',
+							],
 						]),
 				]),
 		];
@@ -53,7 +77,7 @@ class Div_Block extends Atomic_Element_Base {
 				->default( [] ),
 
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header' ] )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' ),
 		];
 	}
@@ -101,12 +125,7 @@ class Div_Block extends Atomic_Element_Base {
 	 * @return void
 	 */
 	protected function print_html_tag() {
-		$html_tag = $this->get_atomic_settings()['tag'] ?? null;
-
-		if ( empty( $html_tag ) ) {
-			$html_tag = 'div';
-		}
-
+		$html_tag = $this->get_atomic_settings()['tag'] ?? 'div';
 		Utils::print_validated_html_tag( $html_tag );
 	}
 }
