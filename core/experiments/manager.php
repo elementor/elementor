@@ -465,6 +465,10 @@ class Manager extends Base_Object {
 			static::TYPE_HIDDEN => true,
 			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.26.0',
+			],
 		] );
 
 		$this->add_feature( [
