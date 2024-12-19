@@ -15,7 +15,11 @@ test( 'Verify Google maps controls', async ( { page, apiRequests }, testInfo ) =
 	await wpAdmin.openNewPage();
 	await editor.closeNavigatorIfOpen();
 	await editor.addWidget( 'google_maps' );
-	await googleMapsWidget.setGoogleMapsParams( { location, zoom, height } );
+	await editor.setTextControlValue( 'address', location );
+	await editor.setSliderControlValue( 'zoom', zoom );
+	await editor.setSliderControlValue( 'height', height );
+	await editor.waitForIframeToLoaded( 'google_maps' );
+
 	let src = await googleMapsWidget.getSrc();
 	const expectedValues = {
 		q: 'New%20York',

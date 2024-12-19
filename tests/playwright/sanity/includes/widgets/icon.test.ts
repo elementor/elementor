@@ -28,15 +28,15 @@ test.describe( 'Icon and social icon widget tests', () => {
 		const contentTab = new Content( page, testInfo );
 
 		await test.step( 'Fit Aspect hidden for Icons', async () => {
-			await page.getByRole( 'button', { name: 'Style' } ).click();
+			await editor.openPanelTab( 'style' );
 			await expect( page.locator( '.elementor-control-fit_to_size .elementor-switch-label' ) ).toBeHidden();
 		} );
 
 		await test.step( 'Act', async () => {
 			await contentTab.uploadSVG();
-			await page.getByRole( 'button', { name: 'Style' } ).click();
+			await editor.openPanelTab( 'style' );
 			await page.locator( '.elementor-switch-label' ).click();
-			await page.getByRole( 'spinbutton', { name: 'Size' } ).fill( '300' );
+			await editor.setSliderControlValue( 'size', '300' );
 		} );
 
 		await test.step( 'Editor Fit-to-size enabled', async () => {
