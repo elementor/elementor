@@ -1,5 +1,15 @@
 == Changelog ==
 
+= 3.26.2 - 2024-12-19 =
+
+* Fix: Reverted Activated "Element Caching" feature for existing sites ([#27502](https://github.com/elementor/elementor/issues/29613))
+* Fix: Compatibility issue with third-party plugin with `data-settings` attribute missing when Optimized Markup experiment is activated
+
+= 3.26.1 - 2024-12-19
+
+* Tweak: Return a specific error to users when images provider is not working in Elementor AI
+* Fix: Typo in `Isolation Manager`
+
 = 3.26.0 - 2024-12-16 =
 
 * New: Unify product images seamlessly with AI
