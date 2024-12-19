@@ -660,15 +660,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Whether the Top Bar is active or not.
-	 *
-	 * @return {Promise<boolean>}
-	 */
-	async hasTopBar(): Promise<boolean> {
-		return await this.page.locator( EditorSelectors.panels.topBar.wrapper ).isVisible();
-	}
-
-	/**
 	 * Click on a top bar item.
 	 *
 	 * @param {TopBarSelector} selector - The selector object for the top bar button.
@@ -683,35 +674,12 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open the menu panel. Or, when an inner panel is provided, open the inner panel.
-	 *
-	 * @param {string} innerPanel - Optional. The inner menu to open.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openMenuPanel( innerPanel?: string ) {
-		await this.page.locator( EditorSelectors.panels.menu.footerButton ).click();
-		await this.page.locator( EditorSelectors.panels.menu.wrapper ).waitFor();
-
-		if ( innerPanel ) {
-			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
-		}
-	}
-
-	/**
 	 * Open the elements/widgets panel.
 	 *
 	 * @return {Promise<void>}
 	 */
 	async openElementsPanel() {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.elementsPanel );
-		} else {
-			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.elementsPanel );
 		await this.page.locator( EditorSelectors.panels.elements.wrapper ).waitFor();
 	}
 
@@ -721,14 +689,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openPageSettingsPanel() {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.documentSettings );
-		} else {
-			await this.page.locator( EditorSelectors.panels.pageSettings.footerButton ).click();
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.documentSettings );
 		await this.page.locator( EditorSelectors.panels.pageSettings.wrapper ).waitFor();
 	}
 
@@ -740,14 +701,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openSiteSettings( innerPanel?: string ) {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.siteSettings );
-		} else {
-			await this.openMenuPanel( 'global-settings' );
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.siteSettings );
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 
 		if ( innerPanel ) {
@@ -761,16 +715,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openUserPreferencesPanel() {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.elementorLogo );
-			await this.page.waitForTimeout( 100 );
-			await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
-		} else {
-			await this.openMenuPanel( 'editor-preferences' );
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.elementorLogo );
+		await this.page.waitForTimeout( 100 );
+		await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
 		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
 	}
 
@@ -844,27 +791,13 @@ export default class EditorPage extends BasePage {
 		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
 	}
 
-	async openResponsiveViewBar() {
-		const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
-
-		if ( ! hasResponsiveViewBar ) {
-			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
-		}
-	}
-
 	/**
 	 * Select a responsive view.
 	 *
 	 * @param {string} device - The name of the device breakpoint, such as `tablet_extra`.
 	 */
 	async changeResponsiveView( device: Device ) {
-		const hasTopBar = await this.hasTopBar();
-		if ( hasTopBar ) {
-			await Breakpoints.getDeviceLocator( this.page, device ).click();
-		} else {
-			await this.openResponsiveViewBar();
-			await this.page.locator( `#e-responsive-bar-switcher__option-${ device }` ).first().locator( 'i' ).click();
-		}
+		await Breakpoints.getDeviceLocator( this.page, device ).click();
 	}
 
 	/**
@@ -873,17 +806,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishPage() {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.publish );
-			await this.page.waitForLoadState();
-			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
-		} else {
-			await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
-			await this.page.waitForLoadState();
-			await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
-		}
+		await this.clickTopBarItem( TopBarSelectors.publish );
+		await this.page.waitForLoadState();
+		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
 	}
 
 	/**
@@ -892,19 +817,11 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishAndViewPage() {
-		const hasTopBar = await this.hasTopBar();
-
 		await this.publishPage();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.saveOptions );
-			await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
-			const pageId = await this.getPageId();
-			await this.page.goto( `/?p=${ pageId }` );
-		} else {
-			await this.openMenuPanel( 'view-page' );
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.saveOptions );
+		await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
+		const pageId = await this.getPageId();
+		await this.page.goto( `/?p=${ pageId }` );
 		await this.page.waitForLoadState();
 	}
 
@@ -920,14 +837,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async saveAndReloadPage() {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.publish );
-		} else {
-			await this.page.locator( '#elementor-panel-saver-button-publish' ).click();
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.publish );
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();
@@ -1251,7 +1161,7 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( EditorSelectors.media.imgDescription ).type( args.description );
 	}
 
-	async saveSiteSettingsWithTopBar( toReload: boolean ) {
+	async saveSiteSettings( toReload: boolean ) {
 		if ( await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).isEnabled() ) {
 			await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).click();
 		} else {
@@ -1264,11 +1174,6 @@ export default class EditorPage extends BasePage {
 		if ( toReload ) {
 			await this.page.locator( EditorSelectors.refreshPopup.reloadButton ).click();
 		}
-	}
-
-	async saveSiteSettingsNoTopBar() {
-		await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
-		await this.page.locator( EditorSelectors.toast ).waitFor();
 	}
 
 	async assertCorrectVwWidthStylingOfElement( element: Locator, vwValue: number = 100 ): Promise<void> {
