@@ -704,7 +704,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							],
 							'background-image' => [
 								'$$type' => 'background-image',
-								'value' => [ [ '$$type' => 'background-overlay', 'value' => [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ] ] ]
+								'value' => [ [ '$$type' => 'color-gradient', 'value' => [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ] ] ]
 							],
 						],
 						'meta' => [

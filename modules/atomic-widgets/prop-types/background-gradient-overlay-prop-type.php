@@ -8,14 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Color_Gradient_Prop_Type extends Object_Prop_Type {
+class Background_Gradient_Overlay_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'color-gradient';
+		return 'background-gradient-overlay';
 	}
 
 	protected function define_shape(): array {
 		return [
-			'color' => Color_Prop_Type::make()->required(),
+			'color' => Color_Prop_Type::make(),
 		];
 	}
 }
