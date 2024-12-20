@@ -34,3 +34,27 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: echo "$TITLE" | npx commitlint
+
+  check-css-size:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Find and Check CSS Files
+        run: |
+          MAX_SIZE=51200  # 50 KB in bytes
+          EXIT_CODE=0
+
+          # Find all frontend.css files and check their sizes
+          for file in $(find . -name 'frontend.css'); do
+            FILE_SIZE=$(stat -c%s "$file")
+            echo "Checking $file (Size: $FILE_SIZE bytes)"
+
+            if [ "$FILE_SIZE" -gt "$MAX_SIZE" ]; then
+              echo "Error: $file exceeds size limit of $MAX_SIZE bytes!"
+              EXIT_CODE=1
+            fi
+          done
+
+          exit $EXIT_CODE
