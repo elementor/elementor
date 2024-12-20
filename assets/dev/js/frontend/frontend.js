@@ -7,7 +7,7 @@ import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import BaseVideoLoader from './utils/video-api/base-loader';
 import URLActions from './utils/url-actions';
-import Swiper from './utils/swiper';
+import SwiperHandler from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
@@ -196,7 +196,7 @@ export default class Frontend extends elementorModules.ViewModule {
 				return LightboxManager.getLightbox();
 			},
 			urlActions: new URLActions(),
-			swiper: Swiper,
+			swiper: SwiperHandler,
 			environment,
 			assetsLoader: new AssetsLoader(),
 			escapeHTML,
