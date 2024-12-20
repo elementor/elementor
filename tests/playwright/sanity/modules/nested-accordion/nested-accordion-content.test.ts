@@ -180,8 +180,13 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			const editorFirstItem = frame.locator( '.e-n-accordion-item' ).first();
 
 			await test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in preview frame', async () => {
-				await frame.locator( '.e-n-accordion-item-title' ).first().click();
+				await frame.locator( '.e-n-accordion-item[open="true"] > .e-n-accordion-item-title' ).click();
 				await editor.isUiStable( editorFirstItem );
+				// Sometimes a single click doesn't work with Playwright, so we need to click twice
+				const accordionItemTitle = await frame.locator( '.e-n-accordion-item[open="true"] > .e-n-accordion-item-title' ).all();
+				if ( accordionItemTitle.length > 0 ) {
+					await accordionItemTitle[ 0 ].click();
+				}
 				await expectScreenshotToMatchLocator( 'nested-accordion-no-icons.png', editorFirstItem );
 			} );
 

@@ -4,10 +4,13 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corner_Sizes_Transformer;
@@ -20,6 +23,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
@@ -38,6 +42,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 
@@ -55,8 +61,8 @@ class Module extends BaseModule {
 		'editor-elements', // TODO: Need to be registered and not enqueued.
 		'editor-panels',
 		'editor-props', // TODO: Need to be registered and not enqueued.
-		'editor-style',
 		'editor-styles', // TODO: Need to be registered and not enqueued.
+		'editor-styles-repository',
 	];
 
 	public function get_name() {
@@ -74,11 +80,13 @@ class Module extends BaseModule {
 			( new Atomic_Widget_Styles() )->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
-
+			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
+			add_action( 'elementor/frontend/after_register_styles', fn() => $this->register_styles() );
 		}
 	}
 
@@ -97,9 +105,23 @@ class Module extends BaseModule {
 		return array_merge( $packages, self::PACKAGES );
 	}
 
+	private function add_styles_schema( $settings ) {
+		if ( ! isset( $settings['atomic'] ) ) {
+			$settings['atomic'] = [];
+		}
+
+		$settings['atomic']['styles_schema'] = Style_Schema::get();
+
+		return $settings;
+	}
+
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
+	}
+
+	private function register_elements( Elements_Manager $elements_manager ) {
+		$elements_manager->register_element_type( new Div_Block() );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
@@ -114,6 +136,7 @@ class Module extends BaseModule {
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Image_Attachment_Id_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Url_Prop_Type::get_key(), new Primitive_Transformer() );
+		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
@@ -147,6 +170,15 @@ class Module extends BaseModule {
 			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
+		);
+	}
+
+	public function register_styles() {
+		wp_register_style(
+			'div-block',
+			$this->get_css_assets_url( 'div-block', 'assets/css/' ),
+			[ 'elementor-frontend' ],
+			ELEMENTOR_VERSION
 		);
 	}
 }
