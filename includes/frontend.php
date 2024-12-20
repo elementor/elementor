@@ -383,6 +383,14 @@ class Frontend extends App {
 		);
 
 		wp_register_script(
+			'swiper',
+			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/v8/' ),
+			[],
+			'8.4.5',
+			true
+		);
+
+		wp_register_script(
 			'flatpickr',
 			$this->get_js_assets_url( 'flatpickr', 'assets/lib/flatpickr/' ),
 			[
