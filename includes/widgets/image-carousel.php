@@ -97,7 +97,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	 *
 	 * Retrieve the list of script dependencies the widget requires.
 	 *
-	 * @since 3.24.0
+	 * @since 3.27.0
 	 * @access public
 	 *
 	 * @return array Widget script dependencies.
