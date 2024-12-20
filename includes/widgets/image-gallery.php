@@ -81,7 +81,7 @@ class Widget_Image_Gallery extends Widget_Base {
 	 *
 	 * Retrieve the list of style dependencies the widget requires.
 	 *
-	 * @since 3.27.0
+	 * @since 3.24.0
 	 * @access public
 	 *
 	 * @return array Widget style dependencies.
