@@ -149,16 +149,6 @@ class Frontend extends App {
 	private $google_fonts_index = 0;
 
 	/**
-	 * @var string
-	 */
-	private $e_swiper_asset_path;
-
-	/**
-	 * @var string
-	 */
-	private $e_swiper_version;
-
-	/**
 	 * Front End constructor.
 	 *
 	 * Initializing Elementor front end. Make sure we are not in admin, not and
@@ -179,7 +169,6 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
 		$this->add_content_filter();
-		$this->init_swiper_settings();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
@@ -341,11 +330,6 @@ class Frontend extends App {
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 	}
 
-	public function init_swiper_settings() {
-		$this->e_swiper_asset_path = 'assets/lib/swiper/v8/';
-		$this->e_swiper_version = '8.4.5';
-	}
-
 	/**
 	 * Remove content filter.
 	 *
@@ -395,6 +379,14 @@ class Frontend extends App {
 				'jquery',
 			],
 			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'swiper',
+			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/v8/' ),
+			[],
+			'8.4.5',
 			true
 		);
 
@@ -547,9 +539,9 @@ class Frontend extends App {
 
 		wp_register_style(
 			'swiper',
-			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
+			$this->get_css_assets_url( 'swiper', 'assets/lib/swiper/v8/css/' ),
 			[],
-			$this->e_swiper_version
+			'8.4.5'
 		);
 
 		wp_register_style(
