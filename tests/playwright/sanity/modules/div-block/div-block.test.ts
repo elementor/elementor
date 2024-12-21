@@ -71,4 +71,22 @@ test.describe( 'Div Block tests @div-block', () => {
 		expect( divBlockChildrenCount ).toBe( 4 );
 		expect( childDivBlockChildrenCount ).toBe( 2 );
 	} );
+
+	test( 'Div block should render styles after refresh', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage(),
+			divBlock = await editor.addElement( { elType: 'div-block' }, 'document' );
+
+		await editor.openV2PanelTab( 'style' );
+		await editor.openV2Section( 'background' );
+
+		const inputLocator = page.locator( '.MuiGrid-item:has-text("Color") + .MuiGrid-item input' );
+
+		await inputLocator.fill( '#8d101080' );
+		await editor.saveAndReloadPage();
+
+		const divBlockLocator = editor.getPreviewFrame().locator( `[data-id="${ divBlock }"]` );
+
+		await expect( divBlockLocator ).toHaveCSS( 'background-color', /[rgba\(141, 16, 16, 0.5\)|\#8d101080]/ );
+	} );
 } );
