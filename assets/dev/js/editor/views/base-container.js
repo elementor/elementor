@@ -282,7 +282,7 @@ Marionette.CollectionView.prototype.buildChildView = function( child, ChildViewC
 Marionette.CompositeView.prototype.attachBuffer = function( compositeView, buffer ) {
 	const $container = this.getChildViewContainer( compositeView );
 
-	if ( this.model?.config?.is_interlaced ) {
+	if ( this.model?.config?.support_improved_repeaters && this.model?.config?.is_interlaced ) {
 		const $items = $container.find( this.model?.config?.defaults?.child_container_placeholder_selector );
 
 		_.each( $items, function( item ) {
