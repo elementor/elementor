@@ -92,6 +92,20 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'e-swiper', 'widget-image-carousel' ];
 	}
 
+	/**
+	 * Get script dependencies.
+	 *
+	 * Retrieve the list of script dependencies the widget requires.
+	 *
+	 * @since 3.27.0
+	 * @access public
+	 *
+	 * @return array Widget script dependencies.
+	 */
+	public function get_script_depends(): array {
+		return [ 'swiper' ];
+	}
+
 	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
