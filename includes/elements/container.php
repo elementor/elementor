@@ -689,6 +689,20 @@ class Container extends Element_Base {
 							],
 						],
 					],
+					'script_modules' => [
+						[
+							'name' => 'elementorModules/frontend/handlers/backgroundSlideshow',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+					],
 				],
 			]
 		);

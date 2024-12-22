@@ -1,7 +1,7 @@
 import globalHandler from './handlers/global';
 import backgroundHandlers from './handlers/background';
 import containerHandlers from './handlers/container/container';
-import columnHandlers from './handlers/column';
+// import columnHandlers from './handlers/column';
 
 // Section handlers.
 import HandlesPosition from './handlers/section/handles-position';
@@ -44,19 +44,20 @@ module.exports = function( $ ) {
 	const addElementsHandlers = () => {
 		this.elementsHandlers.section = [
 			StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
-			...backgroundHandlers,
+			// ...backgroundHandlers,
 			HandlesPosition,
 			Shapes,
 		];
 
 		this.elementsHandlers.container = [ ...backgroundHandlers ];
+		this.elementsHandlers.container.push( window.elementorElementHandlers?.backgroundSlideshow || {} );
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {
 			this.elementsHandlers.container.push( ...containerHandlers );
 		}
 
-		this.elementsHandlers.column = columnHandlers;
+		// this.elementsHandlers.column = columnHandlers;
 
 		$.each( this.elementsHandlers, ( elementName, Handlers ) => {
 			const elementData = elementName.split( '.' );

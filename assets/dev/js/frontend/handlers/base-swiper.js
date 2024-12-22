@@ -1,6 +1,4 @@
-import BaseHandler from './base';
-
-export default class SwiperHandlerBase extends BaseHandler {
+class SwiperHandlerBase extends elementorModules.frontend.handlers.Base {
 	getInitialSlide() {
 		const editSettings = this.getEditSettings();
 
@@ -45,3 +43,7 @@ export default class SwiperHandlerBase extends BaseHandler {
 		this.$activeImageBg.addClass( settings.classes.kenBurnsActive );
 	}
 }
+
+window.elementorModules.frontend.handlers.SwiperBase = SwiperHandlerBase;
+
+export default SwiperHandlerBase;

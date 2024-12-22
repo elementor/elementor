@@ -376,6 +376,27 @@ class Frontend extends App {
 			[ 'elementorModules/viewModule' ],
 			ELEMENTOR_VERSION,
 		);
+
+		wp_register_script_module(
+			'elementorModules/frontend/handlers/baseSwiper',
+			$this->get_js_assets_url( 'base-swiper', 'assets/dev/js/frontend/handlers/' ),
+			[ 'elementorModules/baseModule' ],
+			ELEMENTOR_VERSION,
+		);
+
+//		wp_register_script_module(
+//			'elementorModules/frontend/handlers/baseCarousel',
+//			$this->get_js_assets_url( 'base-carousel', 'assets/dev/js/frontend/handlers/' ),
+//			[ 'elementorModules/frontend/handlers/baseSwiper' ],
+//			ELEMENTOR_VERSION,
+//		);
+
+		wp_register_script_module(
+			'elementorModules/frontend/handlers/backgroundSlideshow',
+			$this->get_js_assets_url( 'background-slideshow', 'assets/dev/js/frontend/handlers/' ),
+			[ 'elementorModules/frontend/handlers/baseSwiper' ],
+			ELEMENTOR_VERSION,
+		);
 	}
 
 	/**

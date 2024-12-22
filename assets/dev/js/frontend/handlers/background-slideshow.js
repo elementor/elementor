@@ -187,3 +187,6 @@ export default class BackgroundSlideshow extends elementorModules.frontend.handl
 		}
 	}
 }
+
+window.elementorElementHandlers = window.elementorElementHandlers || {};
+window.elementorElementHandlers.backgroundSlideshow = BackgroundSlideshow;
