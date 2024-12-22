@@ -47,21 +47,13 @@ class Loader extends Module {
 				'dependencies' => [ 'swiper' ],
 			],
 			'swiper' => [
-				'src' => $this->get_css_assets_url( 'swiper', $this->getSwiperPath() ),
-				'version' => $this->getSwiperVersion(),
+				'src' => $this->get_css_assets_url( 'swiper', 'assets/lib/swiper/v8/css/' ),
+				'version' => '8.4.5',
 				'dependencies' => [],
 			],
 		];
 
 		return array_merge( $styles, $this->get_animation_styles() );
-	}
-
-	private function getSwiperPath(): string {
-		return 'assets/lib/swiper/v8/css/';
-	}
-
-	private function getSwiperVersion(): string {
-		return '8.4.5';
 	}
 
 	private function get_animations(): array {
