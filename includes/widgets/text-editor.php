@@ -90,10 +90,6 @@ class Widget_Text_Editor extends Widget_Base {
 		return [ 'text', 'editor' ];
 	}
 
-	protected function is_dynamic_content(): bool {
-		return false;
-	}
-
 	/**
 	 * Get style dependencies.
 	 *
