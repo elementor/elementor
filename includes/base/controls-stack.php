@@ -1570,6 +1570,10 @@ abstract class Controls_Stack extends Base_Object {
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/before_section_start", $this, $args );
 
+		if ( $this->should_manually_trigger_common_action( $stack_name ) ) {
+			do_action( "elementor/element/common/{$section_id}/before_section_start", $this, $args );
+		}
+
 		$args['type'] = Controls_Manager::SECTION;
 
 		$this->add_control( $section_id, $args );
@@ -1610,6 +1614,10 @@ abstract class Controls_Stack extends Base_Object {
 		 * @param array          $args Section arguments.
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/after_section_start", $this, $args );
+
+		if ( $this->should_manually_trigger_common_action( $stack_name ) ) {
+			do_action( "elementor/element/common/{$section_id}/after_section_start", $this, $args );
+		}
 	}
 
 	/**
@@ -1660,6 +1668,10 @@ abstract class Controls_Stack extends Base_Object {
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/before_section_end", $this, $args );
 
+		if ( $this->should_manually_trigger_common_action( $stack_name ) ) {
+			do_action( "elementor/element/common/{$section_id}/before_section_end", $this, $args );
+		}
+
 		$this->current_section = null;
 
 		/**
@@ -1688,6 +1700,35 @@ abstract class Controls_Stack extends Base_Object {
 		 * @param array          $args Section arguments.
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/after_section_end", $this, $args );
+
+		if ( $this->should_manually_trigger_common_action( $stack_name ) ) {
+			do_action( "elementor/element/common/{$section_id}/after_section_end", $this, $args );
+		}
+	}
+
+	/**
+	 * Should manually trigger common action.
+	 *
+	 * With the Optimized Markup experiment, the Advanced Tab has been split to maintain backward compatibility:
+	 * - 'common' refers to the existing Advanced Tab.
+	 * - 'common-optimized' refers to the new Advanced Tab for optimized widgets.
+	 *
+	 * Third-party developers may have used hooks like 'elementor/element/common/_section_background/before_section_end'
+	 * to add controls to the Advanced Tab. However, this hook will now only work on widgets that are not optimized.
+	 *
+	 * This method checks whether the 'elementor/element/common/...' hooks should be manually executed
+	 * to prevent third parties from needing to add equivalent hooks for 'elementor/element/common-optimized/...'.
+	 *
+	 * @todo Remove this method and the manual execution of 'common' hooks when the feature is merged.
+	 *
+	 * @access private
+	 *
+	 * @param string $stack_name Stack name.
+	 *
+	 * @return bool
+	 */
+	private function should_manually_trigger_common_action( $stack_name ): bool {
+		return 'common-optimized' === $stack_name && Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**
