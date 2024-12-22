@@ -9,11 +9,15 @@ export default class NestedTitleKeyboardHandler extends Base {
 		this.focusableElementSelector = 'audio, button, canvas, details, iframe, input, select, summary, textarea, video, [accesskey], [contenteditable], [href], [tabindex]:not([tabindex="-1"])';
 	}
 
+	getWidgetNumber() {
+		return this.$element.find( '> .elementor-widget-container > .e-n-tabs, > .e-n-tabs' ).attr( 'data-widget-number' );
+	}
+
 	getDefaultSettings() {
 		return {
 			selectors: {
-				itemTitle: '.e-n-tab-title',
-				itemContainer: '.e-n-tabs-content > .e-con',
+				itemTitle: `[id*="e-n-tab-title-${ this.getWidgetNumber() }"]`,
+				itemContainer: `[id*="e-n-tab-content-${ this.getWidgetNumber() }"]`,
 			},
 			ariaAttributes: {
 				titleStateAttribute: 'aria-selected',
@@ -87,8 +91,8 @@ export default class NestedTitleKeyboardHandler extends Base {
 	}
 
 	unbindEvents() {
-		this.elements.$itemTitles.off();
-		this.elements.$itemContainers.children().off();
+		this.elements.$itemTitles.off( this.getTitleEvents() );
+		this.elements.$focusableContainerElements.children().off( this.getContentElementEvents() );
 	}
 
 	getTitleEvents() {

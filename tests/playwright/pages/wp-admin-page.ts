@@ -1,12 +1,18 @@
-import { type APIRequestContext, expect } from '@playwright/test';
-import { execSync } from 'child_process';
+import { type APIRequestContext, type Page, Response, type TestInfo } from '@playwright/test';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
-import { create } from '../assets/api-requests';
 import { ElementorType, WindowType } from '../types/types';
+import { wpCli } from '../assets/wp-cli';
+import ApiRequests from '../assets/api-requests';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
+	protected readonly apiRequests: ApiRequests;
+	constructor( page: Page, testInfo: TestInfo, apiRequests: ApiRequests ) {
+		super( page, testInfo );
+		this.apiRequests = apiRequests;
+	}
+
 	/**
 	 * Go to the WordPress dashboard.
 	 *
@@ -37,6 +43,21 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
+	async customLogin( username: string, password: string ) {
+		await this.gotoDashboard();
+		const loggedIn = await this.page.$( 'text=Dashboard' );
+
+		if ( loggedIn ) {
+			await this.page.hover( '#wp-admin-bar-top-secondary' );
+			await this.page.click( '#wp-admin-bar-logout > a' );
+		}
+
+		await this.page.fill( 'input[name="log"]', username );
+		await this.page.fill( 'input[name="pwd"]', password );
+		await this.page.locator( 'text=Log In' ).last().click();
+		await this.page.waitForSelector( 'text=Dashboard' );
+	}
+
 	/**
 	 * Open a new Elementor page.
 	 *
@@ -61,8 +82,6 @@ export default class WpAdminPage extends BasePage {
 
 	/**
 	 * Create a new page with the API and open it in Elementor.
-	 *
-	 * @return {Promise<void>}
 	 */
 	async createNewPostWithAPI() {
 		const request: APIRequestContext = this.page.context().request,
@@ -70,13 +89,15 @@ export default class WpAdminPage extends BasePage {
 				title: 'Playwright Test Page - Uninitialized',
 				content: '',
 			},
-			postId = await create( request, 'pages', postDataInitial ),
+			postId = await this.apiRequests.create( request, 'pages', postDataInitial ),
 			postDataUpdated = {
 				title: `Playwright Test Page #${ postId }`,
 			};
 
-		await create( request, `pages/${ postId }`, postDataUpdated );
+		await this.apiRequests.create( request, `pages/${ postId }`, postDataUpdated );
 		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+
+		return postId;
 	}
 
 	/**
@@ -139,34 +160,16 @@ export default class WpAdminPage extends BasePage {
 	/**
 	 * Get the response status for the API request.
 	 *
-	 * @param {Object} response - The response object.
-	 *
-	 * @return {Promise<boolean>}
+	 * @param {Response} response - The response object.
 	 */
-	async blockUrlResponse( response ): Promise<boolean> {
+	async blockUrlResponse( response: Response ): Promise<boolean> {
 		const isRestRequest = response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ); // For local testing
 		const isJsonRequest = response.url().includes( 'wp-json/wp/v2/pages' ); // For CI testing
 		return ( isJsonRequest || isRestRequest ) && 200 === response.status();
 	}
 
 	/**
-	 * Skip the tutorial.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async skipTutorial() {
-		await this.page.waitForTimeout( 1000 );
-		const next = await this.page.$( "text='Next'" );
-
-		if ( next ) {
-			await this.page.click( '[aria-label="Close dialog"]' );
-		}
-	}
-
-	/**
 	 * Wait for the Elementor editor panel to finish loading.
-	 *
-	 * @return {Promise<void>}
 	 */
 	async waitForPanel() {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
@@ -178,12 +181,18 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * TODO: The testing environment isn't clean between tests - Use with caution!
 	 *
-	 * @param {Object} experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 * @param {Object}            experiments - Experiments settings ( `{ experiment_id: true / false }` );
+	 * @param {(boolean|string)=} oldUrl      - Optional. Whether to use the old URL structure. Default is false.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setExperiments( experiments: {[ n: string ]: boolean | string } ) {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+	async setExperiments( experiments: { [ n: string ]: boolean | string }, oldUrl: boolean = false ) {
+		if ( oldUrl ) {
+			await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
+			await this.page.click( '#elementor-settings-tab-experiments' );
+		} else {
+			await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+		}
 
 		const prefix = 'e-experiment';
 
@@ -210,14 +219,22 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	/**
-	 * Set site language.
-	 *
-	 * @param {string} language     - The site language to set.
-	 * @param {string} userLanguage - Optional. The user language to set.
+	 * Reset all Elementor experiments to their default settings.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setSiteLanguage( language: string, userLanguage = null ) {
+	async resetExperiments() {
+		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+		await this.page.getByRole( 'button', { name: 'default' } ).click();
+	}
+
+	/**
+	 * Set site language.
+	 *
+	 * @param {string}      language     - The site language to set.
+	 * @param {string|null} userLanguage - Optional. The user language to set.
+	 */
+	async setSiteLanguage( language: string, userLanguage: string = null ) {
 		let languageCheck = language;
 
 		if ( 'he_IL' === language ) {
@@ -269,12 +286,14 @@ export default class WpAdminPage extends BasePage {
 		}
 	}
 
-	getActiveTheme() {
-		return execSync( `npx wp-env run cli wp theme list --status=active --field=name --format=csv` ).toString().trim();
+	async getActiveTheme() {
+		const request: APIRequestContext = this.page.context().request;
+		const themeData = await this.apiRequests.getTheme( request, 'active' );
+		return themeData[ 0 ].stylesheet;
 	}
 
-	activateTheme( theme: string ) {
-		execSync( `npx wp-env run cli wp theme activate ${ theme }` );
+	async activateTheme( theme: string ) {
+		await wpCli( `wp theme activate ${ theme }` );
 	}
 
 	/**
@@ -346,22 +365,6 @@ export default class WpAdminPage extends BasePage {
 	async openNewWordpressPage() {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
 		await this.closeBlockEditorPopupIfVisible();
-	}
-
-	/**
-	 * Screenshot test for the promotion page.
-	 *
-	 * @param {string} promotionContainer - The promotion container selector.
-	 * @param {string} pageUri            - The page URI.
-	 * @param {string} screenshotName     - The screenshot name.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async promotionPageScreenshotTest( promotionContainer: string, pageUri: string, screenshotName: string ) {
-		await this.page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
-		const promoContainer = this.page.locator( promotionContainer );
-		await promoContainer.waitFor();
-		await expect( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
 	}
 
 	/**

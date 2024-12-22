@@ -78,6 +78,24 @@ class Widget_Image_Box extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-image-box' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	/**
 	 * Register image box widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -700,7 +718,7 @@ class Widget_Image_Box extends Widget_Base {
 			var imageHtml = '<img src="' + _.escape( image_url ) + '" class="elementor-animation-' + _.escape( settings.hover_animation ) + '" />';
 
 			if ( settings.link.url ) {
-				imageHtml = '<a href="' + _.escape( settings.link.url ) + '" tabindex="-1">' + imageHtml + '</a>';
+				imageHtml = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '" tabindex="-1">' + imageHtml + '</a>';
 			}
 
 			html += '<figure class="elementor-image-box-img">' + imageHtml + '</figure>';
@@ -714,7 +732,7 @@ class Widget_Image_Box extends Widget_Base {
 					titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
 				if ( settings.link.url ) {
-					title_html = '<a href="' + _.escape( settings.link.url ) + '">' + title_html + '</a>';
+					title_html = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '">' + title_html + '</a>';
 				}
 
 				view.addRenderAttribute( 'title_text', 'class', 'elementor-image-box-title' );

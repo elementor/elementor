@@ -1,9 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'AI @ai', () => {
-	test( 'AI Button', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'AI Button', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 

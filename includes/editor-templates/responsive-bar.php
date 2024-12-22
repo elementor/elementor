@@ -59,14 +59,10 @@ $breakpoint_classes_map = array_intersect_key( Plugin::$instance->breakpoints->g
 				<label for="e-responsive-bar__input-height">H</label>
 				<input type="number" id="e-responsive-bar__input-height" class="e-responsive-bar__input-size" autocomplete="off">
 			</div>
-			<button id="e-responsive-bar__settings-button" class="e-responsive-bar__button e-responsive-bar--pipe"
-					data-tooltip="<?php echo esc_attr__( 'Manage Breakpoints', 'elementor' ); ?>">
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Settings', 'elementor' ); ?></span>
+			<button id="e-responsive-bar__settings-button" class="e-responsive-bar__button e-responsive-bar--pipe" data-tooltip="<?php echo esc_attr__( 'Manage Breakpoints', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Manage Breakpoints', 'elementor' ); ?>">
 				<i class="eicon-cog" aria-hidden="true"></i>
 			</button>
-			<button id="e-responsive-bar__close-button" class="e-responsive-bar__button"
-					data-tooltip="<?php echo esc_attr__( 'Close', 'elementor' ); ?>">
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Close', 'elementor' ); ?></span>
+			<button id="e-responsive-bar__close-button" class="e-responsive-bar__button" data-tooltip="<?php echo esc_attr__( 'Close', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Close', 'elementor' ); ?>">
 				<i class="eicon-close" aria-hidden="true"></i>
 			</button>
 		</div>

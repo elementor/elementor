@@ -5,7 +5,7 @@ import Events from 'elementor-utils/events';
 import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
-import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admin/module';
+import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js/floating-buttons/admin/module';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -115,6 +115,31 @@ import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admi
 					$wrapperElm.slideUp( 100, function() {
 						$wrapperElm.remove();
 					} );
+				} );
+			} );
+
+			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="plugin_image_optimization"] a.e-button--cta' ).on( 'click', function() {
+				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
+					data: {
+						source: 'io-wp-media-library-install',
+					},
+				} );
+			} );
+
+			$( '.e-a-apps .e-a-item[data-plugin="image-optimization/image-optimization.php"] a.e-btn' ).on( 'click', function() {
+				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
+					data: {
+						source: 'io-esetting-addons-install',
+					},
+				} );
+			} );
+
+			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="site_mailer_promotion"] a.e-button--cta' ).on( 'click', function() {
+				const isWcNotice = $( this ).closest( '.e-notice' ).hasClass( 'sm-notice-wc' );
+				elementorCommon.ajax.addRequest( 'elementor_core_site_mailer_campaign', {
+					data: {
+						source: isWcNotice ? 'sm-core-woo-install' : 'sm-core-form-install',
+					},
 				} );
 			} );
 
@@ -316,13 +341,6 @@ import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admi
 				} ).show();
 			} );
 
-			$( '.elementor_css_print_method select' ).on( 'change', function() {
-				var $descriptions = $( '.elementor-css-print-method-description' );
-
-				$descriptions.hide();
-				$descriptions.filter( '[data-value="' + $( this ).val() + '"]' ).show();
-			} ).trigger( 'change' );
-
 			$( '.elementor_google_font select' ).on( 'change', function() {
 				$( '.elementor_font_display' ).toggle( '1' === $( this ).val() );
 			} ).trigger( 'change' );
@@ -347,8 +365,8 @@ import LinksPagesModule from 'elementor/modules/conversion-center/assets/js/admi
 				new LandingPagesModule();
 			}
 
-			if ( elementorCommon.config.experimentalFeatures[ 'conversion-center' ] ) {
-				new LinksPagesModule();
+			if ( elementorCommon.config.experimentalFeatures.container ) {
+				new FloatingButtonsHandler();
 			}
 
 			this.templateControls = new TemplateControls();

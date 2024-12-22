@@ -560,6 +560,11 @@ class Tracker {
 			'install_time' => Plugin::instance()->get_install_time(),
 		];
 
+		$site_key = Api::get_site_key();
+		if ( ! empty( $site_key ) ) {
+			$params['site_key'] = $site_key;
+		}
+
 		/**
 		 * Tracker send tracking data params.
 		 *

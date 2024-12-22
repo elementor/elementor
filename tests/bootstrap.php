@@ -20,6 +20,7 @@ if ( getenv( 'WP_PHPUNIT__DIR' ) ) {
 }
 
 define( 'ELEMENTOR_TESTS', true );
+define ( 'ELEMENTOR_DEBUG', true );
 
 /**
  * change PLUGIN_FILE env in phpunit.xml
@@ -51,6 +52,7 @@ tests_add_filter( 'shutdown', 'drop_tables', 999999 );
 require $_tests_dir . '/includes/bootstrap.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
 require __DIR__ . '/phpunit/trait-responsive-control-testing.php';
+require __DIR__ . '/phpunit/elementor/includes/container/traits/trait-test-container.php';
 
 require_once dirname( __DIR__ ) . '/includes/autoloader.php';
 
@@ -65,7 +67,7 @@ remove_action( 'admin_init', '_maybe_update_plugins' );
 // The following action activates all registered experiments in order for them to be able to be tested.
 add_action( 'elementor/experiments/feature-registered', function ( Experiments_Manager $experiments_manager, array $experimental_data ) {
 	$exclude = [
-		Editor::EDITOR_V2_EXPERIMENT_NAME, // For now the tests are not ready for the new editor.
+		Elementor\Modules\EditorAppBar\Module::EXPERIMENT_NAME, // For now the tests are not ready for the new editor.
 		Elementor\Modules\Home\Module::PAGE_ID,
 	];
 
@@ -78,7 +80,9 @@ add_action( 'elementor/experiments/feature-registered', function ( Experiments_M
 }, 10, 2 );
 
 // Make sure the main class is running
-\Elementor\Plugin::instance();
+$instance = \Elementor\Plugin::instance();
+
+$instance->initialize_container();
 
 // Run fake actions
 do_action( 'init' );

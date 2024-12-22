@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import {
 	userInformationMock,
@@ -15,8 +16,8 @@ import {
 const CREDITS_USAGE_MESSAGE = 'You’ve used %s of credits for this AI feature.';
 
 test.describe( 'AI @ai', () => {
-	test( 'User Information', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'User Information', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 		await editor.addWidget( 'heading' );

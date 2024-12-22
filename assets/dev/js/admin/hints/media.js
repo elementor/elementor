@@ -24,9 +24,8 @@
 				<% } %>
 				</div>
 			</div>
-			<button class="elementor-control-notice-dismiss" data-event="<%= dismissible %>">
+			<button class="elementor-control-notice-dismiss" data-event="<%= dismissible %>" aria-label="<%= dismiss %>">
 				<i class="eicon eicon-close" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><%= dismiss %></span>
 			</button>
 		</div>
 	</div>`,
@@ -54,8 +53,8 @@
 		events: {
 			...wp.media.view.Attachment.Details.prototype.events,
 			'click .elementor-control-notice-dismiss': 'dismiss',
-			'click .e-hint__container .e-btn-1': 'onHintAction',
-			'click .e-hint__container a': 'onHintAction',
+			'click .e-hint__container a': 'onHintAnchorClick',
+			'click .e-hint__container button.e-btn-1': 'onHintAction',
 		},
 
 		shouldDisplayHint( view ) {
@@ -98,12 +97,17 @@
 			this.dismiss( event );
 		},
 
+		onHintAnchorClick( event ) {
+			this.dismiss( event );
+		},
+
 		dismiss( event ) {
 			elementorCommon.ajax.addRequest( 'dismissed_editor_notices', {
 				data: {
 					dismissId: event.target.closest( '.e-hint__container' ).dataset.event,
 				},
 			} );
+
 			this.hideHint( event );
 		},
 

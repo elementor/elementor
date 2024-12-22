@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import { afterAll, beforeAll } from './helper';
 import _path from 'path';
@@ -7,16 +8,16 @@ const iconExperimentStates = [ 'inactive', 'active' ];
 
 iconExperimentStates.forEach( ( iconExperimentState ) => {
 	test.describe( `Rating style panel - Icon Experiment: ${ iconExperimentState } @rating`, () => {
-		test.beforeAll( async ( { browser }, testInfo ) => {
-			await beforeAll( browser, testInfo, iconExperimentState );
+		test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+			await beforeAll( browser, apiRequests, testInfo, iconExperimentState );
 		} );
 
-		test.afterAll( async ( { browser }, testInfo ) => {
-			await afterAll( browser, testInfo );
+		test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+			await afterAll( browser, apiRequests, testInfo );
 		} );
 
-		test( `Styling test - Icon Experiment: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo ),
+		test( `Styling test - Icon Experiment: ${ iconExperimentState }`, async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 				editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' ),
 				ratingId = await editor.addWidget( 'rating', container ),
@@ -86,8 +87,8 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			} );
 		} );
 
-		test( `Rating flex-wrap styling: ${ iconExperimentState }`, async ( { page }, testInfo ) => {
-			const wpAdmin = new WpAdminPage( page, testInfo ),
+		test( `Rating flex-wrap styling: ${ iconExperimentState }`, async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 				editor = await wpAdmin.openNewPage();
 
 			await test.step( 'Load Template', async () => {

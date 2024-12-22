@@ -55,7 +55,7 @@ export class Load extends $e.modules.CommandInternalBase {
 			// The issue is that the css-parser is depends upon cache and cache is not available during this time.
 			return $e.data.get( 'globals/index' ).then( () => {
 				if ( setAsInitial ) {
-					// There is no need to attach preview when the iframe is reloaded. It will be triggerred
+					// There is no need to attach preview when the iframe is reloaded. It will be triggered
 					// automatically after the iframe finishes loading (see `EditorBase.onPreviewLoaded()`).
 					elementor.reloadPreview();
 

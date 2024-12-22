@@ -103,7 +103,23 @@
 			return Object.create(settings);
 		};
 
-		this.init = function(settings) {
+		this.maybeLoadAssets = async function () {
+			const isFrontend = !! window.elementorFrontend?.utils?.assetsLoader;
+
+			if ( ! isFrontend ) {
+				return;
+			}
+
+			try {
+				await elementorFrontend.utils.assetsLoader.load( 'style', 'dialog' );
+			} catch ( error ) {
+				console.error( 'Failed to load assets:', error );
+			}
+		};
+
+		this.init = function (settings) {
+
+			this.maybeLoadAssets();
 
 			initSettings(settings);
 

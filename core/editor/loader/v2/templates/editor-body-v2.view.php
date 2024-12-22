@@ -31,6 +31,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 <div id="elementor-editor-wrapper">
 	<aside id="elementor-panel" class="elementor-panel" aria-labelledby="elementor-panel-header-title"></aside>
 	<main id="elementor-preview" aria-label="<?php echo esc_attr__( 'Preview', 'elementor' ); ?>">
+		<div id="elementor-responsive-bar"></div>
 		<div id="elementor-preview-responsive-wrapper" class="elementor-device-desktop elementor-device-rotate-portrait">
 			<div id="elementor-preview-loading">
 				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>

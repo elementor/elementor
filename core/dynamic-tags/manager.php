@@ -40,15 +40,6 @@ class Manager {
 	}
 
 	/**
-	 * @deprecated 3.1.0
-	 */
-	public function localize_settings() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
-
-		return [];
-	}
-
-	/**
 	 * Parse dynamic tags text.
 	 *
 	 * Receives the dynamic tag text, and returns a single value or multiple values

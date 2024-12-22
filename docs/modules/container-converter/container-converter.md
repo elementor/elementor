@@ -14,7 +14,7 @@ removed in the future when the Container element will be a stable feature and be
 
 It registers 2 commands:
 
-- `$e.run( 'container-converter/convert', { container } )` - Converts a single "convertable" element and its descendants to a Containers.
+- `$e.run( 'container-converter/convert', { container } )` - Converts a single "convertible" element and its descendants to a Containers.
 
 
 - `$e.run( 'container-converter/convert-all' )` - Converts the whole page to Containers.

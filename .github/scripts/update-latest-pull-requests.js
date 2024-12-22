@@ -5,7 +5,7 @@ const updatePullRequests = async () => {
 	lastDays.setDate( lastDays.getDate() - DAYS_TO_UPDATE );
 	const lastDaysString = lastDays.toISOString().split( 'T' )[0];
 
-	const url = `https://api.github.com/search/issues?q=repo:${GITHUB_REPOSITORY}+type:pr+is:open+base:main+created:>=${lastDaysString}`;
+	const url = `https://api.github.com/search/issues?q=repo:${GITHUB_REPOSITORY}+type:pr+is:open+draft:false+base:main+created:>=${lastDaysString}`;
 	const headers = {
 		Authorization: `token ${GITHUB_TOKEN}`,
 		Accept: 'application/vnd.github.v3+json',

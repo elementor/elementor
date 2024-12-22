@@ -39,6 +39,8 @@ class Module extends BaseModule {
 				'elementorNotifications',
 				$this->get_app_js_config()
 			);
+
+			wp_set_script_translations( 'e-editor-notifications', 'elementor' );
 		}, 5 /* Before Elementor's admin enqueue scripts */ );
 
 		add_action( 'elementor/editor/v2/scripts/enqueue', [ $this, 'enqueue_editor_scripts' ] );
@@ -75,6 +77,8 @@ class Module extends BaseModule {
 			'elementorNotifications',
 			$this->get_app_js_config()
 		);
+
+		wp_set_script_translations( 'e-editor-notifications', 'elementor' );
 	}
 
 	private function get_app_js_config() : array {

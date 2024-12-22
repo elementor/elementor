@@ -42,6 +42,7 @@ const UseImage = ( { sx, ...props } ) => (
 		size="small"
 		variant="contained"
 		startIcon={ <DownloadIcon /> }
+		sx={ sx }
 		{ ...props }
 	>
 		{ __( 'Use Image', 'elementor' ) }

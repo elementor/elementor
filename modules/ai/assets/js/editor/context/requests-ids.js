@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Context = createContext( {} );
@@ -17,7 +17,7 @@ export const getUniqueId = ( prefix ) => {
 	return prefix + '-' + Math.random().toString( 16 ).substr( 2, 7 );
 };
 
-window.EDITOR_SESSION_ID = window.EDITOR_SESSION_ID || window.ElementorAiConfig?.client_session_id || getUniqueId( 'editor-session' );
+window.EDITOR_SESSION_ID = window.EDITOR_SESSION_ID || getUniqueId( 'editor-session' );
 
 export function generateIds( template ) {
 	template.id = getUniqueId().toString();
@@ -50,6 +50,12 @@ export const RequestIdsProvider = ( props ) => {
 		return requestId;
 	};
 
+	const [ usagePercentage, setUsagePercentage ] = useState( 0 );
+
+	const updateUsagePercentage = ( newPercentage ) => {
+		setUsagePercentage( newPercentage );
+	};
+
 	return (
 		<Context.Provider
 			value={ {
@@ -61,6 +67,8 @@ export const RequestIdsProvider = ( props ) => {
 				setGenerate,
 				setBatch,
 				setRequest,
+				usagePercentage,
+				updateUsagePercentage,
 			} }
 		>
 			{ props.children }

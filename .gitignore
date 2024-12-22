@@ -4,6 +4,7 @@ node_modules/
 .sass-cache/
 log/
 vendor/
+/vendor_prefixed
 local-site/
 tmp/
 
@@ -15,6 +16,7 @@ assets/lib/swiper/css/swiper*.css
 *.log
 *.map
 /templates/
+/hello-elementor/
 
 # build tools lock
 yarn.lock
@@ -29,10 +31,12 @@ Thumbs.db
 *.DS_Store
 coverage/
 .zimud.json
+.phpunit.result.cache
+.npmrc
 
 # playwright
 test-results/
-**/storageState.json
+**/storageState-*.json
 tests/playwright/config/local.config.js
 playwright-report
 tests/playwright/blob-report

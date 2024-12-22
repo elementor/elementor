@@ -3,6 +3,7 @@ namespace Elementor\Modules\Apps;
 
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Plugin_Status_Adapter;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -46,7 +47,11 @@ class Admin_Apps_Page {
 	}
 
 	private static function get_plugins() : array {
-		if ( ! self::$wordpress_adapter ) {
+		$container = Plugin::$instance->elementor_container();
+
+		if ( $container->has( Wordpress_Adapter::class ) ) {
+			self::$wordpress_adapter = $container->get( Wordpress_Adapter::class );
+		} else if ( ! self::$wordpress_adapter ) {
 			self::$wordpress_adapter = new Wordpress_Adapter();
 		}
 
@@ -163,7 +168,7 @@ class Admin_Apps_Page {
 
 	private static function render_plugin_item( $plugin ) {
 		?>
-		<div class="e-a-item">
+		<div class="e-a-item"<?php echo ! empty( $plugin['file_path'] ) ? ' data-plugin="' . esc_attr( $plugin['file_path'] ) . '"' : ''; ?>>
 			<div class="e-a-heading">
 				<img class="e-a-img" src="<?php echo esc_url( $plugin['image'] ); ?>" alt="<?php echo esc_attr( $plugin['name'] ); ?>">
 				<?php if ( ! empty( $plugin['badge'] ) ) : ?>

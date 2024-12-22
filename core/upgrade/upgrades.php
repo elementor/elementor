@@ -857,6 +857,36 @@ class Upgrades {
 		}
 	}
 
+	/**
+	 * Upgrade Elementor 3.26.0 - Delete old experiments from the DB.
+	 *
+	 * @since 3.26.0
+	 * @static
+	 * @access public
+	 */
+	public static function _v_3_26_0() {
+		delete_option( 'elementor_experiment-ai-layout' );
+		delete_option( 'elementor_experiment-block_editor_assets_optimize' );
+		delete_option( 'elementor_experiment-container_grid' );
+		delete_option( 'elementor_experiment-display-conditions' );
+		delete_option( 'elementor_experiment-e_dom_optimization' );
+		delete_option( 'elementor_experiment-e_global_styleguide' );
+		delete_option( 'elementor_experiment-e_image_loading_optimization' );
+		delete_option( 'elementor_experiment-e_lazyload' );
+		delete_option( 'elementor_experiment-e_optimized_assets_loading' );
+		delete_option( 'elementor_experiment-e_optimized_css_loading' );
+		delete_option( 'elementor_experiment-e_scroll_snap' );
+		delete_option( 'elementor_experiment-floating-buttons' );
+		delete_option( 'elementor_experiment-form-submissions' );
+		delete_option( 'elementor_experiment-link-in-bio' );
+		delete_option( 'elementor_experiment-loop' );
+		delete_option( 'elementor_experiment-notes' );
+		delete_option( 'elementor_experiment-off-canvas' );
+		delete_option( 'elementor_experiment-page-transitions' );
+		delete_option( 'elementor_experiment-search' );
+		delete_option( 'elementor_experiment-taxonomy-filter' );
+	}
+
 	private static function maybe_add_gap_control_data( $option_name ) {
 		$kit_id = get_option( $option_name );
 

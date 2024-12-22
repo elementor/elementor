@@ -216,6 +216,9 @@ abstract class PageBase extends Document {
 					'type' => Controls_Manager::TEXTAREA,
 					'default' => $document->post->post_excerpt,
 					'separator' => 'before',
+					'ai' => [
+						'type' => 'excerpt',
+					],
 				]
 			);
 		}

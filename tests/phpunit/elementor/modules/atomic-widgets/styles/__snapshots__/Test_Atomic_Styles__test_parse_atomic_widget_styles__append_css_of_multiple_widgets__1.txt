@@ -1,0 +1,2 @@
+.test-style-1{font-size:16px;color:red;}.test-style-2{font-weight:bold;color:blue;}
+.test-style-3{font-size:18px;color:green;}

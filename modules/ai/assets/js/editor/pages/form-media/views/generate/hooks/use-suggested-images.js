@@ -22,7 +22,7 @@ const useSuggestedImages = ( { selectedType } ) => {
 
 		const categoryImages = shuffledImages.filter( ( { imageType } ) => imageType.includes( selectedType ) );
 
-		// Some categories don't have images, so we TEMPORARLY fallback to the shuffled images.
+		// Some categories don't have images, so we TEMPORARILY fallback to the shuffled images.
 		return categoryImages.length ? categoryImages : shuffledImages;
 	}, [ selectedType, data ] );
 

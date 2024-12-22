@@ -20,15 +20,18 @@ describe( 'FormLayout', () => {
 	} );
 
 	it( 'Should render AttachDialog iframe once prompt is url', async () => {
-		const { getByTestId } = renderElement();
+		global.$e.run = jest.fn();
+
+		renderElement();
 
 		await addPromptAndGenerate( 'https://www.google.com' );
 		await sleep( 1000 );
 
-		const root = getByTestId( 'root' );
+		expect( global.$e.run ).toHaveBeenCalledWith( 'ai-integration/open-choose-element', {
+			url: 'https://www.google.com',
+		} );
 
-		expect( root.querySelector( 'iframe' ) ).not.toBeNull();
-		expect( root.querySelector( 'iframe' ).src ).toContain( 'https%3A%2F%2Fwww.google.com' );
+		delete global.$e.run;
 	} );
 
 	it( 'Should not render AttachDialog iframe when prompt is not url', async () => {

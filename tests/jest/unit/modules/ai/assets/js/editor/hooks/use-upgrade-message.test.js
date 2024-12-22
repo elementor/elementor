@@ -16,7 +16,7 @@ describe( 'useUpgradeMessage', () => {
 			isViewed: false,
 			hasSubscription: false,
 			usagePercentage: BELOW_THRESHOLD_VALUE,
-			expectedShowBadge: false,
+			expectedShowBadge: true,
 			expectedShowBanner: true,
 		},
 		{

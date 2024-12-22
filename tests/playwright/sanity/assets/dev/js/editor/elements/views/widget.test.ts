@@ -1,10 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../pages/wp-admin-page';
 
 test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
-	test( 'Check if the empty placeholder is displayed inside the Image Carousel', async ( { page }, testInfo ) => {
+	test( 'Check if the empty placeholder is displayed inside the Image Carousel', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
@@ -18,9 +19,9 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
-	test( 'Check if the empty placeholder is displayed inside the Sidebar widget', async ( { page }, testInfo ) => {
+	test( 'Check if the empty placeholder is displayed inside the Sidebar widget', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
@@ -35,9 +36,9 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
-	test( 'Check if the empty placeholder is displayed inside the Image Box widget', async ( { page }, testInfo ) => {
+	test( 'Check if the empty placeholder is displayed inside the Image Box widget', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
@@ -56,9 +57,9 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
-	test( 'Check if the empty placeholder is displayed inside the Basic Gallery widget', async ( { page }, testInfo ) => {
+	test( 'Check if the empty placeholder is displayed inside the Basic Gallery widget', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
@@ -72,9 +73,9 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
-	test( 'Check if the empty placeholder is displayed inside the Video widget', async ( { page }, testInfo ) => {
+	test( 'Check if the empty placeholder is displayed inside the Video widget', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
@@ -89,9 +90,9 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 		expect( emptyViewPlaceholderCount ).toBe( 1 );
 	} );
 
-	test.skip( 'Check if the empty placeholder is displayed inside the Google Maps widget', async ( { page }, testInfo ) => {
+	test.skip( 'Check if the empty placeholder is displayed inside the Google Maps widget', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo ),
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
 		// Act.

@@ -78,8 +78,26 @@ class Widget_Tabs extends Widget_Base {
 		return false;
 	}
 
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-tabs' ];
+	}
+
 	public function show_in_panel(): bool {
-		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
+		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**

@@ -1,64 +1,85 @@
 import AiBehavior from './ai-behavior';
 import { __ } from '@wordpress/i18n';
 import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
-import AiPromotionInfotipWrapper from './components/ai-promotion-infotip-wrapper';
 import ReactUtils from 'elementor-utils/react';
-import { shouldShowPromotionIntroduction } from './utils/promotion-introduction-session-validator';
+import LayoutAppWrapper from './layout-app-wrapper';
+import { AiGetStartedConnect } from './ai-get-started-connect';
+import { getUiConfig } from './utils/editor-integration';
+import { getRemoteFrontendConfig } from './api';
+import { getUniqueId } from './context/requests-ids';
+import ApplyAiTitlesNavigatorBehavior from './integration/navigator/apply-ai-titles-to-navigator-behaviour';
+
+setTimeout( async () => {
+	if ( '1' !== window.ElementorAiConfig?.is_get_started ) {
+		return;
+	}
+
+	window.EDITOR_SESSION_ID = window.EDITOR_SESSION_ID || getUniqueId( 'elementor-editor-session' );
+
+	try {
+		const config = await getRemoteFrontendConfig( {
+			client_name: 'elementor-editor-loading',
+			client_version: elementorCommon.config.version,
+			client_session_id: window.EDITOR_SESSION_ID,
+		},
+		true,
+		);
+
+		window.ElementorAIRemoteConfigData = config;
+
+		if ( config?.remoteIntegrationUrl ) {
+			// Add a script tag to the head of the document
+			const script = document.createElement( 'script' );
+			script.type = 'module';
+			script.src = config.remoteIntegrationUrl;
+			document.head.appendChild( script );
+		}
+	} catch ( e ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Elementor AI Integration Loader', e );
+	}
+}, 0 );
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
-		window.$e.commands.on( 'run:after', ( component, command, args ) => {
-			if ( 'document/elements/create' === command ) {
-				this.onCreateContainer( args );
+		elementor.hooks.addFilter( 'navigator/layout/behaviors', this.registerNavigatorBehavior.bind( this ) );
+
+		window.addEventListener( 'hashchange', function( e ) {
+			if ( e.newURL.includes( 'welcome-ai' ) ) {
+				const source = e.newURL.includes( 'welcome-ai-whats-new' ) ? 'whats-new' : 'connect';
+				const returnTo = e.newURL.includes( 'return-to' ) ? e.newURL.split( 'return-to-' )[ 1 ] : '';
+				window.location.hash = '';
+
+				setTimeout( () => {
+					const rootElement = document.createElement( 'div' );
+					document.body.append( rootElement );
+					const { colorScheme, isRTL } = getUiConfig();
+					const { unmount } = ReactUtils.render(
+
+						<LayoutAppWrapper
+							isRTL={ isRTL }
+							colorScheme={ colorScheme }>
+							<AiGetStartedConnect
+								onClose={ () => {
+									unmount();
+									rootElement.remove();
+								} }
+								newHashOnConnect={ returnTo }
+								source={ source }
+							/>
+						</LayoutAppWrapper>, rootElement );
+				}, 1000 );
 			}
 		} );
 	}
 
-	onCreateContainer( args ) {
-		if ( args.container?.id !== 'document' || args.model.elType !== 'container' || args.containers ) {
-			return;
-		}
-
-		if ( ! shouldShowPromotionIntroduction( sessionStorage ) ) {
-			return;
-		}
-
-		const element = args.container.view.$el[ 0 ];
-		const rootBox = element.getBoundingClientRect();
-
-		if ( ! rootBox || 0 === rootBox.width || 0 === rootBox.height ) {
-			return;
-		}
-
-		const { x: canvasOffsetX, y: canvasOffsetY } = document.querySelector( '#elementor-preview-iframe' ).getBoundingClientRect();
-
-		setTimeout( () => {
-			const rootElement = document.createElement( 'div' );
-			document.body.append( rootElement );
-			const isPromotion = ! window.ElementorAiConfig.is_get_started;
-			const mainActionText = isPromotion ? __( 'Try it for free', 'elementor' ) : __( 'Try it now', 'elementor' );
-			const { unmount } = ReactUtils.render( <AiPromotionInfotipWrapper
-				test-id="ai-promotion-infotip-wrapper"
-				anchor={ element }
-				clickAction={ () => {
-					window.elementorFrontend.elements.$body.find( '.e-ai-layout-button' ).trigger( 'click' );
-				} }
-				header={ __( 'Give your workflow a boost.', 'elementor' ) }
-				contentText={ __( 'Build containers with AI and generate any layout you’d need for your site’s design.', 'elementor' ) }
-				mainActionText={ mainActionText }
-				controlType={ 'container' }
-				unmountAction={ () => {
-					unmount();
-				} }
-				colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
-				isRTL={ elementorCommon.config.isRTL }
-				placement={ 'bottom' }
-				offset={ { x: canvasOffsetX, y: canvasOffsetY } }
-			/>, rootElement );
-		}, 1000 );
+	registerNavigatorBehavior( behaviors ) {
+		behaviors.ai = {
+			behaviorClass: ApplyAiTitlesNavigatorBehavior,
+		};
+		return behaviors;
 	}
-
 	registerControlBehavior( behaviors, view ) {
 		const aiOptions = view.options.model.get( 'ai' );
 
@@ -121,7 +142,10 @@ export default class Module extends elementorModules.editor.utils.Module {
 					type: aiOptions.type,
 					buttonLabel: __( 'Create with AI', 'elementor' ),
 					getControlValue: view.getControlValue.bind( view ),
-					setControlValue: () => {},
+					setControlValue: ( image ) => {
+						view.setSettingsModel( image );
+						view.applySavedValue();
+					},
 					controlView: view,
 					additionalOptions: {
 						defaultValue: view.options.model.get( 'default' ),
@@ -130,6 +154,65 @@ export default class Module extends elementorModules.editor.utils.Module {
 					context: this.getContextData( view, controlType ),
 				};
 			}
+		}
+
+		if ( 'excerpt' === aiOptions.type ) {
+			behaviors.ai = {
+				behaviorClass: AiBehavior,
+				type: aiOptions.type,
+				getControlValue: view.getControlValue.bind( view ),
+				setControlValue: ( value ) => {
+					if ( 'wysiwyg' === controlType ) {
+						value = value.replaceAll( '\n', '<br>' );
+					}
+
+					view.setSettingsModel( value );
+					view.applySavedValue();
+				},
+				isLabelBlock: view.options.model.get( 'label_block' ),
+				additionalOptions: {
+					defaultValue: view.options.model.get( 'default' ),
+				},
+				context: this.getContextData( view, controlType ),
+			};
+		}
+
+		if ( [ 'animation', 'hover_animation' ].includes( aiOptions.type ) ) {
+			const widgetType = view.options.container.model.get( 'widgetType' );
+
+			const getControlValue = () => Object.values( elementor?.widgetsCache?.[ widgetType ]?.controls ?? [] )
+				.filter( ( control ) => 'hover_animation' === aiOptions.type
+					? '_tab_positioning_hover' === control.inner_tab
+					: 'section_effects' === control.section )
+				.map( ( control ) => ( { [ control.name ]: view.options.container.settings.get( control.name ) } ) )
+				.reduce( ( acc, control ) => ( { ...acc, ...control } ), {} );
+
+			const setControlValue = ( settings ) => {
+				$e.run( 'document/elements/settings', {
+					container: view.container,
+					settings,
+					options: {
+						external: true,
+					},
+				} );
+			};
+
+			behaviors = {
+				ai: {
+					behaviorClass: AiBehavior,
+					type: aiOptions.type,
+					getControlValue,
+					buttonLabel: __( 'Animate with AI', 'elementor' ),
+					setControlValue,
+					isLabelBlock: true,
+					additionalOptions: {
+						animationType: aiOptions.type,
+						widgetType,
+						buttonBorder: true,
+					},
+					context: this.getContextData( view, controlType ),
+				},
+			};
 		}
 
 		return behaviors;

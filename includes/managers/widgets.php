@@ -65,7 +65,9 @@ class Widgets_Manager {
 	*/
 	private function init_widgets() {
 		$build_widgets_filename = [
+			'common-base',
 			'common',
+			'common-optimized',
 			'inner-section',
 			'heading',
 			'image',
@@ -97,7 +99,6 @@ class Widgets_Manager {
 			'sidebar',
 			'read-more',
 			'rating',
-			'share-buttons',
 		];
 
 		$this->_widget_types = [];
@@ -550,6 +551,61 @@ class Widgets_Manager {
 		}
 
 		return $keys;
+	}
+
+	/**
+	 * Widgets with styles.
+	 *
+	 * This method returns the list of all the widgets in the `/includes/`
+	 * folder that have styles.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array The names of the widgets that have styles.
+	 */
+	public function widgets_with_styles(): array {
+		return [
+			'counter',
+			'divider',
+			'google_maps',
+			'heading',
+			'image',
+			'image-carousel',
+			'menu-anchor',
+			'rating',
+			'social-icons',
+			'spacer',
+			'testimonial',
+			'text-editor',
+			'video',
+		];
+	}
+
+	/**
+	 * Widgets with responsive styles.
+	 *
+	 * This method returns the list of all the widgets in the `/includes/`
+	 * folder that have responsive styles.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array The names of the widgets that have responsive styles.
+	 */
+	public function widgets_with_responsive_styles(): array {
+		return [
+			'accordion',
+			'alert',
+			'icon-box',
+			'icon-list',
+			'image-box',
+			'image-gallery',
+			'progress',
+			'star-rating',
+			'tabs',
+			'toggle',
+		];
 	}
 
 	/**

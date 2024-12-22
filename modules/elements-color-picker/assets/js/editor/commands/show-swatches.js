@@ -207,7 +207,7 @@ export class ShowSwatches extends $e.modules.CommandBase {
 	}
 
 	/**
-	 * Extract colors from image and push it ot the colors array.
+	 * Extract colors from image and push it to the colors array.
 	 *
 	 * @param {Object} image  - The image element to extract colors from
 	 * @param {string} suffix - An optional suffix for the key in the colors array.

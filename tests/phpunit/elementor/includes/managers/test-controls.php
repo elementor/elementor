@@ -61,7 +61,7 @@ class Test_Controls extends Elementor_Test_Base {
 	 *
 	 * @expectedIncorrectUsage Elementor\Controls_Manager::add_control_to_stack
 	 */
-	public function test_control_not_added_if_min_value_greather_than_default_items() {
+	public function test_control_not_added_if_min_value_greater_than_default_items() {
 		$control_data = [
 			'type'=> Controls_Manager::REPEATER,
 			'tab'=>'content',

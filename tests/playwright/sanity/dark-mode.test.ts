@@ -1,9 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
-test( 'navigator empty placeholder should be in dark mode', async ( { page }, testInfo ) => {
+test( 'navigator empty placeholder should be in dark mode', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	await wpAdmin.setExperiments( {
 		container: true,
 	} );
