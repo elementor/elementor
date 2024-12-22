@@ -290,6 +290,10 @@ class Elements_Manager {
 					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
 				],
 			],
+			'helloplus' => [
+				'title' => esc_html__( 'Hello+', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
 			'general' => [
 				'title' => esc_html__( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
