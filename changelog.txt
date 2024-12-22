@@ -1,5 +1,53 @@
 == Changelog ==
 
+= 3.26.2 - 2024-12-19 =
+
+* Fix: Reverted Activated "Element Caching" feature for existing sites ([#27502](https://github.com/elementor/elementor/issues/29613))
+* Fix: Compatibility issue with third-party plugin with `data-settings` attribute missing when Optimized Markup experiment is activated
+
+= 3.26.1 - 2024-12-19
+
+* Tweak: Return a specific error to users when images provider is not working in Elementor AI
+* Fix: Typo in `Isolation Manager`
+
+= 3.26.0 - 2024-12-16 =
+
+* New: Unify product images seamlessly with AI
+* Tweak: Added "Space Between Dots" control to Image Carousel widget ([#2526](https://github.com/elementor/elementor/issues/2526), [#3277](https://github.com/elementor/elementor/issues/3277), [#21697](https://github.com/elementor/elementor/issues/21697))
+* Tweak: Added paragraph spacing control in Text Editor widget ([#25431](https://github.com/elementor/elementor/issues/25431), [#20144](https://github.com/elementor/elementor/issues/20144))
+* Tweak: Added hover and transition color controls for a link in Heading widget ([#12877](https://github.com/elementor/elementor/issues/12877))
+* Tweak: Updated Image Spacing control to support only PX units in Image Carousel widget ([#21827](https://github.com/elementor/elementor/issues/21827))
+* Tweak: Created CSS variables for Row and Column gaps value in Container ([#24178](https://github.com/elementor/elementor/issues/24178))
+* Tweak: Added the ability to set `aria-label` in Image Carousel widget ([#28355](https://github.com/elementor/elementor/issues/28355))
+* Tweak: Replaced the Wrap Align Content select control with a choose control in Container ([#22640](https://github.com/elementor/elementor/issues/22640))
+* Tweak: Implemented accessibility improvements for pagination bullets in Image Carousel widget ([#28674](https://github.com/elementor/elementor/issues/28674))
+* Tweak: Replaced hidden `elementor-screen-only` div with `aria-label` attributes
+* Tweak: Improved behavior and messaging for the warning displayed when navigating between documents
+* Tweak: Load Nested Elements styles only when they are in use
+* Tweak: Added support for rendering Gutenberg blocks on the frontend
+* Tweak: Removed `elementor-widget-container` div from Elementor widgets as part of the Optimized Markup experiment
+* Tweak: Updated CSS to utilize `inset` CSS logical property in various locations
+* Tweak: Updated minimum required Safari version to 15.5
+* Tweak: Transition Duration controls are displayed only when a background color is set
+* Tweak: Transition Duration controls are displayed only when a border is set
+* Tweak: Improved keyboard accessibility for the section and container presets area
+* Tweak: Merged "Upgrade Swiper Library" feature to version
+* Tweak: Merged "Optimized Control Loading" feature to version
+* Tweak: Activated "Element Caching" feature for existing sites
+* Tweak: Promoted "Nested Elements" feature to Stable status
+* Tweak: Removed `elementor/core/schemes`
+* Fix: Container Gap values not transferring correctly between sites when using Cross-site Copy and Paste ([#24111](https://github.com/elementor/elementor/issues/24111), [#28343](https://github.com/elementor/elementor/issues/28343))
+* Fix: Removed anchor scroll warnings from the console ([#29199](https://github.com/elementor/elementor/issues/29199), [#29350](https://github.com/elementor/elementor/issues/29350))
+* Fix: Frontend template rendering is broken with fatal error ([#29582](https://github.com/elementor/elementor/issues/29582), [#29579](https://github.com/elementor/elementor/issues/29579))
+* Fix: PHP error log appearing due to the Usage Data Sharing cron job (([#29153](https://github.com/elementor/elementor/issues/29153))
+* Fix: Deprecated `print_emoji_styles` warning in Theme Builder screen ([#27502](https://github.com/elementor/elementor/issues/27502))
+* Fix: Display Condition feature is available without an active Elementor license in Floating Elements
+* Fix: "Generate with Elementor AI" button is missing in the Media Library list mode
+* Fix: Resized file size exceeding the maximum limit does not display an error in AI Image
+* Fix: Images from URL incorrectly open the Generate modal
+* Fix: Dropdown area is not opening correctly in certain scenarios in Menu widget
+* Fix: Swiper styling missing from Lightbox inside Gallery widgets
+
 = 3.25.11 - 2024-12-10 =
 
 * Tweak: Updated `eicons` library to v5.34.0

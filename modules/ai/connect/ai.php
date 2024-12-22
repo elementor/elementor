@@ -85,6 +85,32 @@ class Ai extends Library {
 	}
 
 	/**
+	 * @param array $event_data {
+	 *     @type string $name
+	 *     @type array $data
+	 *     @type array $client {
+	 *         @type string $name
+	 *         @type string $version
+	 *         @type string $session_id
+	 *     }
+	 * }
+	 */
+	public function send_event( array $event_data ) : void {
+		$this->ai_request(
+			'POST',
+			'client-events/events',
+			[
+				'payload' => $event_data,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
+	/**
 	 * get_file_payload
 	 * @param $filename
 	 * @param $file_type

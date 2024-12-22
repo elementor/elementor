@@ -18,7 +18,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con e-div-block`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con e-div-block${ this.getClassString() }`;
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -60,11 +60,7 @@ const DivBlockView = BaseElementView.extend( {
 
 	renderOnChange() {
 		BaseElementView.prototype.renderOnChange.apply( this, arguments );
-
-		const classes = this.getContainer().settings.get( 'classes' );
-		if ( classes && classes.value && classes.value[ 0 ] ) {
-			this.$el.addClass( classes.value[ 0 ] );
-		}
+		this.$el.addClass( this.getClasses() );
 	},
 
 	onRender() {
@@ -265,6 +261,15 @@ const DivBlockView = BaseElementView.extend( {
 		this.addSectionView = addSectionView;
 	},
 
+	getClasses() {
+		return this.options?.model?.getSetting( 'classes' )?.value || [];
+	},
+
+	getClassString() {
+		const classes = this.getClasses();
+
+		return classes.length ? [ '', ...classes ].join( ' ' ) : '';
+	},
 } );
 
 module.exports = DivBlockView;
