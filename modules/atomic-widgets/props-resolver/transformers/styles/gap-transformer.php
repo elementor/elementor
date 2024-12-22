@@ -11,13 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Gap_Transformer extends Transformer_Base {
-	public function transform( $value, $key ) {
-		$dimensions = Collection::make( $value )
+	public function transform( $value, $key ): array {
+		$gap = Collection::make( $value )
 			->only( [ 'row', 'column' ] )
 			->filter()
-			->map_with_keys( fn( $dimension, $side ) => [ $key . '-' . $side => $dimension ] )
+			->map_with_keys( fn( $gap, $gap_direction ) => [ $gap_direction . '-' . $key => $gap ] )
 			->all();
 
-		return Multi_Props::generate( $dimensions );
+		return Multi_Props::generate( $gap );
 	}
 }
