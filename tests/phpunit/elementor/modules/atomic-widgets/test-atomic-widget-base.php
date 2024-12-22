@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
@@ -51,6 +52,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'text' => String_Prop_Type::make()->default( 'The greatest text' ),
 						'tag' => String_Prop_Type::make()->default( 'h2' ),
 						'transformable_string' => String_Prop_Type::make(),
+						'link' => Link_Prop_Type::make(),
 					],
 					'settings' => [
 						'text' => 'This text is more great than the greatest text',
@@ -59,11 +61,23 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'$$type' => 'string',
 							'value' => 'This is awesome!',
 						],
+						'link' => [
+							'$$type' => 'link',
+							'value' => [
+								'enabled' => true,
+								'href' => 'https://elementor.com',
+								'isTargetBlank' => true,
+							],
+						],
 					],
 					'result' => [
 						'text' => 'This text is more great than the greatest text',
 						'tag' => 'h2',
 						'transformable_string' => 'This is awesome!',
+						'link' => [
+							'href' => 'https://elementor.com',
+							'target' => '_blank',
+						],
 					],
 				]
 			],
