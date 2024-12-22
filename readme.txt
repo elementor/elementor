@@ -346,6 +346,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.26.3 - 2024-12-22 =
+
+* Tweak: Registered `swiper.js` script to ensure Swiper is properly declared and loaded ([#29612](https://github.com/elementor/elementor/issues/29612), [#29616](https://github.com/elementor/elementor/issues/29616))
+
 = 3.26.2 - 2024-12-19 =
 
 * Fix: Reverted Activated "Element Caching" feature for existing sites ([#27502](https://github.com/elementor/elementor/issues/29613))
