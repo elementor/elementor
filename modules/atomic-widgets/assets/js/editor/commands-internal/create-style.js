@@ -10,6 +10,14 @@ export class CreateStyle extends $e.modules.editor.CommandContainerInternalBase 
 		this.requireContainer( args );
 
 		this.requireArgumentConstructor( 'bind', String, args );
+
+		if ( 'label' in args ) {
+			const isValidLabel = 'string' === typeof args.label && args.label.length > 0;
+
+			if ( ! isValidLabel ) {
+				throw new Error( 'Invalid label arg' );
+			}
+		}
 	}
 
 	randomId( containerId ) {
