@@ -61,7 +61,7 @@
 		"@testing-library/dom": "^9.3.3",
 		"@testing-library/react": "^14.1.2",
 		"@wordpress/babel-plugin-import-jsx-pragma": "^5.9.0",
-		"@wordpress/babel-preset-default": "^8.14.0",
+		"@wordpress/babel-preset-default": "^3.0.2",
 		"@wordpress/eslint-plugin": "^17.2.0",
 		"allure-playwright": "^2.10.0",
 		"autoprefixer": "^10.4.20",

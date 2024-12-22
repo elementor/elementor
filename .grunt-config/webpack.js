@@ -52,7 +52,6 @@ const getModuleRules = ( presets ) => {
 								} ],
 								[ '@babel/plugin-transform-runtime' ],
 								[ '@babel/plugin-transform-modules-commonjs' ],
-								[ '@babel/plugin-transform-export-namespace-from' ],
 							],
 						},
 					},
