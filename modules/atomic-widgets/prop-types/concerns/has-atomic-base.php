@@ -75,7 +75,7 @@ trait Has_Atomic_Base {
 			[ $is_valid, $sanitized_style, $errors ] = $style_parser->parse( $style );
 
 			if ( ! $is_valid ) {
-				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors) );
+				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
 			}
 
 			$styles[ $style_id ] = $sanitized_style;

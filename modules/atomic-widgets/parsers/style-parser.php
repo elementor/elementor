@@ -147,7 +147,7 @@ class Style_Parser {
 		return [
 			$is_valid,
 			$validated,
-			$errors_bag
+			$errors_bag,
 		];
 	}
 }

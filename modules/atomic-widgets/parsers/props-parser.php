@@ -102,7 +102,7 @@ class Props_Parser {
 		return [
 			$is_valid,
 			$this->sanitize( $validated ),
-			$errors_bag
+			$errors_bag,
 		];
 	}
 }

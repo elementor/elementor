@@ -93,7 +93,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 
 	public function sanitize_value( $value ) {
 		foreach ( $this->get_shape() as $key => $prop_type ) {
-			if( ! isset($value[ $key ]) ) {
+			if ( ! isset( $value[ $key ] ) ) {
 				continue;
 			}
 
