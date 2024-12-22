@@ -165,6 +165,8 @@ class Frontend extends App {
 
 		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_script_modules' ], 1 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
@@ -341,6 +343,39 @@ class Frontend extends App {
 	 */
 	public function remove_content_filter() {
 		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+	}
+
+	/**
+	 * Registers script modules.
+	 *
+	 * Registers all the frontend script modules.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
+	 *
+	 * @since 3.27.0
+	 * @access public
+	 */
+	public function register_script_modules(): void {
+		wp_enqueue_script_module(
+			'elementorModules/baseModule',
+			$this->get_js_assets_url( 'module', 'assets/dev/js/modules/imports/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementorModules/viewModule',
+			$this->get_js_assets_url( 'view-module', 'assets/dev/js/modules/imports/' ),
+			[ 'elementorModules/baseModule' ],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementorModules/frontend/handlers/base',
+			$this->get_js_assets_url( 'base', 'assets/dev/js/frontend/handlers/' ),
+			[ 'elementorModules/viewModule' ],
+			ELEMENTOR_VERSION,
+		);
 	}
 
 	/**

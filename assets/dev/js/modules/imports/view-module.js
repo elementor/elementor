@@ -1,6 +1,4 @@
-import Module from './module';
-
-export default Module.extend( {
+const ViewModule = elementorModules.BaseModule.extend( {
 	elements: null,
 
 	getDefaultElements() {
@@ -19,3 +17,8 @@ export default Module.extend( {
 		this.elements = this.getDefaultElements();
 	},
 } );
+
+window.elementorModules = elementorModules || {};
+window.elementorModules.ViewModule = ViewModule;
+
+export default ViewModule;
