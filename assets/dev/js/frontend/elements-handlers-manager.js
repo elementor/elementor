@@ -50,7 +50,11 @@ module.exports = function( $ ) {
 		];
 
 		this.elementsHandlers.container = [ ...backgroundHandlers ];
-		this.elementsHandlers.container.push( window.elementorElementHandlers?.backgroundSlideshow || {} );
+
+		if ( window.hasOwnProperty( 'elementorElementHandlers' ) && !! elementorElementHandlers.backgroundSlideshow ) {
+			this.elementsHandlers.container.push( elementorElementHandlers.backgroundSlideshow );
+		}
+
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {

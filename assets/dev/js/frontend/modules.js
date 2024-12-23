@@ -1,16 +1,22 @@
-import BaseHandler from './handlers/base';
+import elementorModules from '../modules/modules';
 import Document from './document';
 import StretchElement from './tools/stretch-element';
 import StretchedElement from './handlers/stretched-element';
+import BaseHandler from './handlers/base';
+// import SwiperBase from './handlers/base-swiper';
+// import CarouselBase from './handlers/base-carousel';
 import NestedTabs from 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs';
 
-window.elementorModules.frontend = elementorModules?.frontend || {};
-elementorModules.frontend.Document = Document;
-
-elementorModules.frontend.tools = {};
-elementorModules.frontend.tools.StretchElement = StretchElement;
-
-window.elementorModules.frontend.handlers = elementorModules?.frontend?.handlers || {};
-elementorModules.frontend.handlers.Base = BaseHandler;
-elementorModules.frontend.handlers.StretchedElement = StretchedElement
-elementorModules.frontend.handlers.NestedTabs = NestedTabs;
+elementorModules.frontend = {
+	Document,
+	tools: {
+		StretchElement,
+	},
+	handlers: {
+		Base: BaseHandler,
+		StretchedElement,
+		// SwiperBase,
+		// CarouselBase,
+		NestedTabs,
+	},
+};
