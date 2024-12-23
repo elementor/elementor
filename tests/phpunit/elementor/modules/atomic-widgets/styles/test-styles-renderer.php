@@ -412,15 +412,15 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								'$$type' => 'background',
 								'value' => [
 									'background-overlay' => [
-										'$$type' => 'overlay',
+										'$$type' => 'background-overlay',
 										'value' => [
 											[
-												'$$type' => 'color-overlay',
+												'$$type' => 'background-color-overlay',
 												'value' => 'blue',
 											],
 
 											[
-												'$$type' => 'gradient-overlay',
+												'$$type' => 'background-gradient-overlay',
 												'value' => [
 													'color' => [
 														'$$type' => 'color',
@@ -430,7 +430,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											],
 
 											[
-												'$$type' => 'image-overlay',
+												'$$type' => 'background-image-overlay',
 												'value' => [
 													'url' => [
 														'$$type' => 'string',
@@ -530,10 +530,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								'$$type' => 'background',
 								'value' => [
 									'background-overlay' => [
-										'$$type' => 'overlay',
+										'$$type' => 'background-overlay',
 										'value' => [
 											[
-												'$$type' => 'color-overlay',
+												'$$type' => 'background-color-overlay',
 												'value' => 'blue',
 											],
 										],

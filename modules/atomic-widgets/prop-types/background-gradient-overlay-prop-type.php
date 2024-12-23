@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Gradient_Overlay_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'gradient-overlay';
+		return 'background-gradient-overlay';
 	}
 
 	protected function define_shape(): array {

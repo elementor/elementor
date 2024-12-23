@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Overlay_Prop_Type extends Array_Prop_Type {
 	public static function get_key(): string {
-		return 'overlay';
+		return 'background-overlay';
 	}
 
 	protected function define_item_type(): Prop_Type {
