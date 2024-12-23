@@ -254,6 +254,40 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
 
 		// Assert.
+		$this->assertEmpty( $settings['atomicDynamicTags']['tags'] );
+
+		// Cleanup.
+		$tag->cleanup();
+	}
+
+	public function test_add_atomic_dynamic_tags_to_editor_settings__returns_tag_with_flag_and_unsupported_control() {
+		// Arrange.
+		$info_tag = $this->make_mock_tag( [
+			'name' => 'info',
+			'title' => 'Info',
+			'categories' => [ 'text' ],
+			'group' => 'post',
+			'register_controls' => function ( Tag $tag ) {
+				$tag->add_control(
+					'unsupported-control',
+					[
+						'type' => 'choose',
+					]
+				);
+			},
+			'editor_config' => [
+				'supports_a_widgets' => true,
+			],
+		] );
+
+		Plugin::$instance->dynamic_tags->register( $info_tag );
+
+		$tags = Plugin::$instance->dynamic_tags->get_tags_config();
+
+		// Act.
+		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
+
+		// Assert.
 		$expected = [
 			'info' => [
 				'name' => 'info',
@@ -270,41 +304,11 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 		$this->assertEqualSets( $expected, json_decode( wp_json_encode( $settings['atomicDynamicTags']['tags'] ), true ) );
 
 		// Cleanup.
-		$tag->cleanup();
-	}
-
-	public function test_add_atomic_dynamic_tags_to_editor_settings__returns_tag_with_flag_and_unsupported_control() {
-		// Arrange.
-		$tag = $this->make_mock_tag( [
-			'register_controls' => function ( Tag $tag ) {
-				$tag->add_control(
-					'unsupported-control',
-					[
-						'type' => 'choose',
-					]
-				);
-			},
-			'editor_config' => [
-				'supports_a_widgets' => true,
-			],
-		] );
-
-		Plugin::$instance->dynamic_tags->register( $tag );
-
-		$tags = Plugin::$instance->dynamic_tags->get_tags_config();
-
-		// Act.
-		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
-
-		// Assert.
-		$this->assertEmpty( $settings['atomicDynamicTags']['tags'] );
-
-		// Cleanup.
-		$tag->cleanup();
+		$info_tag->cleanup();
 	}
 
 	public function test_add_atomic_dynamic_tags_to_editor_settings__returns_empty_array_when_tags_have_select_control_with_no_options() {
-		// Arrange.
+		// Arrange.s
 		$tag = $this->make_mock_tag( [
 			'register_controls' => function ( Tag $tag ) {
 				$tag->add_control(
@@ -481,7 +485,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 			public function get_editor_config() {
 				$conf = parent::get_editor_config();
 
-				return array_merge( $conf, $options['editor_config'] ?? [] );
+				return array_merge( $conf, $this->options['editor_config'] ?? [] );
 			}
 
 			protected function register_controls() {
