@@ -165,7 +165,7 @@ class Style_Schema {
 	}
 
 	/**
-	 * @deprecated This declaration is replaces with the "background" shorthand variance
+	 * @deprecated This declaration is replaced with the "background" shorthand variance
 	 * @TODO should be removed before the final release, kept as a reference (temporarily)
 	 */
 	private static function get_background_overlay_props() {

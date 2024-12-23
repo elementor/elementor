@@ -13,6 +13,8 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Tr
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Color_Gradient_Transformer;
+
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Gradient_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
@@ -171,10 +173,13 @@ class Module extends BaseModule {
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register( Gap_Prop_Type::get_key(), new Gap_Transformer() );
 
+		$transformers->register( Background_Image_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
+		$transformers->register( Color_Gradient_Prop_Type::get_key(), new Color_Gradient_Transformer() );
+
 		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
 		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
-		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ', ' ) );
+		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 	}
 

@@ -7,7 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Color_Gradient_Transformer;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Gradient_Overlay_Transformer;
@@ -488,7 +488,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			$registry->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
 			$registry->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 			$registry->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
-			$registry->register( Color_Gradient_Prop_Type::get_key(), new Background_Overlay_Transformer() );
+			$registry->register( Color_Gradient_Prop_Type::get_key(), new Color_Gradient_Transformer() );
 			$registry->register( Background_Image_Prop_Type::get_key(), new Combine_Array_Transformer(', ') );
 		});
 
