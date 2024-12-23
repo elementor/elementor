@@ -101,15 +101,14 @@ class Page extends PageBase {
 	}
 
 	private static function get_elementor_edit_url( int $post_id, $args = [] ): string {
-		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
+		$page = new self( [ 'post_id' => $post_id ] );
+		$url = add_query_arg( $args, $page->get_edit_url() );
 
-		if ( ! empty( $active_kit_id ) ) {
-			$args['active-document'] = $active_kit_id;
+		if ( Plugin::$instance->kits_manager->get_active_id() ) {
+			return $url . '#e:run:panel/global/open';
 		}
 
-		$page = new self( [ 'post_id' => $post_id ] );
-
-		return add_query_arg( $args, $page->get_edit_url() );
+		return $url;
 	}
 
 	public static function get_elementor_page() {
