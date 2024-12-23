@@ -207,7 +207,4 @@ Module.extend = function( properties ) {
 	return child;
 };
 
-window.elementorModules = window.elementorModules || {};
-window.elementorModules.Module = Module;
-
-export default Module;
+module.exports = Module;

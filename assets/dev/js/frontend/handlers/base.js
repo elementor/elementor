@@ -1,4 +1,4 @@
-const BaseHandler = elementorModules.ViewModule.extend( {
+module.exports = elementorModules.ViewModule.extend( {
 	$element: null,
 
 	editorListeners: null,
@@ -251,5 +251,3 @@ const BaseHandler = elementorModules.ViewModule.extend( {
 		}
 	},
 } );
-
-export default BaseHandler;
