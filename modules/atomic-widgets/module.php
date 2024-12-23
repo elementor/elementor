@@ -19,6 +19,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Tra
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Gap_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
@@ -39,6 +40,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Gradient_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Gap_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Widgets\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -156,6 +158,7 @@ class Module extends BaseModule {
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register( Color_Gradient_Prop_Type::get_key(), new Background_Overlay_Transformer() );
 		$transformers->register( Background_Image_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
+		$transformers->register( Gap_Prop_Type::get_key(), new Gap_Transformer() );
 	}
 
 	/**
