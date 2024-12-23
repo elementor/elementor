@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
@@ -27,6 +28,7 @@ class Style_Schema {
 			self::get_spacing_props(),
 			self::get_border_props(),
 			self::get_background_props(),
+			self::get_background_color_props(),
 			self::get_background_overlay_props(),
 			self::get_effects_props(),
 			self::get_layout_props(),
@@ -148,10 +150,24 @@ class Style_Schema {
 
 	private static function get_background_props() {
 		return [
+			'background' => Background_Prop_Type::make(),
+		];
+	}
+
+	/**
+	 * @deprecated This declaration is replaced with the "background" shorthand variance
+	 * @TODO should be removed before the final release, kept as a reference (temporarily)
+	 */
+	private static function get_background_color_props() {
+		return [
 			'background-color' => Color_Prop_Type::make(),
 		];
 	}
 
+	/**
+	 * @deprecated This declaration is replaces with the "background" shorthand variance
+	 * @TODO should be removed before the final release, kept as a reference (temporarily)
+	 */
 	private static function get_background_overlay_props() {
 		return [
 			'background-image' => Background_Image_Prop_Type::make(),

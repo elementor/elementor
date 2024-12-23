@@ -12,6 +12,12 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Sr
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
+
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Gradient_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Transformer;
+
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corner_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dimensions_Transformer;
@@ -21,6 +27,13 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Tra
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Gap_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
+
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
+
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
@@ -156,9 +169,13 @@ class Module extends BaseModule {
 		$transformers->register( Border_Radius_Prop_Type::get_key(), new Corner_Sizes_Transformer( fn( $corner ) => 'border-' . $corner . '-radius' ) );
 		$transformers->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
-		$transformers->register( Color_Gradient_Prop_Type::get_key(), new Background_Overlay_Transformer() );
-		$transformers->register( Background_Image_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Gap_Prop_Type::get_key(), new Gap_Transformer() );
+
+		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
+		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
+		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
+		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ', ' ) );
+		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 	}
 
 	/**
