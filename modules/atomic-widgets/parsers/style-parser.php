@@ -118,8 +118,10 @@ class Style_Parser {
 	public function sanitize( array $style ): array {
 		$props_parser = Props_Parser::make( $this->schema );
 
-		foreach ( $style['variants'] as $variant_index => $variant ) {
-			$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] );
+		if ( ! empty( $style['variants'] ) ) {
+			foreach ( $style['variants'] as $variant_index => $variant ) {
+				$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] );
+			}
 		}
 
 		return $style;
@@ -136,17 +138,11 @@ class Style_Parser {
 	 *  }
 	 */
 	public function parse( array $style ): array {
-		$props_parser = Props_Parser::make( $this->schema );
-
 		[ $is_valid, $validated, $errors_bag  ] = $this->validate( $style );
-
-		foreach ( $validated['variants'] as $variant_index => $variant ) {
-			$validated['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] );
-		}
 
 		return [
 			$is_valid,
-			$validated,
+			$this->sanitize( $validated ),
 			$errors_bag,
 		];
 	}

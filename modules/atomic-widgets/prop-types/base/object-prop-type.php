@@ -99,11 +99,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 
 			$sanitized_value = $prop_type->sanitize( $value[ $key ] );
 
-			if ( is_null( $sanitized_value ) ) {
-				unset( $value[ $key ] );
-			} else {
-				$value[ $key ] = $sanitized_value;
-			}
+			$value[ $key ] = $sanitized_value;
 		}
 
 		return $value;

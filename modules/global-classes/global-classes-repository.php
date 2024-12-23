@@ -54,11 +54,8 @@ class Global_Classes_Repository {
 			return $value;
 		}
 
-		[, $parsed] = Style_Parser::make( Style_Schema::get() )
-			->parse( $value );
-
 		$value = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
-			'items' => $all->get_items()->merge( [ $id => $parsed ] )->all(),
+			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
 			'order' => $all->get_order()->all(),
 		] );
 
@@ -75,11 +72,8 @@ class Global_Classes_Repository {
 
 		$value['id'] = $id;
 
-		[, $parsed] = Style_Parser::make( Style_Schema::get() )
-			->parse( $value );
-
 		$updated = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
-			'items' => $all->get_items()->merge( [ $id => $parsed ] )->all(),
+			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
 			'order' => $all->get_order()->push( $id )->all(),
 		] );
 
