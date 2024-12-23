@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'background-image-overlay';
+		return 'image-overlay';
 	}
 
 	protected function define_shape(): array {
