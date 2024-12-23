@@ -103,7 +103,7 @@ class Page extends PageBase {
 	private static function get_elementor_edit_url( int $post_id, $args = [] ): string {
 		$page = new self( [ 'post_id' => $post_id ] );
 
-		return $page->get_edit_url() . "#e:run:panel/global/open";
+		return $page->get_edit_url() . '#e:run:panel/global/open';
 	}
 
 	public static function get_elementor_page() {
