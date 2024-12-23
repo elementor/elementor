@@ -108,7 +108,6 @@ class Div_Block extends Atomic_Element_Base {
 
 		if ( isset( $settings['aria_hidden'] ) && $settings['aria_hidden'] ) {
 			$this->add_render_attribute( '_wrapper', 'aria-hidden', 'true' );
-			$this->add_render_attribute( '_wrapper', 'inert', 'true' );
 		}
 	}
 
