@@ -37,7 +37,6 @@ class Popups_Promotion_Item extends Base_Promotion_Item {
 		return 'popups';
 	}
 
-
 	public function get_label() {
 		return esc_html__( 'Popups', 'elementor' );
 	}
