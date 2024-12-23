@@ -1,4 +1,4 @@
-import BaseHandler from './base';
+import BaseHandler from 'elementor-frontend/handlers/base';
 
 export default class SwiperHandlerBase extends BaseHandler {
 	getInitialSlide() {
