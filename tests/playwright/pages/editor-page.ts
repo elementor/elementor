@@ -298,6 +298,34 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Open a tab inside an Editor panel for V2 widgets.
+	 *
+	 * @param {'style' | 'general'} sectionName - The section to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openV2PanelTab( sectionName: 'style' | 'general' ) {
+		const selectorMap: Record< 'style' | 'general', string > = {
+			style: 'style',
+			general: 'settings',
+		};
+		const sectionButtonSelector = `#tab-0-${ selectorMap[ sectionName ] }`,
+			sectionContentSelector = `#tabpanel-0-${ selectorMap[ sectionName ] }`,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionContentElement: HTMLElement = document.querySelector( selector );
+
+				return ! sectionContentElement?.hidden;
+			}, sectionContentSelector );
+
+		if ( isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionButtonSelector ).click();
+		await this.page.locator( sectionContentSelector ).waitFor();
+	}
+
+	/**
 	 * Open a section in an active panel tab.
 	 *
 	 * @param {string} sectionId - The section to open.
@@ -341,6 +369,27 @@ export default class EditorPage extends BasePage {
 		}
 
 		await this.page.locator( sectionSelector + '.e-open:visible .elementor-panel-heading' ).click();
+	}
+
+	/**
+	 * Open a section in an active panel tab.
+	 *
+	 * @param {string} sectionId - The section to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ) {
+		const sectionButton = this.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( sectionId, 'i' ) } );
+		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
+		const isContentVisible = await this.page.evaluate( ( selector ) => {
+			return !! document.getElementById( selector );
+		}, contentSelector );
+
+		if ( isContentVisible ) {
+			return;
+		}
+
+		await sectionButton.click();
 	}
 
 	/**
