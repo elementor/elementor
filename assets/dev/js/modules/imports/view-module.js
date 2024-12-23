@@ -1,4 +1,4 @@
-const ViewModule = elementorModules.BaseModule.extend( {
+const ViewModule = elementorModules.Module.extend( {
 	elements: null,
 
 	getDefaultElements() {

@@ -166,7 +166,7 @@ class Frontend extends App {
 		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_script_modules' ], 1 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_script_modules' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
@@ -377,24 +377,31 @@ class Frontend extends App {
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		wp_enqueue_script_module(
+			'elementorModules/frontend/document',
+			$this->get_js_assets_url( 'document', 'assets/dev/js/frontend/' ),
+			[ 'elementorModules/viewModule' ],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
 			'elementorModules/frontend/handlers/baseSwiper',
 			$this->get_js_assets_url( 'base-swiper', 'assets/dev/js/frontend/handlers/' ),
 			[ 'elementorModules/baseModule' ],
 			ELEMENTOR_VERSION,
 		);
 
-//		wp_register_script_module(
-//			'elementorModules/frontend/handlers/baseCarousel',
-//			$this->get_js_assets_url( 'base-carousel', 'assets/dev/js/frontend/handlers/' ),
-//			[ 'elementorModules/frontend/handlers/baseSwiper' ],
-//			ELEMENTOR_VERSION,
-//		);
+		wp_register_script_module(
+			'elementorModules/frontend/handlers/baseCarousel',
+			$this->get_js_assets_url( 'base-carousel', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
 
 		wp_register_script_module(
 			'elementorModules/frontend/handlers/backgroundSlideshow',
 			$this->get_js_assets_url( 'background-slideshow', 'assets/dev/js/frontend/handlers/' ),
-			[ 'elementorModules/frontend/handlers/baseSwiper' ],
+			[],
 			ELEMENTOR_VERSION,
 		);
 	}

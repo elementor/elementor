@@ -208,6 +208,6 @@ Module.extend = function( properties ) {
 };
 
 window.elementorModules = window.elementorModules || {};
-window.elementorModules.BaseModule = Module;
+window.elementorModules.Module = Module;
 
 export default Module;

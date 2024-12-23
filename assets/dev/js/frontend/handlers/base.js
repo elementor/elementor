@@ -252,9 +252,4 @@ const BaseHandler = elementorModules.ViewModule.extend( {
 	},
 } );
 
-window.elementorModules = elementorModules || {};
-window.elementorModules.frontend = elementorModules.frontend || {};
-window.elementorModules.frontend.handlers = elementorModules.frontend.handlers || {};
-window.elementorModules.frontend.handlers.Base = BaseHandler;
-
 export default BaseHandler;
