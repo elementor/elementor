@@ -716,9 +716,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 									],
 								],
 							],
-							'background-image' => [
-								'$$type' => 'background-image',
-								'value' => [ [ '$$type' => 'color-gradient', 'value' => [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ] ] ]
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+								    'color' => [
+									    '$$type' => 'color',
+									    'value' => '#000000',
+								    ],
+								],
 							],
 						],
 						'meta' => [
@@ -1210,21 +1215,20 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
-								'background-image' => [
-									'$$type' => 'background-image',
+								'background' => [
+									'$$type' => 'background',
 									'value' => [
-										[
+										'background-overlay' => [
 											'$$type' => 'background-overlay',
 											'value' => [
-												'color' => [
-													'$$type' => 'color',
-													'value' => 4,
-												],
+												'$$type' => 'background-color-overlay',
+												'value' => 4,
 											],
 										],
 									],
 								],
 							],
+
 							'meta' => [
 								'breakpoint' => 'desktop',
 								'state' => null,
@@ -1237,7 +1241,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: background-image' );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: background' );
 
 		// Act.
 		$widget->get_data_for_save();
