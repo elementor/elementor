@@ -9,6 +9,6 @@ class ImageCarousel extends elementorModules.frontend.handlers.CarouselBase {
 }
 
 window.elementorModules.frontend.widgets = elementorModules.frontend.widgets || {};
-window.elementorModules.frontend.widgets.ImageCarousel = ImageCarousel;
+window.elementorModules.frontend.widgets[ 'image-carousel.default' ] = ImageCarousel;
 
 export default ImageCarousel;

@@ -383,6 +383,23 @@ class Frontend extends App {
 			[],
 			ELEMENTOR_VERSION,
 		);
+
+		wp_register_script_module(
+			'elementor_accordion',
+			$this->get_js_assets_url( 'accordion', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+//		'alert.default': () => import( /* webpackChunkName: 'alert' */ './handlers/alert' ),
+//		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
+//		'progress.default': () => import( /* webpackChunkName: 'progress' */ './handlers/progress' ),
+//		'tabs.default': () => import( /* webpackChunkName: 'tabs' */ './handlers/tabs' ),
+//		'toggle.default': () => import( /* webpackChunkName: 'toggle' */ './handlers/toggle' ),
+//		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
+//		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
+//		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
+//
 	}
 
 	/**

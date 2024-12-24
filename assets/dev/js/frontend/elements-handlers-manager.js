@@ -14,7 +14,6 @@ module.exports = function( $ ) {
 	const handlersInstances = {};
 
 	this.elementsHandlers = {
-		'accordion.default': () => import( /* webpackChunkName: 'accordion' */ './handlers/accordion' ),
 		'alert.default': () => import( /* webpackChunkName: 'alert' */ './handlers/alert' ),
 		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
 		'progress.default': () => import( /* webpackChunkName: 'progress' */ './handlers/progress' ),
@@ -25,7 +24,12 @@ module.exports = function( $ ) {
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
-	this.elementsHandlers[ 'image-carousel.default' ] = elementorModules.frontend.widgets.ImageCarousel;
+	this.elementsHandlers = {
+		...this.elementsHandlers,
+		...window.elementorModules.frontend.widgets,
+	};
+
+	console.log( this.elementsHandlers );
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
