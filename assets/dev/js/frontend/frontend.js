@@ -7,7 +7,6 @@ import URLActions from './utils/url-actions';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
-import Events from 'elementor-utils/events';
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 import Controls from './utils/controls';
 import AnchorScrollMargin from './utils/anchor-scroll-margin';
@@ -186,12 +185,10 @@ export default class Frontend extends elementorModules.ViewModule {
 	initOnReadyComponents() {
 		this.utils = this.utils || {};
 
-		this.utils.environment = environment;
-		this.utils.events = Events;
-
 		this.utils.anchor_scroll_margin = new AnchorScrollMargin();
 		this.utils.assetsLoader = new AssetsLoader();
 		this.utils.controls = new Controls();
+		this.utils.environment = environment;
 		this.utils.escapeHTML = escapeHTML;
 		this.utils.urlActions = new URLActions();
 
