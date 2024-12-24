@@ -5,19 +5,22 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corner_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Gradient_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -28,6 +31,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * @group Test_Styles_Renderer
+ */
 class Test_Styles_Renderer extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
@@ -377,6 +383,157 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
+	public function test_render__style_with_nested_background_transformers() {
+		// Arrange.
+		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
+			$this->attach_background_transformers( $transformers );
+		} );
+
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => 'blue',
+											],
+										],
+									],
+
+									'color' => [
+										'$$type' => 'color',
+										'value' => 'red',
+									],
+								],
+							],
+						],
+
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'breakpoints' => []
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_with_background_color_transformers() {
+		// Arrange.
+		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
+			$this->attach_background_transformers( $transformers );
+		} );
+
+		$styles = [
+			[
+				'id' => 'test-background-color',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'color' => [
+										'$$type' => 'color',
+										'value' => 'red',
+									],
+								],
+							],
+						],
+
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'breakpoints' => [],
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_with_background_overlay_transformers() {
+		// Arrange.
+		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
+			$this->attach_background_transformers( $transformers );
+		} );
+
+		$styles = [
+			[
+				'id' => 'test-background-overlay',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => 'blue',
+											],
+										],
+									],
+								],
+							],
+						],
+
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'breakpoints' => [],
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	private function attach_background_transformers( $transformers ) {
+		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
+		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
+
+		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
+		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ', ' ) );
+
+		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
+	}
+
 	public function test_render__style_with_nested_transformers() {
 		// Arrange.
 		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
@@ -386,8 +543,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			$registry->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
 			$registry->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 			$registry->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
-			$registry->register( Color_Gradient_Prop_Type::get_key(), new Background_Overlay_Transformer() );
-			$registry->register( Background_Image_Prop_Type::get_key(), new Combine_Array_Transformer(', ') );
 		});
 
 		$styles = [
@@ -483,20 +638,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'value' => [
 											'unit' => 'px',
 											'size' => 10,
-										],
-									],
-								],
-							],
-							'background-image' => [
-								'$$type' => 'background-image',
-								'value' => [
-									[
-										'$$type' => 'background-overlay',
-										'value' => [
-											'color' => [
-												'$$type' => 'color',
-												'value' => 'rgba(0, 0, 0, 0.2)',
-											],
 										],
 									],
 								],
