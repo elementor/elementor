@@ -42,6 +42,7 @@ export default class NestedAccordion extends Base {
 
 	onInit( ...args ) {
 		super.onInit( ...args );
+
 		this.injectKeyboardHandler();
 	}
 
