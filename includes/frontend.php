@@ -452,6 +452,13 @@ class Frontend extends App {
 			ELEMENTOR_VERSION,
 		);
 
+		wp_register_script_module(
+			'elementor_utils_vimeo',
+			$this->get_js_assets_url( 'vimeo-loader', 'assets/dev/js/frontend/utils/video-api/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
 		do_action( 'elementor/frontend/after_register_script_modules' );
 	}
 

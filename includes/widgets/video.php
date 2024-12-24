@@ -157,6 +157,34 @@ class Widget_Video extends Widget_Base {
 					'hosted' => esc_html__( 'Self Hosted', 'elementor' ),
 				],
 				'frontend_available' => true,
+				'assets' => [
+					'script_modules' => [
+						[
+							'name' => 'elementor_utils_youtube' ,
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'video_type',
+										'operator' => '===',
+										'value' => 'youtube',
+									],
+								],
+							],
+						],
+						[
+							'name' => 'elementor_utils_vimeo' ,
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'video_type',
+										'operator' => '===',
+										'value' => 'vimeo',
+									],
+								],
+							],
+						],
+					],
+				]
 			]
 		);
 

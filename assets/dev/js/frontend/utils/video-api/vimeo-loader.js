@@ -1,4 +1,4 @@
-import BaseLoader from './base-loader';
+import BaseLoader from './base-loader.js';
 
 export default class VimeoLoader extends BaseLoader {
 	getApiURL() {
@@ -24,3 +24,7 @@ export default class VimeoLoader extends BaseLoader {
 		return videoURL.replace( timeMatch[ 0 ], '' ) + timeMatch;
 	}
 }
+
+window.elementorFrontend = window.elementorFrontend || {};
+window.elementorFrontend.utils = window.elementorFrontend.utils || {};
+window.elementorFrontend.utils.vimeo = new VimeoLoader();

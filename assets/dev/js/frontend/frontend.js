@@ -190,7 +190,6 @@ export default class Frontend extends elementorModules.ViewModule {
 	initOnReadyComponents() {
 		this.utils = this.utils || {};
 
-		this.utils.vimeo = new VimeoApiLoader();
 		this.utils.baseVideoLoader = new BaseVideoLoader();
 		this.utils.urlActions = new URLActions();
 		this.utils.swiper = SwiperHandler;

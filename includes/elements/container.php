@@ -726,6 +726,18 @@ class Container extends Element_Base {
 								],
 							],
 						],
+						[
+							'name' => 'elementor_utils_vimeo' ,
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'video',
+									],
+								],
+							],
+						],
 					],
 				],
 			]
