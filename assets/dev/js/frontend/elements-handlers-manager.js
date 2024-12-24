@@ -22,11 +22,6 @@ module.exports = function( $ ) {
 		...window.elementorModules.frontend.widgets,
 	};
 
-	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
-		// TODO: Remove from here in v3.28.
-		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
-	}
-
 	if ( elementorFrontendConfig.experimentalFeatures.container ) {
 		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/floating-buttons/assets/js/floating-buttons/frontend/handlers/contact-buttons' );
 		this.elementsHandlers[ 'floating-bars-var-1.default' ] = () => import( /* webpackChunkName: 'floating-bars' */ 'elementor/modules/floating-buttons/assets/js/floating-bars/frontend/handlers/floating-bars' );

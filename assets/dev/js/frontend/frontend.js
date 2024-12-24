@@ -3,6 +3,7 @@ import '../public-path';
 import DocumentsManager from './documents-manager';
 import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
+import Events from 'elementor-utils/events';
 import URLActions from './utils/url-actions';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
@@ -189,6 +190,7 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.utils.assetsLoader = new AssetsLoader();
 		this.utils.controls = new Controls();
 		this.utils.environment = environment;
+		this.utils.events = Events;
 		this.utils.escapeHTML = escapeHTML;
 		this.utils.urlActions = new URLActions();
 

@@ -27,8 +27,4 @@ export class Events {
 	}
 }
 
-window.elementorFrontend = window.elementorFrontend || {};
-window.elementorFrontend.utils = window.elementorFrontend.utils || {};
-window.elementorFrontend.utils.events = Events;
-
 export default Events;
