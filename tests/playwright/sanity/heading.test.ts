@@ -19,7 +19,7 @@ test( 'Heading widget added using shortcode with non-correct payload', async ( {
 	} );
 
 	await editor.addWidget( 'shortcode' );
-	await page.locator( '.elementor-control-shortcode textarea' ).fill( testShortcode );
+	await editor.setTextareaControlValue( 'shortcode', testShortcode );
 	await editor.getPreviewFrame().waitForSelector( EditorSelectors.heading.h2 );
 
 	expect( alertDetected ).toBe( false );

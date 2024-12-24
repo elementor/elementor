@@ -31,7 +31,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'General test', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -77,7 +76,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		await editor.loadTemplate( templatePath );
-
 		await editor.closeNavigatorIfOpen();
 
 		// Act.
@@ -99,11 +97,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
-
 		await editor.loadTemplate( templatePath );
 
 		// Act.
-		// Open front end.
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.elementor-widget-n-tabs' );
 
@@ -116,7 +112,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'Check Gap between tabs and Space between tabs controls in mobile view', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -128,11 +123,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.openSection( 'section_tabs_responsive' );
 		await editor.setSelectControlValue( 'breakpoint_selector', 'mobile' );
 		await editor.openPanelTab( 'style' );
-
-		// Change responsive view to mobile
 		await editor.changeResponsiveView( 'mobile' );
-
-		// Set controls values.
 		await editor.setSliderControlValue( 'tabs_title_spacing_mobile', '50' );
 		await editor.setSliderControlValue( 'tabs_title_space_between_mobile', '25' );
 
@@ -147,7 +138,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'Check that the hover affects non-active tab only', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -178,7 +168,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		await editor.loadTemplate( templatePath );
-
 		await editor.closeNavigatorIfOpen();
 
 		// Act.

@@ -8,6 +8,7 @@ let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
 	protected readonly apiRequests: ApiRequests;
+
 	constructor( page: Page, testInfo: TestInfo, apiRequests: ApiRequests ) {
 		super( page, testInfo );
 		this.apiRequests = apiRequests;
@@ -18,7 +19,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async gotoDashboard() {
+	async gotoDashboard(): Promise<void> {
 		await this.page.goto( '/wp-admin' );
 	}
 
@@ -27,7 +28,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async login() {
+	async login(): Promise<void> {
 		await this.gotoDashboard();
 
 		const loggedIn = await this.page.$( 'text=Dashboard' );
@@ -43,7 +44,15 @@ export default class WpAdminPage extends BasePage {
 		await this.page.waitForSelector( 'text=Dashboard' );
 	}
 
-	async customLogin( username: string, password: string ) {
+	/**
+	 * Log in to WordPress with custom credentials.
+	 *
+	 * @param {string} username - The username to log in with.
+	 * @param {string} password - The password to log in with.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async customLogin( username: string, password: string ): Promise<void> {
 		await this.gotoDashboard();
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 
@@ -82,8 +91,10 @@ export default class WpAdminPage extends BasePage {
 
 	/**
 	 * Create a new page with the API and open it in Elementor.
+	 *
+	 * @return {Promise<string>}
 	 */
-	async createNewPostWithAPI() {
+	async createNewPostWithAPI(): Promise<string> {
 		const request: APIRequestContext = this.page.context().request,
 			postDataInitial = {
 				title: 'Playwright Test Page - Uninitialized',
@@ -103,11 +114,11 @@ export default class WpAdminPage extends BasePage {
 	/**
 	 * Create a new page from the WordPress dashboard.
 	 *
-	 * @param {boolean} setPageName
+	 * @param {boolean} setPageName - Whether to set the page name.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async createNewPostFromDashboard( setPageName: boolean ) {
+	async createNewPostFromDashboard( setPageName: boolean ): Promise<void> {
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
 			await this.gotoDashboard();
 		}
@@ -126,7 +137,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setPageName() {
+	async setPageName(): Promise<void> {
 		await this.page.locator( '#elementor-panel-footer-settings' ).click();
 
 		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
@@ -161,6 +172,8 @@ export default class WpAdminPage extends BasePage {
 	 * Get the response status for the API request.
 	 *
 	 * @param {Response} response - The response object.
+	 *
+	 * @return {Promise<boolean>}
 	 */
 	async blockUrlResponse( response: Response ): Promise<boolean> {
 		const isRestRequest = response.url().includes( 'rest_route=%2Fwp%2Fv2%2Fpages%2' ); // For local testing
@@ -170,8 +183,10 @@ export default class WpAdminPage extends BasePage {
 
 	/**
 	 * Wait for the Elementor editor panel to finish loading.
+	 *
+	 * @return {Promise<void>}
 	 */
-	async waitForPanel() {
+	async waitForPanel(): Promise<void> {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
@@ -186,7 +201,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setExperiments( experiments: { [ n: string ]: boolean | string }, oldUrl: boolean = false ) {
+	async setExperiments( experiments: { [ n: string ]: boolean | string }, oldUrl: boolean = false ): Promise<void> {
 		if ( oldUrl ) {
 			await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
 			await this.page.click( '#elementor-settings-tab-experiments' );
@@ -223,7 +238,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async resetExperiments() {
+	async resetExperiments(): Promise<void> {
 		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
 		await this.page.getByRole( 'button', { name: 'default' } ).click();
 	}
@@ -232,9 +247,11 @@ export default class WpAdminPage extends BasePage {
 	 * Set site language.
 	 *
 	 * @param {string}      language     - The site language to set.
-	 * @param {string|null} userLanguage - Optional. The user language to set.
+	 * @param {string|null} userLanguage - Optional. The user language to set. Default is null.
+	 *
+	 * @return {Promise<void>}
 	 */
-	async setSiteLanguage( language: string, userLanguage: string = null ) {
+	async setSiteLanguage( language: string, userLanguage: string = null ): Promise<void> {
 		let languageCheck = language;
 
 		if ( 'he_IL' === language ) {
@@ -263,7 +280,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setUserLanguage( language: string ) {
+	async setUserLanguage( language: string ): Promise<void> {
 		await this.page.goto( 'wp-admin/profile.php' );
 		await this.page.selectOption( '[name="locale"]', language );
 		await this.page.locator( '#submit' ).click();
@@ -274,7 +291,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async confirmExperimentModalIfOpen() {
+	async confirmExperimentModalIfOpen(): Promise<void> {
 		const dialogButton = this.page.locator( '.dialog-type-confirm .dialog-confirm-ok' );
 
 		if ( await dialogButton.isVisible() ) {
@@ -286,7 +303,12 @@ export default class WpAdminPage extends BasePage {
 		}
 	}
 
-	async getActiveTheme() {
+	/**
+	 * Get the active WordPress theme.
+	 *
+	 * @return {Promise<string>}
+	 */
+	async getActiveTheme(): Promise<string> {
 		const request: APIRequestContext = this.page.context().request;
 		const themeData = await this.apiRequests.getTheme( request, 'active' );
 		return themeData[ 0 ].stylesheet;
@@ -301,7 +323,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async enableAdvancedUploads() {
+	async enableAdvancedUploads(): Promise<void> {
 		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '1' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
@@ -312,7 +334,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async disableAdvancedUploads() {
+	async disableAdvancedUploads(): Promise<void> {
 		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
@@ -323,7 +345,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async closeAnnouncementsIfVisible() {
+	async closeAnnouncementsIfVisible(): Promise<void> {
 		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
 			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
 		}
@@ -341,7 +363,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async editWithElementor() {
+	async editWithElementor(): Promise<void> {
 		await this.page.getByRole( 'link', { name: ' Edit with Elementor' } ).click();
 	}
 
@@ -350,7 +372,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async closeBlockEditorPopupIfVisible() {
+	async closeBlockEditorPopupIfVisible(): Promise<void> {
 		await this.page.locator( '#elementor-switch-mode-button' ).waitFor();
 		if ( await this.page.getByRole( 'button', { name: 'Close' } ).isVisible() ) {
 			await this.page.getByRole( 'button', { name: 'Close' } ).click();
@@ -362,7 +384,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openNewWordpressPage() {
+	async openNewWordpressPage(): Promise<void> {
 		await this.page.goto( '/wp-admin/post-new.php?post_type=page' );
 		await this.closeBlockEditorPopupIfVisible();
 	}
@@ -372,7 +394,7 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async hideAdminBar() {
+	async hideAdminBar(): Promise<void> {
 		await this.page.goto( '/wp-admin/profile.php' );
 		await this.page.locator( '#admin_bar_front' ).uncheck();
 		await this.page.locator( '#submit' ).click();
@@ -383,10 +405,9 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async showAdminBar() {
+	async showAdminBar(): Promise<void> {
 		await this.page.goto( '/wp-admin/profile.php' );
 		await this.page.locator( '#admin_bar_front' ).check();
 		await this.page.locator( '#submit' ).click();
 	}
 }
-
