@@ -4,7 +4,6 @@ import DocumentsManager from './documents-manager';
 import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
 import URLActions from './utils/url-actions';
-import SwiperHandler from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
