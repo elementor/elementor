@@ -41,7 +41,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'props' => [
 					'color' => [
 						'$$type' => 'color',
-						'value' => '<script>pink</script>',
+						'value' => '<b>pink</b>',
 					],
 				],
 			]
@@ -60,7 +60,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'props' => [
 					'color' => [
 						'$$type' => 'color',
-						'value' => '<script>blue</script>',
+						'value' => '<b>blue</b>',
 					],
 				],
 			],
