@@ -439,6 +439,8 @@ class Frontend extends App {
 			[],
 			ELEMENTOR_VERSION,
 		);
+
+		do_action( 'elementor/frontend/after_register_script_modules' );
 	}
 
 	/**

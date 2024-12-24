@@ -1,5 +1,5 @@
 import NestedTitleKeyboardHandler
-	from 'elementor-frontend/handlers/accessibility/nested-title-keyboard-handler';
+	from '../../../../../../assets/dev/js/frontend/handlers/accessibility/nested-title-keyboard-handler.js';
 
 export default class NestedAccordionTitleKeyboardHandler extends NestedTitleKeyboardHandler {
 	__construct( ...args ) {
