@@ -1,4 +1,4 @@
-export default class ImageCarousel extends elementorModules.frontend.handlers.CarouselBase {
+class ImageCarousel extends elementorModules.frontend.handlers.CarouselBase {
 	getDefaultSettings() {
 		const settings = super.getDefaultSettings();
 
@@ -7,3 +7,8 @@ export default class ImageCarousel extends elementorModules.frontend.handlers.Ca
 		return settings;
 	}
 }
+
+window.elementorModules.frontend.widgets = elementorModules.frontend.widgets || {};
+window.elementorModules.frontend.widgets.ImageCarousel = ImageCarousel;
+
+export default ImageCarousel;

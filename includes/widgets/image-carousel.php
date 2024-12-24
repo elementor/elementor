@@ -120,6 +120,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [
 			'elementorModules/frontend/handlers/baseSwiper',
 			'elementorModules/frontend/handlers/baseCarousel',
+			'elementorModules/frontend/widgets/ImageCarousel',
 		];
 	}
 

@@ -21,10 +21,11 @@ module.exports = function( $ ) {
 		'tabs.default': () => import( /* webpackChunkName: 'tabs' */ './handlers/tabs' ),
 		'toggle.default': () => import( /* webpackChunkName: 'toggle' */ './handlers/toggle' ),
 		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
-		'image-carousel.default': () => import( /* webpackChunkName: 'image-carousel' */ './handlers/image-carousel' ),
 		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
+
+	this.elementsHandlers[ 'image-carousel.default' ] = elementorModules.frontend.widgets.ImageCarousel;
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
@@ -54,7 +55,6 @@ module.exports = function( $ ) {
 		if ( window.hasOwnProperty( 'elementorElementHandlers' ) && !! elementorElementHandlers.backgroundSlideshow ) {
 			this.elementsHandlers.container.push( elementorElementHandlers.backgroundSlideshow );
 		}
-
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {
