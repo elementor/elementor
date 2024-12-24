@@ -153,7 +153,7 @@ class Global_Classes_REST_API {
 			->without_id()
 			->parse( $values );
 
-		if( ! $is_valid ) {
+		if ( ! $is_valid ) {
 			return $this->fail_with_validation_errors( $errors );
 		}
 
@@ -168,7 +168,7 @@ class Global_Classes_REST_API {
 			->without_id()
 			->parse( $class );
 
-		if( ! $is_valid ) {
+		if ( ! $is_valid ) {
 			return $this->fail_with_validation_errors( $errors );
 		}
 
@@ -195,6 +195,6 @@ class Global_Classes_REST_API {
 	}
 
 	private function fail_with_validation_errors( array $errors ) {
-		return new \WP_Error( 'invalid_data', __( 'Invalid data: '.join( ', ', $errors ), 'elementor' ), [ 'status' => 400 ] );
+		return new \WP_Error( 'invalid_data', __( 'Invalid data: ' . join( ', ', $errors ), 'elementor' ), [ 'status' => 400 ] );
 	}
 }
