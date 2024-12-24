@@ -11,6 +11,8 @@ use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\FloatingButtons\Module;
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -148,6 +150,8 @@ class Frontend extends App {
 
 	private $google_fonts_index = 0;
 
+	private $wordpress_adapter;
+
 	/**
 	 * Front End constructor.
 	 *
@@ -157,7 +161,7 @@ class Frontend extends App {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function __construct() {
+	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
 		// We don't need this class in admin side, but in AJAX requests.
 		if ( is_admin() && ! wp_doing_ajax() ) {
 			return;
@@ -171,6 +175,7 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
 		$this->add_content_filter();
+		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
@@ -356,7 +361,7 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function register_script_modules(): void {
-		wp_enqueue_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_base_swiper',
 			$this->get_js_assets_url( 'base-swiper', 'assets/dev/js/frontend/handlers/' ),
 			[ 'elementorModules/baseModule' ],
