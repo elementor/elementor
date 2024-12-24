@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_API extends Elementor_Test_Base {
+class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	private $mock_global_class = [
 		"label" => "flexy",
 		"variants" => [
@@ -28,6 +28,43 @@ class Test_API extends Elementor_Test_Base {
 				],
 			]
 		]
+	];
+
+	private $mock_unsanitized_class = [
+		"label" => "flexy",
+		"variants" => [
+			[
+				"meta" => [
+					"breakpoint" => "desktop",
+					"state" => null
+				],
+				'props' => [
+					'color' => [
+						'$$type' => 'color',
+						'value' => '<b>pink</b>',
+					],
+				],
+			]
+		]
+	];
+
+	private $mock_unsanitized_existing_class_update = [
+		'id' => 'g-4-123',
+		'label' => 'pinky',
+		'variants' => [
+			[
+				'meta' => [
+					'breakpoint' => 'desktop',
+					'state' => null,
+				],
+				'props' => [
+					'color' => [
+						'$$type' => 'color',
+						'value' => '<b>blue</b>',
+					],
+				],
+			],
+		],
 	];
 
 	private $mock_global_classes = [
@@ -268,6 +305,8 @@ class Test_API extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+
 		// Act
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
 		$request->set_body_params( [] );
@@ -322,6 +361,53 @@ class Test_API extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( 400, $response->get_status() );
+	}
+
+	public function test_post__create_sanitized_style() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/global-classes' );
+		$request->set_body_params( $this->mock_unsanitized_class );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
+		$id = $response->get_data()['id'];
+		$class =  $classes['items'][ $id ];
+
+		$this->assertEquals( 201, $response->get_status() );
+		$this->assertTrue( [
+				'color' => [
+					'$$type' => 'color',
+					'value' => 'pink',
+				]
+			] == $class['variants'][0]['props'] );
+	}
+
+	public function test_post__update_sanitized_style() {
+		// Arrange
+		$this->act_as_admin();
+
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
+		$request->set_body_params( $this->mock_unsanitized_existing_class_update );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
+		$class =  $classes['items'][ 'g-4-123' ];
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertTrue( [
+				'color' => [
+					'$$type' => 'color',
+					'value' => 'blue',
+				]
+			] == $class['variants'][0]['props'] );
 	}
 
 	public function test_post__returns_error_when_unauthorized() {

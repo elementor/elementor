@@ -7,8 +7,8 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
-use Elementor\Modules\AtomicWidgets\Validators\Style_Validator;
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -68,30 +68,33 @@ trait Has_Atomic_Base {
 		}
 	}
 
-	private function sanitize_atomic_styles( array $styles ) {
-		foreach ( $styles as $style ) {
-			[$is_valid, $sanitized, $errors_bag] = Style_Validator::make( Style_Schema::get() )->validate( $style );
+	private function parse_atomic_styles( array $styles ): array {
+		$style_parser = Style_Parser::make( Style_Schema::get() );
+
+		foreach ( $styles as $style_id => $style ) {
+			[ $is_valid, $sanitized_style, $errors ] = $style_parser->parse( $style );
 
 			if ( ! $is_valid ) {
-				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors_bag ) );
+				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
 			}
 
-			$styles[ $sanitized['id'] ] = $sanitized;
+			$styles[ $style_id ] = $sanitized_style;
 		}
 
 		return $styles;
 	}
 
-	private function sanitize_atomic_settings( array $settings ): array {
+	private function parse_atomic_settings( array $settings ): array {
 		$schema = static::get_props_schema();
+		$props_parser = Props_Parser::make( $schema );
 
-		[ , $validated, $errors ] = Props_Validator::make( $schema )->validate( $settings );
+		[ $is_valid, $parsed, $errors ] = $props_parser->parse( $settings );
 
-		if ( ! empty( $errors ) ) {
+		if ( ! $is_valid ) {
 			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
 		}
 
-		return $validated;
+		return $parsed;
 	}
 
 	public function get_atomic_controls() {
@@ -116,8 +119,8 @@ trait Has_Atomic_Base {
 		$data = parent::get_data_for_save();
 
 		$data['version'] = $this->version;
-		$data['settings'] = $this->sanitize_atomic_settings( $data['settings'] );
-		$data['styles'] = $this->sanitize_atomic_styles( $data['styles'] );
+		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
+		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
 
 		return $data;
 	}

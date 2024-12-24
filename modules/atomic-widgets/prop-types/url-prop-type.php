@@ -16,4 +16,8 @@ class Url_Prop_Type extends Plain_Prop_Type {
 	protected function validate_value( $value ): bool {
 		return ! ! wp_http_validate_url( $value );
 	}
+
+	protected function sanitize_value( $value ) {
+		return esc_url_raw( $value );
+	}
 }

@@ -4,7 +4,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Validators\Style_Validator;
+use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -71,13 +71,6 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
-				'validate_callback' => function( \WP_REST_Request $request ) {
-					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
-						->without_id()
-						->validate( $request->get_body_params() );
-
-					return $is_valid;
-				},
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
@@ -85,14 +78,7 @@ class Global_Classes_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
 				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->create( $request ) ),
-				'validate_callback' => function( \WP_REST_Request $request ) {
-					[ $is_valid ] = Style_Validator::make( Style_Schema::get() )
-						->without_id()
-						->validate( $request->get_body_params() );
-
-					return $is_valid;
-				},
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->create( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
@@ -163,14 +149,30 @@ class Global_Classes_REST_API {
 			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
 		}
 
-		$values = $this->get_repository()->put( $id, $values );
+		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )
+			->without_id()
+			->parse( $values );
+
+		if ( ! $is_valid ) {
+			return $this->fail_with_validation_errors( $errors );
+		}
+
+		$values = $this->get_repository()->put( $id, $parsed );
 
 		return new \WP_REST_Response( $values, 200 );
 	}
 
 	private function create( \WP_REST_Request $request ) {
 		$class = $request->get_params();
-		$new = $this->get_repository()->create( $class );
+		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )
+			->without_id()
+			->parse( $class );
+
+		if ( ! $is_valid ) {
+			return $this->fail_with_validation_errors( $errors );
+		}
+
+		$new = $this->get_repository()->create( $parsed );
 
 		return new \WP_REST_Response( $new, 201 );
 	}
@@ -190,5 +192,9 @@ class Global_Classes_REST_API {
 		}
 
 		return $response;
+	}
+
+	private function fail_with_validation_errors( array $errors ) {
+		return new \WP_Error( 'Invalid data: ', join( ', ', $errors ), [ 'status' => 400 ] );
 	}
 }
