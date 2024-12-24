@@ -694,10 +694,6 @@ class Frontend extends App {
 			return;
 		}
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_head_loading_styles' ) ) {
-			return;
-		}
-
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {
