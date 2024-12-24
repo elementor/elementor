@@ -77,15 +77,10 @@ class Dynamic_Tags_Registry {
 		$tag_atomic_schema = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
 
 		if ( ! $tag_atomic_schema ) {
-			return $atomic_dynamic_tag;
+			return null;
 		}
 
-		[ $controls, $props_schema ] = $tag_atomic_schema;
-
-		$atomic_dynamic_tag['atomic_controls'] = $controls;
-		$atomic_dynamic_tag['props_schema'] = $props_schema;
-
-		return $atomic_dynamic_tag;
+		return array_merge( $atomic_dynamic_tag, $tag_atomic_schema );
 	}
 
 	private function convert_controls_to_atomic( $controls, $force = false ) {

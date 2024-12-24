@@ -276,7 +276,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				);
 			},
 			'editor_config' => [
-				'supports_a_widgets' => true,
+				'force_convert_to_atomic' => true,
 			],
 		] );
 
