@@ -691,7 +691,7 @@ class Container extends Element_Base {
 					],
 					'script_modules' => [
 						[
-							'name' => 'elementorModules/frontend/handlers/baseSwiper' ,
+							'name' => 'elementor_base_swiper' ,
 							'conditions' => [
 								'terms' => [
 									[
@@ -703,7 +703,7 @@ class Container extends Element_Base {
 							],
 						],
 						[
-							'name' => 'elementorModules/frontend/handlers/backgroundSlideshow',
+							'name' => 'elementor_background_slideshow',
 							'conditions' => [
 								'terms' => [
 									[

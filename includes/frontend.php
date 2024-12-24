@@ -357,28 +357,28 @@ class Frontend extends App {
 	 */
 	public function register_script_modules(): void {
 		wp_enqueue_script_module(
-			'elementorModules/frontend/handlers/baseSwiper',
+			'elementor_base_swiper',
 			$this->get_js_assets_url( 'base-swiper', 'assets/dev/js/frontend/handlers/' ),
 			[ 'elementorModules/baseModule' ],
 			ELEMENTOR_VERSION,
 		);
 
 		wp_register_script_module(
-			'elementorModules/frontend/handlers/baseCarousel',
+			'elementor_base_carousel',
 			$this->get_js_assets_url( 'base-carousel', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
 		wp_register_script_module(
-			'elementorModules/frontend/handlers/backgroundSlideshow',
+			'elementor_background_slideshow',
 			$this->get_js_assets_url( 'background-slideshow', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_enqueue_script_module(
-			'elementorModules/frontend/widgets/ImageCarousel',
+		wp_register_script_module(
+			'elementor_image_carousel',
 			$this->get_js_assets_url( 'image-carousel', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
