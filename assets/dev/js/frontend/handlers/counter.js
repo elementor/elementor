@@ -37,3 +37,6 @@ export default class Counter extends elementorModules.frontend.handlers.Base {
 		this.intersectionObserver.observe( this.elements.$counterNumber[ 0 ] );
 	}
 }
+
+window.elementorModules.frontend.widgets = elementorModules.frontend.widgets || {};
+window.elementorModules.frontend.widgets[ 'counter.default' ] = Counter;

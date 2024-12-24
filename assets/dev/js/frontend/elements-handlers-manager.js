@@ -14,9 +14,6 @@ module.exports = function( $ ) {
 	const handlersInstances = {};
 
 	this.elementsHandlers = {
-		'alert.default': () => import( /* webpackChunkName: 'alert' */ './handlers/alert' ),
-		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
-		'progress.default': () => import( /* webpackChunkName: 'progress' */ './handlers/progress' ),
 		'tabs.default': () => import( /* webpackChunkName: 'tabs' */ './handlers/tabs' ),
 		'toggle.default': () => import( /* webpackChunkName: 'toggle' */ './handlers/toggle' ),
 		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),

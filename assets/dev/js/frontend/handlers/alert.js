@@ -23,3 +23,6 @@ export default class Alert extends elementorModules.frontend.handlers.Base {
 	}
 }
 
+window.elementorModules.frontend.widgets = elementorModules.frontend.widgets || {};
+window.elementorModules.frontend.widgets[ 'alert.default' ] = Alert;
+

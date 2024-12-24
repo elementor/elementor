@@ -391,6 +391,27 @@ class Frontend extends App {
 			ELEMENTOR_VERSION,
 		);
 
+		wp_register_script_module(
+			'elementor_alert',
+			$this->get_js_assets_url( 'alert', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_counter',
+			$this->get_js_assets_url( 'counter', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_progress',
+			$this->get_js_assets_url( 'progress', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
 //		'alert.default': () => import( /* webpackChunkName: 'alert' */ './handlers/alert' ),
 //		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
 //		'progress.default': () => import( /* webpackChunkName: 'progress' */ './handlers/progress' ),
