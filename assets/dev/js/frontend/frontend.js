@@ -3,9 +3,6 @@ import '../public-path';
 import DocumentsManager from './documents-manager';
 import Storage from 'elementor-common/utils/storage';
 import environment from 'elementor-common/utils/environment';
-import YouTubeApiLoader from './utils/video-api/youtube-loader';
-import VimeoApiLoader from './utils/video-api/vimeo-loader';
-import BaseVideoLoader from './utils/video-api/base-loader';
 import URLActions from './utils/url-actions';
 import SwiperHandler from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
@@ -190,7 +187,6 @@ export default class Frontend extends elementorModules.ViewModule {
 	initOnReadyComponents() {
 		this.utils = this.utils || {};
 
-		this.utils.baseVideoLoader = new BaseVideoLoader();
 		this.utils.urlActions = new URLActions();
 		this.utils.swiper = SwiperHandler;
 		this.utils.environment = environment;

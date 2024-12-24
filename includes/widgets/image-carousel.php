@@ -118,6 +118,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	 */
 	public function get_script_module_depends(): array {
 		return [
+			'elementor_utils_swiper',
 			'elementor_base_swiper',
 			'elementor_base_carousel',
 			'elementor_image_carousel',
