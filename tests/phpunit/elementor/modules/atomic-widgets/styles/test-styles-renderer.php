@@ -7,8 +7,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Gradient_Overlay_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corner_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes_Transformer;
@@ -16,8 +14,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dim
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
@@ -410,30 +406,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 												'$$type' => 'background-color-overlay',
 												'value' => 'blue',
 											],
-
-											[
-												'$$type' => 'background-gradient-overlay',
-												'value' => [
-													'color' => [
-														'$$type' => 'color',
-														'value' => 'green',
-													],
-												],
-											],
-
-											[
-												'$$type' => 'background-image-overlay',
-												'value' => [
-													'url' => [
-														'$$type' => 'string',
-														'value' => 'https://ex.com/img-1.jpeg',
-													],
-													'repeat' => [
-														'$$type' => 'string',
-														'value' => 'no-repeat',
-													],
-												],
-											],
 										],
 									],
 
@@ -560,8 +532,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ', ' ) );
 
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
-		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
-		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
 	}
 
 	public function test_render__style_with_nested_transformers() {
