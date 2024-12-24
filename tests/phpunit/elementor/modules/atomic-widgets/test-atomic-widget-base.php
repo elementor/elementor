@@ -769,7 +769,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'number_prop' => Number_Prop_Type::make()->default( 0 ),
 			],
 			'settings' => [
-				'string_prop' => '<script>invalid HTML string</script>',
+				'string_prop' => '<b>invalid HTML string</b>',
 				'number_prop' => '123',
 			],
 		] );
