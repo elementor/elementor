@@ -70,7 +70,7 @@ class Global_Classes_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
 			[
 				'methods' => 'PUT',
-				'callback' => fn( $request ) => $this->put( $request ),
+				'callback' => fn( $request ) => $this->route_wrapper(fn() => $this->put( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
@@ -78,7 +78,7 @@ class Global_Classes_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
 				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->create( $request ),
+				'callback' => fn( $request ) => $this->route_wrapper(fn() => $this->create( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
