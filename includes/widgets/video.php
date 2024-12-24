@@ -183,6 +183,24 @@ class Widget_Video extends Widget_Base {
 								],
 							],
 						],
+						[
+							'name' => 'elementor_utils_base_video' ,
+							'conditions' => [
+								'relation' => 'and',
+								'terms' => [
+									[
+										'name' => 'video_type',
+										'operator' => '!==',
+										'value' => 'youtube',
+									],
+									[
+										'name' => 'video_type',
+										'operator' => '!==',
+										'value' => 'vimeo',
+									],
+								],
+							],
+						],
 					],
 				]
 			]
