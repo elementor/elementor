@@ -1,7 +1,7 @@
 import globalHandler from './handlers/global';
 import backgroundHandlers from './handlers/background';
 import containerHandlers from './handlers/container/container';
-import columnHandlers from './handlers/column';
+// import columnHandlers from './handlers/column';
 
 // Section handlers.
 import HandlesPosition from './handlers/section/handles-position';
@@ -14,25 +14,13 @@ module.exports = function( $ ) {
 	const handlersInstances = {};
 
 	this.elementsHandlers = {
-		'accordion.default': () => import( /* webpackChunkName: 'accordion' */ './handlers/accordion' ),
-		'alert.default': () => import( /* webpackChunkName: 'alert' */ './handlers/alert' ),
-		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
-		'progress.default': () => import( /* webpackChunkName: 'progress' */ './handlers/progress' ),
-		'tabs.default': () => import( /* webpackChunkName: 'tabs' */ './handlers/tabs' ),
-		'toggle.default': () => import( /* webpackChunkName: 'toggle' */ './handlers/toggle' ),
-		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
-		'image-carousel.default': () => import( /* webpackChunkName: 'image-carousel' */ './handlers/image-carousel' ),
-		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
-	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
-		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
-	}
-
-	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
-		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion' );
-	}
+	this.elementsHandlers = {
+		...this.elementsHandlers,
+		...window.elementorModules.frontend.widgets,
+	};
 
 	if ( elementorFrontendConfig.experimentalFeatures.container ) {
 		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/floating-buttons/assets/js/floating-buttons/frontend/handlers/contact-buttons' );
@@ -44,19 +32,26 @@ module.exports = function( $ ) {
 	const addElementsHandlers = () => {
 		this.elementsHandlers.section = [
 			StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
-			...backgroundHandlers,
-			HandlesPosition,
+			// ...backgroundHandlers,
 			Shapes,
 		];
 
+		if ( elementorFrontend.isEditMode() ) {
+			this.elementsHandlers.section.push( HandlesPosition );
+		}
+
 		this.elementsHandlers.container = [ ...backgroundHandlers ];
+
+		if ( window.hasOwnProperty( 'elementorElementHandlers' ) && !! elementorElementHandlers.backgroundSlideshow ) {
+			this.elementsHandlers.container.push( elementorElementHandlers.backgroundSlideshow );
+		}
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {
 			this.elementsHandlers.container.push( ...containerHandlers );
 		}
 
-		this.elementsHandlers.column = columnHandlers;
+		// this.elementsHandlers.column = columnHandlers;
 
 		$.each( this.elementsHandlers, ( elementName, Handlers ) => {
 			const elementData = elementName.split( '.' );

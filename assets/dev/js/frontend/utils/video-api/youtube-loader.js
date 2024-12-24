@@ -1,4 +1,4 @@
-import BaseLoader from './base-loader';
+import BaseLoader from './base-loader.js';
 
 export default class YoutubeLoader extends BaseLoader {
 	getApiURL() {
@@ -17,3 +17,7 @@ export default class YoutubeLoader extends BaseLoader {
 		return YT;
 	}
 }
+
+window.elementorFrontend = window.elementorFrontend || {};
+window.elementorFrontend.utils = window.elementorFrontend.utils || {};
+window.elementorFrontend.utils.youtube = new YoutubeLoader();

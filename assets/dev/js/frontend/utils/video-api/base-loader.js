@@ -20,6 +20,8 @@ export default class BaseLoader extends elementorModules.ViewModule {
 		this.setSettings( 'isInserted', true );
 	}
 
+	getURLRegex() {}
+
 	getVideoIDFromURL( url ) {
 		const videoIDParts = url.match( this.getURLRegex() );
 
@@ -45,3 +47,7 @@ export default class BaseLoader extends elementorModules.ViewModule {
 		return videoURL.replace( '&autoplay=0', '' ) + '&autoplay=1';
 	}
 }
+
+window.elementorFrontend = window.elementorFrontend || {};
+window.elementorFrontend.utils = window.elementorFrontend.utils || {};
+window.elementorFrontend.utils.baseVideoLoader = new BaseLoader();

@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\Isolation;
 
+use Elementor;
 use Elementor\Core\Settings\Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
@@ -85,5 +86,25 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
 	public function get_post_status( $post_id ) : string {
 		return get_post_status( $post_id );
+	}
+
+	public function wp_register_script_module( string $id, string $src, array $deps = array(), $version = false ) : void {
+		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+			require_once ELEMENTOR_PATH . 'includes/wordpress/script-modules.php';
+			cloned_wp_register_script_module( $id, $src, $deps, $version );
+			return;
+		}
+
+		wp_register_script_module( $id, $src, $deps, $version );
+	}
+
+	public function wp_enqueue_script_module( string $id, string $src = '', array $deps = array(), $version = false ) : void {
+		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+			require_once ELEMENTOR_PATH . 'includes/wordpress/script-modules.php';
+			cloned_wp_enqueue_script_module( $id, $src, $deps, $version );
+			return;
+		}
+
+		wp_enqueue_script_module( $id, $src, $deps, $version );
 	}
 }

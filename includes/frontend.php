@@ -11,6 +11,8 @@ use Elementor\Core\Responsive\Responsive;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Modules\FloatingButtons\Module;
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -148,6 +150,8 @@ class Frontend extends App {
 
 	private $google_fonts_index = 0;
 
+	private $wordpress_adapter;
+
 	/**
 	 * Front End constructor.
 	 *
@@ -157,7 +161,7 @@ class Frontend extends App {
 	 * @since 1.0.0
 	 * @access public
 	 */
-	public function __construct() {
+	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
 		// We don't need this class in admin side, but in AJAX requests.
 		if ( is_admin() && ! wp_doing_ajax() ) {
 			return;
@@ -165,10 +169,13 @@ class Frontend extends App {
 
 		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_script_modules' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
 		$this->add_content_filter();
+		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
@@ -341,6 +348,132 @@ class Frontend extends App {
 	 */
 	public function remove_content_filter() {
 		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+	}
+
+	/**
+	 * Registers script modules.
+	 *
+	 * Registers all the frontend script modules.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
+	 *
+	 * @since 3.27.0
+	 * @access public
+	 */
+	public function register_script_modules(): void {
+		$this->wordpress_adapter->wp_register_script_module(
+			'elementor_base_swiper',
+			$this->get_js_assets_url( 'base-swiper', 'assets/dev/js/frontend/handlers/' ),
+			[ 'elementorModules/baseModule' ],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_base_carousel',
+			$this->get_js_assets_url( 'base-carousel', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_background_slideshow',
+			$this->get_js_assets_url( 'background-slideshow', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_image_carousel',
+			$this->get_js_assets_url( 'image-carousel', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_accordion',
+			$this->get_js_assets_url( 'accordion', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_alert',
+			$this->get_js_assets_url( 'alert', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_counter',
+			$this->get_js_assets_url( 'counter', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_progress',
+			$this->get_js_assets_url( 'progress', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_tabs',
+			$this->get_js_assets_url( 'tabs', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_toggle',
+			$this->get_js_assets_url( 'toggle', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_video',
+			$this->get_js_assets_url( 'video', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_text_editor',
+			$this->get_js_assets_url( 'text-editor', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_utils_youtube',
+			$this->get_js_assets_url( 'youtube-loader', 'assets/dev/js/frontend/utils/video-api/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_utils_vimeo',
+			$this->get_js_assets_url( 'vimeo-loader', 'assets/dev/js/frontend/utils/video-api/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_utils_base_video',
+			$this->get_js_assets_url( 'base-loader', 'assets/dev/js/frontend/utils/video-api/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_utils_swiper',
+			$this->get_js_assets_url( 'swiper', 'assets/dev/js/frontend/utils/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		do_action( 'elementor/frontend/after_register_script_modules' );
 	}
 
 	/**

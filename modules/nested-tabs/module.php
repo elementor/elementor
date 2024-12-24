@@ -28,6 +28,8 @@ class Module extends \Elementor\Core\Base\Module {
 				'nested-elements',
 			], ELEMENTOR_VERSION, true );
 		} );
+
+		add_action( 'elementor/frontend/after_register_script_modules', [ $this, 'register_script_modules' ] );
 	}
 
 	/**
@@ -47,6 +49,15 @@ class Module extends \Elementor\Core\Base\Module {
 			$this->get_frontend_file_url( "widget-nested-tabs{$direction_suffix}.min.css", $has_custom_breakpoints ),
 			[ 'elementor-frontend' ],
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
+		);
+	}
+
+	public function register_script_modules(): void {
+		wp_register_script_module(
+			'elementor_nested_tabs',
+			ELEMENTOR_URL . 'modules/nested-tabs/assets/js/frontend/handlers/nested-tabs.js',
+			[],
+			ELEMENTOR_VERSION,
 		);
 	}
 }
