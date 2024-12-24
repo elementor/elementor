@@ -188,7 +188,6 @@ export default class Frontend extends elementorModules.ViewModule {
 		this.utils = this.utils || {};
 
 		this.utils.urlActions = new URLActions();
-		this.utils.swiper = SwiperHandler;
 		this.utils.environment = environment;
 		this.utils.assetsLoader = new AssetsLoader();
 		this.utils.escapeHTML = escapeHTML;

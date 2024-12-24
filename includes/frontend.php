@@ -468,7 +468,7 @@ class Frontend extends App {
 
 		wp_register_script_module(
 			'elementor_utils_swiper',
-			$this->get_js_assets_url( 'swiper', 'assets/dev/js/frontend/utils/video-api/' ),
+			$this->get_js_assets_url( 'swiper', 'assets/dev/js/frontend/utils/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
