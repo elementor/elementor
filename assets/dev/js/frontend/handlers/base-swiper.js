@@ -44,6 +44,9 @@ class SwiperHandlerBase extends elementorModules.frontend.handlers.Base {
 	}
 }
 
+window.elementorModules = elementorModules || {};
+window.elementorModules.frontend = elementorModules.frontend || {};
+window.elementorModules.frontend.handlers = elementorModules.frontend.handlers || {};
 window.elementorModules.frontend.handlers.SwiperBase = SwiperHandlerBase;
 
 export default SwiperHandlerBase;

@@ -356,34 +356,6 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function register_script_modules(): void {
-//		wp_enqueue_script_module(
-//			'elementorModules/baseModule',
-//			$this->get_js_assets_url( 'module', 'assets/dev/js/modules/imports/' ),
-//			[],
-//			ELEMENTOR_VERSION,
-//		);
-//
-//		wp_enqueue_script_module(
-//			'elementorModules/viewModule',
-//			$this->get_js_assets_url( 'view-module', 'assets/dev/js/modules/imports/' ),
-//			[ 'elementorModules/baseModule' ],
-//			ELEMENTOR_VERSION,
-//		);
-//
-//		wp_enqueue_script_module(
-//			'elementorModules/frontend/handlers/base',
-//			$this->get_js_assets_url( 'base', 'assets/dev/js/frontend/handlers/' ),
-//			[ 'elementorModules/viewModule' ],
-//			ELEMENTOR_VERSION,
-//		);
-//
-//		wp_enqueue_script_module(
-//			'elementorModules/frontend/document',
-//			$this->get_js_assets_url( 'document', 'assets/dev/js/frontend/' ),
-//			[ 'elementorModules/viewModule' ],
-//			ELEMENTOR_VERSION,
-//		);
-
 		wp_enqueue_script_module(
 			'elementorModules/frontend/handlers/baseSwiper',
 			$this->get_js_assets_url( 'base-swiper', 'assets/dev/js/frontend/handlers/' ),
