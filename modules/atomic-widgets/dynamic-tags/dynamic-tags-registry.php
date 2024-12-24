@@ -86,7 +86,7 @@ class Dynamic_Tags_Registry {
 		return $atomic_dynamic_tag;
 	}
 
-	private function convert_controls_to_atomic( $controls, $supports_a_widgets ) {
+	private function convert_controls_to_atomic( $controls, $ignore_exception = false ) {
 		$atomic_controls = [];
 		$props_schema = [];
 
@@ -98,7 +98,7 @@ class Dynamic_Tags_Registry {
 			try {
 				['atomic_control' => $atomic_control, 'prop_schema' => $prop_schema] = $this->convert_control_to_atomic( $control );
 			} catch ( \Exception $e ) {
-				if ( $supports_a_widgets ) {
+				if ( $ignore_exception ) {
 					continue;
 				}
 
