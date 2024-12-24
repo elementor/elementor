@@ -107,6 +107,22 @@ class Widget_Video extends Widget_Base {
 		return [ 'widget-video' ];
 	}
 
+	/**
+	 * Get script module dependencies.
+	 *
+	 * Retrieve the list of script module dependencies the widget requires.
+	 *
+	 * @since 3.27.0
+	 * @access public
+	 *
+	 * @return array Widget script module dependencies.
+	 */
+	public function get_script_module_depends(): array {
+		return [
+			'elementor_video',
+		];
+	}
+
 	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}

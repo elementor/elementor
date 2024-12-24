@@ -86,3 +86,6 @@ export default class TextEditor extends elementorModules.frontend.handlers.Base 
 		}
 	}
 }
+
+window.elementorModules.frontend.widgets = elementorModules.frontend.widgets || {};
+window.elementorModules.frontend.widgets[ 'text-editor.default' ] = TextEditor;

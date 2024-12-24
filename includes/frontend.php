@@ -412,15 +412,33 @@ class Frontend extends App {
 			ELEMENTOR_VERSION,
 		);
 
-//		'alert.default': () => import( /* webpackChunkName: 'alert' */ './handlers/alert' ),
-//		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
-//		'progress.default': () => import( /* webpackChunkName: 'progress' */ './handlers/progress' ),
-//		'tabs.default': () => import( /* webpackChunkName: 'tabs' */ './handlers/tabs' ),
-//		'toggle.default': () => import( /* webpackChunkName: 'toggle' */ './handlers/toggle' ),
-//		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
-//		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
-//		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
-//
+		wp_register_script_module(
+			'elementor_tabs',
+			$this->get_js_assets_url( 'tabs', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_toggle',
+			$this->get_js_assets_url( 'toggle', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_video',
+			$this->get_js_assets_url( 'video', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_text_editor',
+			$this->get_js_assets_url( 'text-editor', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
 	}
 
 	/**

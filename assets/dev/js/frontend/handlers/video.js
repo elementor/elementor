@@ -192,3 +192,6 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 		}
 	}
 }
+
+window.elementorModules.frontend.widgets = elementorModules.frontend.widgets || {};
+window.elementorModules.frontend.widgets[ 'video.default' ] = Video;

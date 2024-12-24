@@ -14,10 +14,7 @@ module.exports = function( $ ) {
 	const handlersInstances = {};
 
 	this.elementsHandlers = {
-		'tabs.default': () => import( /* webpackChunkName: 'tabs' */ './handlers/tabs' ),
-		'toggle.default': () => import( /* webpackChunkName: 'toggle' */ './handlers/toggle' ),
-		'video.default': () => import( /* webpackChunkName: 'video' */ './handlers/video' ),
-		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
+		// I am not sure when this file is used.
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 
@@ -25,8 +22,6 @@ module.exports = function( $ ) {
 		...this.elementsHandlers,
 		...window.elementorModules.frontend.widgets,
 	};
-
-	console.log( this.elementsHandlers );
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
