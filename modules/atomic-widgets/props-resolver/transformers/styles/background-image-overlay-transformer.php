@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Background_Image_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
 		$url = $value['url'] ?? '';
-		$repeat = $value['repeat'] ?? 'no-repeat';
-		$pos_x = $value['position_x'] ?? 'top';
-		$pos_y = $value['position_y'] ?? 'left';
-		$attachment = $value['attachment'] ?? 'initial';
+		$repeat = $value['repeat'] ?? '';
+		$pos_x = $value['position_x'] ?? '';
+		$pos_y = $value['position_y'] ?? '';
+		$attachment = $value['attachment'] ?? '';
 
 		return trim( "url(\"$url\") $repeat $pos_x $pos_y $attachment" );
 	}

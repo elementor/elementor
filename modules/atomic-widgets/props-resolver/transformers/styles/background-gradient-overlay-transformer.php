@@ -11,6 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Background_Gradient_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
 		$color = $value['color'] ?? '';
-		return "linear-gradient($color)";
+		return "linear-gradient($color, $color)";
 	}
 }

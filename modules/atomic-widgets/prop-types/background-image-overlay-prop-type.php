@@ -16,7 +16,7 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'url' => String_Prop_Type::make(),
+			'url' => Url_Prop_Type::make(),
 			'repeat' => String_Prop_Type::make(),
 		];
 	}
