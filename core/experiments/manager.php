@@ -398,15 +398,6 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_ACTIVE,
 		] );
-
-		$this->add_feature( [
-			'name' => 'e_head_loading_styles',
-			'title' => esc_html__( 'Head Loading Styles', 'elementor' ),
-			'description' => esc_html__( 'Head Loading Styles', 'elementor' ),
-			'hidden' => true,
-			'default' => self::STATE_INACTIVE,
-			'release_status' => self::RELEASE_STATUS_ALPHA,
-		] );
 	}
 
 	/**
