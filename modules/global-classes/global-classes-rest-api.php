@@ -195,6 +195,6 @@ class Global_Classes_REST_API {
 	}
 
 	private function fail_with_validation_errors( array $errors ) {
-		return new \WP_Error( 'Invalid data: ' . join( ', ', $errors ), [ 'status' => 400 ] );
+		return new \WP_Error( 'Invalid data: ', join( ', ', $errors ), [ 'status' => 400 ] );
 	}
 }
