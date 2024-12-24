@@ -744,11 +744,11 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'not_a_prop_type' => 'not-a-prop-type',
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
-				'number_prop' => 123,
-				'boolean_prop' => true,
-				'not_in_schema' => 'not-in-schema',
-				'not_a_prop_type' => 'not-a-prop-type',
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+				'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
+				'boolean_prop' => [ '$$type' => 'boolean', 'value' => true ],
+				'not_in_schema' => [ '$$type' => 'string', 'value' => 'not-in-schema' ],
+				'not_a_prop_type' => [ '$$type' => 'string', 'value' => 'not-a-prop-type' ],
 			],
 			'styles' => $widget_styles
 		] );
@@ -758,9 +758,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [
-			'string_prop' => 'valid-string',
-			'number_prop' => 123,
-			'boolean_prop' => true,
+			'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+			'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
+			'boolean_prop' => [ '$$type' => 'boolean', 'value' => true ],
 		], $data_for_save['settings'] );
 
 		$this->assertTrue( $widget_styles == $data_for_save['styles'] );
@@ -796,7 +796,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
 			],
 			'styles' => [
 				's-1234' => [
@@ -840,7 +840,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
 			],
 			'styles' => [
 				's-1234' => [
@@ -874,7 +874,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
 			],
 			'styles' => [
 				's-1234' => [
@@ -948,7 +948,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
 			],
 			'styles' => [
 				's-1234' => [
@@ -1010,7 +1010,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
 			],
 			'styles' => [
 				's-1234' => [
@@ -1065,7 +1065,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
 			],
 			'styles' => [
 				's-1234' => [
@@ -1127,7 +1127,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
 			],
 			'styles' => [
 				's-1234' => [
@@ -1164,8 +1164,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'mock_prop_2' => Number_Prop_Type::make()->default( 0 ),
 			],
 			'settings' => [
-				'mock_prop_1' => 123,
-				'mock_prop_2' => 'not-a-number',
+				'mock_prop_1' => [ '$$type' => 'number', 'value' => 123 ],
+				'mock_prop_2' => [ '$$type' => 'string', 'value' => 'not-a-number' ],
 			],
 		] );
 
@@ -1184,7 +1184,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
 			],
 			'styles' => [
 				's-1234' => [
@@ -1232,7 +1232,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
 			],
 			'styles' => [
 				's-1234' => [
