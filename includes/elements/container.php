@@ -714,6 +714,18 @@ class Container extends Element_Base {
 								],
 							],
 						],
+						[
+							'name' => 'elementor_utils_youtube' ,
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'video',
+									],
+								],
+							],
+						],
 					],
 				],
 			]

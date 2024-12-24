@@ -14,7 +14,6 @@ module.exports = function( $ ) {
 	const handlersInstances = {};
 
 	this.elementsHandlers = {
-		// I am not sure when this file is used.
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
 	};
 

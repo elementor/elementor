@@ -20,6 +20,8 @@ export default class BaseLoader extends elementorModules.ViewModule {
 		this.setSettings( 'isInserted', true );
 	}
 
+	getURLRegex() {}
+
 	getVideoIDFromURL( url ) {
 		const videoIDParts = url.match( this.getURLRegex() );
 

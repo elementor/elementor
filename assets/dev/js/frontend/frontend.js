@@ -188,21 +188,24 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	initOnReadyComponents() {
+		this.utils = this.utils || {};
+
+		this.utils.vimeo = new VimeoApiLoader();
+		this.utils.baseVideoLoader = new BaseVideoLoader();
+		this.utils.urlActions = new URLActions();
+		this.utils.swiper = SwiperHandler;
+		this.utils.environment = environment;
+		this.utils.assetsLoader = new AssetsLoader();
+		this.utils.escapeHTML = escapeHTML;
+		this.utils.events = Events;
+		this.utils.controls = new Controls();
+		this.utils.anchor_scroll_margin = new AnchorScrollMargin();
+
 		this.utils = {
-			youtube: new YouTubeApiLoader(),
-			vimeo: new VimeoApiLoader(),
-			baseVideoLoader: new BaseVideoLoader(),
+			...this.utils,
 			get lightbox() {
 				return LightboxManager.getLightbox();
 			},
-			urlActions: new URLActions(),
-			swiper: SwiperHandler,
-			environment,
-			assetsLoader: new AssetsLoader(),
-			escapeHTML,
-			events: Events,
-			controls: new Controls(),
-			anchor_scroll_margin: new AnchorScrollMargin(),
 		};
 
 		// TODO: BC since 2.4.0
