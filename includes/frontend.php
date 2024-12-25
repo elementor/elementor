@@ -474,7 +474,11 @@ class Frontend extends App {
 			ELEMENTOR_VERSION,
 		);
 
-		if ( isset( $_GET['elementor-preview'] ) ) {
+		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+			$this->wordpress_adapter->wp_script_module_add_hooks();
+		}
+
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_base_swiper' );
 			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_base_carousel' );
 			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_background_slideshow', );
