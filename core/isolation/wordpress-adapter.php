@@ -107,4 +107,11 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
 		wp_enqueue_script_module( $id, $src, $deps, $version );
 	}
+
+	public function wp_script_module_add_hooks(): void {
+		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+			require_once ELEMENTOR_PATH . 'includes/wordpress/script-modules.php';
+			wp_script_module_add_hooks();
+		}
+	}
 }

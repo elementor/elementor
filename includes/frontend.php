@@ -170,12 +170,18 @@ class Frontend extends App {
 		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );
 
+		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_script_modules' ], 5 );
+
+
+//		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+//			add_action( 'after_setup_theme', [ $this, 'print_my_wp_script_modules' ] );
+//		}
+
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
 		$this->add_content_filter();
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
@@ -368,105 +374,105 @@ class Frontend extends App {
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_base_carousel',
 			$this->get_js_assets_url( 'base-carousel', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_background_slideshow',
 			$this->get_js_assets_url( 'background-slideshow', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_image_carousel',
 			$this->get_js_assets_url( 'image-carousel', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_accordion',
 			$this->get_js_assets_url( 'accordion', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_alert',
 			$this->get_js_assets_url( 'alert', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_counter',
 			$this->get_js_assets_url( 'counter', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_progress',
 			$this->get_js_assets_url( 'progress', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_tabs',
 			$this->get_js_assets_url( 'tabs', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_toggle',
 			$this->get_js_assets_url( 'toggle', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_video',
 			$this->get_js_assets_url( 'video', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_text_editor',
 			$this->get_js_assets_url( 'text-editor', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_utils_youtube',
 			$this->get_js_assets_url( 'youtube-loader', 'assets/dev/js/frontend/utils/video-api/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_utils_vimeo',
 			$this->get_js_assets_url( 'vimeo-loader', 'assets/dev/js/frontend/utils/video-api/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_utils_base_video',
 			$this->get_js_assets_url( 'base-loader', 'assets/dev/js/frontend/utils/video-api/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
 
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_utils_swiper',
 			$this->get_js_assets_url( 'swiper', 'assets/dev/js/frontend/utils/' ),
 			[],
@@ -1699,5 +1705,9 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
+	}
+
+	public function print_my_wp_script_modules() {
+		$this->wordpress_adapter->wp_script_module_add_hooks();
 	}
 }

@@ -128,6 +128,14 @@ class Loader extends Module {
 					wp_enqueue_style( $asset_name );
 				}
 			}
+
+			if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+				$this->wordpress_adapter->wp_script_module_add_hooks();
+			}
+		}
+
+		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+			$this->wordpress_adapter->wp_script_module_add_hooks();
 		}
 	}
 

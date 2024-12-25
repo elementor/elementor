@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\NestedAccordion;
 
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Core\Base\Module as BaseModule;
 
@@ -10,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+
+	private Wordpress_Adapter|Wordpress_Adapter_Interface $wordpress_adapter;
 
 	public static function is_active() {
 		return Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
@@ -21,6 +25,8 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
+
+		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 
@@ -51,7 +57,7 @@ class Module extends BaseModule {
 	}
 
 	public function register_script_modules(): void {
-		wp_register_script_module(
+		$this->wordpress_adapter->wp_register_script_module(
 			'elementor_nested_accordion',
 			ELEMENTOR_URL . 'modules/nested-accordion/assets/js/frontend/handlers/nested-accordion.js',
 			[],

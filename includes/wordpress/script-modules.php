@@ -18,3 +18,7 @@ function cloned_wp_register_script_module( string $id, string $src, array $deps 
 function cloned_wp_enqueue_script_module( string $id, string $src = '', array $deps = array(), $version = false ): void {
 	cloned_wp_script_modules()->enqueue( $id, $src, $deps, $version );
 }
+
+function wp_script_module_add_hooks(): void {
+	cloned_wp_script_modules()->add_hooks();
+}
