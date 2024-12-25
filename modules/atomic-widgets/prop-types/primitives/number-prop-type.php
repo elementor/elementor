@@ -18,4 +18,8 @@ class Number_Prop_Type extends Plain_Prop_Type {
 	protected function validate_value( $value ): bool {
 		return is_numeric( $value );
 	}
+
+	protected function sanitize_value( $value ) {
+		return (int) $value;
+	}
 }
