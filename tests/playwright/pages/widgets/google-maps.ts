@@ -1,21 +1,44 @@
-import EditorSelectors from '../../selectors/editor-selectors';
 import Content from '../elementor-panel-tabs/content';
 
 export default class GoogleMaps extends Content {
+	/**
+	 * Set Google Maps widget parameters
+	 *
+	 * @param {Object} args          - Google maps parameters.
+	 * @param {string} args.location - The location to set.
+	 * @param {string} args.zoom     - The zoom to set.
+	 * @param {string} args.height   - The height to set.
+	 *
+	 * @return {Promise<string>}
+	 */
 	async setGoogleMapsParams( args : { location: string, zoom: string, height: string } ) {
-		await this.page.locator( EditorSelectors.googleMaps.location ).fill( args.location );
-		await this.page.getByLabel( 'Zoom' ).fill( args.zoom );
-		await this.page.getByRole( 'spinbutton', { name: 'Height' } ).fill( args.height );
+		await this.editor.setTextControlValue( 'address', args.location );
+		await this.editor.setSliderControlValue( 'zoom', args.zoom );
+		await this.editor.setSliderControlValue( 'height', args.height );
 		await this.editor.waitForIframeToLoaded( 'google_maps' );
 	}
 
-	async getSrc( isPublished = false ) {
+	/**
+	 * Get the Google Maps widget src.
+	 *
+	 * @param {boolean} isPublished - Optional. Whether the page is published. Default is false.
+	 *
+	 * @return {Promise<string>}
+	 */
+	async getSrc( isPublished: boolean = false ): Promise<string> {
 		const page = isPublished ? this.page : this.editor.getPreviewFrame();
 		const src = await page.locator( 'iframe' ).getAttribute( 'src' );
 		return src;
 	}
 
-	async getHeight( isPublished = false ) {
+	/**
+	 * Get the Google Maps widget height.
+	 *
+	 * @param {boolean} isPublished - Optional. Whether the page is published. Default is false.
+	 *
+	 * @return {Promise<number>}
+	 */
+	async getHeight( isPublished: boolean = false ): Promise<number> {
 		const page = isPublished ? this.page : this.editor.getPreviewFrame();
 		const box = await page.locator( 'iframe' ).boundingBox();
 		return box.height;
