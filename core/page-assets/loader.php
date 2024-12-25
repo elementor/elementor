@@ -123,7 +123,7 @@ class Loader extends Module {
 				if ( 'scripts' === $assets_type ) {
 					wp_enqueue_script( $asset_name );
 				} else if ( 'script_modules' === $assets_type ) {
-					wp_enqueue_script_module( $asset_name );
+					$this->wordpress_adapter->wp_enqueue_script_module( $asset_name );
 				} else {
 					wp_enqueue_style( $asset_name );
 				}
@@ -163,7 +163,7 @@ class Loader extends Module {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 					} else if ( 'script_modules' === $assets_type ) {
-						wp_enqueue_script_module(  $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
+						$this->wordpress_adapter->wp_enqueue_script_module(  $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					} else {
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					}
@@ -180,7 +180,7 @@ class Loader extends Module {
 				if ( 'scripts' === $assets_type ) {
 					wp_register_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 				} else if ( 'script_modules' === $assets_type ) {
-					wp_register_script_module( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
+					$this->wordpress_adapter->wp_register_script_module( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 				} else {
 					wp_register_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 				}
