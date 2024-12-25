@@ -61,7 +61,7 @@ class Dynamic_Tags_Registry {
 			return null;
 		}
 
-		$atomic_dynamic_tag = [
+		$converted_tag = [
 			'name' => $tag['name'],
 			'categories' => $tag['categories'],
 			'label' => $tag['title'] ?? '',
@@ -71,22 +71,26 @@ class Dynamic_Tags_Registry {
 		];
 
 		if ( ! isset( $tag['controls'] ) ) {
-			return $atomic_dynamic_tag;
+			return $converted_tag;
 		}
 
 		try {
-			['atomic_controls' => $controls, 'props_schema' => $props_schema] = $this->convert_controls_to_atomic( $tag['controls'] );
-
-			$atomic_dynamic_tag['atomic_controls'] = $controls;
-			$atomic_dynamic_tag['props_schema'] = $props_schema;
+			$atomic_schema = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
 		} catch ( \Exception $e ) {
 			return null;
 		}
 
-		return $atomic_dynamic_tag;
+		if ( ! $atomic_schema ) {
+			return null;
+		}
+
+		$converted_tag['atomic_controls'] = $atomic_schema['atomic_controls'];
+		$converted_tag['props_schema'] = $atomic_schema['props_schema'];
+
+		return $converted_tag;
 	}
 
-	private function convert_controls_to_atomic( $controls ) {
+	private function convert_controls_to_atomic( $controls, $force = false ) {
 		$atomic_controls = [];
 		$props_schema = [];
 
@@ -95,7 +99,17 @@ class Dynamic_Tags_Registry {
 				continue;
 			}
 
-			['atomic_control' => $atomic_control, 'prop_schema' => $prop_schema] = $this->convert_control_to_atomic( $control );
+			$atomic_schema = $this->convert_control_to_atomic( $control );
+
+			if ( ! $atomic_schema ) {
+				if ( $force ) {
+					continue;
+				}
+
+				return null;
+			}
+
+			[ 'atomic_control' => $atomic_control, 'prop_schema' => $prop_schema ] = $atomic_schema;
 
 			$section_name = $control['section'];
 
@@ -125,11 +139,13 @@ class Dynamic_Tags_Registry {
 		];
 
 		if ( ! isset( $map[ $control['type'] ] ) ) {
-			throw new \Exception( 'Control type is not allowed' );
+			return null;
 		}
 
-		if ( ! isset( $control['name'], $control['section'], $control['label'], $control['default'] ) ) {
-			throw new \Exception( 'Control must have name, section, label and default' );
+		$is_convertable = ! isset( $control['name'], $control['section'], $control['label'], $control['default'] );
+
+		if ( $is_convertable ) {
+			throw new \Exception( 'Control must have name, section, label, and default' );
 		}
 
 		return $map[ $control['type'] ]( $control );
