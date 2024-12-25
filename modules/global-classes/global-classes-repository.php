@@ -2,6 +2,8 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Styles\Utils as Atomic_Styles_Utils;
 use Elementor\Plugin;
 
@@ -45,7 +47,7 @@ class Global_Classes_Repository {
 		unset( $value['id'] );
 
 		if ( ! isset( $all->get_items()[ $id ] ) ) {
-			throw new \Exception( "Global class with id ${id} not found" );
+			throw new \Exception( "Global class with id {$id} not found" );
 		}
 
 		if ( $value === $all->get_items()[ $id ] ) {

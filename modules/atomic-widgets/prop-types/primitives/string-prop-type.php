@@ -65,4 +65,8 @@ class String_Prop_Type extends Plain_Prop_Type {
 	private function validate_regex( $value ): bool {
 		return preg_match( $this->settings['regex'], $value );
 	}
+
+	protected function sanitize_value( $value ) {
+		return sanitize_text_field( $value );
+	}
 }
