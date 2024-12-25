@@ -167,17 +167,12 @@ class Frontend extends App {
 			return;
 		}
 
+		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
+
 		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );
 
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_script_modules' ], 5 );
-
-
-//		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
-//			add_action( 'after_setup_theme', [ $this, 'print_my_wp_script_modules' ] );
-//		}
-
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
@@ -478,6 +473,25 @@ class Frontend extends App {
 			[],
 			ELEMENTOR_VERSION,
 		);
+
+		if ( isset( $_GET['elementor-preview'] ) ) {
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_base_swiper' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_base_carousel' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_background_slideshow', );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_image_carousel' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_accordion' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_alert' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_counter' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_progress' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_tabs' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_toggle' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_video' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_text_editor' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_utils_youtube' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_utils_vimeo' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_utils_base_video' );
+			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_utils_swiper' );
+		}
 
 		do_action( 'elementor/frontend/after_register_script_modules' );
 	}
@@ -1701,9 +1715,5 @@ class Frontend extends App {
 		$more_link = apply_filters( 'the_content_more_link', $more_link, $more_link_text );
 
 		return force_balance_tags( $parts['main'] ) . $more_link;
-	}
-
-	public function print_my_wp_script_modules() {
-		$this->wordpress_adapter->wp_script_module_add_hooks();
 	}
 }
