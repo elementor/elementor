@@ -183,7 +183,6 @@ const EditorSelectors = {
 	googleMaps: {
 		iframe: 'iframe[src*="https://maps.google.com/maps"]',
 		showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
-		location: '[data-setting="address"]',
 	},
 	soundCloud: {
 		iframe: 'iframe[src*="https://w.soundcloud.com/"]',
