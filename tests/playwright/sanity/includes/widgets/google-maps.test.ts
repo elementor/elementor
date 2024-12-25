@@ -16,6 +16,7 @@ test( 'Verify Google maps controls', async ( { page, apiRequests }, testInfo ) =
 	await editor.closeNavigatorIfOpen();
 	await editor.addWidget( 'google_maps' );
 	await googleMapsWidget.setGoogleMapsParams( { location, zoom, height } );
+
 	let src = await googleMapsWidget.getSrc();
 	const expectedValues = {
 		q: 'New%20York',
