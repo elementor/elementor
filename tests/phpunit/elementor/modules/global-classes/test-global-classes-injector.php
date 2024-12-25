@@ -49,7 +49,7 @@ class Test_Global_Classes_Injector extends Elementor_Test_Base {
 				],
 			],
 		],
-		'order' => [ 'g-4-123', 'g-4-124' ],
+		'order' => [ 'g-4-124', 'g-4-123' ],
 	];
 
 	private Kit $kit;
@@ -80,7 +80,7 @@ class Test_Global_Classes_Injector extends Elementor_Test_Base {
 		// Assert
 		$css = $post->get_content();
 
-		$this->assertEquals( '@media(max-width:767px){.g-4-123{color:pink;}}.g-4-124{color:blue;}', $css );
+		$this->assertEquals( '.g-4-124{color:blue;}@media(max-width:767px){.g-4-123{color:pink;}}', $css );
 	}
 
 	public function test_it__does_not_parse_global_classes_to_kit_css_if_no_classes() {
