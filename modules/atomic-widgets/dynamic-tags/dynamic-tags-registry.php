@@ -62,7 +62,7 @@ class Dynamic_Tags_Registry {
 			return null;
 		}
 
-		$atomic_dynamic_tag = [
+		$converted_tag = [
 			'name' => $tag['name'],
 			'categories' => $tag['categories'],
 			'label' => $tag['title'] ?? '',
@@ -72,16 +72,23 @@ class Dynamic_Tags_Registry {
 		];
 
 		if ( ! isset( $tag['controls'] ) ) {
-			return $atomic_dynamic_tag;
+			return $converted_tag;
 		}
 
-		$atomic_schema = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
+		try {
+			$atomic_schema = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
+		} catch ( \Exception $e ) {
+			return null;
+		}
 
 		if ( ! $atomic_schema ) {
 			return null;
 		}
 
-		return array_merge( $atomic_dynamic_tag, $atomic_schema );
+		$converted_tag['atomic_controls'] = $atomic_schema['atomic_controls'];
+		$converted_tag['props_schema'] = $atomic_schema['props_schema'];
+
+		return $converted_tag;
 	}
 
 	private function convert_controls_to_atomic( $controls, $force = false ) {
@@ -97,13 +104,9 @@ class Dynamic_Tags_Registry {
 
 			if ( ! $atomic_schema ) {
 				if ( $force ) {
-					return null;
+					continue;
 				}
 
-				continue;
-			}
-
-			if ( ! $atomic_schema ) {
 				return null;
 			}
 
@@ -146,11 +149,7 @@ class Dynamic_Tags_Registry {
 			throw new \Exception( 'Control must have name, section, label, and default' );
 		}
 
-		try {
-			return $map[ $control['type'] ]( $control );
-		} catch ( \Exception $e ) {
-			return null;
-		}
+		return $map[ $control['type'] ]( $control );
 	}
 
 	/**
