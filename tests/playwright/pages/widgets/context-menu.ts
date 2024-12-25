@@ -9,7 +9,7 @@ export default class ContextMenu extends Content {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openContextMenu( widget: string ) {
+	async openContextMenu( widget: string ): Promise<void> {
 		await this.editor
 			.getPreviewFrame()
 			.locator( EditorSelectors.getWidgetByName( widget ) )
@@ -24,7 +24,7 @@ export default class ContextMenu extends Content {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async selectWidgetContextMenuItem( widget: string, menuItem: string ) {
+	async selectWidgetContextMenuItem( widget: string, menuItem: string ): Promise<void> {
 		await this.openContextMenu( widget );
 		await this.page.getByRole( 'menuitem', { name: menuItem } ).first().click();
 	}
@@ -36,7 +36,7 @@ export default class ContextMenu extends Content {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async copyElement( elementId: string ) {
+	async copyElement( elementId: string ): Promise<void> {
 		const element = this.editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
 		await element.click( { button: 'right' } );
 
@@ -52,7 +52,7 @@ export default class ContextMenu extends Content {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async pasteElement( selector: string ) {
+	async pasteElement( selector: string ): Promise<void> {
 		await this.editor.getPreviewFrame().locator( selector ).click( { button: 'right' } );
 
 		const pasteSelector = '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste';
@@ -66,7 +66,7 @@ export default class ContextMenu extends Content {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async pasteStyleElement( elementId: string ) {
+	async pasteStyleElement( elementId: string ): Promise<void> {
 		const element = this.editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
 		await element.click( { button: 'right' } );
 

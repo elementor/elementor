@@ -20,25 +20,6 @@
 			border: none; // To deal with inconsistencies
 			background-color: $black; // To show the effect of the aspect ratio when the player does not support responsive well (e.g. Vimeo)
 		}
-
-		// BC for older browsers that don't support `aspect-ratio`.
-		// While Elementor supports Safari 14 and above, Safari started supporting
-		// `aspect-ratio` in Safari 15 which was released on September 2022.
-		@supports not ( aspect-ratio: 1 / 1 ) {
-
-			& {
-				position: relative;
-				overflow: hidden;
-				height: 0;
-				padding-bottom: calc( 100% / var( --video-aspect-ratio ) );
-
-				iframe,
-				video {
-					position: absolute;
-					inset: 0;
-				}
-			}
-		}
 	}
 
 	.elementor-open-inline {
@@ -71,24 +52,6 @@
 			aspect-ratio: var( --video-aspect-ratio );
 			object-fit: cover;
 			object-position: center center;
-		}
-
-		// BC for older browsers that don't support `aspect-ratio`.
-		// While Elementor supports Safari 14 and above, Safari started supporting
-		// `aspect-ratio` in Safari 15 which was released on September 2022.
-		@supports not ( aspect-ratio: 1 / 1 ) {
-
-			& {
-				position: relative;
-				overflow: hidden;
-				height: 0;
-				padding-bottom: calc( 100% / var( --video-aspect-ratio ) );
-
-				img {
-					position: absolute;
-					inset: 0;
-				}
-			}
 		}
 	}
 
