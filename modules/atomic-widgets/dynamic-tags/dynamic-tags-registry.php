@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
@@ -94,7 +95,11 @@ class Dynamic_Tags_Registry {
 
 			$atomic_schema = $this->convert_control_to_atomic( $control );
 
-			if ( ! $atomic_schema && $force ) {
+			if ( ! $atomic_schema ) {
+				if ( $force ) {
+					return null;
+				}
+
 				continue;
 			}
 
@@ -126,17 +131,19 @@ class Dynamic_Tags_Registry {
 	}
 
 	private function convert_control_to_atomic( $control ) {
-		$map = [
+		$map = Collection::make([
 			'select' => fn( $control ) => $this->convert_select_control_to_atomic( $control ),
 			'text' => fn( $control ) => $this->convert_text_control_to_atomic( $control ),
-		];
+		]);
 
 		if ( ! isset( $map[ $control['type'] ] ) ) {
 			return null;
 		}
 
-		if ( ! isset( $control['name'], $control['section'], $control['label'], $control['default'] ) ) {
-			return null;
+		$is_convertable = ! isset( $control['name'], $control['section'], $control['label'], $control['default'] );
+
+		if ( $is_convertable ) {
+			throw new \Exception( 'Control must have name, section, label, and default' );
 		}
 
 		try {
