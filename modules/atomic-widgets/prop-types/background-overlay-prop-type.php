@@ -9,12 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Background_Image_Prop_Type extends Array_Prop_Type {
+class Background_Overlay_Prop_Type extends Array_Prop_Type {
 	public static function get_key(): string {
-		return 'background-image';
+		return 'background-overlay';
 	}
 
 	protected function define_item_type(): Prop_Type {
-		return Color_Gradient_Prop_Type::make();
+		return Union_Prop_Type::make()
+			->add_prop_type( Background_Color_Overlay_Prop_Type::make() );
 	}
 }
