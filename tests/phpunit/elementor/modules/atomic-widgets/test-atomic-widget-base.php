@@ -766,6 +766,29 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertTrue( $widget_styles == $data_for_save['styles'] );
 	}
 
+	public function test_get_data_for_save__sanitize_settings() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+				'number_prop' => Number_Prop_Type::make()->default( 0 ),
+			],
+			'settings' => [
+				'string_prop' => '<b>invalid HTML string</b>',
+				'number_prop' => '123',
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'string_prop' => 'invalid HTML string',
+			'number_prop' => 123,
+		], $data_for_save['settings'] );
+	}
+
 	public function test_get_data_for_save__throws_on_styles_size_prop_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
@@ -885,7 +908,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [
+					'$$type' => 'string',
+					'value' => 'valid-string'
+				],
 			],
 			'styles' => [
 				'1234' => [
