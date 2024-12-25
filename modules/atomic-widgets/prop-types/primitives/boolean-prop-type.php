@@ -18,4 +18,8 @@ class Boolean_Prop_Type extends Plain_Prop_Type {
 	protected function validate_value( $value ): bool {
 		return is_bool( $value );
 	}
+
+	protected function sanitize_value( $value ) {
+		return (bool) $value;
+	}
 }
