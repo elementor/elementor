@@ -8,10 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Background_Overlay_Transformer extends Transformer_Base {
+class Background_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
-		$color = $value['color'];
+		$overlay = $value['background-overlay'] ?? '';
+		$color = $value['color'] ?? '';
 
-		return "linear-gradient($color, $color)";
+		return trim( "$overlay $color" );
 	}
 }
