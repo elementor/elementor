@@ -1,0 +1,1 @@
+.test-style{background:linear-gradient(blue, blue) red;}
