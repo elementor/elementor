@@ -74,13 +74,13 @@ class Dynamic_Tags_Registry {
 			return $atomic_dynamic_tag;
 		}
 
-		$tag_atomic_schema = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
+		$atomic_schema = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
 
-		if ( ! $tag_atomic_schema ) {
+		if ( ! $atomic_schema ) {
 			return null;
 		}
 
-		return array_merge( $atomic_dynamic_tag, $tag_atomic_schema );
+		return array_merge( $atomic_dynamic_tag, $atomic_schema );
 	}
 
 	private function convert_controls_to_atomic( $controls, $force = false ) {
