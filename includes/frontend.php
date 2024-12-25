@@ -474,9 +474,7 @@ class Frontend extends App {
 			ELEMENTOR_VERSION,
 		);
 
-		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
-			$this->wordpress_adapter->wp_script_module_add_hooks();
-		}
+		do_action( 'elementor/frontend/after_register_script_modules' );
 
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_base_swiper' );
@@ -497,7 +495,9 @@ class Frontend extends App {
 			$this->wordpress_adapter->wp_enqueue_script_module( 'elementor_utils_swiper' );
 		}
 
-		do_action( 'elementor/frontend/after_register_script_modules' );
+		if ( version_compare( get_bloginfo( 'version' ), '6.5', '<' ) ) {
+			$this->wordpress_adapter->wp_script_module_add_hooks();
+		}
 	}
 
 	/**
