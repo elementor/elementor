@@ -483,9 +483,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 			}
 
 			public function get_editor_config() {
-				$conf = parent::get_editor_config();
-
-				return array_merge( $conf, $this->options['editor_config'] ?? [] );
+				return array_merge( parent::get_editor_config(), $this->options['editor_config'] ?? [] );
 			}
 
 			protected function register_controls() {
