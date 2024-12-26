@@ -45,8 +45,8 @@ class Link_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
-	public function set_free_solo( bool $freeSolo ): self {
-		$this->free_solo = $freeSolo;
+	public function set_free_solo( bool $free_solo ): self {
+		$this->free_solo = $free_solo;
 
 		return $this;
 	}
@@ -57,7 +57,7 @@ class Link_Control extends Atomic_Control_Base {
 		$options = [];
 
 		foreach ( $posts_map as $post_type_slug => $data ) {
-			foreach ( $data[ 'items' ] as $post ) {
+			foreach ( $data['items'] as $post ) {
 				$options[ $post->guid ] = [
 					'label' => $post->post_title,
 					'groupLabel' => $posts_map[ $post_type_slug ]['label'],

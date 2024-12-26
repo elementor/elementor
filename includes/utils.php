@@ -941,7 +941,10 @@ class Utils {
 			return $post_type->name;
 		}, $post_types );
 
-		$posts = get_posts( [ 'post_type' => $post_type_slugs, 'numberposts' => -1 ] );
+		$posts = get_posts( [
+			'post_type' => $post_type_slugs,
+			'numberposts' => -1,
+		] );
 
 		return array_reduce( $posts, function ( $carry, $post ) use ( $post_types ) {
 			$post_type_label = $post_types[ $post->post_type ]->label;
@@ -953,7 +956,7 @@ class Utils {
 				];
 			}
 
-			$carry[ $post->post_type ][ 'items' ][] = $post;
+			$carry[ $post->post_type ]['items'][] = $post;
 
 			return $carry;
 		}, [] );
