@@ -37,7 +37,6 @@ class Popups_Promotion_Item extends Base_Promotion_Item {
 		return 'popups';
 	}
 
-
 	public function get_label() {
 		return esc_html__( 'Popups', 'elementor' );
 	}
@@ -52,14 +51,6 @@ class Popups_Promotion_Item extends Base_Promotion_Item {
 
 	public function get_promotion_description() {
 		return $this->promotion_data['content'];
-	}
-
-	/**
-	 * @deprecated use get_promotion_description instead
-	 * @return void
-	 */
-	public function render_promotion_description() {
-		echo $this->get_promotion_description(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	public function get_cta_url() {
