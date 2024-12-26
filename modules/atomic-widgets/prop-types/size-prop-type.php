@@ -23,4 +23,12 @@ class Size_Prop_Type extends Plain_Prop_Type
 	{
 		return array_key_exists('size', $value) && is_numeric($value['size']) && array_key_exists('unit', $value) && is_string($value['unit']) && in_array($value['unit'], static::SUPPORTED_UNITS, true);
 	}
+
+	protected function sanitize_value($value)
+	{
+		return [
+			'size' => (int) $value[ 'size' ],
+			'unit' => sanitize_text_field( $value[ 'unit' ] ),
+		];
+	}
 }

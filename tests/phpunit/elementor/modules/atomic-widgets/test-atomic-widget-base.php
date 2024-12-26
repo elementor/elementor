@@ -628,7 +628,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'props' => [
 							'color' => [
 								'$$type' => 'color',
-								'value' => [ '$$type' => 'string', 'value' => 'red' ],
+								'value' => 'red',
 							],
 							'font-size' => [
 								'$$type' => 'size',
@@ -768,8 +768,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'number_prop' => Number_Prop_Type::make()->default( 0 ),
 			],
 			'settings' => [
-				'string_prop' => '<b>invalid HTML string</b>',
-				'number_prop' => '123',
+				'string_prop' => [ '$$type' => 'string', 'value' => '<b>invalid HTML string</b>' ],
+				'number_prop' => [ '$$type' => 'number', 'value' => '123' ],
 			],
 		] );
 
@@ -778,8 +778,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [
-			'string_prop' => 'invalid HTML string',
-			'number_prop' => 123,
+			'string_prop' => [ '$$type' => 'string', 'value' => 'invalid HTML string' ],
+			'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
 		], $data_for_save['settings'] );
 	}
 
