@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Gap_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -26,7 +27,6 @@ class Style_Schema {
 			self::get_spacing_props(),
 			self::get_border_props(),
 			self::get_background_props(),
-			self::get_background_overlay_props(),
 			self::get_effects_props(),
 			self::get_layout_props(),
 			self::get_alignment_props(),
@@ -147,13 +147,7 @@ class Style_Schema {
 
 	private static function get_background_props() {
 		return [
-			'background-color' => Color_Prop_Type::make(),
-		];
-	}
-
-	private static function get_background_overlay_props() {
-		return [
-			'background-image' => Background_Image_Prop_Type::make(),
+			'background' => Background_Prop_Type::make(),
 		];
 	}
 
@@ -183,7 +177,7 @@ class Style_Schema {
 				'column',
 				'column-reverse',
 			]),
-			'gap' => Size_Prop_Type::make(),
+			'gap' => Gap_Prop_Type::make(),
 			'flex-wrap' => String_Prop_Type::make()->enum([
 				'wrap',
 				'nowrap',

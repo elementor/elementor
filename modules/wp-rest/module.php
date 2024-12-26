@@ -11,7 +11,6 @@ defined( 'ABSPATH' ) || exit;
 
 class Module extends BaseModule {
 
-
 	public function get_name() {
 		return 'wp-rest';
 	}
