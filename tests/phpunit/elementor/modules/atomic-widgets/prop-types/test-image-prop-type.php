@@ -52,7 +52,7 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 						],
 					],
 				],
-				'size' => 'full',
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
 			],
 		] );
 
