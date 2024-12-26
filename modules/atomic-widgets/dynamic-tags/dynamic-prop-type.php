@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Validators\Props_Validator;
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -53,9 +53,17 @@ class Dynamic_Prop_Type extends Plain_Prop_Type {
 			return false;
 		}
 
-		[ $is_valid ] = Props_Validator::make( $tag['props_schema'] )->validate( $value['settings'] );
+		[ $is_valid ] = Props_Parser::make( $tag['props_schema'] )->validate( $value['settings'] );
 
 		return $is_valid;
+	}
+
+	protected function sanitize_value( $value ): array {
+		$tag = Dynamic_Tags_Module::instance()->registry->get_tag( $value['name'] );
+
+		$sanitized = Props_Parser::make( $tag['props_schema'] )->sanitize( $value['settings'] );
+
+		return $sanitized;
 	}
 
 	private function is_tag_in_supported_categories( array $tag ): bool {

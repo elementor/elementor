@@ -30,6 +30,10 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		return $style_depends;
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	public function get_icon(): string {
 		return 'eicon-banner';
 	}

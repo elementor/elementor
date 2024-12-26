@@ -37,6 +37,12 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		);
 	}
 
+	public function sanitize( $value ) {
+		$value['value'] = $this->sanitize_value( $value['value'] );
+
+		return $value;
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'kind' => static::KIND,
@@ -50,4 +56,6 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	abstract public static function get_key(): string;
 
 	abstract protected function validate_value( $value ): bool;
+
+	abstract protected function sanitize_value( $value );
 }

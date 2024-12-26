@@ -42,7 +42,9 @@ const UnifySingleProductImages = ( { productsImages, setProductImages, isProduct
 						newImage,
 						isProductGallery,
 					);
-				} } /> }
+				} }
+				onClose={ () => setIsOpen( false ) }
+			/> }
 		</div> );
 };
 

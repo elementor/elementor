@@ -29,7 +29,7 @@ if ( ! $has_pro ) {
 ?>
 <script type="text/template" id="tmpl-elementor-navigator">
 	<div id="elementor-navigator__header">
-		<button id="elementor-navigator__toggle-all" data-elementor-action="expand" aria-label="<?php esc_attr__( 'Expand all elements', 'elementor' ); ?>">
+		<button id="elementor-navigator__toggle-all" data-elementor-action="expand" aria-label="<?php echo esc_attr__( 'Expand all elements', 'elementor' ); ?>">
 			<i class="eicon-expand" aria-hidden="true"></i>
 		</button>
 		<h2 id="elementor-navigator__header__title"><?php echo esc_html__( 'Structure', 'elementor' ); ?></h2>

@@ -16,4 +16,8 @@ class Color_Prop_Type extends Plain_Prop_Type {
 	protected function validate_value( $value ): bool {
 		return is_string( $value );
 	}
+
+	protected function sanitize_value( $value ) {
+		return sanitize_text_field( $value );
+	}
 }

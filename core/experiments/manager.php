@@ -372,16 +372,6 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'e_nested_atomic_repeaters',
-			'title' => esc_html__( 'Nested Elements Performance', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Improve the performance of the Nested widgets.', 'elementor' ),
-			static::TYPE_HIDDEN => true,
-			'release_status' => self::RELEASE_STATUS_DEV,
-			'default' => self::STATE_ACTIVE,
-		] );
-
-		$this->add_feature( [
 			'name' => 'e_optimized_markup',
 			'title' => esc_html__( 'Optimized Markup', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
@@ -677,6 +667,9 @@ class Manager extends Base_Object {
 			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo $feature['title']; ?></label>
 			<?php foreach ( $feature['tags'] as $tag ) { ?>
 				<span class="e-experiment__title__tag e-experiment__title__tag__<?php echo $tag['type']; ?>"><?php echo $tag['label']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+			<?php } ?>
+			<?php if ( $feature['deprecated'] ) { ?>
+				<span class="e-experiment__title__tag e-experiment__title__tag__deprecated"><?php echo esc_html__( 'Deprecated', 'elementor' ); ?></span>
 			<?php } ?>
 		</div>
 		<?php
@@ -1045,9 +1038,10 @@ class Manager extends Base_Object {
 			],
 			'on_state_change' => null,
 			'generator_tag' => false,
+			'deprecated' => false,
 		];
 
-		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag', 'messages' ];
+		$allowed_options = [ 'name', 'title', 'tag', 'tags', 'description', 'release_status', 'default', 'mutable', static::TYPE_HIDDEN, 'new_site', 'on_state_change', 'dependencies', 'generator_tag', 'messages', 'deprecated' ];
 		$experimental_data = $this->merge_properties( $default_experimental_data, $options, $allowed_options );
 
 		return $this->unify_feature_tags( $experimental_data );
