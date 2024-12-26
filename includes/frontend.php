@@ -383,6 +383,14 @@ class Frontend extends App {
 		);
 
 		wp_register_script(
+			'swiper',
+			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/v8/' ),
+			[],
+			'8.4.5',
+			true
+		);
+
+		wp_register_script(
 			'flatpickr',
 			$this->get_js_assets_url( 'flatpickr', 'assets/lib/flatpickr/' ),
 			[
@@ -683,10 +691,6 @@ class Frontend extends App {
 		$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
 		if ( ! empty( $page_assets ) ) {
 			Plugin::$instance->assets_loader->enable_assets( $page_assets );
-			return;
-		}
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_head_loading_styles' ) ) {
 			return;
 		}
 

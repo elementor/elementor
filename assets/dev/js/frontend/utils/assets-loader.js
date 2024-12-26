@@ -72,6 +72,7 @@ AssetsLoader.assets = {
 		'share-link': {
 			src: `${ assetsUrl }lib/share-link/share-link${ fileSuffix }.js?ver=${ pluginVersion }`,
 		},
+		// TODO: Remove 'swiper' in v3.29.0 [ED-16272].
 		swiper: {
 			src: `${ assetsUrl }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`,
 		},
