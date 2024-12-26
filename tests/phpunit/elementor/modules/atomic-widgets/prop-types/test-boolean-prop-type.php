@@ -25,6 +25,6 @@ class Test_Boolean_Prop_Type extends Elementor_Test_Base {
 		$prop_type = Boolean_Prop_Type::make();
 
 		// Act.
-		$this->assertFalse( $prop_type->validate( 'string' ) );
+		$this->assertFalse( $prop_type->validate( [ '$$type' => 'string', 'value' => 'string' ] ) );
 	}
 }

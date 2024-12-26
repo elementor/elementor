@@ -799,7 +799,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
-								'font-size' => 'not-a-size',
+								'font-size' => [ '$$type' => 'string', 'value' => 'not-a-size' ],
 								'width' => [ // Missing unit
 									'$$type' => 'size',
 									'value' => [ 'size' => 16 ],
