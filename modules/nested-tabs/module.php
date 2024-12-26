@@ -1,8 +1,6 @@
 <?php
 namespace Elementor\Modules\NestedTabs;
 
-use Elementor\Core\Isolation\Wordpress_Adapter;
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 
@@ -12,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
-	private Wordpress_Adapter|Wordpress_Adapter_Interface $wordpress_adapter;
-
 	public static function is_active() {
 		return Plugin::$instance->experiments->is_feature_active( NestedElementsModule::EXPERIMENT_NAME );
 	}
@@ -22,7 +18,7 @@ class Module extends \Elementor\Core\Base\Module {
 		return 'nested-tabs';
 	}
 
-	public function __construct( ?Wordpress_Adapter_Interface $wordpress_adapter = null ) {
+	public function __construct() {
 		parent::__construct();
 
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
@@ -34,8 +30,6 @@ class Module extends \Elementor\Core\Base\Module {
 		} );
 
 		add_action( 'elementor/frontend/after_register_script_modules', [ $this, 'register_script_modules' ] );
-
-		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
 	}
 
 	/**
@@ -59,7 +53,7 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function register_script_modules(): void {
-		$this->wordpress_adapter->wp_register_script_module(
+		wp_register_script_module(
 			'elementor_nested_tabs',
 			ELEMENTOR_URL . 'modules/nested-tabs/assets/js/frontend/handlers/nested-tabs.js',
 			[],
