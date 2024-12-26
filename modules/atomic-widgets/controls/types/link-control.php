@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Link_Control extends Atomic_Control_Base {
 	private ?string $placeholder = null;
-	private ?array $options = [];
-	private bool $is_autocomplete = false;
-	private bool $free_solo = false;
+	private ?array $options = null;
+	private ?bool $is_autocomplete = null;
+	private ?bool $is_free_solo = null;
 
 	public function get_type(): string {
 		return 'link';
@@ -35,7 +35,7 @@ class Link_Control extends Atomic_Control_Base {
 			'placeholder' => $this->placeholder,
 			'options' => $this->options,
 			'isAutocomplete' => $this->is_autocomplete,
-			'freeSolo' => $this->free_solo,
+			'isFreeSolo' => $this->is_free_solo,
 		];
 	}
 
@@ -45,8 +45,8 @@ class Link_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
-	public function set_free_solo( bool $free_solo ): self {
-		$this->free_solo = $free_solo;
+	public function set_is_free_solo( bool $is_free_solo ): self {
+		$this->is_free_solo = $is_free_solo;
 
 		return $this;
 	}
