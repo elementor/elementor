@@ -12,7 +12,7 @@
 		"test:setup:playwright:mac": "pnpm run build && pnpm run start-local-server && pnpm run test:setup:playwright && npx playwright install chromium",
 		"wp-env": "wp-env",
 		"test:linux": "node ./run-on-linux.js",
-		"build": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload && grunt build",
+		"build": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload && pnpm grunt build",
 		"setup-templates": "rm -rf ./templates && mkdir -p ./templates/playwright && mkdir -p ./templates/lighthouse && cp ./tests/playwright/templates/* ./templates/playwright && cp ./tests/lighthouse/templates/* ./templates/lighthouse",
 		"start-local-server": "pnpm run setup-templates && wp-env start",
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
@@ -122,6 +122,7 @@
 		"webpack": "^5.97.1"
 	},
 	"dependencies": {
+		"@babel/runtime": "^7.26.0",
 		"@elementor/editor": "0.17.2",
 		"@elementor/editor-app-bar": "0.22.2",
 		"@elementor/editor-canvas": "0.4.0",
