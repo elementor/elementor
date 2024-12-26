@@ -359,7 +359,7 @@ class Frontend extends App {
 		wp_register_script_module(
 			'elementor_base_swiper',
 			$this->get_js_assets_url( 'base-swiper', 'assets/dev/js/frontend/handlers/' ),
-			[ 'elementorModules/baseModule' ],
+			[],
 			ELEMENTOR_VERSION,
 		);
 
@@ -470,7 +470,7 @@ class Frontend extends App {
 
 		do_action( 'elementor/frontend/after_register_script_modules' );
 
-		if ( Plugin::$instance->preview->is_preview_mode() ) {
+//		if ( Plugin::$instance->preview->is_preview_mode() ) {
 			wp_enqueue_script_module( 'elementor_base_swiper' );
 			wp_enqueue_script_module( 'elementor_base_carousel' );
 			wp_enqueue_script_module( 'elementor_background_slideshow', );
@@ -490,7 +490,7 @@ class Frontend extends App {
 
 			wp_enqueue_script_module( 'elementor_nested_tabs' );
 			wp_enqueue_script_module( 'elementor_nested_accordion' );
-		}
+//		}
 	}
 
 	/**

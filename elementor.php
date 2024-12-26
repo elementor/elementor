@@ -110,7 +110,10 @@ if ( ! function_exists( 'wp_enqueue_script_module' ) ) {
 	function wp_enqueue_script_module( $handle, $src = '', $dependencies = [], $version = false ): void {
 		$bc_handle = '__elementor_wp_bc_' . $handle;
 
-		wp_register_script_module( $bc_handle, $src, $dependencies, $version );
+		if ( ! wp_script_is( $bc_handle, 'registered' ) ) {
+			wp_register_script_module( $bc_handle, $src, $dependencies, $version );
+
+		}
 
 		wp_enqueue_script( $bc_handle );
 	}
