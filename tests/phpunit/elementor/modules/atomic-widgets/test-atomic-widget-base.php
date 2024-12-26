@@ -51,16 +51,11 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'prop_types' => [
 						'text' => String_Prop_Type::make()->default( 'The greatest text' ),
 						'tag' => String_Prop_Type::make()->default( 'h2' ),
-						'transformable_string' => String_Prop_Type::make(),
 						'link' => Link_Prop_Type::make(),
 					],
 					'settings' => [
-						'text' => 'This text is more great than the greatest text',
-						'invalid_prop' => 'This prop is not in the schema',
-						'transformable_string' => [
-							'$$type' => 'string',
-							'value' => 'This is awesome!',
-						],
+						'text' => [ '$$type' => 'string', 'value' => 'This text is more great than the greatest text'],
+						'invalid_prop' => [ '$$type' => 'string', 'value' => 'This prop is not in the schema'],
 						'link' => [
 							'$$type' => 'link',
 							'value' => [
@@ -73,7 +68,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'result' => [
 						'text' => 'This text is more great than the greatest text',
 						'tag' => 'h2',
-						'transformable_string' => 'This is awesome!',
 						'link' => [
 							'href' => 'https://elementor.com',
 							'target' => '_blank',
@@ -131,7 +125,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'settings' => [
 						'classes' => [
 							'$$type' => 'classes',
-							'value' => [ 'one', 'two', 'three' ],
+							'value' => [ [ '$$type' => 'string', 'value' => 'one'], [ '$$type' => 'string', 'value' => 'two'], [ '$$type' => 'string', 'value' => 'three' ] ],
 						],
 						'outer_classes' => [
 							'$$type' => 'classes',
@@ -223,7 +217,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'image' => [
 					'$$type' => 'image',
 					'value' => [
-						'size' => 'medium',
+						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
 					],
 				],
 			],
@@ -255,7 +249,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'url' => 'https://example.com/image.jpg',
 							],
 						],
-						'size' => 'medium',
+						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
 					],
 				],
 			],
@@ -295,7 +289,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'url' => null,
 							],
 						],
-						'size' => 'medium',
+						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
 					],
 				],
 			],
@@ -327,7 +321,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'url' => null,
 							],
 						],
-						'size' => 'medium',
+						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
 					],
 				],
 			],
@@ -357,7 +351,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'url' => null,
 							],
 						],
-						'size' => 'medium',
+						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
 					],
 				],
 			],
@@ -423,7 +417,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'name' => 'test-image-dynamic',
 							],
 						],
-						'size' => 'medium',
+						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
 					],
 				],
 			],
@@ -634,7 +628,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'props' => [
 							'color' => [
 								'$$type' => 'color',
-								'value' => 'red',
+								'value' => [ '$$type' => 'string', 'value' => 'red' ],
 							],
 							'font-size' => [
 								'$$type' => 'size',
