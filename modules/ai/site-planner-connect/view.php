@@ -89,10 +89,13 @@ defined( 'ABSPATH' ) || exit;
 	}
 </style>
 <div class="site-planner-consent">
-	<h1 class="site-planner-consent-title">Connect to Site Planner</h1>
+	<h1 class="site-planner-consent-title">
+		<?php echo esc_html__( 'Connect to Site Planner', 'elementor' ); ?>
+	</h1>
 	<div style="height: 20px"></div>
-	<p class="site-planner-consent-description">To connect to Site Planner, you need to generate an application
-		password.</p>
+	<p class="site-planner-consent-description">
+		<?php echo esc_html__( 'To connect to Site Planner, you need to generate an application password.', 'elementor' ); ?>
+	</p>
 	<div style="height: 40px"></div>
 	<svg width="287" height="40" viewBox="0 0 287 40" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<line x1="16.5" y1="22.5" x2="271.5" y2="22.5" stroke="#69727D" stroke-linecap="round" stroke-linejoin="round"
@@ -126,21 +129,19 @@ defined( 'ABSPATH' ) || exit;
 
 	<div class="site-planner-consent-connect-names">
 		<div>%domain%</div>
-		<div>Site Planner</div>
+		<div>%app_name%</div>
 	</div>
 	<div style="height: 40px"></div>
 
 	<button class="site-planner-consent-button" onclick="sendPassword()">
-		Approve & Connect
+		<?php echo esc_html__( 'Approve & Connect', 'elementor' ); ?>
 	</button>
 </div>
 <script>
-	// Move the consent dialog to the body
+	// Move the consent dialog to the body in order to allow hide the admin bar and admin menu.
 	document.body.append(document.querySelector(".site-planner-consent"))
-	const rootUrl = "%root_url%";
-	const urlObject = new URL(rootUrl);
 	const sendPassword = () => {
-		fetch(wpApiSettings.root + "wp/v2/users/me/application-passwords", {
+		fetch(`${ wpApiSettings.root}wp/v2/users/me/application-passwords`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -160,7 +161,7 @@ defined( 'ABSPATH' ) || exit;
 						uuid: data.uuid,
 						created: data.created
 					}
-				}, urlObject.origin);
+				}, '%safe_origin%');
 				window.close();
 			})
 			.catch(error => {

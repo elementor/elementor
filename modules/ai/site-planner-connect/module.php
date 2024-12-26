@@ -5,6 +5,9 @@ namespace Elementor\Modules\Ai\SitePlannerConnect;
 defined( 'ABSPATH' ) || exit;
 
 class Module {
+	const NOT_TRANSLATED_APP_NAME = 'Site Planner';
+	const PLANNER_ORIGIN = 'https://planner.elementor.com';
+	const HIDDEN_PAGE_SLUG = null;
 
 	public function __construct() {
 		add_action( 'rest_api_init', [ $this, 'on_rest_init' ] );
@@ -24,7 +27,7 @@ class Module {
 
 	public function register_menu_page() {
 		add_submenu_page(
-			null, // Hidden page
+			self::HIDDEN_PAGE_SLUG,
 			'App Password Generator',
 			'App Password',
 			'manage_options',
@@ -34,13 +37,12 @@ class Module {
 	}
 
 	public function render_menu_page() {
-		$root_url = 'https://planner.elementor.com';
-
 		ob_start();
 		require_once __DIR__ . '/view.php';
 		$content = ob_get_clean();
 		$vars = [
-			'%root_url%' => $root_url,
+			'%app_name%' => self::NOT_TRANSLATED_APP_NAME,
+			'%safe_origin%' => self::PLANNER_ORIGIN,
 			'%domain%' => isset( $_SERVER['HTTP_HOST'] ) ? sanitize_key( $_SERVER['HTTP_HOST'] ) : '',
 		];
 
