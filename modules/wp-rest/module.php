@@ -17,18 +17,10 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
-		add_action( 'rest_api_init', [ $this, 'on_rest_init' ] );
-
-		add_filter('elementor/template_library/sources/local/register_post_type_args', function ( $args ) {
-			$args['show_in_rest'] = true;
-			$args['supports'][] = 'custom-fields';
-			return $args;
-		});
-	}
-
-	public function on_rest_init() {
-		( new ElementorPostMeta() )->register();
-		( new ElementorSettings() )->register();
-		( new ElementorUserMeta() )->register();
+		add_action( 'rest_api_init', function () {
+			( new ElementorPostMeta() )->register();
+			( new ElementorSettings() )->register();
+			( new ElementorUserMeta() )->register();
+		} );
 	}
 }

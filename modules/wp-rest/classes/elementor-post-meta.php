@@ -17,7 +17,6 @@ class ElementorPostMeta {
 				'type' => 'string',
 				'label' => 'Elementor edit mode',
 				'description' => 'Elementor edit mode, `builder` is required for Elementor editing',
-				'default' => 'builder',
 				'single' => true,
 				'show_in_rest' => true,
 				'auth_callback' => [ $this, 'check_edit_permission' ],
