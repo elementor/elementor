@@ -109,7 +109,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					Link_Control::bind_to( 'link' )
 						->set_post_query()
 						->set_is_free_solo( true )
-						->set_is_autocomplete( true )
+						->set_is_autocomplete( true ),
 				] ),
 		];
 	}
