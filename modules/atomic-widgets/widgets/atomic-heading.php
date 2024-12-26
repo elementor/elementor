@@ -106,7 +106,10 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						->set_label( __( 'Title', 'elementor' ) )
 						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
 
-					Link_Control::bind_to( 'link' ),
+					Link_Control::bind_to( 'link' )
+						->set_post_query()
+						->set_free_solo( true )
+						->set_is_autocomplete( true ),
 				] ),
 		];
 	}
