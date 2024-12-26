@@ -67,7 +67,6 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm i --frozen-lockfile
-          sed -i -e "s/image: 'mariadb:lts'/image: 'mariadb:11.2.4-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -126,7 +125,6 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm i --frozen-lockfile
-          sed -i -e "s/image: 'mariadb:lts'/image: 'mariadb:11.2.4-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
