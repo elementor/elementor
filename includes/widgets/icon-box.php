@@ -724,6 +724,9 @@ class Widget_Icon_Box extends Widget_Base {
 		if ( $has_link ) {
 			$this->add_link_attributes( 'link', $settings['link'] );
 			$this->add_render_attribute( 'icon', 'tabindex', '-1' );
+			if ( ! empty( $settings['title_text'] ) ) {
+				$this->add_render_attribute( 'icon', 'aria-label', $settings['title_text'] );
+			}
 		}
 
 		if ( ! isset( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
@@ -818,6 +821,9 @@ class Widget_Icon_Box extends Widget_Base {
 		if ( hasLink ) {
 			view.addRenderAttribute( 'link', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
 			view.addRenderAttribute( 'icon', 'tabindex', '-1' );
+			if ( '' !== settings.title_text ) {
+				view.addRenderAttribute( 'icon', 'aria-label', settings.title_text );
+			}
 		}
 
 		view.addRenderAttribute( 'description_text', 'class', 'elementor-icon-box-description' );

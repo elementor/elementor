@@ -716,9 +716,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 									],
 								],
 							],
-							'background-image' => [
-								'$$type' => 'background-image',
-								'value' => [ [ '$$type' => 'background-overlay', 'value' => [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ] ] ]
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+								    'color' => [
+									    '$$type' => 'color',
+									    'value' => '#000000',
+								    ],
+								],
 							],
 						],
 						'meta' => [
@@ -759,6 +764,29 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $data_for_save['settings'] );
 
 		$this->assertTrue( $widget_styles == $data_for_save['styles'] );
+	}
+
+	public function test_get_data_for_save__sanitize_settings() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+				'number_prop' => Number_Prop_Type::make()->default( 0 ),
+			],
+			'settings' => [
+				'string_prop' => '<b>invalid HTML string</b>',
+				'number_prop' => '123',
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'string_prop' => 'invalid HTML string',
+			'number_prop' => 123,
+		], $data_for_save['settings'] );
 	}
 
 	public function test_get_data_for_save__throws_on_styles_size_prop_validation_error() {
@@ -880,7 +908,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [
+					'$$type' => 'string',
+					'value' => 'valid-string'
+				],
 			],
 			'styles' => [
 				'1234' => [
@@ -1210,21 +1241,20 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
-								'background-image' => [
-									'$$type' => 'background-image',
+								'background' => [
+									'$$type' => 'background',
 									'value' => [
-										[
+										'background-overlay' => [
 											'$$type' => 'background-overlay',
 											'value' => [
-												'color' => [
-													'$$type' => 'color',
-													'value' => 4,
-												],
+												'$$type' => 'background-color-overlay',
+												'value' => 4,
 											],
 										],
 									],
 								],
 							],
+
 							'meta' => [
 								'breakpoint' => 'desktop',
 								'state' => null,
@@ -1237,7 +1267,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: background-image' );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: background' );
 
 		// Act.
 		$widget->get_data_for_save();
