@@ -33,27 +33,16 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
-      - name: Download hello-elementor theme
-        run: |
-          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
-          unzip hello-elementor
-      - name: Debug
-        run: pwd
 
       - name: Install WordPress environment
         run: |
           npm run start-local-server
-
-      - name: List all files
-        run: ls -R
-
-      - name: List assets directory
-        run: ls -R assets/css || echo "Directory not found"
 
       - name: Check file sizes
         run: node ./tests/scripts/checkFileSize.js
