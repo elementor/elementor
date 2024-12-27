@@ -354,6 +354,13 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function register_scripts() {
+		wp_enqueue_script_module(
+			'accordion',
+			$this->get_js_assets_url( 'accordion', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
 		/**
 		 * Before frontend register scripts.
 		 *

@@ -1,4 +1,4 @@
-import TabsModule from './base-tabs';
+import TabsModule from './base-tabs.js';
 
 export default class Accordion extends TabsModule {
 	getDefaultSettings() {
@@ -11,3 +11,5 @@ export default class Accordion extends TabsModule {
 		};
 	}
 }
+
+window.elementorAccordionHandler = Accordion;
