@@ -2575,7 +2575,7 @@ abstract class Controls_Stack extends Base_Object {
 			}
 		}
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'mymodules' ], 5 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'mymodules' ], 1 );
 	}
 
 	public function mymodules() {
