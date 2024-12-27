@@ -2,8 +2,8 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 
 const sizeLimits = {
-	'frontend.css': 73,
-	'frontend.min.css': 63,
+	'frontend.css': 65,
+	'frontend.min.css': 55,
 };
 
 function findTargetFiles( startPath, targetFileNames ) {
@@ -30,9 +30,6 @@ const startDirectory = path.resolve( __dirname, '../../' );
 const targetFileNames = Object.keys( sizeLimits );
 const foundFiles = findTargetFiles( startDirectory, targetFileNames );
 
-console.log( 'Found target files:' );
-foundFiles.forEach( ( filePath ) => console.log( `- ${ filePath }` ) );
-
 let allFilesValid = true;
 
 foundFiles.forEach( ( filePath ) => {
@@ -41,16 +38,16 @@ foundFiles.forEach( ( filePath ) => {
 	const sizeLimitKB = sizeLimits[ fileName ];
 
 	if ( fileSizeKB > sizeLimitKB ) {
-		console.error( `Error: ${ fileName } at ${ filePath } exceeds the size limit of ${ sizeLimitKB }KB (${ fileSizeKB.toFixed( 2 ) }KB).` );
 		allFilesValid = false;
+		throw new Error( `Error: ${ fileName } at ${ filePath } exceeds the size limit of ${ sizeLimitKB }KB (${ fileSizeKB.toFixed( 2 ) }KB).` );
 	} else {
-		console.log( `OK: ${ fileName } at ${ filePath } is within the size limit (${ fileSizeKB.toFixed( 2 ) }KB).` );
+		throw new Error( `OK: ${ fileName } at ${ filePath } is within the size limit (${ fileSizeKB.toFixed( 2 ) }KB).` );
 	}
 } );
 
 if ( 0 === foundFiles.length ) {
-	console.warn( `Warning: No target files (${ targetFileNames.join( ', ' ) }) found.` );
 	allFilesValid = false;
+	throw new Error( `Warning: No target files (${ targetFileNames.join( ', ' ) }) found.` );
 }
 
 if ( ! allFilesValid ) {
