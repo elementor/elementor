@@ -15,19 +15,18 @@ class ElementorSettings {
 		register_rest_route('elementor/v1', '/settings/(?P<key>[\w_-]+)', [
 			[
 				'methods' => WP_REST_Server::READABLE,
-				'permission_callback' => function () {
+				'permission_callback' => function (): bool {
 					return current_user_can( 'manage_options' );
 				},
-				'sanitize_callback' => function ( $param ) {
+				'sanitize_callback' => function ( string $param ): string {
 					return esc_attr( $param );
 				},
-				'validate_callback' => function ( $request ) {
-					/** @var WP_REST_Request $request */
+				'validate_callback' => function ( WP_REST_Request $request ): bool {
 					$params = $request->get_params();
 
 					return 0 === strpos( $params['key'], 'elementor' );
 				},
-				'callback' => function ( $request ) {
+				'callback' => function ( $request ): WP_REST_Response {
 					try {
 						$key = $request->get_param( 'key' );
 						$current_value = get_option( $key );
@@ -54,18 +53,17 @@ class ElementorSettings {
 		register_rest_route('elementor/v1', '/settings/(?P<key>[\w_-]+)', [
 			[
 				'methods' => WP_REST_Server::EDITABLE,
-				'permission_callback' => function () {
+				'permission_callback' => function (): bool {
 					return current_user_can( 'manage_options' );
 				},
-				'sanitize_callback' => function ( $param ) {
+				'sanitize_callback' => function ( string $param ): string {
 					return esc_attr( $param );
 				},
-				'validate_callback' => function ( $request ) {
-					/** @var WP_REST_Request $request */
+				'validate_callback' => function ( WP_REST_Request $request ): bool {
 					$params = $request->get_params();
 					return 0 === strpos( $params['key'], 'elementor' ) && isset( $params['value'] );
 				},
-				'callback' => function ( $request ) {
+				'callback' => function ( WP_REST_Request $request ): WP_REST_Response {
 					$key = $request->get_param( 'key' );
 					$new_value = $request->get_param( 'value' );
 					$current_value = get_option( $key );

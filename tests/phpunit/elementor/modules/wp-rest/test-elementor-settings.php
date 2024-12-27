@@ -6,15 +6,10 @@ use Elementor\Modules\WpRest\Classes\ElementorSettings;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_REST_Request;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+defined( 'ABSPATH' ) || exit;
 
 class Test_Elementor_Settings extends Elementor_Test_Base {
-	/**
-	 * @var ElementorSettings
-	 */
-	protected $settings;
+	protected ElementorSettings $settings;
 
 	public function setUp(): void {
 		parent::setUp();
