@@ -89,3 +89,5 @@ export default class SwiperHandler {
 		return config;
 	}
 }
+
+window.elementorUtilsSwiperHandler = SwiperHandler;

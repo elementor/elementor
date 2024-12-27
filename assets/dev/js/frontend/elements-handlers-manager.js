@@ -14,7 +14,7 @@ module.exports = function( $ ) {
 	const handlersInstances = {};
 
 	this.elementsHandlers = {
-		'accordion.default': window.elementorAccordionHandler,
+		'accordion.default': () => import( /* webpackChunkName: 'accordion' */ './handlers/accordion' ),
 		'alert.default': () => import( /* webpackChunkName: 'alert' */ './handlers/alert' ),
 		'counter.default': () => import( /* webpackChunkName: 'counter' */ './handlers/counter' ),
 		'progress.default': () => import( /* webpackChunkName: 'progress' */ './handlers/progress' ),

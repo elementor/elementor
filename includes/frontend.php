@@ -355,8 +355,8 @@ class Frontend extends App {
 	 */
 	public function register_scripts() {
 		wp_enqueue_script_module(
-			'accordion',
-			$this->get_js_assets_url( 'accordion', 'assets/dev/js/frontend/handlers/' ),
+			'swiper-handler',
+			$this->get_js_assets_url( 'swiper-handler', 'assets/js/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
