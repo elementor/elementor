@@ -12,6 +12,7 @@ on:
       - 'docs/**'
 
 jobs:
+
   check-size-limit:
     runs-on: ubuntu-latest
     steps:
