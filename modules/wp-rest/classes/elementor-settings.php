@@ -5,6 +5,7 @@ namespace Elementor\Modules\WpRest\Classes;
 use Exception;
 use WP_REST_Request;
 use WP_REST_Server;
+use WP_REST_Response;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -31,14 +32,20 @@ class ElementorSettings {
 						$key = $request->get_param( 'key' );
 						$current_value = get_option( $key );
 
-						wp_send_json_success([
+						return new WP_REST_Response([
+							'success' => true,
 							// Nest in order to allow extending the response with more details
-							'value' => $current_value,
-						]);
+							'data' => [
+								'value' => $current_value,
+							],
+						], 200);
 					} catch ( Exception $e ) {
-						wp_send_json_error([
-							'message' => $e->getMessage(),
-						]);
+						return new WP_REST_Response([
+							'success' => false,
+							'data' => [
+								'message' => $e->getMessage(),
+							],
+						], 500);
 					}
 				},
 			],
@@ -64,18 +71,26 @@ class ElementorSettings {
 					$current_value = get_option( $key );
 
 					if ( $new_value === $current_value ) {
-						wp_send_json_success();
+						return new WP_REST_Response([
+							'success' => true,
+						], 200);
 					}
 
 					$success = update_option( $key, $new_value );
 					if ( $success ) {
-						wp_send_json_success([
-							'message' => 'Setting updated successfully.',
-						]);
+						return new WP_REST_Response([
+							'success' => true,
+							'data' => [
+								'message' => 'Setting updated successfully.',
+							],
+						], 200);
 					} else {
-						wp_send_json_error([
-							'message' => 'Failed to update setting.',
-						]);
+						return new WP_REST_Response([
+							'success' => false,
+							'data' => [
+								'message' => 'Failed to update setting.',
+							],
+						], 500);
 					}
 				},
 			],

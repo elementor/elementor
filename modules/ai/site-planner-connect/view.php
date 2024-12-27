@@ -90,11 +90,11 @@ defined( 'ABSPATH' ) || exit;
 </style>
 <div class="site-planner-consent">
 	<h1 class="site-planner-consent-title">
-		<?php echo esc_html__( 'Connect to Site Planner', 'elementor' ); ?>
+		%title%
 	</h1>
 	<div style="height: 20px"></div>
 	<p class="site-planner-consent-description">
-		<?php echo esc_html__( 'To connect to Site Planner, you need to generate an application password.', 'elementor' ); ?>
+		%description%
 	</p>
 	<div style="height: 40px"></div>
 	<svg width="287" height="40" viewBox="0 0 287 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -134,12 +134,14 @@ defined( 'ABSPATH' ) || exit;
 	<div style="height: 40px"></div>
 
 	<button class="site-planner-consent-button" onclick="sendPassword()">
-		<?php echo esc_html__( 'Approve & Connect', 'elementor' ); ?>
+		%cta%
 	</button>
 </div>
 <script>
-	// Move the consent dialog to the body in order to allow hide the admin bar and admin menu.
-	document.body.append(document.querySelector(".site-planner-consent"))
+	const hideAdminUi = () => {
+		document.body.append(document.querySelector(".site-planner-consent"))
+	}
+
 	const sendPassword = () => {
 		fetch(`${ wpApiSettings.root}wp/v2/users/me/application-passwords`, {
 			method: "POST",
@@ -168,4 +170,6 @@ defined( 'ABSPATH' ) || exit;
 				console.error("Error:", error);
 			});
 	}
+
+	hideAdminUi();
 </script>
