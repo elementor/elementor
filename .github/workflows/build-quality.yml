@@ -26,6 +26,8 @@ jobs:
 
       - name: Build Project
         uses: ./.github/workflows/build.yml
+        with:
+          node-version: '16'
 
       - name: Check CSS File Sizes
         run: |
