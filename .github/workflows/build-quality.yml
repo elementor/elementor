@@ -27,5 +27,14 @@ jobs:
         with:
           node-version: '16'
 
+      - name: Debug
+        run: pwd
+
+      - name: List all files
+        run: ls -R
+
+      - name: List assets directory
+        run: ls -R assets/css || echo "Directory not found"
+
       - name: Check file sizes
         run: node checkFileSize.js
