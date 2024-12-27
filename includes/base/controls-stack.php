@@ -2579,6 +2579,17 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	public function mymodules() {
+		wp_enqueue_script(
+			'mytest',
+			'https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.min.js',
+			[],
+			'5.3.3',
+		);
+
+		$inline_script = 'console.log( "Inline script executed." );';
+
+		wp_add_inline_script('mytest', $inline_script);
+
 		wp_enqueue_script_module(
 			'elementor_base_swiper',
 			$this->get_js_assets_url( 'base-swiper', 'assets/dev/js/frontend/handlers/' ),
