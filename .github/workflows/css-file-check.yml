@@ -56,4 +56,4 @@ jobs:
         run: ls -R assets/css || echo "Directory not found"
 
       - name: Check file sizes
-        run: node checkFileSize.js
+        run: node ./tests/scripts/checkFileSize.js
