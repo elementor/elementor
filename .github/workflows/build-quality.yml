@@ -30,7 +30,7 @@ jobs:
       - name: Check CSS File Sizes
         run: |
           # Define size limits
-          FRONTEND_CSS_LIMIT=66560
+          FRONTEND_CSS_LIMIT=12
           FRONTEND_MIN_CSS_LIMIT=56320
 
           # Search for all frontend.css and frontend.min.css files
