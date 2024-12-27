@@ -91,6 +91,8 @@ jobs:
       - name: Install playwright/test
         run: |
           npx playwright install chromium
+      - name: Check file sizes
+        run: node checkFileSize.js
       - name: Run Playwright tests
         if: ${{ matrix.shardIndex != 'elements-regression' }}
         run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
