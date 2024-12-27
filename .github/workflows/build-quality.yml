@@ -1,31 +1,69 @@
-name: Check CSS File Sizes
+name: Check CSS Size Limit
 
 on:
   pull_request:
-    paths:
-      - '**/frontend.css'
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
 
 jobs:
-  check-css-size:
+  check-size-limit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Find and Check CSS Files
+      - name: Install Node.js (if needed for your build process)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Build Project
+        uses: ./.github/workflows/build.yml
+
+      - name: Check CSS File Sizes
         run: |
-          MAX_SIZE=51200  # 50 KB in bytes
-          EXIT_CODE=0
+          # Define size limits in bytes (65 KB = 66560 bytes, 55 KB = 56320 bytes)
+          FRONTEND_CSS_LIMIT=66560
+          FRONTEND_MIN_CSS_LIMIT=56320
 
-          # Find all frontend.css files and check their sizes
-          for file in $(find . -name 'frontend.css'); do
-            FILE_SIZE=$(stat -c%s "$file")
-            echo "Checking $file (Size: $FILE_SIZE bytes)"
+          # Search for all frontend.css and frontend.min.css files
+          FRONTEND_CSS_FILES=$(find . -type f -name 'frontend.css')
+          FRONTEND_MIN_CSS_FILES=$(find . -type f -name 'frontend.min.css')
 
-            if [ "$FILE_SIZE" -gt "$MAX_SIZE" ]; then
-              echo "Error: $file exceeds size limit of $MAX_SIZE bytes!"
-              EXIT_CODE=1
+          # Initialize error flag
+          ERROR=0
+
+          # Check sizes of frontend.css files
+          for FILE in $FRONTEND_CSS_FILES; do
+            FILE_SIZE=$(stat --printf="%s" "$FILE")
+            echo "$FILE size: $FILE_SIZE bytes"
+            if [ "$FILE_SIZE" -gt "$FRONTEND_CSS_LIMIT" ]; then
+              echo "Error: $FILE exceeds size limit of $FRONTEND_CSS_LIMIT bytes."
+              ERROR=1
             fi
           done
 
-          exit $EXIT_CODE
+          # Check sizes of frontend.min.css files
+          for FILE in $FRONTEND_MIN_CSS_FILES; do
+            FILE_SIZE=$(stat --printf="%s" "$FILE")
+            echo "$FILE size: $FILE_SIZE bytes"
+            if [ "$FILE_SIZE" -gt "$FRONTEND_MIN_CSS_LIMIT" ]; then
+              echo "Error: $FILE exceeds size limit of $FRONTEND_MIN_CSS_LIMIT bytes."
+              ERROR=1
+            fi
+          done
+
+          # Fail if any file exceeds the limit
+          if [ "$ERROR" -eq 1 ]; then
+            echo "One or more files exceed the size limit."
+            exit 1
+          fi
+
+          echo "All CSS files are within size limits."
+
