@@ -12,7 +12,6 @@ on:
       - 'docs/**'
 
 jobs:
-
   check-size-limit:
     runs-on: ubuntu-latest
     steps:
@@ -31,7 +30,7 @@ jobs:
 
       - name: Check CSS File Sizes
         run: |
-          # Define size limits in bytes (65 KB = 66560 bytes, 55 KB = 56320 bytes)
+          # Define size limits
           FRONTEND_CSS_LIMIT=66560
           FRONTEND_MIN_CSS_LIMIT=56320
 
@@ -39,34 +38,21 @@ jobs:
           FRONTEND_CSS_FILES=$(find . -type f -name 'frontend.css')
           FRONTEND_MIN_CSS_FILES=$(find . -type f -name 'frontend.min.css')
 
-          # Initialize error flag
-          ERROR=0
-
-          # Check sizes of frontend.css files
+          # Check file sizes
           for FILE in $FRONTEND_CSS_FILES; do
             FILE_SIZE=$(stat --printf="%s" "$FILE")
-            echo "$FILE size: $FILE_SIZE bytes"
             if [ "$FILE_SIZE" -gt "$FRONTEND_CSS_LIMIT" ]; then
-              echo "Error: $FILE exceeds size limit of $FRONTEND_CSS_LIMIT bytes."
-              ERROR=1
+              echo "Error: $FILE exceeds size limit."
+              exit 1
             fi
           done
 
-          # Check sizes of frontend.min.css files
           for FILE in $FRONTEND_MIN_CSS_FILES; do
             FILE_SIZE=$(stat --printf="%s" "$FILE")
-            echo "$FILE size: $FILE_SIZE bytes"
             if [ "$FILE_SIZE" -gt "$FRONTEND_MIN_CSS_LIMIT" ]; then
-              echo "Error: $FILE exceeds size limit of $FRONTEND_MIN_CSS_LIMIT bytes."
-              ERROR=1
+              echo "Error: $FILE exceeds size limit."
+              exit 1
             fi
           done
 
-          # Fail if any file exceeds the limit
-          if [ "$ERROR" -eq 1 ]; then
-            echo "One or more files exceed the size limit."
-            exit 1
-          fi
-
-          echo "All CSS files are within size limits."
-
+          echo "All files are within size limits."
