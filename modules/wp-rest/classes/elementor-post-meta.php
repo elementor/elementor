@@ -72,24 +72,6 @@ class ElementorPostMeta {
 				],
 				'auth_callback' => [ $this, 'check_edit_permission' ],
 			]);
-
-			if ( Utils::has_pro() ) {
-				register_meta($post_type, '_elementor_conditions', [
-					'type' => 'object',
-					'title' => 'Elementor conditions',
-					'description' => 'Elementor conditions',
-					'single' => true,
-					'show_in_rest' => [
-						'schema' => [
-							'description' => 'Elementor conditions',
-							'type' => 'array',
-							'additionalProperties' => true,
-							'context' => [ 'view', 'edit' ],
-						],
-					],
-					'auth_callback' => [ $this, 'check_edit_permission' ],
-				]);
-			}
 		}
 	}
 

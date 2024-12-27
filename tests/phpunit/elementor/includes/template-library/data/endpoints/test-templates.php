@@ -28,7 +28,11 @@ class Test_Templates extends Elementor_Test_Base {
 
 		$response = $this->manager->run_endpoint( 'template-library/templates', [
 			'title' => 'My custom template',
-			'type' => 'page'
+			'type' => 'page',
+			'page_settings' => ['template' => 'default'],
+			'meta' => [
+				'custom_field' => 'test_value'
+			]
 		], 'POST' );
 
 		$document = Plugin::$instance->documents->get( $response['template_id'] );
@@ -37,6 +41,7 @@ class Test_Templates extends Elementor_Test_Base {
 		$this->assertEquals( 'page', $response['type'] );
 		$this->assertEquals( 'page', $document->get_template_type() );
 		$this->assertTrue( $document->is_built_with_elementor() );
+		$this->assertEquals( 'test_value', get_post_meta( $response['template_id'], 'custom_field', true ) );
 	}
 
 	public function test_create_new_template__unauthorized_creating_template() {
