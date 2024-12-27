@@ -2574,5 +2574,158 @@ abstract class Controls_Stack extends Base_Object {
 				$this->init( $data );
 			}
 		}
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'mymodules' ], 5 );
+	}
+
+	public function mymodules() {
+		wp_enqueue_script_module(
+			'elementor_base_swiper',
+			$this->get_js_assets_url( 'base-swiper', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_base_carousel',
+			$this->get_js_assets_url( 'base-carousel', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_background_slideshow',
+			$this->get_js_assets_url( 'background-slideshow', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_image_carousel',
+			$this->get_js_assets_url( 'image-carousel', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_accordion',
+			$this->get_js_assets_url( 'accordion', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_alert',
+			$this->get_js_assets_url( 'alert', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_counter',
+			$this->get_js_assets_url( 'counter', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_progress',
+			$this->get_js_assets_url( 'progress', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_tabs',
+			$this->get_js_assets_url( 'tabs', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_toggle',
+			$this->get_js_assets_url( 'toggle', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_video',
+			$this->get_js_assets_url( 'video', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_text_editor',
+			$this->get_js_assets_url( 'text-editor', 'assets/dev/js/frontend/handlers/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_utils_youtube',
+			$this->get_js_assets_url( 'youtube-loader', 'assets/dev/js/frontend/utils/video-api/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_utils_vimeo',
+			$this->get_js_assets_url( 'vimeo-loader', 'assets/dev/js/frontend/utils/video-api/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_utils_base_video',
+			$this->get_js_assets_url( 'base-loader', 'assets/dev/js/frontend/utils/video-api/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_enqueue_script_module(
+			'elementor_utils_swiper',
+			$this->get_js_assets_url( 'swiper', 'assets/dev/js/frontend/utils/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+	}
+
+
+	protected function get_js_assets_url( $file_name, $relative_url = null, $add_min_suffix = 'default' ) {
+		return $this->get_assets_url( $file_name, 'js', $relative_url, $add_min_suffix );
+	}
+
+	protected function get_assets_url( $file_name, $file_extension, $relative_url = null, $add_min_suffix = 'default' ) {
+		static $is_test_mode = null;
+
+		if ( null === $is_test_mode ) {
+			$is_test_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+		}
+
+		if ( ! $relative_url ) {
+			$relative_url = $this->get_assets_relative_url() . $file_extension . '/';
+		}
+
+		$url = $this->get_assets_base_url() . $relative_url . $file_name;
+
+		if ( 'default' === $add_min_suffix ) {
+			$add_min_suffix = ! $is_test_mode;
+		}
+
+		if ( $add_min_suffix ) {
+			$url .= '.min';
+		}
+
+		return $url . '.' . $file_extension;
+	}
+
+	protected function get_assets_relative_url() {
+		return 'assets/';
+	}
+
+	protected function get_assets_base_url() {
+		return ELEMENTOR_URL;
 	}
 }
