@@ -62,7 +62,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 	 * @return array Widget script module dependencies.
 	 */
 	public function get_script_module_depends(): array {
-		return [ 'elementor_nested_accordion' ];
+		return [
+			'elementor_handler_nested_title_keyboard',
+			'elementor_handler_nested_accordion_keyboard',
+			'elementor_nested_accordion',
+		];
 	}
 
 	public function show_in_panel(): bool {

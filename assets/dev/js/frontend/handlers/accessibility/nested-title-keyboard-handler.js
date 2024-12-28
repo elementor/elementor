@@ -212,3 +212,6 @@ export default class NestedTitleKeyboardHandler extends elementorModules.fronten
 
 	handleContentElementTabEvents() {}
 }
+
+window.elementorModules.frontend.handlers.accessibility = window.elementorModules.frontend.handlers.accessibility || {};
+window.elementorModules.frontend.handlers.accessibility.NestedTitleKeyboardHandler = NestedTitleKeyboardHandler;

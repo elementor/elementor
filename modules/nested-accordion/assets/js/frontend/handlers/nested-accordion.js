@@ -1,5 +1,3 @@
-import NestedAccordionTitleKeyboardHandler from './nested-accordion-title-keyboard-handler.js';
-
 export default class NestedAccordion extends elementorModules.frontend.handlers.Base {
 	constructor( ...args ) {
 		super( ...args );
@@ -47,6 +45,8 @@ export default class NestedAccordion extends elementorModules.frontend.handlers.
 
 	injectKeyboardHandler() {
 		if ( 'nested-accordion.default' === this.getSettings( 'elementName' ) ) {
+			const NestedAccordionTitleKeyboardHandler = elementorModules.frontend.handlers.NestedAccordionTitleKeyboardHandler;
+
 			new NestedAccordionTitleKeyboardHandler( {
 				$element: this.$element,
 				toggleTitle: this.clickListener.bind( this ),

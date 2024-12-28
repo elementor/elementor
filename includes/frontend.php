@@ -470,6 +470,13 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
+		wp_register_script_module(
+			'elementor_handler_nested_title_keyboard',
+			$this->get_js_assets_url( 'frontend-handler-nested-title-keyboard', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		do_action( 'elementor/frontend/after_register_script_modules' );
 
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
@@ -490,6 +497,8 @@ class Frontend extends App {
 			wp_enqueue_script_module( 'elementor_utils_base_video' );
 			wp_enqueue_script_module( 'elementor_utils_swiper' );
 
+			wp_enqueue_script_module( 'elementor_handler_nested_title_keyboard' );
+			wp_enqueue_script_module( 'elementor_handler_nested_accordion_keyboard' );
 			wp_enqueue_script_module( 'elementor_nested_tabs' );
 			wp_enqueue_script_module( 'elementor_nested_accordion' );
 		}

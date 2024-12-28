@@ -158,6 +158,8 @@ const frontendEntries = {
 	'frontend-handler-toggle': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/toggle.js' ),
 	'frontend-handler-video': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/video.js' ),
 	'frontend-handler-text-editor': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/text-editor.js' ),
+	'frontend-handler-nested-title-keyboard': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/accessibility/nested-title-keyboard-handler.js' ),
+	'frontend-handler-nested-accordion-keyboard': path.resolve( __dirname, '../modules/nested-accordion/assets/js/frontend/handlers/nested-accordion-title-keyboard-handler.js' ),
 	'frontend-util-youtube-loader': path.resolve( __dirname, '../assets/dev/js/frontend/utils/video-api/youtube-loader.js' ),
 	'frontend-util-vimeo-loader': path.resolve( __dirname, '../assets/dev/js/frontend/utils/video-api/vimeo-loader.js' ),
 	'frontend-util-base-loader': path.resolve( __dirname, '../assets/dev/js/frontend/utils/video-api/base-loader.js' ),

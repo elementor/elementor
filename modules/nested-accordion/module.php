@@ -57,5 +57,12 @@ class Module extends BaseModule {
 			[],
 			ELEMENTOR_VERSION,
 		);
+
+		wp_register_script_module(
+			'elementor_handler_nested_accordion_keyboard',
+			$this->get_js_assets_url( 'frontend-handler-nested-accordion-keyboard', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 }
