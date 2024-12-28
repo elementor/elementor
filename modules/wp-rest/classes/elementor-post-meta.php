@@ -3,6 +3,7 @@
 namespace Elementor\Modules\WpRest\Classes;
 
 use Elementor\Plugin;
+use Elementor\Utils;
 
 defined( 'ABSPATH' ) || exit;
 

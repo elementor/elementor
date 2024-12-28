@@ -219,4 +219,24 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$this->assertEquals( 'section', $result['content'][0]['elType'] );
 		$this->assertNotEquals( 'test', $result['content'][0]['id'], 'The id should be regenerate in get_data method' );
 	}
+
+	public function test_cpt_rest_is_not_accessible_for_editor() {
+        do_action( 'rest_api_init');
+		wp_set_current_user( $this->factory()->get_editor_user()->ID );
+
+		$response = rest_do_request( new \WP_REST_Request( 'GET', '/wp/v2/elementor_library' ) );
+
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'rest_forbidden', $response->get_data()['code'] );
+	}
+
+	public function test_cpt_rest_is_accessible_for_admin() {
+        do_action( 'rest_api_init');
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+
+		$response = rest_do_request( new \WP_REST_Request( 'GET', '/wp/v2/elementor_library' ) );
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertIsArray( $response->get_data() );
+	}
 }
