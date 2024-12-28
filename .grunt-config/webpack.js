@@ -146,6 +146,7 @@ const entry = {
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
+	'frontend-handler-accordion': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/accordion.js' ),
 };
 
 const externals = [

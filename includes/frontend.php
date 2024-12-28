@@ -386,7 +386,7 @@ class Frontend extends App {
 
 		wp_register_script_module(
 			'elementor_accordion',
-			$this->get_js_assets_url( 'accordion', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-accordion', 'assets/js/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
@@ -470,27 +470,27 @@ class Frontend extends App {
 
 		do_action( 'elementor/frontend/after_register_script_modules' );
 
-//		if ( Plugin::$instance->preview->is_preview_mode() ) {
-//			wp_enqueue_script_module( 'elementor_base_swiper' );
-//			wp_enqueue_script_module( 'elementor_base_carousel' );
-//			wp_enqueue_script_module( 'elementor_background_slideshow', );
-//			wp_enqueue_script_module( 'elementor_image_carousel' );
-//			wp_enqueue_script_module( 'elementor_accordion' );
-//			wp_enqueue_script_module( 'elementor_alert' );
-//			wp_enqueue_script_module( 'elementor_counter' );
-//			wp_enqueue_script_module( 'elementor_progress' );
-//			wp_enqueue_script_module( 'elementor_tabs' );
-//			wp_enqueue_script_module( 'elementor_toggle' );
-//			wp_enqueue_script_module( 'elementor_video' );
-//			wp_enqueue_script_module( 'elementor_text_editor' );
-//			wp_enqueue_script_module( 'elementor_utils_youtube' );
-//			wp_enqueue_script_module( 'elementor_utils_vimeo' );
-//			wp_enqueue_script_module( 'elementor_utils_base_video' );
-//			wp_enqueue_script_module( 'elementor_utils_swiper' );
-//
-//			wp_enqueue_script_module( 'elementor_nested_tabs' );
-//			wp_enqueue_script_module( 'elementor_nested_accordion' );
-//		}
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			wp_enqueue_script_module( 'elementor_base_swiper' );
+			wp_enqueue_script_module( 'elementor_base_carousel' );
+			wp_enqueue_script_module( 'elementor_background_slideshow', );
+			wp_enqueue_script_module( 'elementor_image_carousel' );
+			wp_enqueue_script_module( 'elementor_accordion' );
+			wp_enqueue_script_module( 'elementor_alert' );
+			wp_enqueue_script_module( 'elementor_counter' );
+			wp_enqueue_script_module( 'elementor_progress' );
+			wp_enqueue_script_module( 'elementor_tabs' );
+			wp_enqueue_script_module( 'elementor_toggle' );
+			wp_enqueue_script_module( 'elementor_video' );
+			wp_enqueue_script_module( 'elementor_text_editor' );
+			wp_enqueue_script_module( 'elementor_utils_youtube' );
+			wp_enqueue_script_module( 'elementor_utils_vimeo' );
+			wp_enqueue_script_module( 'elementor_utils_base_video' );
+			wp_enqueue_script_module( 'elementor_utils_swiper' );
+
+			wp_enqueue_script_module( 'elementor_nested_tabs' );
+			wp_enqueue_script_module( 'elementor_nested_accordion' );
+		}
 	}
 
 	/**
