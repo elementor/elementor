@@ -3,7 +3,6 @@
 namespace Elementor\Modules\WpRest\Classes;
 
 use Elementor\Plugin;
-use Elementor\Utils;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -14,26 +13,30 @@ class ElementorPostMeta {
 
 		foreach ( $post_types as $post_type ) {
 			register_meta($post_type, '_elementor_edit_mode', [
-				'type' => 'string',
-				'label' => 'Elementor edit mode',
-				'description' => 'Elementor edit mode, `builder` is required for Elementor editing',
 				'single' => true,
-				'show_in_rest' => true,
+				'show_in_rest' => [
+					'schema' => [
+						'title' => 'Elementor edit mode',
+						'description' => 'Elementor edit mode, `builder` is required for Elementor editing',
+						'type' => 'string',
+						'enum' => [ '', 'builder' ],
+						'context' => [ 'edit' ],
+					],
+				],
 				'auth_callback' => [ $this, 'check_edit_permission' ],
 			]);
 
 			$document_types = Plugin::$instance->documents->get_document_types();
 
 			register_meta($post_type, '_elementor_template_type', [
-				'type' => 'string',
-				'label' => 'Elementor template type',
 				'single' => true,
 				'show_in_rest' => [
 					'schema' => [
+						'title' => 'Elementor template type',
 						'description' => 'Elementor document type',
 						'type' => 'string',
 						'enum' => array_keys( $document_types ),
-						'context' => [ 'view', 'edit' ],
+						'context' => [ 'edit' ],
 					],
 				],
 				'auth_callback' => [ $this, 'check_edit_permission' ],
@@ -43,21 +46,20 @@ class ElementorPostMeta {
 				'single' => true,
 				'show_in_rest' => [
 					'schema' => [
+						'title' => 'Elementor data',
 						'description' => 'Elementor JSON as a string',
 						'type' => 'string',
-						'context' => [ 'view', 'edit' ],
+						'context' => [ 'edit' ],
 					],
 				],
 				'auth_callback' => [ $this, 'check_edit_permission' ],
 			]);
 
 			register_meta($post_type, '_elementor_page_settings', [
-				'type' => 'object',
-				'title' => 'Elementor page settings',
-				'description' => 'Elementor page level settings',
 				'single' => true,
 				'show_in_rest' => [
 					'schema' => [
+						'title' => 'Elementor page settings',
 						'description' => 'Elementor page level settings',
 						'type' => 'object',
 						'properties' => [
@@ -67,7 +69,7 @@ class ElementorPostMeta {
 							],
 						],
 						'additionalProperties' => true,
-						'context' => [ 'view', 'edit' ],
+						'context' => [ 'edit' ],
 					],
 				],
 				'auth_callback' => [ $this, 'check_edit_permission' ],
@@ -87,6 +89,6 @@ class ElementorPostMeta {
 	public function check_edit_permission( bool $allowed, string $meta_key, int $post_id ) : bool {
 		$document = Plugin::$instance->documents->get( $post_id );
 
-		return $document && $document->is_built_with_elementor() && $document->is_editable_by_current_user();
+		return $document && $document->is_editable_by_current_user();
 	}
 }
