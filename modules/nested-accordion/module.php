@@ -53,7 +53,7 @@ class Module extends BaseModule {
 	public function register_script_modules(): void {
 		wp_register_script_module(
 			'elementor_nested_accordion',
-			ELEMENTOR_URL . 'modules/nested-accordion/assets/js/frontend/handlers/nested-accordion.js',
+			$this->get_js_assets_url( 'frontend-handler-nested-accordion', 'assets/js/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);

@@ -496,7 +496,6 @@ class Frontend extends App {
 			wp_enqueue_script_module( 'elementor_utils_vimeo' );
 			wp_enqueue_script_module( 'elementor_utils_base_video' );
 			wp_enqueue_script_module( 'elementor_utils_swiper' );
-
 			wp_enqueue_script_module( 'elementor_handler_nested_title_keyboard' );
 			wp_enqueue_script_module( 'elementor_handler_nested_accordion_keyboard' );
 			wp_enqueue_script_module( 'elementor_nested_tabs' );
