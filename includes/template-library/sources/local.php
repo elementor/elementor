@@ -277,6 +277,8 @@ class Source_Local extends Source_Base {
 			'rewrite' => false,
 			'public' => false,
 			'label' => esc_html_x( 'Type', 'Template Library', 'elementor' ),
+			'show_in_rest' => true,
+			'supports' => [ 'custom-fields' ],
 		];
 
 		/**

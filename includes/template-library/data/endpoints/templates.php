@@ -36,22 +36,6 @@ class Templates extends Endpoint {
 				'description' => 'Elementor data object',
 				'type' => 'object',
 			],
-			'page_settings' => [
-				'required' => false,
-				'description' => 'Elementor page settings object',
-				'type' => 'object',
-			],
-			'meta' => [
-				'required' => false,
-				'description' => 'Meta data',
-				'type' => 'object',
-				'schema' => [
-					'items' => [
-						'type' => 'object',
-						'additionalProperties' => true,
-					],
-				],
-			],
 		] );
 	}
 
@@ -91,23 +75,17 @@ class Templates extends Endpoint {
 		/** @var Source_Local $source */
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
 
-		$template_id = $source->save_item( [
+		$result = $source->save_item( [
 			'title' => $request->get_param( 'title' ),
 			'type' => $request->get_param( 'type' ),
 			'content' => $request->get_param( 'content' ),
 			'page_settings' => $request->get_param( 'page_settings' ),
 		] );
 
-		if ( is_wp_error( $template_id ) ) {
-			return $template_id;
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
-		if ( $request->get_param( 'meta' ) ) {
-			foreach ( $request->get_param( 'meta' ) as $key => $value ) {
-				update_post_meta( $template_id, $key, $value );
-			}
-		}
-
-		return $source->get_item( $template_id );
+		return $source->get_item( $result );
 	}
 }
