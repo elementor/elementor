@@ -221,21 +221,29 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	}
 
 	public function test_cpt_rest_is_not_accessible_for_editor() {
+		// Arrange
 		do_action( 'rest_api_init');
 		wp_set_current_user( $this->factory()->get_editor_user()->ID );
+		$request = new \WP_REST_Request( 'GET', '/wp/v2/elementor_library' );
 
-		$response = rest_do_request( new \WP_REST_Request( 'GET', '/wp/v2/elementor_library' ) );
+		// Act
+		$response = rest_do_request( $request );
 
+		// Assert
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $response->get_data()['code'] );
 	}
 
 	public function test_cpt_rest_is_accessible_for_admin() {
+		// Arrange
 		do_action( 'rest_api_init');
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+		$request = new \WP_REST_Request( 'GET', '/wp/v2/elementor_library' );
 
-		$response = rest_do_request( new \WP_REST_Request( 'GET', '/wp/v2/elementor_library' ) );
+		// Act
+		$response = rest_do_request( $request );
 
+		// Assert
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertIsArray( $response->get_data() );
 	}
