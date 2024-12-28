@@ -86,7 +86,7 @@ class ElementorPostMeta {
 							'description' => 'Elementor conditions',
 							'type' => 'array',
 							'additionalProperties' => true,
-							'context' => [ 'view', 'edit' ],
+							'context' => [ 'edit' ],
 						],
 					],
 					'auth_callback' => [ $this, 'check_edit_permission' ],
