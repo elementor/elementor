@@ -255,6 +255,7 @@ class Source_Local extends Source_Base {
 		];
 
 		$this->avoid_rest_access_for_non_admins();
+
 		/**
 		 * Register template library post type args.
 		 *
