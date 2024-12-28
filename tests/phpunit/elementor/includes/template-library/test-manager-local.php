@@ -221,7 +221,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	}
 
 	public function test_cpt_rest_is_not_accessible_for_editor() {
-        do_action( 'rest_api_init');
+		do_action( 'rest_api_init');
 		wp_set_current_user( $this->factory()->get_editor_user()->ID );
 
 		$response = rest_do_request( new \WP_REST_Request( 'GET', '/wp/v2/elementor_library' ) );
@@ -231,7 +231,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	}
 
 	public function test_cpt_rest_is_accessible_for_admin() {
-        do_action( 'rest_api_init');
+		do_action( 'rest_api_init');
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
 		$response = rest_do_request( new \WP_REST_Request( 'GET', '/wp/v2/elementor_library' ) );
