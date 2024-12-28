@@ -356,116 +356,118 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function register_script_modules(): void {
+		do_action( 'elementor/frontend/before_register_script_modules' );
+
 		wp_register_script_module(
 			'elementor_base_swiper',
-			$this->get_js_assets_url( 'base-swiper', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-base-swiper', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_base_carousel',
-			$this->get_js_assets_url( 'base-carousel', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-base-carousel', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_background_slideshow',
-			$this->get_js_assets_url( 'background-slideshow', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-background-slideshow', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_image_carousel',
-			$this->get_js_assets_url( 'image-carousel', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-image-carousel', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_accordion',
 			$this->get_js_assets_url( 'frontend-handler-accordion', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_alert',
-			$this->get_js_assets_url( 'alert', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-alert', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_counter',
-			$this->get_js_assets_url( 'counter', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-counter', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_progress',
-			$this->get_js_assets_url( 'progress', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-progress', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_tabs',
-			$this->get_js_assets_url( 'tabs', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-tabs', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_toggle',
-			$this->get_js_assets_url( 'toggle', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-toggle', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_video',
-			$this->get_js_assets_url( 'video', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-video', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_text_editor',
-			$this->get_js_assets_url( 'text-editor', 'assets/dev/js/frontend/handlers/' ),
+			$this->get_js_assets_url( 'frontend-handler-text-editor', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_utils_youtube',
-			$this->get_js_assets_url( 'youtube-loader', 'assets/dev/js/frontend/utils/video-api/' ),
+			$this->get_js_assets_url( 'frontend-util-youtube-loader', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_utils_vimeo',
-			$this->get_js_assets_url( 'vimeo-loader', 'assets/dev/js/frontend/utils/video-api/' ),
+			$this->get_js_assets_url( 'frontend-util-vimeo-loader', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_utils_base_video',
-			$this->get_js_assets_url( 'base-loader', 'assets/dev/js/frontend/utils/video-api/' ),
+			$this->get_js_assets_url( 'frontend-util-base-loader', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		wp_register_script_module(
 			'elementor_utils_swiper',
-			$this->get_js_assets_url( 'swiper', 'assets/dev/js/frontend/utils/' ),
+			$this->get_js_assets_url( 'frontend-util-swiper', 'assets/js/' ),
 			[],
-			ELEMENTOR_VERSION,
+			ELEMENTOR_VERSION
 		);
 
 		do_action( 'elementor/frontend/after_register_script_modules' );
