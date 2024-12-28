@@ -46,7 +46,7 @@ class Module {
 			'%domain%' => isset( $_SERVER['HTTP_HOST'] ) ? sanitize_key( $_SERVER['HTTP_HOST'] ) : '',
 			'%title%' => esc_html__( 'Connect to Site Planner', 'elementor' ),
 			'%description%' => esc_html__( 'To connect your site to Site Planner, you need to generate an app password.', 'elementor' ),
-			'%cta' => esc_html__( 'Approve & Connect', 'elementor' ),
+			'%cta%' => esc_html__( 'Approve & Connect', 'elementor' ),
 		];
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
