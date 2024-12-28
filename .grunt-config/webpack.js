@@ -165,6 +165,7 @@ const frontendEntries = {
 	'frontend-util-base-loader': path.resolve( __dirname, '../assets/dev/js/frontend/utils/video-api/base-loader.js' ),
 	'frontend-util-swiper': path.resolve( __dirname, '../assets/dev/js/frontend/utils/swiper.js' ),
 	'frontend-handler-nested-accordion': path.resolve( __dirname, '../modules/nested-accordion/assets/js/frontend/handlers/nested-accordion.js' ),
+	'frontend-handler-nested-tabs': path.resolve( __dirname, '../modules/nested-tabs/assets/js/frontend/handlers/nested-tabs.js' ),
 };
 
 const externals = [

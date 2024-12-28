@@ -55,7 +55,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function register_script_modules(): void {
 		wp_register_script_module(
 			'elementor_nested_tabs',
-			ELEMENTOR_URL . 'modules/nested-tabs/assets/js/frontend/handlers/nested-tabs.js',
+			$this->get_js_assets_url( 'frontend-handler-nested-tabs', 'assets/js/' ),
 			[],
 			ELEMENTOR_VERSION,
 		);
