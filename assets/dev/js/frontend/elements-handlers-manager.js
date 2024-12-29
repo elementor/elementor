@@ -34,8 +34,9 @@ module.exports = function( $ ) {
 		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion' );
 	}
 
-	if ( elementorFrontendConfig.experimentalFeatures[ 'conversion-center' ] ) {
-		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/conversion-center/assets/js/frontend/handlers/contact-buttons' );
+	if ( elementorFrontendConfig.experimentalFeatures.container ) {
+		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/floating-buttons/assets/js/floating-buttons/frontend/handlers/contact-buttons' );
+		this.elementsHandlers[ 'floating-bars-var-1.default' ] = () => import( /* webpackChunkName: 'floating-bars' */ 'elementor/modules/floating-buttons/assets/js/floating-bars/frontend/handlers/floating-bars' );
 	}
 
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
@@ -162,7 +163,9 @@ module.exports = function( $ ) {
 	};
 
 	this.runReadyTrigger = function( scope ) {
-		if ( elementorFrontend.config.is_static ) {
+		const isDelayChildHandlers = !! scope.closest( '[data-delay-child-handlers="true"]' ) && 0 !== scope.closest( '[data-delay-child-handlers="true"]' ).length;
+
+		if ( elementorFrontend.config.is_static || isDelayChildHandlers ) {
 			return;
 		}
 

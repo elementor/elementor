@@ -1,34 +1,30 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
-test.describe( 'Editor v2', () => {
+test.describe( 'Editor top bar', () => {
 	let editor;
-	let wpAdminPage;
+	let wpAdmin;
 	let context;
 
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 
 		const page = await context.newPage();
 
-		wpAdminPage = new WpAdminPage( page, testInfo );
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdminPage.setExperiments( { editor_v2: true } );
+		await wpAdmin.resetExperiments();
 
-		editor = await wpAdminPage.openNewPage();
-	} );
-
-	test.afterAll( async () => {
-		await wpAdminPage.setExperiments( { editor_v2: false } );
+		editor = await wpAdmin.openNewPage();
 	} );
 
 	test( 'check that app-bar exists', async () => {
 		// Act
 		const wrapper = await editor.page.locator( '#elementor-editor-wrapper-v2' );
 
-		await wrapper.getByRole( 'button', { name: 'Page Settings' } ).click();
-
-		await editor.page.getByLabel( 'Title', { exact: true } ).fill( 'Playwright Test Page' );
+		await editor.openPageSettingsPanel();
+		await editor.setTextControlValue( 'post_title', 'Playwright Test Page' );
 
 		await wrapper.getByRole( 'button', { name: 'Playwright Test Page' } ).waitFor();
 		await editor.isUiStable( wrapper, 5 );
@@ -42,7 +38,7 @@ test.describe( 'Editor v2', () => {
 
 	test( 'check panel styles', async () => {
 		// Act
-		await editor.page.locator( '#elementor-editor-wrapper-v2' ).getByRole( 'button', { name: 'Add Element' } ).click();
+		await editor.openElementsPanel();
 
 		// Assert
 		expect( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {

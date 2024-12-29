@@ -67,7 +67,7 @@ Simple explanation about the files and their purpose:
 ## `assets/js/editor/index.js`
 ### The first file that loaded for the editor javascript.
 * **Link to the actual file** - [index.js](../../../modules/nested-elements/assets/js/editor/index.js)
-* **Description** - Loads the editor module, and tells when its loaded, since the dependant modules are that depends on __Nested Elements__ module, need to know when its loaded and avilable.
+* **Description** - Loads the editor module, and tells when its loaded, since the dependant modules are that depends on __Nested Elements__ module, need to know when its loaded and available.
     - Import the editor(`editor.js`) module.
     - Save the import promise in the global variable(`elementor.modules.nestedElements`).
     - After loading replace the promise with the actual loaded file.

@@ -1,9 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
 test.describe( 'Widget tests', () => {
-	test( 'Widget Transform controls', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Widget Transform controls', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
 		} );
@@ -15,8 +16,8 @@ test.describe( 'Widget tests', () => {
 			widgetContainerSelector = '.elementor-edit-mode .elementor-element-' + widgetId + ' > .elementor-widget-container';
 
 		// Act.
-		await editor.activatePanelTab( 'advanced' );
-		await page.locator( '.elementor-control-_section_transform .elementor-panel-heading-title' ).click();
+		await editor.openPanelTab( 'advanced' );
+		await editor.openSection( '_section_transform' );
 		// Set rotation.
 		await page.locator( '.elementor-control-_transform_rotate_popover .elementor-control-popover-toggle-toggle-label' ).click();
 		await page.locator( '.elementor-control-_transform_rotateZ_effect .elementor-control-input-wrapper input' ).fill( '2' );

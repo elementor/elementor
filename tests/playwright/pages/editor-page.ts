@@ -1,43 +1,74 @@
+import { readFile } from 'fs/promises';
 import { addElement, getElementSelector } from '../assets/elements-utils';
-import { expect, type Page, type Frame, type BrowserContext, type TestInfo } from '@playwright/test';
+import { expect, type Page, type Frame, type TestInfo, type ElementHandle, Locator } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
-import _path from 'path';
+import _path, { resolve as pathResolve } from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, WindowType, BackboneType, ElementorType, ElementorFrontendConfig } from '../types/types';
+import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
+import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
+import Breakpoints from '../assets/breakpoints';
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
 let window: WindowType;
-let elementorFrontendConfig: ElementorFrontendConfig;
 
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
 	postId: number | null;
+
+	/**
+	 * Create an Elementor editor page.
+	 *
+	 * @param {Page}     page        - Playwright page instance.
+	 * @param {TestInfo} testInfo    - Test information.
+	 * @param {number}   cleanPostId - Optional. Post ID.
+	 *
+	 * @return {void}
+	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
 		this.previewFrame = this.getPreviewFrame();
 		this.postId = cleanPostId;
 	}
 
-	async gotoPostId( id = this.postId ) {
+	/**
+	 * Open a specific post in the elementor editor.
+	 *
+	 * @param {number|string} id - Optional. Post ID. Default is the ID of the current post.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async gotoPostId( id: number|string = this.postId ): Promise<void> {
 		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
 		await this.page.waitForLoadState( 'load' );
-		await this.ensurePanelLoaded();
+		await this.waitForPanelToLoad();
 	}
 
-	updateImageDates( templateData: JSON ) {
+	/**
+	 * Update image dates in the template data.
+	 *
+	 * @param {JSON} templateData - Template data.
+	 *
+	 * @return {JSON}
+	 */
+	updateImageDates( templateData: JSON ): JSON {
 		const date = new Date();
 		const month = date.toLocaleString( 'default', { month: '2-digit' } );
 		const data = JSON.stringify( templateData );
 		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
 		return JSON.parse( updatedData ) as JSON;
 	}
-	/*
+
+	/**
 	 * Upload SVG in the Media Library. Expects media library to be open.
+	 *
+	 * @param {string} svgFileName - Optional. SVG file name, without extension.
+	 *
+	 * @return {Promise<void>}
 	 */
-	async uploadSVG( svgFileName = undefined ) {
+	async uploadSVG( svgFileName?: string ): Promise<void> {
 		const _svgFileName = svgFileName === undefined ? 'test-svg-wide' : svgFileName;
 		const regex = new RegExp( _svgFileName );
 		const response = this.page.waitForResponse( regex );
@@ -47,8 +78,15 @@ export default class EditorPage extends BasePage {
 			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
 
-	async loadTemplate( filePath: string, updateDatesForImages = false ) {
-		let templateData = await import( filePath ) as JSON;
+	/**
+	 * Load a template from a file.
+	 *
+	 * @param {string}  filePath             - Path to the template file.
+	 * @param {boolean} updateDatesForImages - Optional. Whether to update images dates. Default is false.
+	 */
+	async loadTemplate( filePath: string, updateDatesForImages: boolean = false ): Promise<void> {
+		const rawFileData = await readFile( filePath );
+		let templateData = JSON.parse( rawFileData.toString() );
 
 		// For templates that use images, date when image is uploaded is hardcoded in template.
 		// Element regression tests upload images before each test.
@@ -71,31 +109,23 @@ export default class EditorPage extends BasePage {
 		}, templateData );
 	}
 
-	async cleanContent() {
+	/**
+	 * Remove all the content from the page.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async cleanContent(): Promise<void> {
 		await this.page.evaluate( () => {
 			$e.run( 'document/elements/empty', { force: true } );
 		} );
 	}
 
-	async openNavigator( ) {
-		const isOpen = await this.previewFrame.evaluate( () =>
-			elementor.navigator.isOpen(),
-		);
-
-		if ( ! isOpen ) {
-			await this.page.click( '#elementor-panel-footer-navigator' );
-		}
-	}
-
-	async closeNavigatorIfOpen() {
-		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
-
-		if ( isOpen ) {
-			await this.page.click( '#elementor-navigator__close' );
-		}
-	}
-
-	async ensurePanelLoaded() {
+	/**
+	 * Wait for the editor panels to finish loading.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async waitForPanelToLoad(): Promise<void> {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
 	}
@@ -104,16 +134,23 @@ export default class EditorPage extends BasePage {
 	 * Add element to the page using a model.
 	 *
 	 * @param {Object}  model               - Model definition.
-	 * @param {string}  container           - Optional Container to create the element in.
-	 * @param {boolean} isContainerASection - Optional. Is the container a section.
+	 * @param {string}  container           - Optional. Container to create the element in.
+	 * @param {boolean} isContainerASection - Optional. Whether the container is a section.
 	 *
-	 * @return {Promise<*>} Element ID
+	 * @return {Promise<string>} Element ID
 	 */
 	async addElement( model: unknown, container: null | string = null, isContainerASection = false ): Promise<string> {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
 	}
 
-	async removeElement( elementId: string ) {
+	/**
+	 * Remove element from the page.
+	 *
+	 * @param {string} elementId - Element ID.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async removeElement( elementId: string ): Promise<void> {
 		await this.page.evaluate( ( { id } ) => {
 			$e.run( 'document/elements/delete', {
 				container: elementor.getContainer( id ),
@@ -124,12 +161,13 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Add a widget by `widgetType`.
 	 *
-	 * @param {string}  widgetType
-	 * @param {string}  container           - Optional Container to create the element in.
-	 * @param {boolean} isContainerASection - Optional. Is the container a section.
-	 * @return {Promise<string>}			- widget ID
+	 * @param {string}  widgetType          - Widget type.
+	 * @param {string}  container           - Optional. Container to create the element in.
+	 * @param {boolean} isContainerASection - Optional. Whether the container is a section.
+	 *
+	 * @return {Promise<string>} The widget ID.
 	 */
-	async addWidget( widgetType: string, container = null, isContainerASection = false ) {
+	async addWidget( widgetType: string, container = null, isContainerASection = false ): Promise<string> {
 		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
 		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
 
@@ -139,14 +177,17 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Add a page by importing a Json page object from PostMeta _elementor_data into Tests
 	 *
-	 * @param {string}  dirName              - use __dirname to get the current directory
-	 * @param {string}  fileName             - without json extension
-	 * @param {string}  widgetSelector       - css selector
-	 * @param {boolean} updateDatesForImages - flag to update dates for images
+	 * @param {string}  dirName              - Directory name, use `__dirname` for the current directory.
+	 * @param {string}  fileName             - Name of the file without extension.
+	 * @param {string}  widgetSelector       - Selector of the widget.
+	 * @param {boolean} updateDatesForImages - Optional. Whether to update image dates in the template. Default is false.
+	 *
+	 * @return {Promise<void>}
 	 */
-	async loadJsonPageTemplate( dirName: string, fileName: string, widgetSelector: string, updateDatesForImages = false ) {
+	async loadJsonPageTemplate( dirName: string, fileName: string, widgetSelector: string, updateDatesForImages: boolean = false ): Promise<void> {
 		const filePath = _path.resolve( dirName, `./templates/${ fileName }.json` );
-		const templateData = await import( filePath ) as JSON;
+		const rawFileData = await readFile( filePath );
+		const templateData = JSON.parse( rawFileData.toString() );
 		const pageTemplateData =
 		{
 			content: templateData,
@@ -180,61 +221,33 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * @typedef {import('@playwright/test').ElementHandle} ElementHandle
-	 */
-	/**
 	 * Get element handle from the preview frame using its Container ID.
 	 *
 	 * @param {string} id - Container ID.
 	 *
 	 * @return {Promise<ElementHandle<SVGElement | HTMLElement> | null>} element handle
 	 */
-	async getElementHandle( id: string ) {
+	async getElementHandle( id: string ): Promise<ElementHandle<SVGElement | HTMLElement> | null> {
 		return this.getPreviewFrame().$( getElementSelector( id ) );
 	}
 
-	getPreviewFrame() {
+	/**
+	 * Get the frame of the Elementor editor preview.
+	 *
+	 * @return {Frame}
+	 */
+	getPreviewFrame(): Frame {
 		return this.page.frame( { name: 'elementor-preview-iframe' } );
-	}
-
-	/**
-	 * Use the Canvas post template.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async useCanvasTemplate() {
-		if ( await this.getPreviewFrame().$( '.elementor-template-canvas' ) ) {
-			return;
-		}
-
-		await this.page.click( '#elementor-panel-footer-settings' );
-		await this.page.selectOption( '.elementor-control-template >> select', 'elementor_canvas' );
-		await this.getPreviewFrame().waitForSelector( '.elementor-template-canvas' );
-	}
-
-	/**
-	 * Use the Default post template.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async useDefaultTemplate() {
-		if ( await this.getPreviewFrame().$( '.elementor-default' ) ) {
-			return;
-		}
-
-		await this.page.click( '#elementor-panel-footer-settings' );
-		await this.page.selectOption( '.elementor-control-template >> select', 'default' );
-		await this.getPreviewFrame().waitForSelector( '.elementor-default' );
 	}
 
 	/**
 	 * Select an element inside the editor.
 	 *
-	 * @param {string} elementId - Element ID;
+	 * @param {string} elementId - Element ID.
 	 *
-	 * @return {Object} element;
+	 * @return {Promise<Locator>} element;
 	 */
-	async selectElement( elementId: string ) {
+	async selectElement( elementId: string ): Promise<Locator> {
 		await this.page.evaluate( ( { id } ) => {
 			$e.run( 'document/elements/select', {
 				container: elementor.getContainer( id ),
@@ -245,23 +258,14 @@ export default class EditorPage extends BasePage {
 		return this.getPreviewFrame().locator( '.elementor-element-' + elementId );
 	}
 
-	async copyElement( elementId: string ) {
-		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
-		await element.click( { button: 'right' } );
-
-		const copyListItemSelector = '.elementor-context-menu-list__item-copy:visible';
-		await this.page.waitForSelector( copyListItemSelector );
-		await this.page.locator( copyListItemSelector ).click();
-	}
-
-	async pasteElement( selector: string ) {
-		await this.getPreviewFrame().locator( selector ).click( { button: 'right' } );
-
-		const pasteSelector = '.elementor-context-menu-list__group-paste .elementor-context-menu-list__item-paste';
-		await this.page.locator( pasteSelector ).click();
-	}
-
-	async openAddElementSection( elementId: string ) {
+	/**
+	 * Open the section that adds a new element.
+	 *
+	 * @param {string} elementId - Element ID.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openAddElementSection( elementId: string ): Promise<void> {
 		const element = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId }` );
 		await element.hover();
 		const elementAddButton = this.getPreviewFrame().locator( `.elementor-edit-mode .elementor-element-${ elementId } > .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-add` );
@@ -269,74 +273,349 @@ export default class EditorPage extends BasePage {
 		await this.getPreviewFrame().waitForSelector( '.elementor-add-section-inline' );
 	}
 
-	async pasteStyleElement( elementId: string ) {
-		const element = this.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + elementId );
-		await element.click( { button: 'right' } );
-
-		const pasteListItemSelector = '.elementor-context-menu-list__item-pasteStyle:visible';
-		await this.page.waitForSelector( pasteListItemSelector );
-		await this.page.locator( pasteListItemSelector ).click();
+	async setWidgetTab( tab: 'content' | 'style' | 'advanced' ): Promise<void> {
+		await this.page.locator( `.elementor-tab-control-${ tab }` ).click();
 	}
 
 	/**
-	 * Activate a tab inside the panel editor.
+	 * Open a tab inside an Editor panel.
 	 *
-	 * @param {string} panelName - The name of the panel;
+	 * @param {string} panelId - The panel tab to open.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async activatePanelTab( panelName: string ) {
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + ' span' );
+	async openPanelTab( panelId: string ): Promise<void> {
+		await this.page.waitForSelector( `.elementor-tab-control-${ panelId } span` );
 
 		// Check if panel has been activated already.
-		if ( await this.page.$( '.elementor-tab-control-' + panelName + '.elementor-active' ) ) {
+		if ( await this.page.$( `.elementor-tab-control-${ panelId }.elementor-active` ) ) {
 			return;
 		}
 
-		await this.page.locator( '.elementor-tab-control-' + panelName + ' span' ).click();
-		await this.page.waitForSelector( '.elementor-tab-control-' + panelName + '.elementor-active' );
+		await this.page.locator( `.elementor-tab-control-${ panelId } span` ).click();
+		await this.page.waitForSelector( `.elementor-tab-control-${ panelId }.elementor-active` );
+	}
+
+	/**
+	 * Open a tab inside an Editor panel for V2 widgets.
+	 *
+	 * @param {'style' | 'general'} sectionName - The section to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openV2PanelTab( sectionName: 'style' | 'general' ) {
+		const selectorMap: Record< 'style' | 'general', string > = {
+			style: 'style',
+			general: 'settings',
+		};
+		const sectionButtonSelector = `#tab-0-${ selectorMap[ sectionName ] }`,
+			sectionContentSelector = `#tabpanel-0-${ selectorMap[ sectionName ] }`,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionContentElement: HTMLElement = document.querySelector( selector );
+
+				return ! sectionContentElement?.hidden;
+			}, sectionContentSelector );
+
+		if ( isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionButtonSelector ).click();
+		await this.page.locator( sectionContentSelector ).waitFor();
+	}
+
+	/**
+	 * Open a section in an active panel tab.
+	 *
+	 * @param {string} sectionId - The section to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openSection( sectionId: string ): Promise<void> {
+		const sectionSelector = `.elementor-control-${ sectionId }`,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionElement = document.querySelector( selector );
+
+				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
+			}, sectionSelector ),
+			section = await this.page.$( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' );
+
+		if ( ! section || isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
+	}
+
+	/**
+	 * Close a section in an active panel tab.
+	 *
+	 * @param {string} sectionId - The section to close.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async closeSection( sectionId: string ): Promise<void> {
+		const sectionSelector = `.elementor-control-${ sectionId }`,
+			isOpenSection = await this.page.evaluate( ( selector ) => {
+				const sectionElement = document.querySelector( selector );
+
+				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
+			}, sectionSelector ),
+			section = await this.page.$( sectionSelector + '.e-open:visible' );
+
+		if ( ! section || ! isOpenSection ) {
+			return;
+		}
+
+		await this.page.locator( sectionSelector + '.e-open:visible .elementor-panel-heading' ).click();
+	}
+
+	/**
+	 * Open a section in an active panel tab.
+	 *
+	 * @param {string} sectionId - The section to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ) {
+		const sectionButton = this.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( sectionId, 'i' ) } );
+		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
+		const isContentVisible = await this.page.evaluate( ( selector ) => {
+			return !! document.getElementById( selector );
+		}, contentSelector );
+
+		if ( isContentVisible ) {
+			return;
+		}
+
+		await sectionButton.click();
 	}
 
 	/**
 	 * Set a custom width value to a widget.
 	 *
-	 * @param {string} width - The custom width value (as a percentage);
+	 * @param {string} width - Optional. The custom width value (as a percentage). Default is '100'.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setWidgetCustomWidth( width = '100' ) {
-		await this.activatePanelTab( 'advanced' );
-		await this.page.selectOption( '.elementor-control-_element_width >> select', 'initial' );
-		await this.page.locator( '.elementor-control-_element_custom_width .elementor-control-input-wrapper input' ).fill( width );
+	async setWidgetCustomWidth( width: string = '100' ): Promise<void> {
+		await this.openPanelTab( 'advanced' );
+		await this.setSelectControlValue( '_element_width', 'initial' );
+		await this.setSliderControlValue( '_element_custom_width', width );
 	}
 
 	/**
-	 * Set a custom width value to a widget.
+	 * Set tab control value.
 	 *
-	 * @param {string}        controlId - The control to set the value to;
-	 * @param {string|number} value     - The value to set;
+	 * @param {string} controlId - The control to select.
+	 * @param {string} tabId     - The tab to select.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setSliderControlValue( controlId: string, value: string ) {
-		await this.page.locator( '.elementor-control-' + controlId + ' .elementor-slider-input input' ).fill( value.toString() );
+	async setTabControlValue( controlId: string, tabId: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-${ tabId }` ).first().click();
 	}
 
-	async setNumberControlValue( controlId: string, value: string ) {
+	/**
+	 * Set text control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} value     - The value to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTextControlValue( controlId: string, value: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId } input` ).nth( 0 ).fill( value.toString() );
+	}
+
+	/**
+	 * Set textarea control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} value     - The value to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTextareaControlValue( controlId: string, value: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId } textarea` ).fill( value.toString() );
+	}
+
+	/**
+	 * Set number control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} value     - The value to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setNumberControlValue( controlId: string, value: string ): Promise<void> {
 		await this.page.locator( `.elementor-control-${ controlId } input >> nth=0` ).fill( value.toString() );
 	}
 
-	async setChooseControlValue( controlId: string, value: string ) {
-		await this.page.locator( `.elementor-control-${ controlId } .${ value }` ).click();
+	/**
+	 * Set slider control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} value     - The value to set.
+	 */
+	async setSliderControlValue( controlId: string, value: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-slider-input input` ).fill( value );
 	}
 
 	/**
-	 * Set a widget to `flew grow`.
+	 * Set select control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} value     - The value to set.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setWidgetToFlexGrow() {
-		await this.page.locator( '.elementor-control-_flex_size .elementor-control-input-wrapper .eicon-grow' ).click();
+	async setSelectControlValue( controlId: string, value: string ): Promise<void> {
+		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+	}
+
+	/**
+	 * Set select2 control value.
+	 *
+	 * @param {string}  controlId  - The control to set the value to.
+	 * @param {string}  value      - The value to set.
+	 * @param {boolean} exactMatch - Optional. Select only items that exactly match the provided value. Default is true.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSelect2ControlValue( controlId: string, value: string, exactMatch: boolean = true ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId } .select2:not( .select2-container--disabled )` ).click();
+		await this.page.locator( '.select2-search--dropdown input[type="search"]' ).fill( value );
+
+		if ( exactMatch ) {
+			await this.page.locator( `.select2-results__option:text-is("${ value }")` ).first().click();
+		} else {
+			await this.page.locator( `.select2-results__option:has-text("${ value }")` ).first().click();
+		}
+
+		await this.page.waitForLoadState( 'domcontentloaded' );
+	}
+
+	/**
+	 * Set dimensions control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} value     - The value to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDimensionsValue( controlId: string, value: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-dimensions li:first-child input` ).fill( value );
+	}
+
+	/**
+	 * Set choose control value.
+	 *
+	 * TODO: For consistency, we need to rewrite the logic, from icon based to value based.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} icon      - The icon to choose.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setChooseControlValue( controlId: string, icon: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId } .${ icon }` ).click();
+	}
+
+	/**
+	 * Set color control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} value     - The value to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setColorControlValue( controlId: string, value: string ): Promise<void> {
+		const controlSelector = `.elementor-control-${ controlId }`;
+
+		await this.page.locator( controlSelector + ' .pcr-button' ).click();
+		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( value );
+		await this.page.locator( controlSelector ).click();
+	}
+
+	/**
+	 * Set switcher control value.
+	 *
+	 * @param {string}  controlId - The control to set the value to.
+	 * @param {boolean} value     - Optional. The value to set (true|false). Default is true.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setSwitcherControlValue( controlId: string, value: boolean = true ): Promise<void> {
+		const controlSelector = `.elementor-control-${ controlId }`,
+			controlLabel = this.page.locator( controlSelector + ' label.elementor-switch' ),
+			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
+
+		if ( currentState !== Boolean( value ) ) {
+			await controlLabel.click();
+		}
+	}
+
+	/**
+	 * Set an image on a media control.
+	 *
+	 * @param {string}  controlId  - The control to set the value to.
+	 * @param {boolean} imageTitle - The title of the image to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setMediaControlImageValue( controlId: string, imageTitle: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId } .elementor-control-media__preview` ).click();
+		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
+		await this.page.locator( `[aria-label="${ imageTitle }"]` ).click();
+		await this.page.locator( '.button.media-button' ).click();
+	}
+
+	/**
+	 * Set typography control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} fontsize  - Font size value.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTypographyControlValue( controlId: string, fontsize: string ): Promise<void> {
+		const controlSelector = `.elementor-control-${ controlId }_typography .eicon-edit`;
+
+		await this.page.locator( controlSelector ).click();
+		await this.setSliderControlValue( controlId + '_font_size', fontsize );
+		await this.page.locator( controlSelector ).click();
+	}
+
+	/**
+	 * Set shadow control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} type      - Shadow type. Available options are 'text' or 'box.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setShadowControlValue( controlId: string, type: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type label` ).first().click();
+	}
+
+	/**
+	 * Set text stroke control value.
+	 *
+	 * @param {string} controlId - The control to set the value to.
+	 * @param {string} type      - Stroke type. Available options are 'text' or 'box.
+	 * @param {number} value     - Stroke value.
+	 * @param {string} color     - Stroke color.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setTextStrokeControlValue( controlId: string, type: string, value: number, color: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
+		await this.page.locator( `.elementor-control-${ controlId }_stroke_color .pcr-button` ).first().click();
+		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
+		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type label` ).first().click();
 	}
 
 	/**
@@ -344,64 +623,12 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setWidgetMask() {
-		await this.page.locator( '.elementor-control-_section_masking' ).click();
-		await this.page.locator( '.elementor-control-_mask_switch .elementor-control-input-wrapper .elementor-switch .elementor-switch-label' ).click();
-		await this.page.selectOption( '.elementor-control-_mask_size >> select', 'custom' );
-		await this.page.locator( '.elementor-control-_mask_size_scale .elementor-control-input-wrapper input' ).fill( '30' );
-		await this.page.selectOption( '.elementor-control-_mask_position >> select', 'top right' );
-	}
-
-	/**
-	 * Set a background color to an element.
-	 *
-	 * @param {string}  color     - The background color code;
-	 * @param {string}  elementId - The ID of targeted element;
-	 * @param {boolean} isWidget  - Indicate whether the element is a widget or not; the default value is 'widget';
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setBackgroundColor( color: string, elementId: string, isWidget = true ) {
-		const panelTab = isWidget ? 'advanced' : 'style',
-			backgroundSelector = isWidget ? '.elementor-control-_background_background ' : '.elementor-control-background_background ',
-			backgroundColorSelector = isWidget ? '.elementor-control-_background_color ' : '.elementor-control-background_color ';
-
-		await this.selectElement( elementId );
-		await this.activatePanelTab( panelTab );
-
-		if ( isWidget ) {
-			await this.page.locator( '.elementor-control-_section_background .elementor-panel-heading-title' ).click();
-		}
-
-		await this.page.locator( backgroundSelector + '.eicon-paint-brush' ).click();
-		await this.page.locator( backgroundColorSelector + '.pcr-button' ).click();
-		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
-	}
-
-	/**
-	 * Set a border color to a container.
-	 *
-	 * @param {string} color       - The background color code;
-	 * @param {string} containerId - The ID of targeted container;
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setContainerBorderColor( color: string, containerId: string ) {
-		await this.selectElement( containerId );
-		await this.activatePanelTab( 'style' );
-		await this.openSection( 'section_border' );
-		await this.page.locator( '.elementor-control-border_color .pcr-button' ).click();
-		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
-	}
-
-	/**
-	 * Remove the focus from the test elements by creating two new elements.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async removeFocus() {
-		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click( { button: 'right' } );
-		await this.getPreviewFrame().locator( '#elementor-add-new-section' ).click();
+	async setWidgetMask(): Promise<void> {
+		await this.openSection( '_section_masking' );
+		await this.setSwitcherControlValue( '_mask_switch', true );
+		await this.setSelectControlValue( '_mask_size', 'custom' );
+		await this.setSliderControlValue( '_mask_size_scale', '30' );
+		await this.setSelectControlValue( '_mask_position', 'top right' );
 	}
 
 	/**
@@ -409,7 +636,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async hideVideoControls() {
+	async hideVideoControls(): Promise<void> {
 		await this.getPreviewFrame().waitForSelector( '.elementor-video' );
 
 		const videoFrame = this.getPreviewFrame().frameLocator( '.elementor-video' ),
@@ -429,7 +656,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async hideMapControls() {
+	async hideMapControls(): Promise<void> {
 		await this.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
 
 		const mapFrame = this.getPreviewFrame().frameLocator( '.elementor-widget-google_maps iframe' ),
@@ -447,7 +674,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async togglePreviewMode() {
+	async togglePreviewMode(): Promise<void> {
 		if ( ! await this.page.$( 'body.elementor-editor-preview' ) ) {
 			await this.page.locator( '#elementor-mode-switcher' ).click();
 			await this.page.waitForSelector( 'body.elementor-editor-preview' );
@@ -458,13 +685,12 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
-	async changeEditorLayout( layout: string ) {
-		await this.page.locator( '#elementor-panel-footer-settings' ).click();
-		await this.page.selectOption( '[data-setting=template]', layout );
-		await this.ensurePreviewReload();
-	}
-
-	async ensurePreviewReload() {
+	/**
+	 * Wait for the Elementor preview to finish loading.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async waitForPreviewToLoad(): Promise<void> {
 		await this.page.waitForSelector( '#elementor-preview-loading' );
 		await this.page.waitForSelector( '#elementor-preview-loading', { state: 'hidden' } );
 	}
@@ -474,90 +700,307 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async hideEditorElements() {
+	async hideEditorElements(): Promise<void> {
 		const css = '<style>.elementor-element-overlay,.elementor-empty-view{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}</style>';
 
 		await this.addWidget( 'html' );
-		await this.page.locator( '.elementor-control-type-code textarea' ).fill( css );
+		await this.setTextareaControlValue( 'type-code', css );
 	}
 
-	async changeUiTheme( uiMode: string ) {
+	/**
+	 * Whether the Top Bar is active or not.
+	 *
+	 * @return {Promise<boolean>}
+	 */
+	async hasTopBar(): Promise<boolean> {
+		return await this.page.locator( EditorSelectors.panels.topBar.wrapper ).isVisible();
+	}
+
+	/**
+	 * Click on a top bar item.
+	 *
+	 * @param {TopBarSelector} selector - The selector object for the top bar button.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async clickTopBarItem( selector: TopBarSelector ): Promise<void> {
+		const topbarLocator = this.page.locator( EditorSelectors.panels.topBar.wrapper );
+		if ( 'text' === selector.attribute ) {
+			await topbarLocator.getByRole( 'button', { name: selector.attributeValue } ).click();
+		} else {
+			await topbarLocator.locator( `button[${ selector.attribute }="${ selector.attributeValue }"]` ).click();
+		}
+	}
+
+	/**
+	 * Open the menu panel. Or, when an inner panel is provided, open the inner panel.
+	 *
+	 * TODO: Delete when Editor Top Bar feature is merged.
+	 *
+	 * @param {string} innerPanel - Optional. The inner menu to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openMenuPanel( innerPanel?: string ): Promise<void> {
+		await this.page.locator( EditorSelectors.panels.menu.footerButton ).click();
+		await this.page.locator( EditorSelectors.panels.menu.wrapper ).waitFor();
+
+		if ( innerPanel ) {
+			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
+		}
+	}
+
+	/**
+	 * Open the elements/widgets panel.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openElementsPanel(): Promise<void> {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( TopBarSelectors.elementsPanel );
+		} else {
+			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
+		}
+
+		await this.page.locator( EditorSelectors.panels.elements.wrapper ).waitFor();
+	}
+
+	/**
+	 * Open the page settings panel.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openPageSettingsPanel(): Promise<void> {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( TopBarSelectors.documentSettings );
+		} else {
+			await this.page.locator( EditorSelectors.panels.pageSettings.footerButton ).click();
+		}
+
+		await this.page.locator( EditorSelectors.panels.pageSettings.wrapper ).waitFor();
+	}
+
+	/**
+	 * Open the site settings panel. Or, when an inner panel is provided, open the inner panel.
+	 *
+	 * @param {string} innerPanel - Optional. The inner menu to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openSiteSettings( innerPanel?: string ): Promise<void> {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( TopBarSelectors.siteSettings );
+		} else {
+			await this.openMenuPanel( 'global-settings' );
+		}
+
+		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
+
+		if ( innerPanel ) {
+			await this.page.locator( `.elementor-panel-menu-item-settings-${ innerPanel }` ).click();
+		}
+	}
+
+	/**
+	 * Open the user preferences panel.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openUserPreferencesPanel(): Promise<void> {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( TopBarSelectors.elementorLogo );
+			await this.page.waitForTimeout( 100 );
+			await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
+		} else {
+			await this.openMenuPanel( 'editor-preferences' );
+		}
+
+		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
+	}
+
+	/**
+	 * Close the navigator/structure panel.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async closeNavigatorIfOpen(): Promise<void> {
+		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
+
+		if ( ! isOpen ) {
+			return;
+		}
+
+		await this.page.locator( EditorSelectors.panels.navigator.closeButton ).click();
+	}
+
+	/**
+	 * Set WordPress page template.
+	 *
+	 * @param {string} template - The page template to set. Available options: 'default', 'canvas', 'full-width'.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setPageTemplate( template: 'default' | 'canvas' | 'full-width' ): Promise<void> {
+		let templateValue;
+		let templateClass;
+
+		switch ( template ) {
+			case 'default':
+				templateValue = 'default';
+				templateClass = '.elementor-default';
+				break;
+			case 'canvas':
+				templateValue = 'elementor_canvas';
+				templateClass = '.elementor-template-canvas';
+				break;
+			case 'full-width':
+				templateValue = 'elementor_header_footer';
+				templateClass = '.elementor-template-full-width';
+				break;
+		}
+
+		// Check if the template is already set
+		if ( await this.getPreviewFrame().$( templateClass ) ) {
+			return;
+		}
+
+		// Select the template
+		await this.openPageSettingsPanel();
+		await this.setSelectControlValue( 'template', templateValue );
+		await this.getPreviewFrame().waitForSelector( templateClass );
+	}
+
+	/**
+	 * Change the display mode of the editor.
+	 *
+	 * @param {string} uiMode - Either 'light', 'dark', or 'auto'.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setDisplayMode( uiMode: string ):	Promise<void> {
 		const uiThemeOptions = {
-			light: '.eicon-light-mode',
-			dark: '.eicon-dark-mode',
-			auto: '.eicon-header',
+			light: 'eicon-light-mode',
+			dark: 'eicon-dark-mode',
+			auto: 'eicon-header',
 		};
-		await this.page.locator( '#elementor-panel-header-menu-button' ).click();
-		await this.page.click( '.elementor-panel-menu-item-editor-preferences' );
-		await this.page.locator( `.elementor-control-ui_theme ${ uiThemeOptions[ uiMode ] }` ).click();
+
+		await this.openUserPreferencesPanel();
+		await this.setChooseControlValue( 'ui_theme', uiThemeOptions[ uiMode ] );
+	}
+
+	/**
+	 * Open the responsive view bar.
+	 *
+	 * TODO: Delete when Editor Top Bar feature is merged.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openResponsiveViewBar(): Promise<void> {
+		const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
+
+		if ( ! hasResponsiveViewBar ) {
+			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+		}
 	}
 
 	/**
 	 * Select a responsive view.
 	 *
-	 * @param {string} device - The name of the device breakpoint, such as `tablet_extra`;
+	 * @param {Device} device - The name of the device breakpoint, such as `tablet_extra`.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async changeResponsiveView( device: string ) {
-		const hasResponsiveViewBar = await this.page.evaluate( () => {
-			return document.querySelector( '#elementor-preview-responsive-wrapper' ).classList.contains( 'ui-resizable' );
-		} );
+	async changeResponsiveView( device: Device ): Promise<void> {
+		const hasTopBar = await this.hasTopBar();
+		if ( hasTopBar ) {
+			await Breakpoints.getDeviceLocator( this.page, device ).click();
+		} else {
+			await this.openResponsiveViewBar();
+			await this.page.locator( `#e-responsive-bar-switcher__option-${ device }` ).first().locator( 'i' ).click();
+		}
+	}
 
-		if ( ! hasResponsiveViewBar ) {
-			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
+	/**
+	 * Publish the current page.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async publishPage(): Promise<void> {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( TopBarSelectors.publish );
+			await this.page.waitForLoadState();
+			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
+		} else {
+			await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+			await this.page.waitForLoadState();
+			await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
+		}
+	}
+
+	/**
+	 * Publish the current page and view it.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async publishAndViewPage(): Promise<void> {
+		const hasTopBar = await this.hasTopBar();
+
+		await this.publishPage();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( TopBarSelectors.saveOptions );
+			await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
+			const pageId = await this.getPageId();
+			await this.page.goto( `/?p=${ pageId }` );
+		} else {
+			await this.openMenuPanel( 'view-page' );
 		}
 
-		await this.page.locator( `#e-responsive-bar-switcher__option-${ device } i` ).click();
-	}
-
-	async publishPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
-		await this.page.waitForLoadState();
-		await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
-	}
-
-	async publishAndViewPage() {
-		await this.publishPage();
-		await this.page.locator( '#elementor-panel-header' ).getByRole( 'button', { name: 'Menu' } ).click();
-		await this.page.getByRole( 'link', { name: 'View Page' } ).click();
 		await this.page.waitForLoadState();
 	}
 
-	async saveAndReloadPage() {
-		await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
+	async viewPage() {
+		const pageId = await this.getPageId();
+		await this.page.goto( `/?p=${ pageId }` );
+		await this.page.waitForLoadState();
+	}
+
+	/**
+	 * Save and reload the current page.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async saveAndReloadPage(): Promise<void> {
+		const hasTopBar = await this.hasTopBar();
+
+		if ( hasTopBar ) {
+			await this.clickTopBarItem( TopBarSelectors.publish );
+		} else {
+			await this.page.locator( '#elementor-panel-saver-button-publish' ).click();
+		}
+
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();
 	}
 
-	async previewChanges( context: BrowserContext ) {
-		const previewPagePromise = context.waitForEvent( 'page' );
-
-		await this.page.locator( '#elementor-panel-footer-saver-preview' ).click();
-		await this.page.waitForLoadState( 'networkidle' );
-
-		const previewPage = await previewPagePromise;
-		await previewPage.waitForLoadState();
-
-		return previewPage;
-	}
-
-	/*
-	 * @Description edit current page from the Front End.
+	/**
+	 * Get the current page ID.
+	 *
+	 * @return {Promise<string>}
 	 */
-	async editCurrentPage() {
-		const postId = await this.getPageIdFromFrontEnd();
-		expect( postId, 'No Post/Page ID returned when calling getPageIdFromFrontEnd().' ).toBeTruthy();
-		await this.gotoPostId( postId );
-	}
-
-	async getPageId() {
+	async getPageId(): Promise<string> {
 		return await this.page.evaluate( () => elementor.config.initial_document.id );
-	}
-
-	async getPageIdFromFrontEnd() {
-		return await this.page.evaluate( () => elementorFrontendConfig.post.id );
 	}
 
 	/**
@@ -582,7 +1025,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async applyElementSettings( elementId: string, settings: unknown ) {
+	async applyElementSettings( elementId: string, settings: unknown ): Promise<void> {
 		await this.page.evaluate(
 			( args ) => $e.run( 'document/elements/settings', {
 				container: elementor.getContainer( args.elementId ),
@@ -595,9 +1038,11 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Check if an item is in the viewport.
 	 *
-	 * @param {string} itemSelector
+	 * @param {string} itemSelector - The item selector.
+	 *
+	 * @return {Promise<boolean>}
 	 */
-	async isItemInViewport( itemSelector: string ) {
+	async isItemInViewport( itemSelector: string ): Promise<boolean> {
 		return this.page.evaluate( ( item: string ) => {
 			let isVisible = false;
 
@@ -620,96 +1065,27 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open a section of the active widget.
+	 * Get the number of widgets in the editor.
 	 *
-	 * @param {string} sectionId
-	 *
-	 * @return {Promise<void>}
+	 * @return {Promise<number>}
 	 */
-	async openSection( sectionId: string ) {
-		const sectionSelector = '.elementor-control-' + sectionId,
-			isOpenSection = await this.page.evaluate( ( selector ) => {
-				const sectionElement = document.querySelector( selector );
-
-				return sectionElement?.classList.contains( 'e-open' ) || sectionElement?.classList.contains( 'elementor-open' );
-			}, sectionSelector ),
-			section = await this.page.$( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' );
-
-		if ( ! section || isOpenSection ) {
-			return;
-		}
-
-		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
-	}
-
-	/**
-	 * Open a control of the active widget.
-	 *
-	 * @param {string} controlId
-	 * @param {string} value
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setSelectControlValue( controlId: string, value: string ) {
-		await this.page.selectOption( '.elementor-control-' + controlId + ' select', value );
-	}
-
-	/**
-	 * Change switcher control value.
-	 *
-	 * @param {string}  controlId
-	 * @param {boolean} setState  [true|false]
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setSwitcherControlValue( controlId: string, setState = true ) {
-		const controlSelector = '.elementor-control-' + controlId,
-			controlLabel = this.page.locator( controlSelector + ' label.elementor-switch' ),
-			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
-
-		if ( currentState !== Boolean( setState ) ) {
-			await controlLabel.click();
-		}
-	}
-
-	async getWidgetCount() {
+	async getWidgetCount(): Promise<number> {
 		return ( await this.getPreviewFrame().$$( EditorSelectors.widget ) ).length;
 	}
 
-	getWidget() {
-		return this.getPreviewFrame().locator( EditorSelectors.widget );
-	}
-
-	async waitForElementRender( id: string ) {
-		if ( null === id ) {
-			throw new Error( 'Id is null' );
-		}
-		let isLoading: boolean;
-
-		try {
-			await this.getPreviewFrame().waitForSelector(
-				EditorSelectors.loadingElement( id ),
-				{ timeout: 500 },
-			);
-
-			isLoading = true;
-		} catch ( e ) {
-			isLoading = false;
-		}
-
-		if ( isLoading ) {
-			await this.getPreviewFrame().waitForSelector(
-				EditorSelectors.loadingElement( id ),
-				{ state: 'detached' },
-			);
-		}
-	}
-
-	async waitForIframeToLoaded( widgetType: string, isPublished = false ) {
+	/**
+	 * Based on the widget type, wait for the iframe to load.
+	 *
+	 * @param {string}  widgetType  - The widget type. Available options: 'video', 'google_maps', 'sound_cloud'.
+	 * @param {boolean} isPublished - Optional. Whether the element is published. Default is false.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async waitForIframeToLoaded( widgetType: string, isPublished: boolean = false ): Promise<void> {
 		const frames = {
-			video: [ EditorSelectors.videoIframe, EditorSelectors.playIcon ],
-			google_maps: [ EditorSelectors.mapIframe, EditorSelectors.showSatelliteViewBtn ],
-			sound_cloud: [ EditorSelectors.soundCloudIframe, EditorSelectors.soundWaveForm ],
+			video: [ EditorSelectors.video.iframe, EditorSelectors.video.playIcon ],
+			google_maps: [ EditorSelectors.googleMaps.iframe, EditorSelectors.googleMaps.showSatelliteViewBtn ],
+			sound_cloud: [ EditorSelectors.soundCloud.iframe, EditorSelectors.soundCloud.waveForm ],
 		};
 
 		if ( ! ( widgetType in frames ) ) {
@@ -736,7 +1112,15 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
-	async waitForElement( isPublished: boolean, selector: string ) {
+	/**
+	 * Wait for the element to be visible.
+	 *
+	 * @param {boolean} isPublished - Whether the element is published.
+	 * @param {string}  selector    - Element selector.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async waitForElement( isPublished: boolean, selector: string ): Promise<void> {
 		if ( selector === undefined ) {
 			return;
 		}
@@ -750,27 +1134,17 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
-	async setColorControlValue( color: string, colorControlId: string ) {
-		const controlSelector = '.elementor-control-' + colorControlId;
-
-		await this.page.locator( controlSelector + ' .pcr-button' ).click();
-		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( color );
-		await this.page.locator( controlSelector ).click();
-	}
-
 	/**
-	 * Set Dimentions controls value
+	 * Verify class in element.
 	 *
-	 * @param {string} selector
-	 * @param {string} value
+	 * @param {Object}  args             - Arguments.
+	 * @param {string}  args.selector    - Element selector.
+	 * @param {string}  args.className   - Class name.
+	 * @param {boolean} args.isPublished - Whether the element is published.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setDimensionsValue( selector: string, value: string ) {
-		await this.page.locator( '.elementor-control-' + selector + ' .elementor-control-dimensions li:first-child input' ).fill( value );
-	}
-
-	async verifyClassInElement( args: { selector: string, className: string, isPublished: boolean } ) {
+	async verifyClassInElement( args: { selector: string, className: string, isPublished: boolean } ): Promise<void> {
 		const regex = new RegExp( args.className );
 		if ( args.isPublished ) {
 			await expect( this.page.locator( args.selector ) ).toHaveClass( regex );
@@ -779,7 +1153,18 @@ export default class EditorPage extends BasePage {
 		}
 	}
 
-	async verifyImageSize( args: { selector: string, width: number, height: number, isPublished: boolean } ) {
+	/**
+	 * Verify image size.
+	 *
+	 * @param {Object}  args             - Arguments.
+	 * @param {string}  args.selector    - Element selector.
+	 * @param {number}  args.width       - Image width.
+	 * @param {number}  args.height      - Image height.
+	 * @param {boolean} args.isPublished - Whether the element is published.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async verifyImageSize( args: { selector: string, width: number, height: number, isPublished: boolean } ): Promise<void> {
 		const imageSize = args.isPublished
 			? await this.page.locator( args.selector ).boundingBox()
 			: await this.getPreviewFrame().locator( args.selector ).boundingBox();
@@ -787,18 +1172,18 @@ export default class EditorPage extends BasePage {
 		expect( imageSize.height ).toEqual( args.height );
 	}
 
-	async setTypography( selector: string, fontsize: string ) {
-		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
-		await this.setSliderControlValue( selector + '_font_size', fontsize );
-		await this.page.locator( '.elementor-control-' + selector + '_typography .eicon-edit' ).click();
-	}
-
-	/*
-	* Checks for a stable UI state by comparing screenshots at intervals and expecting a match.
-	* Can be used to check for completed rendering. Useful to wait out animations before screenshots and expects.
-	* Should be less flaky than waitForLoadState( 'load' ) in editor where Ajax re-rendering is triggered.
-	*/
-	async isUiStable( locator, retries = 3, timeout = 500 ) {
+	/**
+	 * Checks for a stable UI state by comparing screenshots at intervals and expecting a match.
+	 * Can be used to check for completed rendering. Useful to wait out animations before screenshots and expects.
+	 * Should be less flaky than waitForLoadState( 'load' ) in editor where Ajax re-rendering is triggered.
+	 *
+	 * @param {Locator} locator - The locator to check for.
+	 * @param {number}  retries - Optional. Number of retries. Default is 3.
+	 * @param {number}  timeout - Optional. Time to wait between retries, in milliseconds. Default is 500.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async isUiStable( locator: Locator, retries: number = 3, timeout: number = 500 ): Promise<void> {
 		const comparator = getComparator( 'image/png' );
 		let retry = 0,
 			beforeImage,
@@ -823,65 +1208,26 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Set Slider control value.
+	 * Run accessibility test using @Axe-Core.
 	 *
-	 * @param {string} controlID
-	 * @param {string} type      [text|box]
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setShadowControl( controlID, type ) {
-		await this.page.locator( `.elementor-control-${ controlID }_${ type }_shadow_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlID }_${ type }_shadow_type  label` ).first().click();
-	}
-
-	/**
-	 * Set Slider control value.
-	 *
-	 * @param {string} controlID
-	 * @param {string} type      [text]
-	 * @param {number} value     [number]
-	 * @param {string} color     [hex color]
+	 * @param {Page}   page     - Playwright page instance.
+	 * @param {string} selector - The selector to test.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async setTextStokeControl( controlID, type, value, color ) {
-		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
-		await this.page.locator( `.elementor-control-${ controlID }_stroke_color .pcr-button` ).first().click();
-		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
-		await this.page.locator( `.elementor-control-${ controlID }_${ type }_stroke_type  label` ).first().click();
-	}
-
-	/**
-	 * Set Slider control value.
-	 *
-	 * @param {string} controlID
-	 * @param {string} tab       [normal|hover|active]
-	 *
-	 * @return {Promise<void>}
-	 */
-	async selectStateTab( controlID, tab ) {
-		await this.page.locator( `.elementor-control-${ controlID } .elementor-control-header_${ tab }_title` ).first().click();
-	}
-
-	/**
-	 * Do an @Axe-Core Accessibility test.
-	 *
-	 * @param {Page}   page
-	 * @param {string} selector
-	 *
-	 * @return {Promise<void>}
-	 */
-	async axeCoreAccessibilityTest( page, selector ) {
-		const accessibilityScanResults = await new AxeBuilder( { page } )
-			.include( selector )
-			.analyze();
-
+	async axeCoreAccessibilityTest( page, selector: string ): Promise<void> {
+		const accessibilityScanResults = await new AxeBuilder( { page } ).include( selector ).analyze();
 		expect.soft( accessibilityScanResults.violations ).toEqual( [] );
 	}
 
-	async removeClasses( className: string ) {
+	/**
+	 * Remove classes from the page.
+	 *
+	 * @param {string} className - The class to remove.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async removeClasses( className: string ): Promise<void> {
 		await this.page.evaluate( async ( _class ) => {
 			await new Promise( ( resolve1 ) => {
 				const elems = document.querySelectorAll( `.${ _class }` );
@@ -894,7 +1240,12 @@ export default class EditorPage extends BasePage {
 		}, className );
 	}
 
-	async scrollPage() {
+	/**
+	 * Scroll the page.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async scrollPage(): Promise<void> {
 		await this.page.evaluate( async () => {
 			await new Promise( ( resolve1 ) => {
 				let totalHeight = 0;
@@ -913,7 +1264,12 @@ export default class EditorPage extends BasePage {
 		} );
 	}
 
-	async removeWpAdminBar() {
+	/**
+	 * Remove the WordPress admin bar.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async removeWpAdminBar(): Promise<void> {
 		const adminBar = 'wpadminbar';
 		await this.page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
 		await this.page.evaluate( ( selector ) => {
@@ -922,7 +1278,89 @@ export default class EditorPage extends BasePage {
 		}, adminBar );
 	}
 
-	async isolatedIdNumber( idPrefix: string, itemID: string ) {
+	/**
+	 * Isolated ID number.
+	 *
+	 * @param {string} idPrefix - The prefix of the item.
+	 * @param {string} itemID   - The item ID.
+	 *
+	 * @return {Promise<number>}
+	 */
+	async isolatedIdNumber( idPrefix: string, itemID: string ): Promise<number> {
 		return Number( itemID.replace( idPrefix, '' ) );
+	}
+
+	async addImagesToGalleryControl( args?: { images?: string[], metaData?: boolean } ) {
+		const defaultImages = [ 'A.jpg', 'B.jpg', 'C.jpg', 'D.jpg', 'E.jpg' ];
+
+		await this.page.locator( EditorSelectors.galleryControl.addGalleryBtn ).nth( 0 ).click();
+		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
+
+		const _images = args?.images === undefined ? defaultImages : args.images;
+
+		for ( const i in _images ) {
+			await this.page.setInputFiles( EditorSelectors.media.imageInp, pathResolve( __dirname, `../resources/${ _images[ i ] }` ) );
+
+			if ( args?.metaData ) {
+				await this.addTestImageMetaData();
+			}
+		}
+
+		await this.page.locator( EditorSelectors.media.addGalleryButton ).click();
+		await this.page.locator( 'text=Insert gallery' ).click();
+	}
+
+	async addTestImageMetaData( args = { caption: 'Test caption!', description: 'Test description!' } ) {
+		await this.page.locator( EditorSelectors.media.images ).first().click();
+		await this.page.locator( EditorSelectors.media.imgCaption ).clear();
+		await this.page.locator( EditorSelectors.media.imgCaption ).type( args.caption );
+
+		await this.page.locator( EditorSelectors.media.images ).first().click();
+		await this.page.locator( EditorSelectors.media.imgDescription ).clear();
+		await this.page.locator( EditorSelectors.media.imgDescription ).type( args.description );
+	}
+
+	/**
+	 * Save the site settings with the top bar.
+	 *
+	 * TODO: Rename when Editor Top Bar feature is merged.
+	 *
+	 * @param {boolean} toReload - Whether to reload the page after saving.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async saveSiteSettingsWithTopBar( toReload: boolean ): Promise<void> {
+		if ( await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).isEnabled() ) {
+			await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).click();
+		} else {
+			await this.page.evaluate( ( selector ) => {
+				const button: HTMLElement = document.evaluate( selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
+				button.click();
+			}, EditorSelectors.panels.siteSettings.saveButton );
+		}
+
+		if ( toReload ) {
+			await this.page.locator( EditorSelectors.refreshPopup.reloadButton ).click();
+		}
+	}
+
+	/**
+	 * Save the site settings without the top bar.
+	 *
+	 * TODO: Delete when Editor Top Bar feature is merged.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async saveSiteSettingsNoTopBar(): Promise<void> {
+		await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
+		await this.page.locator( EditorSelectors.toast ).waitFor();
+	}
+
+	async assertCorrectVwWidthStylingOfElement( element: Locator, vwValue: number = 100 ): Promise<void> {
+		const viewport = this.page.viewportSize();
+		const vwConvertedToPxUnit = viewport.width * vwValue / 100;
+		const elementWidthInPxUnit = await element.boundingBox().then( ( box ) => box?.width ?? 0 );
+		const vwAndPxValuesAreEqual = Math.abs( vwConvertedToPxUnit - elementWidthInPxUnit ) <= 1;
+		expect( vwAndPxValuesAreEqual ).toBeTruthy();
 	}
 }

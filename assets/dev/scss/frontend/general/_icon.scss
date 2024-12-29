@@ -48,8 +48,18 @@
 	}
 }
 
-// Used in Icon and Icons Box.
+// Used in Icon, Icon Box and Social Icons.
 .elementor-shape {
+	&-square {
+		.elementor-icon {
+			border-radius: 0;
+		}
+	}
+	&-rounded {
+		.elementor-icon {
+			border-radius: 10%;
+		}
+	}
 	&-circle {
 		.elementor-icon {
 			border-radius: 50%;

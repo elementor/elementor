@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Experiments\Manager;
 use Elementor\Includes\Elements\Container;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -291,9 +290,17 @@ class Elements_Manager {
 					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
 				],
 			],
+			'helloplus' => [
+				'title' => esc_html__( 'Hello+', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
 			'general' => [
 				'title' => esc_html__( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
+			],
+			'link-in-bio' => [
+				'title' => esc_html__( 'Link In Bio', 'elementor' ),
+				'hideIfEmpty' => true,
 			],
 			'theme-elements' => [
 				'title' => esc_html__( 'Site', 'elementor' ),
@@ -341,6 +348,12 @@ class Elements_Manager {
 			'icon' => 'eicon-wordpress',
 			'active' => false,
 		];
+	}
+
+	public function enqueue_elements_styles() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->enqueue_styles();
+		}
 	}
 
 	/**

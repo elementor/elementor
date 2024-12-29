@@ -592,7 +592,7 @@ class Module extends BaseModule {
 				throw new \Error( static::KIT_LIBRARY_ERROR_KEY );
 			}
 
-			$remote_zip_request = wp_remote_get( $file_url );
+			$remote_zip_request = wp_safe_remote_get( $file_url );
 
 			if ( is_wp_error( $remote_zip_request ) ) {
 				Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
@@ -693,6 +693,8 @@ class Module extends BaseModule {
 				)
 			);
 		}
+
+		do_action( 'elementor/import-export/import-kit/runner/after-run', $import );
 
 		wp_send_json_success( $import );
 	}

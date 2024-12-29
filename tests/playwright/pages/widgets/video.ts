@@ -3,31 +3,49 @@ import Content from '../elementor-panel-tabs/content';
 import { expect } from '@playwright/test';
 
 export default class VideoWidget extends Content {
-	async setTime( startOrEnd: string, value: string ) {
-		const label = `${ String( startOrEnd ).toUpperCase() } Time`;
-		await this.page.getByLabel( label ).click();
-		await this.page.getByLabel( label ).clear( { force: true } );
-		await this.page.getByLabel( label ).type( value );
-	}
-
-	async selectSuggestedVideos( option: string ) {
-		await this.page.locator( EditorSelectors.video.suggestedVideoSelect ).selectOption( option );
-	}
-
-	async getVideoSrc( isPublished: boolean ) {
-		const page = true === isPublished ? this.page : this.editorPage.getPreviewFrame();
+	/**
+	 * Set the video widget source.
+	 *
+	 * @param {boolean} isPublished - Whether the page is published.
+	 *
+	 * @return {Promise<string>}
+	 */
+	async getVideoSrc( isPublished: boolean ): Promise<string> {
+		const page = true === isPublished ? this.page : this.editor.getPreviewFrame();
 		const src = await page.locator( EditorSelectors.video.iframe ).getAttribute( 'src' );
 		return src;
 	}
 
-	async selectVideoSource( option: string ) {
-		await this.page.locator( EditorSelectors.video.videoSourceSelect ).selectOption( option );
-	}
-
-	async verifyVideoLightBox( isPublished: boolean ) {
-		const page = true === isPublished ? this.page : this.editorPage.getPreviewFrame();
+	/**
+	 * Verify the video widget has lightbox set.
+	 *
+	 * @param {boolean} isPublished - Whether the page is published.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async verifyVideoLightBox( isPublished: boolean ): Promise<void> {
+		const page = true === isPublished ? this.page : this.editor.getPreviewFrame();
 		await expect( page.locator( EditorSelectors.video.lightBoxSetting ) ).toBeVisible();
 		await page.locator( EditorSelectors.video.image ).click( );
 		await expect( page.locator( EditorSelectors.video.lightBoxDialog ) ).toBeVisible();
+
+		if ( isPublished ) {
+			await this.editor.assertCorrectVwWidthStylingOfElement( page.locator( EditorSelectors.video.videoWrapper ), 85 );
+		}
+	}
+
+	/**
+	 * Toggle the video widget controls.
+	 *
+	 * @param {string[]} controlSelectors - Control selectors.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async toggleVideoControls( controlSelectors: string[] ): Promise<void> {
+		for ( const i in controlSelectors ) {
+			await this.page.locator( controlSelectors[ i ] )
+				.locator( '..' )
+				.locator( EditorSelectors.video.switch ).click();
+		}
 	}
 }

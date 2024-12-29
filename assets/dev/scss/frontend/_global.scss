@@ -55,10 +55,7 @@
 	.elementor-background-video-container,
 	.elementor-background-holder,
 	.elementor-background {
-		height: 100%;
-		width: 100%;
-		top: 0;
-		left: 0;
+		inset: 0;
 		position: absolute;
 		overflow: hidden;
 		z-index: $ground-layer;
@@ -87,26 +84,20 @@
 		@include absolute-center;
 	}
 
-	.elementor-html5-video {
+	.elementor-background-video-hosted {
 		object-fit: cover; // For HTML5 portrait video
 	}
 	// End Background Video
 
 	.elementor-background-overlay {
-		height: 100%;
-		width: 100%;
-		top: 0;
-		left: 0;
+		inset: 0;
 		position: absolute;
 	}
 
 	.elementor-background-slideshow {
 		position: absolute;
-		width: 100%;
-		height: 100%;
+		inset: 0;
 		z-index: $ground-layer;
-		top: 0;
-		@include start(0);
 
 		&__slide__image {
 			width: 100%;
@@ -184,7 +175,7 @@
 		justify-content: var( --justify-content );
 		align-items: var( --align-items );
 		align-content: var( --align-content );
-		gap: var( --gap );
+		gap: var( --row-gap ) var( --column-gap );
 	}
 
 	// Flex item.
@@ -204,22 +195,19 @@
 
 	&center {
 		text-align: center;
-
-		.elementor-button {
-			width: auto;
-		}
 	}
 
 	&right {
 		text-align: right;
-
-		.elementor-button {
-			width: auto;
-		}
 	}
 
 	&left {
 		text-align: left;
+	}
+
+	&center,
+	&right,
+	&left {
 
 		.elementor-button {
 			width: auto;
@@ -308,22 +296,19 @@
 
 		&center {
 			text-align: center;
-
-			.elementor-button {
-				width: auto;
-			}
 		}
 
 		&right {
 			text-align: right;
-
-			.elementor-button {
-				width: auto;
-			}
 		}
 
 		&left {
 			text-align: left;
+		}
+
+		&center,
+		&right,
+		&left {
 
 			.elementor-button {
 				width: auto;

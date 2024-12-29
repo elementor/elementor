@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
@@ -267,7 +266,7 @@ class Control_Media extends Control_Base_Multiple {
 						Hints::get_notice_template( [
 							'display' => ! Hints::is_dismissed( 'image-optimization' ),
 							'type' => 'info',
-							'content' => __( 'Don’t let unoptimized images be the downfall of your site’s performance. Use Image Optimizer!', 'elementor' ),
+							'content' => __( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
 							'icon' => true,
 							'dismissible' => 'image_optimizer_hint',
 							'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
@@ -428,6 +427,10 @@ class Control_Media extends Control_Base_Multiple {
 
 		$alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
 		if ( ! $alt ) {
+			if ( Utils::has_invalid_post_permissions( $attachment ) ) {
+				return '';
+			}
+
 			$alt = $attachment->post_excerpt;
 			if ( ! $alt ) {
 				$alt = $attachment->post_title;

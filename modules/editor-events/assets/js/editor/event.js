@@ -1,20 +1,21 @@
 export default class Event {
+	appType = 'Editor';
+
 	constructor( data ) {
 		this.user_id = null;
 		this.subscription_id = elementor.config.editor_events?.subscription_id;
 		this.url = elementor.config.editor_events?.site_url;
-		this.extra_data = JSON.stringify( data );
-		this.site_info = JSON.stringify( this.getSiteInfo() );
-		this.created_at = Date.now();
+		this.WpVersion = elementor.config.editor_events?.wp_version;
+		this.ClientId = elementor.config.editor_events?.site_key;
+		this.AppVersion = elementor.config.editor_events?.elementor_version;
+		this.SiteLanguage = elementor.config.editor_events?.site_language;
+
+		this.attachData( data );
 	}
 
-	getSiteInfo() {
-		return {
-			WpVersion: elementor.config.editor_events?.wp_version,
-			ClientId: elementor.config.editor_events?.site_key,
-			AppVersion: elementor.config.editor_events?.elementor_version,
-			UserAgent: elementor.config.editor_events?.user_agent,
-			SiteLanguage: elementor.config.editor_events?.site_language,
-		};
+	attachData( data ) {
+		for ( const key in data ) {
+			this[ key ] = data[ key ];
+		}
 	}
 }

@@ -21,6 +21,9 @@ class Command extends \WP_CLI_Command {
 	 * [--network]
 	 *      Flush CSS Cache for all the sites in the network.
 	 *
+	 * [--regenerate]
+	 *      Re-create the CSS files. Otherwise they will be created by a page visit.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *  1. wp elementor flush-css
@@ -29,12 +32,16 @@ class Command extends \WP_CLI_Command {
 	 *  2. wp elementor flush-css --network
 	 *      - This will flush the CSS files for elementor page builder for all the sites in the network.
 	 *
+	 *  3. wp elementor flush-css --regenerate
+	 *      - This will flush the CSS files for elementor page builder and re-create the new CSS files.
+	 *
 	 * @since 2.1.0
 	 * @access public
 	 * @alias flush-css
 	 */
 	public function flush_css( $args, $assoc_args ) {
 		$network = ! empty( $assoc_args['network'] ) && is_multisite();
+		$should_regenerate = ! empty( $assoc_args['regenerate'] );
 
 		if ( $network ) {
 			$blog_ids = get_sites( [
@@ -45,17 +52,23 @@ class Command extends \WP_CLI_Command {
 			foreach ( $blog_ids as $blog_id ) {
 				switch_to_blog( $blog_id );
 
-				Plugin::$instance->files_manager->clear_cache();
-
-				\WP_CLI::success( 'Flushed the Elementor CSS Cache for site - ' . get_option( 'home' ) );
+				$this->handle_flush( $should_regenerate, 'Flushed the Elementor CSS Cache for site - ' . get_option( 'home' ) );
 
 				restore_current_blog();
 			}
 		} else {
-			Plugin::$instance->files_manager->clear_cache();
-
-			\WP_CLI::success( 'Flushed the Elementor CSS Cache' );
+			$this->handle_flush( $should_regenerate, 'Flushed the Elementor CSS Cache' );
 		}
+	}
+
+	private function handle_flush( bool $should_regenerate, string $success_message ): void {
+		Plugin::$instance->files_manager->clear_cache();
+
+		if ( $should_regenerate ) {
+			Plugin::$instance->files_manager->generate_css();
+		}
+
+		\WP_CLI::success( $success_message );
 	}
 
 	/**

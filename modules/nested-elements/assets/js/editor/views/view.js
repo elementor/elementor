@@ -10,8 +10,7 @@ export class View extends $e.components.get( 'nested-elements/nested-repeater' )
 
 			const closest = e.target.closest( '.elementor-element' );
 
-			let model = this.options.model,
-				view = this;
+			let targetContainer = null;
 
 			// For clicks on container/widget.
 			if ( [ 'container', 'widget' ].includes( closest?.dataset.element_type ) ) { // eslint-disable-line camelcase
@@ -23,16 +22,12 @@ export class View extends $e.components.get( 'nested-elements/nested-repeater' )
 				}
 
 				// If not empty, open it.
-				model = container.model;
-				view = container.view;
+				targetContainer = container;
 			}
 
 			e.stopPropagation();
 
-			$e.run( 'panel/editor/open', {
-				model,
-				view,
-			} );
+			$e.run( 'document/elements/select', { container: targetContainer || this.getContainer() } );
 		};
 
 		return events;

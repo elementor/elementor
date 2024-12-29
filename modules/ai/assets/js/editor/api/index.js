@@ -1,6 +1,10 @@
 const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	if ( Object.keys( data ).length ) {
-		data.context = window.elementorAiCurrentContext;
+		if ( window.elementorAiCurrentContext ) {
+			data.context = window.elementorAiCurrentContext;
+		} else {
+			data.context = window.elementorWpAiCurrentContext;
+		}
 	}
 
 	return new Promise( ( resolve, reject ) => {
@@ -10,6 +14,7 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 				success: resolve,
 				error: reject,
 				data,
+				unique_id: data.unique_id,
 			},
 			immediately,
 		);
@@ -20,11 +25,17 @@ const request = ( endpoint, data = {}, immediately = false, signal ) => {
 	} );
 };
 
-export const getUserInformation = () => request( 'ai_get_user_information' );
+export const getUserInformation = ( immediately ) => request( 'ai_get_user_information', undefined, immediately );
 
 export const getRemoteConfig = () => request( 'ai_get_remote_config' );
 
+export const getRemoteFrontendConfig = ( payload, immediately ) => request( 'ai_get_remote_frontend_config', { payload }, immediately );
+
 export const getCompletionText = ( payload ) => request( 'ai_get_completion_text', { payload } );
+
+export const getExcerpt = ( payload ) => request( 'ai_get_excerpt', { payload } );
+
+export const getFeaturedImage = ( payload ) => request( 'ai_get_featured_image', { payload } );
 
 export const getEditText = ( payload ) => request( 'ai_get_edit_text', { payload } );
 
@@ -40,6 +51,8 @@ export const getTextToImageGeneration = ( payload ) => request( 'ai_get_text_to_
 
 export const getImageToImageGeneration = ( payload ) => request( 'ai_get_image_to_image', { payload } );
 
+export const getImageToImageMaskCleanup = ( payload ) => request( 'ai_get_image_to_image_mask_cleanup', { payload } );
+
 export const getImageToImageMaskGeneration = ( payload ) => request( 'ai_get_image_to_image_mask', { payload } );
 
 export const getImageToImageOutPainting = ( payload ) => request( 'ai_get_image_to_image_outpainting', { payload } );
@@ -54,7 +67,15 @@ export const getImageToImageRemoveText = ( image ) => request( 'ai_get_image_to_
 
 export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_prompt_enhancer', { prompt } );
 
-export const uploadImage = ( image ) => request( 'ai_upload_image', { ...image } );
+export const getProductImageUnification = ( payload, immediately ) => request( 'ai_get_product_image_unification', { payload }, immediately );
+
+export const getAnimation = ( payload ) => request( 'ai_get_animation', { payload } );
+
+export const uploadImage = ( image ) => request( 'ai_upload_image', {
+	...image,
+	editor_post_id: image.image.editor_post_id,
+	unique_id: image.image.unique_id,
+} );
 
 /**
  * @typedef {Object} AttachmentPropType - See ./types/attachment.js

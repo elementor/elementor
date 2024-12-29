@@ -27,8 +27,4 @@ class Performance {
 
 		return static::$is_frontend;
 	}
-
-	public static function is_optimized_control_loading_feature_enabled(): bool {
-		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_control_loading' );
-	}
 }

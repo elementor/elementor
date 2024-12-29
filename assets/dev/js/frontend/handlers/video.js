@@ -58,7 +58,10 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			$videoIframe.attr( 'src', lazyLoad );
 		}
 
-		$videoIframe[ 0 ].src = this.apiProvider.getAutoplayURL( $videoIframe[ 0 ].src );
+		if ( this.getElementSettings( 'autoplay' ) ) {
+			$videoIframe.attr( 'allow', 'autoplay' );
+			$videoIframe[ 0 ].src = this.apiProvider.getAutoplayURL( $videoIframe[ 0 ].src );
+		}
 	}
 
 	async animateVideo() {
@@ -98,6 +101,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 					rel: elementSettings.rel ? 1 : 0,
 					playsinline: elementSettings.play_on_mobile ? 1 : 0,
 					modestbranding: elementSettings.modestbranding ? 1 : 0,
+					cc_load_policy: elementSettings.cc_load_policy ? 1 : 0,
 					autoplay: elementSettings.autoplay ? 1 : 0,
 					start: elementSettings.start,
 					end: elementSettings.end,

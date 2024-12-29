@@ -17,14 +17,3 @@ $screen-tablet-extra-next: -1;
 $screen-laptop-min: -1;
 $screen-laptop-max: -1;
 $screen-widescreen-min: -1;
-
-// Aliases
-$screen-sm-min: $screen-mobile-min;
-$screen-sm-max: $screen-mobile-max;
-$screen-md-min: $screen-tablet-min;
-$screen-md-max: $screen-tablet-max;
-$screen-lg-min: $screen-desktop-min;
-
-$screen-xl-min: map_get($breakpoints, xl);
-$screen-xl-max: map_get($breakpoints, xxl) - 1;
-$screen-xxl-min: map_get($breakpoints, xxl);

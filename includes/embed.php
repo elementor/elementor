@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Elementor embed handler class is responsible for Elementor embed functionality.
  * The class holds the supported providers with their embed patters, and handles
- * their custom properties to create custom HTML with the embeded content.
+ * their custom properties to create custom HTML with the embedded content.
  *
  * @since 1.5.0
  */
@@ -28,7 +28,7 @@ class Embed {
 	 * @var array Provider URL structure regex.
 	 */
 	private static $provider_match_masks = [
-		'youtube' => '/^.*(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user)\/))([^\?&\"\'>]+)/',
+		'youtube' => '/^.*(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user|shorts)\/))([^\?&\"\'>]+)/',
 		'vimeo' => '/^.*vimeo\.com\/(?:[a-z]*\/)*([‌​0-9]{6,11})[?]?.*/',
 		'dailymotion' => '/^.*dailymotion.com\/(?:video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/',
 		'videopress' => [
@@ -195,6 +195,10 @@ class Embed {
 			$default_frame_attributes['src'] = $video_embed_url;
 		} else {
 			$default_frame_attributes['data-lazy-load'] = $video_embed_url;
+		}
+
+		if ( isset( $embed_url_params['autoplay'] ) ) {
+			$default_frame_attributes['allow'] = 'autoplay';
 		}
 
 		$frame_attributes = array_merge( $default_frame_attributes, $frame_attributes );

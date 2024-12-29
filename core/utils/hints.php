@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\User;
+use Elementor\Utils;
 
 class Hints {
 	const INFO = 'info';
@@ -140,9 +141,8 @@ class Hints {
 		}
 
 		if ( $notice_settings['dismissible'] ) {
-			$dismissible = '<button class="elementor-control-notice-dismiss tooltip-target" data-event="' . $notice_settings['dismissible'] . '" data-tooltip="' . esc_attr__( 'Don’t show again.', 'elementor' ) . '">
+			$dismissible = '<button class="elementor-control-notice-dismiss tooltip-target" data-event="' . $notice_settings['dismissible'] . '" data-tooltip="' . esc_attr__( 'Don’t show again.', 'elementor' ) . '" aria-label="' . esc_attr__( 'Don’t show again.', 'elementor' ) . '">
 				<i class="eicon eicon-close" aria-hidden="true"></i>
-				<span class="elementor-screen-only">' . esc_html__( 'Don’t show again.', 'elementor' ) . '</span>
 			</button>';
 		}
 
@@ -197,7 +197,11 @@ class Hints {
 	 * @return string
 	 */
 	public static function get_plugin_activate_url( $plugin_slug ): string {
-		return admin_url( 'plugins.php' );
+		$path = "$plugin_slug/$plugin_slug.php";
+		return wp_nonce_url(
+			admin_url( 'plugins.php?action=activate&plugin=' . $path ),
+			'activate-plugin_' . $path
+		);
 	}
 
 	/**
@@ -253,6 +257,32 @@ class Hints {
 			}
 		}
 		return true;
+	}
+
+	private static function is_conflict_plugin_installed(): bool {
+		if ( ! Utils::has_pro() ) {
+			return false;
+		}
+
+		$conflicting_plugins = [
+			'imagify/imagify.php',
+			'optimole-wp/optimole-wp.php',
+			'ewww-image-optimizer/ewww-image-optimizer.php',
+			'ewww-image-optimizer-cloud/ewww-image-optimizer-cloud.php',
+			'kraken-image-optimizer/kraken.php',
+			'shortpixel-image-optimiser/wp-shortpixel.php',
+			'wp-smushit/wp-smush.php',
+			'wp-smush-pro/wp-smush.php',
+			'tiny-compress-images/tiny-compress-images.php',
+		];
+
+		foreach ( $conflicting_plugins as $plugin ) {
+			if ( self::is_plugin_active( $plugin ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

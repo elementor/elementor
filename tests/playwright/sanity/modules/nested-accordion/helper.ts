@@ -1,51 +1,65 @@
-import { expect, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 
 /**
- * Set Nested Accordion Title Tag (H1-H6,div,span,p)
+ * Set nested accordion title tag (H1-H6,div,span,p).
  *
- * @param {string} optionToSelect          - value of select option i.e. h1,h2,h3,h4,h5,h6,div,span,p
- * @param {string} nestedAccordionWidgetId - id of the nested accordion widget
- * @param {Object} editor
- * @param {Object} page
+ * @param {string}     optionToSelect          - value of select option i.e. h1,h2,h3,h4,h5,h6,div,span,p
+ * @param {string}     nestedAccordionWidgetId - Id of the nested accordion widget
+ * @param {EditorPage} editor                  - Editor object
+ *
  * @return {Promise<void>}
  */
-export async function setTitleTextTag( optionToSelect, nestedAccordionWidgetId, editor, page ) {
+export async function setTitleTextTag( optionToSelect: string, nestedAccordionWidgetId: string, editor: EditorPage ): Promise<void> {
 	const frame = editor.getPreviewFrame();
 	await editor.selectElement( nestedAccordionWidgetId );
-	await page.selectOption( '.elementor-control-title_tag .elementor-control-input-wrapper > select', optionToSelect );
+	await editor.setSelectControlValue( 'title_tag', optionToSelect );
 	await frame.waitForLoadState( 'load' );
 }
 
 /**
- * Take a Screenshot of this Widget
+ * Take a screenshot of this widget.
  *
- * @param {string} fileName
- * @param {Object} locator
+ * @param {string}  fileName
+ * @param {Locator} locator
+ *
  * @return {Promise<void>}
  */
-export async function expectScreenshotToMatchLocator( fileName, locator ) {
+export async function expectScreenshotToMatchLocator( fileName: string, locator: Locator ): Promise<void> {
 	expect.soft( await locator.screenshot( {
 		type: 'png',
 	} ) ).toMatchSnapshot( fileName );
 }
 
-async function getChoicesButtonSelector( choicesControlId, icon ) {
-	return '.elementor-control-accordion_' + choicesControlId + ' ' + icon;
-}
-
-export async function setTitleIconPosition( direction, editor, breakpoint = 'desktop' ) {
+/**
+ * Set nested accordion title icon position.
+ *
+ * @param {string}     direction  - Icon direction
+ * @param {EditorPage} editor     - Editor object
+ * @param {string}     breakpoint - Breakpoint type
+ *
+ * @return {Promise<void>}
+ */
+export async function setTitleIconPosition( direction: string, editor: EditorPage, breakpoint: string = 'desktop' ): Promise<void> {
+	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? `_${ breakpoint }` : '';
 	const icon = Object.freeze( {
 		right: '.eicon-h-align-right',
 		left: '.eicon-h-align-left',
 	} );
-
-	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? '_' + breakpoint : '';
-	const locator = await getChoicesButtonSelector( 'item_title_icon_position' + controlBreakpoint, icon[ direction ] );
-	await editor.page.locator( locator ).click();
+	await editor.page.locator( `.elementor-control-accordion_item_title_icon_position${ controlBreakpoint } ${ icon[ direction ] }` ).click();
 }
 
-export async function setTitleHorizontalAlignment( direction, editor, breakpoint = 'desktop' ) {
+/**
+ * Set nested accordion title horizontal alignment.
+ *
+ * @param {string}     direction  - Icon direction
+ * @param {EditorPage} editor     - Editor object
+ * @param {string}     breakpoint - Breakpoint type
+ *
+ * @return {Promise<void>}
+ */
+export async function setTitleHorizontalAlignment( direction: string, editor: EditorPage, breakpoint: string = 'desktop' ): Promise<void> {
+	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? `_${ breakpoint }` : '';
 	const icon = Object.freeze( {
 		start: '.eicon-align-start-h',
 		end: '.eicon-align-end-h',
@@ -53,13 +67,10 @@ export async function setTitleHorizontalAlignment( direction, editor, breakpoint
 		stretch: '.eicon-h-align-stretch',
 		justify: '.eicon-h-align-stretch',
 	} );
-
-	const controlBreakpoint = ( breakpoint.toLowerCase() !== 'desktop' ) ? '_' + breakpoint : '';
-	const locator = await getChoicesButtonSelector( 'item_title_position_horizontal' + controlBreakpoint, icon[ direction ] );
-	await editor.page.locator( locator ).click();
+	await editor.page.locator( `.elementor-control-accordion_item_title_position_horizontal${ controlBreakpoint } ${ icon[ direction ] }` ).click();
 }
 
-export async function setBorderAndBackground( editor, state, color, borderType, borderColor ) {
+export async function setBorderAndBackground( editor: EditorPage, state: string, color: string, borderType: string, borderColor: string ): Promise<void> {
 	await setState();
 	await setBackgroundColor();
 	await setBorderType();
@@ -67,20 +78,20 @@ export async function setBorderAndBackground( editor, state, color, borderType, 
 	await setBorderColor();
 
 	async function setBackgroundColor() {
-		await editor.page.locator( '.elementor-control-accordion_background_' + state + '_background .eicon-paint-brush' ).click();
-		await editor.setColorControlValue( color, 'accordion_background_' + state + '_color' );
+		await editor.setChooseControlValue( `accordion_background_${ state }_background`, 'eicon-paint-brush' );
+		await editor.setColorControlValue( `accordion_background_${ state }_color`, color );
 	}
 
 	async function setBorderType() {
-		await editor.page.selectOption( '.elementor-control-accordion_border_' + state + '_border >> select', { value: borderType } );
+		await editor.setSelectControlValue( 'accordion_border_' + state + '_border', borderType );
 	}
 
 	async function setBorderWidth() {
-		await editor.page.locator( '.elementor-control-accordion_border_' + state + '_width [data-setting="top"]' ).fill( '5' );
+		await editor.setDimensionsValue( `accordion_border_${ state }_width`, '5' );
 	}
 
 	async function setBorderColor() {
-		await editor.setColorControlValue( borderColor, 'accordion_border_' + state + '_color' );
+		await editor.setColorControlValue( `accordion_border_${ state }_color`, borderColor );
 	}
 
 	async function setState() {
@@ -88,12 +99,12 @@ export async function setBorderAndBackground( editor, state, color, borderType, 
 	}
 }
 
-export async function setIconColor( editor, state, color, context ) {
+export async function setIconColor( editor: EditorPage, state: string, color: string, context: string ): Promise<void> {
 	await setState();
 	await setColor();
 
 	async function setColor() {
-		await editor.setColorControlValue( color, state + '_' + context + '_color' );
+		await editor.setColorControlValue( `${ state }_${ context }_color`, color );
 	}
 
 	async function setState() {
@@ -101,21 +112,21 @@ export async function setIconColor( editor, state, color, context ) {
 	}
 }
 
-export async function addIcon( editor: EditorPage, page: Page, iconName: string ) {
-	await editor.activatePanelTab( 'content' );
+export async function addIcon( editor: EditorPage, page: Page, iconName: string ): Promise<void> {
+	await editor.openPanelTab( 'content' );
 	await page.locator( '.elementor-control-icons--inline__displayed-icon' ).first().click();
 	await page.locator( '#elementor-icons-manager__search input' ).fill( iconName );
 	await page.locator( '.elementor-icons-manager__tab__item' ).first().click();
 	await page.locator( '.dialog-insert_icon' ).click();
 }
 
-export async function setIconSize( editor: EditorPage, sizeInPx: string = '10' ) {
-	await editor.activatePanelTab( 'style' );
+export async function setIconSize( editor: EditorPage, sizeInPx: string = '10' ): Promise<void> {
+	await editor.openPanelTab( 'style' );
 	await editor.openSection( 'section_header_style' );
 	await editor.setSliderControlValue( 'icon_size', sizeInPx );
 }
 
-export async function deleteItemFromRepeater( editor: EditorPage, accordionID: string ) {
+export async function deleteItemFromRepeater( editor: EditorPage, accordionID: string ): Promise<void> {
 	// Arrange
 	const deleteItemButton = editor.page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
 		nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
@@ -133,7 +144,7 @@ export async function deleteItemFromRepeater( editor: EditorPage, accordionID: s
 	await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents - 1 );
 }
 
-export async function addItemFromRepeater( editor: EditorPage, accordionID: string ) {
+export async function addItemFromRepeater( editor: EditorPage, accordionID: string ): Promise<void> {
 	// Arrange
 	const addItemButton = editor.page.locator( '.elementor-repeater-add' ),
 		nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ accordionID } .e-n-accordion-item` ),
@@ -151,7 +162,7 @@ export async function addItemFromRepeater( editor: EditorPage, accordionID: stri
 	await expect.soft( nestedAccordionItemContent ).toHaveCount( numberOfContents + 1 );
 }
 
-export async function cloneItemFromRepeater( editor: EditorPage, position: string ) {
+export async function cloneItemFromRepeater( editor: EditorPage, position: string ): Promise<void> {
 	// Arrange
 	const nestedAccordionItemTitle = editor.getPreviewFrame().locator( `.e-n-accordion-item` ),
 		nestedAccordionItemContent = editor.getPreviewFrame().locator( `.e-n-accordion-item > .e-con` ),

@@ -69,7 +69,7 @@ export default function ImportComplete() {
 	return (
 		<Layout type="import" footer={ <ImportCompleteFooter seeItLiveUrl={ seeItLiveUrl } referrer={ referrer } /> }>
 			<WizardStep
-				image={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
+				image={ elementorAppConfig.assets_url + 'images/kit-is-live.svg' }
 				heading={ __( 'Your kit is now live on your site!', 'elementor' ) }
 				description={ __( 'You’ve imported and applied the following to your site:', 'elementor' ) }
 				notice={ (

@@ -62,7 +62,7 @@ runs:
       run: |
             bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
     - name: Upload Dev Build To GitHub Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dev-svn-preview
         path: elementor

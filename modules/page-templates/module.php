@@ -246,7 +246,10 @@ class Module extends BaseModule {
 	 * @param Document $document The document instance.
 	 */
 	public function action_register_template_control( $document ) {
-		if ( $document instanceof PageBase || $document instanceof LibraryPageDocument ) {
+		if (
+			( $document instanceof PageBase || $document instanceof LibraryPageDocument ) &&
+			$document::get_property( 'support_page_layout' )
+		) {
 			$this->register_template_control( $document );
 		}
 	}
@@ -400,16 +403,6 @@ class Module extends BaseModule {
 		}
 
 		return $check;
-	}
-
-	/**
-	 * Support `wp_body_open` action, available since WordPress 5.2.
-	 *
-	 * @since 2.7.0
-	 * @access public
-	 */
-	public static function body_open() {
-		wp_body_open();
 	}
 
 	/**

@@ -235,7 +235,7 @@
 
 * **Examples**:
     Copy style from one widget and paste it into another.
-    Assuming we have a two widgets one with special style, another one with defaults, we will copy the style of the one with the default and paste to into the speical one, to restore him to default.
+    Assuming we have a two widgets one with special style, another one with defaults, we will copy the style of the one with the default and paste to into the special one, to restore him to default.
     ![widget-heading-another-heading-with-special-style](./_images/widget-heading-another-heading-with-special-style.png)
 
     ```javascript

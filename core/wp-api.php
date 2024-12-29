@@ -22,6 +22,10 @@ class Wp_Api {
 	 * @return Collection
 	 */
 	public function get_plugins() {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		if ( ! $this->plugins ) {
 			$this->plugins = new Collection( get_plugins() );
 		}
@@ -56,5 +60,9 @@ class Wp_Api {
 	 */
 	public function activate_plugin( $plugin ) {
 		return activate_plugin( $plugin );
+	}
+
+	public function wp_attachment_is_image( $post = null ) {
+		return wp_attachment_is_image( $post );
 	}
 }

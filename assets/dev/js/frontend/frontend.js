@@ -7,19 +7,19 @@ import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import BaseVideoLoader from './utils/video-api/base-loader';
 import URLActions from './utils/url-actions';
-import Swiper from './utils/swiper';
+import SwiperHandler from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import Shapes from 'elementor/modules/shapes/assets/js/frontend/frontend';
 import Controls from './utils/controls';
+import AnchorScrollMargin from './utils/anchor-scroll-margin';
 
 import { escapeHTML } from 'elementor-frontend/utils/utils';
 
 const EventManager = require( 'elementor-utils/hooks' ),
-	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' ),
-	AnchorsModule = require( 'elementor-frontend/utils/anchors' );
+	ElementsHandler = require( 'elementor-frontend/elements-handlers-manager' );
 
 export default class Frontend extends elementorModules.ViewModule {
 	constructor( ...args ) {
@@ -192,17 +192,17 @@ export default class Frontend extends elementorModules.ViewModule {
 			youtube: new YouTubeApiLoader(),
 			vimeo: new VimeoApiLoader(),
 			baseVideoLoader: new BaseVideoLoader(),
-			anchors: new AnchorsModule(),
 			get lightbox() {
 				return LightboxManager.getLightbox();
 			},
 			urlActions: new URLActions(),
-			swiper: Swiper,
+			swiper: SwiperHandler,
 			environment,
 			assetsLoader: new AssetsLoader(),
 			escapeHTML,
 			events: Events,
 			controls: new Controls(),
+			anchor_scroll_margin: new AnchorScrollMargin(),
 		};
 
 		// TODO: BC since 2.4.0
@@ -296,29 +296,6 @@ export default class Frontend extends elementorModules.ViewModule {
 				func.apply( context, args );
 			}
 		};
-	}
-
-	waypoint( $element, callback, options ) {
-		const defaultOptions = {
-			offset: '100%',
-			triggerOnce: true,
-		};
-
-		options = jQuery.extend( defaultOptions, options );
-
-		const correctCallback = function() {
-			const element = this.element || this,
-				result = callback.apply( element, arguments );
-
-			// If is Waypoint new API and is frontend
-			if ( options.triggerOnce && this.destroy ) {
-				this.destroy();
-			}
-
-			return result;
-		};
-
-		return $element.elementorWaypoint( correctCallback, options );
 	}
 
 	muteMigrationTraces() {

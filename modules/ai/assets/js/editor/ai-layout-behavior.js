@@ -24,6 +24,8 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 	onAiButtonClick( e ) {
 		e.stopPropagation();
 
+		window.elementorAiCurrentContext = this.getOption( 'context' );
+
 		renderLayoutApp( {
 			parentContainer: elementor.getPreviewContainer(),
 			mode: MODE_LAYOUT,
@@ -54,10 +56,11 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 	}
 
 	onRender() {
-		const $button = jQuery( '<div>', {
+		const $button = jQuery( '<button>', {
+			type: 'button',
 			class: 'e-ai-layout-button elementor-add-section-area-button e-button-primary',
 			title: __( 'Build with AI', 'elementor' ),
-			role: 'button',
+			'aria-label': __( 'Build with AI', 'elementor' ),
 		} );
 
 		$button.html( `
@@ -68,7 +71,7 @@ export default class AiLayoutBehavior extends Marionette.Behavior {
 			<div class="e-ai-layout-button--sparkle"></div>
 			<div class="e-ai-layout-button--sparkle"></div>
 			<div class="e-ai-layout-button--sparkle"></div>
-			<i class="eicon-ai"></i>
+			<i class="eicon-ai" aria-hidden="true"></i>
 		` );
 
 		this.ui.addTemplateButton.after( $button );

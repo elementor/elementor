@@ -69,6 +69,14 @@ class Widget_Read_More extends Widget_Base {
 		return [ 'read', 'more', 'tag', 'excerpt' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register HTML widget controls.
 	 *

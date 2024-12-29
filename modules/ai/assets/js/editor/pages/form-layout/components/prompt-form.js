@@ -13,17 +13,28 @@ import { useConfig } from '../context/config';
 import { AttachmentPropType } from '../../../types/attachment';
 
 const PROMPT_SUGGESTIONS = Object.freeze( [
-	{ text: __( 'Services section with list layout, icons, and service descriptions for [topic]', 'elementor' ) },
-	{ text: __( 'Accordion-style FAQ block with clickable questions about [topic]', 'elementor' ) },
-	{ text: __( 'Hero section with image, heading, subheading, and CTA button about [topic]', 'elementor' ) },
-	{ text: __( 'Full-width call-to-action with background image and overlay text about [topic]', 'elementor' ) },
-	{ text: __( 'Carousel testimonial block with user images, names, and feedback about [topic]', 'elementor' ) },
-	{ text: __( 'Features block showcasing feature title and brief description about [topic]', 'elementor' ) },
-	{ text: __( 'Multi-column minimalistic About Us section with icons for [topic]', 'elementor' ) },
-	{ text: __( 'Section with contact form and social media icons for [topic]', 'elementor' ) },
-	{ text: __( 'Statistics display in a 3-column layout with numbers and icons for [topic]', 'elementor' ) },
-	{ text: __( 'Pricing table section with highlighted option for [topic]', 'elementor' ) },
-	{ text: __( 'About Us section combining company history and values for [topic]', 'elementor' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Hero section on [topic] with heading, text, buttons on the right, and an image on the left', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'About Us section on [topic] with heading, text, and big image below', 'elementor.com' ) },
+	{ text: __( 'Team section with four image boxes showcasing team members', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'FAQ section with a toggle widget showcasing FAQs about [topic]', 'elementor.com' ) },
+	{ text: __( 'Gallery section with a carousel displaying three images at once', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Contact section with a form for [topic]', 'elementor.com' ) },
+	{ text: __( 'Client section featuring companies\' logos', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Testimonial section with testimonials, each featuring a star rating and an image', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Service section about [topic], showcasing four services with buttons', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Stats section with counters displaying data about [topic]', 'elementor.com' ) },
+	{ text: __( 'Quote section with colored background, featuring a centered quote', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Pricing section for [topic] with a pricing list', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Subscribe section featuring a simple email form, inviting users to stay informed on [topic]', 'elementor.com' ) },
 ] );
 
 const IconButtonWithTooltip = ( { tooltip, ...props } ) => (

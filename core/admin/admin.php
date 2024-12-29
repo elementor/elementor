@@ -345,7 +345,12 @@ class Admin extends App {
 
 		array_unshift( $links, $settings_link );
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', esc_html__( 'Get Elementor Pro', 'elementor' ) );
+		$go_pro_text = esc_html__( 'Get Elementor Pro', 'elementor' );
+		if ( Utils::is_sale_time() ) {
+			$go_pro_text = esc_html__( 'Discounted Upgrades Now!', 'elementor' );
+		}
+
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', $go_pro_text );
 
 		return $links;
 	}
@@ -620,19 +625,10 @@ class Admin extends App {
 		];
 
 		$additions_actions = [];
-
-		if ( User::get_introduction_meta( 'ai_get_started' ) ) {
-			$additions_actions['ai-library'] = [
-				'title' => esc_html__( 'AI Prompts Library', 'elementor' ),
-				'link' => 'https://go.elementor.com/overview-ai-prompts-library/',
-			];
-		} else {
-			$additions_actions['ai'] = [
-				'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
-				'link' => 'https://go.elementor.com/overview-widget-ai/',
-			];
-		}
-
+		$additions_actions['ai'] = [
+			'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
+			'link' => 'https://go.elementor.com/overview-widget-ai/',
+		];
 		$additions_actions['go-pro'] = [
 			'title' => esc_html__( 'Upgrade', 'elementor' ),
 			'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
@@ -696,6 +692,8 @@ class Admin extends App {
 
 		$post_data = Utils::get_super_global_value( $_GET, 'post_data' ) ?? [];
 
+		$post_data = $this->filter_post_data( $post_data );
+
 		/**
 		 * Create new post meta data.
 		 *
@@ -726,12 +724,61 @@ class Admin extends App {
 		die;
 	}
 
+	private function get_allowed_fields_for_role() {
+		$allowed_fields = [
+			'post_title',
+			'post_content',
+			'post_excerpt',
+			'post_category',
+			'post_type',
+			'tags_input',
+		];
+
+		if ( current_user_can( 'publish_posts' ) ) {
+			$allowed_fields[] = 'post_status';
+		}
+
+		if ( current_user_can( 'edit_others_posts' ) ) {
+			$allowed_fields[] = 'post_author';
+		}
+
+		return $allowed_fields;
+	}
+
+	private function filter_post_data( $post_data ) {
+		$allowed_fields = $this->get_allowed_fields_for_role();
+		return array_filter(
+			$post_data,
+			function( $key ) use ( $allowed_fields ) {
+				return in_array( $key, $allowed_fields, true );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+	}
 	/**
 	 * @since 2.3.0
 	 * @access public
 	 */
 	public function add_new_template_template() {
 		Plugin::$instance->common->add_template( ELEMENTOR_PATH . 'includes/admin-templates/new-template.php' );
+	}
+
+	public function add_new_floating_elements_template() {
+		Plugin::$instance->common->add_template( ELEMENTOR_PATH . 'includes/admin-templates/new-floating-elements.php' );
+	}
+
+	public function enqueue_new_floating_elements_scripts() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script(
+			'elementor-floating-elements-modal',
+			ELEMENTOR_ASSETS_URL . 'js/floating-elements-modal' . $suffix . '.js',
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_set_script_translations( 'elementor-floating-elements-modal', 'elementor' );
 	}
 
 	/**
@@ -774,6 +821,20 @@ class Admin extends App {
 		);
 
 		wp_set_script_translations( 'elementor-beta-tester', 'elementor' );
+	}
+
+	public function init_floating_elements() {
+		$screens = [
+			'elementor_library_page_e-floating-buttons' => true,
+			'edit-e-floating-buttons' => true,
+		];
+
+		if ( ! isset( $screens[ get_current_screen()->id ] ) ) {
+			return;
+		}
+
+		add_action( 'admin_head', [ $this, 'add_new_floating_elements_template' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_floating_elements_scripts' ] );
 	}
 
 	/**
@@ -868,11 +929,14 @@ class Admin extends App {
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
+		add_action( 'current_screen', [ $this, 'init_floating_elements' ] );
 		add_action( 'current_screen', [ $this, 'init_beta_tester' ] );
 
 		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function( $plugin_data ) {
 			$this->version_update_warning( ELEMENTOR_VERSION, $plugin_data['new_version'] );
 		} );
+
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_hints' ] );
 	}
 
 	/**
@@ -943,7 +1007,7 @@ class Admin extends App {
 	}
 
 	private function maybe_enqueue_hints() {
-		if ( ! Hints::should_display_hint( 'image-optimization-once-media-modal' ) && ! Hints::should_display_hint( 'image-optimization-media-modal' ) ) {
+		if ( ! Hints::should_display_hint( 'image-optimization' ) ) {
 			return;
 		}
 
@@ -955,26 +1019,18 @@ class Admin extends App {
 			true
 		);
 
-		$once_dismissed = Hints::is_dismissed( 'image-optimization-once-media-modal' );
-		$content = $once_dismissed ?
-			sprintf("%1\$s <a href='%2\$s' class='e-btn-1' target='_blank'>%3\$s</a> %4\$s",
-				__( 'This image is large and may slow things down.', 'elementor' ),
-				Hints::get_plugin_action_url( 'image-optimization' ),
-				( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' ),
-				__( 'to reduce size without losing quality.', 'elementor' )
-			) :
-			sprintf("%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
-				__( 'Don’t let unoptimized images be the downfall of your site’s performance.', 'elementor' ),
-				Hints::get_plugin_action_url( 'image-optimization' ),
-				( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' )
-			);
+		$content = sprintf("%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
+			__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
+			Hints::get_plugin_action_url( 'image-optimization' ),
+			( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' )
+		);
 
-		$dismissible = $once_dismissed ? 'image-optimization-media-modal' : 'image-optimization-once-media-modal';
+		$dismissible = 'image_optimizer_hint';
 
 		wp_localize_script( 'media-hints', 'elementorAdminHints', [
 			'mediaHint' => [
-				'display' => ! $once_dismissed,
-				'type' => $once_dismissed ? 'warning' : 'info',
+				'display' => true,
+				'type' => 'info',
 				'content' => $content,
 				'icon' => true,
 				'dismissible' => $dismissible,
@@ -989,5 +1045,46 @@ class Admin extends App {
 		] );
 
 		wp_enqueue_script( 'media-hints' );
+	}
+
+	public function register_ajax_hints( $ajax_manager ) {
+		$ajax_manager->register_ajax_action( 'elementor_image_optimization_campaign', [ $this, 'ajax_set_image_optimization_campaign' ] );
+		$ajax_manager->register_ajax_action( 'elementor_core_site_mailer_campaign', [ $this, 'ajax_site_mailer_campaign' ] );
+	}
+
+	public function ajax_set_image_optimization_campaign( $request ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return;
+		}
+
+		if ( empty( $request['source'] ) ) {
+			return;
+		}
+
+		$campaign_data = [
+			'source' => sanitize_key( $request['source'] ),
+			'campaign' => 'io-plg',
+			'medium' => 'wp-dash',
+		];
+
+		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
+	}
+
+	public function ajax_site_mailer_campaign( $request ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return;
+		}
+
+		if ( empty( $request['source'] ) ) {
+			return;
+		}
+
+		$campaign_data = [
+			'source' => sanitize_key( $request['source'] ),
+			'campaign' => 'sm-plg',
+			'medium' => 'wp-dash',
+		];
+
+		set_transient( 'elementor_site_mailer_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 }

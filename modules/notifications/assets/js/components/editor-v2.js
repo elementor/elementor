@@ -1,13 +1,13 @@
-import { GiftIcon } from '../icons/gift-icon';
 import { editorOnButtonClicked } from './editor-on-button-clicked';
 import { Badge } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import SpeakerphoneIcon from '@elementor/icons/SpeakerphoneIcon';
 
 const IconWithBadge = ( { invisible } ) => {
 	return (
 		<Badge color="primary" variant="dot" invisible={ invisible }>
-			<GiftIcon />
+			<SpeakerphoneIcon />
 		</Badge>
 	);
 };
@@ -21,7 +21,7 @@ export const editorV2 = () => {
 
 	utilitiesMenu.registerLink( {
 		id: 'app-bar-menu-item-whats-new',
-		priority: 25,
+		priority: 10,
 		useProps: () => {
 			const [ isRead, setIsRead ] = useState( ! elementorNotifications.is_unread );
 
@@ -29,6 +29,16 @@ export const editorV2 = () => {
 				title: __( "What's New", 'elementor' ),
 				icon: () => <IconWithBadge invisible={ isRead } />,
 				onClick: () => {
+					elementor.editorEvents.dispatchEvent(
+						elementor.editorEvents.config.names.topBar.whatsNew,
+						{
+							location: elementor.editorEvents.config.locations.topBar,
+							secondaryLocation: elementor.editorEvents.config.secondaryLocations[ 'whats-new' ],
+							trigger: elementor.editorEvents.config.triggers.click,
+							element: elementor.editorEvents.config.elements.buttonIcon,
+						},
+					);
+
 					setIsRead( true );
 					elementorNotifications.is_unread = false;
 

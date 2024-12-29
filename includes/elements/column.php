@@ -74,6 +74,10 @@ class Element_Column extends Element_Base {
 		return 'eicon-column';
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get initial config.
 	 *
@@ -286,6 +290,43 @@ class Element_Column extends Element_Base {
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'handle_slideshow_asset_loading',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'assets' => [
+					'styles' => [
+						[
+							'name' => 'e-swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+					],
+					'scripts' => [
+						[
+							'name' => 'swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
 					],
 				],
 			]
@@ -601,7 +642,7 @@ class Element_Column extends Element_Base {
 							'value' => '',
 						],
 						[
-							'name' => 'border_border',
+							'name' => 'border_hover_border',
 							'operator' => '!==',
 							'value' => '',
 						],

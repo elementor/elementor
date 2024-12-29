@@ -6,6 +6,7 @@ use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Tracker;
 use Elementor\User;
 use Elementor\Utils;
@@ -27,7 +28,8 @@ class Admin_Notices extends Module {
 		'rate_us_feedback',
 		'role_manager_promote',
 		'experiment_promotion',
-		'design_not_appearing',
+		'site_mailer_promotion',
+		'plugin_image_optimization',
 	];
 
 	private $elementor_pages_count = null;
@@ -348,8 +350,8 @@ class Admin_Notices extends Module {
 
 		$experiments = Plugin::$instance->experiments;
 		$is_all_performance_features_active = (
-			$experiments->is_feature_active( 'additional_custom_breakpoints' ) &&
-			$experiments->is_feature_active( 'e_optimized_css_loading' )
+			$experiments->is_feature_active( 'e_element_cache' ) &&
+			$experiments->is_feature_active( 'e_font_icon_svg' )
 		);
 
 		if ( $is_all_performance_features_active ) {
@@ -362,7 +364,7 @@ class Admin_Notices extends Module {
 			'id' => $notice_id,
 			'button' => [
 				'text' => esc_html__( 'Try it out', 'elementor' ),
-				'url' => admin_url( 'admin.php?page=elementor#tab-experiments' ),
+				'url' => Settings::get_settings_tab_url( 'experiments' ),
 				'type' => 'cta',
 			],
 			'button_secondary' => [
@@ -378,50 +380,165 @@ class Admin_Notices extends Module {
 		return true;
 	}
 
-	private function notice_design_not_appearing() {
-		$installs_history = get_option( 'elementor_install_history', [] );
-		$is_first_install = 1 === count( $installs_history );
+	private function site_has_forms_plugins() {
+		return defined( 'WPFORMS_VERSION' ) || defined( 'WPCF7_VERSION' ) || defined( 'FLUENTFORM_VERSION' ) || class_exists( '\GFCommon' ) || class_exists( '\Ninja_Forms' ) || function_exists( 'load_formidable_forms' );
+	}
 
-		if ( $is_first_install || ! current_user_can( 'update_plugins' ) ) {
+	private function site_has_woocommerce() {
+		return class_exists( 'WooCommerce' );
+	}
+
+	private function notice_site_mailer_promotion() {
+		$notice_id = 'site_mailer_promotion';
+		$has_forms = $this->site_has_forms_plugins();
+		$has_woocommerce = $this->site_has_woocommerce();
+
+		if ( ! $has_forms && ! $has_woocommerce ) {
 			return false;
 		}
 
-		$notice_id          = 'design_not_appearing';
-		$notice             = User::get_user_notices()[ $notice_id ] ?? [];
-		$notice_version     = $notice['meta']['version'] ?? null;
-		$is_version_changed = $this->get_elementor_version() !== $notice_version;
-
-		if ( $is_version_changed ) {
-			User::set_user_notice( $notice_id, false, [ 'version' => $this->get_elementor_version() ] );
-		}
-
-		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard', 'update-core', 'plugins' ], true ) ) {
+		if ( ! $this->is_elementor_page() && ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true ) ) {
 			return false;
 		}
 
-		if ( User::is_user_notice_viewed( $notice_id ) ) {
+		if ( ( Utils::has_pro() && ! $has_woocommerce ) || ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$plugin_file_path = 'site-mailer/site-mailer.php';
+		$plugin_slug = 'site-mailer';
+
+		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
+		if ( empty( $cta_data ) ) {
 			return false;
 		}
 
 		$options = [
-			'title' => esc_html__( 'The version was updated successfully!', 'elementor' ),
-			'description' => sprintf(
-				esc_html__( 'Encountering issues after updating the version? Don’t worry - we’ve collected all the fixes for troubleshooting common issues. %1$sFind a solution%2$s', 'elementor' ),
-				'<a href="https://go.elementor.com/wp-dash-changes-do-not-appear-online/" target="_blank">',
-				'</a>'
-			),
+			'title' => esc_html__( 'Ensure your form emails avoid the spam folder!', 'elementor' ),
+			'description' => esc_html__( 'Use Site Mailer for improved email deliverability, detailed email logs, and an easy setup.', 'elementor' ),
 			'id' => $notice_id,
+			'type' => 'cta',
+			'button' => [
+				'text' => $cta_data['text'],
+				'url' => $cta_data['url'],
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/sm-core-form/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
 		];
 
-		$excluded_pages = [];
-		$this->print_admin_notice( $options, $excluded_pages );
+		if ( $this->should_render_woocommerce_hint( $has_forms, $has_woocommerce ) ) {
+			// We include WP's default notice class so it will be properly handled by WP's js handler
+			// And add a new one to distinguish between the two types of notices
+			$options['classes'] = [ 'notice', 'e-notice', 'sm-notice-wc' ];
+			$options['title'] = esc_html__( 'Improve Transactional Email Deliverability', 'elementor' );
+			$options['description'] = esc_html__( 'Use Elementor\'s Site Mailer to ensure your store emails like purchase confirmations, shipping updates and more are reliably delivered.', 'elementor' );
+		}
+
+		$this->print_admin_notice( $options );
 
 		return true;
+	}
+
+	private function should_render_woocommerce_hint( $has_forms, $has_woocommerce ): bool {
+		if ( ! $has_forms && ! $has_woocommerce ) {
+			return false;
+		}
+
+		if ( ! $has_forms && $has_woocommerce ) {
+			return true;
+		}
+
+		if ( $has_forms && $has_woocommerce && Utils::has_pro() ) {
+			return true;
+		}
+
+		return (bool) mt_rand( 0, 1 );
+	}
+
+	private function is_elementor_page(): bool {
+		return 0 === strpos( $this->current_screen_id, 'elementor_page' );
+	}
+
+	private function get_plugin_cta_data( $plugin_slug, $plugin_file_path ) {
+		if ( is_plugin_active( $plugin_file_path ) ) {
+			return false;
+		}
+
+		if ( $this->is_plugin_installed( $plugin_file_path ) ) {
+			$url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $plugin_file_path . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $plugin_file_path );
+			$cta_text = esc_html__( 'Activate Plugin', 'elementor' );
+		} else {
+			$url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $plugin_slug ), 'install-plugin_' . $plugin_slug );
+			$cta_text = esc_html__( 'Install Plugin', 'elementor' );
+		}
+
+		return [
+			'url' => $url,
+			'text' => $cta_text,
+		];
 	}
 
 	// For testing purposes
 	public function get_elementor_version() {
 		return ELEMENTOR_VERSION;
+	}
+
+	private function notice_plugin_image_optimization() {
+		$notice_id = 'plugin_image_optimization';
+
+		if ( 'upload' !== $this->current_screen_id ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$attachments = new \WP_Query( [
+			'post_type' => 'attachment',
+			'post_status' => 'any',
+			'fields' => 'ids',
+		] );
+
+		if ( 1 > $attachments->found_posts ) {
+			return false;
+		}
+
+		$plugin_file_path = 'image-optimization/image-optimization.php';
+		$plugin_slug = 'image-optimization';
+
+		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
+
+		if ( empty( $cta_data ) ) {
+			return false;
+		}
+
+		$options = [
+			'title' => esc_html__( 'Speed up your website with Image Optimizer by Elementor', 'elementor' ),
+			'description' => esc_html__( 'Automatically compress and optimize images, resize larger files, or convert to WebP. Optimize images individually, in bulk, or on upload.', 'elementor' ),
+			'id' => $notice_id,
+			'type' => 'cta',
+			'button_secondary' => [
+				'text' => $cta_data['text'],
+				'url' => $cta_data['url'],
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
+	private function is_plugin_installed( $file_path ): bool {
+		$installed_plugins = get_plugins();
+
+		return isset( $installed_plugins[ $file_path ] );
 	}
 
 	public function print_admin_notice( array $options, $exclude_pages = self::DEFAULT_EXCLUDED_PAGES ) {
