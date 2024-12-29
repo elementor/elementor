@@ -8,14 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Link_Control extends Atomic_Control_Base {
+class Query_Control extends Atomic_Control_Base {
 	private ?string $placeholder = null;
 	private ?array $options = null;
-	private ?bool $is_autocomplete = null;
 	private ?bool $is_free_solo = null;
 
 	public function get_type(): string {
-		return 'link';
+		return 'query';
 	}
 
 	public function set_placeholder( string $placeholder ): self {
@@ -25,6 +24,10 @@ class Link_Control extends Atomic_Control_Base {
 	}
 
 	public function set_options( array $options ): self {
+		if ( ! $this->validate_options_scheme( $options ) ) {
+			Utils::safe_throw( 'Each option must have a label property' );
+		}
+
 		$this->options = $options;
 
 		return $this;
@@ -34,15 +37,8 @@ class Link_Control extends Atomic_Control_Base {
 		return [
 			'placeholder' => $this->placeholder,
 			'options' => $this->options,
-			'isAutocomplete' => $this->is_autocomplete,
 			'isFreeSolo' => $this->is_free_solo,
 		];
-	}
-
-	public function set_is_autocomplete( bool $is_autocomplete ): self {
-		$this->is_autocomplete = $is_autocomplete;
-
-		return $this;
 	}
 
 	public function set_is_free_solo( bool $is_free_solo ): self {
@@ -60,13 +56,22 @@ class Link_Control extends Atomic_Control_Base {
 			foreach ( $data['items'] as $post ) {
 				$options[ $post->guid ] = [
 					'label' => $post->post_title,
+					'groupValue' => $post_type_slug,
 					'groupLabel' => $posts_map[ $post_type_slug ]['label'],
 				];
 			}
 		}
 
-		$this->options = $options;
+		return $this->set_options( $options );
+	}
 
-		return $this;
+	private function validate_options_scheme( ?array $options = [] ) {
+		foreach ( $options as $option ) {
+			if ( ! is_array( $option ) || ! array_key_exists( 'label', $option ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

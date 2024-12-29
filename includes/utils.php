@@ -962,7 +962,7 @@ class Utils {
 		}, [] );
 	}
 
-	public static function get_excluded_post_types() {
-		return [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ];
+	public static function get_excluded_post_types( ?array $additional_exclusions = [] ) {
+		return array_merge( [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ], $additional_exclusions );
 	}
 }
