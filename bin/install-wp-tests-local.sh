@@ -19,7 +19,7 @@ read -r WP_VERSION
 
 DB_NAME=${DB_NAME:-"elementor-tests"}
 DB_USER=${DB_USER:-"admin"}
-DB_PASS=${DB_PASS:-""}
+DB_PASS=${DB_PASS:-"admin"}
 DB_HOST=${DB_HOST:-"127.0.0.1"}
 WP_VERSION=${WP_VERSION:-"latest"}
 
