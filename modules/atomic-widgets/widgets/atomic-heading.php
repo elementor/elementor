@@ -109,7 +109,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					Query_Control::bind_to( 'link' )
 						->set_post_query()
 						->set_is_free_solo( true )
-						->set_placeholder( __( 'Paste URL or type', 'elementor') ),
+						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 				] ),
 		];
 	}
