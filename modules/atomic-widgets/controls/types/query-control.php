@@ -56,7 +56,6 @@ class Query_Control extends Atomic_Control_Base {
 			foreach ( $data['items'] as $post ) {
 				$options[ $post->guid ] = [
 					'label' => $post->post_title,
-					'groupValue' => $post_type_slug,
 					'groupLabel' => $posts_map[ $post_type_slug ]['label'],
 				];
 			}
