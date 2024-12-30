@@ -388,7 +388,7 @@ class Frontend extends App {
 
 		wp_register_script_module(
 			'elementor_accordion',
-			$this->get_js_assets_url( 'frontend-handler-accordion', 'assets/js/' ),
+			$this->get_js_assets_url( 'accordion-test', 'assets/dev/js/frontend/handlers/' ),
 			[],
 			ELEMENTOR_VERSION
 		);
