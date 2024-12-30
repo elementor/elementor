@@ -49,8 +49,8 @@ foundFiles.forEach( ( filePath ) => {
 } );
 
 if ( 0 === foundFiles.length ) {
-	console.warn( `Warning: No target files (${ targetFileNames.join( ', ' ) }) found.` );
 	allFilesValid = false;
+	throw new Error( `Warning: No target files (${ targetFileNames.join( ', ' ) }) found.` );
 }
 
 if ( ! allFilesValid ) {
