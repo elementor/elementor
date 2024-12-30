@@ -53,29 +53,11 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function register_script_modules(): void {
-
-		$file_relative_path = 'assets/js/frontend/handlers/nested-tabs.js';
-
-		$file_path = plugin_dir_path( __FILE__ ) . $file_relative_path;
-
-		$file_url = ELEMENTOR_URL . 'modules/nested-tabs/' . $file_relative_path;
-		$version = file_exists( $file_path ) ? filemtime( $file_path ) : ELEMENTOR_VERSION;
-
-		echo $file_path . '<br />';
-
-		echo $file_url . '<br />';
-
-		if ( file_exists( $file_path ) ) {
-			echo 'file exists';
-		} else {
-			echo 'file exists not';
-		}
-
 		wp_register_script_module(
 			'elementor_nested_tabs',
-			$file_url,
+			$this->get_js_assets_url( 'frontend-handler-nested-tabs', 'assets/js/' ),
 			[],
-			$version
+			ELEMENTOR_VERSION
 		);
 	}
 }
