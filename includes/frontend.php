@@ -386,11 +386,22 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
+		$file_path = $this->get_js_assets_url( 'accordion-test', 'assets/dev/js/frontend/handlers/' );
+		$version = file_exists( $file_path ) ? filemtime( $file_path ) : ELEMENTOR_VERSION;
+
+		echo $file_path;
+
+		if ( file_exists( $file_path ) ) {
+			echo 'file exists';
+		} else {
+			echo 'file exists not';
+		}
+
 		wp_register_script_module(
 			'elementor_accordion',
 			$this->get_js_assets_url( 'accordion-test', 'assets/dev/js/frontend/handlers/' ),
 			[],
-			ELEMENTOR_VERSION
+			$version
 		);
 
 		wp_register_script_module(
