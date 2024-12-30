@@ -125,7 +125,11 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'settings' => [
 						'classes' => [
 							'$$type' => 'classes',
-							'value' => [ [ '$$type' => 'string', 'value' => 'one'], [ '$$type' => 'string', 'value' => 'two'], [ '$$type' => 'string', 'value' => 'three' ] ],
+							'value' => [ 
+								[ '$$type' => 'string', 'value' => 'one'],
+								[ '$$type' => 'string', 'value' => 'two'],
+								[ '$$type' => 'string', 'value' => 'three' ],
+							],
 						],
 						'outer_classes' => [
 							'$$type' => 'classes',
@@ -958,7 +962,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 											'$$type' => 'size',
 											'value' => [
 												'unit' => 'px',
-												'size' => '14'
+												'size' => 14
 											]
 										],
 										'right' => 'not-a-size',
@@ -966,14 +970,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 											'$$type' => 'size',
 											'value' => [
 												'unit' => 'px',
-												'size' => '14'
+												'size' => 14
 											]
 										],
 										'left' => [
 											'$$type' => 'size',
 											'value' => [
 												'unit' => 'px',
-												'size' => '14'
+												'size' => 14
 											]
 										],
 									]

@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Prop_Type extends Plain_Prop_Type {
-
 	const SUPPORTED_UNITS = [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax' ];
 
 	public static function get_key(): string {
@@ -19,7 +18,14 @@ class Size_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
-		return array_key_exists( 'size', $value ) && is_numeric( $value['size'] ) && array_key_exists( 'unit', $value ) && is_string( $value['unit'] ) && in_array( $value['unit'], static::SUPPORTED_UNITS, true );
+		return (
+			is_array( $value ) &&
+			array_key_exists( 'size', $value ) &&
+			! empty( $value['unit'] ) &&
+			is_numeric( $value['size'] ) &&
+			is_string( $value['unit'] ) &&
+			in_array( $value['unit'], static::SUPPORTED_UNITS, true )
+		);
 	}
 
 	protected function sanitize_value( $value ) {
