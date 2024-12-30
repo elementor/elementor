@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Textarea_Control extends Atomic_Control_Base {
 	private $placeholder = null;
 
+	private $value = '';
+
 	public function get_type(): string {
 		return 'textarea';
 	}
@@ -20,9 +22,16 @@ class Textarea_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
+	public function set_value( string $value ): self {
+		$this->value = $value;
+
+		return $this;
+	}
+
 	public function get_props(): array {
 		return [
 			'placeholder' => $this->placeholder,
+			'value' => $this->value,
 		];
 	}
 }
