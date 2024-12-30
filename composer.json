@@ -27,6 +27,7 @@
 	},
 	"scripts": {
 		"lint": "phpcs --standard=ruleset.xml",
+		"format": "phpcbf --extensions=php",
 		"test": "phpunit",
 		"test:install": "bash ./bin/install-wp-tests-local.sh",
 		"coverage": "composer run coverage:test && composer run coverage:check",
@@ -43,7 +44,8 @@
 		"post-update-cmd": [
 			"@php -r \"if (!file_exists('vendor_prefixed')) { mkdir('vendor_prefixed', 0755, true); }\"",
 			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection.inc.php --force",
-			"@php composer dump-autoload"
+			"@php composer dump-autoload",
+			"phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs"
 		]
 	},
 	"config": {
