@@ -30,9 +30,6 @@ const startDirectory = path.resolve( __dirname, '../../' );
 const targetFileNames = Object.keys( sizeLimits );
 const foundFiles = findTargetFiles( startDirectory, targetFileNames );
 
-console.log( 'Found target files:' );
-foundFiles.forEach( ( filePath ) => console.log( `- ${ filePath }` ) );
-
 let allFilesValid = true;
 
 foundFiles.forEach( ( filePath ) => {
@@ -41,10 +38,8 @@ foundFiles.forEach( ( filePath ) => {
 	const sizeLimitKB = sizeLimits[ fileName ];
 
 	if ( fileSizeKB > sizeLimitKB ) {
-		console.error( `Error: ${ fileName } at ${ filePath } exceeds the size limit of ${ sizeLimitKB }KB (${ fileSizeKB.toFixed( 2 ) }KB).` );
 		allFilesValid = false;
-	} else {
-		console.log( `OK: ${ fileName } at ${ filePath } is within the size limit (${ fileSizeKB.toFixed( 2 ) }KB).` );
+		throw new Error( `Error: ${ fileName } at ${ filePath } exceeds the size limit of ${ sizeLimitKB }KB (${ fileSizeKB.toFixed( 2 ) }KB).` );
 	}
 } );
 
