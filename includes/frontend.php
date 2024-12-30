@@ -386,10 +386,18 @@ class Frontend extends App {
 			ELEMENTOR_VERSION
 		);
 
-		$file_path = $this->get_js_assets_url( 'accordion-test', 'assets/dev/js/frontend/handlers/' );
+		$file_relative_path = 'assets/dev/js/frontend/handlers/accordion-test.js';
+
+		$plugin_base_path = dirname( plugin_dir_path( __FILE__ ), 1 );
+		$file_path = $plugin_base_path . '/' . $file_relative_path;
+
+		
+		$file_url = $this->get_js_assets_url( 'accordion-test', 'assets/dev/js/frontend/handlers/' );
 		$version = file_exists( $file_path ) ? filemtime( $file_path ) : ELEMENTOR_VERSION;
 
-		echo $file_path;
+		echo $file_path . '<br />';
+
+		echo $file_url . '<br />';
 
 		if ( file_exists( $file_path ) ) {
 			echo 'file exists';
