@@ -51,7 +51,7 @@ class Admin_Apps_Page {
 
 		if ( $container->has( Wordpress_Adapter::class ) ) {
 			self::$wordpress_adapter = $container->get( Wordpress_Adapter::class );
-		} else if ( ! self::$wordpress_adapter ) {
+		} elseif ( ! self::$wordpress_adapter ) {
 			self::$wordpress_adapter = new Wordpress_Adapter();
 		}
 
