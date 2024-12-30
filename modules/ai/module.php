@@ -163,7 +163,9 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/container/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
 		add_action( 'elementor/element/common/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/container/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
 	}
 
 	public function handle_kit_install( $imported_data ) {
