@@ -2,8 +2,8 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 
 const sizeLimits = {
-	'frontend.css': 73,
-	'frontend.min.css': 63,
+	'frontend.css': 64,
+	'frontend.min.css': 54,
 };
 
 function findTargetFiles( startPath, targetFileNames ) {
