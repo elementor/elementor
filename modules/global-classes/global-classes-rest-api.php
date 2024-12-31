@@ -5,6 +5,8 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\GlobalClasses\Utils\Error;
+use Elementor\Modules\GlobalClasses\Utils\Response;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -109,7 +111,9 @@ class Global_Classes_REST_API {
 	private function all() {
 		$classes = $this->get_repository()->all();
 
-		return $classes->get();
+		return Response::make( $classes->get_items()->all() )
+			->set_meta( [ 'order' => $classes->get_order()->all() ] )
+			->get();
 	}
 
 	private function get( \WP_REST_Request $request ) {
@@ -117,10 +121,15 @@ class Global_Classes_REST_API {
 		$class = $this->get_repository()->get( $id );
 
 		if ( null === $class ) {
-			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
+			return Error::make( 'entity_not_found' )
+				->set_message( __( 'Global class not found', 'elementor' ) )
+				->set_status( 404 )
+				->get();
 		}
 
-		return $class;
+		return Response::make( $class )
+			->set_meta( [ 'order' => $this->get_repository()->all()->get_order()->all() ] )
+			->get();
 	}
 
 	private function delete( \WP_REST_Request $request ) {
@@ -128,38 +137,50 @@ class Global_Classes_REST_API {
 		$class = $this->get_repository()->get( $id );
 
 		if ( null === $class ) {
-			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
+			return Error::make( 'entity_not_found' )
+				->set_message( __( 'Global class not found', 'elementor' ) )
+				->set_status( 404 )
+				->get();
 		}
 
 		$this->get_repository()->delete( $id );
 
-		return new \WP_REST_Response( null, 204 );
+		return Response::make()
+			->set_status( 204 )
+			->set_meta( [ 'order' => $this->get_repository()->all()->get_order()->all() ] )
+			->get();
 	}
 
 	private function put( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
-		$values = $request->get_params();
+		$value = $request->get_params();
 
 		// Ignore id to simplify the patch, and allow passing the entity as it is
-		unset( $values['id'] );
+		unset( $value['id'] );
 
 		$class = $this->get_repository()->get( $id );
 
 		if ( null === $class ) {
-			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
+			return Error::make( 'entity_not_found' )
+				->set_message( __( 'Global class not found', 'elementor' ) )
+				->set_status( 404 )
+				->get();
 		}
 
 		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )
 			->without_id()
-			->parse( $values );
+			->parse( $value );
 
 		if ( ! $is_valid ) {
 			return $this->fail_with_validation_errors( $errors );
 		}
 
-		$values = $this->get_repository()->put( $id, $parsed );
+		$updated = $this->get_repository()->put( $id, $parsed );
+		$order = $this->get_repository()->all()->get_order()->all();
 
-		return new \WP_REST_Response( $values, 200 );
+		return Response::make( $updated )
+			->set_meta( [ 'order' => $order ] )
+			->get();
 	}
 
 	private function create( \WP_REST_Request $request ) {
@@ -173,28 +194,37 @@ class Global_Classes_REST_API {
 		}
 
 		$new = $this->get_repository()->create( $parsed );
+		$order = $this->get_repository()->all()->get_order()->all();
 
-		return new \WP_REST_Response( $new, 201 );
+		return Response::make( $new )
+			->set_status( 201 )
+			->set_meta( [ 'order' => $order ] )
+			->get();
 	}
 
 	private function arrange( \WP_REST_Request $request ) {
 		$order = $request->get_params();
-		$updated = $this->get_repository()->arrange( $order );
+		$updated = $this->get_repository()->order( $order );
 
-		return new \WP_REST_Response( $updated, 200 );
+		return Response::make( $updated )->get();
 	}
 
 	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', __( 'Something went wrong', 'elementor' ), [ 'status' => 500 ] );
+			return Error::make( 'unexpected_error' )
+				->set_message( __( 'Something went wrong', 'elementor' ) )
+				->set_status( 500 )
+				->get();
 		}
 
 		return $response;
 	}
 
 	private function fail_with_validation_errors( array $errors ) {
-		return new \WP_Error( 'Invalid data: ', join( ', ', $errors ), [ 'status' => 400 ] );
+		return Error::make( 'invalid_data' )
+			->set_message( join( ', ', $errors ) )
+			->get();
 	}
 }

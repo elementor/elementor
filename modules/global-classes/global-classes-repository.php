@@ -84,7 +84,7 @@ class Global_Classes_Repository {
 		return $this->get( $id );
 	}
 
-	public function arrange( array $value ) {
+	public function order( array $value ) {
 		$all = $this->all();
 
 		if ( $all->get_order()->all() === $value ) {

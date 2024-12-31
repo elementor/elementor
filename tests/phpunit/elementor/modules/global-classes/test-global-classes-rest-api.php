@@ -136,7 +136,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( $this->mock_global_classes, $response->get_data() );
+		$this->assertEquals( $this->mock_global_classes['items'], $response->get_data()['data'] );
+		$this->assertEquals( $this->mock_global_classes['order'], $response->get_data()['meta']['order'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -149,10 +150,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( [
-			'items' => [],
-			'order' => [],
-		], $response->get_data() );
+		$this->assertEquals( [], $response->get_data()['data'] );
+		$this->assertEquals( [], $response->get_data()['meta']['order'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -181,7 +180,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( $this->mock_global_classes['items']['g-4-123'], $response->get_data() );
+		$this->assertEquals( $this->mock_global_classes['items']['g-4-123'], $response->get_data()['data'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -342,7 +341,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Assert
 		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
-		$id = $response->get_data()['id'];
+		$id = $response->get_data()['data']['id'];
 
 		$this->assertEquals( 201, $response->get_status() );
 		$this->assertArrayHasKey( 'items', $classes );
@@ -374,7 +373,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Assert
 		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
-		$id = $response->get_data()['id'];
+		$id = $response->get_data()['data']['id'];
 		$class =  $classes['items'][ $id ];
 
 		$this->assertEquals( 201, $response->get_status() );
