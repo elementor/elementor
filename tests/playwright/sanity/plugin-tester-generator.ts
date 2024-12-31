@@ -53,6 +53,7 @@ export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
 			let pluginTechnicalName: string;
+			wpEnvCli( `wp plugin install elementor --activate` );
 			switch ( plugin.installSource ) {
 				case 'api':
 					pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
