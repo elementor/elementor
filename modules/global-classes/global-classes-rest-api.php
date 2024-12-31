@@ -204,7 +204,7 @@ class Global_Classes_REST_API {
 
 	private function arrange( \WP_REST_Request $request ) {
 		$order = $request->get_params();
-		$updated = $this->get_repository()->order( $order );
+		$updated = $this->get_repository()->arrange( $order );
 
 		return Response::make( $updated )->get();
 	}
