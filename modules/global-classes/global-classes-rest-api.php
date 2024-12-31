@@ -127,9 +127,7 @@ class Global_Classes_REST_API {
 				->get();
 		}
 
-		return Response::make( $class )
-			->set_meta( [ 'order' => $this->get_repository()->all()->get_order()->all() ] )
-			->get();
+		return Response::make( $class )->get();
 	}
 
 	private function delete( \WP_REST_Request $request ) {
