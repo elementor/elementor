@@ -170,7 +170,9 @@ class Global_Classes_REST_API {
 			->parse( $value );
 
 		if ( ! $is_valid ) {
-			return $this->fail_with_validation_errors( $errors );
+			return Error::make( 'invalid_data' )
+				->set_message( join( ', ', $errors ) )
+				->get();
 		}
 
 		$updated = $this->get_repository()->put( $id, $parsed );
@@ -188,7 +190,9 @@ class Global_Classes_REST_API {
 			->parse( $class );
 
 		if ( ! $is_valid ) {
-			return $this->fail_with_validation_errors( $errors );
+			return Error::make( 'invalid_data' )
+				->set_message( join( ', ', $errors ) )
+				->get();
 		}
 
 		$new = $this->get_repository()->create( $parsed );
@@ -218,11 +222,5 @@ class Global_Classes_REST_API {
 		}
 
 		return $response;
-	}
-
-	private function fail_with_validation_errors( array $errors ) {
-		return Error::make( 'invalid_data' )
-			->set_message( join( ', ', $errors ) )
-			->get();
 	}
 }
