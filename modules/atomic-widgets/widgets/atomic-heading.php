@@ -105,7 +105,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					Textarea_Control::bind_to( 'title' )
 						->set_label( __( 'Title', 'elementor' ) )
 						->set_placeholder( __( 'Type your title here', 'elementor' ) )
-						->set_default_value( '' ),
+						->set_default_value(),
 					Link_Control::bind_to( 'link' ),
 				] ),
 		];
