@@ -21,9 +21,8 @@ class Size_Prop_Type extends Plain_Prop_Type {
 		return (
 			is_array( $value ) &&
 			array_key_exists( 'size', $value ) &&
-			! empty( $value['unit'] ) &&
 			is_numeric( $value['size'] ) &&
-			is_string( $value['unit'] ) &&
+			! empty( $value['unit'] ) &&
 			in_array( $value['unit'], static::SUPPORTED_UNITS, true )
 		);
 	}
