@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\GlobalClasses\Utils;
 
-class Error {
+class Error_Builder {
 	private string $message;
 	private int $status;
 	private string $code;
@@ -28,7 +28,7 @@ class Error {
 		return $this;
 	}
 
-	public function get() {
+	public function build() {
 		return new \WP_Error( $this->code, $this->message, [ 'status' => $this->status ] );
 	}
 }

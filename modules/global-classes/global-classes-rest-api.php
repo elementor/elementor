@@ -6,7 +6,9 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\GlobalClasses\Utils\Error;
+use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\GlobalClasses\Utils\Response;
+use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -110,9 +112,9 @@ class Global_Classes_REST_API {
 	private function all() {
 		$classes = $this->get_repository()->all();
 
-		return Response::make( $classes->get_items()->all() )
+		return Response_Builder::make( $classes->get_items()->all() )
 			->set_meta( [ 'order' => $classes->get_order()->all() ] )
-			->get();
+			->build();
 	}
 
 	private function get( \WP_REST_Request $request ) {
@@ -120,13 +122,13 @@ class Global_Classes_REST_API {
 		$class = $this->get_repository()->get( $id );
 
 		if ( null === $class ) {
-			return Error::make( 'entity_not_found' )
+			return Error_Builder::make( 'entity_not_found' )
 				->set_message( __( 'Global class not found', 'elementor' ) )
 				->set_status( 404 )
-				->get();
+				->build();
 		}
 
-		return Response::make( $class )->get();
+		return Response_Builder::make( $class )->build();
 	}
 
 	private function delete( \WP_REST_Request $request ) {
@@ -134,18 +136,18 @@ class Global_Classes_REST_API {
 		$class = $this->get_repository()->get( $id );
 
 		if ( null === $class ) {
-			return Error::make( 'entity_not_found' )
+			return Error_Builder::make( 'entity_not_found' )
 				->set_message( __( 'Global class not found', 'elementor' ) )
 				->set_status( 404 )
-				->get();
+				->build();
 		}
 
 		$this->get_repository()->delete( $id );
 
-		return Response::make()
+		return Response_Builder::make()
 			->set_status( 204 )
 			->set_meta( [ 'order' => $this->get_repository()->all()->get_order()->all() ] )
-			->get();
+			->build();
 	}
 
 	private function put( \WP_REST_Request $request ) {
@@ -158,10 +160,10 @@ class Global_Classes_REST_API {
 		$class = $this->get_repository()->get( $id );
 
 		if ( null === $class ) {
-			return Error::make( 'entity_not_found' )
+			return Error_Builder::make( 'entity_not_found' )
 				->set_message( __( 'Global class not found', 'elementor' ) )
 				->set_status( 404 )
-				->get();
+				->build();
 		}
 
 		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )
@@ -169,17 +171,17 @@ class Global_Classes_REST_API {
 			->parse( $value );
 
 		if ( ! $is_valid ) {
-			return Error::make( 'invalid_data' )
+			return Error_Builder::make( 'invalid_data' )
 				->set_message( join( ', ', $errors ) )
-				->get();
+				->build();
 		}
 
 		$updated = $this->get_repository()->put( $id, $parsed );
 		$order = $this->get_repository()->all()->get_order()->all();
 
-		return Response::make( $updated )
+		return Response_Builder::make( $updated )
 			->set_meta( [ 'order' => $order ] )
-			->get();
+			->build();
 	}
 
 	private function create( \WP_REST_Request $request ) {
@@ -191,35 +193,35 @@ class Global_Classes_REST_API {
 			->parse( $class );
 
 		if ( ! $is_valid ) {
-			return Error::make( 'invalid_data' )
+			return Error_Builder::make( 'invalid_data' )
 				->set_message( join( ', ', $errors ) )
-				->get();
+				->build();
 		}
 
 		$new = $this->get_repository()->create( $parsed );
 		$order = $this->get_repository()->all()->get_order()->all();
 
-		return Response::make( $new )
+		return Response_Builder::make( $new )
 			->set_status( 201 )
 			->set_meta( [ 'order' => $order ] )
-			->get();
+			->build();
 	}
 
 	private function arrange( \WP_REST_Request $request ) {
 		$order = $request->get_params();
 		$updated = $this->get_repository()->arrange( $order );
 
-		return Response::make( $updated )->get();
+		return Response_Builder::make( $updated )->build();
 	}
 
 	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
-			return Error::make( 'unexpected_error' )
+			return Error_Builder::make( 'unexpected_error' )
 				->set_message( __( 'Something went wrong', 'elementor' ) )
 				->set_status( 500 )
-				->get();
+				->build();
 		}
 
 		return $response;

@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\GlobalClasses\Utils;
 
-class Response {
+class Response_Builder {
 	private $data;
 	private int $status;
 	private array $meta = [];
@@ -28,7 +28,7 @@ class Response {
 		return $this;
 	}
 
-	public function get() {
+	public function build() {
 		$res_data = [
 			'data' => $this->data,
 			'meta' => $this->meta,
