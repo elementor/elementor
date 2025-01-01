@@ -388,6 +388,19 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_ACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_local_google_fonts',
+			'title' => esc_html__( 'Load Google Fonts locally', 'elementor' ),
+			'description' => esc_html__( "To improve page load performance and user privacy, replace Google Fonts CDN links with self-hosted font files. This approach downloads and serves font files directly from your server, eliminating external requests to Google's servers.", 'elementor' ),
+			'tag' => esc_html__( 'Performance', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_BETA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.27.0',
+			],
+			'generator_tag' => true,
+		] );
 	}
 
 	/**
