@@ -24,7 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'floating-buttons';
 	const FLOATING_ELEMENTS_TYPE_META_KEY = '_elementor_floating_elements_type';
 	const ROUTER_OPTION_KEY = 'elementor_floating_buttons_router_version';
 	const META_CLICK_TRACKING = '_elementor_click_tracking';
@@ -48,20 +47,8 @@ class Module extends BaseModule {
 		];
 	}
 
-	// TODO: This is a hidden experiment which needs to remain enabled like this until 3.26 for pro compatibility.
-	public static function get_experimental_data() {
-		return [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Floating Buttons', 'elementor' ),
-			'hidden' => true,
-			'default' => Manager::STATE_ACTIVE,
-			'release_status' => Manager::RELEASE_STATUS_STABLE,
-			'mutable' => false,
-		];
-	}
-
 	public function get_name(): string {
-		return static::EXPERIMENT_NAME;
+		return 'floating-buttons';
 	}
 
 	public function get_widgets(): array {
