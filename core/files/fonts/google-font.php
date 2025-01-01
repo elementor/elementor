@@ -3,6 +3,10 @@ namespace Elementor\Core\Files\Fonts;
 
 use Elementor\Plugin;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 class Google_Font {
 
 	const FOLDER_BASE = 'elementor/google-fonts';
