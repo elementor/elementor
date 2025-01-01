@@ -1,0 +1,48 @@
+name: Check CSS Size Limit
+
+on:
+  pull_request:
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+
+jobs:
+  build-plugin:
+    name: Build plugin
+    uses: ./.github/workflows/build.yml
+
+  check-size-limit:
+    runs-on: ubuntu-latest
+    needs: build-plugin
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
+
+      - name: Install WordPress environment
+        run: |
+          npm run start-local-server
+
+      - name: Check file sizes
+        run: node ./tests/scripts/checkFileSize.js
