@@ -99,7 +99,7 @@ class Google_Font {
 
 		$css_content = wp_remote_retrieve_body( $css_content_response );
 
-		preg_match_all('/url\(([^)]+)\)/', $css_content, $font_urls );
+		preg_match_all( '/url\(([^)]+)\)/', $css_content, $font_urls );
 
 		if ( ! function_exists( 'download_url' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -202,6 +202,7 @@ class Google_Font {
 
 		$sanitize_font_name = static::sanitize_font_name( $font_name );
 
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		wp_enqueue_style(
 			'elementor-gf-' . $sanitize_font_name,
 			$font_url,
