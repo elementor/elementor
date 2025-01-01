@@ -184,7 +184,9 @@ class Global_Classes_REST_API {
 
 	private function create( \WP_REST_Request $request ) {
 		$class = $request->get_params();
-		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )
+		$class['variants'] = $class['variants'] ?? [];
+
+		[ $is_valid, $parsed, $errors ] = Style_Parser::make( Style_Schema::get() )
 			->without_id()
 			->parse( $class );
 
