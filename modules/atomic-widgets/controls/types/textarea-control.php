@@ -22,8 +22,8 @@ class Textarea_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
-	public function set_value( string $value ): self {
-		$this->value = $value;
+	public function set_default_value( string $value = null ): self {
+		$this->value = $value ?? '';
 
 		return $this;
 	}
