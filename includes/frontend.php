@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\App;
 use Elementor\Core\Base\Elements_Iteration_Actions\Assets;
+use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
@@ -1020,9 +1021,15 @@ class Frontend extends App {
 		if ( ! empty( $google_fonts['google'] ) ) {
 			$this->google_fonts_index++;
 
-			$fonts_url = $this->get_stable_google_fonts_url( $google_fonts['google'] );
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_local_google_fonts' ) ) {
+				foreach ( $google_fonts['google'] as $current_font ) {
+					Google_Font::enqueue( $current_font );
+				}
+			} else {
+				$fonts_url = $this->get_stable_google_fonts_url( $google_fonts['google'] );
 
-			wp_enqueue_style( 'google-fonts-' . $this->google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+				wp_enqueue_style( 'google-fonts-' . $this->google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			}
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
@@ -1031,12 +1038,9 @@ class Frontend extends App {
 			foreach ( $early_access_font_urls as $ea_font_url ) {
 				$this->google_fonts_index++;
 
-				//printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
-
 				wp_enqueue_style( 'google-earlyaccess-' . $this->google_fonts_index, $ea_font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
-
 	}
 
 	/**
