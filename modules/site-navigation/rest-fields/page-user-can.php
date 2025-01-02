@@ -22,13 +22,13 @@ class Page_User_Can {
 		register_rest_field(
 			'page',
 			'user_can',
-			[
-				'get_callback' => [ $this, 'get_callback' ],
-				'schema' => [
+			array(
+				'get_callback' => array( $this, 'get_callback' ),
+				'schema' => array(
 					'description' => __( 'Whether the current user can edit or delete this post', 'elementor' ),
 					'type' => 'array',
-				],
-			]
+				),
+			)
 		);
 	}
 
@@ -36,9 +36,9 @@ class Page_User_Can {
 		$can_edit = current_user_can( 'edit_post', $post['id'] );
 		$can_delete = current_user_can( 'delete_post', $post['id'] );
 
-		return [
+		return array(
 			'edit' => $can_edit,
 			'delete' => $can_delete,
-		];
+		);
 	}
 }

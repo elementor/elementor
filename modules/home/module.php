@@ -32,10 +32,10 @@ class Module extends BaseApp {
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			$hook_suffix = 'toplevel_page_elementor';
-			add_action( "admin_print_scripts-{$hook_suffix}", [ $this, 'enqueue_home_screen_scripts' ] );
+			add_action( "admin_print_scripts-{$hook_suffix}", array( $this, 'enqueue_home_screen_scripts' ) );
 		}, 10, 2 );
 
-		add_filter( 'elementor/document/urls/edit', [ $this, 'add_active_document_to_edit_link' ] );
+		add_filter( 'elementor/document/urls/edit', array( $this, 'add_active_document_to_edit_link' ) );
 	}
 
 	public function enqueue_home_screen_scripts(): void {
@@ -48,12 +48,12 @@ class Module extends BaseApp {
 		wp_enqueue_script(
 			'e-home-screen',
 			ELEMENTOR_ASSETS_URL . 'js/e-home-screen' . $min_suffix . '.js',
-			[
+			array(
 				'react',
 				'react-dom',
 				'elementor-common',
 				'elementor-v2-ui',
-			],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -87,14 +87,14 @@ class Module extends BaseApp {
 	}
 
 	private function register_layout_experiment(): void {
-		Plugin::$instance->experiments->add_feature( [
+		Plugin::$instance->experiments->add_feature( array(
 			'name' => static::PAGE_ID,
 			'title' => esc_html__( 'Elementor Home Screen', 'elementor' ),
 			'description' => esc_html__( 'Default Elementor menu page.', 'elementor' ),
 			'hidden' => true,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'default' => Experiments_Manager::STATE_ACTIVE,
-		] );
+		) );
 	}
 
 	private function get_app_js_config(): array {
@@ -105,11 +105,11 @@ class Module extends BaseApp {
 	}
 
 	private function get_api_config(): array {
-		return [
+		return array(
 			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/home-screen/v1/home-screen.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_home_screen_data',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'home-screen',
-		];
+		);
 	}
 
 	public static function get_elementor_settings_page_id(): string {

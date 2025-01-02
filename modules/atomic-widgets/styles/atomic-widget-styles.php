@@ -27,9 +27,9 @@ class Atomic_Widget_Styles {
 
 		$this->styles_enqueue_fonts( $styles );
 
-		$css = Styles_Renderer::make( [
+		$css = Styles_Renderer::make( array(
 			'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
-		] )->render( $styles );
+		) )->render( $styles );
 
 		$post->get_stylesheet()->add_raw_css( $css );
 	}

@@ -26,7 +26,7 @@ class Props_Resolver {
 	/**
 	 * @var array<string, Props_Resolver>
 	 */
-	private static array $instances = [];
+	private static array $instances = array();
 
 	private Transformers_Registry $transformers;
 
@@ -55,11 +55,11 @@ class Props_Resolver {
 	}
 
 	public static function reset(): void {
-		self::$instances = [];
+		self::$instances = array();
 	}
 
 	public function resolve( array $schema, array $props ): array {
-		$resolved = [];
+		$resolved = array();
 
 		foreach ( $schema as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
@@ -138,7 +138,7 @@ class Props_Resolver {
 	}
 
 	private function assign_values( $values, $schema ) {
-		$assigned = [];
+		$assigned = array();
 
 		foreach ( $values as $key => $value ) {
 			$prop_type = $schema instanceof Prop_Type ? $schema : $schema[ $key ];

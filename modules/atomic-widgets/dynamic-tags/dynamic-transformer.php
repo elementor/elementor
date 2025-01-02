@@ -28,7 +28,7 @@ class Dynamic_Transformer extends Transformer_Base {
 		return $this->dynamic_manager->get_tag_data_content(
 			null,
 			$value['name'],
-			$value['settings'] ?? []
+			$value['settings'] ?? array()
 		);
 	}
 }

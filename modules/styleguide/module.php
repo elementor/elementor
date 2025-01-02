@@ -21,8 +21,8 @@ class Module extends Base_Module {
 	 */
 	public function __construct() {
 		parent::__construct();
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_main_scripts' ] );
-		add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_styles' ] );
+		add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'enqueue_main_scripts' ) );
+		add_action( 'elementor/preview/enqueue_styles', array( $this, 'enqueue_styles' ) );
 
 		add_action( 'elementor/frontend/after_register_scripts', function () {
 			$is_preview = Plugin::$instance->preview->is_preview();
@@ -34,8 +34,8 @@ class Module extends Base_Module {
 			$this->enqueue_app_initiator( $is_preview );
 		} );
 
-		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
-		add_action( 'elementor/element/after_section_start', [ $this, 'add_styleguide_enable_controls' ], 10, 3 );
+		add_action( 'elementor/controls/register', array( $this, 'register_controls' ) );
+		add_action( 'elementor/element/after_section_start', array( $this, 'add_styleguide_enable_controls' ), 10, 3 );
 	}
 
 	/**
@@ -56,24 +56,24 @@ class Module extends Base_Module {
 		wp_enqueue_script(
 			static::ASSETS_HANDLE,
 			$this->get_js_assets_url( static::ASSETS_SRC ),
-			[ 'elementor-editor' ],
+			array( 'elementor-editor' ),
 			ELEMENTOR_VERSION,
 			true
 		);
 
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 
-		wp_localize_script( static::ASSETS_HANDLE, 'elementorStyleguideConfig', [
+		wp_localize_script( static::ASSETS_HANDLE, 'elementorStyleguideConfig', array(
 			'activeKitId' => $kit_id,
-		] );
+		) );
 	}
 
 	public function enqueue_app_initiator( $is_preview = false ) {
-		$dependencies = [
+		$dependencies = array(
 			'wp-i18n',
 			'react',
 			'react-dom',
-		];
+		);
 
 		if ( ! $is_preview ) {
 			$dependencies[] = static::ASSETS_HANDLE;
@@ -92,7 +92,7 @@ class Module extends Base_Module {
 		wp_enqueue_style(
 			static::ASSETS_HANDLE,
 			$this->get_css_assets_url( 'modules/' . static::ASSETS_SRC . '/' . static::ASSETS_SRC ),
-			[],
+			array(),
 			ELEMENTOR_VERSION
 		);
 	}
@@ -111,7 +111,7 @@ class Module extends Base_Module {
 	 * @param array $args
 	 */
 	public function add_styleguide_enable_controls( $element, $section_id, $args ) {
-		if ( 'kit' !== $element->get_name() || ! in_array( $section_id, [ 'section_global_colors', 'section_text_style' ] ) ) {
+		if ( 'kit' !== $element->get_name() || ! in_array( $section_id, array( 'section_global_colors', 'section_text_style' ) ) ) {
 			return;
 		}
 
@@ -119,7 +119,7 @@ class Module extends Base_Module {
 
 		$element->add_control(
 			$control_name,
-			[
+			array(
 				'label' => esc_html__( 'Show global settings', 'elementor' ),
 				'type' => Switcher::CONTROL_TYPE,
 				'description' => esc_html__( 'Temporarily overlay the canvas with the style guide to preview your changes to global colors and fonts.', 'elementor' ),
@@ -127,7 +127,7 @@ class Module extends Base_Module {
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'label_on' => esc_html__( 'Yes', 'elementor' ),
 				'on_change_command' => true,
-			]
+			)
 		);
 	}
 }

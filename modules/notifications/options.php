@@ -3,7 +3,7 @@ namespace Elementor\Modules\Notifications;
 
 class Options {
 
-	public static function has_unread_notifications() : bool {
+	public static function has_unread_notifications(): bool {
 		$current_user = wp_get_current_user();
 
 		if ( ! $current_user ) {
@@ -28,19 +28,19 @@ class Options {
 		$current_user = wp_get_current_user();
 
 		if ( ! $current_user ) {
-			return [];
+			return array();
 		}
 
 		$notifications_dismissed = get_user_meta( $current_user->ID, '_e_notifications_dismissed', true );
 
 		if ( ! is_array( $notifications_dismissed ) ) {
-			$notifications_dismissed = [];
+			$notifications_dismissed = array();
 		}
 
 		return $notifications_dismissed;
 	}
 
-	public static function mark_notification_read( $notifications ) : bool {
+	public static function mark_notification_read( $notifications ): bool {
 		$current_user = wp_get_current_user();
 
 		if ( ! $current_user ) {

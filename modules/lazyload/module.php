@@ -17,7 +17,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'init', [ $this, 'init' ] );
+		add_action( 'init', array( $this, 'init' ) );
 	}
 
 	public function init() {
@@ -25,7 +25,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		add_action( 'wp_head', function() {
+		add_action( 'wp_head', function () {
 			if ( ! $this->should_lazyload() ) {
 				return;
 			}
@@ -51,7 +51,7 @@ class Module extends BaseModule {
 			<?php
 		} );
 
-		add_action( 'wp_footer', function() {
+		add_action( 'wp_footer', function () {
 			if ( ! $this->should_lazyload() ) {
 				return;
 			}

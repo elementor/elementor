@@ -14,12 +14,12 @@ class Settings_Reporter extends Base_Reporter {
 	}
 
 	public function get_fields() {
-		return [
+		return array(
 			'settings' => '',
-		];
+		);
 	}
 
-	public function get_settings() : array {
+	public function get_settings(): array {
 		$usage_settings_text = '';
 
 		$settings = Module::get_settings_usage();
@@ -30,12 +30,12 @@ class Settings_Reporter extends Base_Reporter {
 			$usage_settings_text .= '<tr><td>' . $setting_name . '</td><td>' . $setting_value_text . '</td></tr>';
 		}
 
-		return [
+		return array(
 			'value' => $usage_settings_text,
-		];
+		);
 	}
 
-	public function get_raw_settings() : array {
+	public function get_raw_settings(): array {
 		$usage_settings = PHP_EOL;
 
 		$settings = Module::get_settings_usage();
@@ -46,8 +46,8 @@ class Settings_Reporter extends Base_Reporter {
 			$usage_settings .= "\t" . $setting_name . ': ' . $setting_value_text . PHP_EOL;
 		}
 
-		return [
+		return array(
 			'value' => $usage_settings,
-		];
+		);
 	}
 }

@@ -13,9 +13,9 @@ class Image_Src_Transformer extends Transformer_Base {
 	// Currently, the dynamic tags that return images return it with id & url no matter
 	// what, so we need to keep the same structure in the props.
 	public function transform( $value, $key ) {
-		return [
+		return array(
 			'id' => isset( $value['id'] ) ? (int) $value['id'] : null,
 			'url' => $value['url'] ?? null,
-		];
+		);
 	}
 }

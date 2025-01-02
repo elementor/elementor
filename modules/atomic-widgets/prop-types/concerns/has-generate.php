@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Has_Generate {
 	public static function generate( $value ) {
-		return [
+		return array(
 			'$$type' => static::get_key(),
 			'value' => $value,
-		];
+		);
 	}
 
 	abstract public static function get_key(): string;

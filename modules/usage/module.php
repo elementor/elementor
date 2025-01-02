@@ -90,9 +90,9 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	public function get_formatted_usage( $format = 'html' ) {
-		$usage = [];
+		$usage = array();
 
-		foreach ( get_option( self::OPTION_NAME, [] ) as $doc_type => $elements ) {
+		foreach ( get_option( self::OPTION_NAME, array() ) as $doc_type => $elements ) {
 			$doc_class = Plugin::$instance->documents->get_document_type( $doc_type );
 
 			if ( 'html' === $format && $doc_class ) {
@@ -113,7 +113,7 @@ class Module extends BaseModule {
 			foreach ( $elements as $element_type => $data ) {
 				unset( $elements[ $element_type ] );
 
-				if ( in_array( $element_type, [ 'section', 'column' ], true ) ) {
+				if ( in_array( $element_type, array( 'section', 'column' ), true ) ) {
 					continue;
 				}
 
@@ -131,20 +131,20 @@ class Module extends BaseModule {
 			// Sort elements by key.
 			ksort( $elements );
 
-			$usage[ $doc_type ] = [
+			$usage[ $doc_type ] = array(
 				'title' => $doc_title,
 				'elements' => $elements,
 				'count' => $doc_count,
-			];
+			);
 
 			// ' ? 1 : 0;' In sorters is compatibility for PHP8.0.
 			// Sort usage by title.
-			uasort( $usage, function( $a, $b ) {
+			uasort( $usage, function ( $a, $b ) {
 				return ( $a['title'] > $b['title'] ) ? 1 : 0;
 			} );
 
 			// If title includes '-' will have lower priority.
-			uasort( $usage, function( $a ) {
+			uasort( $usage, function ( $a ) {
 				return strpos( $a['title'], '-' ) ? 1 : 0;
 			} );
 		}
@@ -275,16 +275,16 @@ class Module extends BaseModule {
 			delete_option( self::OPTION_NAME );
 		}
 
-		$post_types = get_post_types( [ 'public' => true ] );
+		$post_types = get_post_types( array( 'public' => true ) );
 
-		$query = new \WP_Query( [
+		$query = new \WP_Query( array(
 			'no_found_rows' => true,
 			'meta_key' => '_elementor_data',
 			'post_type' => $post_types,
-			'post_status' => [ 'publish', 'private' ],
+			'post_status' => array( 'publish', 'private' ),
 			'posts_per_page' => $limit,
 			'offset' => $offset,
-		] );
+		) );
 
 		foreach ( $query->posts as $post ) {
 			$document = Plugin::$instance->documents->get( $post->ID );
@@ -315,11 +315,11 @@ class Module extends BaseModule {
 	 */
 	private function increase_controls_count( &$element_ref, $tab, $section, $control, $count ) {
 		if ( ! isset( $element_ref['controls'][ $tab ] ) ) {
-			$element_ref['controls'][ $tab ] = [];
+			$element_ref['controls'][ $tab ] = array();
 		}
 
 		if ( ! isset( $element_ref['controls'][ $tab ][ $section ] ) ) {
-			$element_ref['controls'][ $tab ][ $section ] = [];
+			$element_ref['controls'][ $tab ][ $section ] = array();
 		}
 
 		if ( ! isset( $element_ref['controls'][ $tab ][ $section ][ $control ] ) ) {
@@ -362,7 +362,7 @@ class Module extends BaseModule {
 			if ( $value !== $control_config['default'] ) {
 				$this->increase_controls_count( $element_ref, $tab, $section, $control, 1 );
 
-				$changed_controls_count++;
+				++$changed_controls_count;
 			}
 		}
 
@@ -405,18 +405,18 @@ class Module extends BaseModule {
 	 * @param array $doc_usage
 	 */
 	private function add_to_global( $doc_name, $doc_usage ) {
-		$global_usage = get_option( self::OPTION_NAME, [] );
+		$global_usage = get_option( self::OPTION_NAME, array() );
 
 		foreach ( $doc_usage as $element_type => $element_data ) {
 			if ( ! isset( $global_usage[ $doc_name ] ) ) {
-				$global_usage[ $doc_name ] = [];
+				$global_usage[ $doc_name ] = array();
 			}
 
 			if ( ! isset( $global_usage[ $doc_name ][ $element_type ] ) ) {
-				$global_usage[ $doc_name ][ $element_type ] = [
+				$global_usage[ $doc_name ][ $element_type ] = array(
 					'count' => 0,
-					'controls' => [],
-				];
+					'controls' => array(),
+				);
 			}
 
 			$global_element_ref = &$global_usage[ $doc_name ][ $element_type ];
@@ -454,7 +454,7 @@ class Module extends BaseModule {
 
 		$doc_name = $document->get_name();
 
-		$global_usage = get_option( self::OPTION_NAME, [] );
+		$global_usage = get_option( self::OPTION_NAME, array() );
 
 		foreach ( $prev_usage as $element_type => $doc_value ) {
 			if ( isset( $global_usage[ $doc_name ][ $element_type ]['count'] ) ) {
@@ -503,7 +503,7 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function get_elements_usage( $elements ) {
-		$usage = [];
+		$usage = array();
 
 		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( &$usage ) {
 			if ( empty( $element['widgetType'] ) ) {
@@ -515,11 +515,11 @@ class Module extends BaseModule {
 			}
 
 			if ( ! isset( $usage[ $type ] ) ) {
-				$usage[ $type ] = [
+				$usage[ $type ] = array(
 					'count' => 0,
 					'control_percent' => 0,
-					'controls' => [],
-				];
+					'controls' => array(),
+				);
 			}
 
 			$usage[ $type ]['count']++;
@@ -573,18 +573,18 @@ class Module extends BaseModule {
 
 				$this->add_to_global( $document->get_name(), $usage );
 			} catch ( \Exception $exception ) {
-				Plugin::$instance->logger->get_logger()->error( $exception->getMessage(), [
+				Plugin::$instance->logger->get_logger()->error( $exception->getMessage(), array(
 					'document_id' => $document->get_id(),
 					'document_name' => $document->get_name(),
-				] );
+				) );
 
 				return;
-			};
+			}
 		}
 	}
 
 	public static function get_settings_usage() {
-		$usage = [];
+		$usage = array();
 
 		$settings_tab = Plugin::$instance->settings->get_tabs();
 		$settings = array_merge(
@@ -625,15 +625,15 @@ class Module extends BaseModule {
 	 * Add system info report.
 	 */
 	public function add_system_info_report() {
-		System_Info::add_report( 'usage', [
+		System_Info::add_report( 'usage', array(
 			'file_name' => __DIR__ . '/usage-reporter.php',
 			'class_name' => __NAMESPACE__ . '\Usage_Reporter',
-		] );
+		) );
 
-		System_Info::add_report( 'settings', [
+		System_Info::add_report( 'settings', array(
 			'file_name' => __DIR__ . '/settings-reporter.php',
 			'class_name' => __NAMESPACE__ . '\Settings_Reporter',
-		] );
+		) );
 	}
 
 	/**
@@ -648,14 +648,14 @@ class Module extends BaseModule {
 			return;
 		}
 
-		add_action( 'transition_post_status', [ $this, 'on_status_change' ], 10, 3 );
-		add_action( 'before_delete_post', [ $this, 'on_before_delete_post' ] );
+		add_action( 'transition_post_status', array( $this, 'on_status_change' ), 10, 3 );
+		add_action( 'before_delete_post', array( $this, 'on_before_delete_post' ) );
 
-		add_action( 'elementor/document/before_save', [ $this, 'before_document_save' ], 10, 2 );
-		add_action( 'elementor/document/after_save', [ $this, 'after_document_save' ] );
+		add_action( 'elementor/document/before_save', array( $this, 'before_document_save' ), 10, 2 );
+		add_action( 'elementor/document/after_save', array( $this, 'after_document_save' ) );
 
-		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
+		add_filter( 'elementor/tracker/send_tracking_data_params', array( $this, 'add_tracking_data' ) );
 
-		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 50 );
+		add_action( 'admin_init', array( $this, 'add_system_info_report' ), 50 );
 	}
 }
