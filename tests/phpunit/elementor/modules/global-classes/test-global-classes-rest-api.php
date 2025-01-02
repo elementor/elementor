@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	private $mock_global_class = [
 		"label" => "flexy",
+		"type" => "class",
 		"variants" => [
 			[
 				"meta" => [
@@ -50,6 +51,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 	private $mock_unsanitized_existing_class_update = [
 		'id' => 'g-4-123',
+		'type' => 'class',
 		'label' => 'pinky',
 		'variants' => [
 			[
