@@ -4,7 +4,7 @@ namespace Elementor\Core\Base\Elements_Iteration_Actions;
 use Elementor\Element_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Base {

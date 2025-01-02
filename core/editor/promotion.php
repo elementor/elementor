@@ -5,7 +5,7 @@ use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Promotion {
