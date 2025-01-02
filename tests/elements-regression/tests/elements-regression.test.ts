@@ -27,6 +27,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 	- Test container_flexbox template
 	- Test video template
 	- Test testimonial template
+	- Test container_grid
 	 */
 	const testData = [
 		// 'container_flexbox',
