@@ -7,12 +7,12 @@ class Error_Builder {
 	private int $status;
 	private string $code;
 
-	private function __construct( $code, $status = 400 ) {
+	private function __construct( $code, $status = 500 ) {
 		$this->code = $code;
 		$this->status = $status;
 	}
 
-	public static function make( $code, $status = 400 ) {
+	public static function make( $code, $status = 500 ) {
 		return new self( $code, $status );
 	}
 

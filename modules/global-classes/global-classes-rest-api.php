@@ -5,9 +5,7 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
-use Elementor\Modules\GlobalClasses\Utils\Error;
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
-use Elementor\Modules\GlobalClasses\Utils\Response;
 use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -172,6 +170,7 @@ class Global_Classes_REST_API {
 
 		if ( ! $is_valid ) {
 			return Error_Builder::make( 'invalid_data' )
+				->set_status( 400 )
 				->set_message( join( ', ', $errors ) )
 				->build();
 		}
@@ -195,6 +194,7 @@ class Global_Classes_REST_API {
 
 		if ( ! $is_valid ) {
 			return Error_Builder::make( 'invalid_data' )
+				->set_status( 400 )
 				->set_message( join( ', ', $errors ) )
 				->build();
 		}
@@ -221,7 +221,6 @@ class Global_Classes_REST_API {
 		} catch ( \Exception $e ) {
 			return Error_Builder::make( 'unexpected_error' )
 				->set_message( __( 'Something went wrong', 'elementor' ) )
-				->set_status( 500 )
 				->build();
 		}
 
