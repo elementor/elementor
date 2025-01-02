@@ -6,7 +6,7 @@ use Elementor\Element_Base;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Assets extends Base {

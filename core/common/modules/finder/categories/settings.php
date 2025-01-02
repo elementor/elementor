@@ -7,7 +7,7 @@ use Elementor\Modules\ElementManager\Module as ElementManagerModule;
 use Elementor\Settings as ElementorSettings;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

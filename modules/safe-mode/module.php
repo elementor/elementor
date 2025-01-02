@@ -9,7 +9,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends \Elementor\Core\Base\Module {

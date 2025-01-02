@@ -5,7 +5,7 @@ use Elementor\Data\V2\Base\Endpoint\Index;
 use Elementor\Data\V2\Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 /**
  * class AllChildren, is optional endpoint.

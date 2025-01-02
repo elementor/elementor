@@ -8,7 +8,7 @@ use Elementor\Plugin;
 use Elementor\Modules\KitElementsDefaults\ImportExport\Import_Export;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {

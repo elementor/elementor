@@ -9,7 +9,7 @@ use Elementor\Modules\Checklist\Module as ChecklistModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Model extends BaseModel {

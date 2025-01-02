@@ -7,7 +7,7 @@ use Elementor\Plugin;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Library extends Common_App {

@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Custom_Fonts_Promotion_Item extends Base_Promotion_Template {

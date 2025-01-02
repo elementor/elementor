@@ -6,7 +6,7 @@ use Elementor\Data\V2\Base\Processor;
 use Elementor\Data\V2\Base\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

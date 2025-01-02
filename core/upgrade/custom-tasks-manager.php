@@ -5,7 +5,7 @@ use Elementor\Core\Base\Background_Task_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Custom_Tasks_Manager extends Background_Task_Manager {

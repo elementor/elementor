@@ -5,7 +5,7 @@ use Elementor\Data\V2\Base\Endpoint;
 use WP_REST_Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Index extends Endpoint {

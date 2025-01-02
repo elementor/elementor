@@ -6,7 +6,7 @@ use Elementor\Utils;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {

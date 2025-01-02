@@ -6,7 +6,7 @@ use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Global_Colors extends Tab_Base {

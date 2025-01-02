@@ -17,7 +17,7 @@ use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends Base_Module {

@@ -5,7 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Data\Base\Processor;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Manager extends BaseModule {
