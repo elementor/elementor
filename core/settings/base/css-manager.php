@@ -5,7 +5,7 @@ namespace Elementor\Core\Settings\Base;
 use Elementor\Core\Files\CSS\Base as CSS_File;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class CSS_Manager extends Manager {
