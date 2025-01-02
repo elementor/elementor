@@ -2,7 +2,7 @@
 namespace Elementor\Data\V2\Base\Exceptions;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class WP_Error_Exception extends Data_Exception {

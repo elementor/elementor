@@ -7,7 +7,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Files\Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Settings_Site_Identity extends Tab_Base {

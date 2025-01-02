@@ -5,7 +5,7 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Controls_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Settings_Lightbox extends Tab_Base {

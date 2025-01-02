@@ -5,7 +5,7 @@ use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Create_New_Page_Url extends Transformations_Abstract {

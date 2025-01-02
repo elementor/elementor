@@ -8,7 +8,7 @@ use Elementor\Settings;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {

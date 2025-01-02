@@ -6,7 +6,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Wp_Cli extends \WP_CLI_Command {

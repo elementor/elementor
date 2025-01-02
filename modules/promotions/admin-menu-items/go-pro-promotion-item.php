@@ -8,7 +8,7 @@ use Elementor\Settings;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {

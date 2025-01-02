@@ -11,7 +11,7 @@ use Elementor\Utils;
 use WP_User_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {

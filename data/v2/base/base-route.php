@@ -6,7 +6,7 @@ use Elementor\Data\V2\Base\Exceptions\Error_500;
 use WP_REST_Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

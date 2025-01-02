@@ -5,7 +5,7 @@ namespace Elementor\Modules\FloatingButtons\Widgets;
 use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

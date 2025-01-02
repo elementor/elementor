@@ -6,7 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {

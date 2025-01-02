@@ -7,7 +7,7 @@ use Elementor\Core\Settings\Base\Model as BaseModel;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Manager extends BaseManager {

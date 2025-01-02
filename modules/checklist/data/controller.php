@@ -6,7 +6,7 @@ use Elementor\Modules\Checklist\Data\Endpoints\Steps;
 use Elementor\Modules\Checklist\Data\Endpoints\User_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Controller extends Controller_Base {

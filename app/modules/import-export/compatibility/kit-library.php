@@ -3,7 +3,7 @@
 namespace Elementor\App\Modules\ImportExport\Compatibility;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Kit_Library extends Base_Adapter {

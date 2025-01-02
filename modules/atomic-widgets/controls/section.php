@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Controls;
 use JsonSerializable;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Section implements JsonSerializable {

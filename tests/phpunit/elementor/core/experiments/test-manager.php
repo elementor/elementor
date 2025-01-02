@@ -11,7 +11,7 @@ use Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Test_Manager extends Elementor_Test_Base {

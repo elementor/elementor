@@ -7,7 +7,7 @@ use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Transformations_Manager {

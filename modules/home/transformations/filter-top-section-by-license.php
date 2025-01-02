@@ -4,7 +4,7 @@ namespace elementor\modules\home\transformations;
 use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
 use Elementor\Utils;
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Filter_Top_Section_By_License extends Transformations_Abstract {

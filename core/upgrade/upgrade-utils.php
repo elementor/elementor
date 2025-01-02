@@ -4,7 +4,7 @@ namespace Elementor\Core\Upgrade;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Upgrade_Utils {
@@ -22,9 +22,9 @@ class Upgrade_Utils {
 		global $wpdb;
 
 		$post_ids = $updater->query_col(
-			'SELECT `post_id` 
-					FROM `' . $wpdb->postmeta . '` 
-					WHERE `meta_key` = "_elementor_data" 
+			'SELECT `post_id`
+					FROM `' . $wpdb->postmeta . '`
+					WHERE `meta_key` = "_elementor_data"
 					AND `meta_value` LIKE \'%"widgetType":"' . $widget_id . '"%\';'
 		);
 

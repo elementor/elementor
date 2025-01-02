@@ -2,7 +2,7 @@
 namespace Elementor\Modules\Library\Documents;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

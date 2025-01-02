@@ -5,7 +5,7 @@ use Elementor\Core\Common\Modules\Finder\Base_Category;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

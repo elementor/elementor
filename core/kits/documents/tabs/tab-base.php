@@ -10,7 +10,7 @@ use Elementor\Settings;
 use Elementor\Sub_Controls_Stack;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Tab_Base extends Sub_Controls_Stack {

@@ -2,7 +2,7 @@
 namespace Elementor\Modules\Home\Transformations\Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Transformations_Abstract {

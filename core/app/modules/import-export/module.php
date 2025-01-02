@@ -5,7 +5,7 @@ use Elementor\App\Modules\ImportExport\Module as Import_Export_Module;
 use Elementor\Core\Base\Module as BaseModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

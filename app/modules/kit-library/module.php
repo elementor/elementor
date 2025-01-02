@@ -14,7 +14,7 @@ use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Co
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
