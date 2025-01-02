@@ -24,7 +24,7 @@ class Controller extends Base_Controller {
 	}
 
 	public function create_items_permissions_check( $request ): bool {
-		// Permissions check is located in the endpoint
+		// Permissions check is located in the endpoint.
 		return true;
 	}
 

@@ -93,13 +93,13 @@ class Steps_Manager {
 		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => false ] );
 	}
 
-	/**
-	 * Maybe marks a step as completed (depending on if source allows it), returns true if the step was found and marked or false otherwise
-	 *
-	 * @param $step_id
-	 *
-	 * @return void
-	 */
+    /**
+     * Maybe marks a step as completed (depending on if source allows it), returns true if the step was found and marked or false otherwise
+     *
+     * @param string $step_id step id
+     *
+     * @return void
+     */
 	public function maybe_set_step_as_immutable_completed( string $step_id ): void {
 		$step = $this->get_step_by_id( $step_id );
 
@@ -114,9 +114,10 @@ class Steps_Manager {
 		return $this->step_instances[ $step_id ] ?? null;
 	}
 
-	/**
-	 * @return array
-	 */
+    /**
+     * @param $step_id
+     * @return array
+     */
 	public function get_step_config( $step_id ): array {
 		$step_instance = $this->step_instances[ $step_id ];
 
@@ -160,13 +161,12 @@ class Steps_Manager {
 		return self::$step_ids;
 	}
 
-	/**
-	 * Using step data->id, instantiates and returns the step class or null if the class does not exist
-	 *
-	 * @param $step_data
-	 *
-	 * @return Step_Base|null
-	 */
+    /**
+     * Using step data->id, instantiates and returns the step class or null if the class does not exist
+     *
+     * @param string $step_id
+     * @return Step_Base|null
+     */
 	private function get_step_instance( string $step_id ): ?Step_Base {
 		$class_name = '\\Elementor\\Modules\\Checklist\\Steps\\' . $step_id;
 

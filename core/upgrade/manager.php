@@ -18,7 +18,7 @@ class Manager extends DB_Upgrades_Manager {
 		return 'elementor_install_history';
 	}
 
-	// todo: remove in future releases
+	/** TODO: remove in future releases. **/
 	public function should_upgrade() {
 		if ( ( 'elementor' === $this->get_plugin_name() ) && version_compare( get_option( $this->get_version_option_name() ), '2.4.2', '<' ) ) {
 			delete_option( 'elementor_log' );
@@ -68,7 +68,7 @@ class Manager extends DB_Upgrades_Manager {
 
 		return version_compare(
 			key( $installs_history ),
-			$version ? $version : '0.0.0', // when no version assigned
+			$version ? $version : '0.0.0', // when no version assigned.
 			$operator
 		);
 	}
@@ -84,7 +84,7 @@ class Manager extends DB_Upgrades_Manager {
 
 		$old_version = $this->get_current_version();
 
-		// If there was an old version of Elementor, and there's no record for that install yet
+		// If there was an old version of Elementor, and there's no record for that install yet.
 		if ( $old_version && empty( $installs_history[ $old_version ] ) ) {
 			$installs_history[ $old_version ] = $installs_history[ $this->get_new_version() ] - 1;
 		}

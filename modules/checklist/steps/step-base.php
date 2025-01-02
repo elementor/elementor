@@ -73,14 +73,14 @@ abstract class Step_Base {
 	 */
 	abstract public function get_image_src(): string;
 
-	/**
-	 * Step_Base constructor.
-	 *
-	 * @param Checklist_Module             $module
-	 * @param ?Wordpress_Adapter_Interface $wordpress_adapter
-	 * @param ?Elementor_Adapter_Interface $elementor_adapter
-	 * @return void
-	 */
+    /**
+     * Step_Base constructor.
+     *
+     * @param Checklist_Module $module
+     * @param ?Wordpress_Adapter_Interface $wordpress_adapter
+     * @param ?Elementor_Adapter_Interface $elementor_adapter
+     * @param null $promotion_data
+     */
 	public function __construct( Checklist_Module $module, ?Wordpress_Adapter_Interface $wordpress_adapter = null, ?Elementor_Adapter_Interface $elementor_adapter = null, $promotion_data = null ) {
 		$this->module = $module;
 		$this->wordpress_adapter = $wordpress_adapter ?? Isolation_Manager::get_adapter( Wordpress_Adapter::class );

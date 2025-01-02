@@ -20,7 +20,7 @@ class Plugins_Manager {
 
 	public function __construct( $upgrader = null ) {
 
-		// For tests
+		// For tests.
 		if ( $upgrader ) {
 			$this->upgrader = $upgrader;
 		} else {

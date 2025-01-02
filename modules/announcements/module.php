@@ -99,7 +99,7 @@ class Module extends BaseApp {
 			$raw_announcements[] = $this->get_ai_announcement_data();
 		}
 
-		// DO NOT USE THIS FILTER
+		// DO NOT USE THIS FILTER.
 		return apply_filters( 'elementor/announcements/raw_announcements', $raw_announcements );
 	}
 

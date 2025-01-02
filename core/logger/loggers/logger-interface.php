@@ -55,7 +55,7 @@ interface Logger_Interface {
 
 	/**
 	 * @param int  $max_entries
-	 * @param bool $table use <td> in format
+	 * @param bool $table use <td> in format.
 	 *
 	 * @return array [ 'key' => [ 'total_count' => int, 'count' => int, 'entries' => Log_Item[] ] ]
 	 */
