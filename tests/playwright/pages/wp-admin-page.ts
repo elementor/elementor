@@ -82,7 +82,7 @@ export default class WpAdminPage extends BasePage {
 			await this.createNewPostFromDashboard( setPageName );
 		}
 
-		await this.page.waitForLoadState( 'load', { timeout: 30000 } );
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
 		await this.closeAnnouncementsIfVisible();
 
@@ -106,7 +106,7 @@ export default class WpAdminPage extends BasePage {
 			};
 
 		await this.apiRequests.create( request, `pages/${ postId }`, postDataUpdated );
-		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor`, { timeout: 20000 } );
+		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor`, { timeout: 15000 } );
 
 		return postId;
 	}

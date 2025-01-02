@@ -69,7 +69,7 @@ export const generatePluginTests = ( testType: string ) => {
 				const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 				const adminBar = 'wpadminbar';
 
-				await page.goto( '/law-firm-about/' );
+				await page.goto( '/law-firm-about/', { timeout: 15000 } );
 				await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
 				await page.evaluate( ( selector ) => {
 					const admin = document.getElementById( selector );
