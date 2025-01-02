@@ -22,8 +22,14 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		await page.close();
 	} );
 
+	/*
+	Note: these tests were skipped in task ED-16747. Unskip task ED-16749
+	- Test container_flexbox template
+	- Test video template
+	- Test testimonial template
+	 */
 	const testData = [
-		'container_flexbox',
+		// 'container_flexbox',
 		'container_grid',
 		'divider',
 		'heading',
@@ -34,7 +40,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'image_box',
 		'image_carousel',
 		'tabs',
-		'video',
+		// 'video',
 		'spacer',
 		'text_path',
 		'social_icons',
@@ -45,7 +51,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'basic_gallery',
 		'counter',
 		'progress_bar',
-		'testimonial',
+		// 'testimonial',
 		'toggle',
 		'sound_cloud',
 		'html',
