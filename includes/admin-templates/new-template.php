@@ -7,11 +7,11 @@ use Elementor\TemplateLibrary\Forms\New_Template_Form;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-$new_template_control_form = new New_Template_Form( [ 'id' => 'form' ] );
+$new_template_control_form = new New_Template_Form( array( 'id' => 'form' ) );
 $document_types = Plugin::$instance->documents->get_document_types();
 
-$types = [];
-$lock_configs = [];
+$types = array();
+$lock_configs = array();
 
 $selected = get_query_var( 'elementor_library_type' );
 
@@ -25,7 +25,7 @@ foreach ( $document_types as $document_type ) {
 
 		$types[ $instance->get_name() ] = $document_type::get_title();
 		$lock_configs[ $instance->get_name() ] = empty( $lock_behavior )
-			? (object) []
+			? (object) array()
 			: $lock_behavior->get_config();
 	}
 }
@@ -78,7 +78,7 @@ ksort( $types );
 						printf(
 							'<option value="%1$s" data-lock=\'%2$s\' %3$s>%4$s</option>',
 							esc_attr( $value ),
-							wp_json_encode( $lock_configs[ $value ] ?? (object) [] ),
+							wp_json_encode( $lock_configs[ $value ] ?? (object) array() ),
 							selected( $selected, $value, false ),
 							esc_html( $type_title )
 						);

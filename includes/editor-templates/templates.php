@@ -298,12 +298,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		{{{ message }}}
 	</div>
 		<?php
-		$url = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize', [
+		$url = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize', array(
 			'utm_source' => 'template-library',
 			'utm_medium' => 'wp-dash',
 			'utm_campaign' => 'library-connect',
 			'utm_content' => '%%template_type%%', // will be replaced in the frontend
-		] );
+		) );
 		?>
 	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="<?php echo esc_url( $url ); ?>">
 		{{{ button }}}
@@ -311,7 +311,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 	$base_images_url = $this->get_assets_base_url() . '/assets/images/library-connect/';
 
-	$images = [ 'left-1', 'left-2', 'right-1', 'right-2' ];
+	$images = array( 'left-1', 'left-2', 'right-1', 'right-2' );
 
 	foreach ( $images as $image ) : ?>
 		<img id="elementor-template-library-connect__background-image-<?php Utils::print_unescaped_internal_string( $image ); ?>" class="elementor-template-library-connect__background-image" src="<?php Utils::print_unescaped_internal_string( $base_images_url . $image ); ?>.png" draggable="false" loading="lazy" />

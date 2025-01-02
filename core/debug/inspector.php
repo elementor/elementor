@@ -12,7 +12,7 @@ class Inspector {
 
 	protected $is_enabled = false;
 
-	protected $log = [];
+	protected $log = array();
 
 	/**
 	 * @since 2.1.2
@@ -25,10 +25,10 @@ class Inspector {
 		$this->is_enabled = is_null( $option ) ? $is_debug : 'enable' === $option;
 
 		if ( $this->is_enabled ) {
-			add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 201 );
+			add_action( 'admin_bar_menu', array( $this, 'add_menu_in_admin_bar' ), 201 );
 		}
 
-		add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_fields' ], 50 );
+		add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, array( $this, 'register_admin_tools_fields' ), 50 );
 	}
 
 	/**
@@ -44,20 +44,20 @@ class Inspector {
 	 * @access public
 	 */
 	public function register_admin_tools_fields( Tools $tools ) {
-		$tools->add_fields( Settings::TAB_GENERAL, 'tools', [
-			'enable_inspector' => [
+		$tools->add_fields( Settings::TAB_GENERAL, 'tools', array(
+			'enable_inspector' => array(
 				'label' => esc_html__( 'Debug Bar', 'elementor' ),
-				'field_args' => [
+				'field_args' => array(
 					'type' => 'select',
 					'std' => $this->is_enabled ? 'enable' : '',
-					'options' => [
+					'options' => array(
 						'' => esc_html__( 'Disable', 'elementor' ),
 						'enable' => esc_html__( 'Enable', 'elementor' ),
-					],
+					),
 					'desc' => esc_html__( 'Debug Bar adds an admin bar menu that lists all the templates that are used on a page that is being displayed.', 'elementor' ),
-				],
-			],
-		] );
+				),
+			),
+		) );
 	}
 
 	/**
@@ -92,13 +92,13 @@ class Inspector {
 		}
 
 		if ( ! isset( $this->log[ $module ] ) ) {
-			$this->log[ $module ] = [];
+			$this->log[ $module ] = array();
 		}
 
-		$this->log[ $module ][] = [
+		$this->log[ $module ][] = array(
 			'title' => $title,
 			'url' => $url,
-		];
+		);
 	}
 
 	/**
@@ -110,34 +110,34 @@ class Inspector {
 			return;
 		}
 
-		$wp_admin_bar->add_node( [
+		$wp_admin_bar->add_node( array(
 			'id' => 'elementor_inspector',
 			'title' => esc_html__( 'Elementor Debugger', 'elementor' ),
-		] );
+		) );
 
 		foreach ( $this->log as $module => $log ) {
 			$module_id = sanitize_key( $module );
 
-			$wp_admin_bar->add_menu( [
+			$wp_admin_bar->add_menu( array(
 				'id' => 'elementor_inspector_' . $module_id,
 				'parent' => 'elementor_inspector',
 				'title' => $module,
-			] );
+			) );
 
 			foreach ( $log as $index => $row ) {
 				$url = $row['url'];
 
 				unset( $row['url'] );
 
-				$wp_admin_bar->add_menu( [
+				$wp_admin_bar->add_menu( array(
 					'id' => 'elementor_inspector_log_' . $module_id . '_' . $index,
 					'parent' => 'elementor_inspector_' . $module_id,
 					'href' => $url,
 					'title' => implode( ' > ', $row ),
-					'meta' => [
+					'meta' => array(
 						'target' => '_blank',
-					],
-				] );
+					),
+				) );
 			}
 		}
 	}

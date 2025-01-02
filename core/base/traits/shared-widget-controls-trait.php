@@ -10,19 +10,19 @@ use Elementor\Utils;
 
 trait Shared_Widget_Controls_Trait {
 
-	protected $border_width_range = [
+	protected $border_width_range = array(
 		'min' => 0,
 		'max' => 10,
 		'step' => 1,
-	];
+	);
 
 	protected function add_html_tag_control( string $name, string $default = 'h2' ): void {
 		$this->add_control(
 			$name,
-			[
+			array(
 				'label' => esc_html__( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => [
+				'options' => array(
 					'h1' => 'H1',
 					'h2' => 'H2',
 					'h3' => 'H3',
@@ -32,9 +32,9 @@ trait Shared_Widget_Controls_Trait {
 					'div' => 'div',
 					'span' => 'span',
 					'p' => 'p',
-				],
+				),
 				'default' => $default,
-			]
+			)
 		);
 	}
 
@@ -42,11 +42,11 @@ trait Shared_Widget_Controls_Trait {
 	 * Remove any child arrays where all properties are empty
 	 */
 	protected function clean_array(
-		$input_array = []
+		$input_array = array()
 	) {
-		$output_array = array_filter( $input_array, function( $sub_array ) {
+		$output_array = array_filter( $input_array, function ( $sub_array ) {
 			// Use array_filter on the sub array
-			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
+			$filtered_sub_array = array_filter( $sub_array, function ( $val ) {
 				// Filter out empty or null values
 				return ! is_null( $val ) && '' !== $val;
 			} );
@@ -57,10 +57,10 @@ trait Shared_Widget_Controls_Trait {
 	}
 
 	protected function get_link_attributes(
-		$link = [],
-		$other_attributes = []
+		$link = array(),
+		$other_attributes = array()
 	) {
-		$url_attrs = [];
+		$url_attrs = array();
 		$rel_string = '';
 
 		if ( ! empty( $link['url'] ) ) {
@@ -95,10 +95,10 @@ trait Shared_Widget_Controls_Trait {
 
 	protected function add_icons_per_row_control(
 		string $name = 'icons_per_row',
-		$options = [
+		$options = array(
 			'2' => '2',
 			'3' => '3',
-		],
+		),
 		string $default = '3',
 		$label = '',
 		$selector_custom_property = '--e-link-in-bio-icon-columns'
@@ -108,37 +108,37 @@ trait Shared_Widget_Controls_Trait {
 		}
 		$this->add_control(
 			$name,
-			[
+			array(
 				'label' => $label,
 				'type' => Controls_Manager::SELECT,
 				'options' => $options,
 				'default' => $default,
 				'render_type' => 'template',
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => $selector_custom_property . ': {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 	}
 
 	protected function add_slider_control(
 		string $name,
-		array $args = []
+		array $args = array()
 	): void {
-		$default_args = [
+		$default_args = array(
 			'type' => Controls_Manager::SLIDER,
-			'default' => [
+			'default' => array(
 				'unit' => 'px',
-			],
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-			'range' => [
-				'px' => [
+			),
+			'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+			'range' => array(
+				'px' => array(
 					'min' => 0,
 					'max' => 100,
 					'step' => 1,
-				],
-			],
-		];
+				),
+			),
+		);
 
 		$this->add_control(
 			$name,
@@ -148,67 +148,67 @@ trait Shared_Widget_Controls_Trait {
 
 	protected function add_borders_control(
 		string $prefix,
-		array $show_border_args = [],
-		array $border_width_args = [],
-		array $border_color_args = []
+		array $show_border_args = array(),
+		array $border_width_args = array(),
+		array $border_color_args = array()
 	): void {
-		$show_border = [
+		$show_border = array(
 			'label' => esc_html__( 'Border', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
 			'label_on' => esc_html__( 'Yes', 'elementor' ),
 			'label_off' => esc_html__( 'No', 'elementor' ),
 			'return_value' => 'yes',
 			'default' => '',
-		];
+		);
 
 		$this->add_control(
 			$prefix . '_show_border',
 			array_merge( $show_border, $show_border_args )
 		);
 
-		$condition = [
+		$condition = array(
 			$prefix . '_show_border' => 'yes',
-		];
+		);
 
 		if ( isset( $border_width_args['condition'] ) ) {
 			$condition = array_merge( $condition, $border_width_args['condition'] );
 			unset( $border_width_args['condition'] );
 		}
 
-		$border_width = [
+		$border_width = array(
 			'label' => esc_html__( 'Border Width', 'elementor' ) . ' (px)',
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px' ],
-			'range' => [
+			'size_units' => array( 'px' ),
+			'range' => array(
 				'px' => $this->border_width_range,
-			],
+			),
 			'condition' => $condition,
-			'default' => [
+			'default' => array(
 				'unit' => 'px',
 				'size' => 1,
-			],
-		];
+			),
+		);
 
 		$this->add_responsive_control(
 			$prefix . '_border_width',
 			array_merge( $border_width, $border_width_args ),
 		);
 
-		$condition = [
+		$condition = array(
 			$prefix . '_show_border' => 'yes',
-		];
+		);
 
 		if ( isset( $border_color_args['condition'] ) ) {
 			$condition = array_merge( $condition, $border_color_args['condition'] );
 			unset( $border_color_args['condition'] );
 		}
 
-		$border_color = [
+		$border_color = array(
 			'label' => esc_html__( 'Border Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'condition' => $condition,
 			'default' => '#000000',
-		];
+		);
 
 		$this->add_control(
 			$prefix . '_border_color',
@@ -222,20 +222,20 @@ trait Shared_Widget_Controls_Trait {
 		$file_name = $settings[ $base_setting_key ];
 
 		if ( empty( $file_name ) ) {
-			return [];
+			return array();
 		}
 
 		$negative = ! empty( $settings[ $base_setting_key . '_negative' ] );
 		$shape_path = Shapes::get_shape_path( $file_name, $negative );
 
 		if ( ! is_file( $shape_path ) || ! is_readable( $shape_path ) ) {
-			return [];
+			return array();
 		}
 
-		return [
+		return array(
 			'negative' => $negative,
 			'svg' => Utils::file_get_contents( $shape_path ),
-		];
+		);
 	}
 
 	protected function print_shape_divider( $side = 'bottom' ) {
@@ -260,36 +260,36 @@ trait Shared_Widget_Controls_Trait {
 	}
 
 	protected function get_configured_breakpoints( $add_desktop = 'true' ) {
-		$active_devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
+		$active_devices = Plugin::$instance->breakpoints->get_active_devices_list( array( 'reverse' => true ) );
 		$active_breakpoint_instances = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		$devices_options = [];
+		$devices_options = array();
 
 		foreach ( $active_devices as $device_key ) {
 			$device_label = 'desktop' === $device_key ? esc_html__( 'Desktop', 'elementor' ) : $active_breakpoint_instances[ $device_key ]->get_label();
 			$devices_options[ $device_key ] = $device_label;
 		}
 
-		return [
+		return array(
 			'active_devices' => $active_devices,
 			'devices_options' => $devices_options,
-		];
+		);
 	}
 
 	protected function add_hover_animation_control(
 		string $name,
-		array $args = []
+		array $args = array()
 	): void {
 
 		$this->add_control(
 			$name,
 			array_merge(
-				[
+				array(
 					'label' => esc_html__( 'Hover Animation', 'elementor' ),
 					'type' => Hover_Animation_Floating_Buttons::TYPE,
 					'frontend_available' => true,
 					'default' => 'grow',
-				],
+				),
 				$args
 			)
 		);

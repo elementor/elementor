@@ -44,11 +44,11 @@ class Control_Media extends Control_Base_Multiple {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return [
+		return array(
 			'url' => '',
 			'id' => '',
 			'size' => '',
-		];
+		);
 	}
 
 	/**
@@ -72,10 +72,10 @@ class Control_Media extends Control_Base_Multiple {
 		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
 
 		if ( ! $settings ) {
-			$settings = [
+			$settings = array(
 				'id' => '',
 				'url' => Utils::get_placeholder_image_src(),
-			];
+			);
 		}
 
 		return $settings;
@@ -116,18 +116,18 @@ class Control_Media extends Control_Base_Multiple {
 		wp_enqueue_style(
 			'media',
 			admin_url( '/css/media' . $suffix . '.css' ),
-			[],
+			array(),
 			$wp_version
 		);
 
 		wp_register_script(
 			'image-edit',
 			'/wp-admin/js/image-edit' . $suffix . '.js',
-			[
+			array(
 				'jquery',
 				'json2',
 				'imgareaselect',
-			],
+			),
 			$wp_version,
 			true
 		);
@@ -263,7 +263,7 @@ class Control_Media extends Control_Base_Multiple {
 					<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
 					<div class="elementor-control-media__promotions" role="alert" style="display: none;">
 						<?php
-						Hints::get_notice_template( [
+						Hints::get_notice_template( array(
 							'display' => ! Hints::is_dismissed( 'image-optimization' ),
 							'type' => 'info',
 							'content' => __( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
@@ -271,10 +271,10 @@ class Control_Media extends Control_Base_Multiple {
 							'dismissible' => 'image_optimizer_hint',
 							'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
 							'button_event' => 'image_optimizer_hint',
-							'button_data' => [
+							'button_data' => array(
 								'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
-							],
-						] ); ?>
+							),
+						) ); ?>
 					</div>
 					<?php endif; ?>
 
@@ -326,10 +326,10 @@ class Control_Media extends Control_Base_Multiple {
 		<?php
 	}
 
-	private function get_image_sizes() : array {
+	private function get_image_sizes(): array {
 		$wp_image_sizes = Group_Control_Image_Size::get_all_image_sizes();
 
-		$image_sizes = [];
+		$image_sizes = array();
 
 		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
 			$control_title = ucwords( str_replace( '_', ' ', $size_key ) );
@@ -357,22 +357,22 @@ class Control_Media extends Control_Base_Multiple {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'label_block' => true,
 			'has_sizes' => false,
-			'ai' => [
+			'ai' => array(
 				'active' => true,
 				'type' => 'media',
 				'category' => 'photographic',
-			],
-			'media_types' => [
+			),
+			'media_types' => array(
 				'image',
-			],
-			'dynamic' => [
-				'categories' => [ TagsModule::IMAGE_CATEGORY ],
+			),
+			'dynamic' => array(
+				'categories' => array( TagsModule::IMAGE_CATEGORY ),
 				'returnType' => 'object',
-			],
-		];
+			),
+		);
 	}
 
 	/**

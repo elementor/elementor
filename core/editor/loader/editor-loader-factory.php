@@ -18,11 +18,11 @@ class Editor_Loader_Factory {
 	 * @return Editor_Loader_Interface
 	 */
 	public static function create() {
-		$config = new Collection( [
+		$config = new Collection( array(
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'min_suffix' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
 			'direction_suffix' => is_rtl() ? '-rtl' : '',
-		] );
+		) );
 
 		$assets_config_provider = ( new Assets_Config_Provider() )
 			->set_path_resolver( function ( $name ) {

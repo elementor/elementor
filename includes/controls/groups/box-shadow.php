@@ -55,26 +55,26 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 	 * @return array Control fields.
 	 */
 	protected function init_fields() {
-		$controls = [];
+		$controls = array();
 
-		$controls['box_shadow'] = [
+		$controls['box_shadow'] = array(
 			'label' => esc_html__( 'Box Shadow', 'elementor' ),
 			'type' => Controls_Manager::BOX_SHADOW,
-			'selectors' => [
+			'selectors' => array(
 				'{{SELECTOR}}' => 'box-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{SPREAD}}px {{COLOR}} {{box_shadow_position.VALUE}};',
-			],
-		];
+			),
+		);
 
-		$controls['box_shadow_position'] = [
+		$controls['box_shadow_position'] = array(
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
-			'options' => [
+			'options' => array(
 				' ' => esc_html_x( 'Outline', 'Box Shadow Control', 'elementor' ),
 				'inset' => esc_html_x( 'Inset', 'Box Shadow Control', 'elementor' ),
-			],
+			),
 			'default' => ' ',
 			'render_type' => 'ui',
-		];
+		);
 
 		return $controls;
 	}
@@ -91,15 +91,15 @@ class Group_Control_Box_Shadow extends Group_Control_Base {
 	 * @return array Default box shadow control options.
 	 */
 	protected function get_default_options() {
-		return [
-			'popover' => [
+		return array(
+			'popover' => array(
 				'starter_title' => esc_html__( 'Box Shadow', 'elementor' ),
 				'starter_name' => 'box_shadow_type',
 				'starter_value' => 'yes',
-				'settings' => [
+				'settings' => array(
 					'render_type' => 'ui',
-				],
-			],
-		];
+				),
+			),
+		);
 	}
 }

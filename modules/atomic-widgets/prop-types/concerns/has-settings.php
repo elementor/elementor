@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Has_Settings {
-	protected array $settings = [];
+	protected array $settings = array();
 
 	/**
 	 * @param $key

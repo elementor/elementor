@@ -14,9 +14,9 @@ class Background_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
-		return [
+		return array(
 			'background-overlay' => Background_Overlay_Prop_Type::make(),
 			'color' => Color_Prop_Type::make(),
-		];
+		);
 	}
 }

@@ -99,23 +99,23 @@ class Preview extends App {
 		// Compatibility with Yoast SEO plugin when 'Removes unneeded query variables from the URL' enabled.
 		// TODO: Move this code to `includes/compatibility.php`.
 		if ( class_exists( 'WPSEO_Frontend' ) ) {
-			remove_action( 'template_redirect', [ \WPSEO_Frontend::get_instance(), 'clean_permalink' ], 1 );
+			remove_action( 'template_redirect', array( \WPSEO_Frontend::get_instance(), 'clean_permalink' ), 1 );
 		}
 
 		// Disable the WP admin bar in preview mode.
 		add_filter( 'show_admin_bar', '__return_false' );
 
-		add_action( 'wp_enqueue_scripts', function() {
+		add_action( 'wp_enqueue_scripts', function () {
 			$this->enqueue_styles();
 			$this->enqueue_scripts();
 		}, self::ENQUEUED_STYLES_PRIORITY );
 
-		add_filter( 'the_content', [ $this, 'builder_wrapper' ], 999999 );
+		add_filter( 'the_content', array( $this, 'builder_wrapper' ), 999999 );
 
-		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
+		add_action( 'wp_footer', array( $this, 'wp_footer' ) );
 
 		// Avoid Cloudflare's Rocket Loader lazy load the editor iframe
-		add_filter( 'script_loader_tag', [ $this, 'rocket_loader_filter' ], 10, 3 );
+		add_filter( 'script_loader_tag', array( $this, 'rocket_loader_filter' ), 10, 3 );
 
 		// Tell to WP Cache plugins do not cache this request.
 		Utils::do_not_cache();
@@ -246,23 +246,23 @@ class Preview extends App {
 		wp_register_style(
 			'elementor-select2',
 			ELEMENTOR_ASSETS_URL . 'lib/e-select2/css/e-select2' . $suffix . '.css',
-			[],
+			array(),
 			'4.0.6-rc.1'
 		);
 
 		wp_register_style(
 			'editor-preview',
 			ELEMENTOR_ASSETS_URL . 'css/editor-preview' . $direction_suffix . $suffix . '.css',
-			[
+			array(
 				'elementor-select2',
-			],
+			),
 			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_style(
 			'e-theme-ui-light',
 			$this->get_css_assets_url( 'theme-light' ),
-			[],
+			array(),
 			ELEMENTOR_VERSION
 		);
 
@@ -301,7 +301,7 @@ class Preview extends App {
 		wp_enqueue_script(
 			'elementor-inline-editor',
 			ELEMENTOR_ASSETS_URL . 'lib/inline-editor/js/inline-editor' . $suffix . '.js',
-			[],
+			array(),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -353,6 +353,6 @@ class Preview extends App {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'template_redirect', [ $this, 'init' ], 0 );
+		add_action( 'template_redirect', array( $this, 'init' ), 0 );
 	}
 }

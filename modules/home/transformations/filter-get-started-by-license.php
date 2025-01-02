@@ -24,7 +24,7 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
-		$new_get_started = [];
+		$new_get_started = array();
 
 		foreach ( $home_screen_data['get_started'] as $index => $item ) {
 			if ( $this->is_valid_item( $item ) ) {

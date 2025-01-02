@@ -45,7 +45,7 @@ class Control_Icon extends Base_Data_Control {
 	 * @return array Available icons.
 	 */
 	public static function get_icons() {
-		return [
+		return array(
 			'fa fa-500px' => '500px',
 			'fa fa-address-book' => 'address-book',
 			'fa fa-address-book-o' => 'address-book-o',
@@ -834,7 +834,7 @@ class Control_Icon extends Base_Data_Control {
 			'fa fa-youtube' => 'youtube',
 			'fa fa-youtube-play' => 'youtube-play',
 			'fa fa-youtube-square' => 'youtube-square',
-		];
+		);
 	}
 
 	/**
@@ -850,11 +850,11 @@ class Control_Icon extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'options' => self::get_icons(),
 			'include' => '',
 			'exclude' => '',
-		];
+		);
 	}
 
 	/**

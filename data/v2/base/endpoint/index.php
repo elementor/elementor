@@ -53,11 +53,11 @@ class Index extends Endpoint {
 		return $this->controller->delete_item( $request );
 	}
 
-	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = [] ) {
+	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = array() ) {
 		parent::register_items_route( $methods, array_merge( $this->controller->get_items_args( $methods ), $args ) );
 	}
 
-	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
+	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = array(), $route = '/' ) {
 		parent::register_item_route( $methods, array_merge( $this->controller->get_item_args( $methods ), $args ), $route );
 	}
 }

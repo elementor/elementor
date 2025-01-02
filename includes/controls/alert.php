@@ -70,10 +70,10 @@ class Control_Alert extends Base_UI_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'alert_type' => '', // info, success, warning, danger.
 			'heading' => '',
 			'content' => '',
-		];
+		);
 	}
 }

@@ -10,7 +10,7 @@ use Elementor\Core\Utils\Static_Collection;
 
 abstract class Favorites_Type extends Static_Collection {
 
-	public function __construct( array $items = [] ) {
+	public function __construct( array $items = array() ) {
 		parent::__construct( $items, true );
 	}
 
@@ -34,7 +34,7 @@ abstract class Favorites_Type extends Static_Collection {
 		}
 
 		if ( ! is_array( $favorites ) ) {
-			return [ $favorites ];
+			return array( $favorites );
 		}
 
 		return $favorites;

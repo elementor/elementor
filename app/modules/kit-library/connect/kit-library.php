@@ -16,7 +16,7 @@ class Kit_Library extends Library {
 		return esc_html__( 'Kit Library', 'elementor' );
 	}
 
-	public function get_all( $args = [] ) {
+	public function get_all( $args = array() ) {
 		return $this->http_request( 'GET', 'kits/plugin-version/' . ELEMENTOR_VERSION, $args );
 	}
 
@@ -37,10 +37,10 @@ class Kit_Library extends Library {
 	}
 
 	protected function get_api_url() {
-		return [
+		return array(
 			static::DEFAULT_BASE_ENDPOINT,
 			static::FALLBACK_BASE_ENDPOINT,
-		];
+		);
 	}
 
 	/**
@@ -51,7 +51,7 @@ class Kit_Library extends Library {
 	protected function get_connect_info() {
 		$connect_info = $this->get_base_connect_info();
 
-		$additional_info = [];
+		$additional_info = array();
 
 		// BC Support.
 		$old_kit_library = new \Elementor\Core\App\Modules\KitLibrary\Connect\Kit_Library();

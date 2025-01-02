@@ -17,9 +17,9 @@ class Controller extends Base_Controller {
 	public function get_items( $request ) {
 		$data = $this->get_repository()->get_all( $request->get_param( 'force' ) );
 
-		return [
+		return array(
 			'data' => $data->values(),
-		];
+		);
 	}
 
 	public function get_item( $request ) {
@@ -29,31 +29,31 @@ class Controller extends Base_Controller {
 			return new Error_404( esc_html__( 'Kit not exists.', 'elementor' ), 'kit_not_exists' );
 		}
 
-		return [
+		return array(
 			'data' => $data,
-		];
+		);
 	}
 
 	public function get_collection_params() {
-		return [
-			'force' => [
+		return array(
+			'force' => array(
 				'description' => 'Force an API request and skip the cache.',
 				'required' => false,
 				'default' => false,
 				'type' => 'boolean',
-			],
-		];
+			),
+		);
 	}
 
 	public function register_endpoints() {
-		$this->index_endpoint->register_item_route( \WP_REST_Server::READABLE, [
-			'id' => [
+		$this->index_endpoint->register_item_route( \WP_REST_Server::READABLE, array(
+			'id' => array(
 				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
 				'required' => true,
-			],
+			),
 			'id_arg_type_regex' => '[\w]+',
-		] );
+		) );
 
 		$this->register_endpoint( new Endpoints\Download_Link( $this ) );
 		$this->register_endpoint( new Endpoints\Favorites( $this ) );

@@ -10,14 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Shadow_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
-		$val = array_filter( [
+		$val = array_filter( array(
 			$value['hOffset'],
 			$value['vOffset'],
 			$value['blur'],
 			$value['spread'],
 			$value['color'],
 			$value['position'] ?? '',
-		] );
+		) );
 
 		return implode( ' ', $val );
 	}

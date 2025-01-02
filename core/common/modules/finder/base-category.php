@@ -59,7 +59,7 @@ abstract class Base_Category extends Base_Object {
 	 *
 	 * @return array
 	 */
-	abstract public function get_category_items( array $options = [] );
+	abstract public function get_category_items( array $options = array() );
 
 	/**
 	 * Is dynamic.
@@ -84,10 +84,10 @@ abstract class Base_Category extends Base_Object {
 	 * @return array
 	 */
 	protected function get_init_settings() {
-		$settings = [
+		$settings = array(
 			'title' => $this->get_title(),
 			'dynamic' => $this->is_dynamic(),
-		];
+		);
 
 		if ( ! $settings['dynamic'] ) {
 			$settings['items'] = $this->get_category_items();

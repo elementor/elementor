@@ -26,13 +26,13 @@ abstract class Base_Control extends Base_Object {
 	 *
 	 * @var array
 	 */
-	private $_base_settings = [
+	private $_base_settings = array(
 		'label' => '',
 		'description' => '',
 		'show_label' => true,
 		'label_block' => false,
 		'separator' => 'default',
-	];
+	);
 
 	/**
 	 * Get features.
@@ -47,7 +47,7 @@ abstract class Base_Control extends Base_Object {
 	 * @return array Features array.
 	 */
 	public static function get_features() {
-		return [];
+		return array();
 	}
 
 	/**
@@ -134,11 +134,11 @@ abstract class Base_Control extends Base_Object {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [];
+		return array();
 	}
 
 	public static function get_assets( $setting ) {
-		return [];
+		return array();
 	}
 
 	/**

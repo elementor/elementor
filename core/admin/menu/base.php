@@ -13,7 +13,7 @@ abstract class Base extends Base_Object {
 
 	private $options;
 
-	private $submenus = [];
+	private $submenus = array();
 
 	abstract protected function get_init_args();
 
@@ -22,18 +22,18 @@ abstract class Base extends Base_Object {
 
 		$this->init_options();
 
-		add_action( 'admin_menu', function() {
+		add_action( 'admin_menu', function () {
 			$this->register();
 		} );
 
 		if ( $this->options['separator'] ) {
-			add_action( 'admin_menu', function() {
+			add_action( 'admin_menu', function () {
 				$this->add_menu_separator();
 			} );
 
 			add_filter( 'custom_menu_order', '__return_true' );
 
-			add_filter( 'menu_order', function( $menu_order ) {
+			add_filter( 'menu_order', function ( $menu_order ) {
 				return $this->rearrange_menu_separator( $menu_order );
 			} );
 		}
@@ -44,18 +44,18 @@ abstract class Base extends Base_Object {
 	}
 
 	public function add_submenu( $submenu_args ) {
-		$default_submenu_args = [
+		$default_submenu_args = array(
 			'page_title' => '',
 			'capability' => $this->args['capability'],
 			'function' => null,
 			'index' => null,
-		];
+		);
 
 		$this->submenus[] = array_merge( $default_submenu_args, $submenu_args );
 	}
 
 	protected function get_init_options() {
-		return [];
+		return array();
 	}
 
 	protected function register_default_submenus() {}
@@ -69,19 +69,19 @@ abstract class Base extends Base_Object {
 
 		do_action( 'elementor/admin/menu_registered/' . $args['menu_slug'], $this );
 
-		usort( $this->submenus, function( $a, $b ) {
+		usort( $this->submenus, function ( $a, $b ) {
 			return $a['index'] - $b['index'];
 		} );
 
 		foreach ( $this->submenus as $index => $submenu_item ) {
-			$submenu_args = [
+			$submenu_args = array(
 				$args['menu_slug'],
 				$submenu_item['page_title'],
 				$submenu_item['menu_title'],
 				$submenu_item['capability'],
 				$submenu_item['menu_slug'],
 				$submenu_item['function'],
-			];
+			);
 
 			if ( 0 === $submenu_item['index'] ) {
 				$submenu_args[] = 0;
@@ -98,19 +98,19 @@ abstract class Base extends Base_Object {
 	}
 
 	private function init_args() {
-		$default_args = [
+		$default_args = array(
 			'function' => null,
 			'icon_url' => null,
 			'position' => null,
-		];
+		);
 
 		$this->args = array_merge( $default_args, $this->get_init_args() );
 	}
 
 	private function init_options() {
-		$default_options = [
+		$default_options = array(
 			'separator' => false,
-		];
+		);
 
 		$this->options = array_merge( $default_options, $this->get_init_options() );
 	}
@@ -120,12 +120,12 @@ abstract class Base extends Base_Object {
 
 		$slug = $this->args['menu_slug'];
 
-		$menu[] = [ '', 'read', 'separator-' . $slug, '', 'wp-menu-separator ' . $slug ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$menu[] = array( '', 'read', 'separator-' . $slug, '', 'wp-menu-separator ' . $slug ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	private function rearrange_menu_separator( $menu_order ) {
 		// Initialize our custom order array.
-		$custom_menu_order = [];
+		$custom_menu_order = array();
 
 		$slug = $this->args['menu_slug'];
 

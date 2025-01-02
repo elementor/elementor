@@ -11,17 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Link_Transformer extends Transformer_Base {
 	public function transform( $value, $key ): array {
 		if ( empty( $value['enabled'] ) ) {
-			return [];
+			return array();
 		}
 
 		if ( empty( $value['href'] ) ) {
 			throw new \Exception( 'Url is not provided.' );
 		}
 
-		$link_attrs = [
+		$link_attrs = array(
 			'href' => esc_url( $value['href'] ),
 			'target' => $value['isTargetBlank'] ? '_blank' : '',
-		];
+		);
 
 		return array_filter( $link_attrs );
 	}

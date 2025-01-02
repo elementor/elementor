@@ -18,7 +18,7 @@ class Controller extends Controller_Base {
 	public function get_collection_params() {
 		// Does not have 'get_items' args (OPTIONS).
 		// Maybe TODO: try `$this->get_index_endpoint()->get_collection_params()`.
-		return [];
+		return array();
 	}
 
 	public function get_permission_callback( $request ) {

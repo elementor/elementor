@@ -66,7 +66,7 @@ class Widget_Read_More extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'read', 'more', 'tag', 'excerpt' ];
+		return array( 'read', 'more', 'tag', 'excerpt' );
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -88,9 +88,9 @@ class Widget_Read_More extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_title',
-			[
+			array(
 				'label' => esc_html__( 'Read More', 'elementor' ),
-			]
+			)
 		);
 
 		$default_link_text = esc_html__( 'Continue reading', 'elementor' );
@@ -108,7 +108,7 @@ class Widget_Read_More extends Widget_Base {
 
 		$this->add_control(
 			'theme_support',
-			[
+			array(
 				'type' => Controls_Manager::ALERT,
 				'alert_type' => 'warning',
 				'content' => sprintf(
@@ -116,19 +116,19 @@ class Widget_Read_More extends Widget_Base {
 					esc_html__( 'Note: This widget only affects themes that use `%s` in archive pages.', 'elementor' ),
 					'the_content'
 				),
-			]
+			)
 		);
 
 		$this->add_control(
 			'link_text',
-			[
+			array(
 				'label' => esc_html__( 'Read More Text', 'elementor' ),
 				'placeholder' => $default_link_text,
 				'default' => $default_link_text,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();

@@ -51,25 +51,25 @@ class Module extends BaseModule {
 		}
 
 		// Get the published pages and posts
-		$pages_and_posts = new \WP_Query( [
-			'post_type' => [ 'page', 'post' ],
+		$pages_and_posts = new \WP_Query( array(
+			'post_type' => array( 'page', 'post' ),
 			'post_status' => 'publish',
 			'update_post_meta_cache' => false,
 			'update_post_term_cache' => false,
 			'no_found_rows' => true,
-		] );
+		) );
 
 		$custom_site_logo_id = get_theme_mod( 'custom_logo' );
 		$custom_logo_src = wp_get_attachment_image_src( $custom_site_logo_id, 'full' );
 		$site_name = get_option( 'blogname', '' );
 
 		$hello_theme = wp_get_theme( 'hello-elementor' );
-		$hello_theme_errors = is_object( $hello_theme->errors() ) ? $hello_theme->errors()->errors : [];
+		$hello_theme_errors = is_object( $hello_theme->errors() ) ? $hello_theme->errors()->errors : array();
 
 		/** @var Library $library */
 		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
 
-		Plugin::$instance->app->set_settings( 'onboarding', [
+		Plugin::$instance->app->set_settings( 'onboarding', array(
 			'eventPlacement' => 'Onboarding wizard',
 			'onboardingAlreadyRan' => get_option( self::ONBOARDING_OPTION ),
 			'onboardingVersion' => self::VERSION,
@@ -81,40 +81,40 @@ class Module extends BaseModule {
 			'helloOptOut' => count( $pages_and_posts->posts ) < 5,
 			'siteName' => esc_html( $site_name ),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-			'urls' => [
+			'urls' => array(
 				'kitLibrary' => Plugin::$instance->app->get_base_url() . '#/kit-library?order[direction]=desc&order[by]=featuredIndex',
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
-				'connect' => $library->get_admin_url( 'authorize', [
+				'connect' => $library->get_admin_url( 'authorize', array(
 					'utm_source' => 'onboarding-wizard',
 					'utm_campaign' => 'connect-account',
 					'utm_medium' => 'wp-dash',
 					'utm_term' => self::VERSION,
 					'source' => 'generic',
-				] ),
+				) ),
 				'upgrade' => 'https://go.elementor.com/go-pro-onboarding-wizard-upgrade/',
-				'signUp' => $library->get_admin_url( 'authorize', [
+				'signUp' => $library->get_admin_url( 'authorize', array(
 					'utm_source' => 'onboarding-wizard',
 					'utm_campaign' => 'connect-account',
 					'utm_medium' => 'wp-dash',
 					'utm_term' => self::VERSION,
 					'source' => 'generic',
 					'screen_hint' => 'signup',
-				] ),
+				) ),
 				'uploadPro' => Plugin::$instance->app->get_base_url() . '#/onboarding/uploadAndInstallPro?mode=popup',
-			],
-			'siteLogo' => [
+			),
+			'siteLogo' => array(
 				'id' => $custom_site_logo_id,
 				'url' => $custom_logo_src ? $custom_logo_src[0] : '',
-			],
-			'utms' => [
+			),
+			'utms' => array(
 				'connectTopBar' => '&utm_content=top-bar',
 				'connectCta' => '&utm_content=cta-button',
 				'connectCtaLink' => '&utm_content=cta-link',
 				'downloadPro' => '?utm_source=onboarding-wizard&utm_campaign=my-account-subscriptions&utm_medium=wp-dash&utm_content=import-pro-plugin&utm_term=' . self::VERSION,
-			],
+			),
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => Plugin::$instance->experiments->is_feature_active( 'e_onboarding' ),
-		] );
+		) );
 	}
 
 	/**
@@ -127,12 +127,12 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function get_permission_error_response() {
-		return [
+		return array(
 			'status' => 'error',
-			'payload' => [
+			'payload' => array(
 				'error_message' => esc_html__( 'You do not have permission to perform this action.', 'elementor' ),
-			],
-		];
+			),
+		);
 	}
 
 	/**
@@ -145,12 +145,12 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	private function maybe_update_site_name() {
-		$problem_error = [
+		$problem_error = array(
 			'status' => 'error',
-			'payload' => [
+			'payload' => array(
 				'error_message' => esc_html__( 'There was a problem setting your site name.', 'elementor' ),
-			],
-		];
+			),
+		);
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( empty( $_POST['data'] ) ) {
@@ -180,12 +180,12 @@ class Module extends BaseModule {
 		// The site name is sanitized in `update_options()`
 		update_option( 'blogname', $new_site_name );
 
-		return [
+		return array(
 			'status' => 'success',
-			'payload' => [
+			'payload' => array(
 				'siteNameUpdated' => true,
-			],
-		];
+			),
+		);
 	}
 
 	/**
@@ -202,12 +202,12 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		$data_error = [
+		$data_error = array(
 			'status' => 'error',
-			'payload' => [
+			'payload' => array(
 				'error_message' => esc_html__( 'There was a problem setting your site logo.', 'elementor' ),
-			],
-		];
+			),
+		);
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( empty( $_POST['data'] ) ) {
@@ -237,12 +237,12 @@ class Module extends BaseModule {
 
 		set_theme_mod( 'custom_logo', $absint_attachment_id );
 
-		return [
+		return array(
 			'status' => 'success',
-			'payload' => [
+			'payload' => array(
 				'siteLogoUpdated' => true,
-			],
-		];
+			),
+		);
 	}
 
 	/**
@@ -261,12 +261,12 @@ class Module extends BaseModule {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
-			return [
+			return array(
 				'status' => 'error',
-				'payload' => [
+				'payload' => array(
 					'error_message' => $error_message,
-				],
-			];
+				),
+			);
 		}
 
 		// If the user has allowed it, set the Request's state as an "Elementor Upload" request, in order to add
@@ -288,19 +288,19 @@ class Module extends BaseModule {
 		}
 
 		if ( $image_attachment && ! is_wp_error( $image_attachment ) ) {
-			$result = [
+			$result = array(
 				'status' => 'success',
-				'payload' => [
+				'payload' => array(
 					'imageAttachment' => $image_attachment,
-				],
-			];
+				),
+			);
 		} else {
-			$result = [
+			$result = array(
 				'status' => 'error',
-				'payload' => [
+				'payload' => array(
 					'error_message' => $error_message,
-				],
-			];
+				),
+			);
 		}
 
 		return $result;
@@ -320,12 +320,12 @@ class Module extends BaseModule {
 
 		switch_theme( 'hello-elementor' );
 
-		return [
+		return array(
 			'status' => 'success',
-			'payload' => [
+			'payload' => array(
 				'helloThemeActivated' => true,
-			],
-		];
+			),
+		);
 	}
 
 	/**
@@ -342,19 +342,19 @@ class Module extends BaseModule {
 
 		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? [];
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? array();
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
-			return [
+			return array(
 				'status' => 'error',
-				'payload' => [
+				'payload' => array(
 					'error_message' => $error_message,
-				],
-			];
+				),
+			);
 		}
 
-		$result = [];
+		$result = array();
 
 		if ( ! class_exists( 'Automatic_Upgrader_Skin' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
@@ -362,33 +362,33 @@ class Module extends BaseModule {
 
 		$skin = new Automatic_Upgrader_Skin();
 		$upgrader = new Plugin_Upgrader( $skin );
-		$upload_result = $upgrader->install( $file['tmp_name'], [ 'overwrite_package' => false ] );
+		$upload_result = $upgrader->install( $file['tmp_name'], array( 'overwrite_package' => false ) );
 
 		if ( ! $upload_result || is_wp_error( $upload_result ) ) {
-			$result = [
+			$result = array(
 				'status' => 'error',
-				'payload' => [
+				'payload' => array(
 					'error_message' => $error_message,
-				],
-			];
+				),
+			);
 		} else {
 			$activated = activate_plugin( WP_PLUGIN_DIR . '/elementor-pro/elementor-pro.php', false, false, true );
 
 			if ( ! is_wp_error( $activated ) ) {
-				$result = [
+				$result = array(
 					'status' => 'success',
-					'payload' => [
+					'payload' => array(
 						'elementorProInstalled' => true,
-					],
-				];
+					),
+				);
 			} else {
-				$result = [
+				$result = array(
 					'status' => 'error',
-					'payload' => [
+					'payload' => array(
 						'error_message' => $error_message,
 						'elementorProInstalled' => false,
-					],
-				];
+					),
+				);
 			}
 		}
 
@@ -402,10 +402,10 @@ class Module extends BaseModule {
 			update_option( self::ONBOARDING_OPTION, true );
 		}
 
-		return [
+		return array(
 			'status' => 'success',
 			'payload' => 'onboarding DB',
-		];
+		);
 	}
 
 	/**
@@ -417,7 +417,7 @@ class Module extends BaseModule {
 	 * @return array|null
 	 */
 	private function maybe_handle_ajax() {
-		$result = [];
+		$result = array();
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		switch ( Utils::get_super_global_value( $_POST, 'action' ) ) {
@@ -442,7 +442,7 @@ class Module extends BaseModule {
 				break;
 			case 'elementor_save_onboarding_features':
 				// phpcs:ignore WordPress.Security.NonceVerification.Missing
-				$result = $this->get_component( 'features_usage' )->save_onboarding_features( Utils::get_super_global_value( $_POST, 'data' ) ?? [] );
+				$result = $this->get_component( 'features_usage' )->save_onboarding_features( Utils::get_super_global_value( $_POST, 'data' ) ?? array() );
 		}
 
 		if ( ! empty( $result ) ) {
@@ -457,7 +457,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		$this->add_component( 'features_usage', new Features_Usage() );
 
-		add_action( 'elementor/init', function() {
+		add_action( 'elementor/init', function () {
 			// Only load when viewing the onboarding app.
 			if ( Plugin::$instance->app->is_current() ) {
 				$this->set_onboarding_settings();
@@ -478,7 +478,7 @@ class Module extends BaseModule {
 			} );
 		} );
 
-		add_action( 'admin_init', function() {
+		add_action( 'admin_init', function () {
 			if ( wp_doing_ajax() &&
 				isset( $_POST['action'] ) &&
 				isset( $_POST['_nonce'] ) &&

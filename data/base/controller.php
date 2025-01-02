@@ -12,14 +12,14 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @var \Elementor\Data\Base\Endpoint[]
 	 */
-	public $endpoints = [];
+	public $endpoints = array();
 
 	/**
 	 * Loaded processor(s).
 	 *
 	 * @var \Elementor\Data\Base\Processor[][]
 	 */
-	public $processors = [];
+	public $processors = array();
 
 	/**
 	 * Controller constructor.
@@ -45,7 +45,7 @@ abstract class Controller extends WP_REST_Controller {
 		 * Re-add the actions.
 		 */
 		add_action( 'elementor_rest_api_before_init', function () {
-			add_action( 'rest_api_init', function() {
+			add_action( 'rest_api_init', function () {
 				$this->register();
 			} );
 		} );
@@ -104,11 +104,11 @@ abstract class Controller extends WP_REST_Controller {
 			}
 		} );
 
-		$data = [
+		$data = array(
 			'namespace' => $this->get_namespace(),
 			'controller' => $controller_route,
 			'routes' => $server->get_data_for_routes( $endpoints ),
-		];
+		);
 
 		$response = rest_ensure_response( $data );
 
@@ -126,7 +126,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return \Elementor\Data\Base\Processor[]
 	 */
 	public function get_processors( $command ) {
-		$result = [];
+		$result = array();
 
 		if ( isset( $this->processors[ $command ] ) ) {
 			$result = $this->processors[ $command ];
@@ -147,7 +147,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	public function create_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -158,7 +158,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	public function update_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -169,7 +169,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	public function delete_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -187,16 +187,16 @@ abstract class Controller extends WP_REST_Controller {
 	 * Register internal endpoints.
 	 */
 	protected function register_internal_endpoints() {
-		register_rest_route( $this->get_namespace(), '/' . $this->get_rest_base(), [
-			[
+		register_rest_route( $this->get_namespace(), '/' . $this->get_rest_base(), array(
+			array(
 				'methods' => WP_REST_Server::READABLE,
-				'callback' => [ $this, 'get_items' ],
-				'args' => [],
+				'callback' => array( $this, 'get_items' ),
+				'args' => array(),
 				'permission_callback' => function ( $request ) {
 					return $this->get_permission_callback( $request );
 				},
-			],
-		] );
+			),
+		) );
 	}
 
 	/**
@@ -247,7 +247,7 @@ abstract class Controller extends WP_REST_Controller {
 		$command = $processor_instance->get_command();
 
 		if ( ! isset( $this->processors[ $command ] ) ) {
-			$this->processors[ $command ] = [];
+			$this->processors[ $command ] = array();
 		}
 
 		$this->processors[ $command ] [] = $processor_instance;
@@ -285,8 +285,8 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @return array
 	 */
-	public function get_items_recursive( $skip_endpoints = [] ) {
-		$response = [];
+	public function get_items_recursive( $skip_endpoints = array() ) {
+		$response = array();
 
 		foreach ( $this->endpoints as $endpoint ) {
 			// Skip self.

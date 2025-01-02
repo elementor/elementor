@@ -46,12 +46,12 @@ class Admin_Apps_Page {
 		}
 	}
 
-	private static function get_plugins() : array {
+	private static function get_plugins(): array {
 		$container = Plugin::$instance->elementor_container();
 
 		if ( $container->has( Wordpress_Adapter::class ) ) {
 			self::$wordpress_adapter = $container->get( Wordpress_Adapter::class );
-		} else if ( ! self::$wordpress_adapter ) {
+		} elseif ( ! self::$wordpress_adapter ) {
 			self::$wordpress_adapter = new Wordpress_Adapter();
 		}
 
@@ -68,20 +68,20 @@ class Admin_Apps_Page {
 		$apps = wp_remote_get( static::APPS_URL );
 
 		if ( is_wp_error( $apps ) ) {
-			return [];
+			return array();
 		}
 
 		$apps = json_decode( wp_remote_retrieve_body( $apps ), true );
 
 		if ( empty( $apps['apps'] ) || ! is_array( $apps['apps'] ) ) {
-			return [];
+			return array();
 		}
 
 		return $apps['apps'];
 	}
 
 	private static function filter_apps( $apps ) {
-		$filtered_apps = [];
+		$filtered_apps = array();
 
 		foreach ( $apps as $app ) {
 			if ( static::is_wporg_app( $app ) ) {
@@ -119,14 +119,12 @@ class Admin_Apps_Page {
 				$app['action_label'] = esc_html__( 'Cannot Activate', 'elementor' );
 				$app['action_url'] = '#';
 			}
-		} else {
-			if ( current_user_can( 'install_plugins' ) ) {
+		} elseif ( current_user_can( 'install_plugins' ) ) {
 				$app['action_label'] = esc_html__( 'Install', 'elementor' );
 				$app['action_url'] = self::$plugin_status_adapter->get_install_plugin_url( $app['file_path'] );
-			} else {
-				$app['action_label'] = esc_html__( 'Cannot Install', 'elementor' );
-				$app['action_url'] = '#';
-			}
+		} else {
+			$app['action_label'] = esc_html__( 'Cannot Install', 'elementor' );
+			$app['action_url'] = '#';
 		}
 
 		return $app;

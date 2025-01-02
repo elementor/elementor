@@ -20,7 +20,7 @@ class Repository {
 	 */
 	const SUBSCRIPTION_PLAN_FREE_TAG = 'Free';
 
-	const TAXONOMIES_KEYS = [ 'tags', 'categories', 'main_category', 'third_category', 'features', 'types' ];
+	const TAXONOMIES_KEYS = array( 'tags', 'categories', 'main_category', 'third_category', 'features', 'types' );
 
 	const KITS_CACHE_KEY = 'elementor_remote_kits';
 	const KITS_TAXONOMIES_CACHE_KEY = 'elementor_remote_kits_taxonomies';
@@ -65,10 +65,10 @@ class Repository {
 	 *
 	 * @return array|null
 	 */
-	public function find( $id, $options = [] ) {
-		$options = wp_parse_args( $options, [
+	public function find( $id, $options = array() ) {
+		$options = wp_parse_args( $options, array(
 			'manifest_included' => true,
-		] );
+		) );
 
 		$item = $this->get_kits_data()
 			->find( function ( $kit ) use ( $id ) {
@@ -102,21 +102,21 @@ class Repository {
 			->only( static::TAXONOMIES_KEYS )
 			->reduce( function ( Collection $carry, $taxonomies, $type ) {
 				return $carry->merge( array_map( function ( $taxonomy ) use ( $type ) {
-					return [
+					return array(
 						'text' => $taxonomy->name,
 						'type' => $type,
-					];
+					);
 				}, $taxonomies ) );
-			}, new Collection( [] ) )
+			}, new Collection( array() ) )
 			->merge(
 				$this->subscription_plans->map( function ( $label ) {
-					return [
+					return array(
 						'text' => $label ? $label : self::SUBSCRIPTION_PLAN_FREE_TAG,
 						'type' => 'subscription_plans',
-					];
+					);
 				} )
 			)
-			->unique( [ 'text', 'type' ] );
+			->unique( array( 'text', 'type' ) );
 	}
 
 	/**
@@ -131,7 +131,7 @@ class Repository {
 			throw new WP_Error_Exception( $response );
 		}
 
-		return [ 'download_link' => $response->download_link ];
+		return array( 'download_link' => $response->download_link );
 	}
 
 	/**
@@ -141,7 +141,7 @@ class Repository {
 	 * @throws \Exception
 	 */
 	public function add_to_favorites( $id ) {
-		$kit = $this->find( $id, [ 'manifest_included' => false ] );
+		$kit = $this->find( $id, array( 'manifest_included' => false ) );
 
 		if ( ! $kit ) {
 			throw new Error_404( esc_html__( 'Kit not found', 'elementor' ), 'kit_not_found' );
@@ -161,7 +161,7 @@ class Repository {
 	 * @throws \Exception
 	 */
 	public function remove_from_favorites( $id ) {
-		$kit = $this->find( $id, [ 'manifest_included' => false ] );
+		$kit = $this->find( $id, array( 'manifest_included' => false ) );
 
 		if ( ! $kit ) {
 			throw new Error_404( esc_html__( 'Kit not found', 'elementor' ), 'kit_not_found' );
@@ -186,11 +186,11 @@ class Repository {
 		$kits_editor_layout_type = $experiments_manager->is_feature_active( 'container' ) ? 'container_flexbox' : '';
 
 		if ( ! $data || $force_api_request ) {
-			$args = [
-				'body' => [
+			$args = array(
+				'body' => array(
 					'editor_layout_type' => $kits_editor_layout_type,
-				],
-			];
+				),
+			);
 
 			/**
 			 * Filters arguments for the request to the Kits API.
@@ -261,7 +261,7 @@ class Repository {
 			->push( $subscription_plan_tag ? $subscription_plan_tag : self::SUBSCRIPTION_PLAN_FREE_TAG );
 
 		return array_merge(
-			[
+			array(
 				'id' => $kit->_id,
 				'title' => $kit->title,
 				'thumbnail_url' => $kit->thumbnail,
@@ -277,8 +277,8 @@ class Repository {
 				'created_at' => isset( $kit->created_at ) ? $kit->created_at : null,
 				'updated_at' => isset( $kit->updated_at ) ? $kit->updated_at : null,
 				//
-			],
-			$manifest ? $this->transform_manifest_api_response( $manifest ) : []
+			),
+			$manifest ? $this->transform_manifest_api_response( $manifest ) : array()
 		);
 	}
 
@@ -301,25 +301,25 @@ class Repository {
 				}, (array) $content );
 
 				return $carry + $mapped_documents;
-			}, [] );
+			}, array() );
 
 		$content = ( new Collection( (array) $manifest->templates ) )
 			->union( $manifest_content )
 			->map( function ( $manifest_item, $key ) {
-				return [
+				return array(
 					'id' => isset( $manifest_item->id ) ? $manifest_item->id : $key,
 					'title' => $manifest_item->title,
 					'doc_type' => $manifest_item->doc_type,
 					'thumbnail_url' => $manifest_item->thumbnail,
 					'preview_url' => isset( $manifest_item->url ) ? $manifest_item->url : null,
-				];
+				);
 			} );
 
-		return [
+		return array(
 			'description' => $manifest->description,
 			'preview_url' => isset( $manifest->site ) ? $manifest->site : '',
 			'documents' => $content->values(),
-		];
+		);
 	}
 
 	/**

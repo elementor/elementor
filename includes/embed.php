@@ -27,15 +27,15 @@ class Embed {
 	 *
 	 * @var array Provider URL structure regex.
 	 */
-	private static $provider_match_masks = [
+	private static $provider_match_masks = array(
 		'youtube' => '/^.*(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user|shorts)\/))([^\?&\"\'>]+)/',
 		'vimeo' => '/^.*vimeo\.com\/(?:[a-z]*\/)*([‌​0-9]{6,11})[?]?.*/',
 		'dailymotion' => '/^.*dailymotion.com\/(?:video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/',
-		'videopress' => [
+		'videopress' => array(
 			'/^(?:http(?:s)?:\/\/)?videos\.files\.wordpress\.com\/([a-zA-Z\d]{8,})\//i',
 			'/^(?:http(?:s)?:\/\/)?(?:www\.)?video(?:\.word)?press\.com\/(?:v|embed)\/([a-zA-Z\d]{8,})(.+)?/i',
-		],
-	];
+		),
+	);
 
 	/**
 	 * Embed patterns.
@@ -48,12 +48,12 @@ class Embed {
 	 *
 	 * @var array Embed patters.
 	 */
-	private static $embed_patterns = [
+	private static $embed_patterns = array(
 		'youtube' => 'https://www.youtube{NO_COOKIE}.com/embed/{VIDEO_ID}?feature=oembed',
 		'vimeo' => 'https://player.vimeo.com/video/{VIDEO_ID}#t={TIME}',
 		'dailymotion' => 'https://dailymotion.com/embed/video/{VIDEO_ID}',
 		'videopress' => 'https://videopress.com/embed/{VIDEO_ID}',
-	];
+	);
 
 	/**
 	 * Get video properties.
@@ -71,15 +71,15 @@ class Embed {
 	public static function get_video_properties( $video_url ) {
 		foreach ( self::$provider_match_masks as $provider => $match_mask ) {
 			if ( ! is_array( $match_mask ) ) {
-				$match_mask = [ $match_mask ];
+				$match_mask = array( $match_mask );
 			}
 
 			foreach ( $match_mask as $mask ) {
 				if ( preg_match( $mask, $video_url, $matches ) ) {
-					return [
+					return array(
 						'provider' => $provider,
 						'video_id' => $matches[1],
-					];
+					);
 				}
 			}
 		}
@@ -104,7 +104,7 @@ class Embed {
 	 *
 	 * @return null|array The video properties, or null.
 	 */
-	public static function get_embed_url( $video_url, array $embed_url_params = [], array $options = [] ) {
+	public static function get_embed_url( $video_url, array $embed_url_params = array(), array $options = array() ) {
 		$video_properties = self::get_video_properties( $video_url );
 
 		if ( ! $video_properties ) {
@@ -113,9 +113,9 @@ class Embed {
 
 		$embed_pattern = self::$embed_patterns[ $video_properties['provider'] ];
 
-		$replacements = [
+		$replacements = array(
 			'{VIDEO_ID}' => $video_properties['video_id'],
-		];
+		);
 
 		if ( 'youtube' === $video_properties['provider'] ) {
 			$replacements['{NO_COOKIE}'] = ! empty( $options['privacy'] ) ? '-nocookie' : '';
@@ -141,7 +141,7 @@ class Embed {
 			 * token, it adds it to the embed params array as the `h` parameter (which is how Vimeo can receive it when
 			 * using Oembed).
 			 */
-			$h_param = [];
+			$h_param = array();
 			preg_match( '/(?|(?:[\?|\&]h={1})([\w]+)|\d\/([\w]+))/', $video_url, $h_param );
 
 			if ( ! empty( $h_param ) ) {
@@ -173,10 +173,10 @@ class Embed {
 	 *
 	 * @return string The embed HTML.
 	 */
-	public static function get_embed_html( $video_url, array $embed_url_params = [], array $options = [], array $frame_attributes = [] ) {
+	public static function get_embed_html( $video_url, array $embed_url_params = array(), array $options = array(), array $frame_attributes = array() ) {
 		$video_properties = self::get_video_properties( $video_url );
 
-		$default_frame_attributes = [
+		$default_frame_attributes = array(
 			'class' => 'elementor-video-iframe',
 			'allowfullscreen',
 			'allow' => 'clipboard-write',
@@ -185,7 +185,7 @@ class Embed {
 				__( '%s Video Player', 'elementor' ),
 				$video_properties['provider']
 			),
-		];
+		);
 
 		$video_embed_url = self::get_embed_url( $video_url, $embed_url_params, $options );
 		if ( ! $video_embed_url ) {
@@ -203,7 +203,7 @@ class Embed {
 
 		$frame_attributes = array_merge( $default_frame_attributes, $frame_attributes );
 
-		$attributes_for_print = [];
+		$attributes_for_print = array();
 
 		foreach ( $frame_attributes as $attribute_key => $attribute_value ) {
 			$attribute_value = esc_attr( $attribute_value );
@@ -242,14 +242,14 @@ class Embed {
 		$normalize_oembed_data = self::fetch_oembed_data( $oembed_url );
 
 		if ( ! $cached_oembed_data ) {
-			$cached_oembed_data = [];
+			$cached_oembed_data = array();
 		}
 
 		update_post_meta( $cached_post_id, '_elementor_oembed_cache', wp_json_encode( array_merge(
 			$cached_oembed_data,
-			[
+			array(
 				$oembed_url => $normalize_oembed_data,
-			]
+			)
 		) ) );
 
 		return $normalize_oembed_data;
@@ -269,10 +269,10 @@ class Embed {
 			return null;
 		}
 
-		return [
+		return array(
 			'thumbnail_url' => $oembed_data->thumbnail_url,
 			'title' => $oembed_data->title,
-		];
+		);
 	}
 
 	/**

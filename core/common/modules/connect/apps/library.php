@@ -29,14 +29,14 @@ class Library extends Common_App {
 			return new \WP_Error( '401', esc_html__( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );
 		}
 
-		$body_args = [
+		$body_args = array(
 			'id' => $id,
 
 			// Which API version is used.
 			'api_version' => ELEMENTOR_VERSION,
 			// Which language to return.
 			'site_lang' => get_bloginfo( 'language' ),
-		];
+		);
 
 		/**
 		 * API: Template body args.
@@ -65,8 +65,8 @@ class Library extends Common_App {
 		/** @var ConnectModule $connect */
 		$connect = Plugin::$instance->common->get_component( 'connect' );
 
-		return array_replace_recursive( $settings, [
-			'library_connect' => [
+		return array_replace_recursive( $settings, array(
+			'library_connect' => array(
 				'is_connected' => $is_connected,
 				'subscription_plans' => $connect->get_subscription_plans( 'template-library' ),
 				// TODO: Remove `base_access_level`.
@@ -74,21 +74,21 @@ class Library extends Common_App {
 				'base_access_tier' => ConnectModule::ACCESS_TIER_FREE,
 				'current_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 				'current_access_tier' => ConnectModule::ACCESS_TIER_FREE,
-			],
-		] );
+			),
+		) );
 	}
 
 	public function library_connect_popup_seen() {
-		User::set_introduction_viewed( [
+		User::set_introduction_viewed( array(
 			'introductionKey' => 'library_connect',
-		] );
+		) );
 	}
 
 	/**
 	 * @param \Elementor\Core\Common\Modules\Ajax\Module $ajax_manager
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
-		$ajax_manager->register_ajax_action( 'library_connect_popup_seen', [ $this, 'library_connect_popup_seen' ] );
+		$ajax_manager->register_ajax_action( 'library_connect_popup_seen', array( $this, 'library_connect_popup_seen' ) );
 	}
 
 	/**
@@ -103,32 +103,32 @@ class Library extends Common_App {
 	}
 
 	protected function get_app_info() {
-		return [
-			'user_common_data' => [
+		return array(
+			'user_common_data' => array(
 				'label' => 'User Common Data',
 				'value' => get_user_option( $this->get_option_name(), get_current_user_id() ),
-			],
-			'connect_site_key' => [
+			),
+			'connect_site_key' => array(
 				'label' => 'Site Key',
 				'value' => get_option( self::OPTION_CONNECT_SITE_KEY ),
-			],
-			'remote_info_library' => [
+			),
+			'remote_info_library' => array(
 				'label' => 'Remote Library Info',
 				'value' => get_option( 'elementor_remote_info_library' ),
-			],
-		];
+			),
+		);
 	}
 
 	protected function get_popup_success_event_data() {
-		return [
+		return array(
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 			'access_tier' => ConnectModule::ACCESS_TIER_FREE,
-		];
+		);
 	}
 
 	protected function init() {
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
-		add_filter( 'elementor/common/localize_settings', [ $this, 'localize_settings' ] );
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_filter( 'elementor/editor/localize_settings', array( $this, 'localize_settings' ) );
+		add_filter( 'elementor/common/localize_settings', array( $this, 'localize_settings' ) );
+		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
 	}
 }

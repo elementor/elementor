@@ -30,12 +30,12 @@ class Module extends BaseModule {
 	}
 
 	private function register_admin_menu( MainMenu $menu ) {
-		$menu->add_submenu( [
+		$menu->add_submenu( array(
 			'page_title' => esc_html__( 'Kit Library', 'elementor' ),
 			'menu_title' => '<span id="e-admin-menu__kit-library">' . esc_html__( 'Kit Library', 'elementor' ) . '</span>',
 			'menu_slug' => Plugin::$instance->app->get_base_url() . '#/kit-library',
 			'index' => 40,
-		] );
+		) );
 	}
 
 	/**
@@ -59,21 +59,21 @@ class Module extends BaseModule {
 		/** @var Kit_Library $kit_library */
 		$kit_library = $connect->get_app( 'kit-library' );
 
-		Plugin::$instance->app->set_settings( 'kit-library', [
+		Plugin::$instance->app->set_settings( 'kit-library', array(
 			'has_access_to_module' => current_user_can( 'administrator' ),
 			'subscription_plans' => $this->apply_filter_subscription_plans( $connect->get_subscription_plans( 'kit-library' ) ),
 			'is_pro' => false,
 			'is_library_connected' => $kit_library->is_connected(),
-			'library_connect_url'  => $kit_library->get_admin_url( 'authorize', [
+			'library_connect_url'  => $kit_library->get_admin_url( 'authorize', array(
 				'utm_source' => 'kit-library',
 				'utm_medium' => 'wp-dash',
 				'utm_campaign' => 'library-connect',
 				'utm_term' => '%%page%%', // Will be replaced in the frontend.
-			] ),
+			) ),
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 			'access_tier' => ConnectModule::ACCESS_TIER_FREE,
 			'app_url' => Plugin::$instance->app->get_base_url() . '#/' . $this->get_name(),
-		] );
+		) );
 	}
 
 	private function apply_filter_subscription_plans( array $subscription_plans ): array {
@@ -100,9 +100,9 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
 
 		// Assigning this action here since the repository is being loaded by demand.
-		add_action( 'elementor/experiments/feature-state-change/container', [ Repository::class, 'clear_cache' ], 10, 0 );
+		add_action( 'elementor/experiments/feature-state-change/container', array( Repository::class, 'clear_cache' ), 10, 0 );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 30 );
 

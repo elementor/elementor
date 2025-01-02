@@ -38,9 +38,9 @@ class Module extends BaseApp {
 	 * Enqueue admin scripts
 	 */
 	private function enqueue_scripts() {
-		wp_enqueue_style( 'elementor-admin-top-bar-fonts', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap', [], ELEMENTOR_VERSION );
+		wp_enqueue_style( 'elementor-admin-top-bar-fonts', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap', array(), ELEMENTOR_VERSION );
 
-		wp_enqueue_style( 'elementor-admin-top-bar', $this->get_css_assets_url( 'admin-top-bar', null, 'default', true ), [], ELEMENTOR_VERSION );
+		wp_enqueue_style( 'elementor-admin-top-bar', $this->get_css_assets_url( 'admin-top-bar', null, 'default', true ), array(), ELEMENTOR_VERSION );
 
 		/**
 		 * Before admin top bar enqueue scripts.
@@ -51,34 +51,34 @@ class Module extends BaseApp {
 		 */
 		do_action( 'elementor/admin_top_bar/before_enqueue_scripts', $this );
 
-		wp_enqueue_script( 'elementor-admin-top-bar', $this->get_js_assets_url( 'admin-top-bar' ), [
+		wp_enqueue_script( 'elementor-admin-top-bar', $this->get_js_assets_url( 'admin-top-bar' ), array(
 			'elementor-common',
 			'react',
 			'react-dom',
 			'tipsy',
-		], ELEMENTOR_VERSION, true );
+		), ELEMENTOR_VERSION, true );
 
 		wp_set_script_translations( 'elementor-admin-top-bar', 'elementor' );
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
-		wp_enqueue_script( 'tipsy', ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $min_suffix . '.js', [
+		wp_enqueue_script( 'tipsy', ELEMENTOR_ASSETS_URL . 'lib/tipsy/tipsy' . $min_suffix . '.js', array(
 			'jquery',
-		], '1.0.0', true );
+		), '1.0.0', true );
 
 		$this->print_config();
 	}
 
 	private function add_frontend_settings() {
-		$settings = [];
+		$settings = array();
 		$settings['is_administrator'] = current_user_can( 'manage_options' );
 
 		// TODO: Find a better way to add apps page url to the admin top bar.
 		$settings['apps_url'] = admin_url( 'admin.php?page=elementor-apps' );
-		$settings['promotion'] = [
+		$settings['promotion'] = array(
 			'text' => __( 'Upgrade Now', 'elementor' ),
 			'url' => 'https://go.elementor.com/wp-dash-admin-top-bar-upgrade/',
-		];
+		);
 
 		$settings['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
 			$settings['promotion'],
@@ -91,16 +91,16 @@ class Module extends BaseApp {
 		/** @var \Elementor\Core\Common\Modules\Connect\Apps\Library $library */
 		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
 		if ( $library ) {
-			$settings = array_merge( $settings, [
+			$settings = array_merge( $settings, array(
 				'is_user_connected' => $library->is_connected(),
-				'connect_url' => $library->get_admin_url( 'authorize', [
+				'connect_url' => $library->get_admin_url( 'authorize', array(
 					'utm_source' => 'top-bar',
 					'utm_medium' => 'wp-dash',
 					'utm_campaign' => 'connect-account',
 					'utm_content' => $current_screen->id,
 					'source' => 'generic',
-				] ),
-			] );
+				) ),
+			) );
 		}
 
 		$this->set_settings( $settings );

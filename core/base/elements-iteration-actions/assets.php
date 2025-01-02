@@ -24,10 +24,10 @@ class Assets extends Base {
 
 		$element_assets = $this->get_assets( $settings, $controls );
 
-		$element_assets_depend = [
+		$element_assets_depend = array(
 			'styles' => $element_data->get_style_depends(),
 			'scripts' => $element_data->get_script_depends(),
-		];
+		);
 
 		if ( $element_assets_depend ) {
 			foreach ( $element_assets_depend as $assets_type => $assets ) {
@@ -36,7 +36,7 @@ class Assets extends Base {
 				}
 
 				if ( ! isset( $element_assets[ $assets_type ] ) ) {
-					$element_assets[ $assets_type ] = [];
+					$element_assets[ $assets_type ] = array();
 				}
 
 				foreach ( $assets as $asset_name ) {
@@ -71,7 +71,7 @@ class Assets extends Base {
 	public function after_elements_iteration() {
 		// In case that the page assets value is empty, it should still be saved as an empty array as an indication that at lease one iteration has occurred.
 		if ( ! is_array( $this->page_assets ) ) {
-			$this->page_assets = [];
+			$this->page_assets = array();
 		}
 
 		$this->get_document_assets();
@@ -94,12 +94,12 @@ class Assets extends Base {
 
 	private function update_page_assets( $new_assets ) {
 		if ( ! is_array( $this->page_assets ) ) {
-			$this->page_assets = [];
+			$this->page_assets = array();
 		}
 
 		foreach ( $new_assets as $assets_type => $assets_type_data ) {
 			if ( ! isset( $this->page_assets[ $assets_type ] ) ) {
-				$this->page_assets[ $assets_type ] = [];
+				$this->page_assets[ $assets_type ] = array();
 			}
 
 			foreach ( $assets_type_data as $asset_name ) {
@@ -111,7 +111,7 @@ class Assets extends Base {
 	}
 
 	private function get_assets( $settings, $controls ) {
-		$assets = [];
+		$assets = array();
 
 		foreach ( $settings as $setting_key => $setting ) {
 			if ( ! isset( $controls[ $setting_key ] ) ) {
@@ -133,7 +133,7 @@ class Assets extends Base {
 						}
 
 						if ( ! isset( $assets[ $assets_type ] ) ) {
-							$assets[ $assets_type ] = [];
+							$assets[ $assets_type ] = array();
 						}
 
 						$assets[ $assets_type ][] = $dependency['name'];
@@ -150,7 +150,7 @@ class Assets extends Base {
 				foreach ( $control_conditional_assets as $assets_type => $dependencies ) {
 					foreach ( $dependencies as $dependency ) {
 						if ( ! isset( $assets[ $assets_type ] ) ) {
-							$assets[ $assets_type ] = [];
+							$assets[ $assets_type ] = array();
 						}
 
 						$assets[ $assets_type ][] = $dependency;

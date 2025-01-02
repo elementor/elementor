@@ -17,7 +17,7 @@ class Envato extends Base_Adapter {
 	public function adapt_manifest( array $manifest_data ) {
 		$templates = $manifest_data['templates'];
 
-		$manifest_data['templates'] = [];
+		$manifest_data['templates'] = array();
 
 		foreach ( $templates as $template ) {
 			// Envato store their global kit styles as a 'global.json' template file.
@@ -63,9 +63,9 @@ class Envato extends Base_Adapter {
 		$global_file_path = $path . $manifest_data['path-to-envto-site-settings'];
 		$global_file_data = ImportExportUtils::read_json_file( $global_file_path );
 
-		return [
+		return array(
 			'settings' => $global_file_data['page_settings'],
-		];
+		);
 	}
 
 	public function adapt_template( array $template_data, array $template_settings ) {

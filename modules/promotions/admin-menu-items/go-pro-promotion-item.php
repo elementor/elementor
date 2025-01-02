@@ -33,7 +33,7 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 			$upgrade_text = esc_html__( 'Upgrade Sale Now', 'elementor' );
 		}
 
-		return apply_filters( 'elementor/admin_menu/custom_promotion', [ 'upgrade_text' => $upgrade_text ] )['upgrade_text'] ?? $upgrade_text;
+		return apply_filters( 'elementor/admin_menu/custom_promotion', array( 'upgrade_text' => $upgrade_text ) )['upgrade_text'] ?? $upgrade_text;
 	}
 
 	public function get_page_title() {
@@ -46,8 +46,8 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 
 	public static function get_url() {
 		$url = self::URL;
-		$filtered_url = apply_filters( 'elementor/admin_menu/custom_promotion', [ 'upgrade_url' => $url ] )['upgrade_url'] ?? '';
-		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data( [ 'upgrade_url' => $filtered_url ], 'elementor/admin_menu/custom_promotion', 'upgrade_url' );
+		$filtered_url = apply_filters( 'elementor/admin_menu/custom_promotion', array( 'upgrade_url' => $url ) )['upgrade_url'] ?? '';
+		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data( array( 'upgrade_url' => $filtered_url ), 'elementor/admin_menu/custom_promotion', 'upgrade_url' );
 		return $promotion_data ['upgrade_url'];
 	}
 

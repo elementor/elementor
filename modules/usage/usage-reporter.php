@@ -23,9 +23,9 @@ class Usage_Reporter extends Base {
 	}
 
 	public function get_fields() {
-		return [
+		return array(
 			'usage' => '',
-		];
+		);
 	}
 
 	public function print_html_label( $label ) {
@@ -33,10 +33,10 @@ class Usage_Reporter extends Base {
 
 		if ( empty( $_GET[ self::RECALC_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not required here.
 			$nonce = wp_create_nonce( self::RECALC_ACTION );
-			$url = add_query_arg( [
+			$url = add_query_arg( array(
 				self::RECALC_ACTION => 1,
 				'_wpnonce' => $nonce,
-			] );
+			) );
 
 			$title .= '<a id="elementor-usage-recalc" href="' . esc_url( $url ) . '#elementor-usage-recalc" class="box-title-tool">Recalculate</a>';
 		} else {
@@ -55,9 +55,9 @@ class Usage_Reporter extends Base {
 			$nonce = Utils::get_super_global_value( $_GET, '_wpnonce' );
 
 			if ( ! wp_verify_nonce( $nonce, self::RECALC_ACTION ) ) {
-				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
+				wp_die( 'Invalid Nonce', 'Invalid Nonce', array(
 					'back_link' => true,
-				] );
+				) );
 			}
 
 			$module->recalc_usage();
@@ -75,9 +75,9 @@ class Usage_Reporter extends Base {
 			$usage .= '</td></tr>';
 		}
 
-		return [
+		return array(
 			'value' => $usage,
-		];
+		);
 	}
 
 	public function get_raw_usage() {
@@ -93,9 +93,9 @@ class Usage_Reporter extends Base {
 			}
 		}
 
-		return [
+		return array(
 			'value' => $usage,
-		];
+		);
 	}
 
 	/**

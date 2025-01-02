@@ -10,7 +10,7 @@ class API {
 	public static function get_notifications_by_conditions( $force_request = false ) {
 		$notifications = static::get_notifications( $force_request );
 
-		$filtered_notifications = [];
+		$filtered_notifications = array();
 
 		foreach ( $notifications as $notification ) {
 			if ( empty( $notification['conditions'] ) ) {
@@ -41,17 +41,17 @@ class API {
 		return $notifications;
 	}
 
-	private static function fetch_data() : array {
+	private static function fetch_data(): array {
 		$response = wp_remote_get( self::NOTIFICATIONS_URL );
 
 		if ( is_wp_error( $response ) ) {
-			return [];
+			return array();
 		}
 
 		$data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( empty( $data['notifications'] ) || ! is_array( $data['notifications'] ) ) {
-			return [];
+			return array();
 		}
 
 		return $data['notifications'];
@@ -88,7 +88,7 @@ class API {
 			// Reset results for each condition.
 			$result = false;
 			switch ( $condition['type'] ) {
-				case 'wordpress': // phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled
+				case 'WordPress': // phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled
 					// include an unmodified $wp_version
 					include ABSPATH . WPINC . '/version.php';
 					$result = version_compare( $wp_version, $condition['version'], $condition['operator'] );
@@ -102,7 +102,7 @@ class API {
 					break;
 				case 'plugin':
 					if ( ! function_exists( 'is_plugin_active' ) ) {
-						require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+						require_once ABSPATH . 'wp-admin/includes/plugin.php';
 					}
 
 					$is_plugin_active = is_plugin_active( $condition['plugin'] );
@@ -169,10 +169,10 @@ class API {
 	}
 
 	private static function set_transient( $cache_key, $value, $expiration = '+12 hours' ) {
-		$data = [
+		$data = array(
 			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
 			'value' => json_encode( $value ),
-		];
+		);
 
 		return update_option( $cache_key, $data, false );
 	}

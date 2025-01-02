@@ -46,14 +46,14 @@ class Widget_Inner_Section extends Widget_Base {
 	 * @inheritDoc
 	 */
 	public function get_categories() {
-		return [ 'basic' ];
+		return array( 'basic' );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function get_keywords() {
-		return [ 'row', 'columns', 'nested' ];
+		return array( 'row', 'columns', 'nested' );
 	}
 
 	protected function is_dynamic_content(): bool {

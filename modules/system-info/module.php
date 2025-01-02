@@ -58,15 +58,15 @@ class Module extends BaseModule {
 	 *
 	 * @var array
 	 */
-	private static $reports = [
-		'server' => [],
-		'wordpress' => [],
-		'theme' => [],
-		'user' => [],
-		'plugins' => [],
-		'network_plugins' => [],
-		'mu_plugins' => [],
-	];
+	private static $reports = array(
+		'server' => array(),
+		'wordpress' => array(),
+		'theme' => array(),
+		'user' => array(),
+		'plugins' => array(),
+		'network_plugins' => array(),
+		'mu_plugins' => array(),
+	);
 
 	public function get_capability() {
 		return $this->capability;
@@ -96,7 +96,7 @@ class Module extends BaseModule {
 	 * @return array Default settings.
 	 */
 	protected function get_init_settings() {
-		$settings = [];
+		$settings = array();
 
 		$reporter_properties = Base::get_properties_keys();
 
@@ -122,7 +122,7 @@ class Module extends BaseModule {
 			$this->register_menu( $admin_menu_manager );
 		}, Settings::ADMIN_MENU_PRIORITY + 30 );
 
-		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
+		add_action( 'wp_ajax_elementor_system_info_download_file', array( $this, 'download_file' ) );
 	}
 
 	/**
@@ -244,12 +244,12 @@ class Module extends BaseModule {
 	 * @return array An array of system info reports.
 	 */
 	public function load_reports( $reports ) {
-		$result = [];
+		$result = array();
 
 		foreach ( $reports as $report_name => $report_info ) {
-			$reporter_params = [
+			$reporter_params = array(
 				'name' => $report_name,
-			];
+			);
 
 			$reporter_params = array_merge( $reporter_params, $report_info );
 
@@ -259,10 +259,10 @@ class Module extends BaseModule {
 				continue;
 			}
 
-			$result[ $report_name ] = [
+			$result[ $report_name ] = array(
 				'report' => $reporter,
 				'label' => $reporter->get_title(),
-			];
+			);
 
 			if ( ! empty( $report_info['sub'] ) ) {
 				$result[ $report_name ]['sub'] = $this->load_reports( $report_info['sub'] );

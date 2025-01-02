@@ -12,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Settings_Sanitizer {
 
-	const SPECIAL_SETTINGS = [
+	const SPECIAL_SETTINGS = array(
 		'__dynamic__',
 		'__globals__',
-	];
+	);
 
 	/**
 	 * @var Elements_Manager
@@ -41,7 +41,7 @@ class Settings_Sanitizer {
 	 * @param Elements_Manager $elements_manager
 	 * @param array $widget_types
 	 */
-	public function __construct( Elements_Manager $elements_manager, array $widget_types = [] ) {
+	public function __construct( Elements_Manager $elements_manager, array $widget_types = array() ) {
 		$this->elements_manager = $elements_manager;
 		$this->widget_types = $widget_types;
 	}
@@ -121,7 +121,7 @@ class Settings_Sanitizer {
 			return $this;
 		}
 
-		$this->pending_settings = map_deep( $this->pending_settings, function( $value ) {
+		$this->pending_settings = map_deep( $this->pending_settings, function ( $value ) {
 			if ( ! is_string( $value ) ) {
 				return $value;
 			}
@@ -155,7 +155,7 @@ class Settings_Sanitizer {
 	 */
 	public function get() {
 		if ( ! $this->is_prepared() ) {
-			return [];
+			return array();
 		}
 
 		$settings = $this->pending_settings;
@@ -176,25 +176,25 @@ class Settings_Sanitizer {
 		$is_inner_section = 'inner-section' === $type;
 
 		if ( $is_inner_section ) {
-			return $this->elements_manager->create_element_instance( [
+			return $this->elements_manager->create_element_instance( array(
 				'elType' => 'section',
 				'isInner' => true,
 				'id' => '0',
-			] );
+			) );
 		}
 
 		if ( $is_widget ) {
-			return $this->elements_manager->create_element_instance( [
+			return $this->elements_manager->create_element_instance( array(
 				'elType' => 'widget',
 				'widgetType' => $type,
 				'id' => '0',
-			] );
+			) );
 		}
 
-		return $this->elements_manager->create_element_instance( [
+		return $this->elements_manager->create_element_instance( array(
 			'elType' => $type,
 			'id' => '0',
-		] );
+		) );
 	}
 
 	/**
@@ -211,7 +211,7 @@ class Settings_Sanitizer {
 		$result = $document->process_element_import_export(
 			$this->pending_element,
 			$process_type,
-			[ 'settings' => $this->pending_settings ]
+			array( 'settings' => $this->pending_settings )
 		);
 
 		if ( empty( $result['settings'] ) ) {
@@ -232,21 +232,21 @@ class Settings_Sanitizer {
 	 */
 	private function get_valid_settings_keys( $controls ) {
 		if ( ! $controls ) {
-			return [];
+			return array();
 		}
 
 		$control_keys = array_keys( $controls );
 
-		$optional_responsive_keys = [
+		$optional_responsive_keys = array(
 			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE,
 			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA,
 			Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
 			Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA,
 			Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP,
 			Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN,
-		];
+		);
 
-		$settings = [];
+		$settings = array();
 
 		foreach ( $control_keys as $control_key ) {
 			// Add the responsive settings.

@@ -8,7 +8,7 @@ class Taxonomies extends Import_Runner_Base {
 
 	private $import_session_id;
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'taxonomies';
 	}
 
@@ -26,10 +26,10 @@ class Taxonomies extends Import_Runner_Base {
 		$this->import_session_id = $data['session_id'];
 
 		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
-		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
+		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : array();
 		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 
-		$result = [];
+		$result = array();
 
 		foreach ( $post_types as $post_type ) {
 			if ( empty( $data['manifest']['taxonomies'][ $post_type ] ) ) {
@@ -43,8 +43,8 @@ class Taxonomies extends Import_Runner_Base {
 	}
 
 	private function import_taxonomies( array $taxonomies, $path ) {
-		$result = [];
-		$imported_taxonomies = [];
+		$result = array();
+		$imported_taxonomies = array();
 
 		foreach ( $taxonomies as $taxonomy ) {
 			if ( ! taxonomy_exists( $taxonomy ) ) {
@@ -70,7 +70,7 @@ class Taxonomies extends Import_Runner_Base {
 	}
 
 	private function import_taxonomy( array $taxonomy_data ) {
-		$terms = [];
+		$terms = array();
 
 		foreach ( $taxonomy_data as $term ) {
 			$old_slug = $term['slug'];
@@ -80,34 +80,34 @@ class Taxonomies extends Import_Runner_Base {
 				if ( 'nav_menu' === $term['taxonomy'] ) {
 					$term = $this->handle_duplicated_nav_menu_term( $term );
 				} else {
-					$terms[] = [
+					$terms[] = array(
 						'old_id' => (int) $term['term_id'],
 						'new_id' => (int) $existing_term['term_id'],
 						'old_slug' => $old_slug,
 						'new_slug' => $term['slug'],
-					];
+					);
 					continue;
 				}
 			}
 
 			$parent = $this->get_term_parent( $term, $terms );
 
-			$args = [
+			$args = array(
 				'slug' => $term['slug'],
 				'description' => wp_slash( $term['description'] ),
 				'parent' => (int) $parent,
-			];
+			);
 
 			$new_term = wp_insert_term( wp_slash( $term['name'] ), $term['taxonomy'], $args );
 			if ( ! is_wp_error( $new_term ) ) {
 				$this->set_session_term_meta( (int) $new_term['term_id'], $this->import_session_id );
 
-				$terms[] = [
+				$terms[] = array(
 					'old_id' => $term['term_id'],
 					'new_id' => (int) $new_term['term_id'],
 					'old_slug' => $old_slug,
 					'new_slug' => $term['slug'],
-				];
+				);
 			}
 		}
 

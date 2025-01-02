@@ -5,7 +5,7 @@ use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 class Taxonomies extends Export_Runner_Base {
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'taxonomies';
 	}
 
@@ -18,24 +18,24 @@ class Taxonomies extends Export_Runner_Base {
 
 	public function export( array $data ) {
 		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
-		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
+		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : array();
 		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 
 		$export = $this->export_taxonomies( $post_types );
 
 		$manifest_data['taxonomies'] = $export['manifest'];
 
-		return [
+		return array(
 			'files' => $export['files'],
-			'manifest' => [
+			'manifest' => array(
 				$manifest_data,
-			],
-		];
+			),
+		);
 	}
 
 	private function export_taxonomies( array $post_types ) {
-		$files = [];
-		$manifest = [];
+		$files = array();
+		$manifest = array();
 
 		$taxonomies = get_taxonomies();
 
@@ -57,42 +57,42 @@ class Taxonomies extends Export_Runner_Base {
 				$manifest[ $post_type ][] = $taxonomy;
 			}
 
-			$files[] = [
+			$files[] = array(
 				'path' => 'taxonomies/' . $taxonomy,
 				'data' => $data,
-			];
+			);
 		}
 
-		return [
+		return array(
 			'files' => $files,
 			'manifest' => $manifest,
-		];
+		);
 	}
 
 	private function export_terms( $taxonomy ) {
-		$terms = get_terms( [
+		$terms = get_terms( array(
 			'taxonomy' => (array) $taxonomy,
 			'hide_empty' => true,
 			'get' => 'all',
-		] );
+		) );
 
 		$ordered_terms = $this->order_terms( $terms );
 
 		if ( empty( $ordered_terms ) ) {
-			return [];
+			return array();
 		}
 
-		$data = [];
+		$data = array();
 
 		foreach ( $ordered_terms as $term ) {
-			$data[] = [
+			$data[] = array(
 				'term_id' => $term->term_id,
 				'name' => $term->name,
 				'slug' => $term->slug,
 				'taxonomy' => $term->taxonomy,
 				'description' => $term->description,
 				'parent' => $term->parent,
-			];
+			);
 		}
 
 		return $data;
@@ -100,7 +100,7 @@ class Taxonomies extends Export_Runner_Base {
 
 	// Put terms in order with no child going before its parent.
 	private function order_terms( array $terms ) {
-		$ordered_terms = [];
+		$ordered_terms = array();
 
 		while ( $term = array_shift( $terms ) ) {
 			$is_top_level = 0 === $term->parent;

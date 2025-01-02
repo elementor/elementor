@@ -43,43 +43,43 @@ class Settings extends Base_Category {
 	 *
 	 * @return array
 	 */
-	public function get_category_items( array $options = [] ) {
-		return [
-			'general-settings' => [
+	public function get_category_items( array $options = array() ) {
+		return array(
+			'general-settings' => array(
 				'title' => esc_html__( 'General Settings', 'elementor' ),
 				'url' => ElementorSettings::get_settings_tab_url( 'general' ),
-				'keywords' => [ 'general', 'settings', 'elementor' ],
-			],
-			'integrations' => [
+				'keywords' => array( 'general', 'settings', 'elementor' ),
+			),
+			'integrations' => array(
 				'title' => esc_html__( 'Integrations', 'elementor' ),
 				'url' => ElementorSettings::get_settings_tab_url( 'integrations' ),
-				'keywords' => [ 'integrations', 'settings', 'elementor' ],
-			],
-			'advanced' => [
+				'keywords' => array( 'integrations', 'settings', 'elementor' ),
+			),
+			'advanced' => array(
 				'title' => esc_html__( 'Advanced', 'elementor' ),
 				'url' => ElementorSettings::get_settings_tab_url( 'advanced' ),
-				'keywords' => [ 'advanced', 'settings', 'elementor' ],
-			],
-			'performance' => [
+				'keywords' => array( 'advanced', 'settings', 'elementor' ),
+			),
+			'performance' => array(
 				'title' => esc_html__( 'Performance', 'elementor' ),
 				'url' => ElementorSettings::get_settings_tab_url( 'performance' ),
-				'keywords' => [ 'performance', 'settings', 'elementor' ],
-			],
-			'experiments' => [
+				'keywords' => array( 'performance', 'settings', 'elementor' ),
+			),
+			'experiments' => array(
 				'title' => esc_html__( 'Experiments', 'elementor' ),
 				'url' => ElementorSettings::get_settings_tab_url( 'experiments' ),
-				'keywords' => [ 'settings', 'elementor', 'experiments' ],
-			],
-			'features' => [
+				'keywords' => array( 'settings', 'elementor', 'experiments' ),
+			),
+			'features' => array(
 				'title' => esc_html__( 'Features', 'elementor' ),
 				'url' => ElementorSettings::get_settings_tab_url( 'experiments' ),
-				'keywords' => [ 'settings', 'elementor', 'features' ],
-			],
-			'element-manager' => [
+				'keywords' => array( 'settings', 'elementor', 'features' ),
+			),
+			'element-manager' => array(
 				'title' => esc_html__( 'Element Manager', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=' . ElementManagerModule::PAGE_ID ),
-				'keywords' => [ 'settings', 'elements', 'widgets', 'manager' ],
-			],
-		];
+				'keywords' => array( 'settings', 'elements', 'widgets', 'manager' ),
+			),
+		);
 	}
 }

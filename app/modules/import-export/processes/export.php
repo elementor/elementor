@@ -21,7 +21,7 @@ class Export {
 	/**
 	 * @var Export_Runner_Base[]
 	 */
-	protected $runners = [];
+	protected $runners = array();
 
 	/**
 	 * Selected content types to export.
@@ -67,7 +67,7 @@ class Export {
 	 */
 	private $zip;
 
-	public function __construct( $settings = [] ) {
+	public function __construct( $settings = array() ) {
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
 		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
@@ -109,11 +109,11 @@ class Export {
 		$this->init_zip_archive();
 		$this->init_manifest_data();
 
-		$data = [
+		$data = array(
 			'include' => $this->settings_include,
 			'selected_plugins' => $this->settings_selected_plugins,
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
-		];
+		);
 
 		foreach ( $this->runners as $runner ) {
 			if ( $runner->should_export( $data ) ) {
@@ -127,10 +127,10 @@ class Export {
 		$zip_file_name = $this->zip->filename;
 		$this->zip->close();
 
-		return [
+		return array(
 			'manifest' => $this->manifest_data,
 			'file_name' => $zip_file_name,
-		];
+		);
 	}
 
 	/**
@@ -192,7 +192,7 @@ class Export {
 	 * @return array
 	 */
 	private function get_default_settings_include() {
-		return [ 'templates', 'content', 'settings', 'plugins' ];
+		return array( 'templates', 'content', 'settings', 'plugins' );
 	}
 
 	/**
@@ -201,10 +201,10 @@ class Export {
 	 * @return array
 	 */
 	private function get_default_settings_kit_info() {
-		return [
+		return array(
 			'title' => 'kit',
 			'description' => '',
-		];
+		);
 	}
 
 	/**
@@ -216,12 +216,12 @@ class Export {
 		$installed_plugins = Plugin::$instance->wp->get_plugins();
 
 		return $installed_plugins->map( function ( $item, $key ) {
-			return [
+			return array(
 				'name' => $item['Name'],
 				'plugin' => $key,
 				'pluginUri' => $item['PluginURI'],
 				'version' => $item['Version'],
-			];
+			);
 		} )->all();
 	}
 
@@ -260,7 +260,7 @@ class Export {
 	private function init_manifest_data() {
 		$kit_post = Plugin::$instance->kits_manager->get_active_kit()->get_post();
 
-		$manifest_data = [
+		$manifest_data = array(
 			'name' => sanitize_title( $this->settings_kit_info['title'] ),
 			'title' => $this->settings_kit_info['title'],
 			'description' => $this->settings_kit_info['description'],
@@ -270,7 +270,7 @@ class Export {
 			'created' => gmdate( 'Y-m-d H:i:s' ),
 			'thumbnail' => get_the_post_thumbnail_url( $kit_post ),
 			'site' => get_site_url(),
-		];
+		);
 
 		$this->manifest_data = $manifest_data;
 	}
@@ -288,7 +288,7 @@ class Export {
 		}
 
 		if ( isset( $export_result['files']['path'] ) ) {
-			$export_result['files'] = [ $export_result['files'] ];
+			$export_result['files'] = array( $export_result['files'] );
 		}
 
 		foreach ( $export_result['files'] as $file ) {

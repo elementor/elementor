@@ -41,7 +41,7 @@ class Control_WP_Widget extends Base_Data_Control {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return [];
+		return array();
 	}
 
 	/**

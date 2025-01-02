@@ -71,7 +71,7 @@ class Widget_Accordion extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'accordion', 'tabs', 'toggle' ];
+		return array( 'accordion', 'tabs', 'toggle' );
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -89,7 +89,7 @@ class Widget_Accordion extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-accordion' ];
+		return array( 'widget-accordion' );
 	}
 
 	/**
@@ -119,33 +119,33 @@ class Widget_Accordion extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_title',
-			[
+			array(
 				'label' => esc_html__( 'Accordion', 'elementor' ),
-			]
+			)
 		);
 
 		$repeater = new Repeater();
 
 		$repeater->add_control(
 			'tab_title',
-			[
+			array(
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Accordion Title', 'elementor' ),
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'label_block' => true,
-			]
+			)
 		);
 
 		$repeater->add_control(
 			'tab_content',
-			[
+			array(
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'type' => Controls_Manager::WYSIWYG,
 				'default' => esc_html__( 'Accordion Content', 'elementor' ),
-			]
+			)
 		);
 
 		if ( Plugin::$instance->widgets_manager->get_widget_types( 'nested-accordion' ) ) {
@@ -161,88 +161,88 @@ class Widget_Accordion extends Widget_Base {
 
 		$this->add_control(
 			'tabs',
-			[
+			array(
 				'label' => esc_html__( 'Accordion Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_controls(),
-				'default' => [
-					[
+				'default' => array(
+					array(
 						'tab_title' => esc_html__( 'Accordion #1', 'elementor' ),
 						'tab_content' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					],
-					[
+					),
+					array(
 						'tab_title' => esc_html__( 'Accordion #2', 'elementor' ),
 						'tab_content' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					],
-				],
+					),
+				),
 				'title_field' => '{{{ tab_title }}}',
-			]
+			)
 		);
 
 		$this->add_control(
 			'selected_icon',
-			[
+			array(
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'separator' => 'before',
 				'fa4compatibility' => 'icon',
-				'default' => [
+				'default' => array(
 					'value' => 'fas fa-plus',
 					'library' => 'fa-solid',
-				],
-				'recommended' => [
-					'fa-solid' => [
+				),
+				'recommended' => array(
+					'fa-solid' => array(
 						'chevron-down',
 						'angle-down',
 						'angle-double-down',
 						'caret-down',
 						'caret-square-down',
-					],
-					'fa-regular' => [
+					),
+					'fa-regular' => array(
 						'caret-square-down',
-					],
-				],
+					),
+				),
 				'skin' => 'inline',
 				'label_block' => false,
-			]
+			)
 		);
 
 		$this->add_control(
 			'selected_active_icon',
-			[
+			array(
 				'label' => esc_html__( 'Active Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon_active',
-				'default' => [
+				'default' => array(
 					'value' => 'fas fa-minus',
 					'library' => 'fa-solid',
-				],
-				'recommended' => [
-					'fa-solid' => [
+				),
+				'recommended' => array(
+					'fa-solid' => array(
 						'chevron-up',
 						'angle-up',
 						'angle-double-up',
 						'caret-up',
 						'caret-square-up',
-					],
-					'fa-regular' => [
+					),
+					'fa-regular' => array(
 						'caret-square-up',
-					],
-				],
+					),
+				),
 				'skin' => 'inline',
 				'label_block' => false,
-				'condition' => [
+				'condition' => array(
 					'selected_icon[value]!' => '',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'title_html_tag',
-			[
+			array(
 				'label' => esc_html__( 'Title HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => [
+				'options' => array(
 					'h1' => 'H1',
 					'h2' => 'H2',
 					'h3' => 'H3',
@@ -250,301 +250,301 @@ class Widget_Accordion extends Widget_Base {
 					'h5' => 'H5',
 					'h6' => 'H6',
 					'div' => 'div',
-				],
+				),
 				'default' => 'div',
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_control(
 			'faq_schema',
-			[
+			array(
 				'label' => esc_html__( 'FAQ Schema', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_title_style',
-			[
+			array(
 				'label' => esc_html__( 'Accordion', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->add_control(
 			'border_width',
-			[
+			array(
 				'label' => esc_html__( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+				'range' => array(
+					'px' => array(
 						'max' => 20,
-					],
-					'em' => [
+					),
+					'em' => array(
 						'max' => 2,
-					],
-				],
-				'selectors' => [
+					),
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-accordion-item' => 'border-width: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-accordion-item .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-accordion-item .elementor-tab-title.elementor-active' => 'border-width: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'border_color',
-			[
+			array(
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-accordion-item' => 'border-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-accordion-item .elementor-tab-content' => 'border-top-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-accordion-item .elementor-tab-title.elementor-active' => 'border-bottom-color: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_toggle_style_title',
-			[
+			array(
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->add_control(
 			'title_background',
-			[
+			array(
 				'label' => esc_html__( 'Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-tab-title' => 'background-color: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'title_color',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-accordion-icon, {{WRAPPER}} .elementor-accordion-title' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-accordion-icon svg' => 'fill: {{VALUE}};',
-				],
-				'global' => [
+				),
+				'global' => array(
 					'default' => Global_Colors::COLOR_PRIMARY,
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'tab_active_color',
-			[
+			array(
 				'label' => esc_html__( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-active .elementor-accordion-icon, {{WRAPPER}} .elementor-active .elementor-accordion-title' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-active .elementor-accordion-icon svg' => 'fill: {{VALUE}};',
-				],
-				'global' => [
+				),
+				'global' => array(
 					'default' => Global_Colors::COLOR_ACCENT,
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			[
+			array(
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-accordion-title',
-				'global' => [
+				'global' => array(
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Stroke::get_type(),
-			[
+			array(
 				'name' => 'text_stroke',
 				'selector' => '{{WRAPPER}} .elementor-accordion-title',
-			]
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			[
+			array(
 				'name' => 'title_shadow',
 				'selector' => '{{WRAPPER}} .elementor-accordion-title',
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'title_padding',
-			[
+			array(
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'selectors' => [
+				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-tab-title' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_toggle_style_icon',
-			[
+			array(
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => [
+				'condition' => array(
 					'selected_icon[value]!' => '',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'icon_align',
-			[
+			array(
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
+				'options' => array(
+					'left' => array(
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
-					],
-					'right' => [
+					),
+					'right' => array(
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
-					],
-				],
+					),
+				),
 				'default' => is_rtl() ? 'right' : 'left',
 				'toggle' => false,
-			]
+			)
 		);
 
 		$this->add_control(
 			'icon_color',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-tab-title .elementor-accordion-icon i:before' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-tab-title .elementor-accordion-icon svg' => 'fill: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'icon_active_color',
-			[
+			array(
 				'label' => esc_html__( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-tab-title.elementor-active .elementor-accordion-icon i:before' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-tab-title.elementor-active .elementor-accordion-icon svg' => 'fill: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_responsive_control(
 			'icon_space',
-			[
+			array(
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+				'range' => array(
+					'px' => array(
 						'max' => 100,
-					],
-					'em' => [
+					),
+					'em' => array(
 						'max' => 1,
-					],
-					'rem' => [
+					),
+					'rem' => array(
 						'max' => 1,
-					],
-				],
-				'selectors' => [
+					),
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-accordion-icon.elementor-accordion-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-accordion-icon.elementor-accordion-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_toggle_style_content',
-			[
+			array(
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->add_control(
 			'content_background_color',
-			[
+			array(
 				'label' => esc_html__( 'Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-tab-content' => 'background-color: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'content_color',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-tab-content' => 'color: {{VALUE}};',
-				],
-				'global' => [
+				),
+				'global' => array(
 					'default' => Global_Colors::COLOR_TEXT,
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			[
+			array(
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
-				'global' => [
+				'global' => array(
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			[
+			array(
 				'name' => 'content_shadow',
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'content_padding',
-			[
+			array(
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'selectors' => [
+				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-tab-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
@@ -584,22 +584,22 @@ class Widget_Accordion extends Widget_Base {
 
 				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
 
-				$this->add_render_attribute( $tab_title_setting_key, [
+				$this->add_render_attribute( $tab_title_setting_key, array(
 					'id' => 'elementor-tab-title-' . $id_int . $tab_count,
-					'class' => [ 'elementor-tab-title' ],
+					'class' => array( 'elementor-tab-title' ),
 					'data-tab' => $tab_count,
 					'role' => 'button',
 					'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'aria-expanded' => 'false',
-				] );
+				) );
 
-				$this->add_render_attribute( $tab_content_setting_key, [
+				$this->add_render_attribute( $tab_content_setting_key, array(
 					'id' => 'elementor-tab-content-' . $id_int . $tab_count,
-					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
+					'class' => array( 'elementor-tab-content', 'elementor-clearfix' ),
 					'data-tab' => $tab_count,
 					'role' => 'region',
 					'aria-labelledby' => 'elementor-tab-title-' . $id_int . $tab_count,
-				] );
+				) );
 
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
@@ -628,21 +628,21 @@ class Widget_Accordion extends Widget_Base {
 			<?php endforeach; ?>
 			<?php
 			if ( isset( $settings['faq_schema'] ) && 'yes' === $settings['faq_schema'] ) {
-				$json = [
+				$json = array(
 					'@context' => 'https://schema.org',
 					'@type' => 'FAQPage',
-					'mainEntity' => [],
-				];
+					'mainEntity' => array(),
+				);
 
 				foreach ( $settings['tabs'] as $index => $item ) {
-					$json['mainEntity'][] = [
+					$json['mainEntity'][] = array(
 						'@type' => 'Question',
 						'name' => wp_strip_all_tags( $item['tab_title'] ),
-						'acceptedAnswer' => [
+						'acceptedAnswer' => array(
 							'@type' => 'Answer',
 							'text' => $this->parse_text_editor( $item['tab_content'] ),
-						],
-					];
+						),
+					);
 				}
 				?>
 				<script type="application/ld+json"><?php echo wp_json_encode( $json ); ?></script>

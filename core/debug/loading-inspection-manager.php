@@ -19,7 +19,7 @@ class Loading_Inspection_Manager {
 	}
 
 	/** @var Inspection_Base[] */
-	private $inspections = [];
+	private $inspections = array();
 
 	public function register_inspections() {
 		$this->inspections['theme-missing'] = new Theme_Missing();
@@ -39,19 +39,19 @@ class Loading_Inspection_Manager {
 	}
 
 	public function run_inspections() {
-		$debug_data = [
+		$debug_data = array(
 			'message' => esc_html__( "We’re sorry, but something went wrong. Click on 'Learn more' and follow each of the steps to quickly solve it.", 'elementor' ),
 			'header' => esc_html__( 'The preview could not be loaded', 'elementor' ),
 			'doc_url' => 'https://go.elementor.com/preview-not-loaded/',
-		];
+		);
 		foreach ( $this->inspections as $inspection ) {
 			if ( ! $inspection->run() ) {
-				$debug_data = [
+				$debug_data = array(
 					'message' => $inspection->get_message(),
 					'header' => $inspection->get_header_message(),
 					'doc_url' => $inspection->get_help_doc_url(),
 					'error' => true,
-				];
+				);
 				break;
 			}
 		}

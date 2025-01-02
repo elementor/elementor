@@ -73,7 +73,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *
 	 * @return string
 	 */
-	public function get_name() : string {
+	public function get_name(): string {
 		return 'e-checklist';
 	}
 
@@ -82,7 +82,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *
 	 * @return bool
 	 */
-	public function is_experiment_active() : bool {
+	public function is_experiment_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ID );
 	}
 
@@ -101,9 +101,9 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *      }
 	 *  }
 	 */
-	public function get_user_progress_from_db() : array {
+	public function get_user_progress_from_db(): array {
 		$db_progress = json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true );
-		$db_progress = is_array( $db_progress ) ? $db_progress : [];
+		$db_progress = is_array( $db_progress ) ? $db_progress : array();
 
 		$progress = array_merge( $this->get_default_user_progress(), $db_progress );
 
@@ -123,7 +123,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *      @type bool $is_completed
 	 *  }
 	 */
-	public function get_step_progress( $step_id ) : ?array {
+	public function get_step_progress( $step_id ): ?array {
 		return $this->user_progress['steps'][ $step_id ] ?? null;
 	}
 
@@ -135,17 +135,17 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 *
 	 * @return void
 	 */
-	public function set_step_progress( $step_id, $step_progress ) : void {
+	public function set_step_progress( $step_id, $step_progress ): void {
 		$this->user_progress['steps'][ $step_id ] = $step_progress;
 		$this->update_user_progress_in_db();
 	}
 
-	public function update_user_progress( $new_data ) : void {
-		$allowed_properties = [
+	public function update_user_progress( $new_data ): void {
+		$allowed_properties = array(
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
 			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
 			self::IS_POPUP_MINIMIZED_KEY => $new_data[ self::IS_POPUP_MINIMIZED_KEY ] ?? null,
-		];
+		);
 
 		foreach ( $allowed_properties as $key => $value ) {
 			if ( null !== $value ) {
@@ -163,32 +163,32 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	/**
 	 * @return Steps_Manager
 	 */
-	public function get_steps_manager() : Steps_Manager {
+	public function get_steps_manager(): Steps_Manager {
 		return $this->steps_manager;
 	}
 
 	/**
 	 * @return Wordpress_Adapter
 	 */
-	public function get_wordpress_adapter() : Wordpress_Adapter {
+	public function get_wordpress_adapter(): Wordpress_Adapter {
 		return $this->wordpress_adapter;
 	}
 
 	/**
 	 * @return Elementor_Adapter
 	 */
-	public function get_elementor_adapter() : Elementor_Adapter {
+	public function get_elementor_adapter(): Elementor_Adapter {
 		return $this->elementor_adapter;
 	}
 
-	public function enqueue_editor_scripts() : void {
+	public function enqueue_editor_scripts(): void {
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 			wp_enqueue_script(
 				$this->get_name(),
 				ELEMENTOR_ASSETS_URL . 'js/checklist' . $min_suffix . '.js',
-				[
+				array(
 					'react',
 					'react-dom',
 					'elementor-common',
@@ -196,7 +196,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 					'elementor-v2-icons',
 					'elementor-v2-editor-app-bar',
 					'elementor-web-cli',
-				],
+				),
 				ELEMENTOR_VERSION,
 				true
 			);
@@ -205,7 +205,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		} );
 	}
 
-	public function is_preference_switch_on() : bool {
+	public function is_preference_switch_on(): bool {
 		if ( $this->should_switch_preferences_off() ) {
 			return false;
 		}
@@ -215,40 +215,40 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		return 'yes' === $user_preferences || $this->wordpress_adapter->is_new_installation();
 	}
 
-	public function should_switch_preferences_off() : bool {
+	public function should_switch_preferences_off(): bool {
 		return ! $this->elementor_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 	}
 
-	private function register_experiment() : void {
-		Plugin::$instance->experiments->add_feature( [
+	private function register_experiment(): void {
+		Plugin::$instance->experiments->add_feature( array(
 			'name' => self::EXPERIMENT_ID,
 			'title' => esc_html__( 'Launchpad Checklist', 'elementor' ),
 			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
 			'release_status' => Manager::RELEASE_STATUS_ALPHA,
 			'hidden' => true,
-			'new_site' => [
+			'new_site' => array(
 				'default_active' => true,
 				'minimum_installation_version' => '3.25.0',
-			],
-		] );
+			),
+		) );
 	}
 
-	private function init_user_progress() : void {
+	private function init_user_progress(): void {
 		$default_settings = $this->get_default_user_progress();
 
 		$this->wordpress_adapter->add_option( self::DB_OPTION_KEY, wp_json_encode( $default_settings ) );
 	}
 
-	private function get_default_user_progress() : array {
-		return [
+	private function get_default_user_progress(): array {
+		return array(
 			self::LAST_OPENED_TIMESTAMP => null,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			self::IS_POPUP_MINIMIZED_KEY => false,
-			'steps' => [],
-		];
+			'steps' => array(),
+		);
 	}
 
-	private function update_user_progress_in_db() : void {
+	private function update_user_progress_in_db(): void {
 		$this->wordpress_adapter->update_option( self::DB_OPTION_KEY, wp_json_encode( $this->user_progress ) );
 	}
 
@@ -270,7 +270,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		}, 11 );
 	}
 
-	public static function should_display_checklist_toggle_control() : bool {
+	public static function should_display_checklist_toggle_control(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ID ) &&
 			Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) &&
 			current_user_can( 'manage_options' );

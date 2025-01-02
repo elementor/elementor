@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Wp_Cli extends \WP_CLI_Command {
 
-	const AVAILABLE_SETTINGS = [ 'include', 'overrideConditions', 'selectedCustomPostTypes', 'plugins' ];
+	const AVAILABLE_SETTINGS = array( 'include', 'overrideConditions', 'selectedCustomPostTypes', 'plugins' );
 
 	/**
 	 * Export a Kit
@@ -40,7 +40,7 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		\WP_CLI::line( 'Kit export started.' );
 
-		$export_settings = [];
+		$export_settings = array();
 		foreach ( $assoc_args as $key => $value ) {
 			if ( ! in_array( $key, static::AVAILABLE_SETTINGS, true ) ) {
 				continue;
@@ -108,13 +108,13 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		\WP_CLI::line( 'Kit import started' );
 
-		$assoc_args = wp_parse_args( $assoc_args, [
+		$assoc_args = wp_parse_args( $assoc_args, array(
 			'sourceType' => 'local',
-		] );
+		) );
 
 		$url = null;
 		$file_path = $args[0];
-		$import_settings = [];
+		$import_settings = array();
 		$import_settings['referrer'] = Module::REFERRER_LOCAL;
 
 		switch ( $assoc_args['sourceType'] ) {
@@ -187,11 +187,11 @@ class Wp_Cli extends \WP_CLI_Command {
 
 			\WP_CLI::success( 'Kit imported successfully' );
 		} catch ( \Error $error ) {
-			Plugin::$instance->logger->get_logger()->error( $error->getMessage(), [
-				'meta' => [
+			Plugin::$instance->logger->get_logger()->error( $error->getMessage(), array(
+				'meta' => array(
 					'trace' => $error->getTraceAsString(),
-				],
-			] );
+				),
+			) );
 
 			if ( $url ) {
 				Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $zip_path ) );

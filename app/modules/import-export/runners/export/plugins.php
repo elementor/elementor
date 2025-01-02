@@ -4,7 +4,7 @@ namespace Elementor\App\Modules\ImportExport\Runners\Export;
 
 class Plugins extends Export_Runner_Base {
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'plugins';
 	}
 
@@ -19,11 +19,11 @@ class Plugins extends Export_Runner_Base {
 	public function export( array $data ) {
 		$manifest_data['plugins'] = $data['selected_plugins'];
 
-		return [
-			'manifest' => [
+		return array(
+			'manifest' => array(
 				$manifest_data,
-			],
-			'files' => [],
-		];
+			),
+			'files' => array(),
+		);
 	}
 }

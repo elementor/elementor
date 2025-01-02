@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Manager {
 
-	private $files = [];
+	private $files = array();
 
 	/**
 	 * Files manager constructor.
@@ -182,9 +182,9 @@ class Manager {
 	 * @access private
 	 */
 	private function register_actions() {
-		add_action( 'deleted_post', [ $this, 'on_delete_post' ] );
+		add_action( 'deleted_post', array( $this, 'on_delete_post' ) );
 
-		add_filter( 'wxr_export_skip_postmeta', [ $this, 'on_export_post_meta' ], 10, 2 );
+		add_filter( 'wxr_export_skip_postmeta', array( $this, 'on_export_post_meta' ), 10, 2 );
 
 		add_action( 'update_option_home', function () {
 			$this->reset_assets_data();
@@ -220,18 +220,18 @@ class Manager {
 		$processed_posts = 0;
 
 		while ( true ) {
-			$args = [
+			$args = array(
 				'post_type' => get_post_types(),
 				'posts_per_page' => $batch_size,
-				'meta_query' => [
-					[
+				'meta_query' => array(
+					array(
 						'key' => Document_Base::BUILT_WITH_ELEMENTOR_META_KEY,
 						'compare' => 'EXISTS',
-					],
-				],
+					),
+				),
 				'offset' => $processed_posts,
 				'fields' => 'ids',
-			];
+			);
 
 			$query = new \WP_Query( $args );
 

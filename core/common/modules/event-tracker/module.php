@@ -30,9 +30,9 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	protected function get_init_settings() {
-		return [
+		return array(
 			'isUserDataShared' => Tracker::is_allow_track(),
-		];
+		);
 	}
 
 	public function __construct() {

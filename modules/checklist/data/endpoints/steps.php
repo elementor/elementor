@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Steps extends Endpoint_Base {
 
-	public function get_name() : string {
+	public function get_name(): string {
 		return 'steps';
 	}
 
-	public function get_format() : string {
+	public function get_format(): string {
 		return 'checklist';
 	}
 
@@ -29,35 +29,35 @@ class Steps extends Endpoint_Base {
 		$step = $checklist_module->get_steps_manager()->get_step_by_id( $id );
 		$step->update_step( $request->get_json_params() );
 
-		return [
+		return array(
 			'data' => 'success',
-		];
+		);
 	}
 
 	private function get_checklist_data(): array {
 		$checklist_module = Checklist_Module::instance();
 		$steps_data = $checklist_module->get_steps_manager()->get_steps_for_frontend();
 
-		return [
+		return array(
 			'data' => $steps_data,
-		];
+		);
 	}
 
 	protected function register() {
 		parent::register();
 
 		$this->register_item_route();
-		$this->register_item_route( \WP_REST_Server::EDITABLE, [
+		$this->register_item_route( \WP_REST_Server::EDITABLE, array(
 			'id_arg_name' => 'id',
 			'id_arg_type_regex' => '[\w\-\_]+',
-			'id' => [
+			'id' => array(
 				'type' => 'string',
 				'description' => 'The step id.',
 				'required' => true,
 				'validate_callback' => function ( $step_id ) {
 					return in_array( $step_id, Steps_Manager::get_step_ids() );
 				},
-			],
-		] );
+			),
+		) );
 	}
 }

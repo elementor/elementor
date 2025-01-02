@@ -13,13 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 
-	abstract protected function get_promotion_title():string;
+	abstract protected function get_promotion_title(): string;
 
-	abstract protected function get_cta_url():string;
+	abstract protected function get_cta_url(): string;
 
-	abstract protected function get_content_lines():array;
+	abstract protected function get_content_lines(): array;
 
-	abstract protected function get_video_url():string;
+	abstract protected function get_video_url(): string;
 
 	public function is_visible() {
 		return true;
@@ -41,7 +41,7 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 	 * Should the promotion have a side note.
 	 * @return string
 	 */
-	protected function get_side_note():string {
+	protected function get_side_note(): string {
 		return '';
 	}
 
@@ -97,13 +97,13 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 	 * @return array
 	 */
 	private function build_promotion_data_array(): array {
-		return [
+		return array(
 			'promotion_title' => $this->get_promotion_title(),
 			'cta_url' => $this->get_cta_url(),
 			'cta_text' => $this->get_cta_text(),
 			'video_url' => $this->get_video_url(),
 			'lines' => $this->get_lines(),
 			'side_note' => $this->get_side_note(),
-		];
+		);
 	}
 }

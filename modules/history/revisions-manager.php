@@ -35,7 +35,7 @@ class Revisions_Manager {
 	 *
 	 * @var array
 	 */
-	private static $authors = [];
+	private static $authors = array();
 
 	/**
 	 * History revisions manager constructor.
@@ -108,19 +108,19 @@ class Revisions_Manager {
 	 *
 	 * @return array
 	 */
-	public static function get_revisions( $post_id = 0, $query_args = [], $parse_result = true ) {
+	public static function get_revisions( $post_id = 0, $query_args = array(), $parse_result = true ) {
 		$post = get_post( $post_id );
 
 		if ( ! $post || empty( $post->ID ) ) {
-			return [];
+			return array();
 		}
 
-		$revisions = [];
+		$revisions = array();
 
-		$default_query_args = [
+		$default_query_args = array(
 			'posts_per_page' => self::MAX_REVISIONS_TO_DISPLAY,
 			'meta_key' => '_elementor_data',
-		];
+		);
 
 		$query_args = array_merge( $default_query_args, $query_args );
 
@@ -164,13 +164,13 @@ class Revisions_Manager {
 			}
 
 			if ( ! isset( self::$authors[ $revision->post_author ] ) ) {
-				self::$authors[ $revision->post_author ] = [
+				self::$authors[ $revision->post_author ] = array(
 					'avatar' => get_avatar( $revision->post_author, 22 ),
 					'display_name' => get_the_author_meta( 'display_name', $revision->post_author ),
-				];
+				);
 			}
 
-			$revisions[] = [
+			$revisions[] = array(
 				'id' => $revision->ID,
 				'author' => self::$authors[ $revision->post_author ]['display_name'],
 				'timestamp' => strtotime( $revision->post_modified ),
@@ -183,7 +183,7 @@ class Revisions_Manager {
 				'type' => $type,
 				'typeLabel' => $type_label,
 				'gravatar' => self::$authors[ $revision->post_author ]['avatar'],
-			];
+			);
 		}
 
 		return $revisions;
@@ -256,10 +256,10 @@ class Revisions_Manager {
 
 		$revision = Plugin::$instance->documents->get_with_permissions( $data['id'] );
 
-		return [
+		return array(
 			'settings' => $revision->get_settings(),
 			'elements' => $revision->get_elements_data(),
-		];
+		);
 	}
 
 	/**
@@ -287,32 +287,32 @@ class Revisions_Manager {
 		$post_id = $document->get_main_id();
 
 		$latest_revisions = self::get_revisions(
-			$post_id, [
+			$post_id, array(
 				'posts_per_page' => 1,
-			]
+			)
 		);
 
 		$all_revision_ids = self::get_revisions(
-			$post_id, [
+			$post_id, array(
 				'fields' => 'ids',
-			], false
+			), false
 		);
 
 		// Send revisions data only if has revisions.
 		if ( ! empty( $latest_revisions ) ) {
 			$current_revision_id = self::current_revision_id( $post_id );
 
-			$return_data = array_replace_recursive( $return_data, [
-				'config' => [
-					'document' => [
-						'revisions' => [
+			$return_data = array_replace_recursive( $return_data, array(
+				'config' => array(
+					'document' => array(
+						'revisions' => array(
 							'current_id' => $current_revision_id,
-						],
-					],
-				],
+						),
+					),
+				),
 				'latest_revisions' => $latest_revisions,
 				'revisions_ids' => $all_revision_ids,
-			] );
+			) );
 		}
 
 		return $return_data;
@@ -330,10 +330,10 @@ class Revisions_Manager {
 	}
 
 	public static function document_config( $settings, $post_id ) {
-		$settings['revisions'] = [
+		$settings['revisions'] = array(
 			'enabled' => ( $post_id && wp_revisions_enabled( get_post( $post_id ) ) ),
 			'current_id' => self::current_revision_id( $post_id ),
-		];
+		);
 
 		return $settings;
 	}
@@ -353,7 +353,7 @@ class Revisions_Manager {
 	public static function editor_settings() {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
 
-		return [];
+		return array();
 	}
 
 	/**
@@ -371,8 +371,8 @@ class Revisions_Manager {
 	 * @static
 	 */
 	public static function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'get_revisions', [ __CLASS__, 'ajax_get_revisions' ] );
-		$ajax->register_ajax_action( 'get_revision_data', [ __CLASS__, 'ajax_get_revision_data' ] );
+		$ajax->register_ajax_action( 'get_revisions', array( __CLASS__, 'ajax_get_revisions' ) );
+		$ajax->register_ajax_action( 'get_revision_data', array( __CLASS__, 'ajax_get_revision_data' ) );
 	}
 
 	/**
@@ -381,20 +381,20 @@ class Revisions_Manager {
 	 * @static
 	 */
 	private static function register_actions() {
-		add_action( 'wp_restore_post_revision', [ __CLASS__, 'restore_revision' ], 10, 2 );
-		add_action( 'init', [ __CLASS__, 'add_revision_support_for_all_post_types' ], 9999 );
-		add_filter( 'elementor/document/config', [ __CLASS__, 'document_config' ], 10, 2 );
-		add_action( 'elementor/db/before_save', [ __CLASS__, 'db_before_save' ], 10, 2 );
-		add_action( '_wp_put_post_revision', [ __CLASS__, 'save_revision' ] );
-		add_action( 'wp_creating_autosave', [ __CLASS__, 'update_autosave' ] );
-		add_action( 'elementor/ajax/register_actions', [ __CLASS__, 'register_ajax_actions' ] );
+		add_action( 'wp_restore_post_revision', array( __CLASS__, 'restore_revision' ), 10, 2 );
+		add_action( 'init', array( __CLASS__, 'add_revision_support_for_all_post_types' ), 9999 );
+		add_filter( 'elementor/document/config', array( __CLASS__, 'document_config' ), 10, 2 );
+		add_action( 'elementor/db/before_save', array( __CLASS__, 'db_before_save' ), 10, 2 );
+		add_action( '_wp_put_post_revision', array( __CLASS__, 'save_revision' ) );
+		add_action( 'wp_creating_autosave', array( __CLASS__, 'update_autosave' ) );
+		add_action( 'elementor/ajax/register_actions', array( __CLASS__, 'register_ajax_actions' ) );
 
 		// Hack to avoid delete the auto-save revision in WP editor.
-		add_filter( 'edit_post_content', [ __CLASS__, 'avoid_delete_auto_save' ], 10, 2 );
-		add_action( 'edit_form_after_title', [ __CLASS__, 'remove_temp_post_content' ] );
+		add_filter( 'edit_post_content', array( __CLASS__, 'avoid_delete_auto_save' ), 10, 2 );
+		add_action( 'edit_form_after_title', array( __CLASS__, 'remove_temp_post_content' ) );
 
 		if ( wp_doing_ajax() ) {
-			add_filter( 'elementor/documents/ajax_save/return_data', [ __CLASS__, 'on_ajax_save_builder_data' ], 10, 2 );
+			add_filter( 'elementor/documents/ajax_save/return_data', array( __CLASS__, 'on_ajax_save_builder_data' ), 10, 2 );
 		}
 	}
 

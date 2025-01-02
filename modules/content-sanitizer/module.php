@@ -16,14 +16,14 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_filter( 'elementor/document/save/data', [ $this, 'sanitize_content' ], 10, 2 );
+		add_filter( 'elementor/document/save/data', array( $this, 'sanitize_content' ), 10, 2 );
 	}
 
 	public function get_name() {
 		return 'content-sanitizer';
 	}
 
-	public function sanitize_content( $data, $document ) : array {
+	public function sanitize_content( $data, $document ): array {
 		if ( current_user_can( 'manage_options' ) || empty( $data['elements'] ) ) {
 			return $data;
 		}

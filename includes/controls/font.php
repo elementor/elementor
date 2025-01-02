@@ -41,10 +41,10 @@ class Control_Font extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'groups' => Fonts::get_font_groups(),
 			'options' => Fonts::get_fonts(),
-		];
+		);
 	}
 
 	/**

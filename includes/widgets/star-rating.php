@@ -70,7 +70,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'star', 'rating', 'rate', 'review' ];
+		return array( 'star', 'rating', 'rate', 'review' );
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -88,7 +88,7 @@ class Widget_Star_Rating extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-star-rating' ];
+		return array( 'widget-star-rating' );
 	}
 
 	/**
@@ -118,9 +118,9 @@ class Widget_Star_Rating extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_rating',
-			[
+			array(
 				'label' => esc_html__( 'Star Rating', 'elementor' ),
-			]
+			)
 		);
 
 		if ( Plugin::$instance->widgets_manager->get_widget_types( 'rating' ) ) {
@@ -136,263 +136,263 @@ class Widget_Star_Rating extends Widget_Base {
 
 		$this->add_control(
 			'rating_scale',
-			[
+			array(
 				'label' => esc_html__( 'Rating Scale', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => [
+				'options' => array(
 					'5' => '0-5',
 					'10' => '0-10',
-				],
+				),
 				'default' => '5',
-			]
+			)
 		);
 
 		$this->add_control(
 			'rating',
-			[
+			array(
 				'label' => esc_html__( 'Rating', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
 				'max' => 10,
 				'step' => 0.1,
 				'default' => 5,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'star_style',
-			[
+			array(
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => [
+				'options' => array(
 					'star_fontawesome' => 'Font Awesome',
 					'star_unicode' => 'Unicode',
-				],
+				),
 				'default' => 'star_fontawesome',
 				'render_type' => 'template',
 				'prefix_class' => 'elementor--star-style-',
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_control(
 			'unmarked_star_style',
-			[
+			array(
 				'label' => esc_html__( 'Unmarked Style', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'solid' => [
+				'options' => array(
+					'solid' => array(
 						'title' => esc_html__( 'Solid', 'elementor' ),
 						'icon' => 'eicon-star',
-					],
-					'outline' => [
+					),
+					'outline' => array(
 						'title' => esc_html__( 'Outline', 'elementor' ),
 						'icon' => 'eicon-star-o',
-					],
-				],
+					),
+				),
 				'default' => 'solid',
-			]
+			)
 		);
 
 		$this->add_control(
 			'title',
-			[
+			array(
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'separator' => 'before',
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_responsive_control(
 			'align',
-			[
+			array(
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
+				'options' => array(
+					'left' => array(
 						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
-					],
-					'center' => [
+					),
+					'center' => array(
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
-					],
-					'right' => [
+					),
+					'right' => array(
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
-					],
-					'justify' => [
+					),
+					'justify' => array(
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
-					],
-				],
+					),
+				),
 				'prefix_class' => 'elementor-star-rating%s--align-',
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => 'text-align: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_title_style',
-			[
+			array(
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => [
+				'condition' => array(
 					'title!' => '',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'title_color',
-			[
+			array(
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'global' => [
+				'global' => array(
 					'default' => Global_Colors::COLOR_TEXT,
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-star-rating__title' => 'color: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			[
+			array(
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-star-rating__title',
-				'global' => [
+				'global' => array(
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			[
+			array(
 				'name' => 'title_shadow',
 				'selector' => '{{WRAPPER}} .elementor-star-rating__title',
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'title_gap',
-			[
+			array(
 				'label' => esc_html__( 'Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+				'range' => array(
+					'px' => array(
 						'max' => 50,
-					],
-					'em' => [
+					),
+					'em' => array(
 						'min' => 0,
 						'max' => 5,
-					],
-					'rem' => [
+					),
+					'rem' => array(
 						'min' => 0,
 						'max' => 5,
-					],
-				],
-				'selectors' => [
+					),
+				),
+				'selectors' => array(
 					'body:not(.rtl) {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__title' => 'margin-right: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__title' => 'margin-left: {{SIZE}}{{UNIT}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_stars_style',
-			[
+			array(
 				'label' => esc_html__( 'Stars', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'icon_size',
-			[
+			array(
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+				'range' => array(
+					'px' => array(
 						'max' => 100,
-					],
-					'em' => [
+					),
+					'em' => array(
 						'min' => 0,
 						'max' => 10,
-					],
-					'rem' => [
+					),
+					'rem' => array(
 						'min' => 0,
 						'max' => 10,
-					],
-				],
-				'selectors' => [
+					),
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-star-rating' => 'font-size: {{SIZE}}{{UNIT}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_responsive_control(
 			'icon_space',
-			[
+			array(
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+				'range' => array(
+					'px' => array(
 						'max' => 50,
-					],
-					'em' => [
+					),
+					'em' => array(
 						'min' => 0,
 						'max' => 5,
-					],
-					'rem' => [
+					),
+					'rem' => array(
 						'min' => 0,
 						'max' => 5,
-					],
-				],
-				'selectors' => [
+					),
+				),
+				'selectors' => array(
 					'body:not(.rtl) {{WRAPPER}} .elementor-star-rating i:not(:last-of-type)' => 'margin-right: {{SIZE}}{{UNIT}}',
 					'body.rtl {{WRAPPER}} .elementor-star-rating i:not(:last-of-type)' => 'margin-left: {{SIZE}}{{UNIT}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'stars_color',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-star-rating i:before' => 'color: {{VALUE}}',
-				],
+				),
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_control(
 			'stars_unmarked_color',
-			[
+			array(
 				'label' => esc_html__( 'Unmarked Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-star-rating i' => 'color: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
@@ -407,7 +407,7 @@ class Widget_Star_Rating extends Widget_Base {
 		$rating_scale = (int) $settings['rating_scale'];
 		$rating = (float) $settings['rating'] > $rating_scale ? $rating_scale : $settings['rating'];
 
-		return [ $rating, $rating_scale ];
+		return array( $rating, $rating_scale );
 	}
 
 	/**
@@ -461,13 +461,13 @@ class Widget_Star_Rating extends Widget_Base {
 			}
 		}
 
-		$this->add_render_attribute( 'icon_wrapper', [
+		$this->add_render_attribute( 'icon_wrapper', array(
 			'class' => 'elementor-star-rating',
 			'title' => $textual_rating,
 			'itemtype' => 'http://schema.org/Rating',
 			'itemscope' => '',
 			'itemprop' => 'reviewRating',
-		] );
+		) );
 
 		$schema_rating = '<span itemprop="ratingValue" class="elementor-screen-only">' . $textual_rating . '</span>';
 		$stars_element = '<div ' . $this->get_render_attribute_string( 'icon_wrapper' ) . '>' . $this->render_stars( $icon ) . ' ' . $schema_rating . '</div>';

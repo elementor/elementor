@@ -21,9 +21,9 @@ class Manager {
 
 	const DYNAMIC_SETTING_KEY = '__dynamic__';
 
-	private $tags_groups = [];
+	private $tags_groups = array();
 
-	private $tags_info = [];
+	private $tags_info = array();
 
 	private $parsing_mode = self::MODE_RENDER;
 
@@ -61,7 +61,7 @@ class Manager {
 			$value = $this->parse_tag_text( $text, $settings, $parse_callback );
 		} else {
 
-			$value = preg_replace_callback( '/\[' . self::TAG_LABEL . '.+?(?=\])\]/', function( $tag_text_match ) use ( $settings, $parse_callback ) {
+			$value = preg_replace_callback( '/\[' . self::TAG_LABEL . '.+?(?=\])\]/', function ( $tag_text_match ) use ( $settings, $parse_callback ) {
 				return $this->parse_tag_text( $tag_text_match[0], $settings, $parse_callback );
 			}, $text );
 		}
@@ -91,7 +91,7 @@ class Manager {
 
 		if ( ! $tag_data ) {
 			if ( ! empty( $settings['returnType'] ) && 'object' === $settings['returnType'] ) {
-				return [];
+				return array();
 			}
 
 			return '';
@@ -117,11 +117,11 @@ class Manager {
 			return null;
 		}
 
-		return [
+		return array(
 			'id' => $tag_id_match[1],
 			'name' => $tag_name_match[1],
 			'settings' => json_decode( urldecode( $tag_settings_match[1] ), true ),
-		];
+		);
 	}
 
 	/**
@@ -149,7 +149,7 @@ class Manager {
 	 *
 	 * @return string
 	 */
-	public function tag_data_to_tag_text( $tag_id, $tag_name, array $settings = [] ) {
+	public function tag_data_to_tag_text( $tag_id, $tag_name, array $settings = array() ) {
 		$tag = $this->create_tag( $tag_id, $tag_name, $settings );
 
 		if ( ! $tag ) {
@@ -168,7 +168,7 @@ class Manager {
 	 *
 	 * @return Tag|null
 	 */
-	public function create_tag( $tag_id, $tag_name, array $settings = [] ) {
+	public function create_tag( $tag_id, $tag_name, array $settings = array() ) {
 		$tag_info = $this->get_tag_info( $tag_name );
 
 		if ( ! $tag_info ) {
@@ -177,10 +177,10 @@ class Manager {
 
 		$tag_class = $tag_info['class'];
 
-		return new $tag_class( [
+		return new $tag_class( array(
 			'settings' => $settings,
 			'id' => $tag_id,
-		] );
+		) );
 	}
 
 	/**
@@ -193,7 +193,7 @@ class Manager {
 	 *
 	 * @return null|string
 	 */
-	public function get_tag_data_content( $tag_id, $tag_name, array $settings = [] ) {
+	public function get_tag_data_content( $tag_id, $tag_name, array $settings = array() ) {
 		if ( self::MODE_REMOVE === $this->parsing_mode ) {
 			return null;
 		}
@@ -243,7 +243,7 @@ class Manager {
 			 */
 			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
 				'elementor/dynamic_tags/register_tags',
-				[ $this ],
+				array( $this ),
 				'3.5.0',
 				'elementor/dynamic_tags/register'
 			);
@@ -296,10 +296,10 @@ class Manager {
 	 *
 	 */
 	public function register( Base_Tag $dynamic_tag_instance ) {
-		$this->tags_info[ $dynamic_tag_instance->get_name() ] = [
+		$this->tags_info[ $dynamic_tag_instance->get_name() ] = array(
 			'class' => get_class( $dynamic_tag_instance ),
 			'instance' => $dynamic_tag_instance,
-		];
+		);
 	}
 
 	/**
@@ -341,9 +341,9 @@ class Manager {
 	 * @param array $group_settings
 	 */
 	public function register_group( $group_name, array $group_settings ) {
-		$default_group_settings = [
+		$default_group_settings = array(
 			'title' => '',
-		];
+		);
 
 		$group_settings = array_merge( $default_group_settings, $group_settings );
 
@@ -371,7 +371,7 @@ class Manager {
 	 * @access public
 	 */
 	public function get_tags_config() {
-		$config = [];
+		$config = array();
 
 		foreach ( $this->get_tags() as $tag_name => $tag_info ) {
 			/** @var Tag $tag */
@@ -388,10 +388,10 @@ class Manager {
 	 * @access public
 	 */
 	public function get_config() {
-		return [
+		return array(
 			'tags' => $this->get_tags_config(),
 			'groups' => $this->tags_groups,
-		];
+		);
 	}
 
 	/**
@@ -421,7 +421,7 @@ class Manager {
 		 */
 		do_action( 'elementor/dynamic_tags/before_render' );
 
-		$tags_data = [];
+		$tags_data = array();
 
 		foreach ( $data['tags'] as $tag_key ) {
 			$tag_key_parts = explode( '-', $tag_key );
@@ -485,7 +485,7 @@ class Manager {
 	 * @access public
 	 */
 	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'render_tags', [ $this, 'ajax_render_tags' ] );
+		$ajax->register_ajax_action( 'render_tags', array( $this, 'ajax_render_tags' ) );
 	}
 
 	/**
@@ -493,7 +493,7 @@ class Manager {
 	 * @access private
 	 */
 	private function add_actions() {
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-		add_action( 'elementor/css-file/post/enqueue', [ $this, 'after_enqueue_post_css' ] );
+		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
+		add_action( 'elementor/css-file/post/enqueue', array( $this, 'after_enqueue_post_css' ) );
 	}
 }

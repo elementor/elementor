@@ -75,25 +75,25 @@ class Api {
 		if ( $force_update || false === $info_data ) {
 			$timeout = ( $force_update ) ? 25 : 8;
 
-			$body_request = [
+			$body_request = array(
 				// Which API version is used.
 				'api_version' => ELEMENTOR_VERSION,
 				// Which language to return.
 				'site_lang' => get_bloginfo( 'language' ),
-			];
+			);
 
 			$site_key = self::get_site_key();
 			if ( ! empty( $site_key ) ) {
 				$body_request['site_key'] = $site_key;
 			}
 
-			$response = wp_remote_get( self::$api_info_url, [
+			$response = wp_remote_get( self::$api_info_url, array(
 				'timeout' => $timeout,
 				'body' => $body_request,
-			] );
+			) );
 
 			if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
-				set_transient( $cache_key, [], 2 * HOUR_IN_SECONDS );
+				set_transient( $cache_key, array(), 2 * HOUR_IN_SECONDS );
 
 				return false;
 			}
@@ -101,7 +101,7 @@ class Api {
 			$info_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			if ( empty( $info_data ) || ! is_array( $info_data ) ) {
-				set_transient( $cache_key, [], 2 * HOUR_IN_SECONDS );
+				set_transient( $cache_key, array(), 2 * HOUR_IN_SECONDS );
 
 				return false;
 			}
@@ -182,7 +182,7 @@ class Api {
 		$data = self::get_info_data();
 
 		if ( ! isset( $data['pro_widgets'] ) ) {
-			$data['pro_widgets'] = [];
+			$data['pro_widgets'] = array();
 		}
 
 		return $data['pro_widgets'];
@@ -208,7 +208,7 @@ class Api {
 		$library_data = get_option( self::LIBRARY_OPTION_KEY );
 
 		if ( empty( $library_data ) ) {
-			return [];
+			return array();
 		}
 
 		return $library_data;
@@ -234,7 +234,7 @@ class Api {
 		$feed = get_option( self::FEED_OPTION_KEY );
 
 		if ( empty( $feed ) ) {
-			return [];
+			return array();
 		}
 
 		return $feed;
@@ -275,15 +275,15 @@ class Api {
 	 * @return array The response of the request.
 	 */
 	public static function send_feedback( $feedback_key, $feedback_text ) {
-		return wp_remote_post( self::$api_feedback_url, [
+		return wp_remote_post( self::$api_feedback_url, array(
 			'timeout' => 30,
-			'body' => [
+			'body' => array(
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 				'feedback_key' => $feedback_key,
 				'feedback' => $feedback_text,
-			],
-		] );
+			),
+		) );
 	}
 
 	/**
@@ -317,6 +317,6 @@ class Api {
 	 * @static
 	 */
 	public static function init() {
-		add_action( 'wp_ajax_elementor_reset_library', [ __CLASS__, 'ajax_reset_api_data' ] );
+		add_action( 'wp_ajax_elementor_reset_library', array( __CLASS__, 'ajax_reset_api_data' ) );
 	}
 }

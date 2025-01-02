@@ -38,7 +38,7 @@ class Force_Locale {
 
 		$this->original_locale = $original_locale ? $original_locale : determine_locale();
 
-		$this->filter = function() use ( $new_locale ) {
+		$this->filter = function () use ( $new_locale ) {
 			return $new_locale;
 		};
 	}

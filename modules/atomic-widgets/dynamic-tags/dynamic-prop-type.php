@@ -18,7 +18,7 @@ class Dynamic_Prop_Type extends Plain_Prop_Type {
 	 * using `Prop_Type::add_meta()`, e.g. `String_Prop_Type::make()->add_meta( Dynamic_Prop_Type::ignore() )`.
 	 */
 	public static function ignore(): array {
-		return [ static::META_KEY, false ];
+		return array( static::META_KEY, false );
 	}
 
 	public static function get_key(): string {
@@ -32,7 +32,7 @@ class Dynamic_Prop_Type extends Plain_Prop_Type {
 	}
 
 	public function get_categories() {
-		return $this->settings['categories'] ?? [];
+		return $this->settings['categories'] ?? array();
 	}
 
 	protected function validate_value( $value ): bool {

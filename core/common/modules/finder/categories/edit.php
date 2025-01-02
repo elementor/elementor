@@ -58,47 +58,47 @@ class Edit extends Base_Category {
 	 *
 	 * @return array
 	 */
-	public function get_category_items( array $options = [] ) {
-		$post_types = get_post_types( [
+	public function get_category_items( array $options = array() ) {
+		$post_types = get_post_types( array(
 			'exclude_from_search' => false,
-		] );
+		) );
 
 		$post_types[] = Source_Local::CPT;
 
-		$document_types = Plugin::$instance->documents->get_document_types( [
+		$document_types = Plugin::$instance->documents->get_document_types( array(
 			'is_editable' => true,
 			'show_in_finder' => true,
-		] );
+		) );
 
-		$recently_edited_query_args = [
+		$recently_edited_query_args = array(
 			'no_found_rows' => true,
 			'post_type' => $post_types,
-			'post_status' => [ 'publish', 'draft', 'private', 'pending', 'future' ],
+			'post_status' => array( 'publish', 'draft', 'private', 'pending', 'future' ),
 			'posts_per_page' => '10',
-			'meta_query' => [
-				[
+			'meta_query' => array(
+				array(
 					'key' => '_elementor_edit_mode',
 					'value' => 'builder',
-				],
-				[
+				),
+				array(
 					'relation' => 'or',
-					[
+					array(
 						'key' => Document::TYPE_META_KEY,
 						'compare' => 'NOT EXISTS',
-					],
-					[
+					),
+					array(
 						'key' => Document::TYPE_META_KEY,
 						'value' => array_keys( $document_types ),
-					],
-				],
-			],
+					),
+				),
+			),
 			'orderby' => 'modified',
 			's' => $options['filter'],
-		];
+		);
 
 		$recently_edited_query = new \WP_Query( $recently_edited_query_args );
 
-		$items = [];
+		$items = array();
 
 		/** @var \WP_Post $post */
 		foreach ( $recently_edited_query->posts as $post ) {
@@ -120,19 +120,19 @@ class Edit extends Base_Category {
 				$icon = 'post-title';
 			}
 
-			$items[] = [
+			$items[] = array(
 				'icon' => $icon,
 				'title' => esc_html( $post->post_title ),
 				'description' => $description,
 				'url' => $document->get_edit_url(),
-				'actions' => [
-					[
+				'actions' => array(
+					array(
 						'name' => 'view',
 						'url' => $document->get_permalink(),
 						'icon' => 'preview-medium',
-					],
-				],
-			];
+					),
+				),
+			);
 		}
 
 		return $items;

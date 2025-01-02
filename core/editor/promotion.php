@@ -27,13 +27,13 @@ class Promotion {
 	 */
 	private function get_action_button_content(): array {
 		$has_pro = Utils::has_pro();
-		return $has_pro ? [
+		return $has_pro ? array(
 			'text' => __( 'Connect & Activate', 'elementor' ),
 			'url' => admin_url( 'admin.php?page=elementor-license' ),
-		] : [
+		) : array(
 			'text' => __( 'Upgrade Now', 'elementor' ),
 			'url' => 'https://go.elementor.com/go-pro-%s',
-		];
+		);
 	}
 
 	/**
@@ -49,7 +49,7 @@ class Promotion {
 	 * @return array
 	 */
 	private function get_promotion_data(): array {
-		return [
+		return array(
 			/* translators: %s: Widget title. */
 			'title' => __( '%s Widget', 'elementor' ),
 			/* translators: %s: Widget title. */
@@ -58,6 +58,6 @@ class Promotion {
 				'elementor'
 			),
 			'action_button' => $this->get_action_button_content(),
-		];
+		);
 	}
 }

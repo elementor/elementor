@@ -37,7 +37,7 @@ class Module extends BaseModule {
 	/**
 	 * @var array
 	 */
-	protected $registered_apps = [];
+	protected $registered_apps = array();
 
 	/**
 	 * Apps Instances.
@@ -49,7 +49,7 @@ class Module extends BaseModule {
 	 *
 	 * @var Base_App[]
 	 */
-	protected $apps = [];
+	protected $apps = array();
 
 	/**
 	 * Registered apps categories.
@@ -61,7 +61,7 @@ class Module extends BaseModule {
 	 *
 	 * @var array
 	 */
-	protected $categories = [];
+	protected $categories = array();
 
 	protected $admin_page;
 
@@ -70,10 +70,10 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->registered_apps = [
+		$this->registered_apps = array(
 			'connect' => Connect::get_class_name(),
 			'library' => Library::get_class_name(),
-		];
+		);
 
 		// When using REST API the parent module is construct after the action 'elementor/init'
 		// so this part of code make sure to register the module "apps".
@@ -81,7 +81,7 @@ class Module extends BaseModule {
 			$this->init();
 		} else {
 			// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
-			add_action( 'elementor/init', [ $this, 'init' ], 11 );
+			add_action( 'elementor/init', array( $this, 'init' ), 11 );
 		}
 
 		add_filter( 'elementor/tracker/send_tracking_data_params', function ( $params ) {
@@ -192,68 +192,68 @@ class Module extends BaseModule {
 		$base_url = Utils::has_pro() ? 'https://my.elementor.com/upgrade-subscription' : 'https://elementor.com/pro';
 		$promotion_url = $base_url . '/?utm_source=' . $context . '&utm_medium=wp-dash&utm_campaign=gopro';
 
-		return [
-			static::ACCESS_TIER_FREE => [
+		return array(
+			static::ACCESS_TIER_FREE => array(
 				'label' => null,
 				'promotion_url' => null,
 				'color' => null,
-			],
-			static::ACCESS_TIER_ESSENTIAL => [
+			),
+			static::ACCESS_TIER_ESSENTIAL => array(
 				'label' => 'Pro',
 				'promotion_url' => $promotion_url,
 				'color' => '#92003B',
-			],
-			static::ACCESS_TIER_ESSENTIAL_OCT_2023 => [
+			),
+			static::ACCESS_TIER_ESSENTIAL_OCT_2023 => array(
 				'label' => 'Advanced', // Should be the same label as "Advanced".
 				'promotion_url' => $promotion_url,
 				'color' => '#92003B',
-			],
-			static::ACCESS_TIER_ADVANCED => [
+			),
+			static::ACCESS_TIER_ADVANCED => array(
 				'label' => 'Advanced',
 				'promotion_url' => $promotion_url,
 				'color' => '#92003B',
-			],
-			static::ACCESS_TIER_EXPERT => [
+			),
+			static::ACCESS_TIER_EXPERT => array(
 				'label' => 'Expert',
 				'promotion_url' => $promotion_url,
 				'color' => '#92003B',
-			],
-			static::ACCESS_TIER_AGENCY => [
+			),
+			static::ACCESS_TIER_AGENCY => array(
 				'label' => 'Agency',
 				'promotion_url' => $promotion_url,
 				'color' => '#92003B',
-			],
-		];
+			),
+		);
 	}
 
 	private function add_tracking_data( $params ) {
-		$users = [];
+		$users = array();
 
-		$users_query = new WP_User_Query( [
+		$users_query = new WP_User_Query( array(
 			'count_total' => false, // Disable SQL_CALC_FOUND_ROWS.
-			'meta_query' => [
+			'meta_query' => array(
 				'key' => Common_App::OPTION_CONNECT_COMMON_DATA_KEY,
 				'compare' => 'EXISTS',
-			],
-		] );
+			),
+		) );
 
 		foreach ( $users_query->get_results() as $user ) {
 			$connect_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY, $user->ID );
 
 			if ( $connect_common_data ) {
-				$users [] = [
+				$users [] = array(
 					'id' => $user->ID,
 					'email' => $connect_common_data['user']->email,
 					'roles' => implode( ', ', $user->roles ),
-				];
+				);
 			}
 		}
 
-		$params['usages'][ $this->get_name() ] = [
+		$params['usages'][ $this->get_name() ] = array(
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
 			'count' => count( $users ),
 			'users' => $users,
-		];
+		);
 
 		return $params;
 	}

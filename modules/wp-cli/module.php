@@ -51,8 +51,8 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'cli_init', [ $this, 'init_common' ] );
-		add_action( 'elementor/loggers/register', [ $this, 'register_cli_logger' ] );
+		add_action( 'cli_init', array( $this, 'init_common' ) );
+		add_action( 'elementor/loggers/register', array( $this, 'register_cli_logger' ) );
 
 		\WP_CLI::add_command( 'elementor', '\Elementor\Modules\WpCli\Command' );
 		\WP_CLI::add_command( 'elementor update', '\Elementor\Modules\WpCli\Update' );

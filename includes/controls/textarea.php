@@ -42,18 +42,18 @@ class Control_Textarea extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'label_block' => true,
 			'rows' => 5,
 			'placeholder' => '',
-			'ai' => [
+			'ai' => array(
 				'active' => true,
 				'type' => 'textarea',
-			],
-			'dynamic' => [
-				'categories' => [ TagsModule::TEXT_CATEGORY ],
-			],
-		];
+			),
+			'dynamic' => array(
+				'categories' => array( TagsModule::TEXT_CATEGORY ),
+			),
+		);
 	}
 
 	/**

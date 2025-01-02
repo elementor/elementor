@@ -42,43 +42,43 @@ class Tools extends Base_Category {
 	 *
 	 * @return array
 	 */
-	public function get_category_items( array $options = [] ) {
+	public function get_category_items( array $options = array() ) {
 		$tools_url = ElementorTools::get_url();
 
-		$items = [
-			'tools' => [
+		$items = array(
+			'tools' => array(
 				'title' => esc_html__( 'Tools', 'elementor' ),
 				'icon' => 'tools',
 				'url' => $tools_url,
-				'keywords' => [ 'tools', 'regenerate css', 'safe mode', 'debug bar', 'sync library', 'elementor' ],
-			],
-			'replace-url' => [
+				'keywords' => array( 'tools', 'regenerate css', 'safe mode', 'debug bar', 'sync library', 'elementor' ),
+			),
+			'replace-url' => array(
 				'title' => esc_html__( 'Replace URL', 'elementor' ),
 				'icon' => 'tools',
 				'url' => $tools_url . '#tab-replace_url',
-				'keywords' => [ 'tools', 'replace url', 'domain', 'elementor' ],
-			],
-			'maintenance-mode' => [
+				'keywords' => array( 'tools', 'replace url', 'domain', 'elementor' ),
+			),
+			'maintenance-mode' => array(
 				'title' => esc_html__( 'Maintenance Mode', 'elementor' ),
 				'icon' => 'tools',
 				'url' => $tools_url . '#tab-maintenance_mode',
-				'keywords' => [ 'tools', 'maintenance', 'coming soon', 'elementor' ],
-			],
-			'import-export' => [
+				'keywords' => array( 'tools', 'maintenance', 'coming soon', 'elementor' ),
+			),
+			'import-export' => array(
 				'title' => esc_html__( 'Import Export', 'elementor' ),
 				'icon' => 'import-export',
 				'url' => $tools_url . '#tab-import-export-kit',
-				'keywords' => [ 'tools', 'import export', 'import', 'export', 'kit' ],
-			],
-		];
+				'keywords' => array( 'tools', 'import export', 'import', 'export', 'kit' ),
+			),
+		);
 
 		if ( ElementorTools::can_user_rollback_versions() ) {
-			$items['version-control'] = [
+			$items['version-control'] = array(
 				'title' => esc_html__( 'Version Control', 'elementor' ),
 				'icon' => 'time-line',
 				'url' => $tools_url . '#tab-versions',
-				'keywords' => [ 'tools', 'version', 'control', 'rollback', 'beta', 'elementor' ],
-			];
+				'keywords' => array( 'tools', 'version', 'control', 'rollback', 'beta', 'elementor' ),
+			);
 		}
 
 		return $items;

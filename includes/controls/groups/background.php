@@ -90,24 +90,24 @@ class Group_Control_Background extends Group_Control_Base {
 	 * @return array Default background types.
 	 */
 	private static function get_default_background_types() {
-		return [
-			'classic' => [
+		return array(
+			'classic' => array(
 				'title' => esc_html__( 'Classic', 'elementor' ),
 				'icon' => 'eicon-paint-brush',
-			],
-			'gradient' => [
+			),
+			'gradient' => array(
 				'title' => esc_html__( 'Gradient', 'elementor' ),
 				'icon' => 'eicon-barcode',
-			],
-			'video' => [
+			),
+			'video' => array(
 				'title' => esc_html__( 'Video', 'elementor' ),
 				'icon' => 'eicon-video-camera',
-			],
-			'slideshow' => [
+			),
+			'slideshow' => array(
 				'title' => esc_html__( 'Slideshow', 'elementor' ),
 				'icon' => 'eicon-slideshow',
-			],
-		];
+			),
+		);
 	}
 
 	/**
@@ -123,24 +123,24 @@ class Group_Control_Background extends Group_Control_Base {
 	public function init_fields() {
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		$location_device_args = [];
-		$location_device_defaults = [
-			'default' => [
+		$location_device_args = array();
+		$location_device_defaults = array(
+			'default' => array(
 				'unit' => '%',
-			],
-		];
+			),
+		);
 
-		$angel_device_args = [];
-		$angel_device_defaults = [
-			'default' => [
+		$angel_device_args = array();
+		$angel_device_defaults = array(
+			'default' => array(
 				'unit' => 'deg',
-			],
-		];
+			),
+		);
 
-		$position_device_args = [];
-		$position_device_defaults = [
+		$position_device_args = array();
+		$position_device_defaults = array(
 			'default' => 'center center',
-		];
+		);
 
 		foreach ( $active_breakpoints as $breakpoint_name => $breakpoint ) {
 			$location_device_args[ $breakpoint_name ] = $location_device_defaults;
@@ -148,123 +148,123 @@ class Group_Control_Background extends Group_Control_Base {
 			$position_device_args[ $breakpoint_name ] = $position_device_defaults;
 		}
 
-		$fields = [];
+		$fields = array();
 
-		$fields['background'] = [
+		$fields['background'] = array(
 			'label' => esc_html__( 'Background Type', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
 			'render_type' => 'ui',
-		];
+		);
 
-		$fields['gradient_notice'] = [
+		$fields['gradient_notice'] = array(
 			'type' => Controls_Manager::ALERT,
 			'alert_type' => 'warning',
 			'content' => esc_html__( 'Set locations and angle for each breakpoint to ensure the gradient adapts to different screen sizes.', 'elementor' ),
 			'render_type' => 'ui',
-			'condition' => [
-				'background' => [ 'gradient' ],
-			],
-		];
+			'condition' => array(
+				'background' => array( 'gradient' ),
+			),
+		);
 
-		$fields['color'] = [
+		$fields['color'] = array(
 			'label' => esc_html__( 'Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '',
 			'control_type' => 'content',
 			'title' => esc_html__( 'Background Color', 'elementor' ),
-			'selectors' => [
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background-color: {{VALUE}};',
-			],
-			'condition' => [
-				'background' => [ 'classic', 'gradient', 'video' ],
-			],
-		];
+			),
+			'condition' => array(
+				'background' => array( 'classic', 'gradient', 'video' ),
+			),
+		);
 
-		$fields['color_stop'] = [
+		$fields['color_stop'] = array(
 			'label' => esc_html_x( 'Location', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ '%', 'custom' ],
-			'default' => [
+			'size_units' => array( '%', 'custom' ),
+			'default' => array(
 				'unit' => '%',
 				'size' => 0,
-			],
+			),
 			'device_args' => $location_device_args,
 			'responsive' => true,
 			'render_type' => 'ui',
-			'condition' => [
-				'background' => [ 'gradient' ],
-			],
+			'condition' => array(
+				'background' => array( 'gradient' ),
+			),
 			'of_type' => 'gradient',
-		];
+		);
 
-		$fields['color_b'] = [
+		$fields['color_b'] = array(
 			'label' => esc_html__( 'Second Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '#f2295b',
 			'render_type' => 'ui',
 			'control_type' => 'content',
-			'condition' => [
-				'background' => [ 'gradient' ],
-			],
+			'condition' => array(
+				'background' => array( 'gradient' ),
+			),
 			'of_type' => 'gradient',
-		];
+		);
 
-		$fields['color_b_stop'] = [
+		$fields['color_b_stop'] = array(
 			'label' => esc_html_x( 'Location', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ '%', 'custom' ],
-			'default' => [
+			'size_units' => array( '%', 'custom' ),
+			'default' => array(
 				'unit' => '%',
 				'size' => 100,
-			],
+			),
 			'device_args' => $location_device_args,
 			'responsive' => true,
 			'render_type' => 'ui',
-			'condition' => [
-				'background' => [ 'gradient' ],
-			],
+			'condition' => array(
+				'background' => array( 'gradient' ),
+			),
 			'of_type' => 'gradient',
-		];
+		);
 
-		$fields['gradient_type'] = [
+		$fields['gradient_type'] = array(
 			'label' => esc_html_x( 'Type', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
-			'options' => [
+			'options' => array(
 				'linear' => esc_html__( 'Linear', 'elementor' ),
 				'radial' => esc_html__( 'Radial', 'elementor' ),
-			],
+			),
 			'default' => 'linear',
 			'render_type' => 'ui',
-			'condition' => [
-				'background' => [ 'gradient' ],
-			],
+			'condition' => array(
+				'background' => array( 'gradient' ),
+			),
 			'of_type' => 'gradient',
-		];
+		);
 
-		$fields['gradient_angle'] = [
+		$fields['gradient_angle'] = array(
 			'label' => esc_html__( 'Angle', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'deg', 'grad', 'rad', 'turn', 'custom' ],
-			'default' => [
+			'size_units' => array( 'deg', 'grad', 'rad', 'turn', 'custom' ),
+			'default' => array(
 				'unit' => 'deg',
 				'size' => 180,
-			],
+			),
 			'device_args' => $angel_device_args,
 			'responsive' => true,
-			'selectors' => [
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
-			],
-			'condition' => [
-				'background' => [ 'gradient' ],
+			),
+			'condition' => array(
+				'background' => array( 'gradient' ),
 				'gradient_type' => 'linear',
-			],
+			),
 			'of_type' => 'gradient',
-		];
+		);
 
-		$fields['gradient_position'] = [
+		$fields['gradient_position'] = array(
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
-			'options' => [
+			'options' => array(
 				'center center' => esc_html__( 'Center Center', 'elementor' ),
 				'center left' => esc_html__( 'Center Left', 'elementor' ),
 				'center right' => esc_html__( 'Center Right', 'elementor' ),
@@ -274,48 +274,48 @@ class Group_Control_Background extends Group_Control_Base {
 				'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
 				'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
 				'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
-			],
+			),
 			'default' => 'center center',
 			'device_args' => $position_device_args,
 			'responsive' => true,
-			'selectors' => [
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background-color: transparent; background-image: radial-gradient(at {{VALUE}}, {{color.VALUE}} {{color_stop.SIZE}}{{color_stop.UNIT}}, {{color_b.VALUE}} {{color_b_stop.SIZE}}{{color_b_stop.UNIT}})',
-			],
-			'condition' => [
-				'background' => [ 'gradient' ],
+			),
+			'condition' => array(
+				'background' => array( 'gradient' ),
 				'gradient_type' => 'radial',
-			],
+			),
 			'of_type' => 'gradient',
-		];
+		);
 
-		$fields['image'] = [
+		$fields['image'] = array(
 			'label' => esc_html__( 'Image', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
-			'ai' => [
+			'ai' => array(
 				'category' => 'background',
-			],
-			'dynamic' => [
+			),
+			'dynamic' => array(
 				'active' => true,
-			],
+			),
 			'responsive' => true,
 			'title' => esc_html__( 'Background Image', 'elementor' ),
-			'selectors' => [
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background-image: url("{{URL}}");',
-			],
+			),
 			'has_sizes' => true,
 			'render_type' => 'template',
-			'condition' => [
-				'background' => [ 'classic' ],
-			],
-		];
+			'condition' => array(
+				'background' => array( 'classic' ),
+			),
+		);
 
-		$fields['position'] = [
+		$fields['position'] = array(
 			'label' => esc_html__( 'Position', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'separator' => 'before',
 			'responsive' => true,
-			'options' => [
+			'options' => array(
 				'' => esc_html__( 'Default', 'elementor' ),
 				'center center' => esc_html__( 'Center Center', 'elementor' ),
 				'center left' => esc_html__( 'Center Left', 'elementor' ),
@@ -328,382 +328,382 @@ class Group_Control_Background extends Group_Control_Base {
 				'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
 				'initial' => esc_html__( 'Custom', 'elementor' ),
 
-			],
-			'selectors' => [
+			),
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background-position: {{VALUE}};',
-			],
-			'condition' => [
-				'background' => [ 'classic' ],
+			),
+			'condition' => array(
+				'background' => array( 'classic' ),
 				'image[url]!' => '',
-			],
-		];
+			),
+		);
 
-		$fields['xpos'] = [
+		$fields['xpos'] = array(
 			'label' => esc_html__( 'X Position', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'responsive' => true,
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-			'default' => [
+			'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+			'default' => array(
 				'size' => 0,
-			],
-			'tablet_default' => [
+			),
+			'tablet_default' => array(
 				'size' => 0,
-			],
-			'mobile_default' => [
+			),
+			'mobile_default' => array(
 				'size' => 0,
-			],
-			'range' => [
-				'px' => [
+			),
+			'range' => array(
+				'px' => array(
 					'min' => -800,
 					'max' => 800,
-				],
-				'em' => [
+				),
+				'em' => array(
 					'min' => -100,
 					'max' => 100,
-				],
-				'%' => [
+				),
+				'%' => array(
 					'min' => -100,
 					'max' => 100,
-				],
-				'vw' => [
+				),
+				'vw' => array(
 					'min' => -100,
 					'max' => 100,
-				],
-			],
-			'selectors' => [
+				),
+			),
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background-position: {{SIZE}}{{UNIT}} {{ypos.SIZE}}{{ypos.UNIT}}',
-			],
-			'condition' => [
-				'background' => [ 'classic' ],
-				'position' => [ 'initial' ],
+			),
+			'condition' => array(
+				'background' => array( 'classic' ),
+				'position' => array( 'initial' ),
 				'image[url]!' => '',
-			],
+			),
 			'required' => true,
-		];
+		);
 
-		$fields['ypos'] = [
+		$fields['ypos'] = array(
 			'label' => esc_html__( 'Y Position', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'responsive' => true,
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
-			'default' => [
+			'size_units' => array( 'px', '%', 'em', 'rem', 'vh', 'custom' ),
+			'default' => array(
 				'size' => 0,
-			],
-			'tablet_default' => [
+			),
+			'tablet_default' => array(
 				'size' => 0,
-			],
-			'mobile_default' => [
+			),
+			'mobile_default' => array(
 				'size' => 0,
-			],
-			'range' => [
-				'px' => [
+			),
+			'range' => array(
+				'px' => array(
 					'min' => -800,
 					'max' => 800,
-				],
-				'em' => [
+				),
+				'em' => array(
 					'min' => -100,
 					'max' => 100,
-				],
-				'%' => [
+				),
+				'%' => array(
 					'min' => -100,
 					'max' => 100,
-				],
-				'vh' => [
+				),
+				'vh' => array(
 					'min' => -100,
 					'max' => 100,
-				],
-			],
-			'selectors' => [
+				),
+			),
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background-position: {{xpos.SIZE}}{{xpos.UNIT}} {{SIZE}}{{UNIT}}',
-			],
-			'condition' => [
-				'background' => [ 'classic' ],
-				'position' => [ 'initial' ],
+			),
+			'condition' => array(
+				'background' => array( 'classic' ),
+				'position' => array( 'initial' ),
 				'image[url]!' => '',
-			],
+			),
 			'required' => true,
-		];
+		);
 
-		$fields['attachment'] = [
+		$fields['attachment'] = array(
 			'label' => esc_html_x( 'Attachment', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
-			'options' => [
+			'options' => array(
 				'' => esc_html__( 'Default', 'elementor' ),
 				'scroll' => esc_html_x( 'Scroll', 'Background Control', 'elementor' ),
 				'fixed' => esc_html_x( 'Fixed', 'Background Control', 'elementor' ),
-			],
-			'selectors' => [
+			),
+			'selectors' => array(
 				'(desktop+){{SELECTOR}}' => 'background-attachment: {{VALUE}};',
-			],
-			'condition' => [
-				'background' => [ 'classic' ],
+			),
+			'condition' => array(
+				'background' => array( 'classic' ),
 				'image[url]!' => '',
-			],
-		];
+			),
+		);
 
-		$fields['attachment_alert'] = [
+		$fields['attachment_alert'] = array(
 			'type' => Controls_Manager::RAW_HTML,
 			'content_classes' => 'elementor-control-field-description',
 			'raw' => esc_html__( 'Note: Attachment Fixed works only on desktop.', 'elementor' ),
-			'condition' => [
-				'background' => [ 'classic' ],
+			'condition' => array(
+				'background' => array( 'classic' ),
 				'image[url]!' => '',
 				'attachment' => 'fixed',
-			],
-		];
+			),
+		);
 
-		$fields['repeat'] = [
+		$fields['repeat'] = array(
 			'label' => esc_html_x( 'Repeat', 'Background Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'responsive' => true,
-			'options' => [
+			'options' => array(
 				'' => esc_html__( 'Default', 'elementor' ),
 				'no-repeat' => esc_html__( 'No-repeat', 'elementor' ),
 				'repeat' => esc_html__( 'Repeat', 'elementor' ),
 				'repeat-x' => esc_html__( 'Repeat-x', 'elementor' ),
 				'repeat-y' => esc_html__( 'Repeat-y', 'elementor' ),
-			],
-			'selectors' => [
+			),
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background-repeat: {{VALUE}};',
-			],
-			'condition' => [
-				'background' => [ 'classic' ],
+			),
+			'condition' => array(
+				'background' => array( 'classic' ),
 				'image[url]!' => '',
-			],
-		];
+			),
+		);
 
-		$fields['size'] = [
+		$fields['size'] = array(
 			'label' => esc_html__( 'Display Size', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'responsive' => true,
 			'default' => '',
-			'options' => [
+			'options' => array(
 				'' => esc_html__( 'Default', 'elementor' ),
 				'auto' => esc_html__( 'Auto', 'elementor' ),
 				'cover' => esc_html__( 'Cover', 'elementor' ),
 				'contain' => esc_html__( 'Contain', 'elementor' ),
 				'initial' => esc_html__( 'Custom', 'elementor' ),
-			],
-			'selectors' => [
+			),
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background-size: {{VALUE}};',
-			],
-			'condition' => [
-				'background' => [ 'classic' ],
+			),
+			'condition' => array(
+				'background' => array( 'classic' ),
 				'image[url]!' => '',
-			],
-		];
+			),
+		);
 
-		$fields['bg_width'] = [
+		$fields['bg_width'] = array(
 			'label' => esc_html__( 'Width', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'responsive' => true,
-			'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-			'range' => [
-				'px' => [
+			'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+			'range' => array(
+				'px' => array(
 					'max' => 1000,
-				],
-			],
-			'default' => [
+				),
+			),
+			'default' => array(
 				'size' => 100,
 				'unit' => '%',
-			],
+			),
 			'required' => true,
-			'selectors' => [
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background-size: {{SIZE}}{{UNIT}} auto',
 
-			],
-			'condition' => [
-				'background' => [ 'classic' ],
-				'size' => [ 'initial' ],
+			),
+			'condition' => array(
+				'background' => array( 'classic' ),
+				'size' => array( 'initial' ),
 				'image[url]!' => '',
-			],
-		];
+			),
+		);
 
-		$fields['video_link'] = [
+		$fields['video_link'] = array(
 			'label' => esc_html__( 'Video Link', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
 			'placeholder' => 'https://www.youtube.com/watch?v=XHOmBV4js_E',
 			'description' => esc_html__( 'YouTube/Vimeo link, or link to video file (mp4 is recommended).', 'elementor' ),
 			'label_block' => true,
 			'default' => '',
-			'dynamic' => [
+			'dynamic' => array(
 				'active' => true,
-				'categories' => [
+				'categories' => array(
 					TagsModule::POST_META_CATEGORY,
 					TagsModule::URL_CATEGORY,
-				],
-			],
-			'ai' => [
+				),
+			),
+			'ai' => array(
 				'active' => false,
-			],
-			'condition' => [
-				'background' => [ 'video' ],
-			],
+			),
+			'condition' => array(
+				'background' => array( 'video' ),
+			),
 			'of_type' => 'video',
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['video_start'] = [
+		$fields['video_start'] = array(
 			'label' => esc_html__( 'Start Time', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'description' => esc_html__( 'Specify a start time (in seconds)', 'elementor' ),
 			'placeholder' => 10,
-			'condition' => [
-				'background' => [ 'video' ],
-			],
+			'condition' => array(
+				'background' => array( 'video' ),
+			),
 			'of_type' => 'video',
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['video_end'] = [
+		$fields['video_end'] = array(
 			'label' => esc_html__( 'End Time', 'elementor' ),
 			'type' => Controls_Manager::NUMBER,
 			'description' => esc_html__( 'Specify an end time (in seconds)', 'elementor' ),
 			'placeholder' => 70,
-			'condition' => [
-				'background' => [ 'video' ],
-			],
+			'condition' => array(
+				'background' => array( 'video' ),
+			),
 			'of_type' => 'video',
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['play_once'] = [
+		$fields['play_once'] = array(
 			'label' => esc_html__( 'Play Once', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
-			'condition' => [
-				'background' => [ 'video' ],
-			],
+			'condition' => array(
+				'background' => array( 'video' ),
+			),
 			'of_type' => 'video',
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['play_on_mobile'] = [
+		$fields['play_on_mobile'] = array(
 			'label' => esc_html__( 'Play On Mobile', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
-			'condition' => [
-				'background' => [ 'video' ],
-			],
+			'condition' => array(
+				'background' => array( 'video' ),
+			),
 			'of_type' => 'video',
 			'frontend_available' => true,
-		];
+		);
 
 		// This control was added to handle a bug with the Youtube Embed API. The bug: If there is a video with Privacy
 		// Mode on, and at the same time the page contains another video WITHOUT privacy mode on, one of the videos
 		// will not run properly. This added control allows users to align all their videos to one host (either
 		// youtube.com or youtube-nocookie.com, depending on whether the user wants privacy mode on or not).
-		$fields['privacy_mode'] = [
+		$fields['privacy_mode'] = array(
 			'label' => esc_html__( 'Privacy Mode', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
-			'condition' => [
-				'background' => [ 'video' ],
-			],
+			'condition' => array(
+				'background' => array( 'video' ),
+			),
 			'of_type' => 'video',
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['video_fallback'] = [
+		$fields['video_fallback'] = array(
 			'label' => esc_html__( 'Background Fallback', 'elementor' ),
 			'description' => esc_html__( 'This cover image will replace the background video in case that the video could not be loaded.', 'elementor' ),
 			'type' => Controls_Manager::MEDIA,
-			'dynamic' => [
+			'dynamic' => array(
 				'active' => true,
-			],
-			'condition' => [
-				'background' => [ 'video' ],
-			],
-			'selectors' => [
+			),
+			'condition' => array(
+				'background' => array( 'video' ),
+			),
+			'selectors' => array(
 				'{{SELECTOR}}' => 'background: url("{{URL}}") 50% 50%; background-size: cover;',
-			],
+			),
 			'of_type' => 'video',
-		];
+		);
 
-		$fields['slideshow_gallery'] = [
+		$fields['slideshow_gallery'] = array(
 			'label' => esc_html__( 'Images', 'elementor' ),
 			'type' => Controls_Manager::GALLERY,
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
+			'condition' => array(
+				'background' => array( 'slideshow' ),
+			),
 			'show_label' => false,
 			'of_type' => 'slideshow',
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['slideshow_loop'] = [
+		$fields['slideshow_loop'] = array(
 			'label' => esc_html__( 'Infinite Loop', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
 			'default' => 'yes',
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
+			'condition' => array(
+				'background' => array( 'slideshow' ),
+			),
 			'of_type' => 'slideshow',
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['slideshow_slide_duration'] = [
+		$fields['slideshow_slide_duration'] = array(
 			'label' => esc_html__( 'Duration', 'elementor' ) . ' (ms)',
 			'type' => Controls_Manager::NUMBER,
 			'default' => 5000,
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
+			'condition' => array(
+				'background' => array( 'slideshow' ),
+			),
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['slideshow_slide_transition'] = [
+		$fields['slideshow_slide_transition'] = array(
 			'label' => esc_html__( 'Transition', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => 'fade',
-			'options' => [
+			'options' => array(
 				'fade' => 'Fade',
 				'slide_right' => 'Slide Right',
 				'slide_left' => 'Slide Left',
 				'slide_up' => 'Slide Up',
 				'slide_down' => 'Slide Down',
-			],
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
+			),
+			'condition' => array(
+				'background' => array( 'slideshow' ),
+			),
 			'of_type' => 'slideshow',
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['slideshow_transition_duration'] = [
+		$fields['slideshow_transition_duration'] = array(
 			'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
 			'type' => Controls_Manager::NUMBER,
 			'default' => 500,
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
+			'condition' => array(
+				'background' => array( 'slideshow' ),
+			),
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['slideshow_background_size'] = [
+		$fields['slideshow_background_size'] = array(
 			'label' => esc_html__( 'Background Size', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'responsive' => true,
 			'default' => '',
-			'options' => [
+			'options' => array(
 				'' => esc_html__( 'Default', 'elementor' ),
 				'auto' => esc_html__( 'Auto', 'elementor' ),
 				'cover' => esc_html__( 'Cover', 'elementor' ),
 				'contain' => esc_html__( 'Contain', 'elementor' ),
-			],
-			'selectors' => [
+			),
+			'selectors' => array(
 				'{{WRAPPER}} .elementor-background-slideshow__slide__image' => 'background-size: {{VALUE}};',
-			],
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
-		];
+			),
+			'condition' => array(
+				'background' => array( 'slideshow' ),
+			),
+		);
 
-		$fields['slideshow_background_position'] = [
+		$fields['slideshow_background_position'] = array(
 			'label' => esc_html__( 'Background Position', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
 			'responsive' => true,
-			'options' => [
+			'options' => array(
 				'' => esc_html__( 'Default', 'elementor' ),
 				'center center' => esc_html__( 'Center Center', 'elementor' ),
 				'center left' => esc_html__( 'Center Left', 'elementor' ),
@@ -714,52 +714,52 @@ class Group_Control_Background extends Group_Control_Base {
 				'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
 				'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
 				'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
-			],
-			'selectors' => [
+			),
+			'selectors' => array(
 				'{{WRAPPER}} .elementor-background-slideshow__slide__image' => 'background-position: {{VALUE}};',
-			],
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
-		];
+			),
+			'condition' => array(
+				'background' => array( 'slideshow' ),
+			),
+		);
 
-		$fields['slideshow_lazyload'] = [
+		$fields['slideshow_lazyload'] = array(
 			'label' => esc_html__( 'Lazyload', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
 			'separator' => 'before',
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
+			'condition' => array(
+				'background' => array( 'slideshow' ),
+			),
 			'of_type' => 'slideshow',
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['slideshow_ken_burns'] = [
+		$fields['slideshow_ken_burns'] = array(
 			'label' => esc_html__( 'Ken Burns Effect', 'elementor' ),
 			'type' => Controls_Manager::SWITCHER,
 			'separator' => 'before',
-			'condition' => [
-				'background' => [ 'slideshow' ],
-			],
+			'condition' => array(
+				'background' => array( 'slideshow' ),
+			),
 			'of_type' => 'slideshow',
 			'frontend_available' => true,
-		];
+		);
 
-		$fields['slideshow_ken_burns_zoom_direction'] = [
+		$fields['slideshow_ken_burns_zoom_direction'] = array(
 			'label' => esc_html__( 'Direction', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => 'in',
-			'options' => [
+			'options' => array(
 				'in' => esc_html__( 'In', 'elementor' ),
 				'out' => esc_html__( 'Out', 'elementor' ),
-			],
-			'condition' => [
-				'background' => [ 'slideshow' ],
+			),
+			'condition' => array(
+				'background' => array( 'slideshow' ),
 				'slideshow_ken_burns!' => '',
-			],
+			),
 			'of_type' => 'slideshow',
 			'frontend_available' => true,
-		];
+		);
 
 		return $fields;
 	}
@@ -776,10 +776,10 @@ class Group_Control_Background extends Group_Control_Base {
 	 * @return array Default arguments for all the child controls.
 	 */
 	protected function get_child_default_args() {
-		return [
-			'types' => [ 'classic', 'gradient' ],
+		return array(
+			'types' => array( 'classic', 'gradient' ),
 			'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background), {{WRAPPER}} > .elementor-motion-effects-container > .elementor-motion-effects-layer',
-		];
+		);
 	}
 
 	/**
@@ -824,7 +824,7 @@ class Group_Control_Background extends Group_Control_Base {
 
 		$background_types = self::get_background_types();
 
-		$choose_types = [];
+		$choose_types = array();
 
 		foreach ( $args['types'] as $type ) {
 			if ( isset( $background_types[ $type ] ) ) {
@@ -849,8 +849,8 @@ class Group_Control_Background extends Group_Control_Base {
 	 * @return array Default background control options.
 	 */
 	protected function get_default_options() {
-		return [
+		return array(
 			'popover' => false,
-		];
+		);
 	}
 }

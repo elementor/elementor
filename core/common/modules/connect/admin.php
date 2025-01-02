@@ -30,9 +30,9 @@ class Admin {
 	 */
 	public function on_load_page() {
 		if ( ! $this->user_has_enough_permissions() ) {
-			wp_die( 'You do not have sufficient permissions to access this page.', 'You do not have sufficient permissions to access this page.', [
+			wp_die( 'You do not have sufficient permissions to access this page.', 'You do not have sufficient permissions to access this page.', array(
 				'back_link' => true,
-			] );
+			) );
 		}
 
 		if ( isset( $_GET['action'], $_GET['app'] ) ) {
@@ -52,15 +52,15 @@ class Admin {
 			}
 
 			if ( ! wp_verify_nonce( Utils::get_super_global_value( $_GET, 'nonce' ), $nonce_action ) ) {
-				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
+				wp_die( 'Invalid Nonce', 'Invalid Nonce', array(
 					'back_link' => true,
-				] );
+				) );
 			}
 
 			$method = 'action_' . $action;
 
 			if ( method_exists( $app, $method ) ) {
-				call_user_func( [ $app, $method ] );
+				call_user_func( array( $app, $method ) );
 			}
 		}
 	}
@@ -84,11 +84,11 @@ class Admin {
 	public function __construct() {
 		self::$url = admin_url( 'admin.php?page=' . self::PAGE_ID );
 
-		add_action( 'elementor/admin/menu/register', [ $this, 'register_admin_menu' ] );
+		add_action( 'elementor/admin/menu/register', array( $this, 'register_admin_menu' ) );
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
-				add_action( 'load-' . $hooks[ static::PAGE_ID ], [ $this, 'on_load_page' ] );
+				add_action( 'load-' . $hooks[ static::PAGE_ID ], array( $this, 'on_load_page' ) );
 			}
 		}, 10, 2 );
 	}

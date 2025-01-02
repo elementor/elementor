@@ -59,13 +59,13 @@ abstract class Base extends Base_File {
 	 *
 	 * @var array
 	 */
-	private $fonts = [];
+	private $fonts = array();
 
-	private $icons_fonts = [];
+	private $icons_fonts = array();
 
-	private $dynamic_elements_ids = [];
+	private $dynamic_elements_ids = array();
 
-	private $preserved_dynamic_style_values = [];
+	private $preserved_dynamic_style_values = array();
 
 	/**
 	 * Stylesheet object.
@@ -87,7 +87,7 @@ abstract class Base extends Base_File {
 	 *
 	 * @var array
 	 */
-	private static $printed = [];
+	private static $printed = array();
 
 	/**
 	 * Get CSS file name.
@@ -316,7 +316,7 @@ abstract class Base extends Base_File {
 	 * @param array    $replacements   Replacements.
 	 * @param array    $values         Global Values.
 	 */
-	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements, array $values = [] ) {
+	public function add_control_rules( array $control, array $controls_stack, callable $value_callback, array $placeholders, array $replacements, array $values = array() ) {
 		if ( empty( $control['selectors'] ) ) {
 			return;
 		}
@@ -327,7 +327,7 @@ abstract class Base extends Base_File {
 			$control_global_key = $control['groupPrefix'] . $control['groupType'];
 		}
 
-		$global_values = [];
+		$global_values = array();
 		$global_key = '';
 
 		if ( ! empty( $values['__globals__'] ) ) {
@@ -348,7 +348,7 @@ abstract class Base extends Base_File {
 
 		$stylesheet = $this->get_stylesheet();
 
-		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? [], $this );
+		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? array(), $this );
 
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
@@ -365,7 +365,7 @@ abstract class Base extends Base_File {
 						$css_property = $control['unit_selectors_dictionary'][ $value['unit'] ];
 					}
 
-					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function ( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
 						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
 						$parsed_value = '';
@@ -421,7 +421,7 @@ abstract class Base extends Base_File {
 
 			preg_match( $device_pattern, $selector, $device_rules );
 
-			$query = [];
+			$query = array();
 
 			if ( $device_rules ) {
 				$selector = preg_replace( $device_pattern, '', $selector );
@@ -446,7 +446,7 @@ abstract class Base extends Base_File {
 			$parsed_selector = str_replace( $placeholders, $replacements, $selector );
 
 			if ( ! $query && ! empty( $control['responsive'] ) ) {
-				$query = array_intersect_key( $control['responsive'], array_flip( [ 'min', 'max' ] ) );
+				$query = array_intersect_key( $control['responsive'], array_flip( array( 'min', 'max' ) ) );
 
 				if ( ! empty( $query['max'] ) && Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $query['max'] ) {
 					unset( $query['max'] );
@@ -618,12 +618,12 @@ abstract class Base extends Base_File {
 	abstract protected function render_css();
 
 	protected function get_default_meta() {
-		return array_merge( parent::get_default_meta(), [
+		return array_merge( parent::get_default_meta(), array(
 			'fonts' => array_unique( $this->fonts ),
 			'icons' => array_unique( $this->icons_fonts ),
-			'dynamic_elements_ids' => [],
+			'dynamic_elements_ids' => array(),
 			'status' => '',
-		] );
+		) );
 	}
 
 	/**
@@ -637,7 +637,7 @@ abstract class Base extends Base_File {
 	 * @return array Name of the stylesheet.
 	 */
 	protected function get_enqueue_dependencies() {
-		return [];
+		return array();
 	}
 
 	/**
@@ -724,7 +724,7 @@ abstract class Base extends Base_File {
 	 */
 	protected function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
 		$this->add_control_rules(
-			$control, $controls, function( $control ) use ( $values ) {
+			$control, $controls, function ( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements, $values
 		);
@@ -836,7 +836,7 @@ abstract class Base extends Base_File {
 	 * @param array          $replacements     Replacements.
 	 */
 	protected function add_repeater_control_style_rules( Controls_Stack $controls_stack, array $repeater_control, array $repeater_values, array $placeholders, array $replacements ) {
-		$placeholders = array_merge( $placeholders, [ '{{CURRENT_ITEM}}' ] );
+		$placeholders = array_merge( $placeholders, array( '{{CURRENT_ITEM}}' ) );
 
 		foreach ( $repeater_control['style_fields'] as $index => $item ) {
 			$this->add_controls_stack_style_rules(
@@ -844,7 +844,7 @@ abstract class Base extends Base_File {
 				$item,
 				$repeater_values[ $index ],
 				$placeholders,
-				array_merge( $replacements, [ '.elementor-repeater-item-' . $repeater_values[ $index ]['_id'] ] ),
+				array_merge( $replacements, array( '.elementor-repeater-item-' . $repeater_values[ $index ]['_id'] ) ),
 				$repeater_control['fields']
 			);
 		}
@@ -862,14 +862,14 @@ abstract class Base extends Base_File {
 	 * @param string $value   The value.
 	 */
 	protected function add_dynamic_control_style_rules( array $control, $value ) {
-		Plugin::$instance->dynamic_tags->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
+		Plugin::$instance->dynamic_tags->parse_tags_text( $value, $control, function ( $id, $name, $settings ) {
 			$tag = Plugin::$instance->dynamic_tags->create_tag( $id, $name, $settings );
 
 			if ( ! $tag instanceof Tag ) {
 				return;
 			}
 
-			$this->add_controls_stack_style_rules( $tag, $this->get_style_controls( $tag ), $tag->get_active_settings(), [ '{{WRAPPER}}' ], [ '#elementor-tag-' . $id ] );
+			$this->add_controls_stack_style_rules( $tag, $this->get_style_controls( $tag ), $tag->get_active_settings(), array( '{{WRAPPER}}' ), array( '#elementor-tag-' . $id ) );
 		} );
 	}
 
@@ -885,7 +885,7 @@ abstract class Base extends Base_File {
 		$id = $global_args[1];
 
 		if ( ! empty( $control['groupType'] ) ) {
-			$strings_to_replace = [ $control['groupPrefix'] ];
+			$strings_to_replace = array( $control['groupPrefix'] );
 
 			$active_breakpoint_keys = array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 
@@ -932,7 +932,7 @@ abstract class Base extends Base_File {
 		}
 
 		$active_controls = array_reduce(
-			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
+			array_keys( $controls ), function ( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
 				$control = $controls[ $control_key ];
 
 				if ( $controls_stack->is_control_visible( $control, $settings, $controls ) ) {
@@ -940,7 +940,7 @@ abstract class Base extends Base_File {
 				}
 
 				return $active_controls;
-			}, []
+			}, array()
 		);
 
 		return $active_controls;
@@ -949,7 +949,7 @@ abstract class Base extends Base_File {
 	final public function get_style_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
 		$controls = $this->get_active_controls( $controls_stack, $controls, $settings );
 
-		$style_controls = [];
+		$style_controls = array();
 
 		foreach ( $controls as $control_name => $control ) {
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
@@ -961,7 +961,7 @@ abstract class Base extends Base_File {
 			$control = array_merge( $control_obj->get_settings(), $control );
 
 			if ( $control_obj instanceof Control_Repeater ) {
-				$style_fields = [];
+				$style_fields = array();
 
 				foreach ( $controls_stack->get_settings( $control_name ) as $item ) {
 					$style_fields[] = $this->get_style_controls( $controls_stack, $control['fields'], $item );

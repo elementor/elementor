@@ -43,18 +43,18 @@ class Control_Code extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'label_block' => true,
 			'language' => 'html', // html/css
 			'rows' => 10,
-			'ai' => [
+			'ai' => array(
 				'active' => true,
 				'type' => 'code',
-			],
-			'dynamic' => [
-				'categories' => [ TagsModule::TEXT_CATEGORY ],
-			],
-		];
+			),
+			'dynamic' => array(
+				'categories' => array( TagsModule::TEXT_CATEGORY ),
+			),
+		);
 	}
 
 	/**

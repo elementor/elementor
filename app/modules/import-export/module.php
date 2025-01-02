@@ -102,7 +102,7 @@ class Module extends BaseModule {
 
 	public function get_init_settings() {
 		if ( ! Plugin::$instance->app->is_current() ) {
-			return [];
+			return array();
 		}
 
 		return $this->get_config_data();
@@ -112,18 +112,18 @@ class Module extends BaseModule {
 	 * Register the import/export tab in elementor tools.
 	 */
 	public function register_settings_tab( Tools $tools ) {
-		$tools->add_tab( 'import-export-kit', [
+		$tools->add_tab( 'import-export-kit', array(
 			'label' => esc_html__( 'Import / Export Kit', 'elementor' ),
-			'sections' => [
-				'intro' => [
+			'sections' => array(
+				'intro' => array(
 					'label' => esc_html__( 'Template Kits', 'elementor' ),
-					'callback' => function() {
+					'callback' => function () {
 						$this->render_import_export_tab_content();
 					},
-					'fields' => [],
-				],
-			],
-		] );
+					'fields' => array(),
+				),
+			),
+		) );
 	}
 
 	/**
@@ -139,32 +139,32 @@ class Module extends BaseModule {
 			$intro_text_link
 		);
 
-		$content_data = [
-			'export' => [
+		$content_data = array(
+			'export' => array(
 				'title' => esc_html__( 'Export a Template Kit', 'elementor' ),
-				'button' => [
+				'button' => array(
 					'url' => Plugin::$instance->app->get_base_url() . '#/export',
 					'text' => esc_html__( 'Start Export', 'elementor' ),
-				],
+				),
 				'description' => esc_html__( 'Bundle your whole site - or just some of its elements - to be used for another website.', 'elementor' ),
-				'link' => [
+				'link' => array(
 					'url' => 'https://go.elementor.com/wp-dash-import-export-export-flow/',
 					'text' => esc_html__( 'Learn More', 'elementor' ),
-				],
-			],
-			'import' => [
+				),
+			),
+			'import' => array(
 				'title' => esc_html__( 'Import a Template Kit', 'elementor' ),
-				'button' => [
+				'button' => array(
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
 					'text' => esc_html__( 'Start Import', 'elementor' ),
-				],
+				),
 				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
-				'link' => [
+				'link' => array(
 					'url' => 'https://go.elementor.com/wp-dash-import-export-import-flow/',
 					'text' => esc_html__( 'Learn More', 'elementor' ),
-				],
-			],
-		];
+				),
+			),
+		);
 
 		$last_imported_kit = $this->revert->get_last_import_session();
 		$penultimate_imported_kit = $this->revert->get_penultimate_import_session();
@@ -217,11 +217,11 @@ class Module extends BaseModule {
 			<?php
 			if ( $should_show_revert_section ) {
 
-				$link_attributes = [
+				$link_attributes = array(
 					'href' => $this->get_revert_href(),
 					'id' => 'elementor-import-export__revert_kit',
 					'class' => 'button',
-				];
+				);
 				?>
 				<div class="tab-import-export-kit__revert">
 					<h2>
@@ -307,13 +307,13 @@ class Module extends BaseModule {
 	public function upload_kit( $file, $referrer ) {
 		$this->ensure_writing_permissions();
 
-		$this->import = new Import( $file, [ 'referrer' => $referrer ] );
+		$this->import = new Import( $file, array( 'referrer' => $referrer ) );
 
-		return [
+		return array(
 			'session' => $this->import->get_session_id(),
 			'manifest' => $this->import->get_manifest(),
 			'conflicts' => $this->import->get_settings_conflicts(),
-		];
+		);
 	}
 
 	/**
@@ -340,16 +340,16 @@ class Module extends BaseModule {
 		$this->import = new Import( $path, $settings );
 		$this->import->register_default_runners();
 
-		remove_filter( 'elementor/document/save/data', [ Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ] );
+		remove_filter( 'elementor/document/save/data', array( Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ) );
 		do_action( 'elementor/import-export/import-kit', $this->import );
 
 		if ( $split_to_chunks ) {
 			$this->import->init_import_session( true );
 
-			return [
+			return array(
 				'session' => $this->import->get_session_id(),
 				'runners' => $this->import->get_runners_name(),
-			];
+			);
 		}
 
 		return $this->import->run();
@@ -431,7 +431,7 @@ class Module extends BaseModule {
 	 * Register appropriate actions.
 	 */
 	private function register_actions() {
-		add_action( 'admin_init', function() {
+		add_action( 'admin_init', function () {
 			if ( wp_doing_ajax() &&
 				isset( $_POST['action'] ) &&
 				wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
@@ -441,17 +441,17 @@ class Module extends BaseModule {
 			}
 		} );
 
-		add_action( 'admin_post_elementor_revert_kit', [ $this, 'handle_revert_last_imported_kit' ] );
+		add_action( 'admin_post_elementor_revert_kit', array( $this, 'handle_revert_last_imported_kit' ) );
 
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		$page_id = Tools::PAGE_ID;
 
-		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+		add_action( "elementor/admin/after_create_settings/{$page_id}", array( $this, 'register_settings_tab' ) );
 
 		// TODO 18/04/2023 : This needs to be moved to the runner itself after https://elementor.atlassian.net/browse/HTS-434 is done.
 		if ( self::IMPORT_PLUGINS_ACTION === ElementorUtils::get_super_global_value( $_SERVER, 'HTTP_X_ELEMENTOR_ACTION' ) ) {
-			add_filter( 'woocommerce_create_pages', [ $this, 'empty_pages' ], 10, 0 );
+			add_filter( 'woocommerce_create_pages', array( $this, 'empty_pages' ), 10, 0 );
 		}
 		// TODO ^^^
 	}
@@ -463,17 +463,17 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	public function empty_pages(): array {
-		return [];
+		return array();
 	}
 
 	private function ensure_writing_permissions() {
 		$server = new Server();
 
-		$paths_to_check = [
+		$paths_to_check = array(
 			Server::KEY_PATH_WP_CONTENT_DIR => $server->get_system_path( Server::KEY_PATH_WP_CONTENT_DIR ),
 			Server::KEY_PATH_UPLOADS_DIR => $server->get_system_path( Server::KEY_PATH_UPLOADS_DIR ),
 			Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR => $server->get_system_path( Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ),
-		];
+		);
 
 		$permissions = $server->get_paths_permissions( $paths_to_check );
 
@@ -508,7 +508,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-import-export-admin',
 			$this->get_js_assets_url( 'import-export-admin' ),
-			[ 'elementor-common' ],
+			array( 'elementor-common' ),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -516,10 +516,10 @@ class Module extends BaseModule {
 		wp_localize_script(
 			'elementor-import-export-admin',
 			'elementorImportExport',
-			[
+			array(
 				'lastImportedSession' => $this->revert->get_last_import_session(),
 				'appUrl' => Plugin::$instance->app->get_base_url() . '#/kit-library',
-			]
+			)
 		);
 	}
 
@@ -556,11 +556,11 @@ class Module extends BaseModule {
 				$this->import->finalize_import_session_option();
 			}
 
-			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
-				'meta' => [
+			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), array(
+				'meta' => array(
 					'trace' => $e->getTraceAsString(),
-				],
-			] );
+				),
+			) );
 
 			if ( isset( $this->import ) && $this->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
 				wp_send_json_error( self::THIRD_PARTY_ERROR, 500 );
@@ -612,12 +612,12 @@ class Module extends BaseModule {
 			$referrer = static::REFERRER_LOCAL;
 		}
 
-		Plugin::$instance->logger->get_logger()->info( 'Uploading Kit: ', [
-			'meta' => [
+		Plugin::$instance->logger->get_logger()->info( 'Uploading Kit: ', array(
+			'meta' => array(
 				'kit_id' => ElementorUtils::get_super_global_value( $_POST, 'kit_id' ),
 				'referrer' => $referrer,
-			],
-		] );
+			),
+		) );
 
 		$uploaded_kit = $this->upload_kit( $file_name, $referrer );
 
@@ -633,10 +633,10 @@ class Module extends BaseModule {
 			throw new \Error( static::PLUGIN_PERMISSIONS_ERROR_KEY );
 		}
 
-		$result = [
+		$result = array(
 			'session' => $session_dir,
 			'manifest' => $manifest,
-		];
+		);
 
 		if ( ! empty( $conflicts ) ) {
 			$result['conflicts'] = $conflicts;
@@ -716,10 +716,10 @@ class Module extends BaseModule {
 
 		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 
-		$result = [
+		$result = array(
 			'manifest' => $export['manifest'],
 			'file' => base64_encode( $file ),
-		];
+		);
 
 		wp_send_json_success( $result );
 	}
@@ -729,9 +729,9 @@ class Module extends BaseModule {
 	 */
 	private function get_config_data() {
 		$export_nonce = wp_create_nonce( 'elementor_export' );
-		$export_url = add_query_arg( [ '_nonce' => $export_nonce ], Plugin::$instance->app->get_base_url() );
+		$export_url = add_query_arg( array( '_nonce' => $export_nonce ), Plugin::$instance->app->get_base_url() );
 
-		return [
+		return array(
 			'exportURL' => $export_url,
 			'summaryTitles' => $this->get_summary_titles(),
 			'builtinWpPostTypes' => ImportExportUtils::get_builtin_wp_post_types(),
@@ -742,22 +742,22 @@ class Module extends BaseModule {
 			'tools_url' => Tools::get_url(),
 			'importSessions' => Revert::get_import_sessions(),
 			'lastImportedSession' => $this->revert->get_last_import_session(),
-		];
+		);
 	}
 
 	/**
 	 * Get labels of Elementor document types, Elementor Post types, WordPress Post types and Custom Post types.
 	 */
 	private function get_summary_titles() {
-		$summary_titles = [];
+		$summary_titles = array();
 
 		$document_types = Plugin::$instance->documents->get_document_types();
 
 		foreach ( $document_types as $name => $document_type ) {
-			$summary_titles['templates'][ $name ] = [
+			$summary_titles['templates'][ $name ] = array(
 				'single' => $document_type::get_title(),
 				'plural' => $document_type::get_plural_title(),
-			];
+			);
 		}
 
 		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
@@ -767,10 +767,10 @@ class Module extends BaseModule {
 		foreach ( $post_types as $post_type ) {
 			$post_type_object = get_post_type_object( $post_type );
 
-			$summary_titles['content'][ $post_type ] = [
+			$summary_titles['content'][ $post_type ] = array(
 				'single' => $post_type_object->labels->singular_name ?? '',
 				'plural' => $post_type_object->label ?? '',
-			];
+			);
 		}
 
 		$custom_post_types = ImportExportUtils::get_registered_cpt_names();
@@ -780,16 +780,16 @@ class Module extends BaseModule {
 				$custom_post_types_object = get_post_type_object( $custom_post_type );
 				// CPT data appears in two arrays:
 				// 1. content object: in order to show the export summary when completed in getLabel function
-				$summary_titles['content'][ $custom_post_type ] = [
+				$summary_titles['content'][ $custom_post_type ] = array(
 					'single' => $custom_post_types_object->labels->singular_name ?? '',
 					'plural' => $custom_post_types_object->label ?? '',
-				];
+				);
 
 				// 2. customPostTypes object: in order to actually export the data
-				$summary_titles['content']['customPostTypes'][ $custom_post_type ] = [
+				$summary_titles['content']['customPostTypes'][ $custom_post_type ] = array(
 					'single' => $custom_post_types_object->labels->singular_name ?? '',
 					'plural' => $custom_post_types_object->label ?? '',
-				];
+				);
 			}
 		}
 
@@ -846,7 +846,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_recently_edited_elementor_page_url() {
-		$query = ElementorUtils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
+		$query = ElementorUtils::get_recently_edited_posts_query( array( 'posts_per_page' => 1 ) );
 
 		if ( ! isset( $query->post ) ) {
 			return '';
@@ -856,7 +856,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_recently_edited_elementor_editor_page_url() {
-		$query = ElementorUtils::get_recently_edited_posts_query( [ 'posts_per_page' => 1 ] );
+		$query = ElementorUtils::get_recently_edited_posts_query( array( 'posts_per_page' => 1 ) );
 
 		if ( ! isset( $query->post ) ) {
 			return '';
@@ -893,12 +893,12 @@ class Module extends BaseModule {
 	 * @return bool
 	 */
 	public function is_third_party_class( $class ) {
-		$allowed_classes = [
+		$allowed_classes = array(
 			'Elementor\\',
 			'ElementorPro\\',
 			'WP_',
 			'wp_',
-		];
+		);
 
 		foreach ( $allowed_classes as $allowed_class ) {
 			if ( str_starts_with( $class, $allowed_class ) ) {

@@ -13,7 +13,7 @@ class Typography extends Base {
 	}
 
 	protected function get_kit_items() {
-		$result = [];
+		$result = array();
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 
@@ -31,7 +31,7 @@ class Typography extends Base {
 		$custom_items = $kit->get_settings( 'custom_typography' );
 
 		if ( ! $custom_items ) {
-			$custom_items = [];
+			$custom_items = array();
 		}
 
 		$items = array_merge( $system_items, $custom_items );
@@ -47,10 +47,10 @@ class Typography extends Base {
 
 			$id = $item['_id'];
 
-			$result[ $id ] = [
+			$result[ $id ] = array(
 				'title' => $item['title'] ?? '',
 				'id' => $id,
-			];
+			);
 
 			unset( $item['_id'], $item['title'] );
 
@@ -61,10 +61,10 @@ class Typography extends Base {
 	}
 
 	protected function convert_db_format( $item ) {
-		$db_format = [
+		$db_format = array(
 			'_id' => $item['id'],
 			'title' => $item['title'] ?? '',
-		];
+		);
 
 		$db_format = array_merge( $item['value'], $db_format );
 

@@ -19,25 +19,25 @@ class Controller extends Base_Controller {
 	}
 
 	public function register_endpoints() {
-		$this->index_endpoint->register_item_route(\WP_REST_Server::EDITABLE, [
+		$this->index_endpoint->register_item_route(\WP_REST_Server::EDITABLE, array(
 			'id_arg_name' => 'type',
 			'id_arg_type_regex' => '[\w\-\_]+',
-			'type' => [
+			'type' => array(
 				'type' => 'string',
 				'description' => 'The type of the element.',
 				'required' => true,
-				'validate_callback' => function( $type ) {
+				'validate_callback' => function ( $type ) {
 					return $this->validate_type( $type );
 				},
-			],
-			'settings' => [
+			),
+			'settings' => array(
 				'description' => 'All the default values for the requested type',
 				'required' => true,
 				'type' => 'object',
-				'validate_callback' => function( $settings ) {
+				'validate_callback' => function ( $settings ) {
 					return is_array( $settings );
 				},
-				'sanitize_callback' => function( $settings, \WP_REST_Request $request ) {
+				'sanitize_callback' => function ( $settings, \WP_REST_Request $request ) {
 					Performance::set_use_style_controls( true );
 
 					$sanitizer = new Settings_Sanitizer(
@@ -56,25 +56,25 @@ class Controller extends Base_Controller {
 
 					return $sanitized_data;
 				},
-			],
-		] );
+			),
+		) );
 
-		$this->index_endpoint->register_item_route(\WP_REST_Server::DELETABLE, [
+		$this->index_endpoint->register_item_route(\WP_REST_Server::DELETABLE, array(
 			'id_arg_name' => 'type',
 			'id_arg_type_regex' => '[\w\-\_]+',
-			'type' => [
+			'type' => array(
 				'type' => 'string',
 				'description' => 'The type of the element.',
 				'required' => true,
-				'validate_callback' => function( $type ) {
+				'validate_callback' => function ( $type ) {
 					return $this->validate_type( $type );
 				},
-			],
-		] );
+			),
+		) );
 	}
 
 	public function get_collection_params() {
-		return [];
+		return array();
 	}
 
 	public function get_items( $request ) {
@@ -96,7 +96,7 @@ class Controller extends Base_Controller {
 
 		$kit->update_json_meta( Module::META_KEY, $data );
 
-		return (object) [];
+		return (object) array();
 	}
 
 	public function delete_item( $request ) {
@@ -110,7 +110,7 @@ class Controller extends Base_Controller {
 
 		$kit->update_json_meta( Module::META_KEY, $data );
 
-		return (object) [];
+		return (object) array();
 	}
 
 	private function validate_kit() {

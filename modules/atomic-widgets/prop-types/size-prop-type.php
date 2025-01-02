@@ -11,16 +11,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Prop_Type extends Object_Prop_Type {
-	const SUPPORTED_UNITS = [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax' ];
+	const SUPPORTED_UNITS = array( 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax' );
 
 	public static function get_key(): string {
 		return 'size';
 	}
 
 	protected function define_shape(): array {
-		return [
+		return array(
 			'size' => Number_Prop_Type::make()->required(),
 			'unit' => String_Prop_Type::make()->enum( static::SUPPORTED_UNITS )->required(),
-		];
+		);
 	}
 }

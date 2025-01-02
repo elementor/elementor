@@ -20,8 +20,8 @@ class Garage extends \Elementor\Data\V2\Base\Endpoint {
 	}
 
 	protected function get_items( $request ) {
-		return [
+		return array(
 			'status' => 'garage available',
-		];
+		);
 	}
 }

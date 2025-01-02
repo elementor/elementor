@@ -15,7 +15,7 @@ class Filter_Condition_Introduction_Meta extends Transformations_Abstract {
 	public function __construct( $args ) {
 		parent::__construct( $args );
 
-		$this->introduction_meta_data = User::get_introduction_meta() ?? [];
+		$this->introduction_meta_data = User::get_introduction_meta() ?? array();
 	}
 
 	public function transform( array $home_screen_data ): array {
@@ -29,7 +29,7 @@ class Filter_Condition_Introduction_Meta extends Transformations_Abstract {
 	private function get_introduction_meta_conditions( $home_screen_data ): array {
 		$add_ons = $home_screen_data['add_ons']['repeater'];
 
-		$conditions = [];
+		$conditions = array();
 
 		foreach ( $add_ons as $add_on ) {
 			if ( array_key_exists( 'condition', $add_on ) && 'introduction_meta' === $add_on['condition']['key'] ) {
@@ -41,7 +41,7 @@ class Filter_Condition_Introduction_Meta extends Transformations_Abstract {
 	}
 
 	private function get_activated_addons( $conditions ): array {
-		$active_addons = [];
+		$active_addons = array();
 
 		foreach ( $conditions as $add_on_title => $introduction_meta_value ) {
 			if ( ! empty( $this->introduction_meta_data[ $introduction_meta_value ] ) ) {
@@ -54,7 +54,7 @@ class Filter_Condition_Introduction_Meta extends Transformations_Abstract {
 
 	private function get_inactive_addons( $home_screen_data, $active_addons ): array {
 		$add_ons = $home_screen_data['add_ons']['repeater'];
-		$inactive_add_ons = [];
+		$inactive_add_ons = array();
 
 		foreach ( $add_ons as $add_on ) {
 			if ( ! in_array( $add_on['title'], $active_addons ) ) {

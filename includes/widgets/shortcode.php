@@ -67,7 +67,7 @@ class Widget_Shortcode extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'shortcode', 'code' ];
+		return array( 'shortcode', 'code' );
 	}
 
 	/**
@@ -99,25 +99,25 @@ class Widget_Shortcode extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_shortcode',
-			[
+			array(
 				'label' => esc_html__( 'Shortcode', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'shortcode',
-			[
+			array(
 				'label' => esc_html__( 'Enter your shortcode', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
-				'ai' => [
+				),
+				'ai' => array(
 					'active' => false,
-				],
+				),
 				'placeholder' => '[gallery id="123" size="medium"]',
 				'default' => '',
-			]
+			)
 		);
 
 		$this->end_controls_section();

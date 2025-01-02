@@ -83,7 +83,7 @@ abstract class Background_Task_Manager extends BaseModule {
 			$this->continue_run();
 		}
 
-		wp_safe_redirect( remove_query_arg( [ $this->get_action(), '_wpnonce' ] ) );
+		wp_safe_redirect( remove_query_arg( array( $this->get_action(), '_wpnonce' ) ) );
 		die;
 	}
 }

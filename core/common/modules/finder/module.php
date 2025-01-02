@@ -37,7 +37,7 @@ class Module extends BaseModule {
 
 		$this->add_template();
 
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class Module extends BaseModule {
 	 * @param Ajax $ajax
 	 */
 	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'finder_get_category_items', [ $this, 'ajax_get_category_items' ] );
+		$ajax->register_ajax_action( 'finder_get_category_items', array( $this, 'ajax_get_category_items' ) );
 	}
 
 	/**
@@ -105,10 +105,10 @@ class Module extends BaseModule {
 	protected function get_init_settings() {
 		$categories = $this->categories_manager->get_categories();
 
-		$categories_data = [];
+		$categories_data = array();
 
 		foreach ( $categories as $category_name => $category ) {
-			$categories_data[ $category_name ] = array_merge( $category->get_settings(), [ 'name' => $category_name ] );
+			$categories_data[ $category_name ] = array_merge( $category->get_settings(), array( 'name' => $category_name ) );
 		}
 
 		/**
@@ -123,8 +123,8 @@ class Module extends BaseModule {
 		 */
 		$categories_data = apply_filters( 'elementor/finder/categories', $categories_data );
 
-		return [
+		return array(
 			'data' => $categories_data,
-		];
+		);
 	}
 }

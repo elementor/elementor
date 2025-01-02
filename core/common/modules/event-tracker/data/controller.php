@@ -17,13 +17,13 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-		$this->index_endpoint->register_items_route( \WP_REST_Server::CREATABLE, [
-			'event_data' => [
+		$this->index_endpoint->register_items_route( \WP_REST_Server::CREATABLE, array(
+			'event_data' => array(
 				'description' => 'All the recorded event data in JSON format',
 				'type' => 'object',
 				'required' => true,
-			],
-		] );
+			),
+		) );
 	}
 
 	/**

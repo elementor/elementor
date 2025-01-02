@@ -45,11 +45,11 @@ class Model extends CSS_Model {
 	 *
 	 * @param array $data Optional. Model data. Default is an empty array.
 	 */
-	public function __construct( array $data = [] ) {
+	public function __construct( array $data = array() ) {
 		$this->post = get_post( $data['id'] );
 
 		if ( ! $this->post ) {
-			$this->post = new \WP_Post( (object) [] );
+			$this->post = new \WP_Post( (object) array() );
 		}
 
 		if ( wp_is_post_revision( $this->post->ID ) ) {
@@ -121,13 +121,13 @@ class Model extends CSS_Model {
 	public function get_panel_page_settings() {
 		$document = Plugin::$instance->documents->get( $this->post->ID );
 
-		return [
+		return array(
 			'title' => sprintf(
 				/* translators: %s: Document title. */
 				esc_html__( '%s Settings', 'elementor' ),
 				$document::get_title()
 			),
-		];
+		);
 	}
 
 	/**
@@ -149,7 +149,7 @@ class Model extends CSS_Model {
 			 * @var \Elementor\Modules\PageTemplates\Module $page_templates_module
 			 */
 			$page_templates_module = Plugin::$instance->modules_manager->get_modules( 'page-templates' );
-			$is_elementor_template = ! ! $page_templates_module->get_template_path( $element_data['settings']['template'] );
+			$is_elementor_template = (bool) $page_templates_module->get_template_path( $element_data['settings']['template'] );
 
 			if ( ! $is_elementor_template ) {
 				unset( $element_data['settings']['template'] );

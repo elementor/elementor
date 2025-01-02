@@ -67,7 +67,7 @@ class Widget_Html extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'html', 'code', 'embed', 'script' ];
+		return array( 'html', 'code', 'embed', 'script' );
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -93,23 +93,23 @@ class Widget_Html extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_title',
-			[
+			array(
 				'label' => esc_html__( 'HTML Code', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'html',
-			[
+			array(
 				'label' => esc_html__( 'HTML Code', 'elementor' ),
 				'type' => Controls_Manager::CODE,
 				'default' => '',
 				'placeholder' => esc_html__( 'Enter your code', 'elementor' ),
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'is_editable' => User::is_current_user_can_use_custom_html(),
-			]
+			)
 		);
 
 		$this->end_controls_section();

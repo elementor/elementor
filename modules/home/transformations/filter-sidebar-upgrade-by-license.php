@@ -26,7 +26,7 @@ class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
-		$new_sidebar_upgrade = [];
+		$new_sidebar_upgrade = array();
 
 		foreach ( $home_screen_data['sidebar_upgrade'] as $index => $item ) {
 			if ( $this->is_valid_item( $item ) ) {

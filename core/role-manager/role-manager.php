@@ -19,18 +19,18 @@ class Role_Manager extends Settings_Page {
 
 	const ROLE_MANAGER_ADVANCED = 'role-manager';
 
-	private static $advanced_options = [];
+	private static $advanced_options = array();
 
 	/**
 	 * @since 2.0.0
 	 * @access public
 	 */
 	public function get_role_manager_options() {
-		return get_option( 'elementor_' . self::ROLE_MANAGER_OPTION_NAME, [] );
+		return get_option( 'elementor_' . self::ROLE_MANAGER_OPTION_NAME, array() );
 	}
 
 	public function get_role_manager_advanced_options() {
-		return get_option( 'elementor_' . self::ROLE_MANAGER_ADVANCED, [] );
+		return get_option( 'elementor_' . self::ROLE_MANAGER_ADVANCED, array() );
 	}
 
 	public function get_user_advanced_options() {
@@ -64,36 +64,36 @@ class Role_Manager extends Settings_Page {
 	 */
 	protected function create_tabs() {
 		$validation_class = 'Elementor\Settings_Validations';
-		return [
-			'general' => [
+		return array(
+			'general' => array(
 				'label' => esc_html__( 'General', 'elementor' ),
-				'sections' => [
-					'tools' => [
-						'fields' => [
-							'exclude_user_roles' => [
+				'sections' => array(
+					'tools' => array(
+						'fields' => array(
+							'exclude_user_roles' => array(
 								'label' => esc_html__( 'Exclude Roles', 'elementor' ),
-								'field_args' => [
+								'field_args' => array(
 									'type' => 'checkbox_list_roles',
-									'exclude' => [ 'super_admin', 'administrator' ],
-								],
-								'setting_args' => [
-									'sanitize_callback' => [ $validation_class, 'checkbox_list' ],
-								],
-							],
-							self::ROLE_MANAGER_ADVANCED => [
-								'field_args' => [
+									'exclude' => array( 'super_admin', 'administrator' ),
+								),
+								'setting_args' => array(
+									'sanitize_callback' => array( $validation_class, 'checkbox_list' ),
+								),
+							),
+							self::ROLE_MANAGER_ADVANCED => array(
+								'field_args' => array(
 									'type' => 'raw_html',
 									'html' => '',
-								],
-								'setting_args' => [
-									'sanitize_callback' => [ $this, 'save_advanced_options' ],
-								],
-							],
-						],
-					],
-				],
-			],
-		];
+								),
+								'setting_args' => array(
+									'sanitize_callback' => array( $this, 'save_advanced_options' ),
+								),
+							),
+						),
+					),
+				),
+			),
+		);
 	}
 
 	public function save_advanced_options( $input ) {
@@ -187,7 +187,7 @@ class Role_Manager extends Settings_Page {
 		$name = 'elementor_' . self::ROLE_MANAGER_ADVANCED . '[' . $role_slug . '][]';
 
 		$advanced_options = $this->get_user_advanced_options();
-		$checked = isset( $advanced_options[ $role_slug ] ) ? $advanced_options[ $role_slug ] : [];
+		$checked = isset( $advanced_options[ $role_slug ] ) ? $advanced_options[ $role_slug ] : array();
 		?>
 		<div class="elementor-role-control">
 			<label for="<?php echo esc_attr( $id ); ?>">
@@ -205,7 +205,7 @@ class Role_Manager extends Settings_Page {
 		$name = 'elementor_' . self::ROLE_MANAGER_ADVANCED . '[' . $role_slug . '][]';
 
 		$advanced_options = $this->get_user_advanced_options();
-		$checked = isset( $advanced_options[ $role_slug ] ) ? $advanced_options[ $role_slug ] : [];
+		$checked = isset( $advanced_options[ $role_slug ] ) ? $advanced_options[ $role_slug ] : array();
 		?>
 		<div class="elementor-role-control">
 			<label for="<?php echo esc_attr( $id ); ?>">
@@ -235,14 +235,13 @@ class Role_Manager extends Settings_Page {
 	public function get_go_pro_link_content() {
 		$upgrade_url = 'https://go.elementor.com/go-pro-role-manager/';
 
-		$promotion = [
+		$promotion = array(
 			'description' => esc_html__( 'Want to give access only to content?', 'elementor' ),
 			'upgrade_url' => esc_url( $upgrade_url ),
 			'upgrade_text' => esc_html__( 'Upgrade', 'elementor' ),
-		];
+		);
 
 		return Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion, 'elementor/role/custom_promotion', 'upgrade_url' );
-
 	}
 
 	/**
@@ -253,7 +252,7 @@ class Role_Manager extends Settings_Page {
 		$user = wp_get_current_user();
 		$user_roles = $user->roles;
 		$options = $this->get_user_restrictions();
-		$restrictions = [];
+		$restrictions = array();
 		if ( empty( $options ) ) {
 			return $restrictions;
 		}
@@ -274,7 +273,7 @@ class Role_Manager extends Settings_Page {
 	private function get_user_restrictions() {
 		static $restrictions = false;
 		if ( ! $restrictions ) {
-			$restrictions = [];
+			$restrictions = array();
 
 			/**
 			 * Editor user restrictions.
@@ -319,10 +318,10 @@ class Role_Manager extends Settings_Page {
 			$this->register_admin_menu( $admin_menu );
 		}, Settings::ADMIN_MENU_PRIORITY + 10 );
 
-		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );
-		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_custom_html_enable_control' ] );
-		add_action( 'elementor/role/restrictions/controls', [ $this, 'get_go_pro_link_html' ] );
+		add_action( 'elementor/role/restrictions/controls', array( $this, 'add_json_enable_control' ) );
+		add_action( 'elementor/role/restrictions/controls', array( $this, 'add_custom_html_enable_control' ) );
+		add_action( 'elementor/role/restrictions/controls', array( $this, 'get_go_pro_link_html' ) );
 
-		add_filter( 'elementor/editor/user/restrictions', [ $this, 'get_role_manager_advanced_options' ] );
+		add_filter( 'elementor/editor/user/restrictions', array( $this, 'get_role_manager_advanced_options' ) );
 	}
 }

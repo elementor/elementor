@@ -27,7 +27,7 @@ class Page extends PageBase {
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
-		$properties['cpt'] = [ 'page' ];
+		$properties['cpt'] = array( 'page' );
 		$properties['support_kit'] = true;
 
 		return $properties;
@@ -75,19 +75,19 @@ class Page extends PageBase {
 	public static function get_site_settings_url_config( $active_tab_id = null ) {
 		$existing_elementor_page = self::get_elementor_page();
 		$site_settings_url = $existing_elementor_page
-			? self::get_elementor_edit_url( $existing_elementor_page->ID, [ 'active-tab' => $active_tab_id ] )
+			? self::get_elementor_edit_url( $existing_elementor_page->ID, array( 'active-tab' => $active_tab_id ) )
 			: self::get_create_new_editor_page_url( $active_tab_id );
 
-		return [
+		return array(
 			'new_page' => empty( $existing_elementor_page ),
 			'url' => $site_settings_url,
 			'type' => static::URL_TYPE,
-		];
+		);
 	}
 
 	public static function get_create_new_editor_page_url( $active_tab = null ): string {
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$args = [];
+		$args = array();
 
 		if ( ! empty( $active_kit_id ) ) {
 			$args['active-document'] = $active_kit_id;
@@ -100,8 +100,8 @@ class Page extends PageBase {
 		return add_query_arg( $args, Plugin::$instance->documents->get_create_new_post_url( 'page' ) );
 	}
 
-	private static function get_elementor_edit_url( int $post_id, $args = [] ): string {
-		$page = new self( [ 'post_id' => $post_id ] );
+	private static function get_elementor_edit_url( int $post_id, $args = array() ): string {
+		$page = new self( array( 'post_id' => $post_id ) );
 		$url = add_query_arg( $args, $page->get_edit_url() );
 
 		if ( Plugin::$instance->kits_manager->get_active_id() ) {
@@ -112,11 +112,11 @@ class Page extends PageBase {
 	}
 
 	public static function get_elementor_page() {
-		return get_pages( [
+		return get_pages( array(
 			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
 			'sort_order' => 'asc',
 			'sort_column' => 'post_date',
 			'number' => 1,
-		] )[0] ?? null;
+		) )[0] ?? null;
 	}
 }

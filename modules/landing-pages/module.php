@@ -42,18 +42,18 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	public static function get_experimental_data() {
-		return [
+		return array(
 			'name' => 'landing-pages',
 			'title' => esc_html__( 'Landing Pages', 'elementor' ),
 			'description' => esc_html__( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'default' => Experiments_Manager::STATE_ACTIVE,
-			'new_site' => [
+			'new_site' => array(
 				'default_inactive' => true,
 				'minimum_installation_version' => '3.22.0',
-			],
+			),
 			'deprecated' => true,
-		];
+		);
 	}
 
 	/**
@@ -71,14 +71,14 @@ class Module extends BaseModule {
 		}
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any trashed landing pages.
-		$trashed_posts_query = new \WP_Query( [
+		$trashed_posts_query = new \WP_Query( array(
 			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
 			'meta_value' => self::DOCUMENT_TYPE,
-		] );
+		) );
 
 		$this->trashed_posts = $trashed_posts_query->posts;
 
@@ -90,14 +90,14 @@ class Module extends BaseModule {
 			return $this->has_pages;
 		}
 
-		$posts_query = new \WP_Query( [
+		$posts_query = new \WP_Query( array(
 			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'any',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
 			'meta_value' => self::DOCUMENT_TYPE,
-		] );
+		) );
 
 		$this->has_pages = $posts_query->post_count > 0;
 
@@ -126,23 +126,23 @@ class Module extends BaseModule {
 			$function = null;
 		} else {
 			$menu_slug = self::CPT;
-			$function = [ $this, 'print_empty_landing_pages_page' ];
+			$function = array( $this, 'print_empty_landing_pages_page' );
 		}
 
-		return [
+		return array(
 			'menu_slug' => $menu_slug,
 			'function' => $function,
-		];
+		);
 	}
 
 	private function register_admin_menu( MainMenu $menu ) {
 		$landing_pages_title = esc_html__( 'Landing Pages', 'elementor' );
 
-		$menu_args = array_merge( $this->get_menu_args(), [
+		$menu_args = array_merge( $this->get_menu_args(), array(
 			'page_title' => $landing_pages_title,
 			'menu_title' => $landing_pages_title,
 			'index' => 20,
-		] );
+		) );
 
 		$menu->add_submenu( $menu_args );
 	}
@@ -247,15 +247,15 @@ class Module extends BaseModule {
 	 * @return array|null
 	 */
 	private function admin_localize_settings( $settings ) {
-		$additional_settings = [
-			'urls' => [
+		$additional_settings = array(
+			'urls' => array(
 				'addNewLandingPageUrl' => $this->get_add_new_landing_page_url(),
-			],
-			'landingPages' => [
+			),
+			'landingPages' => array(
 				'landingPagesHasPages' => $this->has_landing_pages(),
 				'isLandingPageAdminEdit' => $this->is_landing_page_admin_edit(),
-			],
-		];
+			),
+		);
 
 		return array_replace_recursive( $settings, $additional_settings );
 	}
@@ -266,7 +266,7 @@ class Module extends BaseModule {
 	 * @since 3.1.0
 	 */
 	private function register_landing_page_cpt() {
-		$labels = [
+		$labels = array(
 			'name' => esc_html__( 'Landing Pages', 'elementor' ),
 			'singular_name' => esc_html__( 'Landing Page', 'elementor' ),
 			'add_new' => esc_html__( 'Add New', 'elementor' ),
@@ -280,16 +280,16 @@ class Module extends BaseModule {
 			'not_found_in_trash' => esc_html__( 'No landing pages found in trash', 'elementor' ),
 			'parent_item_colon' => '',
 			'menu_name' => esc_html__( 'Landing Pages', 'elementor' ),
-		];
+		);
 
-		$args = [
+		$args = array(
 			'labels' => $labels,
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'capability_type' => 'page',
-			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
-			'supports' => [ 'title', 'editor', 'comments', 'revisions', 'trackbacks', 'author', 'excerpt', 'page-attributes', 'thumbnail', 'custom-fields', 'post-formats', 'elementor' ],
-		];
+			'taxonomies' => array( Source_Local::TAXONOMY_TYPE_SLUG ),
+			'supports' => array( 'title', 'editor', 'comments', 'revisions', 'trackbacks', 'author', 'excerpt', 'page-attributes', 'thumbnail', 'custom-fields', 'post-formats', 'elementor' ),
+		);
 
 		register_post_type( self::CPT, $args );
 	}
@@ -349,7 +349,7 @@ class Module extends BaseModule {
 		}
 
 		// Create the post types property as an array and include the landing pages CPT in it.
-		$query_post_types = [ 'post', 'page', self::CPT ];
+		$query_post_types = array( 'post', 'page', self::CPT );
 
 		// Since WordPress determined this is supposed to be a page, we'll pre-set the post_type query arg to make sure
 		// it includes the Landing Page CPT, so when the query is parsed, our CPT will be a legitimate match to the
@@ -361,7 +361,7 @@ class Module extends BaseModule {
 			$query->set( 'post_type', $query_post_types );
 
 			// We also need to set the name query var since redirect_guess_404_permalink() relies on it.
-			add_filter( 'pre_redirect_guess_404_permalink', function( $value ) use ( $query ) {
+			add_filter( 'pre_redirect_guess_404_permalink', function ( $value ) use ( $query ) {
 				set_query_var( 'name', $query->query['pagename'] );
 
 				return $value;
@@ -413,11 +413,11 @@ class Module extends BaseModule {
 		}
 
 		// Search for a Landing Page with the same name passed as the 'category name'.
-		$possible_new_query = new \WP_Query( [
+		$possible_new_query = new \WP_Query( array(
 			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'name' => $query->query['category_name'],
-		] );
+		) );
 
 		// Only if such a Landing Page is found, override the query to fetch the correct page.
 		if ( ! empty( $possible_new_query->posts ) ) {
@@ -437,7 +437,7 @@ class Module extends BaseModule {
 		if ( '' !== $this->permalink_structure ) {
 			// Landing Pages' post link needs to be modified to be identical to the pages permalink structure. This
 			// needs to happen in both the admin and the front end, since post links are also used in the admin pages.
-			add_filter( 'post_type_link', function( $post_link, $post, $leavename ) {
+			add_filter( 'post_type_link', function ( $post_link, $post, $leavename ) {
 				return $this->remove_post_type_slug( $post_link, $post, $leavename );
 			}, 10, 3 );
 
@@ -454,27 +454,27 @@ class Module extends BaseModule {
 			}
 		}
 
-		add_action( 'elementor/documents/register', function( Documents_Manager $documents_manager ) {
+		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Landing_Page::get_class_full_name() );
 		} );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
-		add_action( 'elementor/admin/localize_settings', function( array $settings ) {
+		add_action( 'elementor/admin/localize_settings', function ( array $settings ) {
 			return $this->admin_localize_settings( $settings );
 		} );
 
-		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function( array $cpts ) {
+		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function ( array $cpts ) {
 			$cpts[] = self::CPT;
 
 			return $cpts;
 		} );
 
 		// In the Landing Pages Admin Table page - Overwrite Template type column header title.
-		add_action( 'manage_' . Landing_Pages_Module::CPT . '_posts_columns', function( $posts_columns ) {
+		add_action( 'manage_' . Landing_Pages_Module::CPT . '_posts_columns', function ( $posts_columns ) {
 			/** @var Source_Local $source_local */
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
 
@@ -482,7 +482,7 @@ class Module extends BaseModule {
 		} );
 
 		// In the Landing Pages Admin Table page - Overwrite Template type column row values.
-		add_action( 'manage_' . Landing_Pages_Module::CPT . '_posts_custom_column', function( $column_name, $post_id ) {
+		add_action( 'manage_' . Landing_Pages_Module::CPT . '_posts_custom_column', function ( $column_name, $post_id ) {
 			/** @var Landing_Page $document */
 			$document = Plugin::$instance->documents->get( $post_id );
 
@@ -491,7 +491,7 @@ class Module extends BaseModule {
 
 		// Overwrite the Admin Bar's 'New +' Landing Page URL with the link that creates the new LP in Elementor
 		// with the Template Library modal open.
-		add_action( 'admin_bar_menu', function( $admin_bar ) {
+		add_action( 'admin_bar_menu', function ( $admin_bar ) {
 			// Get the Landing Page menu node.
 			$new_landing_page_node = $admin_bar->get_node( 'new-e-landing-page' );
 

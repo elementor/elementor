@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Section implements JsonSerializable {
 	private $label = null;
 	private $description = null;
-	private array $items = [];
+	private array $items = array();
 
 	public static function make(): self {
 		return new static();
@@ -39,13 +39,13 @@ class Section implements JsonSerializable {
 	}
 
 	public function jsonSerialize(): array {
-		return [
+		return array(
 			'type' => 'section',
-			'value' => [
+			'value' => array(
 				'label' => $this->label,
 				'description' => $this->description,
 				'items' => $this->items,
-			],
-		];
+			),
+		);
 	}
 }

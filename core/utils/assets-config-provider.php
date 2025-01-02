@@ -47,10 +47,10 @@ class Assets_Config_Provider extends Collection {
 			return $this;
 		}
 
-		$this->items[ $key ] = [
+		$this->items[ $key ] = array(
 			'handle' => $config['handle'],
-			'deps' => $this->is_valid_deps( $config ) ? $config['deps'] : [],
-		];
+			'deps' => $this->is_valid_deps( $config ) ? $config['deps'] : array(),
+		);
 
 		return $this;
 	}

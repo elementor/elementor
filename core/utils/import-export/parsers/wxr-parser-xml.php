@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * WXR Parser that makes use of the XML Parser PHP extension.
  */
 class WXR_Parser_XML {
-	private static $wp_tags = [
+	private static $wp_tags = array(
 		'wp:post_id',
 		'wp:post_date',
 		'wp:post_date_gmt',
@@ -58,9 +58,9 @@ class WXR_Parser_XML {
 		'wp:author_display_name',
 		'wp:author_first_name',
 		'wp:author_last_name',
-	];
+	);
 
-	private static $wp_sub_tags = [
+	private static $wp_sub_tags = array(
 		'wp:comment_id',
 		'wp:comment_author',
 		'wp:comment_author_email',
@@ -73,7 +73,7 @@ class WXR_Parser_XML {
 		'wp:comment_type',
 		'wp:comment_parent',
 		'wp:comment_user_id',
-	];
+	);
 
 	/**
 	 * @var string
@@ -178,11 +178,11 @@ class WXR_Parser_XML {
 			$error_code = xml_get_error_code( $xml );
 			$error_string = xml_error_string( $error_code );
 
-			return new WP_Error( 'XML_parse_error', 'There was an error when reading this WXR file', [
+			return new WP_Error( 'XML_parse_error', 'There was an error when reading this WXR file', array(
 				$current_line,
 				$current_column,
 				$error_string,
-			] );
+			) );
 		}
 		xml_parser_free( $xml );
 
@@ -190,7 +190,7 @@ class WXR_Parser_XML {
 			return new WP_Error( 'WXR_parse_error', esc_html__( 'This does not appear to be a WXR file, missing/invalid WXR version number', 'elementor' ) );
 		}
 
-		return [
+		return array(
 			'authors' => $this->authors,
 			'posts' => $this->posts,
 			'categories' => $this->category,
@@ -199,7 +199,7 @@ class WXR_Parser_XML {
 			'base_url' => $this->base_url,
 			'base_blog_url' => $this->base_blog_url,
 			'version' => $this->wxr_version,
-		];
+		);
 	}
 
 	private function tag_open( $tag, $attr ) {
@@ -274,49 +274,49 @@ class WXR_Parser_XML {
 				if ( ! empty( $this->sub_data ) ) {
 					$this->data['comments'][] = $this->sub_data;
 				}
-				$this->sub_data = [];
+				$this->sub_data = array();
 				break;
 			case 'wp:commentmeta':
-				$this->sub_data['commentmeta'][] = [
+				$this->sub_data['commentmeta'][] = array(
 					'key' => $this->sub_data['key'],
 					'value' => $this->sub_data['value'],
-				];
+				);
 				break;
 			case 'category':
 				if ( ! empty( $this->sub_data ) ) {
 					$this->sub_data['name'] = $this->cdata;
 					$this->data['terms'][] = $this->sub_data;
 				}
-				$this->sub_data = [];
+				$this->sub_data = array();
 				break;
 			case 'wp:postmeta':
 				if ( ! empty( $this->sub_data ) ) {
 					$this->data['postmeta'][] = $this->sub_data;
 				}
-				$this->sub_data = [];
+				$this->sub_data = array();
 				break;
 			case 'item':
 				$this->posts[] = $this->data;
-				$this->data = [];
+				$this->data = array();
 				break;
 			case 'wp:category':
 			case 'wp:tag':
 			case 'wp:term':
 				$n = substr( $tag, 3 );
 				array_push( $this->$n, $this->data );
-				$this->data = [];
+				$this->data = array();
 				break;
 			case 'wp:termmeta':
 				if ( ! empty( $this->sub_data ) ) {
 					$this->data['termmeta'][] = $this->sub_data;
 				}
-				$this->sub_data = [];
+				$this->sub_data = array();
 				break;
 			case 'wp:author':
 				if ( ! empty( $this->data['author_login'] ) ) {
 					$this->authors[ $this->data['author_login'] ] = $this->data;
 				}
-				$this->data = [];
+				$this->data = array();
 				break;
 			case 'wp:base_site_url':
 				$this->base_url = $this->cdata;
@@ -335,7 +335,7 @@ class WXR_Parser_XML {
 				if ( $this->in_sub_tag ) {
 					$this->sub_data[ $this->in_sub_tag ] = $this->cdata;
 					$this->in_sub_tag = false;
-				} else if ( $this->in_tag ) {
+				} elseif ( $this->in_tag ) {
 					$this->data[ $this->in_tag ] = $this->cdata;
 					$this->in_tag = false;
 				}
@@ -348,17 +348,17 @@ class WXR_Parser_XML {
 		$this->wxr_version = '';
 
 		$this->cdata = '';
-		$this->data = [];
-		$this->sub_data = [];
+		$this->data = array();
+		$this->sub_data = array();
 
 		$this->in_post = false;
 		$this->in_tag = false;
 		$this->in_sub_tag = false;
 
-		$this->authors = [];
-		$this->posts = [];
-		$this->term = [];
-		$this->category = [];
-		$this->tag = [];
+		$this->authors = array();
+		$this->posts = array();
+		$this->term = array();
+		$this->category = array();
+		$this->tag = array();
 	}
 }

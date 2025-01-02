@@ -22,17 +22,17 @@ class Font_Awesome extends Base {
 
 		$icon_file_name = str_replace( 'fa-', '', $icon['library'] );
 
-		return [
+		return array(
 			'key' => $icon_key,
 			'version' => self::LIBRARY_CURRENT_VERSION,
 			'file_path' => ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/json/' . $icon_file_name . '.json',
-			'data' => [
-				'icon_data' => [
+			'data' => array(
+				'icon_data' => array(
 					'name' => $icon_name,
 					'library' => $icon['library'],
-				],
-			],
-		];
+				),
+			),
+		);
 	}
 
 	protected function get_asset_content() {
@@ -44,11 +44,11 @@ class Font_Awesome extends Base {
 
 		$svg_data = $file_data['icons'][ $icon_name ];
 
-		return [
+		return array(
 			'width' => $svg_data[0],
 			'height' => $svg_data[1],
 			'path' => $svg_data[4],
 			'key' => $this->get_key(),
-		];
+		);
 	}
 }

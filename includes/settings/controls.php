@@ -27,17 +27,17 @@ class Settings_Controls {
 	 *
 	 * @param array $field Optional. Field data. Default is an empty array.
 	 */
-	public static function render( $field = [] ) {
+	public static function render( $field = array() ) {
 		if ( empty( $field ) || empty( $field['id'] ) ) {
 			return;
 		}
 
-		$defaults = [
+		$defaults = array(
 			'type' => '',
-			'attributes' => [],
+			'attributes' => array(),
 			'std' => '',
 			'desc' => '',
-		];
+		);
 
 		$field = array_merge( $defaults, $field );
 
@@ -120,7 +120,7 @@ class Settings_Controls {
 	private static function checkbox_list( array $field ) {
 		$old_value = get_option( $field['id'], $field['std'] );
 		if ( ! is_array( $old_value ) ) {
-			$old_value = [];
+			$old_value = array();
 		}
 
 		foreach ( $field['options'] as $option_key => $option_value ) :
@@ -178,15 +178,15 @@ class Settings_Controls {
 	 * @param array $field Field data.
 	 */
 	private static function checkbox_list_cpt( array $field ) {
-		$defaults = [
-			'exclude' => [],
-		];
+		$defaults = array(
+			'exclude' => array(),
+		);
 		$field = array_merge( $defaults, $field );
 
 		$post_types_objects = get_post_types(
-			[
+			array(
 				'public' => true,
-			], 'objects'
+			), 'objects'
 		);
 
 		/**
@@ -198,7 +198,7 @@ class Settings_Controls {
 		 */
 		$post_types_objects = apply_filters( 'elementor/settings/controls/checkbox_list_cpt/post_type_objects', $post_types_objects );
 
-		$field['options'] = [];
+		$field['options'] = array();
 		foreach ( $post_types_objects as $cpt_slug => $post_type ) {
 			if ( in_array( $cpt_slug, $field['exclude'], true ) ) {
 				continue;
@@ -222,20 +222,20 @@ class Settings_Controls {
 	 * @param array $field Field data.
 	 */
 	private static function checkbox_list_roles( array $field ) {
-		$defaults = [
-			'exclude' => [],
-		];
+		$defaults = array(
+			'exclude' => array(),
+		);
 		$field = array_merge( $defaults, $field );
 
-		$field['options'] = [];
+		$field['options'] = array();
 		$roles = get_editable_roles();
 
 		if ( is_multisite() ) {
-			$roles = [
-				'super_admin' => [
+			$roles = array(
+				'super_admin' => array(
 					'name' => esc_html__( 'Super Admin', 'elementor' ),
-				],
-			] + $roles;
+				),
+			) + $roles;
 		}
 
 		foreach ( $roles as $role_slug => $role_data ) {
