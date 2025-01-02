@@ -4,7 +4,7 @@ namespace Elementor\Core\Upgrade;
 use Elementor\Core\Base\DB_Upgrades_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Manager extends DB_Upgrades_Manager {
