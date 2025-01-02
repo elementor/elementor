@@ -84,7 +84,7 @@ class Admin extends App {
 			} );
 
 		Collection::make( [ 'ui', 'icons', 'query' ] )
-			->each( function( $package ) use ( $assets_config_provider ) {
+			->each( function ( $package ) use ( $assets_config_provider ) {
 				$suffix = Utils::is_script_debug() ? '' : '.min';
 				$config = $assets_config_provider->load( $package )->get( $package );
 
@@ -511,7 +511,7 @@ class Admin extends App {
 	 * Fired by `elementor_dashboard_overview_widget` function.
 	 *
 	 * @param array $args
-	 * @param bool $show_heading
+	 * @param bool  $show_heading
 	 *
 	 * @return void
 	 * @since 3.12.0
@@ -547,7 +547,7 @@ class Admin extends App {
 	 * Displays the Elementor dashboard widget - news and updates section.
 	 * Fired by `elementor_dashboard_overview_widget` function.
 	 *
-	 * @param int $limit_feed
+	 * @param int  $limit_feed
 	 * @param bool $show_heading
 	 *
 	 * @return void
@@ -749,7 +749,7 @@ class Admin extends App {
 		$allowed_fields = $this->get_allowed_fields_for_role();
 		return array_filter(
 			$post_data,
-			function( $key ) use ( $allowed_fields ) {
+			function ( $key ) use ( $allowed_fields ) {
 				return in_array( $key, $allowed_fields, true );
 			},
 			ARRAY_FILTER_USE_KEY
@@ -932,7 +932,7 @@ class Admin extends App {
 		add_action( 'current_screen', [ $this, 'init_floating_elements' ] );
 		add_action( 'current_screen', [ $this, 'init_beta_tester' ] );
 
-		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function( $plugin_data ) {
+		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function ( $plugin_data ) {
 			$this->version_update_warning( ELEMENTOR_VERSION, $plugin_data['new_version'] );
 		} );
 

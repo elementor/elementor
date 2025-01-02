@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Elementor usage module handler class is responsible for registering and
  * managing Elementor usage data.
- *
  */
 class Module extends BaseModule {
 	const GENERAL_TAB = 'general';
@@ -51,7 +50,7 @@ class Module extends BaseModule {
 	 * Remove 'wp-' from $doc_type for BC, support doc type change since 2.7.0.
 	 *
 	 * @param \Elementor\Core\Documents_Manager $doc_class
-	 * @param String $doc_type
+	 * @param String                            $doc_type
 	 *
 	 * @return int
 	 */
@@ -139,12 +138,12 @@ class Module extends BaseModule {
 
 			// ' ? 1 : 0;' In sorters is compatibility for PHP8.0.
 			// Sort usage by title.
-			uasort( $usage, function( $a, $b ) {
+			uasort( $usage, function ( $a, $b ) {
 				return ( $a['title'] > $b['title'] ) ? 1 : 0;
 			} );
 
 			// If title includes '-' will have lower priority.
-			uasort( $usage, function( $a ) {
+			uasort( $usage, function ( $a ) {
 				return strpos( $a['title'], '-' ) ? 1 : 0;
 			} );
 		}
@@ -158,7 +157,7 @@ class Module extends BaseModule {
 	 * Called on elementor/document/before_save, remove document from global & set saving flag.
 	 *
 	 * @param Document $document
-	 * @param array $data new settings to save.
+	 * @param array    $data new settings to save.
 	 */
 	public function before_document_save( $document, $data ) {
 		$current_status = get_post_status( $document->get_post() );
@@ -191,8 +190,8 @@ class Module extends BaseModule {
 	 *
 	 * Called on transition_post_status.
 	 *
-	 * @param string $new_status
-	 * @param string $old_status
+	 * @param string   $new_status
+	 * @param string   $old_status
 	 * @param \WP_Post $post
 	 */
 	public function on_status_change( $new_status, $old_status, $post ) {
@@ -307,11 +306,11 @@ class Module extends BaseModule {
 	 *
 	 * Increase controls count, for each element.
 	 *
-	 * @param array &$element_ref
+	 * @param array  &$element_ref
 	 * @param string $tab
 	 * @param string $section
 	 * @param string $control
-	 * @param int $count
+	 * @param int    $count
 	 */
 	private function increase_controls_count( &$element_ref, $tab, $section, $control, $count ) {
 		if ( ! isset( $element_ref['controls'][ $tab ] ) ) {
@@ -362,7 +361,7 @@ class Module extends BaseModule {
 			if ( $value !== $control_config['default'] ) {
 				$this->increase_controls_count( $element_ref, $tab, $section, $control, 1 );
 
-				$changed_controls_count++;
+				++$changed_controls_count;
 			}
 		}
 
@@ -402,7 +401,7 @@ class Module extends BaseModule {
 	 * Add's usage to global (update database).
 	 *
 	 * @param string $doc_name
-	 * @param array $doc_usage
+	 * @param array  $doc_usage
 	 */
 	private function add_to_global( $doc_name, $doc_usage ) {
 		$global_usage = get_option( self::OPTION_NAME, [] );
@@ -579,7 +578,7 @@ class Module extends BaseModule {
 				] );
 
 				return;
-			};
+			}
 		}
 	}
 

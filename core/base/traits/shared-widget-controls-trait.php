@@ -44,9 +44,9 @@ trait Shared_Widget_Controls_Trait {
 	protected function clean_array(
 		$input_array = []
 	) {
-		$output_array = array_filter( $input_array, function( $sub_array ) {
+		$output_array = array_filter( $input_array, function ( $sub_array ) {
 			// Use array_filter on the sub array
-			$filtered_sub_array = array_filter( $sub_array, function( $val ) {
+			$filtered_sub_array = array_filter( $sub_array, function ( $val ) {
 				// Filter out empty or null values
 				return ! is_null( $val ) && '' !== $val;
 			} );

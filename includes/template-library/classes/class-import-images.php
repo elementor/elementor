@@ -103,7 +103,7 @@ class Import_Images {
 	 * @access public
 	 *
 	 * @param array $attachment The attachment.
-	 * @param int $parent_post_id Optional
+	 * @param int   $parent_post_id Optional
 	 *
 	 * @return false|array Imported image data, or false.
 	 */
@@ -156,7 +156,7 @@ class Import_Images {
 			$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
 
 			$file_content = $svg_handler->sanitizer( $file_content );
-		};
+		}
 
 		$upload = wp_upload_bits(
 			$filename,

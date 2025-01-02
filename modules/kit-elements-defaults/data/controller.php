@@ -26,7 +26,7 @@ class Controller extends Base_Controller {
 				'type' => 'string',
 				'description' => 'The type of the element.',
 				'required' => true,
-				'validate_callback' => function( $type ) {
+				'validate_callback' => function ( $type ) {
 					return $this->validate_type( $type );
 				},
 			],
@@ -34,10 +34,10 @@ class Controller extends Base_Controller {
 				'description' => 'All the default values for the requested type',
 				'required' => true,
 				'type' => 'object',
-				'validate_callback' => function( $settings ) {
+				'validate_callback' => function ( $settings ) {
 					return is_array( $settings );
 				},
-				'sanitize_callback' => function( $settings, \WP_REST_Request $request ) {
+				'sanitize_callback' => function ( $settings, \WP_REST_Request $request ) {
 					Performance::set_use_style_controls( true );
 
 					$sanitizer = new Settings_Sanitizer(
@@ -66,7 +66,7 @@ class Controller extends Base_Controller {
 				'type' => 'string',
 				'description' => 'The type of the element.',
 				'required' => true,
-				'validate_callback' => function( $type ) {
+				'validate_callback' => function ( $type ) {
 					return $this->validate_type( $type );
 				},
 			],

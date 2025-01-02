@@ -94,7 +94,7 @@ class Widget_Common_Base extends Widget_Base {
 	 * @since 3.4.7
 	 * @access private
 	 *
-	 * @param array $args
+	 * @param array  $args
 	 * @param string $breakpoint_key
 	 * @return array parsed device args
 	 */

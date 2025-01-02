@@ -329,7 +329,7 @@ class Widget_Divider extends Widget_Base {
 	}
 
 	private function filter_styles_by( $array, $key, $value ) {
-		return array_filter( $array, function( $style ) use ( $key, $value ) {
+		return array_filter( $array, function ( $style ) use ( $key, $value ) {
 			return $value === $style[ $key ];
 		} );
 	}

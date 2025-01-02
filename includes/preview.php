@@ -105,7 +105,7 @@ class Preview extends App {
 		// Disable the WP admin bar in preview mode.
 		add_filter( 'show_admin_bar', '__return_false' );
 
-		add_action( 'wp_enqueue_scripts', function() {
+		add_action( 'wp_enqueue_scripts', function () {
 			$this->enqueue_styles();
 			$this->enqueue_scripts();
 		}, self::ENQUEUED_STYLES_PRIORITY );

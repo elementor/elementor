@@ -16,8 +16,8 @@ abstract class Style_Transformer_Base {
 	/**
 	 * Transform the value.
 	 *
-	 * @param mixed $value
-	 *
+	 * @param mixed    $value
+	 * @param callable $transform
 	 * @return mixed
 	 */
 	abstract public function transform( $value, callable $transform );

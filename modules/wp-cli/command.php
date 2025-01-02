@@ -7,7 +7,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -35,6 +35,8 @@ class Command extends \WP_CLI_Command {
 	 *  3. wp elementor flush-css --regenerate
 	 *      - This will flush the CSS files for elementor page builder and re-create the new CSS files.
 	 *
+	 * @param array $args
+	 * @param array $assoc_args
 	 * @since 2.1.0
 	 * @access public
 	 * @alias flush-css
@@ -103,6 +105,8 @@ class Command extends \WP_CLI_Command {
 	 *
 	 * @access public
 	 * @alias replace-urls
+	 * @param array $args
+	 * @param array $assoc_args
 	 */
 	public function replace_urls( $args, $assoc_args ) {
 		if ( empty( $args[0] ) ) {
@@ -133,13 +137,15 @@ class Command extends \WP_CLI_Command {
 	 *  1. wp elementor sync-library
 	 *      - This will sync the library with Elementor cloud library.
 	 *
+	 * @param array $args
+	 * @param array $assoc_args
 	 * @since 2.1.0
 	 * @access public
 	 * @alias sync-library
 	 */
 	public function sync_library( $args, $assoc_args ) {
 		// TODO:
-		// \WP_CLI::warning( 'command is deprecated since 2.8.0 Please use: wp elementor library sync' );
+		// \WP_CLI::warning( 'command is deprecated since 2.8.0 Please use: wp elementor library sync' );.
 
 		$data = Api::get_library_data( true );
 
@@ -158,13 +164,15 @@ class Command extends \WP_CLI_Command {
 	 *  1. wp elementor import-library <file-path>
 	 *      - This will import a file or a zip of multiple files to the library.
 	 *
+	 * @param array $args
+	 * @param array $assoc_args
 	 * @since 2.1.0
 	 * @access public
 	 * @alias import-library
 	 */
 	public function import_library( $args, $assoc_args ) {
 		// TODO:
-		// \WP_CLI::warning( 'command is deprecated since 2.8.0 Please use: wp elementor library import' );
+		// \WP_CLI::warning( 'command is deprecated since 2.8.0 Please use: wp elementor library import' );.
 
 		if ( empty( $args[0] ) ) {
 			\WP_CLI::error( 'Please set file path.' );

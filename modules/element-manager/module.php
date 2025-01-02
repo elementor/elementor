@@ -23,7 +23,7 @@ class Module extends BaseModule {
 		$ajax = new Ajax();
 		$ajax->register_endpoints();
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$admin_menu->register( static::PAGE_ID, new Admin_Menu_App() );
 		}, 25 );
 
@@ -34,11 +34,11 @@ class Module extends BaseModule {
 			}
 		}, 10, 2 );
 
-		add_filter( 'elementor/widgets/is_widget_enabled', function( $should_register, Widget_Base $widget_instance ) {
+		add_filter( 'elementor/widgets/is_widget_enabled', function ( $should_register, Widget_Base $widget_instance ) {
 			return ! Options::is_element_disabled( $widget_instance->get_name() );
 		}, 10, 2 );
 
-		add_filter( 'elementor/system-info/usage/settings', function( $usage ) {
+		add_filter( 'elementor/system-info/usage/settings', function ( $usage ) {
 			$disabled_elements = Options::get_disabled_elements();
 
 			if ( ! empty( $disabled_elements ) ) {
@@ -48,7 +48,7 @@ class Module extends BaseModule {
 			return $usage;
 		} );
 
-		add_filter( 'elementor/tracker/send_tracking_data_params', function( $params ) {
+		add_filter( 'elementor/tracker/send_tracking_data_params', function ( $params ) {
 			$disabled_elements = Options::get_disabled_elements();
 
 			if ( ! empty( $disabled_elements ) ) {

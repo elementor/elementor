@@ -10,7 +10,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -324,8 +324,8 @@ class Documents_Manager {
 	 * @since  2.0.0
 	 * @access public
 	 *
-	 * @param array $args      Optional. An array of key => value arguments to match against
-	 *                               the properties. Default is empty array.
+	 * @param array  $args      Optional. An array of key => value arguments to match against
+	 *                                the properties. Default is empty array.
 	 * @param string $operator Optional. The logical operation to perform. 'or' means only one
 	 *                               element from the array needs to match; 'and' means all elements
 	 *                               must match; 'not' means no elements may match. Default 'and'.
@@ -480,7 +480,7 @@ class Documents_Manager {
 	 *
 	 * Let the Document to filter the array of row action links on the Posts list table.
 	 *
-	 * @param array $actions
+	 * @param array    $actions
 	 * @param \WP_Post $post
 	 *
 	 * @return array
@@ -602,7 +602,6 @@ class Documents_Manager {
 	 *
 	 * @since 2.0.0
 	 * @access public
-	 *
 	 */
 	public function ajax_discard_changes( $request ) {
 		$document = $this->get_with_permissions( $request['editor_post_id'] );
@@ -734,7 +733,7 @@ class Documents_Manager {
 	 *
 	 * Retrieve a custom URL for creating a new post/page using Elementor.
 	 *
-	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 * @param string      $post_type Optional. Post type slug. Default is 'page'.
 	 * @param string|null $template_type Optional. Query arg 'template_type'. Default is null.
 	 *
 	 * @return string A URL for creating new post using Elementor.

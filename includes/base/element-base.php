@@ -131,7 +131,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	final public function enqueue_scripts() {
 		$deprecated_scripts = [
-			//Insert here when you have a deprecated script
+			// Insert here when you have a deprecated script.
 		];
 
 		foreach ( $this->get_script_depends() as $script ) {
@@ -288,7 +288,7 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Whether the element returns dynamic content.
 	 *
-	 * set to determine whether to cache the element output or not.
+	 * Set to determine whether to cache the element output or not.
 	 *
 	 * @since 3.22.0
 	 * @access protected
@@ -397,13 +397,12 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param array|string $element   The HTML element.
-	 * @param array $url_control      Array of link settings.
-	 * @param bool $overwrite         Optional. Whether to overwrite existing
-	 *                                attribute. Default is false, not to overwrite.
+	 * @param array        $url_control      Array of link settings.
+	 * @param bool         $overwrite         Optional. Whether to overwrite existing
+	 *                                        attribute. Default is false, not to overwrite.
 	 *
 	 * @return Element_Base Current instance of the element.
 	 */
-
 	public function add_link_attributes( $element, array $url_control, $overwrite = false ) {
 		$attributes = [];
 
@@ -422,7 +421,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! empty( $url_control['custom_attributes'] ) ) {
-			// Custom URL attributes should come as a string of comma-delimited key|value pairs
+			// Custom URL attributes should come as a string of comma-delimited key|value pairs.
 			$attributes = array_merge( $attributes, Utils::parse_custom_attributes( $url_control['custom_attributes'] ) );
 		}
 
@@ -694,7 +693,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ): array {
 		$tags_manager = Plugin::$instance->dynamic_tags;
 
 		if ( empty( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {

@@ -1856,18 +1856,18 @@ class Fonts {
 	 * @return array Font type, or false if font doesn't exist.
 	 */
 	public static function get_fonts_by_groups( $groups = [] ) {
-		return array_filter( self::get_fonts(), function( $font ) use ( $groups ) {
+		return array_filter( self::get_fonts(), function ( $font ) use ( $groups ) {
 			return in_array( $font, $groups );
 		} );
 	}
 
-	public static function is_google_fonts_enabled() : bool {
+	public static function is_google_fonts_enabled(): bool {
 		if ( null === static::$is_google_fonts_enabled ) {
 			$default_value = '1';
 
 			// TODO: For future use, using for new installs.
-			//$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
-			//$default_value = $is_new_site ? '0' : '1';
+			// $is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
+			// $default_value = $is_new_site ? '0' : '1';
 
 			$option = get_option( 'elementor_google_font', $default_value );
 

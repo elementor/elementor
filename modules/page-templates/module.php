@@ -7,11 +7,11 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Core\DocumentTypes\PageBase as PageBase;
+use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Modules\Library\Documents\Page as LibraryPageDocument;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -134,11 +134,11 @@ class Module extends BaseModule {
 	 * @access public
 	 * @static
 	 *
-	 * @param array $page_templates Array of page templates. Keys are filenames,
-	 *                              checks are translated names.
+	 * @param array     $page_templates Array of page templates. Keys are filenames,
+	 *                                  checks are translated names.
 	 *
 	 * @param \WP_Theme $wp_theme
-	 * @param \WP_Post $post
+	 * @param \WP_Post  $post
 	 *
 	 * @return array Page templates.
 	 */
@@ -288,9 +288,14 @@ class Module extends BaseModule {
 		$document->end_injection();
 	}
 
-	// The $options variable is an array of $control_options to overwrite the default
+	/** The $options variable is an array of $control_options to overwrite the default. *
+	 *
+	 * @param Document $document
+	 * @param string   $control_id
+	 * @param array    $control_options
+	 */
 	public function add_template_controls( Document $document, $control_id, $control_options ) {
-		// Default Control Options
+		// Default Control Options.
 		$default_control_options = [
 			'label' => esc_html__( 'Page Layout', 'elementor' ),
 			'type' => Controls_Manager::SELECT,

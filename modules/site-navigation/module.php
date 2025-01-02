@@ -11,7 +11,7 @@ use Elementor\Utils;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends Module_Base {
@@ -19,6 +19,7 @@ class Module extends Module_Base {
 
 	/**
 	 * Initialize the Site navigation module.
+	 *
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -34,7 +35,7 @@ class Module extends Module_Base {
 		$this->register_pages_panel_experiment();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
-			add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
+			add_filter( 'elementor/editor/v2/scripts/env', function ( $env ) {
 				$env['@elementor/editor-site-navigation'] = [
 					'is_pages_panel_active' => true,
 				];
@@ -76,9 +77,8 @@ class Module extends Module_Base {
 	}
 
 	private function register_rest_fields() {
-		add_action( 'rest_api_init', function() {
+		add_action( 'rest_api_init', function () {
 			( new Page_User_Can() )->register_rest_field();
 		} );
 	}
-
 }

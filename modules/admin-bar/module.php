@@ -31,7 +31,7 @@ class Module extends BaseApp {
 	/**
 	 * Collect the documents that was rendered in the current page.
 	 *
-	 * @param Document $document
+	 * @param Document   $document
 	 * @param $is_excerpt
 	 */
 	public function add_document_to_admin_bar( Document $document, $is_excerpt ) {

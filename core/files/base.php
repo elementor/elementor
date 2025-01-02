@@ -4,7 +4,7 @@ namespace Elementor\Core\Files;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Base {
@@ -75,6 +75,7 @@ abstract class Base {
 	}
 
 	/**
+	 * @param string $file_name
 	 * @since 2.1.0
 	 * @access public
 	 */
@@ -99,6 +100,7 @@ abstract class Base {
 	}
 
 	/**
+	 * @param string $files_dir
 	 * @since 2.1.0
 	 * @access public
 	 */

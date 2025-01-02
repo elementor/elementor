@@ -137,9 +137,9 @@ abstract class Endpoint {
 	 *
 	 * All reset requests from the client should pass this function.
 	 *
-	 * @param string $methods
+	 * @param string           $methods
 	 * @param \WP_REST_Request $request
-	 * @param bool $is_multi
+	 * @param bool             $is_multi
 	 *
 	 * @return mixed|\WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 * @throws \Exception
@@ -191,7 +191,7 @@ abstract class Endpoint {
 	/**
 	 * Retrieves one item from the collection.
 	 *
-	 * @param string $id
+	 * @param string           $id
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -216,7 +216,7 @@ abstract class Endpoint {
 	/**
 	 * Creates one item.
 	 *
-	 * @param string $id id of request item.
+	 * @param string           $id id of request item.
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -239,7 +239,7 @@ abstract class Endpoint {
 	/**
 	 * Updates one item.
 	 *
-	 * @param string $id id of request item.
+	 * @param string           $id id of request item.
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -262,7 +262,7 @@ abstract class Endpoint {
 	/**
 	 * Delete one item.
 	 *
-	 * @param string $id id of request item.
+	 * @param string           $id id of request item.
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -285,7 +285,7 @@ abstract class Endpoint {
 	/**
 	 * Register item route.
 	 *
-	 * @param array $args
+	 * @param array  $args
 	 * @param string $route
 	 * @param string $methods
 	 *
@@ -326,8 +326,8 @@ abstract class Endpoint {
 	 *
 	 * @param string $route
 	 * @param string $methods
-	 * @param null $callback
-	 * @param array $args
+	 * @param null   $callback
+	 * @param array  $args
 	 *
 	 * @return bool
 	 * @throws \Exception

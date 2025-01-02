@@ -8,7 +8,7 @@ use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
@@ -69,9 +69,9 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function get_widgets_style_list():array {
+	private function get_widgets_style_list(): array {
 		return [
-			'widget-link-in-bio' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
+			'widget-link-in-bio' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717].
 			'widget-link-in-bio-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-link-in-bio-var-2' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-link-in-bio-var-3' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,

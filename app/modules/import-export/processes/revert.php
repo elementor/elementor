@@ -87,7 +87,7 @@ class Revert {
 			return [];
 		}
 
-		usort( $import_sessions, function( $a, $b ) {
+		usort( $import_sessions, function ( $a, $b ) {
 			return strcmp( $a['start_timestamp'], $b['start_timestamp'] );
 		} );
 

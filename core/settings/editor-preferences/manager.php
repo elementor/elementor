@@ -7,7 +7,7 @@ use Elementor\Core\Settings\Base\Model as BaseModel;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Manager extends BaseManager {
@@ -23,7 +23,6 @@ class Manager extends BaseManager {
 	 * @access public
 	 *
 	 * @return BaseModel The model object.
-	 *
 	 */
 	public function get_model_for_config() {
 		return $this->get_model();
@@ -51,7 +50,6 @@ class Manager extends BaseManager {
 	 *
 	 * @param int $id.
 	 * @return array
-	 *
 	 */
 	protected function get_saved_settings( $id ) {
 		$settings = get_user_meta( get_current_user_id(), self::META_KEY, true );
@@ -69,10 +67,9 @@ class Manager extends BaseManager {
 	 * Save settings to the database.
 	 *
 	 * @param array $settings Settings.
-	 * @param int $id Post ID.
+	 * @param int   $id Post ID.
 	 * @since 2.8.0
 	 * @access protected
-	 *
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
 		update_user_meta( get_current_user_id(), self::META_KEY, $settings );

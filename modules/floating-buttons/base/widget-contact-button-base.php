@@ -508,7 +508,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			$notification_dot_return_value = 'yes';
 			$notification_dot_default = $notification_dot_return_value;
 
-			// Only clear if explicitly passed
+			// Only clear if explicitly passed.
 			if ( false === $config['content']['chat_button_section']['has_notification_dot_default_enabled'] ) {
 				$notification_dot_default = '';
 			}
@@ -3123,7 +3123,6 @@ JS;
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this, static::TAB_ADVANCED );
 
 		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, static::TAB_ADVANCED );
-
 	}
 
 	protected function render(): void {

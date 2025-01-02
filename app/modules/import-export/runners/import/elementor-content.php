@@ -17,7 +17,7 @@ class Elementor_Content extends Import_Runner_Base {
 		$this->init_page_on_front_data();
 	}
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'elementor-content';
 	}
 
@@ -100,7 +100,7 @@ class Elementor_Content extends Import_Runner_Base {
 
 		$post_data['import_settings'] = $post_settings;
 
-		$new_attachment_callback = function( $attachment_id ) {
+		$new_attachment_callback = function ( $attachment_id ) {
 			$this->set_session_post_meta( $attachment_id, $this->import_session_id );
 		};
 
@@ -151,7 +151,7 @@ class Elementor_Content extends Import_Runner_Base {
 		}
 	}
 
-	public function get_import_session_metadata() : array {
+	public function get_import_session_metadata(): array {
 		return [
 			'page_on_front' => $this->page_on_front_id ?? 0,
 		];

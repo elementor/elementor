@@ -54,7 +54,7 @@ class Module extends BaseModule {
 			$connect_module->register_app( 'ai', Ai::get_class_name() );
 		} );
 
-		add_action( 'elementor/ajax/register_actions', function( $ajax ) {
+		add_action( 'elementor/ajax/register_actions', function ( $ajax ) {
 			$handlers = [
 				'ai_get_user_information' => [ $this, 'ajax_ai_get_user_information' ],
 				'ai_get_remote_config' => [ $this, 'ajax_ai_get_remote_config' ],
@@ -91,12 +91,12 @@ class Module extends BaseModule {
 			}
 		} );
 
-		add_action( 'elementor/editor/before_enqueue_scripts', function() {
+		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			$this->enqueue_main_script();
 			$this->enqueue_layout_script();
 		} );
 
-		add_action( 'elementor/editor/after_enqueue_styles', function() {
+		add_action( 'elementor/editor/after_enqueue_styles', function () {
 			wp_enqueue_style(
 				'elementor-ai-editor',
 				$this->get_css_assets_url( 'modules/ai/editor' ),
@@ -105,7 +105,7 @@ class Module extends BaseModule {
 			);
 		} );
 
-		add_action( 'elementor/preview/enqueue_styles', function() {
+		add_action( 'elementor/preview/enqueue_styles', function () {
 			wp_enqueue_style(
 				'elementor-ai-layout-preview',
 				$this->get_css_assets_url( 'modules/ai/layout-preview' ),
@@ -127,7 +127,7 @@ class Module extends BaseModule {
 			}
 		}
 
-		add_action( 'enqueue_block_editor_assets', function() {
+		add_action( 'enqueue_block_editor_assets', function () {
 			wp_enqueue_script( 'elementor-ai-gutenberg',
 				$this->get_js_assets_url( 'ai-gutenberg' ),
 				[
@@ -291,7 +291,6 @@ class Module extends BaseModule {
 		}
 
 		$this->add_wc_scripts();
-
 	}
 
 	public function enqueue_ai_single_product_page_scripts() {
@@ -300,7 +299,6 @@ class Module extends BaseModule {
 		}
 
 		$this->add_wc_scripts();
-
 	}
 
 	private function add_products_bulk_action( $bulk_actions ) {
@@ -507,7 +505,7 @@ class Module extends BaseModule {
 
 		// If for some reason the document has been saved during an AI Layout session,
 		// ensure that the temporary containers are removed from the data.
-		$data['elements'] = array_filter( $data['elements'], function( $element ) {
+		$data['elements'] = array_filter( $data['elements'], function ( $element ) {
 			$is_preview_container = strpos( $element['id'], 'e-ai-preview-container' ) === 0;
 			$is_screenshot_container = strpos( $element['id'], 'e-ai-screenshot-container' ) === 0;
 
@@ -589,10 +587,8 @@ class Module extends BaseModule {
 			if ( ! $document->is_editable_by_current_user() ) {
 				throw new \Exception( 'Access denied' );
 			}
-		} else {
-			if ( ! current_user_can( 'edit_post', $editor_post_id ) ) {
+		} elseif ( ! current_user_can( 'edit_post', $editor_post_id ) ) {
 				throw new \Exception( 'Access denied' );
-			}
 		}
 	}
 
@@ -700,7 +696,7 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function get_ai_app() : Ai {
+	private function get_ai_app(): Ai {
 		return Plugin::$instance->common->get_component( 'connect' )->get_app( 'ai' );
 	}
 
@@ -1127,8 +1123,8 @@ class Module extends BaseModule {
 		}
 
 		if ( ! empty( $image['use_gallery_image'] ) && ! empty( $image['id'] ) ) {
-			 $app = $this->get_ai_app();
-			 $app->set_used_gallery_image( $image['id'] );
+			$app = $this->get_ai_app();
+			$app->set_used_gallery_image( $image['id'] );
 		}
 
 		return [

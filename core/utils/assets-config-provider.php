@@ -26,7 +26,7 @@ class Assets_Config_Provider extends Collection {
 	 * Load asset config from a file into the collection.
 	 *
 	 * @param $key
-	 * @param $path
+	 * @param string $path
 	 *
 	 * @return $this
 	 */
@@ -58,22 +58,22 @@ class Assets_Config_Provider extends Collection {
 	/**
 	 * Check that the handle property in the config is a valid.
 	 *
-	 * @param $config
+	 * @param array $config
 	 *
 	 * @return bool
 	 */
-	private function is_valid_handle( $config ) {
+	private function is_valid_handle( $config ): bool {
 		return ! empty( $config['handle'] ) && is_string( $config['handle'] );
 	}
 
 	/**
 	 * Check that the deps property in the config is a valid.
 	 *
-	 * @param $config
+	 * @param array $config
 	 *
 	 * @return bool
 	 */
-	private function is_valid_deps( $config ) {
+	private function is_valid_deps( $config ): bool {
 		return isset( $config['deps'] ) && is_array( $config['deps'] );
 	}
 }

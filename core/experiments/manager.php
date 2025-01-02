@@ -12,7 +12,7 @@ use Elementor\Tracker;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Manager extends Base_Object {
@@ -93,7 +93,7 @@ class Manager extends Base_Object {
 		if ( $experimental_data['mutable'] && is_admin() ) {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
-			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data, $feature_option_key ) {
+			$on_state_change_callback = function ( $old_state, $new_state ) use ( $experimental_data, $feature_option_key ) {
 				try {
 					$this->on_feature_state_change( $experimental_data, $new_state, $old_state );
 				} catch ( Exceptions\Dependency_Exception $e ) {
@@ -140,7 +140,7 @@ class Manager extends Base_Object {
 	 *
 	 * @return array
 	 */
-	private function unify_feature_tags( array $experimental_data ) : array {
+	private function unify_feature_tags( array $experimental_data ): array {
 		foreach ( [ 'tag', 'tags' ] as $key ) {
 			if ( empty( $experimental_data[ $key ] ) ) {
 				continue;
@@ -168,7 +168,7 @@ class Manager extends Base_Object {
 	 *
 	 * @return array
 	 */
-	private function format_feature_tags( $tags ) : array {
+	private function format_feature_tags( $tags ): array {
 		if ( ! is_string( $tags ) && ! is_array( $tags ) ) {
 			return [];
 		}
@@ -441,7 +441,6 @@ class Manager extends Base_Object {
 	 *
 	 * @since 3.1.0
 	 * @access private
-	 *
 	 */
 	private function register_settings_fields( Settings $settings ) {
 		$features = $this->get_features();
@@ -467,7 +466,7 @@ class Manager extends Base_Object {
 
 			$fields[ $section ][ $feature_key ]['field_args'] = $feature;
 
-			$fields[ $section ][ $feature_key ]['render'] = function( $feature ) {
+			$fields[ $section ][ $feature_key ]['render'] = function ( $feature ) {
 				$this->render_feature_settings_field( $feature );
 			};
 		}
@@ -493,13 +492,13 @@ class Manager extends Base_Object {
 				'label' => esc_html__( 'Features', 'elementor' ),
 				'sections' => [
 					'ongoing_experiments' => [
-						'callback' => function() {
+						'callback' => function () {
 							$this->render_settings_intro();
 						},
 						'fields' => $fields['ongoing'],
 					],
 					'stable_experiments' => [
-						'callback' => function() {
+						'callback' => function () {
 							$this->render_stable_section_title();
 						},
 						'fields' => $fields['stable'],
@@ -531,7 +530,7 @@ class Manager extends Base_Object {
 		</h2>
 		<p class="e-experiment__description">
 			<?php
-			echo sprintf(
+			printf(
 				/* translators: %1$s Link open tag, %2$s: Link close tag. */
 				esc_html__( 'Personalize your Elementor experience by controlling which features and experiments are active on your site. Help make Elementor better by %1$ssharing your experience and feedback with us%2$s.', 'elementor' ),
 				'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" target="_blank">',
@@ -541,7 +540,7 @@ class Manager extends Base_Object {
 		</p>
 		<p class="e-experiment__description">
 			<?php
-			echo sprintf(
+			printf(
 				'%1$s <a href="https://go.elementor.com/wp-dash-experiments/" target="_blank">%2$s</a>',
 				esc_html__( 'To use an experiment or feature on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' ),
@@ -635,7 +634,7 @@ class Manager extends Base_Object {
 				return $dependency instanceof Non_Existing_Dependency;
 			} );
 
-		return ! ! $non_existing_dep;
+		return (bool) $non_existing_dep;
 	}
 
 	/**
@@ -736,7 +735,7 @@ class Manager extends Base_Object {
 	 * @since 3.1.0
 	 * @access private
 	 *
-	 * @param array $old_feature_data
+	 * @param array  $old_feature_data
 	 * @param string $new_state
 	 *
 	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
@@ -931,7 +930,7 @@ class Manager extends Base_Object {
 		if ( is_admin() ) {
 			$page_id = Settings::PAGE_ID;
 
-			add_action( "elementor/admin/after_create_settings/{$page_id}", function( Settings $settings ) {
+			add_action( "elementor/admin/after_create_settings/{$page_id}", function ( Settings $settings ) {
 				$this->register_settings_fields( $settings );
 			}, 11 );
 
@@ -997,7 +996,7 @@ class Manager extends Base_Object {
 
 	/**
 	 * @param $new_site
-	 * @param array $experimental_data
+	 * @param array    $experimental_data
 	 * @return array
 	 */
 	private function set_new_site_default_state( $new_site, array $experimental_data ): array {

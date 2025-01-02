@@ -19,7 +19,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
@@ -79,8 +79,7 @@ class Module extends BaseModule {
 			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Empty_View_Menu_Item( $function ) );
 		} else {
 			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
-		};
-
+		}
 	}
 
 	public function __construct() {
@@ -107,7 +106,7 @@ class Module extends BaseModule {
 			);
 		} );
 
-		add_action( 'current_screen', function() {
+		add_action( 'current_screen', function () {
 			$screen = get_current_screen();
 			if ( $screen && 'edit-e-floating-buttons' === $screen->id ) {
 				$this->flush_permalinks_on_elementor_version_change();
@@ -166,7 +165,7 @@ class Module extends BaseModule {
 			return $is_top_bar_active;
 		}, 10, 2 );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
 
@@ -226,7 +225,7 @@ class Module extends BaseModule {
 			}
 		} );
 
-		add_action( 'manage_' . static::CPT_FLOATING_BUTTONS . '_posts_columns', function( $posts_columns ) {
+		add_action( 'manage_' . static::CPT_FLOATING_BUTTONS . '_posts_columns', function ( $posts_columns ) {
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
 			unset( $posts_columns['date'] );
 			unset( $posts_columns['comments'] );
@@ -283,7 +282,7 @@ class Module extends BaseModule {
 				$starting_clicks = (int) get_post_meta( $post_id, static::META_CLICK_TRACKING, true );
 				$posts_to_update[ $post_id ] = $starting_clicks ? $starting_clicks : 0;
 			}
-			$posts_to_update[ $post_id ] ++;
+			++$posts_to_update[ $post_id ];
 		}
 
 		foreach ( $posts_to_update as $post_id => $clicks ) {
@@ -484,7 +483,6 @@ class Module extends BaseModule {
 		] );
 
 		return $posts_query->post_count > 0;
-
 	}
 
 	private function get_contact_menu_args(): array {
@@ -586,7 +584,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function get_widgets_style_list():array {
+	private function get_widgets_style_list(): array {
 		return [
 			'widget-floating-buttons' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-floating-bars-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,

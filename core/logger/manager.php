@@ -12,7 +12,7 @@ use Elementor\Modules\System_Info\Module as System_Info;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Manager extends BaseModule {
@@ -118,7 +118,6 @@ class Manager extends BaseModule {
 	 * Log Elementor errors and save them in the database.
 	 *
 	 * Fired by `wp_ajax_elementor_js_log` action.
-	 *
 	 */
 	public function js_log() {
 		/** @var Module $ajax */
@@ -136,7 +135,7 @@ class Manager extends BaseModule {
 		// PHPCS - See comment above.
 		$data = Utils::get_super_global_value( $_POST, 'data' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
-		array_walk_recursive( $data, function( &$value ) {
+		array_walk_recursive( $data, function ( &$value ) {
 			$value = sanitize_text_field( $value );
 		} );
 
@@ -201,7 +200,7 @@ class Manager extends BaseModule {
 
 	/**
 	 * @param string $message
-	 * @param array $args
+	 * @param array  $args
 	 *
 	 * @return void
 	 */
@@ -211,7 +210,7 @@ class Manager extends BaseModule {
 
 	/**
 	 * @param string $message
-	 * @param array $args
+	 * @param array  $args
 	 *
 	 * @return void
 	 */
@@ -221,7 +220,7 @@ class Manager extends BaseModule {
 
 	/**
 	 * @param string $message
-	 * @param array $args
+	 * @param array  $args
 	 *
 	 * @return void
 	 */
@@ -231,7 +230,7 @@ class Manager extends BaseModule {
 
 	/**
 	 * @param string $message
-	 * @param array $args
+	 * @param array  $args
 	 *
 	 * @return void
 	 */

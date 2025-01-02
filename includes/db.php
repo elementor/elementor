@@ -91,8 +91,8 @@ class DB {
 	 * @deprecated 3.1.0 Use `Plugin::$instance->documents->get( $post_id )->get_elements_raw_data( null, true )` OR `Plugin::$instance->documents->get_doc_or_auto_save( $post_id )->get_elements_raw_data( null, true )` instead.
 	 * @access public
 	 *
-	 * @param int     $post_id           Post ID.
-	 * @param string  $status            Optional. Post status. Default is `publish`.
+	 * @param int    $post_id           Post ID.
+	 * @param string $status            Optional. Post status. Default is `publish`.
 	 *
 	 * @return array Editor data.
 	 */

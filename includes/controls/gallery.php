@@ -97,7 +97,8 @@ class Control_Gallery extends Base_Data_Control {
 					</div>
 				</div>
 
-				<?php /* ?>
+				<?php /*
+				?>
 				<div class="elementor-control-media__warnings" role="alert" style="display: none;">
 					<?php
 					Hints::get_notice_template( [

@@ -125,7 +125,7 @@ class Canary_Deployment extends Module {
 			// Reset results for each condition.
 			$result = false;
 			switch ( $condition['type'] ) {
-				case 'wordpress': // phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled
+				case 'WordPress': // phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled
 					// include an unmodified $wp_version
 					include ABSPATH . WPINC . '/version.php';
 					$result = version_compare( $wp_version, $condition['version'], $condition['operator'] );

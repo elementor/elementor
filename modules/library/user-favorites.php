@@ -66,7 +66,7 @@ class User_Favorites {
 	/**
 	 * @param       $vendor
 	 * @param       $resource
-	 * @param array $value
+	 * @param array    $value
 	 *
 	 * @return $this
 	 * @throws \Exception

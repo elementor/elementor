@@ -369,7 +369,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	 */
 	protected function prepare_fields( $fields ) {
 		array_walk(
-			$fields, function( &$field, $field_name ) {
+			$fields, function ( &$field, $field_name ) {
 
 				if ( in_array( $field_name, [ 'typography', 'popover_toggle' ] ) ) {
 					return;

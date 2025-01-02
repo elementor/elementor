@@ -130,7 +130,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				continue;
 			}
 
-			$filtered_attributes = array_filter( $attributes, function( $attribute ) {
+			$filtered_attributes = array_filter( $attributes, function ( $attribute ) {
 				return ! substr( $attribute, 0, 5 ) === 'data-';
 			}, ARRAY_FILTER_USE_KEY );
 

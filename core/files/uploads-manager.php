@@ -73,7 +73,7 @@ class Uploads_Manager extends Base_Object {
 	 * @access public
 	 *
 	 * @param string $file_path
-	 * @param array $allowed_file_types
+	 * @param array  $allowed_file_types
 	 * @return array|\WP_Error
 	 */
 	public function extract_and_validate_zip( $file_path, $allowed_file_types = null ) {
@@ -154,7 +154,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	final public static function are_unfiltered_uploads_enabled() {
-		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY )
+		$enabled = (bool) get_option( self::UNFILTERED_FILE_UPLOADS_KEY )
 			&& Svg::file_sanitizer_can_run()
 			&& User::is_current_user_can_upload_json();
 

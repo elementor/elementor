@@ -10,7 +10,7 @@ use Elementor\Utils;
 class Templates extends Import_Runner_Base {
 	private $import_session_id;
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'templates';
 	}
 
@@ -68,7 +68,7 @@ class Templates extends Import_Runner_Base {
 		$template_data['import_settings'] = $template_settings;
 		$template_data['id'] = $id;
 
-		$new_attachment_callback = function( $attachment_id ) {
+		$new_attachment_callback = function ( $attachment_id ) {
 			$this->set_session_post_meta( $attachment_id, $this->import_session_id );
 		};
 

@@ -361,7 +361,7 @@ class Module extends BaseModule {
 			$query->set( 'post_type', $query_post_types );
 
 			// We also need to set the name query var since redirect_guess_404_permalink() relies on it.
-			add_filter( 'pre_redirect_guess_404_permalink', function( $value ) use ( $query ) {
+			add_filter( 'pre_redirect_guess_404_permalink', function ( $value ) use ( $query ) {
 				set_query_var( 'name', $query->query['pagename'] );
 
 				return $value;
@@ -437,7 +437,7 @@ class Module extends BaseModule {
 		if ( '' !== $this->permalink_structure ) {
 			// Landing Pages' post link needs to be modified to be identical to the pages permalink structure. This
 			// needs to happen in both the admin and the front end, since post links are also used in the admin pages.
-			add_filter( 'post_type_link', function( $post_link, $post, $leavename ) {
+			add_filter( 'post_type_link', function ( $post_link, $post, $leavename ) {
 				return $this->remove_post_type_slug( $post_link, $post, $leavename );
 			}, 10, 3 );
 
@@ -454,27 +454,27 @@ class Module extends BaseModule {
 			}
 		}
 
-		add_action( 'elementor/documents/register', function( Documents_Manager $documents_manager ) {
+		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Landing_Page::get_class_full_name() );
 		} );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
-		add_action( 'elementor/admin/localize_settings', function( array $settings ) {
+		add_action( 'elementor/admin/localize_settings', function ( array $settings ) {
 			return $this->admin_localize_settings( $settings );
 		} );
 
-		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function( array $cpts ) {
+		add_filter( 'elementor/template_library/sources/local/register_taxonomy_cpts', function ( array $cpts ) {
 			$cpts[] = self::CPT;
 
 			return $cpts;
 		} );
 
 		// In the Landing Pages Admin Table page - Overwrite Template type column header title.
-		add_action( 'manage_' . Landing_Pages_Module::CPT . '_posts_columns', function( $posts_columns ) {
+		add_action( 'manage_' . Landing_Pages_Module::CPT . '_posts_columns', function ( $posts_columns ) {
 			/** @var Source_Local $source_local */
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
 
@@ -482,7 +482,7 @@ class Module extends BaseModule {
 		} );
 
 		// In the Landing Pages Admin Table page - Overwrite Template type column row values.
-		add_action( 'manage_' . Landing_Pages_Module::CPT . '_posts_custom_column', function( $column_name, $post_id ) {
+		add_action( 'manage_' . Landing_Pages_Module::CPT . '_posts_custom_column', function ( $column_name, $post_id ) {
 			/** @var Landing_Page $document */
 			$document = Plugin::$instance->documents->get( $post_id );
 
@@ -491,7 +491,7 @@ class Module extends BaseModule {
 
 		// Overwrite the Admin Bar's 'New +' Landing Page URL with the link that creates the new LP in Elementor
 		// with the Template Library modal open.
-		add_action( 'admin_bar_menu', function( $admin_bar ) {
+		add_action( 'admin_bar_menu', function ( $admin_bar ) {
 			// Get the Landing Page menu node.
 			$new_landing_page_node = $admin_bar->get_node( 'new-e-landing-page' );
 

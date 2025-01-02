@@ -4,7 +4,7 @@ namespace Elementor\Core\Admin\Menu;
 use Elementor\Core\Base\Base_Object;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Base extends Base_Object {
@@ -22,18 +22,18 @@ abstract class Base extends Base_Object {
 
 		$this->init_options();
 
-		add_action( 'admin_menu', function() {
+		add_action( 'admin_menu', function () {
 			$this->register();
 		} );
 
 		if ( $this->options['separator'] ) {
-			add_action( 'admin_menu', function() {
+			add_action( 'admin_menu', function () {
 				$this->add_menu_separator();
 			} );
 
 			add_filter( 'custom_menu_order', '__return_true' );
 
-			add_filter( 'menu_order', function( $menu_order ) {
+			add_filter( 'menu_order', function ( $menu_order ) {
 				return $this->rearrange_menu_separator( $menu_order );
 			} );
 		}
@@ -69,7 +69,7 @@ abstract class Base extends Base_Object {
 
 		do_action( 'elementor/admin/menu_registered/' . $args['menu_slug'], $this );
 
-		usort( $this->submenus, function( $a, $b ) {
+		usort( $this->submenus, function ( $a, $b ) {
 			return $a['index'] - $b['index'];
 		} );
 

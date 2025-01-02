@@ -64,7 +64,7 @@ class Deprecation {
 	 * @since 3.1.0
 	 *
 	 * @param string $version
-	 * @param int $count
+	 * @param int    $count
 	 *
 	 * @return string|false
 	 */
@@ -310,10 +310,10 @@ class Deprecation {
 	 *
 	 * @since 3.1.0
 	 *
-	 * @param string $hook
-	 * @param array $args
-	 * @param string $version
-	 * @param string $replacement
+	 * @param string      $hook
+	 * @param array       $args
+	 * @param string      $version
+	 * @param string      $replacement
 	 * @param null|string $base_version
 	 *
 	 * @throws \Exception
@@ -335,10 +335,10 @@ class Deprecation {
 	 *
 	 * @since 3.2.0
 	 *
-	 * @param string $hook
-	 * @param array $args
-	 * @param string $version
-	 * @param string $replacement
+	 * @param string      $hook
+	 * @param array       $args
+	 * @param string      $version
+	 * @param string      $replacement
 	 * @param null|string $base_version
 	 *
 	 * @return mixed

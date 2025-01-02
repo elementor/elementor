@@ -959,7 +959,7 @@ class Widget_Video extends Widget_Base {
 					'unit' => '%',
 				],
 				// 'selectors' => [
-				// 	'(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
+				// '(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 				// ],
 				'condition' => [
 					'lightbox_video_width!' => '',
@@ -980,7 +980,7 @@ class Widget_Video extends Widget_Base {
 					'top' => esc_html__( 'Top', 'elementor' ),
 				],
 				// 'selectors' => [
-				// 	'#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
+				// '#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
 				// ],
 				'selectors_dictionary' => [
 					'top' => 'top: 60px',
@@ -1050,7 +1050,7 @@ class Widget_Video extends Widget_Base {
 			if ( $is_static_render_mode ) {
 				$video_html = Embed::get_embed_thumbnail_html( $video_url, $post_id );
 				// YouTube API requires a different markup which was set above.
-			} else if ( 'youtube' !== $settings['video_type'] ) {
+			} elseif ( 'youtube' !== $settings['video_type'] ) {
 				$video_html = Embed::get_embed_html( $video_url, $embed_params, $embed_options );
 			}
 		}

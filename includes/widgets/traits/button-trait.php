@@ -14,7 +14,7 @@ use Elementor\Widget_Base;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 trait Button_Trait {
@@ -669,7 +669,7 @@ trait Button_Trait {
 		] );
 
 		// TODO: replace the protected with public
-		//$instance->add_inline_editing_attributes( 'text', 'none' );
+		// $instance->add_inline_editing_attributes( 'text', 'none' );
 		?>
 		<span <?php $instance->print_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>

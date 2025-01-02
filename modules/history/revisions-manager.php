@@ -278,7 +278,7 @@ class Revisions_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 * @static
-	 * @param array $return_data
+	 * @param array    $return_data
 	 * @param Document $document
 	 *
 	 * @return array

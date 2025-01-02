@@ -6,7 +6,7 @@ use Elementor\Data\V2\Base\Exceptions\Error_500;
 use WP_REST_Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -119,7 +119,7 @@ abstract class Base_Route {
 	/**
 	 * Retrieves one item from the collection.
 	 *
-	 * @param string $id
+	 * @param string           $id
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -142,7 +142,7 @@ abstract class Base_Route {
 	/**
 	 * Creates one item.
 	 *
-	 * @param string $id id of request item.
+	 * @param string           $id id of request item.
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -165,7 +165,7 @@ abstract class Base_Route {
 	/**
 	 * Updates one item.
 	 *
-	 * @param string $id id of request item.
+	 * @param string           $id id of request item.
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -188,7 +188,7 @@ abstract class Base_Route {
 	/**
 	 * Delete one item.
 	 *
-	 * @param string $id id of request item.
+	 * @param string           $id id of request item.
 	 * @param \WP_REST_Request $request Full data about the request.
 	 *
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
@@ -249,7 +249,7 @@ abstract class Base_Route {
 	 * Register items route.
 	 *
 	 * @param string $methods
-	 * @param array $args
+	 * @param array  $args
 	 */
 	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = [] ) {
 		$args['is_multi'] = true;
@@ -261,7 +261,7 @@ abstract class Base_Route {
 	 * Register item route.
 	 *
 	 * @param string $route
-	 * @param array $args
+	 * @param array  $args
 	 * @param string $methods
 	 */
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
@@ -299,10 +299,10 @@ abstract class Base_Route {
 	 * Base callback.
 	 * All reset requests from the client should pass this function.
 	 *
-	 * @param string $methods
+	 * @param string           $methods
 	 * @param \WP_REST_Request $request
-	 * @param bool $is_multi
-	 * @param array $args
+	 * @param bool             $is_multi
+	 * @param array            $args
 	 *
 	 * @return mixed|\WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 */
@@ -369,7 +369,7 @@ abstract class Base_Route {
 	 * run `$this->register()`.
 	 *
 	 * @param \Elementor\Data\V2\Base\Controller $controller
-	 * @param string $route
+	 * @param string                             $route
 	 */
 	protected function __construct( Controller $controller, $route ) {
 		$this->controller = $controller;

@@ -101,7 +101,7 @@ class Settings extends Settings_Page {
 		);
 
 		if ( $this->home_module->is_experiment_active() ) {
-			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$admin_menu->register( 'elementor-settings', new Admin_Menu_Item( $this ) );
 			}, 0 );
 		}
@@ -253,7 +253,7 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'general' => [
 						'label' => esc_html__( 'General', 'elementor' ),
-						'callback' => function() {
+						'callback' => function () {
 							printf(
 								'<p>%s</p><br><hr><br>',
 								esc_html__( 'Tailor how Elementor enhances your site, from post types to other functions.', 'elementor' )
@@ -305,7 +305,7 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'google_maps' => [
 						'label' => esc_html__( 'Google Maps Embed API', 'elementor' ),
-						'callback' => function() {
+						'callback' => function () {
 							printf(
 								/* translators: 1: Link open tag, 2: Link close tag */
 								esc_html__( 'Google Maps Embed API is a free service by Google that allows embedding Google Maps in your site. For more details, visit Google Maps\' %1$sUsing API Keys%2$s page.', 'elementor' ),
@@ -330,7 +330,7 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'advanced' => [
 						'label' => esc_html__( 'Advanced', 'elementor' ),
-						'callback' => function() {
+						'callback' => function () {
 							printf(
 								'<p>%s</p><br><hr><br>',
 								esc_html__( 'Personalize the way Elementor works on your website by choosing the advanced features and how they operate.', 'elementor' )
@@ -401,7 +401,7 @@ class Settings extends Settings_Page {
 				'sections' => [
 					'performance' => [
 						'label' => esc_html__( 'Performance', 'elementor' ),
-						'callback' => function() {
+						'callback' => function () {
 							printf(
 								'<p>%s</p><br><hr><br>',
 								esc_html__( 'Improve loading times on your site by selecting the optimization tools that best fit your requirements.', 'elementor' )

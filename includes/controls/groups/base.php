@@ -441,7 +441,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$controls_prefix = $this->get_controls_prefix();
 
 		$prefixed_condition_keys = array_map(
-			function( $key ) use ( $controls_prefix ) {
+			function ( $key ) use ( $controls_prefix ) {
 				return $controls_prefix . $key;
 			},
 			array_keys( $field['condition'] )
@@ -493,7 +493,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$selectors = array_combine(
 			array_map(
-				function( $key ) use ( $args ) {
+				function ( $key ) use ( $args ) {
 					return str_replace( '{{SELECTOR}}', $args['selector'], $key );
 				}, array_keys( $selectors )
 			),
@@ -507,10 +507,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$controls_prefix = $this->get_controls_prefix();
 
 		foreach ( $selectors as &$selector ) {
-			$selector = preg_replace_callback( '/{{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
+			$selector = preg_replace_callback( '/{{\K(.*?)(?=}})/', function ( $matches ) use ( $controls_prefix ) {
 				$is_external_reference = false;
 
-				return preg_replace_callback( '/[^ ]+?(?=\.)\./', function( $sub_matches ) use ( $controls_prefix, &$is_external_reference ) {
+				return preg_replace_callback( '/[^ ]+?(?=\.)\./', function ( $sub_matches ) use ( $controls_prefix, &$is_external_reference ) {
 					$placeholder = $sub_matches[0];
 
 					if ( 'external.' === $placeholder ) {

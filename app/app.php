@@ -85,7 +85,7 @@ class App extends BaseApp {
 
 		// Setup default heartbeat options
 		// TODO: Enable heartbeat.
-		add_filter( 'heartbeat_settings', function( $settings ) {
+		add_filter( 'heartbeat_settings', function ( $settings ) {
 			$settings['interval'] = 15;
 			return $settings;
 		} );

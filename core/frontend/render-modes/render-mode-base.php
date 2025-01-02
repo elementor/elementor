@@ -69,14 +69,12 @@ abstract class Render_Mode_Base {
 	 * By default do not do anything.
 	 */
 	protected function enqueue_scripts() {
-		//
 	}
 
 	/**
 	 * By default do not do anything.
 	 */
 	protected function enqueue_styles() {
-		//
 	}
 
 	/**

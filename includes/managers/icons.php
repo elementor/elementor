@@ -179,6 +179,7 @@ class Icons_Manager {
 
 	/**
 	 * Get Icon Manager Tabs
+	 *
 	 * @return array
 	 */
 	public static function get_icon_manager_tabs() {
@@ -273,6 +274,7 @@ class Icons_Manager {
 
 	/**
 	 * Get font awesome svg.
+	 *
 	 * @param $icon array [ 'value' => string, 'library' => string ]
 	 *
 	 * @return bool|mixed|string
@@ -333,12 +335,10 @@ class Icons_Manager {
 		if ( ! $content ) {
 			if ( empty( $attributes['class'] ) ) {
 				$attributes['class'] = $icon['value'];
-			} else {
-				if ( is_array( $attributes['class'] ) ) {
+			} elseif ( is_array( $attributes['class'] ) ) {
 					$attributes['class'][] = $icon['value'];
-				} else {
-					$attributes['class'] .= ' ' . $icon['value'];
-				}
+			} else {
+				$attributes['class'] .= ' ' . $icon['value'];
 			}
 		}
 
@@ -349,8 +349,9 @@ class Icons_Manager {
 	 * Render Icon
 	 *
 	 * Used to render Icon for \Elementor\Controls_Manager::ICONS
-	 * @param array $icon             Icon Type, Icon value
-	 * @param array $attributes       Icon HTML Attributes
+	 *
+	 * @param array  $icon             Icon Type, Icon value
+	 * @param array  $attributes       Icon HTML Attributes
 	 * @param string $tag             Icon HTML tag, defaults to <i>
 	 *
 	 * @return mixed|string
@@ -400,10 +401,11 @@ class Icons_Manager {
 
 	/**
 	 * on_import_migration
-	 * @param array $element        settings array
+	 *
+	 * @param array  $element        settings array
 	 * @param string $old_control   old control id
 	 * @param string $new_control   new control id
-	 * @param bool $remove_old      boolean whether to remove old control or not
+	 * @param bool   $remove_old      boolean whether to remove old control or not
 	 *
 	 * @return array
 	 */
@@ -426,7 +428,7 @@ class Icons_Manager {
 
 		$element['settings'][ $new_control ] = $new_value;
 
-		//remove old value
+		// remove old value
 		if ( $remove_old ) {
 			unset( $element['settings'][ $old_control ] );
 		}
@@ -436,6 +438,7 @@ class Icons_Manager {
 
 	/**
 	 * is_migration_allowed
+	 *
 	 * @return bool
 	 */
 	public static function is_migration_allowed() {
@@ -459,6 +462,7 @@ class Icons_Manager {
 	 * Register_Admin Settings
 	 *
 	 * adds Font Awesome migration / update admin settings
+	 *
 	 * @param Settings $settings
 	 */
 	public function register_admin_settings( Settings $settings ) {
@@ -485,7 +489,7 @@ class Icons_Manager {
 		$settings->add_tab( 'fontawesome4_migration', [ 'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ) ] );
 
 		$settings->add_section( 'fontawesome4_migration', 'fontawesome4_migration', [
-			'callback' => function() {
+			'callback' => function () {
 				echo '<h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
 				echo '<p>' . // PHPCS - Plain Text
 				esc_html__( 'Access 1,500+ amazing Font Awesome 5 icons and enjoy faster performance and design flexibility.', 'elementor' ) . '<br>' . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -559,6 +563,7 @@ class Icons_Manager {
 
 	/**
 	 * Add Update Needed Flag
+	 *
 	 * @param array $settings
 	 *
 	 * @return array;

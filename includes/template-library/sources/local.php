@@ -1272,7 +1272,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
-	 * @param array $args
+	 * @param array  $args
 	 */
 	public function maybe_render_blank_state( $which, array $args = [] ) {
 		global $post_type;
@@ -1654,7 +1654,7 @@ class Source_Local extends Source_Base {
 		// Remove elementor library templates from WP Sitemap
 		add_filter(
 			'wp_sitemaps_post_types',
-			function( $post_types ) {
+			function ( $post_types ) {
 				return $this->remove_elementor_cpt_from_sitemap( $post_types );
 			}
 		);

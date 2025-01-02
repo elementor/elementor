@@ -40,7 +40,7 @@ abstract class Base_Module extends BaseModule {
 	/**
 	 * Add allowed headers to plugins.
 	 *
-	 * @param array $headers
+	 * @param array                    $headers
 	 * @param       $compatibility_tag_header
 	 *
 	 * @return array

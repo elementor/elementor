@@ -21,7 +21,7 @@ return [
 		 *
 		 * @return string The modified content.
 		 */
-		function( $file_path, $prefix, $content ) {
+		function ( $file_path, $prefix, $content ) {
 			if ( substr( $file_path, -46 ) !== 'vendor/php-di/php-di/src/Compiler/Template.php' ) {
 				return $content;
 			}

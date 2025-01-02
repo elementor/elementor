@@ -1,5 +1,5 @@
 <?php
-// TODO: Delete this file in v3.28.0 - It is not in use anymore [ED-16258].
+/** TODO: Delete this file in v3.28.0 - It is not in use anymore [ED-16258]. **/
 namespace Elementor\Core\Files\CSS;
 
 use Elementor\Core\Kits\Manager;
@@ -153,7 +153,7 @@ class Global_CSS extends Base {
 			}
 
 			foreach ( $global_controls as $control ) {
-				$this->add_control_rules( $control, $controls, function( $control ) {}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ], $global_values );
+				$this->add_control_rules( $control, $controls, function ( $control ) {}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ], $global_values );
 			}
 		}
 	}

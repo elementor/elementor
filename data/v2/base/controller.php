@@ -6,7 +6,7 @@ use Elementor\Data\V2\Manager;
 use WP_REST_Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -232,7 +232,7 @@ abstract class Controller extends WP_REST_Controller {
 
 	/**
 	 * Checks if a given request has access to create items.
-	 **
+	 * *
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
 	 *

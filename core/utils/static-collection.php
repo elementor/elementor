@@ -22,9 +22,12 @@ class Static_Collection {
 	protected $unique_values = false;
 
 	/**
-	 * @inheritDoc
+	 *
+	 * @param array $items
+	 * @param bool  $unique_values
+	 * @return void
 	 */
-	public function __construct( array $items = [], $unique_values = false ) {
+	public function __construct( array $items = [], bool $unique_values = false ) {
 		$this->collection = new Collection( $items );
 		$this->unique_values = $unique_values;
 	}
@@ -35,7 +38,7 @@ class Static_Collection {
 	 * it will be assigned as the current collection instance after executing any method.
 	 *
 	 * @param string $name
-	 * @param array $arguments
+	 * @param array  $arguments
 	 */
 	public function __call( $name, $arguments ) {
 		$call = call_user_func_array( [ $this->collection, $name ], $arguments );

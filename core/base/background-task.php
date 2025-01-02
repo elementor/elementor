@@ -209,6 +209,7 @@ abstract class Background_Task extends WP_Background_Process {
 
 	/**
 	 * Use the protected `is_process_running` method as a public method.
+	 *
 	 * @return bool
 	 */
 	public function is_process_locked() {
@@ -284,7 +285,7 @@ abstract class Background_Task extends WP_Background_Process {
 					$logger->info( sprintf( '%s callback needs to run more %d times', $callback, $item['total'] - $item['iterate_num'] ) );
 				}
 
-				$item['iterate_num']++;
+				++$item['iterate_num'];
 			} else {
 				$logger->info( sprintf( '%s Finished', $callback ) );
 			}

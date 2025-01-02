@@ -79,13 +79,13 @@ class Module extends BaseModule {
 
 	private function add_advanced_tab_actions() {
 		$hooks = [
-			'elementor/element/common/_section_style/after_section_end' => '_css_classes', // Widgets
+			'elementor/element/common/_section_style/after_section_end' => '_css_classes', // Widgets.
 		];
 
 		foreach ( $hooks as $hook => $injection_position ) {
 			add_action(
 				$hook,
-				function( $element, $args ) use ( $injection_position ) {
+				function ( $element, $args ) use ( $injection_position ) {
 					$this->add_control_to_advanced_tab( $element, $args, $injection_position );
 				},
 				10,

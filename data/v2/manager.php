@@ -6,7 +6,7 @@ use Elementor\Data\V2\Base\Processor;
 use Elementor\Data\V2\Base\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -97,7 +97,6 @@ class Manager extends BaseModule {
 	 *
 	 * @param string $command
 	 * @param string $format
-	 *
 	 */
 	public function register_endpoint_format( $command, $format ) {
 		$this->command_formats[ $command ] = untrailingslashit( $format );
@@ -135,7 +134,7 @@ class Manager extends BaseModule {
 	 * Command extract args.
 	 *
 	 * @param string $command
-	 * @param array $args
+	 * @param array  $args
 	 *
 	 * @return \stdClass
 	 */
@@ -244,7 +243,7 @@ class Manager extends BaseModule {
 	 * Run processor.
 	 *
 	 * @param \Elementor\Data\V2\Base\Processor $processor
-	 * @param array $data
+	 * @param array                             $data
 	 *
 	 * @return mixed
 	 */
@@ -262,8 +261,8 @@ class Manager extends BaseModule {
 	 * Filter them by class.
 	 *
 	 * @param \Elementor\Data\V2\Base\Processor[] $processors
-	 * @param string $filter_by_class
-	 * @param array $data
+	 * @param string                              $filter_by_class
+	 * @param array                               $data
 	 *
 	 * @return false|array
 	 */
@@ -294,7 +293,7 @@ class Manager extends BaseModule {
 	 * Use args as query.
 	 *
 	 * @param string $endpoint
-	 * @param array $args
+	 * @param array  $args
 	 * @param string $method
 	 * @param string $namespace (optional)
 	 * @param string $version (optional)
@@ -324,7 +323,7 @@ class Manager extends BaseModule {
 	 * Wrapper for `$this->run_request` return `$response->getData()` instead of `$response`.
 	 *
 	 * @param string $endpoint
-	 * @param array $args
+	 * @param array  $args
 	 * @param string $method
 	 *
 	 * @return array

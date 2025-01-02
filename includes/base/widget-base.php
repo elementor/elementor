@@ -541,16 +541,15 @@ abstract class Widget_Base extends Element_Base {
 	 * Used to add Light-Box-related data attributes to links that open media files.
 	 *
 	 * @param array|string $element         The link HTML element.
-	 * @param int $id                       The ID of the image
-	 * @param string $lightbox_setting_key  The setting key that dictates whether to open the image in a lightbox
-	 * @param string $group_id              Unique ID for a group of lightbox images
-	 * @param bool $overwrite               Optional. Whether to overwrite existing
-	 *                                      attribute. Default is false, not to overwrite.
+	 * @param int          $id                       The ID of the image
+	 * @param string       $lightbox_setting_key  The setting key that dictates whether to open the image in a lightbox
+	 * @param string       $group_id              Unique ID for a group of lightbox images
+	 * @param bool         $overwrite               Optional. Whether to overwrite existing
+	 *                                              attribute. Default is false, not to overwrite.
 	 *
 	 * @return Widget_Base Current instance of the widget.
 	 * @since 2.9.0
 	 * @access public
-	 *
 	 */
 	public function add_lightbox_data_attributes( $element, $id = null, $lightbox_setting_key = null, $group_id = null, $overwrite = false ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -781,8 +780,8 @@ abstract class Widget_Base extends Element_Base {
 	 * Script tags are allowed on frontend according to the WP theme securing policy.
 	 *
 	 * @param string $setting
-	 * @param null $repeater_name
-	 * @param null $index
+	 * @param null   $repeater_name
+	 * @param null   $index
 	 */
 	final public function print_unescaped_setting( $setting, $repeater_name = null, $index = null ) {
 		if ( $repeater_name ) {
@@ -849,7 +848,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @param string $setting_key      The current setting key inside the repeater item (e.g. `tab_title`).
 	 * @param string $repeater_key     The repeater key containing the array of all the items in the repeater (e.g. `tabs`).
-	 * @param int $repeater_item_index The current item index in the repeater array (e.g. `3`).
+	 * @param int    $repeater_item_index The current item index in the repeater array (e.g. `3`).
 	 *
 	 * @return string The repeater setting key (e.g. `tabs.3.tab_title`).
 	 */

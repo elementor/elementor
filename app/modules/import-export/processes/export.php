@@ -311,8 +311,8 @@ class Export {
 	 * Add json file to the zip archive.
 	 *
 	 * @param string $path The relative path to the file.
-	 * @param array $content The content of the file.
-	 * @param int $json_flags
+	 * @param array  $content The content of the file.
+	 * @param int    $json_flags
 	 */
 	private function add_json_file( $path, array $content, $json_flags = 0 ) {
 		if ( ! Str::ends_with( $path, '.json' ) ) {

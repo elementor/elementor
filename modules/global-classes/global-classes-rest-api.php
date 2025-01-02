@@ -29,7 +29,7 @@ class Global_Classes_REST_API {
 		return $this->repository;
 	}
 
-	// TODO: Add sanitization when implemented on prop types [EDS-574]
+	/**  TODO: Add sanitization when implemented on prop types [EDS-574]. **/
 	private function register_routes() {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
@@ -87,7 +87,7 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->arrange( $request ) ),
-				'validate_callback' => function( \WP_REST_Request $request ) {
+				'validate_callback' => function ( \WP_REST_Request $request ) {
 					$order = $request->get_params();
 
 					if ( ! is_array( $order ) ) {
@@ -140,7 +140,7 @@ class Global_Classes_REST_API {
 		$id = $request->get_param( 'id' );
 		$values = $request->get_params();
 
-		// Ignore id to simplify the patch, and allow passing the entity as it is
+		// Ignore id to simplify the patch, and allow passing the entity as it is.
 		unset( $values['id'] );
 
 		$class = $this->get_repository()->get( $id );

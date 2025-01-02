@@ -121,7 +121,6 @@ class WP_Import extends \WP_Importer {
 	 * @link  http://tools.ietf.org/html/rfc6266
 	 *
 	 * @see WP_REST_Attachments_Controller::get_filename_from_disposition()
-	 *
 	 */
 	protected static function get_filename_from_disposition( $disposition_header ) {
 		// Get the filename.
@@ -788,7 +787,7 @@ class WP_Import extends \WP_Importer {
 						add_comment_meta( $inserted_comments[ $key ], wp_slash( $meta['key'] ), wp_slash_strings_only( $value ) );
 					}
 
-					$num_comments++;
+					++$num_comments;
 				}
 				unset( $newcomments, $inserted_comments, $post['comments'] );
 			}

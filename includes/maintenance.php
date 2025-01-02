@@ -113,7 +113,7 @@ class Maintenance {
 				Manager::create_default_kit();
 
 				restore_current_blog();
-			};
+			}
 
 			return;
 		}

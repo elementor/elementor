@@ -11,7 +11,7 @@ use Elementor\Tracker;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Base_App {
@@ -88,7 +88,7 @@ abstract class Base_App {
 			$url = $this->get_admin_url( 'disconnect' );
 			$attr = '';
 
-			echo sprintf(
+			printf(
 				'%s <a %s href="%s">%s</a>',
 				// PHPCS - the variable $title is already escaped above.
 				$title, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -358,8 +358,8 @@ abstract class Base_App {
 
 	/**
 	 * @param       $action
-	 * @param array $request_body
-	 * @param false $as_array
+	 * @param array  $request_body
+	 * @param false  $as_array
 	 *
 	 * @return mixed|\WP_Error
 	 */
@@ -449,8 +449,8 @@ abstract class Base_App {
 	 *
 	 * @param       $method
 	 * @param       $endpoint
-	 * @param array $args
-	 * @param array $options
+	 * @param array    $args
+	 * @param array    $options
 	 *
 	 * @return mixed|\WP_Error
 	 */
@@ -783,7 +783,6 @@ abstract class Base_App {
 			// PHPCS - the values of $item['label'], $color, $status are plain strings.
 			printf( '%s: <strong style="color:%s">%s</strong><br>', $item['label'], $color, $status ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
-
 	}
 
 	private function get_generated_urls( $endpoint ) {

@@ -100,7 +100,7 @@ class Style_Parser {
 			return false;
 		}
 
-		// TODO: Validate breakpoint based on the existing breakpoints in the system [EDS-528]
+		// TODO: Validate breakpoint based on the existing breakpoints in the system [EDS-528].
 		if ( ! isset( $meta['breakpoint'] ) || ! is_string( $meta['breakpoint'] ) ) {
 			$this->errors_bag[] = 'meta';
 			return false;

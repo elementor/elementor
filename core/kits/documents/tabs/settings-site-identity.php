@@ -7,7 +7,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Files\Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Settings_Site_Identity extends Tab_Base {
@@ -39,7 +39,7 @@ class Settings_Site_Identity extends Tab_Base {
 		$site_icon_id = get_option( 'site_icon' );
 		$site_icon_src = wp_get_attachment_image_src( $site_icon_id, 'full' );
 
-		// If CANNOT upload svg normally, it will add a custom inline option to force svg upload if requested. (in logo and favicon)
+		// If CANNOT upload svg normally, it will add a custom inline option to force svg upload if requested. (in logo and favicon).
 		$should_include_svg_inline_option = ! Uploads_Manager::are_unfiltered_uploads_enabled();
 
 		$this->start_controls_section(

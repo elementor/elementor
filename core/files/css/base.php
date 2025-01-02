@@ -365,7 +365,7 @@ abstract class Base extends Base_File {
 						$css_property = $control['unit_selectors_dictionary'][ $value['unit'] ];
 					}
 
-					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
+					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function ( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
 						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
 						$parsed_value = '';
@@ -724,7 +724,7 @@ abstract class Base extends Base_File {
 	 */
 	protected function add_control_style_rules( array $control, array $values, array $controls, array $placeholders, array $replacements ) {
 		$this->add_control_rules(
-			$control, $controls, function( $control ) use ( $values ) {
+			$control, $controls, function ( $control ) use ( $values ) {
 				return $this->get_style_control_value( $control, $values );
 			}, $placeholders, $replacements, $values
 		);
@@ -862,7 +862,7 @@ abstract class Base extends Base_File {
 	 * @param string $value   The value.
 	 */
 	protected function add_dynamic_control_style_rules( array $control, $value ) {
-		Plugin::$instance->dynamic_tags->parse_tags_text( $value, $control, function( $id, $name, $settings ) {
+		Plugin::$instance->dynamic_tags->parse_tags_text( $value, $control, function ( $id, $name, $settings ) {
 			$tag = Plugin::$instance->dynamic_tags->create_tag( $id, $name, $settings );
 
 			if ( ! $tag instanceof Tag ) {
@@ -932,7 +932,7 @@ abstract class Base extends Base_File {
 		}
 
 		$active_controls = array_reduce(
-			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
+			array_keys( $controls ), function ( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
 				$control = $controls[ $control_key ];
 
 				if ( $controls_stack->is_control_visible( $control, $settings, $controls ) ) {

@@ -4,7 +4,7 @@ namespace Elementor\Modules\WpCli;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -36,8 +36,8 @@ class Update extends \WP_CLI_Command {
 	 * @since  2.4.0
 	 * @access public
 	 *
-	 * @param $args
-	 * @param $assoc_args
+	 * @param array $args
+	 * @param array $assoc_args
 	 */
 	public function db( $args, $assoc_args ) {
 		$network = ! empty( $assoc_args['network'] ) && is_multisite();

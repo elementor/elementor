@@ -11,7 +11,7 @@ use Elementor\Utils;
 use Plugin_Upgrader;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -50,7 +50,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		// Get the published pages and posts
+		// Get the published pages and posts.
 		$pages_and_posts = new \WP_Query( [
 			'post_type' => [ 'page', 'post' ],
 			'post_status' => 'publish',
@@ -177,7 +177,7 @@ class Module extends BaseModule {
 		 */
 		$new_site_name = apply_filters( 'elementor/onboarding/site-name', $data['siteName'] );
 
-		// The site name is sanitized in `update_options()`
+		// The site name is sanitized in `update_options()`.
 		update_option( 'blogname', $new_site_name );
 
 		return [
@@ -259,7 +259,7 @@ class Module extends BaseModule {
 
 		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' );
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing.
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
 			return [
 				'status' => 'error',
@@ -344,7 +344,7 @@ class Module extends BaseModule {
 
 		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? [];
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing.
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
 			return [
 				'status' => 'error',
@@ -412,9 +412,9 @@ class Module extends BaseModule {
 	 * Maybe Handle Ajax
 	 *
 	 * This method checks if there are any AJAX actions being
-	 * @since 3.6.0
 	 *
-	 * @return array|null
+	 * @return void
+	 * @since 3.6.0
 	 */
 	private function maybe_handle_ajax() {
 		$result = [];
@@ -457,7 +457,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		$this->add_component( 'features_usage', new Features_Usage() );
 
-		add_action( 'elementor/init', function() {
+		add_action( 'elementor/init', function () {
 			// Only load when viewing the onboarding app.
 			if ( Plugin::$instance->app->is_current() ) {
 				$this->set_onboarding_settings();
@@ -478,7 +478,7 @@ class Module extends BaseModule {
 			} );
 		} );
 
-		add_action( 'admin_init', function() {
+		add_action( 'admin_init', function () {
 			if ( wp_doing_ajax() &&
 				isset( $_POST['action'] ) &&
 				isset( $_POST['_nonce'] ) &&

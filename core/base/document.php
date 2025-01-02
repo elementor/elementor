@@ -21,7 +21,7 @@ use ElementorPro\Modules\Library\Widgets\Template;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -224,7 +224,7 @@ abstract class Document extends Controls_Stack {
 	/**
 	 * @param $promotion
 	 * @param $index
-	 * @param array $categories
+	 * @param array     $categories
 	 *
 	 * @return array
 	 */
@@ -549,10 +549,8 @@ abstract class Document extends Controls_Stack {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 *
 	 * @return bool|Document
 	 */
-
 	public function get_newer_autosave() {
 		$autosave = $this->get_autosave();
 
@@ -639,7 +637,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @param array    $actions An array of row action links.
+	 * @param array $actions An array of row action links.
 	 *
 	 * @return array An updated array of row action links.
 	 */
@@ -926,7 +924,7 @@ abstract class Document extends Controls_Stack {
 	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function is_built_with_elementor() {
-		return ! ! $this->get_meta( self::BUILT_WITH_ELEMENTOR_META_KEY );
+		return (bool) $this->get_meta( self::BUILT_WITH_ELEMENTOR_META_KEY );
 	}
 
 	/**
@@ -1283,7 +1281,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ): array {
 		foreach ( $config as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
@@ -1422,7 +1420,6 @@ abstract class Document extends Controls_Stack {
 			 * @since 2.5.12
 			 *
 			 * @param \Elementor\Core\Base\Document $this The current document.
-			 *
 			 */
 			do_action( 'elementor/document/save_version', $this );
 		}
@@ -1461,7 +1458,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $key   Meta data key.
-	 * @param mixed $value Meta data value.
+	 * @param mixed  $value Meta data value.
 	 *
 	 * @return bool|int
 	 */
@@ -1622,7 +1619,7 @@ abstract class Document extends Controls_Stack {
 	 * @return array The data to export
 	 */
 	public function get_export_data() {
-		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function( $element_data ) {
+		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function ( $element_data ) {
 			$element_data['id'] = Utils::generate_random_string();
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
@@ -1661,7 +1658,7 @@ abstract class Document extends Controls_Stack {
 	 * @return array The data to import
 	 */
 	public function get_import_data( array $data ) {
-		$data['content'] = Plugin::$instance->db->iterate_data( $data['content'], function( $element_data ) {
+		$data['content'] = Plugin::$instance->db->iterate_data( $data['content'], function ( $element_data ) {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
@@ -2057,7 +2054,7 @@ abstract class Document extends Controls_Stack {
 			$elements_iteration_action->set_mode( $mode );
 		}
 
-		Plugin::$instance->db->iterate_data( $elements, function( array $element_data ) use ( &$unique_page_elements, $elements_iteration_actions ) {
+		Plugin::$instance->db->iterate_data( $elements, function ( array $element_data ) use ( &$unique_page_elements, $elements_iteration_actions ) {
 			$element_type = 'widget' === $element_data['elType'] ? $element_data['widgetType'] : $element_data['elType'];
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );

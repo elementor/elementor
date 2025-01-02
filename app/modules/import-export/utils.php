@@ -4,7 +4,7 @@ namespace Elementor\App\Modules\ImportExport;
 
 use Elementor\Core\Utils\Str;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
-use \Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
+use Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
 
@@ -90,7 +90,7 @@ class Utils {
 	/**
 	 * Transform a string name to title format.
 	 *
-	 * @param $name
+	 * @param string $name
 	 *
 	 * @return string
 	 */

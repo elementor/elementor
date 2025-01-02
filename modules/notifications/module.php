@@ -16,7 +16,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/admin_top_bar/before_enqueue_scripts', function() {
+		add_action( 'elementor/admin_top_bar/before_enqueue_scripts', function () {
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return;
 			}
@@ -81,7 +81,7 @@ class Module extends BaseModule {
 		wp_set_script_translations( 'e-editor-notifications', 'elementor' );
 	}
 
-	private function get_app_js_config() : array {
+	private function get_app_js_config(): array {
 		return [
 			'is_unread' => Options::has_unread_notifications(),
 		];

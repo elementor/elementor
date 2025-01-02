@@ -77,14 +77,14 @@ class Version {
 	 * @return bool
 	 */
 	public static function is_valid_version( $version ) {
-		return ! ! preg_match( '/^(\d+\.)?(\d+\.)?(\*|\d+)(-.+)?$/', $version );
+		return (bool) preg_match( '/^(\d+\.)?(\d+\.)?(\*|\d+)(-.+)?$/', $version );
 	}
 
 	/**
 	 * Creates a Version instance from a string.
 	 *
 	 * @param      $version
-	 * @param bool $should_validate
+	 * @param bool    $should_validate
 	 *
 	 * @return static
 	 * @throws \Exception
@@ -128,7 +128,7 @@ class Version {
 	 *
 	 * @param        $operator
 	 * @param        $version
-	 * @param string $part
+	 * @param string   $part
 	 *
 	 * @return bool
 	 * @throws \Exception

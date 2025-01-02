@@ -9,7 +9,7 @@ use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Kit extends PageBase {
@@ -174,7 +174,7 @@ class Kit extends PageBase {
 		$page_settings_manager = SettingsManager::get_settings_managers( 'page' );
 		$page_settings_manager->save_settings( $document_settings, $this->get_id() );
 
-		/** @var Kit $autosave **/
+		/** @var Kit $autosave */
 		$autosave = $this->get_autosave();
 
 		if ( $autosave ) {

@@ -36,7 +36,7 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		// Initialize Events Database Table
+		// Initialize Events Database Table.
 		$this->add_component( 'events-db', new DB() );
 
 		// Handle User Data Deletion/Export requests.

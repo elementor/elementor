@@ -82,7 +82,7 @@ class Shapes {
 	 */
 	public static function filter_shapes( $by, $filter = self::FILTER_INCLUDE ) {
 		return array_filter(
-			self::get_shapes(), function( $shape ) use ( $by, $filter ) {
+			self::get_shapes(), function ( $shape ) use ( $by, $filter ) {
 				return self::FILTER_INCLUDE === $filter xor empty( $shape[ $by ] );
 			}
 		);

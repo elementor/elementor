@@ -22,7 +22,7 @@ class Module extends BaseModule {
 
 		Admin_Pointer::add_hooks();
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$admin_menu->register( static::PAGE_ID, new Admin_Menu_Apps() );
 		}, 115 );
 
@@ -32,7 +32,7 @@ class Module extends BaseModule {
 			}
 		}, 10, 2 );
 
-		add_filter( 'elementor/finder/categories', function( array $categories ) {
+		add_filter( 'elementor/finder/categories', function ( array $categories ) {
 			$categories['site']['items']['apps'] = [
 				'title' => esc_html__( 'Add-ons', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=' . static::PAGE_ID ),

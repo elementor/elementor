@@ -2,7 +2,7 @@
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Common_App extends Base_User_App {
@@ -28,7 +28,7 @@ abstract class Common_App extends Base_User_App {
 
 			if ( ! self::$common_data ) {
 				self::$common_data = [];
-			};
+			}
 		}
 
 		$this->data = & self::$common_data;

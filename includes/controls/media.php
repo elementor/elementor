@@ -248,7 +248,8 @@ class Control_Media extends Control_Base_Multiple {
 						</div>
 					</div>
 
-					<?php /* ?>
+					<?php /*
+					?>
 					<div class="elementor-control-media__warnings" role="alert" style="display: none;">
 						<?php
 						Hints::get_notice_template( [
@@ -326,7 +327,7 @@ class Control_Media extends Control_Base_Multiple {
 		<?php
 	}
 
-	private function get_image_sizes() : array {
+	private function get_image_sizes(): array {
 		$wp_image_sizes = Group_Control_Image_Size::get_all_image_sizes();
 
 		$image_sizes = [];

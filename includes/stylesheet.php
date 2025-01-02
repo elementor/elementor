@@ -345,7 +345,7 @@ class Stylesheet {
 		$this->rules[ $query_hash ] = [];
 
 		uksort(
-			$this->rules, function( $a, $b ) {
+			$this->rules, function ( $a, $b ) {
 				if ( 'all' === $a ) {
 					return -1;
 				}

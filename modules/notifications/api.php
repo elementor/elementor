@@ -41,7 +41,7 @@ class API {
 		return $notifications;
 	}
 
-	private static function fetch_data() : array {
+	private static function fetch_data(): array {
 		$response = wp_remote_get( self::NOTIFICATIONS_URL );
 
 		if ( is_wp_error( $response ) ) {
@@ -88,7 +88,7 @@ class API {
 			// Reset results for each condition.
 			$result = false;
 			switch ( $condition['type'] ) {
-				case 'wordpress': // phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled
+				case 'WordPress': // phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled
 					// include an unmodified $wp_version
 					include ABSPATH . WPINC . '/version.php';
 					$result = version_compare( $wp_version, $condition['version'], $condition['operator'] );
@@ -102,7 +102,7 @@ class API {
 					break;
 				case 'plugin':
 					if ( ! function_exists( 'is_plugin_active' ) ) {
-						require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+						require_once ABSPATH . 'wp-admin/includes/plugin.php';
 					}
 
 					$is_plugin_active = is_plugin_active( $condition['plugin'] );

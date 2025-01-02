@@ -28,6 +28,7 @@ abstract class Base_Icon_Font {
 
 	/**
 	 * get_css_prefix
+	 *
 	 * @return string
 	 */
 	abstract public function get_css_prefix();

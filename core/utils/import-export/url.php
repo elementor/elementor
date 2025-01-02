@@ -3,7 +3,7 @@
 namespace Elementor\Core\Utils\ImportExport;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Url {
@@ -13,7 +13,7 @@ class Url {
 	 * The function will also check and change absolute url to relative one by the base url.
 	 * This is currently supports only "Post Name" permalink structure to any permalink structure.
 	 *
-	 * @param string $url The url that should be migrated.
+	 * @param string      $url The url that should be migrated.
 	 * @param string|Null $base_url The base url that should be clean from the url.
 	 * @return string The migrated url || the $url if it couldn't find a match in the current permalink structure.
 	 */

@@ -51,7 +51,7 @@ class Compatibility_Tag extends Base_Object {
 	/**
 	 * Check single plugin if is compatible or not.
 	 *
-	 * @param Version $version
+	 * @param Version     $version
 	 * @param         $plugin_name
 	 *
 	 * @return string

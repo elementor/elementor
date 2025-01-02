@@ -61,7 +61,7 @@ class Manager {
 			$value = $this->parse_tag_text( $text, $settings, $parse_callback );
 		} else {
 
-			$value = preg_replace_callback( '/\[' . self::TAG_LABEL . '.+?(?=\])\]/', function( $tag_text_match ) use ( $settings, $parse_callback ) {
+			$value = preg_replace_callback( '/\[' . self::TAG_LABEL . '.+?(?=\])\]/', function ( $tag_text_match ) use ( $settings, $parse_callback ) {
 				return $this->parse_tag_text( $tag_text_match[0], $settings, $parse_callback );
 			}, $text );
 		}
@@ -189,7 +189,7 @@ class Manager {
 	 *
 	 * @param       $tag_id
 	 * @param       $tag_name
-	 * @param array $settings
+	 * @param array    $settings
 	 *
 	 * @return null|string
 	 */
@@ -293,7 +293,6 @@ class Manager {
 	 * @return void
 	 * @since  3.5.0
 	 * @access public
-	 *
 	 */
 	public function register( Base_Tag $dynamic_tag_instance ) {
 		$this->tags_info[ $dynamic_tag_instance->get_name() ] = [
@@ -338,7 +337,7 @@ class Manager {
 	 * @access public
 	 *
 	 * @param       $group_name
-	 * @param array $group_settings
+	 * @param array      $group_settings
 	 */
 	public function register_group( $group_name, array $group_settings ) {
 		$default_group_settings = [

@@ -6,7 +6,7 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -34,7 +34,9 @@ class Library extends \WP_CLI_Command {
 	 *  3. wp elementor library sync --network
 	 *      - This will sync the library with Elementor cloud library for each site in the network if needed.
 	 *
-	 * @since 2.8.0
+	 * @param array $args
+	 * @param array $assoc_args
+	 * * @since 2.8.0
 	 * @access public
 	 */
 	public function sync( $args, $assoc_args ) {
@@ -78,8 +80,8 @@ class Library extends \WP_CLI_Command {
 	 *
 	 *  2. wp elementor library import <file-path> --returnType=info,ids
 	 *
-	 * @param $args
-	 * @param $assoc_args
+	 * @param array $args
+	 * @param array $assoc_args
 	 *
 	 * @since  2.8.0
 	 * @access public
@@ -135,13 +137,13 @@ class Library extends \WP_CLI_Command {
 	 *  1. wp elementor library import-dir <file-path>
 	 *      - This will import all JSON files from <file-path>
 	 *
-	 * @param $args
+	 * @param array $args
 	 *
 	 * @since  3.4.7
 	 * @access public
 	 * @alias import-dir
 	 */
-	public function import_dir( $args ) {
+	public function import_dir( array $args ) {
 		if ( empty( $args[0] ) ) {
 			\WP_CLI::error( 'Please set dir path.' );
 		}
@@ -209,8 +211,8 @@ class Library extends \WP_CLI_Command {
 	 *  1. wp elementor library connect --user=admin --token=<connect-cli-token>
 	 *      - This will connect the admin to Elementor library.
 	 *
-	 * @param $args
-	 * @param $assoc_args
+	 * @param array $args
+	 * @param array $assoc_args
 	 *
 	 * @since  2.8.0
 	 * @access public
@@ -246,9 +248,6 @@ class Library extends \WP_CLI_Command {
 	 *
 	 *  1. wp elementor library disconnect --user=admin
 	 *      - This will disconnect the admin from Elementor library.
-	 *
-	 * @param $args
-	 * @param $assoc_args
 	 *
 	 * @since  2.8.0
 	 * @access public

@@ -189,7 +189,7 @@ class Tools extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
 		}, Settings::ADMIN_MENU_PRIORITY + 20 );
 
@@ -257,7 +257,7 @@ class Tools extends Settings_Page {
 					continue;
 				}
 
-				$current_index++;
+				++$current_index;
 				$rollback_versions[] = $version;
 			}
 
@@ -315,9 +315,9 @@ class Tools extends Settings_Page {
 				'label' => esc_html__( 'Replace URL', 'elementor' ),
 				'sections' => [
 					'replace_url' => [
-						'callback' => function() {
+						'callback' => function () {
 							echo '<h2>' . esc_html__( 'Replace URL', 'elementor' ) . '</h2>';
-							echo sprintf(
+							printf(
 								'<p><strong>%1$s</strong> %2$s</p>',
 								esc_html__( 'Important:', 'elementor' ),
 								sprintf(
@@ -347,7 +347,7 @@ class Tools extends Settings_Page {
 				'sections' => [
 					'rollback' => [
 						'label' => esc_html__( 'Rollback to Previous Version', 'elementor' ),
-						'callback' => function() {
+						'callback' => function () {
 							$intro_text = sprintf(
 								/* translators: %s: Elementor version. */
 								esc_html__( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ),
@@ -375,7 +375,7 @@ class Tools extends Settings_Page {
 					'beta' => [
 						'show_if' => $this->display_beta_tester(),
 						'label' => esc_html__( 'Become a Beta Tester', 'elementor' ),
-						'callback' => function() {
+						'callback' => function () {
 							echo '<p>' .
 								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
 								'</p>';

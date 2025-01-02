@@ -14,7 +14,7 @@ use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -117,7 +117,7 @@ class Module extends BaseModule {
 			'sections' => [
 				'intro' => [
 					'label' => esc_html__( 'Template Kits', 'elementor' ),
-					'callback' => function() {
+					'callback' => function () {
 						$this->render_import_export_tab_content();
 					},
 					'fields' => [],
@@ -327,9 +327,9 @@ class Module extends BaseModule {
 	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
 	 *
 	 * @param string $path Path to the file or session_id.
-	 * @param array $settings Settings the import use to determine which content to import.
-	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
-	 * @param bool $split_to_chunks Determine if the import process should be split into chunks.
+	 * @param array  $settings Settings the import use to determine which content to import.
+	 *       (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param bool   $split_to_chunks Determine if the import process should be split into chunks.
 	 * @return array
 	 * @throws \Exception
 	 */
@@ -431,7 +431,7 @@ class Module extends BaseModule {
 	 * Register appropriate actions.
 	 */
 	private function register_actions() {
-		add_action( 'admin_init', function() {
+		add_action( 'admin_init', function () {
 			if ( wp_doing_ajax() &&
 				isset( $_POST['action'] ) &&
 				wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, '_nonce' ), Ajax::NONCE_KEY ) &&
@@ -460,6 +460,7 @@ class Module extends BaseModule {
 	 * Prevent the creation of the default WooCommerce pages (Cart, Checkout, etc.)
 	 *
 	 * TODO 18/04/2023 : This needs to be moved to the runner itself after https://elementor.atlassian.net/browse/HTS-434 is done.
+	 *
 	 * @return array
 	 */
 	public function empty_pages(): array {
@@ -808,9 +809,9 @@ class Module extends BaseModule {
 		}
 
 		// TODO: BC - remove in the future
-		//  The 'templates' runner was in core and moved to the Pro plugin. (Part of it still exits in the Core for BC)
-		//  The runner that is in the core version is missing the revert functionality,
-		//  therefore we shouldn't display the revert section if the import process done with the core version.
+		// The 'templates' runner was in core and moved to the Pro plugin. (Part of it still exits in the Core for BC)
+		// The runner that is in the core version is missing the revert functionality,
+		// therefore we shouldn't display the revert section if the import process done with the core version.
 		$is_import_templates_ran = isset( $last_imported_kit['runners']['templates'] );
 		if ( $this->has_pro() && $is_import_templates_ran ) {
 			$has_imported_templates = ! empty( $last_imported_kit['runners']['templates'] );

@@ -7,7 +7,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
+use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
@@ -335,7 +335,7 @@ class Manager {
 	 */
 	public function convert_scheme_to_global( $scheme ) {
 		if ( isset( $scheme['type'] ) && isset( $scheme['value'] ) ) {
-			//_deprecated_argument( $args['scheme'], '3.0.0', 'Schemes are now deprecated - use $args[\'global\'] instead.' );
+			// _deprecated_argument( $args['scheme'], '3.0.0', 'Schemes are now deprecated - use $args[\'global\'] instead.' );
 			return $this->map_scheme_to_global( $scheme['type'], $scheme['value'] );
 		}
 
@@ -375,7 +375,7 @@ class Manager {
 	 * Send a confirm message before move a kit to trash, or if delete permanently not for trash.
 	 *
 	 * @param       $post_id
-	 * @param false $is_permanently_delete
+	 * @param false   $is_permanently_delete
 	 */
 	private function before_delete_kit( $post_id, $is_permanently_delete = false ) {
 		if ( $this->should_skip_trash_kit_confirmation ) {
@@ -468,7 +468,7 @@ class Manager {
 			$this->update_kit_settings_based_on_option( 'site_description', $value );
 		}, 10, 2 );
 
-		add_action( 'wp_head', function() {
+		add_action( 'wp_head', function () {
 			$this->add_body_class();
 		} );
 

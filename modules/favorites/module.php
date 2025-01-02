@@ -94,9 +94,9 @@ class Module extends BaseModule {
 	/**
 	 * Merge new user favorites to a type.
 	 *
-	 * @param string        $type
-	 * @param array|string  $favorites
-	 * @param bool          $store
+	 * @param string       $type
+	 * @param array|string $favorites
+	 * @param bool         $store
 	 *
 	 * @return array|bool
 	 */
@@ -107,9 +107,9 @@ class Module extends BaseModule {
 	/**
 	 * Delete existing favorites from a type.
 	 *
-	 * @param string        $type
-	 * @param array|string  $favorites
-	 * @param bool          $store
+	 * @param string       $type
+	 * @param array|string $favorites
+	 * @param bool         $store
 	 *
 	 * @return array|int
 	 */
@@ -123,7 +123,7 @@ class Module extends BaseModule {
 	 * @param      $type
 	 * @param      $favorites
 	 * @param      $action
-	 * @param bool $store
+	 * @param bool      $store
 	 *
 	 * @return array|boolean
 	 */
@@ -137,7 +137,7 @@ class Module extends BaseModule {
 				break;
 			case static::ACTION_DELETE:
 				$type_instance->filter(
-					function( $value ) use ( $favorites ) {
+					function ( $value ) use ( $favorites ) {
 						return ! in_array( $value, $favorites, true );
 					}
 				);

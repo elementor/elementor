@@ -383,7 +383,6 @@ class Tracker {
 		}
 
 		return $usage;
-
 	}
 
 	/**
@@ -573,7 +572,6 @@ class Tracker {
 		 * @param array $params Variable to encode as JSON.
 		 *
 		 * @since 1.0.0
-		 *
 		 */
 		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
 

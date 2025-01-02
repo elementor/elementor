@@ -481,7 +481,7 @@ class Manager extends Module {
 	 * @since 3.2.0
 	 */
 	private function init_active_breakpoints() {
-		$this->active_breakpoints = array_filter( $this->get_breakpoints(), function( $breakpoint ) {
+		$this->active_breakpoints = array_filter( $this->get_breakpoints(), function ( $breakpoint ) {
 			/** @var Breakpoint $breakpoint */
 			return $breakpoint->is_enabled();
 		} );

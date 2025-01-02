@@ -73,7 +73,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) {
 				if ( empty( $element['widgetType'] ) || 'image' !== $element['widgetType'] ) {
 					return $element;
 				}
@@ -130,7 +130,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) {
 				if ( empty( $element['widgetType'] ) ) {
 					return $element;
 				}
@@ -192,7 +192,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) {
 				if ( empty( $element['widgetType'] ) ) {
 					return $element;
 				}
@@ -356,7 +356,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( &$do_update ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( &$do_update ) {
 				if ( empty( $element['widgetType'] ) || 'video' !== $element['widgetType'] ) {
 					return $element;
 				}
@@ -455,7 +455,7 @@ class Upgrades {
 				continue;
 			}
 
-			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( &$do_update, $widgets ) {
+			$data = Plugin::$instance->db->iterate_data( $data, function ( $element ) use ( &$do_update, $widgets ) {
 				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets ) ) {
 					return $element;
 				}
@@ -583,7 +583,7 @@ class Upgrades {
 	 *
 	 * @param Updater $updater
 	 *
-	 * @param string $type
+	 * @param string  $type
 	 *
 	 * @return bool
 	 */
@@ -617,7 +617,8 @@ class Upgrades {
 	 * @return bool
 	 */
 	// Because the query is slow on large sites, temporary don't upgrade.
-	/*	public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
+	/*
+		public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
 		return self::rename_document_base_to_wp( $updater, 'post' ) || self::rename_document_base_to_wp( $updater, 'page' );
 	}*/
 
@@ -673,7 +674,7 @@ class Upgrades {
 	 * @return bool
 	 */
 	public static function _v_3_0_0_move_general_settings_to_kit( $updater ) {
-		$callback = function( $kit_id ) {
+		$callback = function ( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			if ( ! $kit ) {
@@ -730,7 +731,7 @@ class Upgrades {
 	}
 
 	public static function _v_3_2_0_migrate_breakpoints_to_new_system( $updater, $include_revisions = true ) {
-		$callback = function( $kit_id ) {
+		$callback = function ( $kit_id ) {
 			$kit = Plugin::$instance->documents->get( $kit_id );
 
 			$kit_settings = $kit->get_meta( SettingsPageManager::META_KEY );
@@ -750,7 +751,7 @@ class Upgrades {
 			];
 
 			// Breakpoint values are either a number, or an empty string (empty setting).
-			array_walk( $breakpoint_values, function( &$breakpoint_value, $breakpoint_key ) {
+			array_walk( $breakpoint_values, function ( &$breakpoint_value, $breakpoint_key ) {
 				if ( $breakpoint_value ) {
 					// If the saved breakpoint value is a number, 1px is reduced because the new breakpoints system is
 					// based on max-width, as opposed to the old breakpoints system that worked based on min-width.
@@ -962,7 +963,7 @@ class Upgrades {
 	}
 
 	/**
-	 * @param \wpdb $wpdb
+	 * @param \wpdb  $wpdb
 	 * @param string $element_type
 	 *
 	 * @return array

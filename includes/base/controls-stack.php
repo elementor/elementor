@@ -361,7 +361,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		$active_controls = array_reduce(
-			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
+			array_keys( $controls ), function ( $active_controls, $control_key ) use ( $controls, $settings ) {
 				$control = $controls[ $control_key ];
 
 				if ( $this->is_control_visible( $control, $settings, $controls ) ) {
@@ -637,11 +637,11 @@ abstract class Controls_Stack extends Base_Object {
 		$controls_keys = array_keys( $registered_controls );
 
 		while ( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
-			$target_section_index--;
+			--$target_section_index;
 		}
 
 		if ( 'section' === $position['type'] ) {
-			$target_control_index++;
+			++$target_control_index;
 
 			if ( 'end' === $position['at'] ) {
 				while ( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_control_index ] ]['type'] ) {
@@ -655,7 +655,7 @@ abstract class Controls_Stack extends Base_Object {
 		$target_control = $registered_controls[ $controls_keys[ $target_control_index ] ];
 
 		if ( 'after' === $position['at'] ) {
-			$target_control_index++;
+			++$target_control_index;
 		}
 
 		$section_id = $registered_controls[ $controls_keys[ $target_section_index ] ]['name'];
@@ -737,7 +737,7 @@ abstract class Controls_Stack extends Base_Object {
 		$controls_keys = array_keys( $registered_controls );
 
 		while ( true ) {
-			$section_index++;
+			++$section_index;
 
 			if ( ! isset( $controls_keys[ $section_index ] ) ) {
 				break;
@@ -750,7 +750,7 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			$section_controls[ $control_key ] = $registered_controls[ $control_key ];
-		};
+		}
 
 		return $section_controls;
 	}
@@ -1390,7 +1390,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		return array_reduce(
-			array_keys( $settings ), function( $filtered_settings, $setting_key ) use ( $controls, $settings, $callback ) {
+			array_keys( $settings ), function ( $filtered_settings, $setting_key ) use ( $controls, $settings, $callback ) {
 				if ( isset( $controls[ $setting_key ] ) ) {
 					$result = $callback( $settings[ $setting_key ], $controls[ $setting_key ] );
 
@@ -1452,7 +1452,7 @@ abstract class Controls_Stack extends Base_Object {
 
 			$pure_condition_key = $condition_key_parts[1];
 			$condition_sub_key = $condition_key_parts[2];
-			$is_negative_condition = ! ! $condition_key_parts[3];
+			$is_negative_condition = (bool) $condition_key_parts[3];
 
 			if ( ! isset( $values[ $pure_condition_key ] ) || null === $values[ $pure_condition_key ] ) {
 				return false;
@@ -2006,8 +2006,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 2.7.0
 	 * @access public
 	 *
-	 * @param string $element       The HTML element.
-	 * @param string $key           Optional. Attribute key. Default is null.
+	 * @param string       $element       The HTML element.
+	 * @param string       $key           Optional. Attribute key. Default is null.
 	 * @param array|string $values   Optional. Attribute value/s. Default is null.
 	 */
 	public function remove_render_attribute( $element, $key = null, $values = null ) {
@@ -2129,7 +2129,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ): array {
 		return $config;
 	}
 

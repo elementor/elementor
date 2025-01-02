@@ -156,7 +156,7 @@ class Editor {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 999999 );
 
 		// Setup default heartbeat options
-		add_filter( 'heartbeat_settings', function( $settings ) {
+		add_filter( 'heartbeat_settings', function ( $settings ) {
 			$settings['interval'] = 15;
 			return $settings;
 		} );

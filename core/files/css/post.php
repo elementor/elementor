@@ -348,7 +348,7 @@ class Post extends Base {
 			$this->add_control_rules(
 				$control,
 				$controls,
-				function( $control ) {},
+				function ( $control ) {},
 				[ '{{WRAPPER}}' ],
 				[ '.elementor-widget-' . $element->get_name() ],
 				$global_values

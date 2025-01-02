@@ -5,7 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -39,6 +39,6 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		add_filter( 'elementor/frontend/admin_bar/settings', [ $this, 'add_menu_in_admin_bar' ] ); // After kit (Site settings)
+		add_filter( 'elementor/frontend/admin_bar/settings', [ $this, 'add_menu_in_admin_bar' ] ); // After kit (Site settings).
 	}
 }

@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @deprecated 3.0.0 Use `Plugin::$instance->kits_manager->get_active_kit_for_frontend()` instead.
  */
-
 class Model {
 
 	/**
@@ -52,9 +51,11 @@ class Model {
 		return [];
 	}
 
-	/**
-	 * @deprecated 3.0.0
-	 */
+    /**
+     * @param null $setting
+     * @return array|mixed|string|null
+     * @deprecated 3.0.0
+     */
 	public function get_settings( $setting = null ) {
 
 		if ( $setting ) {

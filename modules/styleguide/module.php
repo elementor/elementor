@@ -6,7 +6,7 @@ use Elementor\Plugin;
 use Elementor\Modules\Styleguide\Controls\Switcher;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends Base_Module {
@@ -107,8 +107,8 @@ class Module extends Base_Module {
 	 * Add the Enable Styleguide Preview controls to Global Colors and Global Fonts.
 	 *
 	 * @param $element
-	 * @param string $section_id
-	 * @param array $args
+	 * @param string  $section_id
+	 * @param array   $args
 	 */
 	public function add_styleguide_enable_controls( $element, $section_id, $args ) {
 		if ( 'kit' !== $element->get_name() || ! in_array( $section_id, [ 'section_global_colors', 'section_text_style' ] ) ) {
