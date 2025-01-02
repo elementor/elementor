@@ -67,15 +67,15 @@ class Fonts {
 	 */
 	public static function get_font_groups() {
 		if ( null === self::$font_groups ) {
-			$font_groups = [
+			$font_groups = array(
 				self::SYSTEM => esc_html__( 'System', 'elementor' ),
-			];
+			);
 
 			if ( static::is_google_fonts_enabled() ) {
-				$font_groups = array_merge( $font_groups, [
+				$font_groups = array_merge( $font_groups, array(
 					self::GOOGLE => esc_html__( 'Google', 'elementor' ),
 					self::EARLYACCESS => esc_html__( 'Google (Early Access)', 'elementor' ),
-				] );
+				) );
 			}
 
 			/**
@@ -108,7 +108,7 @@ class Fonts {
 	 */
 	public static function get_fonts() {
 		if ( null === self::$fonts ) {
-			$additional_fonts = [];
+			$additional_fonts = array();
 
 			/**
 			 * Additional fonts.
@@ -139,7 +139,7 @@ class Fonts {
 	 * @return array Supported fonts.
 	 */
 	private static function get_native_fonts() {
-		$fonts = [
+		$fonts = array(
 			// System fonts.
 			'Arial' => self::SYSTEM,
 			'Tahoma' => self::SYSTEM,
@@ -148,10 +148,10 @@ class Fonts {
 			'Times New Roman' => self::SYSTEM,
 			'Trebuchet MS' => self::SYSTEM,
 			'Georgia' => self::SYSTEM,
-		];
+		);
 
 		if ( static::is_google_fonts_enabled() ) {
-			$fonts = array_merge( $fonts, [
+			$fonts = array_merge( $fonts, array(
 				// Google Fonts (last update: 05/05/2024).
 				'ABeeZee' => self::GOOGLE,
 				'ADLaM Display' => self::GOOGLE,
@@ -1813,7 +1813,7 @@ class Fonts {
 				'Zhi Mang Xing' => self::GOOGLE,
 				'Zilla Slab' => self::GOOGLE,
 				'Zilla Slab Highlight' => self::GOOGLE,
-			] );
+			) );
 		}
 
 		return $fonts;
@@ -1855,13 +1855,13 @@ class Fonts {
 	 *
 	 * @return array Font type, or false if font doesn't exist.
 	 */
-	public static function get_fonts_by_groups( $groups = [] ) {
-		return array_filter( self::get_fonts(), function( $font ) use ( $groups ) {
+	public static function get_fonts_by_groups( $groups = array() ) {
+		return array_filter( self::get_fonts(), function ( $font ) use ( $groups ) {
 			return in_array( $font, $groups );
 		} );
 	}
 
-	public static function is_google_fonts_enabled() : bool {
+	public static function is_google_fonts_enabled(): bool {
 		if ( null === static::$is_google_fonts_enabled ) {
 			$default_value = '1';
 

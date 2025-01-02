@@ -71,7 +71,7 @@ class Widget_Google_Maps extends Widget_Base {
 	 * @return array Widget categories.
 	 */
 	public function get_categories() {
-		return [ 'basic' ];
+		return array( 'basic' );
 	}
 
 	/**
@@ -85,7 +85,7 @@ class Widget_Google_Maps extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'google', 'map', 'embed', 'location' ];
+		return array( 'google', 'map', 'embed', 'location' );
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -103,7 +103,7 @@ class Widget_Google_Maps extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-google_maps' ];
+		return array( 'widget-google_maps' );
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -121,9 +121,9 @@ class Widget_Google_Maps extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_map',
-			[
+			array(
 				'label' => esc_html__( 'Google Maps', 'elementor' ),
-			]
+			)
 		);
 
 		if ( Plugin::$instance->editor->is_edit_mode() ) {
@@ -132,7 +132,7 @@ class Widget_Google_Maps extends Widget_Base {
 			if ( ! $api_key ) {
 				$this->add_control(
 					'api_key_notification',
-					[
+					array(
 						'type' => Controls_Manager::ALERT,
 						'alert_type' => 'info',
 						'content' => sprintf(
@@ -142,7 +142,7 @@ class Widget_Google_Maps extends Widget_Base {
 							'<a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank">',
 							'</a>'
 						),
-					]
+					)
 				);
 			}
 		}
@@ -150,118 +150,118 @@ class Widget_Google_Maps extends Widget_Base {
 		$default_address = esc_html__( 'London Eye, London, United Kingdom', 'elementor' );
 		$this->add_control(
 			'address',
-			[
+			array(
 				'label' => esc_html__( 'Location', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-					'categories' => [
+					'categories' => array(
 						TagsModule::POST_META_CATEGORY,
-					],
-				],
-				'ai' => [
+					),
+				),
+				'ai' => array(
 					'active' => false,
-				],
+				),
 				'placeholder' => $default_address,
 				'default' => $default_address,
 				'label_block' => true,
-			]
+			)
 		);
 
 		$this->add_control(
 			'zoom',
-			[
+			array(
 				'label' => esc_html__( 'Zoom', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => [
+				'default' => array(
 					'size' => 10,
-				],
-				'range' => [
-					'px' => [
+				),
+				'range' => array(
+					'px' => array(
 						'min' => 1,
 						'max' => 20,
-					],
-				],
+					),
+				),
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'height',
-			[
+			array(
 				'label' => esc_html__( 'Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
+				'range' => array(
+					'px' => array(
 						'min' => 40,
 						'max' => 1440,
-					],
-				],
-				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
-				'selectors' => [
+					),
+				),
+				'size_units' => array( 'px', 'em', 'rem', 'vh', 'custom' ),
+				'selectors' => array(
 					'{{WRAPPER}} iframe' => 'height: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_map_style',
-			[
+			array(
 				'label' => esc_html__( 'Google Maps', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->start_controls_tabs( 'map_filter' );
 
 		$this->start_controls_tab( 'normal',
-			[
+			array(
 				'label' => esc_html__( 'Normal', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Css_Filter::get_type(),
-			[
+			array(
 				'name' => 'css_filters',
 				'selector' => '{{WRAPPER}} iframe',
-			]
+			)
 		);
 
 		$this->end_controls_tab();
 
 		$this->start_controls_tab( 'hover',
-			[
+			array(
 				'label' => esc_html__( 'Hover', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Css_Filter::get_type(),
-			[
+			array(
 				'name' => 'css_filters_hover',
 				'selector' => '{{WRAPPER}}:hover iframe',
-			]
+			)
 		);
 
 		$this->add_control(
 			'hover_transition',
-			[
+			array(
 				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
+				'range' => array(
+					'px' => array(
 						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
-					],
-				],
-				'selectors' => [
+					),
+				),
+				'selectors' => array(
 					'{{WRAPPER}} iframe' => 'transition-duration: {{SIZE}}s',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_tab();
@@ -292,10 +292,10 @@ class Widget_Google_Maps extends Widget_Base {
 
 		$api_key = esc_html( get_option( 'elementor_google_maps_api_key' ) );
 
-		$params = [
+		$params = array(
 			rawurlencode( $settings['address'] ),
 			absint( $settings['zoom']['size'] ),
-		];
+		);
 
 		if ( $api_key ) {
 			$params[] = $api_key;

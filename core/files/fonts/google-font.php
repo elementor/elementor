@@ -15,14 +15,14 @@ class Google_Font {
 
 	const FOLDER_FONTS = 'fonts';
 
-	const AVAILABLE_FOLDERS = [
+	const AVAILABLE_FOLDERS = array(
 		self::FOLDER_CSS,
 		self::FOLDER_FONTS,
-	];
+	);
 
 	const UA_STRING = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36';
 
-	private static array $folders = [];
+	private static array $folders = array();
 
 	public static function enqueue( string $font_name ): bool {
 		if ( static::enqueue_style( $font_name ) ) {
@@ -39,7 +39,6 @@ class Google_Font {
 
 	private static function sanitize_font_name( string $font_name ): string {
 		return sanitize_key( $font_name );
-
 	}
 
 	private static function enqueue_style( string $font_name ): bool {
@@ -54,7 +53,7 @@ class Google_Font {
 		wp_enqueue_style(
 			'elementor-gf-local-' . $sanitize_font_name,
 			$font_data['url'],
-			[],
+			array(),
 			$font_data['version']
 		);
 
@@ -68,7 +67,7 @@ class Google_Font {
 	}
 
 	private static function get_local_google_fonts(): array {
-		return (array) get_option( '_elementor_local_google_fonts', [] );
+		return (array) get_option( '_elementor_local_google_fonts', array() );
 	}
 
 	private static function set_local_google_fonts( string $font_name, array $font_data ): void {
@@ -89,13 +88,13 @@ class Google_Font {
 			return false;
 		}
 
-		$fonts_url = static::get_google_fonts_remote_url( [ $font_name ] );
+		$fonts_url = static::get_google_fonts_remote_url( array( $font_name ) );
 
-		$css_content_response = wp_remote_get( $fonts_url, [
-			'headers' => [
+		$css_content_response = wp_remote_get( $fonts_url, array(
+			'headers' => array(
 				'User-Agent' => static::UA_STRING,
-			],
-		] );
+			),
+		) );
 
 		if ( is_wp_error( $css_content_response ) || 200 !== (int) wp_remote_retrieve_response_code( $css_content_response ) ) {
 			return false;
@@ -142,10 +141,10 @@ class Google_Font {
 			return false;
 		}
 
-		$font_data = [
+		$font_data = array(
 			'url' => $css_folder['url'] . $sanitize_font_name . '.css',
 			'version' => time(),
-		];
+		);
 
 		$css_folder_path = $css_folder['path'] . $sanitize_font_name . '.css';
 
@@ -163,7 +162,7 @@ class Google_Font {
 	private static function get_folder( string $folder ): array {
 		$folders = static::get_folders();
 
-		return $folders[ $folder ] ?? [];
+		return $folders[ $folder ] ?? array();
 	}
 
 	private static function get_folders(): array {
@@ -177,7 +176,7 @@ class Google_Font {
 			return;
 		}
 
-		static::$folders = [];
+		static::$folders = array();
 
 		$upload_dir = wp_upload_dir();
 
@@ -189,20 +188,19 @@ class Google_Font {
 				wp_mkdir_p( $folder_path );
 			}
 
-			static::$folders[ $folder ] = [
+			static::$folders[ $folder ] = array(
 				'path' => trailingslashit( $folder_path ),
 				'url' => trailingslashit( $folder_url ),
-			];
+			);
 		}
 	}
 
 	private static function get_google_fonts_remote_url( array $fonts ): string {
 		return Plugin::$instance->frontend->get_stable_google_fonts_url( $fonts );
-
 	}
 
 	private static function enqueue_from_cdn( string $font_name ): void {
-		$font_url = static::get_google_fonts_remote_url( [ $font_name ] );
+		$font_url = static::get_google_fonts_remote_url( array( $font_name ) );
 
 		$sanitize_font_name = static::sanitize_font_name( $font_name );
 
@@ -210,7 +208,7 @@ class Google_Font {
 		wp_enqueue_style(
 			'elementor-gf-' . $sanitize_font_name,
 			$font_url,
-			[],
+			array(),
 			null
 		);
 	}

@@ -25,12 +25,12 @@ class Hints {
 	 * @return string[]
 	 */
 	public static function get_notice_types(): array {
-		return [
+		return array(
 			self::INFO,
 			self::SUCCESS,
 			self::WARNING,
 			self::DANGER,
-		];
+		);
 	}
 
 	/**
@@ -41,33 +41,33 @@ class Hints {
 	 * @return array|string[]|\string[][]
 	 */
 	public static function get_hints( $hint_key = null ): array {
-		$hints = [
-			'image-optimization-once' => [
+		$hints = array(
+			'image-optimization-once' => array(
 				self::DISMISSED => 'image-optimization-once',
 				self::CAPABILITY => 'install_plugins',
 				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
-			],
-			'image-optimization-once-media-modal' => [
+			),
+			'image-optimization-once-media-modal' => array(
 				self::DISMISSED => 'image-optimization-once-media-modal',
 				self::CAPABILITY => 'install_plugins',
 				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
-			],
-			'image-optimization' => [
+			),
+			'image-optimization' => array(
 				self::DISMISSED => 'image_optimizer_hint',
 				self::CAPABILITY => 'install_plugins',
 				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
-			],
-			'image-optimization-media-modal' => [
+			),
+			'image-optimization-media-modal' => array(
 				self::DISMISSED => 'image-optimization-media-modal',
 				self::CAPABILITY => 'install_plugins',
 				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
-			],
-		];
+			),
+		);
 		if ( ! $hint_key ) {
 			return $hints;
 		}
 
-		return $hints[ $hint_key ] ?? [];
+		return $hints[ $hint_key ] ?? array();
 	}
 
 	/**
@@ -92,7 +92,7 @@ class Hints {
 	 * @return string|void
 	 */
 	public static function get_notice_template( array $notice, bool $return = false ) {
-		$default_settings = [
+		$default_settings = array(
 			'type' => 'info',
 			'icon' => false,
 			'heading' => '',
@@ -100,9 +100,9 @@ class Hints {
 			'dismissible' => false,
 			'button_text' => '',
 			'button_event' => '',
-			'button_data' => [],
+			'button_data' => array(),
 			'display' => false,
-		];
+		);
 		$notice_settings = array_merge( $default_settings, $notice );
 
 		if ( empty( $notice_settings['heading'] ) && empty( $notice_settings['content'] ) ) {
@@ -180,10 +180,10 @@ class Hints {
 		$action = 'install-plugin';
 		return wp_nonce_url(
 			add_query_arg(
-				[
+				array(
 					'action' => $action,
 					'plugin' => $plugin_slug,
-				],
+				),
 				admin_url( 'update.php' )
 			),
 			$action . '_' . $plugin_slug
@@ -264,7 +264,7 @@ class Hints {
 			return false;
 		}
 
-		$conflicting_plugins = [
+		$conflicting_plugins = array(
 			'imagify/imagify.php',
 			'optimole-wp/optimole-wp.php',
 			'ewww-image-optimizer/ewww-image-optimizer.php',
@@ -274,7 +274,7 @@ class Hints {
 			'wp-smushit/wp-smush.php',
 			'wp-smush-pro/wp-smush.php',
 			'tiny-compress-images/tiny-compress-images.php',
-		];
+		);
 
 		foreach ( $conflicting_plugins as $plugin ) {
 			if ( self::is_plugin_active( $plugin ) ) {
@@ -291,7 +291,7 @@ class Hints {
 	 *
 	 * @return bool
 	 */
-	public static function is_plugin_installed( $plugin ) : bool {
+	public static function is_plugin_installed( $plugin ): bool {
 		$plugins = get_plugins();
 		$plugin = self::ensure_plugin_folder( $plugin );
 		return ! empty( $plugins[ $plugin ] );
@@ -344,43 +344,43 @@ class Hints {
 	 * @return array[]
 	 */
 	public static function get_notice_allowed_html(): array {
-		return [
-			'div' => [
-				'class' => [],
-				'data-display' => [],
-			],
-			'svg' => [
-				'width' => [],
-				'height' => [],
-				'viewbox' => [],
-				'fill' => [],
-				'xmlns' => [],
-			],
-			'path' => [
-				'd' => [],
-				'stroke' => [],
-				'stroke-width' => [],
-				'stroke-linecap' => [],
-				'stroke-linejoin' => [],
-			],
-			'button' => [
-				'class' => [],
-				'data-event' => [],
-				'data-settings' => [],
-				'data-tooltip' => [],
-			],
-			'i' => [
-				'class' => [],
-				'aria-hidden' => [],
-			],
-			'span' => [
-				'class' => [],
-			],
-			'a' => [
-				'href' => [],
-				'style' => [],
-				'target' => [],
-			],
-		];
+		return array(
+			'div' => array(
+				'class' => array(),
+				'data-display' => array(),
+			),
+			'svg' => array(
+				'width' => array(),
+				'height' => array(),
+				'viewbox' => array(),
+				'fill' => array(),
+				'xmlns' => array(),
+			),
+			'path' => array(
+				'd' => array(),
+				'stroke' => array(),
+				'stroke-width' => array(),
+				'stroke-linecap' => array(),
+				'stroke-linejoin' => array(),
+			),
+			'button' => array(
+				'class' => array(),
+				'data-event' => array(),
+				'data-settings' => array(),
+				'data-tooltip' => array(),
+			),
+			'i' => array(
+				'class' => array(),
+				'aria-hidden' => array(),
+			),
+			'span' => array(
+				'class' => array(),
+			),
+			'a' => array(
+				'href' => array(),
+				'style' => array(),
+				'target' => array(),
+			),
+		);
 	}
 }

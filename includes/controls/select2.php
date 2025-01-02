@@ -43,14 +43,14 @@ class Control_Select2 extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
-			'options' => [],
+		return array(
+			'options' => array(),
 			'multiple' => false,
 			// Select2 library options
-			'select2options' => [],
+			'select2options' => array(),
 			// the lockedOptions array can be passed option keys. The passed option keys will be non-deletable.
-			'lockedOptions' => [],
-		];
+			'lockedOptions' => array(),
+		);
 	}
 
 	/**

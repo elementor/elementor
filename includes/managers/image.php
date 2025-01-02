@@ -34,8 +34,8 @@ class Images_Manager {
 		}
 
 		// PHPCS - Already validated by wp_ajax.
-		$items = Utils::get_super_global_value( $_POST, 'items' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$urls  = [];
+		$items = Utils::get_super_global_value( $_POST, 'items' ) ?? array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$urls  = array();
 
 		foreach ( $items as $item ) {
 			$urls[ $item['id'] ] = $this->get_details( $item['id'], $item['size'], $item['is_first_time'] );
@@ -72,11 +72,11 @@ class Images_Manager {
 			$sizes = get_intermediate_image_sizes();
 			$sizes[] = 'full';
 		} else {
-			$sizes = [];
+			$sizes = array();
 		}
 
 		$sizes[] = $size;
-		$urls = [];
+		$urls = array();
 		foreach ( $sizes as $size ) {
 			if ( 0 === strpos( $size, 'custom_' ) ) {
 				preg_match( '/custom_(\d*)x(\d*)/', $size, $matches );
@@ -84,13 +84,13 @@ class Images_Manager {
 				$matches[1] = (int) $matches[1];
 				$matches[2] = (int) $matches[2];
 
-				$instance = [
+				$instance = array(
 					'image_size' => 'custom',
-					'image_custom_dimension' => [
+					'image_custom_dimension' => array(
 						'width' => $matches[1],
 						'height' => $matches[2],
-					],
-				];
+					),
+				);
 
 				$url = Group_Control_Image_Size::get_attachment_image_src( $id, 'image', $instance );
 
@@ -99,12 +99,12 @@ class Images_Manager {
 				$image_meta = wp_get_attachment_metadata( $id );
 
 				// Attach custom image to original.
-				$image_meta['sizes'][ 'elementor_' . $size ] = [
+				$image_meta['sizes'][ 'elementor_' . $size ] = array(
 					'file' => $thumbs_path,
 					'width' => $matches[1],
 					'height' => $matches[2],
 					'mime-type' => get_post_mime_type( $id ),
-				];
+				);
 
 				wp_update_attachment_metadata( $id, $image_meta );
 
@@ -130,19 +130,19 @@ class Images_Manager {
 	 */
 
 	public function get_lightbox_image_attributes( $id ) {
-		$attributes = [];
+		$attributes = array();
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$lightbox_title_src = $kit->get_settings( 'lightbox_title_src' );
 		$lightbox_description_src = $kit->get_settings( 'lightbox_description_src' );
 		$attachment = get_post( $id );
 
 		if ( $attachment ) {
-			$image_data = [
+			$image_data = array(
 				'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
 				'caption' => $attachment->post_excerpt,
 				'description' => $attachment->post_content,
 				'title' => $attachment->post_title,
-			];
+			);
 
 			if ( $lightbox_title_src && $image_data[ $lightbox_title_src ] ) {
 				$attributes['title'] = $image_data[ $lightbox_title_src ];
@@ -180,7 +180,7 @@ class Images_Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'wp_ajax_elementor_get_images_details', [ $this, 'get_images_details' ] );
+		add_action( 'wp_ajax_elementor_get_images_details', array( $this, 'get_images_details' ) );
 
 		// Delete elementor thumbnail files on deleting its main image.
 		add_action( 'delete_attachment', function ( $post_id ) {

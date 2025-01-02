@@ -262,7 +262,7 @@ class Svg_Sanitizer {
 	 * @return array
 	 */
 	private function get_allowed_attributes() {
-		$allowed_attributes = [
+		$allowed_attributes = array(
 			'class',
 			'clip-path',
 			'clip-rule',
@@ -351,7 +351,7 @@ class Svg_Sanitizer {
 			'dy',
 			'rotate',
 			'textlength',
-		];
+		);
 
 		/**
 		 * Allowed attributes in SVG file.
@@ -382,7 +382,7 @@ class Svg_Sanitizer {
 	 * @return array
 	 */
 	private function get_allowed_elements() {
-		$allowed_elements = [
+		$allowed_elements = array(
 			'a',
 			'circle',
 			'clippath',
@@ -415,7 +415,7 @@ class Svg_Sanitizer {
 			'title',
 			'tspan',
 			'use',
-		];
+		);
 
 		/**
 		 * Allowed elements in SVG file.
@@ -519,24 +519,24 @@ class Svg_Sanitizer {
 		}
 
 		// Allow known data URIs.
-		if ( in_array( substr( $value, 0, 14 ), [
+		if ( in_array( substr( $value, 0, 14 ), array(
 			'data:image/png', // PNG
 			'data:image/gif', // GIF
 			'data:image/jpg', // JPG
 			'data:image/jpe', // JPEG
 			'data:image/pjp', // PJPEG
-		], true ) ) {
+		), true ) ) {
 			return true;
 		}
 
 		// Allow known short data URIs.
-		if ( in_array( substr( $value, 0, 12 ), [
+		if ( in_array( substr( $value, 0, 12 ), array(
 			'data:img/png', // PNG
 			'data:img/gif', // GIF
 			'data:img/jpg', // JPG
 			'data:img/jpe', // JPEG
 			'data:img/pjp', // PJPEG
-		], true ) ) {
+		), true ) ) {
 			return true;
 		}
 

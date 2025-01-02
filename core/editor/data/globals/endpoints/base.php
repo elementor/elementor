@@ -10,9 +10,9 @@ abstract class Base extends Endpoint {
 	protected function register() {
 		parent::register();
 
-		$args = [
+		$args = array(
 			'id_arg_type_regex' => '[\w]+',
-		];
+		);
 
 		$this->register_item_route( \WP_REST_Server::READABLE, $args );
 		$this->register_item_route( \WP_REST_Server::CREATABLE, $args );

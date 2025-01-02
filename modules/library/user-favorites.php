@@ -40,13 +40,13 @@ class User_Favorites {
 		}
 
 		if ( ! $this->cache || ! is_array( $this->cache ) ) {
-			return [];
+			return array();
 		}
 
 		if ( $vendor && $resource ) {
 			$key = $this->get_key( $vendor, $resource );
 
-			return isset( $this->cache[ $key ] ) ? $this->cache[ $key ] : [];
+			return isset( $this->cache[ $key ] ) ? $this->cache[ $key ] : array();
 		}
 
 		return $this->cache;
@@ -71,7 +71,7 @@ class User_Favorites {
 	 * @return $this
 	 * @throws \Exception
 	 */
-	public function save( $vendor, $resource, $value = [] ) {
+	public function save( $vendor, $resource, $value = array() ) {
 		$all_favorites = $this->get();
 
 		$all_favorites[ $this->get_key( $vendor, $resource ) ] = $value;

@@ -28,9 +28,9 @@ class Global_Classes_Injector {
 				fn( $id ) => $global_classes->get_items()->get( $id )
 			);
 
-		$css = Styles_Renderer::make( [
+		$css = Styles_Renderer::make( array(
 			'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
-		] )->render( $sorted_items->all() );
+		) )->render( $sorted_items->all() );
 
 		$post->get_stylesheet()->add_raw_css( $css );
 	}

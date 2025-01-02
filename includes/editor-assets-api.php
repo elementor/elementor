@@ -33,13 +33,13 @@ class EditorAssetsAPI {
 		$response = wp_remote_get( $this->config( static::ASSETS_DATA_URL ) );
 
 		if ( is_wp_error( $response ) ) {
-			return [];
+			return array();
 		}
 
 		$data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( empty( $data[ $this->config( static::ASSETS_DATA_KEY ) ] ) || ! is_array( $data[ $this->config( static::ASSETS_DATA_KEY ) ] ) ) {
-			return [];
+			return array();
 		}
 
 		return $data[ $this->config( static::ASSETS_DATA_KEY ) ];
@@ -60,10 +60,10 @@ class EditorAssetsAPI {
 	}
 
 	private function set_transient( $cache_key, $value, $expiration = '+12 hours' ): bool {
-		$data = [
+		$data = array(
 			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
 			'value' => wp_json_encode( $value ),
-		];
+		);
 
 		return update_option( $cache_key, $data, false );
 	}

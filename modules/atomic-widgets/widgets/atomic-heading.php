@@ -35,7 +35,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$format = $this->get_heading_template( ! empty( $settings['link']['href'] ) );
 		$args = $this->get_template_args( $settings );
 
-		echo sprintf( $format, ...$args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		printf( $format, ...$args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	private function get_heading_template( bool $is_link_enabled ): string {
@@ -45,20 +45,20 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	private function get_template_args( array $settings ): array {
 		$tag = $settings['tag'];
 		$title = esc_html( $settings['title'] );
-		$attrs = array_filter( [
+		$attrs = array_filter( array(
 			'class' => $settings['classes'] ?? '',
-		] );
+		) );
 
-		$default_args = [
+		$default_args = array(
 			Utils::validate_html_tag( $tag ),
 			Utils::render_html_attributes( $attrs ),
-		];
+		);
 
 		if ( ! empty( $settings['link']['href'] ) ) {
-			$link_args = [
+			$link_args = array(
 				Utils::render_html_attributes( $settings['link'] ),
 				esc_html( $title ),
-			];
+			);
 
 			return array_merge( $default_args, $link_args );
 		}
@@ -69,61 +69,61 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		return [
+		return array(
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
-				->set_items( [
+				->set_items( array(
 					Select_Control::bind_to( 'tag' )
 						->set_label( esc_html__( 'Tag', 'elementor' ) )
-						->set_options( [
-							[
+						->set_options( array(
+							array(
 								'value' => 'h1',
 								'label' => 'H1',
-							],
-							[
+							),
+							array(
 								'value' => 'h2',
 								'label' => 'H2',
-							],
-							[
+							),
+							array(
 								'value' => 'h3',
 								'label' => 'H3',
-							],
-							[
+							),
+							array(
 								'value' => 'h4',
 								'label' => 'H4',
-							],
-							[
+							),
+							array(
 								'value' => 'h5',
 								'label' => 'H5',
-							],
-							[
+							),
+							array(
 								'value' => 'h6',
 								'label' => 'H6',
-							],
-						]),
+							),
+						)),
 
 					Textarea_Control::bind_to( 'title' )
 						->set_label( __( 'Title', 'elementor' ) )
 						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
 
 					Link_Control::bind_to( 'link' ),
-				] ),
-		];
+				) ),
+		);
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+		return array(
 			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
+				->default( array() ),
 
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
+				->enum( array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ) )
 				->default( 'h2' ),
 
 			'title' => String_Prop_Type::make()
 				->default( __( 'Your Title Here', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
-		];
+		);
 	}
 }

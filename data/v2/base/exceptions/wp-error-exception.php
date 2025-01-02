@@ -7,8 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WP_Error_Exception extends Data_Exception {
 	public function __construct( \WP_Error $wp_error ) {
-		parent::__construct( $wp_error->get_error_message(), $wp_error->get_error_code(), [
+		parent::__construct( $wp_error->get_error_message(), $wp_error->get_error_code(), array(
 			'status' => $wp_error->get_error_code(),
-		] );
+		) );
 	}
 }

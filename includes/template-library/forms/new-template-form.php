@@ -41,7 +41,7 @@ class New_Template_Form extends Controls_Stack {
 				<select id="<?php echo esc_attr( $control_id ); ?>" class="elementor-form-field__select" name="meta[<?php echo esc_html( $control_settings['name'] ); ?>]">
 					<?php
 					foreach ( $control_settings['options'] as $key => $value ) {
-						echo sprintf( '<option value="%1$s">%2$s</option>', esc_html( $key ), esc_html( $value ) );
+						printf( '<option value="%1$s">%2$s</option>', esc_html( $key ), esc_html( $value ) );
 					}
 					?>
 				</select>

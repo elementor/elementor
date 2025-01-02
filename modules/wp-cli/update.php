@@ -43,10 +43,10 @@ class Update extends \WP_CLI_Command {
 		$network = ! empty( $assoc_args['network'] ) && is_multisite();
 
 		if ( $network ) {
-			$blog_ids = get_sites( [
+			$blog_ids = get_sites( array(
 				'fields' => 'ids',
 				'number' => 0,
-			] );
+			) );
 
 			foreach ( $blog_ids as $blog_id ) {
 				switch_to_blog( $blog_id );
@@ -90,13 +90,13 @@ class Update extends \WP_CLI_Command {
 		$did_tasks = false;
 
 		if ( ! empty( $callbacks ) ) {
-			Plugin::$instance->logger->get_logger()->info( 'Update DB has been started', [
-				'meta' => [
+			Plugin::$instance->logger->get_logger()->info( 'Update DB has been started', array(
+				'meta' => array(
 					'plugin' => $manager->get_plugin_label(),
 					'from' => $manager->get_current_version(),
 					'to' => $manager->get_new_version(),
-				],
-			] );
+				),
+			) );
 
 			$updater->handle_immediately( $callbacks );
 			$did_tasks = true;

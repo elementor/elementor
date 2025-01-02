@@ -49,11 +49,11 @@ class Upgrade_Utils {
 
 			// loop thru callbacks & array
 			foreach ( $changes as $change ) {
-				$args = [
+				$args = array(
 					'do_update' => &$do_update,
 					'widget_id' => $widget_id,
 					'control_ids' => $change['control_ids'],
-				];
+				);
 
 				if ( isset( $change['prefix'] ) ) {
 					$args['prefix'] = $change['prefix'];

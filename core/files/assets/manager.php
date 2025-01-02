@@ -20,7 +20,7 @@ class Manager {
 	 * Holds registered asset types
 	 * @var array
 	 */
-	protected $asset_types = [];
+	protected $asset_types = array();
 
 	/**
 	 * Assets manager constructor.

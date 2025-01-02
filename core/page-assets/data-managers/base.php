@@ -118,7 +118,7 @@ abstract class Base {
 			return $this->assets_config['data'];
 		}
 
-		return [];
+		return array();
 	}
 
 	/**
@@ -133,7 +133,7 @@ abstract class Base {
 	 */
 	protected function set_asset_data( $asset_key ) {
 		if ( ! isset( $this->assets_data[ $asset_key ] ) ) {
-			$this->assets_data[ $asset_key ] = [];
+			$this->assets_data[ $asset_key ] = array();
 		}
 
 		$this->assets_data[ $asset_key ]['content'] = $this->get_asset_content();
@@ -202,7 +202,7 @@ abstract class Base {
 		}
 
 		if ( ! isset( $this->files_data[ $asset_key ] ) ) {
-			$this->files_data[ $asset_key ] = [];
+			$this->files_data[ $asset_key ] = array();
 		}
 
 		$asset_path = $this->get_file_path();
@@ -235,17 +235,17 @@ abstract class Base {
 	 * @return array
 	 */
 	protected function get_saved_assets_data() {
-		$assets_data = get_option( self::ASSETS_DATA_KEY, [] );
+		$assets_data = get_option( self::ASSETS_DATA_KEY, array() );
 
 		$content_type = $this->content_type;
 		$assets_category = $this->assets_category;
 
 		if ( ! isset( $assets_data[ $content_type ] ) ) {
-			$assets_data[ $content_type ] = [];
+			$assets_data[ $content_type ] = array();
 		}
 
 		if ( ! isset( $assets_data[ $content_type ][ $assets_category ] ) ) {
-			$assets_data[ $content_type ][ $assets_category ] = [];
+			$assets_data[ $content_type ][ $assets_category ] = array();
 		}
 		return $assets_data;
 	}
@@ -261,7 +261,7 @@ abstract class Base {
 	 * @return array
 	 */
 	protected function get_config( $data ) {
-		return [];
+		return array();
 	}
 
 	/**
@@ -286,7 +286,7 @@ abstract class Base {
 
 		$asset_key = $config['key'];
 
-		$asset_data = isset( $this->assets_data[ $asset_key ] ) ? $this->assets_data[ $asset_key ] : [];
+		$asset_data = isset( $this->assets_data[ $asset_key ] ) ? $this->assets_data[ $asset_key ] : array();
 
 		if ( ! $asset_data || $this->is_asset_version_changed( $asset_data['version'] ) ) {
 			$this->set_asset_data( $asset_key );

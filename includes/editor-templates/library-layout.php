@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<span><?php echo esc_html__( 'Skip', 'elementor' ); ?></span>
 				<# } #>
 				<i class="eicon-close"
-				   aria-hidden="true"
-				   title="{{{ $e.components?.get( 'document/elements' )?.utils?.getTitleForLibraryClose() }}}"></i>
+					aria-hidden="true"
+					title="{{{ $e.components?.get( 'document/elements' )?.utils?.getTitleForLibraryClose() }}}"></i>
 				<span class="elementor-screen-only">{{{ $e.components?.get( 'document/elements' )?.utils?.getTitleForLibraryClose() }}}</span>
 			</div>
 		<# } #>

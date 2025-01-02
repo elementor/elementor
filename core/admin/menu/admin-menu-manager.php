@@ -15,7 +15,7 @@ class Admin_Menu_Manager {
 	/**
 	 * @var Admin_Menu_Item[]
 	 */
-	private $items = [];
+	private $items = array();
 
 	public function register( $item_slug, Admin_Menu_Item $item ) {
 		$this->items[ $item_slug ] = $item;
@@ -50,7 +50,7 @@ class Admin_Menu_Manager {
 	private function register_wp_menus() {
 		do_action( 'elementor/admin/menu/register', $this );
 
-		$hooks = [];
+		$hooks = array();
 
 		foreach ( $this->get_all() as $item_slug => $item ) {
 			$is_top_level = empty( $item->get_parent_slug() );
@@ -70,7 +70,7 @@ class Admin_Menu_Manager {
 		$has_position = ( $item instanceof Admin_Menu_Item_Has_Position );
 
 		$page_title = $has_page ? $item->get_page_title() : '';
-		$callback = $has_page ? [ $item, 'render' ] : '';
+		$callback = $has_page ? array( $item, 'render' ) : '';
 		$position = $has_position ? $item->get_position() : null;
 
 		return add_menu_page(
@@ -88,7 +88,7 @@ class Admin_Menu_Manager {
 		$has_page = ( $item instanceof Admin_Menu_Item_With_Page );
 
 		$page_title = $has_page ? $item->get_page_title() : '';
-		$callback = $has_page ? [ $item, 'render' ] : '';
+		$callback = $has_page ? array( $item, 'render' ) : '';
 
 		return add_submenu_page(
 			$item->get_parent_slug(),

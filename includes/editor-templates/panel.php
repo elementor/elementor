@@ -56,7 +56,7 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 	<div><?php echo esc_html__( 'Now you can choose where you want to go on the site from the following options', 'elementor' ); ?></div>
 	<div>
 		<!-- translators: 1: Opening HTML <a> tag, 2: closing HTML <a> tag. -->
-		<?php echo sprintf(
+		<?php printf(
 			esc_html__( 'Any time you can change the settings in %1$sUser Preferences%2$s', 'elementor' ),
 			'<a id="user-preferences">',
 			'</a>'
@@ -254,7 +254,7 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 							<option value=""><?php echo esc_html__( 'Default', 'elementor' ); ?></option>
 							<?php foreach ( Fonts::get_font_groups() as $group_type => $group_label ) : ?>
 								<optgroup label="<?php echo esc_attr( $group_label ); ?>">
-									<?php foreach ( Fonts::get_fonts_by_groups( [ $group_type ] ) as $font_title => $font_type ) : ?>
+									<?php foreach ( Fonts::get_fonts_by_groups( array( $group_type ) ) as $font_title => $font_type ) : ?>
 										<option value="<?php echo esc_attr( $font_title ); ?>"><?php echo esc_html( $font_title ); ?></option>
 									<?php endforeach; ?>
 								</optgroup>

@@ -21,12 +21,12 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
+		add_action( 'elementor/frontend/after_register_styles', array( $this, 'register_styles' ) );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
-			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
+			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), array(
 				'nested-elements',
-			], ELEMENTOR_VERSION, true );
+			), ELEMENTOR_VERSION, true );
 		} );
 	}
 
@@ -45,7 +45,7 @@ class Module extends \Elementor\Core\Base\Module {
 		wp_register_style(
 			'widget-nested-tabs',
 			$this->get_frontend_file_url( "widget-nested-tabs{$direction_suffix}.min.css", $has_custom_breakpoints ),
-			[ 'elementor-frontend' ],
+			array( 'elementor-frontend' ),
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
 	}

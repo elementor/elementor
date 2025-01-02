@@ -27,28 +27,28 @@ class Experiments_Reporter extends Base {
 	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
-		return [
+		return array(
 			'experiments' => '',
-		];
+		);
 	}
 
 	/**
 	 * Get Experiments.
 	 */
 	public function get_experiments() {
-		$result = [];
+		$result = array();
 
 		$experiments_manager = Plugin::$instance->experiments;
 
 		// TODO: Those keys should be at `$experiments_manager`.
-		$tracking_keys = [
+		$tracking_keys = array(
 			'default',
 			'state',
 			'tags',
-		];
+		);
 
 		foreach ( $experiments_manager->get_features() as $feature_name => $feature_data ) {
-			$data_to_collect = [];
+			$data_to_collect = array();
 
 			// Extract only tracking keys.
 			foreach ( $tracking_keys as $tracking_key ) {
@@ -62,9 +62,9 @@ class Experiments_Reporter extends Base {
 			$result[ $feature_name ] = $data_to_collect;
 		}
 
-		return [
+		return array(
 			'value' => $result,
-		];
+		);
 	}
 
 	/**
@@ -98,9 +98,9 @@ class Experiments_Reporter extends Base {
 			$is_first_item = false;
 		}
 
-		return [
+		return array(
 			'value' => $output,
-		];
+		);
 	}
 
 	/**
@@ -126,8 +126,8 @@ class Experiments_Reporter extends Base {
 			$output .= '</tr>';
 		}
 
-		return [
+		return array(
 			'value' => $output,
-		];
+		);
 	}
 }

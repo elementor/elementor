@@ -130,12 +130,12 @@ class Manager extends Module {
 	 * @param array $args
 	 * @return array
 	 */
-	public function get_active_devices_list( $args = [] ) {
-		$default_args = [
+	public function get_active_devices_list( $args = array() ) {
+		$default_args = array(
 			'add_desktop' => true,
 			'reverse' => false,
 			'desktop_first' => false,
-		];
+		);
 
 		$args = array_merge( $default_args, $args );
 
@@ -146,7 +146,7 @@ class Manager extends Module {
 			if ( ! $args['desktop_first'] && in_array( 'widescreen', $active_devices, true ) ) {
 				$widescreen_index = array_search( 'widescreen', $active_devices, true );
 
-				array_splice( $active_devices, $widescreen_index, 0, [ 'desktop' ] );
+				array_splice( $active_devices, $widescreen_index, 0, array( 'desktop' ) );
 			} else {
 				$active_devices[] = 'desktop';
 			}
@@ -177,12 +177,12 @@ class Manager extends Module {
 
 		$breakpoints = $this->get_active_breakpoints();
 
-		$additional_breakpoints = [
+		$additional_breakpoints = array(
 			self::BREAKPOINT_KEY_MOBILE_EXTRA,
 			self::BREAKPOINT_KEY_TABLET_EXTRA,
 			self::BREAKPOINT_KEY_LAPTOP,
 			self::BREAKPOINT_KEY_WIDESCREEN,
-		];
+		);
 
 		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
 			if ( in_array( $breakpoint_name, $additional_breakpoints, true ) ) {
@@ -286,7 +286,7 @@ class Manager extends Module {
 	 */
 	public function get_responsive_icons_classes_map( $device = null ) {
 		if ( ! $this->icons_map ) {
-			$this->icons_map = [
+			$this->icons_map = array(
 				'mobile' => 'eicon-device-mobile',
 				'mobile_extra' => 'eicon-device-mobile eicon-tilted',
 				'tablet' => 'eicon-device-tablet',
@@ -294,7 +294,7 @@ class Manager extends Module {
 				'laptop' => 'eicon-device-laptop',
 				'desktop' => 'eicon-device-desktop',
 				'widescreen' => 'eicon-device-wide',
-			];
+			);
 		}
 
 		return self::get_items( $this->icons_map, $device );
@@ -309,38 +309,38 @@ class Manager extends Module {
 	 * @return array
 	 */
 	public static function get_default_config() {
-		return [
-			self::BREAKPOINT_KEY_MOBILE => [
+		return array(
+			self::BREAKPOINT_KEY_MOBILE => array(
 				'label' => esc_html__( 'Mobile Portrait', 'elementor' ),
 				'default_value' => 767,
 				'direction' => 'max',
-			],
-			self::BREAKPOINT_KEY_MOBILE_EXTRA => [
+			),
+			self::BREAKPOINT_KEY_MOBILE_EXTRA => array(
 				'label' => esc_html__( 'Mobile Landscape', 'elementor' ),
 				'default_value' => 880,
 				'direction' => 'max',
-			],
-			self::BREAKPOINT_KEY_TABLET => [
+			),
+			self::BREAKPOINT_KEY_TABLET => array(
 				'label' => esc_html__( 'Tablet Portrait', 'elementor' ),
 				'default_value' => 1024,
 				'direction' => 'max',
-			],
-			self::BREAKPOINT_KEY_TABLET_EXTRA => [
+			),
+			self::BREAKPOINT_KEY_TABLET_EXTRA => array(
 				'label' => esc_html__( 'Tablet Landscape', 'elementor' ),
 				'default_value' => 1200,
 				'direction' => 'max',
-			],
-			self::BREAKPOINT_KEY_LAPTOP => [
+			),
+			self::BREAKPOINT_KEY_LAPTOP => array(
 				'label' => esc_html__( 'Laptop', 'elementor' ),
 				'default_value' => 1366,
 				'direction' => 'max',
-			],
-			self::BREAKPOINT_KEY_WIDESCREEN => [
+			),
+			self::BREAKPOINT_KEY_WIDESCREEN => array(
 				'label' => esc_html__( 'Widescreen', 'elementor' ),
 				'default_value' => 2400,
 				'direction' => 'min',
-			],
-		];
+			),
+		);
 	}
 
 	/**
@@ -355,16 +355,16 @@ class Manager extends Module {
 	public function get_breakpoints_config() {
 		$breakpoints = $this->get_breakpoints();
 
-		$config = [];
+		$config = array();
 
 		foreach ( $breakpoints as $breakpoint_name => $breakpoint ) {
-			$config[ $breakpoint_name ] = [
+			$config[ $breakpoint_name ] = array(
 				'label' => $breakpoint->get_label(),
 				'value' => $breakpoint->get_value(),
 				'default_value' => $breakpoint->get_default_value(),
 				'direction' => $breakpoint->get_direction(),
 				'is_enabled' => $breakpoint->is_enabled(),
-			];
+			);
 		}
 
 		return $config;
@@ -433,14 +433,14 @@ class Manager extends Module {
 	 * @since 3.2.0
 	 */
 	private function init_breakpoints() {
-		$breakpoints = [];
+		$breakpoints = array();
 
 		$setting_prefix = self::BREAKPOINT_SETTING_PREFIX;
 
-		$active_breakpoint_keys = [
+		$active_breakpoint_keys = array(
 			$setting_prefix . self::BREAKPOINT_KEY_MOBILE,
 			$setting_prefix . self::BREAKPOINT_KEY_TABLET,
-		];
+		);
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'additional_custom_breakpoints' ) ) {
 			$kit_active_id = Plugin::$instance->kits_manager->get_active_id();
@@ -456,7 +456,7 @@ class Manager extends Module {
 		$default_config = self::get_default_config();
 
 		foreach ( $default_config as $breakpoint_name => $breakpoint_config ) {
-			$args = [ 'name' => $breakpoint_name ] + $breakpoint_config;
+			$args = array( 'name' => $breakpoint_name ) + $breakpoint_config;
 
 			// Make sure the two default breakpoints (mobile, tablet) are always enabled.
 			if ( self::BREAKPOINT_KEY_MOBILE === $breakpoint_name || self::BREAKPOINT_KEY_TABLET === $breakpoint_name ) {
@@ -481,7 +481,7 @@ class Manager extends Module {
 	 * @since 3.2.0
 	 */
 	private function init_active_breakpoints() {
-		$this->active_breakpoints = array_filter( $this->get_breakpoints(), function( $breakpoint ) {
+		$this->active_breakpoints = array_filter( $this->get_breakpoints(), function ( $breakpoint ) {
 			/** @var Breakpoint $breakpoint */
 			return $breakpoint->is_enabled();
 		} );
@@ -513,7 +513,7 @@ class Manager extends Module {
 	private static function get_stylesheet_templates() {
 		$templates_paths = glob( self::get_stylesheet_templates_path() . '*.css' );
 
-		$templates = [];
+		$templates = array();
 
 		foreach ( $templates_paths as $template_path ) {
 			$file_name = 'custom-' . basename( $template_path );
@@ -530,7 +530,7 @@ class Manager extends Module {
 		$deprecation_module = Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation;
 
 		// TODO: REMOVE THIS DEPRECATED HOOK IN ELEMENTOR v3.10.0/v4.0.0
-		$templates = $deprecation_module->apply_deprecated_filter( $deprecated_hook, [ $templates ], '3.2.0', $replacement_hook );
+		$templates = $deprecation_module->apply_deprecated_filter( $deprecated_hook, array( $templates ), '3.2.0', $replacement_hook );
 
 		return apply_filters( $replacement_hook, $templates );
 	}

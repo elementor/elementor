@@ -12,9 +12,9 @@ class Items extends \Elementor\Data\V2\Base\Endpoint {
 	}
 
 	protected function get_items( $request ) {
-		return [
+		return array(
 			'item0',
 			'item1',
-		];
+		);
 	}
 }

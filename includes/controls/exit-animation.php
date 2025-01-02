@@ -41,7 +41,7 @@ class Control_Exit_Animation extends Control_Animation {
 	 * @return array Control type.
 	 */
 	public static function get_animations() {
-		$additional_animations = [];
+		$additional_animations = array();
 
 		/**
 		 * Exit animations.
@@ -61,50 +61,50 @@ class Control_Exit_Animation extends Control_Animation {
 	}
 
 	public static function get_default_animations(): array {
-		return [
-			'Fading' => [
+		return array(
+			'Fading' => array(
 				'fadeIn' => 'Fade Out',
 				'fadeInDown' => 'Fade Out Up',
 				'fadeInLeft' => 'Fade Out Left',
 				'fadeInRight' => 'Fade Out Right',
 				'fadeInUp' => 'Fade Out Down',
-			],
-			'Zooming' => [
+			),
+			'Zooming' => array(
 				'zoomIn' => 'Zoom Out',
 				'zoomInDown' => 'Zoom Out Up',
 				'zoomInLeft' => 'Zoom Out Left',
 				'zoomInRight' => 'Zoom Out Right',
 				'zoomInUp' => 'Zoom Out Down',
-			],
-			'Sliding' => [
+			),
+			'Sliding' => array(
 				'slideInDown' => 'Slide Out Up',
 				'slideInLeft' => 'Slide Out Left',
 				'slideInRight' => 'Slide Out Right',
 				'slideInUp' => 'Slide Out Down',
-			],
-			'Rotating' => [
+			),
+			'Rotating' => array(
 				'rotateIn' => 'Rotate Out',
 				'rotateInDownLeft' => 'Rotate Out Up Left',
 				'rotateInDownRight' => 'Rotate Out Up Right',
 				'rotateInUpRight' => 'Rotate Out Down Left',
 				'rotateInUpLeft' => 'Rotate Out Down Right',
-			],
-			'Light Speed' => [
+			),
+			'Light Speed' => array(
 				'lightSpeedIn' => 'Light Speed Out',
-			],
-			'Specials' => [
+			),
+			'Specials' => array(
 				'rollIn' => 'Roll Out',
-			],
-		];
+			),
+		);
 	}
 
 	public static function get_assets( $setting ) {
 		if ( ! $setting || 'none' === $setting ) {
-			return [];
+			return array();
 		}
 
-		return [
-			'styles' => [ 'e-animation-' . $setting ],
-		];
+		return array(
+			'styles' => array( 'e-animation-' . $setting ),
+		);
 	}
 }

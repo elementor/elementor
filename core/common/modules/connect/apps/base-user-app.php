@@ -23,7 +23,7 @@ abstract class Base_User_App extends Base_App {
 		$this->data = get_user_option( $this->get_option_name() );
 
 		if ( ! $this->data ) {
-			$this->data = [];
+			$this->data = array();
 		}
 	}
 }

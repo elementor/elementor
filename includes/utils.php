@@ -24,7 +24,7 @@ class Utils {
 	/**
 	 * A list of safe tags for `validate_html_tag` method.
 	 */
-	const ALLOWED_HTML_WRAPPER_TAGS = [
+	const ALLOWED_HTML_WRAPPER_TAGS = array(
 		'a',
 		'article',
 		'aside',
@@ -43,11 +43,11 @@ class Utils {
 		'p',
 		'section',
 		'span',
-	];
+	);
 
-	const EXTENDED_ALLOWED_HTML_TAGS = [
-		'iframe' => [
-			'iframe' => [
+	const EXTENDED_ALLOWED_HTML_TAGS = array(
+		'iframe' => array(
+			'iframe' => array(
 				'allow' => true,
 				'allowfullscreen' => true,
 				'frameborder' => true,
@@ -58,10 +58,10 @@ class Utils {
 				'sandbox' => true,
 				'src' => true,
 				'width' => true,
-			],
-		],
-		'svg' => [
-			'svg' => [
+			),
+		),
+		'svg' => array(
+			'svg' => array(
 				'aria-hidden' => true,
 				'aria-labelledby' => true,
 				'class' => true,
@@ -70,25 +70,25 @@ class Utils {
 				'viewbox' => true,
 				'width' => true,
 				'xmlns' => true,
-			],
-			'g' => [
+			),
+			'g' => array(
 				'fill' => true,
-			],
-			'title' => [
+			),
+			'title' => array(
 				'title' => true,
-			],
-			'path' => [
+			),
+			'path' => array(
 				'd' => true,
 				'fill' => true,
-			],
-		],
-		'image' => [
-			'img' => [
+			),
+		),
+		'image' => array(
+			'img' => array(
 				'srcset' => true,
 				'sizes' => true,
-			],
-		],
-	];
+			),
+		),
+	);
 
 	/**
 	 * Variables for free to pro upsale modal promotions
@@ -460,7 +460,7 @@ class Utils {
 
 		$post = get_post( $post_id );
 
-		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s AND post_modified_gmt > %s', [ $post_id, "{$post_id}-autosave%", $post->post_modified_gmt ] );
+		$where = $wpdb->prepare( 'post_parent = %d AND post_name LIKE %s AND post_modified_gmt > %s', array( $post_id, "{$post_id}-autosave%", $post->post_modified_gmt ) );
 
 		if ( $user_id ) {
 			$where .= $wpdb->prepare( ' AND post_author = %d', $user_id );
@@ -517,7 +517,7 @@ class Utils {
 	 * @return string
 	 */
 	public static function render_html_attributes( array $attributes ) {
-		$rendered_attributes = [];
+		$rendered_attributes = array();
 
 		foreach ( $attributes as $attribute_key => $attribute_values ) {
 			if ( is_array( $attribute_values ) ) {
@@ -629,7 +629,7 @@ class Utils {
 	 * @return string
 	 */
 	public static function urlencode_html_entities( $string ) {
-		$entities_dictionary = [
+		$entities_dictionary = array(
 			'&#145;' => "'", // Opening single quote
 			'&#146;' => "'", // Closing single quote
 			'&#147;' => '"', // Closing double quote
@@ -640,7 +640,7 @@ class Utils {
 			'&#8220;' => '"', // Closing double quote
 			'&#8221;' => '"', // Opening double quote
 			'&#8222;' => '"', // Double low quote
-		];
+		);
 
 		// Decode decimal entities
 		$string = str_replace( array_keys( $entities_dictionary ), array_values( $entities_dictionary ), $string );
@@ -660,7 +660,7 @@ class Utils {
 	 */
 	public static function parse_custom_attributes( $attributes_string, $delimiter = ',' ) {
 		$attributes = explode( $delimiter, $attributes_string );
-		$result = [];
+		$result = array();
 
 		foreach ( $attributes as $attribute ) {
 			$attr_key_value = explode( '|', $attribute );
@@ -772,16 +772,16 @@ class Utils {
 	 *
 	 * @return \WP_Query
 	 */
-	public static function get_recently_edited_posts_query( $args = [] ) {
-		$args = wp_parse_args( $args, [
+	public static function get_recently_edited_posts_query( $args = array() ) {
+		$args = wp_parse_args( $args, array(
 			'no_found_rows' => true,
 			'post_type' => 'any',
-			'post_status' => [ 'publish', 'draft' ],
+			'post_status' => array( 'publish', 'draft' ),
 			'posts_per_page' => '3',
 			'meta_key' => '_elementor_edit_mode',
 			'meta_value' => 'builder',
 			'orderby' => 'modified',
-		] );
+		) );
 
 		return new \WP_Query( $args );
 	}
@@ -809,7 +809,7 @@ class Utils {
 		 *
 		 * @param string[] $available_paths
 		 */
-		$available_paths = apply_filters( 'elementor/utils/elementor_related_paths', [ ELEMENTOR_PATH ] );
+		$available_paths = apply_filters( 'elementor/utils/elementor_related_paths', array( ELEMENTOR_PATH ) );
 
 		return (bool) ( new Collection( $available_paths ) )
 			->map( function ( $p ) {
@@ -849,7 +849,7 @@ class Utils {
 	}
 
 	private static function sanitize_multi_upload( $fields ) {
-		return array_map( function( $field ) {
+		return array_map( function ( $field ) {
 			return array_map( 'self::sanitize_file_name', $field );
 		}, $fields );
 	}

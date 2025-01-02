@@ -22,7 +22,7 @@ class Render_Mode_Manager {
 	/**
 	 * @var Render_Mode_Base[]
 	 */
-	private $render_modes = [];
+	private $render_modes = array();
 
 	/**
 	 * @param $post_id
@@ -31,12 +31,12 @@ class Render_Mode_Manager {
 	 * @return string
 	 */
 	public static function get_base_url( $post_id, $render_mode_name ) {
-		return add_query_arg( [
+		return add_query_arg( array(
 			self::QUERY_STRING_POST_ID => $post_id,
 			self::QUERY_STRING_PARAM_NAME => $render_mode_name,
 			self::QUERY_STRING_NONCE_PARAM_NAME => wp_create_nonce( self::get_nonce_action( $post_id ) ),
 			'ver' => time(),
-		], get_permalink( $post_id ) );
+		), get_permalink( $post_id ) );
 	}
 
 	/**

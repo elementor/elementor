@@ -100,7 +100,7 @@ class Control_Notice extends Base_UI_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'notice_type' => '', // info, success, warning, danger
 			'icon' => true,
 			'dismissible' => false,
@@ -110,6 +110,6 @@ class Control_Notice extends Base_UI_Control {
 			'button_event' => '',
 			'button_text2' => '',
 			'button_event2' => '',
-		];
+		);
 	}
 }

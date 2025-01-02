@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Import extends Import_Runner_Base {
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'elements-default-values';
 	}
 
@@ -34,7 +34,7 @@ class Import extends Import_Runner_Base {
 		$default_values = ImportExportUtils::read_json_file( "{$data['extracted_directory_path']}/{$file_name}.json" );
 
 		if ( ! $kit || ! $default_values ) {
-			return [];
+			return array();
 		}
 
 		$element_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );

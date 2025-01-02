@@ -23,12 +23,12 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-kit-elements-defaults-editor',
 			$this->get_js_assets_url( 'kit-elements-defaults-editor' ),
-			[
+			array(
 				'elementor-common',
 				'elementor-editor-modules',
 				'elementor-editor-document',
 				'wp-i18n',
-			],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);

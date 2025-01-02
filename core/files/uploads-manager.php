@@ -29,7 +29,7 @@ class Uploads_Manager extends Base_Object {
 	/**
 	 * @var File_Type_Base[]
 	 */
-	private $file_type_handlers = [];
+	private $file_type_handlers = array();
 
 	private $allowed_file_extensions;
 
@@ -53,11 +53,11 @@ class Uploads_Manager extends Base_Object {
 	 */
 	public function register_file_types() {
 		// All file types that have handlers should be included here.
-		$file_types = [
+		$file_types = array(
 			'json' => new Json(),
 			'zip' => new Zip(),
 			'svg' => new Svg(),
-		];
+		);
 
 		foreach ( $file_types as $file_type => $file_handler ) {
 			$this->file_type_handlers[ $file_type ] = $file_handler;
@@ -77,7 +77,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return array|\WP_Error
 	 */
 	public function extract_and_validate_zip( $file_path, $allowed_file_types = null ) {
-		$result = [];
+		$result = array();
 
 		/** @var Zip $zip_handler - File Type */
 		$zip_handler = $this->file_type_handlers['zip'];
@@ -99,7 +99,7 @@ class Uploads_Manager extends Base_Object {
 
 		foreach ( $extracted['files'] as $extracted_file_path ) {
 			// Each file is an array with a 'name' (file path) property.
-			if ( ! is_wp_error( $this->validate_file( [ 'tmp_name' => $extracted_file_path ] ) ) ) {
+			if ( ! is_wp_error( $this->validate_file( array( 'tmp_name' => $extracted_file_path ) ) ) ) {
 				$result['files'][] = $extracted_file_path;
 			}
 		}
@@ -154,7 +154,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	final public static function are_unfiltered_uploads_enabled() {
-		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY )
+		$enabled = (bool) get_option( self::UNFILTERED_FILE_UPLOADS_KEY )
 			&& Svg::file_sanitizer_can_run()
 			&& User::is_current_user_can_upload_json();
 
@@ -320,7 +320,7 @@ class Uploads_Manager extends Base_Object {
 		if ( ! $this->temp_dir ) {
 			$wp_upload_dir = wp_upload_dir();
 
-			$temp_dir = implode( DIRECTORY_SEPARATOR, [ $wp_upload_dir['basedir'], 'elementor', 'tmp' ] ) . DIRECTORY_SEPARATOR;
+			$temp_dir = implode( DIRECTORY_SEPARATOR, array( $wp_upload_dir['basedir'], 'elementor', 'tmp' ) ) . DIRECTORY_SEPARATOR;
 
 			/**
 			 * Temp File Path
@@ -371,7 +371,7 @@ class Uploads_Manager extends Base_Object {
 	 * @param Ajax $ajax
 	 */
 	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'enable_unfiltered_files_upload', [ $this, 'enable_unfiltered_files_upload' ] );
+		$ajax->register_ajax_action( 'enable_unfiltered_files_upload', array( $this, 'enable_unfiltered_files_upload' ) );
 	}
 
 	/**
@@ -525,12 +525,12 @@ class Uploads_Manager extends Base_Object {
 			return $temp_filename;
 		}
 
-		return [
+		return array(
 			// the original uploaded file name
 			'name' => $file['fileName'],
 			// The path to the temporary file
 			'tmp_name' => $temp_filename,
-		];
+		);
 	}
 
 	/**
@@ -543,7 +543,7 @@ class Uploads_Manager extends Base_Object {
 	 * @param array $file_extensions Optional
 	 * @return bool|\WP_Error
 	 */
-	private function validate_file( array $file, $file_extensions = [] ) {
+	private function validate_file( array $file, $file_extensions = array() ) {
 		$uploaded_file_name = isset( $file['name'] ) ? $file['name'] : $file['tmp_name'];
 
 		$file_extension = pathinfo( $uploaded_file_name, PATHINFO_EXTENSION );
@@ -675,11 +675,11 @@ class Uploads_Manager extends Base_Object {
 	public function __construct() {
 		$this->register_file_types();
 
-		add_filter( 'upload_mimes', [ $this, 'support_unfiltered_elementor_file_uploads' ] );
-		add_filter( 'wp_handle_upload_prefilter', [ $this, 'handle_elementor_wp_media_upload' ] );
-		add_filter( 'wp_check_filetype_and_ext', [ $this, 'check_filetype_and_ext' ], 10, 4 );
+		add_filter( 'upload_mimes', array( $this, 'support_unfiltered_elementor_file_uploads' ) );
+		add_filter( 'wp_handle_upload_prefilter', array( $this, 'handle_elementor_wp_media_upload' ) );
+		add_filter( 'wp_check_filetype_and_ext', array( $this, 'check_filetype_and_ext' ), 10, 4 );
 
 		// Ajax.
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
 	}
 }

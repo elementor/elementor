@@ -66,11 +66,11 @@ class Module extends Base_Module {
 	private function get_plugins_with_plugin_title_in_their_name() {
 		return Plugin::$instance->wp
 			->get_plugins()
-			->except( [
+			->except( array(
 				'elementor/elementor.php',
 				'elementor-beta/elementor-beta.php',
 				'block-builder/block-builder.php',
-			] )
+			) )
 			->filter( function ( array $data ) {
 				return false !== strpos( strtolower( $data['Name'] ), 'elementor' );
 			} );

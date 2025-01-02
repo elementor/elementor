@@ -48,7 +48,7 @@ class Server extends Base {
 	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
-		return [
+		return array(
 			'os' => 'Operating System',
 			'software' => 'Software',
 			'mysql_version' => 'MySQL version',
@@ -60,7 +60,7 @@ class Server extends Base {
 			'zip_installed' => 'ZIP Installed',
 			'write_permissions' => 'Write Permissions',
 			'elementor_library' => 'Elementor Library',
-		];
+		);
 	}
 
 	/**
@@ -78,9 +78,9 @@ class Server extends Base {
 	 * }
 	 */
 	public function get_os() {
-		return [
+		return array(
 			'value' => PHP_OS,
-		];
+		);
 	}
 
 	/**
@@ -98,9 +98,9 @@ class Server extends Base {
 	 * }
 	 */
 	public function get_software() {
-		return [
+		return array(
 			'value' => Utils::get_super_global_value( $_SERVER, 'SERVER_SOFTWARE' ),
-		];
+		);
 	}
 
 	/**
@@ -120,9 +120,9 @@ class Server extends Base {
 	 * }
 	 */
 	public function get_php_version() {
-		$result = [
+		$result = array(
 			'value' => PHP_VERSION,
-		];
+		);
 		$recommended_php_version = '7.4';
 
 		if ( version_compare( $result['value'], $recommended_php_version, '<' ) ) {
@@ -153,9 +153,9 @@ class Server extends Base {
 	 * }
 	 */
 	public function get_php_memory_limit() {
-		$result = [
+		$result = array(
 			'value' => (string) ini_get( 'memory_limit' ),
-		];
+		);
 
 		$min_recommended_memory = '128M';
 		$preferred_memory = '256M';
@@ -194,9 +194,9 @@ class Server extends Base {
 	 * }
 	 */
 	public function get_php_max_input_vars() {
-		return [
+		return array(
 			'value' => ini_get( 'max_input_vars' ),
-		];
+		);
 	}
 
 	/**
@@ -214,9 +214,9 @@ class Server extends Base {
 	 * }
 	 */
 	public function get_php_max_post_size() {
-		return [
+		return array(
 			'value' => ini_get( 'post_max_size' ),
-		];
+		);
 	}
 
 	/**
@@ -237,10 +237,10 @@ class Server extends Base {
 	public function get_gd_installed() {
 		$gd_installed = extension_loaded( 'gd' );
 
-		return [
+		return array(
 			'value' => $gd_installed ? 'Yes' : 'No',
 			'warning' => ! $gd_installed,
-		];
+		);
 	}
 
 	/**
@@ -261,10 +261,10 @@ class Server extends Base {
 	public function get_zip_installed() {
 		$zip_installed = extension_loaded( 'zip' );
 
-		return [
+		return array(
 			'value' => $zip_installed ? 'Yes' : 'No',
 			'warning' => ! $zip_installed,
-		];
+		);
 	}
 
 	/**
@@ -295,9 +295,9 @@ class Server extends Base {
 			$db_server_version_string .= $wpdb->get_var( 'SELECT VERSION() AS version' );
 		}
 
-		return [
+		return array(
 			'value' => $db_server_version_string,
-		];
+		);
 	}
 
 	/**
@@ -315,16 +315,16 @@ class Server extends Base {
 	 *                          folders don't have writing permissions, False otherwise.
 	 * }
 	 */
-	public function get_write_permissions() : array {
-		$paths_to_check = [
+	public function get_write_permissions(): array {
+		$paths_to_check = array(
 			static::KEY_PATH_HTACCESS_FILE => $this->get_system_path( static::KEY_PATH_HTACCESS_FILE ),
 			static::KEY_PATH_UPLOADS_DIR => $this->get_system_path( static::KEY_PATH_UPLOADS_DIR ),
 			static::KEY_PATH_ELEMENTOR_UPLOADS_DIR => $this->get_system_path( static::KEY_PATH_ELEMENTOR_UPLOADS_DIR ),
-		];
+		);
 
 		$paths_permissions = $this->get_paths_permissions( $paths_to_check );
 
-		$write_problems = [];
+		$write_problems = array();
 
 		if ( ! $paths_permissions[ static::KEY_PATH_UPLOADS_DIR ]['write'] ) {
 			$write_problems[] = 'WordPress uploads directory';
@@ -346,10 +346,10 @@ class Server extends Base {
 			$value = 'All right';
 		}
 
-		return [
+		return array(
 			'value' => $value,
-			'warning' => ! ! $write_problems,
-		];
+			'warning' => (bool) $write_problems,
+		);
 	}
 
 	/**
@@ -370,22 +370,22 @@ class Server extends Base {
 	 */
 	public function get_elementor_library() {
 		$response = wp_remote_get(
-			Api::$api_info_url, [
+			Api::$api_info_url, array(
 				'timeout' => 5,
-				'body' => [
+				'body' => array(
 					// Which API version is used
 					'api_version' => ELEMENTOR_VERSION,
 					// Which language to return
 					'site_lang' => get_bloginfo( 'language' ),
-				],
-			]
+				),
+			)
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return [
+			return array(
 				'value' => 'Not connected (' . $response->get_error_message() . ')',
 				'warning' => true,
-			];
+			);
 		}
 
 		$http_response_code = wp_remote_retrieve_response_code( $response );
@@ -393,32 +393,32 @@ class Server extends Base {
 		if ( 200 !== (int) $http_response_code ) {
 			$error_msg = 'HTTP Error (' . $http_response_code . ')';
 
-			return [
+			return array(
 				'value' => 'Not connected (' . $error_msg . ')',
 				'warning' => true,
-			];
+			);
 		}
 
 		$info_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( empty( $info_data ) ) {
-			return [
+			return array(
 				'value' => 'Not connected (Returns invalid JSON)',
 				'warning' => true,
-			];
+			);
 		}
 
-		return [
+		return array(
 			'value' => 'Connected',
-		];
+		);
 	}
 
 	/**
 	 * @param $paths [] Paths to check permissions.
 	 * @return array []{exists: bool, read: bool, write: bool, execute: bool}
 	 */
-	public function get_paths_permissions( $paths ) : array {
-		$permissions = [];
+	public function get_paths_permissions( $paths ): array {
+		$permissions = array();
 
 		foreach ( $paths as $key_path => $path ) {
 			$permissions[ $key_path ] = $this->get_path_permissions( $path );
@@ -433,7 +433,7 @@ class Server extends Base {
 	 * @param $path_key
 	 * @return string
 	 */
-	public function get_system_path( $path_key ) : string {
+	public function get_system_path( $path_key ): string {
 		switch ( $path_key ) {
 			case static::KEY_PATH_WP_CONTENT_DIR:
 				return WP_CONTENT_DIR;
@@ -464,21 +464,21 @@ class Server extends Base {
 	 * @param $path
 	 * @return array{exists: bool, read: bool, write: bool, execute: bool}
 	 */
-	public function get_path_permissions( $path ) : array {
+	public function get_path_permissions( $path ): array {
 		if ( empty( $path ) ) {
-			return [
+			return array(
 				'exists' => false,
 				'read' => false,
 				'write' => false,
 				'execute' => false,
-			];
+			);
 		}
 
-		return [
+		return array(
 			'exists' => true,
 			'read' => is_readable( $path ),
 			'write' => is_writeable( $path ),
 			'execute' => is_executable( $path ),
-		];
+		);
 	}
 }

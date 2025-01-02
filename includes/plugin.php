@@ -26,7 +26,7 @@ use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Data\V2\Manager as Data_Manager_V2;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
-use Elementor\Core\Files\Uploads_Manager as Uploads_Manager;
+use Elementor\Core\Files\Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Plugin {
-	const ELEMENTOR_DEFAULT_POST_TYPES = [ 'page', 'post' ];
+	const ELEMENTOR_DEFAULT_POST_TYPES = array( 'page', 'post' );
 
 	/**
 	 * Instance.
@@ -872,8 +872,8 @@ class Plugin {
 		Maintenance::init();
 		Compatibility::register_actions();
 
-		add_action( 'init', [ $this, 'init' ], 0 );
-		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ], 9 );
+		add_action( 'init', array( $this, 'init' ), 0 );
+		add_action( 'rest_api_init', array( $this, 'on_rest_api_init' ), 9 );
 	}
 
 	final public static function get_title() {

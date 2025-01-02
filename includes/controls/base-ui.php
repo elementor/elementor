@@ -26,6 +26,6 @@ abstract class Base_UI_Control extends Base_Control {
 	 * @return array Features array.
 	 */
 	public static function get_features() {
-		return [ 'ui' ];
+		return array( 'ui' );
 	}
 }

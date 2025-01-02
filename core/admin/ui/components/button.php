@@ -28,7 +28,7 @@ class Button extends Base_Object {
 		$html_tag = ! empty( $options['url'] ) ? 'a' : 'button';
 		$before = '';
 		$icon = '';
-		$attributes = [];
+		$attributes = array();
 
 		if ( ! empty( $options['icon'] ) ) {
 			$icon = '<i class="' . esc_attr( $options['icon'] ) . '"></i>';
@@ -82,8 +82,8 @@ class Button extends Base_Object {
 	 * @return array
 	 */
 	private function get_default_options( $option = null ) {
-		$default_options = [
-			'classes' => [ 'e-button' ],
+		$default_options = array(
+			'classes' => array( 'e-button' ),
 			'icon' => '',
 			'new_tab' => false,
 			'text' => '',
@@ -91,7 +91,7 @@ class Button extends Base_Object {
 			'url' => '',
 			'variant' => '',
 			'before' => '',
-		];
+		);
 
 		if ( null !== $option && -1 !== in_array( $option, $default_options ) ) {
 			return $default_options[ $option ];

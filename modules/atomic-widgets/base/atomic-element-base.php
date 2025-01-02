@@ -15,13 +15,13 @@ abstract class Atomic_Element_Base extends Element_Base {
 	use Has_Atomic_Base;
 
 	protected $version = '0.0';
-	protected $styles = [];
+	protected $styles = array();
 
-	public function __construct( $data = [], $args = null ) {
+	public function __construct( $data = array(), $args = null ) {
 		parent::__construct( $data, $args );
 
 		$this->version = $data['version'] ?? '0.0';
-		$this->styles = $data['styles'] ?? [];
+		$this->styles = $data['styles'] ?? array();
 	}
 
 	abstract protected function define_atomic_controls(): array;
@@ -33,9 +33,9 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['atomic_props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
 		$config['show_in_panel'] = true;
-		$config['categories'] = [ 'layout' ];
+		$config['categories'] = array( 'layout' );
 		$config['hide_on_search'] = false;
-		$config['controls'] = [];
+		$config['controls'] = array();
 
 		return $config;
 	}

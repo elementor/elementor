@@ -20,14 +20,14 @@ class Categories_Manager {
 	/**
 	 * @var array
 	 */
-	private $categories_list = [
+	private $categories_list = array(
 		'edit',
 		'general',
 		'create',
 		'site',
 		'settings',
 		'tools',
-	];
+	);
 
 	/**
 	 * Add category.
@@ -146,7 +146,7 @@ class Categories_Manager {
 		 */
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
 			'elementor/finder/categories/init',
-			[ $this ],
+			array( $this ),
 			'3.5.0',
 			'elementor/finder/register'
 		);

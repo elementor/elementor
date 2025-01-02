@@ -41,7 +41,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var array
 	 */
-	private $default_args = [];
+	private $default_args = array();
 
 	/**
 	 * Is type instance.
@@ -64,7 +64,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var array
 	 */
-	private $depended_scripts = [];
+	private $depended_scripts = array();
 
 	/**
 	 * Depended styles.
@@ -76,7 +76,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @var array
 	 */
-	private $depended_styles = [];
+	private $depended_styles = array();
 
 	/**
 	 * Add script depends.
@@ -130,9 +130,9 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 */
 	final public function enqueue_scripts() {
-		$deprecated_scripts = [
+		$deprecated_scripts = array(
 			//Insert here when you have a deprecated script
-		];
+		);
 
 		foreach ( $this->get_script_depends() as $script ) {
 			if ( isset( $deprecated_scripts[ $script ] ) ) {
@@ -346,7 +346,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return array
 	 */
 	public function get_panel_presets() {
-		return [];
+		return array();
 	}
 
 	/**
@@ -361,7 +361,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return Element_Base|false Child element instance, or false if failed.
 	 */
-	public function add_child( array $child_data, array $child_args = [] ) {
+	public function add_child( array $child_data, array $child_args = array() ) {
 		if ( null === $this->children ) {
 			$this->init_children();
 		}
@@ -405,10 +405,10 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 
 	public function add_link_attributes( $element, array $url_control, $overwrite = false ) {
-		$attributes = [];
+		$attributes = array();
 
 		if ( ! empty( $url_control['url'] ) ) {
-			$allowed_protocols = array_merge( wp_allowed_protocols(), [ 'skype', 'viber' ] );
+			$allowed_protocols = array_merge( wp_allowed_protocols(), array( 'skype', 'viber' ) );
 
 			$attributes['href'] = esc_url( $url_control['url'], $allowed_protocols );
 		}
@@ -612,19 +612,19 @@ abstract class Element_Base extends Controls_Stack {
 	public function get_raw_data( $with_html_content = false ) {
 		$data = $this->get_data();
 
-		$elements = [];
+		$elements = array();
 
 		foreach ( $this->get_children() as $child ) {
 			$elements[] = $child->get_raw_data( $with_html_content );
 		}
 
-		$raw_data = [
+		$raw_data = array(
 			'id' => $this->get_id(),
 			'elType' => $data['elType'],
 			'settings' => $data['settings'],
 			'elements' => $elements,
 			'isInner' => $data['isInner'],
-		];
+		);
 
 		if ( ! empty( $data['isLocked'] ) ) {
 			$raw_data['isLocked'] = $data['isLocked'];
@@ -636,7 +636,7 @@ abstract class Element_Base extends Controls_Stack {
 	public function get_data_for_save() {
 		$data = $this->get_raw_data();
 
-		$elements = [];
+		$elements = array();
 
 		foreach ( $this->get_children() as $child ) {
 			$elements[] = $child->get_data_for_save();
@@ -694,7 +694,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ): array {
 		$tags_manager = Plugin::$instance->dynamic_tags;
 
 		if ( empty( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
@@ -752,16 +752,16 @@ abstract class Element_Base extends Controls_Stack {
 		$frontend_settings = $this->get_frontend_settings();
 		$controls = $this->get_controls();
 
-		$this->add_render_attribute( '_wrapper', [
-			'class' => [
+		$this->add_render_attribute( '_wrapper', array(
+			'class' => array(
 				'elementor-element',
 				'elementor-element-' . $id,
-			],
+			),
 			'data-id' => $id,
 			'data-element_type' => $this->get_type(),
-		] );
+		) );
 
-		$class_settings = [];
+		$class_settings = array();
 
 		foreach ( $settings as $setting_key => $setting ) {
 			if ( isset( $controls[ $setting_key ]['prefix_class'] ) ) {
@@ -826,30 +826,30 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return void
 	 */
 	protected function register_transform_section( $element_selector = '', $transform_selector_class = ' > .elementor-widget-container' ) {
-		$default_unit_values_deg = [];
-		$default_unit_values_ms = [];
+		$default_unit_values_deg = array();
+		$default_unit_values_ms = array();
 
 		// Set the default unit sizes for all active breakpoints.
 		foreach ( Breakpoints_Manager::get_default_config() as $breakpoint_name => $breakpoint_config ) {
-			$default_unit_values_deg[ $breakpoint_name ] = [
-				'default' => [
+			$default_unit_values_deg[ $breakpoint_name ] = array(
+				'default' => array(
 					'unit' => 'deg',
-				],
-			];
+				),
+			);
 
-			$default_unit_values_ms[ $breakpoint_name ] = [
-				'default' => [
+			$default_unit_values_ms[ $breakpoint_name ] = array(
+				'default' => array(
 					'unit' => 'ms',
-				],
-			];
+				),
+			);
 		}
 
 		$this->start_controls_section(
 			'_section_transform',
-			[
+			array(
 				'label' => esc_html__( 'Transform', 'elementor' ),
 				'tab' => Controls_Manager::TAB_ADVANCED,
-			]
+			)
 		);
 
 		$this->start_controls_tabs( '_tabs_positioning' );
@@ -863,496 +863,496 @@ abstract class Element_Base extends Controls_Stack {
 			$transform_css_modifier = $element_selector . '-';
 		}
 
-		foreach ( [ '', '_hover' ] as $tab ) {
+		foreach ( array( '', '_hover' ) as $tab ) {
 			$state = '_hover' === $tab ? ':hover' : '';
 
 			$this->start_controls_tab(
 				"_tab_positioning{$tab}",
-				[
+				array(
 					'label' => '' === $tab ? esc_html__( 'Normal', 'elementor' ) : esc_html__( 'Hover', 'elementor' ),
-				]
+				)
 			);
 
 			$this->add_control(
 				"_transform_rotate_popover{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Rotate', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
 					'prefix_class' => $transform_prefix_class,
 					'return_value' => $transform_return_value,
-				]
+				)
 			);
 
 			$this->start_popover();
 
 			$this->add_responsive_control(
 				"_transform_rotateZ_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Rotate', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
-					'range' => [
-						'px' => [
+					'range' => array(
+						'px' => array(
 							'min' => -360,
 							'max' => 360,
-						],
-					],
-					'selectors' => [
+						),
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateZ: {{SIZE}}deg',
-					],
-					'condition' => [
+					),
+					'condition' => array(
 						"_transform_rotate_popover{$tab}!" => '',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->add_control(
 				"_transform_rotate_3d{$tab}",
-				[
+				array(
 					'label' => esc_html__( '3D Rotate', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
 					'label_on' => esc_html__( 'On', 'elementor' ),
 					'label_off' => esc_html__( 'Off', 'elementor' ),
-					'selectors' => [
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: 1{{UNIT}};  --e-' . $transform_css_modifier . 'transform-perspective: 20px;',
-					],
-					'condition' => [
+					),
+					'condition' => array(
 						"_transform_rotate_popover{$tab}!" => '',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->add_responsive_control(
 				"_transform_rotateX_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Rotate X', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
-					'range' => [
-						'px' => [
+					'range' => array(
+						'px' => array(
 							'min' => -360,
 							'max' => 360,
-						],
-					],
-					'condition' => [
+						),
+					),
+					'condition' => array(
 						"_transform_rotate_3d{$tab}!" => '',
 						"_transform_rotate_popover{$tab}!" => '',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: {{SIZE}}deg;',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->add_responsive_control(
 				"_transform_rotateY_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Rotate Y', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
-					'range' => [
-						'px' => [
+					'range' => array(
+						'px' => array(
 							'min' => -360,
 							'max' => 360,
-						],
-					],
-					'condition' => [
+						),
+					),
+					'condition' => array(
 						"_transform_rotate_3d{$tab}!" => '',
 						"_transform_rotate_popover{$tab}!" => '',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateY: {{SIZE}}deg;',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->add_responsive_control(
 				"_transform_perspective_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Perspective', 'elementor' ) . ' (px)',
 					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
+					'range' => array(
+						'px' => array(
 							'max' => 1000,
-						],
-					],
-					'condition' => [
+						),
+					),
+					'condition' => array(
 						"_transform_rotate_popover{$tab}!" => '',
 						"_transform_rotate_3d{$tab}!" => '',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-perspective: {{SIZE}}px',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->end_popover();
 
 			$this->add_control(
 				"_transform_translate_popover{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Offset', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
 					'prefix_class' => $transform_prefix_class,
 					'return_value' => $transform_return_value,
-				]
+				)
 			);
 
 			$this->start_popover();
 
 			$this->add_responsive_control(
 				"_transform_translateX_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Offset X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-					'range' => [
-						'%' => [
+					'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+					'range' => array(
+						'%' => array(
 							'min' => -100,
 							'max' => 100,
-						],
-						'px' => [
+						),
+						'px' => array(
 							'min' => -1000,
 							'max' => 1000,
-						],
-					],
-					'condition' => [
+						),
+					),
+					'condition' => array(
 						"_transform_translate_popover{$tab}!" => '',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-translateX: {{SIZE}}{{UNIT}};',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->add_responsive_control(
 				"_transform_translateY_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Offset Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
-					'range' => [
-						'%' => [
+					'size_units' => array( 'px', '%', 'em', 'rem', 'vh', 'custom' ),
+					'range' => array(
+						'%' => array(
 							'min' => -100,
 							'max' => 100,
-						],
-						'px' => [
+						),
+						'px' => array(
 							'min' => -1000,
 							'max' => 1000,
-						],
-					],
-					'condition' => [
+						),
+					),
+					'condition' => array(
 						"_transform_translate_popover{$tab}!" => '',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-translateY: {{SIZE}}{{UNIT}};',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->end_popover();
 
 			$this->add_control(
 				"_transform_scale_popover{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Scale', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
 					'prefix_class' => $transform_prefix_class,
 					'return_value' => $transform_return_value,
-				]
+				)
 			);
 
 			$this->start_popover();
 
 			$this->add_control(
 				"_transform_keep_proportions{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Keep Proportions', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
 					'label_on' => esc_html__( 'On', 'elementor' ),
 					'label_off' => esc_html__( 'Off', 'elementor' ),
 					'default' => 'yes',
-				]
+				)
 			);
 
 			$this->add_responsive_control(
 				"_transform_scale_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Scale', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
+					'range' => array(
+						'px' => array(
 							'max' => 2,
 							'step' => 0.1,
-						],
-					],
-					'condition' => [
+						),
+					),
+					'condition' => array(
 						"_transform_scale_popover{$tab}!" => '',
 						"_transform_keep_proportions{$tab}!" => '',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-scale: {{SIZE}};',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->add_responsive_control(
 				"_transform_scaleX_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Scale X', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
+					'range' => array(
+						'px' => array(
 							'max' => 2,
 							'step' => 0.1,
-						],
-					],
-					'condition' => [
+						),
+					),
+					'condition' => array(
 						"_transform_scale_popover{$tab}!" => '',
 						"_transform_keep_proportions{$tab}" => '',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-scaleX: {{SIZE}};',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->add_responsive_control(
 				"_transform_scaleY_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Scale Y', 'elementor' ),
 					'type' => Controls_Manager::SLIDER,
-					'range' => [
-						'px' => [
+					'range' => array(
+						'px' => array(
 							'max' => 2,
 							'step' => 0.1,
-						],
-					],
-					'condition' => [
+						),
+					),
+					'condition' => array(
 						"_transform_scale_popover{$tab}!" => '',
 						"_transform_keep_proportions{$tab}" => '',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-scaleY: {{SIZE}};',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->end_popover();
 
 			$this->add_control(
 				"_transform_skew_popover{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Skew', 'elementor' ),
 					'type' => Controls_Manager::POPOVER_TOGGLE,
 					'prefix_class' => $transform_prefix_class,
 					'return_value' => $transform_return_value,
-				]
+				)
 			);
 
 			$this->start_popover();
 
 			$this->add_responsive_control(
 				"_transform_skewX_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Skew X', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
-					'range' => [
-						'px' => [
+					'range' => array(
+						'px' => array(
 							'min' => -360,
 							'max' => 360,
-						],
-					],
-					'condition' => [
+						),
+					),
+					'condition' => array(
 						"_transform_skew_popover{$tab}!" => '',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-skewX: {{SIZE}}deg;',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->add_responsive_control(
 				"_transform_skewY_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Skew Y', 'elementor' ) . ' (deg)',
 					'type' => Controls_Manager::SLIDER,
 					'device_args' => $default_unit_values_deg,
-					'range' => [
-						'px' => [
+					'range' => array(
+						'px' => array(
 							'min' => -360,
 							'max' => 360,
-						],
-					],
-					'condition' => [
+						),
+					),
+					'condition' => array(
 						"_transform_skew_popover{$tab}!" => '',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-skewY: {{SIZE}}deg;',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->end_popover();
 
 			$this->add_control(
 				"_transform_flipX_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Flip Horizontal', 'elementor' ),
 					'type' => Controls_Manager::CHOOSE,
-					'options' => [
-						'transform' => [
+					'options' => array(
+						'transform' => array(
 							'title' => esc_html__( 'Flip Horizontal', 'elementor' ),
 							'icon' => 'eicon-flip eicon-tilted',
-						],
-					],
+						),
+					),
 					'prefix_class' => $transform_prefix_class,
-					'selectors' => [
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-flipX: -1',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			$this->add_control(
 				"_transform_flipY_effect{$tab}",
-				[
+				array(
 					'label' => esc_html__( 'Flip Vertical', 'elementor' ),
 					'type' => Controls_Manager::CHOOSE,
-					'options' => [
-						'transform' => [
+					'options' => array(
+						'transform' => array(
 							'title' => esc_html__( 'Flip Vertical', 'elementor' ),
 							'icon' => 'eicon-flip',
-						],
-					],
+						),
+					),
 					'prefix_class' => $transform_prefix_class,
-					'selectors' => [
+					'selectors' => array(
 						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-flipY: -1',
-					],
+					),
 					'frontend_available' => true,
-				]
+				)
 			);
 
 			if ( '_hover' === $tab ) {
 				$this->add_control(
 					'_transform_transition_hover',
-					[
+					array(
 						'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
 						'type' => Controls_Manager::SLIDER,
 						'device_args' => $default_unit_values_ms,
-						'range' => [
-							'px' => [
+						'range' => array(
+							'px' => array(
 								'min' => 0,
 								'max' => 10000,
 								'step' => 100,
-							],
-						],
-						'selectors' => [
+							),
+						),
+						'selectors' => array(
 							'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-transition-duration: {{SIZE}}ms',
-						],
-					]
+						),
+					)
 				);
 			}
 
-			${"transform_origin_conditions{$tab}"} = [
-				[
+			${"transform_origin_conditions{$tab}"} = array(
+				array(
 					'name' => "_transform_scale_popover{$tab}",
 					'operator' => '!=',
 					'value' => '',
-				],
-				[
+				),
+				array(
 					'name' => "_transform_rotate_popover{$tab}",
 					'operator' => '!=',
 					'value' => '',
-				],
-				[
+				),
+				array(
 					'name' => "_transform_flipX_effect{$tab}",
 					'operator' => '!=',
 					'value' => '',
-				],
-				[
+				),
+				array(
 					'name' => "_transform_flipY_effect{$tab}",
 					'operator' => '!=',
 					'value' => '',
-				],
-			];
+				),
+			);
 
 			$this->end_controls_tab();
 		}
 
 		$this->end_controls_tabs();
 
-		$transform_origin_conditions = [
+		$transform_origin_conditions = array(
 			'relation' => 'or',
 			'terms' => array_merge( $transform_origin_conditions, $transform_origin_conditions_hover ),
-		];
+		);
 
 		// Will override motion effect transform-origin
 		$this->add_responsive_control(
 			'motion_fx_transform_x_anchor_point',
-			[
+			array(
 				'label' => esc_html__( 'X Anchor Point', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
+				'options' => array(
+					'left' => array(
 						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
-					],
-					'center' => [
+					),
+					'center' => array(
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
-					],
-					'right' => [
+					),
+					'right' => array(
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
-					],
-				],
+					),
+				),
 				'conditions' => $transform_origin_conditions,
 				'separator' => 'before',
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-origin-x: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
 		// Will override motion effect transform-origin
 		$this->add_responsive_control(
 			'motion_fx_transform_y_anchor_point',
-			[
+			array(
 				'label' => esc_html__( 'Y Anchor Point', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'top' => [
+				'options' => array(
+					'top' => array(
 						'title' => esc_html__( 'Top', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
-					],
-					'center' => [
+					),
+					'center' => array(
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-v-align-middle',
-					],
-					'bottom' => [
+					),
+					'bottom' => array(
 						'title' => esc_html__( 'Bottom', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
-					],
-				],
+					),
+				),
 				'conditions' => $transform_origin_conditions,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-origin-y: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
@@ -1368,7 +1368,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	protected function add_hidden_device_controls() {
 		// The 'Hide On X' controls are displayed from largest to smallest, while the method returns smallest to largest.
-		$active_devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
+		$active_devices = Plugin::$instance->breakpoints->get_active_devices_list( array( 'reverse' => true ) );
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
 		foreach ( $active_devices as $breakpoint_key ) {
@@ -1376,7 +1376,7 @@ abstract class Element_Base extends Controls_Stack {
 
 			$this->add_control(
 				'hide_' . $breakpoint_key,
-				[
+				array(
 					'label' => sprintf(
 						/* translators: %s: Device name. */
 						esc_html__( 'Hide On %s', 'elementor' ),
@@ -1388,7 +1388,7 @@ abstract class Element_Base extends Controls_Stack {
 					'label_on' => esc_html__( 'Hide', 'elementor' ),
 					'label_off' => esc_html__( 'Show', 'elementor' ),
 					'return_value' => 'hidden-' . $breakpoint_key,
-				]
+				)
 			);
 		}
 	}
@@ -1407,10 +1407,10 @@ abstract class Element_Base extends Controls_Stack {
 		$data = parent::get_default_data();
 
 		return array_merge(
-			$data, [
-				'elements' => [],
+			$data, array(
+				'elements' => array(),
 				'isInner' => false,
-			]
+			)
 		);
 	}
 
@@ -1457,13 +1457,13 @@ abstract class Element_Base extends Controls_Stack {
 	 * @return array The initial config.
 	 */
 	protected function get_initial_config() {
-		$config = [
+		$config = array(
 			'name' => $this->get_name(),
 			'elType' => $this->get_type(),
 			'title' => $this->get_title(),
 			'icon' => $this->get_icon(),
 			'reload_preview' => $this->is_reload_preview_required(),
-		];
+		);
 
 		if ( preg_match( '/^' . __NAMESPACE__ . '(Pro)?\\\\/', get_called_class() ) ) {
 			$config['help_url'] = $this->get_help_url();
@@ -1531,7 +1531,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access private
 	 */
 	private function init_children() {
-		$this->children = [];
+		$this->children = array();
 
 		$children_data = $this->get_data( 'elements' );
 
@@ -1566,7 +1566,7 @@ abstract class Element_Base extends Controls_Stack {
 	 * @param array      $data Optional. Element data. Default is an empty array.
 	 * @param array|null $args Optional. Element default arguments. Default is null.
 	 **/
-	public function __construct( array $data = [], array $args = null ) {
+	public function __construct( array $data = array(), array $args = null ) {
 		if ( $data ) {
 			$this->is_type_instance = false;
 		} elseif ( $args ) {

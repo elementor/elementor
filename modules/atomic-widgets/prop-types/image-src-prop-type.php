@@ -15,10 +15,10 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
-		return [
+		return array(
 			'id' => Image_Attachment_Id_Prop_Type::make(),
 			'url' => Url_Prop_Type::make(),
-		];
+		);
 	}
 
 	protected function validate_value( $value ): bool {

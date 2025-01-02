@@ -16,17 +16,17 @@ class Image_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
-		return [
+		return array(
 			'src' => Image_Src_Prop_Type::make()->required(),
 			'size' => String_Prop_Type::make()->enum( Image_Sizes::get_keys() )->required(),
-		];
+		);
 	}
 
 	public function default_url( string $url ): self {
-		$this->get_shape_field( 'src' )->default( [
+		$this->get_shape_field( 'src' )->default( array(
 			'id' => null,
 			'url' => Url_Prop_Type::generate( $url ),
-		] );
+		) );
 
 		return $this;
 	}

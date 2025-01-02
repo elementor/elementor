@@ -120,9 +120,9 @@ class Global_CSS extends Base {
 		foreach ( $elementor->widgets_manager->get_widget_types() as $widget ) {
 			$controls = $widget->get_controls();
 
-			$global_controls = [];
+			$global_controls = array();
 
-			$global_values['__globals__'] = [];
+			$global_values['__globals__'] = array();
 
 			foreach ( $controls as $control ) {
 				$is_color_control = 'color' === $control['type'];
@@ -153,7 +153,7 @@ class Global_CSS extends Base {
 			}
 
 			foreach ( $global_controls as $control ) {
-				$this->add_control_rules( $control, $controls, function( $control ) {}, [ '{{WRAPPER}}' ], [ '.elementor-widget-' . $widget->get_name() ], $global_values );
+				$this->add_control_rules( $control, $controls, function ( $control ) {}, array( '{{WRAPPER}}' ), array( '.elementor-widget-' . $widget->get_name() ), $global_values );
 			}
 		}
 	}

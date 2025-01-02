@@ -7,7 +7,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
+use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
@@ -75,10 +75,10 @@ class Manager {
 	 * @throws \Exception
 	 */
 	private function get_empty_kit_instance() {
-		return new Kit( [
-			'settings' => [],
+		return new Kit( array(
+			'settings' => array(),
 			'post_id' => 0,
-		] );
+		) );
 	}
 
 	/**
@@ -117,10 +117,10 @@ class Manager {
 		return $kit->get_settings( $setting );
 	}
 
-	public function create( array $kit_data = [], array $kit_meta_data = [] ) {
-		$default_kit_data = [
+	public function create( array $kit_data = array(), array $kit_meta_data = array() ) {
+		$default_kit_data = array(
 			'post_status' => 'publish',
-		];
+		);
 
 		$kit_data = array_merge( $default_kit_data, $kit_data );
 
@@ -129,19 +129,19 @@ class Manager {
 		$kit = Plugin::$instance->documents->create( 'kit', $kit_data, $kit_meta_data );
 
 		if ( isset( $kit_data['settings'] ) ) {
-			$kit->save( [ 'settings' => $kit_data['settings'] ] );
+			$kit->save( array( 'settings' => $kit_data['settings'] ) );
 		}
 
 		return $kit->get_id();
 	}
 
-	public function create_new_kit( $kit_name = '', $settings = [], $active = true ) {
+	public function create_new_kit( $kit_name = '', $settings = array(), $active = true ) {
 		$kit_name = $kit_name ? $kit_name : esc_html__( 'Custom', 'elementor' );
 
-		$id = $this->create( [
+		$id = $this->create( array(
 			'post_title' => $kit_name,
 			'settings' => $settings,
-		] );
+		) );
 
 		if ( $active ) {
 			update_option( self::OPTION_PREVIOUS, $this->get_active_id() );
@@ -152,9 +152,9 @@ class Manager {
 	}
 
 	public function create_default() {
-		return $this->create( [
+		return $this->create( array(
 			'post_title' => esc_html__( 'Default Kit', 'elementor' ),
-		] );
+		) );
 	}
 
 	/**
@@ -170,15 +170,15 @@ class Manager {
 			return;
 		}
 
-		$id = wp_insert_post( [
+		$id = wp_insert_post( array(
 			'post_title' => esc_html__( 'Default Kit', 'elementor' ),
 			'post_type' => Source_Local::CPT,
 			'post_status' => 'publish',
-			'meta_input' => [
+			'meta_input' => array(
 				'_elementor_edit_mode' => 'builder',
 				Document::TYPE_META_KEY => 'kit',
-			],
-		] );
+			),
+		) );
 
 		update_option( self::OPTION_ACTIVE, $id );
 
@@ -222,21 +222,21 @@ class Manager {
 	public function localize_settings( $settings ) {
 		$kit = $this->get_active_kit();
 		$kit_controls = $kit->get_controls();
-		$design_system_controls = [
+		$design_system_controls = array(
 			'colors' => $kit_controls['system_colors']['fields'],
 			'typography' => $kit_controls['system_typography']['fields'],
-		];
+		);
 
-		$settings = array_replace_recursive( $settings, [
+		$settings = array_replace_recursive( $settings, array(
 			'kit_id' => $kit->get_main_id(),
-			'kit_config' => [
+			'kit_config' => array(
 				'typography_prefix' => Global_Typography::TYPOGRAPHY_GROUP_PREFIX,
 				'design_system_controls' => $design_system_controls,
-			],
-			'user' => [
+			),
+			'user' => array(
 				'can_edit_kit' => $kit->is_editable_by_current_user(),
-			],
-		] );
+			),
+		) );
 
 		return $settings;
 	}
@@ -292,7 +292,7 @@ class Manager {
 			return;
 		}
 
-		$active_kit->update_settings( [ $key => $value ] );
+		$active_kit->update_settings( array( $key => $value ) );
 	}
 
 	/**
@@ -305,20 +305,20 @@ class Manager {
 	 * @return mixed
 	 */
 	private function map_scheme_to_global( $type, $value ) {
-		$schemes_to_globals_map = [
-			'color' => [
+		$schemes_to_globals_map = array(
+			'color' => array(
 				'1' => Global_Colors::COLOR_PRIMARY,
 				'2' => Global_Colors::COLOR_SECONDARY,
 				'3' => Global_Colors::COLOR_TEXT,
 				'4' => Global_Colors::COLOR_ACCENT,
-			],
-			'typography' => [
+			),
+			'typography' => array(
 				'1' => Global_Typography::TYPOGRAPHY_PRIMARY,
 				'2' => Global_Typography::TYPOGRAPHY_SECONDARY,
 				'3' => Global_Typography::TYPOGRAPHY_TEXT,
 				'4' => Global_Typography::TYPOGRAPHY_ACCENT,
-			],
-		];
+			),
+		);
 
 		return $schemes_to_globals_map[ $type ][ $value ];
 	}
@@ -413,9 +413,9 @@ class Manager {
 		$document = Plugin::$instance->documents->get( get_the_ID() );
 
 		if ( ! $document || ! $document->is_built_with_elementor() ) {
-			$recent_edited_post = Utils::get_recently_edited_posts_query( [
+			$recent_edited_post = Utils::get_recently_edited_posts_query( array(
 				'posts_per_page' => 1,
-			] );
+			) );
 
 			if ( $recent_edited_post->post_count ) {
 				$posts = $recent_edited_post->get_posts();
@@ -425,32 +425,32 @@ class Manager {
 
 		if ( $document ) {
 			$document_edit_url = add_query_arg(
-				[
+				array(
 					'active-document' => $this->get_active_id(),
-				],
+				),
 				$document->get_edit_url()
 			);
 
-			$admin_bar_config['elementor_edit_page']['children'][] = [
+			$admin_bar_config['elementor_edit_page']['children'][] = array(
 				'id' => 'elementor_site_settings',
 				'title' => esc_html__( 'Site Settings', 'elementor' ),
 				'sub_title' => esc_html__( 'Site', 'elementor' ),
 				'href' => $document_edit_url,
 				'class' => 'elementor-site-settings',
 				'parent_class' => 'elementor-second-section',
-			];
+			);
 		}
 
 		return $admin_bar_config;
 	}
 
 	public function __construct() {
-		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
-		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );
-		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'frontend_before_enqueue_styles' ], 0 );
-		add_action( 'elementor/preview/enqueue_styles', [ $this, 'preview_enqueue_styles' ], 0 );
-		add_action( 'elementor/controls/register', [ $this, 'register_controls' ] );
+		add_action( 'elementor/documents/register', array( $this, 'register_document' ) );
+		add_filter( 'elementor/editor/localize_settings', array( $this, 'localize_settings' ) );
+		add_filter( 'elementor/editor/footer', array( $this, 'render_panel_html' ) );
+		add_action( 'elementor/frontend/after_enqueue_styles', array( $this, 'frontend_before_enqueue_styles' ), 0 );
+		add_action( 'elementor/preview/enqueue_styles', array( $this, 'preview_enqueue_styles' ), 0 );
+		add_action( 'elementor/controls/register', array( $this, 'register_controls' ) );
 
 		add_action( 'wp_trash_post', function ( $post_id ) {
 			$this->before_delete_kit( $post_id );
@@ -468,7 +468,7 @@ class Manager {
 			$this->update_kit_settings_based_on_option( 'site_description', $value );
 		}, 10, 2 );
 
-		add_action( 'wp_head', function() {
+		add_action( 'wp_head', function () {
 			$this->add_body_class();
 		} );
 

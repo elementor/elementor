@@ -50,10 +50,10 @@ class Dynamic_Tags_Module {
 
 	private function add_atomic_dynamic_tags_to_editor_settings( $settings ) {
 		if ( isset( $settings['dynamicTags']['tags'] ) ) {
-			$settings['atomicDynamicTags'] = [
+			$settings['atomicDynamicTags'] = array(
 				'tags' => $this->registry->get_tags(),
 				'groups' => Plugin::$instance->dynamic_tags->get_config()['groups'],
-			];
+			);
 		}
 
 		return $settings;

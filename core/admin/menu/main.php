@@ -13,36 +13,36 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Main extends Base {
 
 	protected function get_init_args() {
-		return [
+		return array(
 			'page_title' => esc_html__( 'Elementor', 'elementor' ),
 			'menu_title' => esc_html__( 'Elementor', 'elementor' ),
 			'capability' => 'manage_options',
 			'menu_slug' => 'elementor',
-			'function' => [ Plugin::$instance->settings, 'display_settings_page' ],
+			'function' => array( Plugin::$instance->settings, 'display_settings_page' ),
 			'position' => 58.5,
-		];
+		);
 	}
 
 	protected function get_init_options() {
-		return [
+		return array(
 			'separator' => true,
-		];
+		);
 	}
 
 	protected function register_default_submenus() {
-		$this->add_submenu( [
+		$this->add_submenu( array(
 			'page_title' => esc_html_x( 'Templates', 'Template Library', 'elementor' ),
 			'menu_title' => esc_html_x( 'Templates', 'Template Library', 'elementor' ),
 			'menu_slug' => Source_Local::ADMIN_MENU_SLUG,
 			'index' => 0,
-		] );
+		) );
 
-		$this->add_submenu( [
+		$this->add_submenu( array(
 			'menu_title' => esc_html__( 'Help', 'elementor' ),
 			'menu_slug' => 'go_knowledge_base_site',
-			'function' => [ Plugin::$instance->settings, 'handle_external_redirects' ],
+			'function' => array( Plugin::$instance->settings, 'handle_external_redirects' ),
 			'index' => 150,
-		] );
+		) );
 	}
 
 	protected function register() {

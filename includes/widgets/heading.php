@@ -75,7 +75,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 * @return array Widget categories.
 	 */
 	public function get_categories() {
-		return [ 'basic' ];
+		return array( 'basic' );
 	}
 
 	/**
@@ -89,7 +89,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'heading', 'title', 'text' ];
+		return array( 'heading', 'title', 'text' );
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -107,7 +107,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-heading' ];
+		return array( 'widget-heading' );
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -122,15 +122,15 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	 */
 	public function sanitize( $content ): string {
 		$allowed_tags = wp_kses_allowed_html( 'post' );
-		$allowed_tags_for_heading = [];
-		$non_allowed_tags = [ 'img' ];
+		$allowed_tags_for_heading = array();
+		$non_allowed_tags = array( 'img' );
 
 		foreach ( $allowed_tags as $tag => $attributes ) {
 			if ( in_array( $tag, $non_allowed_tags, true ) ) {
 				continue;
 			}
 
-			$filtered_attributes = array_filter( $attributes, function( $attribute ) {
+			$filtered_attributes = array_filter( $attributes, function ( $attribute ) {
 				return ! substr( $attribute, 0, 5 ) === 'data-';
 			}, ARRAY_FILTER_USE_KEY );
 
@@ -151,67 +151,67 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_title',
-			[
+			array(
 				'label' => esc_html__( 'Heading', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'title',
-			[
+			array(
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
-				'ai' => [
+				'ai' => array(
 					'type' => 'text',
-				],
-				'dynamic' => [
+				),
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'placeholder' => esc_html__( 'Enter your title', 'elementor' ),
 				'default' => esc_html__( 'Add Your Heading Text Here', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'link',
-			[
+			array(
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
-				'default' => [
+				),
+				'default' => array(
 					'url' => '',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'size',
-			[
+			array(
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => [
+				'options' => array(
 					'default' => esc_html__( 'Default', 'elementor' ),
 					'small' => esc_html__( 'Small', 'elementor' ),
 					'medium' => esc_html__( 'Medium', 'elementor' ),
 					'large' => esc_html__( 'Large', 'elementor' ),
 					'xl' => esc_html__( 'XL', 'elementor' ),
 					'xxl' => esc_html__( 'XXL', 'elementor' ),
-				],
+				),
 				'default' => 'default',
-				'condition' => [
+				'condition' => array(
 					'size!' => 'default', // a workaround to hide the control, unless it's in use (not default).
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'header_size',
-			[
+			array(
 				'label' => esc_html__( 'HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => [
+				'options' => array(
 					'h1' => 'H1',
 					'h2' => 'H2',
 					'h3' => 'H3',
@@ -221,18 +221,18 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 					'div' => 'div',
 					'span' => 'span',
 					'p' => 'p',
-				],
+				),
 				'default' => 'h2',
-			]
+			)
 		);
 
 		if ( ! Utils::has_pro() ) {
 			$this->add_control(
 				Utils::ANIMATED_HEADLINE . '_promotion',
-				[
+				array(
 					'label' => esc_html__( 'Animated Headline widget', 'elementor' ),
 					'type' => Promotion_Control::TYPE,
-				]
+				)
 			);
 		}
 
@@ -240,76 +240,76 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 
 		$this->start_controls_section(
 			'section_title_style',
-			[
+			array(
 				'label' => esc_html__( 'Heading', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'align',
-			[
+			array(
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
+				'options' => array(
+					'left' => array(
 						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
-					],
-					'center' => [
+					),
+					'center' => array(
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
-					],
-					'right' => [
+					),
+					'right' => array(
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
-					],
-					'justify' => [
+					),
+					'justify' => array(
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
-					],
-				],
+					),
+				),
 				'default' => '',
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
-				],
+				),
 				'separator' => 'after',
-			]
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			[
+			array(
 				'name' => 'typography',
-				'global' => [
+				'global' => array(
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
-				],
+				),
 				'selector' => '{{WRAPPER}} .elementor-heading-title',
-			]
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Stroke::get_type(),
-			[
+			array(
 				'name' => 'text_stroke',
 				'selector' => '{{WRAPPER}} .elementor-heading-title',
-			]
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			[
+			array(
 				'name' => 'text_shadow',
 				'selector' => '{{WRAPPER}} .elementor-heading-title',
-			]
+			)
 		);
 
 		$this->add_control(
 			'blend_mode',
-			[
+			array(
 				'label' => esc_html__( 'Blend Mode', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => [
+				'options' => array(
 					'' => esc_html__( 'Normal', 'elementor' ),
 					'multiply' => esc_html__( 'Multiply', 'elementor' ),
 					'screen' => esc_html__( 'Screen', 'elementor' ),
@@ -323,76 +323,76 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 					'exclusion' => esc_html__( 'Exclusion', 'elementor' ),
 					'hue' => esc_html__( 'Hue', 'elementor' ),
 					'luminosity' => esc_html__( 'Luminosity', 'elementor' ),
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-heading-title' => 'mix-blend-mode: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'separator',
-			[
+			array(
 				'type' => Controls_Manager::DIVIDER,
-			]
+			)
 		);
 
 		$this->start_controls_tabs( 'title_colors' );
 
 		$this->start_controls_tab(
 			'title_colors_normal',
-			[
+			array(
 				'label' => esc_html__( 'Normal', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'title_color',
-			[
+			array(
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'global' => [
+				'global' => array(
 					'default' => Global_Colors::COLOR_PRIMARY,
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
 			'title_colors_hover',
-			[
+			array(
 				'label' => esc_html__( 'Hover', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'title_hover_color',
-			[
+			array(
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-heading-title:hover' => 'color: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'title_hover_color_transition_duration',
-			[
+			array(
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms', 'custom' ],
-				'default' => [
+				'size_units' => array( 's', 'ms', 'custom' ),
+				'default' => array(
 					'unit' => 's',
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .elementor-heading-title' => 'transition-duration: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_tab();

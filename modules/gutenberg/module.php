@@ -38,8 +38,8 @@ class Module extends BaseModule {
 	 */
 	public function register_elementor_rest_field() {
 		register_rest_field( get_post_types( '', 'names' ),
-			'gutenberg_elementor_mode', [
-				'update_callback' => function( $request_value, $object ) {
+			'gutenberg_elementor_mode', array(
+				'update_callback' => function ( $request_value, $object ) {
 					if ( ! User::is_current_user_can_edit( $object->ID ) ) {
 						return false;
 					}
@@ -54,7 +54,7 @@ class Module extends BaseModule {
 
 					return true;
 				},
-			]
+			)
 		);
 	}
 
@@ -73,12 +73,12 @@ class Module extends BaseModule {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js', [ 'jquery' ], ELEMENTOR_VERSION, true );
+		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js', array( 'jquery' ), ELEMENTOR_VERSION, true );
 
-		$elementor_settings = [
+		$elementor_settings = array(
 			'isElementorMode' => $document->is_built_with_elementor(),
 			'editLink' => $document->get_edit_url(),
-		];
+		);
 		Utils::print_js_config( 'elementor-gutenberg', 'ElementorGutenbergSettings', $elementor_settings );
 	}
 
@@ -144,10 +144,10 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_elementor_rest_field' ] );
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
-		add_action( 'admin_footer', [ $this, 'print_admin_js_template' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'dequeue_assets' ], 999 );
+		add_action( 'rest_api_init', array( $this, 'register_elementor_rest_field' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
+		add_action( 'admin_footer', array( $this, 'print_admin_js_template' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'dequeue_assets' ), 999 );
 	}
 
 	public function dequeue_assets() {
@@ -174,11 +174,11 @@ class Module extends BaseModule {
 	 * @since 3.21.0
 	 * @access private
 	 */
-	private static function is_optimized_gutenberg_loading_enabled() : bool {
+	private static function is_optimized_gutenberg_loading_enabled(): bool {
 		return (bool) get_option( 'elementor_optimized_gutenberg_loading', '1' );
 	}
 
-	private static function should_dequeue_gutenberg_assets() : bool {
+	private static function should_dequeue_gutenberg_assets(): bool {
 		$post = get_post();
 
 		if ( empty( $post->ID ) ) {
@@ -196,7 +196,7 @@ class Module extends BaseModule {
 		return true;
 	}
 
-	private static function is_built_with_elementor( $post ) : bool {
+	private static function is_built_with_elementor( $post ): bool {
 		$document = Plugin::$instance->documents->get( $post->ID );
 
 		if ( ! $document || ! $document->is_built_with_elementor() ) {
@@ -206,7 +206,7 @@ class Module extends BaseModule {
 		return true;
 	}
 
-	private static function is_gutenberg_in_post( $post ) : bool {
+	private static function is_gutenberg_in_post( $post ): bool {
 		if ( has_blocks( $post ) ) {
 			return true;
 		}
@@ -218,7 +218,7 @@ class Module extends BaseModule {
 		return false;
 	}
 
-	private static function current_theme_is_fse_theme() : bool {
+	private static function current_theme_is_fse_theme(): bool {
 		if ( function_exists( 'wp_is_block_theme' ) ) {
 			return (bool) wp_is_block_theme();
 		}

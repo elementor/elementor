@@ -22,7 +22,7 @@ abstract class Data_Tag extends Base_Tag {
 	 *
 	 * @param array $options
 	 */
-	abstract protected function get_value( array $options = [] );
+	abstract protected function get_value( array $options = array() );
 
 	/**
 	 * @since 2.0.0
@@ -40,7 +40,7 @@ abstract class Data_Tag extends Base_Tag {
 	 *
 	 * @return mixed
 	 */
-	public function get_content( array $options = [] ) {
+	public function get_content( array $options = array() ) {
 		return $this->get_value( $options );
 	}
 }

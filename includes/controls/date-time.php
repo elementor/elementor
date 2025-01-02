@@ -43,15 +43,15 @@ class Control_Date_Time extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'label_block' => true,
-			'picker_options' => [],
-			'dynamic' => [
-				'categories' => [
+			'picker_options' => array(),
+			'dynamic' => array(
+				'categories' => array(
 					TagsModule::DATETIME_CATEGORY,
-				],
-			],
-		];
+				),
+			),
+		);
 	}
 
 	/**

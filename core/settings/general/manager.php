@@ -41,7 +41,7 @@ class Manager extends CSS_Manager {
 
 		$name = $this->get_css_file_name();
 
-		remove_action( "elementor/css-file/{$name}/parse", [ $this, 'add_settings_css_rules' ] );
+		remove_action( "elementor/css-file/{$name}/parse", array( $this, 'add_settings_css_rules' ) );
 	}
 
 	/**
@@ -78,7 +78,7 @@ class Manager extends CSS_Manager {
 	 * @deprecated 3.0.0
 	 */
 	protected function get_saved_settings( $id ) {
-		return [];
+		return array();
 	}
 
 	/**

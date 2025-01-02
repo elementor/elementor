@@ -19,9 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Notices extends Module {
 
-	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
+	const DEFAULT_EXCLUDED_PAGES = array( 'plugins.php', 'plugin-install.php', 'plugin-editor.php' );
 
-	private $plain_notices = [
+	private $plain_notices = array(
 		'api_notice',
 		'api_upgrade_plugin',
 		'tracker',
@@ -30,7 +30,7 @@ class Admin_Notices extends Module {
 		'experiment_promotion',
 		'site_mailer_promotion',
 		'plugin_image_optimization',
-	];
+	);
 
 	private $elementor_pages_count = null;
 
@@ -39,9 +39,9 @@ class Admin_Notices extends Module {
 	private $current_screen_id = null;
 
 	private function get_notices() {
-		$notices = [
+		$notices = array(
 			new Elementor_Dev_Notice(),
-		];
+		);
 
 		/**
 		 * Admin notices.
@@ -68,7 +68,7 @@ class Admin_Notices extends Module {
 
 	private function get_elementor_pages_count() {
 		if ( null === $this->elementor_pages_count ) {
-			$elementor_pages = new \WP_Query( [
+			$elementor_pages = new \WP_Query( array(
 				'no_found_rows' => true,
 				'post_type' => 'any',
 				'post_status' => 'publish',
@@ -77,7 +77,7 @@ class Admin_Notices extends Module {
 				'update_post_term_cache' => false,
 				'meta_key' => '_elementor_edit_mode',
 				'meta_value' => 'builder',
-			] );
+			) );
 
 			$this->elementor_pages_count = $elementor_pages->post_count;
 		}
@@ -95,7 +95,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true ) ) {
+		if ( ! in_array( $this->current_screen_id, array( 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ), true ) ) {
 			return false;
 		}
 
@@ -145,16 +145,16 @@ class Admin_Notices extends Module {
 			esc_attr( esc_html__( 'Update Now', 'elementor' ) )
 		);
 
-		$options = [
+		$options = array(
 			'title' => esc_html__( 'Update Notification', 'elementor' ),
 			'description' => $message,
-			'button' => [
+			'button' => array(
 				'icon_classes' => 'dashicons dashicons-update',
 				'text' => esc_html__( 'Update Now', 'elementor' ),
 				'url' => $upgrade_url,
-			],
+			),
 			'id' => $notice_id,
-		];
+		);
 
 		$this->print_admin_notice( $options );
 
@@ -171,7 +171,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true ) ) {
+		if ( ! in_array( $this->current_screen_id, array( 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ), true ) ) {
 			return false;
 		}
 
@@ -180,11 +180,11 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$options = [
+		$options = array(
 			'title' => esc_html__( 'Update Notification', 'elementor' ),
 			'description' => $admin_notice['notice_text'],
 			'id' => $notice_id,
-		];
+		);
 
 		$this->print_admin_notice( $options );
 
@@ -232,21 +232,21 @@ class Admin_Notices extends Module {
 
 		$message = esc_html( $tracker_description_text ) . ' <a href="https://go.elementor.com/usage-data-tracking/" target="_blank">' . esc_html__( 'Learn more.', 'elementor' ) . '</a>';
 
-		$options = [
+		$options = array(
 			'title' => esc_html__( 'Love using Elementor?', 'elementor' ),
 			'description' => $message,
-			'button' => [
+			'button' => array(
 				'text' => esc_html__( 'Sure! I\'d love to help', 'elementor' ),
 				'url' => $optin_url,
 				'type' => 'cta',
-			],
-			'button_secondary' => [
+			),
+			'button_secondary' => array(
 				'text' => esc_html__( 'No thanks', 'elementor' ),
 				'url' => $optout_url,
 				'variant' => 'outline',
 				'type' => 'cta',
-			],
-		];
+			),
+		);
 
 		$this->print_admin_notice( $options );
 
@@ -268,29 +268,29 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$dismiss_url = add_query_arg( [
+		$dismiss_url = add_query_arg( array(
 			'action' => 'elementor_set_admin_notice_viewed',
 			'notice_id' => esc_attr( $notice_id ),
-		], admin_url( 'admin-post.php' ) );
+		), admin_url( 'admin-post.php' ) );
 
-		$options = [
+		$options = array(
 			'title' => esc_html__( 'Congrats!', 'elementor' ),
 			'description' => esc_html__( 'You created over 10 pages with Elementor. Great job! If you can spare a minute, please help us by leaving a five star review on WordPress.org.', 'elementor' ),
 			'id' => $notice_id,
-			'button' => [
+			'button' => array(
 				'text' => esc_html__( 'Happy To Help', 'elementor' ),
 				'url' => 'https://go.elementor.com/admin-review/',
 				'new_tab' => true,
 				'type' => 'cta',
-			],
-			'button_secondary' => [
+			),
+			'button_secondary' => array(
 				'text' => esc_html__( 'Hide Notification', 'elementor' ),
-				'classes' => [ 'e-notice-dismiss' ],
+				'classes' => array( 'e-notice-dismiss' ),
 				'url' => esc_url_raw( $dismiss_url ),
 				'new_tab' => true,
 				'type' => 'cta',
-			],
-		];
+			),
+		);
 
 		$this->print_admin_notice( $options );
 
@@ -312,27 +312,27 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$users = new \WP_User_Query( [
+		$users = new \WP_User_Query( array(
 			'fields' => 'ID',
 			'number' => 10,
-		] );
+		) );
 
 		if ( 5 > $users->get_total() ) {
 			return false;
 		}
 
-		$options = [
+		$options = array(
 			'title' => esc_html__( 'Managing a multi-user site?', 'elementor' ),
 			'description' => esc_html__( 'With Elementor Pro, you can control user access and make sure no one messes up your design.', 'elementor' ),
 			'id' => $notice_id,
 
-			'button' => [
+			'button' => array(
 				'text' => esc_html__( 'Learn More', 'elementor' ),
 				'url' => 'https://go.elementor.com/plugin-promotion-role-manager/',
 				'new_tab' => true,
 				'type' => 'cta',
-			],
-		];
+			),
+		);
 
 		$options = Filtered_Promotions_Manager::get_filtered_promotion_data( $options, 'core/admin/notice_role_manager_promote', 'button', 'url' );
 
@@ -358,22 +358,22 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$options = [
+		$options = array(
 			'title' => esc_html__( 'Improve your site’s performance score.', 'elementor' ),
 			'description' => esc_html__( 'With our experimental speed boosting features you can go faster than ever before. Look for the Performance label on our Experiments page and activate those experiments to improve your site loading speed.', 'elementor' ),
 			'id' => $notice_id,
-			'button' => [
+			'button' => array(
 				'text' => esc_html__( 'Try it out', 'elementor' ),
 				'url' => Settings::get_settings_tab_url( 'experiments' ),
 				'type' => 'cta',
-			],
-			'button_secondary' => [
+			),
+			'button_secondary' => array(
 				'text' => esc_html__( 'Learn more', 'elementor' ),
 				'url' => 'https://go.elementor.com/wp-dash-experiment-promotion/',
 				'new_tab' => true,
 				'type' => 'cta',
-			],
-		];
+			),
+		);
 
 		$this->print_admin_notice( $options );
 
@@ -397,7 +397,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! $this->is_elementor_page() && ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true ) ) {
+		if ( ! $this->is_elementor_page() && ! in_array( $this->current_screen_id, array( 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ), true ) ) {
 			return false;
 		}
 
@@ -413,28 +413,28 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$options = [
+		$options = array(
 			'title' => esc_html__( 'Ensure your form emails avoid the spam folder!', 'elementor' ),
 			'description' => esc_html__( 'Use Site Mailer for improved email deliverability, detailed email logs, and an easy setup.', 'elementor' ),
 			'id' => $notice_id,
 			'type' => 'cta',
-			'button' => [
+			'button' => array(
 				'text' => $cta_data['text'],
 				'url' => $cta_data['url'],
 				'type' => 'cta',
-			],
-			'button_secondary' => [
+			),
+			'button_secondary' => array(
 				'text' => esc_html__( 'Learn more', 'elementor' ),
 				'url' => 'https://go.elementor.com/sm-core-form/',
 				'new_tab' => true,
 				'type' => 'cta',
-			],
-		];
+			),
+		);
 
 		if ( $this->should_render_woocommerce_hint( $has_forms, $has_woocommerce ) ) {
 			// We include WP's default notice class so it will be properly handled by WP's js handler
 			// And add a new one to distinguish between the two types of notices
-			$options['classes'] = [ 'notice', 'e-notice', 'sm-notice-wc' ];
+			$options['classes'] = array( 'notice', 'e-notice', 'sm-notice-wc' );
 			$options['title'] = esc_html__( 'Improve Transactional Email Deliverability', 'elementor' );
 			$options['description'] = esc_html__( 'Use Elementor\'s Site Mailer to ensure your store emails like purchase confirmations, shipping updates and more are reliably delivered.', 'elementor' );
 		}
@@ -477,10 +477,10 @@ class Admin_Notices extends Module {
 			$cta_text = esc_html__( 'Install Plugin', 'elementor' );
 		}
 
-		return [
+		return array(
 			'url' => $url,
 			'text' => $cta_text,
-		];
+		);
 	}
 
 	// For testing purposes
@@ -499,11 +499,11 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$attachments = new \WP_Query( [
+		$attachments = new \WP_Query( array(
 			'post_type' => 'attachment',
 			'post_status' => 'any',
 			'fields' => 'ids',
-		] );
+		) );
 
 		if ( 1 > $attachments->found_posts ) {
 			return false;
@@ -518,17 +518,17 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$options = [
+		$options = array(
 			'title' => esc_html__( 'Speed up your website with Image Optimizer by Elementor', 'elementor' ),
 			'description' => esc_html__( 'Automatically compress and optimize images, resize larger files, or convert to WebP. Optimize images individually, in bulk, or on upload.', 'elementor' ),
 			'id' => $notice_id,
 			'type' => 'cta',
-			'button_secondary' => [
+			'button_secondary' => array(
 				'text' => $cta_data['text'],
 				'url' => $cta_data['url'],
 				'type' => 'cta',
-			],
-		];
+			),
+		);
 
 		$this->print_admin_notice( $options );
 
@@ -548,17 +548,17 @@ class Admin_Notices extends Module {
 			return;
 		}
 
-		$default_options = [
+		$default_options = array(
 			'id' => null,
 			'title' => '',
 			'description' => '',
-			'classes' => [ 'notice', 'e-notice' ], // We include WP's default notice class so it will be properly handled by WP's js handler
+			'classes' => array( 'notice', 'e-notice' ), // We include WP's default notice class so it will be properly handled by WP's js handler
 			'type' => '',
 			'dismissible' => true,
 			'icon' => 'eicon-elementor',
-			'button' => [],
-			'button_secondary' => [],
-		];
+			'button' => array(),
+			'button_secondary' => array(),
+		);
 
 		$options = array_replace_recursive( $default_options, $options );
 
@@ -581,9 +581,9 @@ class Admin_Notices extends Module {
 			$icon = '<div class="e-notice__icon-wrapper"><i class="' . esc_attr( $options['icon'] ) . '" aria-hidden="true"></i></div>';
 		}
 
-		$wrapper_attributes = [
+		$wrapper_attributes = array(
 			'class' => $notice_classes,
-		];
+		);
 
 		if ( $options['id'] ) {
 			$wrapper_attributes['data-notice_id'] = $options['id'];
@@ -606,7 +606,7 @@ class Admin_Notices extends Module {
 				<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
 					<div class="e-notice__actions">
 						<?php
-						foreach ( [ $options['button'], $options['button_secondary'] ] as $index => $button_settings ) {
+						foreach ( array( $options['button'], $options['button_secondary'] ) as $index => $button_settings ) {
 							if ( empty( $button_settings['variant'] ) && $index ) {
 								$button_settings['variant'] = 'outline';
 							}
@@ -653,7 +653,7 @@ class Admin_Notices extends Module {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'admin_notices', [ $this, 'admin_notices' ], 20 );
+		add_action( 'admin_notices', array( $this, 'admin_notices' ), 20 );
 	}
 
 	/**

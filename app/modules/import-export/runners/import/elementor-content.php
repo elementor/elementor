@@ -17,7 +17,7 @@ class Elementor_Content extends Import_Runner_Base {
 		$this->init_page_on_front_data();
 	}
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'elementor-content';
 	}
 
@@ -31,7 +31,7 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ) {
-		$result['content'] = [];
+		$result['content'] = array();
 		$this->import_session_id = $data['session_id'];
 
 		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
@@ -45,7 +45,7 @@ class Elementor_Content extends Import_Runner_Base {
 			$path = $data['extracted_directory_path'] . 'content/' . $post_type . '/';
 			$imported_terms = ! empty( $imported_data['taxonomies'] )
 				? ImportExportUtils::map_old_new_term_ids( $imported_data )
-				: [];
+				: array();
 
 			$result['content'][ $post_type ] = $this->import_elementor_post_type( $posts_settings, $path, $post_type, $imported_terms );
 		}
@@ -54,10 +54,10 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	private function import_elementor_post_type( array $posts_settings, $path, $post_type, array $imported_terms ) {
-		$result = [
-			'succeed' => [],
-			'failed' => [],
-		];
+		$result = array(
+			'succeed' => array(),
+			'failed' => array(),
+		);
 
 		foreach ( $posts_settings as $id => $post_settings ) {
 			try {
@@ -79,11 +79,11 @@ class Elementor_Content extends Import_Runner_Base {
 	}
 
 	private function import_post( array $post_settings, array $post_data, $post_type, array $imported_terms ) {
-		$post_attributes = [
+		$post_attributes = array(
 			'post_title' => $post_settings['title'],
 			'post_type' => $post_type,
 			'post_status' => 'publish',
-		];
+		);
 
 		if ( ! empty( $post_settings['excerpt'] ) ) {
 			$post_attributes['post_excerpt'] = $post_settings['excerpt'];
@@ -100,7 +100,7 @@ class Elementor_Content extends Import_Runner_Base {
 
 		$post_data['import_settings'] = $post_settings;
 
-		$new_attachment_callback = function( $attachment_id ) {
+		$new_attachment_callback = function ( $attachment_id ) {
 			$this->set_session_post_meta( $attachment_id, $this->import_session_id );
 		};
 
@@ -131,7 +131,7 @@ class Elementor_Content extends Import_Runner_Base {
 				continue;
 			}
 
-			wp_set_post_terms( $post_id, [ $imported_terms[ $term['term_id'] ] ], $term['taxonomy'], false );
+			wp_set_post_terms( $post_id, array( $imported_terms[ $term['term_id'] ] ), $term['taxonomy'], false );
 		}
 	}
 
@@ -151,9 +151,9 @@ class Elementor_Content extends Import_Runner_Base {
 		}
 	}
 
-	public function get_import_session_metadata() : array {
-		return [
+	public function get_import_session_metadata(): array {
+		return array(
 			'page_on_front' => $this->page_on_front_id ?? 0,
-		];
+		);
 	}
 }

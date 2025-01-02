@@ -68,7 +68,7 @@ abstract class CSS_Manager extends Manager {
 
 		$name = $this->get_css_file_name();
 
-		add_action( "elementor/css-file/{$name}/parse", [ $this, 'add_settings_css_rules' ] );
+		add_action( "elementor/css-file/{$name}/parse", array( $this, 'add_settings_css_rules' ) );
 	}
 
 	/**
@@ -112,8 +112,8 @@ abstract class CSS_Manager extends Manager {
 			$model,
 			$css_file->get_style_controls( $model, null, $model->get_settings() ),
 			$model->get_settings(),
-			[ '{{WRAPPER}}' ],
-			[ $model->get_css_wrapper_selector() ]
+			array( '{{WRAPPER}}' ),
+			array( $model->get_css_wrapper_selector() )
 		);
 	}
 }

@@ -101,9 +101,9 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		// On static mode don't use WP responsive images.
 		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) && ! $is_static_render_mode ) {
 			$image_class .= " attachment-$size size-$size wp-image-{$image['id']}";
-			$image_attr = [
+			$image_attr = array(
 				'class' => trim( $image_class ),
-			];
+			);
 
 			$html .= wp_get_attachment_image( $image['id'], $size, false, $image_attr );
 		} else {
@@ -159,7 +159,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 *                               as the image key.
 	 */
 	public static function print_attachment_image_html( array $settings, $image_size_key = 'image', $image_key = null ) {
-		Utils::print_wp_kses_extended( self::get_attachment_image_html( $settings, $image_size_key, $image_key ), [ 'image' ] );
+		Utils::print_wp_kses_extended( self::get_attachment_image_html( $settings, $image_size_key, $image_key ), array( 'image' ) );
 	}
 
 	/**
@@ -176,16 +176,16 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	public static function get_all_image_sizes() {
 		global $_wp_additional_image_sizes;
 
-		$default_image_sizes = [ 'thumbnail', 'medium', 'medium_large', 'large' ];
+		$default_image_sizes = array( 'thumbnail', 'medium', 'medium_large', 'large' );
 
-		$image_sizes = [];
+		$image_sizes = array();
 
 		foreach ( $default_image_sizes as $size ) {
-			$image_sizes[ $size ] = [
+			$image_sizes[ $size ] = array(
 				'width' => (int) get_option( $size . '_size_w' ),
 				'height' => (int) get_option( $size . '_size_h' ),
 				'crop' => (bool) get_option( $size . '_crop' ),
-			];
+			);
 		}
 
 		if ( $_wp_additional_image_sizes ) {
@@ -227,14 +227,14 @@ class Group_Control_Image_Size extends Group_Control_Base {
 
 			$custom_dimension = $settings[ $image_size_key . '_custom_dimension' ];
 
-			$attachment_size = [
+			$attachment_size = array(
 				// Defaults sizes
 				0 => null, // Width.
 				1 => null, // Height.
 
 				'bfi_thumb' => true,
 				'crop' => true,
-			];
+			);
 
 			$has_custom_size = false;
 			if ( ! empty( $custom_dimension['width'] ) ) {
@@ -273,10 +273,10 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 * @return array Default arguments for all the child controls.
 	 */
 	protected function get_child_default_args() {
-		return [
-			'include' => [],
-			'exclude' => [],
-		];
+		return array(
+			'include' => array(),
+			'exclude' => array(),
+		);
 	}
 
 	/**
@@ -290,21 +290,21 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 * @return array Control fields.
 	 */
 	protected function init_fields() {
-		$fields = [];
+		$fields = array();
 
-		$fields['size'] = [
+		$fields['size'] = array(
 			'label' => esc_html__( 'Image Resolution', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
-		];
+		);
 
-		$fields['custom_dimension'] = [
+		$fields['custom_dimension'] = array(
 			'label' => esc_html__( 'Image Dimension', 'elementor' ),
 			'type' => Controls_Manager::IMAGE_DIMENSIONS,
 			'description' => esc_html__( 'You can crop the original image size to any custom size. You can also set a single value for height or width in order to keep the original size ratio.', 'elementor' ),
-			'condition' => [
+			'condition' => array(
 				'size' => 'custom',
-			],
-		];
+			),
+		);
 
 		return $fields;
 	}
@@ -366,7 +366,7 @@ class Group_Control_Image_Size extends Group_Control_Base {
 			$wp_image_sizes = array_diff_key( $wp_image_sizes, array_flip( $args['exclude'] ) );
 		}
 
-		$image_sizes = [];
+		$image_sizes = array();
 
 		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
 			$control_title = ucwords( str_replace( '_', ' ', $size_key ) );
@@ -398,8 +398,8 @@ class Group_Control_Image_Size extends Group_Control_Base {
 	 * @return array Default image size control options.
 	 */
 	protected function get_default_options() {
-		return [
+		return array(
 			'popover' => false,
-		];
+		);
 	}
 }

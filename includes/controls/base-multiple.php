@@ -29,7 +29,7 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return [];
+		return array();
 	}
 
 	/**
@@ -49,11 +49,11 @@ abstract class Control_Base_Multiple extends Base_Data_Control {
 		$value = parent::get_value( $control, $settings );
 
 		if ( empty( $control['default'] ) ) {
-			$control['default'] = [];
+			$control['default'] = array();
 		}
 
 		if ( ! is_array( $value ) ) {
-			$value = [];
+			$value = array();
 		}
 
 		$control['default'] = array_merge(
