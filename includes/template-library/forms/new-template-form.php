@@ -5,7 +5,7 @@ use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class New_Template_Form extends Controls_Stack {

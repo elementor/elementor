@@ -9,7 +9,7 @@ use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Kit extends PageBase {
