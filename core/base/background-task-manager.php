@@ -42,7 +42,7 @@ abstract class Background_Task_Manager extends BaseModule {
 		return $this->task_runner;
 	}
 
-	// TODO: Replace with a db settings system.
+	/** TODO: Replace with a db settings system. */
 	protected function add_flag( $flag ) {
 		add_option( $this->get_plugin_name() . '_' . $this->get_action() . '_' . $flag, 1 );
 	}
