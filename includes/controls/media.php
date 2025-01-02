@@ -318,6 +318,8 @@ class Control_Media extends Control_Base_Multiple {
 						</select>
 					</div>
 				</div>
+
+				<div class="elementor-control-field-description"><?php echo esc_html__( 'Image size settings don’t apply to Dynamic Images.', 'elementor' ); ?></div>
 			</div>
 			<# } #>
 
