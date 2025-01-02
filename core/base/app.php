@@ -22,7 +22,7 @@ abstract class App extends Module {
 	 *
 	 * Used to print the app and its components settings as a JavaScript object.
 	 *
-	 * @param string $handle Optional
+	 * @param string $handle Optional.
 	 *
 	 * @since 2.3.0
 	 * @since 2.6.0 added the `$handle` parameter

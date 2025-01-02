@@ -62,11 +62,9 @@ class Settings_Validations {
 	 * @access public
 	 * @static
 	 *
-	 * @param mixed $input Input field.
-	 *
 	 * @return int
 	 */
-	public static function current_time( $input ) {
+	public static function current_time() {
 		return time();
 	}
 

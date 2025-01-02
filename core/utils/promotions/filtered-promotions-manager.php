@@ -10,12 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Filtered_Promotions_Manager {
 
-	/**
-	 * @param array  $promotion_data
-	 * @param string $filter_name
-	 * @param string $url_key
-	 * @return array
-	 */
+    /**
+     * @param array $promotion_data
+     * @param string $filter_name
+     * @param string $url_key
+     * @param string $url_sub_key
+     * @return array
+     */
 	public static function get_filtered_promotion_data( array $promotion_data, string $filter_name, string $url_key, string $url_sub_key = '' ): array {
 		$new_promotion_data = apply_filters( $filter_name, $promotion_data );
 

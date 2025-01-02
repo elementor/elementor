@@ -156,7 +156,7 @@ class Zip extends Base {
 	 * @since 2.9.8
 	 * @access private
 	 *
-	 * @param string $temp_path - The temporary file path to scan for template files
+	 * @param string $temp_path - The temporary file path to scan for template files.
 	 *
 	 * @return array An array of temporary files on the filesystem
 	 */

@@ -12,12 +12,12 @@ trait Has_Settings {
 	protected array $settings = [];
 
 	/**
-	 * @param $key
-	 * @param $value
+	 * @param string $key
+	 * @param bool $value
 	 *
 	 * @return $this
 	 */
-	public function setting( $key, $value ) {
+	public function setting( string $key, bool $value ) {
 		$this->settings[ $key ] = $value;
 
 		return $this;

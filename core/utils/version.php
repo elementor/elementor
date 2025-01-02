@@ -43,12 +43,12 @@ class Version {
 	/**
 	 * Version constructor.
 	 *
-	 * @param $major1
-	 * @param $major2
-	 * @param $patch
-	 * @param $stage
+	 * @param string $major1
+	 * @param string $major2
+	 * @param string $patch
+	 * @param string $stage
 	 */
-	public function __construct( $major1, $major2, $patch, $stage = null ) {
+	public function __construct( string $major1, string $major2, string $patch, $stage = null ) {
 		$this->major1 = $major1;
 		$this->major2 = $major2;
 		$this->patch  = $patch;
@@ -72,26 +72,26 @@ class Version {
 	/**
 	 * Checks if the current version string is valid.
 	 *
-	 * @param $version
+	 * @param string $version
 	 *
 	 * @return bool
 	 */
-	public static function is_valid_version( $version ) {
+	public static function is_valid_version( string $version ) {
 		return (bool) preg_match( '/^(\d+\.)?(\d+\.)?(\*|\d+)(-.+)?$/', $version );
 	}
 
 	/**
 	 * Creates a Version instance from a string.
 	 *
-	 * @param      $version
-	 * @param bool    $should_validate
+	 * @param string $version
+	 * @param bool   $should_validate
 	 *
 	 * @return static
-	 * @throws \Exception
+	 * @throws \Exception If the version is invalid.
 	 */
 	public static function create_from_string( $version, $should_validate = true ) {
 		if ( $should_validate && ! static::is_valid_version( $version ) ) {
-			throw new \Exception( "{$version} is an invalid version." );
+			throw new \Exception( esc_html( "$version is an invalid version." ) );
 		}
 
 		$parts = explode( '.', $version );
@@ -126,12 +126,12 @@ class Version {
 	/**
 	 * Compare the current version instance with another version.
 	 *
-	 * @param        $operator
-	 * @param        $version
-	 * @param string   $part
+	 * @param string $operator
+	 * @param string $version
+	 * @param string $part
 	 *
 	 * @return bool
-	 * @throws \Exception
+	 * @throws \Exception If the version is invalid.
 	 */
 	public function compare( $operator, $version, $part = self::PART_STAGE ) {
 		if ( ! ( $version instanceof Version ) ) {

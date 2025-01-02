@@ -314,7 +314,7 @@ abstract class Source_Base {
 			$content, function ( $element_data ) use ( $method ) {
 				$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
-				// If the widget/element isn't exist, like a plugin that creates a widget but deactivated
+				// If the widget/element isn't exist, like a plugin that creates a widget but deactivated.
 				if ( ! $element ) {
 					return null;
 				}

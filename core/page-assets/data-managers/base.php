@@ -95,17 +95,18 @@ abstract class Base {
 		return $this->assets_config['file_path'];
 	}
 
-	/**
-	 * Get Config Data.
-	 *
-	 * Holds a unique data relevant for the specific assets category type.
-	 *
-	 * @since 3.3.0
-	 * @access protected
-	 *
-	 * @return string|array
-	 */
-	protected function get_config_data( $key = '' ) {
+    /**
+     * Get Config Data.
+     *
+     * Holds a unique data relevant for the specific assets category type.
+     *
+     * @param string $key
+     * @return string|array
+     * @since 3.3.0
+     * @access protected
+     *
+     */
+	protected function get_config_data( string $key = '' ) {
 		if ( isset( $this->assets_config['data'] ) ) {
 			if ( $key ) {
 				if ( isset( $this->assets_config['data'][ $key ] ) ) {
@@ -121,17 +122,18 @@ abstract class Base {
 		return [];
 	}
 
-	/**
-	 * Set Asset Data.
-	 *
-	 * Responsible for setting the current asset data.
-	 *
-	 * @since 3.3.0
-	 * @access protected
-	 *
-	 * @return void
-	 */
-	protected function set_asset_data( $asset_key ) {
+    /**
+     * Set Asset Data.
+     *
+     * Responsible for setting the current asset data.
+     *
+     * @param string $asset_key
+     * @return void
+     * @since 3.3.0
+     * @access protected
+     *
+     */
+	protected function set_asset_data( string $asset_key ) {
 		if ( ! isset( $this->assets_data[ $asset_key ] ) ) {
 			$this->assets_data[ $asset_key ] = [];
 		}
@@ -269,19 +271,19 @@ abstract class Base {
 	 *
 	 * Initialize the asset data and handles the asset content updates when needed.
 	 *
-	 * @since 3.3.0
-	 * @access public
-	 *
 	 * @param array $config {
 	 *     @type string 'key'
-	 *     @type string 'version'
+          *     @type string 'version'
 	 *     @type string 'file_path'
 	 *     @type array 'data'
 	 * }
 	 *
 	 * @return void
+	 *@since 3.3.0
+	 * @access public
+	 *
 	 */
-	public function init_asset_data( $config ) {
+	public function init_asset_data( array $config ) {
 		$this->assets_config = $config;
 
 		$asset_key = $config['key'];
