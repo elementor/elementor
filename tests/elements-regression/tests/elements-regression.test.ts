@@ -30,8 +30,8 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 	- Test container_grid
 	 */
 	const testData = [
-		// 'container_flexbox',
-		// 'container_grid',
+		'container_flexbox',
+		'container_grid',
 		'divider',
 		'heading',
 		'text_editor',
@@ -41,7 +41,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'image_box',
 		'image_carousel',
 		'tabs',
-		// 'video',
+		'video',
 		'spacer',
 		'text_path',
 		'social_icons',
@@ -52,7 +52,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'basic_gallery',
 		'counter',
 		'progress_bar',
-		// 'testimonial',
+		'testimonial',
 		'toggle',
 		'sound_cloud',
 		'html',
