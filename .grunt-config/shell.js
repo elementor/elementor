@@ -7,7 +7,7 @@ const shell = {
 		].join( '&&' )
 	},
 	packages_build: {
-		command: 'npm run packages:install && npm run packages:build',
+		command: 'pnpm run packages:install && pnpm run packages:build',
 	}
 };
 

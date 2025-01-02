@@ -7,7 +7,7 @@ To run the tests, we have 3 steps:
 ## Running the local WordPress server
 In order to get a stable, reproducible test environment, we decided to use [wp-env](https://www.npmjs.com/package/@wordpress/env) which provides us with a Dockerized server and WP CLI.
 To run the server, run the following command:
-`npm run start-local-server`
+`pnpm run start-local-server`
 This command runs a WordPress server (using wp-env).
 
 ## Configuring the server
@@ -16,16 +16,16 @@ Our tests require the following configuration:
 2. .htaccess configuration
 3. Theme
 To configure the server, run the following command:
-`npm run test:setup:playwright-sanity`
+`pnpm run test:setup:playwright-sanity`
 This command imports the templates, rewrites .htaccess rules and activates the `hello-elementor` theme
 
 ## Running tests
 We have several test packages that can be run separately. The separation has been done in order to parallelize the CI test runs.
 To run the tests, run the following command:
-`npm run test:playwright`
+`pnpm run test:playwright`
 This command runs the "default" test package.
-If you want to run a different package: `npm run test:playwright -- --grep="@nested-tabs"` or
-`TEST_SUITE=@nested-tabs npm run test:playwright`
+If you want to run a different package: `pnpm run test:playwright -- --grep="@nested-tabs"` or
+`TEST_SUITE=@nested-tabs pnpm run test:playwright`
 
 ## Troubleshooting Guide
 Problem: When running any test locally when we update config to a local site from localhost8888.

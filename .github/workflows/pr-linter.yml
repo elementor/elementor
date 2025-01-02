@@ -22,15 +22,21 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+          cache: 'pnpm'
       - name: Install Dependencies
         if: ${{ github.event.pull_request.title != null }}
-        run: npm install --no-package-lock --no-save @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
+        run: pnpm add @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
       - name: Run PR name linter
         if: ${{ github.event.pull_request.title != null }}
         env:
           TITLE: ${{ github.event.pull_request.title }}
-        run: echo "$TITLE" | npx commitlint
+        run: echo "$TITLE" | pnpm exec commitlint
+

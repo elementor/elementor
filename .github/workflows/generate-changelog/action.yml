@@ -26,7 +26,7 @@ runs:
         HEAD_BRANCH_NAME: ${{ inputs.HEAD_BRANCH_NAME }}
         BASE_TAG_NAME: ${{ inputs.BASE_TAG_NAME }}
       run: |
-            npm install --no-package-lock --no-save @octokit/core@3.4.0
+            pnpm add @octokit/core@3.4.0
             node ./.github/scripts/generate-changelog.js
 
             # Upload-artifact action fails if the file size is 0.
