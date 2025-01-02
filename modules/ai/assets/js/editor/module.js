@@ -178,7 +178,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 		}
 
 		if ( [ 'animation', 'hover_animation' ].includes( aiOptions.type ) ) {
-			const widgetType = view.options.container.model.get( 'widgetType' );
+			const widgetType = view.options.container.model.get( 'widgetType' ) ?? 'container';
 
 			const getControlValue = () => Object.values( elementor?.widgetsCache?.[ widgetType ]?.controls ?? [] )
 				.filter( ( control ) => 'hover_animation' === aiOptions.type
