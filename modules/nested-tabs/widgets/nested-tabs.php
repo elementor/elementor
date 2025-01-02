@@ -17,7 +17,7 @@ use Elementor\Plugin;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class NestedTabs extends Widget_Nested_Base {
