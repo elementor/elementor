@@ -35,7 +35,7 @@ trait Supports_Shorthanded_Value {
 	}
 
 	/**
-	 * @param $value
+	 * @param  mixed $value default value.
 	 *
 	 * @return $this
 	 */

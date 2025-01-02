@@ -98,10 +98,14 @@ class Taxonomies extends Export_Runner_Base {
 		return $data;
 	}
 
-	// Put terms in order with no child going before its parent.
+	/**
+	 * @param array $terms terms.
+	 * @return array
+	 * Put terms in order with no child going before its parent.
+	 */
 	private function order_terms( array $terms ) {
 		$ordered_terms = [];
-
+        // phpcs:disable Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition
 		while ( $term = array_shift( $terms ) ) {
 			$is_top_level = 0 === $term->parent;
 			$is_parent_exits = isset( $ordered_terms[ $term->parent ] );
