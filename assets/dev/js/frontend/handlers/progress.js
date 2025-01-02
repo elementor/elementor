@@ -40,3 +40,6 @@ export default class Progress extends elementorModules.frontend.handlers.Base {
 		}, options );
 	}
 }
+
+window.elementorModules.frontend.widgets = elementorModules.frontend.widgets || {};
+window.elementorModules.frontend.widgets[ 'progress.default' ] = Progress;

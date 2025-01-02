@@ -19,3 +19,4 @@ export default Module.extend( {
 		this.elements = this.getDefaultElements();
 	},
 } );
+

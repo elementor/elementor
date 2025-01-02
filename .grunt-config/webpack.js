@@ -146,6 +146,26 @@ const entry = {
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
+	'frontend-handler-accordion': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/accordion.js' ),
+	'frontend-handler-base-swiper': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/base-swiper.js' ),
+	'frontend-handler-base-carousel': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/base-carousel.js' ),
+	'frontend-handler-background-slideshow': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/background-slideshow.js' ),
+	'frontend-handler-image-carousel': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/image-carousel.js' ),
+	'frontend-handler-alert': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/alert.js' ),
+	'frontend-handler-counter': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/counter.js' ),
+	'frontend-handler-progress': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/progress.js' ),
+	'frontend-handler-tabs': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/tabs.js' ),
+	'frontend-handler-toggle': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/toggle.js' ),
+	'frontend-handler-video': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/video.js' ),
+	'frontend-handler-text-editor': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/text-editor.js' ),
+	'frontend-handler-nested-title-keyboard': path.resolve( __dirname, '../assets/dev/js/frontend/handlers/accessibility/nested-title-keyboard-handler.js' ),
+	'frontend-handler-nested-accordion-keyboard': path.resolve( __dirname, '../modules/nested-accordion/assets/js/frontend/handlers/nested-accordion-title-keyboard-handler.js' ),
+	'frontend-util-youtube-loader': path.resolve( __dirname, '../assets/dev/js/frontend/utils/video-api/youtube-loader.js' ),
+	'frontend-util-vimeo-loader': path.resolve( __dirname, '../assets/dev/js/frontend/utils/video-api/vimeo-loader.js' ),
+	'frontend-util-base-loader': path.resolve( __dirname, '../assets/dev/js/frontend/utils/video-api/base-loader.js' ),
+	'frontend-util-swiper': path.resolve( __dirname, '../assets/dev/js/frontend/utils/swiper.js' ),
+	'frontend-handler-nested-accordion': path.resolve( __dirname, '../modules/nested-accordion/assets/js/frontend/handlers/nested-accordion.js' ),
+	'frontend-handler-nested-tabs': path.resolve( __dirname, '../modules/nested-tabs/assets/js/frontend/handlers/nested-tabs.js' ),
 };
 
 const externals = [
