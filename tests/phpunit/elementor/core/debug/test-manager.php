@@ -6,7 +6,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Test_Manager extends Elementor_Test_Base {
