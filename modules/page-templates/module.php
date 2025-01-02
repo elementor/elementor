@@ -11,7 +11,7 @@ use Elementor\Core\DocumentTypes\PageBase as PageBase;
 use Elementor\Modules\Library\Documents\Page as LibraryPageDocument;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
