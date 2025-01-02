@@ -172,7 +172,7 @@ class Editor_Common_Scripts_Settings {
 			require ABSPATH . WPINC . '/class-wp-editor.php';
 		}
 
-		// WordPress 4.8 and higher
+		// WordPress 4.8 and higher.
 		if ( method_exists( '\_WP_Editors', 'print_tinymce_scripts' ) ) {
 			\_WP_Editors::print_default_editor_scripts();
 			\_WP_Editors::print_tinymce_scripts();
@@ -191,7 +191,7 @@ class Editor_Common_Scripts_Settings {
 
 		$config = ob_get_clean();
 
-		// Don't call \_WP_Editors methods again
+		// Don't call \_WP_Editors methods again.
 		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'editor_js' ], 50 );
 		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'print_default_editor_scripts' ], 45 );
 

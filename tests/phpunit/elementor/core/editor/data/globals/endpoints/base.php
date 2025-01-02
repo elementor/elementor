@@ -23,7 +23,11 @@ abstract class Base extends Data_Test_Base {
 		$this->manager->kill_server();
 	}
 
-	public function get_endpoint( $id = null ) {
+    /**
+     * @param $id string
+     * @return string
+     */
+    public function get_endpoint($id = null ) {
 		$endpoint = $this->get_command();
 
 		if ( $id ) {
