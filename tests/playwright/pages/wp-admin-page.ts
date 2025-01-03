@@ -106,7 +106,7 @@ export default class WpAdminPage extends BasePage {
 			};
 
 		await this.apiRequests.create( request, `pages/${ postId }`, postDataUpdated );
-		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+		await this.page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor`, { timeout: 20000 } );
 
 		return postId;
 	}
