@@ -14,10 +14,6 @@ const EditorSelectors = {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
 		},
-		menu: {
-			wrapper: '#elementor-panel-page-menu',
-			footerButton: '#elementor-panel-header-menu-button i',
-		},
 		elements: {
 			wrapper: '#elementor-panel-page-elements',
 			footerButton: '#elementor-panel-header-add-button i',
@@ -37,10 +33,6 @@ const EditorSelectors = {
 		},
 		userPreferences: {
 			wrapper: '#elementor-panel-editorPreferences-settings-controls',
-		},
-		footerTools: {
-			wrapper: '#elementor-panel-footer',
-			updateButton: '#elementor-panel-saver-button-publish-label',
 		},
 		navigator: {
 			wrapper: '#elementor-navigator',

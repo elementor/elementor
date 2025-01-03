@@ -26,8 +26,7 @@ class Module extends Module_Base {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
 		$is_tests = Utils::is_elementor_tests();
-		$is_v2_experiment_on = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
-		if ( ! $is_v2_experiment_on && ! $is_tests ) {
+		if ( ! $is_tests ) {
 			return;
 		}
 
@@ -69,9 +68,6 @@ class Module extends Module_Base {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'hidden' => true,
-			'dependencies' => [
-				'editor_v2',
-			],
 		] );
 	}
 
