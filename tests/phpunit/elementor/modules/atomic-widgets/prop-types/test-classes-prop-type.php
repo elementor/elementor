@@ -46,7 +46,7 @@ class Test_Classes_Prop_Type extends Elementor_Test_Base {
 		// Act.
 		$result = $prop_type->validate( [
 			'$$type' => 'classes',
-			'value' => [ 'a', 'b-123', 'c_123' ],
+			'value' => [ [ '$$type' => 'string', 'value' => 'a' ], [ '$$type' => 'string', 'value' => 'b-123' ], [ '$$type' => 'string', 'value' => 'c_123' ] ],
 		] );
 
 		// Assert.
@@ -55,12 +55,32 @@ class Test_Classes_Prop_Type extends Elementor_Test_Base {
 
 	public function invalid_classes_data_provider() {
 		return [
-			[ [ 'a', 'b', 3 ] ],
-			[ [ 'a', 'b', '3' ] ],
-			[ [ 'a', '2-b' ] ],
-			[ [ 'a', '-b' ] ],
-			[ [ 'a', '_b' ] ],
-			[ [ 'a', 'אבג' ] ],
+			[ [
+				[ '$$type' => 'string', 'value' => 'a'],
+				[ '$$type' => 'string', 'value' => 'b'],
+				[ '$$type' => 'number', 'value' => 3 ],
+			] ],
+			[ [
+				[ '$$type' => 'string', 'value' => 'a'],
+				[ '$$type' => 'string', 'value' => 'b'],
+				[ '$$type' => 'string', 'value' => '3'] 
+			] ],
+			[ [
+				[ '$$type' => 'string', 'value' => 'a'],
+				[ '$$type' => 'string', 'value' => '2-b']
+			] ],
+			[ [
+				[ '$$type' => 'string', 'value' => 'a'],
+				[ '$$type' => 'string', 'value' => '-b' ]
+			] ],
+			[ [
+				[ '$$type' => 'string', 'value' => 'a'],
+				[ '$$type' => 'string', 'value' => '_b' ]
+			] ],
+			[ [
+				[ '$$type' => 'string', 'value' => 'a'],
+				[ '$$type' => 'string', 'value' => 'אבג']
+			] ],
 		];
 	}
 }
