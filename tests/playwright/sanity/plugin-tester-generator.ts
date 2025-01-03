@@ -46,6 +46,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'happy-elementor-addons', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
+	{ pluginName: 'wordpress-seo', installSource: 'api' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
