@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	public function __construct() {
-		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
 	}
 
 	public static function is_active() {
@@ -26,14 +26,14 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'e-wc-product-editor',
 			ELEMENTOR_ASSETS_URL . 'js/e-wc-product-editor' . $suffix . '.js',
-			[ 'wp-components', 'wp-core-data', 'wc-admin-layout', 'wp-plugins' ],
+			array( 'wp-components', 'wp-core-data', 'wc-admin-layout', 'wp-plugins' ),
 			ELEMENTOR_VERSION,
 			true
 		);
 
-		$elementor_settings = [
+		$elementor_settings = array(
 			'editLink' => admin_url( 'post.php' ),
-		];
+		);
 		Utils::print_js_config( 'e-wc-product-editor', 'ElementorWCProductEditorSettings', $elementor_settings );
 	}
 

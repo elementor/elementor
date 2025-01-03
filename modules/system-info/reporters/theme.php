@@ -52,19 +52,19 @@ class Theme extends Base {
 	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
-		$fields = [
+		$fields = array(
 			'name' => 'Name',
 			'version' => 'Version',
 			'author' => 'Author',
 			'is_child_theme' => 'Child Theme',
-		];
+		);
 
 		if ( $this->get_parent_theme() ) {
-			$parent_fields = [
+			$parent_fields = array(
 				'parent_name' => 'Parent Theme Name',
 				'parent_version' => 'Parent Theme Version',
 				'parent_author' => 'Parent Theme Author',
-			];
+			);
 			$fields = array_merge( $fields, $parent_fields );
 		}
 
@@ -134,9 +134,9 @@ class Theme extends Base {
 	 * }
 	 */
 	public function get_name() {
-		return [
+		return array(
 			'value' => $this->get_theme()->get( 'Name' ),
-		];
+		);
 	}
 
 	/**
@@ -154,9 +154,9 @@ class Theme extends Base {
 	 * }
 	 */
 	public function get_author() {
-		return [
+		return array(
 			'value' => $this->get_theme()->get( 'Author' ),
-		];
+		);
 	}
 
 	/**
@@ -174,9 +174,9 @@ class Theme extends Base {
 	 * }
 	 */
 	public function get_version() {
-		return [
+		return array(
 			'value' => $this->get_theme()->get( 'Version' ),
-		];
+		);
 	}
 
 	/**
@@ -197,9 +197,9 @@ class Theme extends Base {
 	public function get_is_child_theme() {
 		$is_child_theme = is_child_theme();
 
-		$result = [
+		$result = array(
 			'value' => $is_child_theme ? 'Yes' : 'No',
-		];
+		);
 
 		if ( ! $is_child_theme ) {
 			$result['recommendation'] = sprintf(
@@ -227,9 +227,9 @@ class Theme extends Base {
 	 * }
 	 */
 	public function get_parent_version() {
-		return [
+		return array(
 			'value' => $this->get_parent_theme()->get( 'Version' ),
-		];
+		);
 	}
 
 	/**
@@ -247,9 +247,9 @@ class Theme extends Base {
 	 * }
 	 */
 	public function get_parent_author() {
-		return [
+		return array(
 			'value' => $this->get_parent_theme()->get( 'Author' ),
-		];
+		);
 	}
 
 	/**
@@ -267,8 +267,8 @@ class Theme extends Base {
 	 * }
 	 */
 	public function get_parent_name() {
-		return [
+		return array(
 			'value' => $this->get_parent_theme()->get( 'Name' ),
-		];
+		);
 	}
 }

@@ -15,7 +15,7 @@ class Product_Image_Unification_Intro {
 	const CURRENT_POINTER_SLUG = 'e-ai-product-image-unification';
 
 	public static function add_hooks() {
-		add_action( 'admin_print_footer_scripts', [ __CLASS__, 'product_image_unification_intro_script' ] );
+		add_action( 'admin_print_footer_scripts', array( __CLASS__, 'product_image_unification_intro_script' ) );
 	}
 
 	public static function product_image_unification_intro_script() {

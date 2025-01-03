@@ -125,7 +125,7 @@ abstract class Base {
 	 * }
 	 */
 	final public function get_report( $format = '' ) {
-		$result = [];
+		$result = array();
 
 		$format = ( empty( $format ) ) ? '' : $format . '_';
 
@@ -140,10 +140,10 @@ abstract class Base {
 				}
 			}
 
-			$reporter_field = [
+			$reporter_field = array(
 				'name' => $field_name,
 				'label' => $field_label,
-			];
+			);
 
 			$reporter_field = array_merge( $reporter_field, $this->$method() );
 			$result[ $field_name ] = $reporter_field;
@@ -169,11 +169,11 @@ abstract class Base {
 	 * }
 	 */
 	public static function get_properties_keys() {
-		return [
+		return array(
 			'name',
 			'format',
 			'fields',
-		];
+		);
 	}
 
 	/**

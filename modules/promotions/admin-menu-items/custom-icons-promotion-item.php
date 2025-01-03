@@ -19,7 +19,7 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 		return esc_html__( 'Custom Icons', 'elementor' );
 	}
 
-	protected function get_promotion_title():string {
+	protected function get_promotion_title(): string {
 		return sprintf(
 			/* translators: %s: br  */
 			esc_html__( 'Enjoy creative freedom %s with Custom Icons', 'elementor' ),
@@ -28,13 +28,13 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 	}
 
 	protected function get_content_lines(): array {
-		return [
+		return array(
 			sprintf(
 				esc_html__( 'Expand your icon library beyond FontAwesome and add icon %s libraries of your choice', 'elementor' ),
 				'<br />'
 			),
 			esc_html__( 'Add any icon, anywhere on your website', 'elementor' ),
-		];
+		);
 	}
 
 	protected function get_cta_url(): string {

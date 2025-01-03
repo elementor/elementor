@@ -19,7 +19,7 @@ class Module extends BaseModule {
 	 *
 	 * @var Favorites_Type[]
 	 */
-	protected $types = [];
+	protected $types = array();
 
 	const OPTION_NAME = 'elementor_editor_user_favorites';
 
@@ -48,7 +48,7 @@ class Module extends BaseModule {
 
 		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
-		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
+		add_filter( 'elementor/tracker/send_tracking_data_params', array( $this, 'add_tracking_data' ) );
 	}
 
 	/**
@@ -137,7 +137,7 @@ class Module extends BaseModule {
 				break;
 			case static::ACTION_DELETE:
 				$type_instance->filter(
-					function( $value ) use ( $favorites ) {
+					function ( $value ) use ( $favorites ) {
 						return ! in_array( $value, $favorites, true );
 					}
 				);
@@ -190,7 +190,7 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	protected function combined() {
-		$all = [];
+		$all = array();
 
 		foreach ( $this->types as $type ) {
 			$favorites = $type->values();
@@ -241,8 +241,8 @@ class Module extends BaseModule {
 	 */
 	public function action_doesnt_exists( $action ) {
 		throw new \InvalidArgumentException( sprintf(
-			"Action '%s' to apply on favorites doesn't exists",
-			$action
+			"Action '%s' to apply on favorites doesn't exist",
+			esc_html( $action )
 		) );
 	}
 }

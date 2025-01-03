@@ -21,11 +21,11 @@ class Module extends App {
 	public function __construct() {
 		$this->deprecation = new Deprecation( ELEMENTOR_VERSION );
 
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'register_scripts' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'register_scripts' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
-		add_action( 'elementor/frontend/after_register_scripts', [ $this, 'register_scripts' ] );
-		add_action( 'elementor/common/after_register_scripts', [ $this, 'register_scripts' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
+		add_action( 'elementor/frontend/after_register_scripts', array( $this, 'register_scripts' ) );
+		add_action( 'elementor/common/after_register_scripts', array( $this, 'register_scripts' ) );
 	}
 
 	public function get_name() {
@@ -36,7 +36,7 @@ class Module extends App {
 		wp_register_script(
 			'elementor-dev-tools',
 			$this->get_js_assets_url( 'dev-tools' ),
-			[],
+			array(),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -45,12 +45,12 @@ class Module extends App {
 	}
 
 	protected function get_init_settings() {
-		return [
+		return array(
 			'isDebug' => ( defined( 'WP_DEBUG' ) && WP_DEBUG ),
-			'urls' => [
+			'urls' => array(
 				'assets' => ELEMENTOR_ASSETS_URL,
-			],
+			),
 			'deprecation' => $this->deprecation->get_settings(),
-		];
+		);
 	}
 }

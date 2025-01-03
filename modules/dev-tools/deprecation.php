@@ -10,19 +10,19 @@ class Deprecation {
 	const HARD_VERSIONS_COUNT = 8;
 
 	private $current_version = null;
-	private $soft_deprecated_notices = [];
+	private $soft_deprecated_notices = array();
 
 	public function __construct( $current_version ) {
 		$this->current_version = $current_version;
 	}
 
 	public function get_settings() {
-		return [
+		return array(
 			'soft_notices' => $this->soft_deprecated_notices,
 			'soft_version_count' => self::SOFT_VERSIONS_COUNT,
 			'hard_version_count' => self::HARD_VERSIONS_COUNT,
 			'current_version' => ELEMENTOR_VERSION,
-		];
+		);
 	}
 
 	/**
@@ -130,11 +130,11 @@ class Deprecation {
 
 		list( $major1, $major2, $minor ) = $version_explode;
 
-		$result = [
+		$result = array(
 			'major1' => intval( $major1 ),
 			'major2' => intval( $major2 ),
 			'minor' => intval( $minor ),
-		];
+		);
 
 		if ( $version_explode_count > 3 ) {
 			$result['build'] = $version_explode[3];
@@ -160,7 +160,7 @@ class Deprecation {
 		$version2 = self::parse_version( $version2 );
 
 		if ( $version1 && $version2 ) {
-			$versions = [ &$version1, &$version2 ];
+			$versions = array( &$version1, &$version2 );
 
 			foreach ( $versions as &$version ) {
 				$version['total'] = self::get_total_major( $version );
@@ -204,10 +204,10 @@ class Deprecation {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && $diff <= self::SOFT_VERSIONS_COUNT ) {
 			// Soft deprecated.
 			if ( ! isset( $this->soft_deprecated_notices[ $entity ] ) ) {
-				$this->soft_deprecated_notices[ $entity ] = [
+				$this->soft_deprecated_notices[ $entity ] = array(
 					$version,
 					$replacement,
-				];
+				);
 			}
 
 			if ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG ) {
@@ -280,7 +280,7 @@ class Deprecation {
 		if ( $print_deprecated ) {
 			$message = empty( $message ) ? '' : ' ' . $message;
 			// These arguments are escaped because they are printed later, and are not escaped when printed.
-			$error_message_args = [ esc_html( $argument ), esc_html( $version ) ];
+			$error_message_args = array( esc_html( $argument ), esc_html( $version ) );
 
 			if ( $replacement ) {
 				/* translators: 1: Function argument, 2: Elementor version number, 3: Replacement argument name. */
@@ -356,7 +356,7 @@ class Deprecation {
 
 		// BC - See the comment above.
 		if ( ! is_array( $args ) ) {
-			$args = [ $args ];
+			$args = array( $args );
 		}
 
 		// Avoid associative arrays.

@@ -18,7 +18,7 @@ class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
 		$this->has_pro = Utils::has_pro();
 	}
 
-	private function is_valid_item( $item ) {
+	private function is_valid_item( $item ): bool {
 		$has_pro_json_not_free = $this->has_pro && 'pro' === $item['license'][0];
 		$is_not_pro_json_not_pro = ! $this->has_pro && 'free' === $item['license'][0];
 		$should_show = ! isset( $item['show'] ) || 'true' === $item['show'];
@@ -26,7 +26,7 @@ class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
-		$new_sidebar_upgrade = [];
+		$new_sidebar_upgrade = array();
 
 		foreach ( $home_screen_data['sidebar_upgrade'] as $index => $item ) {
 			if ( $this->is_valid_item( $item ) ) {

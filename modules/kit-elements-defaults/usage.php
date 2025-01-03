@@ -18,12 +18,12 @@ class Usage {
 	}
 
 	private function get_usage_data() {
-		$elements_defaults = $this->get_elements_defaults() ?? [];
+		$elements_defaults = $this->get_elements_defaults() ?? array();
 
-		return [
+		return array(
 			'count' => count( $elements_defaults ),
 			'elements' => array_keys( $elements_defaults ),
-		];
+		);
 	}
 
 	private function get_elements_defaults() {

@@ -2,14 +2,12 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 trait Has_Settings {
-	protected array $settings = [];
+	protected array $settings = array();
 
 	/**
 	 * @param $key
@@ -17,7 +15,7 @@ trait Has_Settings {
 	 *
 	 * @return $this
 	 */
-	public function setting( $key, $value ) {
+	public function setting( $key, $value ): self {
 		$this->settings[ $key ] = $value;
 
 		return $this;
@@ -27,7 +25,7 @@ trait Has_Settings {
 		return $this->settings;
 	}
 
-	public function get_setting( string $key, $default = null ) {
-		return array_key_exists( $key, $this->settings ) ? $this->settings[ $key ] : $default;
+	public function get_setting( string $key, $default_settings = null ) {
+		return array_key_exists( $key, $this->settings ) ? $this->settings[ $key ] : $default_settings;
 	}
 }

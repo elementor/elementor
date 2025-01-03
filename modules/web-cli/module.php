@@ -14,19 +14,19 @@ class Module extends App {
 	}
 
 	public function __construct() {
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'register_scripts' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'register_scripts' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
-		add_action( 'elementor/frontend/after_register_scripts', [ $this, 'register_scripts' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
+		add_action( 'elementor/frontend/after_register_scripts', array( $this, 'register_scripts' ) );
 	}
 
 	public function register_scripts() {
 		wp_register_script(
 			'elementor-web-cli',
 			$this->get_js_assets_url( 'web-cli' ),
-			[
+			array(
 				'jquery',
-			],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -35,14 +35,14 @@ class Module extends App {
 	}
 
 	protected function get_init_settings() {
-		return [
+		return array(
 			'isDebug' => ( defined( 'WP_DEBUG' ) && WP_DEBUG ),
-			'urls' => [
+			'urls' => array(
 				'rest' => get_rest_url(),
 				'assets' => ELEMENTOR_ASSETS_URL,
-			],
+			),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
 			'version' => ELEMENTOR_VERSION,
-		];
+		);
 	}
 }

@@ -31,63 +31,63 @@ class Global_Classes_REST_API {
 
 	// TODO: Add sanitization when implemented on prop types [EDS-574]
 	private function register_routes() {
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
-			[
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, array(
+			array(
 				'methods' => 'GET',
 				'callback' => fn() => $this->route_wrapper( fn() => $this->all() ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			],
-		] );
+			),
+		) );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
-			[
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', array(
+			array(
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get( $request ) ),
-				'args' => [
-					'id' => [
+				'args' => array(
+					'id' => array(
 						'type' => 'string',
 						'required' => true,
-					],
-				],
+					),
+				),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			],
-		] );
+			),
+		) );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
-			[
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', array(
+			array(
 				'methods' => 'DELETE',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->delete( $request ) ),
-				'args' => [
-					'id' => [
+				'args' => array(
+					'id' => array(
 						'type' => 'string',
 						'required' => true,
-					],
-				],
+					),
+				),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			],
-		] );
+			),
+		) );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
-			[
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', array(
+			array(
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			],
-		] );
+			),
+		) );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
-			[
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, array(
+			array(
 				'methods' => 'POST',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->create( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			],
-		] );
+			),
+		) );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '-order', [
-			[
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '-order', array(
+			array(
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->arrange( $request ) ),
-				'validate_callback' => function( \WP_REST_Request $request ) {
+				'validate_callback' => function ( \WP_REST_Request $request ) {
 					$order = $request->get_params();
 
 					if ( ! is_array( $order ) ) {
@@ -102,8 +102,8 @@ class Global_Classes_REST_API {
 					return $missing_items->is_empty() && $extra_items->is_empty();
 				},
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			],
-		] );
+			),
+		) );
 	}
 
 	private function all() {
@@ -117,7 +117,7 @@ class Global_Classes_REST_API {
 		$class = $this->get_repository()->get( $id );
 
 		if ( null === $class ) {
-			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), array( 'status' => 404 ) );
 		}
 
 		return $class;
@@ -128,7 +128,7 @@ class Global_Classes_REST_API {
 		$class = $this->get_repository()->get( $id );
 
 		if ( null === $class ) {
-			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), array( 'status' => 404 ) );
 		}
 
 		$this->get_repository()->delete( $id );
@@ -146,7 +146,7 @@ class Global_Classes_REST_API {
 		$class = $this->get_repository()->get( $id );
 
 		if ( null === $class ) {
-			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), [ 'status' => 404 ] );
+			return new \WP_Error( 'entity_not_found', __( 'Global class not found', 'elementor' ), array( 'status' => 404 ) );
 		}
 
 		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )
@@ -188,13 +188,13 @@ class Global_Classes_REST_API {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'unexpected_error', __( 'Something went wrong', 'elementor' ), [ 'status' => 500 ] );
+			return new \WP_Error( 'unexpected_error', __( 'Something went wrong', 'elementor' ), array( 'status' => 500 ) );
 		}
 
 		return $response;
 	}
 
 	private function fail_with_validation_errors( array $errors ) {
-		return new \WP_Error( 'Invalid data: ', join( ', ', $errors ), [ 'status' => 400 ] );
+		return new \WP_Error( 'Invalid data: ', join( ', ', $errors ), array( 'status' => 400 ) );
 	}
 }

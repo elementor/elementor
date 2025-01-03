@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Has_Meta {
-	protected array $meta = [];
+	protected array $meta = array();
 
 	/**
 	 * @param $key

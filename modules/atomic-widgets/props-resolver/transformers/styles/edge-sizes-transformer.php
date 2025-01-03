@@ -19,9 +19,9 @@ class Edge_Sizes_Transformer extends Transformer_Base {
 
 	public function transform( $value, $key ) {
 		$edges = Collection::make( $value )
-			->only( [ 'top', 'right', 'bottom', 'left' ] )
+			->only( array( 'top', 'right', 'bottom', 'left' ) )
 			->filter()
-			->map_with_keys( fn( $edge, $edge_key ) => [ call_user_func( $this->key_generator, $edge_key ) => $edge ] )
+			->map_with_keys( fn( $edge, $edge_key ) => array( call_user_func( $this->key_generator, $edge_key ) => $edge ) )
 			->all();
 
 		return Multi_Props::generate( $edges );

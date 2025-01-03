@@ -32,7 +32,7 @@ class Module extends BaseModule {
 			Tracker::is_allow_track() &&
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 
-		$settings = [
+		$settings = array(
 			'can_send_events' => $can_send_events,
 			'elementor_version' => ELEMENTOR_VERSION,
 			'site_url' => hash( 'sha256', get_site_url() ),
@@ -42,19 +42,19 @@ class Module extends BaseModule {
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
 			'subscription_id' => null,
 			'token' => defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ? ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN : '',
-		];
+		);
 
 		return $settings;
 	}
 
 	private function register_experiment() {
-		Plugin::$instance->experiments->add_feature( [
+		Plugin::$instance->experiments->add_feature( array(
 			'name' => static::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Elementor Editor Events', 'elementor' ),
 			'description' => esc_html__( 'Editor events processing', 'elementor' ),
 			'hidden' => true,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
-		] );
+		) );
 	}
 }

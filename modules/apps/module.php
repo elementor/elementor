@@ -22,40 +22,40 @@ class Module extends BaseModule {
 
 		Admin_Pointer::add_hooks();
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$admin_menu->register( static::PAGE_ID, new Admin_Menu_Apps() );
 		}, 115 );
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
-				add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
+				add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", array( $this, 'enqueue_assets' ) );
 			}
 		}, 10, 2 );
 
-		add_filter( 'elementor/finder/categories', function( array $categories ) {
-			$categories['site']['items']['apps'] = [
+		add_filter( 'elementor/finder/categories', function ( array $categories ) {
+			$categories['site']['items']['apps'] = array(
 				'title' => esc_html__( 'Add-ons', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=' . static::PAGE_ID ),
 				'icon' => 'apps',
-				'keywords' => [ 'apps', 'addon', 'plugin', 'extension', 'integration' ],
-			];
+				'keywords' => array( 'apps', 'addon', 'plugin', 'extension', 'integration' ),
+			);
 
 			return $categories;
 		} );
 
 		// Add the Elementor Apps link to the plugin install action links.
-		add_filter( 'install_plugins_tabs', [ $this, 'add_elementor_plugin_install_action_link' ] );
-		add_action( 'install_plugins_pre_elementor', [ $this, 'maybe_open_elementor_tab' ] );
-		add_action( 'admin_print_styles-plugin-install.php', [ $this, 'add_plugins_page_styles' ] );
+		add_filter( 'install_plugins_tabs', array( $this, 'add_elementor_plugin_install_action_link' ) );
+		add_action( 'install_plugins_pre_elementor', array( $this, 'maybe_open_elementor_tab' ) );
+		add_action( 'admin_print_styles-plugin-install.php', array( $this, 'add_plugins_page_styles' ) );
 	}
 
 	public function enqueue_assets() {
-		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
+		add_filter( 'admin_body_class', array( $this, 'body_status_classes' ) );
 
 		wp_enqueue_style(
 			'elementor-apps',
 			$this->get_css_assets_url( 'modules/apps/admin' ),
-			[],
+			array(),
 			ELEMENTOR_VERSION
 		);
 	}
@@ -77,11 +77,11 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$elementor_url = add_query_arg( [
+		$elementor_url = add_query_arg( array(
 			'page' => static::PAGE_ID,
 			'tab' => 'elementor',
 			'ref' => 'plugins',
-		], admin_url( 'admin.php' ) );
+		), admin_url( 'admin.php' ) );
 
 		wp_safe_redirect( $elementor_url );
 		exit;

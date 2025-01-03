@@ -34,43 +34,43 @@ abstract class Step_Base {
 	 *
 	 * @return bool
 	 */
-	abstract protected function is_absolute_completed() : bool;
+	abstract protected function is_absolute_completed(): bool;
 
 	/**
 	 * @return string
 	 */
-	abstract public function get_id() : string;
+	abstract public function get_id(): string;
 
 	/**
 	 * @return string
 	 */
-	abstract public function get_title() : string;
+	abstract public function get_title(): string;
 
 	/**
 	 * @return string
 	 */
-	abstract public function get_description() : string;
+	abstract public function get_description(): string;
 
 	/**
 	 * For instance; 'Create 3 pages'
 	 * @return string
 	 */
-	abstract public function get_cta_text() : string;
+	abstract public function get_cta_text(): string;
 
 	/**
 	 * @return string
 	 */
-	abstract public function get_cta_url() : string;
+	abstract public function get_cta_url(): string;
 
 	/**
 	 * @return bool
 	 */
-	abstract public function get_is_completion_immutable() : bool;
+	abstract public function get_is_completion_immutable(): bool;
 
 	/**
 	 * @return string
 	 */
-	abstract public function get_image_src() : string;
+	abstract public function get_image_src(): string;
 
 	/**
 	 * Step_Base constructor.
@@ -93,24 +93,24 @@ abstract class Step_Base {
 	 *
 	 * @return bool
 	 */
-	public function is_visible() : bool {
+	public function is_visible(): bool {
 		return true;
 	}
 
-	public function get_learn_more_text() : string {
+	public function get_learn_more_text(): string {
 		return esc_html__( 'Learn more', 'elementor' );
 	}
 
-	public function get_learn_more_url() : string {
+	public function get_learn_more_url(): string {
 		return 'https://go.elementor.com/getting-started-with-elementor/';
 	}
 
-	public function update_step( array $step_data ) : void {
-		$allowed_properties = [
+	public function update_step( array $step_data ): void {
+		$allowed_properties = array(
 			self::MARKED_AS_COMPLETED_KEY => $step_data[ self::MARKED_AS_COMPLETED_KEY ] ?? null,
 			self::IMMUTABLE_COMPLETION_KEY => $step_data[ self::IMMUTABLE_COMPLETION_KEY ] ?? null,
 			self::ABSOLUTE_COMPLETION_KEY => $step_data[ self::ABSOLUTE_COMPLETION_KEY ] ?? null,
-		];
+		);
 
 		foreach ( $allowed_properties as $key => $value ) {
 			if ( null !== $value ) {
@@ -126,8 +126,8 @@ abstract class Step_Base {
 	 *
 	 * @return void
 	 */
-	public function mark_as_completed() : void {
-		$this->update_step( [ self::MARKED_AS_COMPLETED_KEY => true ] );
+	public function mark_as_completed(): void {
+		$this->update_step( array( self::MARKED_AS_COMPLETED_KEY => true ) );
 	}
 
 	/**
@@ -135,8 +135,8 @@ abstract class Step_Base {
 	 *
 	 * @return void
 	 */
-	public function unmark_as_completed() : void {
-		$this->update_step( [ self::MARKED_AS_COMPLETED_KEY => false ] );
+	public function unmark_as_completed(): void {
+		$this->update_step( array( self::MARKED_AS_COMPLETED_KEY => false ) );
 	}
 
 	/**
@@ -144,14 +144,14 @@ abstract class Step_Base {
 	 *
 	 * @return void
 	 */
-	public function maybe_immutably_mark_as_completed() : void {
+	public function maybe_immutably_mark_as_completed(): void {
 		$is_immutable_completed = $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
 
 		if ( ! $is_immutable_completed && $this->get_is_completion_immutable() && $this->is_absolute_completed() ) {
-			$this->update_step( [
+			$this->update_step( array(
 				self::MARKED_AS_COMPLETED_KEY => false,
 				self::IMMUTABLE_COMPLETION_KEY => true,
-			] );
+			) );
 		}
 	}
 
@@ -160,7 +160,7 @@ abstract class Step_Base {
 	 *
 	 * @return bool
 	 */
-	public function is_marked_as_completed() : bool {
+	public function is_marked_as_completed(): bool {
 		return $this->user_progress[ self::MARKED_AS_COMPLETED_KEY ];
 	}
 
@@ -169,7 +169,7 @@ abstract class Step_Base {
 	 *
 	 * @return bool
 	 */
-	public function is_immutable_completed() : bool {
+	public function is_immutable_completed(): bool {
 		return $this->get_is_completion_immutable() && $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
 	}
 
@@ -178,11 +178,11 @@ abstract class Step_Base {
 	 *
 	 * @return array
 	 */
-	public function get_step_initial_progress() : array {
-		$initial_progress = [
+	public function get_step_initial_progress(): array {
+		$initial_progress = array(
 			self::MARKED_AS_COMPLETED_KEY => false,
 			self::IMMUTABLE_COMPLETION_KEY => false,
-		];
+		);
 
 		$this->module->set_step_progress( $this->get_id(), $initial_progress );
 
@@ -192,7 +192,7 @@ abstract class Step_Base {
 	/**
 	 * @return ?array
 	 */
-	public function get_promotion_data() : ?array {
+	public function get_promotion_data(): ?array {
 		return $this->promotion_data;
 	}
 
@@ -201,7 +201,7 @@ abstract class Step_Base {
 	 *
 	 * @return void
 	 */
-	private function set_step_progress() : void {
+	private function set_step_progress(): void {
 		$this->module->set_step_progress( $this->get_id(), $this->user_progress );
 	}
 }

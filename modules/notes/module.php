@@ -23,7 +23,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-notes',
 			$this->get_js_assets_url( 'notes' ),
-			[ 'elementor-editor' ],
+			array( 'elementor-editor' ),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -40,7 +40,7 @@ class Module extends BaseModule {
 		wp_enqueue_style(
 			'elementor-notes',
 			$this->get_css_assets_url( 'modules/notes/editor' ),
-			[ 'elementor-editor' ],
+			array( 'elementor-editor' ),
 			ELEMENTOR_VERSION
 		);
 	}
@@ -60,7 +60,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
+		add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'enqueue_styles' ) );
 	}
 }

@@ -12,14 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Union_Prop_Type implements Prop_Type {
 	const KIND = 'union';
 
-	use Concerns\Has_Meta,
-		Concerns\Has_Settings,
-		Concerns\Has_Required_Setting;
+	use Concerns\Has_Meta;
+	use Concerns\Has_Settings;
+	use Concerns\Has_Required_Setting;
 
 	protected $default = null;
 
 	/** @var Array<string, Transformable_Prop_Type> */
-	protected array $prop_types = [];
+	protected array $prop_types = array();
 
 	public static function make(): self {
 		return new static();
@@ -68,10 +68,10 @@ class Union_Prop_Type implements Prop_Type {
 	public function default( $value, ?string $type = null ): self {
 		$this->default = ! $type ?
 			$value :
-			[
+			array(
 				'$$type' => $type,
 				'value' => $value,
-			];
+			);
 
 		return $this;
 	}
@@ -97,12 +97,12 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	public function jsonSerialize(): array {
-		return [
+		return array(
 			'kind' => static::KIND,
 			'default' => $this->get_default(),
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),
 			'prop_types' => $this->get_prop_types(),
-		];
+		);
 	}
 }

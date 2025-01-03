@@ -26,7 +26,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 		$style_depends = Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' )
 			? parent::get_style_depends()
-			: [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+			: array( 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' );
 
 		$style_depends[] = 'widget-link-in-bio-base';
 
@@ -38,124 +38,124 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 	}
 
 	public static function get_configuration() {
-		return [
-			'content' => [
-				'identity_section' => [
-					'identity_image_style' => [
+		return array(
+			'content' => array(
+				'identity_section' => array(
+					'identity_image_style' => array(
 						'default' => 'profile',
-					],
+					),
 					'has_heading_text' => false,
 					'has_profile_image_controls' => false,
-				],
-				'bio_section' => [
-					'title' => [
+				),
+				'bio_section' => array(
+					'title' => array(
 						'default' => esc_html__( 'Kitchen Chronicles', 'elementor' ),
-					],
-					'description' => [
+					),
+					'description' => array(
 						'default' => esc_html__( 'Join me on my journey to a healthier lifestyle', 'elementor' ),
-					],
+					),
 					'has_about_field' => false,
-				],
-				'icon_section' => [
+				),
+				'icon_section' => array(
 					'has_text' => false,
-					'platform' => [
-						'group-1' => [
+					'platform' => array(
+						'group-1' => array(
 							Social_Network_Provider::EMAIL,
 							Social_Network_Provider::TELEPHONE,
 							Social_Network_Provider::MESSENGER,
 							Social_Network_Provider::WAZE,
 							Social_Network_Provider::WHATSAPP,
-						],
+						),
 						'limit' => 5,
-					],
-					'default' => [
-						[
+					),
+					'default' => array(
+						array(
 							'icon_platform' => Social_Network_Provider::FACEBOOK,
-						],
-						[
+						),
+						array(
 							'icon_platform' => Social_Network_Provider::INSTAGRAM,
-						],
-						[
+						),
+						array(
 							'icon_platform' => Social_Network_Provider::TIKTOK,
-						],
-					],
-				],
-				'cta_section' => [
+						),
+					),
+				),
+				'cta_section' => array(
 					'cta_max' => 0,
 					'cta_has_image' => false,
-					'cta_repeater_defaults' => [
-						[
+					'cta_repeater_defaults' => array(
+						array(
 							'cta_link_text' => esc_html__( 'Get Healthy', 'elementor' ),
-						],
-						[
+						),
+						array(
 							'cta_link_text' => esc_html__( 'Top 10 Recipes', 'elementor' ),
-						],
-						[
+						),
+						array(
 							'cta_link_text' => esc_html__( 'Meal Prep', 'elementor' ),
-						],
-						[
+						),
+						array(
 							'cta_link_text' => esc_html__( 'Healthy Living Resources', 'elementor' ),
-						],
-					],
-				],
+						),
+					),
+				),
 				'image_links_section' => false,
-			],
-			'style' => [
-				'identity_section' => [
+			),
+			'style' => array(
+				'identity_section' => array(
 					'has_profile_image_shape' => true,
 					'profile_image_max' => 115,
 					'cover_image_max' => 1000,
-				],
-				'cta_section' => [
+				),
+				'cta_section' => array(
 					'has_dividers' => false,
 					'has_image_border' => false,
-					'has_link_type' => [
+					'has_link_type' => array(
 						'default' => 'button',
-					],
-					'has_corners' => [
+					),
+					'has_corners' => array(
 						'default' => 'rounded',
-						'options' => [
+						'options' => array(
 							'round' => esc_html__( 'Round', 'elementor' ),
 							'rounded' => esc_html__( 'Rounded', 'elementor' ),
 							'sharp' => esc_html__( 'Sharp', 'elementor' ),
-						],
-					],
+						),
+					),
 					'has_padding' => true,
 					'has_background_control' => true,
 					'has_cta_control_text' => false,
-					'has_border_control' => [
+					'has_border_control' => array(
 						'prefix' => 'cta_links',
-						'show_border_args' => [
-							'condition' => [
+						'show_border_args' => array(
+							'condition' => array(
 								'cta_links_type' => 'button',
-							],
-						],
-						'border_width_args' => [
-							'condition' => [
+							),
+						),
+						'border_width_args' => array(
+							'condition' => array(
 								'cta_links_type' => 'button',
-							],
-							'selectors' => [
+							),
+							'selectors' => array(
 								'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-width: {{SIZE}}{{UNIT}}',
-							],
-						],
-						'border_color_args' => [
-							'condition' => [
+							),
+						),
+						'border_color_args' => array(
+							'condition' => array(
 								'cta_links_type' => 'button',
-							],
-							'selectors' => [
+							),
+							'selectors' => array(
 								'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-border-color: {{VALUE}}',
-							],
-						],
-					],
-				],
-				'border_section' => [
+							),
+						),
+					),
+				),
+				'border_section' => array(
 					'field_options' => false,
 					'overlay_field_options' => false,
-				],
+				),
 				'image_links_section' => false,
-			],
+			),
 
-		];
+		);
 	}
 
 	public function get_description_position() {
@@ -167,15 +167,15 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 	}
 
 	public function get_categories(): array {
-		return [ 'link-in-bio' ];
+		return array( 'link-in-bio' );
 	}
 
 	public function get_keywords(): array {
-		return [ 'buttons', 'bio', 'widget', 'link in bio' ];
+		return array( 'buttons', 'bio', 'widget', 'link in bio' );
 	}
 
 	public function get_image_position_options(): array {
-		return [
+		return array(
 			'' => esc_html__( 'Default', 'elementor' ),
 			'center center' => esc_html__( 'Center Center', 'elementor' ),
 			'center left' => esc_html__( 'Center Left', 'elementor' ),
@@ -186,7 +186,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 			'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
 			'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
 			'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
-		];
+		);
 	}
 
 	protected function register_controls(): void {
@@ -211,33 +211,33 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 		$this->start_controls_section(
 			'image_links_section',
-			[
+			array(
 				'label' => esc_html__( 'Image Links', 'elementor' ),
 				'tab' => Controls_Manager::TAB_CONTENT,
-			]
+			)
 		);
 
 		if ( ! empty( $config['content']['image_links_section']['images_max'] ) ) {
 			$this->add_control(
 				'image_links_alert',
-				[
+				array(
 					'type' => Controls_Manager::ALERT,
 					'alert_type' => 'info',
 					'content' => sprintf(
 						__( 'Add up to <b>%d</b> Images', 'elementor' ),
 						$config['content']['image_links_section']['images_max']
 					),
-				]
+				)
 			);
 		}
 
 		$this->add_icons_per_row_control(
 			'image_links_per_row',
-			[
+			array(
 				'1' => '1',
 				'2' => '2',
 				'3' => '3',
-			],
+			),
 			'2',
 			esc_html__( 'Images Per Row', 'elementor' ),
 			'--e-link-in-bio-image-links-columns',
@@ -247,43 +247,43 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 		$repeater->add_control(
 			'image_links_image',
-			[
+			array(
 				'label' => esc_html__( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'label_block' => true,
-				'default' => [
+				'default' => array(
 					'url' => Utils::get_placeholder_image_src(),
-				],
-			]
+				),
+			)
 		);
 
 		$repeater->add_control(
 			'image_links_url',
-			[
+			array(
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'autocomplete' => true,
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
-				'default' => [
+				'default' => array(
 					'is_external' => true,
-				],
-			],
+				),
+			),
 		);
 
 		$this->add_control(
 			'image_links',
-			[
+			array(
 				'type' => Controls_Manager::REPEATER,
 				'max_items' => $config['content']['image_links_section']['images_max'] ?? 0,
 				'fields' => $repeater->get_controls(),
 				'prevent_empty' => true,
 				'button_text' => esc_html__( 'Add item', 'elementor' ),
-				'default' => $config['content']['image_links_section']['images_repeater_defaults'] ?? [],
-			]
+				'default' => $config['content']['image_links_section']['images_repeater_defaults'] ?? array(),
+			)
 		);
 
 		$this->end_controls_section();
@@ -298,23 +298,23 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 		$this->start_controls_section(
 			'cta_section',
-			[
+			array(
 				'label' => esc_html__( 'CTA Link Buttons', 'elementor' ),
 				'tab' => Controls_Manager::TAB_CONTENT,
-			]
+			)
 		);
 
 		if ( ! empty( $config['content']['cta_section']['cta_max'] ) ) {
 			$this->add_control(
 				'cta_section_alert',
-				[
+				array(
 					'type' => Controls_Manager::ALERT,
 					'alert_type' => 'info',
 					'content' => sprintf(
 						__( 'Add up to <b>%d</b> CTA links', 'elementor' ),
 						$config['content']['cta_section']['cta_max']
 					),
-				]
+				)
 			);
 		}
 
@@ -322,227 +322,227 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 		$repeater->add_control(
 			'cta_link_text',
-			[
+			array(
 				'label' => esc_html__( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'label_block' => true,
 				'default' => esc_html__( 'CTA link', 'elementor' ),
 				'placeholder' => esc_html__( 'Enter link text', 'elementor' ),
-			],
+			),
 		);
 
 		if ( $config['content']['cta_section']['cta_has_image'] ) {
 			$repeater->add_control(
 				'cta_link_image',
-				[
+				array(
 					'label' => esc_html__( 'Choose Image', 'elementor' ),
 					'type' => Controls_Manager::MEDIA,
 					'label_block' => true,
-					'default' => [
+					'default' => array(
 						'url' => Utils::get_placeholder_image_src(),
-					],
-				]
+					),
+				)
 			);
 		}
 
 		$repeater->add_control(
 			'cta_link_type',
-			[
+			array(
 				'label' => esc_html__( 'Link Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'groups' => [
+				'groups' => array(
 
-					[
+					array(
 						'label' => '',
 						'options' => Social_Network_Provider::get_social_networks_text(
-							[
+							array(
 								Social_Network_Provider::URL,
 								Social_Network_Provider::FILE_DOWNLOAD,
-							]
+							)
 						),
-					],
-					[
+					),
+					array(
 						'label' => '   --',
 						'options' => Social_Network_Provider::get_social_networks_text(
-							[
+							array(
 								Social_Network_Provider::EMAIL,
 								Social_Network_Provider::TELEPHONE,
 								Social_Network_Provider::MESSENGER,
 								Social_Network_Provider::WAZE,
 								Social_Network_Provider::WHATSAPP,
-							]
+							)
 						),
-					],
-				],
+					),
+				),
 				'default' => Social_Network_Provider::URL,
-			],
+			),
 		);
 
 		$repeater->add_control(
 			'cta_link_file',
-			[
+			array(
 				'label' => esc_html__( 'Choose File', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'label_block' => true,
-				'media_type' => [ 'application/pdf' ],
-				'condition' => [
-					'cta_link_type' => [
+				'media_type' => array( 'application/pdf' ),
+				'condition' => array(
+					'cta_link_type' => array(
 						Social_Network_Provider::FILE_DOWNLOAD,
-					],
-				],
-				'ai' => [
+					),
+				),
+				'ai' => array(
 					'active' => false,
-				],
-			],
+				),
+			),
 		);
 
 		$repeater->add_control(
 			'cta_link_url',
-			[
+			array(
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'autocomplete' => true,
 				'label_block' => true,
-				'condition' => [
-					'cta_link_type' => [
+				'condition' => array(
+					'cta_link_type' => array(
 						Social_Network_Provider::URL,
-					],
-				],
+					),
+				),
 				'placeholder' => esc_html__( 'Enter your link', 'elementor' ),
-				'default' => [
+				'default' => array(
 					'is_external' => true,
-				],
-			],
+				),
+			),
 		);
 
 		$repeater->add_control(
 			'cta_link_mail',
-			[
+			array(
 				'label' => esc_html__( 'Mail', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'label_block' => true,
-				'condition' => [
-					'cta_link_type' => [
+				'condition' => array(
+					'cta_link_type' => array(
 						Social_Network_Provider::EMAIL,
-					],
-				],
+					),
+				),
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
-			],
+			),
 		);
 
 		$repeater->add_control(
 			'cta_link_mail_subject',
-			[
+			array(
 				'label' => esc_html__( 'Subject', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'label_block' => true,
-				'condition' => [
-					'cta_link_type' => [
+				'condition' => array(
+					'cta_link_type' => array(
 						Social_Network_Provider::EMAIL,
-					],
-				],
+					),
+				),
 				'placeholder' => esc_html__( 'Subject', 'elementor' ),
-			],
+			),
 		);
 
 		$repeater->add_control(
 			'cta_link_mail_body',
-			[
+			array(
 				'label' => esc_html__( 'Message', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'label_block' => true,
-				'condition' => [
-					'cta_link_type' => [
+				'condition' => array(
+					'cta_link_type' => array(
 						Social_Network_Provider::EMAIL,
-					],
-				],
+					),
+				),
 				'placeholder' => esc_html__( 'Message', 'elementor' ),
-			],
+			),
 		);
 
 		$repeater->add_control(
 			'cta_link_number',
-			[
+			array(
 				'label' => esc_html__( 'Number', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'label_block' => true,
-				'condition' => [
-					'cta_link_type' => [
+				'condition' => array(
+					'cta_link_type' => array(
 						Social_Network_Provider::TELEPHONE,
 						Social_Network_Provider::WHATSAPP,
-					],
-				],
+					),
+				),
 				'placeholder' => esc_html__( 'Enter your number', 'elementor' ),
-			],
+			),
 		);
 
 		$repeater->add_control(
 			'cta_link_location',
-			[
+			array(
 				'label' => esc_html__( 'Location', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
-				'default' => [
+				),
+				'default' => array(
 					'is_external' => true,
-				],
+				),
 				'label_block' => true,
-				'condition' => [
-					'cta_link_type' => [
+				'condition' => array(
+					'cta_link_type' => array(
 						Social_Network_Provider::WAZE,
-					],
-				],
+					),
+				),
 				'placeholder' => esc_html__( 'Paste Waze link', 'elementor' ),
-			],
+			),
 		);
 
 		$repeater->add_control(
 			'cta_link_username',
-			[
+			array(
 				'label' => esc_html__( 'Username', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'label_block' => true,
-				'condition' => [
-					'cta_link_type' => [
+				'condition' => array(
+					'cta_link_type' => array(
 						Social_Network_Provider::MESSENGER,
-					],
-				],
+					),
+				),
 				'placeholder' => esc_html__( 'Enter your username', 'elementor' ),
-			],
+			),
 		);
 
 		$this->add_control(
 			'cta_link',
-			[
+			array(
 				'type' => Controls_Manager::REPEATER,
 				'max_items' => $config['content']['cta_section']['cta_max'] ?? 0,
 				'fields' => $repeater->get_controls(),
 				'title_field' => '{{{ cta_link_text }}}',
 				'button_text' => esc_html__( 'Add CTA Link', 'elementor' ),
 				'default' => $config['content']['cta_section']['cta_repeater_defaults'],
-			]
+			)
 		);
 
 		$this->end_controls_section();
@@ -553,23 +553,23 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 
 		$this->start_controls_section(
 			'icons_section',
-			[
+			array(
 				'label' => esc_html__( 'Icons', 'elementor' ),
 				'tab' => Controls_Manager::TAB_CONTENT,
-			]
+			)
 		);
 
 		if ( $config['content']['icon_section']['platform']['limit'] ) {
 			$this->add_control(
 				'custom_panel_alert',
-				[
+				array(
 					'type' => Controls_Manager::ALERT,
 					'alert_type' => 'info',
 					'content' => sprintf(
 						__( 'Add up to <b>%d</b> icons', 'elementor' ),
 						$config['content']['icon_section']['platform']['limit']
 					),
-				]
+				)
 			);
 		}
 
@@ -578,34 +578,34 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 		if ( $config['content']['icon_section']['has_text'] ) {
 			$repeater->add_control(
 				'icon_text',
-				[
+				array(
 					'label' => esc_html__( 'Text', 'elementor' ),
 					'type' => Controls_Manager::TEXT,
-					'dynamic' => [
+					'dynamic' => array(
 						'active' => true,
-					],
+					),
 					'placeholder' => esc_html__( 'Enter icon text', 'elementor' ),
-				],
+				),
 			);
 		}
 
 		$repeater->add_control(
 			'icon_platform',
-			[
+			array(
 				'label' => esc_html__( 'Platform', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'groups' => [
+				'groups' => array(
 
-					[
+					array(
 						'label' => '',
 						'options' => Social_Network_Provider::get_social_networks_text(
 							$config['content']['icon_section']['platform']['group-1']
 						),
-					],
-					[
+					),
+					array(
 						'label' => '   --',
 						'options' => Social_Network_Provider::get_social_networks_text(
-							[
+							array(
 								Social_Network_Provider::FACEBOOK,
 								Social_Network_Provider::INSTAGRAM,
 								Social_Network_Provider::LINKEDIN,
@@ -613,43 +613,43 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 								Social_Network_Provider::TIKTOK,
 								Social_Network_Provider::TWITTER,
 								Social_Network_Provider::YOUTUBE,
-							]
+							)
 						),
-					],
-					[
+					),
+					array(
 						'label' => '   --',
 						'options' => Social_Network_Provider::get_social_networks_text(
-							[
+							array(
 								Social_Network_Provider::APPLEMUSIC,
 								Social_Network_Provider::BEHANCE,
 								Social_Network_Provider::DRIBBBLE,
 								Social_Network_Provider::SPOTIFY,
 								Social_Network_Provider::SOUNDCLOUD,
 								Social_Network_Provider::VIMEO,
-							]
+							)
 						),
-					],
-				],
+					),
+				),
 				'default' => Social_Network_Provider::FACEBOOK,
-			],
+			),
 		);
 
 		$repeater->add_control(
 			'icon_url',
-			[
+			array(
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'autocomplete' => true,
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Enter your link', 'elementor' ),
-				'default' => [
+				'default' => array(
 					'is_external' => true,
-				],
-				'condition' => [
-					'icon_platform' => [
+				),
+				'condition' => array(
+					'icon_platform' => array(
 						Social_Network_Provider::VIMEO,
 						Social_Network_Provider::FACEBOOK,
 						Social_Network_Provider::SOUNDCLOUD,
@@ -666,129 +666,129 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 						Social_Network_Provider::SPOTIFY,
 						Social_Network_Provider::SOUNDCLOUD,
 						Social_Network_Provider::URL,
-					],
-				],
-			],
+					),
+				),
+			),
 		);
 
 		$repeater->add_control(
 			'icon_mail',
-			[
+			array(
 				'label' => esc_html__( 'Email', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your email', 'elementor' ),
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'label_block' => true,
-				'condition' => [
-					'icon_platform' => [
+				'condition' => array(
+					'icon_platform' => array(
 						Social_Network_Provider::EMAIL,
-					],
-				],
-				'ai' => [
+					),
+				),
+				'ai' => array(
 					'active' => false,
-				],
-			]
+				),
+			)
 		);
 
 		$repeater->add_control(
 			'icon_mail_subject',
-			[
+			array(
 				'label' => esc_html__( 'Subject', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Subject', 'elementor' ),
 				'label_block' => true,
-				'condition' => [
-					'icon_platform' => [
+				'condition' => array(
+					'icon_platform' => array(
 						Social_Network_Provider::EMAIL,
-					],
-				],
-			]
+					),
+				),
+			)
 		);
 
 		$repeater->add_control(
 			'icon_mail_body',
-			[
+			array(
 				'label' => esc_html__( 'Message', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => esc_html__( 'Message', 'elementor' ),
 				'label_block' => true,
-				'condition' => [
-					'icon_platform' => [
+				'condition' => array(
+					'icon_platform' => array(
 						Social_Network_Provider::EMAIL,
-					],
-				],
-			]
+					),
+				),
+			)
 		);
 
 		$repeater->add_control(
 			'icon_number',
-			[
+			array(
 				'label' => esc_html__( 'Number', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'label_block' => true,
 				'placeholder' => esc_html__( '+', 'elementor' ),
-				'condition' => [
-					'icon_platform' => [
+				'condition' => array(
+					'icon_platform' => array(
 						Social_Network_Provider::TELEPHONE,
 						Social_Network_Provider::WHATSAPP,
-					],
-				],
-				'ai' => [
+					),
+				),
+				'ai' => array(
 					'active' => false,
-				],
-			],
+				),
+			),
 		);
 
 		$repeater->add_control(
 			'icon_location',
-			[
+			array(
 				'label' => esc_html__( 'Location', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
-				'default' => [
+				),
+				'default' => array(
 					'is_external' => true,
-				],
+				),
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Paste Waze link', 'elementor' ),
-				'condition' => [
-					'icon_platform' => [
+				'condition' => array(
+					'icon_platform' => array(
 						Social_Network_Provider::WAZE,
-					],
-				],
-				'ai' => [
+					),
+				),
+				'ai' => array(
 					'active' => false,
-				],
-			],
+				),
+			),
 		);
 
 		$repeater->add_control(
 			'icon_username',
-			[
+			array(
 				'label' => esc_html__( 'Username', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'label_block' => true,
 				'placeholder' => esc_html__( 'Enter your username', 'elementor' ),
-				'condition' => [
-					'icon_platform' => [
+				'condition' => array(
+					'icon_platform' => array(
 						Social_Network_Provider::MESSENGER,
-					],
-				],
-			],
+					),
+				),
+			),
 		);
 
 		$this->add_control(
 			'icon',
-			[
+			array(
 				'max_items' => $config['content']['icon_section']['platform']['limit'],
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_controls(),
@@ -796,7 +796,7 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 				'prevent_empty' => true,
 				'button_text' => esc_html__( 'Add Icon', 'elementor' ),
 				'default' => $config['content']['icon_section']['default'],
-			]
+			)
 		);
 
 		$this->end_controls_section();
@@ -834,38 +834,38 @@ JS;
 		$config = static::get_configuration();
 		$this->start_controls_section(
 			'bio_section',
-			[
+			array(
 				'label' => esc_html__( 'Bio', 'elementor' ),
 				'tab' => Controls_Manager::TAB_CONTENT,
-			]
+			)
 		);
 
 		$this->add_control(
 			'bio_heading',
-			[
+			array(
 				'label' => esc_html__( 'Heading', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'placeholder' => esc_html__( 'Heading', 'elementor' ),
 				'default' => esc_html__( 'Sara Parker', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_html_tag_control( 'bio_heading_tag', 'h2' );
 
 		$this->add_control(
 			'bio_title',
-			[
+			array(
 				'label' => esc_html__( 'Title or Tagline', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'placeholder' => esc_html__( 'Title', 'elementor' ),
 				'default' => $config['content']['bio_section']['title']['default'],
-			]
+			)
 		);
 
 		$this->add_html_tag_control( 'bio_title_tag', 'h3' );
@@ -873,30 +873,30 @@ JS;
 		if ( $config['content']['bio_section']['has_about_field'] ) {
 			$this->add_control(
 				'bio_about',
-				[
+				array(
 					'label' => esc_html__( 'About Heading', 'elementor' ),
 					'type' => Controls_Manager::TEXTAREA,
-					'dynamic' => [
+					'dynamic' => array(
 						'active' => true,
-					],
+					),
 					'placeholder' => esc_html__( 'About', 'elementor' ),
 					'default' => esc_html__( 'About Me', 'elementor' ),
-				]
+				)
 			);
 			$this->add_html_tag_control( 'bio_about_tag', 'h3' );
 		}
 
 		$this->add_control(
 			'bio_description',
-			[
+			array(
 				'label' => esc_html__( 'Description', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'placeholder' => esc_html__( 'Description', 'elementor' ),
 				'default' => $config['content']['bio_section']['description']['default'],
-			]
+			)
 		);
 
 		$this->end_controls_section();
@@ -907,104 +907,104 @@ JS;
 
 		$this->start_controls_section(
 			'identity_section',
-			[
+			array(
 				'label' => esc_html__( 'Identity', 'elementor' ),
 				'tab' => Controls_Manager::TAB_CONTENT,
-			]
+			)
 		);
 
 		if ( $config['content']['identity_section']['has_profile_image_controls'] ) {
 			$this->add_control(
 				'identity_heading_cover',
-				[
+				array(
 					'label' => esc_html__( 'Cover', 'elementor' ),
 					'type' => Controls_Manager::HEADING,
 					'separator' => 'before',
-				]
+				)
 			);
 
 			$this->add_control(
 				'identity_image_cover',
-				[
+				array(
 					'label' => esc_html__( 'Choose Image', 'elementor' ),
 					'type' => Controls_Manager::MEDIA,
-					'default' => [
+					'default' => array(
 						'url' => Utils::get_placeholder_image_src(),
-					],
-				]
+					),
+				)
 			);
 
 			$this->add_responsive_control(
 				'identity_image_cover_position',
-				[
+				array(
 					'label' => esc_html__( 'Position', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
 					'desktop_default' => 'center center',
 					'tablet_default' => 'center center',
 					'mobile_default' => 'center center',
 					'options' => $this->get_image_position_options(),
-					'selectors' => [
+					'selectors' => array(
 						'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-position: {{VALUE}}',
-					],
-					'condition' => [
+					),
+					'condition' => array(
 						'identity_image_cover[url]!' => '',
-					],
-				]
+					),
+				)
 			);
 		}
 
 		if ( $config['content']['identity_section']['has_heading_text'] ) {
 			$this->add_control(
 				'identity_heading',
-				[
+				array(
 					'label' => $config['content']['identity_section']['has_heading_text'],
 					'type' => Controls_Manager::HEADING,
-				]
+				)
 			);
 		}
 
 		if ( $config['content']['identity_section']['identity_image_style'] ) {
 			$this->add_control(
 				'identity_image_style',
-				[
+				array(
 					'label' => esc_html__( 'Image style', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
 					'default' => $config['content']['identity_section']['identity_image_style']['default'],
-					'options' => [
+					'options' => array(
 						'profile' => esc_html__( 'Profile', 'elementor' ),
 						'cover' => esc_html__( 'Cover', 'elementor' ),
-					],
-				]
+					),
+				)
 			);
 		}
 
 		$this->add_control(
 			'identity_image',
-			[
+			array(
 				'label' => esc_html__( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
-				'default' => [
+				'default' => array(
 					'url' => Utils::get_placeholder_image_src(),
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_responsive_control(
 			'identity_image_position',
-			[
+			array(
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'desktop_default' => 'center center',
 				'tablet_default' => 'center center',
 				'mobile_default' => 'center center',
 				'options' => $this->get_image_position_options(),
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-position: {{VALUE}}',
-				],
-				'condition' => [
+				),
+				'condition' => array(
 					'identity_image[url]!' => '',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
@@ -1019,32 +1019,32 @@ JS;
 
 		$this->start_controls_section(
 			'image_links_section_style',
-			[
+			array(
 				'label' => esc_html__( 'Image Links', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'image_links_height',
-			[
+			array(
 				'label' => esc_html__( 'Image Height', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px' ),
+				'range' => array(
+					'px' => array(
 						'min' => 0,
 						'max' => 300,
 						'step' => 1,
-					],
-				],
-				'default' => [
+					),
+				),
+				'default' => array(
 					'unit' => 'px',
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-image-links-height: {{SIZE}}{{UNIT}}',
-				],
-			]
+				),
+			)
 		);
 
 		if ( $config['style']['image_links_section']['has_border_control'] ) {
@@ -1068,76 +1068,76 @@ JS;
 
 		$this->start_controls_section(
 			'cta_links_section_style',
-			[
+			array(
 				'label' => esc_html__( 'CTA Link Buttons', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		if ( $config['style']['cta_section']['has_cta_control_text'] ) {
 			$this->add_control(
 				'cta_links_heading',
-				[
+				array(
 					'label' => $config['style']['cta_section']['has_cta_control_text'],
 					'type' => Controls_Manager::HEADING,
-				]
+				)
 			);
 		}
 
 		if ( $config['style']['cta_section']['has_link_type'] ) {
 			$this->add_control(
 				'cta_links_type',
-				[
+				array(
 					'label' => esc_html__( 'Type', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
 					'default' => $config['style']['cta_section']['has_link_type']['default'],
-					'options' => [
+					'options' => array(
 						'button' => esc_html__( 'Button', 'elementor' ),
 						'link' => esc_html__( 'Link', 'elementor' ),
-					],
-				]
+					),
+				)
 			);
 		}
 
 		$this->add_control(
 			'cta_links_text_color',
-			[
+			array(
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
 					'{{WRAPPER}} .e-link-in-bio__cta.is-type-link' => '--e-link-in-bio-ctas-text-color: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
-		$condition_if_has_links = [];
+		$condition_if_has_links = array();
 		if ( $config['style']['cta_section']['has_link_type'] ) {
-			$condition_if_has_links = [
+			$condition_if_has_links = array(
 				'cta_links_type' => 'button',
-			];
+			);
 		}
 
 		if ( $config['style']['cta_section']['has_background_control'] ) {
 			$this->add_control(
 				'cta_links_background_color',
-				[
+				array(
 					'label' => esc_html__( 'Background Color', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
 					'condition' => $condition_if_has_links,
-					'selectors' => [
+					'selectors' => array(
 						'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-background-color: {{VALUE}}',
-					],
-				]
+					),
+				)
 			);
 		}
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			[
+			array(
 				'name' => 'cta_links_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__cta',
-			]
+			)
 		);
 
 		if ( $config['style']['cta_section']['has_border_control'] ) {
@@ -1152,83 +1152,83 @@ JS;
 		if ( $config['style']['cta_section']['has_corners'] ) {
 			$this->add_control(
 				'cta_links_corners',
-				[
+				array(
 					'label' => esc_html__( 'Corners', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
 					'default' => $config['style']['cta_section']['has_corners']['default'],
 					'options' => $config['style']['cta_section']['has_corners']['options'],
 					'condition' => $condition_if_has_links,
-				]
+				)
 			);
 		}
 
 		if ( $config['style']['cta_section']['has_padding'] ) {
 			$this->add_control(
 				'cta_links_hr',
-				[
+				array(
 					'type' => Controls_Manager::DIVIDER,
-				]
+				)
 			);
 
 			$this->add_responsive_control(
 				'cta_links_padding',
-				[
+				array(
 					'label' => esc_html__( 'Padding', 'elementor' ),
 					'type' => Controls_Manager::DIMENSIONS,
-					'size_units' => [ 'px', '%', 'em', 'rem' ],
-					'default' => [
+					'size_units' => array( 'px', '%', 'em', 'rem' ),
+					'default' => array(
 						'unit' => 'px',
 						'isLinked' => false,
-					],
+					),
 					'condition' => $condition_if_has_links,
-					'selectors' => [
+					'selectors' => array(
 						'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-ctas-padding-block-end: {{BOTTOM}}{{UNIT}}; --e-link-in-bio-ctas-padding-block-start: {{TOP}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-end: {{RIGHT}}{{UNIT}}; --e-link-in-bio-ctas-padding-inline-start: {{LEFT}}{{UNIT}};',
-					],
-				]
+					),
+				)
 			);
 		}
 
 		if ( $config['style']['cta_section']['has_dividers'] ) {
 			$this->add_control(
 				'cta_links_hr',
-				[
+				array(
 					'type' => Controls_Manager::HEADING,
 					'label' => esc_html__( 'Dividers', 'elementor' ),
 					'separator' => 'before',
-				]
+				)
 			);
 
 			$this->add_control(
 				'cta_links_divider_color',
-				[
+				array(
 					'label' => esc_html__( 'Color', 'elementor' ),
 					'type' => Controls_Manager::COLOR,
-					'selectors' => [
+					'selectors' => array(
 						'{{WRAPPER}} .e-link-in-bio__cta' => 'border-bottom-color: {{VALUE}}',
-					],
-				]
+					),
+				)
 			);
 
 			$this->add_control(
 				'cta_links_divider_width',
-				[
+				array(
 					'label' => esc_html__( 'Weight', 'elementor' ) . ' (px)',
 					'type' => Controls_Manager::SLIDER,
-					'size_units' => [ 'px' ],
-					'range' => [
-						'px' => [
+					'size_units' => array( 'px' ),
+					'range' => array(
+						'px' => array(
 							'min' => 0,
 							'max' => 10,
 							'step' => 1,
-						],
-					],
-					'default' => [
+						),
+					),
+					'default' => array(
 						'unit' => 'px',
-					],
-					'selectors' => [
+					),
+					'selectors' => array(
 						'{{WRAPPER}} .e-link-in-bio__cta' => 'border-bottom-width: {{SIZE}}{{UNIT}}',
-					],
-				]
+					),
+				)
 			);
 		}
 
@@ -1240,24 +1240,24 @@ JS;
 
 		$this->start_controls_section(
 			'identity_section_style',
-			[
+			array(
 				'label' => esc_html__( 'Identity', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
-		$condition = [];
+		$condition = array();
 		if ( $config['content']['identity_section']['identity_image_style'] ) {
-			$condition = [
+			$condition = array(
 				'identity_image_style' => 'profile',
-			];
+			);
 		}
 
 		$this->add_identity_image_profile_controls( $condition );
 
-		$condition = [
+		$condition = array(
 			'identity_image_style' => 'cover',
-		];
+		);
 
 		$this->add_identity_image_cover_control( $condition );
 
@@ -1280,94 +1280,94 @@ JS;
 	protected function add_style_bio_controls(): void {
 		$this->start_controls_section(
 			'bio_section_style',
-			[
+			array(
 				'label' => esc_html__( 'Bio', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->add_control(
 			'bio_heading_heading',
-			[
+			array(
 				'label' => esc_html__( 'Heading', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_control(
 			'bio_heading_text_color',
-			[
+			array(
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-heading-color: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			[
+			array(
 				'name' => 'bio_heading_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__heading',
-			]
+			)
 		);
 
 		$this->add_control(
 			'bio_title_heading',
-			[
+			array(
 				'label' => esc_html__( 'Title or Tagline', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_control(
 			'bio_title_text_color',
-			[
+			array(
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-title-color: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			[
+			array(
 				'name' => 'bio_title_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__title',
-			]
+			)
 		);
 
 		$this->add_control(
 			'bio_description_heading',
-			[
+			array(
 				'label' => esc_html__( 'Description', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_control(
 			'bio_description_text_color',
-			[
+			array(
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-description-color: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			[
+			array(
 				'name' => 'bio_description_typography',
 				'selector' => '{{WRAPPER}} .e-link-in-bio__description',
-			]
+			)
 		);
 
 		$this->end_controls_section();
@@ -1377,35 +1377,35 @@ JS;
 
 		$this->start_controls_section(
 			'icons_section_style',
-			[
+			array(
 				'label' => esc_html__( 'Icons', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->add_control(
 			'icons_color',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-icon-color: {{VALUE}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'icons_size',
-			[
+			array(
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'small',
-				'options' => [
+				'options' => array(
 					'small' => esc_html__( 'Small', 'elementor' ),
 					'medium' => esc_html__( 'Medium', 'elementor' ),
 					'large' => esc_html__( 'Large', 'elementor' ),
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
@@ -1415,17 +1415,17 @@ JS;
 		$config = static::get_configuration();
 
 		// Defaults for background image and overlay
-		$bg_section_image_field_option_defaults = [
-			'background' => [
+		$bg_section_image_field_option_defaults = array(
+			'background' => array(
 				'default' => 'classic',
-			],
-			'position' => [
+			),
+			'position' => array(
 				'default' => 'center center',
-			],
-			'size' => [
+			),
+			'size' => array(
 				'default' => 'cover',
-			],
-		];
+			),
+		);
 
 		// Background image
 		$bg_image_field_options = $bg_section_image_field_option_defaults;
@@ -1449,191 +1449,191 @@ JS;
 
 		$this->start_controls_section(
 			'background_border_section_style',
-			[
+			array(
 				'label' => esc_html__( 'Box', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->add_control(
 			'background_border_background',
-			[
+			array(
 				'label' => esc_html__( 'Background', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
-			[
+			array(
 				'name' => 'background_border_background_group',
-				'types' => [ 'classic', 'gradient' ],
+				'types' => array( 'classic', 'gradient' ),
 				'selector' => '{{WRAPPER}} .e-link-in-bio__bg',
 				'fields_options' => $bg_image_field_options,
-			]
+			)
 		);
 
 		$this->add_control(
 			'background_border_background_overlay',
-			[
+			array(
 				'label' => esc_html__( 'Background Overlay', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
-			[
+			array(
 				'name' => 'background_border_background_overlay_group',
-				'types' => [ 'classic', 'gradient' ],
+				'types' => array( 'classic', 'gradient' ),
 				'selector' => '{{WRAPPER}} .e-link-in-bio__bg-overlay',
 				'fields_options' => $bg_overlay_image_field_options,
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'background_overlay_opacity',
-			[
+			array(
 				'label' => esc_html__( 'Opacity', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'%' => [
+				'range' => array(
+					'%' => array(
 						'max' => 1,
 						'min' => 0.10,
 						'step' => 0.01,
-					],
-				],
-				'default' => [
+					),
+				),
+				'default' => array(
 					'unit' => '%',
 					'size' => 0.5,
-				],
-				'condition' => [
+				),
+				'condition' => array(
 					'background_border_background_overlay_group_background!' => '',
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--background-overlay-opacity: {{SIZE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_borders_control(
 			'background',
-			[
-				'selectors' => [],
+			array(
+				'selectors' => array(),
 				'separator' => 'before',
-			],
-			[
-				'selectors' => [
+			),
+			array(
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-width: {{SIZE}}{{UNIT}};',
-				],
-			],
-			[
-				'selectors' => [
+				),
+			),
+			array(
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-border-color: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'background_dimensions',
-			[
+			array(
 				'label' => esc_html__( 'Dimensions', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_control(
 			'advanced_layout_full_width_custom',
-			[
+			array(
 				'label' => esc_html__( 'Full Width', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_on' => esc_html__( 'Yes', 'elementor' ),
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'default' => '',
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'advanced_layout_width',
-			[
+			array(
 				'label' => esc_html__( 'Layout Width', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px' ),
+				'range' => array(
+					'px' => array(
 						'min' => 0,
 						'max' => 500,
 						'step' => 1,
-					],
-				],
-				'default' => [
+					),
+				),
+				'default' => array(
 					'unit' => 'px',
-				],
-				'condition' => [
+				),
+				'condition' => array(
 					'advanced_layout_full_width_custom' => '',
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-container-width: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_responsive_control(
 			'advanced_layout_content_width',
-			[
+			array(
 				'label' => esc_html__( 'Content Width', 'elementor' ) . ' (px)',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px' ),
+				'range' => array(
+					'px' => array(
 						'min' => 0,
 						'max' => 400,
 						'step' => 1,
-					],
-				],
-				'default' => [
+					),
+				),
+				'default' => array(
 					'unit' => 'px',
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-content-width: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'advanced_layout_full_screen_height',
-			[
+			array(
 				'label' => esc_html__( 'Full Screen Height', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_on' => esc_html__( 'Yes', 'elementor' ),
 				'label_off' => esc_html__( 'No', 'elementor' ),
 				'return_value' => 'yes',
 				'default' => '',
-				'condition' => [
+				'condition' => array(
 					'advanced_layout_full_width_custom' => 'yes',
-				],
-			],
+				),
+			),
 		);
 
 		$configured_breakpoints = $this->get_configured_breakpoints();
 
 		$this->add_control(
 			'advanced_layout_full_screen_height_controls',
-			[
+			array(
 				'label' => esc_html__( 'Apply Full Screen Height on', 'elementor' ),
 				'type' => Controls_Manager::SELECT2,
 				'label_block' => true,
 				'multiple' => true,
 				'options' => $configured_breakpoints['devices_options'],
 				'default' => $configured_breakpoints['active_devices'],
-				'condition' => [
+				'condition' => array(
 					'advanced_layout_full_width_custom' => 'yes',
 					'advanced_layout_full_screen_height' => 'yes',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
@@ -1644,108 +1644,108 @@ JS;
 
 		$this->add_responsive_control(
 			'identity_image_size',
-			[
+			array(
 				'label' => esc_html__( 'Image Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+				'range' => array(
+					'px' => array(
 						'min' => 0,
 						'max' => $config['style']['identity_section']['profile_image_max'] ?? 150,
-					],
-				],
-				'default' => [
+					),
+				),
+				'default' => array(
 					'unit' => 'px',
-				],
+				),
 				'condition' => $condition,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-width: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		if ( $config['style']['identity_section']['has_profile_image_shape'] ) {
 			$this->add_control(
 				'identity_image_shape',
-				[
+				array(
 					'label' => esc_html__( 'Image Shape', 'elementor' ),
 					'type' => Controls_Manager::SELECT,
 					'default' => 'circle',
-					'options' => [
+					'options' => array(
 						'circle' => esc_html__( 'Circle', 'elementor' ),
 						'square' => esc_html__( 'Square', 'elementor' ),
-					],
+					),
 					'condition' => $condition,
-				]
+				)
 			);
 		}
 
 		$this->add_borders_control(
 			'identity_image',
-			[
+			array(
 				'condition' => $condition,
-			],
-			[
+			),
+			array(
 				'condition' => $condition,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-width: {{SIZE}}{{UNIT}};',
-				],
-			],
-			[
+				),
+			),
+			array(
 				'condition' => $condition,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-profile-border-color: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 	}
 
 	protected function add_identity_image_cover_control( array $condition ): void {
 		$this->add_responsive_control(
 			'identity_image_height',
-			[
+			array(
 				'label' => esc_html__( 'Image Height', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px', '%', 'em', 'rem', 'custom' ),
+				'range' => array(
+					'px' => array(
 						'min' => 0,
 						'max' => $config['style']['identity_section']['cover_image_max'] ?? 1000,
 						'step' => 1,
-					],
-					'%' => [
+					),
+					'%' => array(
 						'min' => 0,
 						'max' => 100,
-					],
-				],
-				'default' => [
+					),
+				),
+				'default' => array(
 					'unit' => 'px',
-				],
+				),
 				'condition' => $condition,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-height: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_borders_control(
 			'identity_image_bottom',
-			[
+			array(
 				'condition' => $condition,
 				'label' => esc_html__( 'Bottom Border', 'elementor' ),
-			],
-			[
+			),
+			array(
 				'condition' => $condition,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-border-bottom-width: {{SIZE}}{{UNIT}};',
-				],
-			],
-			[
+				),
+			),
+			array(
 				'condition' => $condition,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}} .e-link-in-bio' => '--e-link-in-bio-identity-image-cover-border-color: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 	}
 }

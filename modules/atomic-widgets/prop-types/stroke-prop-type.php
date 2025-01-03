@@ -14,9 +14,9 @@ class Stroke_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
-		return [
+		return array(
 			'color' => Color_Prop_Type::make(),
 			'width' => Size_Prop_Type::make(),
-		];
+		);
 	}
 }
