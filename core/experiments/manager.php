@@ -396,6 +396,7 @@ class Manager extends Base_Object {
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'generator_tag' => true,
+			'default' => self::STATE_INACTIVE,
 		] );
 	}
 
