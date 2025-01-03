@@ -37,6 +37,8 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		( new SitePlannerConnect\Module() );
+
 		if ( is_admin() ) {
 			( new Preferences() )->register();
 			add_action( 'elementor/import-export/import-kit/runner/after-run', [ $this, 'handle_kit_install' ] );
