@@ -1563,12 +1563,14 @@ export default class EditorBase extends Marionette.Application {
 
 				if ( controlArgs.parent ) {
 					const parentControlArgs = newControlsStack[ controlArgs.parent ];
+					if(typeof parentControlArgs != 'undefined')
+					{
+						if ( ! parentControlArgs.inheritors ) {
+							parentControlArgs.inheritors = [];
+						}
 
-					if ( ! parentControlArgs.inheritors ) {
-						parentControlArgs.inheritors = [];
+						parentControlArgs.inheritors.push( responsiveControlName );
 					}
-
-					parentControlArgs.inheritors.push( responsiveControlName );
 				}
 
 				controlArgs.name = responsiveControlName;
