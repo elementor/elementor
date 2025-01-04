@@ -28,7 +28,7 @@ class Test_String_Prop_Type extends Elementor_Test_Base {
 		$prop_type = String_Prop_Type::make()->enum( [ 'a', 'b', 'c' ] );
 
 		// Act.
-		$result = $prop_type->validate( 'a' );
+		$result = $prop_type->validate( [ '$$type' => 'string', 'value' => 'a' ] );
 
 		// Assert.
 		$this->assertTrue( $result );
@@ -39,7 +39,7 @@ class Test_String_Prop_Type extends Elementor_Test_Base {
 		$prop_type = String_Prop_Type::make();
 
 		// Act.
-		$result = $prop_type->validate( 123 );
+		$result = $prop_type->validate( [ '$$type' => 'string', 'value' => 123 ] );
 
 		// Assert.
 		$this->assertFalse( $result );
@@ -51,7 +51,7 @@ class Test_String_Prop_Type extends Elementor_Test_Base {
 			->enum( [ 'a', 'b', 'c' ] );
 
 		// Act.
-		$result = $prop_type->validate( 'd' );
+		$result = $prop_type->validate( [ '$$type' => 'string', 'value' => 'd' ] );
 
 		// Assert.
 		$this->assertFalse( $result );
