@@ -18,6 +18,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
+		// test
 		return [
 			'size' => Number_Prop_Type::make()->required(),
 			'unit' => String_Prop_Type::make()->enum( static::SUPPORTED_UNITS )->required(),
