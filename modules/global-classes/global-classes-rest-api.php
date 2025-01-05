@@ -79,7 +79,7 @@ class Global_Classes_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
 				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->create( $request ) ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->post( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 			],
 		] );
@@ -164,10 +164,10 @@ class Global_Classes_REST_API {
 				->build();
 		}
 
-		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )
-			->without_id()
-			->without_type()
-			->parse( $value );
+		$value['type'] = 'class';
+		$value['id'] = $id;
+
+		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )->parse( $value );
 
 		if ( ! $is_valid ) {
 			return Error_Builder::make( 'invalid_data' )
@@ -184,7 +184,7 @@ class Global_Classes_REST_API {
 			->build();
 	}
 
-	private function create( \WP_REST_Request $request ) {
+	private function post( \WP_REST_Request $request ) {
 		$class = Collection::make( $request->get_params() )->only( [
 			'label',
 			'variants',

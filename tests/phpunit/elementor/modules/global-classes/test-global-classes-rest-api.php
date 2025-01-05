@@ -127,7 +127,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		Plugin::$instance->kits_manager->get_active_kit()->delete_meta( Global_Classes_Repository::META_KEY );
 	}
 
-	public function test_get__returns_all_global_classes() {
+	public function test_all__returns_all_global_classes() {
 		// Arrange
 		$this->act_as_admin();
 
@@ -143,7 +143,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
-	public function test_get__returns_empty_data_when_no_classes() {
+	public function test_all__returns_empty_data_when_no_classes() {
 		// Arrange
 		$this->act_as_admin();
 
@@ -157,7 +157,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
-	public function test_get__returns_error_when_unauthorized() {
+	public function test_all__returns_error_when_unauthorized() {
 		// Arrange
 		$this->act_as_subscriber();
 
@@ -171,7 +171,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
-	public function test_get_by_id__returns_single_class() {
+	public function test_get__returns_single_class() {
 		// Arrange
 		$this->act_as_admin();
 
@@ -186,7 +186,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
-	public function test_get_by_id__returns_error_when_class_not_found() {
+	public function test_get__returns_error_when_class_not_found() {
 		// Arrange
 		$this->act_as_admin();
 
@@ -198,7 +198,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 404, $response->get_status() );
 	}
 
-	public function test_get_by_id__returns_error_when_unauthorized() {
+	public function test_get__returns_error_when_unauthorized() {
 		// Arrange
 		$this->act_as_subscriber();
 
@@ -426,7 +426,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
-	public function test_put_order__updates_order() {
+	public function test_arrange__updates_order() {
 		// Arrange
 		$this->act_as_admin();
 
@@ -444,7 +444,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( [ 'g-4-124', 'g-4-123' ], $classes['order'] );
 	}
 
-	public function test_put_order__doesnt_throw_when_order_is_identical(){
+	public function test_arrange__doesnt_throw_when_order_is_identical(){
 		// Arrange
 		$this->act_as_admin();
 
@@ -459,7 +459,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
-	public function test_put_order__returns_error_when_class_not_exists_in_data(){
+	public function test_arrange__returns_error_when_class_not_exists_in_data(){
 		// Arrange
 		$this->act_as_admin();
 
@@ -472,7 +472,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 400, $response->get_status() );
 	}
 
-	public function test_put_order__returns_error_when_class_not_exists_in_updated_order(){
+	public function test_arrange__returns_error_when_class_not_exists_in_updated_order(){
 		// Arrange
 		$this->act_as_admin();
 
@@ -487,7 +487,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 400, $response->get_status() );
 	}
 
-	public function test_put_order__returns_error_when_order_does_not_match(){
+	public function test_arrange__returns_error_when_order_does_not_match(){
 		// Arrange
 		$this->act_as_admin();
 
@@ -502,7 +502,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 400, $response->get_status() );
 	}
 
-	public function test_put_order__returns_error_when_unauthorized(){
+	public function test_arrange__returns_error_when_unauthorized(){
 		// Arrange
 		$this->act_as_subscriber();
 

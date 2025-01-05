@@ -20,7 +20,7 @@ class Style_Parser {
 
 	private array $schema;
 	private array $errors_bag = [];
-	private $ignore = [];
+	private $should_validate_id = true;
 
 	public function __construct( array $schema ) {
 		$this->schema = $schema;
@@ -31,13 +31,7 @@ class Style_Parser {
 	}
 
 	public function without_id() {
-		$this->ignore[] = 'id';
-
-		return $this;
-	}
-
-	public function without_type() {
-		$this->ignore[] = 'type';
+		$this->should_validate_id = false;
 
 		return $this;
 	}
@@ -55,13 +49,11 @@ class Style_Parser {
 	public function validate( array $style ): array {
 		$validated_style = $style;
 
-		$should_ignore_id = in_array( 'id', $this->ignore, true );
-		if ( ! $should_ignore_id && ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) ) {
+		if ( $this->should_validate_id && ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) ) {
 			$this->errors_bag[] = 'id';
 		}
 
-		$should_ignore_type = in_array( 'type', $this->ignore, true );
-		if ( ! $should_ignore_type && ( ! isset( $style['type'] ) || ! in_array( $style['type'], self::VALID_TYPES, true ) ) ) {
+		if ( ! isset( $style['type'] ) || ! in_array( $style['type'], self::VALID_TYPES, true ) ) {
 			$this->errors_bag[] = 'type';
 		}
 
