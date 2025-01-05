@@ -4,11 +4,6 @@ class FloatingButtonsLibraryModule extends elementorModules.editor.utils.Module 
 	onElementorLoaded() {
 		this.component = $e.components.register( new Component( { manager: this } ) );
 		elementor.channels.editor.on( 'section:activated', this.hideAdvancedTab.bind( this ) );
-		window.addEventListener( 'core/modal/close', ( ) => {
-			if ( this.isFloatingButtonDocument() ) {
-				window.location.href = elementor.config.admin_floating_button_admin_url;
-			}
-		} );
 	}
 
 	hideAdvancedTab( sectionName, editor ) {
