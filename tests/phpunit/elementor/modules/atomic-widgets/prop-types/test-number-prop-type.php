@@ -15,7 +15,7 @@ class Test_Number_Prop_Type extends Elementor_Test_Base {
 		$prop_type = Number_Prop_Type::make();
 
 		// Act.
-		$result = $prop_type->validate( 1 );
+		$result = $prop_type->validate( [ '$$type' => 'number', 'value' => 1 ] );
 
 		// Assert.
 		$this->assertTrue( $result );
@@ -26,7 +26,7 @@ class Test_Number_Prop_Type extends Elementor_Test_Base {
 		$prop_type = Number_Prop_Type::make();
 
 		// Act.
-		$result = $prop_type->validate( 'string' );
+		$result = $prop_type->validate( [ '$$type' => 'number', 'value' => 'string' ] );
 
 		// Assert.
 		$this->assertFalse( $result );
