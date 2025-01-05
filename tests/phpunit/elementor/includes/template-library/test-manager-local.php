@@ -24,11 +24,19 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_registered_sources() {
-		$this->assertEquals( self::$manager->get_registered_sources()['local'], new \Elementor\TemplateLibrary\Source_Local() );
+		$new_source = new \Elementor\TemplateLibrary\Source_Local();
+
+		$this->ensure_post_type_rest_routes();
+
+		$this->assertEquals( self::$manager->get_registered_sources()['local'], $new_source );
 	}
 
 	public function test_should_return_source() {
-		$this->assertEquals( self::$manager->get_source( 'local' ), new \Elementor\TemplateLibrary\Source_Local() );
+		$new_source = new \Elementor\TemplateLibrary\Source_Local();
+
+		$this->ensure_post_type_rest_routes();
+
+		$this->assertEquals( self::$manager->get_source( 'local' ), $new_source );
 	}
 
 	public function test_should_return_wp_error_save_error_from_save_template() {
@@ -284,5 +292,16 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$this->assertEquals( 'Test Template', $result['title']['rendered'] );
 		$this->assertEquals( 'container', get_post_meta( $result['id'], '_elementor_template_type', true ) );
 		$this->assertNotEmpty( get_post_meta( $result['id'], '_elementor_data', true ) );
+	}
+
+	/**
+	 * The data managers are killing the rest server (@see `kill_server`), and removing the post type rest routes.
+	 * This is a workaround to re-register the post type rest routes.
+	 * @return void
+	 */
+	private function ensure_post_type_rest_routes() {
+		global $wp_rest_server;
+		$wp_rest_server = null;
+		rest_get_server();
 	}
 }
