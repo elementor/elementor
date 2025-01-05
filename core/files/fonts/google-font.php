@@ -236,4 +236,18 @@ class Google_Font {
 			null
 		);
 	}
+
+	public static function clear_cache() {
+		$folders = static::get_folders();
+
+		foreach ( $folders as $folder ) {
+			$path = $folder['path'] . '*';
+
+			foreach ( glob( $path ) as $file_path ) {
+				unlink( $file_path );
+			}
+		}
+
+		delete_option( '_elementor_local_google_fonts' );
+	}
 }
