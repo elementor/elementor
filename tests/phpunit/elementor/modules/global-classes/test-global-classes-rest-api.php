@@ -6,6 +6,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
+use function ElementorDeps\DI\value;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -270,8 +271,10 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
 
+		$expected_class = array_merge( $updated_class, [ 'id' => 'g-4-123' ] );
+
 		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( 'new label', $classes['items']['g-4-123']['label'] );
+		$this->assertEquals( $expected_class, $classes['items']['g-4-123'] );
 	}
 	public function test_put__doesnt_throw_when_data_is_identical() {
 		// Arrange
