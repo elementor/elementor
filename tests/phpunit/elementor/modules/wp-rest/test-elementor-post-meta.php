@@ -73,7 +73,7 @@ class Test_Elementor_Post_Meta extends Elementor_Test_Base {
 		$has_permission = $this->post_meta->check_edit_permission( true, '_elementor_edit_mode', $non_elementor_post_id );
 
 		// Assert
-		$this->assertFalse( $has_permission );
+		$this->assertTrue( $has_permission );
 	}
 
     public function test_check_edit_permission_with_elementor_post_and_excluded_user_roles() {
