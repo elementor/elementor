@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Finder;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 ?>

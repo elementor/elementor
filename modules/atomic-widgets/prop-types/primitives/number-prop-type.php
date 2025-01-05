@@ -9,13 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Number_Prop_Type extends Plain_Prop_Type {
-	use Supports_Shorthanded_Value;
-
 	public static function get_key(): string {
 		return 'number';
 	}
 
 	protected function validate_value( $value ): bool {
 		return is_numeric( $value );
+	}
+
+	protected function sanitize_value( $value ) {
+		return (int) $value;
 	}
 }
