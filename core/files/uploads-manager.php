@@ -391,7 +391,7 @@ class Uploads_Manager extends Base_Object {
 		update_option( self::UNFILTERED_FILE_UPLOADS_KEY, 1 );
 	}
 
-	public function ajax_enqueue_google_fonts( $data ) {
+	public function ajax_enqueue_google_fonts( $data ): bool {
 		if ( empty( $data['font_name'] ) ) {
 			return false;
 		}
