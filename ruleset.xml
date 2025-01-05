@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="WordPress.Elementor">
 	<description>Elementor Coding Standard</description>
+
 	<arg value="ps" />
 	<arg name="parallel" value="8" />
 
@@ -14,11 +15,13 @@
 	<exclude-pattern>includes/libraries/</exclude-pattern>
 	<exclude-pattern>tests/*.php</exclude-pattern>
 
-	<rule ref="WordPress.Security" />
-	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax" />
+
 	<rule ref="WordPress">
-		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
 	</rule>
+
+	<rule ref="WordPress.Security" />
 
 	<!-- Include WordPress-Extra rules but exclude specific rules -->
 	<rule ref="WordPress-Extra">
