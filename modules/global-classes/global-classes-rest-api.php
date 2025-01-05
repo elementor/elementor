@@ -211,7 +211,5 @@ class Global_Classes_REST_API {
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 
 		Post_CSS::create( $kit_id )->delete();
-
-		Plugin::instance()->files_manager->clear_cache();
 	}
 }
