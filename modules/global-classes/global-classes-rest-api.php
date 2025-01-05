@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
@@ -133,6 +134,8 @@ class Global_Classes_REST_API {
 
 		$this->get_repository()->delete( $id );
 
+		$this->clear_css_cache();
+
 		return new \WP_REST_Response( null, 204 );
 	}
 
@@ -159,6 +162,8 @@ class Global_Classes_REST_API {
 
 		$values = $this->get_repository()->put( $id, $parsed );
 
+		$this->clear_css_cache();
+
 		return new \WP_REST_Response( $values, 200 );
 	}
 
@@ -174,12 +179,16 @@ class Global_Classes_REST_API {
 
 		$new = $this->get_repository()->create( $parsed );
 
+		$this->clear_css_cache();
+
 		return new \WP_REST_Response( $new, 201 );
 	}
 
 	private function arrange( \WP_REST_Request $request ) {
 		$order = $request->get_params();
 		$updated = $this->get_repository()->arrange( $order );
+
+		$this->clear_css_cache();
 
 		return new \WP_REST_Response( $updated, 200 );
 	}
@@ -196,5 +205,13 @@ class Global_Classes_REST_API {
 
 	private function fail_with_validation_errors( array $errors ) {
 		return new \WP_Error( 'Invalid data: ', join( ', ', $errors ), [ 'status' => 400 ] );
+	}
+
+	private function clear_css_cache() {
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		Post_CSS::create( $kit_id )->delete();
+
+		Plugin::instance()->files_manager->clear_cache();
 	}
 }

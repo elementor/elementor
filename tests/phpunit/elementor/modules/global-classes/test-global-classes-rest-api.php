@@ -1,10 +1,9 @@
 <?php
 namespace Elementor\Testing\Modules\GlobalClasses;
 
-use Elementor\Core\Base\Document;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
-use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,12 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	private $mock_global_class = [
-		"label" => "flexy",
-		"variants" => [
+		'label' => 'flexy',
+		'type' => 'class',
+		'variants' => [
 			[
-				"meta" => [
-					"breakpoint" => "desktop",
-					"state" => null
+				'meta' => [
+					'breakpoint' => 'desktop',
+					'state' => null
 				],
 				'props' => [
 					'color' => [
@@ -31,12 +31,12 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	];
 
 	private $mock_unsanitized_class = [
-		"label" => "flexy",
-		"variants" => [
+		'label' => 'flexy',
+		'variants' => [
 			[
-				"meta" => [
-					"breakpoint" => "desktop",
-					"state" => null
+				'meta' => [
+					'breakpoint' => 'desktop',
+					'state' => null
 				],
 				'props' => [
 					'color' => [
@@ -71,6 +71,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		'items' => [
 			'g-4-123' => [
 				'id' => 'g-4-123',
+				'type' => 'class',
 				'label' => 'pinky',
 				'variants' => [
 					[
@@ -89,6 +90,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			],
 			'g-4-124' => [
 				'id' => 'g-4-124',
+				'type' => 'class',
 				'label' => 'bluey',
 				'variants' => [
 					[
@@ -254,6 +256,27 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
+	public function test_delete__removes_the_class_from_the_css_file() {
+		// Arrange.
+		$this->act_as_admin();
+
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta(
+			Global_Classes_Repository::META_KEY,
+			$this->mock_global_classes
+		);
+
+		// Assert.
+		$this->assert_kit_css_contains( 'g-4-123' );
+
+		// Act.
+		$request = new \WP_REST_Request( 'DELETE', '/elementor/v1/global-classes/g-4-123' );
+
+		rest_do_request( $request );
+
+		// Assert.
+		$this->assert_kit_css_not_contains( 'g-4-123' );
+	}
+
 	public function test_put__updates_class() {
 		// Arrange
 		$this->act_as_admin();
@@ -272,6 +295,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( 'new label', $classes['items']['g-4-123']['label'] );
 	}
+
 	public function test_put__doesnt_throw_when_data_is_identical() {
 		// Arrange
 		$this->act_as_admin();
@@ -286,7 +310,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 200, $response->get_status() );
 	}
-
 
 	public function test_put__returns_error_when_class_not_found(){
 		// Arrange
@@ -329,6 +352,29 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( 403, $response->get_status() );
+	}
+
+	public function test_put__updates_the_class_in_the_css_file() {
+		// Arrange.
+		$this->act_as_admin();
+
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+
+		// Assert.
+		$this->assert_kit_css_contains( '.g-4-123{color:pink;}' );
+
+		// Act.
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes/g-4-123' );
+
+		$updated_class = $this->mock_global_classes['items']['g-4-123'];
+		$updated_class['variants'][0]['props']['color']['value'] = 'red';
+
+		$request->set_body_params( $updated_class );
+
+		rest_do_request( $request );
+
+		// Assert.
+		$this->assert_kit_css_contains( '.g-4-123{color:red;}' );
 	}
 
 	public function test_post__creates_new_class() {
@@ -425,6 +471,28 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
+	public function test_post__adds_a_class_to_the_css_file() {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Assert.
+		$this->assert_kit_css_not_contains( '{color:test-color;}' );
+
+		// Act.
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/global-classes' );
+
+		$new_class = $this->mock_global_class;
+		$new_class['variants'][0]['props']['color']['value'] = 'test-color';
+
+		$request->set_body_params( $new_class );
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$id = $response->get_data()['id'];
+
+		$this->assert_kit_css_contains( ".{$id}{color:test-color;}" );
+	}
+
 	public function test_put_order__updates_order() {
 		// Arrange
 		$this->act_as_admin();
@@ -514,5 +582,49 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( 403, $response->get_status() );
+	}
+
+	public function test_put_order__updates_the_classes_order_in_the_css_file() {
+		// Arrange.
+		$this->act_as_admin();
+
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+
+		// Assert.
+		$this->assert_kit_css_contains('.g-4-123{color:pink;}.g-4-124{color:blue;}');
+
+		// Act.
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes-order' );
+		$request->set_body_params( [ 'g-4-124', 'g-4-123' ] );
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$this->assert_kit_css_contains('.g-4-124{color:blue;}.g-4-123{color:pink;}');
+	}
+
+	private function assert_kit_css_contains( string $substring, bool $contains = true ) {
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		// Intentionally not using the `Post_CSS::create` function to force a new instance.
+		$post_css = new Post_CSS( $kit_id );
+		$meta = $post_css->get_meta();
+
+		// Emulate runtime behavior that creates the CSS file only when necessary.
+		// See: `Elementor\Core\Files\CSS\Base:enqueue()`.
+		if ( '' === $meta['status'] || $post_css->is_update_required() ) {
+			$post_css->update();
+		}
+
+		$css_content = file_get_contents( $post_css->get_path() );
+
+		if ( $contains ) {
+			$this->assertStringContainsString( $substring, $css_content );
+		} else {
+			$this->assertStringNotContainsString( $substring, $css_content );
+		}
+	}
+
+	private function assert_kit_css_not_contains( string $substring ) {
+		$this->assert_kit_css_contains( $substring, false );
 	}
 }
