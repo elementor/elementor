@@ -134,23 +134,6 @@
 			video {
 				aspect-ratio: var( --video-aspect-ratio, 1.77777 ); // Default value 1.77777 = 16/9
 			}
-
-			// BC for browsers that don't support `aspect-ratio` (like Safari 14.1)
-			@supports not ( aspect-ratio: 1 / 1 ) {
-
-				& {
-					position: relative;
-					overflow: hidden;
-					height: 0;
-					padding-bottom: calc( 100% / var( --video-aspect-ratio, 1.77777 ) );
-
-					iframe,
-					video {
-						position: absolute;
-						inset: 0;
-					}
-				}
-			}
 		}
 
 		.elementor-video-square {
@@ -242,9 +225,23 @@
 		}
 
 		@media (max-width: $screen-tablet-max) {
-			&:active {
-				-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
-				-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+			&-prev,
+			&-next {
+				&:active {
+					-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
+					-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+				}
+
+				& svg,
+				i {
+					cursor: pointer;
+
+
+					&:active {
+						outline: none;
+						background-color: rgba(0, 0, 0, 0.5);
+					}
+				}
 			}
 		}
 
@@ -253,16 +250,28 @@
 				outline: none;
 			}
 
-			&:active {
-				-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
-				-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
-			}
+			&-prev,
+			&-next {
+				&:active {
+					-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
+					-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+				}
 
-			&-prev, &-next {
 				width: 20%;
+
 				i {
 					padding: 10px;
 					background-color: rgba(0, 0, 0, 0.5);
+				}
+
+				& svg,
+				i {
+					cursor: pointer;
+
+					&:active {
+						outline: none;
+						background-color: rgba(0, 0, 0, 0.5);
+					}
 				}
 			}
 

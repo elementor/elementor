@@ -85,6 +85,26 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		return true;
 	}
 
+	public function sanitize( $value ) {
+		$value['value'] = $this->sanitize_value( $value['value'] );
+
+		return $value;
+	}
+
+	public function sanitize_value( $value ) {
+		foreach ( $this->get_shape() as $key => $prop_type ) {
+			if ( ! isset( $value[ $key ] ) ) {
+				continue;
+			}
+
+			$sanitized_value = $prop_type->sanitize( $value[ $key ] );
+
+			$value[ $key ] = $sanitized_value;
+		}
+
+		return $value;
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'kind' => static::KIND,

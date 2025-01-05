@@ -21,7 +21,7 @@ use ElementorPro\Modules\Library\Widgets\Template;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -1878,12 +1878,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	protected function do_print_elements( $elements_data ) {
-		// Collect all data updaters that should be updated on runtime.
-		$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
-
-		if ( $runtime_elements_iteration_actions ) {
-			$this->iterate_elements( $elements_data, $runtime_elements_iteration_actions, 'render' );
-		}
+		$this->update_runtime_elements( $elements_data );
 
 		foreach ( $elements_data as $element_data ) {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
@@ -1893,6 +1888,19 @@ abstract class Document extends Controls_Stack {
 			}
 
 			$element->print_element();
+		}
+	}
+
+	public function update_runtime_elements( $elements_data = null ) {
+		if ( null === $elements_data ) {
+			$elements_data = $this->get_elements_data();
+		}
+
+		// Collect all data updaters that should be updated on runtime.
+		$runtime_elements_iteration_actions = $this->get_runtime_elements_iteration_actions();
+
+		if ( $runtime_elements_iteration_actions ) {
+			$this->iterate_elements( $elements_data, $runtime_elements_iteration_actions, 'render' );
 		}
 	}
 

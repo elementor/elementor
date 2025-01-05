@@ -7,7 +7,7 @@ use Elementor\Plugin;
 use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Connect_Menu_Item implements Admin_Menu_Item_With_Page {
