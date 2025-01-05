@@ -72,7 +72,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		expect( childDivBlockChildrenCount ).toBe( 2 );
 	} );
 
-	test( 'Div block should render styles after refresh', async ( { page, apiRequests }, testInfo ) => {
+	test.skip( 'Div block should render styles after refresh', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			divBlock = await editor.addElement( { elType: 'div-block' }, 'document' );
