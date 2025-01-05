@@ -36,7 +36,7 @@ export default class extends Marionette.LayoutView {
 	onCloseModalClick() {
 		this._parent._parent._parent.hideModal();
 
-		const customEvent = new CustomEvent( 'core/modal/close' );
+		const customEvent = new CustomEvent( `core/modal/close/${ elementor.config?.document?.type }` );
 
 		window.dispatchEvent( customEvent );
 
