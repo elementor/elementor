@@ -150,10 +150,13 @@ class Global_Classes_REST_API {
 
 	private function put( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
-		$value = Collection::make( $request->get_params() )->only( [
-			'label',
-			'variants',
-		] )->all();
+		$value = Collection::make( $request->get_params() )
+			->only( [ 'label', 'variants' ] )
+			->merge( [
+				'type' => 'class',
+				'id' => $id,
+			] )
+			->all();
 
 		$class = $this->get_repository()->get( $id );
 
@@ -163,9 +166,6 @@ class Global_Classes_REST_API {
 				->set_status( 404 )
 				->build();
 		}
-
-		$value['type'] = 'class';
-		$value['id'] = $id;
 
 		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )->parse( $value );
 
@@ -185,13 +185,13 @@ class Global_Classes_REST_API {
 	}
 
 	private function post( \WP_REST_Request $request ) {
-		$class = Collection::make( $request->get_params() )->only( [
-			'label',
-			'variants',
-		] )->all();
-
-		$class['variants'] = $class['variants'] ?? [];
-		$class['type'] = 'class';
+		$class = Collection::make( $request->get_params() )
+			->only( [ 'label' ] )
+			->merge( [
+				'variants' => $request->get_param( 'variants' ) ?? [],
+				'type' => 'class',
+			] )
+			->all();
 
 		[ $is_valid, $parsed, $errors ] = Style_Parser::make( Style_Schema::get() )
 			->without_id()

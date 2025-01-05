@@ -1,12 +1,9 @@
 <?php
 namespace Elementor\Testing\Modules\GlobalClasses;
 
-use Elementor\Core\Base\Document;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
-use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
-use function ElementorDeps\DI\value;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
