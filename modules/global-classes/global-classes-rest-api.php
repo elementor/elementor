@@ -110,7 +110,7 @@ class Global_Classes_REST_API {
 	private function all() {
 		$classes = $this->get_repository()->all();
 
-		return Response_Builder::make( $classes->get_items()->all() )
+		return Response_Builder::make( (object) $classes->get_items()->all() )
 			->set_meta( [ 'order' => $classes->get_order()->all() ] )
 			->build();
 	}
@@ -150,10 +150,10 @@ class Global_Classes_REST_API {
 
 	private function put( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
-		$value = $request->get_params();
-
-		// Ignore id to simplify the patch, and allow passing the entity as it is
-		unset( $value['id'] );
+		$value = Collection::make( $request->get_params() )->only( [
+			'label',
+			'variants',
+		] )->all();
 
 		$class = $this->get_repository()->get( $id );
 
@@ -166,6 +166,7 @@ class Global_Classes_REST_API {
 
 		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )
 			->without_id()
+			->without_type()
 			->parse( $value );
 
 		if ( ! $is_valid ) {
@@ -178,13 +179,17 @@ class Global_Classes_REST_API {
 		$updated = $this->get_repository()->put( $id, $parsed );
 		$order = $this->get_repository()->all()->get_order()->all();
 
-		return Response_Builder::make( $updated )
+		return Response_Builder::make( (object) $updated )
 			->set_meta( [ 'order' => $order ] )
 			->build();
 	}
 
 	private function create( \WP_REST_Request $request ) {
-		$class = $request->get_params();
+		$class = Collection::make( $request->get_params() )->only( [
+			'label',
+			'variants',
+		] )->all();
+
 		$class['variants'] = $class['variants'] ?? [];
 		$class['type'] = 'class';
 
@@ -202,7 +207,7 @@ class Global_Classes_REST_API {
 		$new = $this->get_repository()->create( $parsed );
 		$order = $this->get_repository()->all()->get_order()->all();
 
-		return Response_Builder::make( $new )
+		return Response_Builder::make( (object) $new )
 			->set_status( 201 )
 			->set_meta( [ 'order' => $order ] )
 			->build();
@@ -216,13 +221,13 @@ class Global_Classes_REST_API {
 	}
 
 	private function route_wrapper( callable $cb ) {
-		try {
+//		try {
 			$response = $cb();
-		} catch ( \Exception $e ) {
-			return Error_Builder::make( 'unexpected_error' )
-				->set_message( __( 'Something went wrong', 'elementor' ) )
-				->build();
-		}
+//		} catch ( \Exception $e ) {
+//			return Error_Builder::make( 'unexpected_error' )
+//				->set_message( __( 'Something went wrong', 'elementor' ) )
+//				->build();
+//		}
 
 		return $response;
 	}
