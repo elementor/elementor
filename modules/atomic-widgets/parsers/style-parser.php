@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Style_Parser {
+	const VALID_TYPES = [
+		'class',
+	];
+
 	const VALID_STATES = [
 		'hover',
 		'active',
@@ -47,6 +51,14 @@ class Style_Parser {
 
 		if ( $this->should_validate_id && ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) ) {
 			$this->errors_bag[] = 'id';
+		}
+
+		if ( ! isset( $style['type'] ) || ! in_array( $style['type'], self::VALID_TYPES, true ) ) {
+			$this->errors_bag[] = 'type';
+		}
+
+		if ( ! isset( $style['label'] ) || ! is_string( $style['label'] ) ) {
+			$this->errors_bag[] = 'label';
 		}
 
 		if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
