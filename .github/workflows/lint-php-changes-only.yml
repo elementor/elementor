@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  PHP-Lint:
+  file-diff:
     runs-on: ubuntu-22.04
     name: Lint - File Diff
     if: startsWith( github.repository, 'elementor/' )
@@ -30,10 +30,17 @@ jobs:
         with:
           files: |
             **.php
+
+  PHP-Lint:
+    runs-on: ubuntu-22.04
+    needs: [ 'file-diff' ]
+    if: ${{ needs.file-diff.outputs.any_changed == 'true' || github.event.pull_request.title == null }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
       - name: Run PHP Linter
-        env:
-          PHP_CHANGED_FILES: ${{ steps.changed-php-files.outputs.all_changed_files }}
+        PHP_CHANGED_FILES: ${{ needs.file-diff.outputs.all_changed_files }}
         run: |
-          for file in ${PHP_CHANGED_FILES}; do
+          for file in ${ PHP_CHANGED_FILES }; do
             echo "$file was changed"
           done
