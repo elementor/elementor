@@ -42,7 +42,7 @@ class Module {
 		$content = ob_get_clean();
 		$vars = [
 			'%app_name%' => self::NOT_TRANSLATED_APP_NAME,
-			'%safe_origin%' => self::PLANNER_ORIGIN,
+			'%safe_origin%' => esc_url( self::PLANNER_ORIGIN ),
 			'%domain%' => isset( $_SERVER['HTTP_HOST'] ) ? sanitize_key( $_SERVER['HTTP_HOST'] ) : '',
 			'%title%' => esc_html__( 'Connect to Site Planner', 'elementor' ),
 			'%description%' => esc_html__( 'To connect your site to Site Planner, you need to generate an app password.', 'elementor' ),
