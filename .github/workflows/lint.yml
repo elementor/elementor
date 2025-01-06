@@ -91,7 +91,8 @@ jobs:
         env:
           PHPCS_FILES: ${{ needs.file-diff.outputs.php_diff }}
         run: |
-          echo "${PHPCS_FILES// /\n}" > ./.phpcs-files.txt
+          echo '${{ env.PHPCS_FILES }}' | sed 's/ /\n/g' | > ./.phpcs-files.txt
+
 
           vendor/bin/phpcs -p -s -n --standard=./ruleset.xml --extensions=php --file-list=./.phpcs-files.txt
       - name: Setup PHP 7.4 # not included in ubuntu 22.04
