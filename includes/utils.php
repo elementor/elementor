@@ -936,9 +936,6 @@ class Utils {
 			$post_types = $post_types->filter( function( $post_type ) use ( $excluded_types ) {
 				return ! in_array( $post_type->name, $excluded_types, true );
 			} );
-//				array_filter( $post_types, function( $post_type ) use ( $excluded_types ) {
-//				return ! in_array( $post_type->name, $excluded_types, true );
-//			} );
 		}
 
 		$post_type_slugs = $post_types->map( function( $post_type ) {
