@@ -1955,7 +1955,7 @@ class Container extends Element_Base {
 	 * @param array $element
 	 * @return array
 	 */
-	public static function slider_to_gaps_converter( $element ): array {
+	public static function slider_to_gaps_converter( $element ) {
 		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
 		$breakpoints[] = 'desktop';
 		$control_name = 'flex_gap';
