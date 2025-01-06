@@ -131,7 +131,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	final public function enqueue_scripts() {
 		$deprecated_scripts = [
-			// Insert here when you have a deprecated script
+			// Insert here when you have a deprecated script.
 		];
 
 		foreach ( $this->get_script_depends() as $script ) {
@@ -784,7 +784,7 @@ abstract class Element_Base extends Controls_Stack {
 
 		$_animation = ! empty( $settings['_animation'] );
 		$animation = ! empty( $settings['animation'] );
-		$has_animation = $_animation && 'none' !== $settings['_animation'] || $animation && 'none' !== $settings['animation'];
+		$has_animation = ( $_animation && 'none' !== $settings['_animation'] ) || ( $animation && 'none' !== $settings['animation'] );
 
 		if ( $has_animation ) {
 			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
@@ -814,7 +814,7 @@ abstract class Element_Base extends Controls_Stack {
 		 */
 		do_action( 'elementor/element/after_add_attributes', $this );
 	}
-	
+
 	/**
 	 * Register the Transform controls in the advanced tab of the element.
 	 *
@@ -1301,7 +1301,7 @@ abstract class Element_Base extends Controls_Stack {
 			'terms' => array_merge( $transform_origin_conditions, $transform_origin_conditions_hover ),
 		];
 
-		// Will override motion effect transform-origin
+		// Will override motion effect transform-origin.
 		$this->add_responsive_control(
 			'motion_fx_transform_x_anchor_point',
 			[
@@ -1329,7 +1329,7 @@ abstract class Element_Base extends Controls_Stack {
 			]
 		);
 
-		// Will override motion effect transform-origin
+		// Will override motion effect transform-origin.
 		$this->add_responsive_control(
 			'motion_fx_transform_y_anchor_point',
 			[
@@ -1482,6 +1482,9 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * A Base method for sanitizing the settings before save.
 	 * This method is meant to be overridden by the element.
+	 *
+	 * @param array $settings
+	 * @return array
 	 */
 	protected function on_save( array $settings ) {
 		return $settings;
