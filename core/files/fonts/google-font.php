@@ -89,54 +89,7 @@ class Google_Font {
 			return false;
 		}
 
-		$fonts_url = static::get_google_fonts_remote_url( [ $font_name ] );
-
-		$css_content_response = wp_remote_get( $fonts_url, [
-			'headers' => [
-				'User-Agent' => static::UA_STRING,
-			],
-		] );
-
-		if ( is_wp_error( $css_content_response ) || 200 !== (int) wp_remote_retrieve_response_code( $css_content_response ) ) {
-			return false;
-		}
-
-		$css_content = wp_remote_retrieve_body( $css_content_response );
-
-		preg_match_all( '/url\(([^)]+)\)/', $css_content, $font_urls );
-
-		if ( ! function_exists( 'download_url' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-
-		if ( ! empty( $font_urls[1] ) ) {
-			$font_urls = $font_urls[1];
-
-			foreach ( $font_urls as $current_font_url ) {
-				$current_font_url = trim( $current_font_url, '\'"' );
-
-				$tmp_font_file = download_url( $current_font_url );
-				if ( is_wp_error( $tmp_font_file ) ) {
-					return false;
-				}
-
-				$current_font_basename = $sanitize_font_name . '-' . strtolower( sanitize_file_name( basename( $current_font_url ) ) );
-
-				$dest_file = $fonts_folder['path'] . $current_font_basename;
-				$dest_file_url = $fonts_folder['url'] . $current_font_basename;
-
-				// Use copy and unlink because rename breaks streams.
-				// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-				$is_file_copied = @copy( $tmp_font_file, $dest_file );
-				unlink( $tmp_font_file );
-
-				if ( ! $is_file_copied ) {
-					return false;
-				}
-
-				$css_content = str_replace( $current_font_url, $dest_file_url, $css_content );
-			}
-		}
+		$css_content = static::get_css_content( $font_name );
 
 		if ( empty( $css_content ) ) {
 			return false;
@@ -149,9 +102,9 @@ class Google_Font {
 
 		$css_folder_path = $css_folder['path'] . $sanitize_font_name . '.css';
 
-		$is_file_copied = file_put_contents( $css_folder_path, $css_content );
+		$is_font_file_saved = file_put_contents( $css_folder_path, $css_content );
 
-		if ( ! $is_file_copied ) {
+		if ( ! $is_font_file_saved ) {
 			return false;
 		}
 
@@ -196,9 +149,78 @@ class Google_Font {
 		}
 	}
 
+	private static function get_css_content( string $font_name ): string {
+		$css_content = static::get_raw_css_content( $font_name );
+
+		if ( empty( $css_content ) ) {
+			return '';
+		}
+
+		return static::download_fonts( $font_name, $css_content );
+	}
+
+	private static function get_raw_css_content( string $font_name ): string {
+		$font_url = static::get_google_fonts_remote_url( [ $font_name ] );
+
+		$css_content_response = wp_remote_get( $font_url, [
+			'headers' => [
+				'User-Agent' => static::UA_STRING,
+			],
+		] );
+
+		if ( is_wp_error( $css_content_response ) || 200 !== (int) wp_remote_retrieve_response_code( $css_content_response ) ) {
+			return '';
+		}
+
+		return wp_remote_retrieve_body( $css_content_response );
+	}
+
 	private static function get_google_fonts_remote_url( array $fonts ): string {
 		return Plugin::$instance->frontend->get_stable_google_fonts_url( $fonts );
+	}
 
+	private static function download_fonts( string $font_name, string $css_content ): string {
+		preg_match_all( '/url\(([^)]+)\)/', $css_content, $font_urls );
+
+		if ( ! function_exists( 'download_url' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		if ( ! empty( $font_urls[1] ) ) {
+			$font_urls = $font_urls[1];
+
+			$fonts_folder = static::get_folder( static::FOLDER_FONTS );
+			$sanitize_font_name = static::sanitize_font_name( $font_name );
+
+			foreach ( $font_urls as $current_font_url ) {
+				$current_font_url = trim( $current_font_url, '\'"' );
+
+				$tmp_font_file = download_url( $current_font_url );
+				if ( is_wp_error( $tmp_font_file ) ) {
+					@unlink( $tmp_font_file );
+
+					return '';
+				}
+
+				$current_font_basename = $sanitize_font_name . '-' . strtolower( sanitize_file_name( basename( $current_font_url ) ) );
+
+				$dest_file = $fonts_folder['path'] . $current_font_basename;
+				$dest_file_url = $fonts_folder['url'] . $current_font_basename;
+
+				// Use copy and unlink because rename breaks streams.
+				// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+				$is_font_file_saved = @copy( $tmp_font_file, $dest_file );
+				@unlink( $tmp_font_file );
+
+				if ( ! $is_font_file_saved ) {
+					return '';
+				}
+
+				$css_content = str_replace( $current_font_url, $dest_file_url, $css_content );
+			}
+		}
+
+		return $css_content;
 	}
 
 	private static function enqueue_from_cdn( string $font_name ): void {
@@ -213,5 +235,19 @@ class Google_Font {
 			[],
 			null
 		);
+	}
+
+	public static function clear_cache() {
+		$folders = static::get_folders();
+
+		foreach ( $folders as $folder ) {
+			$path = $folder['path'] . '*';
+
+			foreach ( glob( $path ) as $file_path ) {
+				unlink( $file_path );
+			}
+		}
+
+		delete_option( '_elementor_local_google_fonts' );
 	}
 }

@@ -7,7 +7,9 @@ use Elementor\Core\Files\File_Types\Base as File_Type_Base;
 use Elementor\Core\Files\File_Types\Json;
 use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Files\File_Types\Zip;
+use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Fonts;
 use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -372,6 +374,7 @@ class Uploads_Manager extends Base_Object {
 	 */
 	public function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'enable_unfiltered_files_upload', [ $this, 'enable_unfiltered_files_upload' ] );
+		$ajax->register_ajax_action( 'enqueue_google_fonts', [ $this, 'ajax_enqueue_google_fonts' ] );
 	}
 
 	/**
@@ -386,6 +389,22 @@ class Uploads_Manager extends Base_Object {
 		}
 
 		update_option( self::UNFILTERED_FILE_UPLOADS_KEY, 1 );
+	}
+
+	public function ajax_enqueue_google_fonts( $data ): bool {
+		if ( empty( $data['font_name'] ) ) {
+			return false;
+		}
+
+		$font_type = Fonts::get_font_type( $data['font_name'] );
+
+		if ( Fonts::GOOGLE !== $font_type ) {
+			return false;
+		}
+
+		Google_Font::enqueue( $data['font_name'] );
+
+		return true;
 	}
 
 	/**
