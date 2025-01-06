@@ -49,9 +49,6 @@
 	"config": {
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true
-		},
-		"platform": {
-			"php": "7.4.33"
 		}
 	},
 	"authors": [
