@@ -41,10 +41,17 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Install Dependencies
+        run: |
+          composer install
       - name: Run PHP Linter
         env:
           PHP_CHANGED_FILES: ${{ needs.php-file-diff.outputs.all_changed_files }}
         run: |
           for file in ${PHP_CHANGED_FILES}; do
-            echo "$file was changed"
+            composer lint "$file"
           done
