@@ -52,6 +52,6 @@ jobs:
         env:
           PHP_CHANGED_FILES: ${{ needs.php-file-diff.outputs.all_changed_files }}
         run: |
-          for file in ${PHP_CHANGED_FILES}; do
-            composer lint "$file"
-          done
+          #for file in ${PHP_CHANGED_FILES}; do
+            composer lint "${PHP_CHANGED_FILES[@]}"
+          #done
