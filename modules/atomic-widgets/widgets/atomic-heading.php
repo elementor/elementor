@@ -3,7 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Widgets;
 
 use Elementor\Modules\AtomicWidgets\Controls\Dynamic_Section;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Query_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
@@ -106,9 +106,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						->set_label( __( 'Title', 'elementor' ) )
 						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
 
-					Query_Control::bind_to( 'link' )
-						->set_post_query()
-						->set_is_free_solo( true )
+					Link_Control::bind_to( 'link' )
+						->set_options( $this->get_post_query() )
+						->set_allow_custom_values( true )
 						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 				] ),
 		];
@@ -128,5 +128,23 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 		];
+	}
+
+	private function get_post_query(): array {
+		$excluded_types = Utils::get_excluded_post_types();
+		$posts_map = Utils::get_posts_per_post_type_map( $excluded_types );
+		$options = [];
+
+		foreach ( $posts_map as $post_type_slug => $data ) {
+			foreach ( $data['items'] as $post ) {
+				$options[ $post->guid ] = [
+					'value' => $post->guid,
+					'label' => $post->post_title,
+					'groupLabel' => $posts_map[ $post_type_slug ]['label'],
+				];
+			}
+		}
+
+		return $options;
 	}
 }

@@ -8,13 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Query_Control extends Atomic_Control_Base {
+class Link_Control extends Atomic_Control_Base {
 	private ?string $placeholder = null;
 	private ?array $options = null;
-	private ?bool $is_free_solo = null;
+	private ?bool $allow_custom_values = null;
 
 	public function get_type(): string {
-		return 'query';
+		return 'link';
 	}
 
 	public function set_placeholder( string $placeholder ): self {
@@ -37,36 +37,19 @@ class Query_Control extends Atomic_Control_Base {
 		return [
 			'placeholder' => $this->placeholder,
 			'options' => $this->options,
-			'isFreeSolo' => $this->is_free_solo,
+			'allowCustomValues' => $this->allow_custom_values,
 		];
 	}
 
-	public function set_is_free_solo( bool $is_free_solo ): self {
-		$this->is_free_solo = $is_free_solo;
+	public function set_allow_custom_values( bool $allow_custom_values ): self {
+		$this->allow_custom_values = $allow_custom_values;
 
 		return $this;
 	}
 
-	public function set_post_query(): self {
-		$excluded_post_types = Utils::get_excluded_post_types();
-		$posts_map = Utils::get_posts_per_post_type_map( $excluded_post_types );
-		$options = [];
-
-		foreach ( $posts_map as $post_type_slug => $data ) {
-			foreach ( $data['items'] as $post ) {
-				$options[ $post->guid ] = [
-					'label' => $post->post_title,
-					'groupLabel' => $posts_map[ $post_type_slug ]['label'],
-				];
-			}
-		}
-
-		return $this->set_options( $options );
-	}
-
 	private function validate_options_scheme( ?array $options = [] ) {
 		foreach ( $options as $option ) {
-			if ( ! is_array( $option ) || ! array_key_exists( 'label', $option ) ) {
+			if ( ! is_array( $option ) || ! array_key_exists( 'label', $option ) || ! array_key_exists( 'value', $option ) ) {
 				return false;
 			}
 		}

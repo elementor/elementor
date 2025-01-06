@@ -929,26 +929,29 @@ class Utils {
 		return $is_private || $not_allowed || $password_required;
 	}
 
-	public static function get_posts_per_post_type_map( $post_types_to_exclude = [] ) {
-		$post_types = get_post_types( [ 'public' => true ], 'object' );
+	public static function get_posts_per_post_type_map( $excluded_types = [] ) {
+		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
 
-		if ( ! empty( $post_types_to_exclude ) ) {
-			$post_types = array_filter( $post_types, function( $post_type ) use ( $post_types_to_exclude ) {
-				return ! in_array( $post_type->name, $post_types_to_exclude, true );
+		if ( ! empty( $excluded_types ) ) {
+			$post_types = $post_types->filter( function( $post_type ) use ( $excluded_types ) {
+				return ! in_array( $post_type->name, $excluded_types, true );
 			} );
+//				array_filter( $post_types, function( $post_type ) use ( $excluded_types ) {
+//				return ! in_array( $post_type->name, $excluded_types, true );
+//			} );
 		}
 
-		$post_type_slugs = array_map( function( $post_type ) {
+		$post_type_slugs = $post_types->map( function( $post_type ) {
 			return $post_type->name;
-		}, $post_types );
+		} );
 
-		$posts = get_posts( [
-			'post_type' => $post_type_slugs,
+		$posts = new Collection( get_posts( [
+			'post_type' => $post_type_slugs->all(),
 			'numberposts' => -1,
-		] );
+		] ) );
 
-		return array_reduce( $posts, function ( $carry, $post ) use ( $post_types ) {
-			$post_type_label = $post_types[ $post->post_type ]->label;
+		return $posts->reduce( function ( $carry, $post ) use ( $post_types ) {
+			$post_type_label = $post_types->get( $post->post_type )->label;
 
 			if ( ! isset( $carry[ $post->post_type ] ) ) {
 				$carry[ $post->post_type ] = [
