@@ -1266,7 +1266,7 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	public function get_settings_for_display( $setting_key = null ) {
 		if ( ! $this->parsed_active_settings ) {
-			$this->parsed_active_settings = $this->get_active_settings( $this->get_controls(), $this->get_parsed_dynamic_settings() );
+			$this->parsed_active_settings = $this->get_active_settings( $this->get_parsed_dynamic_settings(), $this->get_controls() );
 		}
 
 		return self::get_items( $this->parsed_active_settings, $setting_key );
