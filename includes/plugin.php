@@ -26,9 +26,7 @@ use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Data\V2\Manager as Data_Manager_V2;
 use Elementor\Core\Common\Modules\DevTools\Module as Dev_Tools;
-use Elementor\Core\Files\Uploads_Manager;
-use ElementorDeps\DI\DependencyException;
-use ElementorDeps\DI\NotFoundException;
+use Elementor\Core\Files\Uploads_Manager as Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -651,9 +649,6 @@ class Plugin {
 
 	/**
 	 * Get the Elementor container or resolve a dependency.
-	 *
-	 * @param null $abstract
-	 * @return DIContainer|mixed
 	 */
 	public function elementor_container( $abstract = null ) {
 		if ( is_null( $abstract ) ) {
@@ -835,11 +830,12 @@ class Plugin {
 	/**
 	 * Plugin Magic Getter
 	 *
-	 * @param string $property
-	 * @return mixed
-	 * @throws \Exception
 	 * @since 3.1.0
 	 * @access public
+	 *
+	 * @param $property
+	 * @return mixed
+	 * @throws \Exception
 	 */
 	public function __get( $property ) {
 		if ( 'posts_css_manager' === $property ) {
