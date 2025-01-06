@@ -288,7 +288,7 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Whether the element returns dynamic content.
 	 *
-	 * set to determine whether to cache the element output or not.
+	 * Set to determine whether to cache the element output or not.
 	 *
 	 * @since 3.22.0
 	 * @access protected
@@ -421,7 +421,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! empty( $url_control['custom_attributes'] ) ) {
-			// Custom URL attributes should come as a string of comma-delimited key|value pairs
+			// Custom URL attributes should come as a string of comma-delimited key|value pairs.
 			$attributes = array_merge( $attributes, Utils::parse_custom_attributes( $url_control['custom_attributes'] ) );
 		}
 
@@ -790,7 +790,7 @@ abstract class Element_Base extends Controls_Stack {
 			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
 
 			if ( ! $is_static_render_mode ) {
-				// Hide the element until the animation begins
+				// Hide the element until the animation begins.
 				$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
 			}
 		}
@@ -814,15 +814,17 @@ abstract class Element_Base extends Controls_Stack {
 		 */
 		do_action( 'elementor/element/after_add_attributes', $this );
 	}
-
+	
 	/**
 	 * Register the Transform controls in the advanced tab of the element.
 	 *
 	 * Previously registered under the Widget_Common class, but registered a more fundamental level now to enable access from other widgets.
 	 *
+	 * @param string $element_selector
+	 * @param string $transform_selector_class
+	 * @return void
 	 * @since 3.9.0
 	 * @access protected
-	 * @return void
 	 */
 	protected function register_transform_section( $element_selector = '', $transform_selector_class = ' > .elementor-widget-container' ) {
 		$default_unit_values_deg = [];

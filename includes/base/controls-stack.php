@@ -5,6 +5,7 @@ use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Frontend\Performance;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -2379,7 +2380,6 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	protected function print_template_content( $template_content ) {
 		Utils::print_unescaped_internal_string( $template_content );
-		
 	}
 
 	/**
