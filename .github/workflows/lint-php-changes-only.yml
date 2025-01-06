@@ -26,13 +26,6 @@ jobs:
         with:
           files: |
             **.php
-      - name: List all changed files
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-php-files.outputs.all_changed_files }}
-        run: |
-          for file in ${ALL_CHANGED_FILES}; do
-            echo "$file was changed"
-          done
 
   PHP-Linter:
     runs-on: ubuntu-22.04
@@ -52,6 +45,4 @@ jobs:
         env:
           PHP_CHANGED_FILES: ${{ needs.php-file-diff.outputs.all_changed_files }}
         run: |
-          #for file in ${PHP_CHANGED_FILES}; do
-            composer lint $(echo "${PHP_CHANGED_FILES}" | tr '\n' ' ')
-          #done
+          composer lint $(echo "${PHP_CHANGED_FILES}" | tr '\n' ' ')
