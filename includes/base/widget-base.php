@@ -660,8 +660,7 @@ abstract class Widget_Base extends Element_Base {
 			 * @param Widget_Base $this           The widget.
 			 */
 			$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
-		    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo $widget_content;
+			Utils::print_unescaped_internal_string( $widget_content );
 			?>
 		<?php if ( $this->has_widget_inner_wrapper() ) : ?>
 		</div>

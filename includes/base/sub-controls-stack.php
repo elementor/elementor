@@ -46,7 +46,7 @@ abstract class Sub_Controls_Stack {
 	 * @access public
 	 * @param Controls_Stack $element_parent
 	 */
-	public function __construct( Controls_Stack $element_parent ) {
+	public function __construct( $element_parent ) {
 		$this->parent = $element_parent;
 	}
 
