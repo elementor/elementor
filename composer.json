@@ -26,9 +26,9 @@
 		"php-di/php-di": "6.4.0"
 	},
 	"scripts": {
-		"lint": "phpcs -d memory_limit=2512M --standard=ruleset.xml .",
-		// php files  only
-		"lint:fix": "phpcbf -d memory_limit=2512M --standard=ruleset.xml --extensions=php .",
+		"lint": "phpcs --standard=ruleset.xml",
+		"lint:all": "phpcs -d memory_limit=2048M --extensions=php --standard=ruleset.xml .",
+		"lint:all:fix": "phpcbf -d memory_limit=2048M --extensions=php --standard=ruleset.xml .",
 		"test": "phpunit",
 		"test:filter": "phpunit --filter",
 		"test:install": "bash ./bin/install-wp-tests-local.sh",
