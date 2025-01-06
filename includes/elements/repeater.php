@@ -1,4 +1,4 @@
-<?php
+  <?php
 namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,10 +44,9 @@ class Repeater extends Element_Base {
 	 *
 	 * @param array      $data Optional. Element data. Default is an empty array.
 	 * @param array|null $args Optional. Element default arguments. Default is null.
-	 *
 	 */
 	public function __construct( array $data = [], array $args = null ) {
-		self::$counter++;
+		++self::$counter;
 
 		$this->id = self::$counter;
 

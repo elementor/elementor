@@ -1918,7 +1918,7 @@ class Container extends Element_Base {
 	}
 
 	protected function hook_sticky_notice_into_transform_section() {
-		add_action( 'elementor/element/container/_section_transform/after_section_start', function( Container $container ) {
+		add_action( 'elementor/element/container/_section_transform/after_section_start', function ( Container $container ) {
 			if ( ! empty( $container->get_controls( 'transform_sticky_notice' ) ) ) {
 				return;
 			}
@@ -1950,12 +1950,12 @@ class Container extends Element_Base {
 	}
 
 	/**
-	 * convert slider to gaps control for the 3.16 upgrade script
+	 * Convert slider to gaps control for the 3.16 upgrade script
 	 *
-	 * @param $element
+	 * @param array $element
 	 * @return array
 	 */
-	public static function slider_to_gaps_converter( $element ) {
+	public static function slider_to_gaps_converter( $element ): array {
 		$breakpoints = array_keys( (array) Plugin::$instance->breakpoints->get_breakpoints() );
 		$breakpoints[] = 'desktop';
 		$control_name = 'flex_gap';

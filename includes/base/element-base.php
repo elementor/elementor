@@ -131,7 +131,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	final public function enqueue_scripts() {
 		$deprecated_scripts = [
-			//Insert here when you have a deprecated script
+			// Insert here when you have a deprecated script
 		];
 
 		foreach ( $this->get_script_depends() as $script ) {
@@ -397,13 +397,12 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param array|string $element   The HTML element.
-	 * @param array $url_control      Array of link settings.
-	 * @param bool $overwrite         Optional. Whether to overwrite existing
-	 *                                attribute. Default is false, not to overwrite.
+	 * @param array        $url_control      Array of link settings.
+	 * @param bool         $overwrite         Optional. Whether to overwrite existing
+	 *                                        attribute. Default is false, not to overwrite.
 	 *
 	 * @return Element_Base Current instance of the element.
 	 */
-
 	public function add_link_attributes( $element, array $url_control, $overwrite = false ) {
 		$attributes = [];
 
@@ -694,7 +693,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ): array {
 		$tags_manager = Plugin::$instance->dynamic_tags;
 
 		if ( empty( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
@@ -1501,7 +1500,7 @@ abstract class Element_Base extends Controls_Stack {
 	private function get_child_type( $element_data ) {
 		$child_type = $this->_get_default_child_type( $element_data );
 
-		// If it's not a valid widget ( like a deactivated plugin )
+		// If it's not a valid widget ( like a deactivated plugin ).
 		if ( ! $child_type ) {
 			return false;
 		}
