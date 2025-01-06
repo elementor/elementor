@@ -9,7 +9,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( { e_optimized_markup: 'active' } );
+		// await wpAdmin.setExperiments( { e_optimized_markup: 'active' } );
 
 		await page.close();
 	} );
