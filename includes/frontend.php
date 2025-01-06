@@ -1516,7 +1516,7 @@ class Frontend extends App {
 	 * @access private
 	 * @since 2.0.4
 	 *
-	 * @param $content
+	 * @param string $content
 	 *
 	 * @return string
 	 */

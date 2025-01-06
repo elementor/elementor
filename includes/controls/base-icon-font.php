@@ -27,7 +27,8 @@ abstract class Base_Icon_Font {
 	abstract public function enqueue();
 
 	/**
-	 * get_css_prefix
+	 * Get_css_prefix
+	 *
 	 * @return string
 	 */
 	abstract public function get_css_prefix();
