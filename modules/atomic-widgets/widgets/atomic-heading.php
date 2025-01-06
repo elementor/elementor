@@ -17,7 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Heading extends Atomic_Widget_Base {
-	public function get_name() {
+	public function get_name()
+
+	{
 		return 'a-heading';
 	}
 
