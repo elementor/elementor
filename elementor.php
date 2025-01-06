@@ -39,8 +39,6 @@ if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
 	define( 'ELEMENTOR_URL', plugins_url( '/', ELEMENTOR__FILE__ ) );
 }
 
-
-
 define( 'ELEMENTOR_MODULES_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) . '/modules' );
 define( 'ELEMENTOR_ASSETS_PATH', ELEMENTOR_PATH . 'assets/' );
 define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
