@@ -26,8 +26,11 @@
 		"php-di/php-di": "6.4.0"
 	},
 	"scripts": {
-		"lint": "phpcs --standard=ruleset.xml",
+		"lint": "phpcs -d memory_limit=2512M --standard=ruleset.xml .",
+		// php files  only
+		"lint:fix": "phpcbf -d memory_limit=2512M --standard=ruleset.xml --extensions=php .",
 		"test": "phpunit",
+		"test:filter": "phpunit --filter",
 		"test:install": "bash ./bin/install-wp-tests-local.sh",
 		"coverage": "composer run coverage:test && composer run coverage:check",
 		"coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
