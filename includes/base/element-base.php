@@ -131,7 +131,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	final public function enqueue_scripts() {
 		$deprecated_scripts = [
-			//Insert here when you have a deprecated script
+			// Insert here when you have a deprecated script
 		];
 
 		foreach ( $this->get_script_depends() as $script ) {
@@ -288,7 +288,7 @@ abstract class Element_Base extends Controls_Stack {
 	/**
 	 * Whether the element returns dynamic content.
 	 *
-	 * set to determine whether to cache the element output or not.
+	 * Set to determine whether to cache the element output or not.
 	 *
 	 * @since 3.22.0
 	 * @access protected
@@ -397,13 +397,12 @@ abstract class Element_Base extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param array|string $element   The HTML element.
-	 * @param array $url_control      Array of link settings.
-	 * @param bool $overwrite         Optional. Whether to overwrite existing
-	 *                                attribute. Default is false, not to overwrite.
+	 * @param array        $url_control      Array of link settings.
+	 * @param bool         $overwrite         Optional. Whether to overwrite existing
+	 *                                        attribute. Default is false, not to overwrite.
 	 *
 	 * @return Element_Base Current instance of the element.
 	 */
-
 	public function add_link_attributes( $element, array $url_control, $overwrite = false ) {
 		$attributes = [];
 
@@ -422,7 +421,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! empty( $url_control['custom_attributes'] ) ) {
-			// Custom URL attributes should come as a string of comma-delimited key|value pairs
+			// Custom URL attributes should come as a string of comma-delimited key|value pairs.
 			$attributes = array_merge( $attributes, Utils::parse_custom_attributes( $url_control['custom_attributes'] ) );
 		}
 
@@ -694,7 +693,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ): array {
 		$tags_manager = Plugin::$instance->dynamic_tags;
 
 		if ( empty( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
@@ -791,7 +790,7 @@ abstract class Element_Base extends Controls_Stack {
 			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
 
 			if ( ! $is_static_render_mode ) {
-				// Hide the element until the animation begins
+				// Hide the element until the animation begins.
 				$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
 			}
 		}
@@ -815,15 +814,17 @@ abstract class Element_Base extends Controls_Stack {
 		 */
 		do_action( 'elementor/element/after_add_attributes', $this );
 	}
-
+	
 	/**
 	 * Register the Transform controls in the advanced tab of the element.
 	 *
 	 * Previously registered under the Widget_Common class, but registered a more fundamental level now to enable access from other widgets.
 	 *
+	 * @param string $element_selector
+	 * @param string $transform_selector_class
+	 * @return void
 	 * @since 3.9.0
 	 * @access protected
-	 * @return void
 	 */
 	protected function register_transform_section( $element_selector = '', $transform_selector_class = ' > .elementor-widget-container' ) {
 		$default_unit_values_deg = [];
@@ -1501,7 +1502,7 @@ abstract class Element_Base extends Controls_Stack {
 	private function get_child_type( $element_data ) {
 		$child_type = $this->_get_default_child_type( $element_data );
 
-		// If it's not a valid widget ( like a deactivated plugin )
+		// If it's not a valid widget ( like a deactivated plugin ).
 		if ( ! $child_type ) {
 			return false;
 		}
