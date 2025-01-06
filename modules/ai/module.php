@@ -503,7 +503,7 @@ class Module extends BaseModule {
 	}
 
 	private function remove_temporary_containers( $data ) {
-		if ( empty( $data['elements'] ) ) {
+		if ( empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
 			return $data;
 		}
 
