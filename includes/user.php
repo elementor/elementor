@@ -73,6 +73,7 @@ class User {
 	}
 
 	/**
+	 * @param Ajax $ajax
 	 * @since 2.1.0
 	 * @access public
 	 * @static
@@ -273,9 +274,9 @@ class User {
 	}
 
 	/**
-	 * @param $notice_id
-	 * @param $is_viewed
-	 * @param $meta
+	 * @param string $notice_id
+	 * @param bool   $is_viewed
+	 * @param array  $meta
 	 *
 	 * @return void
 	 */
