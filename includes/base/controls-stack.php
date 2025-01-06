@@ -1230,7 +1230,7 @@ abstract class Controls_Stack extends Base_Object {
 
 				if ( $control_obj instanceof Control_Repeater ) {
 					foreach ( $setting as & $item ) {
-						$item = $this->get_active_settings( $control['fields'], $item );
+						$item = $this->get_active_settings( $item, $control['fields'] );
 					}
 				}
 
