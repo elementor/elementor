@@ -16,7 +16,7 @@ class WpRestApi {
 				'permission_callback' => function () {
 					return current_user_can( 'manage_options' );
 				},
-				'callback' => function ( $request ) {
+				'callback' => function () {
 					try {
 						wp_send_json_success( [
 							'SitePlannerConnect' => true,

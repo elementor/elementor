@@ -33,7 +33,7 @@ class ElementorSettings {
 
 						return new WP_REST_Response([
 							'success' => true,
-							// Nest in order to allow extending the response with more details
+							// Nest in order to allow extending the response with more details.
 							'data' => [
 								'value' => $current_value,
 							],
