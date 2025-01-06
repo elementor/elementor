@@ -1918,7 +1918,7 @@ class Container extends Element_Base {
 	}
 
 	protected function hook_sticky_notice_into_transform_section() {
-		add_action( 'elementor/element/container/_section_transform/after_section_start', function ( Container $container ) {
+		add_action( 'elementor/element/container/_section_transform/after_section_start', function( Container $container ) {
 			if ( ! empty( $container->get_controls( 'transform_sticky_notice' ) ) ) {
 				return;
 			}

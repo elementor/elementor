@@ -361,7 +361,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		$active_controls = array_reduce(
-			array_keys( $controls ), function ( $active_controls, $control_key ) use ( $controls, $settings ) {
+			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls, $settings ) {
 				$control = $controls[ $control_key ];
 
 				if ( $this->is_control_visible( $control, $settings, $controls ) ) {
@@ -1390,7 +1390,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		return array_reduce(
-			array_keys( $settings ), function ( $filtered_settings, $setting_key ) use ( $controls, $settings, $callback ) {
+			array_keys( $settings ), function( $filtered_settings, $setting_key ) use ( $controls, $settings, $callback ) {
 				if ( isset( $controls[ $setting_key ] ) ) {
 					$result = $callback( $settings[ $setting_key ], $controls[ $setting_key ] );
 

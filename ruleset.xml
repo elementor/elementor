@@ -20,7 +20,9 @@
 	<rule ref="WordPress">
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
 	</rule>
-
+	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration">
+		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction"/>
+	</rule>
 	<rule ref="WordPress.Security" />
 
 	<!-- Include WordPress-Extra rules but exclude specific rules -->
