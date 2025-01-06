@@ -91,7 +91,7 @@ jobs:
         env:
           PHPCS_FILES: ${{ needs.file-diff.outputs.php_diff }}
         run: |
-          FILES_WITH_NEW_LINES=$(echo "$PHPCS_FILES" | sed 's/ /\n/g')
+          FILES_WITH_NEW_LINES=$(echo "${{ env.PHPCS_FILES }}" |sed 's/ /\n/g')
 
           FILES_WITHOUT_QUOTES=$(echo $FILES_WITH_NEW_LINES | sed "s/'//g")
 
