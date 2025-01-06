@@ -125,7 +125,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'settings' => [
 						'classes' => [
 							'$$type' => 'classes',
-							'value' => [ 
+							'value' => [
 								[ '$$type' => 'string', 'value' => 'one'],
 								[ '$$type' => 'string', 'value' => 'two'],
 								[ '$$type' => 'string', 'value' => 'three' ],
@@ -627,6 +627,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			's-1234' => [
 				'id' => 's-1234',
 				'type' => 'class',
+				'label' => 'My Class',
 				'variants' => [
 					[
 						'props' => [
@@ -800,6 +801,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
+					'label' => 'My Class',
 					'variants' => [
 						[
 							'props' => [
@@ -844,6 +846,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
+					'label' => 'My Class',
 					'variants' => [
 						[
 							'props' => [],
@@ -878,6 +881,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
+					'label' => 'My Class',
 					'variants' => [
 						[
 							'props' => [],
@@ -939,6 +943,81 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertSame($data['styles']['1234'], []);
 	}
 
+	public function test_get_data_for_save__throws_on_styles_type_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => [
+					'$$type' => 'string',
+					'value' => 'valid-string'
+				],
+			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'invalid-type',
+					'label' => 'My Class',
+					'variants' => [
+						[
+							'props' => [],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: type' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
+	public function test_get_data_for_save__throws_on_styles_label_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => [
+					'$$type' => 'string',
+					'value' => 'valid-string'
+				]
+			],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: label' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
 	public function test_get_data_for_save__throws_on_styles_linked_dimensions_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
@@ -952,6 +1031,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
+					'label' => 'My Class',
 					'variants' => [
 						[
 							'props' => [
@@ -1014,6 +1094,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
+					'label' => 'My Class',
 					'variants' => [
 						[
 							'props' => [
@@ -1069,6 +1150,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
+					'label' => 'My Class',
 					'variants' => [
 						[
 							'props' => [
@@ -1131,6 +1213,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
+					'label' => 'My Class',
 					'variants' => [
 						[
 							'props' => [
@@ -1188,6 +1271,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
+					'label' => 'My Class',
 					'variants' => [
 						[
 							'props' => [
@@ -1236,6 +1320,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
+					'label' => 'My Class',
 					'variants' => [
 						[
 							'props' => [

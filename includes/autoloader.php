@@ -187,7 +187,7 @@ class Autoloader {
 	 *
 	 * Used to convert control names to class names.
 	 *
-	 * @param $string
+	 * @param string $string
 	 * @param string $delimiter
 	 *
 	 * @return mixed
@@ -319,7 +319,7 @@ class Autoloader {
 
 		$has_class_alias = isset( $classes_aliases[ $relative_class_name ] );
 
-		// Backward Compatibility: Save old class name for set an alias after the new class is loaded
+		// Backward Compatibility: Save old class name for set an alias after the new class is loaded.
 		if ( $has_class_alias ) {
 			$alias_data = $classes_aliases[ $relative_class_name ];
 
