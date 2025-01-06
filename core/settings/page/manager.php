@@ -98,11 +98,11 @@ class Manager extends CSS_Manager {
 		$post = get_post( $id );
 
 		if ( empty( $post ) ) {
-			throw new \Exception( 'Invalid post.', Exceptions::NOT_FOUND );
+			throw new \Exception( 'Invalid post.', Exceptions::NOT_FOUND ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		if ( ! Utils::is_wp_cli() && ! current_user_can( 'edit_post', $id ) ) {
-			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN );
+			throw new \Exception( 'Access denied.', Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		// Avoid save empty post title.
@@ -129,7 +129,7 @@ class Manager extends CSS_Manager {
 
 		wp_update_post( $post );
 
-		// Check updated status
+		// Check updated status.
 		if ( Document::STATUS_PUBLISH === get_post_status( $id ) ) {
 			$autosave = wp_get_post_autosave( $post->ID );
 			if ( $autosave ) {
@@ -138,9 +138,9 @@ class Manager extends CSS_Manager {
 		}
 
 		if ( isset( $data['post_featured_image'] ) && post_type_supports( $post->post_type, 'thumbnail' ) ) {
-			// Check if the user is at least an Author before allowing them to modify the thumbnail
+			// Check if the user is at least an Author before allowing them to modify the thumbnail.
 			if ( ! current_user_can( 'publish_posts' ) ) {
-				throw new \Exception( 'You do not have permission to modify the featured image.', Exceptions::FORBIDDEN );
+				throw new \Exception( 'You do not have permission to modify the featured image.', Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			}
 
 			if ( empty( $data['post_featured_image']['id'] ) ) {
@@ -329,15 +329,12 @@ class Manager extends CSS_Manager {
 	/**
 	 * @since 2.0.0
 	 * @access public
-	 *
-	 * @param $post_id
-	 * @param $status
 	 */
 	public function save_post_status( $post_id, $status ) {
 		$parent_id = wp_is_post_revision( $post_id );
 
 		if ( $parent_id ) {
-			// Don't update revisions post-status
+			// Don't update revisions post-status.
 			return;
 		}
 
@@ -348,7 +345,7 @@ class Manager extends CSS_Manager {
 		$allowed_post_statuses = get_post_statuses();
 
 		if ( $this->is_contributor_user() && $this->has_invalid_post_status_for_contributor( $status ) ) {
-			// If the status is not allowed, set it to 'pending' by default
+			// If the status is not allowed, set it to 'pending' by default.
 			$status = 'pending';
 			$post->post_status = $status;
 		}
@@ -370,5 +367,4 @@ class Manager extends CSS_Manager {
 	private function has_invalid_post_status_for_contributor( $status ): bool {
 		return 'draft' !== $status && 'pending' !== $status;
 	}
-
 }
