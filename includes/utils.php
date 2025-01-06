@@ -430,7 +430,7 @@ class Utils {
 	 * @deprecated 3.3.0 Use `Plugin::$instance->documents->get_create_new_post_url()` instead.
 	 * @static
 	 *
-	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 * @param string      $post_type Optional. Post type slug. Default is 'page'.
 	 * @param string|null $template_type Optional. Query arg 'template_type'. Default is null.
 	 *
 	 * @return string A URL for creating new post using Elementor.
@@ -567,9 +567,10 @@ class Utils {
 	 * Add Elementor Config js vars to the relevant script handle,
 	 * WP will wrap it with <script> tag.
 	 * To make sure this script runs thru the `script_loader_tag` hook, use a known handle value.
+	 *
 	 * @param string $handle
 	 * @param string $js_var
-	 * @param mixed $config
+	 * @param mixed  $config
 	 */
 	public static function print_js_config( $handle, $js_var, $config ) {
 		$config = wp_json_encode( $config );
@@ -601,7 +602,7 @@ class Utils {
 	/**
 	 * Checks a control value for being empty, including a string of '0' not covered by PHP's empty().
 	 *
-	 * @param mixed $source
+	 * @param mixed       $source
 	 * @param bool|string $key
 	 *
 	 * @return bool
