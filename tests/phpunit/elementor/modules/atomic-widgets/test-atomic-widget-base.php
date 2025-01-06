@@ -125,7 +125,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'settings' => [
 						'classes' => [
 							'$$type' => 'classes',
-							'value' => [ 
+							'value' => [
 								[ '$$type' => 'string', 'value' => 'one'],
 								[ '$$type' => 'string', 'value' => 'two'],
 								[ '$$type' => 'string', 'value' => 'three' ],
@@ -950,7 +950,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [
+					'$$type' => 'string',
+					'value' => 'valid-string'
+				],
 			],
 			'styles' => [
 				's-1234' => [
@@ -985,7 +988,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => 'valid-string',
+				'string_prop' => [
+					'$$type' => 'string',
+					'value' => 'valid-string'
+				]
 			],
 			'styles' => [
 				's-1234' => [
