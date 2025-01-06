@@ -51,11 +51,16 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'prop_types' => [
 						'text' => String_Prop_Type::make()->default( 'The greatest text' ),
 						'tag' => String_Prop_Type::make()->default( 'h2' ),
+						'transformable_string' => String_Prop_Type::make(),
 						'link' => Link_Prop_Type::make(),
 					],
 					'settings' => [
-						'text' => [ '$$type' => 'string', 'value' => 'This text is more great than the greatest text'],
-						'invalid_prop' => [ '$$type' => 'string', 'value' => 'This prop is not in the schema'],
+						'text' => 'This text is more great than the greatest text',
+						'invalid_prop' => 'This prop is not in the schema',
+						'transformable_string' => [
+							'$$type' => 'string',
+							'value' => 'This is awesome!',
+						],
 						'link' => [
 							'$$type' => 'link',
 							'value' => [
@@ -68,6 +73,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'result' => [
 						'text' => 'This text is more great than the greatest text',
 						'tag' => 'h2',
+						'transformable_string' => 'This is awesome!',
 						'link' => [
 							'href' => 'https://elementor.com',
 							'target' => '_blank',
@@ -125,11 +131,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'settings' => [
 						'classes' => [
 							'$$type' => 'classes',
-							'value' => [ 
-								[ '$$type' => 'string', 'value' => 'one'],
-								[ '$$type' => 'string', 'value' => 'two'],
-								[ '$$type' => 'string', 'value' => 'three' ],
-							],
+							'value' => [ 'one', 'two', 'three' ],
 						],
 						'outer_classes' => [
 							'$$type' => 'classes',
@@ -221,7 +223,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'image' => [
 					'$$type' => 'image',
 					'value' => [
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
+						'size' => 'medium',
 					],
 				],
 			],
@@ -253,7 +255,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'url' => 'https://example.com/image.jpg',
 							],
 						],
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
+						'size' => 'medium',
 					],
 				],
 			],
@@ -293,7 +295,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'url' => null,
 							],
 						],
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
+						'size' => 'medium',
 					],
 				],
 			],
@@ -325,7 +327,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'url' => null,
 							],
 						],
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
+						'size' => 'medium',
 					],
 				],
 			],
@@ -355,7 +357,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'url' => null,
 							],
 						],
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
+						'size' => 'medium',
 					],
 				],
 			],
@@ -421,7 +423,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'name' => 'test-image-dynamic',
 							],
 						],
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
+						'size' => 'medium',
 					],
 				],
 			],
@@ -742,11 +744,11 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'not_a_prop_type' => 'not-a-prop-type',
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
-				'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
-				'boolean_prop' => [ '$$type' => 'boolean', 'value' => true ],
-				'not_in_schema' => [ '$$type' => 'string', 'value' => 'not-in-schema' ],
-				'not_a_prop_type' => [ '$$type' => 'string', 'value' => 'not-a-prop-type' ],
+				'string_prop' => 'valid-string',
+				'number_prop' => 123,
+				'boolean_prop' => true,
+				'not_in_schema' => 'not-in-schema',
+				'not_a_prop_type' => 'not-a-prop-type',
 			],
 			'styles' => $widget_styles
 		] );
@@ -756,9 +758,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [
-			'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
-			'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
-			'boolean_prop' => [ '$$type' => 'boolean', 'value' => true ],
+			'string_prop' => 'valid-string',
+			'number_prop' => 123,
+			'boolean_prop' => true,
 		], $data_for_save['settings'] );
 
 		$this->assertTrue( $widget_styles == $data_for_save['styles'] );
@@ -772,8 +774,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'number_prop' => Number_Prop_Type::make()->default( 0 ),
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => '<b>invalid HTML string</b>' ],
-				'number_prop' => [ '$$type' => 'number', 'value' => '123' ],
+				'string_prop' => '<b>invalid HTML string</b>',
+				'number_prop' => '123',
 			],
 		] );
 
@@ -782,8 +784,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [
-			'string_prop' => [ '$$type' => 'string', 'value' => 'invalid HTML string' ],
-			'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
+			'string_prop' => 'invalid HTML string',
+			'number_prop' => 123,
 		], $data_for_save['settings'] );
 	}
 
@@ -794,7 +796,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+				'string_prop' => 'valid-string',
 			],
 			'styles' => [
 				's-1234' => [
@@ -803,7 +805,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
-								'font-size' => [ '$$type' => 'string', 'value' => 'not-a-size' ],
+								'font-size' => 'not-a-size',
 								'width' => [ // Missing unit
 									'$$type' => 'size',
 									'value' => [ 'size' => 16 ],
@@ -838,7 +840,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+				'string_prop' => 'valid-string',
 			],
 			'styles' => [
 				's-1234' => [
@@ -872,7 +874,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+				'string_prop' => 'valid-string',
 			],
 			'styles' => [
 				's-1234' => [
@@ -946,7 +948,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+				'string_prop' => 'valid-string',
 			],
 			'styles' => [
 				's-1234' => [
@@ -962,7 +964,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 											'$$type' => 'size',
 											'value' => [
 												'unit' => 'px',
-												'size' => 14
+												'size' => '14'
 											]
 										],
 										'right' => 'not-a-size',
@@ -970,14 +972,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 											'$$type' => 'size',
 											'value' => [
 												'unit' => 'px',
-												'size' => 14
+												'size' => '14'
 											]
 										],
 										'left' => [
 											'$$type' => 'size',
 											'value' => [
 												'unit' => 'px',
-												'size' => 14
+												'size' => '14'
 											]
 										],
 									]
@@ -1008,7 +1010,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+				'string_prop' => 'valid-string',
 			],
 			'styles' => [
 				's-1234' => [
@@ -1063,7 +1065,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+				'string_prop' => 'valid-string',
 			],
 			'styles' => [
 				's-1234' => [
@@ -1125,7 +1127,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+				'string_prop' => 'valid-string',
 			],
 			'styles' => [
 				's-1234' => [
@@ -1162,8 +1164,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'mock_prop_2' => Number_Prop_Type::make()->default( 0 ),
 			],
 			'settings' => [
-				'mock_prop_1' => [ '$$type' => 'number', 'value' => 123 ],
-				'mock_prop_2' => [ '$$type' => 'string', 'value' => 'not-a-number' ],
+				'mock_prop_1' => 123,
+				'mock_prop_2' => 'not-a-number',
 			],
 		] );
 
@@ -1182,7 +1184,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+				'string_prop' => 'valid-string',
 			],
 			'styles' => [
 				's-1234' => [
@@ -1230,7 +1232,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'string_prop' => String_Prop_Type::make()->default( '' ),
 			],
 			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+				'string_prop' => 'valid-string',
 			],
 			'styles' => [
 				's-1234' => [

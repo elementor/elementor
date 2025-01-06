@@ -157,14 +157,14 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 					'before' => [
 						'kind' => 'plain',
 						'key' => 'string',
-						'default' => [ '$$type' => 'string', 'value' => '' ],
+						'default' => '',
 						'settings' => [],
 						'meta' => [],
 					],
 					'key' => [
 						'kind' => 'plain',
 						'key' => 'string',
-						'default' => [ '$$type' => 'string', 'value' => '' ],
+						'default' => '',
 						'settings' => [
 							'enum' => [
 								'name',
