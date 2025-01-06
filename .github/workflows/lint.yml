@@ -89,9 +89,11 @@ jobs:
           composer require php-parallel-lint/php-parallel-lint
       - name: Run Lint
         run: |
-          echo $(gh pr diff --name-only) > .phpcs-files.txt
+          PHPCS_FILES=$(gh pr diff --name-only)
 
-          vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php --file-list=./.phpcs-files.txt
+          echo $PHPCS_FILES > ./.phpcs-files.txt
+
+          vendor/bin/phpcs -p -s -n --standard=./ruleset.xml --extensions=php --file-list=./.phpcs-files.txt
       - name: Setup PHP 7.4 # not included in ubuntu 22.04
         uses: shivammathur/setup-php@v2
         with:
