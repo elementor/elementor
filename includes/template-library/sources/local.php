@@ -1750,7 +1750,7 @@ class Source_Local extends Source_Base {
 	}
 
 	private function avoid_rest_access_for_non_admins(): void {
-		add_filter('rest_pre_dispatch', function ( $value, \WP_REST_Server $server, \WP_REST_Request $request ) {
+		add_filter( 'rest_pre_dispatch', function ( $value, \WP_REST_Server $server, \WP_REST_Request $request ) {
 			if ( strpos( $request->get_route(), self::CPT ) !== false ) {
 				if ( ! current_user_can( 'manage_options' ) ) {
 					return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not allowed to do that.', 'elementor' ), [ 'status' => rest_authorization_required_code() ] );

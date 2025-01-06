@@ -13,7 +13,7 @@ class ElementorPostMeta {
 		$post_types = get_post_types_by_support( 'elementor' );
 
 		foreach ( $post_types as $post_type ) {
-			register_meta($post_type, '_elementor_edit_mode', [
+			register_meta( $post_type, '_elementor_edit_mode', [
 				'single' => true,
 				'show_in_rest' => [
 					'schema' => [
@@ -29,7 +29,7 @@ class ElementorPostMeta {
 
 			$document_types = Plugin::$instance->documents->get_document_types();
 
-			register_meta($post_type, '_elementor_template_type', [
+			register_meta( $post_type, '_elementor_template_type', [
 				'single' => true,
 				'show_in_rest' => [
 					'schema' => [
@@ -43,7 +43,7 @@ class ElementorPostMeta {
 				'auth_callback' => [ $this, 'check_edit_permission' ],
 			]);
 
-			register_meta($post_type, '_elementor_data', [
+			register_meta( $post_type, '_elementor_data', [
 				'single' => true,
 				'show_in_rest' => [
 					'schema' => [
@@ -56,7 +56,7 @@ class ElementorPostMeta {
 				'auth_callback' => [ $this, 'check_edit_permission' ],
 			]);
 
-			register_meta($post_type, '_elementor_page_settings', [
+			register_meta( $post_type, '_elementor_page_settings', [
 				'single' => true,
 				'show_in_rest' => [
 					'schema' => [
@@ -77,7 +77,7 @@ class ElementorPostMeta {
 			]);
 
 			if ( Utils::has_pro() ) {
-				register_meta($post_type, '_elementor_conditions', [
+				register_meta( $post_type, '_elementor_conditions', [
 					'type' => 'object',
 					'title' => 'Elementor conditions',
 					'description' => 'Elementor conditions',
