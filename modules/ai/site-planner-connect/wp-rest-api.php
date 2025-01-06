@@ -5,7 +5,7 @@ namespace Elementor\Modules\Ai\SitePlannerConnect;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Just a simple rest api to validate new Site Planner Connect feature is exist.
+ * Just a simple rest api to validate new Site Planner Connect feature exists.
  */
 class WpRestApi {
 
