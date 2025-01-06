@@ -87,6 +87,17 @@ defined( 'ABSPATH' ) || exit;
 		line-height: 26px; /* 162.5% */
 		letter-spacing: 0.46px;
 	}
+
+	.site-planner-consent .generating-results {
+		display: none;
+		padding: 8px 16px;
+		margin: 0 32px;
+	}
+
+	.site-planner-consent .generating-results.error {
+		display: block;
+		background: rgb(253, 236, 236);
+	}
 </style>
 <div class="site-planner-consent">
 	<h1 class="site-planner-consent-title">
@@ -136,13 +147,21 @@ defined( 'ABSPATH' ) || exit;
 	<button class="site-planner-consent-button" onclick="sendPassword()">
 		%cta%
 	</button>
+
+	<div style="height: 40px"></div>
+
+	<div class="generating-results"></div>
 </div>
 <script>
+	const generatingResults = document.querySelector(".generating-results");
+
 	const hideAdminUi = () => {
 		document.body.append(document.querySelector(".site-planner-consent"))
 	}
 
 	const sendPassword = () => {
+		generatingResults.classList.remove("error");
+
 		fetch(`${ wpApiSettings.root}wp/v2/users/me/application-passwords`, {
 			method: "POST",
 			headers: {
@@ -168,6 +187,8 @@ defined( 'ABSPATH' ) || exit;
 			})
 			.catch(error => {
 				console.error("Error:", error);
+				generatingResults.classList.add("error");
+				generatingResults.innerText = "Error generating password: " + error;
 			});
 	}
 
