@@ -45,6 +45,6 @@ jobs:
         env:
           PHP_CHANGED_FILES: ${{ needs.php-file-diff.outputs.all_changed_files }}
         run: |
-          for file in ${ PHP_CHANGED_FILES }; do
+          for file in ${PHP_CHANGED_FILES}; do
             echo "$file was changed"
           done
