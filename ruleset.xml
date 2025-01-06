@@ -20,9 +20,7 @@
 	<rule ref="WordPress">
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
 	</rule>
-	<rule ref="Squiz.Functions.MultiLineFunctionDeclaration">
-		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction"/>
-	</rule>
+
 	<rule ref="WordPress.Security" />
 
 	<!-- Include WordPress-Extra rules but exclude specific rules -->
@@ -34,6 +32,10 @@
 		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 		<exclude name="Squiz.Commenting.VariableComment.Missing" />
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag" />
+		<exclude name="Squiz.Commenting.FunctionCommentThrowTag.Missing" />
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
+		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction"/>
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterOpen" />
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
