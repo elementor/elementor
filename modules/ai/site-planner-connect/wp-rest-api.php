@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\Ai\SitePlannerConnect;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Just a simple rest api to validate new Site Planner Connect feature exists.

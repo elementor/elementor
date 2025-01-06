@@ -6,7 +6,9 @@ use Elementor\Modules\WpRest\Classes\ElementorSettings;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_REST_Request;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Test_Elementor_Settings extends Elementor_Test_Base {
 	protected ElementorSettings $settings;

@@ -7,7 +7,9 @@ use WP_REST_Request;
 use WP_REST_Server;
 use WP_REST_Response;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class ElementorSettings {
 

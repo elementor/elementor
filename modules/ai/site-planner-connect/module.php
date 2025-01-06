@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\Ai\SitePlannerConnect;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Module {
 	const NOT_TRANSLATED_APP_NAME = 'Site Planner';

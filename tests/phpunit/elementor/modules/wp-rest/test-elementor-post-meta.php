@@ -6,7 +6,9 @@ use Elementor\Modules\WpRest\Classes\ElementorPostMeta;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Test_Elementor_Post_Meta extends Elementor_Test_Base {
 	protected ElementorPostMeta $post_meta;

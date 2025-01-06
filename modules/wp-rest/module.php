@@ -7,7 +7,9 @@ use Elementor\Modules\WpRest\Classes\ElementorPostMeta;
 use Elementor\Modules\WpRest\Classes\ElementorSettings;
 use Elementor\Modules\WpRest\Classes\ElementorUserMeta;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 class Module extends BaseModule {
 
