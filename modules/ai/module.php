@@ -295,7 +295,6 @@ class Module extends BaseModule {
 		}
 
 		$this->add_wc_scripts();
-
 	}
 
 	public function enqueue_ai_single_product_page_scripts() {
@@ -304,7 +303,6 @@ class Module extends BaseModule {
 		}
 
 		$this->add_wc_scripts();
-
 	}
 
 	private function add_products_bulk_action( $bulk_actions ) {
@@ -593,10 +591,8 @@ class Module extends BaseModule {
 			if ( ! $document->is_editable_by_current_user() ) {
 				throw new \Exception( 'Access denied' );
 			}
-		} else {
-			if ( ! current_user_can( 'edit_post', $editor_post_id ) ) {
+		} elseif ( ! current_user_can( 'edit_post', $editor_post_id ) ) {
 				throw new \Exception( 'Access denied' );
-			}
 		}
 	}
 
@@ -704,7 +700,7 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function get_ai_app() : Ai {
+	private function get_ai_app(): Ai {
 		return Plugin::$instance->common->get_component( 'connect' )->get_app( 'ai' );
 	}
 
@@ -1131,8 +1127,8 @@ class Module extends BaseModule {
 		}
 
 		if ( ! empty( $image['use_gallery_image'] ) && ! empty( $image['id'] ) ) {
-			 $app = $this->get_ai_app();
-			 $app->set_used_gallery_image( $image['id'] );
+			$app = $this->get_ai_app();
+			$app->set_used_gallery_image( $image['id'] );
 		}
 
 		return [
@@ -1405,15 +1401,15 @@ class Module extends BaseModule {
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
-			throw new \Exception( __( 'Missing Image', 'elementor' ) );
+			throw new \Exception( esc_html__( 'Missing Image', 'elementor' ) );
 		}
 
 		if ( empty( $data['payload']['settings'] ) ) {
-			throw new \Exception( __( 'Missing prompt settings', 'elementor' ) );
+			throw new \Exception( esc_html__( 'Missing prompt settings', 'elementor' ) );
 		}
 
 		if ( ! $app->is_connected() ) {
-			throw new \Exception( __( 'not_connected', 'elementor' ) );
+			throw new \Exception( esc_html__( 'not_connected', 'elementor' ) );
 		}
 
 		$context = $this->get_request_context( $data );
@@ -1523,12 +1519,12 @@ class Module extends BaseModule {
 	private function update_product_gallery( $product, ?int $image_to_remove, ?int $image_to_add ): void {
 		$gallery_image_ids = $product->get_gallery_image_ids();
 
-		$index = array_search( $image_to_remove, $gallery_image_ids );
+		$index = array_search( $image_to_remove, $gallery_image_ids, true );
 		if ( false !== $index ) {
 			unset( $gallery_image_ids[ $index ] );
 		}
 
-		if ( ! in_array( $image_to_add, $gallery_image_ids ) ) {
+		if ( ! in_array( $image_to_add, $gallery_image_ids, true ) ) {
 			$gallery_image_ids[] = $image_to_add;
 		}
 

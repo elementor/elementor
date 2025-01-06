@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 class ElementorPostMeta {
 
-	public function register() :void {
+	public function register(): void {
 		$post_types = get_post_types_by_support( 'elementor' );
 
 		foreach ( $post_types as $post_type ) {
@@ -99,13 +99,13 @@ class ElementorPostMeta {
 	/**
 	 * Check if current user has permission to edit the specific post with elementor
 	 *
-	 * @param bool $allowed Whether the user can add the post meta. Default false.
+	 * @param bool   $allowed Whether the user can add the post meta. Default false.
 	 * @param string $meta_key The meta key.
-	 * @param int $post_id Post ID.
+	 * @param int    $post_id Post ID.
 	 * @return bool
 	 * @since 3.27.0
 	 */
-	public function check_edit_permission( bool $allowed, string $meta_key, int $post_id ) : bool {
+	public function check_edit_permission( bool $allowed, string $meta_key, int $post_id ): bool {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		return $document && $document->is_editable_by_current_user();

@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
 
 class ElementorUserMeta {
 
-	private function get_meta_config() : array {
+	private function get_meta_config(): array {
 		return [
 			'elementor_introduction' => [
 				'schema' => [
@@ -24,7 +24,7 @@ class ElementorUserMeta {
 		];
 	}
 
-	public function register() : void {
+	public function register(): void {
 		foreach ( $this->get_meta_config() as $key => $config ) {
 			$config['get_callback'] = function( $user, $field_name, $request ) {
 				return get_user_meta( $user['id'], $field_name, true );

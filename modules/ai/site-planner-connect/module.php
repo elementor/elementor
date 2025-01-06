@@ -12,13 +12,13 @@ class Module {
 	public function __construct() {
 		add_action( 'rest_api_init', [ $this, 'on_rest_init' ] );
 		add_action( 'admin_menu', [ $this, 'register_menu_page' ], 100 );
-		add_filter('rest_prepare_application_password', function ( $response, $item, $request ) {
-			if ( $request->get_route() === '/wp/v2/users/me/application-passwords' && is_user_logged_in() ) {
+		add_filter( 'rest_prepare_application_password', function ( $response, $item, $request ) {
+			if   ( '/wp/v2/users/me/application-passwords' ===$request->get_route() && is_user_logged_in() ) {
 				$user = wp_get_current_user();
 				$response->data['user_login'] = $user->user_login;
 			}
 			return $response;
-		}, 10, 3);
+		}, 10, 3 );
 	}
 
 	public function on_rest_init(): void {
