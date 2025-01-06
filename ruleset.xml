@@ -2,6 +2,7 @@
 <ruleset name="WordPress.Elementor">
 	<description>Elementor Coding Standard</description>
 
+	<arg value="ps" />
 	<arg name="parallel" value="8" />
 
 	<config name="text_domain" value="elementor" />
@@ -14,12 +15,18 @@
 	<exclude-pattern>includes/libraries/</exclude-pattern>
 	<exclude-pattern>tests/*.php</exclude-pattern>
 
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax" />
+
+	<rule ref="WordPress">
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
+	</rule>
+
 	<rule ref="WordPress.Security" />
 
+	<!-- Include WordPress-Extra rules but exclude specific rules -->
 	<rule ref="WordPress-Extra">
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />
 		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
-		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found" />
 		<exclude name="Squiz.Commenting.ClassComment.Missing" />
 		<exclude name="Squiz.Commenting.FileComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
@@ -38,12 +45,6 @@
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
-	</rule>
-
-	<rule ref="WordPress.WP.DeprecatedFunctions">
-		<properties>
-			<property name="minimum_supported_version" value="4.7" />
-		</properties>
 	</rule>
 
 	<rule ref="WordPress.NamingConventions.ValidHookName">
