@@ -44,8 +44,6 @@ class Global_Classes_Repository {
 	public function put( string $id, array $value ) {
 		$all = $this->all();
 
-		unset( $value['id'] );
-
 		if ( ! isset( $all->get_items()[ $id ] ) ) {
 			throw new \Exception( "Global class with id {$id} not found" );
 		}
