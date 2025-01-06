@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-22.04
     name: PHP Linter - File Diff
     if: startsWith( github.repository, 'elementor/' )
+    permissions:
+      pull-requests: read
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
       - name: Get all changed PHP files
         id: changed-php-files
         uses: tj-actions/changed-files@v45
