@@ -613,8 +613,8 @@ abstract class Controls_Stack extends Base_Object {
 		$position = array_merge( $default_position, $position );
 
 		if (
-			'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ], true ) ||
-			'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ], true )
+			( 'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ], true ) ) ||
+			( 'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ], true ) )
 		) {
 			_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
@@ -932,7 +932,7 @@ abstract class Controls_Stack extends Base_Object {
 
 			// Set parent using the name from previous iteration.
 			if ( isset( $control_name ) ) {
-				// If $control_name end with _widescreen use desktop name instead
+				// If $control_name end with _widescreen use desktop name instead.
 				$control_args['parent'] = '_widescreen' === substr( $control_name, -strlen( '_widescreen' ) ) ? $id : $control_name;
 			} else {
 				$control_args['parent'] = null;
@@ -1061,8 +1061,8 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	final public function get_config() {
 		if ( null === $this->config ) {
-			// TODO: This is for backwards compatibility starting from 2.9.0
-			// This if statement should be removed when the method is hard-deprecated
+			// TODO: This is for backwards compatibility starting from 2.9.0.
+			// This if statement should be removed when the method is hard-deprecated.
 			if ( $this->has_own_method( '_get_initial_config', self::class ) ) {
 				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_get_initial_config', '2.9.0', __CLASS__ . '::get_initial_config()' );
 
@@ -1088,6 +1088,8 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Set a specific property of the config list for this controls-stack.
 	 *
+	 * @param string $key
+	 * @param string $value
 	 * @since 3.5.0
 	 * @access public
 	 */
@@ -1165,6 +1167,9 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * @param null $setting
+	 * @param null $settings
+	 * @return array|mixed|null
 	 * @since 2.0.14
 	 * @access public
 	 */
@@ -1185,14 +1190,14 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Retrieve the settings from all the active controls.
 	 *
-	 * @since 1.4.0
+	 * @param array|null $settings Optional. Controls settings. Default is null.
+	 * @param array|null $controls Optional. An array of controls. Default is null.
+	 *
+	 * @return array Active settings.
 	 * @since 2.1.0 Added the `controls` and the `settings` parameters.
 	 * @access public
 	 *
-	 * @param array $controls Optional. An array of controls. Default is null.
-	 * @param array $settings Optional. Controls settings. Default is null.
-	 *
-	 * @return array Active settings.
+	 * @since 1.4.0
 	 */
 	public function get_active_settings( $settings = null, $controls = null ) {
 		$is_first_request = ! $settings && ! $this->active_settings;
@@ -1225,7 +1230,7 @@ abstract class Controls_Stack extends Base_Object {
 
 				if ( $control_obj instanceof Control_Repeater ) {
 					foreach ( $setting as & $item ) {
-						$item = $this->get_active_settings( $item, $control['fields'] );
+						$item = $this->get_active_settings( $control['fields'], $item );
 					}
 				}
 
@@ -1261,7 +1266,7 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	public function get_settings_for_display( $setting_key = null ) {
 		if ( ! $this->parsed_active_settings ) {
-			$this->parsed_active_settings = $this->get_active_settings( $this->get_parsed_dynamic_settings(), $this->get_controls() );
+			$this->parsed_active_settings = $this->get_active_settings( $this->get_controls(), $this->get_parsed_dynamic_settings() );
 		}
 
 		return self::get_items( $this->parsed_active_settings, $setting_key );
@@ -1423,13 +1428,12 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Used to determine whether the control is visible or not.
 	 *
+	 * @param array $control The control.
+	 * @param null  $values Optional. Condition values. Default is null.
+	 * @param null  $controls
+	 * @return bool Whether the control is visible.
 	 * @since 1.4.0
 	 * @access public
-	 *
-	 * @param array $control The control.
-	 * @param array $values  Optional. Condition values. Default is null.
-	 *
-	 * @return bool Whether the control is visible.
 	 */
 	public function is_control_visible( $control, $values = null, $controls = null ) {
 		if ( null === $values ) {
@@ -1518,7 +1522,10 @@ abstract class Controls_Stack extends Base_Object {
 				$is_contains = $instance_value === $condition_value;
 			}
 
-			if ( $is_negative_condition && $is_contains || ! $is_negative_condition && ! $is_contains ) {
+			if (
+				( $is_negative_condition && $is_contains ) ||
+				( ! $is_negative_condition && ! $is_contains )
+			) {
 				return false;
 			}
 		}
@@ -2067,7 +2074,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param array|string $element The element.
 	 */
 	public function print_render_attribute_string( $element ) {
-		echo $this->get_render_attribute_string( $element ); // XSS ok.
+		Utils::print_unescaped_internal_string( $this->get_render_attribute_string( $element ) );
 	}
 
 	/**
@@ -2082,7 +2089,7 @@ abstract class Controls_Stack extends Base_Object {
 		ob_start();
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
-		// This `if` statement should be removed when the method is removed
+		// This `if` statement should be removed when the method is removed.
 		if ( $this->has_own_method( '_content_template', self::class ) ) {
 			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_content_template', '2.9.0', __CLASS__ . '::content_template()' );
 
@@ -2419,7 +2426,7 @@ abstract class Controls_Stack extends Base_Object {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
-		// This `if` statement should be removed when the method is removed
+		// This `if` statement should be removed when the method is removed.
 		if ( $this->has_own_method( '_register_controls', self::class ) ) {
 			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_controls', '3.1.0', __CLASS__ . '::register_controls()' );
 
@@ -2566,7 +2573,7 @@ abstract class Controls_Stack extends Base_Object {
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
 			// TODO: This is for backwards compatibility starting from 2.9.0
-			// This if statement should be removed when the method is hard-deprecated
+			// This if statement should be removed when the method is hard-deprecated.
 			if ( $this->has_own_method( '_init', self::class ) ) {
 				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_init', '2.9.0', __CLASS__ . '::init()' );
 
