@@ -1,0 +1,48 @@
+name: Lint-PHP-Changes-Only
+
+on:
+  pull_request:
+  merge_group:
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  php-file-diff:
+    runs-on: ubuntu-22.04
+    name: PHP Linter - File Diff
+    if: startsWith( github.repository, 'elementor/' )
+    permissions:
+      pull-requests: read
+    outputs:
+      any_changed: ${{ steps.changed-php-files.outputs.any_changed }}
+      all_changed_files: ${{ steps.changed-php-files.outputs.all_changed_files }}
+    steps:
+      - name: Get all changed PHP files
+        id: changed-php-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            **.php
+
+  PHP-Linter:
+    runs-on: ubuntu-22.04
+    needs: [ 'php-file-diff' ]
+    if: ${{ needs.php-file-diff.outputs.any_changed == 'true' || github.event.pull_request.title == null }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Install Dependencies
+        run: |
+          composer install
+      - name: Run PHP Linter
+        env:
+          PHP_CHANGED_FILES: ${{ needs.php-file-diff.outputs.all_changed_files }}
+        run: |
+          composer lint $(echo "${PHP_CHANGED_FILES}" | tr '\n' ' ')
