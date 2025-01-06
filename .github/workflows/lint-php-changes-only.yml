@@ -1,0 +1,39 @@
+name: Lint-PHP-Changes-Only
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+  merge_group:
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  PHP-Lint:
+    runs-on: ubuntu-22.04
+    name: Lint - File Diff
+    if: startsWith( github.repository, 'elementor/' )
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Get all changed PHP files
+        id: changed-php-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            **.php
+      - name: Run PHP Linter
+        env:
+          PHP_CHANGED_FILES: ${{ steps.changed-php-files.outputs.all_changed_files }}
+        run: |
+          for file in ${PHP_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
