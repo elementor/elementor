@@ -31,7 +31,7 @@ jobs:
           files: |
             **.php
 
-  PHP-Lint:
+  PHP-Linter:
     runs-on: ubuntu-22.04
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.any_changed == 'true' || github.event.pull_request.title == null }}
