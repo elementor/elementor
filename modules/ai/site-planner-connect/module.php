@@ -31,7 +31,7 @@ class Module {
 			'App Password Generator',
 			'App Password',
 			'manage_options',
-			'site-planner-password-generator',
+			'e-site-planner-password-generator',
 			[ $this, 'render_menu_page' ]
 		);
 	}
