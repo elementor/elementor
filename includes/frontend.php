@@ -917,7 +917,7 @@ class Frontend extends App {
 			$this->enqueued_icon_fonts[] = $css_url;
 		}
 
-		// clear enqueued icons
+		// Clear enqueued icons.
 		$this->icon_fonts_to_enqueue = [];
 	}
 
