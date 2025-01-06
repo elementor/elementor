@@ -23,7 +23,7 @@ interface Logger_Interface {
 
 	/**
 	 * @param string $message
-	 * @param array $meta
+	 * @param array  $meta
 	 *
 	 * @return void
 	 */
