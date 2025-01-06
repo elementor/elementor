@@ -24,7 +24,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 	];
 
 	for ( const i in data ) {
-		test.skip( `${ data[ i ].widgetTitle }: Image size test`, async ( { page, apiRequests }, testInfo ) => {
+		test( `${ data[ i ].widgetTitle }: Image size test`, async ( { page, apiRequests }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
 			const contentTab = new Content( page, testInfo );
