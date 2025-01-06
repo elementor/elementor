@@ -426,7 +426,7 @@ abstract class Widget_Base extends Element_Base {
 		if ( $this->has_widget_inner_wrapper() ) : ?>
 		<div class="elementor-widget-container">
 		<?php endif;
-			echo $template_content; // XSS ok.
+			echo $template_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		if ( $this->has_widget_inner_wrapper() ) : ?>
 		</div>
 		<?php endif;
