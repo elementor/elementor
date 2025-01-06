@@ -2378,7 +2378,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param string $template_content Template content.
 	 */
 	protected function print_template_content( $template_content ) {
-		echo $template_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		Utils::print_unescaped_internal_string( $template_content );
+		
 	}
 
 	/**

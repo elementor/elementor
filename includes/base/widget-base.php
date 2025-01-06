@@ -426,7 +426,7 @@ abstract class Widget_Base extends Element_Base {
 		if ( $this->has_widget_inner_wrapper() ) : ?>
 		<div class="elementor-widget-container">
 		<?php endif;
-			echo $template_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			Utils::print_unescaped_internal_string( $template_content );
 		if ( $this->has_widget_inner_wrapper() ) : ?>
 		</div>
 		<?php endif;
@@ -1062,7 +1062,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $message          A message regarding the deprecation.
 	 * @param string $replacement    The widget that should be used instead.
 	 */
-	protected function add_deprecation_message( string $version, string $message, string $replacement ) {
+	protected function add_deprecation_message( $version, $message, $replacement ) {
 		// Expose the config for handling in JS.
 		$this->set_config( 'deprecation', [
 			'version' => $version,
