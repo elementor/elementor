@@ -156,7 +156,7 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	final public static function are_unfiltered_uploads_enabled() {
-		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY )
+		$enabled = (bool) get_option( self::UNFILTERED_FILE_UPLOADS_KEY )
 			&& Svg::file_sanitizer_can_run()
 			&& User::is_current_user_can_upload_json();
 

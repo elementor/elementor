@@ -18,4 +18,3 @@ add_action( 'plugins_loaded', function () {
 	\Elementor\Data\V2\Manager::instance()->register_controller( House\Rooms\Controller::class );
 	\Elementor\Data\V2\Manager::instance()->register_controller( House\Rooms\Doors\Controller::class );
 } );
-
