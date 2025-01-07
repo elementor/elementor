@@ -10,9 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
 		public function transform( $value, $key ) {
-			if ( ! empty( $value['src']['id'] ) ) {
+			var_dump( $value );
+//			die();
+			return "url( 'https://bit.ly/2rlzaXi' )";
+
+			if ( ! empty( $value['image-src']['id'] ) ) {
 				$image_src = wp_get_attachment_image_src(
-					(int) $value['src']['id'],
+					(int) $value['image-src']['id'],
 					$value['size'] ?? 'full'
 				);
 
@@ -25,9 +29,8 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 				return "url( $src )";
 			}
 
-			if ( empty( $value['src']['url'] ) ) {
+			if ( empty( $value['image-src']['url'] ) ) {
 				throw new \Exception( 'Invalid image URL.' );
 			}
-
 		}
 }

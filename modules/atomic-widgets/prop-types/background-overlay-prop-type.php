@@ -18,6 +18,5 @@ class Background_Overlay_Prop_Type extends Array_Prop_Type {
 		return Union_Prop_Type::make()
 			->add_prop_type( Background_Color_Overlay_Prop_Type::make() )
 			->add_prop_type( Background_Image_Overlay_Prop_Type::make() );
-//			->add_prop_type( Image_Src_Prop_Type::make() );
 	}
 }

@@ -9,6 +9,8 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 		return 'background-image-overlay';
 	}
 	protected function define_shape(): array {
+//		var_dump(Image_Src_Prop_Type::make(),);
+//		die();
 		return [
 			'image-src' => Image_Src_Prop_Type::make(),
 		];

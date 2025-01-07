@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corner_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes_Transformer;
@@ -14,6 +15,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Linked_Dim
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
@@ -406,6 +408,26 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 												'$$type' => 'background-color-overlay',
 												'value' => 'blue',
 											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+//													'$$type' => 'image-src',
+//													'value' => [
+//														'id'=> [
+//															'$$type' => 'image-attachment-id',
+//															'value' => '807'
+//													], 'url' => null,
+//													]
+													'$$type' => 'image-src',
+													'value' => [
+														'id' => [
+															'$$type' => 'image-attachment-id',
+															'value' => 807
+														],
+														'url' => null,
+													],
+												]
+											],
 										],
 									],
 
@@ -530,6 +552,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ', ' ) );
+		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
 
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
 	}
