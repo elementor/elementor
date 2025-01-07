@@ -21,6 +21,7 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 
 	/**
+	 * @var mixed
 	 * @deprecated 3.8.0
 	 */
 	public $import;
