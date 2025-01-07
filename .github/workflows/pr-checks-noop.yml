@@ -48,3 +48,9 @@ jobs:
     steps:
       - run: |
           exit 0
+  test-result-lighthouse:
+    name: Lighthouse - Test Results
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          exit 0
