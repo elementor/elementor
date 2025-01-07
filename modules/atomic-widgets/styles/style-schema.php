@@ -56,6 +56,7 @@ class Style_Schema {
 				'relative',
 				'absolute',
 				'fixed',
+				'sticky',
 			]),
 			'top' => Size_Prop_Type::make(),
 			'right' => Size_Prop_Type::make(),
