@@ -47,7 +47,7 @@ class Manager extends Base_Object {
 	 * Add Feature
 	 *
 	 * Each feature has to provide the following information:
-	 *     {
+	 *     [
 	 *         @type string   $name
 	 *         @type string   $title
 	 *         @type string   $tag
@@ -56,7 +56,7 @@ class Manager extends Base_Object {
 	 *         @type string   $release_status
 	 *         @type string   $default
 	 *         @type callable $on_state_change
-	 *     }
+	 *     ]
 	 *
 	 * @since 3.1.0
 	 * @access public
