@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Dynamic_Section;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
@@ -133,17 +134,24 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	private function get_post_query(): array {
 		$excluded_types = Utils::get_excluded_post_types();
 		$posts_map = Utils::get_posts_per_post_type_map( $excluded_types );
-		$options = [];
+		$options = new Collection( [] );
 
 		foreach ( $posts_map as $post_type_slug => $data ) {
-			foreach ( $data['items'] as $post ) {
+			$options = $options->union( $this->get_formatted_post_options( $data['items'], $posts_map[ $post_type_slug ]['label'] ) );
+		}
+
+		return $options->all();
+	}
+
+	private function get_formatted_post_options( $items, $group_label ) {
+		$options = [];
+
+			foreach ( $items as $post ) {
 				$options[ $post->guid ] = [
-					'value' => $post->guid,
 					'label' => $post->post_title,
-					'groupLabel' => $posts_map[ $post_type_slug ]['label'],
+					'groupLabel' => $group_label,
 				];
 			}
-		}
 
 		return $options;
 	}
