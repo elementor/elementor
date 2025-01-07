@@ -12,7 +12,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		public function transform( $value, $key ) {
 			var_dump( $value );
 //			die();
-			return "url( 'https://bit.ly/2rlzaXi' )";
+//			return "url( 'https://bit.ly/2rlzaXi' )";
 
 			if ( ! empty( $value['image-src']['id'] ) ) {
 				$image_src = wp_get_attachment_image_src(
@@ -26,7 +26,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 				[ $src ] = $image_src;
 
-				return "url( $src )";
+				return "url(\" $src \")";
 			}
 
 			if ( empty( $value['image-src']['url'] ) ) {
