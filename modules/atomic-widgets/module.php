@@ -106,10 +106,6 @@ class Module extends BaseModule {
 	}
 
 	private function add_packages( $packages ) {
-		if ( current_user_can( 'manage_options' ) ) {
-			$packages[] = 'editor-global-classes';
-		}
-		
 		return array_merge( $packages, self::PACKAGES );
 	}
 
