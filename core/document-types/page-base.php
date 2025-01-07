@@ -171,7 +171,7 @@ abstract class PageBase extends Document {
 		Plugin::$instance->controls_manager->add_custom_css_controls( $document );
 	}
 
-	public static function get_labels() : array {
+	public static function get_labels(): array {
 		$plural_label   = static::get_plural_title();
 		$singular_label = static::get_title();
 
