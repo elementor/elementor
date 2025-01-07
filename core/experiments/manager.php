@@ -48,14 +48,13 @@ class Manager extends Base_Object {
 	 *
 	 * Each feature has to provide the following information:
 	 *     [
-	 *         @type string   $name
-	 *         @type string   $title
-	 *         @type string   $tag
-	 *         @type array    $tags
-	 *         @type string   $description
-	 *         @type string   $release_status
-	 *         @type string   $default
-	 *         @type callable $on_state_change
+	 *         'name' => string,
+	 *         'title' => string,
+	 *         'description' => string,
+	 *         'tag' => string,
+	 *         'release_status' => string,
+	 *         'default' => string,
+	 * 	       'new_site' => array,
 	 *     ]
 	 *
 	 * @since 3.1.0
@@ -166,7 +165,7 @@ class Manager extends Base_Object {
 	 *     [
 	 *         [
 	 *             'type' => string,
-	 *             'label' => string
+	 *             'label' => string,
 	 *         ]
 	 *     ]
 	 *
