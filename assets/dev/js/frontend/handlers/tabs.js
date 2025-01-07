@@ -1,4 +1,4 @@
-import TabsModule from './base-tabs';
+import TabsModule from './base-tabs.js';
 
 export default class Tabs extends TabsModule {
 	getDefaultSettings() {
@@ -10,3 +10,6 @@ export default class Tabs extends TabsModule {
 		};
 	}
 }
+
+window.elementorModules.frontend.widgets = elementorModules.frontend.widgets || {};
+window.elementorModules.frontend.widgets[ 'tabs.default' ] = Tabs;

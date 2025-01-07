@@ -107,6 +107,20 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	/**
+	 * Get script module dependencies.
+	 *
+	 * Retrieve the list of script module dependencies the widget requires.
+	 *
+	 * @since 3.27.0
+	 * @access public
+	 *
+	 * @return array Widget script module dependencies.
+	 */
+	public function get_script_module_depends(): array {
+		return[];
+	}
+
+	/**
 	 * Get widget upsale data.
 	 *
 	 * Retrieve the widget promotion data.

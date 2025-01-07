@@ -1,6 +1,4 @@
-import Base from '../base';
-
-export default class NestedTitleKeyboardHandler extends Base {
+export default class NestedTitleKeyboardHandler extends elementorModules.frontend.handlers.Base {
 	__construct( settings ) {
 		super.__construct( settings );
 
@@ -214,3 +212,6 @@ export default class NestedTitleKeyboardHandler extends Base {
 
 	handleContentElementTabEvents() {}
 }
+
+window.elementorModules.frontend.handlers.accessibility = window.elementorModules.frontend.handlers.accessibility || {};
+window.elementorModules.frontend.handlers.accessibility.NestedTitleKeyboardHandler = NestedTitleKeyboardHandler;

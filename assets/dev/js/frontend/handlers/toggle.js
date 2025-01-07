@@ -1,4 +1,4 @@
-import TabsModule from './base-tabs';
+import TabsModule from './base-tabs.js';
 
 export default class Toggle extends TabsModule {
 	getDefaultSettings() {
@@ -13,3 +13,6 @@ export default class Toggle extends TabsModule {
 		};
 	}
 }
+
+window.elementorModules.frontend.widgets = elementorModules.frontend.widgets || {};
+window.elementorModules.frontend.widgets[ 'toggle.default' ] = Toggle;

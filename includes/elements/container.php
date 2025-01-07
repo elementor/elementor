@@ -689,6 +689,68 @@ class Container extends Element_Base {
 							],
 						],
 					],
+					'script_modules' => [
+						[
+							'name' => 'elementor_base_swiper' ,
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+						[
+							'name' => 'elementor_utils_swiper' ,
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+						[
+							'name' => 'elementor_background_slideshow',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+						[
+							'name' => 'elementor_utils_youtube' ,
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'video',
+									],
+								],
+							],
+						],
+						[
+							'name' => 'elementor_utils_vimeo' ,
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'video',
+									],
+								],
+							],
+						],
+					],
 				],
 			]
 		);

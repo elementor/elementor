@@ -1,11 +1,10 @@
-import Base from 'elementor-frontend/handlers/base';
 import {
 	changeScrollStatus,
 	setHorizontalScrollAlignment,
 	setHorizontalTitleScrollValues,
-} from 'elementor-frontend-utils/flex-horizontal-scroll';
+} from '../../../../../../assets/dev/js/frontend/utils/flex-horizontal-scroll.js';
 
-export default class NestedTabs extends Base {
+export default class NestedTabs extends elementorModules.frontend.handlers.Base {
 	/**
 	 * @param {string|number} tabIndex
 	 *
@@ -267,14 +266,13 @@ export default class NestedTabs extends Base {
 		setHorizontalScrollAlignment( this.getHorizontalScrollingSettings() );
 
 		this.setTouchMode();
+		this.initializeKeyboardHandling();
+	}
 
+	initializeKeyboardHandling() {
 		if ( 'nested-tabs.default' === this.getSettings( 'elementName' ) ) {
-			import( /* webpackChunkName: 'nested-title-keyboard-handler' */ 'elementor-frontend/handlers/accessibility/nested-title-keyboard-handler' ).then( ( { default: NestedTitleKeyboardHandler } ) => {
-				new NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
-			} ).catch( ( error ) => {
-				// eslint-disable-next-line no-console
-				console.error( 'Error importing module:', error );
-			} );
+			const NestedTitleKeyboardHandler = elementorModules.frontend.handlers.accessibility.NestedTitleKeyboardHandler;
+			new NestedTitleKeyboardHandler( this.getKeyboardNavigationSettings() );
 		}
 	}
 
@@ -464,3 +462,11 @@ export default class NestedTabs extends Base {
 		};
 	}
 }
+
+window.elementorModules.frontend = elementorModules?.frontend || {};
+window.elementorModules.frontend.widgets = elementorModules?.frontend?.widgets || {};
+window.elementorModules.frontend.widgets[ 'nested-tabs.default' ] = NestedTabs;
+
+// TODO: Remove in v3.28 [ED-...]
+window.elementorModules.frontend.handlers = elementorModules?.frontend?.handlers || {};
+window.elementorModules.frontend.handlers.NestedTabs = NestedTabs;

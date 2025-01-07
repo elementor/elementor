@@ -46,6 +46,23 @@ class NestedTabs extends Widget_Nested_Base {
 		return [ 'widget-nested-tabs' ];
 	}
 
+	/**
+	 * Get script module dependencies.
+	 *
+	 * Retrieve the list of script module dependencies the widget requires.
+	 *
+	 * @since 3.27.0
+	 * @access public
+	 *
+	 * @return array Widget script module dependencies.
+	 */
+	public function get_script_module_depends(): array {
+		return [
+			'elementor_handler_nested_title_keyboard',
+			'elementor_nested_tabs',
+		];
+	}
+
 	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}

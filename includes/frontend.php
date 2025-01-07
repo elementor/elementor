@@ -166,6 +166,8 @@ class Frontend extends App {
 
 		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_script_modules' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
@@ -342,6 +344,164 @@ class Frontend extends App {
 	 */
 	public function remove_content_filter() {
 		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+	}
+
+	/**
+	 * Registers script modules.
+	 *
+	 * Registers all the frontend script modules.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
+	 *
+	 * @since 3.27.0
+	 * @access public
+	 */
+	public function register_script_modules(): void {
+		do_action( 'elementor/frontend/before_register_script_modules' );
+
+		wp_register_script_module(
+			'elementor_base_swiper',
+			$this->get_js_assets_url( 'frontend-handler-base-swiper', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_base_carousel',
+			$this->get_js_assets_url( 'frontend-handler-base-carousel', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_background_slideshow',
+			$this->get_js_assets_url( 'frontend-handler-background-slideshow', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_image_carousel',
+			$this->get_js_assets_url( 'frontend-handler-image-carousel', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_accordion',
+			$this->get_js_assets_url( 'frontend-handler-accordion', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_alert',
+			$this->get_js_assets_url( 'frontend-handler-alert', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_counter',
+			$this->get_js_assets_url( 'frontend-handler-counter', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_progress',
+			$this->get_js_assets_url( 'frontend-handler-progress', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_tabs',
+			$this->get_js_assets_url( 'frontend-handler-tabs', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_toggle',
+			$this->get_js_assets_url( 'frontend-handler-toggle', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_video',
+			$this->get_js_assets_url( 'frontend-handler-video', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_text_editor',
+			$this->get_js_assets_url( 'frontend-handler-text-editor', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_utils_youtube',
+			$this->get_js_assets_url( 'frontend-util-youtube-loader', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_utils_vimeo',
+			$this->get_js_assets_url( 'frontend-util-vimeo-loader', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_utils_base_video',
+			$this->get_js_assets_url( 'frontend-util-base-loader', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_enqueue_script_module(
+			'elementor_utils_swiper',
+			$this->get_js_assets_url( 'frontend-util-swiper', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_script_module(
+			'elementor_handler_nested_title_keyboard',
+			$this->get_js_assets_url( 'frontend-handler-nested-title-keyboard', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		do_action( 'elementor/frontend/after_register_script_modules' );
+
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			wp_enqueue_script_module( 'elementor_base_swiper' );
+			wp_enqueue_script_module( 'elementor_base_carousel' );
+			wp_enqueue_script_module( 'elementor_background_slideshow', );
+			wp_enqueue_script_module( 'elementor_image_carousel' );
+			wp_enqueue_script_module( 'elementor_accordion' );
+			wp_enqueue_script_module( 'elementor_alert' );
+			wp_enqueue_script_module( 'elementor_counter' );
+			wp_enqueue_script_module( 'elementor_progress' );
+			wp_enqueue_script_module( 'elementor_tabs' );
+			wp_enqueue_script_module( 'elementor_toggle' );
+			wp_enqueue_script_module( 'elementor_video' );
+			wp_enqueue_script_module( 'elementor_text_editor' );
+			wp_enqueue_script_module( 'elementor_utils_youtube' );
+			wp_enqueue_script_module( 'elementor_utils_vimeo' );
+			wp_enqueue_script_module( 'elementor_utils_base_video' );
+			wp_enqueue_script_module( 'elementor_utils_swiper' );
+			wp_enqueue_script_module( 'elementor_handler_nested_title_keyboard' );
+			wp_enqueue_script_module( 'elementor_handler_nested_accordion_keyboard' );
+			wp_enqueue_script_module( 'elementor_nested_tabs' );
+			wp_enqueue_script_module( 'elementor_nested_accordion' );
+		}
 	}
 
 	/**

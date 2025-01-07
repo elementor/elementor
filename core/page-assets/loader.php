@@ -29,6 +29,7 @@ class Loader extends Module {
 		$assets = [
 			'styles' => $this->init_styles(),
 			'scripts' => [],
+			'script_modules' => [],
 		];
 
 		$this->assets = $assets;
@@ -103,6 +104,7 @@ class Loader extends Module {
 	 * @param array $assets {
 	 *     @type array 'styles'
 	 *     @type array 'scripts'
+	 *     @type array 'script_modules'
 	 * }
 	 */
 	public function enable_assets( array $assets_data ): void {
@@ -116,6 +118,8 @@ class Loader extends Module {
 
 				if ( 'scripts' === $assets_type ) {
 					wp_enqueue_script( $asset_name );
+				} else if ( 'script_modules' === $assets_type ) {
+					wp_enqueue_script_module( $asset_name );
 				} else {
 					wp_enqueue_style( $asset_name );
 				}
@@ -127,6 +131,7 @@ class Loader extends Module {
 	 * @param array $assets {
 	 *     @type array 'styles'
 	 *     @type array 'scripts'
+	 *     @type array 'script_modules'
 	 * }
 	 */
 	public function add_assets( array $assets ): void {
@@ -153,6 +158,8 @@ class Loader extends Module {
 				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
+					} else if ( 'script_modules' === $assets_type ) {
+						wp_enqueue_script_module(  $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					} else {
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					}
@@ -168,6 +175,8 @@ class Loader extends Module {
 			foreach ( $assets_type_data as $asset_name => $asset_data ) {
 				if ( 'scripts' === $assets_type ) {
 					wp_register_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
+				} else if ( 'script_modules' === $assets_type ) {
+					wp_register_script_module( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 				} else {
 					wp_register_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 				}

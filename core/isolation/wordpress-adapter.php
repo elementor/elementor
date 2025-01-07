@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\Isolation;
 
+use Elementor;
 use Elementor\Core\Settings\Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 

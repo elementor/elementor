@@ -30,6 +30,7 @@ class Module extends BaseModule {
 			], ELEMENTOR_VERSION, true );
 		} );
 
+		add_action( 'elementor/frontend/after_register_script_modules', [ $this, 'register_script_modules' ] );
 	}
 
 	/**
@@ -45,6 +46,22 @@ class Module extends BaseModule {
 			'widget-nested-accordion',
 			$this->get_css_assets_url( 'widget-nested-accordion', null, true, true ),
 			[ 'elementor-frontend' ],
+			ELEMENTOR_VERSION
+		);
+	}
+
+	public function register_script_modules(): void {
+		wp_register_script_module(
+			'elementor_nested_accordion',
+			$this->get_js_assets_url( 'frontend-handler-nested-accordion', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION,
+		);
+
+		wp_register_script_module(
+			'elementor_handler_nested_accordion_keyboard',
+			$this->get_js_assets_url( 'frontend-handler-nested-accordion-keyboard', 'assets/js/' ),
+			[],
 			ELEMENTOR_VERSION
 		);
 	}
