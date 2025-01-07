@@ -7,7 +7,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Core\DocumentTypes\PageBase as PageBase;
+use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Modules\Library\Documents\Page as LibraryPageDocument;
 
 if ( ! defined( 'ABSPATH' ) ) {
