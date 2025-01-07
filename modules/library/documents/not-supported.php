@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Elementor section library document handler class is responsible for
  * handling a document of a section type.
- *
  */
 class Not_Supported extends Library_Document {
 

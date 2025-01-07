@@ -84,8 +84,8 @@ class Control_Repeater extends Base_Data_Control implements Has_Validation {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $control  Control
-	 * @param array $settings Controls_Stack settings
+	 * @param array $control  Control.
+	 * @param array $settings Controls_Stack settings.
 	 *
 	 * @return mixed Control values.
 	 */
