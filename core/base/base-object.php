@@ -67,6 +67,7 @@ class Base_Object {
 	 * Delete setting.
 	 *
 	 * Deletes the settings array or a specific key of the settings array if `$key` is specified.
+	 *
 	 * @since 2.3.0
 	 * @access public
 	 *

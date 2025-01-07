@@ -275,6 +275,7 @@ class App extends BaseApp {
 	 * Add default templates.
 	 *
 	 * Register common app default templates.
+	 *
 	 * @since 2.3.0
 	 * @access private
 	 */

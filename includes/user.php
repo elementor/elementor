@@ -309,7 +309,7 @@ class User {
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception If the user cannot install plugins.
 	 */
 	public static function register_as_beta_tester( array $data ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {
@@ -364,7 +364,7 @@ class User {
 	 * Get a user option with default value as fallback.
 	 *
 	 * @param string $option  - Option key.
-	 * @param int    $user_id - User ID
+	 * @param int    $user_id - User ID.
 	 * @param mixed  $default - Default fallback value.
 	 *
 	 * @return mixed

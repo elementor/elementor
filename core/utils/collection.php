@@ -1,6 +1,7 @@
 <?php
 /**
  * Inspired by Laravel Collection.
+ *
  * @link https://github.com/illuminate/collections
  */
 namespace Elementor\Core\Utils;
