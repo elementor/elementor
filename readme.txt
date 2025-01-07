@@ -348,6 +348,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 = 3.26.4 - 2025-01-07 =
 
+
 * Fix: Responsive Visibility "Hide On Mobile Portrait" option not working for hidden Sections and Containers on older sites
 * Fix: Editor fails to load when clicking on "Jumpstart your web-creation" links in Elementor Home after importing a kit
 
