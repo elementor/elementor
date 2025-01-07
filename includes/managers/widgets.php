@@ -481,7 +481,7 @@ class Widgets_Manager {
 	 * @param array $request Ajax request.
 	 *
 	 * @return bool|string Rendered widget form.
-	 * @throws \Exception Exception.
+	 * @throws \Exception If there is an error processing the request.
 	 */
 	public function ajax_get_wp_widget_form( $request ) {
 		Plugin::$instance->documents->check_permissions( $request['editor_post_id'] );
