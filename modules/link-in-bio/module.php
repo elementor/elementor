@@ -56,7 +56,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function get_widgets_style_list():array {
+	private function get_widgets_style_list(): array {
 		return [
 			'widget-link-in-bio' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-link-in-bio-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
