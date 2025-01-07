@@ -49,7 +49,7 @@ class Link_Control extends Atomic_Control_Base {
 
 	private function validate_options_scheme( ?array $options = [] ) {
 		foreach ( $options as $option ) {
-			if ( ! is_array( $option ) || ! array_key_exists( 'label', $option ) || ! array_key_exists( 'value', $option ) ) {
+			if ( ! is_array( $option ) || ! array_key_exists( 'label', $option ) ) {
 				return false;
 			}
 		}
