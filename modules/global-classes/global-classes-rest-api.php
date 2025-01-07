@@ -30,7 +30,9 @@ class Global_Classes_REST_API {
 		return $this->repository;
 	}
 
-	// TODO: Add sanitization when implemented on prop types [EDS-574]
+	/**
+	 * TODO: Add sanitization when implemented on prop types [EDS-574]
+	 */
 	private function register_routes() {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
