@@ -928,42 +928,4 @@ class Utils {
 
 		return $is_private || $not_allowed || $password_required;
 	}
-
-	public static function get_posts_per_post_type_map( $excluded_types = [] ) {
-		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
-
-		if ( ! empty( $excluded_types ) ) {
-			$post_types = $post_types->filter( function( $post_type ) use ( $excluded_types ) {
-				return ! in_array( $post_type->name, $excluded_types, true );
-			} );
-		}
-
-		$post_type_slugs = $post_types->map( function( $post_type ) {
-			return $post_type->name;
-		} );
-
-		$posts = new Collection( get_posts( [
-			'post_type' => $post_type_slugs->all(),
-			'numberposts' => -1,
-		] ) );
-
-		return $posts->reduce( function ( $carry, $post ) use ( $post_types ) {
-			$post_type_label = $post_types->get( $post->post_type )->label;
-
-			if ( ! isset( $carry[ $post->post_type ] ) ) {
-				$carry[ $post->post_type ] = [
-					'label' => $post_type_label,
-					'items' => [],
-				];
-			}
-
-			$carry[ $post->post_type ]['items'][] = $post;
-
-			return $carry;
-		}, [] );
-	}
-
-	public static function get_excluded_post_types( ?array $additional_exclusions = [] ) {
-		return array_merge( [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ], $additional_exclusions );
-	}
 }
