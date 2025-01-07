@@ -50,13 +50,13 @@ class Manager extends Base_Object {
 	 * @access public
 	 *
 	 * @param array $options {
-	 *     @type string $name
-	 *     @type string $title
-	 *     @type string $tag
-	 *     @type array $tags
-	 *     @type string $description
-	 *     @type string $release_status
-	 *     @type string $default
+	 *     @type string   $name
+	 *     @type string   $title
+	 *     @type string   $tag
+	 *     @type array    $tags
+	 *     @type string   $description
+	 *     @type string   $release_status
+	 *     @type string   $default
 	 *     @type callable $on_state_change
 	 * }
 	 *
@@ -140,7 +140,7 @@ class Manager extends Base_Object {
 	 *
 	 * @return array
 	 */
-	private function unify_feature_tags( array $experimental_data ) : array {
+	private function unify_feature_tags( array $experimental_data ): array {
 		foreach ( [ 'tag', 'tags' ] as $key ) {
 			if ( empty( $experimental_data[ $key ] ) ) {
 				continue;
@@ -168,7 +168,7 @@ class Manager extends Base_Object {
 	 *
 	 * @return array
 	 */
-	private function format_feature_tags( $tags ) : array {
+	private function format_feature_tags( $tags ): array {
 		if ( ! is_string( $tags ) && ! is_array( $tags ) ) {
 			return [];
 		}
@@ -219,7 +219,7 @@ class Manager extends Base_Object {
 	 * @since 3.1.0
 	 * @access public
 	 *
-	 * @param string $feature_name Optional. Default is null
+	 * @param string $feature_name Optional. Default is null.
 	 *
 	 * @return array|null
 	 */
@@ -441,7 +441,6 @@ class Manager extends Base_Object {
 	 *
 	 * @since 3.1.0
 	 * @access private
-	 *
 	 */
 	private function register_settings_fields( Settings $settings ) {
 		$features = $this->get_features();
@@ -629,17 +628,17 @@ class Manager extends Base_Object {
 		<?php
 	}
 
-	private function has_non_existing_dependency( $feature ) {
+	private function has_non_existing_dependency( $feature ): bool {
 		$non_existing_dep = ( new Collection( $feature['dependencies'] ?? [] ) )
 			->find( function ( $dependency ) {
 				return $dependency instanceof Non_Existing_Dependency;
 			} );
 
-		return ! ! $non_existing_dep;
+		return (bool) $non_existing_dep;
 	}
 
 	/**
-	 * Get Feature Settings Label HTML
+	 * Get Feature Settings Label HTML.
 	 *
 	 * @since 3.1.0
 	 * @access private
@@ -736,8 +735,9 @@ class Manager extends Base_Object {
 	 * @since 3.1.0
 	 * @access private
 	 *
-	 * @param array $old_feature_data
+	 * @param array  $old_feature_data
 	 * @param string $new_state
+	 * @param string $old_state
 	 *
 	 * @throws \Elementor\Core\Experiments\Exceptions\Dependency_Exception
 	 */
@@ -789,8 +789,8 @@ class Manager extends Base_Object {
 					throw new Exceptions\Dependency_Exception(
 						sprintf(
 							'The feature `%s` has a dependency `%s` that is not available.',
-							$feature['name'],
-							$dependency->get_name()
+							esc_html( $feature['name'] ),
+							esc_html( $dependency->get_name() )
 						)
 					);
 				}
@@ -804,8 +804,8 @@ class Manager extends Base_Object {
 					throw new Exceptions\Dependency_Exception(
 						sprintf(
 							'To turn on `%1$s`, Experiment: `%2$s` activity is required!',
-							$feature['name'],
-							$dependency_feature['name']
+							esc_html( $feature['name'] ),
+							esc_html( $dependency_feature['name'] )
 						)
 					);
 				}
@@ -852,11 +852,9 @@ class Manager extends Base_Object {
 	 * while the dependencies mechanism expects it to be in a specific order (dependencies should be activated before their dependents can).
 	 * In order to solve this issue, we sort the experiments in the POST data based on their dependencies tree.
 	 *
-	 * @param $allowed_options
-	 *
-	 * @return mixed
+	 * @param array $allowed_options
 	 */
-	private function sort_allowed_options_by_dependencies( $allowed_options ) {
+	private function sort_allowed_options_by_dependencies( array $allowed_options ) {
 		if ( ! isset( $allowed_options['elementor'] ) ) {
 			return $allowed_options;
 		}
@@ -957,7 +955,13 @@ class Manager extends Base_Object {
 
 			if ( ! isset( $feature ) ) {
 				// since we must validate the state of each dependency, we have to make sure that dependencies are initialized in the correct order, otherwise, error.
-				throw new Exceptions\Dependency_Exception( "Feature {$experimental_data['name']} cannot be initialized before dependency feature: {$dependency}." );
+				throw new Exceptions\Dependency_Exception(
+					sprintf(
+						'Feature %s cannot be initialized before dependency feature: %s.',
+						esc_html( $experimental_data['name'] ),
+						esc_html( $dependency )
+					)
+				);
 			}
 
 			if ( ! empty( $feature[ static::TYPE_HIDDEN ] ) ) {
@@ -996,11 +1000,11 @@ class Manager extends Base_Object {
 	}
 
 	/**
-	 * @param $new_site
+	 * @param array $new_site
 	 * @param array $experimental_data
 	 * @return array
 	 */
-	private function set_new_site_default_state( $new_site, array $experimental_data ): array {
+	private function set_new_site_default_state( array $new_site, array $experimental_data ): array {
 		if ( ! $this->install_compare( $new_site['minimum_installation_version'] ) ) {
 			return $experimental_data;
 		}
