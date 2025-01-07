@@ -46,11 +46,7 @@ class Manager extends Base_Object {
 	/**
 	 * Add Feature
 	 *
-	 * @since 3.1.0
-	 * @access public
-	 *
-	 * @param array $options Feature options.
-	 *     Options is an array with the following format:
+	 * Each feature has to provide the following information:
 	 *     {
 	 *         @type string   $name
 	 *         @type string   $title
@@ -62,6 +58,10 @@ class Manager extends Base_Object {
 	 *         @type callable $on_state_change
 	 *     }
 	 *
+	 * @since 3.1.0
+	 * @access public
+	 *
+	 * @param array $options Feature options.
 	 * @return array|null
 	 *
 	 * @throws Dependency_Exception If can't change feature state.
@@ -162,14 +162,15 @@ class Manager extends Base_Object {
 	/**
 	 * Format feature tags into the right format.
 	 *
-	 * @param string|array $tags A string or an array of tags.
-	 *     Tags array has the following format:
+	 * If an array of tags provided, each tag has to provide the following information:
 	 *     [
 	 *         [
 	 *             'type' => string,
 	 *             'label' => string
 	 *         ]
 	 *     ]
+	 *
+	 * @param string|array $tags A string of comma separated tags, or an array of tags.
 	 *
 	 * @return array
 	 */
