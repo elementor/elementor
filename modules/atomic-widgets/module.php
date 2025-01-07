@@ -67,7 +67,6 @@ class Module extends BaseModule {
 		'editor-props', // TODO: Need to be registered and not enqueued.
 		'editor-styles', // TODO: Need to be registered and not enqueued.
 		'editor-styles-repository',
-		'editor-global-classes'
 	];
 
 	public function get_name() {
@@ -107,6 +106,10 @@ class Module extends BaseModule {
 	}
 
 	private function add_packages( $packages ) {
+		if ( current_user_can( 'manage_options' ) ) {
+			$packages[] = 'editor-global-classes';
+		}
+		
 		return array_merge( $packages, self::PACKAGES );
 	}
 
