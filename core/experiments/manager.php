@@ -54,7 +54,7 @@ class Manager extends Base_Object {
 	 *         'tag' => string,
 	 *         'release_status' => string,
 	 *         'default' => string,
-	 * 	       'new_site' => array,
+	 *         'new_site' => array,
 	 *     ]
 	 *
 	 * @since 3.1.0
