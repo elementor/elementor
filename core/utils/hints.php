@@ -22,6 +22,7 @@ class Hints {
 
 	/**
 	 * get_notice_types
+	 *
 	 * @return string[]
 	 */
 	public static function get_notice_types(): array {
@@ -72,6 +73,7 @@ class Hints {
 
 	/**
 	 * get_notice_icon
+	 *
 	 * @return string
 	 */
 	public static function get_notice_icon(): string {
@@ -86,6 +88,7 @@ class Hints {
 	 * get_notice_template
 	 *
 	 * Print or Retrieve the notice template.
+	 *
 	 * @param array $notice
 	 * @param bool $return
 	 *
@@ -172,6 +175,7 @@ class Hints {
 
 	/**
 	 * get_plugin_install_url
+	 *
 	 * @param $plugin_slug
 	 *
 	 * @return string
@@ -192,6 +196,7 @@ class Hints {
 
 	/**
 	 * get_plugin_activate_url
+	 *
 	 * @param $plugin_slug
 	 *
 	 * @return string
@@ -206,6 +211,7 @@ class Hints {
 
 	/**
 	 * is_dismissed
+	 *
 	 * @param $key
 	 *
 	 * @return bool
@@ -217,6 +223,7 @@ class Hints {
 
 	/**
 	 * should_display_hint
+	 *
 	 * @param $hint_key
 	 *
 	 * @return bool
@@ -287,11 +294,12 @@ class Hints {
 
 	/**
 	 * is_plugin_installed
+	 *
 	 * @param $plugin
 	 *
 	 * @return bool
 	 */
-	public static function is_plugin_installed( $plugin ) : bool {
+	public static function is_plugin_installed( $plugin ): bool {
 		$plugins = get_plugins();
 		$plugin = self::ensure_plugin_folder( $plugin );
 		return ! empty( $plugins[ $plugin ] );
@@ -299,6 +307,7 @@ class Hints {
 
 	/**
 	 * is_plugin_active
+	 *
 	 * @param $plugin
 	 *
 	 * @return bool
@@ -310,6 +319,7 @@ class Hints {
 
 	/**
 	 * get_plugin_action_url
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
@@ -328,6 +338,7 @@ class Hints {
 
 	/**
 	 * ensure_plugin_folder
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
@@ -341,6 +352,7 @@ class Hints {
 
 	/**
 	 * get_notice_allowed_html
+	 *
 	 * @return array[]
 	 */
 	public static function get_notice_allowed_html(): array {

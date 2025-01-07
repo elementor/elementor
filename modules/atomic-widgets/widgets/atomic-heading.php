@@ -35,7 +35,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$format = $this->get_heading_template( ! empty( $settings['link']['href'] ) );
 		$args = $this->get_template_args( $settings );
 
-		echo sprintf( $format, ...$args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		printf( $format, ...$args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	private function get_heading_template( bool $is_link_enabled ): string {
