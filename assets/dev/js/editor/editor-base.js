@@ -236,6 +236,9 @@ export default class EditorBase extends Marionette.Application {
 				BaseWidget: require( 'elementor-elements/views/base-widget' ),
 				Widget: require( 'elementor-elements/views/widget' ),
 			},
+			components: {
+				EmptyComponent: require( 'elementor-elements/views/container/empty-component' ),
+			},
 		},
 		layouts: {
 			panel: {
