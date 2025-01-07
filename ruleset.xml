@@ -33,9 +33,11 @@
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 		<exclude name="Squiz.Commenting.VariableComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag" />
+		<exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType" />
 		<exclude name="Squiz.Commenting.FunctionCommentThrowTag.Missing" />
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
-		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction"/>
+		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction" />
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamType" />
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeOpen" />
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterOpen" />
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
