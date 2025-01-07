@@ -19,6 +19,7 @@ class Module extends Module_Base {
 
 	/**
 	 * Initialize the Site navigation module.
+	 *
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -80,5 +81,4 @@ class Module extends Module_Base {
 			( new Page_User_Can() )->register_rest_field();
 		} );
 	}
-
 }
