@@ -7,7 +7,6 @@ import YouTubeApiLoader from './utils/video-api/youtube-loader';
 import VimeoApiLoader from './utils/video-api/vimeo-loader';
 import BaseVideoLoader from './utils/video-api/base-loader';
 import URLActions from './utils/url-actions';
-import SwiperHandler from './utils/swiper';
 import LightboxManager from './utils/lightbox/lightbox-manager';
 import AssetsLoader from './utils/assets-loader';
 import Breakpoints from 'elementor-utils/breakpoints';
@@ -188,21 +187,24 @@ export default class Frontend extends elementorModules.ViewModule {
 	}
 
 	initOnReadyComponents() {
+		this.utils = this.utils || {};
+
+		this.utils.anchor_scroll_margin = new AnchorScrollMargin();
+		this.utils.assetsLoader = new AssetsLoader();
+		this.utils.baseVideoLoader = new BaseVideoLoader();
+		this.utils.controls = new Controls();
+		this.utils.environment = environment;
+		this.utils.events = Events;
+		this.utils.escapeHTML = escapeHTML;
+		this.utils.urlActions = new URLActions();
+		this.utils.vimeo = new VimeoApiLoader();
+		this.utils.youtube = new YouTubeApiLoader();
+
 		this.utils = {
-			youtube: new YouTubeApiLoader(),
-			vimeo: new VimeoApiLoader(),
-			baseVideoLoader: new BaseVideoLoader(),
+			...this.utils,
 			get lightbox() {
 				return LightboxManager.getLightbox();
 			},
-			urlActions: new URLActions(),
-			swiper: SwiperHandler,
-			environment,
-			assetsLoader: new AssetsLoader(),
-			escapeHTML,
-			events: Events,
-			controls: new Controls(),
-			anchor_scroll_margin: new AnchorScrollMargin(),
 		};
 
 		// TODO: BC since 2.4.0
