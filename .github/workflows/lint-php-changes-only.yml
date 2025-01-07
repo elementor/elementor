@@ -45,4 +45,5 @@ jobs:
         env:
           PHP_CHANGED_FILES: ${{ needs.php-file-diff.outputs.all_changed_files }}
         run: |
-          composer lint $(echo "${PHP_CHANGED_FILES}" | tr '\n' ' ')
+          #composer lint $(echo "${PHP_CHANGED_FILES}" | tr '\n' ' ')
+          vendor/bin/phpcs --extensions=php --standard=./ruleset.xml --warning-severity=0 $(echo "${PHP_CHANGED_FILES}" | tr '\n' ' ')
