@@ -146,12 +146,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	private function get_formatted_post_options( $items, $group_label ) {
 		$options = [];
 
-			foreach ( $items as $post ) {
-				$options[ $post->guid ] = [
-					'label' => $post->post_title,
-					'groupLabel' => $group_label,
-				];
-			}
+		foreach ( $items as $post ) {
+			$options[ $post->guid ] = [
+				'label' => $post->post_title,
+				'groupLabel' => $group_label,
+			];
+		}
 
 		return $options;
 	}
