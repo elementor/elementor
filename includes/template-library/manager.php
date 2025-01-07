@@ -620,7 +620,7 @@ class Manager {
 	 * @param array  $data
 	 *
 	 * @return mixed
-	 * @throws \Exception Access Exception.
+	 * @throws \Exception If the user has no permission or the post is not found.
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
