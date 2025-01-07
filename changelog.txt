@@ -1,5 +1,6 @@
 == Changelog ==
 
+
 = 3.26.4 - 2025-01-07 =
 
 * Fix: Responsive Visibility "Hide On Mobile Portrait" option not working for hidden Sections and Containers on older sites
