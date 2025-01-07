@@ -136,6 +136,9 @@ export default class EditorBase extends Marionette.Application {
 	 * Exporting modules that can be used externally
 	 * TODO: All of the following entries should move to `elementorModules.editor`
 	 */
+	react = {
+		utils: require( 'elementor-utils/react' ),
+	};
 	modules = {
 		/**
 		 * @deprecated since 2.3.0, use `elementorModules.Module` instead.
