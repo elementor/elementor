@@ -49,16 +49,17 @@ class Manager extends Base_Object {
 	 * @since 3.1.0
 	 * @access public
 	 *
-	 * @param array $options {
-	 *     @type string   $name
-	 *     @type string   $title
-	 *     @type string   $tag
-	 *     @type array    $tags
-	 *     @type string   $description
-	 *     @type string   $release_status
-	 *     @type string   $default
-	 *     @type callable $on_state_change
-	 * }
+	 * @param array $options Feature options is an array with the following format:
+	 *     {
+	 *         @type string   $name
+	 *         @type string   $title
+	 *         @type string   $tag
+	 *         @type array    $tags
+	 *         @type string   $description
+	 *         @type string   $release_status
+	 *         @type string   $default
+	 *         @type callable $on_state_change
+	 *     }
 	 *
 	 * @return array|null
 	 * @throws \Exception
@@ -159,12 +160,13 @@ class Manager extends Base_Object {
 	/**
 	 * Format feature tags into the right format.
 	 *
-	 * @param string|array[
-	 *    [
-	 *       'type' => string,
-	 *       'label' => string
-	 *    ]
-	 * ] $tag
+	 * @param string|array $tags A string or an array with the following format:
+	 *     [
+	 *         [
+	 *             'type' => string,
+	 *             'label' => string
+	 *         ]
+	 *     ]
 	 *
 	 * @return array
 	 */
@@ -530,7 +532,7 @@ class Manager extends Base_Object {
 		</h2>
 		<p class="e-experiment__description">
 			<?php
-			echo sprintf(
+			printf(
 				/* translators: %1$s Link open tag, %2$s: Link close tag. */
 				esc_html__( 'Personalize your Elementor experience by controlling which features and experiments are active on your site. Help make Elementor better by %1$ssharing your experience and feedback with us%2$s.', 'elementor' ),
 				'<a href="https://go.elementor.com/wp-dash-experiments-report-an-issue/" target="_blank">',
@@ -540,7 +542,7 @@ class Manager extends Base_Object {
 		</p>
 		<p class="e-experiment__description">
 			<?php
-			echo sprintf(
+			printf(
 				'%1$s <a href="https://go.elementor.com/wp-dash-experiments/" target="_blank">%2$s</a>',
 				esc_html__( 'To use an experiment or feature on your site, simply click on the dropdown next to it and switch to Active. You can always deactivate them at any time.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' ),
