@@ -231,7 +231,7 @@ class Icons_Manager {
 	private static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
 		static $is_test_mode = null;
 		if ( null === $is_test_mode ) {
-			$is_test_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+			$is_test_mode = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS );
 		}
 		$url = ELEMENTOR_ASSETS_URL . 'lib/font-awesome/' . $ext_type . '/' . $filename;
 		if ( ! $is_test_mode && $add_suffix ) {
@@ -255,7 +255,7 @@ class Icons_Manager {
 	}
 
 	/**
-	 * is_font_awesome_inline
+	 * Is_font_awesome_inline.
 	 *
 	 * @return bool
 	 */
@@ -350,9 +350,9 @@ class Icons_Manager {
 	 *
 	 * Used to render Icon for \Elementor\Controls_Manager::ICONS
 	 *
-	 * @param array  $icon             Icon Type, Icon value
-	 * @param array  $attributes       Icon HTML Attributes
-	 * @param string $tag             Icon HTML tag, defaults to <i>
+	 * @param array  $icon             Icon Type, Icon value.
+	 * @param array  $attributes       Icon HTML Attributes.
+	 * @param string $tag             Icon HTML tag, defaults to <i>.
 	 *
 	 * @return mixed|string
 	 */
@@ -371,7 +371,7 @@ class Icons_Manager {
 	/**
 	 * Font Awesome 4 to font Awesome 5 Value Migration
 	 *
-	 * used to convert string value of Icon control to array value of Icons control
+	 * Used to convert string value of Icon control to array value of Icons control
 	 * ex: 'fa fa-star' => [ 'value' => 'fas fa-star', 'library' => 'fa-solid' ]
 	 *
 	 * @param $value
@@ -400,12 +400,12 @@ class Icons_Manager {
 	}
 
 	/**
-	 * on_import_migration
+	 * On_import_migration
 	 *
-	 * @param array  $element        settings array
-	 * @param string $old_control   old control id
-	 * @param string $new_control   new control id
-	 * @param bool   $remove_old      boolean whether to remove old control or not
+	 * @param array  $element        settings array.
+	 * @param string $old_control   old control id.
+	 * @param string $new_control   new control id.
+	 * @param bool   $remove_old      boolean whether to remove old control or not.
 	 *
 	 * @return array
 	 */
@@ -437,7 +437,7 @@ class Icons_Manager {
 	}
 
 	/**
-	 * is_migration_allowed
+	 * Is_migration_allowed
 	 *
 	 * @return bool
 	 */
@@ -461,7 +461,7 @@ class Icons_Manager {
 	/**
 	 * Register_Admin Settings
 	 *
-	 * adds Font Awesome migration / update admin settings
+	 * Adds Font Awesome migration / update admin settings
 	 *
 	 * @param Settings $settings
 	 */
