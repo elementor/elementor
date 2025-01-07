@@ -254,11 +254,6 @@ class Icons_Manager {
 		return array_values( array_merge( $tabs, self::get_icon_manager_tabs() ) );
 	}
 
-	/**
-	 * Is_font_awesome_inline.
-	 *
-	 * @return bool
-	 */
 	private static function is_font_icon_inline_svg() {
 		return Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' );
 	}
@@ -436,11 +431,6 @@ class Icons_Manager {
 		return $element;
 	}
 
-	/**
-	 * Is_migration_allowed
-	 *
-	 * @return bool
-	 */
 	public static function is_migration_allowed() {
 		static $migration_allowed = false;
 		if ( false === $migration_allowed ) {
