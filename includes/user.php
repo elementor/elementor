@@ -309,7 +309,7 @@ class User {
 	}
 
 	/**
-	 * @throws \Exception Permissions.
+	 * @throws \Exception If the user cannot install plugins.
 	 */
 	public static function register_as_beta_tester( array $data ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {
