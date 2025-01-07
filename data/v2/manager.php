@@ -295,8 +295,8 @@ class Manager extends BaseModule {
 	 * @param string $endpoint
 	 * @param array $args
 	 * @param string $method
-	 * @param string $namespace (optional)
-	 * @param string $version (optional)
+	 * @param string $namespace (optional).
+	 * @param string $version (optional).
 	 *
 	 * @return \WP_REST_Response
 	 */
