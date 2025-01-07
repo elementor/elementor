@@ -33,3 +33,24 @@ jobs:
     steps:
       - run: |
           exit 0
+  JS-Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          exit 0
+  PHP-Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          exit 0
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          exit 0
+  test-result-lighthouse:
+    name: Lighthouse - Test Results
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          exit 0
