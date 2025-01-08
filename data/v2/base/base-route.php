@@ -257,13 +257,6 @@ abstract class Base_Route {
 		$this->register_route( '', $methods, $args );
 	}
 
-	/**
-	 * Register item route.
-	 *
-	 * @param string $methods
-	 * @param array  $args
-	 * @param string $route
-	 */
 	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
 		if ( ! empty( $args['id_arg_name'] ) ) {
 			$this->id_arg_name = $args['id_arg_name'];
