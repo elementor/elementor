@@ -72,7 +72,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Holds all the element depended script modules to enqueue.
 	 *
-	 * @since 3.27.0
+	 * @since 3.28.0
 	 * @access private
 	 *
 	 * @var array
@@ -138,7 +138,7 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * Retrieve the list of script module dependencies the element requires.
 	 *
-	 * @since 3.27.0
+	 * @since 3.28.0
 	 * @access public
 	 *
 	 * @return array Element script modules dependencies.
