@@ -24,7 +24,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 	</div>
 </div>
 
-<h1 class="elementor-screen-only"><?php echo sprintf( esc_html__( 'Edit "%s" with Elementor', 'elementor' ), esc_html( get_the_title() ) ); ?></h1>
+<h1 class="elementor-screen-only"><?php printf( esc_html__( 'Edit "%s" with Elementor', 'elementor' ), esc_html( get_the_title() ) ); ?></h1>
 
 <div id="elementor-editor-wrapper-v2"></div>
 
