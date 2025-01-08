@@ -9,7 +9,6 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
 use Elementor\Modules\Promotions\Controls\Promotion_Control;
-use Elementor\Utils;
 
 /**
  * Elementor heading widget.
