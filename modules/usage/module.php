@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Elementor usage module handler class is responsible for registering and
  * managing Elementor usage data.
- *
  */
 class Module extends BaseModule {
 	const GENERAL_TAB = 'general';
