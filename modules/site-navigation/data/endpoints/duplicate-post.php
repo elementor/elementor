@@ -131,7 +131,7 @@ class Duplicate_Post extends Endpoint {
 	}
 
 	/**
-	 * duplicate_post_taxonomies
+	 * Duplicate_post_taxonomies
 	 *
 	 * @param int $post_id
 	 * @param int $new_post_id
