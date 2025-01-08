@@ -125,11 +125,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'settings' => [
 						'classes' => [
 							'$$type' => 'classes',
-							'value' => [
-								[ '$$type' => 'string', 'value' => 'one'],
-								[ '$$type' => 'string', 'value' => 'two'],
-								[ '$$type' => 'string', 'value' => 'three' ],
-							],
+							'value' => [ 'one', 'two', 'three' ],
 						],
 						'outer_classes' => [
 							'$$type' => 'classes',
