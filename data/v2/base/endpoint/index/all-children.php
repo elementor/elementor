@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 /**
- * Class AllChildren, is optional endpoint.
+ * class AllChildren, is optional endpoint.
  * Used in cases where the endpoints are static & there no use of dynamic endpoints( alpha/{id} ), eg:
  * 'settings' - controller
  * 'settings/products' - endpoint
