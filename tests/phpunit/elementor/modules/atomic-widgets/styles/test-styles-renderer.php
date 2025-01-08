@@ -534,6 +534,42 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
 	}
 
+	public function test_render__style_with_position_transformers() {
+		// Arrange.
+		add_action('elementor/atomic-widgets/styles/transformers/register', function( $registry ) {
+			$registry->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
+		} );
+
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'position' => [
+								'$$type' => 'string',
+								'value' => 'sticky',
+							],
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'breakpoints' => []
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
+
 	public function test_render__style_with_nested_transformers() {
 		// Arrange.
 		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
