@@ -617,7 +617,8 @@ class Upgrades {
 	 * @return bool
 	 */
 	// Because the query is slow on large sites, temporary don't upgrade.
-	/*	public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
+	/*
+	  public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
 		return self::rename_document_base_to_wp( $updater, 'post' ) || self::rename_document_base_to_wp( $updater, 'page' );
 	}*/
 

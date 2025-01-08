@@ -77,7 +77,7 @@ class Version {
 	 * @return bool
 	 */
 	public static function is_valid_version( $version ) {
-		return ! ! preg_match( '/^(\d+\.)?(\d+\.)?(\*|\d+)(-.+)?$/', $version );
+		return (bool) preg_match( '/^(\d+\.)?(\d+\.)?(\*|\d+)(-.+)?$/', $version );
 	}
 
 	/**
