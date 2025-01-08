@@ -446,7 +446,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
-	 * @param ...$values
+	 * @param array $values
 	 *
 	 * @return $this
 	 */
