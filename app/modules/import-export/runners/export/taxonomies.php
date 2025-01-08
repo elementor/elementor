@@ -99,7 +99,7 @@ class Taxonomies extends Export_Runner_Base {
 	}
 	/**
 	* Put terms in order with no child going before its parent.
-	 */
+	*/
 	private function order_terms( array $terms ) {
 		$ordered_terms = [];
 
