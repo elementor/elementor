@@ -22,6 +22,8 @@ class Test_Widget_Heading extends Elementor_Test_Base {
 		'widgetType' => 'heading',
 	];
 
+	const HEADING_NON_SECURE_SHORTCODE_PAYLOAD = '{"id":"22823c6","elType":"widget","isInner":false,"isLocked":false,"settings":{"content_width":"full","title":"Howdy <script>alert(1)</script>owdy"},"elements":[],"widgetType":"heading"}';
+
 	public function test_sanitize__data_attributes() {
 		$html_to_sanitize = '
 			<div data-foo="bar" data-settings="{&quot;submenu_icon&quot;:{&quot;value&quot;:&quot;&lt;img src=x onerror=alert()&gt;&quot;,&quot;library&quot;:&quot;&quot;},&quot;layout&quot;:&quot;horizontal&quot;,&quot;toggle&quot;:&quot;burger&quot;}">
@@ -76,5 +78,33 @@ class Test_Widget_Heading extends Elementor_Test_Base {
 		// Assert
 		$this->assertStringNotContainsString( 'aria-disabled', $rendered_content );
 		$this->assertStringNotContainsString( '<script>alert()</script>', $rendered_content );
+	}
+
+	public function test_render__using_shortcode_for_admin() {
+		// Arrange
+		$this->act_as_admin();
+		$test_shortcode = '[elementor-element data="' . base64_encode( static::HEADING_NON_SECURE_SHORTCODE_PAYLOAD ) . '"]';
+
+		// Act
+		ob_start();
+		echo do_shortcode( $test_shortcode );
+		$rendered_content = ob_get_clean();
+
+		// Assert
+		$this->assertStringContainsString( '<script>alert(1)</script>', $rendered_content );
+	}
+
+	public function test_render__using_shortcode_for_editor() {
+		// Arrange
+		$this->act_as_editor();
+		$test_shortcode = '[elementor-element data="' . base64_encode( static::HEADING_NON_SECURE_SHORTCODE_PAYLOAD ) . '"]';
+
+		// Act
+		ob_start();
+		echo do_shortcode( $test_shortcode );
+		$rendered_content = ob_get_clean();
+
+		// Assert
+		$this->assertStringNotContainsString( '<script>alert(1)</script>', $rendered_content );
 	}
 }
