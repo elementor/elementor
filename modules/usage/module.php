@@ -84,7 +84,7 @@ class Module extends BaseModule {
 	 *
 	 * Retrieve formatted usage, for frontend.
 	 *
-	 * @param String format
+	 * @param String $format Optional. Default is 'html'.
 	 *
 	 * @return array
 	 */
@@ -361,7 +361,7 @@ class Module extends BaseModule {
 			if ( $value !== $control_config['default'] ) {
 				$this->increase_controls_count( $element_ref, $tab, $section, $control, 1 );
 
-				$changed_controls_count++;
+				++$changed_controls_count;
 			}
 		}
 
@@ -578,7 +578,7 @@ class Module extends BaseModule {
 				] );
 
 				return;
-			};
+			}
 		}
 	}
 
