@@ -84,7 +84,7 @@ class Module extends BaseModule {
 	 *
 	 * Retrieve formatted usage, for frontend.
 	 *
-	 * @param String format
+	 * @param String $format Optional. Default is 'html'.
 	 *
 	 * @return array
 	 */
