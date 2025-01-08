@@ -173,7 +173,7 @@ abstract class Base {
 	 * @since 3.3.0
 	 * @access protected
 	 *
-	 * @param string $asset_key
+	 * @param string $version
 	 *
 	 * @return boolean
 	 */

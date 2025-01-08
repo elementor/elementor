@@ -962,12 +962,6 @@ class Upgrades {
 		$logger->notice( $message );
 	}
 
-	/**
-	 * @param \wpdb $wpdb
-	 * @param string $element_type
-	 *
-	 * @return array
-	 */
 	public static function get_post_ids_by_element_type( $updater, string $element_type ): array {
 		global $wpdb;
 
