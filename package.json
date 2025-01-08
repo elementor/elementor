@@ -129,6 +129,7 @@
 		"@elementor/editor-documents": "0.11.14",
 		"@elementor/editor-editing-panel": "1.7.0",
 		"@elementor/editor-elements": "0.4.0",
+		"@elementor/editor-global-classes": "0.1.3",
 		"@elementor/editor-panels": "0.10.2",
 		"@elementor/editor-props": "0.6.0",
 		"@elementor/editor-responsive": "0.12.4",
