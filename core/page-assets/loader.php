@@ -101,11 +101,14 @@ class Loader extends Module {
 	}
 
 	/**
+	 * Enables the specified assets.
+	 *
 	 * @param array $assets_data {
-	 *     @type array 'styles'         List of styles to enable.
-	 *     @type array 'scripts'        List of scripts to enqueue.
-	 *     @type array 'script_modules' List of script modules to enqueue.
-	 * }
+	 *     An array of assets to be enabled. The array should include:
+	 *     @type array 'styles'         List of style asset names to enqueue.
+	 *     @type array 'scripts'        List of script asset names to enqueue.
+	 *     @type array 'script_modules' List of script module names to enqueue.
+	 * } A structured array of asset data.
 	 */
 	public function enable_assets( array $assets_data ): void {
 		if ( ! $this->assets ) {
@@ -128,11 +131,14 @@ class Loader extends Module {
 	}
 
 	/**
-	 * @param array $assets_data {
-	 *     @type array 'styles'         List of styles to enable.
-	 *     @type array 'scripts'        List of scripts to enqueue.
-	 *     @type array 'script_modules' List of script modules to enqueue.
-	 * }
+	 * Enables the specified assets.
+	 *
+	 * @param array $assets {
+	 *     An array of assets to be enabled. The array should include:
+	 *     @type array 'styles'         List of style asset names to enqueue.
+	 *     @type array 'scripts'        List of script asset names to enqueue.
+	 *     @type array 'script_modules' List of script module names to enqueue.
+	 * } A structured array of asset data.
 	 */
 	public function add_assets( array $assets ): void {
 		if ( ! $this->assets ) {
