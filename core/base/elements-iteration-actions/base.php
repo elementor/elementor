@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Base {
 	/**
 	 * The current document that the Base class instance was created from.
+	 *
+	 * @var \Elementor\Core\Document
 	 */
 	protected $document;
 

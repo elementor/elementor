@@ -1,7 +1,6 @@
 import DivBlockEmptyView from './container/div-block-empty-view';
-import AddSectionView from 'elementor-views/add-section/inline';
 
-const BaseElementView = require( 'elementor-elements/views/base' );
+const BaseElementView = elementor.modules.elements.views.BaseElement;
 const DivBlockView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-div-block-content' ),
 
@@ -240,7 +239,7 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
-		const addSectionView = new AddSectionView( {
+		const addSectionView = new elementor.modules.elements.components.AddSectionView( {
 			at: this.model.collection.indexOf( this.model ),
 		} );
 

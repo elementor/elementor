@@ -959,7 +959,7 @@ class Widget_Video extends Widget_Base {
 					'unit' => '%',
 				],
 				// 'selectors' => [
-				// 	'(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
+				// '(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 				// ],
 				'condition' => [
 					'lightbox_video_width!' => '',
@@ -980,7 +980,7 @@ class Widget_Video extends Widget_Base {
 					'top' => esc_html__( 'Top', 'elementor' ),
 				],
 				// 'selectors' => [
-				// 	'#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
+				// '#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
 				// ],
 				'selectors_dictionary' => [
 					'top' => 'top: 60px',
@@ -1335,7 +1335,6 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
-	 * @param bool $from_media
 	 *
 	 * @return string
 	 * @since 2.1.0
