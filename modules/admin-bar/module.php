@@ -70,7 +70,7 @@ class Module extends BaseApp {
 			'admin-bar',
 			null,
 			[ 'elementor-admin-bar' ],
-			false,
+			null,
 			true
 		);
 
