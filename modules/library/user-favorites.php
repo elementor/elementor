@@ -69,7 +69,7 @@ class User_Favorites {
 	 * @param array $value
 	 *
 	 * @return $this
-	 * @throws \Exception
+	 * @throws \Exception Fail to save.
 	 */
 	public function save( $vendor, $resource, $value = [] ) {
 		$all_favorites = $this->get();
@@ -93,7 +93,7 @@ class User_Favorites {
 	 * @param $id
 	 *
 	 * @return $this
-	 * @throws \Exception
+	 * @throws \Exception Exception.
 	 */
 	public function add( $vendor, $resource, $id ) {
 		$favorites = $this->get( $vendor, $resource );
@@ -115,7 +115,7 @@ class User_Favorites {
 	 * @param $id
 	 *
 	 * @return $this
-	 * @throws \Exception
+	 * @throws \Exception Save Exception.
 	 */
 	public function remove( $vendor, $resource, $id ) {
 		$favorites = $this->get( $vendor, $resource );
