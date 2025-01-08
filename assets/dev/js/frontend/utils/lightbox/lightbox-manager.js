@@ -9,6 +9,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			dialogScriptPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
 			dialogStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'dialog' ),
 			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' ),
+			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' ),
 			lightboxStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox' );
 
 		return Promise.all( [
@@ -16,6 +17,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			dialogScriptPromise,
 			dialogStylePromise,
 			shareLinkPromise,
+			swiperStylePromise,
 			lightboxStylePromise,
 		] ).then( () => lightboxPromise );
 	}

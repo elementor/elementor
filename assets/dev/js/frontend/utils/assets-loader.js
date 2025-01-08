@@ -78,6 +78,10 @@ AssetsLoader.assets = {
 		},
 	},
 	style: {
+		swiper: {
+			src: `${ assetsUrl }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`,
+			parent: 'head',
+		},
 		'e-lightbox': {
 			src: elementorFrontendConfig?.responsive?.hasCustomBreakpoints
 				? `${ elementorFrontendConfig.urls.uploadUrl }/elementor/css/custom-lightbox.min.css?ver=${ pluginVersion }`
