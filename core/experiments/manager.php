@@ -633,7 +633,7 @@ class Manager extends Base_Object {
 		<?php
 	}
 
-	private function has_non_existing_dependency( $feature ): bool {
+	private function has_non_existing_dependency( $feature ) {
 		$non_existing_dep = ( new Collection( $feature['dependencies'] ?? [] ) )
 			->find( function ( $dependency ) {
 				return $dependency instanceof Non_Existing_Dependency;
@@ -859,7 +859,7 @@ class Manager extends Base_Object {
 	 *
 	 * @param array $allowed_options
 	 */
-	private function sort_allowed_options_by_dependencies( array $allowed_options ) {
+	private function sort_allowed_options_by_dependencies( $allowed_options ) {
 		if ( ! isset( $allowed_options['elementor'] ) ) {
 			return $allowed_options;
 		}
@@ -1010,7 +1010,7 @@ class Manager extends Base_Object {
 	 * @param array $experimental_data
 	 * @return array
 	 */
-	private function set_new_site_default_state( array $new_site, array $experimental_data ): array {
+	private function set_new_site_default_state( $new_site, array $experimental_data ): array {
 		if ( ! $this->install_compare( $new_site['minimum_installation_version'] ) ) {
 			return $experimental_data;
 		}
