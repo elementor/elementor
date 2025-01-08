@@ -963,7 +963,7 @@ class Upgrades {
 	}
 
 	/**
-	 * @param \wpdb $wpdb
+	 * @param \wpdb  $updater
 	 * @param string $element_type
 	 *
 	 * @return array
