@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * https://github.com/A5hleyRich/wp-background-processing GPL v2.0
+ * Link https://github.com/A5hleyRich/wp-background-processing GPL v2.0.
  *
  * WP Background Process
  *
