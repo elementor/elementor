@@ -68,7 +68,7 @@ abstract class Files_Upload_Handler {
 	}
 
 	/**
-	 * handle_upload_prefilter
+	 * Handle_upload_prefilter
 	 *
 	 * @deprecated 3.5.0 Use `Elementor\Plugin::$instance->uploads_manager->handle_elementor_wp_media_upload()` instead.
 	 *
@@ -83,7 +83,7 @@ abstract class Files_Upload_Handler {
 	}
 
 	/**
-	 * is_file_should_handled
+	 * Is_file_should_handled
 	 *
 	 * @deprecated 3.5.0
 	 *
@@ -100,7 +100,7 @@ abstract class Files_Upload_Handler {
 	}
 
 	/**
-	 * file_sanitizer_can_run
+	 * File_sanitizer_can_run
 	 *
 	 * @deprecated 3.5.0 Use `Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run()` instead.
 	 *

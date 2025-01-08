@@ -530,7 +530,7 @@ class Upgrades {
 	}
 
 	/**
-	 * migrate Icon control string value to Icons control array value
+	 * Migrate Icon control string value to Icons control array value
 	 *
 	 * @param array $element
 	 * @param array $args
@@ -616,17 +616,17 @@ class Upgrades {
 	 *
 	 * @return bool
 	 */
-	// Because the query is slow on large sites, temporary don't upgrade.
+	/** Because the query is slow on large sites, temporary don't upgrade.
 	/*
-	  public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
+		Public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
 		return self::rename_document_base_to_wp( $updater, 'post' ) || self::rename_document_base_to_wp( $updater, 'page' );
-	}*/
+	}
 
 	// Upgrade code was fixed & moved to _v_2_7_1_remove_old_usage_data.
-	/* public static function _v_2_7_0_remove_old_usage_data() {} */
+	/* Public static function _v_2_7_0_remove_old_usage_data() {}
 
 	// Upgrade code moved to _v_2_7_1_recalc_usage_data.
-	/* public static function _v_2_7_0_recalc_usage_data( $updater ) {} */
+	/* Public static function _v_2_7_0_recalc_usage_data( $updater ) {} */
 
 	/**
 	 * Don't use the old data anymore.
@@ -962,12 +962,6 @@ class Upgrades {
 		$logger->notice( $message );
 	}
 
-	/**
-	 * @param \wpdb $wpdb
-	 * @param string $element_type
-	 *
-	 * @return array
-	 */
 	public static function get_post_ids_by_element_type( $updater, string $element_type ): array {
 		global $wpdb;
 
