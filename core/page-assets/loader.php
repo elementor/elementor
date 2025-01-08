@@ -101,10 +101,10 @@ class Loader extends Module {
 	}
 
 	/**
-	 * @param array $assets {
-	 *     @type array 'styles'
-	 *     @type array 'scripts'
-	 *     @type array 'script_modules'
+	 * @param array $assets_data {
+	 *     @type array 'styles'         List of styles to enable.
+	 *     @type array 'scripts'        List of scripts to enqueue.
+	 *     @type array 'script_modules' List of script modules to enqueue.
 	 * }
 	 */
 	public function enable_assets( array $assets_data ): void {
@@ -128,10 +128,10 @@ class Loader extends Module {
 	}
 
 	/**
-	 * @param array $assets {
-	 *     @type array 'styles'
-	 *     @type array 'scripts'
-	 *     @type array 'script_modules'
+	 * @param array $assets_data {
+	 *     @type array 'styles'         List of styles to enable.
+	 *     @type array 'scripts'        List of scripts to enqueue.
+	 *     @type array 'script_modules' List of script modules to enqueue.
 	 * }
 	 */
 	public function add_assets( array $assets ): void {
@@ -159,7 +159,7 @@ class Loader extends Module {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 					} else if ( 'script_modules' === $assets_type ) {
-						wp_enqueue_script_module(  $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
+						wp_enqueue_script_module( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					} else {
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					}

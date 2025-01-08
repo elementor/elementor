@@ -12,10 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Assets extends Base {
 	const ASSETS_META_KEY = '_elementor_page_assets';
 
-	// Default value must be empty.
+	/**
+	 * Default value must be empty.
+	 *
+	 * @var mixed
+	 */
 	private $page_assets;
 
-	// Default value must be empty.
+	/**
+	 * Default value must be empty.
+	 *
+	 * @var mixed
+	 */
 	private $saved_page_assets;
 
 	public function element_action( Element_Base $element_data ) {
