@@ -210,7 +210,7 @@ class Hints {
 	}
 
 	/**
-	 * is_dismissed
+	 * Is_dismissed
 	 *
 	 * @param $key
 	 *
@@ -222,7 +222,7 @@ class Hints {
 	}
 
 	/**
-	 * should_display_hint
+	 * Should_display_hint
 	 *
 	 * @param $hint_key
 	 *
@@ -293,7 +293,7 @@ class Hints {
 	}
 
 	/**
-	 * is_plugin_installed
+	 * Is_plugin_installed
 	 *
 	 * @param $plugin
 	 *
@@ -306,7 +306,7 @@ class Hints {
 	}
 
 	/**
-	 * is_plugin_active
+	 * Is_plugin_active
 	 *
 	 * @param $plugin
 	 *
@@ -318,7 +318,7 @@ class Hints {
 	}
 
 	/**
-	 * get_plugin_action_url
+	 * Get_plugin_action_url
 	 *
 	 * @param $plugin
 	 *
@@ -337,7 +337,7 @@ class Hints {
 	}
 
 	/**
-	 * ensure_plugin_folder
+	 * Ensure_plugin_folder
 	 *
 	 * @param $plugin
 	 *
@@ -351,7 +351,7 @@ class Hints {
 	}
 
 	/**
-	 * get_notice_allowed_html
+	 * Get_notice_allowed_html
 	 *
 	 * @return array[]
 	 */

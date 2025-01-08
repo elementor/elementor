@@ -268,7 +268,7 @@ abstract class Module extends Base_Object {
 	 * @param string $file_name
 	 * @param string $relative_url         Optional. Default is null.
 	 * @param string $add_min_suffix       Optional. Default is 'default'.
-	 * @param bool   $add_direction_suffix Optional. Default is `false`
+	 * @param bool   $add_direction_suffix Optional. Default is `false`.
 	 *
 	 * @return string
 	 */
