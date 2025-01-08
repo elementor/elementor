@@ -427,7 +427,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 
 		$this->add_inline_editing_attributes( 'title' );
 
-		$title = wp_kses_post( $settings['title'] );
+		$title = current_user_can( 'manage_options' ) ? $settings['title'] : wp_kses_post( $settings['title'] );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$this->add_link_attributes( 'url', $settings['link'] );
