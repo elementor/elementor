@@ -6,7 +6,7 @@ import useImageActions from '../../../hooks/use-image-actions';
 
 const ProductImage = ( { productId, ratio, bgColor, image, onUpdate } ) => {
 	const { isLoading: isUploading } = useImageActions();
-	const { data, isLoading: isGenerating, error, send } = useProductImageUnification( {
+	const { data, isLoading: isGenerating, error, send, sendUsageData } = useProductImageUnification( {
 		productId,
 		[ IMAGE_RATIO ]: ratio,
 		[ IMAGE_BACKGROUND_COLOR ]: bgColor,
@@ -14,9 +14,9 @@ const ProductImage = ( { productId, ratio, bgColor, image, onUpdate } ) => {
 
 	useEffect( () => {
 		if ( onUpdate ) {
-			onUpdate( data, isGenerating || isUploading, error, send, productId, ratio, bgColor, image );
+			onUpdate( data, isGenerating || isUploading, error, send, productId, ratio, bgColor, image, sendUsageData );
 		}
-	}, [ data, isGenerating, error, send, productId, ratio, bgColor, image, isUploading, onUpdate ] );
+	}, [ data, isGenerating, error, send, productId, ratio, bgColor, image, isUploading, onUpdate, sendUsageData ] );
 
 	return <div style={ { visibility: 'hidden' } }></div>;
 };

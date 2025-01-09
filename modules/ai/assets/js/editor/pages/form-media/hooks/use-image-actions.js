@@ -61,7 +61,6 @@ const useImageActions = () => {
 
 		results.filter( ( result ) => result )
 			.forEach( ( result ) => setControlValue( result ) );
-		saveAndClose();
 	};
 
 	return {
