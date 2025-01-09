@@ -346,6 +346,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.26.4 - 2025-01-07 =
+
+* Fix: Responsive Visibility "Hide On Mobile Portrait" option not working for hidden Sections and Containers on older sites
+* Fix: Editor fails to load when clicking on "Jumpstart your web-creation" links in Elementor Home after importing a kit
+
 = 3.26.3 - 2024-12-22 =
 
 * Tweak: Registered `swiper.js` script to ensure Swiper is properly declared and loaded ([#29612](https://github.com/elementor/elementor/issues/29612), [#29616](https://github.com/elementor/elementor/issues/29616))

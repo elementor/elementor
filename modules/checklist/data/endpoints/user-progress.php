@@ -15,11 +15,11 @@ class User_Progress extends Endpoint_Base {
 		$this->register_items_route( \WP_REST_Server::EDITABLE );
 	}
 
-	public function get_name() : string {
+	public function get_name(): string {
 		return 'user-progress';
 	}
 
-	public function get_format() : string {
+	public function get_format(): string {
 		return 'checklist';
 	}
 
