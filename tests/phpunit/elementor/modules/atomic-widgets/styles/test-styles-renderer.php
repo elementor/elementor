@@ -417,21 +417,16 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											[
 												'$$type' => 'background-image-overlay',
 												'value' => [
-//													'$$type' => 'image-src',
-//													'value' => [
-//														'id'=> [
-//															'$$type' => 'image-attachment-id',
-//															'value' => '807'
-//													], 'url' => null,
-//													]
-													'$$type' => 'image-src',
-													'value' => [
-														'id' => [
-															'$$type' => 'image-attachment-id',
-															'value' => 807
+													'image-src' => [
+														'$$type' => 'image-src',
+														'value' => [
+															'id' => [
+																'$$type' => 'image-attachment-id',
+																'value' => 807
+															],
+															'url' => null,
 														],
-														'url' => null,
-													],
+													]
 												]
 											],
 										],
@@ -527,6 +522,21 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											[
 												'$$type' => 'background-color-overlay',
 												'value' => 'blue',
+											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image-src' => [
+														'$$type' => 'image-src',
+														'value' => [
+															'id' => [
+																'$$type' => 'image-attachment-id',
+																'value' => 807
+															],
+															'url' => null,
+														],
+													]
+												]
 											],
 										],
 									],

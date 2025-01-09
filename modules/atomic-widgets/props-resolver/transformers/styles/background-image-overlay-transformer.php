@@ -10,9 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
 		public function transform( $value, $key ) {
-			var_dump( $value );
-//			die();
-//			return "url( 'https://bit.ly/2rlzaXi' )";
 
 			if ( ! empty( $value['image-src']['id'] ) ) {
 				$image_src = wp_get_attachment_image_src(
