@@ -664,7 +664,7 @@ class WP_Exporter {
 		if ( $show_page_on_front ) {
 			$page_on_front_id = (int) get_option( 'page_on_front' );
 
-			if ( in_array( $page_on_front_id, $post_ids ) ) {
+			if ( in_array( $page_on_front_id, $post_ids, true ) ) {
 				$page_on_front_xml = "<wp:page_on_front>$page_on_front_id</wp:page_on_front>";
 			}
 		}

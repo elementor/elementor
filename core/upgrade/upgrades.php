@@ -135,7 +135,7 @@ class Upgrades {
 					return $element;
 				}
 
-				if ( in_array( $element['widgetType'], [ 'icon', 'icon-box', 'social-icons' ] ) ) {
+				if ( in_array( $element['widgetType'], [ 'icon', 'icon-box', 'social-icons' ], true ) ) {
 					if ( ! empty( $element['settings']['icon_padding']['size'] ) ) {
 						$element['settings']['icon_padding']['size'] = '';
 					}
@@ -405,7 +405,7 @@ class Upgrades {
 
 			// Clear WP cache for next step.
 			wp_cache_flush();
-		} // End foreach().
+		}
 	}
 
 	/**
@@ -456,7 +456,7 @@ class Upgrades {
 			}
 
 			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( &$do_update, $widgets ) {
-				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets ) ) {
+				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets, true ) ) {
 					return $element;
 				}
 
@@ -480,7 +480,7 @@ class Upgrades {
 			$json_value = wp_slash( wp_json_encode( $data ) );
 
 			update_metadata( 'post', $post_id, '_elementor_data', $json_value );
-		} // End foreach().
+		}
 
 		return $updater->should_run_again( $post_ids );
 	}
@@ -516,7 +516,7 @@ class Upgrades {
 			}
 
 			$document->save_template_type();
-		} // End foreach().
+		}
 
 		return $updater->should_run_again( $post_ids );
 	}
@@ -608,24 +608,6 @@ class Upgrades {
 
 		return $updater->should_run_again( $post_ids );
 	}
-
-	/**
-	 *  Update database to separate page from post.
-	 *
-	 * @param Updater $updater
-	 *
-	 * @return bool
-	 */
-	// Because the query is slow on large sites, temporary don't upgrade.
-	/*	public static function _v_2_7_0_rename_document_types_to_wp( $updater ) {
-		return self::rename_document_base_to_wp( $updater, 'post' ) || self::rename_document_base_to_wp( $updater, 'page' );
-	}*/
-
-	// Upgrade code was fixed & moved to _v_2_7_1_remove_old_usage_data.
-	/* public static function _v_2_7_0_remove_old_usage_data() {} */
-
-	// Upgrade code moved to _v_2_7_1_recalc_usage_data.
-	/* public static function _v_2_7_0_recalc_usage_data( $updater ) {} */
 
 	/**
 	 * Don't use the old data anymore.

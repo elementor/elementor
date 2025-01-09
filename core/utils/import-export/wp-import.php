@@ -1021,7 +1021,7 @@ class WP_Import extends \WP_Importer {
 	 */
 	private function fetch_remote_file( $url, $post ) {
 		// Extract the file name from the URL.
-		$file_name = basename( parse_url( $url, PHP_URL_PATH ) );
+		$file_name = basename( wp_parse_url( $url, PHP_URL_PATH ) );
 
 		if ( ! $file_name ) {
 			$file_name = md5( $url );
@@ -1262,7 +1262,7 @@ class WP_Import extends \WP_Importer {
 	private function is_valid_meta_key( $key ) {
 		// Skip attachment metadata since we'll regenerate it from scratch.
 		// Skip _edit_lock as not relevant for import
-		if ( in_array( $key, [ '_wp_attached_file', '_wp_attachment_metadata', '_edit_lock' ] ) ) {
+		if ( in_array( $key, [ '_wp_attached_file', '_wp_attachment_metadata', '_edit_lock' ], true ) ) {
 			return false;
 		}
 

@@ -93,7 +93,7 @@ class Button extends Base_Object {
 			'before' => '',
 		];
 
-		if ( null !== $option && -1 !== in_array( $option, $default_options ) ) {
+		if ( null !== $option && -1 !== in_array( $option, $default_options, true ) ) {
 			return $default_options[ $option ];
 		}
 

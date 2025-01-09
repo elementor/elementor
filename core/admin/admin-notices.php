@@ -457,7 +457,7 @@ class Admin_Notices extends Module {
 			return true;
 		}
 
-		return (bool) mt_rand( 0, 1 );
+		return (bool) wp_rand( 0, 1 );
 	}
 
 	private function is_elementor_page(): bool {

@@ -1089,7 +1089,7 @@ abstract class Document extends Controls_Stack {
 			}
 
 			$editor_data[] = $element_data;
-		} // End foreach().
+		}
 
 		Plugin::$instance->documents->restore_document();
 

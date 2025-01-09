@@ -25,7 +25,7 @@ class Loading_Inspection_Manager {
 		$this->inspections['theme-missing'] = new Theme_Missing();
 		$this->inspections['htaccess'] = new Htaccess();
 
-		$is_editing_shop_page = Utils::get_super_global_value( $_GET, 'post' ) == get_option( 'woocommerce_shop_page_id' );
+		$is_editing_shop_page = Utils::get_super_global_value( $_GET, 'post' ) === get_option( 'woocommerce_shop_page_id' );
 		if ( $is_editing_shop_page ) {
 			$this->inspections['shop-page-edit'] = new Shop_Page_Edit();
 		}
