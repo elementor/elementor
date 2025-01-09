@@ -285,9 +285,9 @@ abstract class Endpoint {
 	/**
 	 * Register item route.
 	 *
-	 * @param array $args
-	 * @param string $route
 	 * @param string $methods
+	 * @param array  $args
+	 * @param string $route
 	 *
 	 * @throws \Exception
 	 */
