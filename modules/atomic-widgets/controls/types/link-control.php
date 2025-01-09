@@ -23,11 +23,17 @@ class Link_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
+	/**
+	 * @param array< string, array{
+	 *         label: string,
+	 *         groupLabel: string,
+	 *     }> | array< string, array{
+	 *         label: string,
+	 *     }> $options Options for the control.
+	 *
+	 * @return $this
+	 */
 	public function set_options( array $options ): self {
-		if ( ! $this->validate_options_scheme( $options ) ) {
-			Utils::safe_throw( 'Each option must have a label property' );
-		}
-
 		$this->options = $options;
 
 		return $this;
@@ -45,15 +51,5 @@ class Link_Control extends Atomic_Control_Base {
 		$this->allow_custom_values = $allow_custom_values;
 
 		return $this;
-	}
-
-	private function validate_options_scheme( ?array $options = [] ) {
-		foreach ( $options as $option ) {
-			if ( ! is_array( $option ) || ! array_key_exists( 'label', $option ) ) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 }
