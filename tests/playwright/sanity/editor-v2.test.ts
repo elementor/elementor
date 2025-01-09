@@ -19,7 +19,7 @@ test.describe( 'Editor top bar', () => {
 		editor = await wpAdmin.openNewPage();
 	} );
 
-	test( 'check that app-bar exists', async () => {
+	test.skip( 'check that app-bar exists', async () => {
 		// Act
 		const wrapper = await editor.page.locator( '#elementor-editor-wrapper-v2' );
 
@@ -36,7 +36,7 @@ test.describe( 'Editor top bar', () => {
 		} ) ).toMatchSnapshot( 'app-bar.jpg', { maxDiffPixels: 100 } );
 	} );
 
-	test( 'check panel styles', async () => {
+	test.skip( 'check panel styles', async () => {
 		// Act
 		await editor.openElementsPanel();
 

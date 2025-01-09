@@ -4,13 +4,14 @@ namespace Elementor\Data\V2\Base\Processor;
 use Elementor\Data\V2\Base\Processor;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Before extends Processor {
 
 	/**
 	 * Get conditions for running processor.
+	 *
 	 * @param array $args
 	 *
 	 * @return bool

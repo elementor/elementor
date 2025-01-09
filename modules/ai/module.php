@@ -216,6 +216,7 @@ class Module extends BaseModule {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
   }
   .elementor-control-ai_hover_animation .elementor-control-raw-html {
   	display: none;
@@ -250,6 +251,7 @@ class Module extends BaseModule {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		align-items: center;
 	}
 	.elementor-control-ai_animation .elementor-control-raw-html {
 		display: none;
@@ -291,7 +293,6 @@ class Module extends BaseModule {
 		}
 
 		$this->add_wc_scripts();
-
 	}
 
 	public function enqueue_ai_single_product_page_scripts() {
@@ -300,7 +301,6 @@ class Module extends BaseModule {
 		}
 
 		$this->add_wc_scripts();
-
 	}
 
 	private function add_products_bulk_action( $bulk_actions ) {
@@ -589,10 +589,8 @@ class Module extends BaseModule {
 			if ( ! $document->is_editable_by_current_user() ) {
 				throw new \Exception( 'Access denied' );
 			}
-		} else {
-			if ( ! current_user_can( 'edit_post', $editor_post_id ) ) {
+		} elseif ( ! current_user_can( 'edit_post', $editor_post_id ) ) {
 				throw new \Exception( 'Access denied' );
-			}
 		}
 	}
 
@@ -700,7 +698,7 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function get_ai_app() : Ai {
+	private function get_ai_app(): Ai {
 		return Plugin::$instance->common->get_component( 'connect' )->get_app( 'ai' );
 	}
 

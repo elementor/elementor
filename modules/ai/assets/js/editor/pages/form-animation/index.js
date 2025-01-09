@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box, Button, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
@@ -33,6 +33,7 @@ const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalO
 	const { setGenerate } = useRequestIds();
 	const [ animationSummary, setAnimationSummary ] = useState( '' );
 	const [ prevControlValue, setPrevControlValue ] = useState();
+	const lastRun = useRef( () => {} );
 
 	const autocompleteItems = 'hover' === additionalOptions.animationType ? hoverEffectAutocomplete : motionEffectAutocomplete;
 
@@ -41,7 +42,8 @@ const FormAnimation = ( { onClose, getControlValue, setControlValue, additionalO
 	const handleSubmit = async ( event ) => {
 		event.preventDefault();
 		setGenerate();
-		send( { prompt } );
+		lastRun.current = () => send( { prompt } );
+		await lastRun.current();
 	};
 
 	useEffect( () => {

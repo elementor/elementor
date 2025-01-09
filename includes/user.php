@@ -73,6 +73,7 @@ class User {
 	}
 
 	/**
+	 * @param Ajax $ajax
 	 * @since 2.1.0
 	 * @access public
 	 * @static
@@ -273,9 +274,9 @@ class User {
 	}
 
 	/**
-	 * @param $notice_id
-	 * @param $is_viewed
-	 * @param $meta
+	 * @param string $notice_id
+	 * @param bool   $is_viewed
+	 * @param array  $meta
 	 *
 	 * @return void
 	 */
@@ -308,7 +309,7 @@ class User {
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception If the user cannot install plugins.
 	 */
 	public static function register_as_beta_tester( array $data ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {
@@ -363,7 +364,7 @@ class User {
 	 * Get a user option with default value as fallback.
 	 *
 	 * @param string $option  - Option key.
-	 * @param int    $user_id - User ID
+	 * @param int    $user_id - User ID.
 	 * @param mixed  $default - Default fallback value.
 	 *
 	 * @return mixed
