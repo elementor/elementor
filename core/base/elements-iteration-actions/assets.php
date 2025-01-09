@@ -15,7 +15,7 @@ class Assets extends Base {
 	/**
 	 * Default value must be empty.
 	 *
-	 * @var mixed
+	 * @var array
 	 */
 	private $page_assets;
 

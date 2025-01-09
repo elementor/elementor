@@ -16,6 +16,10 @@ class Combine_Array_Transformer extends Transformer_Base {
 	}
 
 	public function transform( $value, $key ) {
+		if ( ! is_array( $value ) ) {
+			return null;
+		}
+
 		return implode( $this->separator, array_filter( $value ) );
 	}
 }

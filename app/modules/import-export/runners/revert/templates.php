@@ -3,10 +3,9 @@
 namespace Elementor\App\Modules\ImportExport\Runners\Revert;
 
 class Templates extends Revert_Runner_Base {
-	/*
+	/**
 	 * The implement of this runner is part of the Pro plugin.
 	 */
-
 	public static function get_name(): string {
 		return 'templates';
 	}
