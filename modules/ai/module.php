@@ -1123,7 +1123,7 @@ class Module extends BaseModule {
 		$image_data = $this->upload_image( $image['image_url'], $data['prompt'], $data['editor_post_id'] );
 
 		if ( is_wp_error( $image_data ) ) {
-			throw new \Exception( $image_data->get_error_message() );
+			throw new \Exception( esc_html( $image_data->get_error_message() ) );
 		}
 
 		if ( ! empty( $image['use_gallery_image'] ) && ! empty( $image['id'] ) ) {
@@ -1317,8 +1317,8 @@ class Module extends BaseModule {
 
 		return [
 			'id' => $attachment_id,
-			'url' => wp_get_attachment_image_url( $attachment_id, 'full' ),
-			'alt' => $image_title,
+			'url' => esc_url( wp_get_attachment_image_url( $attachment_id, 'full' ) ),
+			'alt' => esc_attr( $image_title ),
 			'source' => 'library',
 		];
 	}
@@ -1344,7 +1344,7 @@ class Module extends BaseModule {
 		$result = $app->get_history_by_type( $type, $page, $limit, $context );
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
 		return $result;
@@ -1366,7 +1366,7 @@ class Module extends BaseModule {
 		$result = $app->delete_history_item( $data['id'], $context );
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
 		return [];
@@ -1388,7 +1388,7 @@ class Module extends BaseModule {
 		$result = $app->toggle_favorite_history_item( $data['id'], $context );
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
 		return [];
@@ -1466,7 +1466,7 @@ class Module extends BaseModule {
 	private function throw_on_error( $result ): void {
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( [
-				'message' => $result->get_error_message(),
+				'message' => esc_html( $result->get_error_message() ),
 				'extra_data' => $result->get_error_data(),
 			] );
 		}
@@ -1514,7 +1514,6 @@ class Module extends BaseModule {
 	 * @param int|null $image_to_remove
 	 * @param int|null $image_to_add
 	 * @return void
-	 * @throws \Exception
 	 */
 	private function update_product_gallery( $product, ?int $image_to_remove, ?int $image_to_add ): void {
 		$gallery_image_ids = $product->get_gallery_image_ids();

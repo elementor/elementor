@@ -88,7 +88,7 @@ class Documents_Manager {
 		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
 		add_filter( 'user_has_cap', [ $this, 'remove_user_edit_cap' ], 10, 3 );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
-		add_action('rest_api_init', [$this, 'register_rest_routes']);
+		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 	}
 
 	/**
@@ -785,11 +785,11 @@ class Documents_Manager {
 					$elements_data = $document->get_elements_data();
 
 					$import_data = $document->get_import_data( [
-						'content' => $elements_data
+						'content' => $elements_data,
 					] );
 
 					$document->save( [
-						'elements' => $import_data['content']
+						'elements' => $import_data['content'],
 					] );
 
 					return new \WP_REST_Response( [
@@ -811,11 +811,11 @@ class Documents_Manager {
 			'args' => [
 				'id' => [
 					'required' => true,
-					'validate_callback' => function($param) {
-						return is_numeric($param);
-					}
-				]
-			]
+					'validate_callback' => function( $param ) {
+						return is_numeric( $param );
+					},
+				],
+			],
 		]);
 	}
 }
