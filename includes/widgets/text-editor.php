@@ -95,13 +95,17 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * Retrieve the list of style dependencies the widget requires.
 	 *
+	 * The 'widget-text-editor' style is required only when the drop cap is used.
+	 * Therefor, style should not be loaded on the widget level, rather only on
+	 * control level when the drop cap is active.
+	 *
 	 * @since 3.24.0
 	 * @access public
 	 *
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-text-editor' ];
+		return [];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -141,6 +145,23 @@ class Widget_Text_Editor extends Widget_Base {
 				'label_on' => esc_html__( 'On', 'elementor' ),
 				'prefix_class' => 'elementor-drop-cap-',
 				'frontend_available' => true,
+				'assets' => [
+					'styles' => [
+						[
+							'name' => 'widget-text-editor',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'drop_cap',
+										'operator' => '===',
+										'value' => 'yes',
+									],
+								],
+							],
+						],
+					],
+
+				],
 			]
 		);
 
