@@ -122,7 +122,7 @@ class Ajax {
 	}
 
 	private function get_plugin_name_from_widget_instance( $widget ) {
-		if ( in_array( 'WordPress', $widget->get_categories() ) ) {
+		if ( in_array( 'wordpress', $widget->get_categories() ) ) {
 			return esc_html__( 'WordPress Widgets', 'elementor' );
 		}
 
