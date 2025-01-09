@@ -26,7 +26,7 @@ jobs:
     uses: ./.github/workflows/build.yml
   run-upgrade-test:
     name: Playwright plugin upgrade test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     steps:
