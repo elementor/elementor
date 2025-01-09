@@ -24,7 +24,7 @@ class AllChildren extends Index {
 		return $this->controller->get_name() . '/index';
 	}
 
-	/*
+	/**
 	 * Retrieves a result(s) of all controller endpoint(s), items.
 	 *
 	 * Run overall endpoints of the current controller.
