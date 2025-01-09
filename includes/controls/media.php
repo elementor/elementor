@@ -60,7 +60,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $settings Control settings
+	 * @param array $settings Control settings.
 	 *
 	 * @return array Control settings.
 	 */
@@ -89,7 +89,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @since 3.4.6
 	 * @deprecated 3.5.0
 	 *
-	 * @param $mimes
+	 * @param mixed $mimes
 	 * @return mixed
 	 */
 	public function support_svg_and_json_import( $mimes ) {
@@ -248,7 +248,9 @@ class Control_Media extends Control_Base_Multiple {
 						</div>
 					</div>
 
-					<?php /* ?>
+					<?php
+					/*
+					?>
 					<div class="elementor-control-media__warnings" role="alert" style="display: none;">
 						<?php
 						Hints::get_notice_template( [
@@ -258,7 +260,8 @@ class Control_Media extends Control_Base_Multiple {
 						] );
 						?>
 					</div>
-					<?php */ ?>
+					<?php
+					*/ ?>
 
 					<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
 					<div class="elementor-control-media__promotions" role="alert" style="display: none;">
@@ -326,7 +329,7 @@ class Control_Media extends Control_Base_Multiple {
 		<?php
 	}
 
-	private function get_image_sizes() : array {
+	private function get_image_sizes(): array {
 		$wp_image_sizes = Group_Control_Image_Size::get_all_image_sizes();
 
 		$image_sizes = [];

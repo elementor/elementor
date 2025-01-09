@@ -35,7 +35,7 @@ class Elements_Manager {
 	 *
 	 * @access private
 	 *
-	 * @var
+	 * @var $categories
 	 */
 	private $categories;
 

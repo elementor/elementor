@@ -53,7 +53,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<div><?php echo esc_html__( 'Now you can choose where you want to go on the site from the following options', 'elementor' ); ?></div>
 	<div>
 		<!-- translators: 1: Opening HTML <a> tag, 2: closing HTML <a> tag. -->
-		<?php echo sprintf(
+		<?php printf(
 			esc_html__( 'Any time you can change the settings in %1$sUser Preferences%2$s', 'elementor' ),
 			'<a id="user-preferences">',
 			'</a>'

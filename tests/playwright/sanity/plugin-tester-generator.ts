@@ -29,7 +29,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
 	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
-	// { pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
+	{ pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
 	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
 	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
@@ -46,6 +46,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'happy-elementor-addons', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
+	{ pluginName: 'wordpress-seo', installSource: 'api' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
