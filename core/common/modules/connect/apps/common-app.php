@@ -28,7 +28,7 @@ abstract class Common_App extends Base_User_App {
 
 			if ( ! self::$common_data ) {
 				self::$common_data = [];
-			};
+			}
 		}
 
 		$this->data = & self::$common_data;

@@ -111,7 +111,7 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_file_payload
+	 * Get_file_payload
 	 *
 	 * @param $filename
 	 * @param $file_type
@@ -267,7 +267,7 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_prompt_enhanced
+	 * Get_image_prompt_enhanced
 	 *
 	 * @param $prompt
 	 *
@@ -343,7 +343,7 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_text_to_image
+	 * Get_text_to_image
 	 *
 	 * @param $prompt
 	 * @param $prompt_settings
@@ -370,7 +370,7 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_featured_image
+	 * Get_featured_image
 	 *
 	 * @param $prompt
 	 * @param $prompt_settings
@@ -397,12 +397,12 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image
+	 * Get_image_to_image
 	 *
 	 * @param $image_data
 	 *
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
@@ -500,12 +500,13 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_upscale
+	 * Get_image_to_image_upscale
 	 *
 	 * @param $image_data
-	 *
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image_upscale( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
@@ -532,12 +533,12 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_remove_background
+	 * Get_image_to_image_remove_background
 	 *
 	 * @param $image_data
 	 *
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image_remove_background( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
@@ -563,12 +564,13 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_remove_text
+	 * Get_image_to_image_remove_text
 	 *
 	 * @param $image_data
-	 *
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image_replace_background( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
@@ -595,7 +597,7 @@ class Ai extends Library {
 	}
 
 	/**
-	 * store_temp_file
+	 * Store_temp_file
 	 * used to store a temp file for the AI request and deletes it once the request is done
 	 *
 	 * @param $file_content
@@ -616,12 +618,13 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_out_painting
+	 * Get_image_to_image_out_painting
 	 *
 	 * @param $image_data
-	 *
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image_out_painting( $image_data, $context, $request_ids ) {
 		$img_content = str_replace( ' ', '+', $image_data['mask'] );
@@ -659,12 +662,13 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_mask
+	 * Get_image_to_image_mask
 	 *
 	 * @param $image_data
-	 *
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image_mask( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
