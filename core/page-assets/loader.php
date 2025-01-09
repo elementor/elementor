@@ -100,7 +100,7 @@ class Loader extends Module {
 	}
 
 	/**
-	 * @param array $assets {
+	 * @param array $assets_data {
 	 *     @type array 'styles'
 	 *     @type array 'scripts'
 	 * }
