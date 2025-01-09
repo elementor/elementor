@@ -46,7 +46,7 @@ class Atomic_Widget_Styles {
 	 *       meta: array<string, mixed>
 	 *     }>
 	 *   }>
-	 * 
+	 *
 	 * @param array $styles
 	 */
 	private function styles_enqueue_fonts( array $styles ): void {
