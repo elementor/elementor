@@ -549,10 +549,8 @@ abstract class Document extends Controls_Stack {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 *
 	 * @return bool|Document
 	 */
-
 	public function get_newer_autosave() {
 		$autosave = $this->get_autosave();
 
@@ -926,7 +924,7 @@ abstract class Document extends Controls_Stack {
 	 * @return bool Whether the post was built with Elementor.
 	 */
 	public function is_built_with_elementor() {
-		return ! ! $this->get_meta( self::BUILT_WITH_ELEMENTOR_META_KEY );
+		return (bool) $this->get_meta( self::BUILT_WITH_ELEMENTOR_META_KEY );
 	}
 
 	/**
@@ -1283,7 +1281,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ): array {
 		foreach ( $config as &$element_config ) {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_config );
 
@@ -1422,7 +1420,6 @@ abstract class Document extends Controls_Stack {
 			 * @since 2.5.12
 			 *
 			 * @param \Elementor\Core\Base\Document $this The current document.
-			 *
 			 */
 			do_action( 'elementor/document/save_version', $this );
 		}
