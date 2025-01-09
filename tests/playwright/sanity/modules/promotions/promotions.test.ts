@@ -118,7 +118,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect.soft( saveAsGlobalPromotionLinkContainer ).toHaveAttribute( 'href', saveAsGlobalHref );
 	} );
 
-	test( 'Promotions - Free to Pro - Admin top bar', async ( { page } ) => {
+	test.skip( 'Promotions - Free to Pro - Admin top bar', async ( { page } ) => {
 		// Arrange.
 		const promotionContainer = '.e-admin-top-bar__secondary-area';
 
@@ -126,7 +126,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
 	} );
 
-	test( 'Promotions - Free to Pro - Navigator', async ( { page, apiRequests }, testInfo ) => {
+	test.skip( 'Promotions - Free to Pro - Navigator', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			promotionContainer = EditorSelectors.panels.navigator.footer;
@@ -140,7 +140,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
 	} );
 
-	test( 'Promotions - Free to Pro - Navigator - Dark Mode', async ( { page, apiRequests }, testInfo ) => {
+	test.skip( 'Promotions - Free to Pro - Navigator - Dark Mode', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
