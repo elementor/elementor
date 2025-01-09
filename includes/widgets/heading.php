@@ -117,7 +117,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	/**
 	 * Remove data attributes from the html.
 	 *
-	 * @param string $content Heading title
+	 * @param string $content Heading title.
 	 * @return string
 	 */
 	public function sanitize( $content ): string {

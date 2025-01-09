@@ -5,7 +5,7 @@ use Elementor\Plugin;
 
 class Site_Settings extends Export_Runner_Base {
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'site-settings';
 	}
 

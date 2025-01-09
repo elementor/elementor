@@ -203,11 +203,11 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
 
-	public static function get_packages_to_enqueue() : array {
+	public static function get_packages_to_enqueue(): array {
 		return apply_filters( 'elementor/editor/v2/packages', [] );
 	}
 
-	private function get_styles() : array {
+	private function get_styles(): array {
 		$styles = apply_filters( 'elementor/editor/v2/styles', [] );
 
 		return Collection::make( $styles )

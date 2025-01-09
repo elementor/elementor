@@ -243,6 +243,7 @@ class Module extends BaseModule {
 					esc_html__( 'An image should not be lazy-loaded and marked as high priority at the same time.', 'elementor' ),
 					''
 				);
+
 				/*
 				 * Set `fetchpriority` here for backward-compatibility as we should
 				 * not override what a developer decided, even though it seems
