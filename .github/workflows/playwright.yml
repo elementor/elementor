@@ -106,7 +106,7 @@ jobs:
           retention-days: 2
   PlaywrightWithTag:
     name: Playwright test - tagged tests on PHP 8.1
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [ build-plugin ]
     if: ${{ github.event.inputs.tag }}
     steps:
