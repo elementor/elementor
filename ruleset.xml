@@ -56,13 +56,4 @@
 			<property name="additionalWordDelimiters" value="/-" />
 		</properties>
 	</rule>
-
-	<rule ref="WordPress.WP.Capabilities">
-		<properties>
-			<property name="woocommerce_capabilities" type="array">
-				<element value="edit_products"/>
-				<element value="publish_products"/>
-			</property>
-		</properties>
-	</rule>
 </ruleset>
