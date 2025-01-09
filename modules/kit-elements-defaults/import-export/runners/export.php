@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Export extends Export_Runner_Base {
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'elements-default-values';
 	}
 
