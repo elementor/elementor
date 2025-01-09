@@ -24,12 +24,12 @@ class Link_Control extends Atomic_Control_Base {
 	}
 
 	/**
-	 * @param array< string, array{
+	 * @param $options array< string, array{
 	 *         label: string,
 	 *         groupLabel: string,
 	 *     }> | array< string, array{
 	 *         label: string,
-	 *     }> $options Options for the control.
+	 *     }>  Options for the control.
 	 *
 	 * @return $this
 	 */

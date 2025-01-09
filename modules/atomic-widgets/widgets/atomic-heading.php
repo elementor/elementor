@@ -131,7 +131,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		];
 	}
 
-	// Will be removed as part of ED-16723
+	/**
+	 * Will be removed as part of ED-16723
+	 */
 	private function get_posts_per_post_type_map( $excluded_types = [] ) {
 		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
 
