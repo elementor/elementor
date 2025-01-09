@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class ElementorPostMeta {
+class Elementor_Post_Meta {
 
 	public function register(): void {
 		$post_types = get_post_types_by_support( 'elementor' );

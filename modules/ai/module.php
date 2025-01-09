@@ -1159,7 +1159,7 @@ class Module extends BaseModule {
 
 			if ( is_array( $message ) ) {
 				$message = implode( ', ', $message );
-				throw new \Exception( $message );
+				throw new \Exception( esc_html( $message ) );
 			}
 
 			$this->throw_on_error( $result );

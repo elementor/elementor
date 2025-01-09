@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class ElementorUserMeta {
+class Elementor_User_Meta {
 
 	private function get_meta_config(): array {
 		return [

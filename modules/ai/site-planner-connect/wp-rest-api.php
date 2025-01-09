@@ -21,7 +21,7 @@ class WpRestApi {
 				'callback' => function () {
 					try {
 						wp_send_json_success( [
-							'SitePlannerConnect' => true,
+							'site_planner_connect' => true,
 						] );
 					} catch ( \Exception $e ) {
 						wp_send_json_error( [

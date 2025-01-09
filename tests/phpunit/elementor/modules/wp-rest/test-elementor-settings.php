@@ -2,20 +2,19 @@
 
 namespace Elementor\Testing\Modules\WpRest;
 
-use Elementor\Modules\WpRest\Classes\ElementorSettings;
+use Elementor\Modules\WpRest\Classes\Elementor_Settings;
 use ElementorEditorTesting\Elementor_Test_Base;
-use WP_REST_Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Test_Elementor_Settings extends Elementor_Test_Base {
-	protected ElementorSettings $settings;
+	protected Elementor_Settings $settings;
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->settings = new ElementorSettings();
+		$this->settings = new Elementor_Settings();
 	}
 
 	public function test_get_setting_with_valid_key() {
@@ -26,7 +25,7 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 
 		update_option( 'elementor_test_key', 'test_value' );
 
-		$request = new WP_REST_Request( 'GET', '/elementor/v1/settings/elementor_test_key' );
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/settings/elementor_test_key' );
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
@@ -43,7 +42,7 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 		$this->act_as_admin();
 		do_action( 'rest_api_init' );
 
-		$request = new WP_REST_Request( 'GET', '/elementor/v1/settings/invalid_key' );
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/settings/invalid_key' );
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
@@ -57,7 +56,7 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 		$this->act_as_admin();
 		do_action( 'rest_api_init' );
 
-		$request = new WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_test_key' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_test_key' );
 		$request->set_param( 'value', 'new_test_value' );
 
 		// Act
@@ -74,7 +73,7 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 		// Arrange
 		do_action( 'rest_api_init' );
 
-		$request = new WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_test_key' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_test_key' );
 		$request->set_param( 'value', 'new_test_value' );
 
 		// Act
@@ -89,7 +88,7 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 		$this->act_as_subscriber();
 		do_action( 'rest_api_init' );
 
-		$request = new WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_test_key' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_test_key' );
 		$request->set_param( 'value', 'new_test_value' );
 
 		// Act
@@ -105,7 +104,7 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 		do_action( 'rest_api_init' );
 		update_option( 'elementor_test_key', 'test_value' );
 
-		$request = new WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_test_key' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_test_key' );
 		$request->set_param( 'value', 'test_value' );
 
 		// Act

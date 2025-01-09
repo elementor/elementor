@@ -2,8 +2,6 @@
 
 namespace Elementor\Testing\Modules\WpRest;
 
-use Elementor\Modules\WpRest\Classes\ElementorUserMeta;
-use WP_REST_Request;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Elementor_User_Meta extends Elementor_Test_Base {
@@ -13,7 +11,7 @@ class Test_Elementor_User_Meta extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 		$this->user_id = $this->factory()->create_and_get_administrator_user()->ID;
-		
+
 		$this->act_as_admin();
 
 		do_action( 'rest_api_init' );
@@ -23,7 +21,7 @@ class Test_Elementor_User_Meta extends Elementor_Test_Base {
 		// Arrange
 		$test_data = [ 'ai_get_started' => true ];
 		update_user_meta( $this->user_id, 'elementor_introduction', $test_data );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/users/' . $this->user_id );
+		$request = new \WP_REST_Request( 'GET', '/wp/v2/users/' . $this->user_id );
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
@@ -39,10 +37,10 @@ class Test_Elementor_User_Meta extends Elementor_Test_Base {
 		// Arrange
 		$test_data = [
 			'elementor_introduction' => [
-				'ai_get_started' => true
-			]
+				'ai_get_started' => true,
+			],
 		];
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users/' . $this->user_id );
+		$request = new \WP_REST_Request( 'POST', '/wp/v2/users/' . $this->user_id );
 		$request->set_body_params( $test_data );
 
 		// Act
@@ -58,16 +56,16 @@ class Test_Elementor_User_Meta extends Elementor_Test_Base {
 		// Arrange
 		$initial_data = [
 			'ai_get_started' => false,
-			'existing_key' => 'value'
+			'existing_key' => 'value',
 		];
 		update_user_meta( $this->user_id, 'elementor_introduction', $initial_data );
 
 		$patch_data = [
 			'elementor_introduction' => [
-				'ai_get_started' => true
-			]
+				'ai_get_started' => true,
+			],
 		];
-		$request = new WP_REST_Request( 'PATCH', '/wp/v2/users/' . $this->user_id );
+		$request = new \WP_REST_Request( 'PATCH', '/wp/v2/users/' . $this->user_id );
 		$request->set_body_params( $patch_data );
 
 		// Act
@@ -84,10 +82,10 @@ class Test_Elementor_User_Meta extends Elementor_Test_Base {
 		// Arrange
 		$test_data = [
 			'elementor_introduction' => [
-				'ai_get_started' => 'not_a_boolean'
-			]
+				'ai_get_started' => 'not_a_boolean',
+			],
 		];
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users/' . $this->user_id );
+		$request = new \WP_REST_Request( 'POST', '/wp/v2/users/' . $this->user_id );
 		$request->set_body_params( $test_data );
 
 		// Act
@@ -104,9 +102,9 @@ class Test_Elementor_User_Meta extends Elementor_Test_Base {
 		$test_data = [
 			'elementor_introduction' => [
 				'additional_property' => true,
-			]
+			],
 		];
-		$request = new WP_REST_Request( 'POST', '/wp/v2/users/' . $this->user_id );
+		$request = new \WP_REST_Request( 'POST', '/wp/v2/users/' . $this->user_id );
 		$request->set_body_params( $test_data );
 
 		// Act
