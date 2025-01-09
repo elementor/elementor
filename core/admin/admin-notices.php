@@ -483,7 +483,9 @@ class Admin_Notices extends Module {
 		];
 	}
 
-	// For testing purposes
+	/**
+	 * For testing purposes
+	 */
 	public function get_elementor_version() {
 		return ELEMENTOR_VERSION;
 	}

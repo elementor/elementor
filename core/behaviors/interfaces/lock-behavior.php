@@ -2,7 +2,7 @@
 namespace Elementor\Core\Behaviors\Interfaces;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 interface Lock_Behavior {

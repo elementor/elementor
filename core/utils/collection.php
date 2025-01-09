@@ -1,6 +1,7 @@
 <?php
 /**
  * Inspired by Laravel Collection.
+ *
  * @link https://github.com/illuminate/collections
  */
 namespace Elementor\Core\Utils;
@@ -445,7 +446,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
-	 * @param ...$values
+	 * @param array $values
 	 *
 	 * @return $this
 	 */

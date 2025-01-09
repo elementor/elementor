@@ -138,7 +138,7 @@ class Responsive {
 	public static function has_custom_breakpoints() {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.2.0', 'Plugin::$instance->breakpoints->has_custom_breakpoints()' );
 
-		return ! ! array_diff( self::$default_breakpoints, self::get_breakpoints() );
+		return (bool) array_diff( self::$default_breakpoints, self::get_breakpoints() );
 	}
 
 	/**

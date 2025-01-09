@@ -530,7 +530,7 @@ class Upgrades {
 	}
 
 	/**
-	 * migrate Icon control string value to Icons control array value
+	 * Migrate Icon control string value to Icons control array value
 	 *
 	 * @param array $element
 	 * @param array $args
@@ -943,12 +943,6 @@ class Upgrades {
 		$logger->notice( $message );
 	}
 
-	/**
-	 * @param \wpdb $wpdb
-	 * @param string $element_type
-	 *
-	 * @return array
-	 */
 	public static function get_post_ids_by_element_type( $updater, string $element_type ): array {
 		global $wpdb;
 

@@ -4,7 +4,7 @@ namespace Elementor\Core\Upgrade;
 use Elementor\Core\Base\DB_Upgrades_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Manager extends DB_Upgrades_Manager {
@@ -18,7 +18,11 @@ class Manager extends DB_Upgrades_Manager {
 		return 'elementor_install_history';
 	}
 
-	// todo: remove in future releases
+	/**
+	 * TODO: Remove in future releases
+	 *
+	 * @deprecated 3.1.0
+	 */
 	public function should_upgrade() {
 		if ( ( 'elementor' === $this->get_plugin_name() ) && version_compare( get_option( $this->get_version_option_name() ), '2.4.2', '<' ) ) {
 			delete_option( 'elementor_log' );
@@ -94,7 +98,7 @@ class Manager extends DB_Upgrades_Manager {
 		update_option( static::get_install_history_meta(), $installs_history );
 	}
 
-	public static function is_new_installation() : bool {
+	public static function is_new_installation(): bool {
 		$installs_history = self::get_installs_history();
 
 		return empty( $installs_history ) || static::install_compare( ELEMENTOR_VERSION, '>=' );
