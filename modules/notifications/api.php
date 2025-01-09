@@ -88,10 +88,10 @@ class API {
 			// Reset results for each condition.
 			$result = false;
 			switch ( $condition['type'] ) {
-				case 'Wordpress': // phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled
+				case 'WordPress': // phpcs:ignore WordPress.WP.CapitalPDangit.Misspelled
 					// include an unmodified $wp_version
 					include ABSPATH . WPINC . '/version.php';
-					$result = version_compare( $wp_version, $condition['version'], $condition['operator'] );
+					 $result = version_compare( $wp_version, $condition['version'], $condition['operator'] );
 					break;
 				case 'multisite':
 					$result = is_multisite() === $condition['multisite'];
