@@ -19,4 +19,5 @@ elementorModules.frontend = {
 		CarouselBase,
 		NestedTabs,
 	},
+	elementorHandlers: {},
 };
