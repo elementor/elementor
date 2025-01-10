@@ -384,7 +384,6 @@ class Frontend extends App {
 		$this->enqueue_script_modules();
 	}
 
-
 	/**
 	 * Registers scripts.
 	 *
