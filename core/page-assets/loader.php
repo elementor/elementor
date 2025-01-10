@@ -19,39 +19,39 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.3.0
  */
 class Loader extends Module {
-	private array $assets = array();
+	private array $assets = [];
 
 	public function get_name(): string {
 		return 'assets-loader';
 	}
 
 	private function init_assets(): void {
-		$assets = array(
+		$assets = [
 			'styles' => $this->init_styles(),
-			'scripts' => array(),
-		);
+			'scripts' => [],
+		];
 
 		$this->assets = $assets;
 	}
 
 	private function init_styles(): array {
-		$styles = array(
-			'e-shapes' => array(
+		$styles = [
+			'e-shapes' => [
 				'src' => $this->get_css_assets_url( 'shapes', 'assets/css/conditionals/' ),
 				'version' => ELEMENTOR_VERSION,
-				'dependencies' => array(),
-			),
-			'e-swiper' => array(
+				'dependencies' => [],
+			],
+			'e-swiper' => [
 				'src' => $this->get_css_assets_url( 'e-swiper', 'assets/css/conditionals/' ),
 				'version' => ELEMENTOR_VERSION,
-				'dependencies' => array( 'swiper' ),
-			),
-			'swiper' => array(
+				'dependencies' => [ 'swiper' ],
+			],
+			'swiper' => [
 				'src' => $this->get_css_assets_url( 'swiper', 'assets/lib/swiper/v8/css/' ),
 				'version' => '8.4.5',
-				'dependencies' => array(),
-			),
-		);
+				'dependencies' => [],
+			],
+		];
 
 		return array_merge( $styles, $this->get_animation_styles() );
 	}
@@ -63,7 +63,7 @@ class Loader extends Module {
 
 		$grouped_animations = array_merge( $grouped_animations, $exit_animations );
 
-		$animations = array();
+		$animations = [];
 
 		foreach ( $grouped_animations as $group_label => $group ) {
 			foreach ( $group as $animation_key => $animation_label ) {
@@ -76,16 +76,16 @@ class Loader extends Module {
 
 	private function get_animation_styles(): array {
 		$animations = $this->get_animations();
-		$styles = array();
+		$styles = [];
 
 		foreach ( $animations as $animation => $group_label ) {
 			$style_prefix = 'hover' === $group_label ? 'e-animation-' : '';
 
-			$styles[ 'e-animation-' . $animation ] = array(
+			$styles[ 'e-animation-' . $animation ] = [
 				'src' => $this->get_css_assets_url( $style_prefix . $animation, 'assets/lib/animations/styles/' ),
 				'version' => ELEMENTOR_VERSION,
-				'dependencies' => array(),
-			);
+				'dependencies' => [],
+			];
 		}
 
 		return $styles;

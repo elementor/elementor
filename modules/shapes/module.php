@@ -11,7 +11,7 @@ class Module extends \Elementor\Core\Base\Module {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/frontend/after_register_styles', array( $this, 'register_styles' ) );
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 	}
 
 	/**
@@ -26,7 +26,7 @@ class Module extends \Elementor\Core\Base\Module {
 		wp_register_style(
 			'widget-text-path',
 			$this->get_css_assets_url( 'widget-text-path', null, true, true ),
-			array( 'elementor-frontend' ),
+			[ 'elementor-frontend' ],
 			ELEMENTOR_VERSION
 		);
 	}
@@ -39,14 +39,14 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return array List of paths.
 	 */
 	public static function get_paths( $add_custom = true ) {
-		$paths = array(
+		$paths = [
 			'wave' => esc_html__( 'Wave', 'elementor' ),
 			'arc' => esc_html__( 'Arc', 'elementor' ),
 			'circle' => esc_html__( 'Circle', 'elementor' ),
 			'line' => esc_html__( 'Line', 'elementor' ),
 			'oval' => esc_html__( 'Oval', 'elementor' ),
 			'spiral' => esc_html__( 'Spiral', 'elementor' ),
-		);
+		];
 
 		if ( $add_custom ) {
 			$paths['custom'] = esc_html__( 'Custom', 'elementor' );
@@ -72,9 +72,9 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return string[]
 	 */
 	protected function get_widgets() {
-		return array(
+		return [
 			'TextPath',
-		);
+		];
 	}
 
 	/**

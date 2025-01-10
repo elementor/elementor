@@ -35,10 +35,10 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'status/check',
-			array(
+			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			)
+			]
 		);
 	}
 
@@ -59,10 +59,10 @@ class Ai extends Library {
 		return $this->ai_request(
 			'GET',
 			'remote-config/config',
-			array(
+			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			)
+			]
 		);
 	}
 
@@ -70,14 +70,14 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'remote-config/frontend-config',
-			array(
+			[
 				'client_name' => $data['payload']['client_name'],
 				'client_version' => $data['payload']['client_version'],
 				'client_session_id' => $data['payload']['client_session_id'],
 
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'
@@ -99,11 +99,11 @@ class Ai extends Library {
 		$this->ai_request(
 			'POST',
 			'client-events/events',
-			array(
+			[
 				'payload' => $event_data,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'
@@ -167,9 +167,9 @@ class Ai extends Library {
 	}
 
 	private function ai_request( $method, $endpoint, $body, $file = false, $file_name = '', $format = 'default' ) {
-		$headers = array(
+		$headers = [
 			'x-elementor-ai-version' => '2',
-		);
+		];
 
 		if ( $file ) {
 			$boundary = wp_generate_password( 24, false );
@@ -184,16 +184,16 @@ class Ai extends Library {
 		return $this->http_request(
 			$method,
 			$endpoint,
-			array(
+			[
 				'timeout' => 100,
 				'headers' => $headers,
 				'body' => $body,
 
-			),
-			array(
+			],
+			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 				'with_error_data' => true,
-			)
+			]
 		);
 	}
 
@@ -201,10 +201,10 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'status/get-started',
-			array(
+			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			)
+			]
 		);
 	}
 
@@ -212,10 +212,10 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'status/feedback/' . $response_id,
-			array(
+			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			)
+			]
 		);
 	}
 
@@ -223,10 +223,10 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'status/used-gallery-image/' . $image_id,
-			array(
+			[
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			)
+			]
 		);
 	}
 
@@ -234,13 +234,13 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'text/completion',
-			array(
+			[
 				'prompt' => $prompt,
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'
@@ -252,14 +252,14 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'text/get-excerpt',
-			array(
+			[
 				'content' => $prompt,
 				'maxLength' => $excerpt_length,
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'
@@ -277,13 +277,13 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'text/enhance-image-prompt',
-			array(
+			[
 				'prompt' => $prompt,
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			)
+			]
 		);
 	}
 
@@ -291,14 +291,14 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'text/edit',
-			array(
+			[
 				'input' => $data['payload']['input'],
 				'instruction' => $data['payload']['instruction'],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'
@@ -309,14 +309,14 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'text/custom-code',
-			array(
+			[
 				'prompt' => $data['payload']['prompt'],
 				'language' => $data['payload']['language'],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'
@@ -327,7 +327,7 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'text/custom-css',
-			array(
+			[
 				'prompt' => $data['payload']['prompt'],
 				'html_markup' => $data['payload']['html_markup'],
 				'element_id' => $data['payload']['element_id'],
@@ -335,7 +335,7 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'
@@ -354,7 +354,7 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'image/text-to-image',
-			array(
+			[
 				self::PROMPT => $data['payload']['prompt'],
 				self::IMAGE_TYPE => $data['payload']['settings'][ self::IMAGE_TYPE ] . '/' . $data['payload']['settings'][ self::STYLE_PRESET ],
 				self::ASPECT_RATIO => $data['payload']['settings'][ self::ASPECT_RATIO ],
@@ -362,7 +362,7 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'
@@ -381,7 +381,7 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'image/text-to-image/featured-image',
-			array(
+			[
 				self::PROMPT => $data['payload']['prompt'],
 				self::IMAGE_TYPE => $data['payload']['settings'][ self::IMAGE_TYPE ] . '/' . $data['payload']['settings'][ self::STYLE_PRESET ],
 				self::ASPECT_RATIO => $data['payload']['settings'][ self::ASPECT_RATIO ],
@@ -389,7 +389,7 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'
@@ -414,7 +414,7 @@ class Ai extends Library {
 		$result = $this->ai_request(
 			'POST',
 			'image/image-to-image',
-			array(
+			[
 				self::PROMPT => $image_data[ self::PROMPT ],
 				self::IMAGE_TYPE => $image_data['promptSettings'][ self::IMAGE_TYPE ] . '/' . $image_data['promptSettings'][ self::STYLE_PRESET ],
 				self::IMAGE_STRENGTH => $image_data['promptSettings'][ self::IMAGE_STRENGTH ],
@@ -423,7 +423,7 @@ class Ai extends Library {
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			$image_file,
 			'image'
 		);
@@ -480,14 +480,14 @@ class Ai extends Library {
 		$result = $this->ai_request(
 			'POST',
 			'image/image-to-image/unify-product-images',
-			array(
+			[
 				'aspectRatio' => $image_data['promptSettings'][ self::ASPECT_RATIO ],
 				'backgroundColor' => $image_data['promptSettings'][ self::IMAGE_BACKGROUND_COLOR ],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			$final_path,
 			'image'
 		);
@@ -517,13 +517,13 @@ class Ai extends Library {
 		$result = $this->ai_request(
 			'POST',
 			'image/image-to-image/upscale',
-			array(
+			[
 				self::IMAGE_RESOLUTION => $image_data['promptSettings']['upscale_to'],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			$image_file,
 			'image'
 		);
@@ -549,12 +549,12 @@ class Ai extends Library {
 		$result = $this->ai_request(
 			'POST',
 			'image/image-to-image/remove-background',
-			array(
+			[
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			$image_file,
 			'image'
 		);
@@ -580,13 +580,13 @@ class Ai extends Library {
 		$result = $this->ai_request(
 			'POST',
 			'image/image-to-image/replace-background',
-			array(
+			[
 				self::PROMPT => $image_data[ self::PROMPT ],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			$image_file,
 			'image'
 		);
@@ -636,7 +636,7 @@ class Ai extends Library {
 		$result = $this->ai_request(
 			'POST',
 			'image/image-to-image/outpainting',
-			array(
+			[
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
@@ -645,14 +645,14 @@ class Ai extends Library {
 				'position' => wp_json_encode( $image_data['position'] ),
 				'image_base64' => $image_data['image_base64'],
 				$image_data['image'],
-			),
-			array(
-				array(
+			],
+			[
+				[
 					'name' => 'image',
 					'type' => 'image',
 					'path' => $mask_file,
-				),
-			)
+				],
+			]
 		);
 
 		return $result;
@@ -681,26 +681,26 @@ class Ai extends Library {
 		$result = $this->ai_request(
 			'POST',
 			'image/image-to-image/inpainting',
-			array(
+			[
 				self::PROMPT => $image_data[ self::PROMPT ],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 				'image_base64' => $image_data['image_base64'],
-			),
-			array(
-				array(
+			],
+			[
+				[
 					'name' => 'image',
 					'type' => 'image',
 					'path' => $image_file,
-				),
-				array(
+				],
+				[
 					'name' => 'mask_image',
 					'type' => 'image/svg+xml',
 					'path' => $mask_file,
-				),
-			)
+				],
+			]
 		);
 
 		return $result;
@@ -720,26 +720,26 @@ class Ai extends Library {
 		$result = $this->ai_request(
 			'POST',
 			'image/image-to-image/cleanup',
-			array(
+			[
 				self::PROMPT => $image_data[ self::PROMPT ],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 				'image_base64' => $image_data['image_base64'],
-			),
-			array(
-				array(
+			],
+			[
+				[
 					'name' => 'image',
 					'type' => 'image',
 					'path' => $image_file,
-				),
-				array(
+				],
+				[
 					'name' => 'mask_image',
 					'type' => 'image/svg+xml',
 					'path' => $mask_file,
-				),
-			)
+				],
+			]
 		);
 
 		return $result;
@@ -748,11 +748,11 @@ class Ai extends Library {
 	public function generate_layout( $data, $context ) {
 		$endpoint = 'generate/layout';
 
-		$body = array(
+		$body = [
 			'prompt' => $data['prompt'],
 			'variationType' => (int) $data['variationType'],
 			'ids' => $data['ids'],
-		);
+		];
 
 		if ( ! empty( $data['prevGeneratedIds'] ) ) {
 			$body['generatedBaseTemplatesIds'] = $data['prevGeneratedIds'];
@@ -765,12 +765,12 @@ class Ai extends Library {
 				case 'json':
 					$endpoint = 'generate/generate-json-variation';
 
-					$body['json'] = array(
+					$body['json'] = [
 						'type' => 'elementor',
-						'elements' => array( $attachment['content'] ),
+						'elements' => [ $attachment['content'] ],
 						'label' => $attachment['label'],
 						'source' => $attachment['source'],
-					);
+					];
 					break;
 				case 'url':
 					$endpoint = 'generate/html-to-elementor';
@@ -785,12 +785,12 @@ class Ai extends Library {
 		}
 
 		$context['currentContext'] = $data['currentContext'];
-		$context['features'] = array(
-			'supportedFeatures' => array( 'Taxonomy' ),
-		);
+		$context['features'] = [
+			'supportedFeatures' => [ 'Taxonomy' ],
+		];
 
 		if ( ElementorUtils::has_pro() ) {
-			$context['features']['subscriptions'] = array( 'Pro' );
+			$context['features']['subscriptions'] = [ 'Pro' ];
 		}
 
 		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
@@ -805,16 +805,16 @@ class Ai extends Library {
 			$context['features']['supportedFeatures'][] = 'WooCommerce';
 		}
 
-		$metadata = array(
+		$metadata = [
 			'context' => $context,
 			'api_version' => ELEMENTOR_VERSION,
 			'site_lang' => get_bloginfo( 'language' ),
-			'config' => array(
-				'generate' => array(
+			'config' => [
+				'generate' => [
 					'all' => true,
-				),
-			),
-		);
+				],
+			],
+		];
 
 		$body = array_merge( $body, $metadata );
 
@@ -835,57 +835,57 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'generate/enhance-prompt',
-			array(
+			[
 				'prompt' => $prompt,
 				'enhance_type' => $enhance_type,
 				'context' => wp_json_encode( $context ),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'
 		);
 	}
 
-	public function get_history_by_type( $type, $page, $limit, $context = array() ) {
+	public function get_history_by_type( $type, $page, $limit, $context = [] ) {
 		$endpoint = Module::HISTORY_TYPE_ALL === $type
 			? 'history'
-			: add_query_arg( array(
+			: add_query_arg( [
 				'page' => $page,
 				'limit' => $limit,
-			), "history/{$type}" );
+			], "history/{$type}" );
 
 		return $this->ai_request(
 			'POST',
 			$endpoint,
-			array(
+			[
 				'context' => wp_json_encode( $context ),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			)
+			]
 		);
 	}
 
-	public function delete_history_item( $id, $context = array() ) {
+	public function delete_history_item( $id, $context = [] ) {
 		return $this->ai_request(
 			'DELETE', 'history/' . $id,
-			array(
+			[
 				'context' => wp_json_encode( $context ),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			)
+			]
 		);
 	}
 
-	public function toggle_favorite_history_item( $id, $context = array() ) {
+	public function toggle_favorite_history_item( $id, $context = [] ) {
 		return $this->ai_request(
 			'POST', sprintf( 'history/%s/favorite', $id ),
-			array(
+			[
 				'context' => wp_json_encode( $context ),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			)
+			]
 		);
 	}
 
@@ -893,14 +893,14 @@ class Ai extends Library {
 		return $this->ai_request(
 			'POST',
 			'text/get-motion-effect',
-			array(
+			[
 				'prompt' => $data['payload']['prompt'],
 				'motionEffectType' => $data['payload']['motionEffectType'],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			),
+			],
 			false,
 			'',
 			'json'

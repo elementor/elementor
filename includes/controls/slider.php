@@ -46,10 +46,10 @@ class Control_Slider extends Control_Base_Units {
 	 */
 	public function get_default_value() {
 		return array_merge(
-			parent::get_default_value(), array(
+			parent::get_default_value(), [
 				'size' => '',
-				'sizes' => array(),
-			)
+				'sizes' => [],
+			]
 		);
 	}
 
@@ -66,16 +66,16 @@ class Control_Slider extends Control_Base_Units {
 	 */
 	protected function get_default_settings() {
 		return array_merge(
-			parent::get_default_settings(), array(
+			parent::get_default_settings(), [
 				'label_block' => true,
-				'labels' => array(),
+				'labels' => [],
 				'scales' => 0,
 				'handles' => 'default',
-				'dynamic' => array(
-					'categories' => array( TagsModule::NUMBER_CATEGORY ),
+				'dynamic' => [
+					'categories' => [ TagsModule::NUMBER_CATEGORY ],
 					'property' => 'size',
-				),
-			)
+				],
+			]
 		);
 	}
 

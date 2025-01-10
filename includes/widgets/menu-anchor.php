@@ -68,7 +68,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return array( 'menu', 'anchor', 'link' );
+		return [ 'menu', 'anchor', 'link' ];
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -86,7 +86,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return array( 'widget-menu-anchor' );
+		return [ 'widget-menu-anchor' ];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -104,31 +104,31 @@ class Widget_Menu_Anchor extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_anchor',
-			array(
+			[
 				'label' => esc_html__( 'Menu Anchor', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'anchor',
-			array(
+			[
 				'label' => esc_html__( 'The ID of Menu Anchor.', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'ai' => array(
+				'ai' => [
 					'active' => false,
-				),
+				],
 				'placeholder' => esc_html__( 'For Example: About', 'elementor' ),
 				'description' => esc_html__( 'This ID will be the CSS ID you will have to use in your own page, Without #.', 'elementor' ),
 				'label_block' => true,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'anchor_note',
-			array(
+			[
 				'type' => Controls_Manager::ALERT,
 				'alert_type' => 'warning',
 				'content' => sprintf(
@@ -136,7 +136,7 @@ class Widget_Menu_Anchor extends Widget_Base {
 					esc_html__( 'Note: The ID link ONLY accepts these chars: %s', 'elementor' ),
 					'`A-Z, a-z, 0-9, _ , -`'
 				),
-			)
+			]
 		);
 
 		$this->end_controls_section();
@@ -159,10 +159,10 @@ class Widget_Menu_Anchor extends Widget_Base {
 
 		$this->add_render_attribute(
 			'inner',
-			array(
+			[
 				'class' => 'elementor-menu-anchor',
 				'id' => sanitize_html_class( $anchor ),
-			)
+			]
 		);
 		?>
 		<div <?php $this->print_render_attribute_string( 'inner' ); ?>></div>

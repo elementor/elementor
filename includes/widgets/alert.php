@@ -71,7 +71,7 @@ class Widget_Alert extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return array( 'alert', 'notice', 'message' );
+		return [ 'alert', 'notice', 'message' ];
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -89,7 +89,7 @@ class Widget_Alert extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return array( 'widget-alert' );
+		return [ 'widget-alert' ];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -107,355 +107,355 @@ class Widget_Alert extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_alert',
-			array(
+			[
 				'label' => esc_html__( 'Alert', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'alert_type',
-			array(
+			[
 				'label' => esc_html__( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'info',
-				'options' => array(
+				'options' => [
 					'info' => esc_html__( 'Info', 'elementor' ),
 					'success' => esc_html__( 'Success', 'elementor' ),
 					'warning' => esc_html__( 'Warning', 'elementor' ),
 					'danger' => esc_html__( 'Danger', 'elementor' ),
-				),
+				],
 				'prefix_class' => 'elementor-alert-',
-			)
+			]
 		);
 
 		$this->add_control(
 			'alert_title',
-			array(
+			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'placeholder' => esc_html__( 'Enter your title', 'elementor' ),
 				'default' => esc_html__( 'This is an Alert', 'elementor' ),
 				'label_block' => true,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'alert_description',
-			array(
+			[
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
 				'placeholder' => esc_html__( 'Enter your description', 'elementor' ),
 				'default' => esc_html__( 'I am a description. Click the edit button to change this text.', 'elementor' ),
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'show_dismiss',
-			array(
+			[
 				'label' => esc_html__( 'Dismiss Icon', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'return_value' => 'show',
 				'default' => 'show',
-			)
+			]
 		);
 
 		$this->add_control(
 			'dismiss_icon',
-			array(
+			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
 				'label_block' => false,
 				'render_type' => 'template',
-				'skin_settings' => array(
-					'inline' => array(
-						'none' => array(
+				'skin_settings' => [
+					'inline' => [
+						'none' => [
 							'label' => 'Default',
 							'icon' => 'eicon-close',
-						),
-						'icon' => array(
+						],
+						'icon' => [
 							'icon' => 'eicon-star',
-						),
-					),
-				),
-				'recommended' => array(
-					'fa-regular' => array(
+						],
+					],
+				],
+				'recommended' => [
+					'fa-regular' => [
 						'times-circle',
-					),
-					'fa-solid' => array(
+					],
+					'fa-solid' => [
 						'times',
 						'times-circle',
-					),
-				),
-				'condition' => array(
+					],
+				],
+				'condition' => [
 					'show_dismiss' => 'show',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_type',
-			array(
+			[
 				'label' => esc_html__( 'Alert', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'background',
-			array(
+			[
 				'label' => esc_html__( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-alert' => 'background-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'border_color',
-			array(
+			[
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-alert' => 'border-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'border_left-width',
-			array(
+			[
 				'label' => esc_html__( 'Left Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'custom' ),
-				'range' => array(
-					'px' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
 						'max' => 100,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'max' => 10,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-alert' => 'border-left-width: {{SIZE}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_title',
-			array(
+			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'title_color',
-			array(
+			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-alert-title' => 'color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'alert_title',
 				'selector' => '{{WRAPPER}} .elementor-alert-title',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'title_shadow',
 				'selector' => '{{WRAPPER}} .elementor-alert-title',
-			)
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_description',
-			array(
+			[
 				'label' => esc_html__( 'Description', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'description_color',
-			array(
+			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-alert-description' => 'color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'alert_description',
 				'selector' => '{{WRAPPER}} .elementor-alert-description',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'description_shadow',
 				'selector' => '{{WRAPPER}} .elementor-alert-description',
-			)
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_dismiss_icon',
-			array(
+			[
 				'label' => esc_html__( 'Dismiss Icon', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => array(
+				'condition' => [
 					'show_dismiss' => 'show',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'dismiss_icon_size',
-			array(
+			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
-				'range' => array(
-					'px' => array(
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
 						'max' => 100,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'max' => 10,
-					),
-					'rem' => array(
+					],
+					'rem' => [
 						'max' => 10,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-size: {{SIZE}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'dismiss_icon_vertical_position',
-			array(
+			[
 				'label' => esc_html__( 'Vertical Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => array(
-					'px' => array(
+				'range' => [
+					'px' => [
 						'min' => -100,
 						'max' => 100,
-					),
-				),
-				'size_units' => array( 'px', '%', 'em', 'rem', 'vh', 'custom' ),
-				'selectors' => array(
+					],
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
+				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-vertical-position: {{SIZE}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'dismiss_icon_horizontal_position',
-			array(
+			[
 				'label' => esc_html__( 'Horizontal Position', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => array(
-					'px' => array(
+				'range' => [
+					'px' => [
 						'min' => -100,
 						'max' => 100,
-					),
-				),
-				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
-				'selectors' => array(
+					],
+				],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-horizontal-position: {{SIZE}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->start_controls_tabs( 'dismiss_icon_colors' );
 
-		$this->start_controls_tab( 'dismiss_icon_normal_colors', array(
+		$this->start_controls_tab( 'dismiss_icon_normal_colors', [
 			'label' => esc_html__( 'Normal', 'elementor' ),
-		) );
+		] );
 
 		$this->add_control(
 			'dismiss_icon_normal_color',
-			array(
+			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-normal-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_tab();
 
-		$this->start_controls_tab( 'dismiss_icon_hover_colors', array(
+		$this->start_controls_tab( 'dismiss_icon_hover_colors', [
 			'label' => esc_html__( 'Hover', 'elementor' ),
-		) );
+		] );
 
 		$this->add_control(
 			'dismiss_icon_hover_color',
-			array(
+			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-hover-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'dismiss_icon_hover_transition_duration',
-			array(
+			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
-				'range' => array(
-					'px' => array(
+				'range' => [
+					'px' => [
 						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}}' => '--dismiss-icon-hover-transition-duration: {{SIZE}}s',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_tab();
@@ -506,7 +506,7 @@ class Widget_Alert extends Widget_Base {
 			<button type="button" class="elementor-alert-dismiss" aria-label="<?php echo esc_attr__( 'Dismiss this alert.', 'elementor' ); ?>">
 				<?php
 				if ( ! empty( $settings['dismiss_icon']['value'] ) ) {
-					Icons_Manager::render_icon( $settings['dismiss_icon'], array( 'aria-hidden' => 'true' ) );
+					Icons_Manager::render_icon( $settings['dismiss_icon'], [ 'aria-hidden' => 'true' ] );
 				} else { ?>
 					<span aria-hidden="true">&times;</span>
 				<?php } ?>

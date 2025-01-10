@@ -7,13 +7,13 @@ use WP_REST_Server;
 
 abstract class Endpoint {
 
-	const AVAILABLE_METHODS = array(
+	const AVAILABLE_METHODS = [
 		WP_REST_Server::READABLE,
 		WP_REST_Server::CREATABLE,
 		WP_REST_Server::EDITABLE,
 		WP_REST_Server::DELETABLE,
 		WP_REST_Server::ALLMETHODS,
-	);
+	];
 
 	/**
 	 * Controller of current endpoint.
@@ -27,7 +27,7 @@ abstract class Endpoint {
 	 *
 	 * @var \Elementor\Data\Base\SubEndpoint[]
 	 */
-	private $sub_endpoints = array();
+	private $sub_endpoints = [];
 
 	/**
 	 * Get format suffix.
@@ -291,13 +291,13 @@ abstract class Endpoint {
 	 *
 	 * @throws \Exception
 	 */
-	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = array(), $route = '/' ) {
-		$args = array_merge( array(
-			'id' => array(
+	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
+		$args = array_merge( [
+			'id' => [
 				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
-			),
-		), $args );
+			],
+		], $args );
 
 		if ( isset( $args['id'] ) && $args['id'] ) {
 			$route .= '(?P<id>[\w]+)/';
@@ -332,22 +332,22 @@ abstract class Endpoint {
 	 * @return bool
 	 * @throws \Exception
 	 */
-	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = array() ) {
+	public function register_route( $route = '', $methods = WP_REST_Server::READABLE, $callback = null, $args = [] ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
 			throw new \Exception( 'Invalid method.' );
 		}
 
 		$route = $this->get_base_route() . $route;
 
-		return register_rest_route( $this->controller->get_namespace(), $route, array(
-			array(
+		return register_rest_route( $this->controller->get_namespace(), $route, [
+			[
 				'args' => $args,
 				'methods' => $methods,
 				'callback' => $callback,
 				'permission_callback' => function ( $request ) {
 					return $this->get_permission_callback( $request );
 				},
-			),
-		) );
+			],
+		] );
 	}
 }

@@ -60,9 +60,9 @@ class Compatibility_Tag_Report extends Base {
 	 * @return string[]
 	 */
 	public function get_fields() {
-		return array(
+		return [
 			'report_data' => '',
-		);
+		];
 	}
 
 	/**
@@ -77,9 +77,9 @@ class Compatibility_Tag_Report extends Base {
 			$this->plugins_to_check
 		);
 
-		return array(
+		return [
 			'value' => $compatibility_status,
-		);
+		];
 	}
 
 	public function get_html_report_data() {
@@ -90,9 +90,9 @@ class Compatibility_Tag_Report extends Base {
 
 		$compatibility_status = $this->get_html_from_compatibility_status( $compatibility_status );
 
-		return array(
+		return [
 			'value' => $compatibility_status,
-		);
+		];
 	}
 
 	public function get_raw_report_data() {
@@ -103,9 +103,9 @@ class Compatibility_Tag_Report extends Base {
 
 		$compatibility_status = $this->get_raw_from_compatibility_status( $compatibility_status );
 
-		return array(
+		return [
 			'value' => $compatibility_status,
-		);
+		];
 	}
 
 	/**
@@ -122,7 +122,7 @@ class Compatibility_Tag_Report extends Base {
 			->map( function ( $value ) use ( $labels ) {
 				$status = isset( $labels[ $value ] ) ? $labels[ $value ] : esc_html__( 'Unknown', 'elementor' );
 
-				return array( 'compatibility_status' => $status );
+				return [ 'compatibility_status' => $status ];
 			} );
 
 		return Plugin::$instance->wp
@@ -165,12 +165,12 @@ class Compatibility_Tag_Report extends Base {
 	 * @return array
 	 */
 	private function get_report_labels() {
-		return array(
+		return [
 			Compatibility_Tag::COMPATIBLE   => esc_html__( 'Compatible', 'elementor' ),
 			Compatibility_Tag::INCOMPATIBLE => esc_html__( 'Incompatible', 'elementor' ),
 			Compatibility_Tag::HEADER_NOT_EXISTS => esc_html__( 'Compatibility not specified', 'elementor' ),
 			Compatibility_Tag::INVALID_VERSION => esc_html__( 'Compatibility unknown', 'elementor' ),
 			Compatibility_Tag::PLUGIN_NOT_EXISTS => esc_html__( 'Error', 'elementor' ),
-		);
+		];
 	}
 }

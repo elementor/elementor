@@ -15,8 +15,8 @@ class Image_Control extends Atomic_Control_Base {
 	}
 
 	public function get_props(): array {
-		return array(
+		return [
 			'sizes' => Image_Sizes::get_all(),
-		);
+		];
 	}
 }

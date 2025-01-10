@@ -48,12 +48,12 @@ class Personal_Data extends Base_Object {
 		$updated_events = $event_tracker_db_manager->get_event_ids_from_db();
 		$updated_events_count = count( $updated_events );
 
-		return array(
+		return [
 			'items_removed' => $events_count - $updated_events_count,
 			'items_retained' => 0,
-			'messages' => array(),
+			'messages' => [],
 			'done' => 0 === $updated_events_count,
-		);
+		];
 	}
 
 	/**
@@ -64,14 +64,14 @@ class Personal_Data extends Base_Object {
 	 * @return array[]
 	 */
 	private function add_eraser( $erasers ) {
-		return $erasers + array(
-			self::WP_KEY => array(
+		return $erasers + [
+			self::WP_KEY => [
 				'eraser_friendly_name' => $this->get_title(),
 				'callback' => function () {
 					return $this->erase_data();
 				},
-			),
-		);
+			],
+		];
 	}
 
 	/**

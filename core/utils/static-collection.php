@@ -24,7 +24,7 @@ class Static_Collection {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct( array $items = array(), $unique_values = false ) {
+	public function __construct( array $items = [], $unique_values = false ) {
 		$this->collection = new Collection( $items );
 		$this->unique_values = $unique_values;
 	}
@@ -38,7 +38,7 @@ class Static_Collection {
 	 * @param array $arguments
 	 */
 	public function __call( $name, $arguments ) {
-		$call = call_user_func_array( array( $this->collection, $name ), $arguments );
+		$call = call_user_func_array( [ $this->collection, $name ], $arguments );
 
 		if ( $call instanceof Collection ) {
 			$this->collection = $this->unique_values ?

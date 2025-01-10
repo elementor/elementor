@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends BaseModule {
 
-	protected $loggers = array();
+	protected $loggers = [];
 
 	protected $default_logger = '';
 
@@ -60,12 +60,12 @@ class Manager extends BaseModule {
 			return null;
 		}
 
-		$error = new \WP_Error( $error_number, $error_message, array(
+		$error = new \WP_Error( $error_number, $error_message, [
 			'type' => $error_number,
 			'message' => $error_message,
 			'file' => $error_file,
 			'line' => $error_line,
-		) );
+		] );
 
 		if ( ! Utils::is_elementor_path( $error_file ) ) {
 			// Do execute PHP internal error handler.
@@ -74,7 +74,7 @@ class Manager extends BaseModule {
 
 		$is_an_error = in_array( // It can be notice or warning
 			$error_number,
-			array( E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR ),
+			[ E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR ],
 			true
 		);
 
@@ -90,9 +90,9 @@ class Manager extends BaseModule {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				echo wp_json_encode( $error_data );
 			} else {
-				echo wp_json_encode( array(
+				echo wp_json_encode( [
 					'message' => 'Server error, see Elementor => System Info',
-				) );
+				] );
 			}
 		}
 
@@ -100,15 +100,15 @@ class Manager extends BaseModule {
 	}
 
 	public function register_error_handler() {
-		set_error_handler( array( $this, 'rest_error_handler' ), E_ALL );
+		set_error_handler( [ $this, 'rest_error_handler' ], E_ALL );
 	}
 
 	public function add_system_info_report() {
 		System_Info::add_report(
-			'log', array(
+			'log', [
 				'file_name' => __DIR__ . '/log-reporter.php',
 				'class_name' => __NAMESPACE__ . '\Log_Reporter',
-			)
+			]
 		);
 	}
 
@@ -133,7 +133,7 @@ class Manager extends BaseModule {
 		}
 
 		// PHPCS - See comment above.
-		$data = Utils::get_super_global_value( $_POST, 'data' ) ?? array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$data = Utils::get_super_global_value( $_POST, 'data' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		array_walk_recursive( $data, function ( &$value ) {
 			$value = sanitize_text_field( $value );
@@ -194,7 +194,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return void
 	 */
-	public function log( $message, $args = array() ) {
+	public function log( $message, $args = [] ) {
 		$this->get_logger()->log( $message, $args );
 	}
 
@@ -204,7 +204,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return void
 	 */
-	public function info( $message, $args = array() ) {
+	public function info( $message, $args = [] ) {
 		$this->get_logger()->info( $message, $args );
 	}
 
@@ -214,7 +214,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return void
 	 */
-	public function notice( $message, $args = array() ) {
+	public function notice( $message, $args = [] ) {
 		$this->get_logger()->notice( $message, $args );
 	}
 
@@ -224,7 +224,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return void
 	 */
-	public function warning( $message, $args = array() ) {
+	public function warning( $message, $args = [] ) {
 		$this->get_logger()->warning( $message, $args );
 	}
 
@@ -234,12 +234,12 @@ class Manager extends BaseModule {
 	 *
 	 * @return void
 	 */
-	public function error( $message, $args = array() ) {
+	public function error( $message, $args = [] ) {
 		$this->get_logger()->error( $message, $args );
 	}
 
 	private function get_log_type_from_php_error( $type ) {
-		$error_map = array(
+		$error_map = [
 			E_CORE_ERROR => Logger_Interface::LEVEL_ERROR,
 			E_ERROR => Logger_Interface::LEVEL_ERROR,
 			E_USER_ERROR => Logger_Interface::LEVEL_ERROR,
@@ -257,7 +257,7 @@ class Manager extends BaseModule {
 			E_USER_NOTICE => Logger_Interface::LEVEL_NOTICE,
 			E_DEPRECATED => Logger_Interface::LEVEL_NOTICE,
 			E_USER_DEPRECATED => Logger_Interface::LEVEL_NOTICE,
-		);
+		];
 
 		return isset( $error_map[ $type ] ) ? $error_map[ $type ] : Logger_Interface::LEVEL_ERROR;
 	}
@@ -269,12 +269,12 @@ class Manager extends BaseModule {
 	}
 
 	public function __construct() {
-		register_shutdown_function( array( $this, 'shutdown' ) );
+		register_shutdown_function( [ $this, 'shutdown' ] );
 
-		add_action( 'admin_init', array( $this, 'add_system_info_report' ), 80 );
+		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 80 );
 
-		add_action( 'wp_ajax_elementor_js_log', array( $this, 'js_log' ) );
+		add_action( 'wp_ajax_elementor_js_log', [ $this, 'js_log' ] );
 
-		add_action( 'elementor/loggers/register', array( $this, 'register_default_loggers' ) );
+		add_action( 'elementor/loggers/register', [ $this, 'register_default_loggers' ] );
 	}
 }

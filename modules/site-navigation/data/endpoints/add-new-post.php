@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Add_New_Post extends Endpoint {
 
 	protected function register() {
-		$args = array(
-			'post_type' => array(
+		$args = [
+			'post_type' => [
 				'description' => 'Post type to create',
 				'type' => 'string',
 				'required' => false,
@@ -23,8 +23,8 @@ class Add_New_Post extends Endpoint {
 					return sanitize_text_field( $value );
 				},
 				'validate_callback' => 'rest_validate_request_arg',
-			),
-		);
+			],
+		];
 
 		$this->register_items_route( \WP_REST_Server::CREATABLE, $args );
 	}
@@ -41,11 +41,11 @@ class Add_New_Post extends Endpoint {
 		$post_type = $request->get_param( 'post_type' );
 
 		if ( ! $this->validate_post_type( $post_type ) ) {
-			return new \WP_Error( 400, sprintf( 'Post type %s does not exist.', $post_type ), array( 'status' => 400 ) );
+			return new \WP_Error( 400, sprintf( 'Post type %s does not exist.', $post_type ), [ 'status' => 400 ] );
 		}
 
 		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
-			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $post_type ), array( 'status' => 401 ) );
+			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $post_type ), [ 'status' => 401 ] );
 		}
 
 		// Temporary solution for the fact that documents creation not using the actual registered post types.
@@ -57,10 +57,10 @@ class Add_New_Post extends Endpoint {
 			return new \WP_Error( 500, sprintf( 'Error while creating %s.', $post_type ) );
 		}
 
-		return array(
+		return [
 			'id' => $document->get_main_id(),
 			'edit_url' => $document->get_edit_url(),
-		);
+		];
 	}
 
 	private function validate_post_type( $post_type ): bool {
@@ -77,10 +77,10 @@ class Add_New_Post extends Endpoint {
 	 * @return string
 	 */
 	private function map_post_type( $post_type ): string {
-		$post_type_map = array(
+		$post_type_map = [
 			'page' => 'wp-page',
 			'post' => 'wp-post',
-		);
+		];
 
 		return $post_type_map[ $post_type ] ?? $post_type;
 	}

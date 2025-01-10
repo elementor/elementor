@@ -50,7 +50,7 @@ class Icons_Manager {
 	 * @param string $tag
 	 * @return bool|mixed|string
 	 */
-	public static function try_get_icon_html( $icon, $attributes = array(), $tag = 'i' ) {
+	public static function try_get_icon_html( $icon, $attributes = [], $tag = 'i' ) {
 		if ( empty( $icon['library'] ) ) {
 			return '';
 		}
@@ -85,13 +85,13 @@ class Icons_Manager {
 	public function register_styles() {
 		$config = self::get_icon_manager_tabs_config();
 
-		$shared_styles = array();
+		$shared_styles = [];
 
 		foreach ( $config as $type => $icon_type ) {
 			if ( ! isset( $icon_type['url'] ) ) {
 				continue;
 			}
-			$dependencies = array();
+			$dependencies = [];
 			if ( ! empty( $icon_type['enqueue'] ) ) {
 				foreach ( (array) $icon_type['enqueue'] as $font_css_url ) {
 					if ( ! in_array( $font_css_url, array_keys( $shared_styles ), true ) ) {
@@ -99,7 +99,7 @@ class Icons_Manager {
 						wp_register_style(
 							$style_handle,
 							$font_css_url,
-							array(),
+							[],
 							$icon_type['ver']
 						);
 						$shared_styles[ $font_css_url ] = $style_handle;
@@ -126,44 +126,44 @@ class Icons_Manager {
 	 * @since 2.4.0
 	 */
 	private static function init_tabs() {
-		$initial_tabs = array(
-			'fa-regular' => array(
+		$initial_tabs = [
+			'fa-regular' => [
 				'name' => 'fa-regular',
 				'label' => esc_html__( 'Font Awesome - Regular', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'regular' ),
-				'enqueue' => array( self::get_fa_asset_url( 'fontawesome' ) ),
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'far',
 				'labelIcon' => 'fab fa-font-awesome-alt',
 				'ver' => '5.15.3',
 				'fetchJson' => self::get_fa_asset_url( 'regular', 'js', false ),
 				'native' => true,
-			),
-			'fa-solid' => array(
+			],
+			'fa-solid' => [
 				'name' => 'fa-solid',
 				'label' => esc_html__( 'Font Awesome - Solid', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'solid' ),
-				'enqueue' => array( self::get_fa_asset_url( 'fontawesome' ) ),
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fas',
 				'labelIcon' => 'fab fa-font-awesome',
 				'ver' => '5.15.3',
 				'fetchJson' => self::get_fa_asset_url( 'solid', 'js', false ),
 				'native' => true,
-			),
-			'fa-brands' => array(
+			],
+			'fa-brands' => [
 				'name' => 'fa-brands',
 				'label' => esc_html__( 'Font Awesome - Brands', 'elementor' ),
 				'url' => self::get_fa_asset_url( 'brands' ),
-				'enqueue' => array( self::get_fa_asset_url( 'fontawesome' ) ),
+				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
 				'displayPrefix' => 'fab',
 				'labelIcon' => 'fab fa-font-awesome-flag',
 				'ver' => '5.15.3',
 				'fetchJson' => self::get_fa_asset_url( 'brands', 'js', false ),
 				'native' => true,
-			),
-		);
+			],
+		];
 
 		/**
 		 * Initial icon manager tabs.
@@ -184,12 +184,12 @@ class Icons_Manager {
 	 */
 	public static function get_icon_manager_tabs() {
 		if ( self::is_font_icon_inline_svg() && ! Plugin::$instance->editor->is_edit_mode() && ! Plugin::$instance->preview->is_preview_mode() ) {
-			self::$tabs = array();
+			self::$tabs = [];
 		} elseif ( ! self::$tabs ) {
 			self::init_tabs();
 		}
 
-		$additional_tabs = array();
+		$additional_tabs = [];
 
 		/**
 		 * Additional icon manager tabs.
@@ -208,7 +208,7 @@ class Icons_Manager {
 		wp_enqueue_script(
 			'font-awesome-4-shim',
 			self::get_fa_asset_url( 'v4-shims', 'js' ),
-			array(),
+			[],
 			ELEMENTOR_VERSION
 		);
 		// Make sure that the CSS in the 'all' file does not override FA Pro's CSS
@@ -216,14 +216,14 @@ class Icons_Manager {
 			wp_enqueue_style(
 				'font-awesome-5-all',
 				self::get_fa_asset_url( 'all' ),
-				array(),
+				[],
 				ELEMENTOR_VERSION
 			);
 		}
 		wp_enqueue_style(
 			'font-awesome-4-shim',
 			self::get_fa_asset_url( 'v4-shims' ),
-			array(),
+			[],
 			ELEMENTOR_VERSION
 		);
 	}
@@ -242,14 +242,14 @@ class Icons_Manager {
 	}
 
 	public static function get_icon_manager_tabs_config() {
-		$tabs = array(
-			'all' => array(
+		$tabs = [
+			'all' => [
 				'name' => 'all',
 				'label' => esc_html__( 'All Icons', 'elementor' ),
 				'labelIcon' => 'eicon-filter',
 				'native' => true,
-			),
-		);
+			],
+		];
 
 		return array_values( array_merge( $tabs, self::get_icon_manager_tabs() ) );
 	}
@@ -274,7 +274,7 @@ class Icons_Manager {
 	 *
 	 * @return bool|mixed|string
 	 */
-	public static function get_font_icon_svg( $icon, $attributes = array() ) {
+	public static function get_font_icon_svg( $icon, $attributes = [] ) {
 		// Load the SVG from the database.
 		$icon_data = self::get_icon_svg_data( $icon );
 
@@ -283,7 +283,7 @@ class Icons_Manager {
 		}
 
 		if ( ! empty( $attributes['class'] ) && ! is_array( $attributes['class'] ) ) {
-			$attributes['class'] = array( $attributes['class'] );
+			$attributes['class'] = [ $attributes['class'] ];
 		}
 
 		$attributes['class'][] = self::FONT_ICON_SVG_CLASS_NAME;
@@ -306,11 +306,11 @@ class Icons_Manager {
 		return Svg::get_inline_svg( $value['id'] );
 	}
 
-	public static function render_font_icon( $icon, $attributes = array(), $tag = 'i' ) {
+	public static function render_font_icon( $icon, $attributes = [], $tag = 'i' ) {
 		$icon_types = self::get_icon_manager_tabs();
 
 		if ( isset( $icon_types[ $icon['library'] ]['render_callback'] ) && is_callable( $icon_types[ $icon['library'] ]['render_callback'] ) ) {
-			return call_user_func_array( $icon_types[ $icon['library'] ]['render_callback'], array( $icon, $attributes, $tag ) );
+			return call_user_func_array( $icon_types[ $icon['library'] ]['render_callback'], [ $icon, $attributes, $tag ] );
 		}
 
 		$content = '';
@@ -351,7 +351,7 @@ class Icons_Manager {
 	 *
 	 * @return mixed|string
 	 */
-	public static function render_icon( $icon, $attributes = array(), $tag = 'i' ) {
+	public static function render_icon( $icon, $attributes = [], $tag = 'i' ) {
 		if ( empty( $icon['library'] ) ) {
 			return false;
 		}
@@ -376,10 +376,10 @@ class Icons_Manager {
 	public static function fa4_to_fa5_value_migration( $value ) {
 		static $migration_dictionary = false;
 		if ( '' === $value ) {
-			return array(
+			return [
 				'value' => '',
 				'library' => '',
-			);
+			];
 		}
 		if ( false === $migration_dictionary ) {
 			$migration_dictionary = json_decode( Utils::file_get_contents( ELEMENTOR_ASSETS_PATH . 'lib/font-awesome/migration/mapping.js' ), true );
@@ -388,10 +388,10 @@ class Icons_Manager {
 			return $migration_dictionary[ $value ];
 		}
 
-		return array(
+		return [
 			'value' => 'fas ' . str_replace( 'fa ', '', $value ),
 			'library' => 'fa-solid',
-		);
+		];
 	}
 
 	/**
@@ -411,10 +411,10 @@ class Icons_Manager {
 		}
 
 		// Case when old value is saved as empty string
-		$new_value = array(
+		$new_value = [
 			'value' => '',
 			'library' => '',
-		);
+		];
 
 		// Case when old value needs migration
 		if ( ! empty( $element['settings'][ $old_control ] ) && ! self::is_migration_allowed() ) {
@@ -460,25 +460,25 @@ class Icons_Manager {
 			Settings::TAB_ADVANCED,
 			Settings::TAB_ADVANCED,
 			'load_fa4_shim',
-			array(
+			[
 				'label' => esc_html__( 'Load Font Awesome 4 Support', 'elementor' ),
-				'field_args' => array(
+				'field_args' => [
 					'type' => 'select',
 					'std' => '',
-					'options' => array(
+					'options' => [
 						'' => esc_html__( 'No', 'elementor' ),
 						'yes' => esc_html__( 'Yes', 'elementor' ),
-					),
+					],
 					'desc' => esc_html__( 'Font Awesome 4 support script (shim.js) is a script that makes sure all previously selected Font Awesome 4 icons are displayed correctly while using Font Awesome 5 library.', 'elementor' ),
-				),
-			)
+				],
+			]
 		);
 	}
 
 	public function register_admin_tools_settings( Tools $settings ) {
-		$settings->add_tab( 'fontawesome4_migration', array( 'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ) ) );
+		$settings->add_tab( 'fontawesome4_migration', [ 'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ) ] );
 
-		$settings->add_section( 'fontawesome4_migration', 'fontawesome4_migration', array(
+		$settings->add_section( 'fontawesome4_migration', 'fontawesome4_migration', [
 			'callback' => function () {
 				echo '<h2>' . esc_html__( 'Font Awesome Upgrade', 'elementor' ) . '</h2>';
 				echo '<p>' . // PHPCS - Plain Text
@@ -493,10 +493,10 @@ class Icons_Manager {
 				esc_html__( 'This action is not reversible and cannot be undone by rolling back to previous versions.', 'elementor' ) . // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				'</p>';
 			},
-			'fields' => array(
-				array(
+			'fields' => [
+				[
 					'label' => esc_html__( 'Font Awesome Upgrade', 'elementor' ),
-					'field_args' => array(
+					'field_args' => [
 						'type' => 'raw_html',
 						'html' => sprintf( '<span data-action="%s" data-_nonce="%s" data-redirect-url="%s" class="button" id="elementor_upgrade_fa_button">%s</span>',
 							self::NEEDS_UPDATE_OPTION . '_upgrade',
@@ -504,10 +504,10 @@ class Icons_Manager {
 							esc_url( $this->get_upgrade_redirect_url() ),
 							esc_html__( 'Upgrade To Font Awesome 5', 'elementor' )
 						),
-					),
-				),
-			),
-		) );
+					],
+				],
+			],
+		] );
 	}
 
 	/**
@@ -548,7 +548,7 @@ class Icons_Manager {
 
 		delete_option( 'elementor_' . self::NEEDS_UPDATE_OPTION );
 
-		wp_send_json_success( array( 'message' => esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) ) );
+		wp_send_json_success( [ 'message' => esc_html__( 'Hurray! The upgrade process to Font Awesome 5 was completed successfully.', 'elementor' ) ] );
 	}
 
 	/**
@@ -583,7 +583,7 @@ class Icons_Manager {
 	public function add_admin_strings() {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
 
-		return array();
+		return [];
 	}
 
 	/**
@@ -592,22 +592,22 @@ class Icons_Manager {
 	public function __construct() {
 		if ( is_admin() ) {
 			// @todo: remove once we deprecate fa4
-			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, array( $this, 'register_admin_settings' ), 100 );
+			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
 		}
 
 		if ( self::is_font_icon_inline_svg() ) {
 			self::$data_manager = new Font_Icon_Svg_Data_Manager();
 		}
 
-		add_action( 'elementor/frontend/after_enqueue_styles', array( $this, 'enqueue_fontawesome_css' ) );
-		add_action( 'elementor/frontend/after_register_styles', array( $this, 'register_styles' ) );
+		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_fontawesome_css' ] );
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 
 		if ( ! self::is_migration_allowed() ) {
-			add_filter( 'elementor/editor/localize_settings', array( $this, 'add_update_needed_flag' ) );
-			add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, array( $this, 'register_admin_tools_settings' ), 100 );
+			add_filter( 'elementor/editor/localize_settings', [ $this, 'add_update_needed_flag' ] );
+			add_action( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID, [ $this, 'register_admin_tools_settings' ], 100 );
 
 			if ( ! empty( $_POST ) ) { // phpcs:ignore -- nonce validation done in callback
-				add_action( 'wp_ajax_' . self::NEEDS_UPDATE_OPTION . '_upgrade', array( $this, 'ajax_upgrade_to_fa5' ) );
+				add_action( 'wp_ajax_' . self::NEEDS_UPDATE_OPTION . '_upgrade', [ $this, 'ajax_upgrade_to_fa5' ] );
 			}
 		}
 	}

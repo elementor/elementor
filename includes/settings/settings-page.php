@@ -103,7 +103,7 @@ abstract class Settings_Page {
 	public function __construct() {
 		// PHPCS - The user data is not used.
 		if ( ! empty( $_POST['option_page'] ) && static::PAGE_ID === $_POST['option_page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			add_action( 'admin_init', array( $this, 'register_settings_fields' ) );
+			add_action( 'admin_init', [ $this, 'register_settings_fields' ] );
 		}
 	}
 
@@ -134,7 +134,7 @@ abstract class Settings_Page {
 	 * @param string $tab_id   Tab ID.
 	 * @param array  $tab_args Optional. Tab arguments. Default is an empty array.
 	 */
-	final public function add_tab( $tab_id, array $tab_args = array() ) {
+	final public function add_tab( $tab_id, array $tab_args = [] ) {
 		$this->ensure_tabs();
 
 		if ( isset( $this->tabs[ $tab_id ] ) ) {
@@ -143,7 +143,7 @@ abstract class Settings_Page {
 		}
 
 		if ( ! isset( $tab_args['sections'] ) ) {
-			$tab_args['sections'] = array();
+			$tab_args['sections'] = [];
 		}
 
 		$this->tabs[ $tab_id ] = $tab_args;
@@ -162,7 +162,7 @@ abstract class Settings_Page {
 	 * @param array  $section_args Optional. Section arguments. Default is an
 	 *                             empty array.
 	 */
-	final public function add_section( $tab_id, $section_id, array $section_args = array() ) {
+	final public function add_section( $tab_id, $section_id, array $section_args = [] ) {
 		$this->ensure_tabs();
 
 		if ( ! isset( $this->tabs[ $tab_id ] ) ) {
@@ -176,7 +176,7 @@ abstract class Settings_Page {
 		}
 
 		if ( ! isset( $section_args['fields'] ) ) {
-			$section_args['fields'] = array();
+			$section_args['fields'] = [];
 		}
 
 		$this->tabs[ $tab_id ]['sections'][ $section_id ] = $section_args;
@@ -269,7 +269,7 @@ abstract class Settings_Page {
 
 					$field['field_args']['id'] = $full_field_id;
 
-					$field_classes = array( $full_field_id );
+					$field_classes = [ $full_field_id ];
 
 					if ( ! empty( $field['class'] ) ) {
 						$field_classes[] = $field['field_args']['class'];
@@ -278,7 +278,7 @@ abstract class Settings_Page {
 					$field['field_args']['class'] = implode( ' ', $field_classes );
 
 					if ( ! isset( $field['render'] ) ) {
-						$field['render'] = array( $controls_class_name, 'render' );
+						$field['render'] = [ $controls_class_name, 'render' ];
 					}
 
 					add_settings_field(
@@ -290,7 +290,7 @@ abstract class Settings_Page {
 						$field['field_args']
 					);
 
-					$setting_args = array();
+					$setting_args = [];
 
 					if ( ! empty( $field['setting_args'] ) ) {
 						$setting_args = $field['setting_args'];
@@ -391,10 +391,10 @@ abstract class Settings_Page {
 	}
 
 	public function get_usage_fields() {
-		return array(
-			'allow_tracking' => array(
+		return [
+			'allow_tracking' => [
 				'label' => esc_html__( 'Usage Data Sharing', 'elementor' ),
-				'field_args' => array(
+				'field_args' => [
 					'type' => 'checkbox',
 					'value' => 'yes',
 					'default' => '',
@@ -403,10 +403,10 @@ abstract class Settings_Page {
 						esc_html__( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ),
 						esc_html__( 'Learn more', 'elementor' )
 					),
-				),
-				'setting_args' => array( __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ),
-			),
-		);
+				],
+				'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
+			],
+		];
 	}
 
 	/**

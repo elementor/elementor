@@ -42,18 +42,18 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	public static function get_experimental_data() {
-		return array(
+		return [
 			'name' => 'landing-pages',
 			'title' => esc_html__( 'Landing Pages', 'elementor' ),
 			'description' => esc_html__( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 			'default' => Experiments_Manager::STATE_ACTIVE,
-			'new_site' => array(
+			'new_site' => [
 				'default_inactive' => true,
 				'minimum_installation_version' => '3.22.0',
-			),
+			],
 			'deprecated' => true,
-		);
+		];
 	}
 
 	/**
@@ -71,14 +71,14 @@ class Module extends BaseModule {
 		}
 
 		// `'posts_per_page' => 1` is because this is only used as an indicator to whether there are any trashed landing pages.
-		$trashed_posts_query = new \WP_Query( array(
+		$trashed_posts_query = new \WP_Query( [
 			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
 			'meta_value' => self::DOCUMENT_TYPE,
-		) );
+		] );
 
 		$this->trashed_posts = $trashed_posts_query->posts;
 
@@ -90,14 +90,14 @@ class Module extends BaseModule {
 			return $this->has_pages;
 		}
 
-		$posts_query = new \WP_Query( array(
+		$posts_query = new \WP_Query( [
 			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'post_status' => 'any',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
 			'meta_value' => self::DOCUMENT_TYPE,
-		) );
+		] );
 
 		$this->has_pages = $posts_query->post_count > 0;
 
@@ -126,23 +126,23 @@ class Module extends BaseModule {
 			$function = null;
 		} else {
 			$menu_slug = self::CPT;
-			$function = array( $this, 'print_empty_landing_pages_page' );
+			$function = [ $this, 'print_empty_landing_pages_page' ];
 		}
 
-		return array(
+		return [
 			'menu_slug' => $menu_slug,
 			'function' => $function,
-		);
+		];
 	}
 
 	private function register_admin_menu( MainMenu $menu ) {
 		$landing_pages_title = esc_html__( 'Landing Pages', 'elementor' );
 
-		$menu_args = array_merge( $this->get_menu_args(), array(
+		$menu_args = array_merge( $this->get_menu_args(), [
 			'page_title' => $landing_pages_title,
 			'menu_title' => $landing_pages_title,
 			'index' => 20,
-		) );
+		] );
 
 		$menu->add_submenu( $menu_args );
 	}
@@ -247,15 +247,15 @@ class Module extends BaseModule {
 	 * @return array|null
 	 */
 	private function admin_localize_settings( $settings ) {
-		$additional_settings = array(
-			'urls' => array(
+		$additional_settings = [
+			'urls' => [
 				'addNewLandingPageUrl' => $this->get_add_new_landing_page_url(),
-			),
-			'landingPages' => array(
+			],
+			'landingPages' => [
 				'landingPagesHasPages' => $this->has_landing_pages(),
 				'isLandingPageAdminEdit' => $this->is_landing_page_admin_edit(),
-			),
-		);
+			],
+		];
 
 		return array_replace_recursive( $settings, $additional_settings );
 	}
@@ -266,7 +266,7 @@ class Module extends BaseModule {
 	 * @since 3.1.0
 	 */
 	private function register_landing_page_cpt() {
-		$labels = array(
+		$labels = [
 			'name' => esc_html__( 'Landing Pages', 'elementor' ),
 			'singular_name' => esc_html__( 'Landing Page', 'elementor' ),
 			'add_new' => esc_html__( 'Add New', 'elementor' ),
@@ -280,16 +280,16 @@ class Module extends BaseModule {
 			'not_found_in_trash' => esc_html__( 'No landing pages found in trash', 'elementor' ),
 			'parent_item_colon' => '',
 			'menu_name' => esc_html__( 'Landing Pages', 'elementor' ),
-		);
+		];
 
-		$args = array(
+		$args = [
 			'labels' => $labels,
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'capability_type' => 'page',
-			'taxonomies' => array( Source_Local::TAXONOMY_TYPE_SLUG ),
-			'supports' => array( 'title', 'editor', 'comments', 'revisions', 'trackbacks', 'author', 'excerpt', 'page-attributes', 'thumbnail', 'custom-fields', 'post-formats', 'elementor' ),
-		);
+			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
+			'supports' => [ 'title', 'editor', 'comments', 'revisions', 'trackbacks', 'author', 'excerpt', 'page-attributes', 'thumbnail', 'custom-fields', 'post-formats', 'elementor' ],
+		];
 
 		register_post_type( self::CPT, $args );
 	}
@@ -349,7 +349,7 @@ class Module extends BaseModule {
 		}
 
 		// Create the post types property as an array and include the landing pages CPT in it.
-		$query_post_types = array( 'post', 'page', self::CPT );
+		$query_post_types = [ 'post', 'page', self::CPT ];
 
 		// Since WordPress determined this is supposed to be a page, we'll pre-set the post_type query arg to make sure
 		// it includes the Landing Page CPT, so when the query is parsed, our CPT will be a legitimate match to the
@@ -413,11 +413,11 @@ class Module extends BaseModule {
 		}
 
 		// Search for a Landing Page with the same name passed as the 'category name'.
-		$possible_new_query = new \WP_Query( array(
+		$possible_new_query = new \WP_Query( [
 			'no_found_rows' => true,
 			'post_type' => self::CPT,
 			'name' => $query->query['category_name'],
-		) );
+		] );
 
 		// Only if such a Landing Page is found, override the query to fetch the correct page.
 		if ( ! empty( $possible_new_query->posts ) ) {

@@ -16,31 +16,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Recent_Posts extends Endpoint {
 
-	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = array() ) {
-		$args = array(
-			'posts_per_page' => array(
+	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = [] ) {
+		$args = [
+			'posts_per_page' => [
 				'description' => 'Number of posts to return',
 				'type' => 'integer',
 				'required' => true,
 				'sanitize_callback' => 'absint',
 				'validate_callback' => 'rest_validate_request_arg',
-			),
-			'post_type' => array(
+			],
+			'post_type' => [
 				'description' => 'Post types to retrieve',
 				'type' => 'array',
 				'required' => false,
-				'default' => array( 'page', 'post', Source_Local::CPT ),
+				'default' => [ 'page', 'post', Source_Local::CPT ],
 				'sanitize_callback' => 'rest_sanitize_array',
 				'validate_callback' => 'rest_validate_request_arg',
-			),
-			'post__not_in' => array(
+			],
+			'post__not_in' => [
 				'description' => 'Post id`s to exclude',
 				'type' => 'array',
-				'required' => array(),
+				'required' => [],
 				'sanitize_callback' => 'wp_parse_id_list',
 				'validate_callback' => 'rest_validate_request_arg',
-			),
-		);
+			],
+		];
 
 		parent::register_items_route( $methods, $args );
 	}
@@ -54,18 +54,18 @@ class Recent_Posts extends Endpoint {
 	}
 
 	public function get_items( $request ) {
-		$args = array(
+		$args = [
 			'posts_per_page' => $request->get_param( 'posts_per_page' ),
 			'post_type' => $request->get_param( 'post_type' ),
 			'fields' => 'ids',
-			'meta_query' => array(
-				array(
+			'meta_query' => [
+				[
 					'key' => Document::TYPE_META_KEY,
 					'value' => Kit::get_type(), // Exclude kits.
 					'compare' => '!=',
-				),
-			),
-		);
+				],
+			],
+		];
 
 		$exclude = $request->get_param( 'post__not_in' );
 
@@ -75,25 +75,25 @@ class Recent_Posts extends Endpoint {
 
 		$recently_edited_query = Utils::get_recently_edited_posts_query( $args );
 
-		$recent = array();
+		$recent = [];
 
 		foreach ( $recently_edited_query->posts as $id ) {
 			$document = Plugin::$instance->documents->get( $id );
 
-			$recent[] = array(
+			$recent[] = [
 				'id' => $id,
 				'title' => get_the_title( $id ),
 				'edit_url' => $document->get_edit_url(),
 				'date_modified' => get_post_timestamp( $id, 'modified' ),
-				'type' => array(
+				'type' => [
 					'post_type' => get_post_type( $id ),
 					'doc_type' => $document->get_name(),
 					'label' => $document->get_title(),
-				),
-				'user_can' => array(
+				],
+				'user_can' => [
 					'edit' => current_user_can( 'edit_post', $id ),
-				),
-			);
+				],
+			];
 		}
 
 		return $recent;

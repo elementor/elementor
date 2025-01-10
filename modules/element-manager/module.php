@@ -29,8 +29,8 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
-				add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", array( $this, 'enqueue_assets' ) );
-				add_action( "admin_footer-{$hooks[ static::PAGE_ID ]}", array( $this, 'print_styles' ), 1000 );
+				add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
+				add_action( "admin_footer-{$hooks[ static::PAGE_ID ]}", [ $this, 'print_styles' ], 1000 );
 			}
 		}, 10, 2 );
 
@@ -63,19 +63,19 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'e-element-manager-app',
 			$this->get_js_assets_url( 'element-manager-admin' ),
-			array(
+			[
 				'wp-element',
 				'wp-components',
 				'wp-dom-ready',
 				'wp-i18n',
-			),
+			],
 			ELEMENTOR_VERSION
 		);
 
-		wp_localize_script( 'e-element-manager-app', 'eElementManagerConfig', array(
+		wp_localize_script( 'e-element-manager-app', 'eElementManagerConfig', [
 			'nonce' => wp_create_nonce( 'e-element-manager-app' ),
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-		) );
+		] );
 
 		wp_set_script_translations( 'e-element-manager-app', 'elementor' );
 

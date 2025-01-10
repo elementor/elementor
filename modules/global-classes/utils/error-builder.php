@@ -29,6 +29,6 @@ class Error_Builder {
 	}
 
 	public function build() {
-		return new \WP_Error( $this->code, $this->message, array( 'status' => $this->status ) );
+		return new \WP_Error( $this->code, $this->message, [ 'status' => $this->status ] );
 	}
 }

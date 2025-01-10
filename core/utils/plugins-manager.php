@@ -38,12 +38,12 @@ class Plugins_Manager {
 	 * @return array [ 'succeeded' => [] , 'failed' => [] ]
 	 */
 	public function install( $plugins ) {
-		$succeeded = array();
-		$failed = array();
+		$succeeded = [];
+		$failed = [];
 		$already_installed_plugins = Plugin::$instance->wp->get_plugins();
 
 		if ( ! is_array( $plugins ) ) {
-			$plugins = array( $plugins );
+			$plugins = [ $plugins ];
 		}
 
 		foreach ( $plugins as $plugin ) {
@@ -55,9 +55,9 @@ class Plugins_Manager {
 			$slug = $this->clean_slug( $plugin );
 
 			$api = Plugin::$instance->wp->plugins_api('plugin_information',
-				array(
+				[
 					'slug' => $slug,
-					'fields' => array(
+					'fields' => [
 						'short_description' => false,
 						'sections' => false,
 						'requires' => false,
@@ -70,8 +70,8 @@ class Plugins_Manager {
 						'compatibility' => false,
 						'homepage' => false,
 						'donate_link' => false,
-					),
-				)
+					],
+				]
 			);
 
 			if ( ! isset( $api->download_link ) ) {
@@ -88,10 +88,10 @@ class Plugins_Manager {
 			}
 		}
 
-		return array(
+		return [
 			'succeeded' => $succeeded,
 			'failed' => $failed,
-		);
+		];
 	}
 
 	/**
@@ -103,11 +103,11 @@ class Plugins_Manager {
 	 * @return array [ 'succeeded' => [] , 'failed' => [] ]
 	 */
 	public function activate( $plugins ) {
-		$succeeded = array();
-		$failed = array();
+		$succeeded = [];
+		$failed = [];
 
 		if ( ! is_array( $plugins ) ) {
-			$plugins = array( $plugins );
+			$plugins = [ $plugins ];
 		}
 
 		foreach ( $plugins as $plugin ) {
@@ -125,10 +125,10 @@ class Plugins_Manager {
 			}
 		}
 
-		return array(
+		return [
 			'succeeded' => $succeeded,
 			'failed' => $failed,
-		);
+		];
 	}
 
 	private function clean_slug( $initial_slug ) {

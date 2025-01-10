@@ -28,7 +28,7 @@ class Modules_Manager {
 	 *
 	 * @var array
 	 */
-	private $modules = array();
+	private $modules = [];
 
 	/**
 	 * Modules manager constructor.
@@ -77,7 +77,7 @@ class Modules_Manager {
 	 * @return string[] Modules names.
 	 */
 	public function get_modules_names() {
-		return array(
+		return [
 			'admin-bar',
 			'history',
 			'library',
@@ -126,7 +126,7 @@ class Modules_Manager {
 			'global-classes',
 			'wc-product-editor',
 			'checklist',
-		);
+		];
 	}
 
 	/**

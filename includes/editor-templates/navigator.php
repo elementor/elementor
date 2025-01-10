@@ -15,11 +15,11 @@ $has_pro = Utils::has_pro();
 $elements_list_class = '';
 
 if ( ! $has_pro ) {
-	$promotion_data = array(
+	$promotion_data = [
 		'text' => esc_html__( 'Access all Pro widgets', 'elementor' ),
 		'url_label' => esc_html__( 'Upgrade Now', 'elementor' ),
 		'url' => 'https://go.elementor.com/go-pro-structure-panel/',
-	);
+	];
 
 	$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
 		$promotion_data,

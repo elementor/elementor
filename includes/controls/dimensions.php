@@ -42,13 +42,13 @@ class Control_Dimensions extends Control_Base_Units {
 	 */
 	public function get_default_value() {
 		return array_merge(
-			parent::get_default_value(), array(
+			parent::get_default_value(), [
 				'top' => '',
 				'right' => '',
 				'bottom' => '',
 				'left' => '',
 				'isLinked' => true,
-			)
+			]
 		);
 	}
 
@@ -69,21 +69,21 @@ class Control_Dimensions extends Control_Base_Units {
 	 */
 	protected function get_default_settings() {
 		return array_merge(
-			parent::get_default_settings(), array(
+			parent::get_default_settings(), [
 				'label_block' => true,
 				'allowed_dimensions' => 'all',
 				'placeholder' => '',
-			)
+			]
 		);
 	}
 
 	protected function get_dimensions() {
-		return array(
+		return [
 			'top' => __( 'Top', 'elementor' ),
 			'right' => __( 'Right', 'elementor' ),
 			'bottom' => __( 'Bottom', 'elementor' ),
 			'left' => __( 'Left', 'elementor' ),
-		);
+		];
 	}
 
 	/**

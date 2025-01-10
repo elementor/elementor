@@ -71,7 +71,7 @@ class Widget_Testimonial extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return array( 'testimonial', 'blockquote' );
+		return [ 'testimonial', 'blockquote' ];
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -89,7 +89,7 @@ class Widget_Testimonial extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return array( 'widget-testimonial' );
+		return [ 'widget-testimonial' ];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -107,148 +107,148 @@ class Widget_Testimonial extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_testimonial',
-			array(
+			[
 				'label' => esc_html__( 'Testimonial', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'testimonial_content',
-			array(
+			[
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
+				],
 				'rows' => '10',
 				'default' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'testimonial_image',
-			array(
+			[
 				'label' => esc_html__( 'Choose Image', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-				'default' => array(
+				],
+				'default' => [
 					'url' => Utils::get_placeholder_image_src(),
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Image_Size::get_type(),
-			array(
+			[
 				'name' => 'testimonial_image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `testimonial_image_size` and `testimonial_image_custom_dimension`.
 				'default' => 'full',
-			)
+			]
 		);
 
 		$this->add_control(
 			'testimonial_name',
-			array(
+			[
 				'label' => esc_html__( 'Name', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-				'ai' => array(
+				],
+				'ai' => [
 					'active' => false,
-				),
+				],
 				'default' => esc_html__( 'John Doe', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'testimonial_job',
-			array(
+			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-				'ai' => array(
+				],
+				'ai' => [
 					'active' => false,
-				),
+				],
 				'default' => esc_html__( 'Designer', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'link',
-			array(
+			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-			)
+				],
+			]
 		);
 
 		$aside = is_rtl() ? 'right' : 'left';
 
 		$this->add_control(
 			'testimonial_image_position',
-			array(
+			[
 				'label' => esc_html__( 'Image Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'aside',
-				'options' => array(
-					'aside' => array(
+				'options' => [
+					'aside' => [
 						'title' => esc_html__( 'Aside', 'elementor' ),
 						'icon' => 'eicon-h-align-' . $aside,
-					),
-					'top' => array(
+					],
+					'top' => [
 						'title' => esc_html__( 'Top', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
-					),
-				),
+					],
+				],
 				'toggle' => false,
-				'condition' => array(
+				'condition' => [
 					'testimonial_image[url]!' => '',
-				),
+				],
 				'separator' => 'before',
 				'style_transfer' => true,
-			)
+			]
 		);
 
 		$this->add_responsive_control(
 			'testimonial_alignment',
-			array(
+			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'center',
-				'options' => array(
-					'left'    => array(
+				'options' => [
+					'left'    => [
 						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
-					),
-					'center' => array(
+					],
+					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
-					),
-					'right' => array(
+					],
+					'right' => [
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper' => 'text-align: {{VALUE}}',
-				),
+				],
 				'style_transfer' => true,
-			)
+			]
 		);
 
 		if ( ! Utils::has_pro() ) {
 			$this->add_control(
 				Utils::TESTIMONIAL_WIDGET . '_promotion',
-				array(
+				[
 					'label' => esc_html__( 'Loop Carousel widget', 'elementor' ),
 					'type' => Promotion_Control::TYPE,
-				)
+				]
 			);
 		}
 
@@ -257,44 +257,44 @@ class Widget_Testimonial extends Widget_Base {
 		// Content.
 		$this->start_controls_section(
 			'section_style_testimonial_content',
-			array(
+			[
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'content_content_color',
-			array(
+			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'global' => array(
+				'global' => [
 					'default' => Global_Colors::COLOR_TEXT,
-				),
+				],
 				'default' => '',
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-content' => 'color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'content_typography',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				),
+				],
 				'selector' => '{{WRAPPER}} .elementor-testimonial-content',
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'content_shadow',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-content',
-			)
+			]
 		);
 
 		$this->end_controls_section();
@@ -302,52 +302,52 @@ class Widget_Testimonial extends Widget_Base {
 		// Image.
 		$this->start_controls_section(
 			'section_style_testimonial_image',
-			array(
+			[
 				'label' => esc_html__( 'Image', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => array(
+				'condition' => [
 					'testimonial_image[url]!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'image_size',
-			array(
+			[
 				'label' => esc_html__( 'Image Resolution', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
-				'range' => array(
-					'px' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'range' => [
+					'px' => [
 						'min' => 20,
 						'max' => 200,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'width: {{SIZE}}{{UNIT}};height: {{SIZE}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
-			array(
+			[
 				'name' => 'image_border',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img',
 				'separator' => 'before',
-			)
+			]
 		);
 
 		$this->add_responsive_control(
 			'image_border_radius',
-			array(
+			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'custom' ),
-				'selectors' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper .elementor-testimonial-image img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();
@@ -355,44 +355,44 @@ class Widget_Testimonial extends Widget_Base {
 		// Name.
 		$this->start_controls_section(
 			'section_style_testimonial_name',
-			array(
+			[
 				'label' => esc_html__( 'Name', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'name_text_color',
-			array(
+			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'global' => array(
+				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
-				),
+				],
 				'default' => '',
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-name' => 'color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'name_typography',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
-				),
+				],
 				'selector' => '{{WRAPPER}} .elementor-testimonial-name',
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'name_shadow',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-name',
-			)
+			]
 		);
 
 		$this->end_controls_section();
@@ -400,44 +400,44 @@ class Widget_Testimonial extends Widget_Base {
 		// Job.
 		$this->start_controls_section(
 			'section_style_testimonial_job',
-			array(
+			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'job_text_color',
-			array(
+			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'global' => array(
+				'global' => [
 					'default' => Global_Colors::COLOR_SECONDARY,
-				),
+				],
 				'default' => '',
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-job' => 'color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'job_typography',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
-				),
+				],
 				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'job_shadow',
 				'selector' => '{{WRAPPER}} .elementor-testimonial-job',
-			)
+			]
 		);
 
 		$this->end_controls_section();

@@ -70,7 +70,7 @@ class Widget_Counter extends Widget_Base {
 	 * @return array Widget scripts dependencies.
 	 */
 	public function get_script_depends() {
-		return array( 'jquery-numerator' );
+		return [ 'jquery-numerator' ];
 	}
 
 	/**
@@ -84,7 +84,7 @@ class Widget_Counter extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return array( 'counter' );
+		return [ 'counter' ];
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -102,7 +102,7 @@ class Widget_Counter extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return array( 'widget-counter' );
+		return [ 'widget-counter' ];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -123,125 +123,125 @@ class Widget_Counter extends Widget_Base {
 
 		$this->start_controls_section(
 			'section_counter',
-			array(
+			[
 				'label' => esc_html__( 'Counter', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'starting_number',
-			array(
+			[
 				'label' => esc_html__( 'Starting Number', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 0,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'ending_number',
-			array(
+			[
 				'label' => esc_html__( 'Ending Number', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'default' => 100,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'prefix',
-			array(
+			[
 				'label' => esc_html__( 'Number Prefix', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-				'ai' => array(
+				],
+				'ai' => [
 					'active' => false,
-				),
+				],
 				'default' => '',
-			)
+			]
 		);
 
 		$this->add_control(
 			'suffix',
-			array(
+			[
 				'label' => esc_html__( 'Number Suffix', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-				'ai' => array(
+				],
+				'ai' => [
 					'active' => false,
-				),
+				],
 				'default' => '',
-			)
+			]
 		);
 
 		$this->add_control(
 			'duration',
-			array(
+			[
 				'label' => esc_html__( 'Animation Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::NUMBER,
 				'default' => 2000,
 				'min' => 100,
 				'step' => 100,
-			)
+			]
 		);
 
 		$this->add_control(
 			'thousand_separator',
-			array(
+			[
 				'label' => esc_html__( 'Thousand Separator', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'default' => 'yes',
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'thousand_separator_char',
-			array(
+			[
 				'label' => esc_html__( 'Separator', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'condition' => array(
+				'condition' => [
 					'thousand_separator' => 'yes',
-				),
-				'options' => array(
+				],
+				'options' => [
 					'' => 'Default',
 					'.' => 'Dot',
 					' ' => 'Space',
 					'_' => 'Underline',
 					"'" => 'Apostrophe',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'title',
-			array(
+			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
 				'separator' => 'before',
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
+				],
 				'default' => esc_html__( 'Cool Number', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'title_tag',
-			array(
+			[
 				'label' => esc_html__( 'Title HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => array(
+				'options' => [
 					'h1' => 'H1',
 					'h2' => 'H2',
 					'h3' => 'H3',
@@ -251,353 +251,353 @@ class Widget_Counter extends Widget_Base {
 					'div' => 'div',
 					'span' => 'span',
 					'p' => 'p',
-				),
+				],
 				'default' => 'div',
-				'condition' => array(
+				'condition' => [
 					'title!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_counter_style',
-			array(
+			[
 				'label' => esc_html__( 'Counter', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_responsive_control(
 			'title_position',
-			array(
+			[
 				'label' => esc_html__( 'Title Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'before' => array(
+				'options' => [
+					'before' => [
 						'title' => esc_html__( 'Before', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
-					),
-					'after' => array(
+					],
+					'after' => [
 						'title' => esc_html__( 'After', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
-					),
+					],
 
-					'start' => array(
+					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => "eicon-h-align-$start",
-					),
-					'end' => array(
+					],
+					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => "eicon-h-align-$end",
-					),
-				),
-				'selectors_dictionary' => array(
+					],
+				],
+				'selectors_dictionary' => [
 					'before' => 'flex-direction: column;',
 					'after' => 'flex-direction: column-reverse;',
 					'start' => 'flex-direction: row;',
 					'end' => 'flex-direction: row-reverse;',
-				),
-				'selectors' => array(
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-counter' => '{{VALUE}}',
-				),
-				'condition' => array(
+				],
+				'condition' => [
 					'title!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'title_horizontal_alignment',
-			array(
+			[
 				'label' => esc_html__( 'Title Horizontal Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'start' => array(
+				'options' => [
+					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => "eicon-h-align-$start",
-					),
-					'center' => array(
+					],
+					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
-					),
-					'end' => array(
+					],
+					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => "eicon-h-align-$end",
-					),
-				),
+					],
+				],
 				'separator' => 'before',
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-title' => 'justify-content: {{VALUE}};',
-				),
-				'condition' => array(
+				],
+				'condition' => [
 					'title!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'title_vertical_alignment',
-			array(
+			[
 				'label' => esc_html__( 'Title Vertical Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'start' => array(
+				'options' => [
+					'start' => [
 						'title' => esc_html__( 'Top', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
-					),
-					'center' => array(
+					],
+					'center' => [
 						'title' => esc_html__( 'Middle', 'elementor' ),
 						'icon' => 'eicon-v-align-middle',
-					),
-					'end' => array(
+					],
+					'end' => [
 						'title' => esc_html__( 'Bottom', 'elementor' ),
 						'icon' => 'eicon-v-align-bottom',
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-title' => 'align-items: {{VALUE}};',
-				),
-				'condition' => array(
+				],
+				'condition' => [
 					'title!' => '',
-					'title_position' => array( 'start', 'end' ),
-				),
-			)
+					'title_position' => [ 'start', 'end' ],
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'title_gap',
-			array(
+			[
 				'label' => esc_html__( 'Title Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
-				'selectors' => array(
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-counter' => 'gap: {{SIZE}}{{UNIT}};',
-				),
-				'condition' => array(
+				],
+				'condition' => [
 					'title!' => '',
-					'title_position' => array( '', 'before', 'after' ),
-				),
-			)
+					'title_position' => [ '', 'before', 'after' ],
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'number_position',
-			array(
+			[
 				'label' => esc_html__( 'Number Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'start' => array(
+				'options' => [
+					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => "eicon-h-align-$start",
-					),
-					'center' => array(
+					],
+					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
-					),
-					'end' => array(
+					],
+					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => "eicon-h-align-$end",
-					),
-					'stretch' => array(
+					],
+					'stretch' => [
 						'title' => esc_html__( 'Stretch', 'elementor' ),
 						'icon' => 'eicon-grow',
-					),
-				),
-				'selectors_dictionary' => array(
+					],
+				],
+				'selectors_dictionary' => [
 					'start' => 'text-align: {{VALUE}}; --counter-prefix-grow: 0; --counter-suffix-grow: 1; --counter-number-grow: 0;',
 					'center' => 'text-align: {{VALUE}}; --counter-prefix-grow: 1; --counter-suffix-grow: 1; --counter-number-grow: 0;',
 					'end' => 'text-align: {{VALUE}}; --counter-prefix-grow: 1; --counter-suffix-grow: 0; --counter-number-grow: 0;',
 					'stretch' => '--counter-prefix-grow: 0; --counter-suffix-grow: 0; --counter-number-grow: 1;',
-				),
-				'selectors' => array(
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-number-wrapper' => '{{VALUE}}',
-				),
+				],
 				'separator' => 'before',
-			)
+			]
 		);
 
 		$this->add_responsive_control(
 			'number_alignment',
-			array(
+			[
 				'label' => esc_html__( 'Number Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'start' => array(
+				'options' => [
+					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => "eicon-text-align-$start",
-					),
-					'center' => array(
+					],
+					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
-					),
-					'end' => array(
+					],
+					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => "eicon-text-align-$end",
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-number' => 'text-align: {{VALUE}};',
-				),
-				'condition' => array(
+				],
+				'condition' => [
 					'number_position' => 'stretch',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'number_gap',
-			array(
+			[
 				'label' => esc_html__( 'Number Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
-				'selectors' => array(
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-number-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
-				),
-				'conditions' => array(
+				],
+				'conditions' => [
 					'relation' => 'and',
-					'terms' => array(
-						array(
+					'terms' => [
+						[
 							'name' => 'number_position',
 							'operator' => '!==',
 							'value' => 'stretch',
-						),
-						array(
+						],
+						[
 							'relation' => 'or',
-							'terms' => array(
-								array(
+							'terms' => [
+								[
 									'name' => 'prefix',
 									'operator' => '!==',
 									'value' => '',
-								),
-								array(
+								],
+								[
 									'name' => 'suffix',
 									'operator' => '!==',
 									'value' => '',
-								),
-							),
-						),
-					),
-				),
-			)
+								],
+							],
+						],
+					],
+				],
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_number',
-			array(
+			[
 				'label' => esc_html__( 'Number', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'number_color',
-			array(
+			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'global' => array(
+				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
-				),
-				'selectors' => array(
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-number-wrapper' => 'color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'typography_number',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
-				),
+				],
 				'selector' => '{{WRAPPER}} .elementor-counter-number-wrapper',
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Stroke::get_type(),
-			array(
+			[
 				'name' => 'number_stroke',
 				'selector' => '{{WRAPPER}} .elementor-counter-number-wrapper',
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'number_shadow',
 				'selector' => '{{WRAPPER}} .elementor-counter-number-wrapper',
-			)
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_title',
-			array(
+			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => array(
+				'condition' => [
 					'title!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'title_color',
-			array(
+			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'global' => array(
+				'global' => [
 					'default' => Global_Colors::COLOR_SECONDARY,
-				),
-				'selectors' => array(
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-counter-title' => 'color: {{VALUE}};',
-				),
-				'condition' => array(
+				],
+				'condition' => [
 					'title!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'typography_title',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_SECONDARY,
-				),
+				],
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
-				'condition' => array(
+				'condition' => [
 					'title!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Stroke::get_type(),
-			array(
+			[
 				'name' => 'title_stroke',
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
-				'condition' => array(
+				'condition' => [
 					'title!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'title_shadow',
 				'selector' => '{{WRAPPER}} .elementor-counter-title',
-				'condition' => array(
+				'condition' => [
 					'title!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();
@@ -673,12 +673,12 @@ class Widget_Counter extends Widget_Base {
 
 		$this->add_render_attribute(
 			'counter',
-			array(
+			[
 				'class' => 'elementor-counter-number',
 				'data-duration' => $settings['duration'],
 				'data-to-value' => $settings['ending_number'],
 				'data-from-value' => $settings['starting_number'],
-			)
+			]
 		);
 
 		if ( ! empty( $settings['thousand_separator'] ) ) {

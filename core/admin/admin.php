@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin extends App {
 
-	private $menus = array();
+	private $menus = [];
 
 	/**
 	 * Get module name.
@@ -83,7 +83,7 @@ class Admin extends App {
 				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
 			} );
 
-		Collection::make( array( 'ui', 'icons', 'query' ) )
+		Collection::make( [ 'ui', 'icons', 'query' ] )
 			->each( function ( $package ) use ( $assets_config_provider ) {
 				$suffix = Utils::is_script_debug() ? '' : '.min';
 				$config = $assets_config_provider->load( $package )->get( $package );
@@ -116,7 +116,7 @@ class Admin extends App {
 		wp_register_script(
 			'elementor-admin-modules',
 			$this->get_js_assets_url( 'admin-modules' ),
-			array(),
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -127,11 +127,11 @@ class Admin extends App {
 		wp_register_script(
 			'elementor-ai-admin',
 			$this->get_js_assets_url( 'ai-admin' ),
-			array(
+			[
 				'elementor-common',
 				'elementor-v2-ui',
 				'elementor-v2-icons',
-			),
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -139,10 +139,10 @@ class Admin extends App {
 		wp_register_script(
 			'elementor-admin',
 			$this->get_js_assets_url( 'admin' ),
-			array(
+			[
 				'elementor-common',
 				'elementor-admin-modules',
-			),
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -172,9 +172,9 @@ class Admin extends App {
 		wp_register_style(
 			'elementor-admin',
 			$this->get_css_assets_url( 'admin' . $direction_suffix ),
-			array(
+			[
 				'elementor-common',
-			),
+			],
 			ELEMENTOR_VERSION
 		);
 
@@ -313,7 +313,7 @@ class Admin extends App {
 	public function body_status_classes( $classes ) {
 		global $pagenow;
 
-		if ( in_array( $pagenow, array( 'post.php', 'post-new.php' ), true ) && Utils::is_post_support() ) {
+		if ( in_array( $pagenow, [ 'post.php', 'post-new.php' ], true ) && Utils::is_post_support() ) {
 			$post = get_post();
 
 			$document = Plugin::$instance->documents->get( $post->ID );
@@ -374,10 +374,10 @@ class Admin extends App {
 	 */
 	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
 		if ( ELEMENTOR_PLUGIN_BASE === $plugin_file ) {
-			$row_meta = array(
+			$row_meta = [
 				'docs' => '<a href="https://go.elementor.com/docs-admin-plugins/" aria-label="' . esc_attr( esc_html__( 'View Elementor Documentation', 'elementor' ) ) . '" target="_blank">' . esc_html__( 'Docs & FAQs', 'elementor' ) . '</a>',
 				'ideo' => '<a href="https://go.elementor.com/yt-admin-plugins/" aria-label="' . esc_attr( esc_html__( 'View Elementor Video Tutorials', 'elementor' ) ) . '" target="_blank">' . esc_html__( 'Video Tutorials', 'elementor' ) . '</a>',
-			);
+			];
 
 			$plugin_meta = array_merge( $plugin_meta, $row_meta );
 		}
@@ -426,15 +426,15 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function register_dashboard_widgets() {
-		wp_add_dashboard_widget( 'e-dashboard-overview', esc_html__( 'Elementor Overview', 'elementor' ), array( $this, 'elementor_dashboard_overview_widget' ) );
+		wp_add_dashboard_widget( 'e-dashboard-overview', esc_html__( 'Elementor Overview', 'elementor' ), [ $this, 'elementor_dashboard_overview_widget' ] );
 
 		// Move our widget to top.
 		global $wp_meta_boxes;
 
 		$dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
-		$ours = array(
+		$ours = [
 			'e-dashboard-overview' => $dashboard['e-dashboard-overview'],
-		);
+		];
 
 		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $ours, $dashboard ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
@@ -516,7 +516,7 @@ class Admin extends App {
 	 * @return void
 	 * @since 3.12.0
 	 */
-	public static function elementor_dashboard_overview_recently_edited( array $args = array(), bool $show_heading = true ) {
+	public static function elementor_dashboard_overview_recently_edited( array $args = [], bool $show_heading = true ) {
 		$recently_edited_query = Utils::get_recently_edited_posts_query( $args );
 
 		if ( $recently_edited_query->have_posts() ) { ?>
@@ -613,26 +613,26 @@ class Admin extends App {
 	 * @access public
 	 */
 	public static function static_get_dashboard_overview_widget_footer_actions() {
-		$base_actions = array(
-			'blog' => array(
+		$base_actions = [
+			'blog' => [
 				'title' => esc_html__( 'Blog', 'elementor' ),
 				'link' => 'https://go.elementor.com/overview-widget-blog/',
-			),
-			'help' => array(
+			],
+			'help' => [
 				'title' => esc_html__( 'Help', 'elementor' ),
 				'link' => 'https://go.elementor.com/overview-widget-docs/',
-			),
-		);
+			],
+		];
 
-		$additions_actions = array();
-		$additions_actions['ai'] = array(
+		$additions_actions = [];
+		$additions_actions['ai'] = [
 			'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
 			'link' => 'https://go.elementor.com/overview-widget-ai/',
-		);
-		$additions_actions['go-pro'] = array(
+		];
+		$additions_actions['go-pro'] = [
 			'title' => esc_html__( 'Upgrade', 'elementor' ),
 			'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
-		);
+		];
 
 		/**
 		 * Dashboard widget footer actions.
@@ -690,7 +690,7 @@ class Admin extends App {
 			$type = sanitize_text_field( wp_unslash( $_GET['template_type'] ) );
 		}
 
-		$post_data = Utils::get_super_global_value( $_GET, 'post_data' ) ?? array();
+		$post_data = Utils::get_super_global_value( $_GET, 'post_data' ) ?? [];
 
 		$post_data = $this->filter_post_data( $post_data );
 
@@ -703,7 +703,7 @@ class Admin extends App {
 		 *
 		 * @param array $meta Post meta data.
 		 */
-		$meta = array();
+		$meta = [];
 
 		if ( isset( $_GET['meta'] ) && is_array( $_GET['meta'] ) ) {
 			$meta = array_map( 'sanitize_text_field', wp_unslash( $_GET['meta'] ) );
@@ -725,14 +725,14 @@ class Admin extends App {
 	}
 
 	private function get_allowed_fields_for_role() {
-		$allowed_fields = array(
+		$allowed_fields = [
 			'post_title',
 			'post_content',
 			'post_excerpt',
 			'post_category',
 			'post_type',
 			'tags_input',
-		);
+		];
 
 		if ( current_user_can( 'publish_posts' ) ) {
 			$allowed_fields[] = 'post_status';
@@ -773,7 +773,7 @@ class Admin extends App {
 		wp_enqueue_script(
 			'elementor-floating-elements-modal',
 			ELEMENTOR_ASSETS_URL . 'js/floating-elements-modal' . $suffix . '.js',
-			array(),
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -790,7 +790,7 @@ class Admin extends App {
 		wp_enqueue_script(
 			'elementor-new-template',
 			ELEMENTOR_ASSETS_URL . 'js/new-template' . $suffix . '.js',
-			array(),
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -815,7 +815,7 @@ class Admin extends App {
 		wp_enqueue_script(
 			'elementor-beta-tester',
 			ELEMENTOR_ASSETS_URL . 'js/beta-tester' . $suffix . '.js',
-			array(),
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -824,17 +824,17 @@ class Admin extends App {
 	}
 
 	public function init_floating_elements() {
-		$screens = array(
+		$screens = [
 			'elementor_library_page_e-floating-buttons' => true,
 			'edit-e-floating-buttons' => true,
-		);
+		];
 
 		if ( ! isset( $screens[ get_current_screen()->id ] ) ) {
 			return;
 		}
 
-		add_action( 'admin_head', array( $this, 'add_new_floating_elements_template' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_new_floating_elements_scripts' ) );
+		add_action( 'admin_head', [ $this, 'add_new_floating_elements_template' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_floating_elements_scripts' ] );
 	}
 
 	/**
@@ -846,8 +846,8 @@ class Admin extends App {
 		}
 
 		// Allow plugins to add their templates on admin_head.
-		add_action( 'admin_head', array( $this, 'add_new_template_template' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_new_template_scripts' ) );
+		add_action( 'admin_head', [ $this, 'add_new_template_template' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_template_scripts' ] );
 	}
 
 	public function version_update_warning( $current_version, $new_version ) {
@@ -887,8 +887,8 @@ class Admin extends App {
 	 */
 	public function init_beta_tester( $current_screen ) {
 		if ( ( 'toplevel_page_elementor' === $current_screen->base ) || 'elementor_page_elementor-tools' === $current_screen->id ) {
-			add_action( 'admin_head', array( $this, 'add_beta_tester_template' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_beta_tester_scripts' ) );
+			add_action( 'admin_head', [ $this, 'add_beta_tester_template' ] );
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_beta_tester_scripts' ] );
 		}
 	}
 
@@ -906,37 +906,37 @@ class Admin extends App {
 		$this->add_component( 'feedback', new Feedback() );
 		$this->add_component( 'admin-notices', new Admin_Notices() );
 
-		add_action( 'admin_init', array( $this, 'maybe_redirect_to_getting_started' ) );
+		add_action( 'admin_init', [ $this, 'maybe_redirect_to_getting_started' ] );
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
-		add_action( 'edit_form_after_title', array( $this, 'print_switch_mode_button' ) );
-		add_action( 'save_post', array( $this, 'save_post' ) );
+		add_action( 'edit_form_after_title', [ $this, 'print_switch_mode_button' ] );
+		add_action( 'save_post', [ $this, 'save_post' ] );
 
-		add_filter( 'display_post_states', array( $this, 'add_elementor_post_state' ), 10, 2 );
+		add_filter( 'display_post_states', [ $this, 'add_elementor_post_state' ], 10, 2 );
 
-		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, array( $this, 'plugin_action_links' ) );
-		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
+		add_filter( 'plugin_action_links_' . ELEMENTOR_PLUGIN_BASE, [ $this, 'plugin_action_links' ] );
+		add_filter( 'plugin_row_meta', [ $this, 'plugin_row_meta' ], 10, 2 );
 
-		add_filter( 'admin_body_class', array( $this, 'body_status_classes' ) );
-		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
+		add_filter( 'admin_body_class', [ $this, 'body_status_classes' ] );
+		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
 
 		// Register Dashboard Widgets.
-		add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
+		add_action( 'wp_dashboard_setup', [ $this, 'register_dashboard_widgets' ] );
 
 		// Admin Actions
-		add_action( 'admin_action_elementor_new_post', array( $this, 'admin_action_new_post' ) );
+		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 
-		add_action( 'current_screen', array( $this, 'init_new_template' ) );
-		add_action( 'current_screen', array( $this, 'init_floating_elements' ) );
-		add_action( 'current_screen', array( $this, 'init_beta_tester' ) );
+		add_action( 'current_screen', [ $this, 'init_new_template' ] );
+		add_action( 'current_screen', [ $this, 'init_floating_elements' ] );
+		add_action( 'current_screen', [ $this, 'init_beta_tester' ] );
 
 		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function ( $plugin_data ) {
 			$this->version_update_warning( ELEMENTOR_VERSION, $plugin_data['new_version'] );
 		} );
 
-		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_hints' ) );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_hints' ] );
 	}
 
 	/**
@@ -949,22 +949,22 @@ class Admin extends App {
 		$all_introductions = User::get_introduction_meta();
 		$beta_tester_signup_dismissed = array_key_exists( Beta_Testers::BETA_TESTER_SIGNUP, $all_introductions );
 
-		$settings = array(
+		$settings = [
 			'home_url' => home_url(),
 			'settings_url' => Settings::get_url(),
-			'user' => array(
+			'user' => [
 				'introduction' => User::get_introduction_meta(),
 				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
-			),
-			'beta_tester' => array(
+			],
+			'beta_tester' => [
 				'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,
 				'has_email' => $beta_tester_email,
 				'option_enabled' => 'no' !== $elementor_beta,
 				'signup_dismissed' => $beta_tester_signup_dismissed,
-			),
+			],
 			'experiments' => $this->get_experiments(),
-		);
+		];
 
 		/**
 		 * Localize settings.
@@ -988,21 +988,21 @@ class Admin extends App {
 	private function get_experiments() {
 		return ( new Collection( Plugin::$instance->experiments->get_features() ) )
 			->map( function ( $experiment_data ) {
-				$dependencies = $experiment_data['dependencies'] ?? array();
+				$dependencies = $experiment_data['dependencies'] ?? [];
 
 				$dependencies = ( new Collection( $dependencies ) )
 					->map( function ( $dependency ) {
 						return $dependency->get_name();
 					} )->all();
 
-				return array(
+				return [
 					'name' => $experiment_data['name'],
 					'title' => $experiment_data['title'] ?? $experiment_data['name'],
 					'state' => $experiment_data['state'],
 					'default' => $experiment_data['default'],
 					'dependencies' => $dependencies,
-					'messages' => $experiment_data['messages'] ?? array(),
-				);
+					'messages' => $experiment_data['messages'] ?? [],
+				];
 			} )->all();
 	}
 
@@ -1014,7 +1014,7 @@ class Admin extends App {
 		wp_register_script(
 			'media-hints',
 			$this->get_js_assets_url( 'media-hints' ),
-			array(),
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -1027,8 +1027,8 @@ class Admin extends App {
 
 		$dismissible = 'image_optimizer_hint';
 
-		wp_localize_script( 'media-hints', 'elementorAdminHints', array(
-			'mediaHint' => array(
+		wp_localize_script( 'media-hints', 'elementorAdminHints', [
+			'mediaHint' => [
 				'display' => true,
 				'type' => 'info',
 				'content' => $content,
@@ -1037,19 +1037,19 @@ class Admin extends App {
 				'dismiss' => __( 'Dismiss this notice.', 'elementor' ),
 				'button_event' => $dismissible,
 				'button_data' => base64_encode(
-					json_encode( array(
+					json_encode( [
 						'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
-					) ),
+					] ),
 				),
-			),
-		) );
+			],
+		] );
 
 		wp_enqueue_script( 'media-hints' );
 	}
 
 	public function register_ajax_hints( $ajax_manager ) {
-		$ajax_manager->register_ajax_action( 'elementor_image_optimization_campaign', array( $this, 'ajax_set_image_optimization_campaign' ) );
-		$ajax_manager->register_ajax_action( 'elementor_core_site_mailer_campaign', array( $this, 'ajax_site_mailer_campaign' ) );
+		$ajax_manager->register_ajax_action( 'elementor_image_optimization_campaign', [ $this, 'ajax_set_image_optimization_campaign' ] );
+		$ajax_manager->register_ajax_action( 'elementor_core_site_mailer_campaign', [ $this, 'ajax_site_mailer_campaign' ] );
 	}
 
 	public function ajax_set_image_optimization_campaign( $request ) {
@@ -1061,11 +1061,11 @@ class Admin extends App {
 			return;
 		}
 
-		$campaign_data = array(
+		$campaign_data = [
 			'source' => sanitize_key( $request['source'] ),
 			'campaign' => 'io-plg',
 			'medium' => 'wp-dash',
-		);
+		];
 
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
 	}
@@ -1079,11 +1079,11 @@ class Admin extends App {
 			return;
 		}
 
-		$campaign_data = array(
+		$campaign_data = [
 			'source' => sanitize_key( $request['source'] ),
 			'campaign' => 'sm-plg',
 			'medium' => 'wp-dash',
-		);
+		];
 
 		set_transient( 'elementor_site_mailer_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
 	}

@@ -71,7 +71,7 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 		if ( $kits_manager->is_custom_colors_enabled() || $kits_manager->is_custom_typography_enabled() ) {
 			$this->add_control(
 				$current_section['section'] . '_schemes_notice',
-				array(
+				[
 					'name' => $current_section['section'] . '_schemes_notice',
 					'type' => Controls_Manager::ALERT,
 					'alert_type' => 'warning',
@@ -82,7 +82,7 @@ abstract class Tab_Base extends Sub_Controls_Stack {
 						'</a>'
 					),
 					'render_type' => 'ui',
-				)
+				]
 			);
 		}
 	}

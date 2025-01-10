@@ -73,7 +73,7 @@ class Rollback {
 	 *
 	 * @param array $args Optional. Rollback arguments. Default is an empty array.
 	 */
-	public function __construct( $args = array() ) {
+	public function __construct( $args = [] ) {
 		foreach ( $args as $key => $value ) {
 			$this->{$key} = $value;
 		}
@@ -140,7 +140,7 @@ class Rollback {
 		$update_plugins->response[ $this->plugin_name ] = $plugin_info;
 
 		// Remove handle beta testers.
-		remove_filter( 'pre_set_site_transient_update_plugins', array( Plugin::instance()->beta_testers, 'check_version' ) );
+		remove_filter( 'pre_set_site_transient_update_plugins', [ Plugin::instance()->beta_testers, 'check_version' ] );
 
 		set_site_transient( 'update_plugins', $update_plugins );
 	}
@@ -158,12 +158,12 @@ class Rollback {
 
 		$logo_url = ELEMENTOR_ASSETS_URL . 'images/logo-panel.svg';
 
-		$upgrader_args = array(
+		$upgrader_args = [
 			'url' => 'update.php?action=upgrade-plugin&plugin=' . rawurlencode( $this->plugin_name ),
 			'plugin' => $this->plugin_name,
 			'nonce' => 'upgrade-plugin_' . $this->plugin_name,
 			'title' => '<img src="' . $logo_url . '" alt="Elementor">' . esc_html__( 'Rollback to Previous Version', 'elementor' ),
-		);
+		];
 
 		$this->print_inline_style();
 

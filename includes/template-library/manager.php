@@ -37,7 +37,7 @@ class Manager {
 	 *
 	 * @var Source_Base[]
 	 */
-	protected $_registered_sources = array(); // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
+	protected $_registered_sources = []; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
 	 * Imported template images.
@@ -82,8 +82,8 @@ class Manager {
 	 * @access public
 	 */
 	public function add_actions() {
-		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
-		add_action( 'wp_ajax_elementor_library_direct_actions', array( $this, 'handle_direct_actions' ) );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+		add_action( 'wp_ajax_elementor_library_direct_actions', [ $this, 'handle_direct_actions' ] );
 	}
 
 	/**
@@ -127,7 +127,7 @@ class Manager {
 	 * @return \WP_Error|true True if the source was registered, `WP_Error`
 	 *                        otherwise.
 	 */
-	public function register_source( $source_class, $args = array() ) {
+	public function register_source( $source_class, $args = [] ) {
 		if ( ! class_exists( $source_class ) ) {
 			return new \WP_Error( 'source_class_name_not_exists' );
 		}
@@ -212,15 +212,15 @@ class Manager {
 	 * @param bool  $force_update
 	 * @return array
 	 */
-	public function get_templates( array $filter_sources = array(), bool $force_update = false ): array {
-		$templates = array();
+	public function get_templates( array $filter_sources = [], bool $force_update = false ): array {
+		$templates = [];
 
 		foreach ( $this->get_registered_sources() as $source ) {
 			if ( ! empty( $filter_sources ) && ! in_array( $source->get_id(), $filter_sources, true ) ) {
 				continue;
 			}
 
-			$templates = array_merge( $templates, $source->get_items( array( 'force_update' => $force_update ) ) );
+			$templates = array_merge( $templates, $source->get_items( [ 'force_update' => $force_update ] ) );
 		}
 
 		return $templates;
@@ -248,13 +248,13 @@ class Manager {
 		// Ensure all document are registered.
 		Plugin::$instance->documents->get_document_types();
 
-		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : array();
+		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : [];
 		$force_update = ! empty( $args['sync'] );
 
-		return array(
+		return [
 			'templates' => $this->get_templates( $filter_sources, $force_update ),
 			'config' => $library_data['types_data'],
-		);
+		];
 	}
 
 	/**
@@ -270,7 +270,7 @@ class Manager {
 	 * @return \WP_Error|int The ID of the saved/updated template.
 	 */
 	public function save_template( array $args ) {
-		$validate_args = $this->ensure_args( array( 'post_id', 'source', 'content', 'type' ), $args );
+		$validate_args = $this->ensure_args( [ 'post_id', 'source', 'content', 'type' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
@@ -311,7 +311,7 @@ class Manager {
 	 *                               was updated, `WP_Error` otherwise.
 	 */
 	public function update_template( array $template_data ) {
-		$validate_args = $this->ensure_args( array( 'source', 'content', 'type' ), $template_data );
+		$validate_args = $this->ensure_args( [ 'source', 'content', 'type' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
@@ -371,7 +371,7 @@ class Manager {
 	 * @return \WP_Error|bool|array ??
 	 */
 	public function get_template_data( array $args ) {
-		$validate_args = $this->ensure_args( array( 'source', 'template_id' ), $args );
+		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
@@ -417,7 +417,7 @@ class Manager {
 	 *                                       or 'WP_Error' on failure.
 	 */
 	public function delete_template( array $args ) {
-		$validate_args = $this->ensure_args( array( 'source', 'template_id' ), $args );
+		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
@@ -446,7 +446,7 @@ class Manager {
 	 * @return mixed Whether the export succeeded or failed.
 	 */
 	public function export_template( array $args ) {
-		$validate_args = $this->ensure_args( array( 'source', 'template_id' ), $args );
+		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
@@ -501,14 +501,14 @@ class Manager {
 	 */
 	public function import_template( array $data ) {
 		// If the template is a JSON file, allow uploading it.
-		add_filter( 'elementor/files/allow-file-type/json', array( $this, 'enable_json_template_upload' ) );
-		add_filter( 'elementor/files/allow_unfiltered_upload', array( $this, 'enable_json_template_upload' ) );
+		add_filter( 'elementor/files/allow-file-type/json', [ $this, 'enable_json_template_upload' ] );
+		add_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
 
 		// Imported templates can be either JSON files, or Zip files containing multiple JSON files
-		$upload_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $data, array( 'zip', 'json' ) );
+		$upload_result = Plugin::$instance->uploads_manager->handle_elementor_upload( $data, [ 'zip', 'json' ] );
 
-		remove_filter( 'elementor/files/allow-file-type/json', array( $this, 'enable_json_template_upload' ) );
-		remove_filter( 'elementor/files/allow_unfiltered_upload', array( $this, 'enable_json_template_upload' ) );
+		remove_filter( 'elementor/files/allow-file-type/json', [ $this, 'enable_json_template_upload' ] );
+		remove_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
 
 		if ( is_wp_error( $upload_result ) ) {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
@@ -554,7 +554,7 @@ class Manager {
 	 * @return mixed Whether the template marked as favorite.
 	 */
 	public function mark_template_as_favorite( $args ) {
-		$validate_args = $this->ensure_args( array( 'source', 'template_id', 'favorite' ), $args );
+		$validate_args = $this->ensure_args( [ 'source', 'template_id', 'favorite' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
@@ -566,7 +566,7 @@ class Manager {
 	}
 
 	public function import_from_json( array $args ) {
-		$validate_args = $this->ensure_args( array( 'editor_post_id', 'elements' ), $args );
+		$validate_args = $this->ensure_args( [ 'editor_post_id', 'elements' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
@@ -579,7 +579,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Document not found.' );
 		}
 
-		$import_data = $document->get_import_data( array( 'content' => $elements ) );
+		$import_data = $document->get_import_data( [ 'content' => $elements ] );
 
 		return $import_data['content'];
 	}
@@ -594,10 +594,10 @@ class Manager {
 	 * @access private
 	 */
 	private function register_default_sources() {
-		$sources = array(
+		$sources = [
 			'local',
 			'remote',
-		);
+		];
 
 		foreach ( $sources as $source_filename ) {
 			$class_name = ucwords( $source_filename );
@@ -637,7 +637,7 @@ class Manager {
 			Plugin::$instance->db->switch_to_post( $editor_post_id );
 		}
 
-		$result = call_user_func( array( $this, $ajax_request ), $data );
+		$result = call_user_func( [ $this, $ajax_request ], $data );
 
 		if ( is_wp_error( $result ) ) {
 			throw new \Exception( $result->get_error_message() );
@@ -657,7 +657,7 @@ class Manager {
 	 * @param Ajax $ajax
 	 */
 	public function register_ajax_actions( Ajax $ajax ) {
-		$library_ajax_requests = array(
+		$library_ajax_requests = [
 			'get_library_data',
 			'get_template_data',
 			'save_template',
@@ -666,7 +666,7 @@ class Manager {
 			'import_template',
 			'mark_template_as_favorite',
 			'import_from_json',
-		);
+		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
 			$ajax->register_ajax_action( $ajax_request, function ( $data ) use ( $ajax_request ) {
@@ -693,10 +693,10 @@ class Manager {
 
 		$action = Utils::get_super_global_value( $_REQUEST, 'library_action' ); // phpcs:ignore -- Nonce already verified.
 
-		$whitelist_methods = array(
+		$whitelist_methods = [
 			'export_template',
 			'direct_import_template',
-		);
+		];
 
 		if ( 'direct_import_template' === $action && ! User::is_current_user_can_upload_json() ) {
 			return;

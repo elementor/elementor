@@ -51,10 +51,10 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/widgets/register', function ( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
-				$manager->register( new Widgets\Pro_Widget_Promotion( array(), array(
+				$manager->register( new Widgets\Pro_Widget_Promotion( [], [
 					'widget_name' => $widget_data['name'],
 					'widget_title' => $widget_data['title'],
-				) ) );
+				] ) );
 			}
 		} );
 
@@ -66,7 +66,7 @@ class Module extends Base_Module {
 			$controls_manager->register( new Controls\Promotion_Control() );
 		} );
 
-		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'enqueue_react_data' ) );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 	}
 
 	private function handle_external_redirects() {
@@ -102,11 +102,11 @@ class Module extends Base_Module {
 		wp_enqueue_script(
 			'e-react-promotions',
 			ELEMENTOR_ASSETS_URL . 'js/e-react-promotions' . $min_suffix . '.js',
-			array(
+			[
 				'react',
 				'react-dom',
 				'backbone-marionette',
-			),
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -128,10 +128,10 @@ class Module extends Base_Module {
 	}
 
 	private function get_api_config(): array {
-		return array(
+		return [
 			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_free_to_pro_upsell',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'free-to-pro-upsell',
-		);
+		];
 	}
 }

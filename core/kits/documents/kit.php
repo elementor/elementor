@@ -17,7 +17,7 @@ class Kit extends PageBase {
 	 */
 	private $tabs;
 
-	public function __construct( array $data = array() ) {
+	public function __construct( array $data = [] ) {
 		parent::__construct( $data );
 
 		$this->register_tabs();
@@ -124,14 +124,14 @@ class Kit extends PageBase {
 		$config = parent::get_initial_config();
 
 		foreach ( $this->tabs as $id => $tab ) {
-			$config['tabs'][ $id ] = array(
+			$config['tabs'][ $id ] = [
 				'id' => $id,
 				'title' => $tab->get_title(),
 				'icon' => $tab->get_icon(),
 				'group' => $tab->get_group(),
 				'helpUrl' => $tab->get_help_url(),
 				'additionalContent' => $tab->get_additional_tab_content(),
-			);
+			];
 		}
 
 		return $config;
@@ -150,10 +150,10 @@ class Kit extends PageBase {
 	}
 
 	protected function get_post_statuses() {
-		return array(
+		return [
 			'draft' => sprintf( '%s (%s)', esc_html__( 'Disabled', 'elementor' ), esc_html__( 'Draft', 'elementor' ) ),
 			'publish' => esc_html__( 'Published', 'elementor' ),
-		);
+		];
 	}
 
 	public function add_repeater_row( $control_id, $item ) {
@@ -161,11 +161,11 @@ class Kit extends PageBase {
 		$document_settings = $this->get_meta( $meta_key );
 
 		if ( ! $document_settings ) {
-			$document_settings = array();
+			$document_settings = [];
 		}
 
 		if ( ! isset( $document_settings[ $control_id ] ) ) {
-			$document_settings[ $control_id ] = array();
+			$document_settings[ $control_id ] = [];
 		}
 
 		$document_settings[ $control_id ][] = $item;
@@ -197,7 +197,7 @@ class Kit extends PageBase {
 	 * Register default tabs (menu pages) for site settings.
 	 */
 	private function register_tabs() {
-		$tabs = array(
+		$tabs = [
 			'global-colors' => Tabs\Global_Colors::class,
 			'global-typography' => Tabs\Global_Typography::class,
 			'theme-style-typography' => Tabs\Theme_Style_Typography::class,
@@ -210,7 +210,7 @@ class Kit extends PageBase {
 			'settings-lightbox' => Tabs\Settings_Lightbox::class,
 			'settings-page-transitions' => Tabs\Settings_Page_Transitions::class,
 			'settings-custom-css' => Tabs\Settings_Custom_CSS::class,
-		);
+		];
 
 		foreach ( $tabs as $id => $class ) {
 			$this->register_tab( $id, $class );

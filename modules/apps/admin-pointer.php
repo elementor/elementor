@@ -15,7 +15,7 @@ class Admin_Pointer {
 	const CURRENT_POINTER_SLUG = 'e-apps';
 
 	public static function add_hooks() {
-		add_action( 'admin_print_footer_scripts-index.php', array( __CLASS__, 'admin_print_script' ) );
+		add_action( 'admin_print_footer_scripts-index.php', [ __CLASS__, 'admin_print_script' ] );
 	}
 
 	public static function admin_print_script() {

@@ -13,11 +13,11 @@ class Hover_Animation_Floating_Buttons extends Control_Hover_Animation {
 	}
 
 	public static function get_animations() {
-		return array(
+		return [
 			'grow' => 'Grow',
 			'pulse' => 'Pulse',
 			'push' => 'Push',
 			'float' => 'Float',
-		);
+		];
 	}
 }

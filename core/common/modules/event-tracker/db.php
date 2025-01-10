@@ -47,7 +47,7 @@ class DB extends Base_Object {
 		$events = $this->get_event_ids_from_db();
 
 		if ( 1000 <= count( $events ) ) {
-			$event_ids = array();
+			$event_ids = [];
 
 			foreach ( $events as $event ) {
 				$event_ids[] = $event->id;
@@ -57,7 +57,7 @@ class DB extends Base_Object {
 			array_multisort( $event_ids, SORT_ASC, $events );
 
 			// Delete the smallest ID (which is the earliest DB entry)
-			$this->wpdb->delete( $this->get_table_name(), array( 'ID' => $events[0]->id ) );
+			$this->wpdb->delete( $this->get_table_name(), [ 'ID' => $events[0]->id ] );
 		}
 	}
 
@@ -76,7 +76,7 @@ class DB extends Base_Object {
 		$library = $connect->get_apps()['library'];
 
 		if ( ! isset( $event_data['details'] ) ) {
-			$event_data['details'] = array();
+			$event_data['details'] = [];
 		}
 
 		if ( $library->is_connected() ) {
@@ -88,10 +88,10 @@ class DB extends Base_Object {
 
 		$event_data['details'] = json_encode( $event_data['details'] );
 
-		$entry = array(
+		$entry = [
 			'event_data' => wp_json_encode( $event_data ),
 			'created_at' => $event_data['ts'],
-		);
+		];
 
 		$this->wpdb->insert( $this->get_table_name(), $entry );
 	}

@@ -47,7 +47,7 @@ class Styles_Renderer {
 	 * @return string Rendered CSS string.
 	 */
 	public function render( array $styles ): string {
-		$css_style = array();
+		$css_style = [];
 
 		foreach ( $styles as $style_def ) {
 			$style = $this->style_definition_to_css_string( $style_def );
@@ -64,7 +64,7 @@ class Styles_Renderer {
 			return '';
 		}
 
-		$stylesheet = array();
+		$stylesheet = [];
 
 		foreach ( $style['variants'] as $variant ) {
 			$style_declaration = $this->variant_to_css_string( $base_selector, $variant );
@@ -78,9 +78,9 @@ class Styles_Renderer {
 	}
 
 	private function get_base_selector( array $style_def ): ?string {
-		$map = array(
+		$map = [
 			'class' => '.',
-		);
+		];
 
 		if (
 			isset( $style_def['type'] ) &&

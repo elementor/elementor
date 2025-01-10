@@ -46,20 +46,20 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	private function get_template_args( array $settings ): array {
 		$tag = $settings['tag'];
 		$title = esc_html( $settings['title'] );
-		$attrs = array_filter( array(
+		$attrs = array_filter( [
 			'class' => $settings['classes'] ?? '',
-		) );
+		] );
 
-		$default_args = array(
+		$default_args = [
 			Utils::validate_html_tag( $tag ),
 			Utils::render_html_attributes( $attrs ),
-		);
+		];
 
 		if ( ! empty( $settings['link']['href'] ) ) {
-			$link_args = array(
+			$link_args = [
 				Utils::render_html_attributes( $settings['link'] ),
 				esc_html( $title ),
-			);
+			];
 
 			return array_merge( $default_args, $link_args );
 		}
@@ -70,38 +70,38 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		return array(
+		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
-				->set_items( array(
+				->set_items( [
 					Select_Control::bind_to( 'tag' )
 						->set_label( esc_html__( 'Tag', 'elementor' ) )
-						->set_options( array(
-							array(
+						->set_options( [
+							[
 								'value' => 'h1',
 								'label' => 'H1',
-							),
-							array(
+							],
+							[
 								'value' => 'h2',
 								'label' => 'H2',
-							),
-							array(
+							],
+							[
 								'value' => 'h3',
 								'label' => 'H3',
-							),
-							array(
+							],
+							[
 								'value' => 'h4',
 								'label' => 'H4',
-							),
-							array(
+							],
+							[
 								'value' => 'h5',
 								'label' => 'H5',
-							),
-							array(
+							],
+							[
 								'value' => 'h6',
 								'label' => 'H6',
-							),
-						)),
+							],
+						]),
 
 					Textarea_Control::bind_to( 'title' )
 						->set_label( __( 'Title', 'elementor' ) )
@@ -111,31 +111,31 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						->set_options( $this->get_post_query() )
 						->set_allow_custom_values( true )
 						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
-				) ),
-		);
+				] ),
+		];
 	}
 
 	protected static function define_props_schema(): array {
-		return array(
+		return [
 			'classes' => Classes_Prop_Type::make()
-				->default( array() ),
+				->default( [] ),
 
 			'tag' => String_Prop_Type::make()
-				->enum( array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ) )
+				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
 				->default( 'h2' ),
 
 			'title' => String_Prop_Type::make()
 				->default( __( 'Your Title Here', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
-		);
+		];
 	}
 
 	/**
 	 * Todo: Remove and replace with REST API as part of ED-16723
 	 */
-	private function get_posts_per_post_type_map( $excluded_types = array() ) {
-		$post_types = new Collection( get_post_types( array( 'public' => true ), 'object' ) );
+	private function get_posts_per_post_type_map( $excluded_types = [] ) {
+		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
 
 		if ( ! empty( $excluded_types ) ) {
 			$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
@@ -147,35 +147,35 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			return $post_type->name;
 		} );
 
-		$posts = new Collection( get_posts( array(
+		$posts = new Collection( get_posts( [
 			'post_type' => $post_type_slugs->all(),
 			'numberposts' => -1,
-		) ) );
+		] ) );
 
 		return $posts->reduce( function ( $carry, $post ) use ( $post_types ) {
 			$post_type_label = $post_types->get( $post->post_type )->label;
 
 			if ( ! isset( $carry[ $post->post_type ] ) ) {
-				$carry[ $post->post_type ] = array(
+				$carry[ $post->post_type ] = [
 					'label' => $post_type_label,
-					'items' => array(),
-				);
+					'items' => [],
+				];
 			}
 
 			$carry[ $post->post_type ]['items'][] = $post;
 
 			return $carry;
-		}, array() );
+		}, [] );
 	}
 
-	private function get_excluded_post_types( ?array $additional_exclusions = array() ) {
-		return array_merge( array( 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ), $additional_exclusions );
+	private function get_excluded_post_types( ?array $additional_exclusions = [] ) {
+		return array_merge( [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ], $additional_exclusions );
 	}
 
 	private function get_post_query(): array {
 		$excluded_types = $this->get_excluded_post_types();
 		$posts_map = $this->get_posts_per_post_type_map( $excluded_types );
-		$options = new Collection( array() );
+		$options = new Collection( [] );
 
 		foreach ( $posts_map as $post_type_slug => $data ) {
 			$options = $options->union( $this->get_formatted_post_options( $data['items'], $posts_map[ $post_type_slug ]['label'] ) );
@@ -185,13 +185,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	private function get_formatted_post_options( $items, $group_label ) {
-		$options = array();
+		$options = [];
 
 		foreach ( $items as $post ) {
-			$options[ $post->guid ] = array(
+			$options[ $post->guid ] = [
 				'label' => $post->post_title,
 				'groupLabel' => $group_label,
-			);
+			];
 		}
 
 		return $options;

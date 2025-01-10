@@ -13,20 +13,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.4.0
  */
 class Manager extends Base_Object {
-	private static $data = array();
+	private static $data = [];
 
 	private static function get_data() {
 		if ( ! self::$data ) {
-			self::$data = array(
-				'font-awesome' => array(
+			self::$data = [
+				'font-awesome' => [
 					'regex' => '/^fa-/',
 					'manager' => new Font_Awesome(),
-				),
-				'eicons' => array(
+				],
+				'eicons' => [
 					'regex' => '/^eicons$/',
 					'manager' => new E_Icons(),
-				),
-			);
+				],
+			];
 		}
 
 		return self::$data;

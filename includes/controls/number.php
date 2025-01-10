@@ -42,16 +42,16 @@ class Control_Number extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'min' => '',
 			'max' => '',
 			'step' => '',
 			'placeholder' => '',
 			'title' => '',
-			'dynamic' => array(
-				'categories' => array( TagsModule::NUMBER_CATEGORY ),
-			),
-		);
+			'dynamic' => [
+				'categories' => [ TagsModule::NUMBER_CATEGORY ],
+			],
+		];
 	}
 
 	/**

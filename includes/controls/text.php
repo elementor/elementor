@@ -68,19 +68,19 @@ class Control_Text extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'input_type' => 'text',
 			'placeholder' => '',
 			'title' => '',
-			'ai' => array(
+			'ai' => [
 				'active' => true,
 				'type' => 'text',
-			),
-			'dynamic' => array(
-				'categories' => array(
+			],
+			'dynamic' => [
+				'categories' => [
 					TagsModule::TEXT_CATEGORY,
-				),
-			),
-		);
+				],
+			],
+		];
 	}
 }

@@ -18,7 +18,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	/**
 	 * Packages that should only be registered, unless some other asset depends on them.
 	 */
-	const LIBS = array(
+	const LIBS = [
 		'editor-responsive',
 		'editor-v1-adapters',
 		self::ENV_PACKAGE,
@@ -32,27 +32,27 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'ui',
 		'utils',
 		'wp-media',
-	);
+	];
 
 	/**
 	 * Additional dependencies for packages that rely on global variables, rather than
 	 * an explicit npm dependency (e.g. `window.elementor`, `window.wp`, etc.).
 	 */
-	const ADDITIONAL_DEPS = array(
-		'editor-v1-adapters' => array(
+	const ADDITIONAL_DEPS = [
+		'editor-v1-adapters' => [
 			'elementor-web-cli',
-		),
-		'wp-media' => array(
+		],
+		'wp-media' => [
 			'media-models',
-		),
-	);
+		],
+	];
 
 	/**
 	 * @return void
 	 */
 	public function init() {
 		$packages = array_merge( $this->get_packages_to_enqueue(), self::LIBS );
-		$packages_with_app = array_merge( $packages, array( self::APP_PACKAGE ) );
+		$packages_with_app = array_merge( $packages, [ self::APP_PACKAGE ] );
 
 		foreach ( $packages_with_app as $package ) {
 			$this->assets_config_provider->load( $package );
@@ -75,7 +75,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 				wp_register_script(
 					'elementor-editor-environment-v2',
 					"{$assets_url}js/editor-environment-v2{$min_suffix}.js",
-					array( $config['handle'] ),
+					[ $config['handle'] ],
 					ELEMENTOR_VERSION,
 					true
 				);
@@ -85,13 +85,13 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 				wp_register_script(
 					'elementor-editor-loader-v2',
 					"{$assets_url}js/editor-loader-v2{$min_suffix}.js",
-					array( 'elementor-editor', $config['handle'] ),
+					[ 'elementor-editor', $config['handle'] ],
 					ELEMENTOR_VERSION,
 					true
 				);
 			}
 
-			$additional_deps = self::ADDITIONAL_DEPS[ $package ] ?? array();
+			$additional_deps = self::ADDITIONAL_DEPS[ $package ] ?? [];
 			$deps = array_merge( $config['deps'], $additional_deps );
 
 			wp_register_script(
@@ -123,14 +123,14 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		$env_config = $this->assets_config_provider->get( self::ENV_PACKAGE );
 
 		if ( $env_config ) {
-			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', array(
-				'@elementor/http' => array(
+			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [
+				'@elementor/http' => [
 					'base_url' => rest_url( 'elementor/v1' ),
-					'headers' => array(
+					'headers' => [
 						'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),
-					),
-				),
-			) );
+					],
+				],
+			] );
 
 			Utils::print_js_config(
 				$env_config['handle'],
@@ -139,7 +139,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			);
 		}
 
-		$packages_with_app = array_merge( $this->get_packages_to_enqueue(), array( self::APP_PACKAGE ) );
+		$packages_with_app = array_merge( $this->get_packages_to_enqueue(), [ self::APP_PACKAGE ] );
 
 		foreach ( $this->assets_config_provider->only( $packages_with_app ) as $config ) {
 			wp_enqueue_script( $config['handle'] );
@@ -172,7 +172,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 			wp_register_style(
 				"elementor-{$style}",
 				"{$assets_url}css/{$style}{$min_suffix}.css",
-				array( 'elementor-editor' ),
+				[ 'elementor-editor' ],
 				ELEMENTOR_VERSION
 			);
 		}
@@ -204,11 +204,11 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	}
 
 	public static function get_packages_to_enqueue(): array {
-		return apply_filters( 'elementor/editor/v2/packages', array() );
+		return apply_filters( 'elementor/editor/v2/packages', [] );
 	}
 
 	private function get_styles(): array {
-		$styles = apply_filters( 'elementor/editor/v2/styles', array() );
+		$styles = apply_filters( 'elementor/editor/v2/styles', [] );
 
 		return Collection::make( $styles )
 			->unique()

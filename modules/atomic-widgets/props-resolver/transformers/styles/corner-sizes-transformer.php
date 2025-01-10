@@ -19,9 +19,9 @@ class Corner_Sizes_Transformer extends Transformer_Base {
 
 	public function transform( $value, $key ) {
 		$corners = Collection::make( $value )
-			->only( array( 'top-left', 'top-right', 'bottom-right', 'bottom-left' ) )
+			->only( [ 'top-left', 'top-right', 'bottom-right', 'bottom-left' ] )
 			->filter()
-			->map_with_keys( fn( $corner, $corner_key ) => array( call_user_func( $this->key_generator, $corner_key ) => $corner ) )
+			->map_with_keys( fn( $corner, $corner_key ) => [ call_user_func( $this->key_generator, $corner_key ) => $corner ] )
 			->all();
 
 		return Multi_Props::generate( $corners );

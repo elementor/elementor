@@ -41,10 +41,10 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return array(
+		return [
 			'width' => '',
 			'height' => '',
-		);
+		];
 	}
 
 	/**
@@ -59,10 +59,10 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'show_label' => false,
 			'label_block' => true,
-		);
+		];
 	}
 
 	/**
@@ -116,9 +116,9 @@ class Control_Image_Dimensions extends Control_Base_Multiple {
 	 * @return bool Whether the editor supports the given mime-type.
 	 */
 	private function is_image_editor_supports() {
-		$arg = array(
+		$arg = [
 			'mime_type' => 'image/jpeg',
-		);
+		];
 		return ( wp_image_editor_supports( $arg ) );
 	}
 }

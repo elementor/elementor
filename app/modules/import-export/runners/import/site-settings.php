@@ -44,12 +44,12 @@ class Site_Settings extends Import_Runner_Base {
 		$this->active_kit_id = (int) $active_kit->get_id();
 		$this->previous_kit_id = (int) Plugin::$instance->kits_manager->get_previous_id();
 
-		$result = array();
+		$result = [];
 
 		$old_settings = $active_kit->get_meta( PageManager::META_KEY );
 
 		if ( ! $old_settings ) {
-			$old_settings = array();
+			$old_settings = [];
 		}
 
 		if ( ! empty( $old_settings['custom_colors'] ) ) {
@@ -76,10 +76,10 @@ class Site_Settings extends Import_Runner_Base {
 	}
 
 	public function get_import_session_metadata(): array {
-		return array(
+		return [
 			'previous_kit_id' => $this->previous_kit_id,
 			'active_kit_id' => $this->active_kit_id,
 			'imported_kit_id' => $this->imported_kit_id,
-		);
+		];
 	}
 }

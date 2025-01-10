@@ -43,9 +43,9 @@ class Module extends BaseApp {
 		wp_enqueue_script(
 			'announcements-app',
 			$this->get_js_assets_url( 'announcements-app' ),
-			array(
+			[
 				'wp-i18n',
-			),
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -62,7 +62,7 @@ class Module extends BaseApp {
 	 */
 	protected function get_init_settings(): array {
 		$active_announcements = $this->get_active_announcements();
-		$additional_settings = array();
+		$additional_settings = [];
 
 		foreach ( $active_announcements as $announcement ) {
 			$additional_settings[] = $announcement->get_prepared_data();
@@ -70,9 +70,9 @@ class Module extends BaseApp {
 			$announcement->after_triggered();
 		}
 
-		return array(
+		return [
 			'announcements' => $additional_settings,
-		);
+		];
 	}
 
 	/**
@@ -82,7 +82,7 @@ class Module extends BaseApp {
 		wp_enqueue_style(
 			'announcements-app',
 			$this->get_css_assets_url( 'modules/announcements/announcements' ),
-			array(),
+			[],
 			ELEMENTOR_VERSION
 		);
 	}
@@ -93,7 +93,7 @@ class Module extends BaseApp {
 	 * @return array[]
 	 */
 	private function get_raw_announcements(): array {
-		$raw_announcements = array();
+		$raw_announcements = [];
 
 		if ( Preferences::is_ai_enabled( get_current_user_id() ) ) {
 			$raw_announcements[] = $this->get_ai_announcement_data();
@@ -104,31 +104,31 @@ class Module extends BaseApp {
 	}
 
 	private function get_ai_announcement_data(): array {
-		return array(
+		return [
 			'title' => __( 'Discover your new superpowers ', 'elementor' ),
 			'description' => __( '<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>', 'elementor' ),
-			'media' => array(
+			'media' => [
 				'type' => 'image',
 				'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
-			),
-			'cta' => array(
-				array(
+			],
+			'cta' => [
+				[
 					'label' => __( 'Let\'s do it', 'elementor' ),
 					'variant' => 'primary',
 					'target' => '_top',
 					'url' => '#welcome-ai',
-				),
-				array(
+				],
+				[
 					'label' => __( 'Skip', 'elementor' ),
 					'variant' => 'secondary',
-				),
-			),
-			'triggers' => array(
-				array(
+				],
+			],
+			'triggers' => [
+				[
 					'action' => 'aiStarted',
-				),
-			),
-		);
+				],
+			],
+		];
 	}
 
 	/**
@@ -137,7 +137,7 @@ class Module extends BaseApp {
 	 * @return array
 	 */
 	private function get_announcements(): array {
-		$announcements = array();
+		$announcements = [];
 		foreach ( $this->get_raw_announcements() as $announcement_data ) {
 			$announcements[] = new Announcement( $announcement_data );
 		}
@@ -151,7 +151,7 @@ class Module extends BaseApp {
 	 * @return array
 	 */
 	private function get_active_announcements(): array {
-		$active_announcements = array();
+		$active_announcements = [];
 		foreach ( $this->get_announcements() as $announcement ) {
 			if ( $announcement->is_active() ) {
 				$active_announcements[] = $announcement;
@@ -164,7 +164,7 @@ class Module extends BaseApp {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/init', array( $this, 'on_elementor_init' ) );
+		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
 	}
 
 	public function on_elementor_init() {

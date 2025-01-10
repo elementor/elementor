@@ -16,7 +16,7 @@ class AiStarted extends Trigger_Base {
 	protected $name = 'ai-get-started-announcement';
 
 	public function after_triggered() {
-		User::set_introduction_viewed( array( 'introductionKey' => $this->name ) );
+		User::set_introduction_viewed( [ 'introductionKey' => $this->name ] );
 	}
 
 	/**

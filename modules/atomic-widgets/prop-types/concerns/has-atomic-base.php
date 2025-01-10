@@ -21,7 +21,7 @@ trait Has_Atomic_Base {
 	}
 
 	private function get_valid_controls( array $schema, array $controls ): array {
-		$valid_controls = array();
+		$valid_controls = [];
 
 		foreach ( $controls as $control ) {
 			if ( $control instanceof Section ) {
@@ -112,7 +112,7 @@ trait Has_Atomic_Base {
 			return null;
 		}
 
-		return array();
+		return [];
 	}
 
 	final public function get_data_for_save() {
@@ -134,10 +134,10 @@ trait Has_Atomic_Base {
 	}
 
 	final public function get_stack( $with_common_controls = true ) {
-		return array(
-			'controls' => array(),
-			'tabs' => array(),
-		);
+		return [
+			'controls' => [],
+			'tabs' => [],
+		];
 	}
 
 	final public function get_atomic_settings(): array {

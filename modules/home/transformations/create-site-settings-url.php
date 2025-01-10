@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 
 
-	const SITE_SETTINGS_ITEMS = array( 'Site Settings', 'Site Logo', 'Global Colors', 'Global Fonts' );
+	const SITE_SETTINGS_ITEMS = [ 'Site Settings', 'Site Logo', 'Global Colors', 'Global Fonts' ];
 
 	public function transform( array $home_screen_data ): array {
 		if ( empty( $home_screen_data['get_started'] ) ) {
@@ -25,7 +25,7 @@ class Create_Site_Settings_Url extends Base\Transformations_Abstract {
 			}
 
 			if ( ! empty( $repeater_item['tab_id'] ) ) {
-				$site_settings_url_config['url'] = add_query_arg( array( 'active-tab' => $repeater_item['tab_id'] ), $site_settings_url_config['url'] );
+				$site_settings_url_config['url'] = add_query_arg( [ 'active-tab' => $repeater_item['tab_id'] ], $site_settings_url_config['url'] );
 			}
 
 			return array_merge( $repeater_item, $site_settings_url_config );

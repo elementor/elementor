@@ -18,24 +18,24 @@ class Taxonomies extends Export_Runner_Base {
 
 	public function export( array $data ) {
 		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
-		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : array();
+		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
 
 		$export = $this->export_taxonomies( $post_types );
 
 		$manifest_data['taxonomies'] = $export['manifest'];
 
-		return array(
+		return [
 			'files' => $export['files'],
-			'manifest' => array(
+			'manifest' => [
 				$manifest_data,
-			),
-		);
+			],
+		];
 	}
 
 	private function export_taxonomies( array $post_types ) {
-		$files = array();
-		$manifest = array();
+		$files = [];
+		$manifest = [];
 
 		$taxonomies = get_taxonomies();
 
@@ -57,42 +57,42 @@ class Taxonomies extends Export_Runner_Base {
 				$manifest[ $post_type ][] = $taxonomy;
 			}
 
-			$files[] = array(
+			$files[] = [
 				'path' => 'taxonomies/' . $taxonomy,
 				'data' => $data,
-			);
+			];
 		}
 
-		return array(
+		return [
 			'files' => $files,
 			'manifest' => $manifest,
-		);
+		];
 	}
 
 	private function export_terms( $taxonomy ) {
-		$terms = get_terms( array(
+		$terms = get_terms( [
 			'taxonomy' => (array) $taxonomy,
 			'hide_empty' => true,
 			'get' => 'all',
-		) );
+		] );
 
 		$ordered_terms = $this->order_terms( $terms );
 
 		if ( empty( $ordered_terms ) ) {
-			return array();
+			return [];
 		}
 
-		$data = array();
+		$data = [];
 
 		foreach ( $ordered_terms as $term ) {
-			$data[] = array(
+			$data[] = [
 				'term_id' => $term->term_id,
 				'name' => $term->name,
 				'slug' => $term->slug,
 				'taxonomy' => $term->taxonomy,
 				'description' => $term->description,
 				'parent' => $term->parent,
-			);
+			];
 		}
 
 		return $data;
@@ -101,7 +101,7 @@ class Taxonomies extends Export_Runner_Base {
 	 * Put terms in order with no child going before its parent.
 	 */
 	private function order_terms( array $terms ) {
-		$ordered_terms = array();
+		$ordered_terms = [];
 
 		while ( $term = array_shift( $terms ) ) {
 			$is_top_level = 0 === $term->parent;

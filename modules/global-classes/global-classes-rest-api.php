@@ -34,60 +34,60 @@ class Global_Classes_REST_API {
 	 * TODO: Add sanitization when implemented on prop types [EDS-574]
 	 */
 	private function register_routes() {
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, array(
-			array(
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
+			[
 				'methods' => 'GET',
 				'callback' => fn() => $this->route_wrapper( fn() => $this->all() ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			),
-		) );
+			],
+		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', array(
-			array(
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
+			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get( $request ) ),
-				'args' => array(
-					'id' => array(
+				'args' => [
+					'id' => [
 						'type' => 'string',
 						'required' => true,
-					),
-				),
+					],
+				],
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			),
-		) );
+			],
+		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', array(
-			array(
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
+			[
 				'methods' => 'DELETE',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->delete( $request ) ),
-				'args' => array(
-					'id' => array(
+				'args' => [
+					'id' => [
 						'type' => 'string',
 						'required' => true,
-					),
-				),
+					],
+				],
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			),
-		) );
+			],
+		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', array(
-			array(
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
+			[
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			),
-		) );
+			],
+		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, array(
-			array(
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
+			[
 				'methods' => 'POST',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->post( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			),
-		) );
+			],
+		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '-order', array(
-			array(
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '-order', [
+			[
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->arrange( $request ) ),
 				'validate_callback' => function ( \WP_REST_Request $request ) {
@@ -105,15 +105,15 @@ class Global_Classes_REST_API {
 					return $missing_items->is_empty() && $extra_items->is_empty();
 				},
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			),
-		) );
+			],
+		] );
 	}
 
 	private function all() {
 		$classes = $this->get_repository()->all();
 
 		return Response_Builder::make( (object) $classes->get_items()->all() )
-			->set_meta( array( 'order' => $classes->get_order()->all() ) )
+			->set_meta( [ 'order' => $classes->get_order()->all() ] )
 			->build();
 	}
 
@@ -146,18 +146,18 @@ class Global_Classes_REST_API {
 
 		return Response_Builder::make()
 			->set_status( 204 )
-			->set_meta( array( 'order' => $this->get_repository()->all()->get_order()->all() ) )
+			->set_meta( [ 'order' => $this->get_repository()->all()->get_order()->all() ] )
 			->build();
 	}
 
 	private function put( \WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
 		$value = Collection::make( $request->get_params() )
-			->only( array( 'label', 'variants' ) )
-			->merge( array(
+			->only( [ 'label', 'variants' ] )
+			->merge( [
 				'type' => 'class',
 				'id' => $id,
-			) )
+			] )
 			->all();
 
 		$class = $this->get_repository()->get( $id );
@@ -182,17 +182,17 @@ class Global_Classes_REST_API {
 		$order = $this->get_repository()->all()->get_order()->all();
 
 		return Response_Builder::make( (object) $updated )
-			->set_meta( array( 'order' => $order ) )
+			->set_meta( [ 'order' => $order ] )
 			->build();
 	}
 
 	private function post( \WP_REST_Request $request ) {
 		$class = Collection::make( $request->get_params() )
-			->only( array( 'label' ) )
-			->merge( array(
-				'variants' => $request->get_param( 'variants' ) ?? array(),
+			->only( [ 'label' ] )
+			->merge( [
+				'variants' => $request->get_param( 'variants' ) ?? [],
 				'type' => 'class',
-			) )
+			] )
 			->all();
 
 		[ $is_valid, $parsed, $errors ] = Style_Parser::make( Style_Schema::get() )
@@ -211,7 +211,7 @@ class Global_Classes_REST_API {
 
 		return Response_Builder::make( (object) $new )
 			->set_status( 201 )
-			->set_meta( array( 'order' => $order ) )
+			->set_meta( [ 'order' => $order ] )
 			->build();
 	}
 

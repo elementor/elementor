@@ -47,12 +47,12 @@ class Widgets_Manager {
 	 *
 	 * @return array
 	 */
-	private array $promoted_widgets = array(
-		NestedElementsModule::EXPERIMENT_NAME => array(
+	private array $promoted_widgets = [
+		NestedElementsModule::EXPERIMENT_NAME => [
 			NestedTabs::class,
 			Nested_Accordion::class,
-		),
-	);
+		],
+	];
 
 	/**
 	 * Init widgets.
@@ -64,7 +64,7 @@ class Widgets_Manager {
 	 * @access private
 	 */
 	private function init_widgets() {
-		$build_widgets_filename = array(
+		$build_widgets_filename = [
 			'common-base',
 			'common',
 			'common-optimized',
@@ -99,9 +99,9 @@ class Widgets_Manager {
 			'sidebar',
 			'read-more',
 			'rating',
-		);
+		];
 
-		$this->_widget_types = array();
+		$this->_widget_types = [];
 
 		$this->register_promoted_widgets();
 
@@ -129,7 +129,7 @@ class Widgets_Manager {
 		 */
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
 			'elementor/widgets/widgets_registered',
-			array( $this ),
+			[ $this ],
 			'3.5.0',
 			'elementor/widgets/register'
 		);
@@ -161,7 +161,7 @@ class Widgets_Manager {
 		global $wp_widget_factory;
 
 		// Allow themes/plugins to filter out their widgets.
-		$black_list = array();
+		$black_list = [];
 
 		/**
 		 * Elementor widgets black list.
@@ -183,9 +183,9 @@ class Widgets_Manager {
 			$elementor_widget_class = __NAMESPACE__ . '\Widget_WordPress';
 
 			$this->register(
-				new $elementor_widget_class( array(), array(
+				new $elementor_widget_class( [], [
 					'widget_name' => $widget_class,
-				) )
+				] )
 			);
 		}
 	}
@@ -210,7 +210,7 @@ class Widgets_Manager {
 				}
 
 				return $controls_defaults;
-			}, array() );
+			}, [] );
 	}
 
 	/**
@@ -363,7 +363,7 @@ class Widgets_Manager {
 	 * @return array Registered widget types with each widget config.
 	 */
 	public function get_widget_types_config() {
-		$config = array();
+		$config = [];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
 			$config[ $widget_key ] = $widget->get_config();
@@ -380,23 +380,23 @@ class Widgets_Manager {
 
 		wp_raise_memory_limit( 'admin' );
 
-		$config = array();
+		$config = [];
 
 		foreach ( $this->get_widget_types() as $widget_key => $widget ) {
 			if ( isset( $data['exclude'][ $widget_key ] ) ) {
 				continue;
 			}
 
-			$config[ $widget_key ] = array(
+			$config[ $widget_key ] = [
 				'controls' => $widget->get_stack( false )['controls'],
 				'tabs_controls' => $widget->get_tabs_controls(),
-			);
+			];
 		}
 
 		return $config;
 	}
 
-	public function ajax_get_widgets_default_value_translations( array $data = array() ) {
+	public function ajax_get_widgets_default_value_translations( array $data = [] ) {
 		$locale = empty( $data['locale'] )
 			? get_locale()
 			: $data['locale'];
@@ -408,9 +408,9 @@ class Widgets_Manager {
 			->map( function ( Widget_Base $widget ) {
 				$controls = $widget->get_stack( false )['controls'];
 
-				return array(
+				return [
 					'controls' => $this->pluck_default_controls( $controls ),
-				);
+				];
 			} )
 			->filter( function ( $widget ) {
 				return ! empty( $widget['controls'] );
@@ -447,10 +447,10 @@ class Widgets_Manager {
 
 		// Override the global $post for the render.
 		query_posts(
-			array(
+			[
 				'p' => $request['editor_post_id'],
 				'post_type' => 'any',
-			)
+			]
 		);
 
 		$editor = Plugin::$instance->editor;
@@ -463,9 +463,9 @@ class Widgets_Manager {
 
 		$editor->set_edit_mode( $is_edit_mode );
 
-		return array(
+		return [
 			'render' => $render_html,
-		);
+		];
 	}
 
 	/**
@@ -491,15 +491,15 @@ class Widgets_Manager {
 		}
 
 		if ( empty( $request['data'] ) ) {
-			$request['data'] = array();
+			$request['data'] = [];
 		}
 
-		$element_data = array(
+		$element_data = [
 			'id' => $request['id'],
 			'elType' => 'widget',
 			'widgetType' => $request['widget_type'],
 			'settings' => $request['data'],
-		);
+		];
 
 		/**
 		 * @var $widget_obj Widget_WordPress
@@ -540,7 +540,7 @@ class Widgets_Manager {
 	 * @return array Registered widget types with settings keys for each widget.
 	 */
 	public function get_widgets_frontend_settings_keys() {
-		$keys = array();
+		$keys = [];
 
 		foreach ( $this->get_widget_types() as $widget_type_name => $widget_type ) {
 			$widget_type_keys = $widget_type->get_frontend_settings_keys();
@@ -565,7 +565,7 @@ class Widgets_Manager {
 	 * @return array The names of the widgets that have styles.
 	 */
 	public function widgets_with_styles(): array {
-		return array(
+		return [
 			'counter',
 			'divider',
 			'google_maps',
@@ -579,7 +579,7 @@ class Widgets_Manager {
 			'testimonial',
 			'text-editor',
 			'video',
-		);
+		];
 	}
 
 	/**
@@ -594,7 +594,7 @@ class Widgets_Manager {
 	 * @return array The names of the widgets that have responsive styles.
 	 */
 	public function widgets_with_responsive_styles(): array {
-		return array(
+		return [
 			'accordion',
 			'alert',
 			'icon-box',
@@ -605,7 +605,7 @@ class Widgets_Manager {
 			'star-rating',
 			'tabs',
 			'toggle',
-		);
+		];
 	}
 
 	/**
@@ -657,16 +657,16 @@ class Widgets_Manager {
 	 * }
 	 */
 	public function get_inline_editing_config() {
-		$basic_tools = array(
+		$basic_tools = [
 			'bold',
 			'underline',
 			'italic',
-		);
+		];
 
-		$advanced_tools = array_merge( $basic_tools, array(
+		$advanced_tools = array_merge( $basic_tools, [
 			'createlink',
 			'unlink',
-			'h1' => array(
+			'h1' => [
 				'h1',
 				'h2',
 				'h3',
@@ -676,19 +676,19 @@ class Widgets_Manager {
 				'p',
 				'blockquote',
 				'pre',
-			),
-			'list' => array(
+			],
+			'list' => [
 				'insertOrderedList',
 				'insertUnorderedList',
-			),
-		) );
+			],
+		] );
 
-		return array(
-			'toolbar' => array(
+		return [
+			'toolbar' => [
 				'basic' => $basic_tools,
 				'advanced' => $advanced_tools,
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -702,7 +702,7 @@ class Widgets_Manager {
 	public function __construct() {
 		$this->require_files();
 
-		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
 	/**
@@ -716,9 +716,9 @@ class Widgets_Manager {
 	 * @param Ajax $ajax_manager
 	 */
 	public function register_ajax_actions( Ajax $ajax_manager ) {
-		$ajax_manager->register_ajax_action( 'render_widget', array( $this, 'ajax_render_widget' ) );
-		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', array( $this, 'ajax_get_wp_widget_form' ) );
-		$ajax_manager->register_ajax_action( 'get_widgets_config', array( $this, 'ajax_get_widget_types_controls_config' ) );
+		$ajax_manager->register_ajax_action( 'render_widget', [ $this, 'ajax_render_widget' ] );
+		$ajax_manager->register_ajax_action( 'editor_get_wp_widget_form', [ $this, 'ajax_get_wp_widget_form' ] );
+		$ajax_manager->register_ajax_action( 'get_widgets_config', [ $this, 'ajax_get_widget_types_controls_config' ] );
 
 		$ajax_manager->register_ajax_action( 'get_widgets_default_value_translations', function ( array $data ) {
 			return $this->ajax_get_widgets_default_value_translations( $data );

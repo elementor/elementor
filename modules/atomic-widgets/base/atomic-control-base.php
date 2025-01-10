@@ -42,15 +42,15 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 	}
 
 	public function jsonSerialize(): array {
-		return array(
+		return [
 			'type' => 'control',
-			'value' => array(
+			'value' => [
 				'type' => $this->get_type(),
 				'bind' => $this->get_bind(),
 				'label' => $this->label,
 				'description' => $this->description,
 				'props' => $this->get_props(),
-			),
-		);
+			],
+		];
 	}
 }

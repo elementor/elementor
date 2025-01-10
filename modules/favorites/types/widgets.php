@@ -14,10 +14,10 @@ class Widgets extends Favorites_Type {
 	/**
 	 * Widgets favorites type constructor.
 	 */
-	public function __construct( array $items = array() ) {
+	public function __construct( array $items = [] ) {
 		parent::__construct( $items );
 
-		add_action( 'elementor/document/before_get_config', array( $this, 'update_widget_categories' ), 10, 1 );
+		add_action( 'elementor/document/before_get_config', [ $this, 'update_widget_categories' ], 10, 1 );
 	}
 
 	public function get_name() {
@@ -59,7 +59,7 @@ class Widgets extends Favorites_Type {
 			}
 
 			if ( $widget ) {
-				$widget->set_config( 'categories', array( static::CATEGORY_SLUG ) );
+				$widget->set_config( 'categories', [ static::CATEGORY_SLUG ] );
 			}
 		}
 	}

@@ -27,7 +27,7 @@ abstract class Common_App extends Base_User_App {
 			self::$common_data = get_user_option( static::get_option_name() );
 
 			if ( ! self::$common_data ) {
-				self::$common_data = array();
+				self::$common_data = [];
 			}
 		}
 

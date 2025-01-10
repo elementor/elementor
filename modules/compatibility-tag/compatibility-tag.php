@@ -43,7 +43,7 @@ class Compatibility_Tag extends Base_Object {
 	public function check( Version $version, array $plugins_names ) {
 		return ( new Collection( $plugins_names ) )
 			->map_with_keys( function ( $plugin_name ) use ( $version ) {
-				return array( $plugin_name => $this->is_compatible( $version, $plugin_name ) );
+				return [ $plugin_name => $this->is_compatible( $version, $plugin_name ) ];
 			} )
 			->all();
 	}

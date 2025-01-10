@@ -28,13 +28,13 @@ class Options {
 		$current_user = wp_get_current_user();
 
 		if ( ! $current_user ) {
-			return array();
+			return [];
 		}
 
 		$notifications_dismissed = get_user_meta( $current_user->ID, '_e_notifications_dismissed', true );
 
 		if ( ! is_array( $notifications_dismissed ) ) {
-			$notifications_dismissed = array();
+			$notifications_dismissed = [];
 		}
 
 		return $notifications_dismissed;

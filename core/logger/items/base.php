@@ -14,17 +14,17 @@ class Base implements Log_Item_Interface {
 	protected $date;
 	protected $type;
 	protected $message;
-	protected $meta = array();
+	protected $meta = [];
 
 	protected $times = 0;
-	protected $times_dates = array();
-	protected $args = array();
+	protected $times_dates = [];
+	protected $args = [];
 
 	public function __construct( $args ) {
 		$this->date = current_time( 'mysql' );
 		$this->message = ! empty( $args['message'] ) ? esc_html( $args['message'] ) : '';
 		$this->type = ! empty( $args['type'] ) ? $args['type'] : 'info';
-		$this->meta = ! empty( $args['meta'] ) ? $args['meta'] : array();
+		$this->meta = ! empty( $args['meta'] ) ? $args['meta'] : [];
 		$this->args = $args;
 
 		$this->set_trace();
@@ -45,9 +45,9 @@ class Base implements Log_Item_Interface {
 
 	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
-		return array(
+		return [
 			'class' => get_class( $this ),
-			'item' => array(
+			'item' => [
 				'date' => $this->date,
 				'message' => $this->message,
 				'type' => $this->type,
@@ -55,18 +55,18 @@ class Base implements Log_Item_Interface {
 				'times' => $this->times,
 				'times_dates' => $this->times_dates,
 				'args' => $this->args,
-			),
-		);
+			],
+		];
 	}
 
 	public function deserialize( $properties ) {
 		$this->date = ! empty( $properties['date'] ) && is_string( $properties['date'] ) ? $properties['date'] : '';
 		$this->message = ! empty( $properties['message'] ) && is_string( $properties['message'] ) ? $properties['message'] : '';
 		$this->type = ! empty( $properties['type'] ) && is_string( $properties['type'] ) ? $properties['type'] : '';
-		$this->meta = ! empty( $properties['meta'] ) && is_array( $properties['meta'] ) ? $properties['meta'] : array();
+		$this->meta = ! empty( $properties['meta'] ) && is_array( $properties['meta'] ) ? $properties['meta'] : [];
 		$this->times = ! empty( $properties['times'] ) && is_string( $properties['times'] ) ? $properties['times'] : '';
-		$this->times_dates = ! empty( $properties['times_dates'] ) && is_array( $properties['times_dates'] ) ? $properties['times_dates'] : array();
-		$this->args = ! empty( $properties['args'] ) && is_array( $properties['args'] ) ? $properties['args'] : array();
+		$this->times_dates = ! empty( $properties['times_dates'] ) && is_array( $properties['times_dates'] ) ? $properties['times_dates'] : [];
+		$this->args = ! empty( $properties['args'] ) && is_array( $properties['args'] ) ? $properties['args'] : [];
 	}
 
 	/**

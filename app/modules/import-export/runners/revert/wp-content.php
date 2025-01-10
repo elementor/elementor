@@ -19,25 +19,25 @@ class Wp_Content extends Revert_Runner_Base {
 
 	public function revert( array $data ) {
 		$builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
-		$custom_post_types = $data['runners']['wp-content']['custom_post_types'] ?? array();
+		$custom_post_types = $data['runners']['wp-content']['custom_post_types'] ?? [];
 
 		$post_types = array_merge( $builtin_post_types, $custom_post_types );
 
-		$query_args = array(
+		$query_args = [
 			'post_type' => $post_types,
 			'post_status' => 'any',
 			'posts_per_page' => -1,
-			'meta_query' => array(
-				array(
+			'meta_query' => [
+				[
 					'key' => static::META_KEY_ELEMENTOR_EDIT_MODE,
 					'compare' => 'NOT EXISTS',
-				),
-				array(
+				],
+				[
 					'key' => static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID,
 					'value' => $data['session_id'],
-				),
-			),
-		);
+				],
+			],
+		];
 
 		$query = new \WP_Query( $query_args );
 
@@ -54,17 +54,17 @@ class Wp_Content extends Revert_Runner_Base {
 	}
 
 	private function revert_nav_menus( array $data ) {
-		$terms = get_terms( array(
+		$terms = get_terms( [
 			'taxonomy' => 'nav_menu',
 			'hide_empty' => false,
 			'get' => 'all',
-			'meta_query' => array(
-				array(
+			'meta_query' => [
+				[
 					'key'       => static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID,
 					'value'     => $data['session_id'],
-				),
-			),
-		) );
+				],
+			],
+		] );
 
 		foreach ( $terms as $term ) {
 			wp_delete_term( $term->term_id, $term->taxonomy );

@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class App extends BaseApp {
 
-	private $templates = array();
+	private $templates = [];
 
 	/**
 	 * App constructor.
@@ -36,17 +36,17 @@ class App extends BaseApp {
 	public function __construct() {
 		$this->add_default_templates();
 
-		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'register_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'register_scripts' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
 
-		add_action( 'elementor/editor/before_enqueue_styles', array( $this, 'register_styles' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'register_styles' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_styles' ), 9 );
+		add_action( 'elementor/editor/before_enqueue_styles', [ $this, 'register_styles' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'register_styles' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 9 );
 
-		add_action( 'elementor/editor/footer', array( $this, 'print_templates' ) );
-		add_action( 'admin_footer', array( $this, 'print_templates' ) );
-		add_action( 'wp_footer', array( $this, 'print_templates' ) );
+		add_action( 'elementor/editor/footer', [ $this, 'print_templates' ] );
+		add_action( 'admin_footer', [ $this, 'print_templates' ] );
+		add_action( 'wp_footer', [ $this, 'print_templates' ] );
 	}
 
 	/**
@@ -97,7 +97,7 @@ class App extends BaseApp {
 		wp_register_script(
 			'elementor-common-modules',
 			$this->get_js_assets_url( 'common-modules' ),
-			array(),
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -105,9 +105,9 @@ class App extends BaseApp {
 		wp_register_script(
 			'backbone-marionette',
 			$this->get_js_assets_url( 'backbone.marionette', 'assets/lib/backbone/' ),
-			array(
+			[
 				'backbone',
-			),
+			],
 			'2.4.5.e1',
 			true
 		);
@@ -115,9 +115,9 @@ class App extends BaseApp {
 		wp_register_script(
 			'backbone-radio',
 			$this->get_js_assets_url( 'backbone.radio', 'assets/lib/backbone/' ),
-			array(
+			[
 				'backbone',
-			),
+			],
 			'1.0.4',
 			true
 		);
@@ -125,9 +125,9 @@ class App extends BaseApp {
 		wp_register_script(
 			'elementor-dialog',
 			$this->get_js_assets_url( 'dialog', 'assets/lib/dialog/' ),
-			array(
+			[
 				'jquery-ui-position',
-			),
+			],
 			'4.9.0',
 			true
 		);
@@ -135,7 +135,7 @@ class App extends BaseApp {
 		wp_enqueue_script(
 			'elementor-common',
 			$this->get_js_assets_url( 'common' ),
-			array(
+			[
 				'jquery',
 				'jquery-ui-draggable',
 				'backbone-marionette',
@@ -145,7 +145,7 @@ class App extends BaseApp {
 				'elementor-dialog',
 				'wp-api-request',
 				'elementor-dev-tools',
-			),
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -170,23 +170,23 @@ class App extends BaseApp {
 		wp_register_style(
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
-			array(),
+			[],
 			Icons_Manager::ELEMENTOR_ICONS_VERSION
 		);
 
 		wp_enqueue_style(
 			'elementor-common',
 			$this->get_css_assets_url( 'common', null, 'default', true ),
-			array(
+			[
 				'elementor-icons',
-			),
+			],
 			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_style(
 			'e-theme-ui-light',
 			$this->get_css_assets_url( 'theme-light' ),
-			array(),
+			[],
 			ELEMENTOR_VERSION
 		);
 	}
@@ -243,21 +243,21 @@ class App extends BaseApp {
 
 		$active_experimental_features = array_fill_keys( array_keys( $active_experimental_features ), true );
 
-		$config = array(
+		$config = [
 			'version' => ELEMENTOR_VERSION,
 			'isRTL' => is_rtl(),
 			'isDebug' => ( defined( 'WP_DEBUG' ) && WP_DEBUG ),
 			'isElementorDebug' => ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG ),
 			'activeModules' => array_keys( $this->get_components() ),
 			'experimentalFeatures' => $active_experimental_features,
-			'urls' => array(
+			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 				'rest' => get_rest_url(),
-			),
-			'filesUpload' => array(
+			],
+			'filesUpload' => [
 				'unfilteredFiles' => Uploads_Manager::are_unfiltered_uploads_enabled(),
-			),
-		);
+			],
+		];
 
 		/**
 		 * Localize common settings.
@@ -280,9 +280,9 @@ class App extends BaseApp {
 	 * @access private
 	 */
 	private function add_default_templates() {
-		$default_templates = array(
+		$default_templates = [
 			'includes/editor-templates/library-layout.php',
-		);
+		];
 
 		foreach ( $default_templates as $template ) {
 			$this->add_template( ELEMENTOR_PATH . $template );

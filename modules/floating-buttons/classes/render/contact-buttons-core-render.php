@@ -22,9 +22,9 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 			$content_classnames .= ' has-animation-duration-' . $animation_duration;
 		}
 
-		$this->widget->add_render_attribute( 'content', array(
+		$this->widget->add_render_attribute( 'content', [
 			'class' => $content_classnames,
-		) );
+		] );
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'layout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<div <?php echo $this->widget->get_render_attribute_string( 'content-wrapper' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -44,20 +44,20 @@ class Contact_Buttons_Core_Render extends Contact_Buttons_Render_Base {
 	}
 
 	protected function add_layout_render_attribute( $layout_classnames ) {
-		$this->widget->add_render_attribute( 'layout', array(
+		$this->widget->add_render_attribute( 'layout', [
 			'class' => $layout_classnames,
 			'id' => $this->settings['advanced_custom_css_id'],
 			'data-document-id' => get_the_ID(),
 			'aria-role' => 'dialog',
-		) );
+		] );
 	}
 
 	protected function add_content_wrapper_render_attribute() {
-		$this->widget->add_render_attribute( 'content-wrapper', array(
+		$this->widget->add_render_attribute( 'content-wrapper', [
 			'aria-hidden' => 'true',
 			'aria-label' => __( 'Links window', 'elementor' ),
 			'class' => 'e-contact-buttons__content-wrapper hidden',
 			'id' => 'e-contact-buttons__content-wrapper',
-		) );
+		] );
 	}
 }

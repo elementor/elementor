@@ -26,28 +26,28 @@ class Model {
 	 * @deprecated 3.0.0
 	 */
 	public function get_panel_page_settings() {
-		return array();
+		return [];
 	}
 
 	/**
 	 * @deprecated 3.0.0
 	 */
 	public function get_tabs_controls() {
-		return array();
+		return [];
 	}
 
 	/**
 	 * @deprecated 3.0.0
 	 */
 	public function get_frontend_settings() {
-		return array();
+		return [];
 	}
 
 	/**
 	 * @deprecated 3.0.0
 	 */
 	public function get_controls() {
-		return array();
+		return [];
 	}
 
 	/**

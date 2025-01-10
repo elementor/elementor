@@ -20,10 +20,10 @@ class Wp_Content extends Export_Runner_Base {
 
 	public function export( array $data ) {
 		$post_types = ImportExportUtils::get_builtin_wp_post_types();
-		$custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : array();
+		$custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 
-		$files = array();
-		$manifest_data = array();
+		$files = [];
+		$manifest_data = [];
 
 		foreach ( $post_types as $post_type ) {
 			$export = $this->export_wp_post_type( $post_type );
@@ -38,42 +38,42 @@ class Wp_Content extends Export_Runner_Base {
 
 			$post_type_object = get_post_type_object( $post_type );
 
-			$manifest_data['custom-post-type-title'][ $post_type ] = array(
+			$manifest_data['custom-post-type-title'][ $post_type ] = [
 				'name' => $post_type_object->name,
 				'label' => $post_type_object->label,
-			);
+			];
 		}
 
-		return array(
+		return [
 			'files' => $files,
-			'manifest' => array(
+			'manifest' => [
 				$manifest_data,
-			),
-		);
+			],
+		];
 	}
 
 	private function export_wp_post_type( $post_type ) {
-		$wp_exporter = new WP_Exporter( array(
+		$wp_exporter = new WP_Exporter( [
 			'content' => $post_type,
 			'status' => 'publish',
 			'limit' => 20,
-			'meta_query' => array(
-				array(
+			'meta_query' => [
+				[
 					'key' => static::META_KEY_ELEMENTOR_EDIT_MODE,
 					'compare' => 'NOT EXISTS',
-				),
-			),
+				],
+			],
 			'include_post_featured_image_as_attachment' => true,
-		) );
+		] );
 
 		$export_result = $wp_exporter->run();
 
-		return array(
-			'file' => array(
+		return [
+			'file' => [
 				'path' => 'wp-content/' . $post_type . '/' . $post_type . '.xml',
 				'data' => $export_result['xml'],
-			),
+			],
 			'manifest_data' => $export_result['ids'],
-		);
+		];
 	}
 }

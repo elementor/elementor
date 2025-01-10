@@ -26,9 +26,9 @@ class Log_Reporter extends Base {
 	}
 
 	public function get_fields() {
-		return array(
+		return [
 			'log_entries' => '',
-		);
+		];
 	}
 
 	public function print_html_label( $log_label ) {
@@ -36,10 +36,10 @@ class Log_Reporter extends Base {
 
 		if ( empty( $_GET[ self::CLEAR_LOG_ACTION ] ) ) { // phpcs:ignore -- nonce validation is not require here.
 			$nonce = wp_create_nonce( self::CLEAR_LOG_ACTION );
-			$url = add_query_arg( array(
+			$url = add_query_arg( [
 				self::CLEAR_LOG_ACTION => 1,
 				'_wpnonce' => $nonce,
-			) );
+			] );
 
 			$title .= '<a href="' . esc_url( $url ) . '#elementor-clear-log" class="box-title-tool">' . esc_html__( 'Clear Log', 'elementor' ) . '</a>';
 			$title .= '<span id="elementor-clear-log"></span>';
@@ -59,9 +59,9 @@ class Log_Reporter extends Base {
 			$nonce = Utils::get_super_global_value( $_GET, '_wpnonce' );
 
 			if ( ! wp_verify_nonce( $nonce, self::CLEAR_LOG_ACTION ) ) {
-				wp_die( 'Invalid Nonce', 'Invalid Nonce', array(
+				wp_die( 'Invalid Nonce', 'Invalid Nonce', [
 					'back_link' => true,
-				) );
+				] );
 			}
 
 			$logger->clear();
@@ -84,9 +84,9 @@ class Log_Reporter extends Base {
 			}
 		}
 
-		return array(
+		return [
 			'value' => $log_string,
-		);
+		];
 	}
 
 	public function get_raw_log_entries() {
@@ -110,8 +110,8 @@ class Log_Reporter extends Base {
 			}
 		}
 
-		return array(
+		return [
 			'value' => $log_string,
-		);
+		];
 	}
 }

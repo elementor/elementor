@@ -43,43 +43,43 @@ class General extends Base_Category {
 	 *
 	 * @return array
 	 */
-	public function get_category_items( array $options = array() ) {
-		return array(
-			'saved-templates' => array(
+	public function get_category_items( array $options = [] ) {
+		return [
+			'saved-templates' => [
 				'title' => esc_html__( 'Saved Templates', 'elementor' ),
 				'icon' => 'library-save',
 				'url' => Source_Local::get_admin_url(),
-				'keywords' => array( 'template', 'section', 'page', 'library' ),
-			),
-			'system-info' => array(
+				'keywords' => [ 'template', 'section', 'page', 'library' ],
+			],
+			'system-info' => [
 				'title' => esc_html__( 'System Info', 'elementor' ),
 				'icon' => 'info-circle-o',
 				'url' => admin_url( 'admin.php?page=elementor-system-info' ),
-				'keywords' => array( 'system', 'info', 'environment', 'elementor' ),
-			),
-			'role-manager' => array(
+				'keywords' => [ 'system', 'info', 'environment', 'elementor' ],
+			],
+			'role-manager' => [
 				'title' => esc_html__( 'Role Manager', 'elementor' ),
 				'icon' => 'person',
 				'url' => Role_Manager::get_url(),
-				'keywords' => array( 'role', 'manager', 'user', 'elementor' ),
-			),
-			'knowledge-base' => array(
+				'keywords' => [ 'role', 'manager', 'user', 'elementor' ],
+			],
+			'knowledge-base' => [
 				'title' => esc_html__( 'Knowledge Base', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=go_knowledge_base_site' ),
-				'keywords' => array( 'help', 'knowledge', 'docs', 'elementor' ),
-			),
-			'theme-builder' => array(
+				'keywords' => [ 'help', 'knowledge', 'docs', 'elementor' ],
+			],
+			'theme-builder' => [
 				'title' => esc_html__( 'Theme Builder', 'elementor' ),
 				'icon' => 'library-save',
 				'url' => Plugin::$instance->app->get_settings( 'menu_url' ),
-				'keywords' => array( 'template', 'header', 'footer', 'single', 'archive', 'search', '404', 'library' ),
-			),
-			'kit-library' => array(
+				'keywords' => [ 'template', 'header', 'footer', 'single', 'archive', 'search', '404', 'library' ],
+			],
+			'kit-library' => [
 				'title' => esc_html__( 'Kit Library', 'elementor' ),
 				'icon' => 'kit-parts',
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library',
-				'keywords' => array( 'kit library', 'kit', 'library', 'site parts', 'parts', 'assets', 'templates' ),
-			),
-		);
+				'keywords' => [ 'kit library', 'kit', 'library', 'site parts', 'parts', 'assets', 'templates' ],
+			],
+		];
 	}
 }

@@ -8,11 +8,11 @@ class Global_Classes implements \JsonSerializable {
 	private Collection $items;
 	private Collection $order;
 
-	public static function make( array $items = array(), array $order = array() ) {
+	public static function make( array $items = [], array $order = [] ) {
 		return new static( $items, $order );
 	}
 
-	private function __construct( array $data = array(), array $order = array() ) {
+	private function __construct( array $data = [], array $order = [] ) {
 		$this->items = Collection::make( $data );
 		$this->order = Collection::make( $order );
 	}
@@ -26,10 +26,10 @@ class Global_Classes implements \JsonSerializable {
 	}
 
 	public function get() {
-		return array(
+		return [
 			'items' => $this->get_items()->all(),
 			'order' => $this->get_order()->all(),
-		);
+		];
 	}
 
 	public function jsonSerialize() {

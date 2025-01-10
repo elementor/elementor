@@ -28,13 +28,13 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 	}
 
 	protected function get_content_lines(): array {
-		return array(
+		return [
 			sprintf(
 				esc_html__( 'Expand your icon library beyond FontAwesome and add icon %s libraries of your choice', 'elementor' ),
 				'<br />'
 			),
 			esc_html__( 'Add any icon, anywhere on your website', 'elementor' ),
-		);
+		];
 	}
 
 	protected function get_cta_url(): string {

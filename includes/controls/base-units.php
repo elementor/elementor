@@ -27,9 +27,9 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return array(
+		return [
 			'unit' => 'px',
-		);
+		];
 	}
 
 	/**
@@ -44,71 +44,71 @@ abstract class Control_Base_Units extends Control_Base_Multiple {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
-			'size_units' => array( 'px' ),
-			'range' => array(
-				'px' => array(
+		return [
+			'size_units' => [ 'px' ],
+			'range' => [
+				'px' => [
 					'min' => 0,
 					'max' => 100,
 					'step' => 1,
-				),
-				'em' => array(
+				],
+				'em' => [
 					'min' => 0.1,
 					'max' => 10,
 					'step' => 0.1,
-				),
-				'rem' => array(
+				],
+				'rem' => [
 					'min' => 0.1,
 					'max' => 10,
 					'step' => 0.1,
-				),
-				'%' => array(
+				],
+				'%' => [
 					'min' => 0,
 					'max' => 100,
 					'step' => 1,
-				),
-				'deg' => array(
+				],
+				'deg' => [
 					'min' => 0,
 					'max' => 360,
 					'step' => 1,
-				),
-				'grad' => array(
+				],
+				'grad' => [
 					'min' => 0,
 					'max' => 400,
 					'step' => 1,
-				),
-				'rad' => array(
+				],
+				'rad' => [
 					'min' => 0,
 					'max' => 6.2832,
 					'step' => 0.0001,
-				),
-				'turn' => array(
+				],
+				'turn' => [
 					'min' => 0,
 					'max' => 1,
 					'step' => 0.01,
-				),
-				'vh' => array(
+				],
+				'vh' => [
 					'min' => 0,
 					'max' => 100,
 					'step' => 1,
-				),
-				'vw' => array(
+				],
+				'vw' => [
 					'min' => 0,
 					'max' => 100,
 					'step' => 1,
-				),
-				's' => array(
+				],
+				's' => [
 					'min' => 0,
 					'max' => 3,
 					'step' => 0.1,
-				),
-				'ms' => array(
+				],
+				'ms' => [
 					'min' => 0,
 					'max' => 3000,
 					'step' => 100,
-				),
-			),
-		);
+				],
+			],
+		];
 	}
 
 	/**

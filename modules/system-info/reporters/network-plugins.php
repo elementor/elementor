@@ -89,9 +89,9 @@ class Network_Plugins extends Base_Plugin {
 	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
-		return array(
+		return [
 			'network_active_plugins' => 'Network Plugins',
-		);
+		];
 	}
 
 	/**
@@ -109,8 +109,8 @@ class Network_Plugins extends Base_Plugin {
 	 * }
 	 */
 	public function get_network_active_plugins() {
-		return array(
+		return [
 			'value' => $this->get_network_plugins(),
-		);
+		];
 	}
 }

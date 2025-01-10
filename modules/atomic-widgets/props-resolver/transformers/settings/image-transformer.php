@@ -22,21 +22,21 @@ class Image_Transformer extends Transformer_Base {
 
 			[ $src, $width, $height ] = $image_src;
 
-			return array(
+			return [
 				'src' => $src,
 				'width' => (int) $width,
 				'height' => (int) $height,
 				'srcset' => wp_get_attachment_image_srcset( $value['src']['id'], $value['size'] ),
 				'alt' => get_post_meta( $value['src']['id'], '_wp_attachment_image_alt', true ),
-			);
+			];
 		}
 
 		if ( empty( $value['src']['url'] ) ) {
 			throw new \Exception( 'Invalid image URL.' );
 		}
 
-		return array(
+		return [
 			'src' => $value['src']['url'],
-		);
+		];
 	}
 }

@@ -8,12 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Base_Plugin extends Base {
-	public static $required_plugins_properties = array(
+	public static $required_plugins_properties = [
 		'Name',
 		'Version',
 		'URL',
 		'Author',
-	);
+	];
 
 	public function print_html() {
 		foreach ( $this->get_report( 'html' ) as $field ) {

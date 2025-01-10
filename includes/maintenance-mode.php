@@ -107,7 +107,7 @@ class Maintenance_Mode {
 
 		$user = wp_get_current_user();
 
-		$exclude_mode = self::get( 'exclude_mode', array() );
+		$exclude_mode = self::get( 'exclude_mode', [] );
 
 		$is_login_page = false;
 
@@ -131,7 +131,7 @@ class Maintenance_Mode {
 		}
 
 		if ( 'custom' === $exclude_mode ) {
-			$exclude_roles = self::get( 'exclude_roles', array() );
+			$exclude_roles = self::get( 'exclude_roles', [] );
 			$user_roles = $user->roles;
 
 			if ( is_multisite() && is_super_admin() ) {
@@ -145,7 +145,7 @@ class Maintenance_Mode {
 			}
 		}
 
-		add_filter( 'body_class', array( $this, 'body_class' ) );
+		add_filter( 'body_class', [ $this, 'body_class' ] );
 
 		if ( 'maintenance' === self::get( 'mode' ) ) {
 			$protocol = wp_get_server_protocol();
@@ -158,10 +158,10 @@ class Maintenance_Mode {
 		$GLOBALS['post'] = get_post( self::get( 'template_id' ) ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Set the template as `$wp_query->current_object` for `wp_title` and etc.
-		query_posts( array(
+		query_posts( [
 			'p' => self::get( 'template_id' ),
 			'post_type' => Source_Local::CPT,
-		) );
+		] );
 	}
 
 	/**
@@ -180,11 +180,11 @@ class Maintenance_Mode {
 	 * @param Tools $tools An instance of the Tools settings page.
 	 */
 	public function register_settings_fields( Tools $tools ) {
-		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( array(
+		$templates = Plugin::$instance->templates_manager->get_source( 'local' )->get_items( [
 			'type' => 'page',
-		) );
+		] );
 
-		$templates_options = array();
+		$templates_options = [];
 
 		foreach ( $templates as $template ) {
 			$templates_options[ $template['template_id'] ] = esc_html( $template['title'] );
@@ -197,25 +197,25 @@ class Maintenance_Mode {
 		$template_description = ob_get_clean();
 
 		$tools->add_tab(
-			'maintenance_mode', array(
+			'maintenance_mode', [
 				'label' => esc_html__( 'Maintenance Mode', 'elementor' ),
-				'sections' => array(
-					'maintenance_mode' => array(
+				'sections' => [
+					'maintenance_mode' => [
 						'callback' => function () {
 							echo '<h2>' . esc_html__( 'Maintenance Mode', 'elementor' ) . '</h2>';
 							echo '<p>' . esc_html__( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' ) . '</p>';
 						},
-						'fields' => array(
-							'maintenance_mode_mode' => array(
+						'fields' => [
+							'maintenance_mode_mode' => [
 								'label' => esc_html__( 'Choose Mode', 'elementor' ),
-								'field_args' => array(
+								'field_args' => [
 									'type' => 'select',
 									'std' => '',
-									'options' => array(
+									'options' => [
 										'' => esc_html__( 'Disabled', 'elementor' ),
 										self::MODE_COMING_SOON => esc_html__( 'Coming Soon', 'elementor' ),
 										self::MODE_MAINTENANCE => esc_html__( 'Maintenance', 'elementor' ),
-									),
+									],
 									'desc' => '<div class="elementor-maintenance-mode-description" data-value="" style="display: none">' .
 												esc_html__( 'Choose between Coming Soon mode (returning HTTP 200 code) or Maintenance Mode (returning HTTP 503 code).', 'elementor' ) .
 												'</div>' .
@@ -225,43 +225,43 @@ class Maintenance_Mode {
 												'<div class="elementor-maintenance-mode-description" data-value="coming_soon" style="display: none">' .
 												esc_html__( 'Coming Soon returns HTTP 200 code, meaning the site is ready to be indexed.', 'elementor' ) .
 												'</div>',
-								),
-							),
-							'maintenance_mode_exclude_mode' => array(
+								],
+							],
+							'maintenance_mode_exclude_mode' => [
 								'label' => esc_html__( 'Who Can Access', 'elementor' ),
-								'field_args' => array(
+								'field_args' => [
 									'class' => 'elementor-default-hide',
 									'type' => 'select',
 									'std' => 'logged_in',
-									'options' => array(
+									'options' => [
 										'logged_in' => esc_html__( 'Logged In', 'elementor' ),
 										'custom' => esc_html__( 'Custom', 'elementor' ),
-									),
-								),
-							),
-							'maintenance_mode_exclude_roles' => array(
+									],
+								],
+							],
+							'maintenance_mode_exclude_roles' => [
 								'label' => esc_html__( 'Roles', 'elementor' ),
-								'field_args' => array(
+								'field_args' => [
 									'class' => 'elementor-default-hide',
 									'type' => 'checkbox_list_roles',
-								),
-								'setting_args' => array( __NAMESPACE__ . '\Settings_Validations', 'checkbox_list' ),
-							),
-							'maintenance_mode_template_id' => array(
+								],
+								'setting_args' => [ __NAMESPACE__ . '\Settings_Validations', 'checkbox_list' ],
+							],
+							'maintenance_mode_template_id' => [
 								'label' => esc_html__( 'Choose Template', 'elementor' ),
-								'field_args' => array(
+								'field_args' => [
 									'class' => 'elementor-default-hide',
 									'type' => 'select',
 									'std' => '',
 									'show_select' => true,
 									'options' => $templates_options,
 									'desc' => $template_description,
-								),
-							),
-						),
-					),
-				),
-			)
+								],
+							],
+						],
+					],
+				],
+			]
 		);
 	}
 
@@ -278,20 +278,20 @@ class Maintenance_Mode {
 	 * @param \WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance, passed by reference.
 	 */
 	public function add_menu_in_admin_bar( \WP_Admin_Bar $wp_admin_bar ) {
-		$wp_admin_bar->add_node( array(
+		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-on',
 			'title' => esc_html__( 'Maintenance Mode ON', 'elementor' ),
 			'href' => Tools::get_url() . '#tab-maintenance_mode',
-		) );
+		] );
 
 		$document = Plugin::$instance->documents->get( self::get( 'template_id' ) );
 
-		$wp_admin_bar->add_node( array(
+		$wp_admin_bar->add_node( [
 			'id' => 'elementor-maintenance-edit',
 			'parent' => 'elementor-maintenance-on',
 			'title' => esc_html__( 'Edit Template', 'elementor' ),
 			'href' => $document ? $document->get_edit_url() : '',
-		) );
+		] );
 	}
 
 	/**
@@ -327,25 +327,25 @@ class Maintenance_Mode {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'update_option_elementor_maintenance_mode_mode', array( $this, 'on_update_mode' ), 10, 2 );
+		add_action( 'update_option_elementor_maintenance_mode_mode', [ $this, 'on_update_mode' ], 10, 2 );
 
 		$is_enabled = (bool) self::get( 'mode' ) && (bool) self::get( 'template_id' );
 
 		if ( is_admin() ) {
 			$page_id = Tools::PAGE_ID;
-			add_action( "elementor/admin/after_create_settings/{$page_id}", array( $this, 'register_settings_fields' ) );
+			add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_fields' ] );
 		}
 
 		if ( ! $is_enabled ) {
 			return;
 		}
 
-		add_action( 'admin_bar_menu', array( $this, 'add_menu_in_admin_bar' ), 300 );
-		add_action( 'admin_head', array( $this, 'print_style' ) );
-		add_action( 'wp_head', array( $this, 'print_style' ) );
+		add_action( 'admin_bar_menu', [ $this, 'add_menu_in_admin_bar' ], 300 );
+		add_action( 'admin_head', [ $this, 'print_style' ] );
+		add_action( 'wp_head', [ $this, 'print_style' ] );
 
 		// Priority = 11 that is *after* WP default filter `redirect_canonical` in order to avoid redirection loop.
-		add_action( 'template_redirect', array( $this, 'template_redirect' ), 11 );
+		add_action( 'template_redirect', [ $this, 'template_redirect' ], 11 );
 	}
 
 	/**

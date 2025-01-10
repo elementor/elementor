@@ -59,7 +59,7 @@ class Control_Animation extends Base_Data_Control {
 	 * @return array Control type.
 	 */
 	public static function get_animations() {
-		$additional_animations = array();
+		$additional_animations = [];
 
 		/**
 		 * Entrance animations.
@@ -79,42 +79,42 @@ class Control_Animation extends Base_Data_Control {
 	}
 
 	public static function get_default_animations() {
-		return array(
-			'Fading' => array(
+		return [
+			'Fading' => [
 				'fadeIn' => 'Fade In',
 				'fadeInDown' => 'Fade In Down',
 				'fadeInLeft' => 'Fade In Left',
 				'fadeInRight' => 'Fade In Right',
 				'fadeInUp' => 'Fade In Up',
-			),
-			'Zooming' => array(
+			],
+			'Zooming' => [
 				'zoomIn' => 'Zoom In',
 				'zoomInDown' => 'Zoom In Down',
 				'zoomInLeft' => 'Zoom In Left',
 				'zoomInRight' => 'Zoom In Right',
 				'zoomInUp' => 'Zoom In Up',
-			),
-			'Bouncing' => array(
+			],
+			'Bouncing' => [
 				'bounceIn' => 'Bounce In',
 				'bounceInDown' => 'Bounce In Down',
 				'bounceInLeft' => 'Bounce In Left',
 				'bounceInRight' => 'Bounce In Right',
 				'bounceInUp' => 'Bounce In Up',
-			),
-			'Sliding' => array(
+			],
+			'Sliding' => [
 				'slideInDown' => 'Slide In Down',
 				'slideInLeft' => 'Slide In Left',
 				'slideInRight' => 'Slide In Right',
 				'slideInUp' => 'Slide In Up',
-			),
-			'Rotating' => array(
+			],
+			'Rotating' => [
 				'rotateIn' => 'Rotate In',
 				'rotateInDownLeft' => 'Rotate In Down Left',
 				'rotateInDownRight' => 'Rotate In Down Right',
 				'rotateInUpLeft' => 'Rotate In Up Left',
 				'rotateInUpRight' => 'Rotate In Up Right',
-			),
-			'Attention Seekers' => array(
+			],
+			'Attention Seekers' => [
 				'bounce' => 'Bounce',
 				'flash' => 'Flash',
 				'pulse' => 'Pulse',
@@ -125,14 +125,14 @@ class Control_Animation extends Base_Data_Control {
 				'tada' => 'Tada',
 				'wobble' => 'Wobble',
 				'jello' => 'Jello',
-			),
-			'Light Speed' => array(
+			],
+			'Light Speed' => [
 				'lightSpeedIn' => 'Light Speed In',
-			),
-			'Specials' => array(
+			],
+			'Specials' => [
 				'rollIn' => 'Roll In',
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -171,11 +171,11 @@ class Control_Animation extends Base_Data_Control {
 
 	public static function get_assets( $setting ) {
 		if ( ! $setting || 'none' === $setting ) {
-			return array();
+			return [];
 		}
 
-		return array(
-			'styles' => array( 'e-animation-' . $setting ),
-		);
+		return [
+			'styles' => [ 'e-animation-' . $setting ],
+		];
 	}
 }

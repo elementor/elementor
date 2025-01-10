@@ -30,7 +30,7 @@ class Import {
 	/**
 	 * @var Import_Runner_Base[]
 	 */
-	protected $runners = array();
+	protected $runners = [];
 
 	/**
 	 * The session ID of the import process.
@@ -59,7 +59,7 @@ class Import {
 	 *
 	 * @var array { [document_id] => { "elements": array , "settings": array } }
 	 */
-	private $documents_data = array();
+	private $documents_data = [];
 
 	/**
 	 * Path to the extracted kit files.
@@ -129,7 +129,7 @@ class Import {
 	 *
 	 * @var array
 	 */
-	private $imported_data = array();
+	private $imported_data = [];
 
 	/**
 	 * The metadata output of the import runners.
@@ -137,7 +137,7 @@ class Import {
 	 *
 	 * @var array
 	 */
-	private $runners_import_metadata = array();
+	private $runners_import_metadata = [];
 
 	/**
 	 * @param string $path session_id | zip_file_path
@@ -147,7 +147,7 @@ class Import {
 	 *      We are using it for quick creation of the instance when the import process is being split into chunks.
 	 * @throws \Exception
 	 */
-	public function __construct( string $path, array $settings = array(), array $old_instance = null ) {
+	public function __construct( string $path, array $settings = [], array $old_instance = null ) {
 		if ( ! empty( $old_instance ) ) {
 			$this->set_import_object( $old_instance );
 		} else {
@@ -232,7 +232,7 @@ class Import {
 
 		$import_session = $import_sessions[ $session_id ];
 
-		return new self( $session_id, array(), $import_session );
+		return new self( $session_id, [], $import_session );
 	}
 
 	/**
@@ -291,7 +291,7 @@ class Import {
 			throw new \Exception( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 		}
 
-		$data = array(
+		$data = [
 			'session_id' => $this->session_id,
 			'include' => $this->settings_include,
 			'manifest' => $this->manifest,
@@ -299,12 +299,12 @@ class Import {
 			'selected_plugins' => $this->settings_selected_plugins,
 			'extracted_directory_path' => $this->extracted_directory_path,
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
-		);
+		];
 
 		$this->init_import_session();
 
-		remove_filter( 'elementor/document/save/data', array( Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ) );
-		add_filter( 'elementor/document/save/data', array( $this, 'prevent_saving_elements_on_post_creation' ), 10, 2 );
+		remove_filter( 'elementor/document/save/data', [ Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ] );
+		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
 
 		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
@@ -321,7 +321,7 @@ class Import {
 		// After the upload complete, set the elementor upload state back to false.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 
-		remove_filter( 'elementor/document/save/data', array( $this, 'prevent_saving_elements_on_post_creation' ), 10 );
+		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
 		$this->finalize_import_session_option();
 
@@ -345,7 +345,7 @@ class Import {
 			throw new \Exception( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 		}
 
-		$data = array(
+		$data = [
 			'session_id' => $this->session_id,
 			'include' => $this->settings_include,
 			'manifest' => $this->manifest,
@@ -353,9 +353,9 @@ class Import {
 			'selected_plugins' => $this->settings_selected_plugins,
 			'extracted_directory_path' => $this->extracted_directory_path,
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
-		);
+		];
 
-		add_filter( 'elementor/document/save/data', array( $this, 'prevent_saving_elements_on_post_creation' ), 10, 2 );
+		add_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10, 2 );
 
 		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
@@ -376,7 +376,7 @@ class Import {
 		// After the upload complete, set the elementor upload state back to false.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 
-		remove_filter( 'elementor/document/save/data', array( $this, 'prevent_saving_elements_on_post_creation' ), 10 );
+		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
 		$is_last_runner = key( array_slice( $this->runners, -1, 1, true ) ) === $runner_name;
 		if ( $is_last_runner ) {
@@ -386,10 +386,10 @@ class Import {
 			$this->update_instance_data_in_import_session_option();
 		}
 
-		return array(
+		return [
 			'status' => 'success',
 			'runner' => $runner_name,
-		);
+		];
 	}
 
 	/**
@@ -400,7 +400,7 @@ class Import {
 	public function init_import_session( $save_instance_data = false ) {
 		$import_sessions = Utils::get_import_sessions( true );
 
-		$import_sessions[ $this->session_id ] = array(
+		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
 			'kit_title' => $this->manifest['title'] ?? '',
 			'kit_name' => $this->manifest['name'] ?? '',
@@ -408,10 +408,10 @@ class Import {
 			'kit_source' => $this->settings_referrer,
 			'user_id' => get_current_user_id(),
 			'start_timestamp' => current_time( 'timestamp' ),
-		);
+		];
 
 		if ( $save_instance_data ) {
-			$import_sessions[ $this->session_id ]['instance_data'] = array(
+			$import_sessions[ $this->session_id ]['instance_data'] = [
 				'extracted_directory_path' => $this->extracted_directory_path,
 				'runners' => $this->runners,
 				'adapters' => $this->adapters,
@@ -429,7 +429,7 @@ class Import {
 				'documents_data' => $this->documents_data,
 				'imported_data' => $this->imported_data,
 				'runners_import_metadata' => $this->runners_import_metadata,
-			);
+			];
 		}
 
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
@@ -504,7 +504,7 @@ class Import {
 				return $this->get_settings_selected_plugins();
 
 			default:
-				return array();
+				return [];
 		}
 	}
 
@@ -578,9 +578,9 @@ class Import {
 	 */
 	public function prevent_saving_elements_on_post_creation( array $data, Document $document ) {
 		if ( isset( $data['elements'] ) ) {
-			$this->documents_data[ $document->get_main_id() ] = array( 'elements' => $data['elements'] );
+			$this->documents_data[ $document->get_main_id() ] = [ 'elements' => $data['elements'] ];
 
-			$data['elements'] = array();
+			$data['elements'] = [];
 		}
 
 		if ( isset( $data['settings'] ) ) {
@@ -598,7 +598,7 @@ class Import {
 	 * @return string The extracted directory path.
 	 */
 	private function extract_zip( $zip_path ) {
-		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, array( 'json', 'xml' ) );
+		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
 
 		if ( is_wp_error( $extraction_result ) ) {
 			if ( isset( $extraction_result->errors['zip_error'] ) ) {
@@ -639,13 +639,13 @@ class Import {
 	 * @param array $manifest_data The manifest file content.
 	 */
 	private function init_adapters( array $manifest_data ) {
-		$this->adapters = array();
+		$this->adapters = [];
 
 		/** @var Base_Adapter[] $adapter_types */
-		$adapter_types = array( Envato::class, Kit_Library::class );
+		$adapter_types = [ Envato::class, Kit_Library::class ];
 
 		foreach ( $adapter_types as $adapter_type ) {
-			if ( $adapter_type::is_compatibility_needed( $manifest_data, array( 'referrer' => $this->get_settings_referrer() ) ) ) {
+			if ( $adapter_type::is_compatibility_needed( $manifest_data, [ 'referrer' => $this->get_settings_referrer() ] ) ) {
 				$this->adapters[] = new $adapter_type( $this );
 			}
 		}
@@ -673,7 +673,7 @@ class Import {
 	 */
 	private function get_default_settings_custom_post_types() {
 		if ( empty( $this->manifest['custom-post-type-title'] ) ) {
-			return array();
+			return [];
 		}
 
 		$manifest_post_types = array_keys( $this->manifest['custom-post-type-title'] );
@@ -688,10 +688,10 @@ class Import {
 	 */
 	private function get_default_settings_conflicts() {
 		if ( empty( $this->manifest['templates'] ) ) {
-			return array();
+			return [];
 		}
 
-		return apply_filters( 'elementor/import/get_default_settings_conflicts', array(), $this->manifest['templates'] );
+		return apply_filters( 'elementor/import/get_default_settings_conflicts', [], $this->manifest['templates'] );
 	}
 
 	/**
@@ -701,7 +701,7 @@ class Import {
 	 */
 	private function get_default_settings_override_conditions() {
 		if ( empty( $this->settings_conflicts ) ) {
-			return array();
+			return [];
 		}
 
 		return array_keys( $this->settings_conflicts );
@@ -713,7 +713,7 @@ class Import {
 	 * @return array
 	 */
 	private function get_default_settings_plugins() {
-		return ! empty( $this->manifest['plugins'] ) ? $this->manifest['plugins'] : array();
+		return ! empty( $this->manifest['plugins'] ) ? $this->manifest['plugins'] : [];
 	}
 
 	/**
@@ -722,7 +722,7 @@ class Import {
 	 * @return array
 	 */
 	private function get_default_settings_include() {
-		return array( 'templates', 'plugins', 'content', 'settings' );
+		return [ 'templates', 'plugins', 'content', 'settings' ];
 	}
 
 	/**
@@ -731,10 +731,10 @@ class Import {
 	 * @return array{post_ids: array, term_ids: array}
 	 */
 	private function get_imported_data_replacements(): array {
-		return array(
+		return [
 			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data ),
 			'term_ids' => Utils::map_old_new_term_ids( $this->imported_data ),
-		);
+		];
 	}
 
 	/**

@@ -27,7 +27,7 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	public function get_keywords() {
-		return array( 'star', 'rating', 'review', 'score', 'scale' );
+		return [ 'star', 'rating', 'review', 'score', 'scale' ];
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -35,7 +35,7 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	public function get_style_depends(): array {
-		return array( 'widget-rating' );
+		return [ 'widget-rating' ];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -48,83 +48,83 @@ class Widget_Rating extends Widget_Base {
 	private function add_style_tab() {
 		$this->start_controls_section(
 			'section_icon_style',
-			array(
+			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_responsive_control(
 			'icon_size',
-			array(
+			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em', 'rem', 'vw', 'custom' ),
-				'range' => array(
-					'px' => array(
+				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
+				'range' => [
+					'px' => [
 						'max' => 100,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'min' => 0,
 						'max' => 10,
-					),
-					'rem' => array(
+					],
+					'rem' => [
 						'min' => 0,
 						'max' => 10,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}}' => '--e-rating-icon-font-size: {{SIZE}}{{UNIT}}',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'icon_gap',
-			array(
+			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em', 'rem', 'vw', 'custom' ),
-				'range' => array(
-					'px' => array(
+				'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
+				'range' => [
+					'px' => [
 						'max' => 100,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'min' => 0,
 						'max' => 10,
-					),
-					'rem' => array(
+					],
+					'rem' => [
 						'min' => 0,
 						'max' => 10,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}}' => '--e-rating-gap: {{SIZE}}{{UNIT}}',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'icon_color',
-			array(
+			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}}' => '--e-rating-icon-marked-color: {{VALUE}}',
-				),
+				],
 				'separator' => 'before',
-			)
+			]
 		);
 
 		$this->add_control(
 			'icon_unmarked_color',
-			array(
+			[
 				'label' => esc_html__( 'Unmarked Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}}' => '--e-rating-icon-color: {{VALUE}}',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();
@@ -136,92 +136,92 @@ class Widget_Rating extends Widget_Base {
 
 		$this->start_controls_section(
 			'section_rating',
-			array(
+			[
 				'label' => esc_html__( 'Rating', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'rating_scale',
-			array(
+			[
 				'label' => esc_html__( 'Rating Scale', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => array(
-					'px' => array(
+				'range' => [
+					'px' => [
 						'min' => 1,
 						'max' => 10,
-					),
-				),
-				'default' => array(
+					],
+				],
+				'default' => [
 					'size' => 5,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'rating_value',
-			array(
+			[
 				'label' => esc_html__( 'Rating', 'elementor' ),
 				'type' => Controls_Manager::NUMBER,
 				'min' => 0,
 				'step' => 0.5,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'rating_icon',
-			array(
+			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
 				'skin' => 'inline',
 				'label_block' => false,
-				'skin_settings' => array(
-					'inline' => array(
-						'icon' => array(
+				'skin_settings' => [
+					'inline' => [
+						'icon' => [
 							'icon' => 'eicon-star',
-						),
-					),
-				),
-				'default' => array(
+						],
+					],
+				],
+				'default' => [
 					'value' => 'eicon-star',
 					'library' => 'eicons',
-				),
+				],
 				'separator' => 'before',
-				'exclude_inline_options' => array( 'none' ),
-			)
+				'exclude_inline_options' => [ 'none' ],
+			]
 		);
 
-		$this->add_responsive_control( 'icon_alignment', array(
+		$this->add_responsive_control( 'icon_alignment', [
 			'label' => esc_html__( 'Alignment', 'elementor' ),
 			'type' => Controls_Manager::CHOOSE,
-			'options' => array(
-				'start' => array(
+			'options' => [
+				'start' => [
 					'title' => esc_html__( 'Start', 'elementor' ),
 					'icon' => "eicon-align-$start_logical-h",
-				),
-				'center' => array(
+				],
+				'center' => [
 					'title' => esc_html__( 'Center', 'elementor' ),
 					'icon' => 'eicon-align-center-h',
-				),
-				'end' => array(
+				],
+				'end' => [
 					'title' => esc_html__( 'End', 'elementor' ),
 					'icon' => "eicon-align-$end_logical-h",
-				),
-			),
-			'selectors_dictionary' => array(
+				],
+			],
+			'selectors_dictionary' => [
 				'start' => '--e-rating-justify-content: flex-start;',
 				'center' => '--e-rating-justify-content: center;',
 				'end' => '--e-rating-justify-content: flex-end;',
-			),
-			'selectors' => array(
+			],
+			'selectors' => [
 				'{{WRAPPER}}' => '{{VALUE}}',
-			),
+			],
 			'separator' => 'before',
-		) );
+		] );
 
 		$this->end_controls_section();
 
@@ -266,24 +266,24 @@ class Widget_Rating extends Widget_Base {
 		ob_start();
 
 		for ( $index = 1; $index <= $rating_scale; $index++ ) {
-			$this->add_render_attribute( 'icon_marked_' . $index, array(
+			$this->add_render_attribute( 'icon_marked_' . $index, [
 				'class' => 'e-icon-wrapper e-icon-marked',
-			) );
+			] );
 
 			$icon_marked_width = $this->get_icon_marked_width( $index );
 
 			if ( '100%' !== $icon_marked_width ) {
-				$this->add_render_attribute( 'icon_marked_' . $index, array(
+				$this->add_render_attribute( 'icon_marked_' . $index, [
 					'style' => '--e-rating-icon-marked-width: ' . $icon_marked_width . ';',
-				) );
+				] );
 			}
 			?>
 			<div class="e-icon">
 				<div <?php $this->print_render_attribute_string( 'icon_marked_' . $index ); ?>>
-					<?php echo Icons_Manager::try_get_icon_html( $icon, array( 'aria-hidden' => 'true' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</div>
 				<div class="e-icon-wrapper e-icon-unmarked">
-					<?php echo Icons_Manager::try_get_icon_html( $icon, array( 'aria-hidden' => 'true' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo Icons_Manager::try_get_icon_html( $icon, [ 'aria-hidden' => 'true' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</div>
 			</div>
 			<?php
@@ -293,14 +293,14 @@ class Widget_Rating extends Widget_Base {
 	}
 
 	protected function render() {
-		$this->add_render_attribute( 'widget', array(
+		$this->add_render_attribute( 'widget', [
 			'class' => 'e-rating',
 			'itemtype' => 'https://schema.org/Rating',
 			'itemscope' => '',
 			'itemprop' => 'reviewRating',
-		) );
+		] );
 
-		$this->add_render_attribute( 'widget_wrapper', array(
+		$this->add_render_attribute( 'widget_wrapper', [
 			'class' => 'e-rating-wrapper',
 			'itemprop' => 'ratingValue',
 			'content' => $this->get_rating_value(),
@@ -309,7 +309,7 @@ class Widget_Rating extends Widget_Base {
 				$this->get_rating_value(),
 				$this->get_rating_scale()
 			),
-		) );
+		] );
 		?>
 		<div <?php $this->print_render_attribute_string( 'widget' ); ?>>
 			<meta itemprop="worstRating" content="0">

@@ -69,18 +69,18 @@ class Control_Color extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'alpha' => true,
 			'scheme' => '',
-			'dynamic' => array(
-				'categories' => array(
+			'dynamic' => [
+				'categories' => [
 					TagsModule::COLOR_CATEGORY,
-				),
+				],
 				'active' => true,
-			),
-			'global' => array(
+			],
+			'global' => [
 				'active' => true,
-			),
-		);
+			],
+		];
 	}
 }

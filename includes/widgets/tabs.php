@@ -71,7 +71,7 @@ class Widget_Tabs extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return array( 'tabs', 'accordion', 'toggle' );
+		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -89,7 +89,7 @@ class Widget_Tabs extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return array( 'widget-tabs' );
+		return [ 'widget-tabs' ];
 	}
 
 	public function show_in_panel(): bool {
@@ -114,35 +114,35 @@ class Widget_Tabs extends Widget_Base {
 
 		$this->start_controls_section(
 			'section_tabs',
-			array(
+			[
 				'label' => esc_html__( 'Tabs', 'elementor' ),
-			)
+			]
 		);
 
 		$repeater = new Repeater();
 
 		$repeater->add_control(
 			'tab_title',
-			array(
+			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Tab Title', 'elementor' ),
 				'placeholder' => esc_html__( 'Tab Title', 'elementor' ),
 				'label_block' => true,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-			)
+				],
+			]
 		);
 
 		$repeater->add_control(
 			'tab_content',
-			array(
+			[
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'default' => esc_html__( 'Tab Content', 'elementor' ),
 				'placeholder' => esc_html__( 'Tab Content', 'elementor' ),
 				'type' => Controls_Manager::WYSIWYG,
-			)
+			]
 		);
 
 		$is_nested_tabs_active = Plugin::$instance->widgets_manager->get_widget_types( 'nested-tabs' );
@@ -160,330 +160,330 @@ class Widget_Tabs extends Widget_Base {
 
 		$this->add_control(
 			'tabs',
-			array(
+			[
 				'label' => esc_html__( 'Tabs Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_controls(),
-				'default' => array(
-					array(
+				'default' => [
+					[
 						'tab_title' => esc_html__( 'Tab #1', 'elementor' ),
 						'tab_content' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					),
-					array(
+					],
+					[
 						'tab_title' => esc_html__( 'Tab #2', 'elementor' ),
 						'tab_content' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					),
-				),
+					],
+				],
 				'title_field' => '{{{ tab_title }}}',
-			)
+			]
 		);
 
 		$this->add_control(
 			'type',
-			array(
+			[
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'horizontal',
-				'options' => array(
-					'vertical' => array(
+				'options' => [
+					'vertical' => [
 						'title' => esc_html__( 'Vertical', 'elementor' ),
 						'icon' => 'eicon-h-align-' . ( is_rtl() ? 'right' : 'left' ),
-					),
-					'horizontal' => array(
+					],
+					'horizontal' => [
 						'title' => esc_html__( 'Horizontal', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
-					),
-				),
+					],
+				],
 				'prefix_class' => 'elementor-tabs-view-',
 				'separator' => 'before',
-			)
+			]
 		);
 
 		$this->add_control(
 			'tabs_align_horizontal',
-			array(
+			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'' => array(
+				'options' => [
+					'' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => "eicon-align-$start-h",
-					),
-					'center' => array(
+					],
+					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-align-center-h',
-					),
-					'end' => array(
+					],
+					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => "eicon-align-$end-h",
-					),
-					'stretch' => array(
+					],
+					'stretch' => [
 						'title' => esc_html__( 'Stretch', 'elementor' ),
 						'icon' => 'eicon-align-stretch-h',
-					),
-				),
+					],
+				],
 				'prefix_class' => 'elementor-tabs-alignment-',
-				'condition' => array(
+				'condition' => [
 					'type' => 'horizontal',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'tabs_align_vertical',
-			array(
+			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'' => array(
+				'options' => [
+					'' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-align-start-v',
-					),
-					'center' => array(
+					],
+					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-align-center-v',
-					),
-					'end' => array(
+					],
+					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-align-end-v',
-					),
-					'stretch' => array(
+					],
+					'stretch' => [
 						'title' => esc_html__( 'Stretch', 'elementor' ),
 						'icon' => 'eicon-align-stretch-v',
-					),
-				),
+					],
+				],
 				'prefix_class' => 'elementor-tabs-alignment-',
-				'condition' => array(
+				'condition' => [
 					'type' => 'vertical',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_tabs_style',
-			array(
+			[
 				'label' => esc_html__( 'Tabs', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'navigation_width',
-			array(
+			[
 				'label' => esc_html__( 'Navigation Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'custom' ),
-				'default' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'default' => [
 					'unit' => '%',
-				),
-				'range' => array(
-					'px' => array(
+				],
+				'range' => [
+					'px' => [
 						'min' => 10,
 						'max' => 500,
-					),
-					'%' => array(
+					],
+					'%' => [
 						'min' => 10,
 						'max' => 50,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'min' => 1,
 						'max' => 50,
-					),
-					'rem' => array(
+					],
+					'rem' => [
 						'min' => 1,
 						'max' => 50,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tabs-wrapper' => 'width: {{SIZE}}{{UNIT}}',
-				),
-				'condition' => array(
+				],
+				'condition' => [
 					'type' => 'vertical',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'border_width',
-			array(
+			[
 				'label' => esc_html__( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
-				'default' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'default' => [
 					'size' => 1,
-				),
-				'range' => array(
-					'px' => array(
+				],
+				'range' => [
+					'px' => [
 						'max' => 20,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'max' => 2,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title, {{WRAPPER}} .elementor-tab-title:before, {{WRAPPER}} .elementor-tab-title:after, {{WRAPPER}} .elementor-tab-content, {{WRAPPER}} .elementor-tabs-content-wrapper' => 'border-width: {{SIZE}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'border_color',
-			array(
+			[
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-mobile-title, {{WRAPPER}} .elementor-tab-desktop-title.elementor-active, {{WRAPPER}} .elementor-tab-title:before, {{WRAPPER}} .elementor-tab-title:after, {{WRAPPER}} .elementor-tab-content, {{WRAPPER}} .elementor-tabs-content-wrapper' => 'border-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'background_color',
-			array(
+			[
 				'label' => esc_html__( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-desktop-title.elementor-active' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-tabs-content-wrapper' => 'background-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'heading_title',
-			array(
+			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			)
+			]
 		);
 
 		$this->add_control(
 			'tab_color',
-			array(
+			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title, {{WRAPPER}} .elementor-tab-title a' => 'color: {{VALUE}}',
-				),
-				'global' => array(
+				],
+				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'tab_active_color',
-			array(
+			[
 				'label' => esc_html__( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title.elementor-active,
 					 {{WRAPPER}} .elementor-tab-title.elementor-active a' => 'color: {{VALUE}}',
-				),
-				'global' => array(
+				],
+				'global' => [
 					'default' => Global_Colors::COLOR_ACCENT,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'tab_typography',
 				'selector' => '{{WRAPPER}} .elementor-tab-title',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Stroke::get_type(),
-			array(
+			[
 				'name' => 'text_stroke',
 				'selector' => '{{WRAPPER}} .elementor-tab-title',
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'title_shadow',
 				'selector' => '{{WRAPPER}} .elementor-tab-title',
-			)
+			]
 		);
 
 		$this->add_control(
 			'title_align',
-			array(
+			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'left' => array(
+				'options' => [
+					'left' => [
 						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
-					),
-					'center' => array(
+					],
+					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
-					),
-					'right' => array(
+					],
+					'right' => [
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title' => 'text-align: {{VALUE}};',
-				),
-				'condition' => array(
+				],
+				'condition' => [
 					'tabs_align' => 'stretch',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'heading_content',
-			array(
+			[
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			)
+			]
 		);
 
 		$this->add_control(
 			'content_color',
-			array(
+			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-content' => 'color: {{VALUE}};',
-				),
-				'global' => array(
+				],
+				'global' => [
 					'default' => Global_Colors::COLOR_TEXT,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'content_shadow',
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
-			)
+			]
 		);
 
 		$this->end_controls_section();
@@ -512,16 +512,16 @@ class Widget_Tabs extends Widget_Base {
 					$tab_count = $index + 1;
 					$tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
 
-					$this->add_render_attribute( $tab_title_setting_key, array(
+					$this->add_render_attribute( $tab_title_setting_key, [
 						'id' => 'elementor-tab-title-' . $id_int . $tab_count,
-						'class' => array( 'elementor-tab-title', 'elementor-tab-desktop-title' ),
+						'class' => [ 'elementor-tab-title', 'elementor-tab-desktop-title' ],
 						'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 						'data-tab' => $tab_count,
 						'role' => 'tab',
 						'tabindex' => 1 === $tab_count ? '0' : '-1',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 						'aria-expanded' => 'false',
-					) );
+					] );
 					?>
 					<div <?php $this->print_render_attribute_string( $tab_title_setting_key ); ?>><?php
 						// PHPCS - the main text of a widget should not be escaped.
@@ -538,25 +538,25 @@ class Widget_Tabs extends Widget_Base {
 
 					$tab_title_mobile_setting_key = $this->get_repeater_setting_key( 'tab_title_mobile', 'tabs', $tab_count );
 
-					$this->add_render_attribute( $tab_content_setting_key, array(
+					$this->add_render_attribute( $tab_content_setting_key, [
 						'id' => 'elementor-tab-content-' . $id_int . $tab_count,
-						'class' => array( 'elementor-tab-content', 'elementor-clearfix' ),
+						'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 						'data-tab' => $tab_count,
 						'role' => 'tabpanel',
 						'aria-labelledby' => 'elementor-tab-title-' . $id_int . $tab_count,
 						'tabindex' => '0',
 						'hidden' => $hidden,
-					) );
+					] );
 
-					$this->add_render_attribute( $tab_title_mobile_setting_key, array(
-						'class' => array( 'elementor-tab-title', 'elementor-tab-mobile-title' ),
+					$this->add_render_attribute( $tab_title_mobile_setting_key, [
+						'class' => [ 'elementor-tab-title', 'elementor-tab-mobile-title' ],
 						'aria-selected' => 1 === $tab_count ? 'true' : 'false',
 						'data-tab' => $tab_count,
 						'role' => 'tab',
 						'tabindex' => 1 === $tab_count ? '0' : '-1',
 						'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 						'aria-expanded' => 'false',
-					) );
+					] );
 
 					$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 					?>

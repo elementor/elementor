@@ -13,7 +13,7 @@ abstract class Base extends Base_Object {
 
 	private $options;
 
-	private $submenus = array();
+	private $submenus = [];
 
 	abstract protected function get_init_args();
 
@@ -44,18 +44,18 @@ abstract class Base extends Base_Object {
 	}
 
 	public function add_submenu( $submenu_args ) {
-		$default_submenu_args = array(
+		$default_submenu_args = [
 			'page_title' => '',
 			'capability' => $this->args['capability'],
 			'function' => null,
 			'index' => null,
-		);
+		];
 
 		$this->submenus[] = array_merge( $default_submenu_args, $submenu_args );
 	}
 
 	protected function get_init_options() {
-		return array();
+		return [];
 	}
 
 	protected function register_default_submenus() {}
@@ -74,14 +74,14 @@ abstract class Base extends Base_Object {
 		} );
 
 		foreach ( $this->submenus as $index => $submenu_item ) {
-			$submenu_args = array(
+			$submenu_args = [
 				$args['menu_slug'],
 				$submenu_item['page_title'],
 				$submenu_item['menu_title'],
 				$submenu_item['capability'],
 				$submenu_item['menu_slug'],
 				$submenu_item['function'],
-			);
+			];
 
 			if ( 0 === $submenu_item['index'] ) {
 				$submenu_args[] = 0;
@@ -98,19 +98,19 @@ abstract class Base extends Base_Object {
 	}
 
 	private function init_args() {
-		$default_args = array(
+		$default_args = [
 			'function' => null,
 			'icon_url' => null,
 			'position' => null,
-		);
+		];
 
 		$this->args = array_merge( $default_args, $this->get_init_args() );
 	}
 
 	private function init_options() {
-		$default_options = array(
+		$default_options = [
 			'separator' => false,
-		);
+		];
 
 		$this->options = array_merge( $default_options, $this->get_init_options() );
 	}
@@ -120,12 +120,12 @@ abstract class Base extends Base_Object {
 
 		$slug = $this->args['menu_slug'];
 
-		$menu[] = array( '', 'read', 'separator-' . $slug, '', 'wp-menu-separator ' . $slug ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$menu[] = [ '', 'read', 'separator-' . $slug, '', 'wp-menu-separator ' . $slug ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	private function rearrange_menu_separator( $menu_order ) {
 		// Initialize our custom order array.
-		$custom_menu_order = array();
+		$custom_menu_order = [];
 
 		$slug = $this->args['menu_slug'];
 

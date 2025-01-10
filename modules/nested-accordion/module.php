@@ -22,12 +22,12 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/frontend/after_register_styles', array( $this, 'register_styles' ) );
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
-			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), array(
+			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
 				'nested-elements',
-			), ELEMENTOR_VERSION, true );
+			], ELEMENTOR_VERSION, true );
 		} );
 	}
 
@@ -43,7 +43,7 @@ class Module extends BaseModule {
 		wp_register_style(
 			'widget-nested-accordion',
 			$this->get_css_assets_url( 'widget-nested-accordion', null, true, true ),
-			array( 'elementor-frontend' ),
+			[ 'elementor-frontend' ],
 			ELEMENTOR_VERSION
 		);
 	}

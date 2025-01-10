@@ -25,7 +25,7 @@ class Skins_Manager {
 	 *
 	 * @var array Registered skins.
 	 */
-	private $_skins = array();
+	private $_skins = [];
 
 	/**
 	 * Add new skin.
@@ -44,7 +44,7 @@ class Skins_Manager {
 		$widget_name = $widget->get_name();
 
 		if ( ! isset( $this->_skins[ $widget_name ] ) ) {
-			$this->_skins[ $widget_name ] = array();
+			$this->_skins[ $widget_name ] = [];
 		}
 
 		$this->_skins[ $widget_name ][ $skin->get_id() ] = $skin;

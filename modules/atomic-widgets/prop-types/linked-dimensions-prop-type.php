@@ -15,12 +15,12 @@ class Linked_Dimensions_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
-		return array(
+		return [
 			'isLinked' => Boolean_Prop_Type::make(),
 			'top' => Size_Prop_Type::make(),
 			'right' => Size_Prop_Type::make(),
 			'bottom' => Size_Prop_Type::make(),
 			'left' => Size_Prop_Type::make(),
-		);
+		];
 	}
 }

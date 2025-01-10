@@ -39,7 +39,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'elementor-editor-modules',
 			"{$assets_url}js/editor-modules{$min_suffix}.js",
-			array( 'elementor-common-modules' ),
+			[ 'elementor-common-modules' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -47,7 +47,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'elementor-editor-document',
 			"{$assets_url}js/editor-document{$min_suffix}.js",
-			array( 'elementor-common-modules' ),
+			[ 'elementor-common-modules' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -55,7 +55,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'perfect-scrollbar',
 			"{$assets_url}lib/perfect-scrollbar/js/perfect-scrollbar{$min_suffix}.js",
-			array(),
+			[],
 			'1.4.0',
 			true
 		);
@@ -63,7 +63,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'jquery-easing',
 			"{$assets_url}lib/jquery-easing/jquery-easing{$min_suffix}.js",
-			array( 'jquery' ),
+			[ 'jquery' ],
 			'1.3.2',
 			true
 		);
@@ -71,7 +71,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'nprogress',
 			"{$assets_url}lib/nprogress/nprogress{$min_suffix}.js",
-			array(),
+			[],
 			'0.2.0',
 			true
 		);
@@ -79,7 +79,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'tipsy',
 			"{$assets_url}lib/tipsy/tipsy{$min_suffix}.js",
-			array( 'jquery' ),
+			[ 'jquery' ],
 			'1.0.0',
 			true
 		);
@@ -87,7 +87,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'jquery-elementor-select2',
 			"{$assets_url}lib/e-select2/js/e-select2.full{$min_suffix}.js",
-			array( 'jquery' ),
+			[ 'jquery' ],
 			'4.0.6-rc.1',
 			true
 		);
@@ -95,7 +95,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'flatpickr',
 			"{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.js",
-			array( 'jquery' ),
+			[ 'jquery' ],
 			'4.6.13',
 			true
 		);
@@ -103,7 +103,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'ace',
 			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js',
-			array(),
+			[],
 			'1.2.5',
 			true
 		);
@@ -111,7 +111,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'ace-language-tools',
 			'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ext-language_tools.js',
-			array( 'ace' ),
+			[ 'ace' ],
 			'1.2.5',
 			true
 		);
@@ -119,7 +119,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'jquery-hover-intent',
 			"{$assets_url}lib/jquery-hover-intent/jquery-hover-intent{$min_suffix}.js",
-			array(),
+			[],
 			'1.0.0',
 			true
 		);
@@ -127,7 +127,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'nouislider',
 			"{$assets_url}lib/nouislider/nouislider{$min_suffix}.js",
-			array(),
+			[],
 			'13.0.0',
 			true
 		);
@@ -135,7 +135,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'pickr',
 			"{$assets_url}lib/pickr/pickr.min.js",
-			array(),
+			[],
 			'1.8.2',
 			true
 		);
@@ -143,7 +143,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'elementor-editor',
 			"{$assets_url}js/editor{$min_suffix}.js",
-			array(
+			[
 				'elementor-common',
 				'elementor-editor-modules',
 				'elementor-editor-document',
@@ -164,7 +164,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 				'pickr',
 				'react',
 				'react-dom',
-			),
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -174,7 +174,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'elementor-responsive-bar',
 			"{$assets_url}js/responsive-bar{$min_suffix}.js",
-			array( 'elementor-editor' ),
+			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -200,42 +200,42 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_style(
 			'font-awesome',
 			"{$assets_url}lib/font-awesome/css/font-awesome{$min_suffix}.css",
-			array(),
+			[],
 			'4.7.0'
 		);
 
 		wp_register_style(
 			'elementor-select2',
 			"{$assets_url}lib/e-select2/css/e-select2{$min_suffix}.css",
-			array(),
+			[],
 			'4.0.6-rc.1'
 		);
 
 		wp_register_style(
 			'google-font-roboto',
 			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
-			array(),
+			[],
 			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
 			'flatpickr',
 			"{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.css",
-			array(),
+			[],
 			'4.6.13'
 		);
 
 		wp_register_style(
 			'pickr',
 			"{$assets_url}lib/pickr/themes/monolith.min.css",
-			array(),
+			[],
 			'1.8.2'
 		);
 
 		wp_register_style(
 			'elementor-editor',
 			"{$assets_url}css/editor{$direction_suffix}{$min_suffix}.css",
-			array(
+			[
 				'elementor-common',
 				'elementor-select2',
 				'elementor-icons',
@@ -243,14 +243,14 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 				'google-font-roboto',
 				'flatpickr',
 				'pickr',
-			),
+			],
 			ELEMENTOR_VERSION
 		);
 
 		wp_register_style(
 			'elementor-responsive-bar',
 			"{$assets_url}css/responsive-bar{$min_suffix}.css",
-			array(),
+			[],
 			ELEMENTOR_VERSION
 		);
 	}
@@ -268,7 +268,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 	 * @return void
 	 */
 	public function register_additional_templates() {
-		$templates = array(
+		$templates = [
 			'global',
 			'panel',
 			'panel-elements',
@@ -277,7 +277,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'navigator',
 			'hotkeys',
 			'responsive-bar',
-		);
+		];
 
 		$templates = apply_filters( 'elementor/editor/templates', $templates );
 

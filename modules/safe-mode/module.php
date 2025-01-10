@@ -29,29 +29,29 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'enable_safe_mode', array( $this, 'ajax_enable_safe_mode' ) );
-		$ajax->register_ajax_action( 'disable_safe_mode', array( $this, 'disable_safe_mode' ) );
+		$ajax->register_ajax_action( 'enable_safe_mode', [ $this, 'ajax_enable_safe_mode' ] );
+		$ajax->register_ajax_action( 'disable_safe_mode', [ $this, 'disable_safe_mode' ] );
 	}
 
 	/**
 	 * @param Tools $tools_page
 	 */
 	public function add_admin_button( $tools_page ) {
-		$tools_page->add_fields( Settings::TAB_GENERAL, 'tools', array(
-			'safe_mode' => array(
+		$tools_page->add_fields( Settings::TAB_GENERAL, 'tools', [
+			'safe_mode' => [
 				'label' => esc_html__( 'Safe Mode', 'elementor' ),
-				'field_args' => array(
+				'field_args' => [
 					'type' => 'select',
 					'std' => $this->is_enabled() ? 'global' : '',
-					'options' => array(
+					'options' => [
 						'' => esc_html__( 'Disable', 'elementor' ),
 						'global' => esc_html__( 'Enable', 'elementor' ),
 
-					),
+					],
 					'desc' => esc_html__( 'Safe Mode allows you to troubleshoot issues by only loading the editor, without loading the theme or any other plugin.', 'elementor' ),
-				),
-			),
-		) );
+				],
+			],
+		] );
 	}
 
 	public function on_update_safe_mode( $value ) {
@@ -464,15 +464,15 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function run_safe_mode() {
-		remove_action( 'elementor/editor/footer', array( $this, 'print_try_safe_mode' ) );
+		remove_action( 'elementor/editor/footer', [ $this, 'print_try_safe_mode' ] );
 
 		// Avoid notices like for comment.php.
 		add_filter( 'deprecated_file_trigger_error', '__return_false' );
 
-		add_filter( 'template_include', array( $this, 'filter_template' ), 999 );
-		add_filter( 'elementor/document/urls/preview', array( $this, 'filter_preview_url' ) );
-		add_action( 'elementor/editor/footer', array( $this, 'print_safe_mode_notice' ) );
-		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'register_scripts' ), 11 /* After Common Scripts */ );
+		add_filter( 'template_include', [ $this, 'filter_template' ], 999 );
+		add_filter( 'elementor/document/urls/preview', [ $this, 'filter_preview_url' ] );
+		add_action( 'elementor/editor/footer', [ $this, 'print_safe_mode_notice' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'register_scripts' ], 11 /* After Common Scripts */ );
 	}
 
 	public function register_scripts() {
@@ -500,7 +500,7 @@ class Module extends \Elementor\Core\Base\Module {
 			return;
 		}
 
-		$allowed_plugins = get_option( 'elementor_safe_mode_allowed_plugins', array() );
+		$allowed_plugins = get_option( 'elementor_safe_mode_allowed_plugins', [] );
 		$plugin_key = array_search( $plugin, $allowed_plugins, true );
 
 		if ( $plugin_key ) {
@@ -510,9 +510,9 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function update_allowed_plugins() {
-		$allowed_plugins = array(
+		$allowed_plugins = [
 			'elementor' => ELEMENTOR_PLUGIN_BASE,
-		);
+		];
 
 		if ( defined( 'ELEMENTOR_PRO_PLUGIN_BASE' ) ) {
 			$allowed_plugins['elementor_pro'] = ELEMENTOR_PRO_PLUGIN_BASE;
@@ -527,33 +527,33 @@ class Module extends \Elementor\Core\Base\Module {
 
 	public function __construct() {
 		if ( current_user_can( 'install_plugins' ) ) {
-			add_action( 'elementor/admin/after_create_settings/elementor-tools', array( $this, 'add_admin_button' ) );
+			add_action( 'elementor/admin/after_create_settings/elementor-tools', [ $this, 'add_admin_button' ] );
 		}
 
-		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		$plugin_file = self::MU_PLUGIN_FILE_NAME;
-		add_filter( "plugin_action_links_{$plugin_file}", array( $this, 'plugin_action_links' ) );
+		add_filter( "plugin_action_links_{$plugin_file}", [ $this, 'plugin_action_links' ] );
 
 		// Use pre_update, in order to catch cases that $value === $old_value and it not updated.
-		add_filter( 'pre_update_option_elementor_safe_mode', array( $this, 'on_update_safe_mode' ), 10, 2 );
+		add_filter( 'pre_update_option_elementor_safe_mode', [ $this, 'on_update_safe_mode' ], 10, 2 );
 
-		add_action( 'elementor/safe_mode/init', array( $this, 'run_safe_mode' ) );
-		add_action( 'elementor/editor/footer', array( $this, 'print_try_safe_mode' ) );
+		add_action( 'elementor/safe_mode/init', [ $this, 'run_safe_mode' ] );
+		add_action( 'elementor/editor/footer', [ $this, 'print_try_safe_mode' ] );
 
 		if ( $this->is_enabled() ) {
-			add_action( 'activated_plugin', array( $this, 'update_allowed_plugins' ) );
-			add_action( 'deactivated_plugin', array( $this, 'on_deactivated_plugin' ) );
+			add_action( 'activated_plugin', [ $this, 'update_allowed_plugins' ] );
+			add_action( 'deactivated_plugin', [ $this, 'on_deactivated_plugin' ] );
 		}
 	}
 
 	private function is_allowed_post_type() {
-		$allowed_post_types = array(
+		$allowed_post_types = [
 			'post',
 			'page',
 			'product',
 			Source_Local::CPT,
-		);
+		];
 
 		$current_post_type = get_post_type( Plugin::$instance->editor->get_post_id() );
 

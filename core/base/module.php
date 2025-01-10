@@ -40,7 +40,7 @@ abstract class Module extends Base_Object {
 	 *
 	 * @var array
 	 */
-	private $components = array();
+	private $components = [];
 
 	/**
 	 * Module instance.
@@ -52,7 +52,7 @@ abstract class Module extends Base_Object {
 	 *
 	 * @var Module
 	 */
-	protected static $_instances = array();
+	protected static $_instances = [];
 
 	/**
 	 * Get module name.
@@ -111,7 +111,7 @@ abstract class Module extends Base_Object {
 	}
 
 	public static function get_experimental_data() {
-		return array();
+		return [];
 	}
 
 	/**
@@ -335,7 +335,7 @@ abstract class Module extends Base_Object {
 	 * @return string[]
 	 */
 	protected function get_widgets() {
-		return array();
+		return [];
 	}
 
 	/**
@@ -352,6 +352,6 @@ abstract class Module extends Base_Object {
 	}
 
 	public function __construct() {
-		add_action( 'elementor/widgets/register', array( $this, 'init_widgets' ) );
+		add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
 	}
 }

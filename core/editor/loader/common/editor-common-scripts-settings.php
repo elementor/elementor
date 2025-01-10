@@ -34,7 +34,7 @@ class Editor_Common_Scripts_Settings {
 
 		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
 
-		$client_env = array(
+		$client_env = [
 			'initial_document' => $document->get_config(),
 			'version' => ELEMENTOR_VERSION,
 			'home_url' => home_url(),
@@ -45,16 +45,16 @@ class Editor_Common_Scripts_Settings {
 			'tabs' => Plugin::$instance->controls_manager->get_tabs(),
 			'controls' => Plugin::$instance->controls_manager->get_controls_data(),
 			'elements' => Plugin::$instance->elements_manager->get_element_types_config(),
-			'globals' => array(
-				'defaults_enabled' => array(
+			'globals' => [
+				'defaults_enabled' => [
 					'colors' => $kits_manager->is_custom_colors_enabled(),
 					'typography' => $kits_manager->is_custom_typography_enabled(),
-				),
-			),
-			'icons' => array(
+				],
+			],
+			'icons' => [
 				'libraries' => Icons_Manager::get_icon_manager_tabs_config(),
 				'goProURL' => 'https://go.elementor.com/go-pro-icon-library/',
-			),
+			],
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'settings' => $settings,
 			'wp_editor' => static::get_wp_editor_config(),
@@ -68,48 +68,48 @@ class Editor_Common_Scripts_Settings {
 			'elementPromotionURL' => 'https://go.elementor.com/go-pro-%s',
 			'dynamicPromotionURL' => 'https://go.elementor.com/go-pro-dynamic-tag',
 			'additional_shapes' => Shapes::get_additional_shapes_for_config(),
-			'user' => array(
+			'user' => [
 				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
 				'introduction' => User::get_introduction_meta(),
 				'dismissed_editor_notices' => User::get_dismissed_editor_notices(),
 				'locale' => get_user_locale(),
-			),
-			'preview' => array(
+			],
+			'preview' => [
 				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
 				'help_preview_http_error_url' => 'https://go.elementor.com/preview-not-loaded/#permissions',
 				'help_preview_http_error_500_url' => 'https://go.elementor.com/500-error/',
 				'debug_data' => Loading_Inspection_Manager::instance()->run_inspections(),
-			),
+			],
 			'locale' => get_locale(),
 			'rich_editing_enabled' => filter_var( get_user_meta( get_current_user_id(), 'rich_editing', true ), FILTER_VALIDATE_BOOLEAN ),
 			'page_title_selector' => $page_title_selector,
 			'tinymceHasCustomConfig' => class_exists( 'Tinymce_Advanced' ) || class_exists( 'Advanced_Editor_Tools' ),
 			'inlineEditing' => Plugin::$instance->widgets_manager->get_inline_editing_config(),
 			'dynamicTags' => Plugin::$instance->dynamic_tags->get_config(),
-			'ui' => array(
+			'ui' => [
 				'defaultGenericFonts' => $kits_manager->get_current_settings( 'default_generic_fonts' ),
-			),
+			],
 			// Empty array for BC to avoid errors.
-			'i18n' => array(),
+			'i18n' => [],
 			// 'responsive' contains the custom breakpoints config introduced in Elementor v3.2.0
-			'responsive' => array(
+			'responsive' => [
 				'breakpoints' => Plugin::$instance->breakpoints->get_breakpoints_config(),
 				'icons_map' => Plugin::$instance->breakpoints->get_responsive_icons_classes_map(),
-			),
-			'promotion' => array(
+			],
+			'promotion' => [
 				'elements' => Plugin::$instance->editor->promotion->get_elements_promotion(),
-			),
+			],
 			'editor_events' => EditorEventsModule::get_editor_events_config(),
-			'promotions' => array(
+			'promotions' => [
 				'notes' => Filtered_Promotions_Manager::get_filtered_promotion_data(
-					array( 'upgrade_url' => 'https://go.elementor.com/go-pro-notes/' ),
+					[ 'upgrade_url' => 'https://go.elementor.com/go-pro-notes/' ],
 					'elementor/panel/notes/custom_promotion',
 					'upgrade_url'
 				),
-			),
+			],
 			'fontVariableRanges' => Group_Control_Typography::get_font_variable_ranges(),
-		);
+		];
 
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
 			$client_env['promotionWidgets'] = Api::get_promotion_widgets();
@@ -182,18 +182,18 @@ class Editor_Common_Scripts_Settings {
 		wp_editor(
 			'%%EDITORCONTENT%%',
 			'elementorwpeditor',
-			array(
+			[
 				'editor_class' => 'elementor-wp-editor',
 				'editor_height' => 250,
 				'drag_drop_upload' => true,
-			)
+			]
 		);
 
 		$config = ob_get_clean();
 
 		// Don't call \_WP_Editors methods again
-		remove_action( 'admin_print_footer_scripts', array( '_WP_Editors', 'editor_js' ), 50 );
-		remove_action( 'admin_print_footer_scripts', array( '_WP_Editors', 'print_default_editor_scripts' ), 45 );
+		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'editor_js' ], 50 );
+		remove_action( 'admin_print_footer_scripts', [ '_WP_Editors', 'print_default_editor_scripts' ], 45 );
 
 		\_WP_Editors::editor_js();
 

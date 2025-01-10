@@ -16,7 +16,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_filter( 'elementor/document/save/data', array( $this, 'sanitize_content' ), 10, 2 );
+		add_filter( 'elementor/document/save/data', [ $this, 'sanitize_content' ], 10, 2 );
 	}
 
 	public function get_name() {

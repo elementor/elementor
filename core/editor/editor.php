@@ -105,10 +105,10 @@ class Editor {
 
 		// BC: From 2.9.0, the editor shouldn't handle the global post / current document.
 		// Use requested id and not the global in order to avoid conflicts with plugins that changes the global post.
-		query_posts( array(
+		query_posts( [
 			'p' => $this->post_id,
 			'post_type' => get_post_type( $this->post_id ),
-		) );
+		] );
 
 		Plugin::$instance->db->switch_to_post( $this->post_id );
 
@@ -139,12 +139,12 @@ class Editor {
 		add_action( 'wp_head', 'wp_print_styles', 8 );
 		add_action( 'wp_head', 'wp_print_head_scripts', 9 );
 		add_action( 'wp_head', 'wp_site_icon' );
-		add_action( 'wp_head', array( $this, 'editor_head_trigger' ), 30 );
+		add_action( 'wp_head', [ $this, 'editor_head_trigger' ], 30 );
 
 		// Handle `wp_footer`
 		add_action( 'wp_footer', 'wp_print_footer_scripts', 20 );
 		add_action( 'wp_footer', 'wp_auth_check_html', 30 );
-		add_action( 'wp_footer', array( $this, 'wp_footer' ) );
+		add_action( 'wp_footer', [ $this, 'wp_footer' ] );
 
 		// Handle `wp_enqueue_scripts`
 		remove_all_actions( 'wp_enqueue_scripts' );
@@ -152,8 +152,8 @@ class Editor {
 		// Also remove all scripts hooked into after_wp_tiny_mce.
 		remove_all_actions( 'after_wp_tiny_mce' );
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 999999 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ), 999999 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 999999 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ], 999999 );
 
 		// Setup default heartbeat options
 		add_filter( 'heartbeat_settings', function ( $settings ) {
@@ -254,7 +254,7 @@ class Editor {
 		}
 
 		// Ajax request as Editor mode
-		$actions = array(
+		$actions = [
 			'elementor',
 
 			// Templates
@@ -264,7 +264,7 @@ class Editor {
 			'elementor_delete_template',
 			'elementor_import_template',
 			'elementor_library_direct_actions',
-		);
+		];
 
 		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $actions ) ) {
 			return true;
@@ -339,7 +339,7 @@ class Editor {
 	 * @access public
 	 */
 	public function enqueue_scripts() {
-		remove_action( 'wp_enqueue_scripts', array( $this, __FUNCTION__ ), 999999 );
+		remove_action( 'wp_enqueue_scripts', [ $this, __FUNCTION__ ], 999999 );
 
 		global $wp_styles, $wp_scripts;
 
@@ -421,10 +421,10 @@ class Editor {
 	private function enqueue_theme_ui_styles() {
 		$ui_theme_selected = SettingsManager::get_settings_managers( 'editorPreferences' )->get_model()->get_settings( 'ui_theme' );
 
-		$ui_themes = array(
+		$ui_themes = [
 			'light',
 			'dark',
-		);
+		];
 
 		if ( 'auto' === $ui_theme_selected || ! in_array( $ui_theme_selected, $ui_themes, true ) ) {
 			$ui_light_theme_media_queries = '(prefers-color-scheme: light)';
@@ -450,7 +450,7 @@ class Editor {
 		wp_enqueue_style(
 			'e-theme-ui-' . $ui_theme,
 			ELEMENTOR_ASSETS_URL . 'css/theme-' . $ui_theme . $suffix . '.css',
-			array(),
+			[],
 			ELEMENTOR_VERSION,
 			$ui_theme_media_queries
 		);
@@ -541,12 +541,12 @@ class Editor {
 		$this->notice_bar = new Notice_Bar();
 		$this->promotion = new Promotion();
 
-		add_action( 'admin_action_elementor', array( $this, 'init' ) );
-		add_action( 'template_redirect', array( $this, 'redirect_to_new_url' ) );
+		add_action( 'admin_action_elementor', [ $this, 'init' ] );
+		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 
 		// Handle autocomplete feature for URL control.
-		add_filter( 'wp_link_query_args', array( $this, 'filter_wp_link_query_args' ) );
-		add_filter( 'wp_link_query', array( $this, 'filter_wp_link_query' ) );
+		add_filter( 'wp_link_query_args', [ $this, 'filter_wp_link_query_args' ] );
+		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
 	}
 
 	/**
@@ -609,7 +609,7 @@ class Editor {
 	 */
 	public function get_elements_presets() {
 		$element_types = Plugin::$instance->elements_manager->get_element_types();
-		$presets = array();
+		$presets = [];
 
 		foreach ( $element_types as $el_type => $element ) {
 			$this->check_element_for_presets( $element, $el_type, $presets );

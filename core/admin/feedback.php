@@ -23,11 +23,11 @@ class Feedback extends Module {
 				return;
 			}
 
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_feedback_dialog_scripts' ) );
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_feedback_dialog_scripts' ] );
 		} );
 
 		// Ajax.
-		add_action( 'wp_ajax_elementor_deactivate_feedback', array( $this, 'ajax_elementor_deactivate_feedback' ) );
+		add_action( 'wp_ajax_elementor_deactivate_feedback', [ $this, 'ajax_elementor_deactivate_feedback' ] );
 	}
 
 	/**
@@ -53,17 +53,17 @@ class Feedback extends Module {
 	 * @access public
 	 */
 	public function enqueue_feedback_dialog_scripts() {
-		add_action( 'admin_footer', array( $this, 'print_deactivate_feedback_dialog' ) );
+		add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script(
 			'elementor-admin-feedback',
 			ELEMENTOR_ASSETS_URL . 'js/admin-feedback' . $suffix . '.js',
-			array(
+			[
 				'elementor-common',
 				'wp-i18n',
-			),
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -84,33 +84,33 @@ class Feedback extends Module {
 	 * @access public
 	 */
 	public function print_deactivate_feedback_dialog() {
-		$deactivate_reasons = array(
-			'no_longer_needed' => array(
+		$deactivate_reasons = [
+			'no_longer_needed' => [
 				'title' => esc_html__( 'I no longer need the plugin', 'elementor' ),
 				'input_placeholder' => '',
-			),
-			'found_a_better_plugin' => array(
+			],
+			'found_a_better_plugin' => [
 				'title' => esc_html__( 'I found a better plugin', 'elementor' ),
 				'input_placeholder' => esc_html__( 'Please share which plugin', 'elementor' ),
-			),
-			'couldnt_get_the_plugin_to_work' => array(
+			],
+			'couldnt_get_the_plugin_to_work' => [
 				'title' => esc_html__( 'I couldn\'t get the plugin to work', 'elementor' ),
 				'input_placeholder' => '',
-			),
-			'temporary_deactivation' => array(
+			],
+			'temporary_deactivation' => [
 				'title' => esc_html__( 'It\'s a temporary deactivation', 'elementor' ),
 				'input_placeholder' => '',
-			),
-			'elementor_pro' => array(
+			],
+			'elementor_pro' => [
 				'title' => esc_html__( 'I have Elementor Pro', 'elementor' ),
 				'input_placeholder' => '',
 				'alert' => esc_html__( 'Wait! Don\'t deactivate Elementor. You have to activate both Elementor and Elementor Pro in order for the plugin to work.', 'elementor' ),
-			),
-			'other' => array(
+			],
+			'other' => [
 				'title' => esc_html__( 'Other', 'elementor' ),
 				'input_placeholder' => esc_html__( 'Please share the reason', 'elementor' ),
-			),
-		);
+			],
+		];
 
 		?>
 		<div id="elementor-deactivate-feedback-dialog-wrapper">
@@ -177,6 +177,6 @@ class Feedback extends Module {
 	 * @access private
 	 */
 	private function is_plugins_screen() {
-		return in_array( get_current_screen()->id, array( 'plugins', 'plugins-network' ) );
+		return in_array( get_current_screen()->id, [ 'plugins', 'plugins-network' ] );
 	}
 }

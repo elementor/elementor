@@ -10,7 +10,7 @@ class API {
 	public static function get_notifications_by_conditions( $force_request = false ) {
 		$notifications = static::get_notifications( $force_request );
 
-		$filtered_notifications = array();
+		$filtered_notifications = [];
 
 		foreach ( $notifications as $notification ) {
 			if ( empty( $notification['conditions'] ) ) {
@@ -45,13 +45,13 @@ class API {
 		$response = wp_remote_get( self::NOTIFICATIONS_URL );
 
 		if ( is_wp_error( $response ) ) {
-			return array();
+			return [];
 		}
 
 		$data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( empty( $data['notifications'] ) || ! is_array( $data['notifications'] ) ) {
-			return array();
+			return [];
 		}
 
 		return $data['notifications'];
@@ -169,10 +169,10 @@ class API {
 	}
 
 	private static function set_transient( $cache_key, $value, $expiration = '+12 hours' ) {
-		$data = array(
+		$data = [
 			'timeout' => strtotime( $expiration, current_time( 'timestamp' ) ),
 			'value' => json_encode( $value ),
-		);
+		];
 
 		return update_option( $cache_key, $data, false );
 	}

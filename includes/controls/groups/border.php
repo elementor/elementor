@@ -54,12 +54,12 @@ class Group_Control_Border extends Group_Control_Base {
 	 * @return array Control fields.
 	 */
 	protected function init_fields() {
-		$fields = array();
+		$fields = [];
 
-		$fields['border'] = array(
+		$fields['border'] = [
 			'label' => esc_html__( 'Border Type', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
-			'options' => array(
+			'options' => [
 				'' => esc_html__( 'Default', 'elementor' ),
 				'none' => esc_html__( 'None', 'elementor' ),
 				'solid' => esc_html__( 'Solid', 'elementor' ),
@@ -67,36 +67,36 @@ class Group_Control_Border extends Group_Control_Base {
 				'dotted' => esc_html__( 'Dotted', 'elementor' ),
 				'dashed' => esc_html__( 'Dashed', 'elementor' ),
 				'groove' => esc_html__( 'Groove', 'elementor' ),
-			),
-			'selectors' => array(
+			],
+			'selectors' => [
 				'{{SELECTOR}}' => 'border-style: {{VALUE}};',
-			),
-		);
+			],
+		];
 
-		$fields['width'] = array(
+		$fields['width'] = [
 			'label' => esc_html__( 'Border Width', 'elementor' ),
 			'type' => Controls_Manager::DIMENSIONS,
-			'size_units' => array( 'px', 'em', 'rem', 'vw', 'custom' ),
-			'selectors' => array(
+			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
+			'selectors' => [
 				'{{SELECTOR}}' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-			),
-			'condition' => array(
-				'border!' => array( '', 'none' ),
-			),
+			],
+			'condition' => [
+				'border!' => [ '', 'none' ],
+			],
 			'responsive' => true,
-		);
+		];
 
-		$fields['color'] = array(
+		$fields['color'] = [
 			'label' => esc_html__( 'Border Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '',
-			'selectors' => array(
+			'selectors' => [
 				'{{SELECTOR}}' => 'border-color: {{VALUE}};',
-			),
-			'condition' => array(
-				'border!' => array( '', 'none' ),
-			),
-		);
+			],
+			'condition' => [
+				'border!' => [ '', 'none' ],
+			],
+		];
 
 		return $fields;
 	}
@@ -113,8 +113,8 @@ class Group_Control_Border extends Group_Control_Base {
 	 * @return array Default border control options.
 	 */
 	protected function get_default_options() {
-		return array(
+		return [
 			'popover' => false,
-		);
+		];
 	}
 }

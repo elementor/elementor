@@ -16,7 +16,7 @@ class Revert {
 	/**
 	 * @var Revert_Runner_Base[]
 	 */
-	protected $runners = array();
+	protected $runners = [];
 
 	private $import_sessions;
 
@@ -66,7 +66,7 @@ class Revert {
 
 		// fallback if the import session failed and doesn't have the runners metadata
 		if ( ! isset( $import_session['runners'] ) && isset( $import_session['instance_data'] ) ) {
-			$import_session['runners'] = $import_session['instance_data']['runners_import_metadata'] ?? array();
+			$import_session['runners'] = $import_session['instance_data']['runners_import_metadata'] ?? [];
 		}
 
 		foreach ( $this->runners as $runner ) {
@@ -84,7 +84,7 @@ class Revert {
 		$import_sessions = Utils::get_import_sessions();
 
 		if ( ! $import_sessions ) {
-			return array();
+			return [];
 		}
 
 		usort( $import_sessions, function ( $a, $b ) {
@@ -98,7 +98,7 @@ class Revert {
 		$revert_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_REVERT_SESSIONS );
 
 		if ( ! $revert_sessions ) {
-			return array();
+			return [];
 		}
 
 		return $revert_sessions;
@@ -108,7 +108,7 @@ class Revert {
 		$import_sessions = $this->import_sessions;
 
 		if ( empty( $import_sessions ) ) {
-			return array();
+			return [];
 		}
 
 		return end( $import_sessions );
@@ -116,10 +116,10 @@ class Revert {
 
 	public function get_penultimate_import_session() {
 		$sessions_data = $this->import_sessions;
-		$penultimate_element_value = array();
+		$penultimate_element_value = [];
 
 		if ( empty( $sessions_data ) ) {
-			return array();
+			return [];
 		}
 
 		end( $sessions_data );
@@ -139,7 +139,7 @@ class Revert {
 
 		$reverted_session = array_pop( $import_sessions );
 
-		$revert_sessions[] = array(
+		$revert_sessions[] = [
 			'session_id' => $reverted_session['session_id'],
 			'kit_title' => $reverted_session['kit_title'],
 			'kit_name' => $reverted_session['kit_name'],
@@ -148,7 +148,7 @@ class Revert {
 			'user_id' => get_current_user_id(),
 			'import_timestamp' => $reverted_session['start_timestamp'],
 			'revert_timestamp' => current_time( 'timestamp' ),
-		);
+		];
 
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 		update_option( Module::OPTION_KEY_ELEMENTOR_REVERT_SESSIONS, $revert_sessions, false );
@@ -158,17 +158,17 @@ class Revert {
 	}
 
 	private function revert_attachments( $data ) {
-		$query_args = array(
+		$query_args = [
 			'post_type' => 'attachment',
 			'post_status' => 'any',
 			'posts_per_page' => -1,
-			'meta_query' => array(
-				array(
+			'meta_query' => [
+				[
 					'key' => Module::META_KEY_ELEMENTOR_IMPORT_SESSION_ID,
 					'value' => $data['session_id'],
-				),
-			),
-		);
+				],
+			],
+		];
 
 		$query = new \WP_Query( $query_args );
 

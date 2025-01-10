@@ -14,29 +14,29 @@ class Templates extends Endpoint {
 	protected function register() {
 		parent::register();
 
-		$document_types = Plugin::$instance->documents->get_document_types( array(
+		$document_types = Plugin::$instance->documents->get_document_types( [
 			'show_in_library' => true,
-		) );
+		] );
 
-		$this->register_route( '', \WP_REST_Server::CREATABLE, array(
+		$this->register_route( '', \WP_REST_Server::CREATABLE, [
 			'is_multi' => true,
-			'title' => array(
+			'title' => [
 				'required' => false,
 				'type' => 'string',
 				'description' => 'The title of the document',
-			),
-			'type' => array(
+			],
+			'type' => [
 				'required' => true,
 				'description' => 'The document type.',
 				'type' => 'string',
 				'enum' => array_keys( $document_types ),
-			),
-			'content' => array(
+			],
+			'content' => [
 				'required' => false,
 				'description' => 'Elementor data object',
 				'type' => 'object',
-			),
-		) );
+			],
+		] );
 	}
 
 	public function get_name() {
@@ -48,7 +48,7 @@ class Templates extends Endpoint {
 	}
 
 	public function get_items( $request ) {
-		return $this->reorder_categories( Plugin::$instance->templates_manager->get_library_data( array( 'filter_sources' => array( $request->get_param( 'source' ) ) ) ) );
+		return $this->reorder_categories( Plugin::$instance->templates_manager->get_library_data( [ 'filter_sources' => [ $request->get_param( 'source' ) ] ] ) );
 	}
 
 	/**
@@ -75,12 +75,12 @@ class Templates extends Endpoint {
 		/** @var Source_Local $source */
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
 
-		$result = $source->save_item( array(
+		$result = $source->save_item( [
 			'title' => $request->get_param( 'title' ),
 			'type' => $request->get_param( 'type' ),
 			'content' => $request->get_param( 'content' ),
 			'page_settings' => $request->get_param( 'page_settings' ),
-		) );
+		] );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;

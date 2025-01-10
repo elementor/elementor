@@ -275,7 +275,7 @@ class Controls_Manager {
 	 *
 	 * @var Group_Control_Base[]
 	 */
-	private $control_groups = array();
+	private $control_groups = [];
 
 	/**
 	 * Control stacks.
@@ -287,7 +287,7 @@ class Controls_Manager {
 	 *
 	 * @var array
 	 */
-	private $stacks = array();
+	private $stacks = [];
 
 	/**
 	 * Tabs.
@@ -325,14 +325,14 @@ class Controls_Manager {
 	 * @static
 	 */
 	private static function init_tabs() {
-		self::$tabs = array(
+		self::$tabs = [
 			self::TAB_CONTENT => esc_html__( 'Content', 'elementor' ),
 			self::TAB_STYLE => esc_html__( 'Style', 'elementor' ),
 			self::TAB_ADVANCED => esc_html__( 'Advanced', 'elementor' ),
 			self::TAB_RESPONSIVE => esc_html__( 'Responsive', 'elementor' ),
 			self::TAB_LAYOUT => esc_html__( 'Layout', 'elementor' ),
 			self::TAB_SETTINGS => esc_html__( 'Settings', 'elementor' ),
-		);
+		];
 	}
 
 	/**
@@ -380,7 +380,7 @@ class Controls_Manager {
 
 	public static function get_groups_names() {
 		// Group name must use "-" instead of "_"
-		return array(
+		return [
 			'background',
 			'border',
 			'typography',
@@ -392,11 +392,11 @@ class Controls_Manager {
 			'grid-container',
 			'flex-item',
 			'text-stroke',
-		);
+		];
 	}
 
 	public static function get_controls_names() {
-		return array(
+		return [
 			self::TEXT,
 			self::NUMBER,
 			self::TEXTAREA,
@@ -442,7 +442,7 @@ class Controls_Manager {
 			self::ANIMATION,
 			self::HOVER_ANIMATION,
 			self::EXIT_ANIMATION,
-		);
+		];
 	}
 
 	/**
@@ -461,7 +461,7 @@ class Controls_Manager {
 	 * @access private
 	 */
 	private function register_controls() {
-		$this->controls = array();
+		$this->controls = [];
 
 		foreach ( self::get_controls_names() as $control_id ) {
 			$control_class_id = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $control_id ) ) );
@@ -659,7 +659,7 @@ class Controls_Manager {
 	 * }
 	 */
 	public function get_controls_data() {
-		$controls_data = array();
+		$controls_data = [];
 
 		foreach ( $this->get_controls() as $name => $control ) {
 			$controls_data[ $name ] = $control->get_settings();
@@ -757,12 +757,12 @@ class Controls_Manager {
 	public function open_stack( Controls_Stack $controls_stack ) {
 		$stack_id = $controls_stack->get_unique_name();
 
-		$this->stacks[ $stack_id ] = array(
-			'tabs' => array(),
-			'controls' => array(),
-			'style_controls' => array(),
+		$this->stacks[ $stack_id ] = [
+			'tabs' => [],
+			'controls' => [],
+			'style_controls' => [],
 			'responsive_control_duplication_mode' => Plugin::$instance->breakpoints->get_responsive_control_duplication_mode(),
-		);
+		];
 	}
 
 	/**
@@ -795,11 +795,11 @@ class Controls_Manager {
 	 *
 	 * @return bool True if control added, False otherwise.
 	 */
-	public function add_control_to_stack( Controls_Stack $element, $control_id, $control_data, $options = array() ) {
-		$default_options = array(
+	public function add_control_to_stack( Controls_Stack $element, $control_id, $control_data, $options = [] ) {
+		$default_options = [
 			'overwrite' => false,
 			'index' => null,
-		);
+		];
 
 		$control_type = 'controls';
 		if ( Performance::should_optimize_controls() && $this->is_style_control( $control_data ) ) {
@@ -808,10 +808,10 @@ class Controls_Manager {
 
 		$options = array_merge( $default_options, $options );
 
-		$default_args = array(
+		$default_args = [
 			'type' => self::TEXT,
 			'tab' => self::TAB_CONTENT,
-		);
+		];
 
 		$control_data['name'] = $control_id;
 
@@ -924,7 +924,7 @@ class Controls_Manager {
 	 * @access public
 	 */
 	public function clear_stack_cache() {
-		$this->stacks = array();
+		$this->stacks = [];
 		$this->has_stacks_cache_been_cleared = true;
 	}
 
@@ -975,7 +975,7 @@ class Controls_Manager {
 	 *
 	 * @return bool True if control updated, False otherwise.
 	 */
-	public function update_control_in_stack( Controls_Stack $element, $control_id, $control_data, array $options = array() ) {
+	public function update_control_in_stack( Controls_Stack $element, $control_id, $control_data, array $options = [] ) {
 		$old_control_data = $this->get_control_from_stack( $element->get_unique_name(), $control_id );
 
 		if ( is_wp_error( $old_control_data ) ) {
@@ -988,9 +988,9 @@ class Controls_Manager {
 			$control_data = array_merge( $old_control_data, $control_data );
 		}
 
-		return $this->add_control_to_stack( $element, $control_id, $control_data, array(
+		return $this->add_control_to_stack( $element, $control_id, $control_data, [
 			'overwrite' => true,
-		) );
+		] );
 	}
 
 	/**
@@ -1062,18 +1062,18 @@ class Controls_Manager {
 	 * @param string         $tab
 	 * @param array          $additional_messages
 	 */
-	public function add_custom_css_controls( Controls_Stack $controls_stack, $tab = self::TAB_ADVANCED, $additional_messages = array() ) {
+	public function add_custom_css_controls( Controls_Stack $controls_stack, $tab = self::TAB_ADVANCED, $additional_messages = [] ) {
 		$controls_stack->start_controls_section(
 			'section_custom_css_pro',
-			array(
+			[
 				'label' => esc_html__( 'Custom CSS', 'elementor' ),
 				'tab' => $tab,
-			)
+			]
 		);
 
-		$messages = array(
+		$messages = [
 			esc_html__( 'Custom CSS lets you add CSS code to any widget, and see it render live right in the editor.', 'elementor' ),
-		);
+		];
 
 		if ( $additional_messages ) {
 			$messages = array_merge( $messages, $additional_messages );
@@ -1081,14 +1081,14 @@ class Controls_Manager {
 
 		$controls_stack->add_control(
 			'custom_css_pro',
-			array(
+			[
 				'type' => self::RAW_HTML,
-				'raw' => $this->get_teaser_template( array(
+				'raw' => $this->get_teaser_template( [
 					'title' => esc_html__( 'Meet Our Custom CSS', 'elementor' ),
 					'messages' => $messages,
 					'link' => 'https://go.elementor.com/go-pro-custom-css/',
-				) ),
-			)
+				] ),
+			]
 		);
 
 		$controls_stack->end_controls_section();
@@ -1107,18 +1107,18 @@ class Controls_Manager {
 	 *
 	 * @return void
 	 */
-	public function add_page_transitions_controls( Controls_Stack $controls_stack, $tab = self::TAB_ADVANCED, $additional_messages = array() ) {
+	public function add_page_transitions_controls( Controls_Stack $controls_stack, $tab = self::TAB_ADVANCED, $additional_messages = [] ) {
 		$controls_stack->start_controls_section(
 			'section_page_transitions_teaser',
-			array(
+			[
 				'label' => esc_html__( 'Page Transitions', 'elementor' ),
 				'tab' => $tab,
-			)
+			]
 		);
 
-		$messages = array(
+		$messages = [
 			esc_html__( 'Page Transitions let you style entrance and exit animations between pages as well as display loader until your page assets load.', 'elementor' ),
-		);
+		];
 
 		if ( $additional_messages ) {
 			$messages = array_merge( $messages, $additional_messages );
@@ -1126,14 +1126,14 @@ class Controls_Manager {
 
 		$controls_stack->add_control(
 			'page_transitions_teaser',
-			array(
+			[
 				'type' => self::RAW_HTML,
-				'raw' => $this->get_teaser_template( array(
+				'raw' => $this->get_teaser_template( [
 					'title' => esc_html__( 'Meet Page Transitions', 'elementor' ),
 					'messages' => $messages,
 					'link' => 'https://go.elementor.com/go-pro-page-transitions/',
-				) ),
-			)
+				] ),
+			]
 		);
 
 		$controls_stack->end_controls_section();
@@ -1194,24 +1194,24 @@ class Controls_Manager {
 	public function add_custom_attributes_controls( Controls_Stack $controls_stack, string $tab = self::TAB_ADVANCED ) {
 		$controls_stack->start_controls_section(
 			'section_custom_attributes_pro',
-			array(
+			[
 				'label' => esc_html__( 'Attributes', 'elementor' ),
 				'tab' => $tab,
-			)
+			]
 		);
 
 		$controls_stack->add_control(
 			'custom_attributes_pro',
-			array(
+			[
 				'type' => self::RAW_HTML,
-				'raw' => $this->get_teaser_template( array(
+				'raw' => $this->get_teaser_template( [
 					'title' => esc_html__( 'Meet Our Attributes', 'elementor' ),
-					'messages' => array(
+					'messages' => [
 						esc_html__( 'Attributes lets you add custom HTML attributes to any element.', 'elementor' ),
-					),
+					],
 					'link' => 'https://go.elementor.com/go-pro-custom-attributes/',
-				) ),
-			)
+				] ),
+			]
 		);
 
 		$controls_stack->end_controls_section();
@@ -1232,11 +1232,11 @@ class Controls_Manager {
 
 		// This array provides a convenient way to map human-readable mode names to numeric values for comparison.
 		// If the current stack's mode is greater than or equal to the current mode, then we shouldn't clean the stack.
-		$modes = array(
+		$modes = [
 			'off' => 1,
 			'dynamic' => 2,
 			'on' => 3,
-		);
+		];
 
 		if ( ! isset( $modes[ $stack_duplication_mode ] ) ) {
 			return false;
@@ -1274,11 +1274,11 @@ class Controls_Manager {
 
 		$controls_stack->add_control(
 			'display_conditions_pro',
-			array(
+			[
 				'type'      => self::RAW_HTML,
 				'separator' => 'before',
 				'raw'       => $control_template,
-			)
+			]
 		);
 	}
 
@@ -1289,36 +1289,36 @@ class Controls_Manager {
 
 		$controls_stack->add_control(
 			'scrolling_effects_pro',
-			array(
+			[
 				'type'      => self::RAW_HTML,
 				'separator' => 'before',
 				'raw'       => $this->promotion_switcher_control( esc_html__( 'Scrolling Effects', 'elementor' ), 'scrolling-effects' ),
-			)
+			]
 		);
 
 		$controls_stack->add_control(
 			'mouse_effects_pro',
-			array(
+			[
 				'type'      => self::RAW_HTML,
 				'separator' => 'before',
 				'raw'       => $this->promotion_switcher_control( esc_html__( 'Mouse Effects', 'elementor' ), 'mouse-effects' ),
-			)
+			]
 		);
 
 		$controls_stack->add_control(
 			'sticky_pro',
-			array(
+			[
 				'type'      => self::RAW_HTML,
 				'separator' => 'before',
 				'raw'       => $this->promotion_select_control( esc_html__( 'Sticky', 'elementor' ), 'sticky-effects' ),
-			)
+			]
 		);
 
 		$controls_stack->add_control(
 			'motion_effects_promotion_divider',
-			array(
+			[
 				'type' => self::DIVIDER,
-			)
+			]
 		);
 	}
 

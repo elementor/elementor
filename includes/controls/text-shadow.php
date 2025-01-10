@@ -41,12 +41,12 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return array(
+		return [
 			'horizontal' => 0,
 			'vertical' => 0,
 			'blur' => 10,
 			'color' => 'rgba(0,0,0,0.3)',
-		);
+		];
 	}
 
 	/**
@@ -61,23 +61,23 @@ class Control_Text_Shadow extends Control_Base_Multiple {
 	 * @return array Control sliders.
 	 */
 	public function get_sliders() {
-		return array(
-			'blur' => array(
+		return [
+			'blur' => [
 				'label' => esc_html__( 'Blur', 'elementor' ),
 				'min' => 0,
 				'max' => 100,
-			),
-			'horizontal' => array(
+			],
+			'horizontal' => [
 				'label' => esc_html__( 'Horizontal', 'elementor' ),
 				'min' => -100,
 				'max' => 100,
-			),
-			'vertical' => array(
+			],
+			'vertical' => [
 				'label' => esc_html__( 'Vertical', 'elementor' ),
 				'min' => -100,
 				'max' => 100,
-			),
-		);
+			],
+		];
 	}
 
 	/**

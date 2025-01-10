@@ -34,21 +34,21 @@ class Theme_Style_Form_Fields extends Tab_Base {
 	}
 
 	protected function register_tab_controls() {
-		$label_selectors = array(
+		$label_selectors = [
 			'{{WRAPPER}} label',
-		);
+		];
 
-		$input_selectors = array(
+		$input_selectors = [
 			'{{WRAPPER}} input:not([type="button"]):not([type="submit"])',
 			'{{WRAPPER}} textarea',
 			'{{WRAPPER}} .elementor-field-textual',
-		);
+		];
 
-		$input_focus_selectors = array(
+		$input_focus_selectors = [
 			'{{WRAPPER}} input:focus:not([type="button"]):not([type="submit"])',
 			'{{WRAPPER}} textarea:focus',
 			'{{WRAPPER}} .elementor-field-textual:focus',
-		);
+		];
 
 		$label_selector = implode( ',', $label_selectors );
 		$input_selector = implode( ',', $input_selectors );
@@ -56,66 +56,66 @@ class Theme_Style_Form_Fields extends Tab_Base {
 
 		$this->start_controls_section(
 			'section_form_fields',
-			array(
+			[
 				'label' => esc_html__( 'Form Fields', 'elementor' ),
 				'tab' => $this->get_id(),
-			)
+			]
 		);
 
 		$this->add_default_globals_notice();
 
 		$this->add_control(
 			'form_label_heading',
-			array(
+			[
 				'type' => Controls_Manager::HEADING,
 				'label' => esc_html__( 'Label', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'form_label_color',
-			array(
+			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => array(),
-				'selectors' => array(
+				'dynamic' => [],
+				'selectors' => [
 					$label_selector => 'color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'form_label_typography',
 				'selector' => $label_selector,
-			)
+			]
 		);
 
 		$this->add_control(
 			'form_field_heading',
-			array(
+			[
 				'type' => Controls_Manager::HEADING,
 				'label' => esc_html__( 'Field', 'elementor' ),
 				'separator' => 'before',
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'form_field_typography',
 				'selector' => $input_selector,
-			)
+			]
 		);
 
 		$this->start_controls_tabs( 'tabs_form_field_style' );
 
 		$this->start_controls_tab(
 			'tab_form_field_normal',
-			array(
+			[
 				'label' => esc_html__( 'Normal', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_form_field_state_tab_controls( 'form_field', $input_selector );
@@ -124,29 +124,29 @@ class Theme_Style_Form_Fields extends Tab_Base {
 
 		$this->start_controls_tab(
 			'tab_form_field_focus',
-			array(
+			[
 				'label' => esc_html__( 'Focus', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_form_field_state_tab_controls( 'form_field_focus', $input_focus_selector );
 
 		$this->add_control(
 			'form_field_focus_transition_duration',
-			array(
+			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
-				'selectors' => array(
+				'selectors' => [
 					$input_selector => 'transition: {{SIZE}}ms',
-				),
-				'range' => array(
-					'px' => array(
+				],
+				'range' => [
+					'px' => [
 						'min' => 0,
 						'max' => 3000,
 						'step' => 100,
-					),
-				),
-			)
+					],
+				],
+			]
 		);
 
 		$this->end_controls_tab();
@@ -155,15 +155,15 @@ class Theme_Style_Form_Fields extends Tab_Base {
 
 		$this->add_responsive_control(
 			'form_field_padding',
-			array(
+			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
-				'selectors' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
 					$input_selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				),
+				],
 				'separator' => 'before',
-			)
+			]
 		);
 
 		$this->end_controls_section();
@@ -172,71 +172,71 @@ class Theme_Style_Form_Fields extends Tab_Base {
 	private function add_form_field_state_tab_controls( $prefix, $selector ) {
 		$this->add_control(
 			$prefix . '_text_color',
-			array(
+			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => array(),
-				'selectors' => array(
+				'dynamic' => [],
+				'selectors' => [
 					$selector => 'color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			$prefix . '_accent_color',
-			array(
+			[
 				'label' => esc_html__( 'Accent Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => array(),
-				'selectors' => array(
+				'dynamic' => [],
+				'selectors' => [
 					$selector => 'accent-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			$prefix . '_background_color',
-			array(
+			[
 				'label' => esc_html__( 'Background Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'dynamic' => array(),
-				'selectors' => array(
+				'dynamic' => [],
+				'selectors' => [
 					$selector => 'background-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
-			array(
+			[
 				'name' => $prefix . '_box_shadow',
 				'selector' => $selector,
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
-			array(
+			[
 				'name' => $prefix . '_border',
 				'selector' => $selector,
-				'fields_options' => array(
-					'color' => array(
-						'dynamic' => array(),
-					),
-				),
-			)
+				'fields_options' => [
+					'color' => [
+						'dynamic' => [],
+					],
+				],
+			]
 		);
 
 		$this->add_control(
 			$prefix . '_border_radius',
-			array(
+			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'custom' ),
-				'selectors' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
 					$selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 	}
 }

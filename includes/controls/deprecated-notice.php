@@ -69,12 +69,12 @@ class Control_Deprecated_Notice extends Base_UI_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'widget' => '', // Widgets name
 			'since' => '', // Plugin version widget was deprecated
 			'last' => '', // Plugin version in which the widget will be removed
 			'plugin' => '', // Plugin's title
 			'replacement' => '', // Widget replacement
-		);
+		];
 	}
 }

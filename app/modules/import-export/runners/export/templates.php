@@ -24,22 +24,22 @@ class Templates extends Export_Runner_Base {
 	public function export( array $data ) {
 		$template_types = array_values( Source_Local::get_template_types() );
 
-		$query_args = array(
+		$query_args = [
 			'post_type' => Source_Local::CPT,
 			'post_status' => 'publish',
 			'posts_per_page' => -1,
-			'meta_query' => array(
-				array(
+			'meta_query' => [
+				[
 					'key' => Document::TYPE_META_KEY,
 					'value' => $template_types,
-				),
-			),
-		);
+				],
+			],
+		];
 
 		$templates_query = new \WP_Query( $query_args );
 
-		$templates_manifest_data = array();
-		$files = array();
+		$templates_manifest_data = [];
+		$files = [];
 
 		foreach ( $templates_query->posts as $template_post ) {
 			$template_id = $template_post->ID;
@@ -48,19 +48,19 @@ class Templates extends Export_Runner_Base {
 
 			$templates_manifest_data[ $template_id ] = $template_document->get_export_summary();
 
-			$files[] = array(
+			$files[] = [
 				'path' => 'templates/' . $template_id,
 				'data' => $template_document->get_export_data(),
-			);
+			];
 		}
 
 		$manifest_data['templates'] = $templates_manifest_data;
 
-		return array(
+		return [
 			'files' => $files,
-			'manifest' => array(
+			'manifest' => [
 				$manifest_data,
-			),
-		);
+			],
+		];
 	}
 }

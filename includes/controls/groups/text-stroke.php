@@ -54,42 +54,42 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 	 * @return array Control fields.
 	 */
 	protected function init_fields() {
-		$controls = array();
+		$controls = [];
 
-		$controls['text_stroke'] = array(
+		$controls['text_stroke'] = [
 			'label' => esc_html__( 'Text Stroke', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => array( 'px', 'em', 'rem', 'custom' ),
-			'range' => array(
-				'px' => array(
+			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+			'range' => [
+				'px' => [
 					'min' => 0,
 					'max' => 10,
-				),
-				'em' => array(
+				],
+				'em' => [
 					'min' => 0,
 					'max' => 1,
-				),
-				'rem' => array(
+				],
+				'rem' => [
 					'min' => 0,
 					'max' => 1,
-				),
-			),
+				],
+			],
 			'responsive' => true,
 			'selector' => '{{WRAPPER}}',
-			'selectors' => array(
+			'selectors' => [
 				'{{SELECTOR}}' => '-webkit-text-stroke-width: {{SIZE}}{{UNIT}}; stroke-width: {{SIZE}}{{UNIT}};',
-			),
-		);
+			],
+		];
 
-		$controls['stroke_color'] = array(
+		$controls['stroke_color'] = [
 			'label' => esc_html__( 'Stroke Color', 'elementor' ),
 			'type' => Controls_Manager::COLOR,
 			'default' => '#000',
 			'selector' => '{{WRAPPER}}',
-			'selectors' => array(
+			'selectors' => [
 				'{{SELECTOR}}' => '-webkit-text-stroke-color: {{VALUE}}; stroke: {{VALUE}};',
-			),
-		);
+			],
+		];
 
 		return $controls;
 	}
@@ -106,15 +106,15 @@ class Group_Control_Text_Stroke extends Group_Control_Base {
 	 * @return array Default text stroke control options.
 	 */
 	protected function get_default_options() {
-		return array(
-			'popover' => array(
+		return [
+			'popover' => [
 				'starter_title' => esc_html__( 'Text Stroke', 'elementor' ),
 				'starter_name' => 'text_stroke_type',
 				'starter_value' => 'yes',
-				'settings' => array(
+				'settings' => [
 					'render_type' => 'ui',
-				),
-			),
-		);
+				],
+			],
+		];
 	}
 }

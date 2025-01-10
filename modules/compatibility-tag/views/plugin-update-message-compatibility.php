@@ -48,11 +48,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php foreach ( $plugins as $plugin_name => $plugin_data ) : ?>
 				<?php
 				if (
-				in_array( $plugins_compatibility[ $plugin_name ], array(
+				in_array( $plugins_compatibility[ $plugin_name ], [
 					Compatibility_Tag::PLUGIN_NOT_EXISTS,
 					Compatibility_Tag::HEADER_NOT_EXISTS,
 					Compatibility_Tag::INVALID_VERSION,
-				), true )
+				], true )
 				) {
 					$plugin_data[ $this->get_plugin_header() ] = esc_html__( 'Unknown', 'elementor' );
 				}

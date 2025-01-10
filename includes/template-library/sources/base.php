@@ -77,7 +77,7 @@ abstract class Source_Base {
 	 * @param array $args Optional. Filter templates list based on a set of
 	 *                    arguments. Default is an empty array.
 	 */
-	abstract public function get_items( $args = array() );
+	abstract public function get_items( $args = [] );
 
 	/**
 	 * Get template.
@@ -191,7 +191,7 @@ abstract class Source_Base {
 		$favorites_templates = $this->get_user_meta( 'favorites' );
 
 		if ( ! $favorites_templates ) {
-			$favorites_templates = array();
+			$favorites_templates = [];
 		}
 
 		if ( $favorite ) {
@@ -221,7 +221,7 @@ abstract class Source_Base {
 		}
 
 		if ( ! $this->user_meta ) {
-			$this->user_meta = array();
+			$this->user_meta = [];
 		}
 
 		if ( $item ) {

@@ -103,7 +103,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 */
 	public function get_user_progress_from_db(): array {
 		$db_progress = json_decode( $this->wordpress_adapter->get_option( self::DB_OPTION_KEY ), true );
-		$db_progress = is_array( $db_progress ) ? $db_progress : array();
+		$db_progress = is_array( $db_progress ) ? $db_progress : [];
 
 		$progress = array_merge( $this->get_default_user_progress(), $db_progress );
 
@@ -141,11 +141,11 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	public function update_user_progress( $new_data ): void {
-		$allowed_properties = array(
+		$allowed_properties = [
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => $new_data[ self::FIRST_CLOSED_CHECKLIST_IN_EDITOR ] ?? null,
 			self::LAST_OPENED_TIMESTAMP => $new_data[ self::LAST_OPENED_TIMESTAMP ] ?? null,
 			self::IS_POPUP_MINIMIZED_KEY => $new_data[ self::IS_POPUP_MINIMIZED_KEY ] ?? null,
-		);
+		];
 
 		foreach ( $allowed_properties as $key => $value ) {
 			if ( null !== $value ) {
@@ -188,7 +188,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			wp_enqueue_script(
 				$this->get_name(),
 				ELEMENTOR_ASSETS_URL . 'js/checklist' . $min_suffix . '.js',
-				array(
+				[
 					'react',
 					'react-dom',
 					'elementor-common',
@@ -196,7 +196,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 					'elementor-v2-icons',
 					'elementor-v2-editor-app-bar',
 					'elementor-web-cli',
-				),
+				],
 				ELEMENTOR_VERSION,
 				true
 			);
@@ -220,17 +220,17 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	private function register_experiment(): void {
-		Plugin::$instance->experiments->add_feature( array(
+		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_ID,
 			'title' => esc_html__( 'Launchpad Checklist', 'elementor' ),
 			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
 			'release_status' => Manager::RELEASE_STATUS_ALPHA,
 			'hidden' => true,
-			'new_site' => array(
+			'new_site' => [
 				'default_active' => true,
 				'minimum_installation_version' => '3.25.0',
-			),
-		) );
+			],
+		] );
 	}
 
 	private function init_user_progress(): void {
@@ -240,12 +240,12 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	private function get_default_user_progress(): array {
-		return array(
+		return [
 			self::LAST_OPENED_TIMESTAMP => null,
 			self::FIRST_CLOSED_CHECKLIST_IN_EDITOR => false,
 			self::IS_POPUP_MINIMIZED_KEY => false,
-			'steps' => array(),
-		);
+			'steps' => [],
+		];
 	}
 
 	private function update_user_progress_in_db(): void {

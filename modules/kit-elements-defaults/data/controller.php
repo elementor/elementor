@@ -19,18 +19,18 @@ class Controller extends Base_Controller {
 	}
 
 	public function register_endpoints() {
-		$this->index_endpoint->register_item_route(\WP_REST_Server::EDITABLE, array(
+		$this->index_endpoint->register_item_route(\WP_REST_Server::EDITABLE, [
 			'id_arg_name' => 'type',
 			'id_arg_type_regex' => '[\w\-\_]+',
-			'type' => array(
+			'type' => [
 				'type' => 'string',
 				'description' => 'The type of the element.',
 				'required' => true,
 				'validate_callback' => function ( $type ) {
 					return $this->validate_type( $type );
 				},
-			),
-			'settings' => array(
+			],
+			'settings' => [
 				'description' => 'All the default values for the requested type',
 				'required' => true,
 				'type' => 'object',
@@ -56,25 +56,25 @@ class Controller extends Base_Controller {
 
 					return $sanitized_data;
 				},
-			),
-		) );
+			],
+		] );
 
-		$this->index_endpoint->register_item_route(\WP_REST_Server::DELETABLE, array(
+		$this->index_endpoint->register_item_route(\WP_REST_Server::DELETABLE, [
 			'id_arg_name' => 'type',
 			'id_arg_type_regex' => '[\w\-\_]+',
-			'type' => array(
+			'type' => [
 				'type' => 'string',
 				'description' => 'The type of the element.',
 				'required' => true,
 				'validate_callback' => function ( $type ) {
 					return $this->validate_type( $type );
 				},
-			),
-		) );
+			],
+		] );
 	}
 
 	public function get_collection_params() {
-		return array();
+		return [];
 	}
 
 	public function get_items( $request ) {
@@ -96,7 +96,7 @@ class Controller extends Base_Controller {
 
 		$kit->update_json_meta( Module::META_KEY, $data );
 
-		return (object) array();
+		return (object) [];
 	}
 
 	public function delete_item( $request ) {
@@ -110,7 +110,7 @@ class Controller extends Base_Controller {
 
 		$kit->update_json_meta( Module::META_KEY, $data );
 
-		return (object) array();
+		return (object) [];
 	}
 
 	private function validate_kit() {

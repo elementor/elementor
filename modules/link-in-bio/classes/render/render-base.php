@@ -31,7 +31,7 @@ abstract class Render_Base {
 	}
 
 	protected function render_image_links(): void {
-		$image_links_value_initial = $this->settings['image_links'] ?? array();
+		$image_links_value_initial = $this->settings['image_links'] ?? [];
 		$image_links_columns_value = $this->settings['image_links_per_row'] ?? 2;
 
 		/**
@@ -51,16 +51,16 @@ abstract class Render_Base {
 			$image_links_classnames .= ' has-' . $image_links_columns_value . '-columns';
 		}
 
-		$this->widget->add_render_attribute( 'image-links', array(
+		$this->widget->add_render_attribute( 'image-links', [
 			'class' => $image_links_classnames,
-		) );
+		] );
 		?>
 
 		<div <?php echo $this->widget->get_render_attribute_string( 'image-links' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $image_links_value as $key => $image_link ) {
 				$formatted_link = $image_link['image_links_url']['url'] ?? '';
-				$image_link_image = $image_link['image_links_image'] ?? array();
+				$image_link_image = $image_link['image_links_image'] ?? [];
 
 				// Manage Link class variations
 
@@ -68,10 +68,10 @@ abstract class Render_Base {
 
 				// Manage Link attributes
 
-				$url_attrs = array(
+				$url_attrs = [
 					'class' => $image_link_classnames,
 					'href' => esc_url( $formatted_link ),
-				);
+				];
 
 				$url_combined_attrs = $this->get_link_attributes(
 					$image_link['image_links_url'],
@@ -79,22 +79,22 @@ abstract class Render_Base {
 				);
 
 				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
-					$this->widget->add_render_attribute( 'image-links-link' . $key, array(
+					$this->widget->add_render_attribute( 'image-links-link' . $key, [
 						$attr_key => $attr_value,
-					) );
+					] );
 				}
 				?>
 				<a <?php echo $this->widget->get_render_attribute_string( 'image-links-link' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<?php if ( ! empty( $image_link_image['id'] ) ) {
-						echo wp_get_attachment_image( $image_link_image['id'], 'thumbnail', false, array(
+						echo wp_get_attachment_image( $image_link_image['id'], 'thumbnail', false, [
 							'class' => 'e-link-in-bio__image-links-img',
-						) );
+						] );
 					} else {
-						$this->widget->add_render_attribute( 'image-links-img-' . $key, array(
+						$this->widget->add_render_attribute( 'image-links-img-' . $key, [
 							'alt' => '',
 							'class' => 'e-link-in-bio__image-links-img',
 							'src' => esc_url( $image_link_image['url'] ),
-						) );
+						] );
 						?>
 						<img <?php echo $this->widget->get_render_attribute_string( 'image-links-img-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 					<?php } ?>
@@ -108,7 +108,7 @@ abstract class Render_Base {
 		$ctas_props_corners = $this->settings['cta_links_corners'] ?? 'rounded';
 		$ctas_props_show_border = $this->settings['cta_links_show_border'] ?? false;
 		$ctas_props_type = $this->settings['cta_links_type'] ?? 'button';
-		$ctas_value_initial = $this->settings['cta_link'] ?? array();
+		$ctas_value_initial = $this->settings['cta_link'] ?? [];
 
 		/**
 		 * $this->settings['cta_link'] if empty returns a sub-array with all empty values
@@ -121,16 +121,16 @@ abstract class Render_Base {
 			return;
 		}
 
-		$this->widget->add_render_attribute( 'ctas', array(
+		$this->widget->add_render_attribute( 'ctas', [
 			'class' => 'e-link-in-bio__ctas has-type-' . $ctas_props_type,
-		) );
+		] );
 		?>
 
 		<div <?php echo $this->widget->get_render_attribute_string( 'ctas' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
 			foreach ( $ctas_value as $key => $cta ) {
 				$formatted_link = $this->get_formatted_link_based_on_type_for_cta( $cta );
-				$cta_image = $cta['cta_link_image'] ?? array();
+				$cta_image = $cta['cta_link_image'] ?? [];
 				$cta_has_image = ! empty( $cta_image ) &&
 					( ! empty( $cta_image['url'] || ! empty( $cta_image['id'] ) ) ) &&
 					'button' === $ctas_props_type;
@@ -153,10 +153,10 @@ abstract class Render_Base {
 
 				// Manage Link attributes
 
-				$url_attrs = array(
+				$url_attrs = [
 					'class' => $ctas_classnames,
 					'href' => esc_url( $formatted_link ),
-				);
+				];
 
 				if (
 					Social_Network_Provider::FILE_DOWNLOAD === $cta['cta_link_type'] ||
@@ -177,24 +177,24 @@ abstract class Render_Base {
 				);
 
 				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
-					$this->widget->add_render_attribute( 'cta-' . $key, array(
+					$this->widget->add_render_attribute( 'cta-' . $key, [
 						$attr_key => $attr_value,
-					) );
+					] );
 				}
 				?>
 				<a <?php echo $this->widget->get_render_attribute_string( 'cta-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 					<?php if ( $cta_has_image ) : ?>
 						<span class="e-link-in-bio__cta-image">
 							<?php if ( ! empty( $cta_image['id'] ) ) {
-								echo wp_get_attachment_image( $cta_image['id'], 'thumbnail', false, array(
+								echo wp_get_attachment_image( $cta_image['id'], 'thumbnail', false, [
 									'class' => 'e-link-in-bio__cta-image-element',
-								) );
+								] );
 							} else {
-								$this->widget->add_render_attribute( 'cta-link-image' . $key, array(
+								$this->widget->add_render_attribute( 'cta-link-image' . $key, [
 									'alt' => '',
 									'class' => 'e-link-in-bio__cta-image-element',
 									'src' => esc_url( $cta_image['url'] ),
-								) );
+								] );
 								?>
 								<img <?php echo $this->widget->get_render_attribute_string( 'cta-link-image' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 							<?php } ?>
@@ -212,16 +212,16 @@ abstract class Render_Base {
 	protected function render_icons(): void {
 		$icons_props_show_border = $this->settings['icons_border_show_border'] ?? false;
 		$icons_props_size = $this->settings['icons_size'] ?? 'small';
-		$icons_value = $this->settings['icon'] ?? array();
+		$icons_value = $this->settings['icon'] ?? [];
 
 		$has_icons = ! empty( $icons_value );
 		if ( ! $has_icons ) {
 			return;
 		}
 
-		$this->widget->add_render_attribute( 'icons', array(
+		$this->widget->add_render_attribute( 'icons', [
 			'class' => 'e-link-in-bio__icons has-size-' . $icons_props_size,
-		) );
+		] );
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'icons' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
@@ -235,17 +235,17 @@ abstract class Render_Base {
 					$icon_class_names .= ' has-border';
 				}
 
-				$this->widget->add_render_attribute( 'icon-' . $key, array(
+				$this->widget->add_render_attribute( 'icon-' . $key, [
 					'class' => $icon_class_names,
-				) );
+				] );
 
 				// Manage Link attributes
 
-				$url_attrs = array(
+				$url_attrs = [
 					'aria-label' => esc_attr( $icon['icon_platform'] ),
 					'class' => 'e-link-in-bio__icon-link',
 					'href' => esc_url( $formatted_link ),
-				);
+				];
 
 				$icon_url = $icon['icon_url'];
 
@@ -259,9 +259,9 @@ abstract class Render_Base {
 				);
 
 				foreach ( $url_combined_attrs as $attr_key => $attr_value ) {
-					$this->widget->add_render_attribute( 'icon-link-' . $key, array(
+					$this->widget->add_render_attribute( 'icon-link-' . $key, [
 						$attr_key => $attr_value,
-					) );
+					] );
 				}
 				?>
 				<div <?php echo $this->widget->get_render_attribute_string( 'icon-' . $key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -272,11 +272,11 @@ abstract class Render_Base {
 							$icon_lib = explode( ' ', $mapping )[0];
 							$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
 							Icons_Manager::render_icon(
-								array(
+								[
 									'library' => $library,
 									'value' => $mapping,
-								),
-								array( 'aria-hidden' => 'true' )
+								],
+								[ 'aria-hidden' => 'true' ]
 							);
 							?>
 						</span>
@@ -381,18 +381,18 @@ abstract class Render_Base {
 		 * Get base data for potential images
 		 * Note order is important - secondary must render before primary
 		*/
-		$output_images = array(
-			'secondary_image' => array(
-				'props' => array(),
+		$output_images = [
+			'secondary_image' => [
+				'props' => [],
 				'should_render' => false,
-				'value' => $this->settings['identity_image_cover'] ?? array(),
-			),
-			'primary_image' => array(
-				'props' => array(),
+				'value' => $this->settings['identity_image_cover'] ?? [],
+			],
+			'primary_image' => [
+				'props' => [],
 				'should_render' => false,
-				'value' => $this->settings['identity_image'] ?? array(),
-			),
-		);
+				'value' => $this->settings['identity_image'] ?? [],
+			],
+		];
 
 		$output_images['primary_image']['should_render'] = ! empty( $output_images['primary_image']['value'] ) && ( ! empty( $output_images['primary_image']['value']['url'] || ! empty( $output_images['primary_image']['value']['id'] ) ) );
 		$output_images['secondary_image']['should_render'] = ! empty( $output_images['secondary_image']['value'] ) && ( ! empty( $output_images['secondary_image']['value']['url'] || ! empty( $output_images['secondary_image']['value']['id'] ) ) );
@@ -409,21 +409,21 @@ abstract class Render_Base {
 			<?php
 			foreach ( $output_images as $image_key => $image ) :
 				if ( $image['should_render'] ) :
-					$this->widget->add_render_attribute( 'identity_image_' . $image_key, array(
+					$this->widget->add_render_attribute( 'identity_image_' . $image_key, [
 						'class' => $this->get_image_classnames( $image ),
-					) );
+					] );
 					?>
 						<div <?php echo $this->widget->get_render_attribute_string( 'identity_image_' . $image_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 							<?php if ( ! empty( $image['value']['id'] ) ) {
-								echo wp_get_attachment_image( $image['value']['id'], 'medium', false, array(
+								echo wp_get_attachment_image( $image['value']['id'], 'medium', false, [
 									'class' => 'e-link-in-bio__identity-image-element',
-								) );
+								] );
 							} else {
-								$this->widget->add_render_attribute( 'identity_image_src' . $image_key, array(
+								$this->widget->add_render_attribute( 'identity_image_src' . $image_key, [
 									'alt' => '',
 									'class' => 'e-link-in-bio__identity-image-element',
 									'src' => esc_url( $image['value']['url'] ),
-								) );
+								] );
 								?>
 								<img <?php echo $this->widget->get_render_attribute_string( 'identity_image_src' . $image_key ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 
@@ -551,9 +551,9 @@ abstract class Render_Base {
 			$layout_classnames .= ' ' . $custom_classes;
 		}
 
-		$attrs = array(
+		$attrs = [
 			'class' => $layout_classnames,
-		);
+		];
 
 		if ( ! empty( $this->settings['advanced_custom_css_id'] ) ) {
 			$attrs['id'] = $this->settings['advanced_custom_css_id'];

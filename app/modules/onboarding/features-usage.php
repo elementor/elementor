@@ -37,13 +37,13 @@ class Features_Usage {
 
 		update_option( static::ONBOARDING_FEATURES_OPTION, $post_data['features'] );
 
-		return array(
+		return [
 			'status' => 'success',
-			'payload' => array(),
-		);
+			'payload' => [],
+		];
 	}
 
 	private function get_usage_data() {
-		return get_option( static::ONBOARDING_FEATURES_OPTION, array() );
+		return get_option( static::ONBOARDING_FEATURES_OPTION, [] );
 	}
 }

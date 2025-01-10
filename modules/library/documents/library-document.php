@@ -44,7 +44,7 @@ abstract class Library_Document extends Document {
 		$properties['admin_tab_group'] = 'library';
 		$properties['show_in_library'] = true;
 		$properties['register_type'] = true;
-		$properties['cpt'] = array( Source_Local::CPT );
+		$properties['cpt'] = [ Source_Local::CPT ];
 
 		return $properties;
 	}
@@ -65,9 +65,9 @@ abstract class Library_Document extends Document {
 	public function get_initial_config() {
 		$config = parent::get_initial_config();
 
-		$config['library'] = array(
+		$config['library'] = [
 			'save_as_same_type' => true,
-		);
+		];
 
 		return $config;
 	}

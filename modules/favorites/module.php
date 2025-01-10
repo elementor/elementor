@@ -19,7 +19,7 @@ class Module extends BaseModule {
 	 *
 	 * @var Favorites_Type[]
 	 */
-	protected $types = array();
+	protected $types = [];
 
 	const OPTION_NAME = 'elementor_editor_user_favorites';
 
@@ -48,7 +48,7 @@ class Module extends BaseModule {
 
 		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
-		add_filter( 'elementor/tracker/send_tracking_data_params', array( $this, 'add_tracking_data' ) );
+		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
 	}
 
 	/**
@@ -190,7 +190,7 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	protected function combined() {
-		$all = array();
+		$all = [];
 
 		foreach ( $this->types as $type ) {
 			$favorites = $type->values();

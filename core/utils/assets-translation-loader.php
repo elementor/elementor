@@ -66,10 +66,10 @@ class Assets_Translation_Loader {
 		$relative_path_without_ext = preg_replace( '/(\.min)?\.js$/i', '', $relative_path );
 
 		// By default, we suffix the file with `.strings` (e.g 'assets/js/editor.js' => 'assets/js/editor.strings.js').
-		return implode( '.', array(
+		return implode( '.', [
 			$relative_path_without_ext,
 			'strings',
 			'js',
-		) );
+		] );
 	}
 }

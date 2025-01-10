@@ -45,7 +45,7 @@ class Control_Repeater extends Base_Data_Control implements Has_Validation {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return array();
+		return [];
 	}
 
 	/**
@@ -60,20 +60,20 @@ class Control_Repeater extends Base_Data_Control implements Has_Validation {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
-			'fields' => array(),
+		return [
+			'fields' => [],
 			'title_field' => '',
 			'prevent_empty' => true,
 			'is_repeater' => true,
 			'max_items' => 0,
 			'min_items' => 0,
-			'item_actions' => array(
+			'item_actions' => [
 				'add' => true,
 				'duplicate' => true,
 				'remove' => true,
 				'sort' => true,
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -124,7 +124,7 @@ class Control_Repeater extends Base_Data_Control implements Has_Validation {
 	 *
 	 * @return array Control settings.
 	 */
-	public function on_import( $settings, $control_data = array() ) {
+	public function on_import( $settings, $control_data = [] ) {
 		if ( empty( $settings ) || empty( $control_data['fields'] ) ) {
 			return $settings;
 		}

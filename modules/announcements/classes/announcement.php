@@ -30,7 +30,7 @@ class Announcement {
 	}
 
 	protected function set_triggers() {
-		$triggers = $this->raw_data['triggers'] ?? array();
+		$triggers = $this->raw_data['triggers'] ?? [];
 		foreach ( $triggers as $trigger ) {
 			$this->triggers[] = Utils::get_trigger_object( $trigger );
 		}

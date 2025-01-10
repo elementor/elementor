@@ -15,7 +15,7 @@ class Http extends \WP_Http {
 	 *
 	 * @return array|\WP_Error|null
 	 */
-	public function request_with_fallback( array $urls, $args = array() ) {
+	public function request_with_fallback( array $urls, $args = [] ) {
 		$response = null;
 
 		foreach ( $urls as $url ) {
@@ -41,7 +41,7 @@ class Http extends \WP_Http {
 
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
-		if ( in_array( $response_code, array( 0, 404, 500 ), true ) ) {
+		if ( in_array( $response_code, [ 0, 404, 500 ], true ) ) {
 			return false;
 		}
 

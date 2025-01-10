@@ -41,8 +41,8 @@ class Create extends Base_Category {
 	 *
 	 * @return array
 	 */
-	public function get_category_items( array $options = array() ) {
-		$result = array();
+	public function get_category_items( array $options = [] ) {
+		$result = [];
 
 		$registered_document_types = Plugin::$instance->documents->get_document_types();
 
@@ -105,11 +105,11 @@ class Create extends Base_Category {
 	}
 
 	private function get_create_new_template( $add_new_title, $url ) {
-		return array(
+		return [
 			'title' => $add_new_title,
 			'icon' => 'plus-circle-o',
 			'url' => $url,
-			'keywords' => array( $add_new_title, 'post', 'page', 'template', 'new', 'create' ),
-		);
+			'keywords' => [ $add_new_title, 'post', 'page', 'template', 'new', 'create' ],
+		];
 	}
 }

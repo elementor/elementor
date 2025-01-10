@@ -19,7 +19,7 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @var \Elementor\Data\V2\Base\Endpoint[]
 	 */
-	public $endpoints = array();
+	public $endpoints = [];
 
 	/**
 	 * Index endpoint.
@@ -33,7 +33,7 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @var \Elementor\Data\V2\Base\Processor[][]
 	 */
-	public $processors = array();
+	public $processors = [];
 
 	/**
 	 * @var \Elementor\Data\V2\Base\Controller|null
@@ -43,7 +43,7 @@ abstract class Controller extends WP_REST_Controller {
 	/**
 	 * @var \Elementor\Data\V2\Base\Controller[]
 	 */
-	private $sub_controllers = array();
+	private $sub_controllers = [];
 
 	public static function get_default_namespace() {
 		return Manager::ROOT_NAMESPACE;
@@ -146,11 +146,11 @@ abstract class Controller extends WP_REST_Controller {
 			}
 		} );
 
-		$data = array(
+		$data = [
 			'namespace' => $this->get_namespace(),
 			'controller' => $controller_route,
 			'routes' => $server->get_data_for_routes( $endpoints ),
-		);
+		];
 
 		$response = rest_ensure_response( $data );
 
@@ -174,7 +174,7 @@ abstract class Controller extends WP_REST_Controller {
 			return $this->get_collection_params();
 		}
 
-		return array();
+		return [];
 	}
 
 	/**
@@ -185,7 +185,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return array
 	 */
 	public function get_item_args( $methods ) {
-		return array();
+		return [];
 	}
 
 	/**
@@ -238,7 +238,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return true|\WP_Error True if the request has access to create items, WP_Error object otherwise.
 	 */
 	public function create_items_permissions_check( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -249,7 +249,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return true|\WP_Error True if the request has access to update the item, WP_Error object otherwise.
 	 */
 	public function update_items_permissions_check( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -260,7 +260,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return true|\WP_Error True if the request has access to delete the item, WP_Error object otherwise.
 	 */
 	public function delete_items_permissions_check( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	public function get_items( $request ) {
@@ -275,7 +275,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	public function create_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -286,7 +286,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	public function update_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -297,7 +297,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	public function delete_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
 	}
 
 	/**
@@ -326,7 +326,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return \Elementor\Data\V2\Base\Processor[]
 	 */
 	public function get_processors( $command ) {
-		$result = array();
+		$result = [];
 
 		if ( isset( $this->processors[ $command ] ) ) {
 			$result = $this->processors[ $command ];
@@ -391,7 +391,7 @@ abstract class Controller extends WP_REST_Controller {
 		$command = $processor->get_command();
 
 		if ( ! isset( $this->processors[ $command ] ) ) {
-			$this->processors[ $command ] = array();
+			$this->processors[ $command ] = [];
 		}
 
 		$this->processors[ $command ] [] = $processor;
@@ -420,7 +420,7 @@ abstract class Controller extends WP_REST_Controller {
 	 * @return array
 	 */
 	protected function get_collection_params_by_additional_props_context( $context ) {
-		$result = array();
+		$result = [];
 
 		$collection_params = $this->get_collection_params();
 

@@ -61,9 +61,9 @@ class Control_Raw_Html extends Base_UI_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'raw' => '',
 			'content_classes' => '',
-		);
+		];
 	}
 }

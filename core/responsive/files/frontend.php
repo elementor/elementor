@@ -99,7 +99,7 @@ class Frontend extends Base {
 		$file_meta_key = $this->get_file_meta_key();
 
 		if ( empty( $option[ $file_meta_key ] ) ) {
-			return array();
+			return [];
 		}
 
 		return $option[ $file_meta_key ];
@@ -163,7 +163,7 @@ class Frontend extends Base {
 		$option = get_option( static::META_KEY );
 
 		if ( ! $option ) {
-			$option = array();
+			$option = [];
 		}
 
 		return $option;

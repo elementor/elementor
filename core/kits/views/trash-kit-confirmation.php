@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 $config_url = add_query_arg(
-	array( 'force_delete_kit' => '1' ),
+	[ 'force_delete_kit' => '1' ],
 	get_delete_post_link( $post_id, '', $is_permanently_delete )
 );
 ?>

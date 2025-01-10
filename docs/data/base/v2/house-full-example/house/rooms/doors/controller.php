@@ -12,9 +12,9 @@ class Controller extends \Elementor\Data\V2\Base\Controller {
 	}
 
 	public function register_endpoints() {
-		$this->index_endpoint->register_item_route( \WP_REST_Server::READABLE, array(
+		$this->index_endpoint->register_item_route( \WP_REST_Server::READABLE, [
 			'id_arg_name' => 'door_id',
-		) );
+		] );
 	}
 
 	public function get_items( $request ) {

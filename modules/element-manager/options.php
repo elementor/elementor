@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Options {
 
 	public static function get_disabled_elements() {
-		return (array) get_option( 'elementor_disabled_elements', array() );
+		return (array) get_option( 'elementor_disabled_elements', [] );
 	}
 
 	public static function update_disabled_elements( $elements ) {

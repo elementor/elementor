@@ -12,7 +12,7 @@ class Module extends \Elementor\Core\Base\Module {
 	const EXPERIMENT_NAME = 'nested-elements';
 
 	public static function get_experimental_data() {
-		return array(
+		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Nested Elements', 'elementor' ),
 			'description' => sprintf(
@@ -22,10 +22,10 @@ class Module extends \Elementor\Core\Base\Module {
 			),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'default' => Experiments_Manager::STATE_ACTIVE,
-			'dependencies' => array(
+			'dependencies' => [
 				'container',
-			),
-		);
+			],
+		];
 	}
 
 	public function get_name() {
@@ -40,9 +40,9 @@ class Module extends \Elementor\Core\Base\Module {
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', function () {
-			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), array(
+			wp_enqueue_script( $this->get_name(), $this->get_js_assets_url( $this->get_name() ), [
 				'elementor-common',
-			), ELEMENTOR_VERSION, true );
+			], ELEMENTOR_VERSION, true );
 		} );
 	}
 }

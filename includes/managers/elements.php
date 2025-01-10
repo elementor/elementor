@@ -67,7 +67,7 @@ class Elements_Manager {
 	 * @return Element_Base|null Element instance if element created, or null
 	 *                           otherwise.
 	 */
-	public function create_element_instance( array $element_data, array $element_args = array(), Element_Base $element_type = null ) {
+	public function create_element_instance( array $element_data, array $element_args = [], Element_Base $element_type = null ) {
 		if ( null === $element_type ) {
 			if ( 'widget' === $element_data['elType'] ) {
 				$element_type = Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
@@ -209,7 +209,7 @@ class Elements_Manager {
 	 * @return array Element types config.
 	 */
 	public function get_element_types_config() {
-		$config = array();
+		$config = [];
 
 		foreach ( $this->get_element_types() as $element ) {
 			$config[ $element->get_name() ] = $element->get_config();
@@ -242,9 +242,9 @@ class Elements_Manager {
 	 * @access private
 	 */
 	private function init_elements() {
-		$this->_element_types = array();
+		$this->_element_types = [];
 
-		foreach ( array( 'section', 'column' ) as $element_name ) {
+		foreach ( [ 'section', 'column' ] as $element_name ) {
 			$class_name = __NAMESPACE__ . '\Element_' . $element_name;
 
 			$this->register_element_type( new $class_name() );
@@ -275,58 +275,58 @@ class Elements_Manager {
 	 * @access private
 	 */
 	private function init_categories() {
-		$this->categories = array(
-			'layout' => array(
+		$this->categories = [
+			'layout' => [
 				'title' => esc_html__( 'Layout', 'elementor' ),
 				'hideIfEmpty' => true,
-			),
-			'basic' => array(
+			],
+			'basic' => [
 				'title' => esc_html__( 'Basic', 'elementor' ),
 				'icon' => 'eicon-font',
-			),
-			'pro-elements' => array(
+			],
+			'pro-elements' => [
 				'title' => esc_html__( 'Pro', 'elementor' ),
-				'promotion' => array(
+				'promotion' => [
 					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
-				),
-			),
-			'helloplus' => array(
+				],
+			],
+			'helloplus' => [
 				'title' => esc_html__( 'Hello+', 'elementor' ),
 				'hideIfEmpty' => true,
-			),
-			'general' => array(
+			],
+			'general' => [
 				'title' => esc_html__( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
-			),
-			'link-in-bio' => array(
+			],
+			'link-in-bio' => [
 				'title' => esc_html__( 'Link In Bio', 'elementor' ),
 				'hideIfEmpty' => true,
-			),
-			'theme-elements' => array(
+			],
+			'theme-elements' => [
 				'title' => esc_html__( 'Site', 'elementor' ),
 				'active' => false,
-				'promotion' => array(
+				'promotion' => [
 					'url' => esc_url( 'https://go.elementor.com/go-pro-section-site-widget-panel/' ),
-				),
-			),
-			'woocommerce-elements' => array(
+				],
+			],
+			'woocommerce-elements' => [
 				'title' => esc_html__( 'WooCommerce', 'elementor' ),
 				'active' => false,
-				'promotion' => array(
+				'promotion' => [
 					'url' => esc_url( 'https://go.elementor.com/go-pro-section-woocommerce-widget-panel/' ),
-				),
-			),
-		);
+				],
+			],
+		];
 
 		// Not using the `add_category` because it doesn't allow 3rd party to inject a category on top the others.
-		$this->categories = array_merge_recursive( array(
-			'favorites' => array(
+		$this->categories = array_merge_recursive( [
+			'favorites' => [
 				'title' => esc_html__( 'Favorites', 'elementor' ),
 				'icon' => 'eicon-heart',
 				'sort' => 'a-z',
 				'hideIfEmpty' => false,
-			),
-		), $this->categories );
+			],
+		], $this->categories );
 
 		/**
 		 * When categories are registered.
@@ -343,11 +343,11 @@ class Elements_Manager {
 		 */
 		do_action( 'elementor/elements/categories_registered', $this );
 
-		$this->categories['wordpress'] = array(
+		$this->categories['wordpress'] = [
 			'title' => esc_html__( 'WordPress', 'elementor' ),
 			'icon' => 'eicon-wordpress',
 			'active' => false,
-		);
+		];
 	}
 
 	public function enqueue_elements_styles() {

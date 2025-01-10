@@ -69,7 +69,7 @@ class Widget_Spacer extends Widget_Base {
 	 * @return array Widget categories.
 	 */
 	public function get_categories() {
-		return array( 'basic' );
+		return [ 'basic' ];
 	}
 
 	/**
@@ -83,7 +83,7 @@ class Widget_Spacer extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return array( 'space' );
+		return [ 'space' ];
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -101,7 +101,7 @@ class Widget_Spacer extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return array( 'widget-spacer' );
+		return [ 'widget-spacer' ];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -119,33 +119,33 @@ class Widget_Spacer extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_spacer',
-			array(
+			[
 				'label' => esc_html__( 'Spacer', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_responsive_control(
 			'space',
-			array(
+			[
 				'label' => esc_html__( 'Space', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'default' => array(
+				'default' => [
 					'size' => 50,
-				),
-				'size_units' => array( 'px', 'em', 'rem', 'vh', 'custom' ),
-				'range' => array(
-					'px' => array(
+				],
+				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
+				'range' => [
+					'px' => [
 						'max' => 600,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'max' => 20,
-					),
-				),
+					],
+				],
 				'render_type' => 'template',
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}}' => '--spacer-size: {{SIZE}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();

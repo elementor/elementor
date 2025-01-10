@@ -35,11 +35,11 @@ abstract class Contact_Buttons_Render_Base {
 		$icon_lib = explode( ' ', $mapping )[0];
 		$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
 		Icons_Manager::render_icon(
-			array(
+			[
 				'library' => $library,
 				'value' => $mapping,
-			),
-			array( 'aria-hidden' => 'true' )
+			],
+			[ 'aria-hidden' => 'true' ]
 		);
 	}
 
@@ -79,7 +79,7 @@ abstract class Contact_Buttons_Render_Base {
 			$button_classnames .= ' has-dot';
 		}
 
-		$this->widget->add_render_attribute( 'button', array(
+		$this->widget->add_render_attribute( 'button', [
 			'class' => $button_classnames,
 			'aria-controls' => 'e-contact-buttons__content-wrapper',
 			'aria-label' => sprintf(
@@ -88,7 +88,7 @@ abstract class Contact_Buttons_Render_Base {
 				$accessible_name,
 			),
 			'type' => 'button',
-		) );
+		] );
 
 		?>
 		<div class="e-contact-buttons__chat-button-container">
@@ -104,7 +104,7 @@ abstract class Contact_Buttons_Render_Base {
 	protected function render_close_button(): void {
 		$accessible_name = $this->settings['chat_aria_label'];
 
-		$this->widget->add_render_attribute( 'close-button', array(
+		$this->widget->add_render_attribute( 'close-button', [
 			'class' => 'e-contact-buttons__close-button',
 			'aria-controls' => 'e-contact-buttons__content-wrapper',
 			'aria-label' => sprintf(
@@ -113,7 +113,7 @@ abstract class Contact_Buttons_Render_Base {
 				$accessible_name,
 			),
 			'type' => 'button',
-		) );
+		] );
 
 		?>
 			<button <?php echo $this->widget->get_render_attribute_string( 'close-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
@@ -123,7 +123,7 @@ abstract class Contact_Buttons_Render_Base {
 	}
 
 	protected function render_top_bar(): void {
-		$profile_image_value = $this->settings['top_bar_image'] ?? array();
+		$profile_image_value = $this->settings['top_bar_image'] ?? [];
 		$has_profile_image = ! empty( $profile_image_value ) && ( ! empty( $profile_image_value['url'] || ! empty( $profile_image_value['id'] ) ) );
 		$profile_image_size = $this->settings['style_top_bar_image_size'];
 		$display_profile_dot = $this->settings['top_bar_show_dot'];
@@ -144,23 +144,23 @@ abstract class Contact_Buttons_Render_Base {
 		$has_top_bar_title = ! empty( $top_bar_title );
 		$has_top_bar_subtitle = ! empty( $top_bar_subtitle );
 
-		$this->widget->add_render_attribute( 'profile-image', array(
+		$this->widget->add_render_attribute( 'profile-image', [
 			'class' => $profile_image_classnames,
-		) );
+		] );
 		?>
 		<div class="e-contact-buttons__top-bar">
 			<?php $this->render_close_button(); ?>
 			<div <?php echo $this->widget->get_render_attribute_string( 'profile-image' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php if ( ! empty( $profile_image_value['id'] ) ) {
-					echo wp_get_attachment_image( $profile_image_value['id'], 'medium', false, array(
+					echo wp_get_attachment_image( $profile_image_value['id'], 'medium', false, [
 						'class' => 'e-contact-buttons__profile-image-el',
-					) );
+					] );
 				} else {
-					$this->widget->add_render_attribute( 'profile-image-src', array(
+					$this->widget->add_render_attribute( 'profile-image-src', [
 						'alt'   => '',
 						'class' => 'e-contact-buttons__profile-image-el',
 						'src'   => esc_url( $profile_image_value['url'] ),
-					) );
+					] );
 					?>
 					<img <?php echo $this->widget->get_render_attribute_string( 'profile-image-src' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> />
 				<?php } ?>
@@ -234,9 +234,9 @@ abstract class Contact_Buttons_Render_Base {
 			$message_bubble_classnames .= ' has-typing-animation';
 		}
 
-		$this->widget->add_render_attribute( 'message-bubble', array(
+		$this->widget->add_render_attribute( 'message-bubble', [
 			'class' => $message_bubble_classnames,
-		) );
+		] );
 		?>
 		<div <?php echo $this->widget->get_render_attribute_string( 'message-bubble' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 			<?php
@@ -257,7 +257,7 @@ abstract class Contact_Buttons_Render_Base {
 	}
 
 	protected function render_contact_links(): void {
-		$contact_icons = $this->settings['contact_repeater'] ?? array();
+		$contact_icons = $this->settings['contact_repeater'] ?? [];
 		$icons_size = $this->settings['style_contact_button_size'] ?? 'small';
 		$hover_animation = $this->settings['style_contact_button_hover_animation'];
 		?>
@@ -271,17 +271,17 @@ abstract class Contact_Buttons_Render_Base {
 						$icon_text_mapping,
 					);
 
-					$link = array(
+					$link = [
 						'platform' => $icon['contact_icon_platform'],
 						'number' => $icon['contact_icon_number'] ?? '',
 						'username' => $icon['contact_icon_username'] ?? '',
-						'email_data' => array(
+						'email_data' => [
 							'contact_icon_mail' => $icon['contact_icon_mail'] ?? '',
 							'contact_icon_mail_subject' => $icon['contact_icon_mail_subject'] ?? '',
 							'contact_icon_mail_body' => $icon['contact_icon_mail_body'] ?? '',
-						),
+						],
 						'viber_action' => $icon['contact_icon_viber_action'] ?? '',
-					);
+					];
 
 					$formatted_link = $this->get_formatted_link( $link, 'contact_icon' );
 
@@ -291,13 +291,13 @@ abstract class Contact_Buttons_Render_Base {
 						$icon_classnames .= ' elementor-animation-' . $hover_animation;
 					}
 
-					$this->widget->add_render_attribute( 'icon-link-' . $key, array(
+					$this->widget->add_render_attribute( 'icon-link-' . $key, [
 						'aria-label' => $aria_label,
 						'class' => $icon_classnames,
 						'href' => $formatted_link,
 						'rel' => 'noopener noreferrer',
 						'target' => '_blank',
-					) );
+					] );
 
 					?>
 
@@ -307,11 +307,11 @@ abstract class Contact_Buttons_Render_Base {
 							$icon_lib = explode( ' ', $mapping )[0];
 							$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
 							Icons_Manager::render_icon(
-								array(
+								[
 									'library' => $library,
 									'value' => $mapping,
-								),
-								array( 'aria-hidden' => 'true' )
+								],
+								[ 'aria-hidden' => 'true' ]
 							);
 						?>
 					</a>
@@ -337,17 +337,17 @@ abstract class Contact_Buttons_Render_Base {
 		$hover_animation = $this->settings['style_send_hover_animation'];
 		$cta_classnames = 'e-contact-buttons__send-cta';
 
-		$link = array(
+		$link = [
 			'platform' => $platform,
 			'number' => $this->settings['chat_button_number'] ?? '',
 			'username' => $this->settings['chat_button_username'] ?? '',
-			'email_data' => array(
+			'email_data' => [
 				'chat_button_mail' => $this->settings['chat_button_mail'],
 				'chat_button_mail_subject' => $this->settings['chat_button_mail_subject'] ?? '',
 				'chat_button_mail_body' => $this->settings['chat_button_mail_body'] ?? '',
-			),
+			],
 			'viber_action' => $this->settings['chat_button_viber_action'],
-		);
+		];
 
 		$formatted_link = $this->get_formatted_link( $link, 'chat_button' );
 
@@ -355,12 +355,12 @@ abstract class Contact_Buttons_Render_Base {
 			$cta_classnames .= ' elementor-animation-' . $hover_animation;
 		}
 
-		$this->widget->add_render_attribute( 'formatted-cta', array(
+		$this->widget->add_render_attribute( 'formatted-cta', [
 			'class' => $cta_classnames,
 			'href' => $formatted_link,
 			'rel' => 'noopener noreferrer',
 			'target' => '_blank',
-		) );
+		] );
 
 		?>
 		<div class="e-contact-buttons__send-button">
@@ -373,11 +373,11 @@ abstract class Contact_Buttons_Render_Base {
 							$icon_lib = explode( ' ', $mapping )[0];
 							$library = 'fab' === $icon_lib ? 'fa-brands' : 'fa-solid';
 							Icons_Manager::render_icon(
-								array(
+								[
 									'library' => $library,
 									'value' => $mapping,
-								),
-								array( 'aria-hidden' => 'true' )
+								],
+								[ 'aria-hidden' => 'true' ]
 							);
 						?>
 						<?php echo esc_html( $send_button_text ); ?>

@@ -129,12 +129,12 @@ class Svg extends Base {
 		$attachment_data['thumb'] = compact( 'src', 'width', 'height' );
 
 		// Single Details of Image
-		$attachment_data['sizes']['full'] = array(
+		$attachment_data['sizes']['full'] = [
 			'height' => $height,
 			'width' => $width,
 			'url' => $src,
 			'orientation' => $height > $width ? 'portrait' : 'landscape',
-		);
+		];
 		return $attachment_data;
 	}
 
@@ -240,8 +240,8 @@ class Svg extends Base {
 	}
 
 	public function __construct() {
-		add_filter( 'wp_update_attachment_metadata', array( $this, 'set_svg_meta_data' ), 10, 2 );
-		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'wp_prepare_attachment_for_js' ), 10, 3 );
-		add_action( 'elementor/core/files/clear_cache', array( $this, 'delete_meta_cache' ) );
+		add_filter( 'wp_update_attachment_metadata', [ $this, 'set_svg_meta_data' ], 10, 2 );
+		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'wp_prepare_attachment_for_js' ], 10, 3 );
+		add_action( 'elementor/core/files/clear_cache', [ $this, 'delete_meta_cache' ] );
 	}
 }

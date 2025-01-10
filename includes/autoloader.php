@@ -79,7 +79,7 @@ class Autoloader {
 		self::$default_path = $default_path;
 		self::$default_namespace = $default_namespace;
 
-		spl_autoload_register( array( __CLASS__, 'autoload' ) );
+		spl_autoload_register( [ __CLASS__, 'autoload' ] );
 	}
 
 	/**
@@ -110,7 +110,7 @@ class Autoloader {
 	}
 
 	private static function init_classes_map() {
-		self::$classes_map = array(
+		self::$classes_map = [
 			'Api' => 'includes/api.php',
 			'Base_Control' => 'includes/controls/base.php',
 			'Base_Data_Control' => 'includes/controls/base-data.php',
@@ -158,14 +158,14 @@ class Autoloader {
 			'Widget_WordPress' => 'includes/widgets/wordpress.php',
 			'Widgets_Manager' => 'includes/managers/widgets.php',
 			'WordPress_Widgets_Manager' => 'includes/managers/wordpress-widgets.php',
-		);
+		];
 
 		$controls_names = Controls_Manager::get_controls_names();
 
-		$controls_names = array_merge( $controls_names, array(
+		$controls_names = array_merge( $controls_names, [
 			'base_multiple',
 			'base_units',
-		) );
+		] );
 
 		foreach ( $controls_names as $control_name ) {
 			$class_name = 'Control_' . self::normalize_class_name( $control_name, '_' );
@@ -224,44 +224,44 @@ class Autoloader {
 	 * @return void
 	 */
 	private static function init_classes_aliases() {
-		self::$classes_aliases = array(
-			'System_Info\Main' => array(
+		self::$classes_aliases = [
+			'System_Info\Main' => [
 				'replacement' => 'Modules\System_Info\Module',
 				'version' => '2.9.0',
-			),
-			'System_Info\Classes\Abstracts\Base_Reporter' => array(
+			],
+			'System_Info\Classes\Abstracts\Base_Reporter' => [
 				'replacement' => 'Modules\System_Info\Reporters\Base',
 				'version' => '2.9.0',
-			),
-			'System_Info\Classes\Server_Reporter' => array(
+			],
+			'System_Info\Classes\Server_Reporter' => [
 				'replacement' => 'Modules\System_Info\Reporters\Server',
 				'version' => '2.9.0',
-			),
-			'System_Info\Classes\MU_Plugins_Reporter' => array(
+			],
+			'System_Info\Classes\MU_Plugins_Reporter' => [
 				'replacement' => 'Modules\System_Info\Reporters\MU_Plugins',
 				'version' => '2.9.0',
-			),
-			'System_Info\Classes\Network_Plugins_Reporter' => array(
+			],
+			'System_Info\Classes\Network_Plugins_Reporter' => [
 				'replacement' => 'Modules\System_Info\Reporters\Network_Plugins',
 				'version' => '2.9.0',
-			),
-			'System_Info\Classes\Plugins_Reporter' => array(
+			],
+			'System_Info\Classes\Plugins_Reporter' => [
 				'replacement' => 'Modules\System_Info\Reporters\Plugins',
 				'version' => '2.9.0',
-			),
-			'System_Info\Classes\Theme_Reporter' => array(
+			],
+			'System_Info\Classes\Theme_Reporter' => [
 				'replacement' => 'Modules\System_Info\Reporters\Theme',
 				'version' => '2.9.0',
-			),
-			'System_Info\Classes\User_Reporter' => array(
+			],
+			'System_Info\Classes\User_Reporter' => [
 				'replacement' => 'Modules\System_Info\Reporters\User',
 				'version' => '2.9.0',
-			),
-			'System_Info\Helpers\Model_Helper' => array(
+			],
+			'System_Info\Helpers\Model_Helper' => [
 				'replacement' => 'Modules\System_Info\Helpers\Model_Helper',
 				'version' => '2.9.0',
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -283,8 +283,8 @@ class Autoloader {
 		} else {
 			$filename = strtolower(
 				preg_replace(
-					array( '/([a-z])([A-Z])/', '/_/', '/\\\/' ),
-					array( '$1-$2', '-', DIRECTORY_SEPARATOR ),
+					[ '/([a-z])([A-Z])/', '/_/', '/\\\/' ],
+					[ '$1-$2', '-', DIRECTORY_SEPARATOR ],
 					$relative_class_name
 				)
 			);

@@ -28,7 +28,7 @@ class Dynamic_Prop_Types_Mapping {
 	 * @return array<string, Prop_Type>
 	 */
 	public function get_modified_prop_types( array $schema ): array {
-		$result = array();
+		$result = [];
 
 		foreach ( $schema as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
@@ -53,9 +53,9 @@ class Dynamic_Prop_Types_Mapping {
 	private function get_modified_prop_type( Prop_Type $prop_type ) {
 		$transformable_prop_types = $prop_type instanceof Union_Prop_Type ?
 			$prop_type->get_prop_types() :
-			array( $prop_type );
+			[ $prop_type ];
 
-		$categories = array();
+		$categories = [];
 
 		foreach ( $transformable_prop_types as $transformable_prop_type ) {
 			if ( $transformable_prop_type instanceof Object_Prop_Type ) {
@@ -92,21 +92,21 @@ class Dynamic_Prop_Types_Mapping {
 
 	private function get_related_categories( Transformable_Prop_Type $prop_type ): array {
 		if ( ! $prop_type->get_meta_item( Dynamic_Prop_Type::META_KEY, true ) ) {
-			return array();
+			return [];
 		}
 
 		if ( $prop_type instanceof Number_Prop_Type ) {
-			return array( V1_Dynamic_Tags_Module::NUMBER_CATEGORY );
+			return [ V1_Dynamic_Tags_Module::NUMBER_CATEGORY ];
 		}
 
 		if ( $prop_type instanceof Image_Src_Prop_Type ) {
-			return array( V1_Dynamic_Tags_Module::IMAGE_CATEGORY );
+			return [ V1_Dynamic_Tags_Module::IMAGE_CATEGORY ];
 		}
 
 		if ( $prop_type instanceof String_Prop_Type && empty( $prop_type->get_enum() ) ) {
-			return array( V1_Dynamic_Tags_Module::TEXT_CATEGORY );
+			return [ V1_Dynamic_Tags_Module::TEXT_CATEGORY ];
 		}
 
-		return array();
+		return [];
 	}
 }

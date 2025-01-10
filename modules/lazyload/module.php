@@ -17,7 +17,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', [ $this, 'init' ] );
 	}
 
 	public function init() {

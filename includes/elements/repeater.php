@@ -45,7 +45,7 @@ class Repeater extends Element_Base {
 	 * @param array      $data Optional. Element data. Default is an empty array.
 	 * @param array|null $args Optional. Element default arguments. Default is null.
 	 */
-	public function __construct( array $data = array(), array $args = null ) {
+	public function __construct( array $data = [], array $args = null ) {
 		++self::$counter;
 
 		$this->id = self::$counter;
@@ -54,9 +54,9 @@ class Repeater extends Element_Base {
 
 		$this->add_control(
 			'_id',
-			array(
+			[
 				'type' => Controls_Manager::HIDDEN,
-			)
+			]
 		);
 	}
 
@@ -106,7 +106,7 @@ class Repeater extends Element_Base {
 	 *
 	 * @return bool True if repeater control added, False otherwise.
 	 */
-	public function add_control( $id, array $args, $options = array() ) {
+	public function add_control( $id, array $args, $options = [] ) {
 		$current_tab = $this->get_current_tab();
 
 		if ( null !== $current_tab ) {

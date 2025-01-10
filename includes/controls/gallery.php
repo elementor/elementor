@@ -115,7 +115,7 @@ class Control_Gallery extends Base_Data_Control {
 				<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
 				<div class="elementor-control-media__promotions" role="alert" style="display: none;">
 					<?php
-					Hints::get_notice_template( array(
+					Hints::get_notice_template( [
 						'display' => ! Hints::is_dismissed( 'image-optimization' ),
 						'type' => 'info',
 						'content' => __( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
@@ -123,10 +123,10 @@ class Control_Gallery extends Base_Data_Control {
 						'dismissible' => 'image_optimizer_hint',
 						'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
 						'button_event' => 'image_optimizer_hint',
-						'button_data' => array(
+						'button_data' => [
 							'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
-						),
-					) ); ?>
+						],
+					] ); ?>
 				</div>
 				<?php endif; ?>
 
@@ -147,13 +147,13 @@ class Control_Gallery extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'label_block' => true,
-			'dynamic' => array(
-				'categories' => array( TagsModule::GALLERY_CATEGORY ),
+			'dynamic' => [
+				'categories' => [ TagsModule::GALLERY_CATEGORY ],
 				'returnType' => 'object',
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -168,6 +168,6 @@ class Control_Gallery extends Base_Data_Control {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return array();
+		return [];
 	}
 }

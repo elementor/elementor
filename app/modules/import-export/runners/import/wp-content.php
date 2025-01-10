@@ -12,7 +12,7 @@ class Wp_Content extends Import_Runner_Base {
 	/**
 	 * @var array
 	 */
-	private $selected_custom_post_types = array();
+	private $selected_custom_post_types = [];
 
 	public static function get_name(): string {
 		return 'wp-content';
@@ -34,10 +34,10 @@ class Wp_Content extends Import_Runner_Base {
 
 		$post_types = $this->filter_post_types( $data['selected_custom_post_types'] );
 
-		$taxonomies = $imported_data['taxonomies'] ?? array();
+		$taxonomies = $imported_data['taxonomies'] ?? [];
 		$imported_terms = ImportExportUtils::map_old_new_term_ids( $imported_data );
 
-		$result['wp-content'] = array();
+		$result['wp-content'] = [];
 
 		foreach ( $post_types as $post_type ) {
 			$import = $this->import_wp_post_type(
@@ -60,23 +60,23 @@ class Wp_Content extends Import_Runner_Base {
 	}
 
 	private function import_wp_post_type( $path, $post_type, array $imported_data, array $taxonomies, array $imported_terms ) {
-		$args = array(
+		$args = [
 			'fetch_attachments' => true,
 			'posts' => ImportExportUtils::map_old_new_post_ids( $imported_data ),
 			'terms' => $imported_terms,
-			'taxonomies' => ! empty( $taxonomies[ $post_type ] ) ? $taxonomies[ $post_type ] : array(),
-			'posts_meta' => array(
+			'taxonomies' => ! empty( $taxonomies[ $post_type ] ) ? $taxonomies[ $post_type ] : [],
+			'posts_meta' => [
 				static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID => $this->import_session_id,
-			),
-			'terms_meta' => array(
+			],
+			'terms_meta' => [
 				static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID => $this->import_session_id,
-			),
-		);
+			],
+		];
 
 		$file = $path . $post_type . '/' . $post_type . '.xml';
 
 		if ( ! file_exists( $file ) ) {
-			return array();
+			return [];
 		}
 
 		$wp_importer = new WP_Import( $file, $args );
@@ -85,7 +85,7 @@ class Wp_Content extends Import_Runner_Base {
 		return $result['summary']['posts'];
 	}
 
-	private function filter_post_types( $selected_custom_post_types = array() ) {
+	private function filter_post_types( $selected_custom_post_types = [] ) {
 		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
 
 		foreach ( $selected_custom_post_types as $custom_post_type ) {
@@ -101,9 +101,9 @@ class Wp_Content extends Import_Runner_Base {
 	}
 
 	public function get_import_session_metadata(): array {
-		return array(
+		return [
 			'custom_post_types' => $this->selected_custom_post_types,
-		);
+		];
 	}
 
 	/**

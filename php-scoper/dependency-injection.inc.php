@@ -4,14 +4,14 @@ declare( strict_types=1 );
 
 use Isolated\Symfony\Component\Finder\Finder;
 
-return array(
+return [
 	'prefix' => 'ElementorDeps',
-	'finders' => array(
-		Finder::create()->files()->in( 'vendor/psr/container' )->name( array( '*.php', 'LICENSE', 'composer.json' ) ),
-		Finder::create()->files()->in( 'vendor/laravel/serializable-closure' )->name( array( '*.php', 'LICENSE', 'composer.json' ) ),
-		Finder::create()->files()->in( 'vendor/php-di' )->name( array( '*.php', 'LICENSE', 'composer.json' ) ),
-	),
-	'patchers' => array(
+	'finders' => [
+		Finder::create()->files()->in( 'vendor/psr/container' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		Finder::create()->files()->in( 'vendor/laravel/serializable-closure' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		Finder::create()->files()->in( 'vendor/php-di' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+	],
+	'patchers' => [
 		/**
 		 * Replaces the Adapter string references with the prefixed versions.
 		 *
@@ -26,5 +26,5 @@ return array(
 				return $content;
 			}
 		},
-	),
-);
+	],
+];

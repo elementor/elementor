@@ -38,9 +38,9 @@ class Maintenance {
 
 		if ( is_multisite() && $network_wide ) {
 			static::create_default_kit(
-				get_sites( array(
+				get_sites( [
 					'fields' => 'ids',
-				) )
+				] )
 			);
 
 			return;
@@ -55,9 +55,9 @@ class Maintenance {
 	public static function insert_defaults_options() {
 		$history = Upgrade_Manager::get_installs_history();
 		if ( empty( $history ) ) {
-			$default_options = array(
+			$default_options = [
 				'elementor_font_display' => 'swap',
-			);
+			];
 			foreach ( $default_options as $option_name => $option_value ) {
 				if ( \Elementor\Utils::is_empty( get_option( $option_name ) ) ) {
 					add_option( $option_name, $option_value );
@@ -91,22 +91,22 @@ class Maintenance {
 	 * @static
 	 */
 	public static function init() {
-		register_activation_hook( ELEMENTOR_PLUGIN_BASE, array( __CLASS__, 'activation' ) );
-		register_uninstall_hook( ELEMENTOR_PLUGIN_BASE, array( __CLASS__, 'uninstall' ) );
+		register_activation_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'activation' ] );
+		register_uninstall_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'uninstall' ] );
 
 		add_action( 'wpmu_new_blog', function ( $site_id ) {
 			if ( ! is_plugin_active_for_network( ELEMENTOR_PLUGIN_BASE ) ) {
 				return;
 			}
 
-			static::create_default_kit( array( $site_id ) );
+			static::create_default_kit( [ $site_id ] );
 		} );
 	}
 
 	/**
 	 * @param array $site_ids
 	 */
-	private static function create_default_kit( array $site_ids = array() ) {
+	private static function create_default_kit( array $site_ids = [] ) {
 		if ( ! empty( $site_ids ) ) {
 			foreach ( $site_ids as $site_id ) {
 				switch_to_blog( $site_id );

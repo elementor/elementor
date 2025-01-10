@@ -15,10 +15,10 @@ class Gap_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
-		return array(
+		return [
 			'isLinked' => Boolean_Prop_Type::make(),
 			'column' => Size_Prop_Type::make(),
 			'row' => Size_Prop_Type::make(),
-		);
+		];
 	}
 }

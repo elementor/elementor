@@ -31,55 +31,55 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	public function get_style_depends() {
-		return array( 'div-block' );
+		return [ 'div-block' ];
 	}
 
 	protected function define_atomic_controls(): array {
-		return array(
+		return [
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
-				->set_items( array(
+				->set_items( [
 					Select_Control::bind_to( 'tag' )
 						->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
-						->set_options( array(
-							array(
+						->set_options( [
+							[
 								'value' => 'div',
 								'label' => 'Div',
-							),
-							array(
+							],
+							[
 								'value' => 'header',
 								'label' => 'Header',
-							),
-							array(
+							],
+							[
 								'value' => 'section',
 								'label' => 'Section',
-							),
-							array(
+							],
+							[
 								'value' => 'article',
 								'label' => 'Article',
-							),
-							array(
+							],
+							[
 								'value' => 'aside',
 								'label' => 'Aside',
-							),
-							array(
+							],
+							[
 								'value' => 'footer',
 								'label' => 'Footer',
-							),
-						)),
-				)),
-		);
+							],
+						]),
+				]),
+		];
 	}
 
 	protected static function define_props_schema(): array {
-		return array(
+		return [
 			'classes' => Classes_Prop_Type::make()
-				->default( array() ),
+				->default( [] ),
 
 			'tag' => String_Prop_Type::make()
-				->enum( array( 'div', 'header', 'section', 'article', 'aside', 'footer' ) )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' ),
-		);
+		];
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
@@ -99,12 +99,12 @@ class Div_Block extends Atomic_Element_Base {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 
-		$this->add_render_attribute( '_wrapper', array(
-			'class' => array(
+		$this->add_render_attribute( '_wrapper', [
+			'class' => [
 				'e-div-block',
 				$settings['classes'] ?? '',
-			),
-		) );
+			],
+		] );
 	}
 
 	public function before_render() {

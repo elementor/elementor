@@ -19,7 +19,7 @@ class Union_Prop_Type implements Prop_Type {
 	protected $default = null;
 
 	/** @var Array<string, Transformable_Prop_Type> */
-	protected array $prop_types = array();
+	protected array $prop_types = [];
 
 	public static function make(): self {
 		return new static();
@@ -68,10 +68,10 @@ class Union_Prop_Type implements Prop_Type {
 	public function default( $value, ?string $type = null ): self {
 		$this->default = ! $type ?
 			$value :
-			array(
+			[
 				'$$type' => $type,
 				'value' => $value,
-			);
+			];
 
 		return $this;
 	}
@@ -97,12 +97,12 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	public function jsonSerialize(): array {
-		return array(
+		return [
 			'kind' => static::KIND,
 			'default' => $this->get_default(),
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),
 			'prop_types' => $this->get_prop_types(),
-		);
+		];
 	}
 }

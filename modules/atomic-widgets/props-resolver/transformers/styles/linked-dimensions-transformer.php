@@ -13,9 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Linked_Dimensions_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
 		$dimensions = Collection::make( $value )
-			->only( array( 'top', 'right', 'bottom', 'left' ) )
+			->only( [ 'top', 'right', 'bottom', 'left' ] )
 			->filter()
-			->map_with_keys( fn( $dimension, $side ) => array( $key . '-' . $side => $dimension ) )
+			->map_with_keys( fn( $dimension, $side ) => [ $key . '-' . $side => $dimension ] )
 			->all();
 
 		return Multi_Props::generate( $dimensions );

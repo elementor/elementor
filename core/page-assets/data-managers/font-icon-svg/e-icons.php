@@ -14,17 +14,17 @@ class E_Icons extends Base {
 	const LIBRARY_CURRENT_VERSION = '5.13.0';
 
 	protected function get_config( $icon ) {
-		return array(
+		return [
 			'key' => $icon['value'],
 			'version' => self::LIBRARY_CURRENT_VERSION,
 			'file_path' => ELEMENTOR_ASSETS_PATH . 'lib/eicons/eicons.json',
-			'data' => array(
-				'icon_data' => array(
+			'data' => [
+				'icon_data' => [
 					'name' => $icon['value'],
 					'library' => $icon['library'],
-				),
-			),
-		);
+				],
+			],
+		];
 	}
 
 	protected function get_asset_content() {
@@ -36,11 +36,11 @@ class E_Icons extends Base {
 
 		$svg_data = $file_data[ $icon_name ];
 
-		return array(
+		return [
 			'width' => $svg_data['width'],
 			'height' => $svg_data['height'],
 			'path' => $svg_data['path'],
 			'key' => $this->get_key(),
-		);
+		];
 	}
 }

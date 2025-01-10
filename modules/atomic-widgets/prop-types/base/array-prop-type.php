@@ -90,14 +90,14 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function jsonSerialize(): array {
-		return array(
+		return [
 			'kind' => static::KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),
 			'item_prop_type' => $this->get_item_type(),
-		);
+		];
 	}
 
 	abstract protected function define_item_type(): Prop_Type;

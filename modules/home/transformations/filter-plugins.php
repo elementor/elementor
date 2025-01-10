@@ -28,7 +28,7 @@ class Filter_Plugins extends Transformations_Abstract {
 	}
 
 	private function get_add_ons_installation_status( array $add_ons ): array {
-		$transformed_add_ons = array();
+		$transformed_add_ons = [];
 
 		foreach ( $add_ons as $add_on ) {
 

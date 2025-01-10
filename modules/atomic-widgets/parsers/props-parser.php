@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Props_Parser {
 
 	private array $schema;
-	private array $errors_bag = array();
+	private array $errors_bag = [];
 
 	public function __construct( array $schema ) {
 		$this->schema = $schema;
@@ -33,7 +33,7 @@ class Props_Parser {
 	 * }
 	 */
 	public function validate( array $props ): array {
-		$validated = array();
+		$validated = [];
 
 		foreach ( $this->schema as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
@@ -57,11 +57,11 @@ class Props_Parser {
 
 		$is_valid = empty( $this->errors_bag );
 
-		return array(
+		return [
 			$is_valid,
 			$validated,
 			$this->errors_bag,
-		);
+		];
 	}
 
 	/**
@@ -72,7 +72,7 @@ class Props_Parser {
 	 * @return array<string, mixed>
 	 */
 	public function sanitize( array $props ): array {
-		$sanitized = array();
+		$sanitized = [];
 
 		foreach ( $this->schema as $key => $prop_type ) {
 			if ( ! isset( $props[ $key ] ) ) {
@@ -99,10 +99,10 @@ class Props_Parser {
 	public function parse( array $props ): array {
 		[ $is_valid, $validated, $errors_bag  ] = $this->validate( $props );
 
-		return array(
+		return [
 			$is_valid,
 			$this->sanitize( $validated ),
 			$errors_bag,
-		);
+		];
 	}
 }

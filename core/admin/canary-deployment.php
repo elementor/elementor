@@ -187,6 +187,6 @@ class Canary_Deployment extends Module {
 	 * @access public
 	 */
 	public function __construct() {
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_version' ) );
+		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_version' ] );
 	}
 }

@@ -42,7 +42,7 @@ class Module extends \Elementor\Core\Base\Module {
 		wp_enqueue_script(
 			'container-converter',
 			$this->get_js_assets_url( 'container-converter' ),
-			array( 'elementor-editor' ),
+			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -57,7 +57,7 @@ class Module extends \Elementor\Core\Base\Module {
 		wp_enqueue_style(
 			'container-converter',
 			$this->get_css_assets_url( 'modules/container-converter/editor' ),
-			array(),
+			[],
 			ELEMENTOR_VERSION
 		);
 	}
@@ -74,13 +74,13 @@ class Module extends \Elementor\Core\Base\Module {
 			return;
 		}
 
-		$controls_stack->start_injection( array(
+		$controls_stack->start_injection( [
 			'of' => '_title',
-		) );
+		] );
 
 		$controls_stack->add_control(
 			'convert_to_container',
-			array(
+			[
 				'type' => Controls_Manager::BUTTON,
 				'label' => esc_html__( 'Convert to container', 'elementor' ),
 				'text' => esc_html__( 'Convert', 'elementor' ),
@@ -88,7 +88,7 @@ class Module extends \Elementor\Core\Base\Module {
 				'description' => esc_html__( 'Copies all of the selected sections and columns and pastes them in a container beneath the original.', 'elementor' ),
 				'separator' => 'after',
 				'event' => static::EVENT_NAME,
-			)
+			]
 		);
 
 		$controls_stack->end_injection();
@@ -106,14 +106,14 @@ class Module extends \Elementor\Core\Base\Module {
 			return;
 		}
 
-		$controls_stack->start_injection( array(
+		$controls_stack->start_injection( [
 			'of' => 'post_title',
 			'at' => 'before',
-		) );
+		] );
 
 		$controls_stack->add_control(
 			'convert_to_container',
-			array(
+			[
 				'type' => Controls_Manager::BUTTON,
 				'label' => esc_html__( 'Convert to container', 'elementor' ),
 				'text' => esc_html__( 'Convert', 'elementor' ),
@@ -121,7 +121,7 @@ class Module extends \Elementor\Core\Base\Module {
 				'description' => esc_html__( 'Copies all of the selected sections and columns and pastes them in a container beneath the original.', 'elementor' ),
 				'separator' => 'after',
 				'event' => static::EVENT_NAME,
-			)
+			]
 		);
 
 		$controls_stack->end_injection();
@@ -156,8 +156,8 @@ class Module extends \Elementor\Core\Base\Module {
 	 * @return void
 	 */
 	public function __construct() {
-		add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'elementor/editor/after_enqueue_styles', array( $this, 'enqueue_styles' ) );
+		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
 
 		add_action( 'elementor/element/section/section_layout/after_section_end', function ( Controls_Stack $controls_stack ) {
 			$this->add_section_convert_button( $controls_stack );

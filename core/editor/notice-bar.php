@@ -15,26 +15,26 @@ class Notice_Bar extends Base_Object {
 
 	protected function get_init_settings() {
 		if ( Plugin::$instance->get_install_time() > strtotime( '-1 days' ) ) {
-			return array();
+			return [];
 		}
 
 		$upgrade_url = 'https://go.elementor.com/go-pro-editor-notice-bar/';
 
-		$config = array(
+		$config = [
 			'description' => $this->get_description(),
 			'upgrade_text' => $this->get_upgrade_text(),
 			'upgrade_url' => $upgrade_url,
-		);
+		];
 
 		$config = Filtered_Promotions_Manager::get_filtered_promotion_data( $config, 'elementor/notice-bar/custom_promotion', 'upgrade_url' );
 
-		return array(
+		return [
 			'muted_period' => 14,
 			'option_key' => '_elementor_editor_upgrade_notice_dismissed',
 			'message' => $config['description'] ?? $this->get_description(),
 			'action_title' => $config['upgrade_text'] ?? $this->get_upgrade_text(),
 			'action_url' => $config['upgrade_url'] ?? $upgrade_url,
-		);
+		];
 	}
 
 	public function get_upgrade_text() {
@@ -73,10 +73,10 @@ class Notice_Bar extends Base_Object {
 		$settings = $this->get_settings();
 
 		// TODO: Make the API better. The bad naming is because of BC.
-		$prefix_map = array(
+		$prefix_map = [
 			'primary' => '',
 			'secondary' => 'secondary_',
-		);
+		];
 
 		$prefix = $prefix_map[ $type ];
 
@@ -127,7 +127,7 @@ class Notice_Bar extends Base_Object {
 	}
 
 	public function __construct() {
-		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
 	public function set_notice_dismissed() {
@@ -139,7 +139,7 @@ class Notice_Bar extends Base_Object {
 	}
 
 	public function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'notice_bar_dismiss', array( $this, 'set_notice_dismissed' ) );
+		$ajax->register_ajax_action( 'notice_bar_dismiss', [ $this, 'set_notice_dismissed' ] );
 	}
 
 	private function has_access_to_notice() {

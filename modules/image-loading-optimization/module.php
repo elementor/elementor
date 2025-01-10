@@ -21,7 +21,7 @@ class Module extends BaseModule {
 	/**
 	 * @var array Keep a track of images for which loading optimization strategy were computed.
 	 */
-	private static $image_visited = array();
+	private static $image_visited = [];
 
 	/**
 	 * Get Module name.
@@ -41,17 +41,17 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		// Stop wp core logic.
-		add_action( 'init', array( $this, 'stop_core_fetchpriority_high_logic' ) );
+		add_action( 'init', [ $this, 'stop_core_fetchpriority_high_logic' ] );
 		add_filter( 'wp_lazy_loading_enabled', '__return_false' );
 
 		// Run optimization logic on header.
-		add_action( 'get_header', array( $this, 'set_buffer' ) );
+		add_action( 'get_header', [ $this, 'set_buffer' ] );
 
 		// Ensure buffer is flushed (if any) before the content logic.
-		add_filter( 'the_content', array( $this, 'flush_header_buffer' ), 0 );
+		add_filter( 'the_content', [ $this, 'flush_header_buffer' ], 0 );
 
 		// Run optimization logic on content.
-		add_filter( 'wp_content_img_tag', array( $this, 'loading_optimization_image' ) );
+		add_filter( 'wp_content_img_tag', [ $this, 'loading_optimization_image' ] );
 	}
 
 	/**
@@ -80,7 +80,7 @@ class Module extends BaseModule {
 	 * Set buffer to handle header and footer content.
 	 */
 	public function set_buffer() {
-		ob_start( array( $this, 'handle_buffer_content' ) );
+		ob_start( [ $this, 'handle_buffer_content' ] );
 	}
 
 	/**
@@ -163,12 +163,12 @@ class Module extends BaseModule {
 		}
 
 		$optimization_attrs = $this->get_loading_optimization_attributes(
-			array(
+			[
 				'width'         => $width,
 				'height'        => $height,
 				'loading'       => $loading_val,
 				'fetchpriority' => $fetchpriority_val,
-			)
+			]
 		);
 
 		if ( ! empty( $optimization_attrs['fetchpriority'] ) ) {
@@ -189,7 +189,7 @@ class Module extends BaseModule {
 	 * @return array Loading optimization attributes.
 	 */
 	private function get_loading_optimization_attributes( $attr ) {
-		$loading_attrs = array();
+		$loading_attrs = [];
 
 		// For any resources, width and height must be provided, to avoid layout shifts.
 		if ( ! isset( $attr['width'], $attr['height'] ) ) {

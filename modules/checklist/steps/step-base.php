@@ -107,11 +107,11 @@ abstract class Step_Base {
 	}
 
 	public function update_step( array $step_data ): void {
-		$allowed_properties = array(
+		$allowed_properties = [
 			self::MARKED_AS_COMPLETED_KEY => $step_data[ self::MARKED_AS_COMPLETED_KEY ] ?? null,
 			self::IMMUTABLE_COMPLETION_KEY => $step_data[ self::IMMUTABLE_COMPLETION_KEY ] ?? null,
 			self::ABSOLUTE_COMPLETION_KEY => $step_data[ self::ABSOLUTE_COMPLETION_KEY ] ?? null,
-		);
+		];
 
 		foreach ( $allowed_properties as $key => $value ) {
 			if ( null !== $value ) {
@@ -128,7 +128,7 @@ abstract class Step_Base {
 	 * @return void
 	 */
 	public function mark_as_completed(): void {
-		$this->update_step( array( self::MARKED_AS_COMPLETED_KEY => true ) );
+		$this->update_step( [ self::MARKED_AS_COMPLETED_KEY => true ] );
 	}
 
 	/**
@@ -137,7 +137,7 @@ abstract class Step_Base {
 	 * @return void
 	 */
 	public function unmark_as_completed(): void {
-		$this->update_step( array( self::MARKED_AS_COMPLETED_KEY => false ) );
+		$this->update_step( [ self::MARKED_AS_COMPLETED_KEY => false ] );
 	}
 
 	/**
@@ -149,10 +149,10 @@ abstract class Step_Base {
 		$is_immutable_completed = $this->user_progress[ self::IMMUTABLE_COMPLETION_KEY ] ?? false;
 
 		if ( ! $is_immutable_completed && $this->get_is_completion_immutable() && $this->is_absolute_completed() ) {
-			$this->update_step( array(
+			$this->update_step( [
 				self::MARKED_AS_COMPLETED_KEY => false,
 				self::IMMUTABLE_COMPLETION_KEY => true,
-			) );
+			] );
 		}
 	}
 
@@ -180,10 +180,10 @@ abstract class Step_Base {
 	 * @return array
 	 */
 	public function get_step_initial_progress(): array {
-		$initial_progress = array(
+		$initial_progress = [
 			self::MARKED_AS_COMPLETED_KEY => false,
 			self::IMMUTABLE_COMPLETION_KEY => false,
-		);
+		];
 
 		$this->module->set_step_progress( $this->get_id(), $initial_progress );
 

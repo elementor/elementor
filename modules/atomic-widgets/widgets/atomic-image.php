@@ -34,7 +34,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 		$attrs = array_filter( array_merge(
 			$settings['image'],
-			array( 'class' => $settings['classes'] ?? '' )
+			[ 'class' => $settings['classes'] ?? '' ]
 		) );
 
 		$attrs['src'] = esc_url( $attrs['src'] );
@@ -44,30 +44,30 @@ class Atomic_Image extends Atomic_Widget_Base {
 				'<img %1$s >',
 				Utils::render_html_attributes( $attrs )
 			),
-			array( 'image' )
+			[ 'image' ]
 		);
 	}
 
 	protected function define_atomic_controls(): array {
 		$content_section = Section::make()
 			->set_label( esc_html__( 'Content', 'elementor' ) )
-			->set_items( array(
+			->set_items( [
 				Image_Control::bind_to( 'image' ),
-			) );
+			] );
 
-		return array(
+		return [
 			$content_section,
-		);
+		];
 	}
 
 	protected static function define_props_schema(): array {
-		return array(
+		return [
 			'classes' => Classes_Prop_Type::make()
-				->default( array() ),
+				->default( [] ),
 
 			'image' => Image_Prop_Type::make()
 				->default_url( Utils::get_placeholder_image_src() )
 				->default_size( 'full' ),
-		);
+		];
 	}
 }

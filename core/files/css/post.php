@@ -153,7 +153,7 @@ class Post extends Base {
 	 */
 	protected function get_data() {
 		$document = Plugin::$instance->documents->get( $this->post_id );
-		return $document ? $document->get_elements_data() : array();
+		return $document ? $document->get_elements_data() : [];
 	}
 
 	/**
@@ -239,7 +239,7 @@ class Post extends Base {
 	 * @return array Name of the stylesheet.
 	 */
 	protected function get_enqueue_dependencies() {
-		return array( 'elementor-frontend' );
+		return [ 'elementor-frontend' ];
 	}
 
 	/**
@@ -314,8 +314,8 @@ class Post extends Base {
 			$element,
 			$this->get_style_controls( $element, null, $element->get_parsed_dynamic_settings() ),
 			$element->get_settings(),
-			array( '{{ID}}', '{{WRAPPER}}' ),
-			array( $element->get_id(), $this->get_element_unique_selector( $element ) )
+			[ '{{ID}}', '{{WRAPPER}}' ],
+			[ $element->get_id(), $this->get_element_unique_selector( $element ) ]
 		);
 	}
 
@@ -330,8 +330,8 @@ class Post extends Base {
 		$custom_typography_enabled = $kits_manager->is_custom_typography_enabled();
 
 		$controls = $element->get_controls();
-		$global_controls = array();
-		$global_values['__globals__'] = array();
+		$global_controls = [];
+		$global_values['__globals__'] = [];
 
 		foreach ( $controls as $control ) {
 			$this->build_global_controls_and_values(
@@ -349,8 +349,8 @@ class Post extends Base {
 				$control,
 				$controls,
 				function ( $control ) {},
-				array( '{{WRAPPER}}' ),
-				array( '.elementor-widget-' . $element->get_name() ),
+				[ '{{WRAPPER}}' ],
+				[ '.elementor-widget-' . $element->get_name() ],
 				$global_values
 			);
 		}

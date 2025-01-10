@@ -15,7 +15,7 @@ abstract class Post_Local_Cache extends Post {
 	 *
 	 * @var array
 	 */
-	private $meta_cache = array();
+	private $meta_cache = [];
 
 	abstract protected function get_post_id_for_data();
 
@@ -28,7 +28,7 @@ abstract class Post_Local_Cache extends Post {
 	}
 
 	protected function delete_meta() {
-		$this->meta_cache = array();
+		$this->meta_cache = [];
 	}
 
 	protected function update_meta( $meta ) {
@@ -38,6 +38,6 @@ abstract class Post_Local_Cache extends Post {
 	protected function get_data() {
 		$document = Plugin::$instance->documents->get( $this->get_post_id_for_data() );
 
-		return $document ? $document->get_elements_data() : array();
+		return $document ? $document->get_elements_data() : [];
 	}
 }

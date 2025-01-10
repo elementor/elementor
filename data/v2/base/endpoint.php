@@ -20,7 +20,7 @@ abstract class Endpoint extends Base_Route {
 	 *
 	 * @var \Elementor\Data\V2\Base\Endpoint[]
 	 */
-	protected $sub_endpoints = array();
+	protected $sub_endpoints = [];
 
 	/**
 	 * Get endpoint name.
@@ -87,7 +87,7 @@ abstract class Endpoint extends Base_Route {
 	 */
 	public function get_name_ancestry() {
 		$ancestors = $this->get_ancestors();
-		$ancestors_names = array();
+		$ancestors_names = [];
 
 		foreach ( $ancestors as $ancestor ) {
 			$ancestors_names [] = $ancestor->get_name();
@@ -120,7 +120,7 @@ abstract class Endpoint extends Base_Route {
 	 * @return \Elementor\Data\V2\Base\Endpoint[]
 	 */
 	private function get_ancestors() {
-		$ancestors = array();
+		$ancestors = [];
 		$current = $this;
 
 		do {

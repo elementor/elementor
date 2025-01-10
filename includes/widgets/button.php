@@ -75,7 +75,7 @@ class Widget_Button extends Widget_Base {
 	 * @return array Widget categories.
 	 */
 	public function get_categories() {
-		return array( 'basic' );
+		return [ 'basic' ];
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -89,9 +89,9 @@ class Widget_Button extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_button',
-			array(
+			[
 				'label' => esc_html__( 'Button', 'elementor' ),
-			)
+			]
 		);
 
 		$this->register_button_content_controls();
@@ -99,10 +99,10 @@ class Widget_Button extends Widget_Base {
 		if ( ! Utils::has_pro() ) {
 			$this->add_control(
 				Utils::CTA . '_promotion',
-				array(
+				[
 					'label' => esc_html__( 'Call to Action widget', 'elementor' ),
 					'type' => Promotion_Control::TYPE,
-				)
+				]
 			);
 		}
 
@@ -110,10 +110,10 @@ class Widget_Button extends Widget_Base {
 
 		$this->start_controls_section(
 			'section_style',
-			array(
+			[
 				'label' => esc_html__( 'Button', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->register_button_style_controls();

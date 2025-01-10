@@ -77,16 +77,16 @@ abstract class Widget_Nested_Base extends Widget_Base {
 	 * Adding new 'defaults' config for handling children elements.
 	 */
 	protected function get_initial_config() {
-		return array_merge( parent::get_initial_config(), array(
-			'defaults' => array(
+		return array_merge( parent::get_initial_config(), [
+			'defaults' => [
 				'elements' => $this->get_default_children_elements(),
 				'elements_title' => $this->get_default_children_title(),
 				'elements_placeholder_selector' => $this->get_default_children_placeholder_selector(),
 				'child_container_placeholder_selector' => $this->get_default_children_container_placeholder_selector(),
 				'repeater_title_setting' => $this->get_default_repeater_title_setting_key(),
-			),
+			],
 			'support_nesting' => true,
-		) );
+		] );
 	}
 
 	/**
@@ -95,7 +95,7 @@ abstract class Widget_Nested_Base extends Widget_Base {
 	 * Each element including its children elements.
 	 */
 	public function get_raw_data( $with_html_content = false ) {
-		$elements = array();
+		$elements = [];
 		$data = $this->get_data();
 
 		$children = $this->get_children();
@@ -106,13 +106,13 @@ abstract class Widget_Nested_Base extends Widget_Base {
 			$elements[] = $child_raw_data;
 		}
 
-		return array(
+		return [
 			'id' => $this->get_id(),
 			'elType' => $data['elType'],
 			'widgetType' => $data['widgetType'],
 			'settings' => $data['settings'],
 			'elements' => $elements,
-		);
+		];
 	}
 
 	/**

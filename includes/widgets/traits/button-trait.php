@@ -30,13 +30,13 @@ trait Button_Trait {
 	 * @return array An array containing button sizes.
 	 */
 	public static function get_button_sizes() {
-		return array(
+		return [
 			'xs' => esc_html__( 'Extra Small', 'elementor' ),
 			'sm' => esc_html__( 'Small', 'elementor' ),
 			'md' => esc_html__( 'Medium', 'elementor' ),
 			'lg' => esc_html__( 'Large', 'elementor' ),
 			'xl' => esc_html__( 'Extra Large', 'elementor' ),
-		);
+		];
 	}
 
 	/**
@@ -51,78 +51,78 @@ trait Button_Trait {
 	 *     @type array $icon_exclude_inline_options  Set of icon types to exclude from icon controls.
 	 * }
 	 */
-	protected function register_button_content_controls( $args = array() ) {
-		$default_args = array(
-			'section_condition' => array(),
+	protected function register_button_content_controls( $args = [] ) {
+		$default_args = [
+			'section_condition' => [],
 			'button_default_text' => esc_html__( 'Click here', 'elementor' ),
 			'text_control_label' => esc_html__( 'Text', 'elementor' ),
-			'icon_exclude_inline_options' => array(),
-		);
+			'icon_exclude_inline_options' => [],
+		];
 
 		$args = wp_parse_args( $args, $default_args );
 
 		$this->add_control(
 			'button_type',
-			array(
+			[
 				'label' => esc_html__( 'Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
-				'options' => array(
+				'options' => [
 					'' => esc_html__( 'Default', 'elementor' ),
 					'info' => esc_html__( 'Info', 'elementor' ),
 					'success' => esc_html__( 'Success', 'elementor' ),
 					'warning' => esc_html__( 'Warning', 'elementor' ),
 					'danger' => esc_html__( 'Danger', 'elementor' ),
-				),
+				],
 				'prefix_class' => 'elementor-button-',
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_control(
 			'text',
-			array(
+			[
 				'label' => $args['text_control_label'],
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
+				],
 				'default' => $args['button_default_text'],
 				'placeholder' => $args['button_default_text'],
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_control(
 			'link',
-			array(
+			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-				'default' => array(
+				],
+				'default' => [
 					'url' => '#',
-				),
+				],
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_control(
 			'size',
-			array(
+			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'sm',
 				'options' => self::get_button_sizes(),
 				'style_transfer' => true,
-				'condition' => array_merge( $args['section_condition'], array( 'size[value]!' => 'sm' ) ), // a workaround to hide the control, unless it's in use (not default).
-			)
+				'condition' => array_merge( $args['section_condition'], [ 'size[value]!' => 'sm' ] ), // a workaround to hide the control, unless it's in use (not default).
+			]
 		);
 
 		$this->add_control(
 			'selected_icon',
-			array(
+			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon',
@@ -130,7 +130,7 @@ trait Button_Trait {
 				'label_block' => false,
 				'condition' => $args['section_condition'],
 				'icon_exclude_inline_options' => $args['icon_exclude_inline_options'],
-			)
+			]
 		);
 
 		$start = is_rtl() ? 'right' : 'left';
@@ -138,78 +138,78 @@ trait Button_Trait {
 
 		$this->add_control(
 			'icon_align',
-			array(
+			[
 				'label' => esc_html__( 'Icon Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => is_rtl() ? 'row-reverse' : 'row',
-				'options' => array(
-					'row' => array(
+				'options' => [
+					'row' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => "eicon-h-align-{$start}",
-					),
-					'row-reverse' => array(
+					],
+					'row-reverse' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => "eicon-h-align-{$end}",
-					),
-				),
-				'selectors_dictionary' => array(
+					],
+				],
+				'selectors_dictionary' => [
 					'left' => is_rtl() ? 'row-reverse' : 'row',
 					'right' => is_rtl() ? 'row' : 'row-reverse',
-				),
-				'selectors' => array(
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};',
-				),
+				],
 				'condition' => array_merge(
 					$args['section_condition'],
-					array(
+					[
 						'text!' => '',
 						'selected_icon[value]!' => '',
-					)
+					]
 				),
-			)
+			]
 		);
 
 		$this->add_control(
 			'icon_indent',
-			array(
+			[
 				'label' => esc_html__( 'Icon Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
-				'range' => array(
-					'px' => array(
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
 						'max' => 50,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'max' => 5,
-					),
-					'rem' => array(
+					],
+					'rem' => [
 						'max' => 5,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
-				),
+				],
 				'condition' => array_merge(
 					$args['section_condition'],
-					array(
+					[
 						'text!' => '',
 						'selected_icon[value]!' => '',
-					)
+					]
 				),
-			)
+			]
 		);
 
 		$this->add_control(
 			'button_css_id',
-			array(
+			[
 				'label' => esc_html__( 'Button ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-				'ai' => array(
+				],
+				'ai' => [
 					'active' => false,
-				),
+				],
 				'default' => '',
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'description' => sprintf(
@@ -219,7 +219,7 @@ trait Button_Trait {
 				),
 				'separator' => 'before',
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 	}
 
@@ -235,43 +235,43 @@ trait Button_Trait {
 	 *     @type string $content_alignment_default  Default alignment for the button content.
 	 * }
 	 */
-	protected function register_button_style_controls( $args = array() ) {
-		$default_args = array(
-			'section_condition' => array(),
+	protected function register_button_style_controls( $args = [] ) {
+		$default_args = [
+			'section_condition' => [],
 			'alignment_default' => '',
 			'alignment_control_prefix_class' => 'elementor%s-align-',
 			'content_alignment_default' => '',
-		);
+		];
 
 		$args = wp_parse_args( $args, $default_args );
 
 		$this->add_responsive_control(
 			'align',
-			array(
+			[
 				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'left'    => array(
+				'options' => [
+					'left'    => [
 						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
-					),
-					'center' => array(
+					],
+					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
-					),
-					'right' => array(
+					],
+					'right' => [
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
-					),
-					'justify' => array(
+					],
+					'justify' => [
 						'title' => esc_html__( 'Stretch', 'elementor' ),
 						'icon' => 'eicon-h-align-stretch',
-					),
-				),
+					],
+				],
 				'prefix_class' => $args['alignment_control_prefix_class'],
 				'default' => $args['alignment_default'],
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$start = is_rtl() ? 'right' : 'left';
@@ -279,175 +279,175 @@ trait Button_Trait {
 
 		$this->add_responsive_control(
 			'content_align',
-			array(
+			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'start'    => array(
+				'options' => [
+					'start'    => [
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => "eicon-text-align-{$start}",
-					),
-					'center' => array(
+					],
+					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
-					),
-					'end' => array(
+					],
+					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => "eicon-text-align-{$end}",
-					),
-					'space-between' => array(
+					],
+					'space-between' => [
 						'title' => esc_html__( 'Space between', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
-					),
-				),
+					],
+				],
 				'default' => $args['content_alignment_default'],
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'justify-content: {{VALUE}};',
-				),
-				'condition' => array_merge( $args['section_condition'], array( 'align' => 'justify' ) ),
-			)
+				],
+				'condition' => array_merge( $args['section_condition'], [ 'align' => 'justify' ] ),
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'typography',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_ACCENT,
-				),
+				],
 				'selector' => '{{WRAPPER}} .elementor-button',
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'text_shadow',
 				'selector' => '{{WRAPPER}} .elementor-button',
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
-		$this->start_controls_tabs( 'tabs_button_style', array(
+		$this->start_controls_tabs( 'tabs_button_style', [
 			'condition' => $args['section_condition'],
-		) );
+		] );
 
 		$this->start_controls_tab(
 			'tab_button_normal',
-			array(
+			[
 				'label' => esc_html__( 'Normal', 'elementor' ),
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_control(
 			'button_text_color',
-			array(
+			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'fill: {{VALUE}}; color: {{VALUE}};',
-				),
+				],
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
-			array(
+			[
 				'name' => 'background',
-				'types' => array( 'classic', 'gradient' ),
-				'exclude' => array( 'image' ),
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
 				'selector' => '{{WRAPPER}} .elementor-button',
-				'fields_options' => array(
-					'background' => array(
+				'fields_options' => [
+					'background' => [
 						'default' => 'classic',
-					),
-					'color' => array(
-						'global' => array(
+					],
+					'color' => [
+						'global' => [
 							'default' => Global_Colors::COLOR_ACCENT,
-						),
-					),
-				),
+						],
+					],
+				],
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
 			'tab_button_hover',
-			array(
+			[
 				'label' => esc_html__( 'Hover', 'elementor' ),
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_control(
 			'hover_color',
-			array(
+			[
 				'label' => esc_html__( 'Text Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-button:hover svg, {{WRAPPER}} .elementor-button:focus svg' => 'fill: {{VALUE}};',
-				),
+				],
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Background::get_type(),
-			array(
+			[
 				'name' => 'button_background_hover',
-				'types' => array( 'classic', 'gradient' ),
-				'exclude' => array( 'image' ),
+				'types' => [ 'classic', 'gradient' ],
+				'exclude' => [ 'image' ],
 				'selector' => '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus',
-				'fields_options' => array(
-					'background' => array(
+				'fields_options' => [
+					'background' => [
 						'default' => 'classic',
-					),
-				),
+					],
+				],
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_control(
 			'button_hover_border_color',
-			array(
+			[
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
-				),
+				],
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_control(
 			'button_hover_transition_duration',
-			array(
+			[
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 's', 'ms', 'custom' ),
-				'default' => array(
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
 					'unit' => 's',
-				),
-				'selectors' => array(
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'transition-duration: {{SIZE}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'hover_animation',
-			array(
+			[
 				'label' => esc_html__( 'Hover Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->end_controls_tab();
@@ -456,48 +456,48 @@ trait Button_Trait {
 
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
-			array(
+			[
 				'name' => 'border',
 				'selector' => '{{WRAPPER}} .elementor-button',
 				'separator' => 'before',
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_responsive_control(
 			'border_radius',
-			array(
+			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'custom' ),
-				'selectors' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				),
+				],
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
-			array(
+			[
 				'name' => 'button_box_shadow',
 				'selector' => '{{WRAPPER}} .elementor-button',
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 
 		$this->add_responsive_control(
 			'text_padding',
-			array(
+			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
-				'selectors' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				),
+				],
 				'separator' => 'before',
 				'condition' => $args['section_condition'],
-			)
+			]
 		);
 	}
 
@@ -653,17 +653,17 @@ trait Button_Trait {
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 
-		$instance->add_render_attribute( array(
-			'content-wrapper' => array(
+		$instance->add_render_attribute( [
+			'content-wrapper' => [
 				'class' => 'elementor-button-content-wrapper',
-			),
-			'icon' => array(
+			],
+			'icon' => [
 				'class' => 'elementor-button-icon',
-			),
-			'text' => array(
+			],
+			'text' => [
 				'class' => 'elementor-button-text',
-			),
-		) );
+			],
+		] );
 
 		// TODO: replace the protected with public
 		// $instance->add_inline_editing_attributes( 'text', 'none' );
@@ -672,7 +672,7 @@ trait Button_Trait {
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
 			<span <?php $instance->print_render_attribute_string( 'icon' ); ?>>
 				<?php if ( $is_new || $migrated ) :
-					Icons_Manager::render_icon( $settings['selected_icon'], array( 'aria-hidden' => 'true' ) );
+					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 				else : ?>
 					<i class="<?php echo esc_attr( $settings['icon'] ); ?>" aria-hidden="true"></i>
 				<?php endif; ?>

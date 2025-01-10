@@ -102,10 +102,10 @@ class Zip extends Base {
 
 		$zip->close();
 
-		return array(
+		return [
 			'extraction_directory' => $extraction_directory,
 			'files' => $this->find_temp_files( $extraction_directory ),
-		);
+		];
 	}
 
 	/**
@@ -121,7 +121,7 @@ class Zip extends Base {
 	 * @return array
 	 */
 	private function get_allowed_files( $zip, $allowed_file_types ) {
-		$allowed_files = array();
+		$allowed_files = [];
 
 		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		for ( $i = 0; $i < $zip->numFiles; $i++ ) {
@@ -161,9 +161,9 @@ class Zip extends Base {
 	 * @return array An array of temporary files on the filesystem
 	 */
 	private function find_temp_files( $temp_path ) {
-		$file_names = array();
+		$file_names = [];
 
-		$possible_file_names = array_diff( scandir( $temp_path ), array( '.', '..' ) );
+		$possible_file_names = array_diff( scandir( $temp_path ), [ '.', '..' ] );
 
 		// Find nested files in the unzipped path. This happens for example when the user imports a Website Kit.
 		foreach ( $possible_file_names as $possible_file_name ) {

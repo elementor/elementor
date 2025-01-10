@@ -12,7 +12,7 @@ class Module extends BaseApp {
 	/**
 	 * @var Document[]
 	 */
-	private $documents = array();
+	private $documents = [];
 
 	/**
 	 * @return bool
@@ -60,7 +60,7 @@ class Module extends BaseApp {
 		wp_enqueue_script(
 			'elementor-admin-bar',
 			$this->get_js_assets_url( 'elementor-admin-bar' ),
-			array( 'elementor-frontend-modules' ),
+			[ 'elementor-frontend-modules' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -69,7 +69,7 @@ class Module extends BaseApp {
 		wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
 			'admin-bar',
 			null,
-			array( 'elementor-admin-bar' ),
+			[ 'elementor-admin-bar' ],
 			false,
 			true
 		);
@@ -83,7 +83,7 @@ class Module extends BaseApp {
 	 * @return array
 	 */
 	public function get_init_settings() {
-		$settings = array();
+		$settings = [];
 
 		if ( ! empty( $this->documents ) ) {
 			$settings['elementor_edit_page'] = $this->get_edit_button_config();
@@ -118,26 +118,26 @@ class Module extends BaseApp {
 			unset( $this->documents[ $queried_object_id ] );
 		}
 
-		return array(
+		return [
 			'id' => 'elementor_edit_page',
 			'title' => esc_html__( 'Edit with Elementor', 'elementor' ),
 			'href' => $href,
 			'children' => array_map( function ( $document ) {
-				return array(
+				return [
 					'id' => "elementor_edit_doc_{$document->get_main_id()}",
 					'title' => $document->get_post()->post_title,
 					'sub_title' => $document::get_title(),
 					'href' => $document->get_edit_url(),
-				);
+				];
 			}, $this->documents ),
-		);
+		];
 	}
 
 	/**
 	 * Module constructor.
 	 */
 	public function __construct() {
-		add_action( 'elementor/frontend/before_get_builder_content', array( $this, 'add_document_to_admin_bar' ), 10, 2 );
-		add_action( 'wp_footer', array( $this, 'enqueue_scripts' ), 11 /* after third party scripts */ );
+		add_action( 'elementor/frontend/before_get_builder_content', [ $this, 'add_document_to_admin_bar' ], 10, 2 );
+		add_action( 'wp_footer', [ $this, 'enqueue_scripts' ], 11 /* after third party scripts */ );
 	}
 }

@@ -46,7 +46,7 @@ class AllChildren extends Index {
 	 * ]
 	 */
 	public function get_items( $request ) {
-		$response = array();
+		$response = [];
 
 		foreach ( $this->controller->get_sub_controllers() as $controller ) {
 			$controller_route = $this->get_controller()->get_base_route() . '/' . $controller->get_name();

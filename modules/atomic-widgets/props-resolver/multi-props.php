@@ -16,10 +16,10 @@ class Multi_Props {
 	}
 
 	public static function generate( $value ) {
-		return array(
+		return [
 			'$$multi-props' => true,
 			'value' => $value,
-		);
+		];
 	}
 
 	public static function get_value( $value ) {

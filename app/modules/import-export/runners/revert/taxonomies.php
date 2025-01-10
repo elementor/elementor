@@ -18,17 +18,17 @@ class Taxonomies extends Revert_Runner_Base {
 	public function revert( array $data ) {
 		$taxonomies = get_taxonomies();
 
-		$terms = get_terms( array(
+		$terms = get_terms( [
 			'taxonomy' => $taxonomies,
 			'hide_empty' => false,
 			'get' => 'all',
-			'meta_query' => array(
-				array(
+			'meta_query' => [
+				[
 					'key'       => static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID,
 					'value'     => $data['session_id'],
-				),
-			),
-		) );
+				],
+			],
+		] );
 
 		foreach ( $terms as $term ) {
 			wp_delete_term( $term->term_id, $term->taxonomy );

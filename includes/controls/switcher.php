@@ -69,10 +69,10 @@ class Control_Switcher extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'label_off' => esc_html__( 'No', 'elementor' ),
 			'label_on' => esc_html__( 'Yes', 'elementor' ),
 			'return_value' => 'yes',
-		);
+		];
 	}
 }

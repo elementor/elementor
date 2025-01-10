@@ -7,19 +7,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Style_Parser {
-	const VALID_TYPES = array(
+	const VALID_TYPES = [
 		'class',
-	);
+	];
 
-	const VALID_STATES = array(
+	const VALID_STATES = [
 		'hover',
 		'active',
 		'focus',
 		null,
-	);
+	];
 
 	private array $schema;
-	private array $errors_bag = array();
+	private array $errors_bag = [];
 	private $should_validate_id = true;
 
 	public function __construct( array $schema ) {
@@ -65,11 +65,11 @@ class Style_Parser {
 			$this->errors_bag[] = 'variants';
 			unset( $validated_style['variants'] );
 
-			return array(
+			return [
 				false,
 				$validated_style,
 				$this->errors_bag,
-			);
+			];
 		}
 
 		$props_parser = Props_Parser::make( $this->schema );
@@ -94,11 +94,11 @@ class Style_Parser {
 
 		$is_valid = empty( $this->errors_bag );
 
-		return array(
+		return [
 			$is_valid,
 			$validated_style,
 			$this->errors_bag,
-		);
+		];
 	}
 
 	public function validate_meta( $meta ): bool {
@@ -152,10 +152,10 @@ class Style_Parser {
 	public function parse( array $style ): array {
 		[ $is_valid, $validated, $errors_bag  ] = $this->validate( $style );
 
-		return array(
+		return [
 			$is_valid,
 			$this->sanitize( $validated ),
 			$errors_bag,
-		);
+		];
 	}
 }

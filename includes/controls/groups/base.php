@@ -24,7 +24,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * @var array Group control arguments.
 	 */
-	private $args = array();
+	private $args = [];
 
 	/**
 	 * Options.
@@ -82,7 +82,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @param array          $options   Optional. The element options. Default is
 	 *                                  an empty array.
 	 */
-	final public function add_controls( Controls_Stack $element, array $user_args, array $options = array() ) {
+	final public function add_controls( Controls_Stack $element, array $user_args, array $options = [] ) {
 		$this->init_args( $user_args );
 
 		// Filter which controls to display
@@ -218,7 +218,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Default group control options.
 	 */
 	protected function get_default_options() {
-		return array();
+		return [];
 	}
 
 	/**
@@ -233,7 +233,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Default arguments for all the child controls.
 	 */
 	protected function get_child_default_args() {
-		return array();
+		return [];
 	}
 
 	/**
@@ -289,10 +289,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$field_args['classes'] = $this->get_base_group_classes() . ' elementor-group-control-' . $control_id;
 
-		foreach ( array( 'condition', 'conditions' ) as $condition_type ) {
+		foreach ( [ 'condition', 'conditions' ] as $condition_type ) {
 			if ( ! empty( $args[ $condition_type ] ) ) {
 				if ( empty( $field_args[ $condition_type ] ) ) {
-					$field_args[ $condition_type ] = array();
+					$field_args[ $condition_type ] = [];
 				}
 
 				$field_args[ $condition_type ] += $args[ $condition_type ];
@@ -373,13 +373,13 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @access private
 	 */
 	private function init_options() {
-		$default_options = array(
-			'popover' => array(
+		$default_options = [
+			'popover' => [
 				'starter_name' => 'popover_toggle',
 				'starter_value' => 'custom',
 				'starter_title' => '',
-			),
-		);
+			],
+		];
 
 		$this->options = array_replace_recursive( $default_options, $this->get_default_options() );
 	}
@@ -414,11 +414,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Control default arguments.
 	 */
 	private function get_default_args() {
-		return array(
+		return [
 			'default' => '',
 			'selector' => '{{WRAPPER}}',
-			'fields_options' => array(),
-		);
+			'fields_options' => [],
+		];
 	}
 
 	/**
@@ -549,7 +549,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		if ( isset( $settings['global'] ) ) {
 			if ( ! isset( $popover_options['settings']['global'] ) ) {
-				$popover_options['settings']['global'] = array();
+				$popover_options['settings']['global'] = [];
 			}
 
 			$popover_options['settings']['global'] = array_replace_recursive( $popover_options['settings']['global'], $settings['global'] );
@@ -561,17 +561,17 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$label = $popover_options['starter_title'];
 		}
 
-		$control_params = array(
+		$control_params = [
 			'type' => Controls_Manager::POPOVER_TOGGLE,
 			'label' => $label,
 			'return_value' => $popover_options['starter_value'],
-		);
+		];
 
 		if ( ! empty( $popover_options['settings'] ) ) {
 			$control_params = array_replace_recursive( $control_params, $popover_options['settings'] );
 		}
 
-		foreach ( array( 'condition', 'conditions' ) as $key ) {
+		foreach ( [ 'condition', 'conditions' ] as $key ) {
 			if ( ! empty( $settings[ $key ] ) ) {
 				$control_params[ $key ] = $settings[ $key ];
 			}

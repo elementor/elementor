@@ -40,50 +40,50 @@ class Site extends Base_Category {
 	 *
 	 * @return array
 	 */
-	public function get_category_items( array $options = array() ) {
-		return array(
-			'homepage' => array(
+	public function get_category_items( array $options = [] ) {
+		return [
+			'homepage' => [
 				'title' => esc_html__( 'Homepage', 'elementor' ),
 				'url' => home_url(),
 				'icon' => 'home-heart',
-				'keywords' => array( 'home', 'page' ),
-			),
-			'wordpress-dashboard' => array(
+				'keywords' => [ 'home', 'page' ],
+			],
+			'wordpress-dashboard' => [
 				'title' => esc_html__( 'Dashboard', 'elementor' ),
 				'icon' => 'dashboard',
 				'url' => admin_url(),
-				'keywords' => array( 'dashboard', 'wordpress' ),
-			),
-			'wordpress-menus' => array(
+				'keywords' => [ 'dashboard', 'wordpress' ],
+			],
+			'wordpress-menus' => [
 				'title' => esc_html__( 'Menus', 'elementor' ),
 				'icon' => 'wordpress',
 				'url' => admin_url( 'nav-menus.php' ),
-				'keywords' => array( 'menu', 'wordpress' ),
-			),
-			'wordpress-themes' => array(
+				'keywords' => [ 'menu', 'wordpress' ],
+			],
+			'wordpress-themes' => [
 				'title' => esc_html__( 'Themes', 'elementor' ),
 				'icon' => 'wordpress',
 				'url' => admin_url( 'themes.php' ),
-				'keywords' => array( 'themes', 'wordpress' ),
-			),
-			'wordpress-customizer' => array(
+				'keywords' => [ 'themes', 'wordpress' ],
+			],
+			'wordpress-customizer' => [
 				'title' => esc_html__( 'Customizer', 'elementor' ),
 				'icon' => 'wordpress',
 				'url' => admin_url( 'customize.php' ),
-				'keywords' => array( 'customizer', 'wordpress' ),
-			),
-			'wordpress-plugins' => array(
+				'keywords' => [ 'customizer', 'wordpress' ],
+			],
+			'wordpress-plugins' => [
 				'title' => esc_html__( 'Plugins', 'elementor' ),
 				'icon' => 'wordpress',
 				'url' => admin_url( 'plugins.php' ),
-				'keywords' => array( 'plugins', 'wordpress' ),
-			),
-			'wordpress-users' => array(
+				'keywords' => [ 'plugins', 'wordpress' ],
+			],
+			'wordpress-users' => [
 				'title' => esc_html__( 'Users', 'elementor' ),
 				'icon' => 'wordpress',
 				'url' => admin_url( 'users.php' ),
-				'keywords' => array( 'users', 'profile', 'wordpress' ),
-			),
-		);
+				'keywords' => [ 'users', 'profile', 'wordpress' ],
+			],
+		];
 	}
 }

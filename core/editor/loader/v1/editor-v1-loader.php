@@ -16,7 +16,7 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 	 */
 	public function init() {
 		// Loading UI and Icons v2 scrips for the use of new features that should live in V1.
-		$packages_to_register = array( 'ui', 'icons', 'query' );
+		$packages_to_register = [ 'ui', 'icons', 'query' ];
 
 		foreach ( $packages_to_register as $package ) {
 			$this->assets_config_provider->load( $package );
@@ -45,7 +45,7 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 		wp_register_script(
 			'elementor-editor-loader-v1',
 			"{$assets_url}js/editor-loader-v1{$min_suffix}.js",
-			array( 'elementor-editor' ),
+			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
 		);

@@ -73,10 +73,10 @@ class Heartbeat {
 			/** @var Core\Common\Modules\Ajax\Module $ajax */
 			$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
-			$response['elementor-refresh-nonces'] = array(
+			$response['elementor-refresh-nonces'] = [
 				'elementorNonce' => $ajax->create_nonce(),
 				'heartbeatNonce' => wp_create_nonce( 'heartbeat-nonce' ),
-			);
+			];
 		}
 
 		return $response;
@@ -91,7 +91,7 @@ class Heartbeat {
 	 * @access public
 	 */
 	public function __construct() {
-		add_filter( 'heartbeat_received', array( $this, 'heartbeat_received' ), 10, 2 );
-		add_filter( 'wp_refresh_nonces', array( $this, 'refresh_nonces' ), 30, 2 );
+		add_filter( 'heartbeat_received', [ $this, 'heartbeat_received' ], 10, 2 );
+		add_filter( 'wp_refresh_nonces', [ $this, 'refresh_nonces' ], 30, 2 );
 	}
 }

@@ -55,7 +55,7 @@ abstract class Base_Tag extends Controls_Stack {
 	 *
 	 * @param array $options
 	 */
-	abstract public function get_content( array $options = array() );
+	abstract public function get_content( array $options = [] );
 
 	/**
 	 * @since 2.0.0
@@ -91,7 +91,7 @@ abstract class Base_Tag extends Controls_Stack {
 
 		$panel_template = ob_get_clean();
 
-		return array(
+		return [
 			'name' => $this->get_name(),
 			'title' => $this->get_title(),
 			'panel_template' => $panel_template,
@@ -101,7 +101,7 @@ abstract class Base_Tag extends Controls_Stack {
 			'content_type' => $this->get_content_type(),
 			'settings_required' => $this->is_settings_required(),
 			'editable' => $this->is_editable(),
-		);
+		];
 	}
 
 	/**
@@ -167,9 +167,9 @@ abstract class Base_Tag extends Controls_Stack {
 	final protected function init_controls() {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
-		$this->start_controls_section( 'settings', array(
+		$this->start_controls_section( 'settings', [
 			'label' => esc_html__( 'Settings', 'elementor' ),
-		) );
+		] );
 
 		if ( $this->has_own_method( '_register_controls' ) ) {
 			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_controls', '3.1.0', __CLASS__ . '::register_controls()' );

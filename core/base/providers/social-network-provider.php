@@ -4,7 +4,7 @@ namespace Elementor\Core\Base\Providers;
 
 class Social_Network_Provider {
 
-	private static array $social_networks = array();
+	private static array $social_networks = [];
 
 	public const FACEBOOK = 'Facebook';
 	public const TWITTER = 'X (Twitter)';
@@ -34,7 +34,7 @@ class Social_Network_Provider {
 	public static function get_social_networks_icons(): array {
 		static::init_social_networks_array_if_empty();
 
-		static $icons = array();
+		static $icons = [];
 
 		if ( empty( $icons ) ) {
 			foreach ( static::$social_networks as $network => $data ) {
@@ -75,10 +75,10 @@ class Social_Network_Provider {
 		return '';
 	}
 
-	public static function get_social_networks_text( $providers = array() ): array {
+	public static function get_social_networks_text( $providers = [] ): array {
 		static::init_social_networks_array_if_empty();
 
-		static $texts = array();
+		static $texts = [];
 
 		if ( empty( $texts ) ) {
 			foreach ( static::$social_networks as $network => $data ) {
@@ -98,149 +98,149 @@ class Social_Network_Provider {
 			return;
 		}
 
-		static::$social_networks[ static::VCF ] = array(
+		static::$social_networks[ static::VCF ] = [
 			'text' => esc_html__( 'Save contact (vCard)', 'elementor' ),
 			'icon' => 'fab fa-outlook',
 			'name' => 'vcf',
-		);
+		];
 
-		static::$social_networks[ static::FACEBOOK ] = array(
+		static::$social_networks[ static::FACEBOOK ] = [
 			'text' => esc_html__( 'Facebook', 'elementor' ),
 			'icon' => 'fab fa-facebook',
 			'name' => 'facebook',
-		);
+		];
 
-		static::$social_networks[ static::TWITTER ] = array(
+		static::$social_networks[ static::TWITTER ] = [
 			'text' => esc_html__( 'X (Twitter)', 'elementor' ),
 			'icon' => 'fab fa-x-twitter',
 			'name' => 'x-twitter',
-		);
+		];
 
-		static::$social_networks[ static::INSTAGRAM ] = array(
+		static::$social_networks[ static::INSTAGRAM ] = [
 			'text' => esc_html__( 'Instagram', 'elementor' ),
 			'icon' => 'fab fa-instagram',
 			'name' => 'instagram',
-		);
+		];
 
-		static::$social_networks[ static::LINKEDIN ] = array(
+		static::$social_networks[ static::LINKEDIN ] = [
 			'text' => esc_html__( 'LinkedIn', 'elementor' ),
 			'icon' => 'fab fa-linkedin-in',
 			'name' => 'linkedin',
-		);
+		];
 
-		static::$social_networks[ static::PINTEREST ] = array(
+		static::$social_networks[ static::PINTEREST ] = [
 			'text' => esc_html__( 'Pinterest', 'elementor' ),
 			'icon' => 'fab fa-pinterest',
 			'name' => 'pinterest',
-		);
+		];
 
-		static::$social_networks[ static::YOUTUBE ] = array(
+		static::$social_networks[ static::YOUTUBE ] = [
 			'text' => esc_html__( 'YouTube', 'elementor' ),
 			'icon' => 'fab fa-youtube',
 			'name' => 'youtube',
-		);
+		];
 
-		static::$social_networks[ static::TIKTOK ] = array(
+		static::$social_networks[ static::TIKTOK ] = [
 			'text' => esc_html__( 'TikTok', 'elementor' ),
 			'icon' => 'fab fa-tiktok',
 			'name' => 'tiktok',
-		);
+		];
 
-		static::$social_networks[ static::WHATSAPP ] = array(
+		static::$social_networks[ static::WHATSAPP ] = [
 			'text' => esc_html__( 'WhatsApp', 'elementor' ),
 			'icon' => 'fab fa-whatsapp',
 			'name' => 'whatsapp',
-		);
+		];
 
-		static::$social_networks[ static::APPLEMUSIC ] = array(
+		static::$social_networks[ static::APPLEMUSIC ] = [
 			'text' => esc_html__( 'Apple Music', 'elementor' ),
 			'icon' => 'fa fa-music',
 			'name' => 'apple-music',
-		);
+		];
 
-		static::$social_networks[ static::SPOTIFY ] = array(
+		static::$social_networks[ static::SPOTIFY ] = [
 			'text' => esc_html__( 'Spotify', 'elementor' ),
 			'icon' => 'fab fa-spotify',
 			'name' => 'spotify',
-		);
+		];
 
-		static::$social_networks[ static::SOUNDCLOUD ] = array(
+		static::$social_networks[ static::SOUNDCLOUD ] = [
 			'text' => esc_html__( 'SoundCloud', 'elementor' ),
 			'icon' => 'fab fa-soundcloud',
 			'name' => 'soundcloud',
-		);
+		];
 
-		static::$social_networks[ static::BEHANCE ] = array(
+		static::$social_networks[ static::BEHANCE ] = [
 			'text' => esc_html__( 'Behance', 'elementor' ),
 			'icon' => 'fab fa-behance',
 			'name' => 'behance',
-		);
+		];
 
-		static::$social_networks[ static::DRIBBBLE ] = array(
+		static::$social_networks[ static::DRIBBBLE ] = [
 			'text' => esc_html__( 'Dribbble', 'elementor' ),
 			'icon' => 'fab fa-dribbble',
 			'name' => 'dribble',
-		);
+		];
 
-		static::$social_networks[ static::VIMEO ] = array(
+		static::$social_networks[ static::VIMEO ] = [
 			'text' => esc_html__( 'Vimeo', 'elementor' ),
 			'icon' => 'fab fa-vimeo-v',
 			'name' => 'vimeo',
-		);
+		];
 
-		static::$social_networks[ static::WAZE ] = array(
+		static::$social_networks[ static::WAZE ] = [
 			'text' => esc_html__( 'Waze', 'elementor' ),
 			'icon' => 'fab fa-waze',
 			'name' => 'waze',
-		);
+		];
 
-		static::$social_networks[ static::MESSENGER ] = array(
+		static::$social_networks[ static::MESSENGER ] = [
 			'text' => esc_html__( 'Messenger', 'elementor' ),
 			'icon' => 'fab fa-facebook-messenger',
 			'name' => 'messenger',
-		);
+		];
 
-		static::$social_networks[ static::TELEPHONE ] = array(
+		static::$social_networks[ static::TELEPHONE ] = [
 			'text' => esc_html__( 'Telephone', 'elementor' ),
 			'icon' => 'fas fa-phone-alt',
 			'name' => 'phone',
-		);
+		];
 
-		static::$social_networks[ static::EMAIL ] = array(
+		static::$social_networks[ static::EMAIL ] = [
 			'text' => esc_html__( 'Email', 'elementor' ),
 			'icon' => 'fas fa-envelope',
 			'name' => 'email',
-		);
+		];
 
-		static::$social_networks[ static::URL ] = array(
+		static::$social_networks[ static::URL ] = [
 			'text' => esc_html__( 'URL', 'elementor' ),
 			'icon' => 'fas fa-globe',
 			'name' => 'url',
-		);
+		];
 
-		static::$social_networks[ static::FILE_DOWNLOAD ] = array(
+		static::$social_networks[ static::FILE_DOWNLOAD ] = [
 			'text' => esc_html__( 'File Download', 'elementor' ),
 			'icon' => 'fas fa-download',
 			'name' => 'download',
-		);
+		];
 
-		static::$social_networks[ static::SMS ] = array(
+		static::$social_networks[ static::SMS ] = [
 			'text' => esc_html__( 'SMS', 'elementor' ),
 			'icon' => 'fas fa-sms',
 			'name' => 'sms',
-		);
+		];
 
-		static::$social_networks[ static::VIBER ] = array(
+		static::$social_networks[ static::VIBER ] = [
 			'text' => esc_html__( 'Viber', 'elementor' ),
 			'icon' => 'fab fa-viber',
 			'name' => 'viber',
-		);
+		];
 
-		static::$social_networks[ static::SKYPE ] = array(
+		static::$social_networks[ static::SKYPE ] = [
 			'text' => esc_html__( 'Skype', 'elementor' ),
 			'icon' => 'fab fa-skype',
 			'name' => 'skype',
-		);
+		];
 	}
 
 	public static function build_messenger_link( string $username ) {
@@ -276,8 +276,8 @@ class Social_Network_Provider {
 			return '';
 		}
 
-		return add_query_arg( array(
+		return add_query_arg( [
 			'number' => urlencode( $number ),
-		), 'viber://' . $action );
+		], 'viber://' . $action );
 	}
 }

@@ -30,10 +30,10 @@ class Templates extends Import_Runner_Base {
 		$path = $data['extracted_directory_path'] . 'templates/';
 		$templates = $data['manifest']['templates'];
 
-		$result['templates'] = array(
-			'succeed' => array(),
-			'failed' => array(),
-		);
+		$result['templates'] = [
+			'succeed' => [],
+			'failed' => [],
+		];
 
 		foreach ( $templates as $id => $template_settings ) {
 			try {
@@ -54,11 +54,11 @@ class Templates extends Import_Runner_Base {
 
 		$new_document = Plugin::$instance->documents->create(
 			$doc_type,
-			array(
+			[
 				'post_title' => $template_settings['title'],
 				'post_type' => Source_Local::CPT,
 				'post_status' => 'publish',
-			)
+			]
 		);
 
 		if ( is_wp_error( $new_document ) ) {

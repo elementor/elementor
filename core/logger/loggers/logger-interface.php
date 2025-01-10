@@ -19,7 +19,7 @@ interface Logger_Interface {
 	 *
 	 * @return void
 	 */
-	public function log( $message, $type = self::LEVEL_INFO, $meta = array() );
+	public function log( $message, $type = self::LEVEL_INFO, $meta = [] );
 
 	/**
 	 * @param string $message
@@ -27,7 +27,7 @@ interface Logger_Interface {
 	 *
 	 * @return void
 	 */
-	public function info( $message, $meta = array() );
+	public function info( $message, $meta = [] );
 
 	/**
 	 * @param string $message
@@ -35,7 +35,7 @@ interface Logger_Interface {
 	 *
 	 * @return void
 	 */
-	public function notice( $message, $meta = array() );
+	public function notice( $message, $meta = [] );
 
 	/**
 	 * @param string $message
@@ -43,7 +43,7 @@ interface Logger_Interface {
 	 *
 	 * @return void
 	 */
-	public function warning( $message, $meta = array() );
+	public function warning( $message, $meta = [] );
 
 	/**
 	 * @param string $message
@@ -51,7 +51,7 @@ interface Logger_Interface {
 	 *
 	 * @return void
 	 */
-	public function error( $message, $meta = array() );
+	public function error( $message, $meta = [] );
 
 	/**
 	 * @param int  $max_entries

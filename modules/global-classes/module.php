@@ -17,9 +17,9 @@ class Module extends BaseModule {
 	const NAME = 'global_classes';
 
 	// TODO: Add global classes package
-	const PACKAGES = array(
+	const PACKAGES = [
 		'editor-global-classes',
-	);
+	];
 
 	public function get_name() {
 		return 'global-classes';
@@ -43,14 +43,14 @@ class Module extends BaseModule {
 	}
 
 	private function register_experiment() {
-		Plugin::$instance->experiments->add_feature( array(
+		Plugin::$instance->experiments->add_feature( [
 			'name' => self::NAME,
 			'title' => esc_html__( 'Global Classes', 'elementor' ),
 			'description' => esc_html__( 'Enable global CSS classes.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		) );
+		] );
 	}
 
 	private function add_packages( $packages ) {

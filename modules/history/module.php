@@ -50,6 +50,6 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'elementor/editor/init', array( $this, 'add_templates' ) );
+		add_action( 'elementor/editor/init', [ $this, 'add_templates' ] );
 	}
 }

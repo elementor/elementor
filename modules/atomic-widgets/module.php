@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'atomic_widgets';
 
-	const PACKAGES = array(
+	const PACKAGES = [
 		'editor-canvas',
 		'editor-controls', // TODO: Need to be registered and not enqueued.
 		'editor-editing-panel',
@@ -67,7 +67,7 @@ class Module extends BaseModule {
 		'editor-props', // TODO: Need to be registered and not enqueued.
 		'editor-styles', // TODO: Need to be registered and not enqueued.
 		'editor-styles-repository',
-	);
+	];
 
 	public function get_name() {
 		return 'atomic-widgets';
@@ -95,14 +95,14 @@ class Module extends BaseModule {
 	}
 
 	private function register_experiment() {
-		Plugin::$instance->experiments->add_feature( array(
+		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		) );
+		] );
 	}
 
 	private function add_packages( $packages ) {
@@ -111,7 +111,7 @@ class Module extends BaseModule {
 
 	private function add_styles_schema( $settings ) {
 		if ( ! isset( $settings['atomic'] ) ) {
-			$settings['atomic'] = array();
+			$settings['atomic'] = [];
 		}
 
 		$settings['atomic']['styles_schema'] = Style_Schema::get();
@@ -174,7 +174,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-atomic-widgets-editor',
 			$this->get_js_assets_url( 'atomic-widgets-editor' ),
-			array( 'elementor-editor' ),
+			[ 'elementor-editor' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -184,7 +184,7 @@ class Module extends BaseModule {
 		wp_register_style(
 			'div-block',
 			$this->get_css_assets_url( 'div-block', 'assets/css/' ),
-			array( 'elementor-frontend' ),
+			[ 'elementor-frontend' ],
 			ELEMENTOR_VERSION
 		);
 	}

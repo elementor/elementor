@@ -15,7 +15,7 @@ abstract class Base {
 
 	const META_KEY = '';
 
-	private static $wp_uploads_dir = array();
+	private static $wp_uploads_dir = [];
 
 	private $files_dir;
 
@@ -129,7 +129,7 @@ abstract class Base {
 	public function get_url() {
 		$url = set_url_scheme( self::get_base_uploads_url() . $this->files_dir . $this->file_name );
 
-		return add_query_arg( array( 'ver' => $this->get_meta( 'time' ) ), $url );
+		return add_query_arg( [ 'ver' => $this->get_meta( 'time' ) ], $url );
 	}
 
 	/**
@@ -283,9 +283,9 @@ abstract class Base {
 	 * @access protected
 	 */
 	protected function get_default_meta() {
-		return array(
+		return [
 			'time' => 0,
-		);
+		];
 	}
 
 	/**

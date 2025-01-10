@@ -103,7 +103,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @var null|array
 	 */
-	private $additional_config = array();
+	private $additional_config = [];
 
 	/**
 	 * Current section.
@@ -169,7 +169,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @var array
 	 */
-	private $render_attributes = array();
+	private $render_attributes = [];
 
 	/**
 	 * Get element name.
@@ -370,7 +370,7 @@ abstract class Controls_Stack extends Base_Object {
 				}
 
 				return $active_controls;
-			}, array()
+			}, []
 		);
 
 		return $active_controls;
@@ -406,16 +406,16 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return bool True if control added, False otherwise.
 	 */
-	public function add_control( $id, array $args, $options = array() ) {
-		$default_options = array(
+	public function add_control( $id, array $args, $options = [] ) {
+		$default_options = [
 			'overwrite' => false,
 			'position' => null,
-		);
+		];
 
 		if ( isset( $args['scheme'] ) ) {
-			$args['global'] = array(
+			$args['global'] = [
 				'default' => Plugin::$instance->kits_manager->convert_scheme_to_global( $args['scheme'] ),
-			);
+			];
 
 			unset( $args['scheme'] );
 		}
@@ -430,7 +430,7 @@ abstract class Controls_Stack extends Base_Object {
 			$options['index'] = $this->injection_point['index']++;
 		}
 
-		if ( empty( $args['type'] ) || ! in_array( $args['type'], array( Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ), true ) ) {
+		if ( empty( $args['type'] ) || ! in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ], true ) ) {
 			$args = $this->handle_control_position( $args, $id, $options['overwrite'] );
 		}
 
@@ -441,7 +441,7 @@ abstract class Controls_Stack extends Base_Object {
 		unset( $options['position'] );
 
 		if ( $this->current_popover ) {
-			$args['popover'] = array();
+			$args['popover'] = [];
 
 			if ( ! $this->current_popover['initialized'] ) {
 				$args['popover']['start'] = true;
@@ -451,7 +451,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		if ( Performance::should_optimize_controls() ) {
-			$ui_controls = array(
+			$ui_controls = [
 				Controls_Manager::RAW_HTML,
 				Controls_Manager::DIVIDER,
 				Controls_Manager::HEADING,
@@ -459,13 +459,13 @@ abstract class Controls_Stack extends Base_Object {
 				Controls_Manager::ALERT,
 				Controls_Manager::NOTICE,
 				Controls_Manager::DEPRECATED_NOTICE,
-			);
+			];
 
 			if ( ! empty( $args['type'] ) && ! empty( $args['section'] ) && in_array( $args['type'], $ui_controls ) ) {
-				$args = array(
+				$args = [
 					'type' => $args['type'],
 					'section' => $args['section'],
-				);
+				];
 			}
 
 			unset(
@@ -531,7 +531,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return bool
 	 */
-	public function update_control( $control_id, array $args, array $options = array() ) {
+	public function update_control( $control_id, array $args, array $options = [] ) {
 		$is_updated = Plugin::$instance->controls_manager->update_control_in_stack( $this, $control_id, $args, $options );
 
 		if ( ! $is_updated ) {
@@ -601,10 +601,10 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return bool|array Position info.
 	 */
 	final public function get_position_info( array $position ) {
-		$default_position = array(
+		$default_position = [
 			'type' => 'control',
 			'at' => 'after',
-		);
+		];
 
 		if ( ! empty( $position['type'] ) && 'section' === $position['type'] ) {
 			$default_position['at'] = 'end';
@@ -613,8 +613,8 @@ abstract class Controls_Stack extends Base_Object {
 		$position = array_merge( $default_position, $position );
 
 		if (
-			( 'control' === $position['type'] && in_array( $position['at'], array( 'start', 'end' ), true ) ) ||
-			( 'section' === $position['type'] && in_array( $position['at'], array( 'before', 'after' ), true ) )
+			( 'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ], true ) ) ||
+			( 'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ], true ) )
 		) {
 			_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
@@ -661,16 +661,16 @@ abstract class Controls_Stack extends Base_Object {
 
 		$section_id = $registered_controls[ $controls_keys[ $target_section_index ] ]['name'];
 
-		$position_info = array(
+		$position_info = [
 			'index' => $target_control_index,
 			'section' => $this->get_section_args( $section_id ),
-		);
+		];
 
 		if ( ! empty( $target_control['tabs_wrapper'] ) ) {
-			$position_info['tab'] = array(
+			$position_info['tab'] = [
 				'tabs_wrapper' => $target_control['tabs_wrapper'],
 				'inner_tab' => $target_control['inner_tab'],
-			);
+			];
 		}
 
 		return $position_info;
@@ -731,7 +731,7 @@ abstract class Controls_Stack extends Base_Object {
 	final public function get_section_controls( $section_id ) {
 		$section_index = $this->get_control_index( $section_id );
 
-		$section_controls = array();
+		$section_controls = [];
 
 		$registered_controls = $this->get_controls();
 
@@ -771,7 +771,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param array  $options    Optional. Group control options. Default is an
 	 *                           empty array.
 	 */
-	final public function add_group_control( $group_name, array $args = array(), array $options = array() ) {
+	final public function add_group_control( $group_name, array $args = [], array $options = [] ) {
 		$group = Plugin::$instance->controls_manager->get_control_groups( $group_name );
 
 		if ( ! $group ) {
@@ -802,7 +802,7 @@ abstract class Controls_Stack extends Base_Object {
 
 		$controls = $this->get_active_controls( $controls, $settings );
 
-		$style_controls = array();
+		$style_controls = [];
 
 		foreach ( $controls as $control_name => $control ) {
 			$control_obj = Plugin::$instance->controls_manager->get_control( $control['type'] );
@@ -814,7 +814,7 @@ abstract class Controls_Stack extends Base_Object {
 			$control = array_merge( $control_obj->get_settings(), $control );
 
 			if ( $control_obj instanceof Control_Repeater ) {
-				$style_fields = array();
+				$style_fields = [];
 
 				foreach ( $this->get_settings( $control_name ) as $item ) {
 					$style_fields[] = $this->get_style_controls( $control['fields'], $item );
@@ -865,15 +865,15 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param array  $options Optional. Responsive control options. Default is
 	 *                        an empty array.
 	 */
-	final public function add_responsive_control( $id, array $args, $options = array() ) {
-		$args['responsive'] = array();
+	final public function add_responsive_control( $id, array $args, $options = [] ) {
+		$args['responsive'] = [];
 
 		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		$devices = Plugin::$instance->breakpoints->get_active_devices_list( array(
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [
 			'reverse' => true,
 			'desktop_first' => true,
-		) );
+		] );
 
 		if ( isset( $args['devices'] ) ) {
 			$devices = array_intersect( $devices, $args['devices'] );
@@ -911,9 +911,9 @@ abstract class Controls_Stack extends Base_Object {
 			$args['is_responsive'] = true;
 
 			if ( ! empty( $options['overwrite'] ) ) {
-				$this->update_control( $id, $args, array(
+				$this->update_control( $id, $args, [
 					'recursive' => ! empty( $options['recursive'] ),
-				) );
+				] );
 			} else {
 				$this->add_control( $id, $args, $options );
 			}
@@ -981,13 +981,13 @@ abstract class Controls_Stack extends Base_Object {
 
 			// Set this control as child of previous iteration control.
 			if ( ! empty( $control_args['parent'] ) ) {
-				$this->update_control( $control_args['parent'], array( 'inheritors' => array( $control_name ) ) );
+				$this->update_control( $control_args['parent'], [ 'inheritors' => [ $control_name ] ] );
 			}
 
 			if ( ! empty( $options['overwrite'] ) ) {
-				$this->update_control( $control_name, $control_args, array(
+				$this->update_control( $control_name, $control_args, [
 					'recursive' => ! empty( $options['recursive'] ),
-				) );
+				] );
 			} else {
 				$this->add_control( $control_name, $control_args, $options );
 			}
@@ -1008,11 +1008,11 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param array  $args    Responsive control arguments.
 	 * @param array  $options Optional. Additional options.
 	 */
-	final public function update_responsive_control( $id, array $args, array $options = array() ) {
-		$this->add_responsive_control( $id, $args, array(
+	final public function update_responsive_control( $id, array $args, array $options = [] ) {
+		$this->add_responsive_control( $id, $args, [
 			'overwrite' => true,
 			'recursive' => ! empty( $options['recursive'] ),
-		) );
+		] );
 	}
 
 	/**
@@ -1026,7 +1026,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param string $id Responsive control ID.
 	 */
 	final public function remove_responsive_control( $id ) {
-		$devices = Plugin::$instance->breakpoints->get_active_devices_list( array( 'reverse' => true ) );
+		$devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
 
 		foreach ( $devices as $device_name ) {
 			$id_suffix = Breakpoints_Manager::BREAKPOINT_KEY_DESKTOP === $device_name ? '' : '_' . $device_name;
@@ -1112,7 +1112,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Settings keys for each control.
 	 */
 	final public function get_frontend_settings_keys() {
-		$controls = array();
+		$controls = [];
 
 		foreach ( $this->get_controls() as $control ) {
 			if ( ! empty( $control['frontend_available'] ) ) {
@@ -1212,7 +1212,7 @@ abstract class Controls_Stack extends Base_Object {
 			$controls = $this->get_controls();
 		}
 
-		$active_settings = array();
+		$active_settings = [];
 
 		$controls_objs = Plugin::$instance->controls_manager->get_controls();
 
@@ -1320,7 +1320,7 @@ abstract class Controls_Stack extends Base_Object {
 			$dynamic_settings = $control_obj->get_settings( 'dynamic' );
 
 			if ( ! $dynamic_settings ) {
-				$dynamic_settings = array();
+				$dynamic_settings = [];
 			}
 
 			if ( ! empty( $control['dynamic'] ) ) {
@@ -1361,7 +1361,7 @@ abstract class Controls_Stack extends Base_Object {
 		$frontend_settings = array_intersect_key( $this->get_settings_for_display(), array_flip( $this->get_frontend_settings_keys() ) );
 
 		foreach ( $frontend_settings as $key => $setting ) {
-			if ( in_array( $setting, array( null, '' ), true ) ) {
+			if ( in_array( $setting, [ null, '' ], true ) ) {
 				unset( $frontend_settings[ $key ] );
 			}
 		}
@@ -1386,7 +1386,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return array Filtered settings.
 	 */
-	public function filter_controls_settings( callable $callback, array $settings = array(), array $controls = array() ) {
+	public function filter_controls_settings( callable $callback, array $settings = [], array $controls = [] ) {
 		if ( ! $settings ) {
 			$settings = $this->get_settings();
 		}
@@ -1406,7 +1406,7 @@ abstract class Controls_Stack extends Base_Object {
 				}
 
 				return $filtered_settings;
-			}, array()
+			}, []
 		);
 	}
 
@@ -1548,7 +1548,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param string $section_id Section ID.
 	 * @param array  $args       Section arguments Optional.
 	 */
-	public function start_controls_section( $section_id, array $args = array() ) {
+	public function start_controls_section( $section_id, array $args = [] ) {
 		$stack_name = $this->get_name();
 
 		/**
@@ -1645,9 +1645,9 @@ abstract class Controls_Stack extends Base_Object {
 		// Save the current section for the action.
 		$current_section = $this->current_section;
 		$section_id = $current_section['section'];
-		$args = array(
+		$args = [
 			'tab' => $current_section['tab'],
-		);
+		];
 
 		/**
 		 * Before section end.
@@ -1755,7 +1755,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param string $tabs_id Tabs ID.
 	 * @param array  $args    Tabs arguments.
 	 */
-	public function start_controls_tabs( $tabs_id, array $args = array() ) {
+	public function start_controls_tabs( $tabs_id, array $args = [] ) {
 		if ( null !== $this->current_tab ) {
 			wp_die( sprintf( 'Elementor: You can\'t start tabs before the end of the previous tabs "%s".', $this->current_tab['tabs_wrapper'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
@@ -1764,11 +1764,11 @@ abstract class Controls_Stack extends Base_Object {
 
 		$this->add_control( $tabs_id, $args );
 
-		$this->current_tab = array(
+		$this->current_tab = [
 			'tabs_wrapper' => $tabs_id,
-		);
+		];
 
-		foreach ( array( 'condition', 'conditions' ) as $key ) {
+		foreach ( [ 'condition', 'conditions' ] as $key ) {
 			if ( ! empty( $args[ $key ] ) ) {
 				$this->current_tab[ $key ] = $args[ $key ];
 			}
@@ -1855,9 +1855,9 @@ abstract class Controls_Stack extends Base_Object {
 	 * @access public
 	 */
 	final public function start_popover() {
-		$this->current_popover = array(
+		$this->current_popover = [
 			'initialized' => false,
-		);
+		];
 	}
 
 	/**
@@ -1876,15 +1876,15 @@ abstract class Controls_Stack extends Base_Object {
 
 		$last_control_key = $this->get_control_key( $this->get_pointer_index() - 1 );
 
-		$args = array(
-			'popover' => array(
+		$args = [
+			'popover' => [
 				'end' => true,
-			),
-		);
+			],
+		];
 
-		$options = array(
+		$options = [
 			'recursive' => true,
-		);
+		];
 
 		$this->update_control( $last_control_key, $args, $options );
 	}
@@ -1933,7 +1933,7 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		if ( empty( $this->render_attributes[ $element ][ $key ] ) ) {
-			$this->render_attributes[ $element ][ $key ] = array();
+			$this->render_attributes[ $element ][ $key ] = [];
 		}
 
 		settype( $value, 'array' );
@@ -2253,10 +2253,10 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array Default data.
 	 */
 	protected function get_default_data() {
-		return array(
+		return [
 			'id' => 0,
-			'settings' => array(),
-		);
+			'settings' => [],
+		];
 	}
 
 	/**
@@ -2295,9 +2295,9 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return array The initial config.
 	 */
 	protected function get_initial_config() {
-		return array(
+		return [
 			'controls' => $this->get_controls(),
-		);
+		];
 	}
 
 	/**
@@ -2333,7 +2333,7 @@ abstract class Controls_Stack extends Base_Object {
 	protected function get_section_args( $section_id ) {
 		$section_control = $this->get_controls( $section_id );
 
-		$section_args_keys = array( 'tab', 'condition' );
+		$section_args_keys = [ 'tab', 'condition' ];
 
 		$args = array_intersect_key( $section_control, array_flip( $section_args_keys ) );
 
@@ -2437,7 +2437,7 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	protected function handle_control_position( array $args, $control_id, $overwrite ) {
-		if ( isset( $args['type'] ) && in_array( $args['type'], array( Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ), true ) ) {
+		if ( isset( $args['type'] ) && in_array( $args['type'], [ Controls_Manager::SECTION, Controls_Manager::WP_WIDGET ], true ) ) {
 			return $args;
 		}
 
@@ -2519,7 +2519,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return array Sanitized settings.
 	 */
-	private function sanitize_settings( array $settings, array $controls = array() ) {
+	private function sanitize_settings( array $settings, array $controls = [] ) {
 		if ( ! $controls ) {
 			$controls = $this->get_controls();
 		}
@@ -2570,7 +2570,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @param array $data Optional. Control stack data. Default is an empty array.
 	 */
-	public function __construct( array $data = array() ) {
+	public function __construct( array $data = [] ) {
 		if ( $data ) {
 			// TODO: This is for backwards compatibility starting from 2.9.0
 			// This if statement should be removed when the method is hard-deprecated.

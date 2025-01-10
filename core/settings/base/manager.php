@@ -29,7 +29,7 @@ abstract class Manager {
 	 *
 	 * @var Model[]
 	 */
-	private $models_cache = array();
+	private $models_cache = [];
 
 	/**
 	 * Settings base manager constructor.
@@ -40,9 +40,9 @@ abstract class Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'elementor/editor/init', array( $this, 'on_elementor_editor_init' ) );
+		add_action( 'elementor/editor/init', [ $this, 'on_elementor_editor_init' ] );
 
-		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
 	/**
@@ -60,7 +60,7 @@ abstract class Manager {
 	public function register_ajax_actions( $ajax_manager ) {
 		$name = $this->get_name();
 
-		$ajax_manager->register_ajax_action( "save_{$name}_settings", array( $this, 'ajax_save_settings' ) );
+		$ajax_manager->register_ajax_action( "save_{$name}_settings", [ $this, 'ajax_save_settings' ] );
 	}
 
 	/**
@@ -134,7 +134,7 @@ abstract class Manager {
 
 		$settings_name = $this->get_name();
 
-		$success_response_data = array();
+		$success_response_data = [];
 
 		/**
 		 * Settings success response data.
@@ -237,7 +237,7 @@ abstract class Manager {
 	 * @return array Special settings names.
 	 */
 	protected function get_special_settings_names() {
-		return array();
+		return [];
 	}
 
 	/**
@@ -308,10 +308,10 @@ abstract class Manager {
 
 		$class_name = implode( '\\', $class_parts );
 
-		$this->models_cache[ $id ] = new $class_name( array(
+		$this->models_cache[ $id ] = new $class_name( [
 			'id' => $id,
 			'settings' => $this->get_saved_settings( $id ),
-		) );
+		] );
 	}
 
 	/**

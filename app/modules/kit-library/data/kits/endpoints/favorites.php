@@ -21,9 +21,9 @@ class Favorites extends Endpoint {
 	}
 
 	protected function register() {
-		$args = array(
+		$args = [
 			'id_arg_type_regex' => '[\w]+',
-		);
+		];
 
 		$this->register_item_route( \WP_REST_Server::CREATABLE, $args );
 		$this->register_item_route( \WP_REST_Server::DELETABLE, $args );
@@ -33,9 +33,9 @@ class Favorites extends Endpoint {
 		$repository = $this->controller->get_repository();
 		$kit = $repository->add_to_favorites( $id );
 
-		return array(
+		return [
 			'data' => $kit,
-		);
+		];
 	}
 
 	public function delete_item( $id, $request ) {
@@ -43,8 +43,8 @@ class Favorites extends Endpoint {
 
 		$kit = $repository->remove_from_favorites( $id );
 
-		return array(
+		return [
 			'data' => $kit,
-		);
+		];
 	}
 }

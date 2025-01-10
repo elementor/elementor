@@ -66,8 +66,8 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		$this->cron_hook_identifier     = $this->identifier . '_cron';
 		$this->cron_interval_identifier = $this->identifier . '_cron_interval';
 
-		add_action( $this->cron_hook_identifier, array( $this, 'handle_cron_healthcheck' ) );
-		add_filter( 'cron_schedules', array( $this, 'schedule_cron_healthcheck' ) );
+		add_action( $this->cron_hook_identifier, [ $this, 'handle_cron_healthcheck' ] );
+		add_filter( 'cron_schedules', [ $this, 'schedule_cron_healthcheck' ] );
 	}
 
 	/**
@@ -432,14 +432,14 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		}
 
 		// Adds every 5 minutes to the existing schedules.
-		$schedules[ $this->identifier . '_cron_interval' ] = array(
+		$schedules[ $this->identifier . '_cron_interval' ] = [
 			'interval' => MINUTE_IN_SECONDS * $interval,
 			'display' => sprintf(
 				/* translators: %d: Interval in minutes. */
 				esc_html__( 'Every %d minutes', 'elementor' ),
 				$interval,
 			),
-		);
+		];
 
 		return $schedules;
 	}

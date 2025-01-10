@@ -44,15 +44,15 @@ class Settings_Site_Identity extends Tab_Base {
 
 		$this->start_controls_section(
 			'section_' . $this->get_id(),
-			array(
+			[
 				'label' => $this->get_title(),
 				'tab' => $this->get_id(),
-			)
+			]
 		);
 
 		$this->add_control(
 			$this->get_id() . '_refresh_notice',
-			array(
+			[
 				'type' => Controls_Manager::ALERT,
 				'alert_type' => 'info',
 				'content' => sprintf(
@@ -62,41 +62,41 @@ class Settings_Site_Identity extends Tab_Base {
 					'<a href="javascript: $e.run( \'preview/reload\' )">',
 					'</a>'
 				),
-			)
+			]
 		);
 
 		$this->add_control(
 			'site_name',
-			array(
+			[
 				'label' => esc_html__( 'Site Name', 'elementor' ),
 				'default' => get_option( 'blogname' ),
 				'placeholder' => esc_html__( 'Choose name', 'elementor' ),
 				'label_block' => true,
 				'export' => false,
-			)
+			]
 		);
 
 		$this->add_control(
 			'site_description',
-			array(
+			[
 				'label' => esc_html__( 'Site Description', 'elementor' ),
 				'default' => get_option( 'blogdescription' ),
 				'placeholder' => esc_html__( 'Choose description', 'elementor' ),
 				'label_block' => true,
 				'export' => false,
-			)
+			]
 		);
 
 		$this->add_control(
 			'site_logo',
-			array(
+			[
 				'label' => esc_html__( 'Site Logo', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'should_include_svg_inline_option' => $should_include_svg_inline_option,
-				'default' => array(
+				'default' => [
 					'id' => $custom_logo_id,
 					'url' => $custom_logo_src ? $custom_logo_src[0] : '',
-				),
+				],
 				'description' => sprintf(
 					/* translators: 1: Width number pixel, 2: Height number pixel. */
 					esc_html__( 'Suggested image dimensions: %1$s × %2$s pixels.', 'elementor' ),
@@ -104,22 +104,22 @@ class Settings_Site_Identity extends Tab_Base {
 					'100'
 				),
 				'export' => false,
-			)
+			]
 		);
 
 		$this->add_control(
 			'site_favicon',
-			array(
+			[
 				'label' => esc_html__( 'Site Favicon', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
 				'should_include_svg_inline_option' => $should_include_svg_inline_option,
-				'default' => array(
+				'default' => [
 					'id' => $site_icon_id,
 					'url' => $site_icon_src ? $site_icon_src[0] : '',
-				),
+				],
 				'description' => esc_html__( 'Suggested favicon dimensions: 512 × 512 pixels.', 'elementor' ),
 				'export' => false,
-			)
+			]
 		);
 
 		$this->end_controls_section();

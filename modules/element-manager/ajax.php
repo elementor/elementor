@@ -22,17 +22,17 @@ class Ajax {
 	const PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL = 'https://go.elementor.com/go-pro-advanced-element-manager-permissions/';
 
 	public function register_endpoints() {
-		add_action( 'wp_ajax_elementor_element_manager_get_admin_app_data', array( $this, 'ajax_get_admin_page_data' ) );
-		add_action( 'wp_ajax_elementor_element_manager_save_disabled_elements', array( $this, 'ajax_save_disabled_elements' ) );
-		add_action( 'wp_ajax_elementor_element_manager_get_widgets_usage', array( $this, 'ajax_get_widgets_usage' ) );
+		add_action( 'wp_ajax_elementor_element_manager_get_admin_app_data', [ $this, 'ajax_get_admin_page_data' ] );
+		add_action( 'wp_ajax_elementor_element_manager_save_disabled_elements', [ $this, 'ajax_save_disabled_elements' ] );
+		add_action( 'wp_ajax_elementor_element_manager_get_widgets_usage', [ $this, 'ajax_get_widgets_usage' ] );
 	}
 
 	public function ajax_get_admin_page_data() {
 		$this->verify_permission();
 		$this->force_enabled_all_elements();
 
-		$widgets = array();
-		$plugins = array();
+		$widgets = [];
+		$plugins = [];
 
 		foreach ( Plugin::$instance->widgets_manager->get_widget_types() as $widget ) {
 			$widget_title = sanitize_user( $widget->get_title() );
@@ -46,57 +46,57 @@ class Ajax {
 				$plugins[] = $plugin_name;
 			}
 
-			$widgets[] = array(
+			$widgets[] = [
 				'name' => $widget->get_name(),
 				'plugin' => $plugin_name,
 				'title' => $widget_title,
 				'icon' => $widget->get_icon(),
-			);
+			];
 		}
 
 		$notice_id = 'e-element-manager-intro-1';
 
-		$data = array(
+		$data = [
 			'disabled_elements' => Options::get_disabled_elements(),
-			'promotion_widgets' => array(),
+			'promotion_widgets' => [],
 			'widgets' => $widgets,
 			'plugins' => $plugins,
-			'notice_data' => array(
+			'notice_data' => [
 				'notice_id' => $notice_id,
 				'is_viewed' => User::is_user_notice_viewed( $notice_id ),
-			),
-			'promotion_data' => array(
-				'manager_permissions' => array(
+			],
+			'promotion_data' => [
+				'manager_permissions' => [
 					'pro' => $this->get_element_manager_promotion(
-						array(
+						[
 							'text' => esc_html__( 'Upgrade Now', 'elementor' ),
 							'url' => self::FREE_TO_PRO_PERMISSIONS_PROMOTION_URL,
-						),
+						],
 						'pro_permissions'
 					),
 					'advanced' => $this->get_element_manager_promotion(
-						array(
+						[
 							'text' => esc_html__( 'Upgrade Now', 'elementor' ),
 							'url' => self::PRO_TO_ADVANCED_PERMISSIONS_PROMOTION_URL,
-						),
+						],
 						'advanced_permissions'
 					),
-				),
+				],
 				'element_manager' => $this->get_element_manager_promotion(
-					array(
+					[
 						'text' => esc_html__( 'Upgrade Now', 'elementor' ),
 						'url' => self::ELEMENT_MANAGER_PROMOTION_URL,
-					),
+					],
 					'element_manager'
 				),
-			),
-		);
+			],
+		];
 
 		if ( ! Utils::has_pro() ) {
 			$data['promotion_widgets'] = Api::get_promotion_widgets();
 		}
 
-		$data['additional_data'] = apply_filters( 'elementor/element_manager/admin_app_data/additional_data', array() );
+		$data['additional_data'] = apply_filters( 'elementor/element_manager/admin_app_data/additional_data', [] );
 
 		wp_send_json_success( $data );
 	}
@@ -167,7 +167,7 @@ class Ajax {
 		$usage_module = Usage_Module::instance();
 		$usage_module->recalc_usage();
 
-		$widgets_usage = array();
+		$widgets_usage = [];
 		foreach ( $usage_module->get_formatted_usage( 'raw' ) as $data ) {
 			foreach ( $data['elements'] as $element => $count ) {
 				if ( ! isset( $widgets_usage[ $element ] ) ) {

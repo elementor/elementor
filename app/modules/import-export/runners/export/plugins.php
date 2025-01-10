@@ -19,11 +19,11 @@ class Plugins extends Export_Runner_Base {
 	public function export( array $data ) {
 		$manifest_data['plugins'] = $data['selected_plugins'];
 
-		return array(
-			'manifest' => array(
+		return [
+			'manifest' => [
 				$manifest_data,
-			),
-			'files' => array(),
-		);
+			],
+			'files' => [],
+		];
 	}
 }

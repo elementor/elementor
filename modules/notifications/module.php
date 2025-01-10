@@ -24,12 +24,12 @@ class Module extends BaseModule {
 			wp_enqueue_script(
 				'e-admin-notifications',
 				$this->get_js_assets_url( 'admin-notifications' ),
-				array(
+				[
 					'elementor-v2-ui',
 					'elementor-v2-icons',
 					'elementor-v2-query',
 					'wp-i18n',
-				),
+				],
 				ELEMENTOR_VERSION,
 				true
 			);
@@ -43,20 +43,20 @@ class Module extends BaseModule {
 			wp_set_script_translations( 'e-editor-notifications', 'elementor' );
 		}, 5 /* Before Elementor's admin enqueue scripts */ );
 
-		add_action( 'elementor/editor/v2/scripts/enqueue', array( $this, 'enqueue_editor_scripts' ) );
-		add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'enqueue_editor_scripts' ) );
+		add_action( 'elementor/editor/v2/scripts/enqueue', [ $this, 'enqueue_editor_scripts' ] );
+		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
 
-		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 	}
 
 	public function enqueue_editor_scripts() {
-		$deps = array(
+		$deps = [
 			'elementor-editor',
 			'elementor-v2-ui',
 			'elementor-v2-icons',
 			'elementor-v2-query',
 			'wp-i18n',
-		);
+		];
 
 		$is_editor_v2 = current_action() === 'elementor/editor/v2/scripts/enqueue';
 
@@ -82,13 +82,13 @@ class Module extends BaseModule {
 	}
 
 	private function get_app_js_config(): array {
-		return array(
+		return [
 			'is_unread' => Options::has_unread_notifications(),
-		);
+		];
 	}
 
 	public function register_ajax_actions( $ajax ) {
-		$ajax->register_ajax_action( 'notifications_get', array( $this, 'ajax_get_notifications' ) );
+		$ajax->register_ajax_action( 'notifications_get', [ $this, 'ajax_get_notifications' ] );
 	}
 
 	public function ajax_get_notifications() {

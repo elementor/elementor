@@ -68,20 +68,20 @@ class Admin_Apps_Page {
 		$apps = wp_remote_get( static::APPS_URL );
 
 		if ( is_wp_error( $apps ) ) {
-			return array();
+			return [];
 		}
 
 		$apps = json_decode( wp_remote_retrieve_body( $apps ), true );
 
 		if ( empty( $apps['apps'] ) || ! is_array( $apps['apps'] ) ) {
-			return array();
+			return [];
 		}
 
 		return $apps['apps'];
 	}
 
 	private static function filter_apps( $apps ) {
-		$filtered_apps = array();
+		$filtered_apps = [];
 
 		foreach ( $apps as $app ) {
 			if ( static::is_wporg_app( $app ) ) {

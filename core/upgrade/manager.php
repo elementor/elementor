@@ -64,7 +64,7 @@ class Manager extends DB_Upgrades_Manager {
 	}
 
 	public static function get_installs_history() {
-		return get_option( static::get_install_history_meta(), array() );
+		return get_option( static::get_install_history_meta(), [] );
 	}
 
 	public static function install_compare( $version, $operator ) {

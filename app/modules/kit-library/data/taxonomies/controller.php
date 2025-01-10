@@ -14,22 +14,22 @@ class Controller extends Base_Controller {
 	}
 
 	public function get_collection_params() {
-		return array(
-			'force' => array(
+		return [
+			'force' => [
 				'description' => 'Force an API request and skip the cache.',
 				'required' => false,
 				'default' => false,
 				'type' => 'boolean',
-			),
-		);
+			],
+		];
 	}
 
 	public function get_items( $request ) {
 		$data = $this->get_repository()->get_taxonomies( $request->get_param( 'force' ) );
 
-		return array(
+		return [
 			'data' => $data->values(),
-		);
+		];
 	}
 
 	public function get_permission_callback( $request ) {

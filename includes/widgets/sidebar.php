@@ -67,7 +67,7 @@ class Widget_Sidebar extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return array( 'sidebar', 'widget' );
+		return [ 'sidebar', 'widget' ];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -85,7 +85,7 @@ class Widget_Sidebar extends Widget_Base {
 	protected function register_controls() {
 		global $wp_registered_sidebars;
 
-		$options = array();
+		$options = [];
 
 		if ( ! $wp_registered_sidebars ) {
 			$options[''] = esc_html__( 'No sidebars were found', 'elementor' );
@@ -102,19 +102,19 @@ class Widget_Sidebar extends Widget_Base {
 
 		$this->start_controls_section(
 			'section_sidebar',
-			array(
+			[
 				'label' => esc_html__( 'Sidebar', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'sidebar',
-			array(
+			[
 				'label' => esc_html__( 'Choose Sidebar', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => $default_key,
 				'options' => $options,
-			)
+			]
 		);
 
 		$this->end_controls_section();

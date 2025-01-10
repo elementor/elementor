@@ -41,9 +41,9 @@ class Control_Heading extends Base_UI_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'label_block' => true,
-		);
+		];
 	}
 
 	/**

@@ -12,16 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'editor_v2'; // Kept as `editor_v2` for backward compatibility.
 
-	const PACKAGES = array(
+	const PACKAGES = [
 		'editor-app-bar',
 		'editor-documents',
 		'editor-panels',
 		'editor-site-navigation',
-	);
+	];
 
-	const STYLES = array(
+	const STYLES = [
 		'editor-v2-app-bar-overrides',
-	);
+	];
 
 	public function get_name() {
 		return 'editor-app-bar';
@@ -43,7 +43,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_experiment() {
-		Plugin::$instance->experiments->add_feature( array(
+		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Editor Top Bar', 'elementor' ),
 			'description' => sprintf(
@@ -53,7 +53,7 @@ class Module extends BaseModule {
 			),
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-		) );
+		] );
 	}
 
 	private function add_packages( $packages ) {
@@ -65,7 +65,7 @@ class Module extends BaseModule {
 	}
 
 	private function remove_templates( $templates ) {
-		return array_diff( $templates, array( 'responsive-bar' ) );
+		return array_diff( $templates, [ 'responsive-bar' ] );
 	}
 
 	private function dequeue_scripts() {

@@ -43,10 +43,10 @@ class Control_Icons extends Control_Base_Multiple {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return array(
+		return [
 			'value'   => '',
 			'library' => '',
-		);
+		];
 	}
 
 	/**
@@ -177,34 +177,34 @@ class Control_Icons extends Control_Base_Multiple {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'label_block' => true,
-			'dynamic' => array(
-				'categories' => array( TagsModule::IMAGE_CATEGORY ),
+			'dynamic' => [
+				'categories' => [ TagsModule::IMAGE_CATEGORY ],
 				'returnType' => 'object',
-			),
+			],
 			'search_bar' => true,
 			'recommended' => false,
 			'skin' => 'media',
-			'exclude_inline_options' => array(),
+			'exclude_inline_options' => [],
 			'disable_initial_active_state' => false,
-			'skin_settings' => array(
-				'inline' => array(
-					'none' => array(
+			'skin_settings' => [
+				'inline' => [
+					'none' => [
 						'label' => esc_html__( 'None', 'elementor' ),
 						'icon' => 'eicon-ban',
-					),
-					'svg' => array(
+					],
+					'svg' => [
 						'label' => esc_html__( 'Upload SVG', 'elementor' ),
 						'icon' => 'eicon-upload',
-					),
-					'icon' => array(
+					],
+					'icon' => [
 						'label' => esc_html__( 'Icon Library', 'elementor' ),
 						'icon' => 'eicon-circle',
-					),
-				),
-			),
-		);
+					],
+				],
+			],
+		];
 	}
 
 	/**

@@ -3,34 +3,34 @@
 namespace House\Rooms;
 
 class Controller extends \Elementor\Data\V2\Base\Controller {
-	const DATA = array(
-		array(
+	const DATA = [
+		[
 			'id' => 0,
 			'name' => 'room_0',
-			'doors' => array(
+			'doors' => [
 				'id' => 0,
 				'name' => 'door_0',
-			),
-			array(
+			],
+			[
 				'id' => 1,
 				'name' => 'door_1',
-			),
-		),
-		array(
+			],
+		],
+		[
 			'id' => 1,
 			'name' => 'room_1',
-			'doors' => array(
-				array(
+			'doors' => [
+				[
 					'id' => 0,
 					'name' => 'door_0',
-				),
-				array(
+				],
+				[
 					'id' => 1,
 					'name' => 'door_1',
-				),
-			),
-		),
-	);
+				],
+			],
+		],
+	];
 
 	public function get_name() {
 		return 'rooms';

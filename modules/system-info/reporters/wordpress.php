@@ -40,7 +40,7 @@ class WordPress extends Base {
 	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
-		return array(
+		return [
 			'version' => 'Version',
 			'site_url' => 'Site URL',
 			'home_url' => 'Home URL',
@@ -53,7 +53,7 @@ class WordPress extends Base {
 			'timezone' => 'Timezone',
 			'admin_email' => 'Admin Email',
 			'debug_mode' => 'Debug Mode',
-		);
+		];
 	}
 
 	/**
@@ -71,9 +71,9 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_memory_limit() {
-		return array(
+		return [
 			'value' => (string) WP_MEMORY_LIMIT,
-		);
+		];
 	}
 
 	/**
@@ -88,9 +88,9 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_max_memory_limit() {
-		return array(
+		return [
 			'value' => (string) WP_MAX_MEMORY_LIMIT,
-		);
+		];
 	}
 
 	/**
@@ -108,9 +108,9 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_version() {
-		return array(
+		return [
 			'value' => get_bloginfo( 'version' ),
-		);
+		];
 	}
 
 	/**
@@ -128,9 +128,9 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_is_multisite() {
-		return array(
+		return [
 			'value' => is_multisite() ? 'Yes' : 'No',
-		);
+		];
 	}
 
 	/**
@@ -148,9 +148,9 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_site_url() {
-		return array(
+		return [
 			'value' => get_site_url(),
-		);
+		];
 	}
 
 	/**
@@ -168,9 +168,9 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_home_url() {
-		return array(
+		return [
 			'value' => get_home_url(),
-		);
+		];
 	}
 
 	/**
@@ -196,9 +196,9 @@ class WordPress extends Base {
 			$structure = 'Plain';
 		}
 
-		return array(
+		return [
 			'value' => $structure,
-		);
+		];
 	}
 
 	/**
@@ -216,9 +216,9 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_language() {
-		return array(
+		return [
 			'value' => get_locale(),
-		);
+		];
 	}
 
 	/**
@@ -236,9 +236,9 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_max_upload_size() {
-		return array(
+		return [
 			'value' => size_format( wp_max_upload_size() ),
-		);
+		];
 	}
 
 	/**
@@ -261,9 +261,9 @@ class WordPress extends Base {
 			$timezone = get_option( 'gmt_offset' );
 		}
 
-		return array(
+		return [
 			'value' => $timezone,
-		);
+		];
 	}
 
 	/**
@@ -281,9 +281,9 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_admin_email() {
-		return array(
+		return [
 			'value' => get_option( 'admin_email' ),
-		);
+		];
 	}
 
 	/**
@@ -301,8 +301,8 @@ class WordPress extends Base {
 	 * }
 	 */
 	public function get_debug_mode() {
-		return array(
+		return [
 			'value' => WP_DEBUG ? 'Active' : 'Inactive',
-		);
+		];
 	}
 }

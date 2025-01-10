@@ -47,7 +47,7 @@ class Settings_Validations {
 	 */
 	public static function checkbox_list( $input ) {
 		if ( empty( $input ) ) {
-			$input = array();
+			$input = [];
 		}
 
 		return $input;

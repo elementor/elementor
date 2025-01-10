@@ -42,9 +42,9 @@ class Control_Popover_Toggle extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
+		return [
 			'return_value' => 'yes',
-		);
+		];
 	}
 
 	/**

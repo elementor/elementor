@@ -12,9 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Transformations_Manager {
 
-	private static $cached_data = array();
+	private static $cached_data = [];
 
-	private const TRANSFORMATIONS = array(
+	private const TRANSFORMATIONS = [
 		'Create_New_Page_Url',
 		'Filter_Plugins',
 		'Filter_Get_Started_By_License',
@@ -22,7 +22,7 @@ class Transformations_Manager {
 		'Filter_Condition_Introduction_Meta',
 		'Create_Site_Settings_Url',
 		'Filter_Top_Section_By_License',
-	);
+	];
 
 	protected array $home_screen_data;
 
@@ -30,7 +30,7 @@ class Transformations_Manager {
 
 	protected Plugin_Status_Adapter $plugin_status_adapter;
 
-	protected array $transformation_classes = array();
+	protected array $transformation_classes = [];
 
 	public function __construct( $home_screen_data ) {
 		$container = Plugin::$instance->elementor_container();
@@ -63,14 +63,14 @@ class Transformations_Manager {
 	}
 
 	private function get_transformation_classes(): array {
-		$classes = array();
+		$classes = [];
 
 		$transformations = self::TRANSFORMATIONS;
 
-		$arguments = array(
+		$arguments = [
 			'wordpress_adapter' => $this->wordpress_adapter,
 			'plugin_status_adapter' => $this->plugin_status_adapter,
-		);
+		];
 
 		foreach ( $transformations as $transformation_id ) {
 			$class_name = '\\Elementor\\Modules\\Home\\Transformations\\' . $transformation_id;

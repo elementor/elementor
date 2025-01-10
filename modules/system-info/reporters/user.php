@@ -46,11 +46,11 @@ class User extends Base {
 	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
-		return array(
+		return [
 			'role' => 'Role',
 			'locale' => 'WP Profile lang',
 			'agent' => 'User Agent',
-		);
+		];
 	}
 
 	/**
@@ -75,9 +75,9 @@ class User extends Base {
 			$role = $current_user->roles[0];
 		}
 
-		return array(
+		return [
 			'value' => $role,
-		);
+		];
 	}
 
 	/**
@@ -95,9 +95,9 @@ class User extends Base {
 	 * }
 	 */
 	public function get_locale() {
-		return array(
+		return [
 			'value' => get_bloginfo( 'language' ),
-		);
+		];
 	}
 
 	/**
@@ -115,8 +115,8 @@ class User extends Base {
 	 * }
 	 */
 	public function get_agent() {
-		return array(
+		return [
 			'value' => esc_html( Utils::get_super_global_value( $_SERVER, 'HTTP_USER_AGENT' ) ),
-		);
+		];
 	}
 }

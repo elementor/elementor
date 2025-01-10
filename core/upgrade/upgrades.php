@@ -87,9 +87,9 @@ class Upgrades {
 
 			$document = Plugin::$instance->documents->get( $post_id );
 
-			$document->save( array(
+			$document->save( [
 				'elements' => $data,
-			) );
+			] );
 		}
 	}
 
@@ -135,7 +135,7 @@ class Upgrades {
 					return $element;
 				}
 
-				if ( in_array( $element['widgetType'], array( 'icon', 'icon-box', 'social-icons' ) ) ) {
+				if ( in_array( $element['widgetType'], [ 'icon', 'icon-box', 'social-icons' ] ) ) {
 					if ( ! empty( $element['settings']['icon_padding']['size'] ) ) {
 						$element['settings']['icon_padding']['size'] = '';
 					}
@@ -152,9 +152,9 @@ class Upgrades {
 
 			$document = Plugin::$instance->documents->get( $post_id );
 
-			$document->save( array(
+			$document->save( [
 				'elements' => $data,
-			) );
+			] );
 		}
 	}
 
@@ -198,13 +198,13 @@ class Upgrades {
 				}
 
 				if ( 'button' === $element['widgetType'] ) {
-					$size_to_replace = array(
+					$size_to_replace = [
 						'small' => 'xs',
 						'medium' => 'sm',
 						'large' => 'md',
 						'xl' => 'lg',
 						'xxl' => 'xl',
-					);
+					];
 
 					if ( ! empty( $element['settings']['size'] ) ) {
 						$old_size = $element['settings']['size'];
@@ -220,9 +220,9 @@ class Upgrades {
 
 			$document = Plugin::$instance->documents->get( $post_id );
 
-			$document->save( array(
+			$document->save( [
 				'elements' => $data,
-			) );
+			] );
 		}
 	}
 
@@ -252,10 +252,10 @@ class Upgrades {
 		}
 
 		foreach ( $posts as $post ) {
-			wp_update_post( array(
+			wp_update_post( [
 				'ID' => $post->ID,
 				'post_title' => get_the_title( $post->post_parent ),
-			) );
+			] );
 		}
 	}
 
@@ -288,10 +288,10 @@ class Upgrades {
 			$parent = get_post( $post->post_parent );
 			$title = isset( $parent->post_title ) ? $parent->post_title : '';
 
-			wp_update_post( array(
+			wp_update_post( [
 				'ID' => $post->ID,
 				'post_title' => $title,
-			) );
+			] );
 		}
 	}
 
@@ -325,10 +325,10 @@ class Upgrades {
 			$parent = get_post( $post->post_parent );
 			$title = isset( $parent->post_title ) ? $parent->post_title : '';
 
-			wp_update_post( array(
+			wp_update_post( [
 				'ID' => $post->ID,
 				'post_title' => $title,
-			) );
+			] );
 		}
 	}
 
@@ -361,23 +361,23 @@ class Upgrades {
 					return $element;
 				}
 
-				$replacements = array();
+				$replacements = [];
 
 				if ( empty( $element['settings']['video_type'] ) || 'youtube' === $element['settings']['video_type'] ) {
-					$replacements = array(
+					$replacements = [
 						'yt_autoplay' => 'autoplay',
 						'yt_controls' => 'controls',
 						'yt_mute' => 'mute',
 						'yt_rel' => 'rel',
 						'link' => 'youtube_url',
-					);
+					];
 				} elseif ( 'vimeo' === $element['settings']['video_type'] ) {
-					$replacements = array(
+					$replacements = [
 						'vimeo_autoplay' => 'autoplay',
 						'vimeo_loop' => 'loop',
 						'vimeo_color' => 'color',
 						'vimeo_link' => 'vimeo_url',
-					);
+					];
 				}
 
 				// cleanup old unused settings.
@@ -430,12 +430,12 @@ class Upgrades {
 			return false;
 		}
 
-		$widgets = array(
+		$widgets = [
 			'image',
 			'theme-post-featured-image',
 			'theme-site-logo',
 			'woocommerce-category-image',
-		);
+		];
 
 		foreach ( $post_ids as $post_id ) {
 			// Clear WP cache for next step.
@@ -566,14 +566,14 @@ class Upgrades {
 	 * @param Updater $updater
 	 */
 	public static function _v_2_6_6_fa4_migration_button( $updater ) {
-		$changes = array(
-			array(
-				'callback' => array( 'Elementor\Core\Upgrade\Upgrades', '_migrate_icon_fa4_value' ),
-				'control_ids' => array(
+		$changes = [
+			[
+				'callback' => [ 'Elementor\Core\Upgrade\Upgrades', '_migrate_icon_fa4_value' ],
+				'control_ids' => [
 					'icon' => 'selected_icon',
-				),
-			),
-		);
+				],
+			],
+		];
 		Upgrade_Utils::_update_widget_settings( 'button', $updater, $changes );
 		Upgrade_Utils::_update_widget_settings( 'icon-box', $updater, $changes );
 	}
@@ -683,7 +683,7 @@ class Upgrades {
 			}
 
 			$meta_key = SettingsPageManager::META_KEY;
-			$current_settings = get_option( '_elementor_general_settings', array() );
+			$current_settings = get_option( '_elementor_general_settings', [] );
 			// Take the `space_between_widgets` from the option due to a bug on E < 3.0.0 that the value `0` is stored separated.
 			$current_settings['space_between_widgets'] = get_option( 'elementor_space_between_widgets', '' );
 			$current_settings[ Breakpoints_Manager::BREAKPOINT_SETTING_PREFIX . 'md' ] = get_option( 'elementor_viewport_md', '' );
@@ -703,21 +703,21 @@ class Upgrades {
 			}
 
 			if ( ! $kit_settings ) {
-				$kit_settings = array();
+				$kit_settings = [];
 			}
 
 			// Convert some setting to Elementor slider format.
-			$settings_to_slider = array(
+			$settings_to_slider = [
 				'container_width',
 				'space_between_widgets',
-			);
+			];
 
 			foreach ( $settings_to_slider as $setting ) {
 				if ( isset( $current_settings[ $setting ] ) ) {
-					$current_settings[ $setting ] = array(
+					$current_settings[ $setting ] = [
 						'unit' => 'px',
 						'size' => $current_settings[ $setting ],
-					);
+					];
 				}
 			}
 
@@ -745,10 +745,10 @@ class Upgrades {
 			$old_mobile_option_key = $prefix . 'md';
 			$old_tablet_option_key = $prefix . 'lg';
 
-			$breakpoint_values = array(
+			$breakpoint_values = [
 				$old_mobile_option_key => Plugin::$instance->kits_manager->get_current_settings( $old_mobile_option_key ),
 				$old_tablet_option_key => Plugin::$instance->kits_manager->get_current_settings( $old_tablet_option_key ),
-			);
+			];
 
 			// Breakpoint values are either a number, or an empty string (empty setting).
 			array_walk( $breakpoint_values, function ( &$breakpoint_value, $breakpoint_key ) {
@@ -851,7 +851,7 @@ class Upgrades {
 	}
 
 	public static function _v_3_17_0_site_settings_updates() {
-		$options = array( 'elementor_active_kit', 'elementor_previous_kit' );
+		$options = [ 'elementor_active_kit', 'elementor_previous_kit' ];
 
 		foreach ( $options as $option_name ) {
 			self::maybe_add_gap_control_data( $option_name );
@@ -944,11 +944,11 @@ class Upgrades {
 			return false;
 		}
 
-		$revisions_ids = wp_get_post_revisions( $active_kit_id, array(
+		$revisions_ids = wp_get_post_revisions( $active_kit_id, [
 			'fields' => 'ids',
 			'posts_per_page' => $updater->get_limit(),
 			'offset' => $offset,
-		) );
+		] );
 
 		foreach ( $revisions_ids as $revision_id ) {
 			$callback( $revision_id );

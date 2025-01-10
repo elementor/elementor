@@ -32,7 +32,7 @@ class Module extends BaseModule {
 	 *
 	 * @var array
 	 */
-	private $ajax_actions = array();
+	private $ajax_actions = [];
 
 	/**
 	 * Ajax requests.
@@ -44,7 +44,7 @@ class Module extends BaseModule {
 	 *
 	 * @var array
 	 */
-	private $requests = array();
+	private $requests = [];
 
 	/**
 	 * Ajax response data.
@@ -56,7 +56,7 @@ class Module extends BaseModule {
 	 *
 	 * @var array
 	 */
-	private $response_data = array();
+	private $response_data = [];
 
 	/**
 	 * Current ajax action ID.
@@ -79,7 +79,7 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'wp_ajax_elementor_ajax', array( $this, 'handle_ajax_request' ) );
+		add_action( 'wp_ajax_elementor_ajax', [ $this, 'handle_ajax_request' ] );
 	}
 
 	/**
@@ -172,7 +172,7 @@ class Module extends BaseModule {
 			}
 
 			try {
-				$data = $action_data['data'] ?? array();
+				$data = $action_data['data'] ?? [];
 				$results = call_user_func( $this->ajax_actions[ $action_data['action'] ]['callback'], $data, $this );
 
 				if ( false === $results ) {
@@ -238,10 +238,10 @@ class Module extends BaseModule {
 	}
 
 	protected function get_init_settings() {
-		return array(
+		return [
 			'url' => admin_url( 'admin-ajax.php' ),
 			'nonce' => $this->create_nonce(),
-		);
+		];
 	}
 
 	/**
@@ -253,12 +253,12 @@ class Module extends BaseModule {
 	 * @access protected
 	 */
 	private function send_success() {
-		$response = array(
+		$response = [
 			'success' => true,
-			'data' => array(
+			'data' => [
 				'responses' => $this->response_data,
-			),
-		);
+			],
+		];
 
 		$json = wp_json_encode( $response );
 
@@ -278,7 +278,7 @@ class Module extends BaseModule {
 			echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
-		wp_die( '', '', array( 'response' => null ) );
+		wp_die( '', '', [ 'response' => null ] );
 	}
 
 	/**
@@ -292,9 +292,9 @@ class Module extends BaseModule {
 	 * @param null $code
 	 */
 	private function send_error( $code = null ) {
-		wp_send_json_error( array(
+		wp_send_json_error( [
 			'responses' => $this->response_data,
-		), $code );
+		], $code );
 	}
 
 	/**
@@ -314,11 +314,11 @@ class Module extends BaseModule {
 	 * @return Module An instance of ajax manager.
 	 */
 	private function add_response_data( $success, $data = null, $code = 200 ) {
-		$this->response_data[ $this->current_action_id ] = array(
+		$this->response_data[ $this->current_action_id ] = [
 			'success' => $success,
 			'code' => $code,
 			'data' => $data,
-		);
+		];
 
 		return $this;
 	}

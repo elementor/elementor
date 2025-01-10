@@ -71,6 +71,6 @@ class Module extends BaseModule implements Elementor_Counter_Adapter_Interface {
 	}
 
 	public function is_key_allowed( $key ): bool {
-		return in_array( $key, array( self::EDITOR_COUNTER_KEY ) );
+		return in_array( $key, [ self::EDITOR_COUNTER_KEY ] );
 	}
 }

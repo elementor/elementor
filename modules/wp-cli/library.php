@@ -41,10 +41,10 @@ class Library extends \WP_CLI_Command {
 		$network = isset( $assoc_args['network'] ) && is_multisite();
 
 		if ( $network ) {
-			$blog_ids = get_sites( array(
+			$blog_ids = get_sites( [
 				'fields' => 'ids',
 				'number' => 0,
-			) );
+			] );
 
 			foreach ( $blog_ids as $blog_id ) {
 				switch_to_blog( $blog_id );
@@ -90,7 +90,7 @@ class Library extends \WP_CLI_Command {
 		}
 
 		$file = $args[0];
-		$imported_items_ids = array();
+		$imported_items_ids = [];
 		$return_type = \WP_CLI\Utils\get_flag_value( $assoc_args, 'returnType', 'info' );
 
 		/** @var Source_Local $source */
@@ -161,8 +161,8 @@ class Library extends \WP_CLI_Command {
 		/** @var Source_Local $source */
 		$source = Plugin::$instance->templates_manager->get_source( 'local' );
 
-		$succeed = array();
-		$errors = array();
+		$succeed = [];
+		$errors = [];
 
 		foreach ( $files as $file ) {
 			$basename = basename( $file );

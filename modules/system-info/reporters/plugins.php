@@ -86,9 +86,9 @@ class Plugins extends Base_Plugin {
 	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
-		return array(
+		return [
 			'active_plugins' => 'Active Plugins',
-		);
+		];
 	}
 
 	/**
@@ -106,8 +106,8 @@ class Plugins extends Base_Plugin {
 	 * }
 	 */
 	public function get_active_plugins() {
-		return array(
+		return [
 			'value' => $this->get_plugins(),
-		);
+		];
 	}
 }

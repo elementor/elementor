@@ -44,10 +44,10 @@ class Command extends \WP_CLI_Command {
 		$should_regenerate = ! empty( $assoc_args['regenerate'] );
 
 		if ( $network ) {
-			$blog_ids = get_sites( array(
+			$blog_ids = get_sites( [
 				'fields' => 'ids',
 				'number' => 0,
-			) );
+			] );
 
 			foreach ( $blog_ids as $blog_id ) {
 				switch_to_blog( $blog_id );

@@ -42,9 +42,9 @@ class Control_Select extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return array(
-			'options' => array(),
-		);
+		return [
+			'options' => [],
+		];
 	}
 
 	/**

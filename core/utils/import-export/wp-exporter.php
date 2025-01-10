@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WP_Exporter {
 	const WXR_VERSION = '1.2';
 
-	private static $default_args = array(
+	private static $default_args = [
 		'content' => 'all',
 		'author' => false,
 		'category' => false,
@@ -30,8 +30,8 @@ class WP_Exporter {
 		'status' => false,
 		'offset' => 0,
 		'limit' => -1,
-		'meta_query' => array(), // If specified `meta_key` then will include all post(s) that have this meta_key.
-	);
+		'meta_query' => [], // If specified `meta_key` then will include all post(s) that have this meta_key.
+	];
 
 	/**
 	 * @var array
@@ -60,7 +60,7 @@ class WP_Exporter {
 
 			$where = $this->wpdb->prepare( "{$this->wpdb->posts}.post_type = %s", $this->args['content'] );// phpcs:ignore
 		} else {
-			$post_types = get_post_types( array( 'can_export' => true ) );
+			$post_types = get_post_types( [ 'can_export' => true ] );
 			$esses = array_fill( 0, count( $post_types ), '%s' );
 
 			$where = $this->wpdb->prepare( "{$this->wpdb->posts}.post_type IN (" . implode( ',', $esses ) . ')', $post_types );// phpcs:ignore
@@ -81,7 +81,7 @@ class WP_Exporter {
 			}
 		}
 
-		if ( in_array( $this->args['content'], array( 'post', 'page', 'attachment' ), true ) ) {
+		if ( in_array( $this->args['content'], [ 'post', 'page', 'attachment' ], true ) ) {
 			if ( $this->args['author'] ) {
 				$where .= $this->wpdb->prepare( " AND {$this->wpdb->posts}.post_author = %d", $this->args['author'] );// phpcs:ignore
 			}
@@ -121,7 +121,7 @@ class WP_Exporter {
 
 		// Grab a snapshot of post IDs, just in case it changes during the export.
 		$post_ids = $this->wpdb->get_col( "SELECT ID FROM {$this->wpdb->posts} $join WHERE $where $limit" );// phpcs:ignore
-		$thumbnail_ids = array();
+		$thumbnail_ids = [];
 
 		if ( ! empty( $this->args['include_post_featured_image_as_attachment'] ) ) {
 			foreach ( $post_ids as $post_id ) {
@@ -133,10 +133,10 @@ class WP_Exporter {
 			}
 		}
 
-		return array(
+		return [
 			'ids' => $post_ids,
 			'xml' => $this->get_xml_export( array_merge( $post_ids, $thumbnail_ids ) ),
-		);
+		];
 	}
 
 	/**
@@ -329,7 +329,7 @@ class WP_Exporter {
 			$and = '';
 		}
 
-		$authors = array();
+		$authors = [];
 		$results = $this->wpdb->get_results( "SELECT DISTINCT post_author FROM {$this->wpdb->posts} WHERE post_status != 'auto-draft' $and" );// phpcs:ignore
 		foreach ( (array) $results as $r ) {
 			$authors[] = get_userdata( $r->post_author );
@@ -727,7 +727,7 @@ EOT;
 		return $result;
 	}
 
-	public function __construct( array $args = array() ) {
+	public function __construct( array $args = [] ) {
 		global $wpdb;
 
 		$this->args = wp_parse_args( $args, self::$default_args );

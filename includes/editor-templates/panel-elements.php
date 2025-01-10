@@ -23,16 +23,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-panel-categories">
 	<div id="elementor-panel-categories"></div>
 	<?php
-	$get_pro_details = apply_filters( 'elementor/editor/panel/get_pro_details', array(
+	$get_pro_details = apply_filters( 'elementor/editor/panel/get_pro_details', [
 		'link' => 'https://go.elementor.com/pro-widgets/',
 		'message' => __( 'Get more with Elementor Pro', 'elementor' ),
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
-	) );
-	$promotion_data_sticky = array(
+	] );
+	$promotion_data_sticky = [
 		'url' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
 		'message' => __( 'Access all Pro widgets.', 'elementor' ),
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
-	);
+	];
 	$promotion_data_sticky = Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion_data_sticky, 'elementor/editor/panel/get_pro_details-sticky', 'url' );
 	$has_pro = Utils::has_pro();
 	?>

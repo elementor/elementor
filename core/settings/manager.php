@@ -28,7 +28,7 @@ class Manager {
 	 *
 	 * @var Base\Manager[]
 	 */
-	private static $settings_managers = array();
+	private static $settings_managers = [];
 
 	/**
 	 * Builtin settings managers names.
@@ -40,7 +40,7 @@ class Manager {
 	 *
 	 * @var array
 	 */
-	private static $builtin_settings_managers_names = array( 'page', 'editorPreferences' );
+	private static $builtin_settings_managers_names = [ 'page', 'editorPreferences' ];
 
 	/**
 	 * Add settings manager.
@@ -140,7 +140,7 @@ class Manager {
 	 * @return array The settings managers configuration.
 	 */
 	public static function get_settings_managers_config() {
-		$config = array();
+		$config = [];
 
 		$user_can = Plugin::instance()->role_manager->user_can( 'design' );
 
@@ -152,13 +152,13 @@ class Manager {
 				unset( $tabs['style'] );
 			}
 
-			$config[ $name ] = array(
+			$config[ $name ] = [
 				'name' => $manager->get_name(),
 				'panelPage' => $settings_model->get_panel_page_settings(),
 				'controls' => $settings_model->get_controls(),
 				'tabs' => $tabs,
 				'settings' => $settings_model->get_settings(),
-			);
+			];
 
 			if ( $settings_model instanceof CSS_Model ) {
 				$config[ $name ]['cssWrapperSelector'] = $settings_model->get_css_wrapper_selector();
@@ -180,7 +180,7 @@ class Manager {
 	 * @return array The settings managers frontend configuration.
 	 */
 	public static function get_settings_frontend_config() {
-		$config = array();
+		$config = [];
 
 		foreach ( self::$settings_managers as $name => $manager ) {
 			$settings_model = $manager->get_model_for_config();

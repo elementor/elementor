@@ -43,8 +43,8 @@ class Tracker {
 	 * @static
 	 */
 	public static function init() {
-		add_action( 'elementor/tracker/send_event', array( __CLASS__, 'send_tracking_data' ) );
-		add_action( 'admin_init', array( __CLASS__, 'handle_tracker_actions' ) );
+		add_action( 'elementor/tracker/send_event', [ __CLASS__, 'send_tracking_data' ] );
+		add_action( 'admin_init', [ __CLASS__, 'handle_tracker_actions' ] );
 	}
 
 	/**
@@ -63,10 +63,10 @@ class Tracker {
 	public static function check_for_settings_optin( $new_value ) {
 		$old_value = get_option( 'elementor_allow_tracking', 'no' );
 		if ( $old_value !== $new_value && 'yes' === $new_value ) {
-			Plugin::$instance->custom_tasks->add_tasks_requested_to_run( array(
+			Plugin::$instance->custom_tasks->add_tasks_requested_to_run( [
 				'opt_in_recalculate_usage',
 				'opt_in_send_tracking_data',
-			) );
+			] );
 		}
 
 		if ( empty( $new_value ) ) {
@@ -145,13 +145,13 @@ class Tracker {
 
 		wp_safe_remote_post(
 			self::$api_url,
-			array(
+			[
 				'timeout' => 25,
 				'blocking' => false,
-				'body' => array(
+				'body' => [
 					'data' => wp_json_encode( $params ),
-				),
-			)
+				],
+			]
 		);
 
 		// After sending the event tracking data, we reset the events table.
@@ -241,9 +241,9 @@ class Tracker {
 			unset( $reports['log'] );
 		}
 
-		$system_reports = array();
+		$system_reports = [];
 		foreach ( $reports as $report_key => $report_details ) {
-			$system_reports[ $report_key ] = array();
+			$system_reports[ $report_key ] = [];
 			foreach ( $report_details['report']->get_report() as $sub_report_key => $sub_report_details ) {
 				$system_reports[ $report_key ][ $sub_report_key ] = $sub_report_details['value'];
 			}
@@ -292,7 +292,7 @@ class Tracker {
 	public static function get_non_elementor_posts_usage() {
 		global $wpdb;
 
-		$usage = array();
+		$usage = [];
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
@@ -327,7 +327,7 @@ class Tracker {
 	public static function get_posts_usage() {
 		global $wpdb;
 
-		$usage = array();
+		$usage = [];
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
@@ -363,7 +363,7 @@ class Tracker {
 	public static function get_library_usage() {
 		global $wpdb;
 
-		$usage = array();
+		$usage = [];
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
@@ -427,9 +427,9 @@ class Tracker {
 		/**
 		 * @var $experiments_report Experiments_Reporter
 		 */
-		$experiments_report = $system_info->create_reporter( array(
+		$experiments_report = $system_info->create_reporter( [
 			'class_name' => Experiments_Reporter::class,
-		) );
+		] );
 
 		return $experiments_report->get_experiments()['value'];
 	}
@@ -475,7 +475,7 @@ class Tracker {
 	public static function get_library_usage_extend() {
 		global $wpdb;
 
-		$usage = array();
+		$usage = [];
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
@@ -490,7 +490,7 @@ class Tracker {
 		if ( $results ) {
 			foreach ( $results as $result ) {
 				if ( empty( $usage[ $result->meta_value ] ) ) {
-					$usage[ $result->meta_value ] = array();
+					$usage[ $result->meta_value ] = [];
 				}
 
 				if ( empty( $usage[ $result->meta_value ][ $result->post_status ] ) ) {
@@ -511,7 +511,7 @@ class Tracker {
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results( "SELECT event_data FROM {$table_name}" );
 
-		$events_data = array();
+		$events_data = [];
 
 		foreach ( $results as $event ) {
 			// Results are stored in the database as a JSON string. Since all tracking data is encoded right before
@@ -535,29 +535,29 @@ class Tracker {
 	 * @return array
 	 */
 	public static function get_tracking_data( $is_first_time = false ) {
-		$params = array(
+		$params = [
 			'system' => self::get_system_reports_data(),
 			'site_lang' => get_bloginfo( 'language' ),
 			'email' => get_option( 'admin_email' ),
-			'usages' => array(
+			'usages' => [
 				'posts' => self::get_posts_usage(),
 				'non-elementor-posts' => self::get_non_elementor_posts_usage(),
 				'library' => self::get_library_usage(),
-				'settings' => array(
+				'settings' => [
 					'general' => self::get_settings_general_usage(),
 					'advanced' => self::get_settings_advanced_usage(),
 					'experiments' => self::get_settings_experiments_usage(),
-				),
-				'tools' => array(
+				],
+				'tools' => [
 					'general' => self::get_tools_general_usage(),
 					'version' => self::get_tools_version_control_usage(),
 					'maintenance' => self::get_tools_maintenance_usage(),
-				),
+				],
 				'library-details' => self::get_library_usage_extend(),
-			),
+			],
 			'is_first_time' => $is_first_time,
 			'install_time' => Plugin::instance()->get_install_time(),
-		);
+		];
 
 		$site_key = Api::get_site_key();
 		if ( ! empty( $site_key ) ) {
@@ -601,7 +601,7 @@ class Tracker {
 	}
 
 	private static function get_tracking_data_from_settings_page( $tabs, $tab_name ) {
-		$result = array();
+		$result = [];
 
 		if ( empty( $tabs[ $tab_name ] ) ) {
 			return $result;

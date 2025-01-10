@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Select_Control extends Atomic_Control_Base {
-	private array $options = array();
+	private array $options = [];
 
 	public function get_type(): string {
 		return 'select';
@@ -21,8 +21,8 @@ class Select_Control extends Atomic_Control_Base {
 	}
 
 	public function get_props(): array {
-		return array(
+		return [
 			'options' => $this->options,
-		);
+		];
 	}
 }

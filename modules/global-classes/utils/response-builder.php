@@ -5,7 +5,7 @@ namespace Elementor\Modules\GlobalClasses\Utils;
 class Response_Builder {
 	private $data;
 	private int $status;
-	private array $meta = array();
+	private array $meta = [];
 
 	private function __construct( $data, $status ) {
 		$this->data = $data;
@@ -29,10 +29,10 @@ class Response_Builder {
 	}
 
 	public function build() {
-		$res_data = array(
+		$res_data = [
 			'data' => $this->data,
 			'meta' => $this->meta,
-		);
+		];
 
 		return new \WP_REST_Response( $res_data, $this->status );
 	}

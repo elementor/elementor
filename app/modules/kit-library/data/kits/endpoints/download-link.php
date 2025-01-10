@@ -21,20 +21,20 @@ class Download_Link extends Endpoint {
 	}
 
 	protected function register() {
-		$this->register_item_route( \WP_REST_Server::READABLE, array(
+		$this->register_item_route( \WP_REST_Server::READABLE, [
 			'id_arg_type_regex' => '[\w]+',
-		) );
+		] );
 	}
 
 	public function get_item( $id, $request ) {
 		$repository = $this->controller->get_repository();
 		$data = $repository->get_download_link( $id );
 
-		return array(
+		return [
 			'data' => $data,
-			'meta' => array(
+			'meta' => [
 				'nonce' => wp_create_nonce( 'kit-library-import' ),
-			),
-		);
+			],
+		];
 	}
 }

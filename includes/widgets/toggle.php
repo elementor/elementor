@@ -71,7 +71,7 @@ class Widget_Toggle extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return array( 'tabs', 'accordion', 'toggle' );
+		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -89,7 +89,7 @@ class Widget_Toggle extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return array( 'widget-toggle' );
+		return [ 'widget-toggle' ];
 	}
 
 	/**
@@ -119,36 +119,36 @@ class Widget_Toggle extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_toggle',
-			array(
+			[
 				'label' => esc_html__( 'Toggle', 'elementor' ),
-			)
+			]
 		);
 
 		$repeater = new Repeater();
 
 		$repeater->add_control(
 			'tab_title',
-			array(
+			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'Toggle Title', 'elementor' ),
 				'label_block' => true,
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-			)
+				],
+			]
 		);
 
 		$repeater->add_control(
 			'tab_content',
-			array(
+			[
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'type' => Controls_Manager::WYSIWYG,
 				'default' => esc_html__( 'Toggle Content', 'elementor' ),
-				'dynamic' => array(
+				'dynamic' => [
 					'active' => true,
-				),
-			)
+				],
+			]
 		);
 
 		if ( Plugin::$instance->widgets_manager->get_widget_types( 'nested-accordion' ) ) {
@@ -164,88 +164,88 @@ class Widget_Toggle extends Widget_Base {
 
 		$this->add_control(
 			'tabs',
-			array(
+			[
 				'label' => esc_html__( 'Toggle Items', 'elementor' ),
 				'type' => Controls_Manager::REPEATER,
 				'fields' => $repeater->get_controls(),
-				'default' => array(
-					array(
+				'default' => [
+					[
 						'tab_title' => esc_html__( 'Toggle #1', 'elementor' ),
 						'tab_content' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					),
-					array(
+					],
+					[
 						'tab_title' => esc_html__( 'Toggle #2', 'elementor' ),
 						'tab_content' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ),
-					),
-				),
+					],
+				],
 				'title_field' => '{{{ tab_title }}}',
-			)
+			]
 		);
 
 		$this->add_control(
 			'selected_icon',
-			array(
+			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'separator' => 'before',
 				'fa4compatibility' => 'icon',
-				'default' => array(
+				'default' => [
 					'value' => 'fas fa-caret' . ( is_rtl() ? '-left' : '-right' ),
 					'library' => 'fa-solid',
-				),
-				'recommended' => array(
-					'fa-solid' => array(
+				],
+				'recommended' => [
+					'fa-solid' => [
 						'chevron-down',
 						'angle-down',
 						'angle-double-down',
 						'caret-down',
 						'caret-square-down',
-					),
-					'fa-regular' => array(
+					],
+					'fa-regular' => [
 						'caret-square-down',
-					),
-				),
+					],
+				],
 				'label_block' => false,
 				'skin' => 'inline',
-			)
+			]
 		);
 
 		$this->add_control(
 			'selected_active_icon',
-			array(
+			[
 				'label' => esc_html__( 'Active Icon', 'elementor' ),
 				'type' => Controls_Manager::ICONS,
 				'fa4compatibility' => 'icon_active',
-				'default' => array(
+				'default' => [
 					'value' => 'fas fa-caret-up',
 					'library' => 'fa-solid',
-				),
-				'recommended' => array(
-					'fa-solid' => array(
+				],
+				'recommended' => [
+					'fa-solid' => [
 						'chevron-up',
 						'angle-up',
 						'angle-double-up',
 						'caret-up',
 						'caret-square-up',
-					),
-					'fa-regular' => array(
+					],
+					'fa-regular' => [
 						'caret-square-up',
-					),
-				),
+					],
+				],
 				'skin' => 'inline',
 				'label_block' => false,
-				'condition' => array(
+				'condition' => [
 					'selected_icon[value]!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'title_html_tag',
-			array(
+			[
 				'label' => esc_html__( 'Title HTML Tag', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'options' => array(
+				'options' => [
 					'h1' => 'H1',
 					'h2' => 'H2',
 					'h3' => 'H3',
@@ -253,322 +253,322 @@ class Widget_Toggle extends Widget_Base {
 					'h5' => 'H5',
 					'h6' => 'H6',
 					'div' => 'div',
-				),
+				],
 				'default' => 'div',
 				'separator' => 'before',
-			)
+			]
 		);
 
 		$this->add_control(
 			'faq_schema',
-			array(
+			[
 				'label' => esc_html__( 'FAQ Schema', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'separator' => 'before',
-			)
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_toggle_style',
-			array(
+			[
 				'label' => esc_html__( 'Toggle', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'border_width',
-			array(
+			[
 				'label' => esc_html__( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
-				'range' => array(
-					'px' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'range' => [
+					'px' => [
 						'max' => 20,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'max' => 2,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title' => 'border-width: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-tab-content' => 'border-width: {{SIZE}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'border_color',
-			array(
+			[
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-content' => 'border-bottom-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-tab-title' => 'border-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'space_between',
-			array(
+			[
 				'label' => esc_html__( 'Space Between', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
-				'range' => array(
-					'px' => array(
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
 						'max' => 100,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'max' => 10,
-					),
-					'rem' => array(
+					],
+					'rem' => [
 						'max' => 10,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle-item:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Box_Shadow::get_type(),
-			array(
+			[
 				'name' => 'box_shadow',
 				'selector' => '{{WRAPPER}} .elementor-toggle-item',
-			)
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_toggle_style_title',
-			array(
+			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'title_background',
-			array(
+			[
 				'label' => esc_html__( 'Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title' => 'background-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		// The title selector specificity is to override Theme Style
 		$this->add_control(
 			'title_color',
-			array(
+			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle-title, {{WRAPPER}} .elementor-toggle-icon' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-toggle-icon svg' => 'fill: {{VALUE}};',
-				),
-				'global' => array(
+				],
+				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'tab_active_color',
-			array(
+			[
 				'label' => esc_html__( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title.elementor-active a, {{WRAPPER}} .elementor-tab-title.elementor-active .elementor-toggle-icon' => 'color: {{VALUE}};',
-				),
-				'global' => array(
+				],
+				'global' => [
 					'default' => Global_Colors::COLOR_ACCENT,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'title_typography',
 				'selector' => '{{WRAPPER}} .elementor-toggle-title',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'title_shadow',
 				'selector' => '{{WRAPPER}} .elementor-toggle-title',
-			)
+			]
 		);
 
 		$this->add_responsive_control(
 			'title_padding',
-			array(
+			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
-				'selectors' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_toggle_style_icon',
-			array(
+			[
 				'label' => esc_html__( 'Icon', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => array(
+				'condition' => [
 					'selected_icon[value]!' => '',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'icon_align',
-			array(
+			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
-				'options' => array(
-					'left' => array(
+				'options' => [
+					'left' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
-					),
-					'right' => array(
+					],
+					'right' => [
 						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
-					),
-				),
+					],
+				],
 				'default' => is_rtl() ? 'right' : 'left',
 				'toggle' => false,
-			)
+			]
 		);
 
 		$this->add_control(
 			'icon_color',
-			array(
+			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title .elementor-toggle-icon i:before' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-tab-title .elementor-toggle-icon svg' => 'fill: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'icon_active_color',
-			array(
+			[
 				'label' => esc_html__( 'Active Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title.elementor-active .elementor-toggle-icon i:before' => 'color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-tab-title.elementor-active .elementor-toggle-icon svg' => 'fill: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_responsive_control(
 			'icon_space',
-			array(
+			[
 				'label' => esc_html__( 'Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
-				'range' => array(
-					'px' => array(
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+				'range' => [
+					'px' => [
 						'max' => 100,
-					),
-					'em' => array(
+					],
+					'em' => [
 						'max' => 10,
-					),
-					'rem' => array(
+					],
+					'rem' => [
 						'max' => 10,
-					),
-				),
-				'selectors' => array(
+					],
+				],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-toggle-icon.elementor-toggle-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-toggle-icon.elementor-toggle-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();
 
 		$this->start_controls_section(
 			'section_toggle_style_content',
-			array(
+			[
 				'label' => esc_html__( 'Content', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			)
+			]
 		);
 
 		$this->add_control(
 			'content_background_color',
-			array(
+			[
 				'label' => esc_html__( 'Background', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-content' => 'background-color: {{VALUE}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'content_color',
-			array(
+			[
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'selectors' => array(
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-content' => 'color: {{VALUE}};',
-				),
-				'global' => array(
+				],
+				'global' => [
 					'default' => Global_Colors::COLOR_TEXT,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			array(
+			[
 				'name' => 'content_typography',
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
-				'global' => array(
+				'global' => [
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Shadow::get_type(),
-			array(
+			[
 				'name' => 'content_shadow',
 				'selector' => '{{WRAPPER}} .elementor-tab-content',
-			)
+			]
 		);
 
 		$this->add_responsive_control(
 			'content_padding',
-			array(
+			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
-				'selectors' => array(
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();
@@ -610,22 +610,22 @@ class Widget_Toggle extends Widget_Base {
 
 				$tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
 
-				$this->add_render_attribute( $tab_title_setting_key, array(
+				$this->add_render_attribute( $tab_title_setting_key, [
 					'id' => 'elementor-tab-title-' . $id_int . $tab_count,
-					'class' => array( 'elementor-tab-title' ),
+					'class' => [ 'elementor-tab-title' ],
 					'data-tab' => $tab_count,
 					'role' => 'button',
 					'aria-controls' => 'elementor-tab-content-' . $id_int . $tab_count,
 					'aria-expanded' => 'false',
-				) );
+				] );
 
-				$this->add_render_attribute( $tab_content_setting_key, array(
+				$this->add_render_attribute( $tab_content_setting_key, [
 					'id' => 'elementor-tab-content-' . $id_int . $tab_count,
-					'class' => array( 'elementor-tab-content', 'elementor-clearfix' ),
+					'class' => [ 'elementor-tab-content', 'elementor-clearfix' ],
 					'data-tab' => $tab_count,
 					'role' => 'region',
 					'aria-labelledby' => 'elementor-tab-title-' . $id_int . $tab_count,
-				) );
+				] );
 
 				$this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced' );
 				?>
@@ -636,7 +636,7 @@ class Widget_Toggle extends Widget_Base {
 							<?php
 							if ( $is_new || $migrated ) { ?>
 								<span class="elementor-toggle-icon-closed"><?php Icons_Manager::render_icon( $settings['selected_icon'] ); ?></span>
-								<span class="elementor-toggle-icon-opened"><?php Icons_Manager::render_icon( $settings['selected_active_icon'], array( 'class' => 'elementor-toggle-icon-opened' ) ); ?></span>
+								<span class="elementor-toggle-icon-opened"><?php Icons_Manager::render_icon( $settings['selected_active_icon'], [ 'class' => 'elementor-toggle-icon-opened' ] ); ?></span>
 							<?php } else { ?>
 								<i class="elementor-toggle-icon-closed <?php echo esc_attr( $settings['icon'] ); ?>"></i>
 								<i class="elementor-toggle-icon-opened <?php echo esc_attr( $settings['icon_active'] ); ?>"></i>
@@ -651,21 +651,21 @@ class Widget_Toggle extends Widget_Base {
 			<?php endforeach; ?>
 			<?php
 			if ( isset( $settings['faq_schema'] ) && 'yes' === $settings['faq_schema'] ) {
-				$json = array(
+				$json = [
 					'@context' => 'https://schema.org',
 					'@type' => 'FAQPage',
-					'mainEntity' => array(),
-				);
+					'mainEntity' => [],
+				];
 
 				foreach ( $settings['tabs'] as $index => $item ) {
-					$json['mainEntity'][] = array(
+					$json['mainEntity'][] = [
 						'@type' => 'Question',
 						'name' => wp_strip_all_tags( $item['tab_title'] ),
-						'acceptedAnswer' => array(
+						'acceptedAnswer' => [
 							'@type' => 'Answer',
 							'text' => $this->parse_text_editor( $item['tab_content'] ),
-						),
-					);
+						],
+					];
 				}
 				?>
 				<script type="application/ld+json"><?php echo wp_json_encode( $json ); ?></script>

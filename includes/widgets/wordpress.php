@@ -77,7 +77,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @return array Widget categories. Returns either a WordPress category.
 	 */
 	public function get_categories() {
-		return array( 'wordpress' );
+		return [ 'wordpress' ];
 	}
 
 	/**
@@ -105,7 +105,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return array( 'wordpress', 'widget' );
+		return [ 'wordpress', 'widget' ];
 	}
 
 	/**
@@ -119,7 +119,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return array( 'e-swiper' );
+		return [ 'e-swiper' ];
 	}
 
 	/**
@@ -133,7 +133,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @return array Widget script dependencies.
 	 */
 	public function get_script_depends(): array {
-		return array( 'swiper' );
+		return [ 'swiper' ];
 	}
 
 	public function get_help_url() {
@@ -219,9 +219,9 @@ class Widget_WordPress extends Widget_Base {
 
 		if ( ! empty( $settings['wp'] ) ) {
 			$widget = $this->get_widget_instance();
-			$instance = $widget->update( $settings['wp'], array() );
+			$instance = $widget->update( $settings['wp'], [] );
 			/** This filter is documented in wp-includes/class-wp-widget.php */
-			$settings['wp'] = apply_filters( 'widget_update_callback', $instance, $settings['wp'], array(), $widget );
+			$settings['wp'] = apply_filters( 'widget_update_callback', $instance, $settings['wp'], [], $widget );
 		}
 
 		return $settings;
@@ -238,12 +238,12 @@ class Widget_WordPress extends Widget_Base {
 	protected function register_controls() {
 		$this->add_control(
 			'wp',
-			array(
+			[
 				'label' => esc_html__( 'Form', 'elementor' ),
 				'type' => Controls_Manager::WP_WIDGET,
 				'widget' => $this->get_name(),
 				'id_base' => $this->get_widget_instance()->id_base,
-			)
+			]
 		);
 	}
 
@@ -256,13 +256,13 @@ class Widget_WordPress extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$default_widget_args = array(
+		$default_widget_args = [
 			'widget_id' => $this->get_name(),
 			'before_widget' => '',
 			'after_widget' => '',
 			'before_title' => '<h5>',
 			'after_title' => '</h5>',
-		);
+		];
 
 		/**
 		 * WordPress widget args.
@@ -278,13 +278,13 @@ class Widget_WordPress extends Widget_Base {
 		$is_gallery_widget = 'wp-widget-media_gallery' === $this->get_name();
 
 		if ( $is_gallery_widget ) {
-			add_filter( 'wp_get_attachment_link', array( $this, 'add_lightbox_data_to_image_link' ), 10, 2 );
+			add_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ], 10, 2 );
 		}
 
 		$this->get_widget_instance()->widget( $default_widget_args, $this->get_settings( 'wp' ) );
 
 		if ( $is_gallery_widget ) {
-			remove_filter( 'wp_get_attachment_link', array( $this, 'add_lightbox_data_to_image_link' ) );
+			remove_filter( 'wp_get_attachment_link', [ $this, 'add_lightbox_data_to_image_link' ] );
 		}
 	}
 
@@ -309,7 +309,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @param array $data Widget data. Default is an empty array.
 	 * @param array $args Widget arguments. Default is null.
 	 */
-	public function __construct( $data = array(), $args = null ) {
+	public function __construct( $data = [], $args = null ) {
 		$this->_widget_name = $args['widget_name'];
 
 		parent::__construct( $data, $args );
@@ -325,5 +325,5 @@ class Widget_WordPress extends Widget_Base {
 	 *
 	 * @param array $instance Widget instance. Default is empty array.
 	 */
-	public function render_plain_content( $instance = array() ) {}
+	public function render_plain_content( $instance = [] ) {}
 }

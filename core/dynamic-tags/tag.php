@@ -27,7 +27,7 @@ abstract class Tag extends Base_Tag {
 	 *
 	 * @return string
 	 */
-	public function get_content( array $options = array() ) {
+	public function get_content( array $options = [] ) {
 		$settings = $this->get_settings();
 
 		ob_start();
@@ -84,39 +84,39 @@ abstract class Tag extends Base_Tag {
 	protected function register_advanced_section() {
 		$this->start_controls_section(
 			'advanced',
-			array(
+			[
 				'label' => esc_html__( 'Advanced', 'elementor' ),
-			)
+			]
 		);
 
 		$this->add_control(
 			'before',
-			array(
+			[
 				'label' => esc_html__( 'Before', 'elementor' ),
-				'ai' => array(
+				'ai' => [
 					'active' => false,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'after',
-			array(
+			[
 				'label' => esc_html__( 'After', 'elementor' ),
-				'ai' => array(
+				'ai' => [
 					'active' => false,
-				),
-			)
+				],
+			]
 		);
 
 		$this->add_control(
 			'fallback',
-			array(
+			[
 				'label' => esc_html__( 'Fallback', 'elementor' ),
-				'ai' => array(
+				'ai' => [
 					'active' => false,
-				),
-			)
+				],
+			]
 		);
 
 		$this->end_controls_section();

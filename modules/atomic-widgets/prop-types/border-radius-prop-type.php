@@ -14,11 +14,11 @@ class Border_Radius_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
-		return array(
+		return [
 			'top-left' => Size_Prop_Type::make(),
 			'top-right' => Size_Prop_Type::make(),
 			'bottom-right' => Size_Prop_Type::make(),
 			'bottom-left' => Size_Prop_Type::make(),
-		);
+		];
 	}
 }
