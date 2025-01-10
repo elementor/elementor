@@ -17,5 +17,4 @@ elementorModules.frontend = {
 		SwiperBase,
 		CarouselBase,
 	},
-	elementorHandlers: {},
 };
