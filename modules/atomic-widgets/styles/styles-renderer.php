@@ -13,11 +13,11 @@ class Styles_Renderer {
 
 	/**
 	 * Styles_Renderer constructor.
-	 * 
+	 *
 	 * Config format:
 	 * [
 	 *     breakpoints: array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
-	 * ] 
+	 * ]
 	 *
 	 * @param array $config
 	 */
@@ -41,7 +41,7 @@ class Styles_Renderer {
 	 *         meta: array<string, mixed>
 	 *     }>
 	 *   }>
-	 * 
+	 *
 	 * @param array $styles Array of style definitions.
 	 *
 	 * @return string Rendered CSS string.
