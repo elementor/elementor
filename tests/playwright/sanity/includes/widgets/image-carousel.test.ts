@@ -19,8 +19,6 @@ test.describe( 'Image carousel tests', () => {
 				const page = await context.newPage();
 				const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-				await page.pause();
-
 				await wpAdmin.setExperiments( {
 					e_load_js_modules_conditionally: config.experimentEnabled,
 				} );
@@ -40,8 +38,6 @@ test.describe( 'Image carousel tests', () => {
 			test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
 				const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 				const editor = new EditorPage( page, testInfo );
-
-				await page.pause();
 
 				await wpAdmin.openNewPage();
 				await editor.setPageTemplate( 'canvas' );
