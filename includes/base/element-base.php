@@ -66,7 +66,6 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	private $depended_scripts = [];
 
-
 	/**
 	 * Depended script modules.
 	 *
