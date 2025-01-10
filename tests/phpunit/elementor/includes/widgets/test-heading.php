@@ -22,7 +22,7 @@ class Test_Widget_Heading extends Elementor_Test_Base {
 		'widgetType' => 'heading',
 	];
 
-	const HEADING_NON_SECURE_SHORTCODE_PAYLOAD = '{"id":"22823c6","elType":"widget","isInner":false,"isLocked":false,"settings":{"content_width":"full","title":"Howdy <script>alert(1)</script>owdy"},"elements":[],"widgetType":"heading"}';
+	const HEADING_NON_SECURE_SHORTCODE_PAYLOAD = '{"id":"22823c6","elType":"widget","isInner":false,"isLocked":false,"settings":{"content_width":"full","title":"Howdy <script>alert(1)</script>owdy","isShortcode":true},"elements":[],"widgetType":"heading"}';
 
 	public function test_sanitize__data_attributes() {
 		$html_to_sanitize = '
@@ -91,7 +91,7 @@ class Test_Widget_Heading extends Elementor_Test_Base {
 		$rendered_content = ob_get_clean();
 
 		// Assert
-		$this->assertStringContainsString( '<script>alert(1)</script>', $rendered_content );
+		$this->assertStringNotContainsString( '<script>alert(1)</script>', $rendered_content );
 	}
 
 	public function test_render__using_shortcode_for_editor() {
@@ -100,6 +100,15 @@ class Test_Widget_Heading extends Elementor_Test_Base {
 		$test_shortcode = '[elementor-element data="' . base64_encode( static::HEADING_NON_SECURE_SHORTCODE_PAYLOAD ) . '"]';
 
 		// Act
+		ob_start();
+		echo do_shortcode( $test_shortcode );
+		$rendered_content = ob_get_clean();
+
+		// Assert
+		$this->assertStringNotContainsString( '<script>alert(1)</script>', $rendered_content );
+
+		// Act
+		set_current_screen( 'front' );
 		ob_start();
 		echo do_shortcode( $test_shortcode );
 		$rendered_content = ob_get_clean();
