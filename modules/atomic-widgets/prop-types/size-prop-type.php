@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Prop_Type extends Plain_Prop_Type {
-	const SUPPORTED_UNITS = [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax' ];
+	const SUPPORTED_UNITS = array( 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax' );
 
 	public static function get_key(): string {
 		return 'size';
@@ -28,9 +28,9 @@ class Size_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
-		return [
+		return array(
 			'size' => (int) $value['size'],
 			'unit' => sanitize_text_field( $value['unit'] ),
-		];
+		);
 	}
 }

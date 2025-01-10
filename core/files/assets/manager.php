@@ -21,7 +21,7 @@ class Manager {
 	 *
 	 * @var array
 	 */
-	protected $asset_types = [];
+	protected $asset_types = array();
 
 	/**
 	 * Assets manager constructor.

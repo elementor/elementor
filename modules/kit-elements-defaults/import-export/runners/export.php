@@ -29,19 +29,19 @@ class Export extends Export_Runner_Base {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( ! $kit ) {
-			return [
-				'manifest' => [],
-				'files' => [],
-			];
+			return array(
+				'manifest' => array(),
+				'files' => array(),
+			);
 		}
 
 		$default_values = $kit->get_json_meta( Module::META_KEY );
 
 		if ( ! $default_values ) {
-			return [
-				'manifest' => [],
-				'files' => [],
-			];
+			return array(
+				'manifest' => array(),
+				'files' => array(),
+			);
 		}
 
 		$sanitizer = new Settings_Sanitizer(
@@ -61,11 +61,11 @@ class Export extends Export_Runner_Base {
 			} )
 			->all();
 
-		return [
-			'files' => [
+		return array(
+			'files' => array(
 				'path' => Import_Export::FILE_NAME,
 				'data' => $default_values,
-			],
-		];
+			),
+		);
 	}
 }

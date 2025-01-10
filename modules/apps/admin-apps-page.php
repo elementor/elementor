@@ -51,7 +51,7 @@ class Admin_Apps_Page {
 
 		if ( $container->has( Wordpress_Adapter::class ) ) {
 			self::$wordpress_adapter = $container->get( Wordpress_Adapter::class );
-		} else if ( ! self::$wordpress_adapter ) {
+		} elseif ( ! self::$wordpress_adapter ) {
 			self::$wordpress_adapter = new Wordpress_Adapter();
 		}
 
@@ -68,20 +68,20 @@ class Admin_Apps_Page {
 		$apps = wp_remote_get( static::APPS_URL );
 
 		if ( is_wp_error( $apps ) ) {
-			return [];
+			return array();
 		}
 
 		$apps = json_decode( wp_remote_retrieve_body( $apps ), true );
 
 		if ( empty( $apps['apps'] ) || ! is_array( $apps['apps'] ) ) {
-			return [];
+			return array();
 		}
 
 		return $apps['apps'];
 	}
 
 	private static function filter_apps( $apps ) {
-		$filtered_apps = [];
+		$filtered_apps = array();
 
 		foreach ( $apps as $app ) {
 			if ( static::is_wporg_app( $app ) ) {

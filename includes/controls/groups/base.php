@@ -24,7 +24,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 *
 	 * @var array Group control arguments.
 	 */
-	private $args = [];
+	private $args = array();
 
 	/**
 	 * Options.
@@ -82,7 +82,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @param array          $options   Optional. The element options. Default is
 	 *                                  an empty array.
 	 */
-	final public function add_controls( Controls_Stack $element, array $user_args, array $options = [] ) {
+	final public function add_controls( Controls_Stack $element, array $user_args, array $options = array() ) {
 		$this->init_args( $user_args );
 
 		// Filter which controls to display
@@ -218,7 +218,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Default group control options.
 	 */
 	protected function get_default_options() {
-		return [];
+		return array();
 	}
 
 	/**
@@ -233,7 +233,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Default arguments for all the child controls.
 	 */
 	protected function get_child_default_args() {
-		return [];
+		return array();
 	}
 
 	/**
@@ -289,10 +289,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$field_args['classes'] = $this->get_base_group_classes() . ' elementor-group-control-' . $control_id;
 
-		foreach ( [ 'condition', 'conditions' ] as $condition_type ) {
+		foreach ( array( 'condition', 'conditions' ) as $condition_type ) {
 			if ( ! empty( $args[ $condition_type ] ) ) {
 				if ( empty( $field_args[ $condition_type ] ) ) {
-					$field_args[ $condition_type ] = [];
+					$field_args[ $condition_type ] = array();
 				}
 
 				$field_args[ $condition_type ] += $args[ $condition_type ];
@@ -373,13 +373,13 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @access private
 	 */
 	private function init_options() {
-		$default_options = [
-			'popover' => [
+		$default_options = array(
+			'popover' => array(
 				'starter_name' => 'popover_toggle',
 				'starter_value' => 'custom',
 				'starter_title' => '',
-			],
-		];
+			),
+		);
 
 		$this->options = array_replace_recursive( $default_options, $this->get_default_options() );
 	}
@@ -414,11 +414,11 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 	 * @return array Control default arguments.
 	 */
 	private function get_default_args() {
-		return [
+		return array(
 			'default' => '',
 			'selector' => '{{WRAPPER}}',
-			'fields_options' => [],
-		];
+			'fields_options' => array(),
+		);
 	}
 
 	/**
@@ -441,7 +441,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$controls_prefix = $this->get_controls_prefix();
 
 		$prefixed_condition_keys = array_map(
-			function( $key ) use ( $controls_prefix ) {
+			function ( $key ) use ( $controls_prefix ) {
 				return $controls_prefix . $key;
 			},
 			array_keys( $field['condition'] )
@@ -493,7 +493,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		$selectors = array_combine(
 			array_map(
-				function( $key ) use ( $args ) {
+				function ( $key ) use ( $args ) {
 					return str_replace( '{{SELECTOR}}', $args['selector'], $key );
 				}, array_keys( $selectors )
 			),
@@ -507,10 +507,10 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 		$controls_prefix = $this->get_controls_prefix();
 
 		foreach ( $selectors as &$selector ) {
-			$selector = preg_replace_callback( '/{{\K(.*?)(?=}})/', function( $matches ) use ( $controls_prefix ) {
+			$selector = preg_replace_callback( '/{{\K(.*?)(?=}})/', function ( $matches ) use ( $controls_prefix ) {
 				$is_external_reference = false;
 
-				return preg_replace_callback( '/[^ ]+?(?=\.)\./', function( $sub_matches ) use ( $controls_prefix, &$is_external_reference ) {
+				return preg_replace_callback( '/[^ ]+?(?=\.)\./', function ( $sub_matches ) use ( $controls_prefix, &$is_external_reference ) {
 					$placeholder = $sub_matches[0];
 
 					if ( 'external.' === $placeholder ) {
@@ -549,7 +549,7 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 
 		if ( isset( $settings['global'] ) ) {
 			if ( ! isset( $popover_options['settings']['global'] ) ) {
-				$popover_options['settings']['global'] = [];
+				$popover_options['settings']['global'] = array();
 			}
 
 			$popover_options['settings']['global'] = array_replace_recursive( $popover_options['settings']['global'], $settings['global'] );
@@ -561,17 +561,17 @@ abstract class Group_Control_Base implements Group_Control_Interface {
 			$label = $popover_options['starter_title'];
 		}
 
-		$control_params = [
+		$control_params = array(
 			'type' => Controls_Manager::POPOVER_TOGGLE,
 			'label' => $label,
 			'return_value' => $popover_options['starter_value'],
-		];
+		);
 
 		if ( ! empty( $popover_options['settings'] ) ) {
 			$control_params = array_replace_recursive( $control_params, $popover_options['settings'] );
 		}
 
-		foreach ( [ 'condition', 'conditions' ] as $key ) {
+		foreach ( array( 'condition', 'conditions' ) as $key ) {
 			if ( ! empty( $settings[ $key ] ) ) {
 				$control_params[ $key ] = $settings[ $key ];
 			}

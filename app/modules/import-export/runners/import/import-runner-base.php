@@ -26,7 +26,7 @@ abstract class Import_Runner_Base implements Runner_Interface {
 	abstract public function import( array $data, array $imported_data );
 
 	public function get_import_session_metadata(): array {
-		return [];
+		return array();
 	}
 
 	public function set_session_post_meta( $post_id, $meta_value ) {

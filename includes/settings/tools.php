@@ -28,13 +28,13 @@ class Tools extends Settings_Page {
 	const PAGE_ID = 'elementor-tools';
 
 	private function register_admin_menu( MainMenu $menu ) {
-		$menu->add_submenu( [
+		$menu->add_submenu( array(
 			'page_title' => esc_html__( 'Tools', 'elementor' ),
 			'menu_title' => esc_html__( 'Tools', 'elementor' ),
 			'menu_slug' => self::PAGE_ID,
-			'function' => [ $this, 'display_settings_page' ],
+			'function' => array( $this, 'display_settings_page' ),
 			'index' => 50,
-		] );
+		) );
 	}
 
 	/**
@@ -80,13 +80,13 @@ class Tools extends Settings_Page {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( $kit->get_id() ) {
-			wp_send_json_error( [ 'message' => esc_html__( 'There\'s already an active kit.', 'elementor' ) ], 400 );
+			wp_send_json_error( array( 'message' => esc_html__( 'There\'s already an active kit.', 'elementor' ) ), 400 );
 		}
 
 		$created_default_kit = Plugin::$instance->kits_manager->create_default();
 
 		if ( ! $created_default_kit ) {
-			wp_send_json_error( [ 'message' => esc_html__( 'An error occurred while trying to create a kit.', 'elementor' ) ], 500 );
+			wp_send_json_error( array( 'message' => esc_html__( 'An error occurred while trying to create a kit.', 'elementor' ) ), 500 );
 		}
 
 		update_option( Manager::OPTION_ACTIVE, $created_default_kit );
@@ -161,20 +161,20 @@ class Tools extends Settings_Page {
 		if ( ! ( $rollback instanceof Rollback ) ) {
 			$plugin_slug = basename( ELEMENTOR__FILE__, '.php' );
 
-			$rollback = new Rollback( [
+			$rollback = new Rollback( array(
 				'version' => $version,
 				'plugin_name' => ELEMENTOR_PLUGIN_BASE,
 				'plugin_slug' => $plugin_slug,
 				'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, $version ),
-			] );
+			) );
 		}
 
 		$rollback->run();
 
 		wp_die(
-			'', esc_html__( 'Rollback to Previous Version', 'elementor' ), [
+			'', esc_html__( 'Rollback to Previous Version', 'elementor' ), array(
 				'response' => 200,
-			]
+			)
 		);
 	}
 
@@ -189,15 +189,15 @@ class Tools extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
 		}, Settings::ADMIN_MENU_PRIORITY + 20 );
 
-		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
-		add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
-		add_action( 'wp_ajax_elementor_recreate_kit', [ $this, 'ajax_elementor_recreate_kit' ] );
+		add_action( 'wp_ajax_elementor_clear_cache', array( $this, 'ajax_elementor_clear_cache' ) );
+		add_action( 'wp_ajax_elementor_replace_url', array( $this, 'ajax_elementor_replace_url' ) );
+		add_action( 'wp_ajax_elementor_recreate_kit', array( $this, 'ajax_elementor_recreate_kit' ) );
 
-		add_action( 'admin_post_elementor_rollback', [ $this, 'post_elementor_rollback' ] );
+		add_action( 'admin_post_elementor_rollback', array( $this, 'post_elementor_rollback' ) );
 	}
 
 	private function get_rollback_versions() {
@@ -206,26 +206,26 @@ class Tools extends Settings_Page {
 		if ( false === $rollback_versions ) {
 			$max_versions = 30;
 
-			$versions = apply_filters( 'elementor/settings/rollback/versions', [] );
+			$versions = apply_filters( 'elementor/settings/rollback/versions', array() );
 
 			if ( empty( $versions ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
 				$plugin_information = plugins_api(
-					'plugin_information', [
+					'plugin_information', array(
 						'slug' => 'elementor',
-					]
+					)
 				);
 
 				if ( empty( $plugin_information->versions ) || ! is_array( $plugin_information->versions ) ) {
-					return [];
+					return array();
 				}
 
 				uksort( $plugin_information->versions, 'version_compare' );
 				$versions = array_keys( array_reverse( $plugin_information->versions ) );
 			}
 
-			$rollback_versions = [];
+			$rollback_versions = array();
 
 			$current_index = 0;
 			foreach ( $versions as $version ) {
@@ -257,7 +257,7 @@ class Tools extends Settings_Page {
 					continue;
 				}
 
-				$current_index++;
+				++$current_index;
 				$rollback_versions[] = $version;
 			}
 
@@ -285,37 +285,37 @@ class Tools extends Settings_Page {
 		}
 		$rollback_html .= '</select>';
 
-		$tabs = [
-			'general' => [
+		$tabs = array(
+			'general' => array(
 				'label' => esc_html__( 'General', 'elementor' ),
-				'sections' => [
-					'tools' => [
-						'fields' => [
-							'clear_cache' => [
+				'sections' => array(
+					'tools' => array(
+						'fields' => array(
+							'clear_cache' => array(
 								'label' => esc_html__( 'Regenerate CSS & Data', 'elementor' ),
-								'field_args' => [
+								'field_args' => array(
 									'type' => 'raw_html',
 									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Regenerate Files & Data', 'elementor' ) ),
 									'desc' => esc_html__( 'Styles set in Elementor are saved in CSS files in the uploads folder and in the site’s database. Recreate those files and settings, according to the most recent settings.', 'elementor' ),
-								],
-							],
-							'reset_api_data' => [
+								),
+							),
+							'reset_api_data' => array(
 								'label' => esc_html__( 'Sync Library', 'elementor' ),
-								'field_args' => [
+								'field_args' => array(
 									'type' => 'raw_html',
 									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), esc_html__( 'Sync Library', 'elementor' ) ),
 									'desc' => esc_html__( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
-								],
-							],
-						],
-					],
-				],
-			],
-			'replace_url' => [
+								),
+							),
+						),
+					),
+				),
+			),
+			'replace_url' => array(
 				'label' => esc_html__( 'Replace URL', 'elementor' ),
-				'sections' => [
-					'replace_url' => [
-						'callback' => function() {
+				'sections' => array(
+					'replace_url' => array(
+						'callback' => function () {
 							echo '<h2>' . esc_html__( 'Replace URL', 'elementor' ) . '</h2>';
 							printf(
 								'<p><strong>%1$s</strong> %2$s</p>',
@@ -328,26 +328,26 @@ class Tools extends Settings_Page {
 								)
 							);
 						},
-						'fields' => [
-							'replace_url' => [
+						'fields' => array(
+							'replace_url' => array(
 								'label' => esc_html__( 'Update Site Address (URL)', 'elementor' ),
-								'field_args' => [
+								'field_args' => array(
 									'type' => 'raw_html',
 									'html' => sprintf( '<input type="text" name="from" placeholder="https://old.example.com" class="large-text"><input type="text" name="to" placeholder="https://new.example.com" class="large-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
 									'desc' => esc_html__( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
-								],
-							],
-						],
-					],
-				],
-			],
-			'versions' => [
+								),
+							),
+						),
+					),
+				),
+			),
+			'versions' => array(
 				'show_if' => static::can_user_rollback_versions(),
 				'label' => esc_html__( 'Version Control', 'elementor' ),
-				'sections' => [
-					'rollback' => [
+				'sections' => array(
+					'rollback' => array(
 						'label' => esc_html__( 'Rollback to Previous Version', 'elementor' ),
-						'callback' => function() {
+						'callback' => function () {
 							$intro_text = sprintf(
 								/* translators: %s: Elementor version. */
 								esc_html__( 'Experiencing an issue with Elementor version %s? Rollback to a previous version before the issue appeared.', 'elementor' ),
@@ -357,10 +357,10 @@ class Tools extends Settings_Page {
 
 							Utils::print_unescaped_internal_string( $intro_text );
 						},
-						'fields' => [
-							'rollback' => [
+						'fields' => array(
+							'rollback' => array(
 								'label' => esc_html__( 'Rollback Version', 'elementor' ),
-								'field_args' => [
+								'field_args' => array(
 									'type' => 'raw_html',
 									'html' => sprintf(
 										$rollback_html . '<a data-placeholder-text="%1$s v{VERSION}" href="#" data-placeholder-url="%2$s" class="button elementor-button-spinner elementor-rollback-button">%1$s</a>',
@@ -368,14 +368,14 @@ class Tools extends Settings_Page {
 										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' )
 									),
 									'desc' => '<span style="color: red;">' . esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
-								],
-							],
-						],
-					],
-					'beta' => [
+								),
+							),
+						),
+					),
+					'beta' => array(
 						'show_if' => $this->display_beta_tester(),
 						'label' => esc_html__( 'Become a Beta Tester', 'elementor' ),
-						'callback' => function() {
+						'callback' => function () {
 							echo '<p>' .
 								esc_html__( 'Turn-on Beta Tester, to get notified when a new beta version of Elementor or Elementor Pro is available. The Beta version will not install automatically. You always have the option to ignore it.', 'elementor' ) .
 								'</p>';
@@ -388,34 +388,34 @@ class Tools extends Settings_Page {
 								'</span>',
 							) . '</p>';
 						},
-						'fields' => [
-							'beta' => [
+						'fields' => array(
+							'beta' => array(
 								'label' => esc_html__( 'Beta Tester', 'elementor' ),
-								'field_args' => [
+								'field_args' => array(
 									'type' => 'select',
 									'std' => 'no',
-									'options' => [
+									'options' => array(
 										'no' => esc_html__( 'Disable', 'elementor' ),
 										'yes' => esc_html__( 'Enable', 'elementor' ),
-									],
+									),
 									'desc' => '<span style="color: red;">' . esc_html__( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) . '</span>',
-								],
-							],
-						],
-					],
-				],
-			],
-		];
+								),
+							),
+						),
+					),
+				),
+			),
+		);
 
 		if ( ! Plugin::$instance->kits_manager->get_active_kit()->get_id() ) {
-			$tabs['general']['sections']['tools']['fields']['recreate_kit'] = [
+			$tabs['general']['sections']['tools']['fields']['recreate_kit'] = array(
 				'label' => esc_html__( 'Recreate Kit', 'elementor' ),
-				'field_args' => [
+				'field_args' => array(
 					'type' => 'raw_html',
 					'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-recreate-kit-button">%s</button>', wp_create_nonce( 'elementor_recreate_kit' ), esc_html__( 'Recreate Kit', 'elementor' ) ),
 					'desc' => esc_html__( 'It seems like your site doesn\'t have any active Kit. The active Kit includes all of your Site Settings. By recreating your Kit you will able to start edit your Site Settings again.', 'elementor' ),
-				],
-			];
+				),
+			);
 		}
 		return $tabs;
 	}

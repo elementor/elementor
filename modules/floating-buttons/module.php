@@ -41,10 +41,10 @@ class Module extends BaseModule {
 	}
 
 	public static function get_floating_elements_types() {
-		return [
+		return array(
 			'floating-buttons' => esc_html__( 'Floating Buttons', 'elementor' ),
 			'floating-bars' => esc_html__( 'Floating Bars', 'elementor' ),
-		];
+		);
 	}
 
 	public function get_name(): string {
@@ -53,10 +53,10 @@ class Module extends BaseModule {
 
 	public function get_widgets(): array {
 
-		return [
+		return array(
 			'Contact_Buttons',
 			'Floating_Bars_Var_1',
-		];
+		);
 	}
 
 	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
@@ -66,7 +66,7 @@ class Module extends BaseModule {
 			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Empty_View_Menu_Item( $function ) );
 		} else {
 			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
-		};
+		}
 	}
 
 	public function __construct() {
@@ -93,17 +93,17 @@ class Module extends BaseModule {
 			);
 		} );
 
-		add_action( 'current_screen', function() {
+		add_action( 'current_screen', function () {
 			$screen = get_current_screen();
 			if ( $screen && 'edit-e-floating-buttons' === $screen->id ) {
 				$this->flush_permalinks_on_elementor_version_change();
 			}
 		});
 
-		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
-		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+		add_action( 'wp_ajax_elementor_send_clicks', array( $this, 'handle_click_tracking' ) );
+		add_action( 'wp_ajax_nopriv_elementor_send_clicks', array( $this, 'handle_click_tracking' ) );
 
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
+		add_action( 'elementor/frontend/after_register_styles', array( $this, 'register_styles' ) );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Hover_Animation_Floating_Buttons() );
@@ -152,7 +152,7 @@ class Module extends BaseModule {
 			return $is_top_bar_active;
 		}, 10, 2 );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
 
@@ -186,7 +186,7 @@ class Module extends BaseModule {
 					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
 					check_admin_referer( 'set_as_entire_site_' . $post );
 
-					$posts = get_posts( [
+					$posts = get_posts( array(
 						'post_type' => static::CPT_FLOATING_BUTTONS,
 						'posts_per_page' => -1,
 						'post_status' => 'publish',
@@ -197,13 +197,13 @@ class Module extends BaseModule {
 						'meta_query' => Floating_Buttons::get_meta_query_for_floating_buttons(
 							Floating_Buttons::get_floating_element_type( $post )
 						),
-					] );
+					) );
 
 					foreach ( $posts as $post_id ) {
 						delete_post_meta( $post_id, '_elementor_conditions' );
 					}
 
-					update_post_meta( $post, '_elementor_conditions', [ 'include/general' ] );
+					update_post_meta( $post, '_elementor_conditions', array( 'include/general' ) );
 
 					wp_redirect( $menu_args['menu_slug'] );
 					exit;
@@ -212,7 +212,7 @@ class Module extends BaseModule {
 			}
 		} );
 
-		add_action( 'manage_' . static::CPT_FLOATING_BUTTONS . '_posts_columns', function( $posts_columns ) {
+		add_action( 'manage_' . static::CPT_FLOATING_BUTTONS . '_posts_columns', function ( $posts_columns ) {
 			$source_local = Plugin::$instance->templates_manager->get_source( 'local' );
 			unset( $posts_columns['date'] );
 			unset( $posts_columns['comments'] );
@@ -227,7 +227,7 @@ class Module extends BaseModule {
 
 		add_action(
 			'manage_' . static::CPT_FLOATING_BUTTONS . '_posts_custom_column',
-			[ $this, 'set_admin_columns_content' ],
+			array( $this, 'set_admin_columns_content' ),
 			10,
 			2
 		);
@@ -246,30 +246,30 @@ class Module extends BaseModule {
 	}
 
 	public function handle_click_tracking() {
-		$data = filter_input_array( INPUT_POST, [
-			'clicks' => [
+		$data = filter_input_array( INPUT_POST, array(
+			'clicks' => array(
 				'filter' => FILTER_VALIDATE_INT,
 				'flags' => FILTER_REQUIRE_ARRAY,
-			],
+			),
 			'_nonce' => FILTER_UNSAFE_RAW,
-		] );
+		) );
 
 		if ( ! wp_verify_nonce( $data['_nonce'], static::CLICK_TRACKING_NONCE ) ) {
-			wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
+			wp_send_json_error( array( 'message' => 'Invalid nonce' ) );
 		}
 
 		if ( ! check_ajax_referer( static::CLICK_TRACKING_NONCE, '_nonce', false ) ) {
-			wp_send_json_error( [ 'message' => 'Invalid referrer' ] );
+			wp_send_json_error( array( 'message' => 'Invalid referrer' ) );
 		}
 
-		$posts_to_update = [];
+		$posts_to_update = array();
 
 		foreach ( $data['clicks'] as $post_id ) {
 			if ( ! isset( $posts_to_update[ $post_id ] ) ) {
 				$starting_clicks = (int) get_post_meta( $post_id, static::META_CLICK_TRACKING, true );
 				$posts_to_update[ $post_id ] = $starting_clicks ? $starting_clicks : 0;
 			}
-			$posts_to_update[ $post_id ]++;
+			++$posts_to_update[ $post_id ];
 		}
 
 		foreach ( $posts_to_update as $post_id => $clicks ) {
@@ -334,14 +334,14 @@ class Module extends BaseModule {
 	}
 
 	private function get_trashed_posts( string $cpt, string $document_type ) {
-		$query = new \WP_Query( [
+		$query = new \WP_Query( array(
 			'no_found_rows' => true,
 			'post_type' => $cpt,
 			'post_status' => 'trash',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
 			'meta_value' => $document_type,
-		] );
+		) );
 
 		return $query->posts;
 	}
@@ -398,15 +398,15 @@ class Module extends BaseModule {
 			$contact_menu_slug = 'admin.php?page=' . $contact_menu_slug;
 		}
 
-		$additional_settings = [
-			'urls' => [
+		$additional_settings = array(
+			'urls' => array(
 				'addNewLinkUrlContact' => $this->get_add_new_contact_page_url(),
 				'viewContactPageUrl' => $contact_menu_slug,
-			],
-			'contactPages' => [
+			),
+			'contactPages' => array(
 				'hasPages' => $this->has_contact_pages(),
-			],
-		];
+			),
+		);
 
 		return array_replace_recursive( $settings, $additional_settings );
 	}
@@ -419,15 +419,15 @@ class Module extends BaseModule {
 	}
 
 	private function register_post_type( array $labels, string $cpt ) {
-		$args = [
+		$args = array(
 			'labels' => $labels,
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'show_in_nav_menus' => false,
 			'capability_type' => 'post',
-			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
+			'taxonomies' => array( Source_Local::TAXONOMY_TYPE_SLUG ),
 			'show_in_rest' => true,
-			'supports' => [
+			'supports' => array(
 				'title',
 				'editor',
 				'comments',
@@ -440,8 +440,8 @@ class Module extends BaseModule {
 				'custom-fields',
 				'post-formats',
 				'elementor',
-			],
-		];
+			),
+		);
 
 		register_post_type( $cpt, $args );
 	}
@@ -460,14 +460,14 @@ class Module extends BaseModule {
 	}
 
 	private function has_pages( string $cpt, string $document_type ): bool {
-		$posts_query = new \WP_Query( [
+		$posts_query = new \WP_Query( array(
 			'no_found_rows' => true,
 			'post_type' => $cpt,
 			'post_status' => 'any',
 			'posts_per_page' => 1,
 			'meta_key' => '_elementor_template_type',
 			'meta_value' => $document_type,
-		] );
+		) );
 
 		return $posts_query->post_count > 0;
 	}
@@ -478,13 +478,13 @@ class Module extends BaseModule {
 			$function = null;
 		} else {
 			$menu_slug = static::CPT_FLOATING_BUTTONS;
-			$function = [ $this, 'print_empty_contact_pages_page' ];
+			$function = array( $this, 'print_empty_contact_pages_page' );
 		}
 
-		return [
+		return array(
 			'menu_slug' => $menu_slug,
 			'function' => $function,
-		];
+		);
 	}
 
 	public function override_admin_bar_add_contact( $admin_bar ): void {
@@ -515,14 +515,14 @@ class Module extends BaseModule {
 			}
 		}
 
-		$query = new \WP_Query( [
+		$query = new \WP_Query( array(
 			'post_type' => static::CPT_FLOATING_BUTTONS,
 			'posts_per_page' => - 1,
 			'post_status' => 'publish',
 			'fields' => 'ids',
 			'meta_key' => '_elementor_conditions',
 			'meta_compare' => 'EXISTS',
-		] );
+		) );
 
 		if ( ! $query->have_posts() ) {
 			return;
@@ -565,14 +565,14 @@ class Module extends BaseModule {
 			wp_register_style(
 				$widget_style_name,
 				$this->get_frontend_file_url( "{$widget_style_name}{$direction_suffix}.min.css", $should_load_responsive_css ),
-				[ 'elementor-frontend', 'elementor-icons' ],
+				array( 'elementor-frontend', 'elementor-icons' ),
 				$should_load_responsive_css ? null : ELEMENTOR_VERSION
 			);
 		}
 	}
 
 	private function get_widgets_style_list(): array {
-		return [
+		return array(
 			'widget-floating-buttons' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-floating-bars-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-floating-bars-var-2' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
@@ -586,6 +586,6 @@ class Module extends BaseModule {
 			'widget-contact-buttons-var-8' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-contact-buttons-var-9' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-contact-buttons-var-10' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-		];
+		);
 	}
 }

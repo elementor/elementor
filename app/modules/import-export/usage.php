@@ -31,15 +31,15 @@ class Usage {
 	private function get_revert_usage_data() {
 		$revert_sessions = ( new Revert() )->get_revert_sessions();
 
-		$data = [];
+		$data = array();
 
 		foreach ( $revert_sessions as $revert_session ) {
-			$data[] = [
+			$data[] = array(
 				'kit_name' => $revert_session['kit_name'],
 				'source' => $revert_session['source'],
 				'revert_timestamp' => (int) $revert_session['revert_timestamp'],
 				'total_time' => ( (int) $revert_session['revert_timestamp'] - (int) $revert_session['import_timestamp'] ),
-			];
+			);
 		}
 
 		return $data;

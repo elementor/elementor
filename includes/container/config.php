@@ -12,4 +12,4 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.24.0
  */
 
-return [];
+return array();

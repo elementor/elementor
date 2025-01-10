@@ -18,8 +18,8 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'wp_head', [ $this, 'render_generator_tag' ] );
-		add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_settings' ], 100 );
+		add_action( 'wp_head', array( $this, 'render_generator_tag' ) );
+		add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, array( $this, 'register_admin_settings' ), 100 );
 	}
 
 	public function render_generator_tag() {
@@ -36,9 +36,9 @@ class Module extends BaseModule {
 		$active_features = $this->get_active_features();
 		$settings = $this->get_generator_tag_settings();
 
-		$tags = [
+		$tags = array(
 			'Elementor ' . ELEMENTOR_VERSION,
-		];
+		);
 
 		if ( ! empty( $active_features ) ) {
 			$tags[] = 'features: ' . implode( ', ', $active_features );
@@ -52,7 +52,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_active_features(): array {
-		$active_features = [];
+		$active_features = array();
 
 		foreach ( Plugin::$instance->experiments->get_active_features() as $feature_slug => $feature ) {
 			if ( isset( $feature['generator_tag'] ) && $feature['generator_tag'] ) {
@@ -64,7 +64,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_generator_tag_settings(): array {
-		return apply_filters( 'elementor/generator_tag/settings', [] );
+		return apply_filters( 'elementor/generator_tag/settings', array() );
 	}
 
 	public function register_admin_settings( Settings $settings ) {
@@ -72,18 +72,18 @@ class Module extends BaseModule {
 			Settings::TAB_ADVANCED,
 			Settings::TAB_ADVANCED,
 			'meta_generator_tag',
-			[
+			array(
 				'label' => esc_html__( 'Generator Tag', 'elementor' ),
-				'field_args' => [
+				'field_args' => array(
 					'type' => 'select',
 					'std' => '',
-					'options' => [
+					'options' => array(
 						'' => esc_html__( 'Enable', 'elementor' ),
 						'1' => esc_html__( 'Disable', 'elementor' ),
-					],
+					),
 					'desc' => esc_html__( 'A generator tag is a meta element that indicates the attributes used to create a webpage. It is used for analytical purposes.', 'elementor' ),
-				],
-			]
+				),
+			)
 		);
 	}
 }

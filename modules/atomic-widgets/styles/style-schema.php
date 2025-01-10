@@ -34,42 +34,42 @@ class Style_Schema {
 	}
 
 	private static function get_size_props() {
-		return [
+		return array(
 			'width' => Size_Prop_Type::make(),
 			'height' => Size_Prop_Type::make(),
 			'min-width' => Size_Prop_Type::make(),
 			'min-height' => Size_Prop_Type::make(),
 			'max-width' => Size_Prop_Type::make(),
 			'max-height' => Size_Prop_Type::make(),
-			'overflow' => String_Prop_Type::make()->enum([
+			'overflow' => String_Prop_Type::make()->enum(array(
 				'visible',
 				'hidden',
 				'auto',
-			]),
-		];
+			)),
+		);
 	}
 
 	private static function get_position_props() {
-		return [
-			'position' => String_Prop_Type::make()->enum([
+		return array(
+			'position' => String_Prop_Type::make()->enum(array(
 				'static',
 				'relative',
 				'absolute',
 				'fixed',
 				'sticky',
-			]),
+			)),
 			'top' => Size_Prop_Type::make(),
 			'right' => Size_Prop_Type::make(),
 			'bottom' => Size_Prop_Type::make(),
 			'left' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make(),
-		];
+		);
 	}
 
 	private static function get_typography_props() {
-		return [
+		return array(
 			'font-family' => String_Prop_Type::make(),
-			'font-weight' => String_Prop_Type::make()->enum([
+			'font-weight' => String_Prop_Type::make()->enum(array(
 				'100',
 				'200',
 				'300',
@@ -83,48 +83,48 @@ class Style_Schema {
 				'bold',
 				'bolder',
 				'lighter',
-			]),
+			)),
 			'font-size' => Size_Prop_Type::make(),
 			'color' => Color_Prop_Type::make(),
 			'letter-spacing' => Size_Prop_Type::make(),
 			'word-spacing' => Size_Prop_Type::make(),
 			'line-height' => Size_Prop_Type::make(),
-			'text-align' => String_Prop_Type::make()->enum([
+			'text-align' => String_Prop_Type::make()->enum(array(
 				'left',
 				'center',
 				'right',
 				'justify',
-			]),
-			'font-style' => String_Prop_Type::make()->enum([
+			)),
+			'font-style' => String_Prop_Type::make()->enum(array(
 				'normal',
 				'italic',
 				'oblique',
-			]),
+			)),
 			// TODO: validate text-decoration in more specific way [EDS-524]
 			'text-decoration' => String_Prop_Type::make(),
-			'text-transform' => String_Prop_Type::make()->enum([
+			'text-transform' => String_Prop_Type::make()->enum(array(
 				'none',
 				'capitalize',
 				'uppercase',
 				'lowercase',
-			]),
-			'direction' => String_Prop_Type::make()->enum([
+			)),
+			'direction' => String_Prop_Type::make()->enum(array(
 				'ltr',
 				'rtl',
-			]),
+			)),
 			'-webkit-text-stroke' => Stroke_Prop_Type::make(),
-		];
+		);
 	}
 
 	private static function get_spacing_props() {
-		return [
+		return array(
 			'padding' => Linked_Dimensions_Prop_Type::make(),
 			'margin' => Linked_Dimensions_Prop_Type::make(),
-		];
+		);
 	}
 
 	private static function get_border_props() {
-		return [
+		return array(
 			'border-radius' => Union_Prop_Type::make()->add_prop_type(
 				Size_Prop_Type::make()
 			)->add_prop_type(
@@ -132,7 +132,7 @@ class Style_Schema {
 			),
 			'border-width' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( Border_Width_Prop_Type::make() ),
 			'border-color' => Color_Prop_Type::make(),
-			'border-style' => String_Prop_Type::make()->enum([
+			'border-style' => String_Prop_Type::make()->enum(array(
 				'none',
 				'hidden',
 				'dotted',
@@ -143,25 +143,25 @@ class Style_Schema {
 				'ridge',
 				'inset',
 				'outset',
-			]),
-		];
+			)),
+		);
 	}
 
 	private static function get_background_props() {
-		return [
+		return array(
 			'background' => Background_Prop_Type::make(),
-		];
+		);
 	}
 
 	private static function get_effects_props() {
-		return [
+		return array(
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
-		];
+		);
 	}
 
 	private static function get_layout_props() {
-		return [
-			'display' => String_Prop_Type::make()->enum([
+		return array(
+			'display' => String_Prop_Type::make()->enum(array(
 				'block',
 				'inline',
 				'inline-block',
@@ -172,28 +172,28 @@ class Style_Schema {
 				'flow-root',
 				'none',
 				'contents',
-			]),
-			'flex-direction' => String_Prop_Type::make()->enum([
+			)),
+			'flex-direction' => String_Prop_Type::make()->enum(array(
 				'row',
 				'row-reverse',
 				'column',
 				'column-reverse',
-			]),
+			)),
 			'gap' => Gap_Prop_Type::make(),
-			'flex-wrap' => String_Prop_Type::make()->enum([
+			'flex-wrap' => String_Prop_Type::make()->enum(array(
 				'wrap',
 				'nowrap',
 				'wrap-reverse',
-			]),
+			)),
 			'flex-grow' => Number_Prop_Type::make(),
 			'flex-shrink' => Number_Prop_Type::make(),
 			'flex-basis' => Size_Prop_Type::make(),
-		];
+		);
 	}
 
 	private static function get_alignment_props() {
-		return [
-			'justify-content' => String_Prop_Type::make()->enum([
+		return array(
+			'justify-content' => String_Prop_Type::make()->enum(array(
 				'center',
 				'start',
 				'end',
@@ -206,8 +206,8 @@ class Style_Schema {
 				'space-around',
 				'space-evenly',
 				'stretch',
-			]),
-			'align-items' => String_Prop_Type::make()->enum([
+			)),
+			'align-items' => String_Prop_Type::make()->enum(array(
 				'normal',
 				'stretch',
 				'center',
@@ -218,8 +218,8 @@ class Style_Schema {
 				'self-start',
 				'self-end',
 				'anchor-center',
-			]),
-			'align-self' => String_Prop_Type::make()->enum([
+			)),
+			'align-self' => String_Prop_Type::make()->enum(array(
 				'auto',
 				'normal',
 				'center',
@@ -234,8 +234,8 @@ class Style_Schema {
 				'first baseline',
 				'last baseline',
 				'stretch',
-			]),
+			)),
 			'order' => Number_Prop_Type::make(),
-		];
+		);
 	}
 }

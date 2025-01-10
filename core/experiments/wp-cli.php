@@ -125,10 +125,10 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @return void
 	 */
 	private function foreach_sites( callable $callback, $experiments, $state, $is_network, $success, $error ) {
-		$blog_ids = get_sites( [
+		$blog_ids = get_sites( array(
 			'fields' => 'ids',
 			'number' => 0,
-		] );
+		) );
 
 		foreach ( $blog_ids as $blog_id ) {
 			switch_to_blog( $blog_id );

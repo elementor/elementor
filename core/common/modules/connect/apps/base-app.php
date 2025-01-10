@@ -27,7 +27,7 @@ abstract class Base_App {
 	const HTTP_RETURN_TYPE_OBJECT = 'object';
 	const HTTP_RETURN_TYPE_ARRAY = 'array';
 
-	protected $data = [];
+	protected $data = array();
 
 	protected $auth_mode = '';
 
@@ -139,9 +139,9 @@ abstract class Base_App {
 
 
 	public function get_app_token_from_cli_token( $cli_token ) {
-		$response = $this->request( 'get_app_token_from_cli_token', [
+		$response = $this->request( 'get_app_token_from_cli_token', array(
 			'cli_token' => $cli_token,
-		] );
+		) );
 
 		if ( is_wp_error( $response ) ) {
 			// PHPCS - the variable $response does not contain a user input value.
@@ -194,12 +194,12 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
-		$response = $this->request( 'get_token', [
+		$response = $this->request( 'get_token', array(
 			'grant_type' => 'authorization_code',
 			'code' => Utils::get_super_global_value( $_REQUEST, 'code' ), //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
 			'client_id' => $this->get( 'client_id' ),
-		] );
+		) );
 
 		if ( is_wp_error( $response ) ) {
 			$notice = 'Cannot Get Token:' . $response->get_error_message();
@@ -249,12 +249,12 @@ abstract class Base_App {
 	 * @since 2.3.0
 	 * @access public
 	 */
-	public function get_admin_url( $action, $params = [] ) {
-		$params = [
+	public function get_admin_url( $action, $params = array() ) {
+		$params = array(
 			'app' => $this->get_slug(),
 			'action' => $action,
 			'nonce' => wp_create_nonce( $this->get_slug() . $action ),
-		] + $params;
+		) + $params;
 
 		$admin_url = Str::encode_idn_url( get_admin_url() );
 		$admin_url .= 'admin.php?page=' . Admin::PAGE_ID;
@@ -324,7 +324,7 @@ abstract class Base_App {
 		if ( $key ) {
 			unset( $this->data[ $key ] );
 		} else {
-			$this->data = [];
+			$this->data = array();
 		}
 
 		$this->update_settings();
@@ -353,7 +353,7 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	protected function add_notice( $content, $type = 'success' ) {
-		$this->add( 'notices', compact( 'content', 'type' ), [] );
+		$this->add( 'notices', compact( 'content', 'type' ), array() );
 	}
 
 	/**
@@ -363,22 +363,22 @@ abstract class Base_App {
 	 *
 	 * @return mixed|\WP_Error
 	 */
-	protected function request( $action, $request_body = [], $as_array = false ) {
+	protected function request( $action, $request_body = array(), $as_array = false ) {
 		$request_body = $this->get_connect_info() + $request_body;
 
 		return $this->http_request(
 			'POST',
 			$action,
-			[
+			array(
 				'timeout' => 25,
 				'body' => $request_body,
 				'headers' => $this->is_connected() ?
-					[ 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ] :
-					[],
-			],
-			[
+					array( 'X-Elementor-Signature' => $this->generate_signature( $request_body ) ) :
+					array(),
+			),
+			array(
 				'return_type' => $as_array ? static::HTTP_RETURN_TYPE_ARRAY : static::HTTP_RETURN_TYPE_OBJECT,
-			]
+			)
 		);
 	}
 
@@ -390,14 +390,14 @@ abstract class Base_App {
 	 * @return array
 	 */
 	protected function get_base_connect_info() {
-		return [
+		return array(
 			'app' => $this->get_slug(),
 			'access_token' => $this->get( 'access_token' ),
 			'client_id' => $this->get( 'client_id' ),
 			'local_id' => get_current_user_id(),
 			'site_key' => $this->get_site_key(),
 			'home_url' => trailingslashit( home_url() ),
-		];
+		);
 	}
 
 	/**
@@ -408,7 +408,7 @@ abstract class Base_App {
 	protected function get_connect_info() {
 		$connect_info = $this->get_base_connect_info();
 
-		$additional_info = [];
+		$additional_info = array();
 
 		/**
 		 * Additional connect info.
@@ -434,13 +434,13 @@ abstract class Base_App {
 			->map_with_keys( function ( $value, $key ) {
 				// For bc `get_connect_info` returns the connect info with underscore,
 				// headers with underscore are not valid, so all the keys with underscore will be replaced to hyphen.
-				return [ str_replace( '_', '-', $key ) => $value ];
+				return array( str_replace( '_', '-', $key ) => $value );
 			} )
-			->replace_recursive( [ 'endpoint' => $endpoint ] )
+			->replace_recursive( array( 'endpoint' => $endpoint ) )
 			->sort_keys();
 
 		return $connect_info
-			->merge( [ 'X-Elementor-Signature' => $this->generate_signature( $connect_info->all() ) ] )
+			->merge( array( 'X-Elementor-Signature' => $this->generate_signature( $connect_info->all() ) ) )
 			->all();
 	}
 
@@ -454,16 +454,16 @@ abstract class Base_App {
 	 *
 	 * @return mixed|\WP_Error
 	 */
-	protected function http_request( $method, $endpoint, $args = [], $options = [] ) {
-		$options = wp_parse_args( $options, [
+	protected function http_request( $method, $endpoint, $args = array(), $options = array() ) {
+		$options = wp_parse_args( $options, array(
 			'return_type' => static::HTTP_RETURN_TYPE_OBJECT,
-		] );
+		) );
 
-		$args = array_replace_recursive( [
-			'headers' => $this->is_connected() ? $this->generate_authentication_headers( $endpoint ) : [],
+		$args = array_replace_recursive( array(
+			'headers' => $this->is_connected() ? $this->generate_authentication_headers( $endpoint ) : array(),
 			'method' => $method,
 			'timeout' => 10,
-		], $args );
+		), $args );
 
 		$response = $this->http->request_with_fallback(
 			$this->get_generated_urls( $endpoint ),
@@ -472,7 +472,7 @@ abstract class Base_App {
 
 		if ( is_wp_error( $response ) && empty( $options['with_error_data'] ) ) {
 			// PHPCS - the variable $response does not contain a user input value.
-			wp_die( $response, [ 'back_link' => true ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			wp_die( $response, array( 'back_link' => true ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		$body = wp_remote_retrieve_body( $response );
@@ -507,7 +507,7 @@ abstract class Base_App {
 			if ( 401 === $code ) {
 				$this->delete();
 
-				$should_retry = ! in_array( $this->auth_mode, [ 'xhr', 'cli' ], true );
+				$should_retry = ! in_array( $this->auth_mode, array( 'xhr', 'cli' ), true );
 
 				if ( $should_retry ) {
 					$this->action_authorize();
@@ -531,7 +531,7 @@ abstract class Base_App {
 	 *
 	 * @return false|string
 	 */
-	private function generate_signature( $payload = [] ) {
+	private function generate_signature( $payload = array() ) {
 		return hash_hmac(
 			'sha256',
 			wp_json_encode( $payload, JSON_NUMERIC_CHECK ),
@@ -561,7 +561,7 @@ abstract class Base_App {
 	protected function get_remote_authorize_url() {
 		$redirect_uri = $this->get_auth_redirect_uri();
 
-		$allowed_query_params_to_propagate = [
+		$allowed_query_params_to_propagate = array(
 			'utm_source',
 			'utm_medium',
 			'utm_campaign',
@@ -569,11 +569,11 @@ abstract class Base_App {
 			'utm_content',
 			'source',
 			'screen_hint',
-		];
+		);
 
 		$query_params = ( new Collection( $_GET ) ) // phpcs:ignore
 			->only( $allowed_query_params_to_propagate )
-			->merge( [
+			->merge( array(
 				'action' => 'authorize',
 				'response_type' => 'code',
 				'client_id' => $this->get( 'client_id' ),
@@ -582,12 +582,12 @@ abstract class Base_App {
 				'redirect_uri' => rawurlencode( $redirect_uri ),
 				'may_share_data' => current_user_can( 'manage_options' ) && ! Tracker::is_allow_track(),
 				'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
-			] );
+			) );
 
 		$utm_campaign = get_transient( 'elementor_core_campaign' );
 
 		if ( ! empty( $utm_campaign ) ) {
-			foreach ( [ 'source', 'medium', 'campaign' ] as $key ) {
+			foreach ( array( 'source', 'medium', 'campaign' ) as $key ) {
 				if ( ! empty( $utm_campaign[ $key ] ) ) {
 					$query_params->offsetSet( 'utm_' . $key, $utm_campaign[ $key ] );
 				}
@@ -629,9 +629,9 @@ abstract class Base_App {
 		$source = Utils::get_super_global_value( $_REQUEST, 'source' ) ?? ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 		$response = $this->request(
 			'get_client_id',
-			[
+			array(
 				'source' => esc_attr( $source ),
-			]
+			)
 		);
 
 		if ( is_wp_error( $response ) ) {
@@ -652,7 +652,7 @@ abstract class Base_App {
 	}
 
 	protected function get_popup_success_event_data() {
-		return [];
+		return array();
 	}
 
 	/**
@@ -728,10 +728,10 @@ abstract class Base_App {
 
 		switch ( $this->auth_mode ) {
 			case 'popup':
-				$redirect_uri = add_query_arg( [
+				$redirect_uri = add_query_arg( array(
 					'mode' => 'popup',
 					'callback_id' => esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ), //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
-				], $redirect_uri );
+				), $redirect_uri );
 				break;
 		}
 
@@ -753,11 +753,11 @@ abstract class Base_App {
 				$admin_notices = Plugin::$instance->admin->get_component( 'admin-notices' );
 
 				foreach ( $notices as $notice ) {
-					$options = [
+					$options = array(
 						'description' => wp_kses_post( wpautop( $notice['content'] ) ),
 						'type' => $notice['type'],
 						'icon' => false,
-					];
+					);
 
 					$admin_notices->print_admin_notice( $options );
 				}
@@ -765,7 +765,7 @@ abstract class Base_App {
 	}
 
 	protected function get_app_info() {
-		return [];
+		return array();
 	}
 
 	protected function print_app_info() {
@@ -789,7 +789,7 @@ abstract class Base_App {
 		$base_urls = $this->get_api_url();
 
 		if ( ! is_array( $base_urls ) ) {
-			$base_urls = [ $base_urls ];
+			$base_urls = array( $base_urls );
 		}
 
 		return array_map( function ( $base_url ) use ( $endpoint ) {
@@ -809,9 +809,9 @@ abstract class Base_App {
 		$mode = Utils::get_super_global_value( $_REQUEST, 'mode' ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 
 		if ( $mode ) {
-			$allowed_auth_modes = [
+			$allowed_auth_modes = array(
 				'popup',
-			];
+			);
 
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$allowed_auth_modes[] = 'cli';
@@ -832,7 +832,7 @@ abstract class Base_App {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'admin_notices', [ $this, 'admin_notice' ] );
+		add_action( 'admin_notices', array( $this, 'admin_notice' ) );
 
 		$this->init_auth_mode();
 

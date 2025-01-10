@@ -43,12 +43,12 @@ class Control_URL extends Control_Base_Multiple {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return [
+		return array(
 			'url' => '',
 			'is_external' => '',
 			'nofollow' => '',
 			'custom_attributes' => '',
-		];
+		);
 	}
 
 	/**
@@ -63,21 +63,21 @@ class Control_URL extends Control_Base_Multiple {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'label_block' => true,
 			'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
 			'autocomplete' => true,
-			'options' => [ 'is_external', 'nofollow', 'custom_attributes' ],
-			'dynamic' => [
-				'categories' => [ TagsModule::URL_CATEGORY ],
+			'options' => array( 'is_external', 'nofollow', 'custom_attributes' ),
+			'dynamic' => array(
+				'categories' => array( TagsModule::URL_CATEGORY ),
 				'property' => 'url',
-			],
+			),
 			'custom_attributes_description' => sprintf(
 				'%1$s <a target="_blank" href="https://go.elementor.com/panel-link-custom-attributes/">%2$s</a>',
 				esc_html__( 'Set custom attributes for the link element. Separate attribute keys from values using the | (pipe) character. Separate key-value pairs with a comma.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
-		];
+		);
 	}
 
 	/**

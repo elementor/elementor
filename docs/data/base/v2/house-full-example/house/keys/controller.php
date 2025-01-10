@@ -2,16 +2,16 @@
 namespace House\Keys;
 
 class Controller extends \Elementor\Data\V2\Base\Controller {
-	const DATA = [
-		[
+	const DATA = array(
+		array(
 			'id' => 0,
 			'name' => 'key_0',
-		],
-		[
+		),
+		array(
 			'id' => 1,
 			'name' => 'key_1',
-		],
-	];
+		),
+	);
 
 	public function get_name() {
 		return 'keys';

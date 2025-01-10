@@ -23,7 +23,7 @@ class Widget_Audio extends Widget_Base {
 	 *
 	 * @var array
 	 */
-	protected $_current_instance = [];
+	protected $_current_instance = array();
 
 	/**
 	 * Get widget name.
@@ -78,7 +78,7 @@ class Widget_Audio extends Widget_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [ 'audio', 'player', 'soundcloud', 'embed' ];
+		return array( 'audio', 'player', 'soundcloud', 'embed' );
 	}
 
 	protected function is_dynamic_content(): bool {
@@ -100,157 +100,157 @@ class Widget_Audio extends Widget_Base {
 	protected function register_controls() {
 		$this->start_controls_section(
 			'section_audio',
-			[
+			array(
 				'label' => esc_html__( 'SoundCloud', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'link',
-			[
+			array(
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-					'categories' => [
+					'categories' => array(
 						TagsModule::POST_META_CATEGORY,
 						TagsModule::URL_CATEGORY,
-					],
-				],
-				'default' => [
+					),
+				),
+				'default' => array(
 					'url' => 'https://soundcloud.com/shchxango/john-coltrane-1963-my-favorite',
-				],
+				),
 				'options' => false,
-			]
+			)
 		);
 
 		$this->add_control(
 			'visual',
-			[
+			array(
 				'label' => esc_html__( 'Visual Player', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'no',
-				'options' => [
+				'options' => array(
 					'yes' => esc_html__( 'Yes', 'elementor' ),
 					'no' => esc_html__( 'No', 'elementor' ),
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'sc_options',
-			[
+			array(
 				'label' => esc_html__( 'Additional Options', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			]
+			)
 		);
 
 		$this->add_control(
 			'sc_auto_play',
-			[
+			array(
 				'label' => esc_html__( 'Autoplay', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-			]
+			)
 		);
 
 		$this->add_control(
 			'sc_buying',
-			[
+			array(
 				'label' => esc_html__( 'Buy Button', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'default' => 'yes',
-			]
+			)
 		);
 
 		$this->add_control(
 			'sc_liking',
-			[
+			array(
 				'label' => esc_html__( 'Like Button', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'default' => 'yes',
-			]
+			)
 		);
 
 		$this->add_control(
 			'sc_download',
-			[
+			array(
 				'label' => esc_html__( 'Download Button', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'default' => 'yes',
-			]
+			)
 		);
 
 		$this->add_control(
 			'sc_show_artwork',
-			[
+			array(
 				'label' => esc_html__( 'Artwork', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'default' => 'yes',
-				'condition' => [
+				'condition' => array(
 					'visual' => 'no',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'sc_sharing',
-			[
+			array(
 				'label' => esc_html__( 'Share Button', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'default' => 'yes',
-			]
+			)
 		);
 
 		$this->add_control(
 			'sc_show_comments',
-			[
+			array(
 				'label' => esc_html__( 'Comments', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'default' => 'yes',
-			]
+			)
 		);
 
 		$this->add_control(
 			'sc_show_playcount',
-			[
+			array(
 				'label' => esc_html__( 'Play Counts', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'default' => 'yes',
-			]
+			)
 		);
 
 		$this->add_control(
 			'sc_show_user',
-			[
+			array(
 				'label' => esc_html__( 'Username', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_off' => esc_html__( 'Hide', 'elementor' ),
 				'label_on' => esc_html__( 'Show', 'elementor' ),
 				'default' => 'yes',
-			]
+			)
 		);
 
 		$this->add_control(
 			'sc_color',
-			[
+			array(
 				'label' => esc_html__( 'Controls Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-			]
+			)
 		);
 
 		$this->end_controls_section();
@@ -273,13 +273,13 @@ class Widget_Audio extends Widget_Base {
 
 		$this->_current_instance = $settings;
 
-		add_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50, 3 );
+		add_filter( 'oembed_result', array( $this, 'filter_oembed_result' ), 50, 3 );
 		$video_html = wp_oembed_get( $settings['link']['url'], wp_embed_defaults() );
-		remove_filter( 'oembed_result', [ $this, 'filter_oembed_result' ], 50 );
+		remove_filter( 'oembed_result', array( $this, 'filter_oembed_result' ), 50 );
 
 		if ( $video_html ) : ?>
 			<div class="elementor-soundcloud-wrapper">
-				<?php Utils::print_wp_kses_extended( $video_html, [ 'iframe' ] ); ?>
+				<?php Utils::print_wp_kses_extended( $video_html, array( 'iframe' ) ); ?>
 			</div>
 			<?php
 		endif;
@@ -298,7 +298,7 @@ class Widget_Audio extends Widget_Base {
 	 * @return string Filtered audio widget oEmbed HTML.
 	 */
 	public function filter_oembed_result( $html ) {
-		$param_keys = [
+		$param_keys = array(
 			'auto_play',
 			'buying',
 			'liking',
@@ -308,9 +308,9 @@ class Widget_Audio extends Widget_Base {
 			'show_playcount',
 			'show_user',
 			'show_artwork',
-		];
+		);
 
-		$params = [];
+		$params = array();
 
 		foreach ( $param_keys as $param_key ) {
 			$params[ $param_key ] = 'yes' === $this->_current_instance[ 'sc_' . $param_key ] ? 'true' : 'false';
@@ -324,7 +324,7 @@ class Widget_Audio extends Widget_Base {
 
 		$visual = 'yes' === $this->_current_instance['visual'] ? 'true' : 'false';
 
-		$html = str_replace( [ $matches[1], 'visual=true' ], [ $url, 'visual=' . $visual ], $html );
+		$html = str_replace( array( $matches[1], 'visual=true' ), array( $url, 'visual=' . $visual ), $html );
 
 		if ( 'false' === $visual ) {
 			$html = str_replace( 'height="400"', 'height="200"', $html );

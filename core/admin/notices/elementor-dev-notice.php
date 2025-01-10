@@ -29,28 +29,28 @@ class Elementor_Dev_Notice extends Base_Notice {
 	 *
 	 * @var array
 	 */
-	private $plugins = [];
+	private $plugins = array();
 
 	/**
 	 * If one of those plugin is installed it will show the notice.
 	 *
 	 * @var string[]
 	 */
-	private $promotion_plugins = [
+	private $promotion_plugins = array(
 		'woocommerce-beta-tester/woocommerce-beta-tester.php',
 		'wp-jquery-update-test/wp-jquery-update-test.php',
 		'wordpress-beta-tester/wp-beta-tester.php',
 		'gutenberg/gutenberg.php',
-	];
+	);
 
 	/**
 	 * If one of those options is enabled it will show the notice.
 	 *
 	 * @var string[]
 	 */
-	private $promotion_options = [
+	private $promotion_options = array(
 		'elementor_beta',
-	];
+	);
 
 	/**
 	 * @inheritDoc
@@ -70,22 +70,22 @@ class Elementor_Dev_Notice extends Base_Notice {
 	 * @inheritDoc
 	 */
 	public function get_config() {
-		return [
+		return array(
 			'id' => static::ID,
 			'title' => esc_html__( 'Elementor Developer Edition', 'elementor' ),
 			'description' => __(
 				'Get a sneak peek at our in progress development versions, and help us improve Elementor to perfection. Developer Edition releases contain experimental functionality for testing purposes.',
 				'elementor'
 			),
-			'button' => [
+			'button' => array(
 				'text' => esc_html__( 'Install & Activate', 'elementor' ),
 				'url' => wp_nonce_url(
 					self_admin_url( 'update.php?action=install-plugin&plugin=' . static::PLUGIN_SLUG ),
 					'install-plugin_' . static::PLUGIN_SLUG
 				),
 				'type' => 'cta',
-			],
-		];
+			),
+		);
 	}
 
 	/**

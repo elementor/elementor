@@ -16,10 +16,10 @@ class Create_Pages extends Step_Base {
 	}
 
 	public function is_absolute_completed(): bool {
-		$pages = $this->wordpress_adapter->get_pages( [
+		$pages = $this->wordpress_adapter->get_pages( array(
 			'meta_key' => '_elementor_version',
 			'number' => 3,
-		] ) ?? [];
+		) ) ?? array();
 
 		return count( $pages ) >= 3;
 	}

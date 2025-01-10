@@ -53,32 +53,32 @@ class Controller extends Controller_Base {
 	}
 
 	public function register_endpoints() {
-		$this->index_endpoint->register_item_route( \WP_REST_Server::CREATABLE, [
+		$this->index_endpoint->register_item_route( \WP_REST_Server::CREATABLE, array(
 			'id_arg_type_regex' => '[\w]+',
-			'id' => [
+			'id' => array(
 				'description' => 'Type of favorites.',
 				'type' => 'string',
 				'required' => true,
-			],
-			'favorite' => [
+			),
+			'favorite' => array(
 				'description' => 'The favorite slug to create.',
 				'type' => 'string',
 				'required' => true,
-			],
-		] );
+			),
+		) );
 
-		$this->index_endpoint->register_item_route( \WP_REST_Server::DELETABLE, [
+		$this->index_endpoint->register_item_route( \WP_REST_Server::DELETABLE, array(
 			'id_arg_type_regex' => '[\w]+',
-			'id' => [
+			'id' => array(
 				'description' => 'Type of favorites.',
 				'type' => 'string',
 				'required' => true,
-			],
-			'favorite' => [
+			),
+			'favorite' => array(
 				'description' => 'The favorite slug to delete.',
 				'type' => 'string',
 				'required' => true,
-			],
-		] );
+			),
+		) );
 	}
 }

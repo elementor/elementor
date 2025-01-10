@@ -24,11 +24,11 @@ class Custom_Code_Promotion_Item extends Base_Promotion_Template {
 	}
 
 	protected function get_content_lines(): array {
-		return [
+		return array(
 			esc_html__( 'Add Custom Code snippets anywhere on your website, including the header or footer to measure your page’s performance*', 'elementor' ),
 			esc_html__( 'Use Custom Code to create sophisticated custom interactions to engage visitors', 'elementor' ),
 			esc_html__( 'Leverage Elementor AI to instantly generate Custom Code for Elementor', 'elementor' ),
-		];
+		);
 	}
 
 	protected function get_side_note(): string {

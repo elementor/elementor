@@ -30,7 +30,7 @@ class Source_Remote extends Source_Base {
 	}
 
 	public function add_actions() {
-		add_action( 'elementor/experiments/feature-state-change/container', [ $this, 'clear_cache' ], 10, 0 );
+		add_action( 'elementor/experiments/feature-state-change/container', array( $this, 'clear_cache' ), 10, 0 );
 	}
 
 	/**
@@ -84,12 +84,12 @@ class Source_Remote extends Source_Base {
 	 *
 	 * @return array Remote templates.
 	 */
-	public function get_items( $args = [] ) {
+	public function get_items( $args = array() ) {
 		$force_update = ! empty( $args['force_update'] ) && is_bool( $args['force_update'] );
 
 		$templates_data = $this->get_templates_data( $force_update );
 
-		$templates = [];
+		$templates = array();
 
 		foreach ( $templates_data as $template_data ) {
 			$templates[] = $this->prepare_template( $template_data );
@@ -265,7 +265,7 @@ class Source_Remote extends Source_Base {
 		$templates_data = $this->get_templates_remotely( $editor_layout_type );
 
 		if ( empty( $templates_data ) ) {
-			return [];
+			return array();
 		}
 
 		set_transient( $templates_data_cache_key, $templates_data, 12 * HOUR_IN_SECONDS );
@@ -280,9 +280,9 @@ class Source_Remote extends Source_Base {
 	 * @return array|false
 	 */
 	protected function get_templates_remotely( string $editor_layout_type ) {
-		$response = wp_remote_get( static::API_TEMPLATES_URL, [
+		$response = wp_remote_get( static::API_TEMPLATES_URL, array(
 			'body' => $this->get_templates_body_args( $editor_layout_type ),
-		] );
+		) );
 
 		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return false;
@@ -291,7 +291,7 @@ class Source_Remote extends Source_Base {
 		$templates_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( empty( $templates_data ) || ! is_array( $templates_data ) ) {
-			return [];
+			return array();
 		}
 
 		return $templates_data;
@@ -305,10 +305,10 @@ class Source_Remote extends Source_Base {
 	 * @return array
 	 */
 	protected function get_templates_body_args( string $editor_layout_type ): array {
-		return [
+		return array(
 			'plugin_version' => ELEMENTOR_VERSION,
 			'editor_layout_type' => $editor_layout_type,
-		];
+		);
 	}
 
 	/**
@@ -327,7 +327,7 @@ class Source_Remote extends Source_Base {
 				: ConnectModule::ACCESS_TIER_ESSENTIAL;
 		}
 
-		return [
+		return array(
 			'template_id' => $template_data['id'],
 			'source' => $this->get_id(),
 			'type' => $template_data['type'],
@@ -345,7 +345,7 @@ class Source_Remote extends Source_Base {
 			'hasPageSettings' => ( '1' === $template_data['has_page_settings'] ),
 			'url' => $template_data['url'],
 			'favorite' => ! empty( $favorite_templates[ $template_data['id'] ] ),
-		];
+		);
 	}
 
 	public function clear_cache() {

@@ -13,9 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Gap_Transformer extends Transformer_Base {
 	public function transform( $value, $key ): array {
 		$gap = Collection::make( $value )
-			->only( [ 'row', 'column' ] )
+			->only( array( 'row', 'column' ) )
 			->filter()
-			->map_with_keys( fn( $gap, $gap_direction ) => [ $gap_direction . '-' . $key => $gap ] )
+			->map_with_keys( fn( $gap, $gap_direction ) => array( $gap_direction . '-' . $key => $gap ) )
 			->all();
 
 		return Multi_Props::generate( $gap );

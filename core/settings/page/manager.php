@@ -245,7 +245,7 @@ class Manager extends CSS_Manager {
 		$settings = get_post_meta( $id, self::META_KEY, true );
 
 		if ( ! $settings ) {
-			$settings = [];
+			$settings = array();
 		}
 
 		if ( Utils::is_cpt_custom_templates_supported() ) {
@@ -314,7 +314,7 @@ class Manager extends CSS_Manager {
 	 * @return array Special settings names.
 	 */
 	protected function get_special_settings_names() {
-		return [
+		return array(
 			'id',
 			'post_title',
 			'post_status',
@@ -323,7 +323,7 @@ class Manager extends CSS_Manager {
 			'post_featured_image',
 			'menu_order',
 			'comment_status',
-		];
+		);
 	}
 
 	/**

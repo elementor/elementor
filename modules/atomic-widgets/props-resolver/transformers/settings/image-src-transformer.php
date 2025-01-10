@@ -16,9 +16,9 @@ class Image_Src_Transformer extends Transformer_Base {
 	 * what, so we need to keep the same structure in the props.
 	 */
 	public function transform( $value, $key ) {
-		return [
+		return array(
 			'id' => isset( $value['id'] ) ? (int) $value['id'] : null,
 			'url' => $value['url'] ?? null,
-		];
+		);
 	}
 }

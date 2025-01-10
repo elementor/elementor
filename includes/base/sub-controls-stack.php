@@ -82,7 +82,7 @@ abstract class Sub_Controls_Stack {
 	 *
 	 * @return bool True if added, False otherwise.
 	 */
-	public function add_control( $id, $args, $options = [] ) {
+	public function add_control( $id, $args, $options = array() ) {
 		return $this->parent->add_control( $this->get_control_id( $id ), $args, $options );
 	}
 
@@ -97,7 +97,7 @@ abstract class Sub_Controls_Stack {
 	 * @param array  $args    Control arguments. Only the new fields you want to update.
 	 * @param array  $options Optional. Some additional options.
 	 */
-	public function update_control( $id, $args, array $options = [] ) {
+	public function update_control( $id, $args, array $options = array() ) {
 		$this->parent->update_control( $this->get_control_id( $id ), $args, $options );
 	}
 
@@ -126,7 +126,7 @@ abstract class Sub_Controls_Stack {
 	 * @param array  $args       Group control arguments. Default is an empty array.
 	 * @param array  $options
 	 */
-	public function add_group_control( $group_name, $args, $options = [] ) {
+	public function add_group_control( $group_name, $args, $options = array() ) {
 		$args['name'] = $this->get_control_id( $args['name'] );
 		$this->parent->add_group_control( $group_name, $args, $options );
 	}
@@ -142,7 +142,7 @@ abstract class Sub_Controls_Stack {
 	 * @param array  $args Responsive control arguments.
 	 * @param array  $options
 	 */
-	public function add_responsive_control( $id, $args, $options = [] ) {
+	public function add_responsive_control( $id, $args, $options = array() ) {
 		$this->parent->add_responsive_control( $this->get_control_id( $id ), $args, $options );
 	}
 
@@ -183,7 +183,7 @@ abstract class Sub_Controls_Stack {
 	 * @param string $id   Section ID.
 	 * @param array  $args Section arguments.
 	 */
-	public function start_controls_section( $id, $args = [] ) {
+	public function start_controls_section( $id, $args = array() ) {
 		$this->parent->start_controls_section( $this->get_control_id( $id ), $args );
 	}
 

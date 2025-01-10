@@ -17,23 +17,23 @@ class Utils {
 
 		$file_content = ElementorUtils::file_get_contents( $path, true );
 
-		return $file_content ? json_decode( $file_content, true ) : [];
+		return $file_content ? json_decode( $file_content, true ) : array();
 	}
 
 	public static function map_old_new_post_ids( array $imported_data ) {
-		$result = [];
+		$result = array();
 
-		$result += $imported_data['templates']['succeed'] ?? [];
+		$result += $imported_data['templates']['succeed'] ?? array();
 
 		if ( isset( $imported_data['content'] ) ) {
 			foreach ( $imported_data['content'] as $post_type ) {
-				$result += $post_type['succeed'] ?? [];
+				$result += $post_type['succeed'] ?? array();
 			}
 		}
 
 		if ( isset( $imported_data['wp-content'] ) ) {
 			foreach ( $imported_data['wp-content'] as $post_type ) {
-				$result += $post_type['succeed'] ?? [];
+				$result += $post_type['succeed'] ?? array();
 			}
 		}
 
@@ -41,7 +41,7 @@ class Utils {
 	}
 
 	public static function map_old_new_term_ids( array $imported_data ) {
-		$result = [];
+		$result = array();
 
 		if ( ! isset( $imported_data['taxonomies'] ) ) {
 			return $result;
@@ -68,15 +68,15 @@ class Utils {
 	}
 
 	public static function get_builtin_wp_post_types() {
-		return [ 'post', 'page', 'nav_menu_item' ];
+		return array( 'post', 'page', 'nav_menu_item' );
 	}
 
 	public static function get_registered_cpt_names() {
-		$post_types = get_post_types( [
+		$post_types = get_post_types( array(
 			'public' => true,
 			'can_export' => true,
 			'_builtin' => false,
-		] );
+		) );
 
 		unset(
 			$post_types[ Landing_Pages_Module::CPT ],
@@ -99,18 +99,18 @@ class Utils {
 			return '';
 		}
 
-		$title = str_replace( [ '-', '_' ], ' ', $name );
+		$title = str_replace( array( '-', '_' ), ' ', $name );
 
 		return ucwords( $title );
 	}
 
 	public static function get_import_sessions( $should_run_cleanup = false ) {
-		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, [] );
+		$import_sessions = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, array() );
 
 		if ( $should_run_cleanup ) {
 			foreach ( $import_sessions as $session_id => $import_session ) {
 				if ( ! isset( $import_session['runners'] ) && isset( $import_session['instance_data'] ) ) {
-					$import_sessions[ $session_id ]['runners'] = $import_session['instance_data']['runners_import_metadata'] ?? [];
+					$import_sessions[ $session_id ]['runners'] = $import_session['instance_data']['runners_import_metadata'] ?? array();
 
 					unset( $import_sessions[ $session_id ]['instance_data'] );
 				}

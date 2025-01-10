@@ -66,10 +66,10 @@ class User {
 	 * @static
 	 */
 	public static function init() {
-		add_action( 'wp_ajax_elementor_set_admin_notice_viewed', [ __CLASS__, 'ajax_set_admin_notice_viewed' ] );
-		add_action( 'admin_post_elementor_set_admin_notice_viewed', [ __CLASS__, 'ajax_set_admin_notice_viewed' ] );
+		add_action( 'wp_ajax_elementor_set_admin_notice_viewed', array( __CLASS__, 'ajax_set_admin_notice_viewed' ) );
+		add_action( 'admin_post_elementor_set_admin_notice_viewed', array( __CLASS__, 'ajax_set_admin_notice_viewed' ) );
 
-		add_action( 'elementor/ajax/register_actions', [ __CLASS__, 'register_ajax_actions' ] );
+		add_action( 'elementor/ajax/register_actions', array( __CLASS__, 'register_ajax_actions' ) );
 	}
 
 	/**
@@ -79,9 +79,9 @@ class User {
 	 * @static
 	 */
 	public static function register_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'introduction_viewed', [ __CLASS__, 'set_introduction_viewed' ] );
-		$ajax->register_ajax_action( 'beta_tester_signup', [ __CLASS__, 'register_as_beta_tester' ] );
-		$ajax->register_ajax_action( 'dismissed_editor_notices', [ __CLASS__, 'set_dismissed_editor_notices' ] );
+		$ajax->register_ajax_action( 'introduction_viewed', array( __CLASS__, 'set_introduction_viewed' ) );
+		$ajax->register_ajax_action( 'beta_tester_signup', array( __CLASS__, 'register_as_beta_tester' ) );
+		$ajax->register_ajax_action( 'dismissed_editor_notices', array( __CLASS__, 'set_dismissed_editor_notices' ) );
 	}
 
 	/**
@@ -143,7 +143,7 @@ class User {
 	 */
 	public static function is_current_user_in_editing_black_list() {
 		$user = wp_get_current_user();
-		$exclude_roles = get_option( 'elementor_exclude_user_roles', [] );
+		$exclude_roles = get_option( 'elementor_exclude_user_roles', array() );
 
 		$compare_roles = array_intersect( $user->roles, $exclude_roles );
 		if ( ! empty( $compare_roles ) ) {
@@ -197,7 +197,7 @@ class User {
 	 */
 	public static function get_user_notices() {
 		$notices = get_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, true );
-		return is_array( $notices ) ? $notices : [];
+		return is_array( $notices ) ? $notices : array();
 	}
 
 	/**
@@ -284,13 +284,13 @@ class User {
 		$notices = self::get_user_notices();
 
 		if ( ! is_array( $meta ) ) {
-			$meta = $notices[ $notice_id ]['meta'] ?? [];
+			$meta = $notices[ $notice_id ]['meta'] ?? array();
 		}
 
-		$notices[ $notice_id ] = [
+		$notices[ $notice_id ] = array(
 			'is_viewed' => $is_viewed,
 			'meta' => $meta,
-		];
+		);
 
 		update_user_meta( get_current_user_id(), self::ADMIN_NOTICES_KEY, $notices );
 	}
@@ -319,22 +319,22 @@ class User {
 		update_user_meta( get_current_user_id(), self::BETA_TESTER_META_KEY, true );
 		$response = wp_safe_remote_post(
 			self::BETA_TESTER_API_URL,
-			[
+			array(
 				'timeout' => 25,
-				'body' => [
+				'body' => array(
 					'api_version' => ELEMENTOR_VERSION,
 					'site_lang' => get_bloginfo( 'language' ),
 					'beta_tester_email' => $data['betaTesterEmail'],
-				],
-			]
+				),
+			)
 		);
 
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
 		if ( 200 === $response_code ) {
-			self::set_introduction_viewed( [
+			self::set_introduction_viewed( array(
 				'introductionKey' => Beta_Testers::BETA_TESTER_SIGNUP,
-			] );
+			) );
 		}
 	}
 
@@ -350,7 +350,7 @@ class User {
 		$user_introduction_meta = get_user_meta( get_current_user_id(), self::INTRODUCTION_KEY, true );
 
 		if ( ! $user_introduction_meta ) {
-			$user_introduction_meta = [];
+			$user_introduction_meta = array();
 		}
 
 		if ( $key ) {
@@ -389,7 +389,7 @@ class User {
 	public static function get_dismissed_editor_notices() {
 		$notices = get_user_meta( get_current_user_id(), self::DISMISSED_EDITOR_NOTICES_KEY, true );
 
-		return is_array( $notices ) ? $notices : [];
+		return is_array( $notices ) ? $notices : array();
 	}
 
 	/**

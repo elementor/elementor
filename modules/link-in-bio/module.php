@@ -20,15 +20,15 @@ class Module extends BaseModule {
 	}
 
 	public function get_widgets(): array {
-		return [
+		return array(
 			'Link_In_Bio',
-		];
+		);
 	}
 
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
+		add_action( 'elementor/frontend/after_register_styles', array( $this, 'register_styles' ) );
 	}
 
 	/**
@@ -50,14 +50,14 @@ class Module extends BaseModule {
 			wp_register_style(
 				$widget_style_name,
 				$this->get_frontend_file_url( "{$widget_style_name}{$direction_suffix}.min.css", $should_load_responsive_css ),
-				[ 'elementor-frontend' ],
+				array( 'elementor-frontend' ),
 				$should_load_responsive_css ? null : ELEMENTOR_VERSION
 			);
 		}
 	}
 
 	private function get_widgets_style_list(): array {
-		return [
+		return array(
 			'widget-link-in-bio' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-link-in-bio-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-link-in-bio-var-2' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
@@ -65,6 +65,6 @@ class Module extends BaseModule {
 			'widget-link-in-bio-var-4' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-link-in-bio-var-5' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
 			'widget-link-in-bio-var-7' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
-		];
+		);
 	}
 }

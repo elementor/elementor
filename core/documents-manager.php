@@ -33,7 +33,7 @@ class Documents_Manager {
 	 *
 	 * @var Document[]
 	 */
-	protected $types = [];
+	protected $types = array();
 
 	/**
 	 * Registered documents.
@@ -45,7 +45,7 @@ class Documents_Manager {
 	 *
 	 * @var Document[]
 	 */
-	protected $documents = [];
+	protected $documents = array();
 
 	/**
 	 * Current document.
@@ -69,9 +69,9 @@ class Documents_Manager {
 	 *
 	 * @var array
 	 */
-	protected $switched_data = [];
+	protected $switched_data = array();
 
-	protected $cpt = [];
+	protected $cpt = array();
 
 	/**
 	 * Documents manager constructor.
@@ -82,12 +82,12 @@ class Documents_Manager {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'elementor/documents/register', [ $this, 'register_default_types' ], 0 );
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-		add_filter( 'post_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
-		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
-		add_filter( 'user_has_cap', [ $this, 'remove_user_edit_cap' ], 10, 3 );
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
+		add_action( 'elementor/documents/register', array( $this, 'register_default_types' ), 0 );
+		add_action( 'elementor/ajax/register_actions', array( $this, 'register_ajax_actions' ) );
+		add_filter( 'post_row_actions', array( $this, 'filter_post_row_actions' ), 11, 2 );
+		add_filter( 'page_row_actions', array( $this, 'filter_post_row_actions' ), 11, 2 );
+		add_filter( 'user_has_cap', array( $this, 'remove_user_edit_cap' ), 10, 3 );
+		add_filter( 'elementor/editor/localize_settings', array( $this, 'localize_settings' ) );
 	}
 
 	/**
@@ -103,9 +103,9 @@ class Documents_Manager {
 	 * @param Ajax $ajax_manager An instance of the ajax manager.
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
-		$ajax_manager->register_ajax_action( 'save_builder', [ $this, 'ajax_save' ] );
-		$ajax_manager->register_ajax_action( 'discard_changes', [ $this, 'ajax_discard_changes' ] );
-		$ajax_manager->register_ajax_action( 'get_document_config', [ $this, 'ajax_get_document_config' ] );
+		$ajax_manager->register_ajax_action( 'save_builder', array( $this, 'ajax_save' ) );
+		$ajax_manager->register_ajax_action( 'discard_changes', array( $this, 'ajax_discard_changes' ) );
+		$ajax_manager->register_ajax_action( 'get_document_config', array( $this, 'ajax_get_document_config' ) );
 	}
 
 	/**
@@ -117,11 +117,11 @@ class Documents_Manager {
 	 * @access public
 	 */
 	public function register_default_types() {
-		$default_types = [
+		$default_types = array(
 			'post' => Post::get_class_full_name(), // BC.
 			'wp-post' => Post::get_class_full_name(),
 			'wp-page' => Page::get_class_full_name(),
-		];
+		);
 
 		foreach ( $default_types as $type => $class ) {
 			$this->register_document_type( $type, $class );
@@ -197,9 +197,9 @@ class Documents_Manager {
 			$doc_type = $this->get_doc_type_by_id( $post_id );
 			$doc_type_class = $this->get_document_type( $doc_type );
 
-			$this->documents[ $post_id ] = new $doc_type_class( [
+			$this->documents[ $post_id ] = new $doc_type_class( array(
 				'post_id' => $post_id,
-			] );
+			) );
 		}
 
 		return $this->documents[ $post_id ];
@@ -330,7 +330,7 @@ class Documents_Manager {
 	 *
 	 * @return Document[] All the registered document types.
 	 */
-	public function get_document_types( $args = [], $operator = 'and' ) {
+	public function get_document_types( $args = array(), $operator = 'and' ) {
 		$this->register_types();
 
 		if ( ! empty( $args ) ) {
@@ -350,7 +350,7 @@ class Documents_Manager {
 	 * @return array A list of properties arrays indexed by the type.
 	 */
 	public function get_types_properties() {
-		$types_properties = [];
+		$types_properties = array();
 
 		foreach ( $this->get_document_types() as $type => $class ) {
 			$types_properties[ $type ] = $class::get_properties();
@@ -372,7 +372,7 @@ class Documents_Manager {
 	 *
 	 * @return Document The type of the document.
 	 */
-	public function create( $type, $post_data = [], $meta_data = [] ) {
+	public function create( $type, $post_data = array(), $meta_data = array() ) {
 		$class = $this->get_document_type( $type, false );
 
 		if ( ! $class ) {
@@ -385,7 +385,7 @@ class Documents_Manager {
 				$post_data['post_title'] = sprintf(
 					/* translators: %s: Document title. */
 					__( 'Elementor %s', 'elementor' ),
-					call_user_func( [ $class, 'get_title' ] )
+					call_user_func( array( $class, 'get_title' ) )
 				);
 			}
 			$update_title = true;
@@ -417,12 +417,12 @@ class Documents_Manager {
 		}
 
 		/** @var Document $document */
-		$document = new $class( [
+		$document = new $class( array(
 			'post_id' => $post_id,
-		] );
+		) );
 
 		// Let the $document to re-save the template type by his way + version.
-		$document->save( [] );
+		$document->save( array() );
 
 		return $document;
 	}
@@ -441,7 +441,7 @@ class Documents_Manager {
 	public function remove_user_edit_cap( $allcaps, $caps, $args ) {
 		global $pagenow;
 
-		if ( ! in_array( $pagenow, [ 'post.php', 'edit.php' ], true ) ) {
+		if ( ! in_array( $pagenow, array( 'post.php', 'edit.php' ), true ) ) {
 			return $allcaps;
 		}
 
@@ -521,14 +521,14 @@ class Documents_Manager {
 
 		$status = Document::STATUS_DRAFT;
 
-		if ( isset( $request['status'] ) && in_array( $request['status'], [ Document::STATUS_PUBLISH, Document::STATUS_PRIVATE, Document::STATUS_PENDING, Document::STATUS_AUTOSAVE ], true ) ) {
+		if ( isset( $request['status'] ) && in_array( $request['status'], array( Document::STATUS_PUBLISH, Document::STATUS_PRIVATE, Document::STATUS_PENDING, Document::STATUS_AUTOSAVE ), true ) ) {
 			$status = $request['status'];
 		}
 
 		if ( Document::STATUS_AUTOSAVE === $status ) {
 			// If the post is a draft - save the `autosave` to the original draft.
 			// Allow a revision only if the original post is already published.
-			if ( in_array( $document->get_post()->post_status, [ Document::STATUS_PUBLISH, Document::STATUS_PRIVATE ], true ) ) {
+			if ( in_array( $document->get_post()->post_status, array( Document::STATUS_PUBLISH, Document::STATUS_PRIVATE ), true ) ) {
 				$document = $document->get_autosave( 0, true );
 			}
 		}
@@ -539,10 +539,10 @@ class Documents_Manager {
 			$request['settings']['template'] = 'default';
 		}
 
-		$data = [
+		$data = array(
 			'elements' => $request['elements'],
 			'settings' => $request['settings'],
-		];
+		);
 
 		$document->save( $data );
 
@@ -552,25 +552,25 @@ class Documents_Manager {
 		// Refresh after save.
 		$document = $this->get( $post->ID, false );
 
-		$return_data = [
+		$return_data = array(
 			'status' => $post->post_status,
-			'config' => [
-				'document' => [
+			'config' => array(
+				'document' => array(
 					'last_edited' => $document->get_last_edited(),
-					'urls' => [
+					'urls' => array(
 						'wp_preview' => $document->get_wp_preview_url(),
-					],
-				],
-			],
-		];
+					),
+				),
+			),
+		);
 
 		$post_status_object = get_post_status_object( $main_post->post_status );
 
 		if ( $post_status_object ) {
-			$return_data['config']['document']['status'] = [
+			$return_data['config']['document']['status'] = array(
 				'value' => $post_status_object->name,
 				'label' => $post_status_object->label,
-			];
+			);
 		}
 
 		/**
@@ -660,10 +660,10 @@ class Documents_Manager {
 			return;
 		}
 
-		$this->switched_data[] = [
+		$this->switched_data[] = array(
 			'switched_doc' => $document,
 			'original_doc' => $this->current_doc, // Note, it can be null if the global isn't set
-		];
+		);
 
 		$this->current_doc = $document;
 	}
@@ -702,15 +702,15 @@ class Documents_Manager {
 	}
 
 	public function localize_settings( $settings ) {
-		$translations = [];
+		$translations = array();
 
 		foreach ( $this->get_document_types() as $type => $class ) {
 			$translations[ $type ] = $class::get_title();
 		}
 
-		return array_replace_recursive( $settings, [
+		return array_replace_recursive( $settings, array(
 			'i18n' => $translations,
-		] );
+		) );
 	}
 
 	private function register_types() {
@@ -737,10 +737,10 @@ class Documents_Manager {
 	 * @return string A URL for creating new post using Elementor.
 	 */
 	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
-		$query_args = [
+		$query_args = array(
 			'action' => 'elementor_new_post',
 			'post_type' => $post_type,
-		];
+		);
 
 		if ( $template_type ) {
 			$query_args['template_type'] = $template_type;

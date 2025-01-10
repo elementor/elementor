@@ -47,7 +47,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @var array
 	 */
-	public static $registered_runtime_widgets = [];
+	public static $registered_runtime_widgets = array();
 
 	/**
 	 * Get element type.
@@ -89,7 +89,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return array Widget keywords.
 	 */
 	public function get_keywords() {
-		return [];
+		return array();
 	}
 
 	/**
@@ -103,7 +103,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return array Widget categories.
 	 */
 	public function get_categories() {
-		return [ 'general' ];
+		return array( 'general' );
 	}
 
 	/**
@@ -134,7 +134,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @param array      $data Widget data. Default is an empty array.
 	 * @param array|null $args Optional. Widget default arguments. Default is null.
 	 */
-	public function __construct( $data = [], $args = null ) {
+	public function __construct( $data = array(), $args = null ) {
 		parent::__construct( $data, $args );
 
 		$is_type_instance = $this->is_type_instance();
@@ -269,7 +269,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $section_id Section ID.
 	 * @param array  $args       Section arguments Optional.
 	 */
-	public function start_controls_section( $section_id, array $args = [] ) {
+	public function start_controls_section( $section_id, array $args = array() ) {
 		parent::start_controls_section( $section_id, $args );
 
 		if ( $this->is_first_section ) {
@@ -291,7 +291,7 @@ abstract class Widget_Base extends Element_Base {
 	private function register_skin_control() {
 		$skins = $this->get_skins();
 		if ( ! empty( $skins ) ) {
-			$skin_options = [];
+			$skin_options = array();
 
 			if ( $this->_has_template_content ) {
 				$skin_options[''] = esc_html__( 'Default', 'elementor' );
@@ -308,21 +308,21 @@ abstract class Widget_Base extends Element_Base {
 			if ( 1 >= count( $skin_options ) ) {
 				$this->add_control(
 					'_skin',
-					[
+					array(
 						'label' => esc_html__( 'Skin', 'elementor' ),
 						'type' => Controls_Manager::HIDDEN,
 						'default' => $default_value,
-					]
+					)
 				);
 			} else {
 				$this->add_control(
 					'_skin',
-					[
+					array(
 						'label' => esc_html__( 'Skin', 'elementor' ),
 						'type' => Controls_Manager::SELECT,
 						'default' => $default_value,
 						'options' => $skin_options,
-					]
+					)
 				);
 			}
 		}
@@ -373,7 +373,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return array The initial widget config.
 	 */
 	protected function get_initial_config() {
-		$config = [
+		$config = array(
 			'widget_type' => $this->get_name(),
 			'keywords' => $this->get_keywords(),
 			'categories' => $this->get_categories(),
@@ -383,7 +383,7 @@ abstract class Widget_Base extends Element_Base {
 			'upsale_data' => $this->get_upsale_data(),
 			'is_dynamic_content' => $this->is_dynamic_content(),
 			'has_widget_inner_wrapper' => $this->has_widget_inner_wrapper(),
-		];
+		);
 
 		if ( isset( $config['upsale_data'] ) && is_array( $config['upsale_data'] ) ) {
 			$filter_name = 'elementor/widgets/' . $this->get_name() . '/custom_promotion';
@@ -500,10 +500,10 @@ abstract class Widget_Base extends Element_Base {
 		parent::add_render_attributes();
 
 		$this->add_render_attribute(
-			'_wrapper', 'class', [
+			'_wrapper', 'class', array(
 				'elementor-widget',
 				$this->get_html_wrapper_class(),
-			]
+			)
 		);
 
 		$settings = $this->get_settings();
@@ -571,7 +571,7 @@ abstract class Widget_Base extends Element_Base {
 
 		$attributes['data-elementor-open-lightbox'] = 'yes';
 
-		$action_hash_params = [];
+		$action_hash_params = array();
 
 		if ( $id ) {
 			$action_hash_params['id'] = $id;
@@ -853,7 +853,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @return string The repeater setting key (e.g. `tabs.3.tab_title`).
 	 */
 	protected function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {
-		return implode( '.', [ $repeater_key, $repeater_item_index, $setting_key ] );
+		return implode( '.', array( $repeater_key, $repeater_item_index, $setting_key ) );
 	}
 
 	/**
@@ -883,15 +883,15 @@ abstract class Widget_Base extends Element_Base {
 			return;
 		}
 
-		$this->add_render_attribute( $key, [
+		$this->add_render_attribute( $key, array(
 			'class' => 'elementor-inline-editing',
 			'data-elementor-setting-key' => $key,
-		] );
+		) );
 
 		if ( 'basic' !== $toolbar ) {
-			$this->add_render_attribute( $key, [
+			$this->add_render_attribute( $key, array(
 				'data-elementor-inline-editing-toolbar' => $toolbar,
-			] );
+			) );
 		}
 	}
 
@@ -1015,21 +1015,21 @@ abstract class Widget_Base extends Element_Base {
 	protected function deprecated_notice( $plugin_title, $since, $last = '', $replacement = '' ) {
 		$this->start_controls_section(
 			'Deprecated',
-			[
+			array(
 				'label' => esc_html__( 'Deprecated', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'deprecated_notice',
-			[
+			array(
 				'type' => Controls_Manager::DEPRECATED_NOTICE,
 				'widget' => $this->get_title(),
 				'since' => $since,
 				'last' => $last,
 				'plugin' => $plugin_title,
 				'replacement' => $replacement,
-			]
+			)
 		);
 
 		$this->end_controls_section();
@@ -1064,20 +1064,20 @@ abstract class Widget_Base extends Element_Base {
 	 */
 	protected function add_deprecation_message( $version, $message, $replacement ) {
 		// Expose the config for handling in JS.
-		$this->set_config( 'deprecation', [
+		$this->set_config( 'deprecation', array(
 			'version' => $version,
 			'message' => $message,
 			'replacement' => $replacement,
-		] );
+		) );
 
 		$this->add_control(
 			'deprecation_message',
-			[
+			array(
 				'type' => Controls_Manager::ALERT,
 				'alert_type' => 'info',
 				'content' => $message,
 				'separator' => 'after',
-			]
+			)
 		);
 	}
 }

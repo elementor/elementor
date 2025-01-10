@@ -13,15 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Duplicate_Post extends Endpoint {
 
 	protected function register() {
-		$args = [
-			'post_id' => [
+		$args = array(
+			'post_id' => array(
 				'description' => 'Post id to duplicate',
 				'type' => 'integer',
 				'required' => true,
 				'sanitize_callback' => 'absint',
 				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'title' => [
+			),
+			'title' => array(
 				'description' => 'Post title',
 				'type' => 'string',
 				'required' => false,
@@ -29,8 +29,8 @@ class Duplicate_Post extends Endpoint {
 					return sanitize_text_field( $value );
 				},
 				'validate_callback' => 'rest_validate_request_arg',
-			],
-		];
+			),
+		);
 
 		$this->register_items_route( \WP_REST_Server::CREATABLE, $args );
 	}
@@ -50,7 +50,7 @@ class Duplicate_Post extends Endpoint {
 		$post = get_post( $post_id );
 
 		if ( ! User::is_current_user_can_edit_post_type( $post->post_type ) ) {
-			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $post->post_type ), [ 'status' => 401 ] );
+			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $post->post_type ), array( 'status' => 401 ) );
 		}
 
 		if ( ! $post ) {
@@ -69,9 +69,9 @@ class Duplicate_Post extends Endpoint {
 		// Duplicate all taxonomies
 		$this->duplicate_post_taxonomies( $post_id, $new_post_id );
 
-		return [
+		return array(
 			'post_id' => $new_post_id,
-		];
+		);
 	}
 
 	/**
@@ -86,7 +86,7 @@ class Duplicate_Post extends Endpoint {
 		$current_user = wp_get_current_user();
 		$new_post_author = $current_user->ID;
 
-		$args = [
+		$args = array(
 			'comment_status' => $post->comment_status,
 			'ping_status' => $post->ping_status,
 			'post_author' => $new_post_author,
@@ -99,7 +99,7 @@ class Duplicate_Post extends Endpoint {
 			'post_type' => $post->post_type,
 			'to_ping' => $post->to_ping,
 			'menu_order' => $post->menu_order,
-		];
+		);
 
 		return wp_insert_post( $args );
 	}
@@ -144,7 +144,7 @@ class Duplicate_Post extends Endpoint {
 		}
 
 		foreach ( $taxonomies as $taxonomy ) {
-			$post_terms = wp_get_object_terms( $post_id, $taxonomy, [ 'fields' => 'slugs' ] );
+			$post_terms = wp_get_object_terms( $post_id, $taxonomy, array( 'fields' => 'slugs' ) );
 
 			if ( ! is_wp_error( $post_terms ) ) {
 				wp_set_object_terms( $new_post_id, $post_terms, $taxonomy, false );

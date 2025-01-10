@@ -44,13 +44,13 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function jsonSerialize(): array {
-		return [
+		return array(
 			'kind' => static::KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),
-		];
+		);
 	}
 
 	abstract public static function get_key(): string;

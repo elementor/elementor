@@ -29,21 +29,21 @@ class Manager extends BaseModule {
 	/**
 	 * @var array
 	 */
-	private $cache = [];
+	private $cache = array();
 
 	/**
 	 * Loaded controllers.
 	 *
 	 * @var \Elementor\Data\Base\Controller[]
 	 */
-	public $controllers = [];
+	public $controllers = array();
 
 	/**
 	 * Loaded command(s) format.
 	 *
 	 * @var string[]
 	 */
-	public $command_formats = [];
+	public $command_formats = array();
 
 	/**
 	 * Fix issue with 'Potentially polymorphic call. The code may be inoperable depending on the actual class instance passed as the argument.'.
@@ -55,7 +55,7 @@ class Manager extends BaseModule {
 	}
 
 	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_rest_error_handler' ] );
+		add_action( 'rest_api_init', array( $this, 'register_rest_error_handler' ) );
 	}
 
 	public function get_name() {
@@ -133,7 +133,7 @@ class Manager extends BaseModule {
 	 */
 	public function find_controller_instance( $command ) {
 		$command_parts = explode( '/', $command );
-		$assumed_command_parts = [];
+		$assumed_command_parts = array();
 
 		foreach ( $command_parts as $command_part ) {
 			$assumed_command_parts [] = $command_part;
@@ -158,7 +158,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return \stdClass
 	 */
-	public function command_extract_args( $command, $args = [] ) {
+	public function command_extract_args( $command, $args = array() ) {
 		$result = new \stdClass();
 		$result->command = $command;
 		$result->args = $args;
@@ -251,11 +251,11 @@ class Manager extends BaseModule {
 	public function kill_server() {
 		global $wp_rest_server;
 
-		$this->controllers = [];
-		$this->command_formats = [];
+		$this->controllers = array();
+		$this->command_formats = array();
 		$this->server = false;
 		$this->is_internal = false;
-		$this->cache = [];
+		$this->cache = array();
 		$wp_rest_server = false;
 	}
 
@@ -268,8 +268,8 @@ class Manager extends BaseModule {
 	 * @return mixed
 	 */
 	public function run_processor( $processor, $data ) {
-		if ( call_user_func_array( [ $processor, 'get_conditions' ], $data ) ) {
-			return call_user_func_array( [ $processor, 'apply' ], $data );
+		if ( call_user_func_array( array( $processor, 'get_conditions' ), $data ) ) {
+			return call_user_func_array( array( $processor, 'apply' ), $data );
 		}
 
 		return null;
@@ -346,7 +346,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return array
 	 */
-	public function run_endpoint( $endpoint, $args = [], $method = 'GET' ) {
+	public function run_endpoint( $endpoint, $args = array(), $method = 'GET' ) {
 		$response = $this->run_request( $endpoint, $args, $method );
 
 		return $response->get_data();
@@ -367,7 +367,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return array|false processed result
 	 */
-	public function run( $command, $args = [], $method = 'GET' ) {
+	public function run( $command, $args = array(), $method = 'GET' ) {
 		$key = crc32( $command . '-' . wp_json_encode( $args ) . '-' . $method );
 		$cache = $this->get_cache( $key );
 
@@ -380,8 +380,8 @@ class Manager extends BaseModule {
 		$controller_instance = $this->find_controller_instance( $command );
 
 		if ( ! $controller_instance ) {
-			$this->set_cache( $key, [] );
-			return [];
+			$this->set_cache( $key, array() );
+			return array();
 		}
 
 		$extracted_command = $this->command_extract_args( $command, $args );
@@ -394,17 +394,17 @@ class Manager extends BaseModule {
 
 		$endpoint = $this->command_to_endpoint( $command, $format, $args );
 
-		$this->run_processors( $command_processors, Processor\Before::class, [ $args ] );
+		$this->run_processors( $command_processors, Processor\Before::class, array( $args ) );
 
 		$response = $this->run_request( $endpoint, $args, $method );
 		$result = $response->get_data();
 
 		if ( $response->is_error() ) {
-			$this->set_cache( $key, [] );
-			return [];
+			$this->set_cache( $key, array() );
+			return array();
 		}
 
-		$result = $this->run_processors( $command_processors, Processor\After::class, [ $args, $result ] );
+		$result = $this->run_processors( $command_processors, Processor\After::class, array( $args, $result ) );
 
 		$this->set_cache( $key, $result );
 

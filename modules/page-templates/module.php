@@ -119,7 +119,7 @@ class Module extends BaseModule {
 		$post_types = get_post_types_by_support( 'elementor' );
 
 		foreach ( $post_types as $post_type ) {
-			add_filter( "theme_{$post_type}_templates", [ $this, 'add_page_templates' ], 10, 4 );
+			add_filter( "theme_{$post_type}_templates", array( $this, 'add_page_templates' ), 10, 4 );
 		}
 	}
 
@@ -153,11 +153,11 @@ class Module extends BaseModule {
 			}
 		}
 
-		$page_templates = [
+		$page_templates = array(
 			self::TEMPLATE_CANVAS => esc_html__( 'Elementor Canvas', 'elementor' ),
 			self::TEMPLATE_HEADER_FOOTER => esc_html__( 'Elementor Full Width', 'elementor' ),
 			self::TEMPLATE_THEME => esc_html__( 'Theme', 'elementor' ),
-		] + $page_templates;
+		) + $page_templates;
 
 		return $page_templates;
 	}
@@ -201,7 +201,7 @@ class Module extends BaseModule {
 	 */
 	public function print_content() {
 		if ( ! $this->print_callback ) {
-			$this->print_callback = [ $this, 'print_callback' ];
+			$this->print_callback = array( $this, 'print_callback' );
 		}
 
 		call_user_func( $this->print_callback );
@@ -272,16 +272,16 @@ class Module extends BaseModule {
 
 		require_once ABSPATH . '/wp-admin/includes/template.php';
 
-		$document->start_injection( [
+		$document->start_injection( array(
 			'of' => 'post_status',
-			'fallback' => [
+			'fallback' => array(
 				'of' => 'post_title',
-			],
-		] );
+			),
+		) );
 
-		$control_options = [
+		$control_options = array(
 			'options' => array_flip( get_page_templates( null, $document->get_main_post()->post_type ) ),
-		];
+		);
 
 		$this->add_template_controls( $document, $control_id, $control_options );
 
@@ -293,14 +293,14 @@ class Module extends BaseModule {
 	 */
 	public function add_template_controls( Document $document, $control_id, $control_options ) {
 		// Default Control Options
-		$default_control_options = [
+		$default_control_options = array(
 			'label' => esc_html__( 'Page Layout', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => 'default',
-			'options' => [
+			'options' => array(
 				'default' => esc_html__( 'Default', 'elementor' ),
-			],
-		];
+			),
+		);
 
 		$control_options = array_replace_recursive( $default_control_options, $control_options );
 
@@ -311,60 +311,60 @@ class Module extends BaseModule {
 
 		$document->add_control(
 			$control_id . '_default_description',
-			[
+			array(
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => '<b>' . esc_html__( 'The default page template as defined in Elementor Panel → Hamburger Menu → Site Settings.', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
-				'condition' => [
+				'condition' => array(
 					$control_id => 'default',
-				],
-			]
+				),
+			)
 		);
 
 		$document->add_control(
 			$control_id . '_theme_description',
-			[
+			array(
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => '<b>' . esc_html__( 'Default Page Template from your theme.', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
-				'condition' => [
+				'condition' => array(
 					$control_id => self::TEMPLATE_THEME,
-				],
-			]
+				),
+			)
 		);
 
 		$document->add_control(
 			$control_id . '_canvas_description',
-			[
+			array(
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => '<b>' . esc_html__( 'No header, no footer, just Elementor', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
-				'condition' => [
+				'condition' => array(
 					$control_id => self::TEMPLATE_CANVAS,
-				],
-			]
+				),
+			)
 		);
 
 		$document->add_control(
 			$control_id . '_header_footer_description',
-			[
+			array(
 				'type' => Controls_Manager::RAW_HTML,
 				'raw' => '<b>' . esc_html__( 'This template includes the header, full-width content and footer', 'elementor' ) . '</b>',
 				'content_classes' => 'elementor-descriptor',
-				'condition' => [
+				'condition' => array(
 					$control_id => self::TEMPLATE_HEADER_FOOTER,
-				],
-			]
+				),
+			)
 		);
 
 		if ( $document instanceof Kit ) {
 			$document->add_control(
 				'reload_preview_description',
-				[
+				array(
 					'type' => Controls_Manager::RAW_HTML,
 					'raw' => esc_html__( 'Changes will be reflected in the preview only after the page reloads.', 'elementor' ),
 					'content_classes' => 'elementor-descriptor',
-				]
+				)
 			);
 		}
 	}
@@ -416,12 +416,12 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'add_wp_templates_support' ] );
+		add_action( 'init', array( $this, 'add_wp_templates_support' ) );
 
-		add_filter( 'template_include', [ $this, 'template_include' ], 11 /* After Plugins/WooCommerce */ );
+		add_filter( 'template_include', array( $this, 'template_include' ), 11 /* After Plugins/WooCommerce */ );
 
-		add_action( 'elementor/documents/register_controls', [ $this, 'action_register_template_control' ] );
+		add_action( 'elementor/documents/register_controls', array( $this, 'action_register_template_control' ) );
 
-		add_filter( 'update_post_metadata', [ $this, 'filter_update_meta' ], 10, 3 );
+		add_filter( 'update_post_metadata', array( $this, 'filter_update_meta' ), 10, 3 );
 	}
 }

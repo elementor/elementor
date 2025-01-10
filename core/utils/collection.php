@@ -23,7 +23,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 *
 	 * @param array $items
 	 */
-	public function __construct( array $items = [] ) {
+	public function __construct( array $items = array() ) {
 		$this->items = $items;
 	}
 
@@ -32,7 +32,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 *
 	 * @return static
 	 */
-	public static function make( array $items = [] ) {
+	public static function make( array $items = array() ) {
 		return new static( $items );
 	}
 
@@ -166,7 +166,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * @return $this
 	 */
 	public function map_with_keys( callable $callback ) {
-		$result = [];
+		$result = array();
 
 		foreach ( $this->items as $key => $value ) {
 			$assoc = $callback( $value, $key );
@@ -213,7 +213,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * @return $this
 	 */
 	public function pluck( $key ) {
-		$result = [];
+		$result = array();
 
 		foreach ( $this->items as $item ) {
 			$result[] = $this->get_item_value( $item, $key );
@@ -230,7 +230,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * @return $this
 	 */
 	public function group_by( $group_by ) {
-		$result = [];
+		$result = array();
 
 		foreach ( $this->items as $item ) {
 			$group_key = $this->get_item_value( $item, $group_by, 0 );
@@ -362,10 +362,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		}
 
 		if ( ! is_array( $keys ) ) {
-			$keys = [ $keys ];
+			$keys = array( $keys );
 		}
 
-		$exists = [];
+		$exists = array();
 
 		return $this->filter( function ( $item ) use ( $keys, &$exists ) {
 			$value = null;
@@ -426,7 +426,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * @return $this
 	 */
 	public function flatten() {
-		$result = [];
+		$result = array();
 
 		foreach ( $this->all() as $item ) {
 			$item = $item instanceof Collection ? $item->all() : $item;

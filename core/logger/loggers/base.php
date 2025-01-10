@@ -17,26 +17,26 @@ abstract class Base implements Logger_Interface {
 	 */
 	abstract public function get_log();
 
-	public function log( $item, $type = self::LEVEL_INFO, $args = [] ) {
+	public function log( $item, $type = self::LEVEL_INFO, $args = array() ) {
 		if ( ! $item instanceof Log_Item ) {
 			$item = $this->create_item( $item, $type, $args );
 		}
 		$this->save_log( $item );
 	}
 
-	public function info( $message, $args = [] ) {
+	public function info( $message, $args = array() ) {
 		$this->log( $message, self::LEVEL_INFO, $args );
 	}
 
-	public function notice( $message, $args = [] ) {
+	public function notice( $message, $args = array() ) {
 		$this->log( $message, self::LEVEL_NOTICE, $args );
 	}
 
-	public function warning( $message, $args = [] ) {
+	public function warning( $message, $args = array() ) {
 		$this->log( $message, self::LEVEL_WARNING, $args );
 	}
 
-	public function error( $message, $args = [] ) {
+	public function error( $message, $args = array() ) {
 		$this->log( $message, self::LEVEL_ERROR, $args );
 	}
 
@@ -47,7 +47,7 @@ abstract class Base implements Logger_Interface {
 	 *
 	 * @return Log_Item_Interface
 	 */
-	private function create_item( $message, $type, $args = [] ) {
+	private function create_item( $message, $type, $args = array() ) {
 		$args['message'] = $message;
 		$args['type'] = $type;
 
@@ -60,16 +60,16 @@ abstract class Base implements Logger_Interface {
 		$entries = $this->get_log();
 
 		if ( empty( $entries ) ) {
-			return [
-				'All' => [
+			return array(
+				'All' => array(
 					'total_count' => 0,
 					'count' => 0,
 					'entries' => '',
-				],
-			];
+				),
+			);
 		}
 
-		$sorted_entries = [];
+		$sorted_entries = array();
 		$open_tag = $table ? '<tr><td>' : '';
 		$close_tab = $table ? '</td></tr>' : PHP_EOL;
 
@@ -80,7 +80,7 @@ abstract class Base implements Logger_Interface {
 			$sorted_entries[ $entry->get_name() ][] = $open_tag . $entry->format( $format ) . $close_tab;
 		}
 
-		$formatted_entries = [];
+		$formatted_entries = array();
 		foreach ( $sorted_entries as $key => $sorted_entry ) {
 			$formatted_entries[ $key ]['total_count'] = count( $sorted_entry );
 			$formatted_entries[ $key ]['count'] = count( $sorted_entry );

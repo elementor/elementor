@@ -39,14 +39,14 @@ class Responsive {
 	 *
 	 * @var array Default breakpoints.
 	 */
-	private static $default_breakpoints = [
+	private static $default_breakpoints = array(
 		'xs' => 0,
 		'sm' => 480,
 		'md' => 768,
 		'lg' => 1025,
 		'xl' => 1440,
 		'xxl' => 1600,
-	];
+	);
 
 	/**
 	 * Editable breakpoint keys.
@@ -60,10 +60,10 @@ class Responsive {
 	 *
 	 * @var array Editable breakpoint keys.
 	 */
-	private static $editable_breakpoints_keys = [
+	private static $editable_breakpoints_keys = array(
 		'md',
 		'lg',
-	];
+	);
 
 	/**
 	 * Get default breakpoints.
@@ -115,7 +115,7 @@ class Responsive {
 	 */
 	public static function get_breakpoints() {
 		return array_reduce(
-			array_keys( self::$default_breakpoints ), function( $new_array, $breakpoint_key ) {
+			array_keys( self::$default_breakpoints ), function ( $new_array, $breakpoint_key ) {
 				if ( ! in_array( $breakpoint_key, self::$editable_breakpoints_keys, true ) ) {
 					$new_array[ $breakpoint_key ] = self::$default_breakpoints[ $breakpoint_key ];
 				} else {
@@ -125,7 +125,7 @@ class Responsive {
 				}
 
 				return $new_array;
-			}, []
+			}, array()
 		);
 	}
 

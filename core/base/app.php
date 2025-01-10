@@ -53,7 +53,7 @@ abstract class App extends Module {
 	 * @return array
 	 */
 	private function get_components_config() {
-		$settings = [];
+		$settings = array();
 
 		foreach ( $this->get_components() as $id => $instance ) {
 			$settings[ $id ] = $instance->get_settings();

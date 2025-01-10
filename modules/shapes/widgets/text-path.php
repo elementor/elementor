@@ -72,7 +72,7 @@ class TextPath extends Widget_Base {
 	 * @access public
 	 */
 	public function get_keywords() {
-		return [ 'text path', 'word path', 'text on path', 'wordart', 'word art' ];
+		return array( 'text path', 'word path', 'text on path', 'wordart', 'word art' );
 	}
 
 	/**
@@ -86,7 +86,7 @@ class TextPath extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-text-path' ];
+		return array( 'widget-text-path' );
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -99,121 +99,121 @@ class TextPath extends Widget_Base {
 	protected function register_content_tab() {
 		$this->start_controls_section(
 			'section_content_text_path',
-			[
+			array(
 				'label' => esc_html__( 'Text Path', 'elementor' ),
 				'tab' => Controls_Manager::TAB_CONTENT,
-			]
+			)
 		);
 
 		$this->add_control(
 			'text',
-			[
+			array(
 				'label' => esc_html__( 'Text', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'label_block' => true,
 				'default' => esc_html__( 'Add Your Curvy Text Here', 'elementor' ),
 				'frontend_available' => true,
 				'render_type' => 'none',
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'path',
-			[
+			array(
 				'label' => esc_html__( 'Path Type', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => Shapes_Module::get_paths(),
 				'default' => 'wave',
-			]
+			)
 		);
 
 		$this->add_control(
 			'custom_path',
-			[
+			array(
 				'label' => esc_html__( 'SVG', 'elementor' ),
 				'type' => Controls_Manager::MEDIA,
-				'media_types' => [
+				'media_types' => array(
 					'svg',
-				],
-				'condition' => [
+				),
+				'condition' => array(
 					'path' => 'custom',
-				],
-				'dynamic' => [
+				),
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'description' => sprintf(
 					'%1$s <a target="_blank" href="https://go.elementor.com/text-path-create-paths/">%2$s</a>',
 					esc_html__( 'Want to create custom text paths with SVG?', 'elementor' ),
 					esc_html__( 'Learn more', 'elementor' )
 				),
-			]
+			)
 		);
 
 		$this->add_control(
 			'link',
-			[
+			array(
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
 				'label_block' => true,
-				'dynamic' => [
+				'dynamic' => array(
 					'active' => true,
-				],
+				),
 				'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
 				'frontend_available' => true,
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'align',
-			[
+			array(
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => '',
-				'options' => [
-					'left' => [
+				'options' => array(
+					'left' => array(
 						'title' => esc_html__( 'Left', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
-					],
-					'center' => [
+					),
+					'center' => array(
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
-					],
-					'right' => [
+					),
+					'right' => array(
 						'title' => esc_html__( 'Right', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
-					],
-				],
-				'selectors' => [
+					),
+				),
+				'selectors' => array(
 					'{{WRAPPER}}' => '--alignment: {{VALUE}}',
-				],
+				),
 				'frontend_available' => true,
-			]
+			)
 		);
 
 		$this->add_control(
 			'text_path_direction',
-			[
+			array(
 				'label' => esc_html__( 'Text Direction', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
-				'options' => [
+				'options' => array(
 					'' => esc_html__( 'Default', 'elementor' ),
 					'rtl' => esc_html__( 'RTL', 'elementor' ),
 					'ltr' => esc_html__( 'LTR', 'elementor' ),
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}}' => '--direction: {{VALUE}}',
-				],
+				),
 				'frontend_available' => true,
-			]
+			)
 		);
 
 		$this->add_control(
 			'show_path',
-			[
+			array(
 				'label' => esc_html__( 'Show Path', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'label_on' => esc_html__( 'On', 'elementor' ),
@@ -221,10 +221,10 @@ class TextPath extends Widget_Base {
 				'return_value' => self::DEFAULT_PATH_FILL,
 				'separator' => 'before',
 				'default' => '',
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => '--path-stroke: {{VALUE}}; --path-fill: transparent;',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_section();
@@ -239,163 +239,163 @@ class TextPath extends Widget_Base {
 		 */
 		$this->start_controls_section(
 			'section_style_text_path',
-			[
+			array(
 				'label' => esc_html__( 'Text Path', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'size',
-			[
+			array(
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'range' => [
-					'%' => [
+				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+				'range' => array(
+					'%' => array(
 						'min' => 0,
 						'max' => 100,
 						'step' => 10,
-					],
-					'px' => [
+					),
+					'px' => array(
 						'max' => 800,
 						'step' => 50,
-					],
-				],
-				'default' => [
+					),
+				),
+				'default' => array(
 					'size' => 500,
-				],
-				'tablet_default' => [
+				),
+				'tablet_default' => array(
 					'size' => 500,
-				],
-				'mobile_default' => [
+				),
+				'mobile_default' => array(
 					'size' => 500,
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}}' => '--width: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_responsive_control(
 			'rotation',
-			[
+			array(
 				'label' => esc_html__( 'Rotate', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'deg', 'grad', 'rad', 'turn', 'custom' ],
-				'default' => [
+				'size_units' => array( 'deg', 'grad', 'rad', 'turn', 'custom' ),
+				'default' => array(
 					'unit' => 'deg',
-				],
-				'tablet_default' => [
+				),
+				'tablet_default' => array(
 					'unit' => 'deg',
-				],
-				'mobile_default' => [
+				),
+				'mobile_default' => array(
 					'unit' => 'deg',
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}}' => '--rotate: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'text_heading',
-			[
+			array(
 				'label' => esc_html__( 'Text', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-			]
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
-			[
+			array(
 				'name' => 'text_typography',
 				'selector' => '{{WRAPPER}}',
-				'global' => [
+				'global' => array(
 					'default' => Global_Typography::TYPOGRAPHY_TEXT,
-				],
-				'fields_options' => [
-					'font_size' => [
-						'default' => [
+				),
+				'fields_options' => array(
+					'font_size' => array(
+						'default' => array(
 							'size' => '20',
 							'unit' => 'px',
-						],
-						'size_units' => [ 'px' ],
-					],
+						),
+						'size_units' => array( 'px' ),
+					),
 					// Text decoration isn't an inherited property, so it's required to explicitly
 					// target the specific `textPath` element.
-					'text_decoration' => [
-						'selectors' => [
+					'text_decoration' => array(
+						'selectors' => array(
 							'{{WRAPPER}} textPath' => 'text-decoration: {{VALUE}};',
-						],
-					],
-				],
-			]
+						),
+					),
+				),
+			)
 		);
 
 		$this->add_group_control(
 			Group_Control_Text_Stroke::get_type(),
-			[
+			array(
 				'name' => 'text_stroke',
 				'selector' => '{{WRAPPER}} textPath',
-			]
+			)
 		);
 
 		$this->add_responsive_control(
 			'word_spacing',
-			[
+			array(
 				'label' => esc_html__( 'Word Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+				'range' => array(
+					'px' => array(
 						'min' => -20,
 						'max' => 20,
-					],
-					'em' => [
+					),
+					'em' => array(
 						'min' => -1,
 						'max' => 1,
-					],
-					'rem' => [
+					),
+					'rem' => array(
 						'min' => -1,
 						'max' => 1,
-					],
-				],
-				'default' => [
+					),
+				),
+				'default' => array(
 					'size' => '',
-				],
-				'tablet_default' => [
+				),
+				'tablet_default' => array(
 					'size' => '',
-				],
-				'mobile_default' => [
+				),
+				'mobile_default' => array(
 					'size' => '',
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}}' => '--word-spacing: {{SIZE}}{{UNIT}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'start_point',
-			[
+			array(
 				'label' => esc_html__( 'Starting Point', 'elementor' ) . ' (%)',
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%' ],
-				'range' => [
-					'px' => [
+				'size_units' => array( '%' ),
+				'range' => array(
+					'px' => array(
 						'min' => -100,
 						'max' => 100,
 						'step' => 1,
-					],
-				],
-				'default' => [
+					),
+				),
+				'default' => array(
 					'unit' => '%',
 					'size' => 0,
-				],
+				),
 				'frontend_available' => true,
 				'render_type' => 'none',
-			]
+			)
 		);
 
 		$this->start_controls_tabs( 'text_style' );
@@ -405,21 +405,21 @@ class TextPath extends Widget_Base {
 		 */
 		$this->start_controls_tab(
 			'text_normal',
-			[
+			array(
 				'label' => esc_html__( 'Normal', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'text_color_normal',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => '--text-color: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_tab();
@@ -429,45 +429,45 @@ class TextPath extends Widget_Base {
 		 */
 		$this->start_controls_tab(
 			'text_hover',
-			[
+			array(
 				'label' => esc_html__( 'Hover', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'text_color_hover',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => '--text-color-hover: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'hover_animation',
-			[
+			array(
 				'label' => esc_html__( 'Hover Animation', 'elementor' ),
 				'type' => Controls_Manager::HOVER_ANIMATION,
-			]
+			)
 		);
 
 		$this->add_control(
 			'hover_transition',
-			[
+			array(
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms', 'custom' ],
-				'default' => [
+				'size_units' => array( 's', 'ms', 'custom' ),
+				'default' => array(
 					'unit' => 's',
 					'size' => 0.3,
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}}' => '--transition: {{SIZE}}{{UNIT}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_tab();
@@ -481,13 +481,13 @@ class TextPath extends Widget_Base {
 		 */
 		$this->start_controls_section(
 			'section_style_path',
-			[
+			array(
 				'label' => esc_html__( 'Path', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-				'condition' => [
+				'condition' => array(
 					'show_path!' => '',
-				],
-			]
+				),
+			)
 		);
 
 		$this->start_controls_tabs( 'path_style' );
@@ -497,68 +497,68 @@ class TextPath extends Widget_Base {
 		 */
 		$this->start_controls_tab(
 			'path_normal',
-			[
+			array(
 				'label' => esc_html__( 'Normal', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'path_fill_normal',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => '--path-fill: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'stroke_heading_normal',
-			[
+			array(
 				'label' => esc_html__( 'Stroke', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-			]
+			)
 		);
 
 		$this->add_control(
 			'stroke_color_normal',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => self::DEFAULT_PATH_FILL,
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => '--stroke-color: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'stroke_width_normal',
-			[
+			array(
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'default' => [
+				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+				'default' => array(
 					'size' => 1,
-				],
-				'range' => [
-					'px' => [
+				),
+				'range' => array(
+					'px' => array(
 						'min' => 1,
 						'max' => 20,
-					],
-					'em' => [
+					),
+					'em' => array(
 						'max' => 2,
-					],
-					'rem' => [
+					),
+					'rem' => array(
 						'max' => 2,
-					],
-				],
-				'selectors' => [
+					),
+				),
+				'selectors' => array(
 					'{{WRAPPER}}' => '--stroke-width: {{SIZE}}{{UNIT}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_tab();
@@ -568,84 +568,84 @@ class TextPath extends Widget_Base {
 		 */
 		$this->start_controls_tab(
 			'path_hover',
-			[
+			array(
 				'label' => esc_html__( 'Hover', 'elementor' ),
-			]
+			)
 		);
 
 		$this->add_control(
 			'path_fill_hover',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => '--path-fill-hover: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'stroke_heading_hover',
-			[
+			array(
 				'label' => esc_html__( 'Stroke', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
-			]
+			)
 		);
 
 		$this->add_control(
 			'stroke_color_hover',
-			[
+			array(
 				'label' => esc_html__( 'Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
-				'selectors' => [
+				'selectors' => array(
 					'{{WRAPPER}}' => '--stroke-color-hover: {{VALUE}};',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'stroke_width_hover',
-			[
+			array(
 				'label' => esc_html__( 'Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-				'default' => [
+				'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+				'default' => array(
 					'size' => '',
-				],
-				'range' => [
-					'px' => [
+				),
+				'range' => array(
+					'px' => array(
 						'min' => 1,
 						'max' => 20,
-					],
-					'em' => [
+					),
+					'em' => array(
 						'max' => 2,
-					],
-					'rem' => [
+					),
+					'rem' => array(
 						'max' => 2,
-					],
-				],
-				'selectors' => [
+					),
+				),
+				'selectors' => array(
 					'{{WRAPPER}}' => '--stroke-width-hover: {{SIZE}}{{UNIT}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->add_control(
 			'stroke_transition',
-			[
+			array(
 				'label' => esc_html__( 'Transition Duration', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 's', 'ms', 'custom' ],
-				'default' => [
+				'size_units' => array( 's', 'ms', 'custom' ),
+				'default' => array(
 					'unit' => 's',
 					'size' => 0.3,
-				],
-				'selectors' => [
+				),
+				'selectors' => array(
 					'{{WRAPPER}}' => '--stroke-transition: {{SIZE}}{{UNIT}}',
-				],
-			]
+				),
+			)
 		);
 
 		$this->end_controls_tab();
@@ -686,12 +686,12 @@ class TextPath extends Widget_Base {
 		$path_url = preg_replace( '/^https?:/i', '', $path_url );
 
 		// Add Text Path attributes.
-		$this->add_render_attribute( 'text_path', [
+		$this->add_render_attribute( 'text_path', array(
 			'class' => 'e-text-path',
 			'data-text' => htmlentities( esc_attr( $settings['text'] ) ),
 			'data-url' => esc_url( $path_url ),
 			'data-link-url' => esc_url( $settings['link']['url'] ?? '' ),
-		] );
+		) );
 
 		// Add hover animation.
 		if ( ! empty( $settings['hover_animation'] ) ) {

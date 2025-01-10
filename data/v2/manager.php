@@ -31,21 +31,21 @@ class Manager extends BaseModule {
 	/**
 	 * @var array
 	 */
-	private $cache = [];
+	private $cache = array();
 
 	/**
 	 * Loaded controllers.
 	 *
 	 * @var \Elementor\Data\V2\Base\Controller[]
 	 */
-	public $controllers = [];
+	public $controllers = array();
 
 	/**
 	 * Loaded command(s) format.
 	 *
 	 * @var string[]
 	 */
-	public $command_formats = [];
+	public $command_formats = array();
 
 	public function get_name() {
 		return 'data-manager-v2';
@@ -113,7 +113,7 @@ class Manager extends BaseModule {
 	 */
 	public function find_controller_instance( $command ) {
 		$command_parts = explode( '/', $command );
-		$assumed_command_parts = [];
+		$assumed_command_parts = array();
 
 		foreach ( $command_parts as $command_part ) {
 			$assumed_command_parts [] = $command_part;
@@ -138,7 +138,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return \stdClass
 	 */
-	public function command_extract_args( $command, $args = [] ) {
+	public function command_extract_args( $command, $args = array() ) {
 		$result = new \stdClass();
 		$result->command = $command;
 		$result->args = $args;
@@ -231,11 +231,11 @@ class Manager extends BaseModule {
 	public function kill_server() {
 		global $wp_rest_server;
 
-		$this->controllers = [];
-		$this->command_formats = [];
+		$this->controllers = array();
+		$this->command_formats = array();
 		$this->server = false;
 		$this->is_internal = false;
-		$this->cache = [];
+		$this->cache = array();
 		$wp_rest_server = false;
 	}
 
@@ -248,8 +248,8 @@ class Manager extends BaseModule {
 	 * @return mixed
 	 */
 	public function run_processor( $processor, $data ) {
-		if ( call_user_func_array( [ $processor, 'get_conditions' ], $data ) ) {
-			return call_user_func_array( [ $processor, 'apply' ], $data );
+		if ( call_user_func_array( array( $processor, 'get_conditions' ), $data ) ) {
+			return call_user_func_array( array( $processor, 'apply' ), $data );
 		}
 
 		return null;
@@ -300,7 +300,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return \WP_REST_Response
 	 */
-	public function run_request( $endpoint, $args = [], $method = \WP_REST_Server::READABLE, $namespace = self::ROOT_NAMESPACE, $version = self::VERSION ) {
+	public function run_request( $endpoint, $args = array(), $method = \WP_REST_Server::READABLE, $namespace = self::ROOT_NAMESPACE, $version = self::VERSION ) {
 		$this->run_server();
 
 		$endpoint = '/' . $namespace . '/v' . $version . '/' . trim( $endpoint, '/' );
@@ -328,7 +328,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return array
 	 */
-	public function run_endpoint( $endpoint, $args = [], $method = 'GET' ) {
+	public function run_endpoint( $endpoint, $args = array(), $method = 'GET' ) {
 		// The method become public since it used in `Elementor\Data\V2\Base\Endpoint\Index\AllChildren`.
 		$response = $this->run_request( $endpoint, $args, $method );
 
@@ -350,7 +350,7 @@ class Manager extends BaseModule {
 	 *
 	 * @return array|false processed result
 	 */
-	public function run( $command, $args = [], $method = 'GET' ) {
+	public function run( $command, $args = array(), $method = 'GET' ) {
 		$key = crc32( $command . '-' . wp_json_encode( $args ) . '-' . $method );
 		$cache = $this->get_cache( $key );
 
@@ -363,8 +363,8 @@ class Manager extends BaseModule {
 		$controller_instance = $this->find_controller_instance( $command );
 
 		if ( ! $controller_instance ) {
-			$this->set_cache( $key, [] );
-			return [];
+			$this->set_cache( $key, array() );
+			return array();
 		}
 
 		$extracted_command = $this->command_extract_args( $command, $args );
@@ -377,17 +377,17 @@ class Manager extends BaseModule {
 
 		$endpoint = $this->command_to_endpoint( $command, $format, $args );
 
-		$this->run_processors( $command_processors, Processor\Before::class, [ $args ] );
+		$this->run_processors( $command_processors, Processor\Before::class, array( $args ) );
 
 		$response = $this->run_request( $endpoint, $args, $method );
 		$result = $response->get_data();
 
 		if ( $response->is_error() ) {
-			$this->set_cache( $key, [] );
-			return [];
+			$this->set_cache( $key, array() );
+			return array();
 		}
 
-		$result = $this->run_processors( $command_processors, Processor\After::class, [ $args, $result ] );
+		$result = $this->run_processors( $command_processors, Processor\After::class, array( $args, $result ) );
 
 		$this->set_cache( $key, $result );
 

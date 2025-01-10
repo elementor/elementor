@@ -56,90 +56,90 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	 * @return array Control fields.
 	 */
 	protected function init_fields() {
-		$controls = [];
+		$controls = array();
 
-		$controls['blur'] = [
+		$controls['blur'] = array(
 			'label' => esc_html_x( 'Blur', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'required' => 'true',
-			'range' => [
-				'px' => [
+			'range' => array(
+				'px' => array(
 					'min' => 0,
 					'max' => 10,
 					'step' => 0.1,
-				],
-			],
-			'default' => [
+				),
+			),
+			'default' => array(
 				'size' => 0,
-			],
-			'selectors' => [
+			),
+			'selectors' => array(
 				'{{SELECTOR}}' => 'filter: brightness( {{brightness.SIZE}}% ) contrast( {{contrast.SIZE}}% ) saturate( {{saturate.SIZE}}% ) blur( {{blur.SIZE}}px ) hue-rotate( {{hue.SIZE}}deg )',
-			],
-		];
+			),
+		);
 
-		$controls['brightness'] = [
+		$controls['brightness'] = array(
 			'label' => esc_html_x( 'Brightness', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'render_type' => 'ui',
 			'required' => 'true',
-			'default' => [
+			'default' => array(
 				'size' => 100,
-			],
-			'range' => [
-				'px' => [
+			),
+			'range' => array(
+				'px' => array(
 					'min' => 0,
 					'max' => 200,
-				],
-			],
-		];
+				),
+			),
+		);
 
-		$controls['contrast'] = [
+		$controls['contrast'] = array(
 			'label' => esc_html_x( 'Contrast', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'render_type' => 'ui',
 			'required' => 'true',
-			'default' => [
+			'default' => array(
 				'size' => 100,
-			],
-			'range' => [
-				'px' => [
+			),
+			'range' => array(
+				'px' => array(
 					'min' => 0,
 					'max' => 200,
-				],
-			],
-		];
+				),
+			),
+		);
 
-		$controls['saturate'] = [
+		$controls['saturate'] = array(
 			'label' => esc_html_x( 'Saturation', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'render_type' => 'ui',
 			'required' => 'true',
-			'default' => [
+			'default' => array(
 				'size' => 100,
-			],
-			'range' => [
-				'px' => [
+			),
+			'range' => array(
+				'px' => array(
 					'min' => 0,
 					'max' => 200,
-				],
-			],
-		];
+				),
+			),
+		);
 
-		$controls['hue'] = [
+		$controls['hue'] = array(
 			'label' => esc_html_x( 'Hue', 'Filter Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
 			'render_type' => 'ui',
 			'required' => 'true',
-			'default' => [
+			'default' => array(
 				'size' => 0,
-			],
-			'range' => [
-				'px' => [
+			),
+			'range' => array(
+				'px' => array(
 					'min' => 0,
 					'max' => 360,
-				],
-			],
-		];
+				),
+			),
+		);
 
 		return $controls;
 	}
@@ -156,14 +156,14 @@ class Group_Control_Css_Filter extends Group_Control_Base {
 	 * @return array Default CSS filter control options.
 	 */
 	protected function get_default_options() {
-		return [
-			'popover' => [
+		return array(
+			'popover' => array(
 				'starter_name' => 'css_filter',
 				'starter_title' => esc_html__( 'CSS Filters', 'elementor' ),
-				'settings' => [
+				'settings' => array(
 					'render_type' => 'ui',
-				],
-			],
-		];
+				),
+			),
+		);
 	}
 }

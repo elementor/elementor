@@ -98,13 +98,13 @@ abstract class Base_Promotion_Template implements Admin_Menu_Item_With_Page {
 	 * @return array
 	 */
 	private function build_promotion_data_array(): array {
-		return [
+		return array(
 			'promotion_title' => $this->get_promotion_title(),
 			'cta_url' => $this->get_cta_url(),
 			'cta_text' => $this->get_cta_text(),
 			'video_url' => $this->get_video_url(),
 			'lines' => $this->get_lines(),
 			'side_note' => $this->get_side_note(),
-		];
+		);
 	}
 }

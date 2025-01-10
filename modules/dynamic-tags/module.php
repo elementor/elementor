@@ -81,7 +81,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		$this->register_groups();
 
-		add_action( 'elementor/dynamic_tags/register', [ $this, 'register_tags' ] );
+		add_action( 'elementor/dynamic_tags/register', array( $this, 'register_tags' ) );
 	}
 
 	/**
@@ -109,7 +109,7 @@ class Module extends BaseModule {
 	 * @return array Tag dynamic tag classes names.
 	 */
 	public function get_tag_classes_names() {
-		return [];
+		return array();
 	}
 
 	/**
@@ -123,11 +123,11 @@ class Module extends BaseModule {
 	 * @return array Tag dynamic tag groups.
 	 */
 	public function get_groups() {
-		return [
-			self::BASE_GROUP => [
+		return array(
+			self::BASE_GROUP => array(
 				'title' => 'Base Tags',
-			],
-		];
+			),
+		);
 	}
 
 	/**

@@ -73,11 +73,11 @@ class App extends BaseApp {
 		do_action( 'elementor/app/init', $this );
 
 		// Add the introduction and user settings only when it is needed (when loading the app and not in the editor or admin pages)
-		$this->set_settings( 'user', [
+		$this->set_settings( 'user', array(
 			'introduction' => (object) User::get_introduction_meta(),
 			'is_administrator' => current_user_can( 'manage_options' ),
 			'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
-		] );
+		) );
 
 		$this->enqueue_assets();
 
@@ -85,7 +85,7 @@ class App extends BaseApp {
 
 		// Setup default heartbeat options
 		// TODO: Enable heartbeat.
-		add_filter( 'heartbeat_settings', function( $settings ) {
+		add_filter( 'heartbeat_settings', function ( $settings ) {
 			$settings['interval'] = 15;
 			return $settings;
 		} );
@@ -97,7 +97,7 @@ class App extends BaseApp {
 	protected function get_init_settings() {
 		$referer = wp_get_referer();
 
-		return [
+		return array(
 			'menu_url' => $this->get_base_url() . '#site-editor/promotion',
 			'assets_url' => ELEMENTOR_ASSETS_URL,
 			'pages_url' => admin_url( 'edit.php?post_type=page' ),
@@ -107,11 +107,11 @@ class App extends BaseApp {
 			'login_url' => wp_login_url(),
 			'base_url' => $this->get_base_url(),
 			'promotion' => Filtered_Promotions_Manager::get_filtered_promotion_data(
-				[ 'upgrade_url' => 'https://go.elementor.com/go-pro-theme-builder/' ],
+				array( 'upgrade_url' => 'https://go.elementor.com/go-pro-theme-builder/' ),
 				'elementor/site-editor/promotion',
 				'upgrade_url'
 			),
-		];
+		);
 	}
 
 	private function render() {
@@ -162,7 +162,7 @@ class App extends BaseApp {
 		wp_register_style(
 			'select2',
 			$this->get_css_assets_url( 'e-select2', 'assets/lib/e-select2/css/' ),
-			[],
+			array(),
 			'4.0.6-rc.1'
 		);
 
@@ -171,29 +171,29 @@ class App extends BaseApp {
 		wp_register_style(
 			'select2',
 			ELEMENTOR_ASSETS_URL . 'lib/e-select2/css/e-select2.css',
-			[],
+			array(),
 			'4.0.6-rc.1'
 		);
 
 		wp_enqueue_style(
 			'elementor-app',
 			$this->get_css_assets_url( 'app', null, 'default', true ),
-			[
+			array(
 				'select2',
 				'elementor-icons',
 				'elementor-common',
 				'select2',
-			],
+			),
 			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_script(
 			'elementor-app-packages',
 			$this->get_js_assets_url( 'app-packages' ),
-			[
+			array(
 				'wp-i18n',
 				'react',
-			],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -201,9 +201,9 @@ class App extends BaseApp {
 		wp_register_script(
 			'select2',
 			$this->get_js_assets_url( 'e-select2.full', 'assets/lib/e-select2/js/' ),
-			[
+			array(
 				'jquery',
-			],
+			),
 			'4.0.6-rc.1',
 			true
 		);
@@ -211,13 +211,13 @@ class App extends BaseApp {
 		wp_enqueue_script(
 			'elementor-app',
 			$this->get_js_assets_url( 'app' ),
-			[
+			array(
 				'wp-url',
 				'wp-i18n',
 				'react',
 				'react-dom',
 				'select2',
-			],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -234,9 +234,9 @@ class App extends BaseApp {
 		wp_enqueue_script(
 			'elementor-app-loader',
 			$this->get_js_assets_url( 'app-loader' ),
-			[
+			array(
 				'elementor-common',
-			],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -261,12 +261,12 @@ class App extends BaseApp {
 		}, Source_Local::ADMIN_MENU_PRIORITY + 10 );
 
 		// Happens after WP plugin page validation.
-		add_filter( 'add_menu_classes', [ $this, 'fix_submenu' ] );
+		add_filter( 'add_menu_classes', array( $this, 'fix_submenu' ) );
 
 		if ( $this->is_current() ) {
-			add_action( 'admin_init', [ $this, 'admin_init' ], 0 );
+			add_action( 'admin_init', array( $this, 'admin_init' ), 0 );
 		} else {
-			add_action( 'elementor/common/after_register_scripts', [ $this, 'enqueue_app_loader' ] );
+			add_action( 'elementor/common/after_register_scripts', array( $this, 'enqueue_app_loader' ) );
 		}
 	}
 }

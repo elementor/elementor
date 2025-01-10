@@ -41,13 +41,13 @@ abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 	}
 
 	public function render() {
-		$config = [
+		$config = array(
 			'title' => $this->get_promotion_title(),
 			'description' => $this->get_promotion_description(),
 			'image' => $this->get_image_url(),
 			'upgrade_text' => $this->get_cta_text(),
 			'upgrade_url' => $this->get_cta_url(),
-		];
+		);
 
 		$config = Filtered_Promotions_Manager::get_filtered_promotion_data( $config, 'elementor/' . $this->get_name() . '/custom_promotion', 'upgrade_url' );
 

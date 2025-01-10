@@ -56,7 +56,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 		if ( is_null( self::$_animations ) ) {
 			self::$_animations = self::get_default_animations();
 
-			$additional_animations = [];
+			$additional_animations = array();
 
 			/**
 			 * Hover animations.
@@ -79,7 +79,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 	}
 
 	public static function get_default_animations(): array {
-		return [
+		return array(
 			'grow' => 'Grow',
 			'shrink' => 'Shrink',
 			'pulse' => 'Pulse',
@@ -107,7 +107,7 @@ class Control_Hover_Animation extends Base_Data_Control {
 			'wobble-skew' => 'Wobble Skew',
 			'buzz' => 'Buzz',
 			'buzz-out' => 'Buzz Out',
-		];
+		);
 	}
 
 	/**
@@ -151,18 +151,18 @@ class Control_Hover_Animation extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'label_block' => true,
-		];
+		);
 	}
 
 	public static function get_assets( $setting ) {
 		if ( ! $setting || 'none' === $setting ) {
-			return [];
+			return array();
 		}
 
-		return [
-			'styles' => [ 'e-animation-' . $setting ],
-		];
+		return array(
+			'styles' => array( 'e-animation-' . $setting ),
+		);
 	}
 }

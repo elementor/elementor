@@ -84,9 +84,9 @@ class MU_Plugins extends Base_Plugin {
 	 * @return array Required report fields with field ID and field label.
 	 */
 	public function get_fields() {
-		return [
+		return array(
 			'must_use_plugins' => 'Must-Use Plugins',
-		];
+		);
 	}
 
 	/**
@@ -104,8 +104,8 @@ class MU_Plugins extends Base_Plugin {
 	 * }
 	 */
 	public function get_must_use_plugins() {
-		return [
+		return array(
 			'value' => $this->get_mu_plugins(),
-		];
+		);
 	}
 }

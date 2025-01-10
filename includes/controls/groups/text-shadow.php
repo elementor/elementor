@@ -55,15 +55,15 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 	 * @return array Control fields.
 	 */
 	protected function init_fields() {
-		$controls = [];
+		$controls = array();
 
-		$controls['text_shadow'] = [
+		$controls['text_shadow'] = array(
 			'label' => esc_html__( 'Text Shadow', 'elementor' ),
 			'type' => Controls_Manager::TEXT_SHADOW,
-			'selectors' => [
+			'selectors' => array(
 				'{{SELECTOR}}' => 'text-shadow: {{HORIZONTAL}}px {{VERTICAL}}px {{BLUR}}px {{COLOR}};',
-			],
-		];
+			),
+		);
 
 		return $controls;
 	}
@@ -80,15 +80,15 @@ class Group_Control_Text_Shadow extends Group_Control_Base {
 	 * @return array Default text shadow control options.
 	 */
 	protected function get_default_options() {
-		return [
-			'popover' => [
+		return array(
+			'popover' => array(
 				'starter_title' => esc_html__( 'Text Shadow', 'elementor' ),
 				'starter_name' => 'text_shadow_type',
 				'starter_value' => 'yes',
-				'settings' => [
+				'settings' => array(
 					'render_type' => 'ui',
-				],
-			],
-		];
+				),
+			),
+		);
 	}
 }

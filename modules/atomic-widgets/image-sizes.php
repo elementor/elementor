@@ -18,7 +18,7 @@ class Image_Sizes {
 	public static function get_all(): array {
 		$wp_image_sizes = static::get_wp_image_sizes();
 
-		$image_sizes = [];
+		$image_sizes = array();
 
 		foreach ( $wp_image_sizes as $size_key => $size_attributes ) {
 
@@ -28,16 +28,16 @@ class Image_Sizes {
 				$control_title .= sprintf( ' - %d*%d', $size_attributes['width'], $size_attributes['height'] );
 			}
 
-			$image_sizes[] = [
+			$image_sizes[] = array(
 				'label' => $control_title,
 				'value' => $size_key,
-			];
+			);
 		}
 
-		$image_sizes[] = [
+		$image_sizes[] = array(
 			'label' => esc_html__( 'Full', 'elementor' ),
 			'value' => 'full',
-		];
+		);
 
 		return $image_sizes;
 	}
@@ -46,14 +46,14 @@ class Image_Sizes {
 		$default_image_sizes = get_intermediate_image_sizes();
 		$additional_sizes = wp_get_additional_image_sizes();
 
-		$image_sizes = [];
+		$image_sizes = array();
 
 		foreach ( $default_image_sizes as $size ) {
-			$image_sizes[ $size ] = [
+			$image_sizes[ $size ] = array(
 				'width' => (int) get_option( $size . '_size_w' ),
 				'height' => (int) get_option( $size . '_size_h' ),
 				'crop' => (bool) get_option( $size . '_crop' ),
-			];
+			);
 		}
 
 		if ( $additional_sizes ) {

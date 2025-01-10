@@ -13,13 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class purpose is to separate routing logic into one file.
  */
 abstract class Base_Route {
-	const AVAILABLE_METHODS = [
+	const AVAILABLE_METHODS = array(
 		WP_REST_Server::READABLE,
 		WP_REST_Server::CREATABLE,
 		WP_REST_Server::EDITABLE,
 		WP_REST_Server::DELETABLE,
 		WP_REST_Server::ALLMETHODS,
-	];
+	);
 
 	/**
 	 * Controller of current endpoint.
@@ -40,7 +40,7 @@ abstract class Base_Route {
 	 *
 	 * @var array
 	 */
-	protected $routes = [];
+	protected $routes = array();
 
 	/**
 	 * Registered item route.
@@ -113,7 +113,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function get_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -125,7 +125,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function get_item( $id, $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -136,7 +136,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function create_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -148,7 +148,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function create_item( $id, $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -159,7 +159,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function update_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -171,7 +171,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function update_item( $id, $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -182,7 +182,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function delete_items( $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -194,7 +194,7 @@ abstract class Base_Route {
 	 * @return \WP_Error|\WP_REST_Response Response object on success, or WP_Error object on failure.
 	 */
 	protected function delete_item( $id, $request ) {
-		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), [ 'status' => 405 ] );
+		return new \WP_Error( 'invalid-method', sprintf( "Method '%s' not implemented. Must be overridden in subclass.", __METHOD__ ), array( 'status' => 405 ) );
 	}
 
 	/**
@@ -206,17 +206,17 @@ abstract class Base_Route {
 		$this->register_items_route();
 	}
 
-	protected function register_route( $route = '', $methods = WP_REST_Server::READABLE, $args = [] ) {
+	protected function register_route( $route = '', $methods = WP_REST_Server::READABLE, $args = array() ) {
 		if ( ! in_array( $methods, self::AVAILABLE_METHODS, true ) ) {
 			trigger_error( "Invalid method: '$methods'.", E_USER_ERROR ); // phpcs:ignore
 		}
 
 		$route = $this->get_base_route() . $route;
 
-		$this->routes [] = [
+		$this->routes [] = array(
 			'args' => $args,
 			'route' => $route,
-		];
+		);
 
 		/**
 		 * Determine behaviour of `base_callback()` and `get_permission_callback()`:
@@ -233,16 +233,16 @@ abstract class Base_Route {
 			return $this->base_callback( $methods, $request, $is_multi );
 		};
 
-		return register_rest_route( $this->controller->get_namespace(), $route, [
-			[
+		return register_rest_route( $this->controller->get_namespace(), $route, array(
+			array(
 				'args' => $args,
 				'methods' => $methods,
 				'callback' => $callback,
 				'permission_callback' => function ( $request ) {
 					return $this->get_permission_callback( $request );
 				},
-			],
-		] );
+			),
+		) );
 	}
 
 	/**
@@ -251,13 +251,13 @@ abstract class Base_Route {
 	 * @param string $methods
 	 * @param array $args
 	 */
-	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = [] ) {
+	public function register_items_route( $methods = WP_REST_Server::READABLE, $args = array() ) {
 		$args['is_multi'] = true;
 
 		$this->register_route( '', $methods, $args );
 	}
 
-	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = [], $route = '/' ) {
+	public function register_item_route( $methods = WP_REST_Server::READABLE, $args = array(), $route = '/' ) {
 		if ( ! empty( $args['id_arg_name'] ) ) {
 			$this->id_arg_name = $args['id_arg_name'];
 
@@ -270,20 +270,20 @@ abstract class Base_Route {
 			unset( $args['id_arg_type_regex'] );
 		}
 
-		$args = array_merge( [
-			$this->id_arg_name => [
+		$args = array_merge( array(
+			$this->id_arg_name => array(
 				'description' => 'Unique identifier for the object.',
 				'type' => 'string',
 				'required' => true,
-			],
-		], $args );
+			),
+		), $args );
 
 		$route .= '(?P<' . $this->id_arg_name . '>' . $this->id_arg_type_regex . ')';
 
-		$this->item_route = [
+		$this->item_route = array(
 			'args' => $args,
 			'route' => $route,
-		];
+		);
 
 		$this->register_route( $route, $methods, $args );
 	}
@@ -299,7 +299,7 @@ abstract class Base_Route {
 	 *
 	 * @return mixed|\WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 */
-	public function base_callback( $methods, $request, $is_multi = false, $args = [] ) {
+	public function base_callback( $methods, $request, $is_multi = false, $args = array() ) {
 		if ( $request ) {
 			$json_params = $request->get_json_params();
 
@@ -308,9 +308,9 @@ abstract class Base_Route {
 			}
 		}
 
-		$args = wp_parse_args( $args, [
+		$args = wp_parse_args( $args, array(
 			'is_debug' => ( defined( 'WP_DEBUG' ) && WP_DEBUG ),
-		] );
+		) );
 
 		$result = new \WP_Error( 'invalid_methods', 'route not supported.' );
 
@@ -341,11 +341,11 @@ abstract class Base_Route {
 				$result = ( new Error_500() )->to_wp_error();
 			} else {
 				// For frontend.
-				$exception_mapping = [
+				$exception_mapping = array(
 					'trace' => $e->getTrace(),
 					'file' => $e->getFile(),
 					'line' => $e->getLine(),
-				];
+				);
 
 				$e->debug = $exception_mapping;
 

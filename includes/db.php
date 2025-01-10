@@ -68,7 +68,7 @@ class DB {
 	 *
 	 * @var array Switched post data. Default is an empty array.
 	 */
-	protected $switched_post_data = [];
+	protected $switched_post_data = array();
 
 	/**
 	 * Switched data.
@@ -80,7 +80,7 @@ class DB {
 	 *
 	 * @var array Switched data. Default is an empty array.
 	 */
-	protected $switched_data = [];
+	protected $switched_data = array();
 
 	/**
 	 * Get builder.
@@ -115,7 +115,7 @@ class DB {
 		if ( $document ) {
 			$editor_data = $document->get_elements_raw_data( null, true );
 		} else {
-			$editor_data = [];
+			$editor_data = array();
 		}
 
 		return $editor_data;
@@ -144,7 +144,7 @@ class DB {
 		}
 
 		if ( empty( $meta ) ) {
-			$meta = [];
+			$meta = array();
 		}
 
 		return $meta;
@@ -230,10 +230,10 @@ class DB {
 		$plain_text = $this->get_plain_text( $post_id );
 
 		wp_update_post(
-			[
+			array(
 				'ID' => $post_id,
 				'post_content' => $plain_text,
-			]
+			)
 		);
 
 		// Restore parsing mode.
@@ -255,7 +255,7 @@ class DB {
 	 *
 	 * @return mixed Iterated data.
 	 */
-	public function iterate_data( $data_container, $callback, $args = [] ) {
+	public function iterate_data( $data_container, $callback, $args = array() ) {
 		if ( isset( $data_container['elType'] ) ) {
 			if ( ! empty( $data_container['elements'] ) ) {
 				$data_container['elements'] = $this->iterate_data( $data_container['elements'], $callback, $args );
@@ -323,10 +323,10 @@ class DB {
 	 */
 	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
 		$from_post_meta = get_post_meta( $from_post_id );
-		$core_meta = [
+		$core_meta = array(
 			'_wp_page_template',
 			'_thumbnail_id',
-		];
+		);
 
 		foreach ( $from_post_meta as $meta_key => $values ) {
 			// Copy only meta with the `_elementor` prefix.
@@ -396,10 +396,10 @@ class DB {
 			return;
 		}
 
-		$this->switched_post_data[] = [
+		$this->switched_post_data[] = array(
 			'switched_id' => $post_id,
 			'original_id' => get_the_ID(), // Note, it can be false if the global isn't set.
-		];
+		);
 
 		$GLOBALS['post'] = get_post( $post_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
@@ -458,10 +458,10 @@ class DB {
 
 		$new_query = new \WP_Query( $query_vars );
 
-		$switched_data = [
+		$switched_data = array(
 			'switched' => $new_query,
 			'original' => $wp_query,
-		];
+		);
 
 		if ( ! empty( $GLOBALS['post'] ) ) {
 			$switched_data['post'] = $GLOBALS['post'];
@@ -534,7 +534,7 @@ class DB {
 	 */
 	public function get_plain_text( $post_id ) {
 		$document = Plugin::$instance->documents->get( $post_id );
-		$data = $document ? $document->get_elements_data() : [];
+		$data = $document ? $document->get_elements_data() : array();
 
 		return $this->get_plain_text_from_data( $data );
 	}

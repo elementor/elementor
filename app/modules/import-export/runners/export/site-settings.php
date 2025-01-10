@@ -21,12 +21,12 @@ class Site_Settings extends Export_Runner_Base {
 		$kit_data = $kit->get_export_data();
 		$kit_tabs = $kit->get_tabs();
 
-		$excluded_kit_settings_keys = [
+		$excluded_kit_settings_keys = array(
 			'site_name',
 			'site_description',
 			'site_logo',
 			'site_favicon',
-		];
+		);
 
 		foreach ( $excluded_kit_settings_keys as $setting_key ) {
 			unset( $kit_data['settings'][ $setting_key ] );
@@ -37,14 +37,14 @@ class Site_Settings extends Export_Runner_Base {
 		$kit_tabs = array_keys( $kit_tabs );
 		$manifest_data['site-settings'] = $kit_tabs;
 
-		return [
-			'files' => [
+		return array(
+			'files' => array(
 				'path' => 'site-settings',
 				'data' => $kit_data,
-			],
-			'manifest' => [
+			),
+			'manifest' => array(
 				$manifest_data,
-			],
-		];
+			),
+		);
 	}
 }

@@ -32,11 +32,11 @@ final class Sub_Index_Endpoint extends Index {
 			$parent_controller_route = "(?P<{$parent_index_endpoint->id_arg_name}>[\w]+)";
 		}
 
-		return untrailingslashit('/' . implode( '/', array_filter( [
+		return untrailingslashit('/' . implode( '/', array_filter( array(
 			trim( $parent_index_endpoint->get_base_route(), '/' ),
 			$parent_controller_route,
 			$this->controller->get_name(),
 			$this->get_public_name(),
-		] ) ) );
+		) ) ) );
 	}
 }

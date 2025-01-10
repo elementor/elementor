@@ -65,16 +65,16 @@ class Control_Wysiwyg extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'label_block' => true,
-			'ai' => [
+			'ai' => array(
 				'active' => true,
 				'type' => 'textarea',
-			],
-			'dynamic' => [
+			),
+			'dynamic' => array(
 				'active' => true,
-				'categories' => [ TagsModule::TEXT_CATEGORY ],
-			],
-		];
+				'categories' => array( TagsModule::TEXT_CATEGORY ),
+			),
+		);
 	}
 }

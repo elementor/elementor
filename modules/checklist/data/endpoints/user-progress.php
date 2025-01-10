@@ -30,17 +30,17 @@ class User_Progress extends Endpoint_Base {
 	public function update_items( $request ) {
 		Checklist_Module::instance()->update_user_progress( $request->get_json_params() );
 
-		return [
+		return array(
 			'data' => 'success',
-		];
+		);
 	}
 
 	private function get_checklist_data(): array {
 		$checklist_module = Checklist_Module::instance();
 		$progress_data = $checklist_module->get_user_progress_from_db();
 
-		return [
+		return array(
 			'data' => $progress_data,
-		];
+		);
 	}
 }

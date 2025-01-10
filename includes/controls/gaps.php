@@ -40,12 +40,12 @@ class Control_Gaps extends Control_Dimensions {
 	 * @return array Control default value.
 	 */
 	public function get_default_value() {
-		return [
+		return array(
 			'column' => '',
 			'row' => '',
 			'isLinked' => true,
 			'unit' => 'px',
-		];
+		);
 	}
 
 	public function get_singular_name() {
@@ -53,10 +53,10 @@ class Control_Gaps extends Control_Dimensions {
 	}
 
 	protected function get_dimensions() {
-		return [
+		return array(
 			'column' => esc_html__( 'Column', 'elementor' ),
 			'row' => esc_html__( 'Row', 'elementor' ),
-		];
+		);
 	}
 
 	public function get_value( $control, $settings ) {

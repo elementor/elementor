@@ -22,13 +22,13 @@ class Module extends BaseModule {
 	const HISTORY_TYPE_CODE = 'code';
 	const HISTORY_TYPE_IMAGE = 'images';
 	const HISTORY_TYPE_BLOCK = 'blocks';
-	const VALID_HISTORY_TYPES = [
+	const VALID_HISTORY_TYPES = array(
 		self::HISTORY_TYPE_ALL,
 		self::HISTORY_TYPE_TEXT,
 		self::HISTORY_TYPE_CODE,
 		self::HISTORY_TYPE_IMAGE,
 		self::HISTORY_TYPE_BLOCK,
-	];
+	);
 
 	public function get_name() {
 		return 'ai';
@@ -39,7 +39,7 @@ class Module extends BaseModule {
 
 		if ( is_admin() ) {
 			( new Preferences() )->register();
-			add_action( 'elementor/import-export/import-kit/runner/after-run', [ $this, 'handle_kit_install' ] );
+			add_action( 'elementor/import-export/import-kit/runner/after-run', array( $this, 'handle_kit_install' ) );
 		}
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
@@ -54,83 +54,83 @@ class Module extends BaseModule {
 			$connect_module->register_app( 'ai', Ai::get_class_name() );
 		} );
 
-		add_action( 'elementor/ajax/register_actions', function( $ajax ) {
-			$handlers = [
-				'ai_get_user_information' => [ $this, 'ajax_ai_get_user_information' ],
-				'ai_get_remote_config' => [ $this, 'ajax_ai_get_remote_config' ],
-				'ai_get_remote_frontend_config' => [ $this, 'ajax_ai_get_remote_frontend_config' ],
-				'ai_get_completion_text' => [ $this, 'ajax_ai_get_completion_text' ],
-				'ai_get_excerpt' => [ $this, 'ajax_ai_get_excerpt' ],
-				'ai_get_featured_image' => [ $this, 'ajax_ai_get_featured_image' ],
-				'ai_get_edit_text' => [ $this, 'ajax_ai_get_edit_text' ],
-				'ai_get_custom_code' => [ $this, 'ajax_ai_get_custom_code' ],
-				'ai_get_custom_css' => [ $this, 'ajax_ai_get_custom_css' ],
-				'ai_set_get_started' => [ $this, 'ajax_ai_set_get_started' ],
-				'ai_set_status_feedback' => [ $this, 'ajax_ai_set_status_feedback' ],
-				'ai_get_image_prompt_enhancer' => [ $this, 'ajax_ai_get_image_prompt_enhancer' ],
-				'ai_get_text_to_image' => [ $this, 'ajax_ai_get_text_to_image' ],
-				'ai_get_image_to_image' => [ $this, 'ajax_ai_get_image_to_image' ],
-				'ai_get_image_to_image_mask' => [ $this, 'ajax_ai_get_image_to_image_mask' ],
-				'ai_get_image_to_image_mask_cleanup' => [ $this, 'ajax_ai_get_image_to_image_mask_cleanup' ],
-				'ai_get_image_to_image_outpainting' => [ $this, 'ajax_ai_get_image_to_image_outpainting' ],
-				'ai_get_image_to_image_upscale' => [ $this, 'ajax_ai_get_image_to_image_upscale' ],
-				'ai_get_image_to_image_remove_background' => [ $this, 'ajax_ai_get_image_to_image_remove_background' ],
-				'ai_get_image_to_image_replace_background' => [ $this, 'ajax_ai_get_image_to_image_replace_background' ],
-				'ai_upload_image' => [ $this, 'ajax_ai_upload_image' ],
-				'ai_generate_layout' => [ $this, 'ajax_ai_generate_layout' ],
-				'ai_get_layout_prompt_enhancer' => [ $this, 'ajax_ai_get_layout_prompt_enhancer' ],
-				'ai_get_history' => [ $this, 'ajax_ai_get_history' ],
-				'ai_delete_history_item' => [ $this, 'ajax_ai_delete_history_item' ],
-				'ai_toggle_favorite_history_item' => [ $this, 'ajax_ai_toggle_favorite_history_item' ],
-				'ai_get_product_image_unification' => [ $this, 'ajax_ai_get_product_image_unification' ],
-				'ai_get_animation' => [ $this, 'ajax_ai_get_animation' ],
-			];
+		add_action( 'elementor/ajax/register_actions', function ( $ajax ) {
+			$handlers = array(
+				'ai_get_user_information' => array( $this, 'ajax_ai_get_user_information' ),
+				'ai_get_remote_config' => array( $this, 'ajax_ai_get_remote_config' ),
+				'ai_get_remote_frontend_config' => array( $this, 'ajax_ai_get_remote_frontend_config' ),
+				'ai_get_completion_text' => array( $this, 'ajax_ai_get_completion_text' ),
+				'ai_get_excerpt' => array( $this, 'ajax_ai_get_excerpt' ),
+				'ai_get_featured_image' => array( $this, 'ajax_ai_get_featured_image' ),
+				'ai_get_edit_text' => array( $this, 'ajax_ai_get_edit_text' ),
+				'ai_get_custom_code' => array( $this, 'ajax_ai_get_custom_code' ),
+				'ai_get_custom_css' => array( $this, 'ajax_ai_get_custom_css' ),
+				'ai_set_get_started' => array( $this, 'ajax_ai_set_get_started' ),
+				'ai_set_status_feedback' => array( $this, 'ajax_ai_set_status_feedback' ),
+				'ai_get_image_prompt_enhancer' => array( $this, 'ajax_ai_get_image_prompt_enhancer' ),
+				'ai_get_text_to_image' => array( $this, 'ajax_ai_get_text_to_image' ),
+				'ai_get_image_to_image' => array( $this, 'ajax_ai_get_image_to_image' ),
+				'ai_get_image_to_image_mask' => array( $this, 'ajax_ai_get_image_to_image_mask' ),
+				'ai_get_image_to_image_mask_cleanup' => array( $this, 'ajax_ai_get_image_to_image_mask_cleanup' ),
+				'ai_get_image_to_image_outpainting' => array( $this, 'ajax_ai_get_image_to_image_outpainting' ),
+				'ai_get_image_to_image_upscale' => array( $this, 'ajax_ai_get_image_to_image_upscale' ),
+				'ai_get_image_to_image_remove_background' => array( $this, 'ajax_ai_get_image_to_image_remove_background' ),
+				'ai_get_image_to_image_replace_background' => array( $this, 'ajax_ai_get_image_to_image_replace_background' ),
+				'ai_upload_image' => array( $this, 'ajax_ai_upload_image' ),
+				'ai_generate_layout' => array( $this, 'ajax_ai_generate_layout' ),
+				'ai_get_layout_prompt_enhancer' => array( $this, 'ajax_ai_get_layout_prompt_enhancer' ),
+				'ai_get_history' => array( $this, 'ajax_ai_get_history' ),
+				'ai_delete_history_item' => array( $this, 'ajax_ai_delete_history_item' ),
+				'ai_toggle_favorite_history_item' => array( $this, 'ajax_ai_toggle_favorite_history_item' ),
+				'ai_get_product_image_unification' => array( $this, 'ajax_ai_get_product_image_unification' ),
+				'ai_get_animation' => array( $this, 'ajax_ai_get_animation' ),
+			);
 
 			foreach ( $handlers as $tag => $callback ) {
 				$ajax->register_ajax_action( $tag, $callback );
 			}
 		} );
 
-		add_action( 'elementor/editor/before_enqueue_scripts', function() {
+		add_action( 'elementor/editor/before_enqueue_scripts', function () {
 			$this->enqueue_main_script();
 			$this->enqueue_layout_script();
 		} );
 
-		add_action( 'elementor/editor/after_enqueue_styles', function() {
+		add_action( 'elementor/editor/after_enqueue_styles', function () {
 			wp_enqueue_style(
 				'elementor-ai-editor',
 				$this->get_css_assets_url( 'modules/ai/editor' ),
-				[],
+				array(),
 				ELEMENTOR_VERSION
 			);
 		} );
 
-		add_action( 'elementor/preview/enqueue_styles', function() {
+		add_action( 'elementor/preview/enqueue_styles', function () {
 			wp_enqueue_style(
 				'elementor-ai-layout-preview',
 				$this->get_css_assets_url( 'modules/ai/layout-preview' ),
-				[],
+				array(),
 				ELEMENTOR_VERSION
 			);
 		} );
 
 		if ( is_admin() ) {
-			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
-			add_action( 'admin_head', [ $this, 'enqueue_ai_media_library_upload_screen' ] );
+			add_action( 'wp_enqueue_media', array( $this, 'enqueue_ai_media_library' ) );
+			add_action( 'admin_head', array( $this, 'enqueue_ai_media_library_upload_screen' ) );
 
 			if ( current_user_can( 'edit_products' ) || current_user_can( 'publish_products' ) ) {
-				add_action( 'admin_init', [ $this, 'enqueue_ai_products_page_scripts' ] );
-				add_action( 'current_screen', [ $this, 'enqueue_ai_single_product_page_scripts' ] );
-				add_action( 'wp_ajax_elementor-ai-get-product-images', [ $this, 'get_product_images_ajax' ] );
-				add_action( 'wp_ajax_elementor-ai-set-product-images', [ $this, 'set_product_images_ajax' ] );
+				add_action( 'admin_init', array( $this, 'enqueue_ai_products_page_scripts' ) );
+				add_action( 'current_screen', array( $this, 'enqueue_ai_single_product_page_scripts' ) );
+				add_action( 'wp_ajax_elementor-ai-get-product-images', array( $this, 'get_product_images_ajax' ) );
+				add_action( 'wp_ajax_elementor-ai-set-product-images', array( $this, 'set_product_images_ajax' ) );
 				Product_Image_Unification_Intro::add_hooks();
 			}
 		}
 
-		add_action( 'enqueue_block_editor_assets', function() {
+		add_action( 'enqueue_block_editor_assets', function () {
 			wp_enqueue_script( 'elementor-ai-gutenberg',
 				$this->get_js_assets_url( 'ai-gutenberg' ),
-				[
+				array(
 					'jquery',
 					'elementor-v2-ui',
 					'elementor-v2-icons',
@@ -143,16 +143,16 @@ class Module extends BaseModule {
 					'wp-i18n',
 					'wp-hooks',
 					'elementor-ai-media-library',
-				],
+				),
 			ELEMENTOR_VERSION, true );
 
 			wp_localize_script(
 				'elementor-ai-gutenberg',
 				'ElementorAiConfig',
-				[
+				array(
 					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 					'connect_url' => $this->get_ai_connect_url(),
-				]
+				)
 			);
 
 			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
@@ -162,10 +162,10 @@ class Module extends BaseModule {
 			return $this->remove_temporary_containers( $data );
 		} );
 
-		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
-		add_action( 'elementor/element/container/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
-		add_action( 'elementor/element/common/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
-		add_action( 'elementor/element/container/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/common/section_effects/after_section_start', array( $this, 'register_ai_motion_effect_control' ), 10, 1 );
+		add_action( 'elementor/element/container/section_effects/after_section_start', array( $this, 'register_ai_motion_effect_control' ), 10, 1 );
+		add_action( 'elementor/element/common/_section_transform/after_section_end', array( $this, 'register_ai_hover_effect_control' ), 10, 1 );
+		add_action( 'elementor/element/container/_section_transform/after_section_end', array( $this, 'register_ai_hover_effect_control' ), 10, 1 );
 	}
 
 	public function handle_kit_install( $imported_data ) {
@@ -190,22 +190,22 @@ class Module extends BaseModule {
 		$last_imported_session = $imported_data['configData']['lastImportedSession'];
 		$imported_ai_data = $last_imported_session['instance_data']['site_settings']['settings']['ai'];
 
-		$this->get_ai_app()->send_event( [
+		$this->get_ai_app()->send_event( array(
 			'name' => 'kit_installed',
 			'data' => $imported_ai_data,
-			'client' => [
+			'client' => array(
 				'name' => 'elementor',
 				'version' => ELEMENTOR_VERSION,
 				'session_id' => $last_imported_session['session_id'],
-			],
-		] );
+			),
+		) );
 	}
 
 	public function register_ai_hover_effect_control( Element_Base $element ) {
 		if ( ! $element->get_controls( 'ai_hover_animation' ) ) {
 			$element->add_control(
 				'ai_hover_animation',
-				[
+				array(
 					'tabs_wrapper' => '_tabs_positioning',
 					'inner_tab' => '_tab_positioning_hover',
 					'label' => esc_html__( 'Animate With AI', 'elementor' ),
@@ -223,18 +223,18 @@ class Module extends BaseModule {
   }
 </style>',
 					'render_type' => 'none',
-					'ai' => [
+					'ai' => array(
 						'active' => true,
 						'type' => 'hover_animation',
-					],
-				],
-				[
-					'position' => [
+					),
+				),
+				array(
+					'position' => array(
 						'of' => '_transform_rotate_popover_hover',
 						'type' => 'control',
 						'at' => 'before',
-					],
-				]
+					),
+				)
 			);
 		}
 	}
@@ -242,7 +242,7 @@ class Module extends BaseModule {
 		if ( Utils::has_pro() && ! $element->get_controls( 'ai_animation' ) ) {
 			$element->add_control(
 				'ai_animation',
-				[
+				array(
 					'label' => esc_html__( 'Animate With AI', 'elementor' ),
 					'type' => Controls_Manager::RAW_HTML,
 					'raw' => '
@@ -258,11 +258,11 @@ class Module extends BaseModule {
 	}
 	</style>',
 					'render_type' => 'none',
-					'ai' => [
+					'ai' => array(
 						'active' => true,
 						'type' => 'animation',
-					],
-				]
+					),
+				)
 			);
 		}
 	}
@@ -311,21 +311,21 @@ class Module extends BaseModule {
 	public function get_product_images_ajax() {
 		check_ajax_referer( 'elementor-ai-unify-product-images_nonce', 'nonce' );
 
-		$post_ids = isset( $_POST['post_ids'] ) ? array_map( 'intval', $_POST['post_ids'] ) : [];
+		$post_ids = isset( $_POST['post_ids'] ) ? array_map( 'intval', $_POST['post_ids'] ) : array();
 		$is_galley_only = isset( $_POST['is_galley_only'] ) && sanitize_text_field( wp_unslash( $_POST['is_galley_only'] ) );
 
-		$image_ids = [];
+		$image_ids = array();
 
 		foreach ( $post_ids as $post_id ) {
 			if ( $is_galley_only ) {
 				$product = wc_get_product( $post_id );
 				$gallery_image_ids = $product->get_gallery_image_ids();
 				foreach ( $gallery_image_ids as $image_id ) {
-					$image_ids[] = [
+					$image_ids[] = array(
 						'productId' => $post_id,
 						'id'   => $image_id,
 						'image_url' => wp_get_attachment_url( $image_id ),
-					];
+					);
 				}
 				continue;
 			}
@@ -340,31 +340,31 @@ class Module extends BaseModule {
 				}
 			}
 
-			$image_ids[] = [
+			$image_ids[] = array(
 				'productId' => $post_id,
 				'id' => $image_id ? $image_id : 'No Image',
 				'image_url' => $image_id ? wp_get_attachment_url( $image_id ) : 'No Image',
-			];
+			);
 		}
 
-		wp_send_json_success( [ 'product_images' => array_slice( $image_ids, 0, 10 ) ] );
+		wp_send_json_success( array( 'product_images' => array_slice( $image_ids, 0, 10 ) ) );
 
 		wp_die();
 	}
 
 	private function get_attachment_id_by_url( $url ) {
-		$attachments = get_posts( [
+		$attachments = get_posts( array(
 			'post_type'  => 'attachment',
-			'meta_query' => [
-				[
+			'meta_query' => array(
+				array(
 					'key'   => '_wp_attached_file',
 					'value' => basename( $url ),
 					'compare' => 'LIKE',
-				],
-			],
+				),
+			),
 			'fields'     => 'ids',
 			'numberposts' => 1,
-		] );
+		) );
 
 		return ! empty( $attachments ) ? $attachments[0] : null;
 	}
@@ -399,10 +399,10 @@ class Module extends BaseModule {
 			$product->save();
 		}
 
-		wp_send_json_success( [
+		wp_send_json_success( array(
 			'message' => __( 'Image added successfully', 'elementor' ),
 			'refresh' => true,
-		] );
+		) );
 	}
 
 	public function enqueue_ai_media_library_upload_screen() {
@@ -417,12 +417,12 @@ class Module extends BaseModule {
 	public function enqueue_ai_media_library() {
 		wp_enqueue_script( 'elementor-ai-media-library',
 			$this->get_js_assets_url( 'ai-media-library' ),
-			[
+			array(
 				'jquery',
 				'elementor-v2-ui',
 				'elementor-v2-icons',
 				'media-grid',
-			],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -430,10 +430,10 @@ class Module extends BaseModule {
 		wp_localize_script(
 			'elementor-ai-media-library',
 			'ElementorAiConfig',
-			[
+			array(
 				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 				'connect_url' => $this->get_ai_connect_url(),
-			]
+			)
 		);
 
 		wp_set_script_translations( 'elementor-ai-media-library', 'elementor' );
@@ -443,7 +443,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-ai',
 			$this->get_js_assets_url( 'ai' ),
-			[
+			array(
 				'react',
 				'react-dom',
 				'backbone-marionette',
@@ -454,15 +454,15 @@ class Module extends BaseModule {
 				'elementor-editor-document',
 				'elementor-v2-ui',
 				'elementor-v2-icons',
-			],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);
 
-		$config = [
+		$config = array(
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'connect_url' => $this->get_ai_connect_url(),
-		];
+		);
 
 		if ( $this->get_ai_app()->is_connected() ) {
 			// Use a cached version, don't call the API on every editor load.
@@ -482,7 +482,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'elementor-ai-layout',
 			$this->get_js_assets_url( 'ai-layout' ),
-			[
+			array(
 				'react',
 				'react-dom',
 				'backbone-marionette',
@@ -492,7 +492,7 @@ class Module extends BaseModule {
 				'elementor-ai',
 				'elementor-v2-ui',
 				'elementor-v2-icons',
-			],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -507,7 +507,7 @@ class Module extends BaseModule {
 
 		// If for some reason the document has been saved during an AI Layout session,
 		// ensure that the temporary containers are removed from the data.
-		$data['elements'] = array_filter( $data['elements'], function( $element ) {
+		$data['elements'] = array_filter( $data['elements'], function ( $element ) {
 			$is_preview_container = strpos( $element['id'], 'e-ai-preview-container' ) === 0;
 			$is_screenshot_container = strpos( $element['id'], 'e-ai-screenshot-container' ) === 0;
 
@@ -520,42 +520,42 @@ class Module extends BaseModule {
 	private function get_ai_connect_url() {
 		$app = $this->get_ai_app();
 
-		return $app->get_admin_url( 'authorize', [
+		return $app->get_admin_url( 'authorize', array(
 			'utm_source' => 'ai-popup',
 			'utm_campaign' => 'connect-account',
 			'utm_medium' => 'wp-dash',
 			'source' => 'generic',
-		] );
+		) );
 	}
 
 	public function ajax_ai_get_user_information( $data ) {
 		$app = $this->get_ai_app();
 
 		if ( ! $app->is_connected() ) {
-			return [
+			return array(
 				'is_connected' => false,
 				'connect_url' => $this->get_ai_connect_url(),
-			];
+			);
 		}
 
-		$user_usage = wp_parse_args( $app->get_usage(), [
+		$user_usage = wp_parse_args( $app->get_usage(), array(
 			'hasAiSubscription' => false,
 			'usedQuota' => 0,
 			'quota' => 100,
-		] );
+		) );
 
-		return [
+		return array(
 			'is_connected' => true,
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'usage' => $user_usage,
-		];
+		);
 	}
 
 	public function ajax_ai_get_remote_config() {
 		$app = $this->get_ai_app();
 
 		if ( ! $app->is_connected() ) {
-			return [];
+			return array();
 		}
 
 		return $app->get_remote_config();
@@ -608,14 +608,14 @@ class Module extends BaseModule {
 		}
 		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_image_prompt_enhanced( $data['prompt'], [], $request_ids );
+		$result = $app->get_image_prompt_enhanced( $data['prompt'], array(), $request_ids );
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'text' => $result['text'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_completion_text( $data ) {
@@ -638,11 +638,11 @@ class Module extends BaseModule {
 		$result = $app->get_completion_text( $data['payload']['prompt'], $context, $request_ids );
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'text' => $result['text'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 
@@ -664,11 +664,11 @@ class Module extends BaseModule {
 		$result = $app->get_excerpt( $data['payload']['content'], $context, $request_ids );
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'text' => $result['text'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_featured_image( $data ): array {
@@ -691,11 +691,11 @@ class Module extends BaseModule {
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	private function get_ai_app(): Ai {
@@ -704,7 +704,7 @@ class Module extends BaseModule {
 
 	private function get_request_context( $data ) {
 		if ( empty( $data['context'] ) ) {
-			return [];
+			return array();
 		}
 
 		return $data['context'];
@@ -742,11 +742,11 @@ class Module extends BaseModule {
 		$result = $app->get_edit_text( $data, $context, $request_ids );
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'text' => $result['text'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_custom_code( $data ) {
@@ -771,11 +771,11 @@ class Module extends BaseModule {
 		$result = $app->get_custom_code( $data, $context, $request_ids );
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'text' => $result['text'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_custom_css( $data ) {
@@ -805,19 +805,19 @@ class Module extends BaseModule {
 		$result = $app->get_custom_css( $data, $context, $request_ids );
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'text' => $result['text'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_set_get_started( $data ) {
 		$app = $this->get_ai_app();
 
-		User::set_introduction_viewed( [
+		User::set_introduction_viewed( array(
 			'introductionKey' => 'ai_get_started',
-		] );
+		) );
 
 		return $app->set_get_started();
 	}
@@ -835,7 +835,7 @@ class Module extends BaseModule {
 
 		$app->set_status_feedback( $data['response_id'] );
 
-		return [];
+		return array();
 	}
 
 	public function ajax_ai_get_text_to_image( $data ) {
@@ -858,11 +858,11 @@ class Module extends BaseModule {
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_image_to_image( $data ) {
@@ -885,19 +885,19 @@ class Module extends BaseModule {
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_image_to_image( [
+		$result = $app->get_image_to_image( array(
 			'prompt' => $data['payload']['prompt'],
 			'promptSettings' => $data['payload']['settings'],
 			'attachment_id' => $data['payload']['image']['id'],
-		], $context, $request_ids );
+		), $context, $request_ids );
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_image_to_image_upscale( $data ) {
@@ -920,18 +920,18 @@ class Module extends BaseModule {
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_image_to_image_upscale( [
+		$result = $app->get_image_to_image_upscale( array(
 			'promptSettings' => $data['payload']['promptSettings'],
 			'attachment_id' => $data['payload']['image']['id'],
-		], $context, $request_ids );
+		), $context, $request_ids );
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_image_to_image_replace_background( $data ) {
@@ -954,18 +954,18 @@ class Module extends BaseModule {
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_image_to_image_replace_background( [
+		$result = $app->get_image_to_image_replace_background( array(
 			'attachment_id' => $data['payload']['image']['id'],
 			'prompt' => $data['payload']['prompt'],
-		], $context, $request_ids );
+		), $context, $request_ids );
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_image_to_image_remove_background( $data ) {
@@ -983,17 +983,17 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
-		$result = $app->get_image_to_image_remove_background( [
+		$result = $app->get_image_to_image_remove_background( array(
 			'attachment_id' => $data['payload']['image']['id'],
-		], $context, $request_ids );
+		), $context, $request_ids );
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_image_to_image_mask( $data ) {
@@ -1024,19 +1024,19 @@ class Module extends BaseModule {
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_image_to_image_mask( [
+		$result = $app->get_image_to_image_mask( array(
 			'prompt' => $data['payload']['prompt'],
 			'attachment_id' => $data['payload']['image']['id'],
 			'mask' => $data['payload']['mask'],
-		], $context, $request_ids );
+		), $context, $request_ids );
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 	public function ajax_ai_get_image_to_image_mask_cleanup( $data ) {
 		$this->verify_upload_permissions( $data );
@@ -1062,18 +1062,18 @@ class Module extends BaseModule {
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_image_to_image_mask_cleanup( [
+		$result = $app->get_image_to_image_mask_cleanup( array(
 			'attachment_id' => $data['payload']['image']['id'],
 			'mask' => $data['payload']['mask'],
-		], $context, $request_ids );
+		), $context, $request_ids );
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_image_to_image_outpainting( $data ) {
@@ -1091,20 +1091,20 @@ class Module extends BaseModule {
 
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
-		$result = $app->get_image_to_image_out_painting( [
+		$result = $app->get_image_to_image_out_painting( array(
 			'size' => $data['payload']['size'],
 			'position' => $data['payload']['position'],
 			'mask' => $data['payload']['mask'],
 			'image_base64' => $data['payload']['image_base64'],
-		], $context, $request_ids );
+		), $context, $request_ids );
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_upload_image( $data ) {
@@ -1125,13 +1125,13 @@ class Module extends BaseModule {
 		}
 
 		if ( ! empty( $image['use_gallery_image'] ) && ! empty( $image['id'] ) ) {
-			 $app = $this->get_ai_app();
-			 $app->set_used_gallery_image( $image['id'] );
+			$app = $this->get_ai_app();
+			$app->set_used_gallery_image( $image['id'] );
 		}
 
-		return [
+		return array(
 			'image' => array_merge( $image_data, $data ),
-		];
+		);
 	}
 
 	public function ajax_ai_generate_layout( $data ) {
@@ -1163,7 +1163,7 @@ class Module extends BaseModule {
 			$this->throw_on_error( $result );
 		}
 
-		$elements = $result['text']['elements'] ?? [];
+		$elements = $result['text']['elements'] ?? array();
 		$base_template_id = $result['baseTemplateId'] ?? null;
 		$template_type = $result['templateType'] ?? null;
 
@@ -1174,36 +1174,36 @@ class Module extends BaseModule {
 		if ( 1 === count( $elements ) ) {
 			$template = $elements[0];
 		} else {
-			$template = [
+			$template = array(
 				'elType' => 'container',
 				'elements' => $elements,
-				'settings' => [
+				'settings' => array(
 					'content_width' => 'full',
-					'flex_gap' => [
+					'flex_gap' => array(
 						'column' => '0',
 						'row' => '0',
 						'unit' => 'px',
-					],
-					'padding' => [
+					),
+					'padding' => array(
 						'unit' => 'px',
 						'top' => '0',
 						'right' => '0',
 						'bottom' => '0',
 						'left' => '0',
 						'isLinked' => true,
-					],
-				],
-			];
+					),
+				),
+			);
 		}
 
-		return [
-			'all' => [],
+		return array(
+			'all' => array(),
 			'text' => $template,
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
 			'base_template_id' => $base_template_id,
 			'template_type' => $template_type,
-		];
+		);
 	}
 
 	public function ajax_ai_get_layout_prompt_enhancer( $data ) {
@@ -1227,11 +1227,11 @@ class Module extends BaseModule {
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'text' => $result['text'] ?? $data['prompt'],
 			'response_id' => $result['responseId'] ?? '',
 			'usage' => $result['usage'] ?? '',
-		];
+		);
 	}
 
 	private function prepare_generate_layout_context( $data ) {
@@ -1242,27 +1242,27 @@ class Module extends BaseModule {
 			return $request_context;
 		}
 
-		$kits_data = Collection::make( $kit->get_data()['settings'] ?? [] );
+		$kits_data = Collection::make( $kit->get_data()['settings'] ?? array() );
 
 		$colors = $kits_data
 			->filter( function ( $_, $key ) {
-				return in_array( $key, [ 'system_colors', 'custom_colors' ], true );
+				return in_array( $key, array( 'system_colors', 'custom_colors' ), true );
 			} )
 			->flatten()
 			->filter( function ( $val ) {
 				return ! empty( $val['_id'] );
 			} )
 			->map( function ( $val ) {
-				return [
+				return array(
 					'id' => $val['_id'],
 					'label' => $val['title'] ?? null,
 					'value' => $val['color'] ?? null,
-				];
+				);
 			} );
 
 		$typography = $kits_data
 			->filter( function ( $_, $key ) {
-				return in_array( $key, [ 'system_typography', 'custom_typography' ], true );
+				return in_array( $key, array( 'system_typography', 'custom_typography' ), true );
 			} )
 			->flatten()
 			->filter( function ( $val ) {
@@ -1282,22 +1282,22 @@ class Module extends BaseModule {
 						: $prop['size'] . $prop['unit'];
 				}
 
-				return [
+				return array(
 					'id' => $val['_id'],
 					'label' => $val['title'] ?? null,
-					'value' => [
+					'value' => array(
 						'family' => $val['typography_font_family'] ?? null,
 						'weight' => $val['typography_font_weight'] ?? null,
 						'style' => $val['typography_font_style'] ?? null,
 						'size' => $font_size,
-					],
-				];
+					),
+				);
 			} );
 
-		$request_context['globals'] = [
+		$request_context['globals'] = array(
 			'colors' => $colors->all(),
 			'typography' => $typography->all(),
-		];
+		);
 
 		return $request_context;
 	}
@@ -1313,12 +1313,12 @@ class Module extends BaseModule {
 			return new \WP_Error( 'upload_error', $attachment_id['error'] );
 		}
 
-		return [
+		return array(
 			'id' => $attachment_id,
 			'url' => wp_get_attachment_image_url( $attachment_id, 'full' ),
 			'alt' => $image_title,
 			'source' => 'library',
-		];
+		);
 	}
 
 	public function ajax_ai_get_history( $data ): array {
@@ -1367,7 +1367,7 @@ class Module extends BaseModule {
 			throw new \Exception( $result->get_error_message() );
 		}
 
-		return [];
+		return array();
 	}
 
 	public function ajax_ai_toggle_favorite_history_item( $data ): array {
@@ -1389,7 +1389,7 @@ class Module extends BaseModule {
 			throw new \Exception( $result->get_error_message() );
 		}
 
-		return [];
+		return array();
 	}
 
 	public function ajax_ai_get_product_image_unification( $data ): array {
@@ -1413,18 +1413,18 @@ class Module extends BaseModule {
 		$context = $this->get_request_context( $data );
 		$request_ids = $this->get_request_ids( $data['payload'] );
 
-		$result = $app->get_unify_product_images( [
+		$result = $app->get_unify_product_images( array(
 			'promptSettings' => $data['payload']['settings'],
 			'attachment_id' => $data['payload']['image']['id'],
-		], $context, $request_ids );
+		), $context, $request_ids );
 
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'images' => $result['images'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	public function ajax_ai_get_animation( $data ): array {
@@ -1451,11 +1451,11 @@ class Module extends BaseModule {
 		$result = $app->get_animation( $data, $context, $request_ids );
 		$this->throw_on_error( $result );
 
-		return [
+		return array(
 			'text' => $result['text'],
 			'response_id' => $result['responseId'],
 			'usage' => $result['usage'],
-		];
+		);
 	}
 
 	/**
@@ -1463,10 +1463,10 @@ class Module extends BaseModule {
 	 */
 	private function throw_on_error( $result ): void {
 		if ( is_wp_error( $result ) ) {
-			wp_send_json_error( [
+			wp_send_json_error( array(
 				'message' => $result->get_error_message(),
 				'extra_data' => $result->get_error_data(),
-			] );
+			) );
 		}
 	}
 
@@ -1476,13 +1476,13 @@ class Module extends BaseModule {
 	public function add_wc_scripts(): void {
 		wp_enqueue_script( 'elementor-ai-unify-product-images',
 			$this->get_js_assets_url( 'ai-unify-product-images' ),
-			[
+			array(
 				'jquery',
 				'elementor-v2-ui',
 				'elementor-v2-icons',
 				'wp-components',
 				'elementor-common',
-			],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -1490,14 +1490,14 @@ class Module extends BaseModule {
 		wp_localize_script(
 			'elementor-ai-unify-product-images',
 			'UnifyProductImagesConfig',
-			[
+			array(
 				'get_product_images_url' => admin_url( 'admin-ajax.php' ),
 				'set_product_images_url' => admin_url( 'admin-ajax.php' ),
 				'nonce' => wp_create_nonce( 'elementor-ai-unify-product-images_nonce' ),
 				'placeholder' => ELEMENTOR_ASSETS_URL . 'images/app/ai/product-image-unification-example.gif?' . ELEMENTOR_VERSION,
 				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 				'connect_url' => $this->get_ai_connect_url(),
-			]
+			)
 		);
 
 		add_filter( 'bulk_actions-edit-product', function ( $data ) {

@@ -42,11 +42,11 @@ class Db extends Base {
 		// Clear cache.
 		wp_cache_delete( self::LOG_NAME, 'options' );
 
-		$log = get_option( self::LOG_NAME, [] );
+		$log = get_option( self::LOG_NAME, array() );
 
 		// In case the DB log is corrupted.
 		if ( ! is_array( $log ) ) {
-			$log = [];
+			$log = array();
 		}
 
 		return $log;

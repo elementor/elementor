@@ -83,9 +83,9 @@ class Control_Structure extends Base_Data_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'label_block' => true,
 			'show_label' => false,
-		];
+		);
 	}
 }

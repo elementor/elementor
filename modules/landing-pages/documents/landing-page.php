@@ -22,7 +22,7 @@ class Landing_Page extends PageBase {
 
 		$properties['support_kit'] = true;
 		$properties['show_in_library'] = true;
-		$properties['cpt'] = [ Landing_Pages_Module::CPT ];
+		$properties['cpt'] = array( Landing_Pages_Module::CPT );
 
 		return $properties;
 	}
@@ -95,11 +95,11 @@ class Landing_Page extends PageBase {
 	}
 
 	protected function get_remote_library_config() {
-		$config = [
+		$config = array(
 			'type' => 'lp',
 			'default_route' => 'templates/landing-pages',
 			'autoImportSettings' => true,
-		];
+		);
 
 		return array_replace_recursive( parent::get_remote_library_config(), $config );
 	}

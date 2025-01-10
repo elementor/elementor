@@ -82,7 +82,7 @@ class Shapes {
 	 */
 	public static function filter_shapes( $by, $filter = self::FILTER_INCLUDE ) {
 		return array_filter(
-			self::get_shapes(), function( $shape ) use ( $by, $filter ) {
+			self::get_shapes(), function ( $shape ) use ( $by, $filter ) {
 				return self::FILTER_INCLUDE === $filter xor empty( $shape[ $by ] );
 			}
 		);
@@ -132,87 +132,87 @@ class Shapes {
 	 * @static
 	 */
 	private static function init_shapes() {
-		$native_shapes = [
-			'mountains' => [
+		$native_shapes = array(
+			'mountains' => array(
 				'title' => esc_html_x( 'Mountains', 'Shapes', 'elementor' ),
 				'has_flip' => true,
-			],
-			'drops' => [
+			),
+			'drops' => array(
 				'title' => esc_html_x( 'Drops', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 				'height_only' => true,
-			],
-			'clouds' => [
+			),
+			'clouds' => array(
 				'title' => esc_html_x( 'Clouds', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 				'height_only' => true,
-			],
-			'zigzag' => [
+			),
+			'zigzag' => array(
 				'title' => esc_html_x( 'Zigzag', 'Shapes', 'elementor' ),
-			],
-			'pyramids' => [
+			),
+			'pyramids' => array(
 				'title' => esc_html_x( 'Pyramids', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
-			],
-			'triangle' => [
+			),
+			'triangle' => array(
 				'title' => esc_html_x( 'Triangle', 'Shapes', 'elementor' ),
 				'has_negative' => true,
-			],
-			'triangle-asymmetrical' => [
+			),
+			'triangle-asymmetrical' => array(
 				'title' => esc_html_x( 'Triangle Asymmetrical', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
-			],
-			'tilt' => [
+			),
+			'tilt' => array(
 				'title' => esc_html_x( 'Tilt', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 				'height_only' => true,
-			],
-			'opacity-tilt' => [
+			),
+			'opacity-tilt' => array(
 				'title' => esc_html_x( 'Tilt Opacity', 'Shapes', 'elementor' ),
 				'has_flip' => true,
-			],
-			'opacity-fan' => [
+			),
+			'opacity-fan' => array(
 				'title' => esc_html_x( 'Fan Opacity', 'Shapes', 'elementor' ),
-			],
-			'curve' => [
+			),
+			'curve' => array(
 				'title' => esc_html_x( 'Curve', 'Shapes', 'elementor' ),
 				'has_negative' => true,
-			],
-			'curve-asymmetrical' => [
+			),
+			'curve-asymmetrical' => array(
 				'title' => esc_html_x( 'Curve Asymmetrical', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
-			],
-			'waves' => [
+			),
+			'waves' => array(
 				'title' => esc_html_x( 'Waves', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
-			],
-			'wave-brush' => [
+			),
+			'wave-brush' => array(
 				'title' => esc_html_x( 'Waves Brush', 'Shapes', 'elementor' ),
 				'has_flip' => true,
-			],
-			'waves-pattern' => [
+			),
+			'waves-pattern' => array(
 				'title' => esc_html_x( 'Waves Pattern', 'Shapes', 'elementor' ),
 				'has_flip' => true,
-			],
-			'arrow' => [
+			),
+			'arrow' => array(
 				'title' => esc_html_x( 'Arrow', 'Shapes', 'elementor' ),
 				'has_negative' => true,
-			],
-			'split' => [
+			),
+			'split' => array(
 				'title' => esc_html_x( 'Split', 'Shapes', 'elementor' ),
 				'has_negative' => true,
-			],
-			'book' => [
+			),
+			'book' => array(
 				'title' => esc_html_x( 'Book', 'Shapes', 'elementor' ),
 				'has_negative' => true,
-			],
-		];
+			),
+		);
 
 		self::$shapes = array_merge( $native_shapes, self::get_additional_shapes() );
 	}
@@ -232,7 +232,7 @@ class Shapes {
 		if ( null !== $additional_shapes ) {
 			return $additional_shapes;
 		}
-		$additional_shapes = [];
+		$additional_shapes = array();
 		/**
 		 * Additional shapes.
 		 *
@@ -261,7 +261,7 @@ class Shapes {
 			return false;
 		}
 
-		$additional_shapes_config = [];
+		$additional_shapes_config = array();
 		foreach ( $additional_shapes as $shape_name => $shape_settings ) {
 			if ( ! isset( $shape_settings['url'] ) ) {
 				continue;

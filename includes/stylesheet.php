@@ -25,7 +25,7 @@ class Stylesheet {
 	 *
 	 * @var array A list of CSS rules.
 	 */
-	private $rules = [];
+	private $rules = array();
 
 	/**
 	 * Devices.
@@ -37,7 +37,7 @@ class Stylesheet {
 	 *
 	 * @var array A list of devices.
 	 */
-	private $devices = [];
+	private $devices = array();
 
 	/**
 	 * Raw CSS.
@@ -49,7 +49,7 @@ class Stylesheet {
 	 *
 	 * @var array The raw CSS.
 	 */
-	private $raw = [];
+	private $raw = array();
 
 	/**
 	 * Parse CSS rules.
@@ -160,13 +160,13 @@ class Stylesheet {
 		}
 
 		if ( ! isset( $this->rules[ $query_hash ][ $selector ] ) ) {
-			$this->rules[ $query_hash ][ $selector ] = [];
+			$this->rules[ $query_hash ][ $selector ] = array();
 		}
 
 		if ( is_string( $style_rules ) ) {
 			$style_rules = array_filter( explode( ';', trim( $style_rules ) ) );
 
-			$ordered_rules = [];
+			$ordered_rules = array();
 
 			foreach ( $style_rules as $rule ) {
 				$property = explode( ':', $rule, 2 );
@@ -201,7 +201,7 @@ class Stylesheet {
 	 */
 	public function add_raw_css( $css, $device = '' ) {
 		if ( ! isset( $this->raw[ $device ] ) ) {
-			$this->raw[ $device ] = [];
+			$this->raw[ $device ] = array();
 		}
 
 		$this->raw[ $device ][] = trim( $css );
@@ -289,7 +289,7 @@ class Stylesheet {
 	 * @return string Hashed string of the query.
 	 */
 	private function query_to_hash( array $query ) {
-		$hash = [];
+		$hash = array();
 
 		foreach ( $query as $endpoint => $value ) {
 			$hash[] = $endpoint . '_' . $value;
@@ -312,7 +312,7 @@ class Stylesheet {
 	 * @return array Media query data.
 	 */
 	private function hash_to_query( $hash ) {
-		$query = [];
+		$query = array();
 
 		$hash = array_filter( explode( '-', $hash ) );
 
@@ -342,10 +342,10 @@ class Stylesheet {
 	 * @param string $query_hash Hashed string of the query.
 	 */
 	private function add_query_hash( $query_hash ) {
-		$this->rules[ $query_hash ] = [];
+		$this->rules[ $query_hash ] = array();
 
 		uksort(
-			$this->rules, function( $a, $b ) {
+			$this->rules, function ( $a, $b ) {
 				if ( 'all' === $a ) {
 					return -1;
 				}
@@ -403,7 +403,7 @@ class Stylesheet {
 	private function get_query_hash_style_format( $query_hash ) {
 		$query = $this->hash_to_query( $query_hash );
 
-		$style_format = [];
+		$style_format = array();
 
 		foreach ( $query as $end_point => $value ) {
 			$style_format[] = '(' . $end_point . '-width:' . $value . 'px)';

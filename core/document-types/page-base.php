@@ -42,15 +42,15 @@ abstract class PageBase extends Document {
 		return Utils::array_inject(
 			parent::get_editor_panel_categories(),
 			'theme-elements',
-			[
-				'theme-elements-single' => [
+			array(
+				'theme-elements-single' => array(
 					'title' => esc_html__( 'Single', 'elementor' ),
 					'active' => false,
-					'promotion' => [
+					'promotion' => array(
 						'url' => esc_url( 'https://go.elementor.com/go-pro-section-single-widget-panel/' ),
-					],
-				],
-			]
+					),
+				),
+			)
 		);
 	}
 
@@ -83,16 +83,16 @@ abstract class PageBase extends Document {
 	 * @param Document $document
 	 */
 	public static function register_hide_title_control( $document ) {
-		$document->start_injection( [
+		$document->start_injection( array(
 			'of' => 'post_status',
-			'fallback' => [
+			'fallback' => array(
 				'of' => 'post_title',
-			],
-		] );
+			),
+		) );
 
 		$document->add_control(
 			'hide_title',
-			[
+			array(
 				'label' => esc_html__( 'Hide Title', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'description' => sprintf(
@@ -102,10 +102,10 @@ abstract class PageBase extends Document {
 					'</a>'
 				),
 				'separator' => 'before',
-				'selectors' => [
+				'selectors' => array(
 					':root' => '--page-title-display: none',
-				],
-			]
+				),
+			)
 		);
 
 		$document->end_injection();
@@ -120,50 +120,50 @@ abstract class PageBase extends Document {
 	public static function register_style_controls( $document ) {
 		$document->start_controls_section(
 			'section_page_style',
-			[
+			array(
 				'label' => esc_html__( 'Body Style', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
-			]
+			)
 		);
 
 		$document->add_responsive_control(
 			'margin',
-			[
+			array(
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'selectors' => [
+				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+				'selectors' => array(
 					'{{WRAPPER}}' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
-				],
-			]
+				),
+			)
 		);
 
 		$document->add_responsive_control(
 			'padding',
-			[
+			array(
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'selectors' => [
+				'size_units' => array( 'px', '%', 'em', 'rem', 'vw', 'custom' ),
+				'selectors' => array(
 					'{{WRAPPER}}' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
-				],
-			]
+				),
+			)
 		);
 
 		$document->add_group_control(
 			Group_Control_Background::get_type(),
-			[
+			array(
 				'name'  => 'background',
 				'separator' => 'before',
-				'fields_options' => [
-					'image' => [
+				'fields_options' => array(
+					'image' => array(
 						// Currently isn't supported.
-						'dynamic' => [
+						'dynamic' => array(
 							'active' => false,
-						],
-					],
-				],
-			]
+						),
+					),
+				),
+			)
 		);
 
 		$document->end_controls_section();
@@ -175,7 +175,7 @@ abstract class PageBase extends Document {
 		$plural_label   = static::get_plural_title();
 		$singular_label = static::get_title();
 
-		$labels = [
+		$labels = array(
 			'name' => $plural_label, // Already translated.
 			'singular_name' => $singular_label, // Already translated.
 			'all_items' => sprintf( __( 'All %s', 'elementor' ), $plural_label ),
@@ -189,7 +189,7 @@ abstract class PageBase extends Document {
 			'not_found_in_trash' => sprintf( __( 'No %s found in Trash.', 'elementor' ), strtolower( $plural_label ) ),
 			'parent_item_colon' => '',
 			'menu_name' => $plural_label,
-		];
+		);
 
 		return $labels;
 	}
@@ -201,65 +201,65 @@ abstract class PageBase extends Document {
 	 * @param Document $document
 	 */
 	public static function register_post_fields_control( $document ) {
-		$document->start_injection( [
+		$document->start_injection( array(
 			'of' => 'post_status',
-			'fallback' => [
+			'fallback' => array(
 				'of' => 'post_title',
-			],
-		] );
+			),
+		) );
 
 		if ( post_type_supports( $document->post->post_type, 'excerpt' ) ) {
 			$document->add_control(
 				'post_excerpt',
-				[
+				array(
 					'label' => esc_html__( 'Excerpt', 'elementor' ),
 					'type' => Controls_Manager::TEXTAREA,
 					'default' => $document->post->post_excerpt,
 					'separator' => 'before',
-					'ai' => [
+					'ai' => array(
 						'type' => 'excerpt',
-					],
-				]
+					),
+				)
 			);
 		}
 
 		if ( current_theme_supports( 'post-thumbnails' ) && post_type_supports( $document->post->post_type, 'thumbnail' ) ) {
 			$document->add_control(
 				'post_featured_image',
-				[
+				array(
 					'label' => esc_html__( 'Featured Image', 'elementor' ),
 					'type' => Controls_Manager::MEDIA,
-					'default' => [
+					'default' => array(
 						'id' => get_post_thumbnail_id(),
 						'url' => (string) get_the_post_thumbnail_url( $document->post->ID ),
-					],
+					),
 					'separator' => 'before',
-				]
+				)
 			);
 		}
 
 		if ( is_post_type_hierarchical( $document->post->post_type ) ) {
 			$document->add_control(
 				'menu_order',
-				[
+				array(
 					'label' => esc_html__( 'Order', 'elementor' ),
 					'type' => Controls_Manager::NUMBER,
 					'default' => $document->post->menu_order,
 					'separator' => 'before',
-				]
+				)
 			);
 		}
 
 		if ( post_type_supports( $document->post->post_type, 'comments' ) ) {
 			$document->add_control(
 				'comment_status',
-				[
+				array(
 					'label' => esc_html__( 'Allow Comments', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
 					'return_value' => 'open',
 					'default' => $document->post->comment_status,
 					'separator' => 'before',
-				]
+				)
 			);
 		}
 
@@ -274,7 +274,7 @@ abstract class PageBase extends Document {
 	 *
 	 * @throws \Exception
 	 */
-	public function __construct( array $data = [] ) {
+	public function __construct( array $data = array() ) {
 		if ( $data ) {
 			$template = get_post_meta( $data['post_id'], '_wp_page_template', true );
 

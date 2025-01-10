@@ -43,7 +43,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	 *
 	 * @var array Typography control scheme fields keys.
 	 */
-	private static $_scheme_fields_keys = [ 'font_family', 'font_weight' ];
+	private static $_scheme_fields_keys = array( 'font_family', 'font_weight' );
 
 	/**
 	 * Get scheme fields keys.
@@ -86,7 +86,7 @@ class Group_Control_Typography extends Group_Control_Base {
 	 * @return array Control fields.
 	 */
 	protected function init_fields() {
-		$fields = [];
+		$fields = array();
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit_for_frontend();
 
@@ -102,43 +102,43 @@ class Group_Control_Typography extends Group_Control_Base {
 			$default_fonts = ', ' . $default_fonts;
 		}
 
-		$fields['font_family'] = [
+		$fields['font_family'] = array(
 			'label' => esc_html_x( 'Family', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::FONT,
 			'default' => '',
 			'selector_value' => 'font-family: "{{VALUE}}"' . $default_fonts . ';',
-		];
+		);
 
-		$fields['font_size'] = [
+		$fields['font_size'] = array(
 			'label' => esc_html_x( 'Size', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', 'em', 'rem', 'vw', 'custom' ],
-			'range' => [
-				'px' => [
+			'size_units' => array( 'px', 'em', 'rem', 'vw', 'custom' ),
+			'range' => array(
+				'px' => array(
 					'min' => 1,
 					'max' => 200,
-				],
-				'em' => [
+				),
+				'em' => array(
 					'max' => 20,
-				],
-				'rem' => [
+				),
+				'rem' => array(
 					'max' => 20,
-				],
-				'vw' => [
+				),
+				'vw' => array(
 					'min' => 0.1,
 					'max' => 10,
 					'step' => 0.1,
-				],
-			],
+				),
+			),
 			'responsive' => true,
 			'selector_value' => 'font-size: {{SIZE}}{{UNIT}}',
-		];
+		);
 
-		$fields['font_weight'] = [
+		$fields['font_weight'] = array(
 			'label' => esc_html_x( 'Weight', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
-			'options' => [
+			'options' => array(
 				'100' => '100 ' . esc_html_x( '(Thin)', 'Typography Control', 'elementor' ),
 				'200' => '200 ' . esc_html_x( '(Extra Light)', 'Typography Control', 'elementor' ),
 				'300' => '300 ' . esc_html_x( '(Light)', 'Typography Control', 'elementor' ),
@@ -151,125 +151,125 @@ class Group_Control_Typography extends Group_Control_Base {
 				'' => esc_html__( 'Default', 'elementor' ),
 				'normal' => esc_html__( 'Normal', 'elementor' ),
 				'bold' => esc_html__( 'Bold', 'elementor' ),
-			],
-		];
+			),
+		);
 
 		$fields = $this->add_font_variables_fields( $fields );
 
-		$fields['text_transform'] = [
+		$fields['text_transform'] = array(
 			'label' => esc_html_x( 'Transform', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
-			'options' => [
+			'options' => array(
 				'' => esc_html__( 'Default', 'elementor' ),
 				'uppercase' => esc_html_x( 'Uppercase', 'Typography Control', 'elementor' ),
 				'lowercase' => esc_html_x( 'Lowercase', 'Typography Control', 'elementor' ),
 				'capitalize' => esc_html_x( 'Capitalize', 'Typography Control', 'elementor' ),
 				'none' => esc_html__( 'Normal', 'elementor' ),
-			],
-		];
+			),
+		);
 
-		$fields['font_style'] = [
+		$fields['font_style'] = array(
 			'label' => esc_html_x( 'Style', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
-			'options' => [
+			'options' => array(
 				'' => esc_html__( 'Default', 'elementor' ),
 				'normal' => esc_html__( 'Normal', 'elementor' ),
 				'italic' => esc_html_x( 'Italic', 'Typography Control', 'elementor' ),
 				'oblique' => esc_html_x( 'Oblique', 'Typography Control', 'elementor' ),
-			],
-		];
+			),
+		);
 
-		$fields['text_decoration'] = [
+		$fields['text_decoration'] = array(
 			'label' => esc_html_x( 'Decoration', 'Typography Control', 'elementor' ),
 			'type' => Controls_Manager::SELECT,
 			'default' => '',
-			'options' => [
+			'options' => array(
 				'' => esc_html__( 'Default', 'elementor' ),
 				'underline' => esc_html_x( 'Underline', 'Typography Control', 'elementor' ),
 				'overline' => esc_html_x( 'Overline', 'Typography Control', 'elementor' ),
 				'line-through' => esc_html_x( 'Line Through', 'Typography Control', 'elementor' ),
 				'none' => esc_html__( 'None', 'elementor' ),
-			],
-		];
+			),
+		);
 
-		$fields['line_height'] = [
+		$fields['line_height'] = array(
 			'label' => esc_html__( 'Line Height', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'desktop_default' => [
+			'desktop_default' => array(
 				'unit' => 'em',
-			],
-			'tablet_default' => [
+			),
+			'tablet_default' => array(
 				'unit' => 'em',
-			],
-			'mobile_default' => [
+			),
+			'mobile_default' => array(
 				'unit' => 'em',
-			],
-			'range' => [
-				'px' => [
+			),
+			'range' => array(
+				'px' => array(
 					'min' => 1,
-				],
-			],
+				),
+			),
 			'responsive' => true,
-			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+			'size_units' => array( 'px', 'em', 'rem', 'custom' ),
 			'selector_value' => 'line-height: {{SIZE}}{{UNIT}}',
-		];
+		);
 
-		$fields['letter_spacing'] = [
+		$fields['letter_spacing'] = array(
 			'label' => esc_html__( 'Letter Spacing', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-			'range' => [
-				'px' => [
+			'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+			'range' => array(
+				'px' => array(
 					'min' => -5,
 					'max' => 10,
 					'step' => 0.1,
-				],
-				'em' => [
+				),
+				'em' => array(
 					'min' => 0,
 					'max' => 1,
 					'step' => 0.01,
-				],
-				'rem' => [
+				),
+				'rem' => array(
 					'min' => 0,
 					'max' => 1,
 					'step' => 0.01,
-				],
-			],
+				),
+			),
 			'responsive' => true,
 			'selector_value' => 'letter-spacing: {{SIZE}}{{UNIT}}',
-		];
+		);
 
-		$fields['word_spacing'] = [
+		$fields['word_spacing'] = array(
 			'label' => esc_html__( 'Word Spacing', 'elementor' ),
 			'type' => Controls_Manager::SLIDER,
-			'size_units' => [ 'px', 'em', 'rem', 'custom' ],
-			'range' => [
-				'px' => [
+			'size_units' => array( 'px', 'em', 'rem', 'custom' ),
+			'range' => array(
+				'px' => array(
 					'max' => 50,
-				],
-				'em' => [
+				),
+				'em' => array(
 					'min' => 0,
 					'max' => 5,
-				],
-				'rem' => [
+				),
+				'rem' => array(
 					'min' => 0,
 					'max' => 5,
-				],
-			],
-			'desktop_default' => [
+				),
+			),
+			'desktop_default' => array(
 				'unit' => 'em',
-			],
-			'tablet_default' => [
+			),
+			'tablet_default' => array(
 				'unit' => 'em',
-			],
-			'mobile_default' => [
+			),
+			'mobile_default' => array(
 				'unit' => 'em',
-			],
+			),
 			'responsive' => true,
 			'selector_value' => 'word-spacing: {{SIZE}}{{UNIT}}',
-		];
+		);
 
 		return $fields;
 	}
@@ -281,10 +281,10 @@ class Group_Control_Typography extends Group_Control_Base {
 			return $fields;
 		}
 
-		$font_variables_conditions = [
-			'weight' => [],
-			'width' => [],
-		];
+		$font_variables_conditions = array(
+			'weight' => array(),
+			'width' => array(),
+		);
 
 		foreach ( $font_variables as $font => $variables ) {
 			foreach ( array_keys( $font_variables_conditions ) as $variable ) {
@@ -295,48 +295,48 @@ class Group_Control_Typography extends Group_Control_Base {
 		}
 
 		if ( ! empty( $font_variables_conditions['weight'] ) ) {
-			$fields['weight'] = [
+			$fields['weight'] = array(
 				'label' => esc_html_x( 'Weight', 'Typography Control', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
+				'range' => array(
+					'px' => array(
 						'min' => 1,
 						'max' => 1000,
-					],
-				],
-				'condition' => [
+					),
+				),
+				'condition' => array(
 					'font_family' => $font_variables_conditions['weight'],
-				],
+				),
 				'responsive' => true,
 				'selector_value' => 'font-weight: {{SIZE}};',
-			];
+			);
 
-			$fields['font_weight']['condition'] = [
+			$fields['font_weight']['condition'] = array(
 				'font_family!' => $font_variables_conditions['weight'],
-			];
+			);
 		}
 
 		if ( ! empty( $font_variables_conditions['width'] ) ) {
-			$fields['width'] = [
+			$fields['width'] = array(
 				'label' => esc_html_x( 'Width', 'Typography Control', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'range' => [
-					'px' => [
+				'range' => array(
+					'px' => array(
 						'min' => 0,
 						'max' => 150,
-					],
-				],
-				'condition' => [
+					),
+				),
+				'condition' => array(
 					'font_family' => $font_variables_conditions['width'],
-				],
+				),
 				'responsive' => true,
 				'selector_value' => 'font-stretch: {{SIZE}}%;',
-			];
+			);
 		}
 
-		$fields['font_style']['condition'] = [
+		$fields['font_style']['condition'] = array(
 			'font_family!' => array_keys( $font_variables ),
-		];
+		);
 
 		return $fields;
 	}
@@ -345,14 +345,14 @@ class Group_Control_Typography extends Group_Control_Base {
 		static $font_variables = null;
 
 		if ( null === $font_variables ) {
-			$font_variables = apply_filters( 'elementor/typography/font_variables', [] );
+			$font_variables = apply_filters( 'elementor/typography/font_variables', array() );
 		}
 
 		return $font_variables;
 	}
 
 	public static function get_font_variable_ranges() {
-		return apply_filters( 'elementor/typography/font_variable_ranges', [] );
+		return apply_filters( 'elementor/typography/font_variable_ranges', array() );
 	}
 
 	/**
@@ -369,17 +369,17 @@ class Group_Control_Typography extends Group_Control_Base {
 	 */
 	protected function prepare_fields( $fields ) {
 		array_walk(
-			$fields, function( &$field, $field_name ) {
+			$fields, function ( &$field, $field_name ) {
 
-				if ( in_array( $field_name, [ 'typography', 'popover_toggle' ] ) ) {
+				if ( in_array( $field_name, array( 'typography', 'popover_toggle' ) ) ) {
 					return;
 				}
 
 				$selector_value = ! empty( $field['selector_value'] ) ? $field['selector_value'] : str_replace( '_', '-', $field_name ) . ': {{VALUE}};';
 
-				$field['selectors'] = [
+				$field['selectors'] = array(
 					'{{SELECTOR}}' => $selector_value,
-				];
+				);
 			}
 		);
 
@@ -408,11 +408,11 @@ class Group_Control_Typography extends Group_Control_Base {
 		$args = $this->get_args();
 
 		if ( in_array( $control_id, self::get_scheme_fields_keys() ) && ! empty( $args['scheme'] ) ) {
-			$field_args['scheme'] = [
+			$field_args['scheme'] = array(
 				'type' => self::get_type(),
 				'value' => $args['scheme'],
 				'key' => $control_id,
-			];
+			);
 		}
 
 		return $field_args;
@@ -430,18 +430,18 @@ class Group_Control_Typography extends Group_Control_Base {
 	 * @return array Default typography control options.
 	 */
 	protected function get_default_options() {
-		return [
-			'popover' => [
+		return array(
+			'popover' => array(
 				'starter_name' => 'typography',
 				'starter_title' => esc_html__( 'Typography', 'elementor' ),
-				'settings' => [
+				'settings' => array(
 					'render_type' => 'ui',
 					'groupType' => 'typography',
-					'global' => [
+					'global' => array(
 						'active' => true,
-					],
-				],
-			],
-		];
+					),
+				),
+			),
+		);
 	}
 }

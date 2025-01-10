@@ -7,10 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $wp_version;
 
-$body_classes = [
+$body_classes = array(
 	'elementor-editor-active',
 	'wp-version-' . str_replace( '.', '-', $wp_version ),
-];
+);
 
 if ( is_rtl() ) {
 	$body_classes[] = 'rtl';

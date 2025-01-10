@@ -24,14 +24,14 @@ class Custom_Fonts_Promotion_Item extends Base_Promotion_Template {
 	}
 
 	protected function get_content_lines(): array {
-		return [
+		return array(
 			esc_html__( 'Upload any font to keep your website true to your brand', 'elementor' ),
 			sprintf(
 				/* translators: %s: br  */
 				esc_html__( 'Remain GDPR compliant with Custom Fonts that let you disable %s Google Fonts from your website', 'elementor' ),
 				'<br />'
 			),
-		];
+		);
 	}
 
 	protected function get_cta_url(): string {

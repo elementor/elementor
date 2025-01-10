@@ -30,10 +30,10 @@ class Templates extends Import_Runner_Base {
 		$path = $data['extracted_directory_path'] . 'templates/';
 		$templates = $data['manifest']['templates'];
 
-		$result['templates'] = [
-			'succeed' => [],
-			'failed' => [],
-		];
+		$result['templates'] = array(
+			'succeed' => array(),
+			'failed' => array(),
+		);
 
 		foreach ( $templates as $id => $template_settings ) {
 			try {
@@ -54,11 +54,11 @@ class Templates extends Import_Runner_Base {
 
 		$new_document = Plugin::$instance->documents->create(
 			$doc_type,
-			[
+			array(
 				'post_title' => $template_settings['title'],
 				'post_type' => Source_Local::CPT,
 				'post_status' => 'publish',
-			]
+			)
 		);
 
 		if ( is_wp_error( $new_document ) ) {
@@ -68,7 +68,7 @@ class Templates extends Import_Runner_Base {
 		$template_data['import_settings'] = $template_settings;
 		$template_data['id'] = $id;
 
-		$new_attachment_callback = function( $attachment_id ) {
+		$new_attachment_callback = function ( $attachment_id ) {
 			$this->set_session_post_meta( $attachment_id, $this->import_session_id );
 		};
 

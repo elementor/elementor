@@ -95,7 +95,7 @@ class Version {
 		}
 
 		$parts = explode( '.', $version );
-		$patch_parts = [];
+		$patch_parts = array();
 
 		$major1 = '0';
 		$major2 = '0';
@@ -145,12 +145,12 @@ class Version {
 		$current_version = clone $this;
 		$compare_version = clone $version;
 
-		if ( in_array( $part, [ self::PART_PATCH, self::PART_MAJOR_2, self::PART_MAJOR_1 ], true ) ) {
+		if ( in_array( $part, array( self::PART_PATCH, self::PART_MAJOR_2, self::PART_MAJOR_1 ), true ) ) {
 			$current_version->stage = null;
 			$compare_version->stage = null;
 		}
 
-		if ( in_array( $part, [ self::PART_MAJOR_2, self::PART_MAJOR_1 ], true ) ) {
+		if ( in_array( $part, array( self::PART_MAJOR_2, self::PART_MAJOR_1 ), true ) ) {
 			$current_version->patch = '0';
 			$compare_version->patch = '0';
 		}
@@ -173,7 +173,7 @@ class Version {
 	 * @return string
 	 */
 	public function __toString() {
-		$version = implode( '.', [ $this->major1, $this->major2, $this->patch ] );
+		$version = implode( '.', array( $this->major1, $this->major2, $this->patch ) );
 
 		if ( $this->stage ) {
 			$version .= '-' . $this->stage;

@@ -31,7 +31,7 @@ class Import_Images {
 	 *
 	 * @var array
 	 */
-	private $_replace_image_ids = [];
+	private $_replace_image_ids = array();
 
 	/**
 	 * Get image hash.
@@ -79,10 +79,10 @@ class Import_Images {
 		);
 
 		if ( $post_id ) {
-			$new_attachment = [
+			$new_attachment = array(
 				'id' => $post_id,
 				'url' => wp_get_attachment_url( $post_id ),
-			];
+			);
 			$this->_replace_image_ids[ $attachment['id'] ] = $new_attachment;
 
 			return $new_attachment;
@@ -156,7 +156,7 @@ class Import_Images {
 			$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
 
 			$file_content = $svg_handler->sanitizer( $file_content );
-		};
+		}
 
 		$upload = wp_upload_bits(
 			$filename,
@@ -164,10 +164,10 @@ class Import_Images {
 			$file_content
 		);
 
-		$post = [
+		$post = array(
 			'post_title' => $filename,
 			'guid' => $upload['url'],
-		];
+		);
 
 		$info = wp_check_filetype( $upload['file'] );
 
@@ -198,10 +198,10 @@ class Import_Images {
 		);
 		update_post_meta( $post_id, '_elementor_source_image_hash', $this->get_hash_image( $attachment['url'] ) );
 
-		$new_attachment = [
+		$new_attachment = array(
 			'id' => $post_id,
 			'url' => $upload['url'],
-		];
+		);
 
 		if ( ! empty( $attachment['id'] ) ) {
 			$this->_replace_image_ids[ $attachment['id'] ] = $new_attachment;

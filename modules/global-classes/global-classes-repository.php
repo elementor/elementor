@@ -21,7 +21,7 @@ class Global_Classes_Repository {
 	public function all() {
 		$all = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( self::META_KEY );
 
-		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
+		return Global_Classes::make( $all['items'] ?? array(), $all['order'] ?? array() );
 	}
 
 	public function get( string $id ) {
@@ -35,10 +35,10 @@ class Global_Classes_Repository {
 			throw new \Exception( "Global class with id ${id} not found" );
 		}
 
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
-			'items' => $all->get_items()->except( [ $id ] )->all(),
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, array(
+			'items' => $all->get_items()->except( array( $id ) )->all(),
 			'order' => $all->get_order()->filter( fn( $item ) => $item !== $id )->all(),
-		] );
+		) );
 	}
 
 	public function put( string $id, array $value ) {
@@ -52,10 +52,10 @@ class Global_Classes_Repository {
 			return $value;
 		}
 
-		$value = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
-			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
+		$value = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, array(
+			'items' => $all->get_items()->merge( array( $id => $value ) )->all(),
 			'order' => $all->get_order()->all(),
-		] );
+		) );
 
 		if ( ! $value ) {
 			throw new \Exception( 'Failed to update global class' );
@@ -70,10 +70,10 @@ class Global_Classes_Repository {
 
 		$value['id'] = $id;
 
-		$updated = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
-			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
+		$updated = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, array(
+			'items' => $all->get_items()->merge( array( $id => $value ) )->all(),
 			'order' => $all->get_order()->push( $id )->all(),
-		] );
+		) );
 
 		if ( ! $updated ) {
 			throw new \Exception( 'Failed to create global class' );
@@ -89,10 +89,10 @@ class Global_Classes_Repository {
 			return $value;
 		}
 
-		$updated = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
+		$updated = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, array(
 			'items' => $all->get_items()->all(),
 			'order' => $value,
-		] );
+		) );
 
 		if ( ! $updated ) {
 			throw new \Exception( 'Failed to arrange global classes' );

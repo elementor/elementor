@@ -40,11 +40,11 @@ class Link_Control extends Atomic_Control_Base {
 	}
 
 	public function get_props(): array {
-		return [
+		return array(
 			'placeholder' => $this->placeholder,
 			'options' => $this->options,
 			'allowCustomValues' => $this->allow_custom_values,
-		];
+		);
 	}
 
 	public function set_allow_custom_values( bool $allow_custom_values ): self {

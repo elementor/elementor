@@ -47,16 +47,16 @@ class Custom_Tasks_Manager extends Background_Task_Manager {
 		$task_runner = $this->get_task_runner();
 
 		foreach ( $custom_tasks_callbacks as $callback ) {
-			$task_runner->push_to_queue( [
+			$task_runner->push_to_queue( array(
 				'callback' => $callback,
-			] );
+			) );
 		}
 
 		$this->clear_tasks_requested_to_run();
 
-		Plugin::$instance->logger->get_logger()->info( 'Elementor custom task(s) process has been queued.', [
-			'meta' => [ $custom_tasks_callbacks ],
-		] );
+		Plugin::$instance->logger->get_logger()->info( 'Elementor custom task(s) process has been queued.', array(
+			'meta' => array( $custom_tasks_callbacks ),
+		) );
 
 		$task_runner->save()->dispatch();
 	}
@@ -66,14 +66,14 @@ class Custom_Tasks_Manager extends Background_Task_Manager {
 	}
 
 	public function get_tasks_requested_to_run() {
-		return get_option( self::TASKS_OPTION_KEY, [] );
+		return get_option( self::TASKS_OPTION_KEY, array() );
 	}
 
 	public function clear_tasks_requested_to_run() {
-		return update_option( self::TASKS_OPTION_KEY, [], false );
+		return update_option( self::TASKS_OPTION_KEY, array(), false );
 	}
 
-	public function add_tasks_requested_to_run( $tasks = [] ) {
+	public function add_tasks_requested_to_run( $tasks = array() ) {
 		$current_tasks = $this->get_tasks_requested_to_run();
 		$current_tasks = array_merge( $current_tasks, $tasks );
 
@@ -86,13 +86,13 @@ class Custom_Tasks_Manager extends Background_Task_Manager {
 		$tasks_class = $this->get_tasks_class();
 		$tasks_reflection = new \ReflectionClass( $tasks_class );
 
-		$callbacks = [];
+		$callbacks = array();
 
 		foreach ( $tasks_reflection->getMethods() as $method ) {
 			$method_name = $method->getName();
 
 			if ( in_array( $method_name, $tasks_requested_to_run, true ) ) {
-				$callbacks[] = [ $tasks_class, $method_name ];
+				$callbacks[] = array( $tasks_class, $method_name );
 			}
 		}
 

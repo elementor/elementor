@@ -143,7 +143,7 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 * @param string $id   Section ID.
 	 * @param array  $args Section arguments.
 	 */
-	public function start_controls_section( $id, $args = [] ) {
+	public function start_controls_section( $id, $args = array() ) {
 		$args['condition']['_skin'] = $this->get_id();
 		parent::start_controls_section( $id, $args );
 	}
@@ -162,7 +162,7 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 * @since 3.0.0 New `$options` parameter added.
 	 * @access public
 	 */
-	public function add_control( $id, $args = [], $options = [] ) {
+	public function add_control( $id, $args = array(), $options = array() ) {
 		$args['condition']['_skin'] = $this->get_id();
 		return parent::add_control( $id, $args, $options );
 	}
@@ -181,7 +181,7 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 * @param array  $args    Control arguments. Only the new fields you want to update.
 	 * @param array  $options Optional. Some additional options.
 	 */
-	public function update_control( $id, $args, array $options = [] ) {
+	public function update_control( $id, $args, array $options = array() ) {
 		$args['condition']['_skin'] = $this->get_id();
 		parent::update_control( $id, $args, $options );
 	}
@@ -198,7 +198,7 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 * @since  1.0.5
 	 * @access public
 	 */
-	public function add_responsive_control( $id, $args, $options = [] ) {
+	public function add_responsive_control( $id, $args, $options = array() ) {
 		$args['condition']['_skin'] = $this->get_id();
 		parent::add_responsive_control( $id, $args );
 	}
@@ -247,7 +247,7 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 * @since  1.0.0
 	 * @access public
 	 */
-	final public function add_group_control( $group_name, $args = [], $options = [] ) {
+	final public function add_group_control( $group_name, $args = array(), $options = array() ) {
 		$args['condition']['_skin'] = $this->get_id();
 		parent::add_group_control( $group_name, $args );
 	}

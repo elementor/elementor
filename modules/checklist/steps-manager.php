@@ -15,15 +15,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
-	private array $step_instances = [];
+	private array $step_instances = array();
 
-	private static array $step_ids = [
+	private static array $step_ids = array(
 		Add_Logo::STEP_ID,
 		Set_Fonts_And_Colors::STEP_ID,
 		Create_Pages::STEP_ID,
 		Setup_Header::STEP_ID,
 		Assign_Homepage::STEP_ID,
-	];
+	);
 
 	private Checklist_Module_Interface $module;
 
@@ -31,7 +31,7 @@ class Steps_Manager {
 		$this->module = $module;
 		$this->register_steps();
 
-		add_action( 'elementor/init', function() {
+		add_action( 'elementor/init', function () {
 			$this->filter_steps();
 		} );
 	}
@@ -42,18 +42,18 @@ class Steps_Manager {
 	 * @return array
 	 */
 	public function get_steps_for_frontend(): array {
-		$formatted_steps = [];
+		$formatted_steps = array();
 
 		foreach ( self::$step_ids as $step_id ) {
 			$instance = $this->step_instances[ $step_id ];
 			$instance->maybe_immutably_mark_as_completed();
 
-			$step = [
+			$step = array(
 				Step_Base::MARKED_AS_COMPLETED_KEY => $instance->is_marked_as_completed(),
 				Step_Base::IMMUTABLE_COMPLETION_KEY => $instance->is_immutable_completed(),
 				Step_Base::ABSOLUTE_COMPLETION_KEY => $instance->is_absolute_completed(),
 				'config' => $this->get_step_config( $step_id ),
-			];
+			);
 
 			$formatted_steps[] = $step;
 		}
@@ -79,7 +79,7 @@ class Steps_Manager {
 	 * @return void
 	 */
 	public function mark_step_as_completed( string $step_id ): void {
-		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => true ] );
+		$this->update_step( $step_id, array( Step_Base::MARKED_AS_COMPLETED_KEY => true ) );
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Steps_Manager {
 	 * @return void
 	 */
 	public function unmark_step_as_completed( string $step_id ): void {
-		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => false ] );
+		$this->update_step( $step_id, array( Step_Base::MARKED_AS_COMPLETED_KEY => false ) );
 	}
 
 	/**
@@ -121,7 +121,7 @@ class Steps_Manager {
 		$step_instance = $this->step_instances[ $step_id ];
 
 		return $step_instance
-			? [
+			? array(
 				'id' => $step_instance->get_id(),
 				'title' => $step_instance->get_title(),
 				'description' => $step_instance->get_description(),
@@ -132,8 +132,8 @@ class Steps_Manager {
 				'cta_url' => $step_instance->get_cta_url(),
 				'image_src' => $step_instance->get_image_src(),
 				'promotion_data' => $step_instance->get_promotion_data(),
-			]
-			: [];
+			)
+			: array();
 	}
 
 	/**
@@ -179,7 +179,7 @@ class Steps_Manager {
 	}
 
 	private function filter_steps() {
-		$step_ids  = [];
+		$step_ids  = array();
 		$filtered_steps = apply_filters( 'elementor/checklist/steps', $this->step_instances );
 
 		foreach ( $filtered_steps as $step_id => $step_instance ) {

@@ -28,21 +28,21 @@ class Elementor_Content extends Revert_Runner_Base {
 	public function revert( array $data ) {
 		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
 
-		$query_args = [
+		$query_args = array(
 			'post_type' => $elementor_post_types,
 			'post_status' => 'any',
 			'posts_per_page' => -1,
-			'meta_query' => [
-				[
+			'meta_query' => array(
+				array(
 					'key' => static::META_KEY_ELEMENTOR_EDIT_MODE,
 					'compare' => 'EXISTS',
-				],
-				[
+				),
+				array(
 					'key' => static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID,
 					'value' => $data['session_id'],
-				],
-			],
-		];
+				),
+			),
+		);
 
 		$query = new \WP_Query( $query_args );
 

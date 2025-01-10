@@ -42,11 +42,11 @@ class Control_Button extends Base_UI_Control {
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
-		return [
+		return array(
 			'text' => '',
 			'event' => '',
 			'button_type' => 'default',
-		];
+		);
 	}
 
 	/**

@@ -33,27 +33,27 @@ class Setup_Header extends Step_Base {
 	}
 
 	public function is_absolute_completed(): bool {
-		$args = [
+		$args = array(
 			'post_type' => 'elementor_library',
-			'meta_query' => [
+			'meta_query' => array(
 				'relation' => 'AND',
-				[
+				array(
 					'key' => '_elementor_template_type',
 					'value' => 'header',
 					'compare' => '=',
-				],
-				[
+				),
+				array(
 					'key' => '_elementor_conditions',
-				],
-			],
+				),
+			),
 			'posts_per_page' => 1,
 			'fields' => 'ids',
 			'no_found_rows' => true,
 			'update_post_term_cache' => false,
 			'update_post_meta_cache' => false,
-		];
+		);
 		$query = $this->wordpress_adapter->get_query( $args );
-		$header_templates = $query->posts ?? [];
+		$header_templates = $query->posts ?? array();
 
 		return count( $header_templates ) >= 1;
 	}
@@ -88,11 +88,11 @@ class Setup_Header extends Step_Base {
 
 	private function render_promotion() {
 			return Filtered_Promotions_Manager::get_filtered_promotion_data(
-				[
+				array(
 					'url' => 'https://go.elementor.com/go-pro-website-checklist-header',
 					'text' => esc_html__( 'Upgrade Now', 'elementor' ),
 					'icon' => 'default',
-				],
+				),
 				'elementor/checklist/promotion',
 				'upgrade_url'
 			);
