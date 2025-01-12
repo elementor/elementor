@@ -247,6 +247,10 @@ class Frontend extends App {
 			return;
 		}
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_local_google_fonts' ) ) {
+			return;
+		}
+
 		echo '<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>';
 	}
 
