@@ -1,9 +1,11 @@
 <?php
 /**
+ * @package Elementor
  * Plugin Name: Elementor REST API example.
  * Plugin URI: https://elementor.com/
  * Description: Demo of using Elementor REST API.
  */
+
 add_action( 'plugins_loaded', function () {
 	// Load the controller.
 	require 'house/controller.php';
