@@ -6,7 +6,6 @@ use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 
@@ -61,9 +60,9 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 		printf(
 			'<%1$s %2$s>%3$s</%1$s>',
-			Utils::validate_html_tag( $tag ),
-			Utils::render_html_attributes( $attrs ),
-			esc_html( $paragraph )
+			esc_html( Utils::validate_html_tag( $tag ) ),
+			esc_html( Utils::render_html_attributes( $attrs ) ),
+			esc_html( $paragraph ),
 		);
 	}
 }
