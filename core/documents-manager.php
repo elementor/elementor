@@ -88,6 +88,7 @@ class Documents_Manager {
 		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
 		add_filter( 'user_has_cap', [ $this, 'remove_user_edit_cap' ], 10, 3 );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
+		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 	}
 
 	/**
@@ -773,5 +774,51 @@ class Documents_Manager {
 		$post_type = get_post_type( $post_id );
 
 		return $this->cpt[ $post_type ] ?? 'post';
+	}
+
+	public function register_rest_routes() {
+		register_rest_route('elementor/v1/documents', '/(?P<id>\d+)/media/import', [
+			'methods' => \WP_REST_Server::CREATABLE,
+			'callback' => function( $request ) {
+				$post_id = $request->get_param( 'id' );
+
+				try {
+					$document = $this->get_with_permissions( $post_id );
+
+					$elements_data = $document->get_elements_data();
+
+					$import_data = $document->get_import_data( [
+						'content' => $elements_data,
+					] );
+
+					$document->save( [
+						'elements' => $import_data['content'],
+					] );
+
+					return new \WP_REST_Response( [
+						'success' => true,
+						'document_saved' => true,
+					], 200 );
+
+				} catch ( \Exception $e ) {
+					return new \WP_Error(
+						'elementor_import_error',
+						$e->getMessage(),
+						[ 'status' => 500 ]
+					);
+				}
+			},
+			'permission_callback' => function() {
+				return current_user_can( 'manage_options' );
+			},
+			'args' => [
+				'id' => [
+					'required' => true,
+					'validate_callback' => function( $param ) {
+						return is_numeric( $param );
+					},
+				],
+			],
+		]);
 	}
 }
