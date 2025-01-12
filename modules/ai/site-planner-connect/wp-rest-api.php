@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Just a simple rest api to validate new Site Planner Connect feature exists.
  */
-class WpRestApi {
+class Wp_Rest_Api {
 
 	public function register(): void {
 		register_rest_route('elementor-ai/v1', 'permissions', [

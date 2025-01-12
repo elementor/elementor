@@ -24,7 +24,7 @@ class Module {
 	}
 
 	public function on_rest_init(): void {
-		( new WpRestApi() )->register();
+		( new Wp_Rest_Api() )->register();
 	}
 
 	public function register_menu_page() {
