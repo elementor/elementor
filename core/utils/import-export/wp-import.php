@@ -61,7 +61,6 @@ class WP_Import extends \WP_Importer {
 	 */
 	private $id;
 
-	// phpcs:ignore Squiz.Commenting.VariableComment.MissingVar
 	/**
 	 * Information to import from WXR file.
 	 */
@@ -74,7 +73,6 @@ class WP_Import extends \WP_Importer {
 	private $page_on_front;
 	private $base_blog_url = '';
 
-	// phpcs:ignore Squiz.Commenting.VariableComment.MissingVar
 	/**
 	 * Mappings from old information to new.
 	 */
