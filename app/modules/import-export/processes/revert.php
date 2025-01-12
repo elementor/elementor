@@ -10,6 +10,7 @@ use Elementor\App\Modules\ImportExport\Runners\Revert\Taxonomies;
 use Elementor\App\Modules\ImportExport\Runners\Revert\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Revert\Wp_Content;
 use Elementor\App\Modules\ImportExport\Utils;
+use PHPUnit\Framework\MockObject\Exception;
 
 class Revert {
 
@@ -23,7 +24,7 @@ class Revert {
 	private $revert_sessions;
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception Exception if no revert runners have been specified.
 	 */
 	public function __construct() {
 		$this->import_sessions = self::get_import_sessions();
