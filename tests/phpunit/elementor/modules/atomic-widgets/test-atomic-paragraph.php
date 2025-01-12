@@ -16,7 +16,7 @@ class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicParagraph extend
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK);
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK );
 	}
 
 	public function test_get_paragraph_widget_name(): void {
@@ -24,7 +24,6 @@ class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicParagraph extend
 	}
 
 	public function test_get_paragraph_widget_icon(): void {
-		var_dump($this->instance->get_icon());
 		$this->assertSame( 'eicon-text', $this->instance->get_icon() );
 	}
 
@@ -37,8 +36,11 @@ class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicParagraph extend
 		$this->instance->render_content();
 		$actual = ob_get_clean();
 
+		$actual_output = $this->widgetStringOutput( $actual );
+		$expected_output = $this->widgetStringOutput( $expected );
+
 		// Assert.
-		$this->assertSame( $this->widgetStringOutput( $expected ), $this->widgetStringOutput( $actual ) );
+		$this->assertSame( $expected_output, $actual_output );
 	}
 
 	public function test_set_paragraph_value(): void {
@@ -51,9 +53,11 @@ class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicParagraph extend
 		$this->instance->render_content();
 		$actual = ob_get_clean();
 
+		$actual_output = $this->widgetStringOutput( $actual );
+		$expected_output = $this->widgetStringOutput( $expected );
+
 		// Assert.
-		$this->assertSame( $this->widgetStringOutput( $expected ), $this->widgetStringOutput( $actual ) );
-	}
+		$this->assertSame( $expected_output, $actual_output );	}
 
 
 	public function widgetStringOutput( string $string ): void {
