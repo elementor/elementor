@@ -54,9 +54,7 @@ class WP_Import extends \WP_Importer {
 		'errors' => [],
 	];
 
-	/*
-	 * WXR attachment ID
-	 */
+	// WXR attachment ID
 	private $id;
 
 	// Information to import from WXR file.
