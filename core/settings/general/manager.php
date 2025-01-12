@@ -4,6 +4,7 @@ namespace Elementor\Core\Settings\General;
 use Elementor\Core\Files\CSS\Base;
 use Elementor\Core\Settings\Base\CSS_Manager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -55,6 +56,8 @@ class Manager extends CSS_Manager {
 	 * @return string Manager name.
 	 */
 	public function get_name() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return 'general';
 	}
 
@@ -70,6 +73,8 @@ class Manager extends CSS_Manager {
 	 * @return BaseModel The model object.
 	 */
 	public function get_model_for_config() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return $this->get_model();
 	}
 
@@ -77,6 +82,8 @@ class Manager extends CSS_Manager {
 	 * @deprecated 3.0.0
 	 */
 	protected function get_saved_settings( $id ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return [];
 	}
 
@@ -92,6 +99,8 @@ class Manager extends CSS_Manager {
 	 * @return string CSS file name.
 	 */
 	protected function get_css_file_name() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return 'global';
 	}
 
@@ -99,6 +108,8 @@ class Manager extends CSS_Manager {
 	 * @deprecated 3.0.0
 	 */
 	protected function save_settings_to_db( array $settings, $id ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		throw new \Exception( __CLASS__ . ' is deprecated. Use Plugin::$instance->kits_manager->get_active_kit_for_frontend() instead.' );
 	}
 
@@ -106,6 +117,8 @@ class Manager extends CSS_Manager {
 	 * @deprecated 3.0.0
 	 */
 	protected function get_model_for_css_file( Base $css_file ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return false;
 	}
 
@@ -113,6 +126,8 @@ class Manager extends CSS_Manager {
 	 * @deprecated 3.0.0
 	 */
 	protected function get_css_file_for_update( $id ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return false;
 	}
 }

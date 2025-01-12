@@ -18,6 +18,8 @@ class Json_Handler extends Files_Upload_Handler {
 	 * @deprecated 3.5.0
 	 */
 	public static function get_name() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
 		return 'json-handler';
 	}
 
@@ -25,6 +27,8 @@ class Json_Handler extends Files_Upload_Handler {
 	 * @deprecated 3.5.0
 	 */
 	public function get_mime_type() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
 		return 'application/json';
 	}
 
@@ -32,6 +36,8 @@ class Json_Handler extends Files_Upload_Handler {
 	 * @deprecated 3.5.0
 	 */
 	public function get_file_type() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
 		return 'json';
 	}
 }

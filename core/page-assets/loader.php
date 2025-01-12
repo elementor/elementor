@@ -141,6 +141,8 @@ class Loader extends Module {
 	 * @deprecated 3.22.0
 	 */
 	public function enqueue_assets(): void {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.22.0' );
+
 		$assets = $this->get_assets();
 		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
 

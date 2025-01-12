@@ -23,12 +23,14 @@ class Control_Icon extends Base_Data_Control {
 	 * Retrieve the control type, in this case `icon`.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.6.0 Use `Control_Icons` class instead.
+	 * @deprecated 2.6.0 Use `Control_Icons::get_type()` method instead.
 	 * @access public
 	 *
 	 * @return string Control type.
 	 */
 	public function get_type() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.6.0', 'Control_Icons::get_type()' );
+
 		return 'icon';
 	}
 
@@ -38,13 +40,15 @@ class Control_Icon extends Base_Data_Control {
 	 * Retrieve all the available icons.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.6.0 Use `Control_Icons` class instead.
+	 * @deprecated 2.6.0 Use `Control_Icons::get_icons()` method instead.
 	 * @access public
 	 * @static
 	 *
 	 * @return array Available icons.
 	 */
 	public static function get_icons() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.6.0', 'Control_Icons::get_icons()' );
+
 		return [
 			'fa fa-500px' => '500px',
 			'fa fa-address-book' => 'address-book',
@@ -844,12 +848,14 @@ class Control_Icon extends Base_Data_Control {
 	 * settings while initializing the icons control.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.6.0 Use `Control_Icons` class instead.
+	 * @deprecated 2.6.0 Use `Control_Icons::get_default_settings()` method instead.
 	 * @access protected
 	 *
 	 * @return array Control default settings.
 	 */
 	protected function get_default_settings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.6.0', 'Control_Icons::get_default_settings()' );
+
 		return [
 			'options' => self::get_icons(),
 			'include' => '',
@@ -865,10 +871,12 @@ class Control_Icon extends Base_Data_Control {
 	 * object.
 	 *
 	 * @since 1.0.0
-	 * @deprecated 2.6.0 Use `Control_Icons` class instead.
+	 * @deprecated 2.6.0 Use `Control_Icons::content_template()` method instead.
 	 * @access public
 	 */
 	public function content_template() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.6.0', 'Control_Icons::content_template()' );
+
 		?>
 		<div class="elementor-control-field">
 			<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>

@@ -3,7 +3,6 @@ namespace Elementor\Core\Files\Assets\Svg;
 
 use Elementor\Core\Files\Assets\Files_Upload_Handler;
 use Elementor\Core\Files\File_Types\Svg;
-use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,6 +43,8 @@ class Svg_Handler extends Files_Upload_Handler {
 	 * @deprecated 3.5.0
 	 */
 	public static function get_name() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
 		return 'svg-handler';
 	}
 
@@ -88,6 +89,8 @@ class Svg_Handler extends Files_Upload_Handler {
 	 * @deprecated 3.5.0
 	 */
 	public function get_mime_type() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
 		return 'image/svg+xml';
 	}
 
@@ -95,6 +98,8 @@ class Svg_Handler extends Files_Upload_Handler {
 	 * @deprecated 3.5.0
 	 */
 	public function get_file_type() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
+
 		return 'svg';
 	}
 

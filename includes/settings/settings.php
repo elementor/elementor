@@ -231,6 +231,8 @@ class Settings extends Settings_Page {
 	 * @deprecated 3.0.0 Use `Plugin::$instance->files_manager->clear_cache()` method instead.
 	 */
 	public function update_css_print_method() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0', 'Plugin::$instance->files_manager->clear_cache()' );
+
 		Plugin::$instance->files_manager->clear_cache();
 	}
 

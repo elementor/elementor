@@ -114,6 +114,8 @@ class Responsive {
 	 * @return array Responsive breakpoints.
 	 */
 	public static function get_breakpoints() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.2.0' );
+
 		return array_reduce(
 			array_keys( self::$default_breakpoints ), function( $new_array, $breakpoint_key ) {
 				if ( ! in_array( $breakpoint_key, self::$editable_breakpoints_keys, true ) ) {

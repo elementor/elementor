@@ -2,6 +2,7 @@
 namespace Elementor\Core\Upgrade;
 
 use Elementor\Core\Base\DB_Upgrades_Manager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -24,6 +25,8 @@ class Manager extends DB_Upgrades_Manager {
 	 * @deprecated 3.1.0
 	 */
 	public function should_upgrade() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
+
 		if ( ( 'elementor' === $this->get_plugin_name() ) && version_compare( get_option( $this->get_version_option_name() ), '2.4.2', '<' ) ) {
 			delete_option( 'elementor_log' );
 		}

@@ -164,6 +164,8 @@ class Manager {
 	 * @return bool Whether the source was unregistered.
 	 */
 	public function unregister_source( $id ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.7.0' );
+
 		return true;
 	}
 

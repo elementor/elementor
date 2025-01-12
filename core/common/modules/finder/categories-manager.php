@@ -38,8 +38,6 @@ class Categories_Manager {
 	 *
 	 * @param string        $category_name
 	 * @param Base_Category $category
-	 *
-	 * @deprecated 3.5.0 Use `register()` method instead.
 	 */
 	public function add_category( $category_name, Base_Category $category ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(

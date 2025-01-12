@@ -19,6 +19,8 @@ class Model {
 	 * @deprecated 3.0.0
 	 */
 	public function get_name() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return 'general-deprecated';
 	}
 
@@ -26,6 +28,8 @@ class Model {
 	 * @deprecated 3.0.0
 	 */
 	public function get_panel_page_settings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return [];
 	}
 
@@ -33,6 +37,8 @@ class Model {
 	 * @deprecated 3.0.0
 	 */
 	public function get_tabs_controls() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return [];
 	}
 
@@ -40,6 +46,8 @@ class Model {
 	 * @deprecated 3.0.0
 	 */
 	public function get_frontend_settings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return [];
 	}
 
@@ -47,6 +55,8 @@ class Model {
 	 * @deprecated 3.0.0
 	 */
 	public function get_controls() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
+
 		return [];
 	}
 
@@ -54,6 +64,7 @@ class Model {
 	 * @deprecated 3.0.0
 	 */
 	public function get_settings( $setting = null ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
 
 		if ( $setting ) {
 			$setting = str_replace( 'elementor_', '', $setting );
