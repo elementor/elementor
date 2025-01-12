@@ -456,7 +456,7 @@ class Upgrades {
 			}
 
 			$data = Plugin::$instance->db->iterate_data( $data, function( $element ) use ( &$do_update, $widgets ) {
-				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets, true ) ) {
+				if ( empty( $element['widgetType'] ) || ! in_array( $element['widgetType'], $widgets ) ) {
 					return $element;
 				}
 
