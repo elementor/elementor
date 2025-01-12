@@ -64,6 +64,7 @@ class WP_Import extends \WP_Importer {
 	/**
 	 * Information to import from WXR file.
 	 */
+	// phpcs:ignore Squiz.Commenting.VariableComment.MissingVar
 	private $version;
 	private $authors = [];
 	private $posts = [];
@@ -75,6 +76,7 @@ class WP_Import extends \WP_Importer {
 	/**
 	 * Mappings from old information to new.
 	 */
+	// phpcs:ignore Squiz.Commenting.VariableComment.MissingVar
 	private $processed_taxonomies;
 	private $processed_terms = [];
 	private $processed_posts = [];
