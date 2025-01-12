@@ -52,13 +52,13 @@ class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicParagraph extend
 		$actual = ob_get_clean();
 
 		// Assert.
-		$this->assertEq( $this->widgetStringOutput( $expected ), $this->widgetStringOutput( $actual ) );
+		$this->assertSame( $this->widgetStringOutput( $expected ), $this->widgetStringOutput( $actual ) );
 	}
 
 
 	public function widgetStringOutput( string $string ): void {
 		ob_start();
 		echo $string;
-		echo ob_get_clean();
+		ob_get_clean();
 	}
 }
