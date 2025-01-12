@@ -54,12 +54,15 @@ class WP_Import extends \WP_Importer {
 		'errors' => [],
 	];
 
-	// WXR attachment ID
+	/**
+	 * WXR attachment ID
+	 *
+	 * @var string
+	 */
 	private $id;
 
-	/**
-	 * Information to import from WXR file.
-	 */
+	// Information to import from WXR file.
+
 	private $version;
 	private $authors = [];
 	private $posts = [];
@@ -68,9 +71,8 @@ class WP_Import extends \WP_Importer {
 	private $page_on_front;
 	private $base_blog_url = '';
 
-	/**
-	 * Mappings from old information to new.
-	 */
+	// Mappings from old information to new.
+
 	private $processed_taxonomies;
 	private $processed_terms = [];
 	private $processed_posts = [];
