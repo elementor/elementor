@@ -123,7 +123,7 @@ class Module extends BaseModule {
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
-		$widgets_manager->register( new Atomic_paragraph() );
+		$widgets_manager->register( new Atomic_Paragraph() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
