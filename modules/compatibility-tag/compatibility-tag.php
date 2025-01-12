@@ -30,12 +30,12 @@ class Compatibility_Tag extends Base_Object {
 	public function __construct( $header ) {
 		$this->header = $header;
 	}
-
+	
 	/**
 	 * Return if plugins is compatible or not.
 	 *
 	 * @param Version $version
-	 * @param array   $plugins_names
+	 * @param array $plugins_names
 	 *
 	 * @return array
 	 * @throws \Exception
