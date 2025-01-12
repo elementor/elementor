@@ -183,7 +183,7 @@ class Svg_Sanitizer {
 
 		$tag_name = $element->tagName; // phpcs:ignore -- php DomDocument
 
-		if ( ! in_array( strtolower( $tag_name ), $allowed_tags, true ) ) {
+		if ( ! in_array( strtolower( $tag_name ), $allowed_tags ) ) {
 			$this->remove_element( $element );
 			return false;
 		}
@@ -455,7 +455,7 @@ class Svg_Sanitizer {
 			$attr_name = $element->attributes->item( $index )->name;
 			$attr_name_lowercase = strtolower( $attr_name );
 			// Remove attribute if not in whitelist
-			if ( ! in_array( $attr_name_lowercase, $allowed_attributes, true ) && ! $this->is_a_attribute( $attr_name_lowercase, 'aria' ) && ! $this->is_a_attribute( $attr_name_lowercase, 'data' ) ) {
+			if ( ! in_array( $attr_name_lowercase, $allowed_attributes ) && ! $this->is_a_attribute( $attr_name_lowercase, 'aria' ) && ! $this->is_a_attribute( $attr_name_lowercase, 'data' ) ) {
 				$element->removeAttribute( $attr_name );
 				continue;
 			}

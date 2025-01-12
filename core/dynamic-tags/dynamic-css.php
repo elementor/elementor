@@ -32,7 +32,7 @@ class Dynamic_CSS extends Post_Local_Cache {
 	protected function render_styles( Element_Base $element ) {
 		$id = $element->get_id();
 
-		if ( in_array( $id, $this->post_dynamic_elements_ids, true ) ) {
+		if ( in_array( $id, $this->post_dynamic_elements_ids ) ) {
 			parent::render_styles( $element );
 		}
 

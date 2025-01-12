@@ -135,7 +135,7 @@ class Upgrades {
 					return $element;
 				}
 
-				if ( in_array( $element['widgetType'], [ 'icon', 'icon-box', 'social-icons' ], true ) ) {
+				if ( in_array( $element['widgetType'], [ 'icon', 'icon-box', 'social-icons' ] ) ) {
 					if ( ! empty( $element['settings']['icon_padding']['size'] ) ) {
 						$element['settings']['icon_padding']['size'] = '';
 					}

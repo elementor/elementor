@@ -203,13 +203,13 @@ class WXR_Parser_XML {
 	}
 
 	private function tag_open( $tag, $attr ) {
-		if ( in_array( $tag, self::$wp_tags, true ) ) {
+		if ( in_array( $tag, self::$wp_tags ) ) {
 			$this->in_tag = substr( $tag, 3 );
 
 			return;
 		}
 
-		if ( in_array( $tag, self::$wp_sub_tags, true ) ) {
+		if ( in_array( $tag, self::$wp_sub_tags ) ) {
 			$this->in_sub_tag = substr( $tag, 3 );
 
 			return;

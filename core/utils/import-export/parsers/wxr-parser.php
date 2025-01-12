@@ -27,7 +27,7 @@ class WXR_Parser {
 			$result = $parser->parse( $file );
 
 			// If SimpleXML succeeds or this is an invalid WXR file then return the results.
-			if ( ! is_wp_error( $result ) || 'SimpleXML_parse_error' !== $result->get_error_code() ) {
+			if ( ! is_wp_error( $result ) || 'SimpleXML_parse_error' != $result->get_error_code() ) {
 				return $result;
 			}
 		} elseif ( extension_loaded( 'xml' ) ) {
@@ -35,7 +35,7 @@ class WXR_Parser {
 			$result = $parser->parse( $file );
 
 			// If XMLParser succeeds or this is an invalid WXR file then return the results.
-			if ( ! is_wp_error( $result ) || 'XML_parse_error' !== $result->get_error_code() ) {
+			if ( ! is_wp_error( $result ) || 'XML_parse_error' != $result->get_error_code() ) {
 				return $result;
 			}
 		}
