@@ -1608,7 +1608,7 @@ abstract class Document extends Controls_Stack {
 		parent::__construct( $data );
 	}
 
-	/*
+	/**
 	 * Get Export Data
 	 *
 	 * Filters a document's data on export
@@ -1647,7 +1647,7 @@ abstract class Document extends Controls_Stack {
 		];
 	}
 
-	/*
+	/**
 	 * Get Import Data
 	 *
 	 * Filters a document's data on import
