@@ -10,7 +10,6 @@ use Elementor\App\Modules\ImportExport\Runners\Revert\Taxonomies;
 use Elementor\App\Modules\ImportExport\Runners\Revert\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Revert\Wp_Content;
 use Elementor\App\Modules\ImportExport\Utils;
-use PHPUnit\Framework\MockObject\Exception;
 
 class Revert {
 
