@@ -37,6 +37,7 @@ test.describe( 'Column tests @column', () => {
 		await editor.addImagesToGalleryControl();
 
 		await test.step( 'Verify background slideshow', async () => {
+			await editor.togglePreviewMode();
 			const slideshow = editor
 				.getPreviewFrame()
 				.locator( '.elementor-column .elementor-background-slideshow' );
@@ -46,7 +47,7 @@ test.describe( 'Column tests @column', () => {
 		} );
 
 		await test.step( 'Verify background slideshow on the frontend', async () => {
-			await expect.soft( page.locator( '.e-column' ) ).toHaveScreenshot( 'frontend-section-background-slideshow.png' );
+			await expect.soft( page.locator( '.elementor-column .elementor-background-slideshow' ) ).toHaveScreenshot( 'frontend-section-background-slideshow.png' );
 		} );
 	} );
 } );
