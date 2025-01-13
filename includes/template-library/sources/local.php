@@ -587,7 +587,7 @@ class Source_Local extends Source_Base {
 		);
 	}
 
-	// For testing purposes only, in order to be able to mock the `WP_CLI` constant.
+	/** For testing purposes only, in order to be able to mock the `WP_CLI` constant. */
 	protected function is_wp_cli() {
 		return Utils::is_wp_cli();
 	}
@@ -873,8 +873,8 @@ class Source_Local extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string $name - The file name
-	 * @param string $path - The file path
+	 * @param string $name - The file name.
+	 * @param string $path - The file path.
 	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
 	public function import_template( $name, $path ) {
@@ -1011,7 +1011,7 @@ class Source_Local extends Source_Base {
 	/**
 	 * Is template library supports export.
 	 *
-	 * whether the template library supports export.
+	 * Whether the template library supports export.
 	 *
 	 * Template saved by the user locally on his site, support export by default
 	 * but this can be changed using a filter.
@@ -1272,7 +1272,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
-	 * @param array $args
+	 * @param array  $args
 	 */
 	public function maybe_render_blank_state( $which, array $args = [] ) {
 		global $post_type;
@@ -1355,9 +1355,9 @@ class Source_Local extends Source_Base {
 	 * @since 3.1.0
 	 * @access public
 	 *
-	 * @param string $current_type_label The Entity title
-	 * @param string $href The URL for the 'Add New' button
-	 * @param string $description The sub title describing the Entity (Post Type, Taxonomy, etc.)
+	 * @param string $current_type_label The Entity title.
+	 * @param string $href The URL for the 'Add New' button.
+	 * @param string $description The sub title describing the Entity (Post Type, Taxonomy, etc.).
 	 */
 	public function print_blank_state_template( $current_type_label, $href, $description ) {
 		?>

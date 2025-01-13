@@ -16,5 +16,5 @@ interface Runner_Interface {
 	 *
 	 * @return string
 	 */
-	public static function get_name() : string;
+	public static function get_name(): string;
 }

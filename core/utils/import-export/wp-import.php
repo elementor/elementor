@@ -54,12 +54,14 @@ class WP_Import extends \WP_Importer {
 		'errors' => [],
 	];
 
-	/*
+	/**
 	 * WXR attachment ID
 	 */
 	private $id;
 
-	// Information to import from WXR file.
+	/**
+	 * Information to import from WXR file.
+	 */
 	private $version;
 	private $authors = [];
 	private $posts = [];
@@ -68,7 +70,9 @@ class WP_Import extends \WP_Importer {
 	private $page_on_front;
 	private $base_blog_url = '';
 
-	// Mappings from old information to new.
+	/**
+	 * Mappings from old information to new.
+	 */
 	private $processed_taxonomies;
 	private $processed_terms = [];
 	private $processed_posts = [];
@@ -121,7 +125,6 @@ class WP_Import extends \WP_Importer {
 	 * @link  http://tools.ietf.org/html/rfc6266
 	 *
 	 * @see WP_REST_Attachments_Controller::get_filename_from_disposition()
-	 *
 	 */
 	protected static function get_filename_from_disposition( $disposition_header ) {
 		// Get the filename.
