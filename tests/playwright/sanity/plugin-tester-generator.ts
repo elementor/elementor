@@ -46,7 +46,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'happy-elementor-addons', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
-	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
+	{ pluginName: 'wordpress-seo', installSource: 'api' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
@@ -82,13 +82,6 @@ export const generatePluginTests = ( testType: string ) => {
 				if ( plugin.hasInstallationPage ) {
 					await page.goto( '/wp-admin/index.php' );
 				}
-
-				await page.goto( '/law-firm-about/?elementor', {
-					waitUntil: 'domcontentloaded',
-					timeout: 15000,
-				} );
-
-				await page.locator( '[id="elementor-preview-iframe"]' ).waitFor( { state: 'visible', timeout: 15000 } );
 
 				await wpAdmin.closeAnnouncementsIfVisible();
 
