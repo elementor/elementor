@@ -83,10 +83,7 @@ export const generatePluginTests = ( testType: string ) => {
 					await page.goto( '/wp-admin/index.php' );
 				}
 
-				await page.goto( '/law-firm-about/?elementor', {
-					waitUntil: 'domcontentloaded',
-					timeout: 15000,
-				} );
+				await page.goto( '/law-firm-about/?elementor' );
 
 				await wpAdmin.closeAnnouncementsIfVisible();
 
