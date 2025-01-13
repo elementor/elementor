@@ -46,8 +46,6 @@ abstract class Endpoint {
 	/**
 	 * Endpoint constructor.
 	 *
-	 * run `$this->>register()`.
-	 *
 	 * @param \Elementor\Data\Base\Controller $controller
 	 *
 	 * @throws \Exception If invalid controller.
