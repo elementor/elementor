@@ -841,8 +841,8 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen(): Promise<void> {
-		//const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
-		const isOpen = elementor.navigator.isOpen();
+		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
+
 		if ( ! isOpen ) {
 			return;
 		}
