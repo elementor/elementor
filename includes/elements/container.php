@@ -1402,6 +1402,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '1',
 				'options' => [
+					'' => ' Default',
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -1446,6 +1447,7 @@ class Container extends Element_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => '1',
 				'options' => [
+					'' => ' Default',
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
