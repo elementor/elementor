@@ -400,33 +400,13 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			$this->attach_background_transformers( $transformers );
 		} );
 
-		function create_image() {
-			$file_name = __DIR__ . 'mock/img.png';
-
-			$attachment_id = wp_insert_attachment( [
-				'post_title' => wp_basename( $file_name ),
-				'post_content' => '',
-				'post_type' => 'attachment',
-				'post_parent' => 0,
-				'post_mime_type' => wp_check_filetype( $file_name )['type'],
-				'guid' => 'https://test.local/image.png',
-			] );
-
-			var_dump( $attachment_id . 'before image-meta');
-
-			$data = get_post_meta( $attachment_id, '_wp_attachment_metadata', true );
-			var_dump( $data . 'daya');
-
-			$image_meta = wp_get_attachment_metadata( $attachment_id, true );
-
-			var_dump($image_meta . 'image meta');
-
-			return $attachment_id;
-		}
-
-		$attachment_id = create_image();
-
-		var_dump( $attachment_id );
+		add_filter( 'wp_get_attachment_image_src', function() {
+			return [
+				'https://example.com/image.jpg',
+				100,
+				200,
+			];
+		} );
 
 		$styles = [
 			[
@@ -453,12 +433,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														'value' => [
 															'id' => [
 																'$$type' => 'image-attachment-id',
-																'value' => $attachment_id,
+																'value' => 3,
 															],
-//															'id'=> null,
-//															'url' => [
-//																'$$type' => 'url',
-//																'value' => 'http:localhost//example.com/',
 															'url' => null
 														],
 													]
@@ -487,7 +463,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
-		var_dump( $css );
 
 		// Assert.
 		$this->assertNotEmpty( $css, 'CSS should not be empty' );
@@ -567,7 +542,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														'value' => [
 															'id' => [
 																'$$type' => 'image-attachment-id',
-																'value' => 807
+																'value' => 3,
 															],
 															'url' => null,
 														],
