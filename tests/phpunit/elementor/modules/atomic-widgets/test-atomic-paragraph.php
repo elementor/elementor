@@ -36,11 +36,12 @@ class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicParagraph extend
 		$this->instance->render_content();
 		$actual = ob_get_clean();
 
-		$actual_output = $this->widgetStringOutput( $actual );
-		$expected_output = $this->widgetStringOutput( $expected );
+		ob_start();
+		$this->instance->render_content();
+		$actual = trim( ob_get_clean() );
 
 		// Assert.
-		$this->assertSame( $expected_output, $actual_output );
+		$this->assertSame( $expected, $actual );
 	}
 
 	public function test_set_paragraph_value(): void {
@@ -51,18 +52,9 @@ class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicParagraph extend
 		// Act.
 		ob_start();
 		$this->instance->render_content();
-		$actual = ob_get_clean();
-
-		$actual_output = $this->widgetStringOutput( $actual );
-		$expected_output = $this->widgetStringOutput( $expected );
+		$actual = trim( ob_get_clean() );
 
 		// Assert.
-		$this->assertSame( $expected_output, $actual_output );	}
-
-
-	public function widgetStringOutput( string $string ): void {
-		ob_start();
-		echo $string;
-		ob_get_clean();
+		$this->assertSame( $expected, $actual );
 	}
 }
