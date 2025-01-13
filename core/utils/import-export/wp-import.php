@@ -54,12 +54,17 @@ class WP_Import extends \WP_Importer {
 		'errors' => [],
 	];
 
-	/*
+	/**
 	 * WXR attachment ID
+	 *
+	 * @var string
 	 */
 	private $id;
 
-	// Information to import from WXR file.
+	/**
+	 * Information to import from WXR file.
+	 */
+	// phpcs:ignore Squiz.Commenting.VariableComment.MissingVar
 	private $version;
 	private $authors = [];
 	private $posts = [];
@@ -68,7 +73,10 @@ class WP_Import extends \WP_Importer {
 	private $page_on_front;
 	private $base_blog_url = '';
 
-	// Mappings from old information to new.
+	/**
+	 * Mappings from old information to new.
+	 */
+	// phpcs:ignore Squiz.Commenting.VariableComment.MissingVar
 	private $processed_taxonomies;
 	private $processed_terms = [];
 	private $processed_posts = [];
@@ -1020,7 +1028,7 @@ class WP_Import extends \WP_Importer {
 	 */
 	private function fetch_remote_file( $url, $post ) {
 		// Extract the file name from the URL.
-		$file_name = basename( parse_url( $url, PHP_URL_PATH ) );
+		$file_name = basename( wp_parse_url( $url, PHP_URL_PATH ) );
 
 		if ( ! $file_name ) {
 			$file_name = md5( $url );
