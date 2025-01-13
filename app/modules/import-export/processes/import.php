@@ -602,10 +602,10 @@ class Import {
 
 		if ( is_wp_error( $extraction_result ) ) {
 			if ( isset( $extraction_result->errors['zip_error'] ) ) {
-				throw new \Error( static::ZIP_ARCHIVE_ERROR_KEY );
+				throw new \Error( static::ZIP_ARCHIVE_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			}
 
-			throw new \Error( static::ZIP_FILE_ERROR_KEY );
+			throw new \Error( static::ZIP_FILE_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		return $extraction_result['extraction_directory'];
@@ -621,7 +621,7 @@ class Import {
 
 		if ( ! $manifest ) {
 			Plugin::$instance->logger->get_logger()->error( static::MANIFEST_ERROR_KEY );
-			throw new \Error( static::ZIP_FILE_ERROR_KEY );
+			throw new \Error( static::ZIP_FILE_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$this->init_adapters( $manifest );
