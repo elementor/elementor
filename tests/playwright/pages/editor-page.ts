@@ -859,8 +859,8 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setPageTemplate( template: 'default' | 'canvas' | 'full-width' ): Promise<void> {
-		let templateValue;
-		let templateClass;
+		let templateValue: string;
+		let templateClass: string;
 
 		switch ( template ) {
 			case 'default':
