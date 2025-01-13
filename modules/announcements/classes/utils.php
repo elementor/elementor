@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Utils {
 	/**
-	 * Get trigger object get_trigger_object
+	 * Get trigger object.
 	 *
 	 * @param $trigger
 	 *
