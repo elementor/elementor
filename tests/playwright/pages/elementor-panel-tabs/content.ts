@@ -88,6 +88,8 @@ export default class Content {
 	 */
 	async selectImageSize( args: { widget: string, select: string, imageSize: string } ): Promise<void> {
 		const frame: Frame = this.editor.getPreviewFrame();
+		const locator = frame.locator( args.widget );
+		console.log(await locator);
 		await frame.locator( args.widget ).click();
 		await this.page.locator( args.select ).selectOption( args.imageSize );
 		await frame.locator( EditorSelectors.pageTitle ).click();
