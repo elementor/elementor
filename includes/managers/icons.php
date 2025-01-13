@@ -261,7 +261,9 @@ class Icons_Manager {
 	/**
 	 * @deprecated 3.8.0
 	 */
-	public static function render_svg_symbols() {}
+	public static function render_svg_symbols() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0' );
+	}
 
 	public static function get_icon_svg_data( $icon ) {
 		return self::$data_manager->get_font_icon_svg_data( $icon );

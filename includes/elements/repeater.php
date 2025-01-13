@@ -128,7 +128,7 @@ class Repeater extends Element_Base {
 	 * @return array Repeater fields.
 	 */
 	public function get_fields() {
-		_deprecated_function( __METHOD__, '2.1.0', 'get_controls()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '2.1.0', 'get_controls()' );
 
 		return array_values( $this->get_controls() );
 	}
