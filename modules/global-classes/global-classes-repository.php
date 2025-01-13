@@ -29,7 +29,7 @@ class Global_Classes_Repository {
 		$all = $this->all();
 
 		if ( ! isset( $all->get_items()[ $id ] ) ) {
-			throw new \Exception( "Global class with id ${id} not found" );
+			throw new \Exception( esc_html( "Global class with id ${id} not found" ) );
 		}
 
 		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
@@ -44,7 +44,7 @@ class Global_Classes_Repository {
 		$all = $this->all();
 
 		if ( ! isset( $all->get_items()[ $id ] ) ) {
-			throw new \Exception( "Global class with id {$id} not found" );
+			throw new \Exception( esc_html( "Global class with id {$id} not found" ) );
 		}
 
 		if ( $value === $all->get_items()[ $id ] ) {
