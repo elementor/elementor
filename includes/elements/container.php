@@ -1400,7 +1400,6 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Column Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '1',
 				'options' => [
 					'' => ' Default',
 					'1' => '1',
@@ -1445,7 +1444,6 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Row Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '1',
 				'options' => [
 					'' => ' Default',
 					'1' => '1',
