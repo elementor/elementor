@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Base;
 
+use Elementor\Modules\AtomicWidgets\Engine;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Atomic_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Widget_Base;
@@ -30,14 +31,23 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = static::get_props_schema();
+		$config['atomic_template'] = $this->get_atomic_template();
 		$config['version'] = $this->version;
 
 		return $config;
 	}
 
+	final protected function render() {
+		echo Engine::get_instance()
+			->register( $this->get_name(), $this->get_atomic_template() )
+			->render( $this->get_name(), $this->get_atomic_settings() );
+	}
+
 	// Removes the wrapper div from the widget.
 	public function before_render() {}
 	public function after_render() {}
+
+	abstract public function get_atomic_template(): string;
 
 	/**
 	 * @return array<string, Prop_Type>

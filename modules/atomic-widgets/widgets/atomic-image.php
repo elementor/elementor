@@ -25,27 +25,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return 'eicon-image';
 	}
 
-	protected function render() {
-		$settings = $this->get_atomic_settings();
-
-		if ( ! isset( $settings['image'] ) ) {
-			return;
-		}
-
-		$attrs = array_filter( array_merge(
-			$settings['image'],
-			[ 'class' => $settings['classes'] ?? '' ]
-		) );
-
-		$attrs['src'] = esc_url( $attrs['src'] );
-
-		Utils::print_wp_kses_extended(
-			sprintf(
-				'<img %1$s >',
-				Utils::render_html_attributes( $attrs )
-			),
-			[ 'image' ]
-		);
+	public function get_atomic_template(): string {
+		return '';
 	}
 
 	protected function define_atomic_controls(): array {
