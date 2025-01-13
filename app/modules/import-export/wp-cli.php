@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\App\Modules\ImportExport;
 
 use Elementor\Core\Utils\Collection;

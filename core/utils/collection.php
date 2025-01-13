@@ -12,6 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Inspired by Laravel Collection.
+ *
+ * @link https://github.com/illuminate/collections
+ */
 class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * The items contained in the collection.
