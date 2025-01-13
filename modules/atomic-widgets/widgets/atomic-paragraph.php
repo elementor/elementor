@@ -42,10 +42,12 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
+
 			'tag' => String_Prop_Type::make()
 				->default( 'p' ),
+
 			'paragraph' => String_Prop_Type::make()
-				->default( 'Type your paragraph here' ),
+				->default( __( 'Type your paragraph here', 'elementor' ) ),
 		];
 	}
 
@@ -60,8 +62,10 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 		printf(
 			'<%1$s %2$s>%3$s</%1$s>',
-			esc_html( Utils::validate_html_tag( $tag ) ),
-			esc_html( Utils::render_html_attributes( $attrs ) ),
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			Utils::validate_html_tag( $tag ),
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			Utils::render_html_attributes( $attrs ),
 			esc_html( $paragraph ),
 		);
 	}
