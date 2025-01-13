@@ -243,6 +243,27 @@ class Widget_Common_Base extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'_element_custom_width',
+			[
+				'label' => esc_html__( 'Custom Width', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'default' => [
+					'unit' => '%',
+				],
+				'range' => [
+					'px' => [
+						'max' => 1000,
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--container-widget-width: {{SIZE}}{{UNIT}}; --container-widget-flex-grow: 0; width: var( --container-widget-width, {{SIZE}}{{UNIT}} ); max-width: {{SIZE}}{{UNIT}}',
+				],
+				'condition' => [ '_element_width' => 'initial' ],
+			]
+		);
+
 		$this->add_control(
 			'_heading_grid_item',
 			[
@@ -257,8 +278,8 @@ class Widget_Common_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Column Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '1',
 				'options' => [
+					'' => ' Default',
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -301,8 +322,8 @@ class Widget_Common_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Row Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '1',
 				'options' => [
+					'' => ' Default',
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -338,27 +359,6 @@ class Widget_Common_Base extends Widget_Base {
 				'condition' => [
 					'_grid_row' => 'custom',
 				],
-			]
-		);
-
-		$this->add_responsive_control(
-			'_element_custom_width',
-			[
-				'label' => esc_html__( 'Custom Width', 'elementor' ),
-				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
-				'default' => [
-					'unit' => '%',
-				],
-				'range' => [
-					'px' => [
-						'max' => 1000,
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}}' => '--container-widget-width: {{SIZE}}{{UNIT}}; --container-widget-flex-grow: 0; width: var( --container-widget-width, {{SIZE}}{{UNIT}} ); max-width: {{SIZE}}{{UNIT}}',
-				],
-				'condition' => [ '_element_width' => 'initial' ],
 			]
 		);
 
