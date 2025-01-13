@@ -129,6 +129,7 @@ class Test_Widget_Heading extends Elementor_Test_Base {
 		$heading->render_content();
 		$rendered_content = ob_get_clean();
 
+		// Assert
 		$this->assertStringContainsString( 'aria-disabled', $rendered_content );
 		$this->assertStringContainsString( '<script>alert()</script>', $rendered_content );
 	}
