@@ -229,6 +229,17 @@ export default class EditorPage extends BasePage {
 		return this.getPreviewFrame().$( getElementSelector( id ) );
 	}
 
+	async waitForPreviewFrame(): Promise<Frame> {
+		await this.page.waitForSelector( 'iframe[name="elementor-preview-iframe"]' );
+
+		const frame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		if ( ! frame ) {
+			throw new Error( 'Iframe is null even after it appeared in the DOM.' );
+		}
+
+		return frame;
+	}
+
 	/**
 	 * Get the frame of the Elementor editor preview.
 	 *
