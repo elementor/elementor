@@ -237,7 +237,11 @@ export default class EditorPage extends BasePage {
 	 * @return {Frame}
 	 */
 	getPreviewFrame(): Frame {
-		return this.page.frame( { name: 'elementor-preview-iframe' } );
+		const frame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		if ( null === frame ) {
+			throw new Error( "Frame 'elementor-preview-iframe' was not found" );
+		}
+		return frame;
 	}
 
 	/**
