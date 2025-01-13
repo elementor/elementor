@@ -46,7 +46,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'happy-elementor-addons', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
-	{ pluginName: 'wordpress-seo', installSource: 'api' },
+	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
@@ -84,7 +84,7 @@ export const generatePluginTests = ( testType: string ) => {
 				}
 
 				await page.goto( '/law-firm-about/?elementor', {
-					waitUntil: 'load',
+					waitUntil: 'domcontentloaded',
 					timeout: 15000,
 				} );
 
