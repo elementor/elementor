@@ -230,7 +230,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	async waitForPreviewFrame(): Promise<Frame> {
-		await this.page.waitForSelector( 'iframe[name="elementor-preview-iframe"]' );
+		await this.page.waitForSelector( '[id="elementor-preview-iframe"]' );
 
 		const frame = this.page.frame( { name: 'elementor-preview-iframe' } );
 		if ( ! frame ) {
