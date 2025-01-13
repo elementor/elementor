@@ -2,8 +2,10 @@
 
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Spatie\Snapshots\MatchesSnapshots;
 
 class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicParagraph extends Elementor_Test_Base {
+	use MatchesSnapshots;
 	const MOCK = [
 		'id' => 'e8e55a1',
 		'elType' => 'widget',
@@ -28,33 +30,25 @@ class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicParagraph extend
 	}
 
 	public function test_paragraph_render(): void {
-		// Arrange.
-		$expected = '<p >Type your paragraph here</p>';
-
 		// Act.
 		ob_start();
 		$this->instance->render_content();
-		$actual = ob_get_clean();
-
-		ob_start();
-		$this->instance->render_content();
-		$actual = trim( ob_get_clean() );
+		$rendered_output = ob_get_clean();
 
 		// Assert.
-		$this->assertSame( $expected, $actual );
+		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
 	public function test_set_paragraph_value(): void {
 		// Arrange.
-		$expected = '<p >Hello</p>';
 		$this->instance->set_settings( [ 'paragraph' => 'Hello' ] );
 
 		// Act.
 		ob_start();
 		$this->instance->render_content();
-		$actual = trim( ob_get_clean() );
+		$rendered_output = ob_get_clean();
 
 		// Assert.
-		$this->assertSame( $expected, $actual );
+		$this->assertMatchesSnapshot( $rendered_output );
 	}
 }
