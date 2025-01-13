@@ -1401,15 +1401,15 @@ class Module extends BaseModule {
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
-			throw new \Exception( esc_html__( 'Missing Image', 'elementor' ) );
+			throw new \Exception( 'Missing Image' );
 		}
 
 		if ( empty( $data['payload']['settings'] ) ) {
-			throw new \Exception( esc_html__( 'Missing prompt settings', 'elementor' ) );
+			throw new \Exception( 'Missing prompt settings' );
 		}
 
 		if ( ! $app->is_connected() ) {
-			throw new \Exception( esc_html__( 'not_connected', 'elementor' ) );
+			throw new \Exception( 'not_connected' );
 		}
 
 		$context = $this->get_request_context( $data );
