@@ -6,7 +6,6 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Plugin;
 use Elementor\Utils;
-use mysql_xdevapi\Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
