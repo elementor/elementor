@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Plugin;
 use Elementor\Utils;
+use mysql_xdevapi\Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -247,7 +248,7 @@ class Revisions_Manager {
 	 * @param $data
 	 *
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception Id Exception.
 	 */
 	public static function ajax_get_revision_data( array $data ) {
 		if ( ! isset( $data['id'] ) ) {
@@ -357,7 +358,7 @@ class Revisions_Manager {
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception If the user doesn't have permissions or not found.
 	 */
 	public static function ajax_get_revisions( $data ) {
 		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
