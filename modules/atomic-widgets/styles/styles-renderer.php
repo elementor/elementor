@@ -14,25 +14,35 @@ class Styles_Renderer {
 	/**
 	 * Styles_Renderer constructor.
 	 *
-	 * @param array{
+	 * Config format:
+	 * [
 	 *     breakpoints: array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
-	 * } $config
+	 * ]
+	 *
+	 * @param array $config
 	 */
 	public function __construct( array $config ) {
 		$this->breakpoints = $config['breakpoints'];
 	}
 
+	public static function make( array $config ): self {
+		return new self( $config );
+	}
+
 	/**
 	 * Render the styles to a CSS string.
 	 *
-	 * @param array<int, array{
+	 * Styles format:
+	 *   array<int, array{
 	 *     id: string,
 	 *     type: string,
 	 *     variants: array<int, array{
 	 *         props: array<string, mixed>,
 	 *         meta: array<string, mixed>
 	 *     }>
-	 * }> $styles Array of style definitions.
+	 *   }>
+	 *
+	 * @param array $styles Array of style definitions.
 	 *
 	 * @return string Rendered CSS string.
 	 */

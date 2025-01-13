@@ -1,6 +1,7 @@
 <?php
 /**
  * Inspired by Laravel Collection.
+ *
  * @link https://github.com/illuminate/collections
  */
 namespace Elementor\Core\Utils;
@@ -332,6 +333,21 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
+	 * Run array_diff between the collection and other array or collection.
+	 *
+	 * @param $filter
+	 *
+	 * @return $this
+	 */
+	public function diff( $filter ) {
+		if ( $filter instanceof self ) {
+			$filter = $filter->all();
+		}
+
+		return new static( array_diff( $this->all(), $filter ) );
+	}
+
+	/**
 	 * Make sure all the values inside the array are uniques.
 	 *
 	 * @param null|string|string[] $keys
@@ -430,7 +446,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
-	 * @param ...$values
+	 * @param array $values
 	 *
 	 * @return $this
 	 */

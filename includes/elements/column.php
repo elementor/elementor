@@ -119,7 +119,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		// Element Name for the Navigator
+		// Element Name for the Navigator.
 		$this->add_control(
 			'_title',
 			[
@@ -196,9 +196,9 @@ class Element_Column extends Element_Base {
 					'bottom' => 'flex-end',
 				],
 				'selectors' => [
-					// TODO: The following line is for BC since 2.7.0
+					// TODO: The following line is for BC since 2.7.0.
 					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-widget-wrap' => 'align-items: {{VALUE}}',
-					// This specificity is intended to make sure column css overwrites section css on vertical alignment (content_position)
+					// This specificity is intended to make sure column css overwrites section css on vertical alignment (content_position).
 					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-widget-wrap.elementor-element-populated' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 			]
@@ -232,7 +232,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => 20,
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
+					'{{WRAPPER}} > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', // Need the full path for exclude the inner section.
 				],
 			]
 		);
@@ -290,6 +290,43 @@ class Element_Column extends Element_Base {
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'handle_slideshow_asset_loading',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'assets' => [
+					'styles' => [
+						[
+							'name' => 'e-swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+					],
+					'scripts' => [
+						[
+							'name' => 'swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
 					],
 				],
 			]
@@ -605,7 +642,7 @@ class Element_Column extends Element_Base {
 							'value' => '',
 						],
 						[
-							'name' => 'border_border',
+							'name' => 'border_hover_border',
 							'operator' => '!==',
 							'value' => '',
 						],
@@ -798,7 +835,7 @@ class Element_Column extends Element_Base {
 
 		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
 
-		// TODO: Backward comparability for deprecated controls
+		// TODO: Backward comparability for deprecated controls.
 		$this->add_control(
 			'screen_sm',
 			[
@@ -816,7 +853,7 @@ class Element_Column extends Element_Base {
 				'prefix_class' => 'elementor-sm-',
 			]
 		);
-		// END Backward comparability
+		// END Backward comparability.
 
 		$this->end_controls_section();
 
@@ -937,7 +974,7 @@ class Element_Column extends Element_Base {
 		$overlay_hover_background = $settings['background_overlay_hover_background'] ?? '';
 
 		$has_background_overlay = in_array( $overlay_background, [ 'classic', 'gradient' ], true ) ||
-								  in_array( $overlay_hover_background, [ 'classic', 'gradient' ], true );
+									in_array( $overlay_hover_background, [ 'classic', 'gradient' ], true );
 
 		$column_wrap_classes = [ 'elementor-widget-wrap' ];
 

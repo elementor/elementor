@@ -25,13 +25,12 @@ abstract class Controller extends WP_REST_Controller {
 	 * Controller constructor.
 	 *
 	 * Register endpoints on 'rest_api_init'.
-	 *
 	 */
 	public function __construct() {
 		// TODO: Controllers and endpoints can have common interface.
 
 		// TODO: Uncomment when native 3rd plugins uses V2.
-		//$this->deprecated();
+		// $this->deprecated();
 
 		$this->namespace = Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION;
 		$this->rest_base = Manager::REST_BASE . $this->get_name();
@@ -190,7 +189,7 @@ abstract class Controller extends WP_REST_Controller {
 		register_rest_route( $this->get_namespace(), '/' . $this->get_rest_base(), [
 			[
 				'methods' => WP_REST_Server::READABLE,
-				'callback' => array( $this, 'get_items' ),
+				'callback' => [ $this, 'get_items' ],
 				'args' => [],
 				'permission_callback' => function ( $request ) {
 					return $this->get_permission_callback( $request );

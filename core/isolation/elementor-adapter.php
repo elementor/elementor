@@ -4,6 +4,7 @@ namespace Elementor\Core\Isolation;
 
 use Elementor\Plugin;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter_Module;
+use Elementor\TemplateLibrary\Source_Local;
 
 class Elementor_Adapter implements Elementor_Adapter_Interface {
 
@@ -15,7 +16,7 @@ class Elementor_Adapter implements Elementor_Adapter_Interface {
 		return Plugin::$instance->kits_manager->get_kit_for_frontend()->get_main_post();
 	}
 
-	public function is_active_kit_default() : bool {
+	public function is_active_kit_default(): bool {
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 
 		if ( false === $kit_id || null === $kit_id ) {
@@ -42,6 +43,6 @@ class Elementor_Adapter implements Elementor_Adapter_Interface {
 	}
 
 	public function get_template_type( $template_id ): string {
-		return Plugin::$instance->documents->get( $template_id )->get_template_type();
+		return Source_Local::get_template_type( $template_id );
 	}
 }

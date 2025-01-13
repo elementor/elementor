@@ -14,7 +14,7 @@ use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -460,6 +460,7 @@ class Module extends BaseModule {
 	 * Prevent the creation of the default WooCommerce pages (Cart, Checkout, etc.)
 	 *
 	 * TODO 18/04/2023 : This needs to be moved to the runner itself after https://elementor.atlassian.net/browse/HTS-434 is done.
+	 *
 	 * @return array
 	 */
 	public function empty_pages(): array {
@@ -592,7 +593,7 @@ class Module extends BaseModule {
 				throw new \Error( static::KIT_LIBRARY_ERROR_KEY );
 			}
 
-			$remote_zip_request = wp_remote_get( $file_url );
+			$remote_zip_request = wp_safe_remote_get( $file_url );
 
 			if ( is_wp_error( $remote_zip_request ) ) {
 				Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
@@ -693,6 +694,8 @@ class Module extends BaseModule {
 				)
 			);
 		}
+
+		do_action( 'elementor/import-export/import-kit/runner/after-run', $import );
 
 		wp_send_json_success( $import );
 	}
@@ -806,9 +809,9 @@ class Module extends BaseModule {
 		}
 
 		// TODO: BC - remove in the future
-		//  The 'templates' runner was in core and moved to the Pro plugin. (Part of it still exits in the Core for BC)
-		//  The runner that is in the core version is missing the revert functionality,
-		//  therefore we shouldn't display the revert section if the import process done with the core version.
+		// The 'templates' runner was in core and moved to the Pro plugin. (Part of it still exits in the Core for BC)
+		// The runner that is in the core version is missing the revert functionality,
+		// therefore we shouldn't display the revert section if the import process done with the core version.
 		$is_import_templates_ran = isset( $last_imported_kit['runners']['templates'] );
 		if ( $this->has_pro() && $is_import_templates_ran ) {
 			$has_imported_templates = ! empty( $last_imported_kit['runners']['templates'] );

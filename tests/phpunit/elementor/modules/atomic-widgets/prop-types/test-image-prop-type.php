@@ -52,7 +52,7 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 						],
 					],
 				],
-				'size' => 'full',
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
 			],
 		] );
 
@@ -72,7 +72,7 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 					'$$type' => 'not-an-src',
 					'value' => [],
 				],
-				'size' => 'full',
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
 			],
 		] );
 
@@ -92,7 +92,7 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 					'$$type' => 'image-src',
 					'value' => [],
 				],
-				'size' => 'full',
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
 			],
 		] );
 
@@ -115,7 +115,7 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 						'url' => null,
 					],
 				],
-				'size' => 'full',
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
 			],
 		] );
 
@@ -141,7 +141,7 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 						'url' => null,
 					],
 				],
-				'size' => 'full',
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
 			],
 		] );
 
@@ -167,7 +167,7 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 						'url' => null,
 					],
 				],
-				'size' => 'full',
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
 			],
 		] );
 
@@ -193,7 +193,7 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 						],
 					],
 				],
-				'size' => 'full',
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
 			],
 		] );
 
@@ -219,7 +219,7 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 						]
 					],
 				],
-				'size' => 'full',
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
 			],
 		] );
 
@@ -300,7 +300,7 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 						],
 					]
 				],
-				'size' => 'full',
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
 			],
 		] );
 

@@ -8,7 +8,7 @@ use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class PageBase extends Document {
@@ -171,7 +171,7 @@ abstract class PageBase extends Document {
 		Plugin::$instance->controls_manager->add_custom_css_controls( $document );
 	}
 
-	public static function get_labels() : array {
+	public static function get_labels(): array {
 		$plural_label   = static::get_plural_title();
 		$singular_label = static::get_title();
 
@@ -272,7 +272,7 @@ abstract class PageBase extends Document {
 	 *
 	 * @param array $data
 	 *
-	 * @throws \Exception
+	 * @throws \Exception Exception If the post ID is not set.
 	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {

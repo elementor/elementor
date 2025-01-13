@@ -9,8 +9,7 @@
 		--swiper-pagination-bullet-size: 6px;
 		--swiper-pagination-bullet-horizontal-gap: 6px;
 
-		.swiper,
-		.swiper-container {
+		.swiper {
 
 			.swiper-slide {
 
@@ -27,7 +26,7 @@
 			~ .elementor-swiper-button {
 				position: absolute;
 				display: inline-flex; // Position exactly in center
-				z-index: 10;
+				z-index: 1;
 				cursor: pointer;
 				font-size: 25px;
 				color: $slides_gui;
@@ -84,7 +83,7 @@
 		}
 
 		// `:where()` is used to decrease the specificity of the selectors.
-		:where( .swiper-container-horizontal ) {
+		:where( .swiper-horizontal ) {
 
 			~ .swiper-pagination-bullets {
 				bottom: 5px;
@@ -107,8 +106,7 @@
 		&.elementor-pagination-position-outside {
 			$caption-space: 30px;
 
-			.swiper,
-			.swiper-container {
+			.swiper {
 				padding-bottom: $caption-space;
 
 				.elementor-swiper-button,
@@ -118,12 +116,19 @@
 			}
 		}
 
+		.elementor-swiper {
+			position: relative;
+		}
+
+		.elementor-main-swiper {
+			position: static;
+		}
+
 		&.elementor-arrows-position- {
 
 			&outside {
 
-				.swiper,
-				.swiper-container {
+				.swiper {
 					width: calc(100% - 60px);
 
 					.elementor-swiper-button,

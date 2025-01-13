@@ -92,6 +92,20 @@ class Widget_Image_Carousel extends Widget_Base {
 		return [ 'e-swiper', 'widget-image-carousel' ];
 	}
 
+	/**
+	 * Get script dependencies.
+	 *
+	 * Retrieve the list of script dependencies the widget requires.
+	 *
+	 * @since 3.27.0
+	 * @access public
+	 *
+	 * @return array Widget script dependencies.
+	 */
+	public function get_script_depends(): array {
+		return [ 'swiper' ];
+	}
+
 	public function has_widget_inner_wrapper(): bool {
 		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
@@ -984,7 +998,7 @@ class Widget_Image_Carousel extends Widget_Base {
 			return;
 		}
 
-		$swiper_class = Plugin::$instance->experiments->is_feature_active( 'e_swiper_latest' ) ? 'swiper' : 'swiper-container';
+		$swiper_class = 'swiper';
 		$has_autoplay_enabled = 'yes' === $this->get_settings_for_display( 'autoplay' );
 
 		$this->add_render_attribute( [
@@ -1011,6 +1025,10 @@ class Widget_Image_Carousel extends Widget_Base {
 		$slides_count = count( $settings['carousel'] );
 		?>
 		<div <?php $this->print_render_attribute_string( 'carousel-wrapper' ); ?>>
+			<div <?php $this->print_render_attribute_string( 'carousel' ); ?>>
+				<?php // PHPCS - $slides contains the slides content, all the relevant content is escaped above. ?>
+				<?php echo implode( '', $slides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
 			<?php if ( 1 < $slides_count ) : ?>
 				<?php if ( $show_arrows ) : ?>
 					<div class="elementor-swiper-button elementor-swiper-button-prev" role="button" tabindex="0">
@@ -1025,10 +1043,6 @@ class Widget_Image_Carousel extends Widget_Base {
 					<div class="swiper-pagination"></div>
 				<?php endif; ?>
 			<?php endif; ?>
-			<div <?php $this->print_render_attribute_string( 'carousel' ); ?>>
-				<?php // PHPCS - $slides contains the slides content, all the relevant content is escaped above. ?>
-				<?php echo implode( '', $slides ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</div>
 		</div>
 		<?php
 	}
@@ -1039,7 +1053,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	 * @since 1.0.0
 	 * @access private
 	 *
-	 * @param array $attachment
+	 * @param array  $attachment
 	 * @param object $instance
 	 *
 	 * @return array|string|false An array/string containing the attachment URL, or false if no link.

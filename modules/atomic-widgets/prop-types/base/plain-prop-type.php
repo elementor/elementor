@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	const KIND = 'plain';
 
-	use Concerns\Has_Default,
-		Concerns\Has_Generate,
-		Concerns\Has_Meta,
-		Concerns\Has_Required_Setting,
-		Concerns\Has_Settings,
-		Concerns\Has_Transformable_Validation;
+	use Concerns\Has_Default;
+	use Concerns\Has_Generate;
+	use Concerns\Has_Meta;
+	use Concerns\Has_Required_Setting;
+	use Concerns\Has_Settings;
+	use Concerns\Has_Transformable_Validation;
 
 	/**
 	 * @return static
@@ -37,6 +37,12 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		);
 	}
 
+	public function sanitize( $value ) {
+		$value['value'] = $this->sanitize_value( $value['value'] );
+
+		return $value;
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'kind' => static::KIND,
@@ -50,4 +56,6 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	abstract public static function get_key(): string;
 
 	abstract protected function validate_value( $value ): bool;
+
+	abstract protected function sanitize_value( $value );
 }
