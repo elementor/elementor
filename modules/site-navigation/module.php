@@ -3,6 +3,7 @@
 namespace Elementor\Modules\SiteNavigation;
 
 use Elementor\Core\Base\Module as Module_Base;
+use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\SiteNavigation\Data\Controller;
 use Elementor\Modules\SiteNavigation\Rest_Fields\Page_User_Can;
@@ -21,7 +22,7 @@ class Module extends Module_Base {
 	 * Initialize the Site navigation module.
 	 *
 	 * @return void
-	 * @throws \Exception
+	 * @throws \Exception If an error occurs during the registration.
 	 */
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
@@ -61,7 +62,7 @@ class Module extends Module_Base {
 	 * @since 3.16.0
 	 *
 	 * @return void
-	 * @throws \Exception
+	 * @throws \Exception Dependency Exception.
 	 */
 	private function register_pages_panel_experiment() {
 		Plugin::$instance->experiments->add_feature( [
