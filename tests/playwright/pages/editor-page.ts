@@ -24,8 +24,6 @@ export default class EditorPage extends BasePage {
 	 * @param {Page}     page        - Playwright page instance.
 	 * @param {TestInfo} testInfo    - Test information.
 	 * @param {number}   cleanPostId - Optional. Post ID.
-	 *
-	 * @return {void}
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
@@ -167,7 +165,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<string>} The widget ID.
 	 */
-	async addWidget( widgetType: string, container = null, isContainerASection = false ): Promise<string> {
+	async addWidget( widgetType: string, container: string = null, isContainerASection: boolean = false ): Promise<string> {
 		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
 		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
 
@@ -237,11 +235,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Frame}
 	 */
 	getPreviewFrame(): Frame {
-		const frame = this.page.frame( { name: 'elementor-preview-iframe' } );
-		if ( null === frame ) {
-			throw new Error( "Frame 'elementor-preview-iframe' was not found" );
-		}
-		return frame;
+		return this.page.frame( { name: 'elementor-preview-iframe' } );
 	}
 
 	/**
