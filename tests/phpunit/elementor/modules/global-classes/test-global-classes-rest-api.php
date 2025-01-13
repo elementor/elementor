@@ -11,13 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	private $mock_global_class = [
-		'label' => 'flexy',
-		'type' => 'class',
-		'variants' => [
+		"label" => "flexy",
+		"type" => "class",
+		"variants" => [
 			[
-				'meta' => [
-					'breakpoint' => 'desktop',
-					'state' => null
+				"meta" => [
+					"breakpoint" => "desktop",
+					"state" => null
 				],
 				'props' => [
 					'color' => [
@@ -30,12 +30,12 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	];
 
 	private $mock_unsanitized_class = [
-		'label' => 'flexy',
-		'variants' => [
+		"label" => "flexy",
+		"variants" => [
 			[
-				'meta' => [
-					'breakpoint' => 'desktop',
-					'state' => null
+				"meta" => [
+					"breakpoint" => "desktop",
+					"state" => null
 				],
 				'props' => [
 					'color' => [
@@ -71,7 +71,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		'items' => [
 			'g-4-123' => [
 				'id' => 'g-4-123',
-				'type' => 'class',
 				'label' => 'pinky',
 				'variants' => [
 					[
@@ -90,7 +89,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			],
 			'g-4-124' => [
 				'id' => 'g-4-124',
-				'type' => 'class',
 				'label' => 'bluey',
 				'variants' => [
 					[
@@ -275,7 +273,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( $expected_class, $classes['items']['g-4-123'] );
 	}
-
 	public function test_put__doesnt_throw_when_data_is_identical() {
 		// Arrange
 		$this->act_as_admin();
@@ -290,6 +287,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 200, $response->get_status() );
 	}
+
 
 	public function test_put__returns_error_when_class_not_found(){
 		// Arrange
