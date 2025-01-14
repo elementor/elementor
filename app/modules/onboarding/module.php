@@ -11,7 +11,7 @@ use Elementor\Utils;
 use Plugin_Upgrader;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -412,9 +412,8 @@ class Module extends BaseModule {
 	 * Maybe Handle Ajax
 	 *
 	 * This method checks if there are any AJAX actions being
-	 * @since 3.6.0
 	 *
-	 * @return array|null
+	 * @since 3.6.0
 	 */
 	private function maybe_handle_ajax() {
 		$result = [];

@@ -23,7 +23,7 @@ class Revert {
 	private $revert_sessions;
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception Exception if no revert runners have been specified.
 	 */
 	public function __construct() {
 		$this->import_sessions = self::get_import_sessions();

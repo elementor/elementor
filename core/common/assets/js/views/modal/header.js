@@ -36,6 +36,12 @@ export default class extends Marionette.LayoutView {
 	onCloseModalClick() {
 		this._parent._parent._parent.hideModal();
 
+		const type = elementor.config?.document?.type ?? 'default';
+
+		const customEvent = new CustomEvent( `core/modal/close/${ type }` );
+
+		window.dispatchEvent( customEvent );
+
 		if ( this.isFloatingButtonLibraryClose() ) {
 			$e.internal( 'document/save/set-is-modified', { status: false } );
 			window.location.href = elementor.config.admin_floating_button_admin_url;

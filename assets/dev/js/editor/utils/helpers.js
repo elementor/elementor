@@ -49,6 +49,10 @@ module.exports = {
 				widget: null,
 				container: null,
 			},
+			'div-block': {
+				widget: null,
+				'div-block': null,
+			},
 		},
 	},
 
@@ -280,6 +284,13 @@ module.exports = {
 				}
 
 				enqueueOptions.crossOrigin = true;
+
+				if ( elementorCommon.config.experimentalFeatures?.e_local_google_fonts && 'preview' === target ) {
+					elementorCommon.ajax.addRequest( 'enqueue_google_fonts', {
+						data: { font_name: font },
+						unique_id: 'enqueue_google_fonts_' + font,
+					} );
+				}
 
 				break;
 

@@ -14,7 +14,7 @@ use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Co
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
@@ -112,6 +112,6 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/init', function () {
 			$this->set_kit_library_settings();
-		}, 12 /** after the initiation of the connect kit library */ );
+		}, 12 /** After the initiation of the connect kit library */ );
 	}
 }

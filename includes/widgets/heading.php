@@ -117,7 +117,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	/**
 	 * Remove data attributes from the html.
 	 *
-	 * @param string $content Heading title
+	 * @param string $content Heading title.
 	 * @return string
 	 */
 	public function sanitize( $content ): string {
@@ -343,9 +343,6 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			'title_colors_normal',
 			[
 				'label' => esc_html__( 'Normal', 'elementor' ),
-				'condition' => [
-					'link[url]!' => '',
-				],
 			]
 		);
 
@@ -369,9 +366,6 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			'title_colors_hover',
 			[
 				'label' => esc_html__( 'Hover', 'elementor' ),
-				'condition' => [
-					'link[url]!' => '',
-				],
 			]
 		);
 
@@ -382,9 +376,6 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title:hover' => 'color: {{VALUE}};',
-				],
-				'condition' => [
-					'link[url]!' => '',
 				],
 			]
 		);

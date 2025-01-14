@@ -148,6 +148,7 @@ const EditorSelectors = {
 		loopInp: 'input[data-setting="loop"]',
 		playerControlInp: 'input[data-setting="controls"]',
 		modestbrandingInp: 'input[data-setting="modestbranding"]',
+		ccLoadPolicyInp: 'input[data-setting="cc_load_policy"]',
 		privacyInp: 'input[data-setting="yt_privacy"]',
 		switch: '.elementor-switch-handle',
 		suggestedVideoSelect: '[data-setting="rel"]',
@@ -182,7 +183,6 @@ const EditorSelectors = {
 	googleMaps: {
 		iframe: 'iframe[src*="https://maps.google.com/maps"]',
 		showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
-		location: '[data-setting="address"]',
 	},
 	soundCloud: {
 		iframe: 'iframe[src*="https://w.soundcloud.com/"]',

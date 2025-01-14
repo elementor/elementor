@@ -675,6 +675,20 @@ class Container extends Element_Base {
 							],
 						],
 					],
+					'scripts' => [
+						[
+							'name' => 'swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+					],
 				],
 			]
 		);
@@ -1372,6 +1386,104 @@ class Container extends Element_Base {
 			]
 		);
 
+		$this->add_control(
+			'heading_grid_item',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Grid Item', 'elementor' ),
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'grid_column',
+			[
+				'label' => esc_html__( 'Column Span', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => ' Default',
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+					'custom' => 'Custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-column: span {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'grid_column_custom',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'ai' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-column: {{VALUE}}',
+				],
+				'condition' => [
+					'grid_column' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'grid_row',
+			[
+				'label' => esc_html__( 'Row Span', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => ' Default',
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+					'custom' => 'Custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-row: span {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'grid_row_custom',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'separator' => 'after',
+				'ai' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-row: {{VALUE}}',
+				],
+				'condition' => [
+					'grid_row' => 'custom',
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Flex_Item::get_type(),
 			[
@@ -1838,9 +1950,9 @@ class Container extends Element_Base {
 	}
 
 	/**
-	 * convert slider to gaps control for the 3.16 upgrade script
+	 * Convert slider to gaps control for the 3.16 upgrade script
 	 *
-	 * @param $element
+	 * @param array $element
 	 * @return array
 	 */
 	public static function slider_to_gaps_converter( $element ) {

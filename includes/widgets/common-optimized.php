@@ -17,6 +17,6 @@ class Widget_Common_Optimized extends Widget_Common_Base {
 	const MARGIN = 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} calc(var(--kit-widget-spacing, 0px) + {{BOTTOM}}{{UNIT}}) {{LEFT}}{{UNIT}};';
 
 	public function get_name() {
-		return 'common-optimized';
+		return 'common-optimized'; // TODO: Rename to 'common' and use this version when the Optimized Markup feature is merged.
 	}
 }

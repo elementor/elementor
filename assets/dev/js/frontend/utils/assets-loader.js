@@ -29,11 +29,9 @@ export default class AssetsLoader {
 	}
 
 	isAssetLoaded( assetData, assetType ) {
-		const tag = 'script' === assetType ? 'script' : 'link',
-			filePath = `${ tag }[src="${ assetData.src }"]`,
-			assetElements = document.querySelectorAll( filePath );
+		const filePath = 'script' === assetType ? `script[src="${ assetData.src }"]` : `link[href="${ assetData.src }"]`;
 
-		return !! assetElements?.length;
+		return !! document.querySelectorAll( filePath )?.length;
 	}
 
 	loadAsset( assetData, assetType ) {
@@ -74,6 +72,7 @@ AssetsLoader.assets = {
 		'share-link': {
 			src: `${ assetsUrl }lib/share-link/share-link${ fileSuffix }.js?ver=${ pluginVersion }`,
 		},
+		// TODO: Remove 'swiper' in v3.29.0 [ED-16272].
 		swiper: {
 			src: `${ assetsUrl }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`,
 		},

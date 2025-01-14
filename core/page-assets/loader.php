@@ -8,7 +8,7 @@ use Elementor\Control_Exit_Animation;
 use Elementor\Control_Hover_Animation;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -52,21 +52,13 @@ class Loader extends Module {
 				'dependencies' => [ 'swiper' ],
 			],
 			'swiper' => [
-				'src' => $this->get_css_assets_url( 'swiper', $this->getSwiperPath() ),
-				'version' => $this->getSwiperVersion(),
+				'src' => $this->get_css_assets_url( 'swiper', 'assets/lib/swiper/v8/css/' ),
+				'version' => '8.4.5',
 				'dependencies' => [],
 			],
 		];
 
 		return array_merge( $styles, $this->get_animation_styles() );
-	}
-
-	private function getSwiperPath(): string {
-		return 'assets/lib/swiper/v8/css/';
-	}
-
-	private function getSwiperVersion(): string {
-		return '8.4.5';
 	}
 
 	private function get_animations(): array {
@@ -113,7 +105,7 @@ class Loader extends Module {
 	}
 
 	/**
-	 * @param array $assets {
+	 * @param array $assets_data {
 	 *     @type array 'styles'
 	 *     @type array 'scripts'
 	 * }

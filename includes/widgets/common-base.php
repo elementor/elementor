@@ -62,7 +62,7 @@ class Widget_Common_Base extends Widget_Base {
 	 * @deprecated 3.7.0 Not needed anymore because responsive conditioning in the Editor was fixed in v3.7.0.
 	 * @access protected
 	 *
-	 * @param array $args arguments to duplicate per breakpoint
+	 * @param array $args arguments to duplicate per breakpoint.
 	 * @param array $devices_to_exclude
 	 *
 	 * @return array responsive device args
@@ -94,7 +94,7 @@ class Widget_Common_Base extends Widget_Base {
 	 * @since 3.4.7
 	 * @access private
 	 *
-	 * @param array $args
+	 * @param array  $args
 	 * @param string $breakpoint_key
 	 * @return array parsed device args
 	 */
@@ -115,7 +115,7 @@ class Widget_Common_Base extends Widget_Base {
 	}
 
 	/**
-	 * @param $shape String Shape name.
+	 * @param String $shape Shape name.
 	 *
 	 * @return string The shape path in the assets folder.
 	 */
@@ -154,7 +154,7 @@ class Widget_Common_Base extends Widget_Base {
 	 * the `img` tag should be masked directly. So instead of writing a lot of selectors every time,
 	 * this function builds both of those selectors easily.
 	 *
-	 * @param $rules string The CSS rules to apply.
+	 * @param string $rules The CSS rules to apply.
 	 *
 	 * @return array Selectors with the rules applied.
 	 */
@@ -261,6 +261,104 @@ class Widget_Common_Base extends Widget_Base {
 					'{{WRAPPER}}' => '--container-widget-width: {{SIZE}}{{UNIT}}; --container-widget-flex-grow: 0; width: var( --container-widget-width, {{SIZE}}{{UNIT}} ); max-width: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [ '_element_width' => 'initial' ],
+			]
+		);
+
+		$this->add_control(
+			'_heading_grid_item',
+			[
+				'type' => Controls_Manager::HEADING,
+				'label' => esc_html__( 'Grid Item', 'elementor' ),
+				'separator' => 'before',
+			]
+		);
+
+		$this->add_responsive_control(
+			'_grid_column',
+			[
+				'label' => esc_html__( 'Column Span', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => ' Default',
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+					'custom' => 'Custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-column: span {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_grid_column_custom',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'ai' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-column: {{VALUE}}',
+				],
+				'condition' => [
+					'_grid_column' => 'custom',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_grid_row',
+			[
+				'label' => esc_html__( 'Row Span', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => ' Default',
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
+					'7' => '7',
+					'8' => '8',
+					'9' => '9',
+					'10' => '10',
+					'11' => '11',
+					'12' => '12',
+					'custom' => 'Custom',
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-row: span {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'_grid_row_custom',
+			[
+				'label' => esc_html__( 'Custom', 'elementor' ),
+				'type' => Controls_Manager::TEXT,
+				'separator' => 'after',
+				'ai' => [
+					'active' => false,
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'grid-row: {{VALUE}}',
+				],
+				'condition' => [
+					'_grid_row' => 'custom',
+				],
 			]
 		);
 

@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\App;
 use Elementor\Core\Base\Elements_Iteration_Actions\Assets;
+use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
@@ -149,16 +150,6 @@ class Frontend extends App {
 	private $google_fonts_index = 0;
 
 	/**
-	 * @var string
-	 */
-	private $e_swiper_asset_path;
-
-	/**
-	 * @var string
-	 */
-	private $e_swiper_version;
-
-	/**
 	 * Front End constructor.
 	 *
 	 * Initializing Elementor front end. Make sure we are not in admin, not and
@@ -179,7 +170,6 @@ class Frontend extends App {
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
 		$this->add_content_filter();
-		$this->init_swiper_settings();
 
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
@@ -254,6 +244,10 @@ class Frontend extends App {
 
 	public function print_google_fonts_preconnect_tag() {
 		if ( 0 >= $this->google_fonts_index ) {
+			return;
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_local_google_fonts' ) ) {
 			return;
 		}
 
@@ -341,11 +335,6 @@ class Frontend extends App {
 		add_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
 	}
 
-	public function init_swiper_settings() {
-		$this->e_swiper_asset_path = 'assets/lib/swiper/v8/';
-		$this->e_swiper_version = '8.4.5';
-	}
-
 	/**
 	 * Remove content filter.
 	 *
@@ -395,6 +384,14 @@ class Frontend extends App {
 				'jquery',
 			],
 			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'swiper',
+			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/v8/' ),
+			[],
+			'8.4.5',
 			true
 		);
 
@@ -547,9 +544,9 @@ class Frontend extends App {
 
 		wp_register_style(
 			'swiper',
-			$this->get_css_assets_url( 'swiper', $this->e_swiper_asset_path . 'css/' ),
+			$this->get_css_assets_url( 'swiper', 'assets/lib/swiper/v8/css/' ),
 			[],
-			$this->e_swiper_version
+			'8.4.5'
 		);
 
 		wp_register_style(
@@ -686,16 +683,29 @@ class Frontend extends App {
 				$post_id = get_the_ID();
 				// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
 				if ( $post_id && is_singular() ) {
-					$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
-					if ( ! empty( $page_assets ) ) {
-						Plugin::$instance->assets_loader->enable_assets( $page_assets );
-					}
+					$this->handle_page_assets( $post_id );
 
 					$css_file = Post_CSS::create( get_the_ID() );
 					$css_file->enqueue();
 				}
 			}
 		}
+	}
+
+	private function handle_page_assets( $post_id ): void {
+		$page_assets = get_post_meta( $post_id, Assets::ASSETS_META_KEY, true );
+		if ( ! empty( $page_assets ) ) {
+			Plugin::$instance->assets_loader->enable_assets( $page_assets );
+			return;
+		}
+
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return;
+		}
+
+		$document->update_runtime_elements();
 	}
 
 	/**
@@ -708,7 +718,7 @@ class Frontend extends App {
 	 *
 	 * @access public
 	 *
-	 * @param string $frontend_file_name
+	 * @param string  $frontend_file_name
 	 * @param boolean $custom_file
 	 *
 	 * @return string frontend file URL
@@ -734,7 +744,7 @@ class Frontend extends App {
 	 * @since 3.5.0
 	 * @access public
 	 *
-	 * @param string $frontend_file_name
+	 * @param string  $frontend_file_name
 	 * @param boolean $custom_file
 	 *
 	 * @return string frontend file path
@@ -911,7 +921,7 @@ class Frontend extends App {
 			$this->enqueued_icon_fonts[] = $css_url;
 		}
 
-		//clear enqueued icons
+		// Clear enqueued icons.
 		$this->icon_fonts_to_enqueue = [];
 	}
 
@@ -1013,25 +1023,28 @@ class Frontend extends App {
 
 		// Print used fonts
 		if ( ! empty( $google_fonts['google'] ) ) {
-			$this->google_fonts_index++;
+			++$this->google_fonts_index;
 
-			$fonts_url = $this->get_stable_google_fonts_url( $google_fonts['google'] );
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_local_google_fonts' ) ) {
+				foreach ( $google_fonts['google'] as $current_font ) {
+					Google_Font::enqueue( $current_font );
+				}
+			} else {
+				$fonts_url = $this->get_stable_google_fonts_url( $google_fonts['google'] );
 
-			wp_enqueue_style( 'google-fonts-' . $this->google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+				wp_enqueue_style( 'google-fonts-' . $this->google_fonts_index, $fonts_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			}
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
 			$early_access_font_urls = $this->get_early_access_google_font_urls( $google_fonts['early'] );
 
 			foreach ( $early_access_font_urls as $ea_font_url ) {
-				$this->google_fonts_index++;
-
-				//printf( '<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/earlyaccess/%s.css">', strtolower( str_replace( ' ', '', $current_font ) ) );
+				++$this->google_fonts_index;
 
 				wp_enqueue_style( 'google-earlyaccess-' . $this->google_fonts_index, $ea_font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
-
 	}
 
 	/**
@@ -1219,7 +1232,7 @@ class Frontend extends App {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param int $post_id The post ID.
+	 * @param int  $post_id The post ID.
 	 *
 	 * @param bool $with_css Optional. Whether to retrieve the content with CSS
 	 *                       or not. Default is false.
@@ -1507,7 +1520,7 @@ class Frontend extends App {
 	 * @access private
 	 * @since 2.0.4
 	 *
-	 * @param $content
+	 * @param string $content
 	 *
 	 * @return string
 	 */

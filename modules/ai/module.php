@@ -37,8 +37,11 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		( new SitePlannerConnect\Module() );
+
 		if ( is_admin() ) {
 			( new Preferences() )->register();
+			add_action( 'elementor/import-export/import-kit/runner/after-run', [ $this, 'handle_kit_install' ] );
 		}
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
@@ -162,7 +165,42 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/container/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
 		add_action( 'elementor/element/common/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/container/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
+	}
+
+	public function handle_kit_install( $imported_data ) {
+		if ( ! isset( $imported_data['status'] ) || 'success' !== $imported_data['status'] ) {
+			return;
+		}
+
+		if ( ! isset( $imported_data['runner'] ) || 'site-settings' !== $imported_data['runner'] ) {
+			return;
+		}
+
+		$is_connected = $this->get_ai_app()->is_connected() && User::get_introduction_meta( 'ai_get_started' );
+
+		if ( ! $is_connected ) {
+			return;
+		}
+
+		if ( ! isset( $imported_data['configData']['lastImportedSession']['instance_data']['site_settings']['settings']['ai'] ) ) {
+			return;
+		}
+
+		$last_imported_session = $imported_data['configData']['lastImportedSession'];
+		$imported_ai_data = $last_imported_session['instance_data']['site_settings']['settings']['ai'];
+
+		$this->get_ai_app()->send_event( [
+			'name' => 'kit_installed',
+			'data' => $imported_ai_data,
+			'client' => [
+				'name' => 'elementor',
+				'version' => ELEMENTOR_VERSION,
+				'session_id' => $last_imported_session['session_id'],
+			],
+		] );
 	}
 
 	public function register_ai_hover_effect_control( Element_Base $element ) {
@@ -180,6 +218,7 @@ class Module extends BaseModule {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
   }
   .elementor-control-ai_hover_animation .elementor-control-raw-html {
   	display: none;
@@ -214,6 +253,7 @@ class Module extends BaseModule {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		align-items: center;
 	}
 	.elementor-control-ai_animation .elementor-control-raw-html {
 		display: none;
@@ -255,7 +295,6 @@ class Module extends BaseModule {
 		}
 
 		$this->add_wc_scripts();
-
 	}
 
 	public function enqueue_ai_single_product_page_scripts() {
@@ -264,7 +303,6 @@ class Module extends BaseModule {
 		}
 
 		$this->add_wc_scripts();
-
 	}
 
 	private function add_products_bulk_action( $bulk_actions ) {
@@ -309,13 +347,6 @@ class Module extends BaseModule {
 				'id' => $image_id ? $image_id : 'No Image',
 				'image_url' => $image_id ? wp_get_attachment_url( $image_id ) : 'No Image',
 			];
-		}
-
-		$supported_post_types = get_option( 'elementor_cpt_support', [] );
-		$new_post_type = 'product';
-		if ( ! in_array( $new_post_type, $supported_post_types, true ) ) {
-			$supported_post_types[] = $new_post_type;
-			update_option( 'elementor_cpt_support', $supported_post_types );
 		}
 
 		wp_send_json_success( [ 'product_images' => array_slice( $image_ids, 0, 10 ) ] );
@@ -472,7 +503,7 @@ class Module extends BaseModule {
 	}
 
 	private function remove_temporary_containers( $data ) {
-		if ( empty( $data['elements'] ) ) {
+		if ( empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
 			return $data;
 		}
 
@@ -548,6 +579,7 @@ class Module extends BaseModule {
 		}
 		$this->verify_permissions( $data['editor_post_id'] );
 	}
+
 	private function verify_permissions( $editor_post_id ) {
 		$document = Plugin::$instance->documents->get( $editor_post_id );
 
@@ -555,8 +587,12 @@ class Module extends BaseModule {
 			throw new \Exception( 'Document not found' );
 		}
 
-		if ( ! $document->is_editable_by_current_user() ) {
-			throw new \Exception( 'Access denied' );
+		if ( $document->is_built_with_elementor() ) {
+			if ( ! $document->is_editable_by_current_user() ) {
+				throw new \Exception( 'Access denied' );
+			}
+		} elseif ( ! current_user_can( 'edit_post', $editor_post_id ) ) {
+				throw new \Exception( 'Access denied' );
 		}
 	}
 
@@ -664,7 +700,7 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function get_ai_app() : Ai {
+	private function get_ai_app(): Ai {
 		return Plugin::$instance->common->get_component( 'connect' )->get_app( 'ai' );
 	}
 
@@ -1087,12 +1123,12 @@ class Module extends BaseModule {
 		$image_data = $this->upload_image( $image['image_url'], $data['prompt'], $data['editor_post_id'] );
 
 		if ( is_wp_error( $image_data ) ) {
-			throw new \Exception( $image_data->get_error_message() );
+			throw new \Exception( esc_html( $image_data->get_error_message() ) );
 		}
 
 		if ( ! empty( $image['use_gallery_image'] ) && ! empty( $image['id'] ) ) {
-			 $app = $this->get_ai_app();
-			 $app->set_used_gallery_image( $image['id'] );
+			$app = $this->get_ai_app();
+			$app->set_used_gallery_image( $image['id'] );
 		}
 
 		return [
@@ -1123,7 +1159,7 @@ class Module extends BaseModule {
 
 			if ( is_array( $message ) ) {
 				$message = implode( ', ', $message );
-				throw new \Exception( $message );
+				throw new \Exception( esc_html( $message ) );
 			}
 
 			$this->throw_on_error( $result );
@@ -1281,8 +1317,8 @@ class Module extends BaseModule {
 
 		return [
 			'id' => $attachment_id,
-			'url' => wp_get_attachment_image_url( $attachment_id, 'full' ),
-			'alt' => $image_title,
+			'url' => esc_url( wp_get_attachment_image_url( $attachment_id, 'full' ) ),
+			'alt' => esc_attr( $image_title ),
 			'source' => 'library',
 		];
 	}
@@ -1308,7 +1344,7 @@ class Module extends BaseModule {
 		$result = $app->get_history_by_type( $type, $page, $limit, $context );
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
 		return $result;
@@ -1330,7 +1366,7 @@ class Module extends BaseModule {
 		$result = $app->delete_history_item( $data['id'], $context );
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
 		return [];
@@ -1352,7 +1388,7 @@ class Module extends BaseModule {
 		$result = $app->toggle_favorite_history_item( $data['id'], $context );
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
 		return [];
@@ -1365,15 +1401,15 @@ class Module extends BaseModule {
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
-			throw new \Exception( __( 'Missing Image', 'elementor' ) );
+			throw new \Exception( 'Missing Image' );
 		}
 
 		if ( empty( $data['payload']['settings'] ) ) {
-			throw new \Exception( __( 'Missing prompt settings', 'elementor' ) );
+			throw new \Exception( 'Missing prompt settings' );
 		}
 
 		if ( ! $app->is_connected() ) {
-			throw new \Exception( __( 'not_connected', 'elementor' ) );
+			throw new \Exception( 'not_connected' );
 		}
 
 		$context = $this->get_request_context( $data );
@@ -1430,7 +1466,7 @@ class Module extends BaseModule {
 	private function throw_on_error( $result ): void {
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( [
-				'message' => $result->get_error_message(),
+				'message' => esc_html( $result->get_error_message() ),
 				'extra_data' => $result->get_error_data(),
 			] );
 		}
@@ -1478,17 +1514,16 @@ class Module extends BaseModule {
 	 * @param int|null $image_to_remove
 	 * @param int|null $image_to_add
 	 * @return void
-	 * @throws \Exception
 	 */
 	private function update_product_gallery( $product, ?int $image_to_remove, ?int $image_to_add ): void {
 		$gallery_image_ids = $product->get_gallery_image_ids();
 
-		$index = array_search( $image_to_remove, $gallery_image_ids );
+		$index = array_search( $image_to_remove, $gallery_image_ids, true );
 		if ( false !== $index ) {
 			unset( $gallery_image_ids[ $index ] );
 		}
 
-		if ( ! in_array( $image_to_add, $gallery_image_ids ) ) {
+		if ( ! in_array( $image_to_add, $gallery_image_ids, true ) ) {
 			$gallery_image_ids[] = $image_to_add;
 		}
 
