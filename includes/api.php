@@ -67,7 +67,7 @@ class Api {
 	 *
 	 * @return array|false Info data, or false.
 	 */
-	private static function get_info_data( $force_update = false ) {
+	private static function get_info_data( $force_update = false, $is_deactivation = false ) {
 		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
 
 		$info_data = get_transient( $cache_key );
@@ -85,6 +85,11 @@ class Api {
 			$site_key = self::get_site_key();
 			if ( ! empty( $site_key ) ) {
 				$body_request['site_key'] = $site_key;
+			}
+
+			if ( $is_deactivation ) {
+				$body_request['deactivation'] = true;
+				$timeout = 3;
 			}
 
 			$response = wp_remote_get( self::$api_info_url, [
@@ -238,6 +243,16 @@ class Api {
 		}
 
 		return $feed;
+	}
+
+	public static function get_deactivation_data() {
+		$data = self::get_info_data( true, true );
+
+		if ( empty( $data['deactivation'] ) ) {
+			return false;
+		}
+
+		return $data['deactivation'];
 	}
 
 	/**
