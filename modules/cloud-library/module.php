@@ -21,8 +21,11 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->register_experiment();
-		$this->register_app();
-		$this->register_ajax_actions();
+
+		if ( Plugin::$instance->experiments->is_feature_active( $this->get_name() ) ) {
+			$this->register_app();
+			$this->register_ajax_actions();
+		}
 	}
 
 	private function register_experiment() {
