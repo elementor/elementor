@@ -388,10 +388,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 	public function test_render__style_with_nested_background_transformers() {
 
 		// Arrange.
-//		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
-//			$this->attach_background_transformers( $transformers );
-//		} );
-
 		add_filter( 'wp_get_attachment_image_src', function() {
 			return [
 				'https://example.com/image.jpg',
