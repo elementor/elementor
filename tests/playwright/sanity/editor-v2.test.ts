@@ -36,7 +36,7 @@ test.describe( 'Editor top bar', () => {
 		} ) ).toMatchSnapshot( 'app-bar.jpg', { maxDiffPixels: 100 } );
 	} );
 
-	test.skip( 'check panel styles', async () => {
+	test( 'check panel styles', async () => {
 		// Act
 		await editor.openElementsPanel();
 
