@@ -24,8 +24,6 @@ export default class EditorPage extends BasePage {
 	 * @param {Page}     page        - Playwright page instance.
 	 * @param {TestInfo} testInfo    - Test information.
 	 * @param {number}   cleanPostId - Optional. Post ID.
-	 *
-	 * @return {void}
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
@@ -167,7 +165,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<string>} The widget ID.
 	 */
-	async addWidget( widgetType: string, container = null, isContainerASection = false ): Promise<string> {
+	async addWidget( widgetType: string, container: string = null, isContainerASection: boolean = false ): Promise<string> {
 		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
 		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
 
@@ -229,6 +227,17 @@ export default class EditorPage extends BasePage {
 	 */
 	async getElementHandle( id: string ): Promise<ElementHandle<SVGElement | HTMLElement> | null> {
 		return this.getPreviewFrame().$( getElementSelector( id ) );
+	}
+
+	async waitForPreviewFrame(): Promise<Frame> {
+		await this.page.waitForSelector( '[id="elementor-preview-iframe"]' );
+
+		const frame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		if ( ! frame ) {
+			throw new Error( 'Iframe is null even after it appeared in the DOM.' );
+		}
+
+		return frame;
 	}
 
 	/**
@@ -832,6 +841,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen(): Promise<void> {
+		await this.waitForPreviewFrame();
 		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( ! isOpen ) {
@@ -849,8 +859,8 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setPageTemplate( template: 'default' | 'canvas' | 'full-width' ): Promise<void> {
-		let templateValue;
-		let templateClass;
+		let templateValue: string;
+		let templateClass: string;
 
 		switch ( template ) {
 			case 'default':
