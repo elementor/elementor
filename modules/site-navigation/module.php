@@ -21,7 +21,7 @@ class Module extends Module_Base {
 	 * Initialize the Site navigation module.
 	 *
 	 * @return void
-	 * @throws \Exception
+	 * @throws \Exception If the experiment registration fails.
 	 */
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
@@ -61,7 +61,7 @@ class Module extends Module_Base {
 	 * @since 3.16.0
 	 *
 	 * @return void
-	 * @throws \Exception
+	 * @throws \Exception If the experiment registration fails.
 	 */
 	private function register_pages_panel_experiment() {
 		Plugin::$instance->experiments->add_feature( [

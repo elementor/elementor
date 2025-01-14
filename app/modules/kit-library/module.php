@@ -112,6 +112,6 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/init', function () {
 			$this->set_kit_library_settings();
-		}, 12 /** after the initiation of the connect kit library */ );
+		}, 12 /** After the initiation of the connect kit library */ );
 	}
 }
