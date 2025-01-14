@@ -98,19 +98,6 @@ class Plugin {
 	public $documents;
 
 	/**
-	 * Schemes manager.
-	 *
-	 * Holds the plugin schemes manager.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @deprecated 3.0.0
-	 *
-	 * @var Schemes_Manager
-	 */
-	public $schemes_manager;
-
-	/**
 	 * Elements manager.
 	 *
 	 * Holds the plugin elements manager.
