@@ -31,11 +31,11 @@ class Source_Cloud extends Source_Remote_Base {
 
 	protected function get_template_content( $template_id ) {
 		$app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
-		return $app->get_resource( $args['template_id'] );
+
+		return $app->get_resource( $template_id );
 	}
 
-	protected function prepare_template( array $template_data ) {
-
+	protected function prepare_template( array $template_data ): array {
 		return [
 			'template_id' => $template_data['id'],
 			'source' => $this->get_id(),

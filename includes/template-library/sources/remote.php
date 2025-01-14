@@ -1,9 +1,7 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
-use Elementor\Api;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -122,7 +120,7 @@ class Source_Remote extends Source_Remote_Base {
 	 * @since 2.2.0
 	 * @access private
 	 */
-	protected function prepare_template( array $template_data ) {
+	protected function prepare_template( array $template_data ): array {
 		$favorite_templates = $this->get_user_meta( 'favorites' );
 
 		// BC: Support legacy APIs that don't have access tiers.
