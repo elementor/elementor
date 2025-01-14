@@ -5,6 +5,7 @@ import Ajax from 'elementor-common-modules/ajax/assets/js/ajax';
 import Finder from 'elementor-common-modules/finder/assets/js/finder';
 import Connect from 'elementor-common-modules/connect/assets/js/connect';
 import WordpressComponent from './components/wordpress/component';
+import QueryComponent from './components/global-query/component';
 import EventsDispatcherComponent from 'elementor-common-modules/event-tracker/assets/js/data/component';
 import Events from 'elementor-common-modules/event-tracker/assets/js/events';
 import Notifications from 'elementor-utils/notifications';
@@ -49,6 +50,7 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 			$e.components.register( new WordpressComponent() );
+			$e.components.register( new QueryComponent() );
 		} );
 
 		this.initModules();
@@ -119,6 +121,13 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		this.config = elementorCommonConfig;
 
 		this.setMarionetteTemplateCompiler();
+		// console.log( '123212321', 123212321 );
+		// setTimeout( () => {
+		// 	$e.data.get( 'global-query/post', { term: 'new' }, { refresh: true } )
+		// 		.then( ( response ) => {
+		// 			console.log( response );
+		// 		} );
+		// }, 10000 );
 	}
 }
 
