@@ -37,7 +37,7 @@ class Announcement {
 	}
 
 	/**
-	 * is_active
+	 * Is Active is_active
 	 *
 	 * @return bool
 	 */
