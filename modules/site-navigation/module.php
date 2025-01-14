@@ -3,6 +3,7 @@
 namespace Elementor\Modules\SiteNavigation;
 
 use Elementor\Core\Base\Module as Module_Base;
+use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\SiteNavigation\Data\Controller;
 use Elementor\Modules\SiteNavigation\Rest_Fields\Page_User_Can;
