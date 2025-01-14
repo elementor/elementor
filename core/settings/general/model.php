@@ -19,8 +19,6 @@ class Model {
 	 * @deprecated 3.0.0
 	 */
 	public function get_name() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
-
 		return 'general-deprecated';
 	}
 

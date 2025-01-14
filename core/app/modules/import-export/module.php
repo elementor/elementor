@@ -2,7 +2,6 @@
 namespace Elementor\App\Modules\ImportExport;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -30,8 +29,6 @@ class Module extends BaseModule {
 	 * @deprecated 3.8.0
 	 */
 	public function get_name() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.8.0' );
-
 		return 'import-export-bc';
 	}
 }

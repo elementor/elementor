@@ -18,8 +18,6 @@ class Json_Handler extends Files_Upload_Handler {
 	 * @deprecated 3.5.0
 	 */
 	public static function get_name() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );
-
 		return 'json-handler';
 	}
 

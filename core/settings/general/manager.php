@@ -56,8 +56,6 @@ class Manager extends CSS_Manager {
 	 * @return string Manager name.
 	 */
 	public function get_name() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
-
 		return 'general';
 	}
 
