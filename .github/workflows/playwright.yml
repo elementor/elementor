@@ -13,15 +13,6 @@ on:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
       inputs:
-        path-to-results:
-          required: false
-          description: 'Provide path to reporter files'
-          default: allure-results
-          type: choice
-          options:
-            - test-results/
-            - tests/playwright/blob-report
-            - allure-results
         fail_fast:
             type: boolean
             required: true
@@ -120,7 +111,6 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          sed -i -e "s/image: 'mariadb:lts'/image: 'mariadb:11.2.4-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -156,14 +146,14 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
+    if: ${{ always() }}
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
       - name: Checkout source code
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+        if: ${{ needs.Playwright.result == 'failure' }}
         uses: actions/checkout@v4
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
