@@ -517,6 +517,14 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			$this->attach_background_transformers( $transformers );
 		} );
 
+		add_filter( 'wp_get_attachment_image_src', function() {
+			return [
+				'https://example.com/image.jpg',
+				100,
+				200,
+			];
+		} );
+
 		$styles = [
 			[
 				'id' => 'test-background-overlay',

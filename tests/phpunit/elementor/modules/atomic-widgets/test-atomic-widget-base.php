@@ -14,10 +14,10 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
+//use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
+//use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
+//use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
+//use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -622,13 +622,13 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	}
 
 	public function test_get_data_for_save() {
-		add_filter( 'wp_get_attachment_image_src', function() {
-			return [
-				'https://example.com/image.jpg',
-				100,
-				200,
-			];
-		} );
+//		add_filter( 'wp_get_attachment_image_src', function() {
+//			return [
+//				'https://example.com/image.jpg',
+//				100,
+//				200,
+//			];
+//		} );
 		// Arrange.
 		$widget_styles = [
 			's-1234' => [
