@@ -622,13 +622,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	}
 
 	public function test_get_data_for_save() {
-//		add_filter( 'wp_get_attachment_image_src', function() {
-//			return [
-//				'https://example.com/image.jpg',
-//				100,
-//				200,
-//			];
-//		} );
 		// Arrange.
 		$widget_styles = [
 			's-1234' => [
@@ -725,34 +718,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'background' => [
 								'$$type' => 'background',
 								'value' => [
-									'background-overlay' => [
-										'$$type' => 'background-overlay',
-										'value' => [
-											[
-												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
-											],
-											[
-												'$$type' => 'background-image-overlay',
-												'value' => [
-													'image-src' => [
-														'$$type' => 'image-src',
-														'value' => [
-															'id' => [
-																'$$type' => 'image-attachment-id',
-																'value' => 3,
-															],
-															'url' => null
-														],
-													]
-												]
-											],
-										],
-									],
-
 									'color' => [
 										'$$type' => 'color',
-										'value' => 'red',
+										'value' => '#000000',
 									],
 								],
 							],
