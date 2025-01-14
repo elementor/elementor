@@ -12,23 +12,32 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
 
 		if ( ! empty( $value['image-src']['id'] ) ) {
-			$src = $this->fetch_image_url_by_id( $value['image-src']['id'] );
-
-			return "url(\" $src \")";
+			return $this->get_image_src_by_id( $value['image-src']['id'] );
 		}
 
-		if ( ! empty( $value['image-src']['url'] ) ) {
-			$src = $value['image-src']['url'];
 
-			return "url(\" $src \")";
+		if ( ! empty( $value['image-src']['url'] ) ) {
+			return $this->get_image_src_by_url( $value['image-src']['url'] );
 		}
 
 		if ( empty( $value['image-src']['url'] ) ) {
 			throw new \Exception( 'Invalid image URL.' );
 		}
+
 	}
 
-	public function fetch_image_url_by_id( $id ) {
+	private function get_image_src_by_id( $id ) {
+		$src = $this->fetch_image_url_by_id( $id );
+
+		return "url(\" $src \")";
+	}
+
+	private function get_image_src_by_url( $url ) {
+
+		return "url(\" $url \")";
+	}
+
+	private function fetch_image_url_by_id( $id ) {
 		$image_src = wp_get_attachment_image_src(
 			(int) $id, 'full'
 		);
