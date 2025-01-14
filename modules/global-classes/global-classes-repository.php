@@ -1,9 +1,6 @@
 <?php
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Styles\Utils as Atomic_Styles_Utils;
 use Elementor\Plugin;
 
@@ -32,20 +29,22 @@ class Global_Classes_Repository {
 		$all = $this->all();
 
 		if ( ! isset( $all->get_items()[ $id ] ) ) {
-			throw new \Exception( sprintf( 'Global class with id %s not found', $id ) );
+			throw new \Exception( esc_html( sprintf( 'Global class with id %s not found', $id ) ) );
 		}
 
 		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
 			'items' => $all->get_items()->except( [ $id ] )->all(),
 			'order' => $all->get_order()->filter( fn( $item ) => $item !== $id )->all(),
 		] );
+
+		do_action( 'elementor/global_classes/delete' );
 	}
 
 	public function put( string $id, array $value ) {
 		$all = $this->all();
 
 		if ( ! isset( $all->get_items()[ $id ] ) ) {
-			throw new \Exception( sprintf( 'Global class with id %s not found', $id ) );
+			throw new \Exception( esc_html( sprintf( 'Global class with id %s not found', $id ) ) );
 		}
 
 		if ( $value === $all->get_items()[ $id ] ) {
@@ -60,6 +59,8 @@ class Global_Classes_Repository {
 		if ( ! $value ) {
 			throw new \Exception( 'Failed to update global class' );
 		}
+
+		do_action( 'elementor/global_classes/update' );
 
 		return $this->get( $id );
 	}
@@ -79,6 +80,8 @@ class Global_Classes_Repository {
 			throw new \Exception( 'Failed to create global class' );
 		}
 
+		do_action( 'elementor/global_classes/create' );
+
 		return $this->get( $id );
 	}
 
@@ -97,6 +100,8 @@ class Global_Classes_Repository {
 		if ( ! $updated ) {
 			throw new \Exception( 'Failed to arrange global classes' );
 		}
+
+		do_action( 'elementor/global_classes/arrange' );
 
 		return $this->all()->get_order()->all();
 	}
