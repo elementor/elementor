@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+include 'remote-base.php';
+
 /**
  * Elementor template library remote source.
  *

@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+include 'remote-base.php';
+
 class Source_Cloud extends Source_Remote_Base {
 
 	const TEMPLATES_DATA_TRANSIENT_KEY_PREFIX = 'elementor_cloud_library_templates_data_';
