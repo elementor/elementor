@@ -13,12 +13,9 @@ import { getRandomStyleId } from '../../../utils/get-random-style-id';
  * @property {string[]}  originalClasses - An array of original class names.
  */
 
-export class BaseDuplicatedStylesDetection extends $e.modules.hookData.After {
-	constructor() {
-		super();
+const debouncedNotify = _.debounce( () => $e.run( 'document/atomic-widgets/styles-update' ), 200 );
 
-		this.debouncedNotify = _.debounce( () => $e.run( 'document/atomic-widgets/styles-update' ), 200 );
-	}
+export class BaseDuplicatedStylesDetection extends $e.modules.hookData.After {
 	getId() {
 		return `atomic-widgets/duplicated-styles/-${ this.getCommand() }`;
 	}
@@ -94,7 +91,7 @@ export class BaseDuplicatedStylesDetection extends $e.modules.hookData.After {
 	}
 
 	notifyStyleUpdate() {
-		this.debouncedNotify();
+		debouncedNotify();
 	}
 }
 export default BaseDuplicatedStylesDetection;
