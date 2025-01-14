@@ -250,8 +250,11 @@ class Source_Local extends Source_Base {
 			'exclude_from_search' => true,
 			'capability_type' => 'post',
 			'hierarchical' => false,
-			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
+			'supports' => [ 'title', 'thumbnail', 'author', 'elementor', 'custom-fields' ],
+			'show_in_rest' => true,
 		];
+
+		$this->avoid_rest_access_for_non_admins();
 
 		/**
 		 * Register template library post type args.
@@ -1744,6 +1747,18 @@ class Source_Local extends Source_Base {
 		unset( $post_types[ self::CPT ] );
 
 		return $post_types;
+	}
+
+	private function avoid_rest_access_for_non_admins(): void {
+		add_filter( 'rest_pre_dispatch', function ( $value, \WP_REST_Server $server, \WP_REST_Request $request ) {
+			if ( strpos( $request->get_route(), self::CPT ) !== false ) {
+				if ( ! current_user_can( 'manage_options' ) ) {
+					return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not allowed to do that.', 'elementor' ), [ 'status' => rest_authorization_required_code() ] );
+				}
+			}
+
+			return $value;
+		}, 10, 3 );
 	}
 
 	/**
