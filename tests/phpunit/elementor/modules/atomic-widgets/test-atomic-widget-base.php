@@ -742,12 +742,17 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 																'$$type' => 'image-attachment-id',
 																'value' => 3,
 															],
-															'url' => null,
+															'url' => null
 														],
 													]
 												]
 											],
 										],
+									],
+
+									'color' => [
+										'$$type' => 'color',
+										'value' => 'red',
 									],
 								],
 							],
