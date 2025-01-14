@@ -34,7 +34,7 @@ const UnifySingleProductImages = ( { productsImages, setProductImages, onClose, 
 					const { productId, imageId: currentImage } = extractImgIds( currentImageIdsStr );
 					const product = productsImagesDigested.find( ( productImage ) => productImage.productId === currentImageIdsStr );
 					await new Promise( ( resolve ) => setTimeout( resolve, product.sleepTime ) );
-					setProductImages(
+					await setProductImages(
 						url,
 						productId,
 						currentImage,

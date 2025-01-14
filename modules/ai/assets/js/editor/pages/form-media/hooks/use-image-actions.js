@@ -59,8 +59,8 @@ const useImageActions = () => {
 			// eslint-disable-next-line no-unused-vars
 			.catch( ( _ ) => null ) ) );
 
-		results.filter( ( result ) => result )
-			.forEach( ( result ) => setControlValue( result ) );
+		await Promise.all( results.filter( ( result ) => result )
+			.map( async ( result ) => await setControlValue( result ) ) );
 	};
 
 	return {

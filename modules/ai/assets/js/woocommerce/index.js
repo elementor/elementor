@@ -8,7 +8,7 @@ import UnifySingleProductImages from './unify-single-product-images';
 	'use strict';
 
 	async function setProductImages( url, productId, currentImage = null, newImage = null, isProductGallery = false ) {
-		$.post(
+		await $.post(
 			window.UnifyProductImagesConfig.set_product_images_url,
 			{
 				action: 'elementor-ai-set-product-images',
