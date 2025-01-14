@@ -148,7 +148,7 @@ class Uploads_Manager extends Base_Object {
 	}
 
 	/**
-	 * Are Unfiltered Uploads Enabled
+	 * Is Unfiltered Uploads Enabled
 	 *
 	 * @since 3.5.0
 	 * @access public
