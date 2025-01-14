@@ -1359,7 +1359,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 											'value' => [
 												[
 													'$$type' => 'background-color-overlay',
-													'value' => 'blue',
+													'value' => 4,
 												],
 												[
 													'$$type' => 'background-image-overlay',
