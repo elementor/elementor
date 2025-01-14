@@ -388,9 +388,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 	public function test_render__style_with_nested_background_transformers() {
 
 		// Arrange.
-		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
-			$this->attach_background_transformers( $transformers );
-		} );
+//		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
+//			$this->attach_background_transformers( $transformers );
+//		} );
 
 		add_filter( 'wp_get_attachment_image_src', function() {
 			return [
@@ -505,10 +505,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_background_overlay_transformers() {
 		// Arrange.
-		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
-			$this->attach_background_transformers( $transformers );
-		} );
-
 		add_filter( 'wp_get_attachment_image_src', function() {
 			return [
 				'https://example.com/image.jpg',
@@ -567,25 +563,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
-		var_dump( $css );
 
 		// Assert.
 		$this->assertNotEmpty( $css, 'CSS should not be empty' );
 		$this->assertMatchesSnapshot( $css );
-	}
-
-	private function attach_background_transformers( $transformers ) {
-		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
-
-		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
-		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ', ' ) );
-		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
-		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
-		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
-		$transformers->register( Image_Attachment_Id_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( Url_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
 	}
 
 	public function test_render__style_with_position_transformers() {
