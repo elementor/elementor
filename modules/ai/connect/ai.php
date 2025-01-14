@@ -111,7 +111,7 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_file_payload
+	 * Get file upload get_file_payload
 	 *
 	 * @param $filename
 	 * @param $file_type
@@ -267,7 +267,7 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_prompt_enhanced
+	 * Get Image Prompt Enhanced  get_image_prompt_enhanced
 	 *
 	 * @param $prompt
 	 *
@@ -343,7 +343,7 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_text_to_image
+	 * Get text to image get_text_to_image
 	 *
 	 * @param $prompt
 	 * @param $prompt_settings
@@ -370,11 +370,11 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_featured_image
+	 * Get_Featured_Image get_featured_image
 	 *
-	 * @param $prompt
-	 * @param $prompt_settings
-	 *
+	 * @param $data
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
 	 */
 	public function get_featured_image( $data, $context, $request_ids ) {
@@ -397,12 +397,13 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image
+	 * Get Image To Image get_image_to_image
 	 *
 	 * @param $image_data
-	 *
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
@@ -500,12 +501,13 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_upscale
+	 * Get Image To Image Upscale get_image_to_image_upscale
 	 *
 	 * @param $image_data
-	 *
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image_upscale( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
@@ -532,12 +534,13 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_remove_background
+	 * Get Image To Image Remove Background get_image_to_image_remove_background
 	 *
 	 * @param $image_data
-	 *
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image_remove_background( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
@@ -563,12 +566,13 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_remove_text
+	 * Get Image To Image Remove Text get_image_to_image_remove_text
 	 *
 	 * @param $image_data
-	 *
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image_replace_background( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
@@ -595,7 +599,7 @@ class Ai extends Library {
 	}
 
 	/**
-	 * store_temp_file
+	 * Store Temp File store_temp_file
 	 * used to store a temp file for the AI request and deletes it once the request is done
 	 *
 	 * @param $file_content
@@ -616,12 +620,13 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_out_painting
+	 * Get Image To Image Out Painting get_image_to_image_out_painting
 	 *
 	 * @param $image_data
-	 *
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image_out_painting( $image_data, $context, $request_ids ) {
 		$img_content = str_replace( ' ', '+', $image_data['mask'] );
@@ -659,12 +664,13 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_mask
+	 * Get Image To Image Mask get_image_to_image_mask
 	 *
 	 * @param $image_data
-	 *
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
 	public function get_image_to_image_mask( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
