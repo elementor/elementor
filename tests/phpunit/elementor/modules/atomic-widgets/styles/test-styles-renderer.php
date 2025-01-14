@@ -2,7 +2,6 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
@@ -386,7 +385,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 	}
 
 	public function test_render__style_with_nested_background_transformers() {
-
 		// Arrange.
 		add_filter( 'wp_get_attachment_image_src', function() {
 			return [

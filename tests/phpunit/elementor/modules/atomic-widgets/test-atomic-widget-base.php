@@ -14,10 +14,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-//use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
-//use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
-//use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
-//use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
