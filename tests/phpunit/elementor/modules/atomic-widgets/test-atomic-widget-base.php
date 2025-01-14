@@ -59,7 +59,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'link' => [
 							'$$type' => 'link',
 							'value' => [
-								'enabled' => true,
 								'href' => 'https://elementor.com',
 								'isTargetBlank' => true,
 							],
