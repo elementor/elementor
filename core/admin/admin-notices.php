@@ -457,7 +457,7 @@ class Admin_Notices extends Module {
 			return true;
 		}
 
-		return (bool) mt_rand( 0, 1 );
+		return (bool) wp_rand( 0, 1 );
 	}
 
 	private function is_elementor_page(): bool {
@@ -483,7 +483,9 @@ class Admin_Notices extends Module {
 		];
 	}
 
-	// For testing purposes
+	/**
+	 * For testing purposes
+	 */
 	public function get_elementor_version() {
 		return ELEMENTOR_VERSION;
 	}

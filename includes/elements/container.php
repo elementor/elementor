@@ -1400,8 +1400,8 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Column Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '1',
 				'options' => [
+					'' => ' Default',
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -1444,8 +1444,8 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Row Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '1',
 				'options' => [
+					'' => ' Default',
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -1950,9 +1950,9 @@ class Container extends Element_Base {
 	}
 
 	/**
-	 * convert slider to gaps control for the 3.16 upgrade script
+	 * Convert slider to gaps control for the 3.16 upgrade script
 	 *
-	 * @param $element
+	 * @param array $element
 	 * @return array
 	 */
 	public static function slider_to_gaps_converter( $element ) {

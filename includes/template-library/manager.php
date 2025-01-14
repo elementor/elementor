@@ -209,7 +209,7 @@ class Manager {
 	 * Retrieve all the templates from all the registered sources.
 	 *
 	 * @param array $filter_sources
-	 * @param bool $force_update
+	 * @param bool  $force_update
 	 * @return array
 	 */
 	public function get_templates( array $filter_sources = [], bool $force_update = false ): array {
@@ -617,10 +617,10 @@ class Manager {
 	 *
 	 * @param string $ajax_request Ajax request.
 	 *
-	 * @param array $data
+	 * @param array  $data
 	 *
 	 * @return mixed
-	 * @throws \Exception
+	 * @throws \Exception If the user has no permission or the post is not found.
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {

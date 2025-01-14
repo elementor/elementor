@@ -17,7 +17,9 @@ class Module extends BaseModule {
 	const NAME = 'global_classes';
 
 	// TODO: Add global classes package
-	const PACKAGES = [];
+	const PACKAGES = [
+		'editor-global-classes',
+	];
 
 	public function get_name() {
 		return 'global-classes';
@@ -36,7 +38,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
 			( new Global_Classes_REST_API() )->register_hooks();
-			( new Global_Classes_Injector() )->register_hooks();
+			( new Global_Classes_CSS() )->register_hooks();
 		}
 	}
 
@@ -52,6 +54,10 @@ class Module extends BaseModule {
 	}
 
 	private function add_packages( $packages ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return $packages;
+		}
+
 		return array_merge( $packages, self::PACKAGES );
 	}
 }
