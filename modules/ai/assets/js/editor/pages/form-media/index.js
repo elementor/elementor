@@ -103,7 +103,7 @@ const FormMedia = ( {
 					<GlobalActionsProvider actions={ globalActions }>
 						<LocationProvider>
 							<EditImageProvider imageData={ editImageInitialData }>
-								<MediaOutlet additionalOptions={ additionalOptions } />
+								<MediaOutlet additionalOptions={ additionalOptions } onClose={ onClose } />
 							</EditImageProvider>
 						</LocationProvider>
 					</GlobalActionsProvider>
