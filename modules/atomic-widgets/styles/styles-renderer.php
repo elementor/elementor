@@ -146,4 +146,3 @@ class Styles_Renderer {
 		return "{$bound}:{$width}";
 	}
 }
-
