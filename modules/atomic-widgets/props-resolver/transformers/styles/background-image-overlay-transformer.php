@@ -15,7 +15,6 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			return $this->get_image_src_by_id( $value['image-src']['id'] );
 		}
 
-
 		if ( ! empty( $value['image-src']['url'] ) ) {
 			return $this->get_image_src_by_url( $value['image-src']['url'] );
 		}
@@ -23,7 +22,6 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		if ( empty( $value['image-src']['url'] ) ) {
 			throw new \Exception( 'Invalid image URL.' );
 		}
-
 	}
 
 	private function get_image_src_by_id( $id ) {
