@@ -170,7 +170,6 @@ class Module extends BaseModule {
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
-
 	}
 
 	/**
