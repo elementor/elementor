@@ -24,7 +24,6 @@ class Module extends BaseModule {
 
 		if ( Plugin::$instance->experiments->is_feature_active( $this->get_name() ) ) {
 			$this->register_app();
-			$this->register_ajax_actions();
 		}
 	}
 
@@ -43,31 +42,5 @@ class Module extends BaseModule {
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'cloud-library', Cloud_Library::get_class_name() );
 		} );
-	}
-
-	private function register_ajax_actions() {
-		add_action( 'elementor/ajax/register_actions', function( $ajax ) {
-			$handlers = [
-				'cloud_library_get_resources' => [ $this, 'ajax_cloud_library_get_resources' ],
-			];
-
-			foreach ( $handlers as $tag => $callback ) {
-				$ajax->register_ajax_action( $tag, $callback );
-			}
-		} );
-	}
-
-	public function ajax_cloud_library_get_resources( $data ) {
-		$app = $this->get_cloud_library_app();
-
-		if ( ! $app->is_connected() ) {
-			return [];
-		}
-
-		return $app->get_resources();
-	}
-
-	private function get_cloud_library_app(): Cloud_Library {
-		return Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
 	}
 }

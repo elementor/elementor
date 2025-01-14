@@ -599,6 +599,10 @@ class Manager {
 			'remote',
 		];
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
+			$sources[] = 'cloud';
+		}
+
 		foreach ( $sources as $source_filename ) {
 			$class_name = ucwords( $source_filename );
 			$class_name = str_replace( '-', '_', $class_name );
