@@ -483,7 +483,7 @@ class Manager {
 	public function direct_import_template() {
 		/** @var Source_Local $source */
 		$source = $this->get_source( 'local' );
-		$file = Utils::get_super_global_value( $_FILES, 'file' );
+		$file = Utils::get_super_global_value( $_FILES, 'file' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		return $source->import_template( $file['name'], $file['tmp_name'] );
 	}
 
@@ -647,7 +647,7 @@ class Manager {
 			throw new \Exception( $result->get_error_message() );
 		}
 
-		return $result;
+		return $result; // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 	}
 
 	/**

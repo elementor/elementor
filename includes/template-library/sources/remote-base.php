@@ -32,7 +32,9 @@ class Source_Remote_Base extends Source_Base {
 	 *
 	 * @return string The remote template ID.
 	 */
-	public function get_id() {}
+	public function get_id() {
+		return '';
+	}
 
 	/**
 	 * Get remote template title.
@@ -44,7 +46,9 @@ class Source_Remote_Base extends Source_Base {
 	 *
 	 * @return string The remote template title.
 	 */
-	public function get_title() {}
+	public function get_title() {
+		return '';
+	}
 
 	/**
 	 * Register remote template data.
