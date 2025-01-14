@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { getRandomStyleId } from '../utils/get-random-style-id';
 
 const PROP_TYPE_CLASSES = 'classes';
 
@@ -20,8 +21,11 @@ export class CreateStyle extends $e.modules.editor.CommandContainerInternalBase 
 		}
 	}
 
-	randomId( containerId ) {
-		return `s-${ containerId }-${ elementorCommon.helpers.getUniqueId() }`;
+	randomId( container ) {
+		// Keeping randomId, though we actually use getRandomStyleId, only because we enforce a fixed id in tests as can be seen at -
+		// tests/jest/unit/modules/atomic-widgets/commands/styles.test.js
+		// tests/jest/unit/modules/atomic-widgets/commands-internal/create-style.test.js
+		return getRandomStyleId( container );
 	}
 
 	apply( args ) {
@@ -29,7 +33,7 @@ export class CreateStyle extends $e.modules.editor.CommandContainerInternalBase 
 		const oldStyles = container.model.get( 'styles' ) || {};
 
 		const newStyle = {
-			id: styleDefID ?? this.randomId( container.id ),
+			id: styleDefID ?? this.randomId( container ),
 			/* Translators: 1: container label, 2: number of old styles */
 			label: label ?? sprintf( __( '%1$s Style %2$s', 'elementor' ), container.label, Object.keys( oldStyles ).length + 1 ),
 			type: 'class',
