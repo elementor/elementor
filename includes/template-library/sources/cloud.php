@@ -23,14 +23,6 @@ class Source_Cloud extends Source_Remote_Base {
 
 	public function register_data() {}
 
-	public function save_item( $template_data ) {}
-
-	public function update_item( $new_data ) {}
-
-	public function delete_template( $template_id ) {}
-
-	public function export_template( $template_id ) {}
-
 	protected function get_template_content( $template_id ) {
 		$app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
 
