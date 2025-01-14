@@ -1,4 +1,11 @@
 <?php
+/**
+ * Inspired by Laravel Collection.
+ *
+ * @link https://github.com/illuminate/collections
+ * @package Elementor\Core\Utils
+ */
+
 namespace Elementor\Core\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
