@@ -21,7 +21,7 @@ class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicParagraph extend
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK );
 	}
 
-	public function test__paragraph_render(): void {
+	public function test__render_paragraph(): void {
 		// Act.
 		ob_start();
 		$this->instance->render_content();
