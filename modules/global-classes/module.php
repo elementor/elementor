@@ -38,7 +38,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
 			( new Global_Classes_REST_API() )->register_hooks();
-			( new Global_Classes_Injector() )->register_hooks();
+			( new Global_Classes_CSS() )->register_hooks();
 		}
 	}
 

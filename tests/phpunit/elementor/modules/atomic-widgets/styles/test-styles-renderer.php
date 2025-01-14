@@ -37,14 +37,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Styles_Renderer extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
-	public function set_up() {
-		parent::set_up();
-
-		remove_all_actions( 'elementor/atomic-widgets/styles/transformers/register' );
-
-		Props_Resolver::reset();
-	}
-
 	public function test_render__basic_style() {
 		// Arrange.
 		$styles = [
