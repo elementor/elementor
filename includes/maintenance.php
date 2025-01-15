@@ -83,6 +83,8 @@ class Maintenance {
 	 */
 	public static function uninstall() {
 		wp_clear_scheduled_hook( 'elementor/tracker/send_event' );
+
+		Api::get_uninstalled_data();
 	}
 
 	/**
