@@ -8,7 +8,7 @@ import UnifySingleProductImages from './unify-single-product-images';
 	'use strict';
 
 	async function setProductImages( url, productId, currentImage = null, newImage = null, isProductGallery = false ) {
-		$.post(
+		await $.post(
 			window.UnifyProductImagesConfig.set_product_images_url,
 			{
 				action: 'elementor-ai-set-product-images',
@@ -66,7 +66,11 @@ import UnifySingleProductImages from './unify-single-product-images';
 								const wpContentContainer = document.querySelector( '#wpbody-content' );
 								wpContentContainer.appendChild( container );
 								const root = createRoot( container );
-								root.render( <UnifyProductImages productsImages={ response.data.product_images } setProductImages={ setProductImages } /> );
+								root.render( <UnifyProductImages
+									productsImages={ response.data.product_images }
+									setProductImages={ setProductImages }
+									onClose={ () => window.location.reload() }
+								/> );
 							}
 						},
 					);
@@ -102,7 +106,11 @@ import UnifySingleProductImages from './unify-single-product-images';
 			const wpContentContainer = productThumbnail[ 0 ];
 			wpContentContainer.insertBefore( container, wpContentContainer.firstChild );
 			const root = createRoot( container );
-			root.render( <UnifySingleProductImages productsImages={ response.data.product_images } setProductImages={ setProductImages } /> );
+			root.render( <UnifySingleProductImages
+				productsImages={ response.data.product_images }
+				setProductImages={ setProductImages }
+				onClose={ () => window.location.reload() }
+			/> );
 		}
 	}
 
@@ -132,7 +140,11 @@ import UnifySingleProductImages from './unify-single-product-images';
 			const wpContentContainer = productGallery[ 0 ];
 			wpContentContainer.insertBefore( container, wpContentContainer.firstChild );
 			const root = createRoot( container );
-			root.render( <UnifySingleProductImages productsImages={ response.data.product_images } setProductImages={ setProductImages } isProductGallery /> );
+			root.render( <UnifySingleProductImages
+				productsImages={ response.data.product_images }
+				setProductImages={ setProductImages }
+				onClose={ () => window.location.reload() }
+				isProductGallery /> );
 		}
 	}
 } )( jQuery );
