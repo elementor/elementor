@@ -18,12 +18,8 @@ class Cloud_Library extends Library {
 		return 'cloud-library';
 	}
 
-	public function get_resources( $editor_layout_type ) {
-		return $this->http_request( 'GET', "resources/?editor_layout_type={$editor_layout_type}" );
-	}
-
-	public function get_resource( $id ) {
-		return $this->http_request( 'GET', "resources/{$id}" );
+	public function get_resources() {
+		return $this->http_request( 'GET', 'resources' );
 	}
 
 	protected function init() {}
