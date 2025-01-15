@@ -62,7 +62,8 @@ export class BaseDuplicatedStylesDetection extends $e.modules.hookData.After {
 		const container = window.elementor?.getContainer( model.id );
 		const widgetsCache = window.elementor?.widgetsCache ?? {};
 
-		const widgetType = container.type !== 'widget' ? container.type : container.model.get( 'widgetType' );
+		const elType = container.model.get( 'elType' );
+		const widgetType = elType !== 'widget' ? elType : container.model.get( 'widgetType' );
 		const originalStyles = container.model.get( 'styles' );
 		const settings = container.settings?.attributes;
 
