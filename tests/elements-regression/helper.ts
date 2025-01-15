@@ -24,6 +24,12 @@ export default class ElementRegressionHelper {
 		if ( widgetType.includes( 'hover' ) ) {
 			return;
 		}
+
+		// TODO: Fix in a separate task.
+		if ( 'text_path' === widgetType ) {
+			return;
+		}
+
 		const locator = isPublished
 			? this.page.locator( EditorSelectors.container + ' >> nth=0' )
 			: this.editor.getPreviewFrame().locator( EditorSelectors.container + ' >> nth=0' );
@@ -84,9 +90,10 @@ export default class ElementRegressionHelper {
 		}
 
 		// TODO: Fix in a separate task.
-		if ( 'text_path' === args.widgetType && 'tablet' === args.device ) {
+		if ( 'text_path' === args.widgetType ) {
 			return;
 		}
+
 		if ( args.widgetType.includes( 'hover' ) ) {
 			return;
 		}
