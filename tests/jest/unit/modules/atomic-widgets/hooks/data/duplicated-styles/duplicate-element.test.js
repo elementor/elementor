@@ -1,4 +1,5 @@
 import { createContainer, addChildToContainer } from '../../../create-container';
+import { setGlobalContainers } from './utils/set-global-containers';
 
 describe( 'Duplicate element - apply', () => {
 	let duplicateElementHook;
@@ -139,16 +140,7 @@ describe( 'Duplicate element - apply', () => {
 		addChildToContainer( container, styledElement );
 		addChildToContainer( container, duplicatedStyledElement );
 
-		const containers = {
-			123: container,
-			456: styledElement,
-			567: duplicatedStyledElement,
-		};
-
-		global.elementor = {
-			...global.elementor,
-			getContainer: ( id ) => containers[ id ] ?? null,
-		};
+		setGlobalContainers( [ container, styledElement, duplicatedStyledElement ] );
 
 		const runCommand = global.$e.run = jest.fn();
 
@@ -234,16 +226,7 @@ describe( 'Duplicate element - apply', () => {
 		addChildToContainer( container, nonStyledElement );
 		addChildToContainer( container, duplicatedNonStyledElement );
 
-		const containers = {
-			123: container,
-			456: nonStyledElement,
-			567: duplicatedNonStyledElement,
-		};
-
-		global.elementor = {
-			...global.elementor,
-			getContainer: ( id ) => containers[ id ] ?? null,
-		};
+		setGlobalContainers( [ container, nonStyledElement, duplicatedNonStyledElement ] );
 
 		const runCommand = global.$e.run = jest.fn();
 
