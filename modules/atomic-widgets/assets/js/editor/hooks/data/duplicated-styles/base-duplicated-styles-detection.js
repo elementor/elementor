@@ -21,7 +21,7 @@ export class BaseDuplicatedStylesDetection extends $e.modules.hookData.After {
 	}
 
 	/**
-	 * @param {StyledElementData} styledElements
+	 * @param {StyledElementData} styledElement
 	 */
 	updateStyle( { originalStyles, originalClasses, classesPropKey, container } ) {
 		const newStyles = {};
