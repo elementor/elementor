@@ -455,6 +455,73 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
+	public function test_render__style_with_nested_background_image_transformers() {
+		// Arrange.
+//		add_filter( 'wp_get_attachment_image_src', function() {
+//			return [
+//				'https://example.com/image.jpg',
+//				100,
+//				200,
+//			];
+//		} );
+
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => 'blue',
+											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image-src' => [
+														'$$type' => 'image-src',
+														'value' => [
+															'id' => null,
+															'url' => 'https://example.com/image.jpg',
+														],
+													]
+												]
+											],
+										],
+									],
+
+									'color' => [
+										'$$type' => 'color',
+										'value' => 'red',
+									],
+								],
+							],
+						],
+
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = new Styles_Renderer( [
+			'breakpoints' => []
+		] );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
 	public function test_render__style_with_background_color_transformers() {
 		// Arrange.
 		add_action('elementor/atomic-widgets/styles/transformers/register', function( $transformers ) {
