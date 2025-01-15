@@ -9,11 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Source_Cloud extends Source_Base {
 
-	public function get_id() {
+	public function get_id(): string {
 		return 'cloud';
 	}
 
-	public function get_title() {
+	public function get_title(): string {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
