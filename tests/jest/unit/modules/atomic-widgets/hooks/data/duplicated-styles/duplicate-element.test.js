@@ -49,7 +49,6 @@ describe( 'Duplicate element - apply', () => {
 					},
 				},
 			},
-			run: jest.fn(),
 		};
 
 		const DuplicateElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/duplicated-styles/duplicate-element' ) ).default;
@@ -72,7 +71,7 @@ describe( 'Duplicate element - apply', () => {
 		delete global.elementorCommon;
 		delete global._;
 
-		jest.resetAllMocks();
+		jest.clearAllMocks();
 	} );
 
 	it( 'should detect all atomic widgets with local styles within the duplicated container and regenerate an id to each of the styles', () => {
@@ -151,7 +150,7 @@ describe( 'Duplicate element - apply', () => {
 			getContainer: ( id ) => containers[ id ] ?? null,
 		};
 
-		const runCommand = jest.spyOn( global.$e, 'run' );
+		const runCommand = global.$e.run = jest.fn();
 
 		// Act
 		// The container already has the duplicated element at the point of the hook execution
@@ -182,5 +181,78 @@ describe( 'Duplicate element - apply', () => {
 		} );
 
 		expect( runCommand ).toBeCalledWith( 'document/atomic-widgets/styles-update' );
+	} );
+
+	it( 'should not do anything if no styled elements are duplicated', () => {
+		// Arrange
+		const container = createContainer( {
+			widgetType: 'div-block',
+			elType: 'div-block',
+			id: '123',
+			styles: {
+				's-123-1': {
+					id: 's-123-1',
+					label: '',
+					type: 'class',
+					variants: [],
+				},
+			},
+			settings: {
+				classes: {
+					$$type: 'classes',
+					value: [ 's-123-1' ],
+				},
+			},
+		} );
+
+		const nonStyledElement = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '456',
+			styles: {},
+			settings: {
+				classes: {
+					$$type: 'classes',
+					value: [],
+				},
+			},
+		} );
+
+		const duplicatedNonStyledElement = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '567',
+			styles: {},
+			settings: {
+				classes: {
+					$$type: 'classes',
+					value: [],
+				},
+			},
+		} );
+
+		addChildToContainer( container, nonStyledElement );
+		addChildToContainer( container, duplicatedNonStyledElement );
+
+		const containers = {
+			123: container,
+			456: nonStyledElement,
+			567: duplicatedNonStyledElement,
+		};
+
+		global.elementor = {
+			...global.elementor,
+			getContainer: ( id ) => containers[ id ] ?? null,
+		};
+
+		const runCommand = global.$e.run = jest.fn();
+
+		// Act
+		duplicateElementHook.apply( {
+			containers: [ nonStyledElement ],
+		} );
+
+		// Assert
+		expect( runCommand ).not.toBeCalled();
 	} );
 } );
