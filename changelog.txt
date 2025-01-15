@@ -1,6 +1,6 @@
 == Changelog ==
 
-= 3.26.5 - 2025-01-14 =
+= 3.26.5 - 2025-01-15 =
 
 * Fix: Background Slideshow option not working for columns
 
