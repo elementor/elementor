@@ -59,7 +59,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'link' => [
 							'$$type' => 'link',
 							'value' => [
-								'enabled' => true,
 								'href' => 'https://elementor.com',
 								'isTargetBlank' => true,
 							],
@@ -714,10 +713,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'background' => [
 								'$$type' => 'background',
 								'value' => [
-								    'color' => [
-									    '$$type' => 'color',
-									    'value' => '#000000',
-								    ],
+									'color' => [
+										'$$type' => 'color',
+										'value' => '#000000',
+									],
 								],
 							],
 						],
@@ -1326,9 +1325,31 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										'background-overlay' => [
 											'$$type' => 'background-overlay',
 											'value' => [
-												'$$type' => 'background-color-overlay',
-												'value' => 4,
+												[
+													'$$type' => 'background-color-overlay',
+													'value' => 4,
+												],
+												[
+													'$$type' => 'background-image-overlay',
+													'value' => [
+														'image-src' => [
+															'$$type' => 'image-src',
+															'value' => [
+																'id' => [
+																	'$$type' => 'image-attachment-id',
+																	'value' => 3,
+																],
+																'url' => null
+															],
+														]
+													]
+												],
 											],
+										],
+
+										'color' => [
+											'$$type' => 'color',
+											'value' => 'red',
 										],
 									],
 								],

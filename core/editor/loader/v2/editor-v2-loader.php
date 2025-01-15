@@ -29,6 +29,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'query',
 		'schema',
 		'store',
+		'session',
 		'ui',
 		'utils',
 		'wp-media',
