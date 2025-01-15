@@ -295,7 +295,6 @@ class Module extends BaseModule {
 
 		wp_send_json_success( [
 			'message' => __( 'Image added successfully', 'elementor' ),
-			'refresh' => true,
 		] );
 	}
 

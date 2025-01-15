@@ -45,7 +45,7 @@ export const getCustomCSS = ( payload ) => request( 'ai_get_custom_css', { paylo
 
 export const setGetStarted = () => request( 'ai_set_get_started' );
 
-export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId } );
+export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId }, true );
 
 export const getTextToImageGeneration = ( payload ) => request( 'ai_get_text_to_image', { payload } );
 
