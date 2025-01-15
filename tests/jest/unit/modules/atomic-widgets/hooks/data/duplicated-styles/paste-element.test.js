@@ -1,7 +1,7 @@
 import { createContainer, addChildToContainer } from '../../../create-container';
 
-describe( 'Duplicate element - apply', () => {
-	let duplicateElementHook;
+describe( 'Paste element - apply', () => {
+	let pasteElementHook;
 
 	beforeAll( async () => {
 		global._ = {
@@ -52,11 +52,11 @@ describe( 'Duplicate element - apply', () => {
 			run: jest.fn(),
 		};
 
-		const DuplicateElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/duplicated-styles/duplicate-element' ) ).default;
+		const PasteElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/duplicated-styles/paste-element' ) ).default;
 		const SetSettingsCommand = ( await import( 'elementor-document/elements/commands-internal/set-settings' ) ).default;
 
 		// For mocking the randomId method
-		duplicateElementHook = new DuplicateElementHook();
+		pasteElementHook = new PasteElementHook();
 
 		global.$e.internal = ( command, args ) => {
 			switch ( command ) {
@@ -75,7 +75,7 @@ describe( 'Duplicate element - apply', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should detect all atomic widgets with local styles within the duplicated container and regenerate an id to each of the styles', () => {
+	it( 'should detect all atomic widgets with local styles within the pasted container, and the container itself, and regenerate an id to each of the styles', () => {
 		// Arrange
 		const styledElement = createContainer( {
 			widgetType: 'a-heading',
@@ -102,7 +102,7 @@ describe( 'Duplicate element - apply', () => {
 			elType: 'widget',
 			id: '567',
 			styles: {
-				's-456-1': {		// This widget is the outcome of the duplication command - all the original settings are copied, including the style id
+				's-456-1': {		// This widget is the outcome of the duplication command - all of the original settings are copied, including the style id
 					id: 's-456-1',
 					label: '',
 					type: 'class',
@@ -154,10 +154,10 @@ describe( 'Duplicate element - apply', () => {
 		const runCommand = jest.spyOn( global.$e, 'run' );
 
 		// Act
-		// The container already has the duplicated element at the point of the hook execution
-		// The original command expects to get the container to duplicate
-		duplicateElementHook.apply( {
-			containers: [ styledElement ],
+		// The container already has the pasted element at the point of the hook execution
+		// The original command expects to get the container to paste the copied widget into
+		pasteElementHook.apply( {
+			containers: [ container ],
 		} );
 
 		// Assert

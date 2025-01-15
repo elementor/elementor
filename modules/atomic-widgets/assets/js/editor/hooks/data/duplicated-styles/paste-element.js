@@ -8,16 +8,23 @@ export class PasteElementHook extends BaseDuplicatedStylesDetection {
 
 	apply( args ) {
 		const { containers = [ args.container ] } = args;
+		let hasDuplicatedElement = false;
 
 		containers.forEach( ( container ) => {
 			const allElements = getElementChildren( container.lookup() );
 
 			const styledElements = allElements.filter( Boolean ).reduce( this.getDuplicatedStyledElements, [] );
 
+			if ( styledElements.length > 0 ) {
+				hasDuplicatedElement = true;
+			}
+
 			styledElements?.forEach( this.updateStyle );
 		} );
 
-		this.notifyStyleUpdate();
+		if ( hasDuplicatedElement ) {
+			this.notifyStyleUpdate();
+		}
 	}
 }
 export default PasteElementHook;
