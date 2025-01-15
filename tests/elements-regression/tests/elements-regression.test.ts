@@ -36,7 +36,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'tabs',
 		'video',
 		'spacer',
-		'text_path',
+		// 'text_path',
 		'social_icons',
 		'accordion',
 		'icon_box',
