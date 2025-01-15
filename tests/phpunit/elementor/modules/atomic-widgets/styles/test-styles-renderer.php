@@ -457,14 +457,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_nested_background_image_transformers() {
 		// Arrange.
-//		add_filter( 'wp_get_attachment_image_src', function() {
-//			return [
-//				'https://example.com/image.jpg',
-//				100,
-//				200,
-//			];
-//		} );
-
 		$styles = [
 			[
 				'id' => 'test-style',
