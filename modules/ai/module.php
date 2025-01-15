@@ -465,11 +465,6 @@ class Module extends BaseModule {
 			'connect_url' => $this->get_ai_connect_url(),
 		];
 
-		if ( $this->get_ai_app()->is_connected() ) {
-			// Use a cached version, don't call the API on every editor load.
-			$config['usage'] = $this->get_ai_app()->get_cached_usage();
-		}
-
 		wp_localize_script(
 			'elementor-ai',
 			'ElementorAiConfig',
