@@ -346,6 +346,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.26.5 - 2025-01-15 =
+
+* Fix: Background Slideshow option not working for columns
+
 = 3.26.4 - 2025-01-07 =
 
 * Fix: Responsive Visibility "Hide On Mobile Portrait" option not working for hidden Sections and Containers on older sites
