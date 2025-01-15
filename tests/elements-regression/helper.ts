@@ -85,11 +85,6 @@ export default class ElementRegressionHelper {
 		const deviceParams = { mobile: { width: 360, height: 736 }, tablet: { width: 768, height: 787 } };
 
 		// TODO: Fix in a separate task.
-		if ( 'container_grid' === args.widgetType && args.isPublished && 'mobile' === args.device ) {
-			return;
-		}
-
-		// TODO: Fix in a separate task.
 		if ( 'text_path' === args.widgetType ) {
 			return;
 		}
@@ -101,6 +96,10 @@ export default class ElementRegressionHelper {
 		if ( args.isPublished ) {
 			page = this.page;
 			await page.setViewportSize( deviceParams[ args.device ] );
+
+			if ( 'container_grid' === args.widgetType && 'mobile' === args.device ) {
+				await page.waitForTimeout( 500 );
+			}
 
 			label = '_published';
 			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
