@@ -29,6 +29,21 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 	}
 
 	public function fetch_image_url_by_id( $id ) {
+			return $this->get_image_src_by_id( $value['image-src']['id'] );
+	}
+
+	private function get_image_src_by_id( $id ) {
+		$src = $this->get_image_url_by_id( $id );
+
+		return "url(\" $src \")";
+	}
+
+	private function get_image_src_by_url( $url ) {
+
+		return "url(\" $url \")";
+	}
+
+	private function get_image_url_by_id( $id ) {
 		$image_src = wp_get_attachment_image_src(
 			(int) $id, 'full'
 		);
