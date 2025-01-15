@@ -10,7 +10,7 @@ import { getRandomStyleId } from '../../../utils/get-random-style-id';
  * @property {Container} container       - The container instance.
  * @property {string}    classesPropKey  - The key for the classes property.
  * @property {Object}    originalStyles  - The original styles object.
- * @property {string[]}  originalClasses - An array of original class names.
+ * @property {string[]}  originalClasses - An array of the original classes.
  */
 
 const debouncedNotify = _.debounce( () => $e.run( 'document/atomic-widgets/styles-update' ), 200 );
@@ -75,7 +75,7 @@ export class BaseDuplicatedStylesDetection extends $e.modules.hookData.After {
 		) ?? [];
 
 		const originalClasses =
-			classesPropKey && settings ? settings[ classesPropKey ]?.value : null;
+			classesPropKey && settings ? classesPropTypeUtil.extract( settings[ classesPropKey ] ) : null;
 
 		const isDuplicatedStyle = originalClasses?.[ 0 ] ? -1 === originalClasses[ 0 ].indexOf( container.id ) : false;
 
