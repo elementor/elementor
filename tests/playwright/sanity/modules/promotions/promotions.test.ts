@@ -118,7 +118,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect.soft( saveAsGlobalPromotionLinkContainer ).toHaveAttribute( 'href', saveAsGlobalHref );
 	} );
 
-	test.skip( 'Promotions - Free to Pro - Admin top bar', async ( { page } ) => {
+	test( 'Promotions - Free to Pro - Admin top bar', async ( { page } ) => {
 		// Arrange.
 		const promotionContainer = '.e-admin-top-bar__secondary-area';
 
@@ -126,7 +126,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
 	} );
 
-	test.skip( 'Promotions - Free to Pro - Navigator', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Promotions - Free to Pro - Navigator', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			promotionContainer = EditorSelectors.panels.navigator.footer;
@@ -137,10 +137,10 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
+		await expect.soft( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
 	} );
 
-	test.skip( 'Promotions - Free to Pro - Navigator - Dark Mode', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Promotions - Free to Pro - Navigator - Dark Mode', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
@@ -153,7 +153,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
+		await expect.soft( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
 	} );
 
 	test( 'Promotions - Sticky Free to Pro - Editor- Top Bar Off', async ( { page, apiRequests }, testInfo ) => {
@@ -172,7 +172,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
+		await expect.soft( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
 	} );
 
 	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page, apiRequests }, testInfo ) => {
@@ -191,7 +191,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
+		await expect.soft( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
 	} );
 
 	test( 'Promotion text behavior on resizing the structure panel', async ( { page, apiRequests }, testInfo ) => {
@@ -209,7 +209,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await navigatorPanel.evaluate( ( element ) => element.style.width = '150px' );
 
 		// Assert.
-		await expect( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
+		await expect.soft( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
 	} );
 } );
 
