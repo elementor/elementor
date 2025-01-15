@@ -9,11 +9,9 @@ describe( 'Paste element - apply', () => {
 			debounce: ( cb ) => ( () => cb() ),
 		};
 
-		let uniqueId = 0;
-
 		global.elementorCommon = {
 			helpers: {
-				getUniqueId: () => ++uniqueId,
+				getUniqueId: () => 'random',
 			},
 		};
 
@@ -117,6 +115,26 @@ describe( 'Paste element - apply', () => {
 			},
 		} );
 
+		const anotherStyledElement = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: '678',
+			styles: {
+				's-678-1': {
+					id: 's-678-1',
+					label: '',
+					type: 'class',
+					variants: [],
+				},
+			},
+			settings: {
+				classes: {
+					$$type: 'classes',
+					value: [ 's-678-1' ],
+				},
+			},
+		} );
+
 		const container = createContainer( {
 			widgetType: 'div-block',
 			elType: 'div-block',
@@ -139,14 +157,15 @@ describe( 'Paste element - apply', () => {
 
 		addChildToContainer( container, styledElement );
 		addChildToContainer( container, duplicatedStyledElement );
+		addChildToContainer( container, anotherStyledElement );
 
-		setGlobalContainers( [ container, styledElement, duplicatedStyledElement ] );
+		setGlobalContainers( [ container, styledElement, duplicatedStyledElement, anotherStyledElement ] );
 
 		const runCommand = global.$e.run = jest.fn();
 
 		// Act
-		// The container already has the pasted element at the point of the hook execution
 		// The original command expects to get the container to paste the copied widget into
+		// ** the hook is executed AFTER the element has been pasted
 		pasteElementHook.apply( {
 			containers: [ container ],
 		} );
@@ -161,11 +180,22 @@ describe( 'Paste element - apply', () => {
 			},
 		} );
 
-		expect( duplicatedStyledElement.settings.get( 'classes' ) ).toEqual( { $$type: 'classes', value: [ 's-567-1' ] } );
+		expect( duplicatedStyledElement.settings.get( 'classes' ) ).toEqual( { $$type: 'classes', value: [ 's-567-random' ] } );
 
 		expect( duplicatedStyledElement.model.get( 'styles' ) ).toEqual( {
-			's-567-1': {
-				id: 's-567-1',
+			's-567-random': {
+				id: 's-567-random',
+				label: '',
+				type: 'class',
+				variants: [],
+			},
+		} );
+
+		expect( anotherStyledElement.settings.get( 'classes' ) ).toEqual( { $$type: 'classes', value: [ 's-678-1' ] } );
+
+		expect( anotherStyledElement.model.get( 'styles' ) ).toEqual( {
+			's-678-1': {
+				id: 's-678-1',
 				label: '',
 				type: 'class',
 				variants: [],
