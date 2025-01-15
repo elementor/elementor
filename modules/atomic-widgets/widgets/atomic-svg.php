@@ -48,10 +48,9 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 	protected function define_atomic_controls(): array {
 		$content_section = Section::make()
-			->set_label( esc_html__( 'Atomic Svg', 'elementor' ) )
+			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
 				Textarea_Control::bind_to( 'svg' )
-					->set_label( esc_html__( 'Custom SVG', 'elementor' ) )
 					->set_placeholder( '<svg xmlns="http://www.w3.org/2000/svg"...' ),
 				Color_Control::bind_to( 'color' )
 					->set_label( esc_html__( 'SVG Color', 'elementor' ) )
@@ -71,6 +70,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 			'svg' => String_Prop_Type::make()
 				->default( '<svg xmlns="http://www.w3.org/2000/svg" id="fcd95e07-8bd7-469f-808c-4bea57f73182" data-name="Layer 1" width="33.2114" height="12.6055" viewBox="0 0 33.2114 12.6055"><rect x="0.106" width="33" height="2"></rect><rect x="0.4016" y="9.2498" width="33.1968" height="2.0001" transform="translate(-1.4366 1.4718) rotate(-6.4411)"></rect></svg>' ),
-		];
+            'color' => String_Prop_Type::make()
+            ];
 	}
 }
