@@ -20,7 +20,7 @@ class Source_Cloud extends Source_Base {
 	public function register_data() {}
 
 	public function get_items( $args = [] ) {}
-	
+
 	public function get_item( $template_id ) {}
 
 	public function get_data( array $args ) {}
