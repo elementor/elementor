@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Linked_Dimensions_Transformer extends Transformer_Base {
+class Dimensions_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
 		$dimensions = Collection::make( $value )
 			->only( [ 'top', 'right', 'bottom', 'left' ] )
