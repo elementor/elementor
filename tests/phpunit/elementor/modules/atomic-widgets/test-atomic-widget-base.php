@@ -26,7 +26,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	/**
 	 * @dataProvider get_atomic_settings_data_provider
 	 */
-	public function test_get_atomic_settings( $args, $arrange_cb = null ) {
+	public function test_get_atomic_settings1( $args, $arrange_cb = null ) {
 		// Arrange.
 		$cleanup = $arrange_cb ? $arrange_cb() : fn() => null;
 
@@ -37,6 +37,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
+
+		var_dump($settings);
 
 		// Assert.
 		$this->assertSame( $args['result'], $settings );
@@ -153,7 +155,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'value' => [
 								'name' => 'dynamic-tag',
 								'settings' => [
-									'before' => 'Before text - '
+									'before' => [
+										'$$type' => 'string',
+										'value' => 'Before text - ',
+									],
+									'not-in-schema' => [
+										'$$type' => 'string',
+										'value' => 'Not in schema',
+									],
 								],
 							],
 						],
