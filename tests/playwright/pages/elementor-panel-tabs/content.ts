@@ -1,5 +1,5 @@
 import EditorSelectors from '../../selectors/editor-selectors';
-import { expect, Locator, type Page, type TestInfo } from '@playwright/test';
+import { expect, type Frame, Locator, type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
 import path from 'path';
 import { LinkOptions } from '../../types/types';
@@ -31,7 +31,7 @@ export default class Content {
 
 		const urlInput = this.page.locator( options.linkInpSelector ).first();
 		await urlInput.clear();
-		await urlInput.type( link );
+		await urlInput.fill( link );
 
 		const wheel = this.page.locator( EditorSelectors.button.linkOptions ).first();
 		if ( await wheel.isVisible() ) {
@@ -49,7 +49,7 @@ export default class Content {
 			await this.page
 				.locator( EditorSelectors.button.customAttributesInp )
 				.first()
-				.type( `${ options?.customAttributes.key }|${ options.customAttributes.value }` );
+				.fill( `${ options?.customAttributes.key }|${ options.customAttributes.value }` );
 		}
 		await this.editor.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
 	}
@@ -87,9 +87,11 @@ export default class Content {
 	 * @return {Promise<void>}
 	 */
 	async selectImageSize( args: { widget: string, select: string, imageSize: string } ): Promise<void> {
-		await this.editor.getPreviewFrame().locator( args.widget ).click();
+		await this.editor.waitForPreviewFrame();
+		const frame: Frame = this.editor.getPreviewFrame();
+		await frame.locator( args.widget ).click();
 		await this.page.locator( args.select ).selectOption( args.imageSize );
-		await this.editor.getPreviewFrame().locator( EditorSelectors.pageTitle ).click();
+		await frame.locator( EditorSelectors.pageTitle ).click();
 	}
 
 	/**
@@ -103,7 +105,7 @@ export default class Content {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean, isVideo: boolean } ) {
+	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean, isVideo: boolean } ): Promise<void> {
 		const image = args.isPublished
 			? this.page.locator( args.selector )
 			: await this.editor.getPreviewFrame().waitForSelector( args.selector );
@@ -128,8 +130,8 @@ export default class Content {
 	async setCustomImageSize( args: { selector: string, select: string, imageTitle: string, width: string, height: string } ): Promise<void> {
 		await this.editor.getPreviewFrame().locator( args.selector ).click();
 		await this.page.locator( args.select ).selectOption( 'custom' );
-		await this.page.locator( EditorSelectors.image.widthInp ).type( args.width );
-		await this.page.locator( EditorSelectors.image.heightInp ).type( args.height );
+		await this.page.locator( EditorSelectors.image.widthInp ).fill( args.width );
+		await this.page.locator( EditorSelectors.image.heightInp ).fill( args.height );
 		const regex = new RegExp( `http://(.*)/wp-content/uploads/elementor/thumbs/${ args.imageTitle }(.*)` );
 		const response = this.page.waitForResponse( regex );
 		await this.page.getByRole( 'button', { name: 'Apply' } ).click();
@@ -173,12 +175,11 @@ export default class Content {
 	 * @return {Record<string, string | number>} options: parsed query params with key|value
 	 */
 	parseSrc( src: string ): Record<string, string | number> {
-		const options = src.split( '?' )[ 1 ].split( '&' ).reduce( ( acc, cur ) => {
+		return src.split( '?' )[ 1 ].split( '&' ).reduce( ( acc, cur ) => {
 			const [ key, value ] = cur.split( '=' );
 			acc[ key ] = value;
 			return acc;
 		}, {} );
-		return options;
 	}
 
 	/**

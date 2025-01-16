@@ -403,7 +403,6 @@ class Module extends BaseModule {
 
 		wp_send_json_success( [
 			'message' => __( 'Image added successfully', 'elementor' ),
-			'refresh' => true,
 		] );
 	}
 
@@ -465,11 +464,6 @@ class Module extends BaseModule {
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'connect_url' => $this->get_ai_connect_url(),
 		];
-
-		if ( $this->get_ai_app()->is_connected() ) {
-			// Use a cached version, don't call the API on every editor load.
-			$config['usage'] = $this->get_ai_app()->get_cached_usage();
-		}
 
 		wp_localize_script(
 			'elementor-ai',

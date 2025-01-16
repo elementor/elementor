@@ -148,7 +148,7 @@ class Dynamic_Tags_Editor_Config {
 	 * @param $control
 	 *
 	 * @return Select_Control
-	 * @throws \Exception
+	 * @throws \Exception If control is missing options.
 	 */
 	private function convert_select_control_to_atomic( $control ) {
 		if ( empty( $control['options'] ) ) {
