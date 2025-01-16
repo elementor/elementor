@@ -27,7 +27,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'container_grid',
 		'divider',
 		'heading',
-		// 'text_editor',
+		'text_editor',
 		'button',
 		'image',
 		'icon',
