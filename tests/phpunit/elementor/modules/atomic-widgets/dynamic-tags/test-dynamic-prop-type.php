@@ -66,6 +66,7 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 	}
 
 	public function test_sanitize() {
+		// Arrange.
 		$prop_type = Dynamic_Prop_Type::make()->categories( [ V1DynamicTags::TEXT_CATEGORY ] );
 
 		$dynamic_tag = new Mock_Dynamic_Tag();
