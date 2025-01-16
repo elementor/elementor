@@ -42,7 +42,7 @@ class Dynamic_Transformer extends Transformer_Base {
 
 		$settings = $this->props_resolver->resolve(
 			$schema,
-			$value['settings'] ?? []
+			$value['settings']
 		);
 
 		return $this->dynamic_tags_manager->get_tag_data_content( null, $value['name'], $settings );
