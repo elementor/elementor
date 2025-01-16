@@ -24,7 +24,7 @@ const testCaseslanguages = [
 
 test.describe('Test site translation for different languages', () => {
   testCaseslanguages.forEach((languageObj) => {
-    test(`Test of site translation for language ${languageObj.language} to Hebrew`, async ({ browser, apiRequests }, testInfo) => {
+    test(`Test of site translation for language ${languageObj.language}`, async ({ browser, apiRequests }, testInfo) => {
       // Arrange.
       const context = await browser.newContext();
       const page = await context.newPage();
