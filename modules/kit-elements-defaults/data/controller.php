@@ -137,7 +137,9 @@ class Controller extends Base_Controller {
 		return current_user_can( 'edit_posts' );
 	}
 
-	// TODO: Should be removed once the infra will support it.
+	/**
+	 * TODO: Should be removed once the infra will support it.
+	 */
 	public function get_item_permissions_check( $request ) {
 		return $this->get_items_permissions_check( $request );
 	}

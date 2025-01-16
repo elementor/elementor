@@ -75,7 +75,7 @@ class Network_Plugins extends Base_Plugin {
 			return false;
 		};
 
-		return ! ! $this->get_network_plugins();
+		return (bool) $this->get_network_plugins();
 	}
 
 	/**

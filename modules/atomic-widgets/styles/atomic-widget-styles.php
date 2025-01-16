@@ -35,14 +35,19 @@ class Atomic_Widget_Styles {
 	}
 
 	/**
-	 * @param array<int, array{
+	 * Enqueue styles fonts.
+	 *
+	 * Styles format:
+	 *   <int, array{
 	 *     id: string,
 	 *     type: string,
 	 *     variants: array<int, array{
-	 *         props: array<string, mixed>,
-	 *         meta: array<string, mixed>
+	 *       props: array<string, mixed>,
+	 *       meta: array<string, mixed>
 	 *     }>
-	 * }> $styles
+	 *   }>
+	 *
+	 * @param array $styles
 	 */
 	private function styles_enqueue_fonts( array $styles ): void {
 		foreach ( $styles as $style ) {

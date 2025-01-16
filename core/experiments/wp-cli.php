@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Core\Experiments;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -141,7 +140,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	}
 
 	/**
-	 * @param string $experiments_str comma delimited string of experiments
+	 * @param string $experiments_str comma delimited string of experiments.
 	 *
 	 * @return array array of experiments
 	 */
@@ -150,7 +149,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	}
 
 	/**
-	 * @param array $experiments experiments
+	 * @param array $experiments experiments.
 	 *
 	 * @return string plural
 	 */
@@ -159,8 +158,8 @@ class Wp_Cli extends \WP_CLI_Command {
 	}
 
 	/**
-	 * @param Experiments_Manager $experiments_manager manager
-	 * @param array $experiments experiments
+	 * @param Experiments_Manager $experiments_manager manager.
+	 * @param array $experiments experiments.
 	 *
 	 * @return bool true when all experiments exist, otherwise false
 	 */

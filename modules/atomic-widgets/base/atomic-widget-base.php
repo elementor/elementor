@@ -35,7 +35,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $config;
 	}
 
-	// Removes the wrapper div from the widget.
+	/**
+	 * TODO: Removes the wrapper div from the widget.
+	 */
 	public function before_render() {}
 	public function after_render() {}
 

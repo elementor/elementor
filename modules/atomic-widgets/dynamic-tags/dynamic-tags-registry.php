@@ -154,7 +154,7 @@ class Dynamic_Tags_Registry {
 	/**
 	 * @param $control
 	 *
-	 * @throws \Exception
+	 * @throws \Exception If control is missing options.
 	 * @return array{ atomic_control: Select_Control, prop_schema: String_Prop_Type }
 	 */
 	private function convert_select_control_to_atomic( $control ) {

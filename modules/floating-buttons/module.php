@@ -67,7 +67,6 @@ class Module extends BaseModule {
 		} else {
 			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
 		};
-
 	}
 
 	public function __construct() {
@@ -270,7 +269,7 @@ class Module extends BaseModule {
 				$starting_clicks = (int) get_post_meta( $post_id, static::META_CLICK_TRACKING, true );
 				$posts_to_update[ $post_id ] = $starting_clicks ? $starting_clicks : 0;
 			}
-			$posts_to_update[ $post_id ] ++;
+			$posts_to_update[ $post_id ]++;
 		}
 
 		foreach ( $posts_to_update as $post_id => $clicks ) {
@@ -471,7 +470,6 @@ class Module extends BaseModule {
 		] );
 
 		return $posts_query->post_count > 0;
-
 	}
 
 	private function get_contact_menu_args(): array {
@@ -573,7 +571,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function get_widgets_style_list():array {
+	private function get_widgets_style_list(): array {
 		return [
 			'widget-floating-buttons' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
 			'widget-floating-bars-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,

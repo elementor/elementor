@@ -2,6 +2,7 @@ import { expect, type Page, type TestInfo } from '@playwright/test';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 import Breakpoints from '../../../../../assets/breakpoints';
 import EditorPage from '../../../../../pages/editor-page';
+import { Device } from '../../../../../types/types';
 
 export default class ReverseColumns {
 	readonly page: Page;
@@ -50,7 +51,7 @@ export default class ReverseColumns {
 		await breakpoints.resetBreakpoints( editor );
 	}
 
-	async testReverseColumnsOneActivated( testDevice, isExperimentBreakpoints = false ) {
+	async testReverseColumnsOneActivated( testDevice: Device, isExperimentBreakpoints = false ) {
 		await this.init();
 
 		await this.editor.changeResponsiveView( testDevice );
@@ -65,7 +66,8 @@ export default class ReverseColumns {
 			filteredBreakpoints = breakpoints.filter( ( value ) => testDevice !== value );
 
 		for ( const breakpoint of filteredBreakpoints ) {
-			await this.editor.changeResponsiveView( breakpoint );
+			const typedBreakpoint = breakpoint as Device;
+			await this.editor.changeResponsiveView( typedBreakpoint );
 			await expect( firstColumn ).toHaveCSS( 'order', '0' );
 		}
 	}
@@ -76,10 +78,11 @@ export default class ReverseColumns {
 		const breakpoints = isExperimentBreakpoints ? Breakpoints.getAll() : Breakpoints.getBasic();
 
 		for ( const breakpoint of breakpoints ) {
-			if ( 'widescreen' === breakpoint ) {
+			const typedBreakpoint = breakpoint as Device;
+			if ( 'widescreen' === typedBreakpoint ) {
 				continue;
 			}
-			await this.editor.changeResponsiveView( breakpoint );
+			await this.editor.changeResponsiveView( typedBreakpoint );
 			const firstColumn = this.getFirstColumn();
 			if ( 'desktop' === breakpoint ) {
 				await expect( firstColumn ).toHaveCSS( 'order', '0' );

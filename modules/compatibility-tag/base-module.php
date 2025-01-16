@@ -63,7 +63,7 @@ abstract class Base_Module extends BaseModule {
 	 *
 	 * @param array $args
 	 *
-	 * @throws \Exception
+	 * @throws \Exception Invalid version.
 	 */
 	protected function on_plugin_update_message( array $args ) {
 		$new_version = Version::create_from_string( $args['new_version'] );
@@ -122,7 +122,7 @@ abstract class Base_Module extends BaseModule {
 	/**
 	 * Base_Module constructor.
 	 *
-	 * @throws \Exception
+	 * @throws \Exception Invalid version.
 	 */
 	public function __construct() {
 		add_filter( 'extra_plugin_headers', function ( array $headers ) {

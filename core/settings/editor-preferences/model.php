@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Core\Settings\EditorPreferences;
 
 use Elementor\Controls_Manager;
@@ -22,7 +21,6 @@ class Model extends BaseModel {
 	 * @return string The name.
 	 * @since 2.8.0
 	 * @access public
-	 *
 	 */
 	public function get_name() {
 		return 'editor-preferences';

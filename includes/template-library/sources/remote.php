@@ -234,7 +234,7 @@ class Source_Remote extends Source_Base {
 	 * @param bool $force_update
 	 * @return array
 	 */
-	protected function get_templates_data( bool $force_update ) : array {
+	protected function get_templates_data( bool $force_update ): array {
 		$templates_data_cache_key = static::TEMPLATES_DATA_TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
 
 		$experiments_manager = Plugin::$instance->experiments;
@@ -299,6 +299,7 @@ class Source_Remote extends Source_Base {
 
 	/**
 	 * Prepare the body arguments for the remote request.
+	 *
 	 * @param string $editor_layout_type
 	 *
 	 * @return array

@@ -19,7 +19,7 @@ class Settings_Reporter extends Base_Reporter {
 		];
 	}
 
-	public function get_settings() : array {
+	public function get_settings(): array {
 		$usage_settings_text = '';
 
 		$settings = Module::get_settings_usage();
@@ -35,7 +35,7 @@ class Settings_Reporter extends Base_Reporter {
 		];
 	}
 
-	public function get_raw_settings() : array {
+	public function get_raw_settings(): array {
 		$usage_settings = PHP_EOL;
 
 		$settings = Module::get_settings_usage();

@@ -24,11 +24,19 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_registered_sources() {
-		$this->assertEquals( self::$manager->get_registered_sources()['local'], new \Elementor\TemplateLibrary\Source_Local() );
+		$new_source = new \Elementor\TemplateLibrary\Source_Local();
+
+		$this->ensure_post_type_rest_routes();
+
+		$this->assertEquals( self::$manager->get_registered_sources()['local'], $new_source );
 	}
 
 	public function test_should_return_source() {
-		$this->assertEquals( self::$manager->get_source( 'local' ), new \Elementor\TemplateLibrary\Source_Local() );
+		$new_source = new \Elementor\TemplateLibrary\Source_Local();
+
+		$this->ensure_post_type_rest_routes();
+
+		$this->assertEquals( self::$manager->get_source( 'local' ), $new_source );
 	}
 
 	public function test_should_return_wp_error_save_error_from_save_template() {
@@ -218,5 +226,82 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		);
 		$this->assertEquals( 'section', $result['content'][0]['elType'] );
 		$this->assertNotEquals( 'test', $result['content'][0]['id'], 'The id should be regenerate in get_data method' );
+	}
+
+	public function test_cpt_rest_is_not_accessible_for_editor() {
+		// Arrange
+		do_action( 'rest_api_init');
+		wp_set_current_user( $this->factory()->get_editor_user()->ID );
+		$request = new \WP_REST_Request( 'GET', '/wp/v2/elementor_library' );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'rest_forbidden', $response->get_data()['code'] );
+	}
+
+	public function test_cpt_rest_is_accessible_for_admin() {
+		// Arrange
+		do_action( 'rest_api_init');
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+		$request = new \WP_REST_Request( 'GET', '/wp/v2/elementor_library' );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertIsArray( $response->get_data() );
+	}
+
+	public function test_admin_can_save_template_via_wp_rest() {
+		// Arrange
+		do_action( 'rest_api_init' );
+		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
+
+		$template_data = [
+			'title' => 'Test Template',
+			'status' => 'publish',
+			'meta' => [
+				'_elementor_template_type' => 'container',
+				'_elementor_edit_mode' => 'builder',
+				'_elementor_data' => wp_json_encode([
+					[
+						'id' => 'test-section',
+						'elType' => 'section',
+						'settings' => [],
+						'elements' => [],
+						'isInner' => false
+					]
+				])
+			]
+		];
+
+		$request = new \WP_REST_Request( 'POST', '/wp/v2/elementor_library' );
+		$request->set_body_params( $template_data );
+
+		// Act
+		$response = rest_do_request( $request );
+		$result = $response->get_data();
+
+		// Assert
+		$this->assertEquals( 201, $response->get_status() );
+		$this->assertArrayHasKey( 'id', $result );
+		$this->assertEquals( 'Test Template', $result['title']['rendered'] );
+		$this->assertEquals( 'container', get_post_meta( $result['id'], '_elementor_template_type', true ) );
+		$this->assertNotEmpty( get_post_meta( $result['id'], '_elementor_data', true ) );
+	}
+
+	/**
+	 * The data managers are killing the rest server (@see `kill_server`), and removing the post type rest routes.
+	 * This is a workaround to re-register the post type rest routes.
+	 * @return void
+	 */
+	private function ensure_post_type_rest_routes() {
+		global $wp_rest_server;
+		$wp_rest_server = null;
+		rest_get_server();
 	}
 }

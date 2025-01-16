@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * https://github.com/A5hleyRich/wp-background-processing GPL v2.0
+ * Link https://github.com/A5hleyRich/wp-background-processing GPL v2.0.
  *
  * WP Background Process
  *
@@ -152,7 +152,7 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * @return string
 	 */
 	protected function generate_key( $length = 64 ) {
-		$unique  = md5( microtime() . rand() );
+		$unique  = md5( microtime() . wp_rand() );
 		$prepend = $this->identifier . '_batch_';
 
 		return substr( $prepend . $unique, 0, $length );
@@ -491,7 +491,6 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * Cancel Process
 	 *
 	 * Stop processing queue items, clear cronjob and delete batch.
-	 *
 	 */
 	public function cancel_process() {
 		if ( ! $this->is_queue_empty() ) {
@@ -501,7 +500,6 @@ abstract class WP_Background_Process extends WP_Async_Request {
 
 			wp_clear_scheduled_hook( $this->cron_hook_identifier );
 		}
-
 	}
 
 	/**
@@ -517,5 +515,4 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * @return mixed
 	 */
 	abstract protected function task( $item );
-
 }

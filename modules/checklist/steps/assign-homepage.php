@@ -9,41 +9,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Assign_Homepage extends Step_Base {
 	const STEP_ID = 'assign_homepage';
 
-	public function get_id() : string {
+	public function get_id(): string {
 		return self::STEP_ID;
 	}
 
-	public function is_absolute_completed() : bool {
+	public function is_absolute_completed(): bool {
 		$front_page_id = (int) ( $this->wordpress_adapter->get_option( 'page_on_front' ) ?? 0 );
 
-		return ! ! $front_page_id;
+		return (bool) $front_page_id;
 	}
 
-	public function get_title() : string {
+	public function get_title(): string {
 		return esc_html__( 'Assign a homepage', 'elementor' );
 	}
 
-	public function get_description() : string {
+	public function get_description(): string {
 		return esc_html__( 'Before your launch, make sure to assign a homepage so visitors have a clear entry point into your site.', 'elementor' );
 	}
 
-	public function get_cta_text() : string {
+	public function get_cta_text(): string {
 		return esc_html__( 'Assign homepage', 'elementor' );
 	}
 
-	public function get_cta_url() : string {
+	public function get_cta_url(): string {
 		return admin_url( 'options-reading.php' );
 	}
 
-	public function get_is_completion_immutable() : bool {
+	public function get_is_completion_immutable(): bool {
 		return false;
 	}
 
-	public function get_image_src() : string {
+	public function get_image_src(): string {
 		return 'https://assets.elementor.com/checklist/v1/images/checklist-step-6.jpg';
 	}
 
-	public function get_learn_more_url() : string {
+	public function get_learn_more_url(): string {
 		return 'http://go.elementor.com/app-website-checklist-assign-home-article';
 	}
 }

@@ -120,6 +120,7 @@ class Svg_Sanitizer {
 	 * Is Encoded
 	 *
 	 * Check if the contents of the SVG file are gzipped
+	 *
 	 * @see http://www.gzip.org/zlib/rfc-gzip.html#member-format
 	 *
 	 * @since 3.16.0
@@ -563,7 +564,6 @@ class Svg_Sanitizer {
 	 *
 	 * @since 3.16.0
 	 * @access private
-	 *
 	 */
 	private function strip_doctype() {
 		foreach ( $this->svg_dom->childNodes as $child ) {
@@ -594,7 +594,7 @@ class Svg_Sanitizer {
 				continue;
 			}
 
-			//validate element attributes
+			// validate element attributes
 			$this->validate_allowed_attributes( $current_element );
 
 			$this->strip_xlinks( $current_element );

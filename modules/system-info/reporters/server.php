@@ -315,7 +315,7 @@ class Server extends Base {
 	 *                          folders don't have writing permissions, False otherwise.
 	 * }
 	 */
-	public function get_write_permissions() : array {
+	public function get_write_permissions(): array {
 		$paths_to_check = [
 			static::KEY_PATH_HTACCESS_FILE => $this->get_system_path( static::KEY_PATH_HTACCESS_FILE ),
 			static::KEY_PATH_UPLOADS_DIR => $this->get_system_path( static::KEY_PATH_UPLOADS_DIR ),
@@ -348,7 +348,7 @@ class Server extends Base {
 
 		return [
 			'value' => $value,
-			'warning' => ! ! $write_problems,
+			'warning' => (bool) $write_problems,
 		];
 	}
 
@@ -417,7 +417,7 @@ class Server extends Base {
 	 * @param $paths [] Paths to check permissions.
 	 * @return array []{exists: bool, read: bool, write: bool, execute: bool}
 	 */
-	public function get_paths_permissions( $paths ) : array {
+	public function get_paths_permissions( $paths ): array {
 		$permissions = [];
 
 		foreach ( $paths as $key_path => $path ) {
@@ -433,7 +433,7 @@ class Server extends Base {
 	 * @param $path_key
 	 * @return string
 	 */
-	public function get_system_path( $path_key ) : string {
+	public function get_system_path( $path_key ): string {
 		switch ( $path_key ) {
 			case static::KEY_PATH_WP_CONTENT_DIR:
 				return WP_CONTENT_DIR;
@@ -464,7 +464,7 @@ class Server extends Base {
 	 * @param $path
 	 * @return array{exists: bool, read: bool, write: bool, execute: bool}
 	 */
-	public function get_path_permissions( $path ) : array {
+	public function get_path_permissions( $path ): array {
 		if ( empty( $path ) ) {
 			return [
 				'exists' => false,

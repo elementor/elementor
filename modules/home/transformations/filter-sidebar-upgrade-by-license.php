@@ -22,7 +22,7 @@ class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
 		$has_pro_json_not_free = $this->has_pro && 'pro' === $item['license'][0];
 		$is_not_pro_json_not_pro = ! $this->has_pro && 'free' === $item['license'][0];
 		$should_show = ! isset( $item['show'] ) || 'true' === $item['show'];
-		return $has_pro_json_not_free && $should_show || $is_not_pro_json_not_pro && $should_show;
+		return ( $has_pro_json_not_free && $should_show ) || ( $is_not_pro_json_not_pro && $should_show );
 	}
 
 	public function transform( array $home_screen_data ): array {

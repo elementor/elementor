@@ -210,10 +210,9 @@ class Control_Icons extends Control_Base_Multiple {
 	/**
 	 * Support SVG Import
 	 *
+	 * @param array $mimes
+	 * @return array
 	 * @deprecated 3.5.0
-	 *
-	 * @param $mimes
-	 * @return mixed
 	 */
 	public function support_svg_import( $mimes ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.5.0' );

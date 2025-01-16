@@ -53,21 +53,7 @@ class Api {
 	 */
 	private static $api_feedback_url = 'https://my.elementor.com/api/v1/feedback/';
 
-	/**
-	 * Get info data.
-	 *
-	 * This function notifies the user of upgrade notices, new templates and contributors.
-	 *
-	 * @since 2.0.0
-	 * @access private
-	 * @static
-	 *
-	 * @param bool $force_update Optional. Whether to force the data retrieval or
-	 *                                     not. Default is false.
-	 *
-	 * @return array|false Info data, or false.
-	 */
-	private static function get_info_data( $force_update = false ) {
+	private static function get_info_data( $force_update = false, $additinal_status = false ) {
 		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
 
 		$info_data = get_transient( $cache_key );
@@ -85,6 +71,11 @@ class Api {
 			$site_key = self::get_site_key();
 			if ( ! empty( $site_key ) ) {
 				$body_request['site_key'] = $site_key;
+			}
+
+			if ( ! empty( $additinal_status ) ) {
+				$body_request['status'] = $additinal_status;
+				$timeout = 3;
 			}
 
 			$response = wp_remote_get( self::$api_info_url, [
@@ -238,6 +229,26 @@ class Api {
 		}
 
 		return $feed;
+	}
+
+	public static function get_deactivation_data() {
+		$data = self::get_info_data( true, 'deactivated' );
+
+		if ( empty( $data['deactivate_data'] ) ) {
+			return false;
+		}
+
+		return $data['deactivate_data'];
+	}
+
+	public static function get_uninstalled_data() {
+		$data = self::get_info_data( true, 'uninstalled' );
+
+		if ( empty( $data['uninstall_data'] ) ) {
+			return false;
+		}
+
+		return $data['uninstall_data'];
 	}
 
 	/**

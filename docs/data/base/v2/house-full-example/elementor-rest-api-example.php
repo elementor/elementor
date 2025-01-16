@@ -1,9 +1,10 @@
 <?php
-/*
-Plugin Name: Elementor REST API example.
-Plugin URI: https://elementor.com/
-Description: Demo of using Elementor REST API.
-*/
+/**
+ * @package Elementor
+ * Plugin Name: Elementor REST API example.
+ * Plugin URI: https://elementor.com/
+ * Description: Demo of using Elementor REST API.
+ */
 
 add_action( 'plugins_loaded', function () {
 	// Load the controller.
@@ -18,4 +19,3 @@ add_action( 'plugins_loaded', function () {
 	\Elementor\Data\V2\Manager::instance()->register_controller( House\Rooms\Controller::class );
 	\Elementor\Data\V2\Manager::instance()->register_controller( House\Rooms\Doors\Controller::class );
 } );
-

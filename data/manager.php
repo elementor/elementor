@@ -110,7 +110,6 @@ class Manager extends BaseModule {
 	 *
 	 * @param string $command
 	 * @param string $format
-	 *
 	 */
 	public function register_endpoint_format( $command, $format ) {
 		$this->command_formats[ $command ] = rtrim( $format, '/' );

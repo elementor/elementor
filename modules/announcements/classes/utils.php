@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Utils {
 	/**
-	 * get_trigger_object
+	 * Get trigger object.
 	 *
 	 * @param $trigger
 	 *
@@ -25,7 +25,7 @@ class Utils {
 			return $object_trigger;
 		}
 
-		//@TODO - replace with trigger manager
+		// @TODO - replace with trigger manager
 		switch ( $trigger['action'] ) {
 			case 'isFlexContainerInactive':
 				return new IsFlexContainerInactive();

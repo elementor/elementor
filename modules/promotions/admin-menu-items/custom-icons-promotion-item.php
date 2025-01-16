@@ -19,7 +19,7 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 		return esc_html__( 'Custom Icons', 'elementor' );
 	}
 
-	protected function get_promotion_title():string {
+	protected function get_promotion_title(): string {
 		return sprintf(
 			/* translators: %s: br  */
 			esc_html__( 'Enjoy creative freedom %s with Custom Icons', 'elementor' ),

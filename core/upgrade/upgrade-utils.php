@@ -12,9 +12,9 @@ class Upgrade_Utils {
 	/**
 	 *  _update_widget_settings
 	 *
-	 * @param string $widget_id  widget type id
-	 * @param Updater $updater   updater instance
-	 * @param array $changes     array containing updating control_ids, callback and other data needed by the callback
+	 * @param string $widget_id  widget type id.
+	 * @param Updater $updater   updater instance.
+	 * @param array $changes     array containing updating control_ids, callback and other data needed by the callback.
 	 *
 	 * @return bool
 	 */
@@ -70,7 +70,7 @@ class Upgrade_Utils {
 
 				update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 			}
-		} // End foreach().
+		}
 
 		return $updater->should_run_again( $post_ids );
 	}

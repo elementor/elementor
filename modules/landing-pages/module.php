@@ -112,7 +112,7 @@ class Module extends BaseModule {
 	 * @since 3.1.0
 	 * @access public
 	 *
-	 * @param \WP_Post $post Post Object
+	 * @param \WP_Post $post Post Object.
 	 *
 	 * @return bool Whether the post was built with Elementor.
 	 */

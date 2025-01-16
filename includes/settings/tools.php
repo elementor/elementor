@@ -317,7 +317,7 @@ class Tools extends Settings_Page {
 					'replace_url' => [
 						'callback' => function() {
 							echo '<h2>' . esc_html__( 'Replace URL', 'elementor' ) . '</h2>';
-							echo sprintf(
+							printf(
 								'<p><strong>%1$s</strong> %2$s</p>',
 								esc_html__( 'Important:', 'elementor' ),
 								sprintf(

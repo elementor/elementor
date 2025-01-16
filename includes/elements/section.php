@@ -233,7 +233,7 @@ class Element_Section extends Element_Base {
 			]
 		);
 
-		// Element Name for the Navigator
+		// Element Name for the Navigator.
 		$this->add_control(
 			'_title',
 			[
@@ -437,7 +437,7 @@ class Element_Section extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container > .elementor-column > .elementor-widget-wrap' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
-				// TODO: The following line is for BC since 2.7.0
+				// TODO: The following line is for BC since 2.7.0.
 				'prefix_class' => 'elementor-section-content-',
 			]
 		);
@@ -504,7 +504,7 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Structure
+		// Section Structure.
 		$this->start_controls_section(
 			'section_structure',
 			[
@@ -526,7 +526,7 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section background
+		// Section background.
 		$this->start_controls_section(
 			'section_background',
 			[
@@ -637,7 +637,7 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Background Overlay
+		// Background Overlay.
 		$this->start_controls_section(
 			'section_background_overlay',
 			[
@@ -824,7 +824,7 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section border
+		// Section border.
 		$this->start_controls_section(
 			'section_border',
 			[
@@ -949,7 +949,7 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Shape Divider
+		// Section Shape Divider.
 		$this->start_controls_section(
 			'section_shape_divider',
 			[
@@ -1130,7 +1130,7 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Typography
+		// Section Typography.
 		$this->start_controls_section(
 			'section_typo',
 			[
@@ -1218,7 +1218,7 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Advanced
+		// Section Advanced.
 		$this->start_controls_section(
 			'section_advanced',
 			[
@@ -1365,7 +1365,7 @@ class Element_Section extends Element_Base {
 
 		$this->end_controls_section();
 
-		// Section Responsive
+		// Section Responsive.
 		$this->start_controls_section(
 			'_section_responsive',
 			[

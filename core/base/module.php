@@ -223,7 +223,7 @@ abstract class Module extends Base_Object {
 		static $is_test_mode = null;
 
 		if ( null === $is_test_mode ) {
-			$is_test_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+			$is_test_mode = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS );
 		}
 
 		if ( ! $relative_url ) {
@@ -268,7 +268,7 @@ abstract class Module extends Base_Object {
 	 * @param string $file_name
 	 * @param string $relative_url         Optional. Default is null.
 	 * @param string $add_min_suffix       Optional. Default is 'default'.
-	 * @param bool   $add_direction_suffix Optional. Default is `false`
+	 * @param bool   $add_direction_suffix Optional. Default is `false`.
 	 *
 	 * @return string
 	 */

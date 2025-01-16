@@ -29,7 +29,6 @@ class Module extends BaseModule {
 				'nested-elements',
 			], ELEMENTOR_VERSION, true );
 		} );
-
 	}
 
 	/**

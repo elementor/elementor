@@ -21,7 +21,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiments();
 		$this->register_shortcode();
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
@@ -37,8 +36,8 @@ class Module extends BaseModule {
 		$this->clear_cache_on_site_changed();
 	}
 
-	private function register_experiments() {
-		Plugin::$instance->experiments->add_feature( [
+	public static function get_experimental_data(): array {
+		return [
 			'name' => 'e_element_cache',
 			'title' => esc_html__( 'Element Caching', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
@@ -50,7 +49,7 @@ class Module extends BaseModule {
 				'minimum_installation_version' => '3.23.0',
 			],
 			'generator_tag' => true,
-		] );
+		];
 	}
 
 	private function register_shortcode() {
@@ -64,6 +63,8 @@ class Module extends BaseModule {
 			if ( empty( $widget_data ) || ! is_array( $widget_data ) ) {
 				return '';
 			}
+
+			$widget_data['settings']['isShortcode'] = true;
 
 			ob_start();
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\App\Modules\ImportExport\Runners\Import;
 
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
@@ -10,7 +9,7 @@ use Elementor\Utils;
 class Templates extends Import_Runner_Base {
 	private $import_session_id;
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'templates';
 	}
 
@@ -62,7 +61,7 @@ class Templates extends Import_Runner_Base {
 		);
 
 		if ( is_wp_error( $new_document ) ) {
-			throw new \Exception( $new_document->get_error_message() );
+			throw new \Exception( esc_html( $new_document->get_error_message() ) );
 		}
 
 		$template_data['import_settings'] = $template_settings;

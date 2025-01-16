@@ -116,7 +116,7 @@ class Responsive {
 	public static function get_breakpoints() {
 		return array_reduce(
 			array_keys( self::$default_breakpoints ), function( $new_array, $breakpoint_key ) {
-				if ( ! in_array( $breakpoint_key, self::$editable_breakpoints_keys ) ) {
+				if ( ! in_array( $breakpoint_key, self::$editable_breakpoints_keys, true ) ) {
 					$new_array[ $breakpoint_key ] = self::$default_breakpoints[ $breakpoint_key ];
 				} else {
 					$saved_option = Plugin::$instance->kits_manager->get_current_settings( self::BREAKPOINT_OPTION_PREFIX . $breakpoint_key );
@@ -138,7 +138,7 @@ class Responsive {
 	public static function has_custom_breakpoints() {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.2.0', 'Plugin::$instance->breakpoints->has_custom_breakpoints()' );
 
-		return ! ! array_diff( self::$default_breakpoints, self::get_breakpoints() );
+		return (bool) array_diff( self::$default_breakpoints, self::get_breakpoints() );
 	}
 
 	/**

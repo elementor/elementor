@@ -10,10 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Link_Transformer extends Transformer_Base {
 	public function transform( $value, $key ): array {
-		if ( empty( $value['enabled'] ) ) {
-			return [];
-		}
-
 		if ( empty( $value['href'] ) ) {
 			throw new \Exception( 'Url is not provided.' );
 		}

@@ -19,7 +19,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->ai_app_mock = $this->getMockBuilder('\Elementor\Modules\Ai\Connect\Ai')
+		$this->ai_app_mock = $this->getMockBuilder( '\Elementor\Modules\Ai\Connect\Ai' )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -50,18 +50,18 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 					'instance_data' => [
 						'site_settings' => [
 							'settings' => [
-								'ai' => ['some_setting' => 'value']
-							]
-						]
-					]
-				]
-			]
+								'ai' => [ 'some_setting' => 'value' ],
+							],
+						],
+					],
+				],
+			],
 		];
 	}
 
 	private function act_as_connected_and_started_user() {
-		$this->ai_app_mock->method('is_connected')
-			->willReturn(true);
+		$this->ai_app_mock->method( 'is_connected' )
+			->willReturn( true );
 
 		User::set_introduction_viewed( [ 'introductionKey' => 'ai_get_started' ] );
 	}
@@ -71,16 +71,16 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		$imported_data = $this->get_valid_import();
 
-		$this->ai_app_mock->expects($this->once())
-			->method('send_event')
+		$this->ai_app_mock->expects( $this->once() )
+			->method( 'send_event' )
 			->with([
 				'name' => 'kit_installed',
-				'data' => ['some_setting' => 'value'],
+				'data' => [ 'some_setting' => 'value' ],
 				'client' => [
 					'name' => 'elementor',
 					'version' => ELEMENTOR_VERSION,
-					'session_id' => '123'
-				]
+					'session_id' => '123',
+				],
 			]);
 
 		do_action( 'elementor/import-export/import-kit/runner/after-run', $imported_data );
@@ -92,8 +92,8 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$imported_data = $this->get_valid_import();
 		$imported_data['status'] = 'error';
 
-		$this->ai_app_mock->expects($this->never())
-			->method('send_event');
+		$this->ai_app_mock->expects( $this->never() )
+			->method( 'send_event' );
 
 		do_action( 'elementor/import-export/import-kit/runner/after-run', $imported_data );
 	}
@@ -104,8 +104,8 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$imported_data = $this->get_valid_import();
 		$imported_data['runner'] = 'other-runner';
 
-		$this->ai_app_mock->expects($this->never())
-			->method('send_event');
+		$this->ai_app_mock->expects( $this->never() )
+			->method( 'send_event' );
 
 		do_action( 'elementor/import-export/import-kit/runner/after-run', $imported_data );
 	}
@@ -115,20 +115,20 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		$imported_data = $this->get_valid_import();
 
-		$this->ai_app_mock->expects($this->never())
-			->method('send_event');
+		$this->ai_app_mock->expects( $this->never() )
+			->method( 'send_event' );
 
 		do_action( 'elementor/import-export/import-kit/runner/after-run', $imported_data );
 	}
 
 	public function test_handle_kit_install_should_not_send_event_when_ai_get_started_not_viewed() {
-		$this->ai_app_mock->method('is_connected')
-			->willReturn(true);
+		$this->ai_app_mock->method( 'is_connected' )
+			->willReturn( true );
 
 		$imported_data = $this->get_valid_import();
 
-		$this->ai_app_mock->expects($this->never())
-			->method('send_event');
+		$this->ai_app_mock->expects( $this->never() )
+			->method( 'send_event' );
 
 		do_action( 'elementor/import-export/import-kit/runner/after-run', $imported_data );
 	}
@@ -140,8 +140,8 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		unset( $imported_data['configData']['lastImportedSession']['instance_data']['site_settings']['settings']['ai'] );
 
-		$this->ai_app_mock->expects($this->never())
-			->method('send_event');
+		$this->ai_app_mock->expects( $this->never() )
+			->method( 'send_event' );
 
 		do_action( 'elementor/import-export/import-kit/runner/after-run', $imported_data );
 	}

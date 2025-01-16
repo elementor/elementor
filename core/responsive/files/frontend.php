@@ -176,9 +176,6 @@ class Frontend extends Base {
 	 * Used for backwards compatibility for old Pro versions that were built with an Elementor Core version <3.2.0.
 	 *
 	 * @since 3.2.3
-	 *
-	 * @param $placeholder_data
-	 * @return mixed
 	 */
 	private function maybe_convert_placeholder_data( $placeholder_data ) {
 		switch ( $placeholder_data[1] ) {
