@@ -52,7 +52,7 @@ if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
-} elseif ( ! version_compare( get_bloginfo( 'version' ), '6.3', '>=' ) ) {
+} elseif ( ! version_compare( get_bloginfo( 'version' ), '6.5', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
 	require ELEMENTOR_PATH . 'includes/plugin.php';
@@ -98,7 +98,7 @@ function elementor_fail_wp_version() {
 		sprintf(
 			/* translators: %s: WordPress version. */
 			esc_html__( 'Update to version %s and get back to creating!', 'elementor' ),
-			'6.3'
+			'6.5'
 		),
 		esc_html__( 'Show me how', 'elementor' )
 	);
