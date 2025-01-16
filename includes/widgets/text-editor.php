@@ -99,13 +99,15 @@ class Widget_Text_Editor extends Widget_Base {
 	 * Therefor, style should not be loaded on the widget level, rather only on
 	 * control level when the drop cap is active.
 	 *
+	 * Only in the Editor, these style should be loaded on the widget level.
+	 *
 	 * @since 3.24.0
 	 * @access public
 	 *
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [];
+		return Plugin::$instance->preview->is_preview_mode() ? [ 'widget-text-editor' ] : [];
 	}
 
 	public function has_widget_inner_wrapper(): bool {
