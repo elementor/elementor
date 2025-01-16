@@ -30,7 +30,7 @@ test.describe( 'Test site translation for different languages', () => {
 			const page = await context.newPage();
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
-			const translationButton = '[name="upgrade-translations"][name="upgrade"]';
+			const translationButton = 'input[type="submit"][name="upgrade"]';
 
 			// Act
 			await wpAdmin.setSiteLanguage( languageObj.language );
