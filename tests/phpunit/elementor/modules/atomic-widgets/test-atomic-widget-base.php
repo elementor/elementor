@@ -638,7 +638,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								],
 							],
 							'padding' => [
-								'$$type' => 'linked-dimensions',
+								'$$type' => 'dimensions',
 								'value' => [
 									'top' => [
 										'$$type' => 'size',
