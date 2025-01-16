@@ -209,7 +209,7 @@ class Manager {
 	 * Retrieve all the templates from all the registered sources.
 	 *
 	 * @param array $filter_sources
-	 * @param bool $force_update
+	 * @param bool  $force_update
 	 * @return array
 	 */
 	public function get_templates( array $filter_sources = [], bool $force_update = false ): array {
@@ -483,7 +483,7 @@ class Manager {
 	public function direct_import_template() {
 		/** @var Source_Local $source */
 		$source = $this->get_source( 'local' );
-		$file = Utils::get_super_global_value( $_FILES, 'file' );
+		$file = Utils::get_super_global_value( $_FILES, 'file' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		return $source->import_template( $file['name'], $file['tmp_name'] );
 	}
 
@@ -599,6 +599,10 @@ class Manager {
 			'remote',
 		];
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
+			$sources[] = 'cloud';
+		}
+
 		foreach ( $sources as $source_filename ) {
 			$class_name = ucwords( $source_filename );
 			$class_name = str_replace( '-', '_', $class_name );
@@ -617,10 +621,10 @@ class Manager {
 	 *
 	 * @param string $ajax_request Ajax request.
 	 *
-	 * @param array $data
+	 * @param array  $data
 	 *
 	 * @return mixed
-	 * @throws \Exception
+	 * @throws \Exception If the user has no permission or the post is not found.
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
@@ -640,10 +644,10 @@ class Manager {
 		$result = call_user_func( [ $this, $ajax_request ], $data );
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
-		return $result;
+		return $result; // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 	}
 
 	/**

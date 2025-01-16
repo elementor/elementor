@@ -247,6 +247,10 @@ class Frontend extends App {
 			return;
 		}
 
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_local_google_fonts' ) ) {
+			return;
+		}
+
 		echo '<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>';
 	}
 
@@ -1516,7 +1520,7 @@ class Frontend extends App {
 	 * @access private
 	 * @since 2.0.4
 	 *
-	 * @param $content
+	 * @param string $content
 	 *
 	 * @return string
 	 */
