@@ -196,7 +196,7 @@ const DivBlockView = BaseElementView.extend( {
 				const currentTargetHeight = event.currentTarget.getBoundingClientRect().height;
 				const $placeholder = this.$el.find( '.elementor-sortable-placeholder' );
 
-				if ( 'horizontal' === this.getDroppableAxis() && $placeholder.length) {
+				if ( 'horizontal' === this.getDroppableAxis() && $placeholder.length ) {
 					// TODO Need optimize
 					event.currentTarget.after( $placeholder[ 0 ] );
 					$placeholder.css( {
