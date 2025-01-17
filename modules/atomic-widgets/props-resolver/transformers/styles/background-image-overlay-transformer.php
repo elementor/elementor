@@ -17,7 +17,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		$image_url = $this->get_image_url( $image_src );
 
 		if ( ! isset( $size ) && ! isset( $position ) ) {
-			return  "url(\" $image_url \")";
+			return "url(\" $image_url \")";
 		}
 
 		if ( isset( $position ) && ! isset( $size ) ) {
@@ -26,7 +26,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 		$position = $position ?? '0% 0%';
 
-		return  "url(\" $image_url \") $position \ $size";
+		return "url(\" $image_url \") $position \ $size";
 	}
 
 	private function get_image_url( $image_src ): string {
