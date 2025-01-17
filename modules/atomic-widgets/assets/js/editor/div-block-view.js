@@ -101,10 +101,21 @@ const DivBlockView = BaseElementView.extend( {
 		};
 	},
 
+	getDroppableAxis() {
+		const styles = window.getComputedStyle( this.$el[0] )
+		if ( 'flex' === styles.getPropertyValue( 'display' ) ) {
+			if ( 'row' === styles.getPropertyValue( 'flex-direction' ) || 'row-reverse' === styles.getPropertyValue( 'flex-direction' ) ) {
+				return 'horizontal';
+			}
+		}
+		return 'vertical';
+	},
+
 	getDroppableOptions() {
 		const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 		return {
+			axis: this.getDroppableAxis(),
 			items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 5,
@@ -170,6 +181,25 @@ const DivBlockView = BaseElementView.extend( {
 
 				// User is dragging an element from the panel.
 				this.onDrop( event, { at: newIndex } );
+			},
+			onDragging: (side, event) => {
+				const currentTargetHeight = event.currentTarget.getBoundingClientRect().height;
+				const $placeholder = this.$el.find( '.elementor-sortable-placeholder' );
+
+				if ( 'horizontal' === this.getDroppableAxis() ) {
+					if ( $placeholder.length ) {
+						// TODO Need optimize
+						event.currentTarget.after( $placeholder[ 0 ] );
+						$placeholder.css( {
+							display: 'block',
+							height: currentTargetHeight + 'px',
+							"background-color": '#eb8efb',
+							width: '10px',
+						} );
+					}
+				} else {
+					$placeholder.removeAttr( 'style' );
+				}
 			},
 		};
 	},
