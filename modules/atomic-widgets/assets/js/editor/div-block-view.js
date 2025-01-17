@@ -102,13 +102,21 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getDroppableAxis() {
-		const styles = window.getComputedStyle( this.$el[ 0 ] );
-		if ( 'flex' === styles.getPropertyValue( 'display' ) ) {
-			if ( 'row' === styles.getPropertyValue( 'flex-direction' ) || 'row-reverse' === styles.getPropertyValue( 'flex-direction' ) ) {
-				return 'horizontal';
-			}
+		if ( this.isHorizontalAxis() ) {
+			return 'horizontal';
 		}
 		return 'vertical';
+	},
+
+	isHorizontalAxis() {
+		const styles = window.getComputedStyle( this.$el[ 0 ] );
+
+		if ( 'flex' === styles.getPropertyValue( 'display' ) ) {
+			if ( 'row' === styles.getPropertyValue( 'flex-direction' ) || 'row-reverse' === styles.getPropertyValue( 'flex-direction' ) ) {
+				return true;
+			}
+		}
+		return false;
 	},
 
 	getDroppableOptions() {
