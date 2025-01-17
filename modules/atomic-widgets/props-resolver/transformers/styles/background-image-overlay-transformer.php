@@ -13,45 +13,38 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		$image_src = $value['image-src'];
 		$size = $value['size'];
 		$position = $value['position'];
+		$resolution = $value['resolution'];
 
-		if ( ! empty( $image_src['id'] ) ) {
-			$url = $this->get_image_src_by_id( $value['image-src']['id'] );
-		}
-
-		if ( ! empty( $image_src['url'] ) ) {
-			$url = $this->get_image_src_by_url( $value['image-src']['url'] );
-		}
-
-		if ( empty( $url ) ) {
-			throw new \Exception( 'Invalid image URL.' );
-		}
+		$image_url = $this->get_image_url( $image_src, $resolution );
 
 		if ( ! isset( $size ) && ! isset( $position ) ) {
-			return  "url(\" $url \")";
+			return "url(\" $image_url \")";
 		}
 
 		if ( isset( $position ) && ! isset( $size ) ) {
-			return "url(\" $url \") $position";
+			return "url(\" $image_url \") $position";
 		}
 
-		$position =	$position ?? '0% 0%';
+		$position = $position ?? '0% 0%';
 
-		return  "url(\" $url \") $position \ $size";
+		return "url(\" $image_url \") $position \ $size";
 	}
 
-	private function get_image_src_by_id( $value ) {
-		$src = $this->get_image_url_by_id( $value['image-src']['id'] );
+	private function get_image_url( $image_src, $resolution ): string {
+		if ( ! empty( $image_src['id'] ) ) {
+			return $this->get_image_url_by_id( $image_src['id'], $resolution );
+		}
 
-		return "url(\" $src \")";
+		if ( empty( $image_src['url'] ) ) {
+			throw new \Exception( 'Invalid image URL.' );
+		}
+
+		return $image_src['url'];
 	}
 
-	private function get_image_src_by_url( $url ) {
-		return "url(\" $url \")";
-	}
-
-	private function get_image_url_by_id( $id ) {
+	private function get_image_url_by_id( $id, $resolution ): string {
 		$image_src = wp_get_attachment_image_src(
-			(int) $id, 'full'
+			(int) $id, $resolution
 		);
 
 		if ( ! $image_src ) {
