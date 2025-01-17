@@ -13,8 +13,8 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'image-src' => Image_Src_Prop_Type::make(),
-      'position-shorthand' => String_Prop_Type::make(),
-      'position-custom' => String_Prop_Type::make(),
+			'size' => String_Prop_Type::make(),
+			'position' => String_Prop_Type::make(),
 		];
 	}
 }

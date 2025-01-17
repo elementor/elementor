@@ -10,36 +10,42 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
+		$image_src = $value['image-src'];
+		$size = $value['size'];
+		$position = $value['position'];
 
-		if ( ! empty( $value['image-src']['id'] ) ) {
-			$src = $this->fetch_image_url_by_id( $value['image-src']['id'] );
-
-			return "url(\" $src \")";
+		if ( ! empty( $image_src['id'] ) ) {
+			$url = $this->get_image_src_by_id( $value['image-src']['id'] );
 		}
 
-		if ( ! empty( $value['image-src']['url'] ) ) {
-			$src = $value['image-src']['url'];
-
-			return "url(\" $src \")";
+		if ( ! empty( $image_src['url'] ) ) {
+			$url = $this->get_image_src_by_url( $value['image-src']['url'] );
 		}
 
-		if ( empty( $value['image-src']['url'] ) ) {
+		if ( empty( $url ) ) {
 			throw new \Exception( 'Invalid image URL.' );
 		}
+
+		if ( ! isset( $size ) && ! isset( $position ) ) {
+			return  "url(\" $url \")";
+		}
+
+		if ( isset( $position ) && ! isset( $size ) ) {
+			return "url(\" $url \") $position";
+		}
+
+		$position =	$position ?? '0% 0%';
+
+		return  "url(\" $url \") $position \ $size";
 	}
 
-	public function fetch_image_url_by_id( $id ) {
-			return $this->get_image_src_by_id( $value['image-src']['id'] );
-	}
-
-	private function get_image_src_by_id( $id ) {
-		$src = $this->get_image_url_by_id( $id );
+	private function get_image_src_by_id( $value ) {
+		$src = $this->get_image_url_by_id( $value['image-src']['id'] );
 
 		return "url(\" $src \")";
 	}
 
 	private function get_image_src_by_url( $url ) {
-
 		return "url(\" $url \")";
 	}
 
