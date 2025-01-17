@@ -102,7 +102,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getDroppableAxis() {
-		const styles = window.getComputedStyle( this.$el[0] )
+		const styles = window.getComputedStyle( this.$el[ 0 ] );
 		if ( 'flex' === styles.getPropertyValue( 'display' ) ) {
 			if ( 'row' === styles.getPropertyValue( 'flex-direction' ) || 'row-reverse' === styles.getPropertyValue( 'flex-direction' ) ) {
 				return 'horizontal';
@@ -182,7 +182,7 @@ const DivBlockView = BaseElementView.extend( {
 				// User is dragging an element from the panel.
 				this.onDrop( event, { at: newIndex } );
 			},
-			onDragging: (side, event) => {
+			onDragging: ( side, event ) => {
 				const currentTargetHeight = event.currentTarget.getBoundingClientRect().height;
 				const $placeholder = this.$el.find( '.elementor-sortable-placeholder' );
 
@@ -193,7 +193,7 @@ const DivBlockView = BaseElementView.extend( {
 						$placeholder.css( {
 							display: 'block',
 							height: currentTargetHeight + 'px',
-							"background-color": '#eb8efb',
+							'background-color': '#eb8efb',
 							width: '10px',
 						} );
 					}
