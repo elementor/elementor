@@ -107,7 +107,11 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return Plugin::$instance->preview->is_preview_mode() ? [ 'widget-text-editor' ] : [];
+		$style_dependencies = Plugin::$instance->editor->is_edit_mode() || Plugin::$instance->preview->is_preview_mode()
+			? [ 'widget-text-editor' ]
+			: [];
+
+		return $style_dependencies;
 	}
 
 	public function has_widget_inner_wrapper(): bool {
