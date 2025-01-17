@@ -24,12 +24,12 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			return "url(\" $image_url \") $position";
 		}
 
-		$position =	$position ?? '0% 0%';
+		$position = $position ?? '0% 0%';
 
 		return  "url(\" $image_url \") $position \ $size";
 	}
 
-	private function get_image_url( $image_src ) {
+	private function get_image_url( $image_src ): string {
 		if ( ! empty( $image_src['id'] ) ) {
 			return $this->get_image_url_by_id( $image_src['id'] );
 		}
@@ -41,7 +41,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		return $image_src['url'];
 	}
 
-	private function get_image_url_by_id( $id ) {
+	private function get_image_url_by_id( $id ): string {
 		$image_src = wp_get_attachment_image_src(
 			(int) $id, 'full'
 		);
