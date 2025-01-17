@@ -105,6 +105,7 @@ const DivBlockView = BaseElementView.extend( {
 		if ( this.isHorizontalAxis() ) {
 			return 'horizontal';
 		}
+
 		return 'vertical';
 	},
 
@@ -116,6 +117,7 @@ const DivBlockView = BaseElementView.extend( {
 				return true;
 			}
 		}
+
 		return false;
 	},
 
@@ -194,17 +196,15 @@ const DivBlockView = BaseElementView.extend( {
 				const currentTargetHeight = event.currentTarget.getBoundingClientRect().height;
 				const $placeholder = this.$el.find( '.elementor-sortable-placeholder' );
 
-				if ( 'horizontal' === this.getDroppableAxis() ) {
-					if ( $placeholder.length ) {
-						// TODO Need optimize
-						event.currentTarget.after( $placeholder[ 0 ] );
-						$placeholder.css( {
-							display: 'block',
-							height: currentTargetHeight + 'px',
-							'background-color': '#eb8efb',
-							width: '10px',
-						} );
-					}
+				if ( 'horizontal' === this.getDroppableAxis() && $placeholder.length) {
+					// TODO Need optimize
+					event.currentTarget.after( $placeholder[ 0 ] );
+					$placeholder.css( {
+						display: 'block',
+						height: currentTargetHeight + 'px',
+						'background-color': '#eb8efb',
+						width: '10px',
+					} );
 				} else {
 					$placeholder.removeAttr( 'style' );
 				}
