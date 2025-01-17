@@ -59,7 +59,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	getChildView( childModel ) {
-		if ( 'remote' === childModel.get( 'source' ) ) {
+		if ( childModel.get( 'source' ).startsWith( 'remote' ) ) {
 			return TemplateLibraryTemplateRemoteView;
 		}
 

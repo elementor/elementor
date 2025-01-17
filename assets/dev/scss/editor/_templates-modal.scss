@@ -300,7 +300,8 @@ label.elementor-template-library-order-label {
 	}
 }
 
-.elementor-template-library-template-remote {
+.elementor-template-library-template-remote,
+.elementor-template-library-template-remote-ehp {
 	margin: calc( #{$remote-templates-items-space} / 2 );
 	padding: 8px;
 	border: var(--e-a-border);
