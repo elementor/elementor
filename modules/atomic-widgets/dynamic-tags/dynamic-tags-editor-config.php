@@ -85,7 +85,7 @@ class Dynamic_Tags_Editor_Config {
 			return null;
 		}
 
-		if ( ! $atomic_controls ) {
+		if ( null === $atomic_controls ) {
 			return null;
 		}
 

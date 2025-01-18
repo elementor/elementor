@@ -20,6 +20,8 @@ class Dynamic_Tags_Schemas {
 
 		$tag = $this->get_tag( $tag_name );
 
+		$this->tags_schemas[ $tag_name ] = [];
+
 		foreach ( $tag->get_controls() as $control ) {
 			if ( ! isset( $control['type'] ) || 'section' === $control['type'] ) {
 				continue;
