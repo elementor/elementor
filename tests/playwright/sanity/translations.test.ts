@@ -2,25 +2,7 @@ import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
-
-const testCaseslanguages = [
-	{
-		language: 'he_IL',
-		buttonText: 'פרסם',
-	},
-	{
-		language: 'en_NZ',
-		buttonText: 'Publish',
-	},
-	{
-		language: 'de_DE',
-		buttonText: 'Veröffentlichen',
-	},
-	{
-		language: 'fr_BE',
-		buttonText: 'Publier',
-	},
-];
+import { testCaseslanguages } from './translations.languages';
 
 test.describe( 'Test site translation for different languages', () => {
 	testCaseslanguages.forEach( ( languageObj ) => {
