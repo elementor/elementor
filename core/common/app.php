@@ -11,7 +11,7 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Core\Common\Data\Global_Query\Controller as Global_Query_Controller;
+use Elementor\Core\Common\Data\WP_Query\Controller as WP_Query_Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -71,7 +71,7 @@ class App extends BaseApp {
 
 		$this->add_component( 'event-tracker', new Event_Tracker() );
 
-		Plugin::$instance->data_manager_v2->register_controller( new Global_Query_Controller() );
+		Plugin::$instance->data_manager_v2->register_controller( new WP_Query_Controller() );
 	}
 
 	/**

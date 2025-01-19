@@ -1,9 +1,9 @@
 <?php
 
-namespace Elementor\Core\Common\Data\Global_Query;
+namespace Elementor\Core\Common\Data\WP_Query;
 
 use Elementor\Data\V2\Base\Controller as Controller_Base;
-use Elementor\Core\Common\Data\Global_Query\Endpoints\Post;
+use Elementor\Core\Common\Data\WP_Query\Endpoints\Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -11,11 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Controller extends Controller_Base {
 	public function get_name() {
-		return 'global-query';
+		return 'wp-query';
 	}
 
 	public function register_endpoints() {
-//		$this->index_endpoint->register_item_route();
 		$this->register_endpoint( new Post( $this ) );
 	}
 
