@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Plugin;
 
@@ -13,10 +14,13 @@ class Dynamic_Tags_Module {
 
 	private static ?self $instance = null;
 
-	public Dynamic_Tags_Registry $registry;
+	public Dynamic_Tags_Editor_Config $registry;
+
+	private Dynamic_Tags_Schemas $schemas;
 
 	private function __construct() {
-		$this->registry = new Dynamic_Tags_Registry();
+		$this->schemas = new Dynamic_Tags_Schemas();
+		$this->registry = new Dynamic_Tags_Editor_Config( $this->schemas );
 	}
 
 	public static function instance( $fresh = false ): self {
@@ -44,7 +48,9 @@ class Dynamic_Tags_Module {
 
 		add_action(
 			'elementor/atomic-widgets/settings/transformers/register',
-			fn ( $transformers ) => $this->register_transformers( $transformers )
+			fn ( $transformers, $prop_resolver ) => $this->register_transformers( $transformers, $prop_resolver ),
+			10,
+			2
 		);
 	}
 
@@ -59,10 +65,14 @@ class Dynamic_Tags_Module {
 		return $settings;
 	}
 
-	private function register_transformers( Transformers_Registry $transformers ) {
+	private function register_transformers( Transformers_Registry $transformers, Props_Resolver $props_resolver ) {
 		$transformers->register(
 			Dynamic_Prop_Type::get_key(),
-			new Dynamic_Transformer( Plugin::$instance->dynamic_tags )
+			new Dynamic_Transformer(
+				Plugin::$instance->dynamic_tags,
+				$this->schemas,
+				$props_resolver
+			)
 		);
 	}
 }
