@@ -1,59 +1,33 @@
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
-import { expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
+import { expect } from '@playwright/test';
+import { resolve } from 'path';
 
-const testCaseslanguages = [
-	{
-		language: 'he_IL',
-		buttonText: 'פרסם',
-	},
-	{
-		language: 'en_NZ',
-		buttonText: 'Publish',
-	},
-	{
-		language: 'de_DE',
-		buttonText: 'Veröffentlichen',
-	},
-	{
-		language: 'fr_BE',
-		buttonText: 'Publier',
-	},
-];
-
-test.describe( 'Test site translation for different languages', () => {
-	testCaseslanguages.forEach( ( languageObj ) => {
-		test( `Test of site translation for language ${ languageObj.language }`, async ( { browser, apiRequests }, testInfo ) => {
-			// Arrange.
-			const context = await browser.newContext();
-			const page = await context.newPage();
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			const editor = new EditorPage( page, testInfo );
-			const translationButton = 'Form[name=upgrade-translations] input[type=submit]';
-
-			// Act
-			await wpAdmin.setSiteLanguage( languageObj.language );
-			await page.goto( '/wp-admin/update-core.php' );
-			await page.locator( '.update-last-checked' ).click();
-			if ( await page.locator( translationButton ).isVisible() ) {
-				await page.locator( translationButton ).click();
-			}
-			await wpAdmin.openNewPage();
-			await editor.closeNavigatorIfOpen();
-			const publishButton = page.locator( 'button.MuiButton-root' ).nth( 1 );
-
-			// Assert.
-			await expect( publishButton ).toHaveText( languageObj.buttonText );
-			await page.close();
-		} );
-	} );
-} );
-
-test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-	// Reset to default language (English)
+test( 'Minimalist widget basic sanity test with content in bio tab', async ( { browser, apiRequests }, testInfo ) => {
+	// Arrange.
 	const context = await browser.newContext();
 	const page = await context.newPage();
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-	await wpAdmin.setSiteLanguage( '' );
+	const editor = new EditorPage( page, testInfo );
+	await wpAdmin.openNewPage();
+	await editor.closeNavigatorIfOpen();
+
+	// Act.
+	await editor.addWidget( 'link-in-bio' );
+	await page.locator( '.elementor-control-media__preview' ).click();
+	await page.locator( 'text=Media Library' ).click();
+	await page.waitForSelector( 'text=Insert Media' );
+	await page.locator( '[id="menu-item-upload"]' ).click();
+	await page.setInputFiles( 'input[type="file"]', resolve( __dirname, '../resources/mountain-image.jpeg' ) );
+	await page.getByRole( 'button', { name: 'Insert Media' } )
+		.or( page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
+	await editor.openSection( 'bio_section' );
+	await editor.setTextareaControlValue( 'bio_heading', 'This is a heading' );
+	await editor.setTextareaControlValue( 'bio_title', 'This is a title' );
+	await editor.setTextareaControlValue( 'bio_description', 'Test description' );
+	await editor.togglePreviewMode();
+
+	// Assert.
+	await expect.soft( editor.getPreviewFrame().locator( '.e-link-in-bio__content' ) ).toHaveScreenshot( 'minimalist.png' );
 } );
