@@ -72,7 +72,7 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 	 */
 	public function print_root_template() {
 		// Exposing the path for the view part to render the body of the editor template.
-		$body_file_path = __DIR__ . '/templates/editor-body-v1.view.php';
+		$body_file_path = __DIR__ . '/templates/editor-body-v1-view.php';
 
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
