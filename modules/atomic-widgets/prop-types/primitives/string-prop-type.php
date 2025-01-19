@@ -49,7 +49,7 @@ class String_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
-		if( $value === '' ) {
+		if ( $value === '' ) {
 			return ! $this->is_required();
 		}
 
