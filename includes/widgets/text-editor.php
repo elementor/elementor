@@ -451,8 +451,7 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'body:not(.rtl) {{WRAPPER}} .elementor-drop-cap' => 'margin-right: {{SIZE}}{{UNIT}};',
-					'body.rtl {{WRAPPER}} .elementor-drop-cap' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-drop-cap' => 'margin-inline-end: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
