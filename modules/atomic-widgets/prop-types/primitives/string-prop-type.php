@@ -49,6 +49,10 @@ class String_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
+		if( ! $value ) {
+			return ! $this->is_required();
+		}
+
 		return (
 			is_string( $value ) &&
 			( ! $this->get_enum() || $this->validate_enum( $value ) ) &&
