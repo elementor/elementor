@@ -10,30 +10,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
+		$image_src = $value['image-src'];
+		$size = $value['size'];
+		$position = $value['position'];
 
-		if ( ! empty( $value['image-src']['id'] ) ) {
-			return $this->get_image_src_by_id( $value['image-src']['id'] );
+		$image_url = $this->get_image_url( $image_src );
+
+		if ( ! isset( $size ) && ! isset( $position ) ) {
+			return "url(\" $image_url \")";
 		}
 
-		if ( ! empty( $value['image-src']['url'] ) ) {
-			return $this->get_image_src_by_url( $value['image-src']['url'] );
+		if ( isset( $position ) && ! isset( $size ) ) {
+			return "url(\" $image_url \") $position";
 		}
 
-		throw new \Exception( 'Invalid image URL.' );
+		$position = $position ?? '0% 0%';
+
+		return "url(\" $image_url \") $position / $size";
 	}
 
-	private function get_image_src_by_id( $id ) {
-		$src = $this->get_image_url_by_id( $id );
+	private function get_image_url( $image_src ): string {
+		if ( ! empty( $image_src['id'] ) ) {
+			return $this->get_image_url_by_id( $image_src['id'] );
+		}
 
-		return "url(\" $src \")";
+		if ( empty( $image_src['url'] ) ) {
+			throw new \Exception( 'Invalid image URL.' );
+		}
+
+		return $image_src['url'];
 	}
 
-	private function get_image_src_by_url( $url ) {
-
-		return "url(\" $url \")";
-	}
-
-	private function get_image_url_by_id( $id ) {
+	private function get_image_url_by_id( $id ): string {
 		$image_src = wp_get_attachment_image_src(
 			(int) $id, 'full'
 		);
@@ -42,8 +50,8 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			throw new \Exception( 'Cannot get image src.' );
 		}
 
-		[ $src ] = $image_src;
+		[ $image_url ] = $image_src;
 
-		return $src;
+		return $image_url;
 	}
 }
