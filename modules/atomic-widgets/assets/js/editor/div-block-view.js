@@ -112,13 +112,8 @@ const DivBlockView = BaseElementView.extend( {
 	isHorizontalAxis() {
 		const styles = window.getComputedStyle( this.$el[ 0 ] );
 
-		if ( 'flex' === styles.getPropertyValue( 'display' ) ) {
-			if ( 'row' === styles.getPropertyValue( 'flex-direction' ) || 'row-reverse' === styles.getPropertyValue( 'flex-direction' ) ) {
-				return true;
-			}
-		}
-
-		return false;
+		return styles.display === 'flex' &&
+			[ 'row', 'row-reverse' ].includes( styles.flexDirection );
 	},
 
 	getDroppableOptions() {
@@ -199,14 +194,16 @@ const DivBlockView = BaseElementView.extend( {
 				}
 
 				const currentTargetHeight = event.currentTarget.getBoundingClientRect().height;
+				const currentTarget = event.currentTarget;
+				const isNotBeforeSibling = currentTarget !== placeholderElement.previousElementSibling;
 
 				if ( $placeholder.length ) {
 					if ( 'horizontal' === this.getDroppableAxis() ) {
-						if ( event.currentTarget !== $placeholder[ 0 ].previousElementSibling ) {
-							if ( 'top' === side || 'left' === side ) {
-								event.currentTarget.before( $placeholder[ 0 ] );
+						if ( isNotBeforeSibling ) {
+							if ( [ 'top', 'left' ].includes( side ) ) {
+								currentTarget.before( $placeholder[ 0 ] );
 							} else {
-								event.currentTarget.after( $placeholder[ 0 ] );
+								currentTarget.after( $placeholder[ 0 ] );
 							}
 						}
 
