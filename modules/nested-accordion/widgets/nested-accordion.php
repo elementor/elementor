@@ -906,6 +906,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'target_container' => [ '.e-n-accordion' ],
 			'node' => 'details',
 			'is_interlaced' => true,
+			'allows_css_id' => true,
 		] );
 	}
 
@@ -938,7 +939,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		view.addRenderAttribute( 'details-container', itemWrapperAttributes, null, true );
 		view.addRenderAttribute( 'summary-container', itemTitleAttributes, null, true );
-		view.addRenderAttribute( 'text-container', itemTitleTextAttributes, null, true );
+<!--		view.addRenderAttribute( 'text-container', itemTitleTextAttributes, null, true );-->
 		#>
 
 		<details {{{ view.getRenderAttributeString( 'details-container' ) }}}>
@@ -1008,6 +1009,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 						'data-binding-setting': ['item_title'],
 						'data-binding-index': itemCount,
 						'data-binding-dynamic': 'true',
+						'data-binding-dynamic-css-id': 'element_css_id',
 					});
 				#>
 

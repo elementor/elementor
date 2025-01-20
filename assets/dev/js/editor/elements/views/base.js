@@ -654,11 +654,10 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( changedSettings, dataBinding, changedControl ) {
+	isAtomicDynamic( changedSettings, dataBinding, changedControl, supportsDynamicCssId ) {
 		return '__dynamic__' in changedSettings &&
 			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
-			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
+			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl || supportsDynamicCssId === changedControl );
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
@@ -754,19 +753,32 @@ BaseElementView = BaseContainer.extend( {
 			return false;
 		}
 
-		let changed = false;
-
+		let changed = false,
+			changedControl;
 		const renderDataBinding = async ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset,
-				changedControl = this.getChangedDynamicControlKey( settings );
-			let change = settings.changed[ bindingSetting ];
+			const { bindingSetting, bindingDynamicCssId } = dataBinding.dataset;
+			let change = settings.changed[ bindingSetting ] || settings.changed[ bindingDynamicCssId ];
+			changedControl = this.getChangedDynamicControlKey( settings );
 
-			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl ) ) {
-				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
+			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl, bindingDynamicCssId ) ) {
+				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting, bindingDynamicCssId );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
 				}
+			}
+
+			if ( 'element_css_id' === changedControl ) {
+				if ( ! change ) {
+					change = settings.attributes[ changedControl ];
+				}
+
+				if ( change.length > 0 ) {
+					dataBinding.el.closest( 'details' ).setAttribute( 'id', change );
+					return true;
+				}
+
+				return false;
 			}
 
 			if ( change !== undefined ) {
@@ -788,8 +800,11 @@ BaseElementView = BaseContainer.extend( {
 
 					const container = repeater.children.find( ( i ) => i.id === settings.attributes._id );
 
-					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
-						changed = renderDataBinding( dataBinding );
+					const bindingIndexCondition = ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex );
+					changed = renderDataBinding( dataBinding );
+
+					if ( bindingIndexCondition ) {
+						continue;
 					} else if ( dataBindings.indexOf( dataBinding ) + 1 === this.getRepeaterItemActiveIndex() ) {
 						changed = this.tryHandleDynamicCoverSettings( dataBinding, settings );
 					}
