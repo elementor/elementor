@@ -152,7 +152,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'value' => [
 								'name' => 'dynamic-tag',
 								'settings' => [
-									'before' => 'Before text - '
+									'before' => [
+										'$$type' => 'string',
+										'value' => 'Before text - ',
+									],
+									'not-in-schema' => [
+										'$$type' => 'string',
+										'value' => 'Not in schema',
+									],
 								],
 							],
 						],
