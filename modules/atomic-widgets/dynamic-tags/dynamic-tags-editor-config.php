@@ -6,16 +6,21 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Dynamic_Tags_Registry {
+class Dynamic_Tags_Editor_Config {
+
+	private Dynamic_Tags_Schemas $schemas;
 
 	private ?array $tags = null;
+
+	public function __construct( Dynamic_Tags_Schemas $schemas ) {
+		$this->schemas = $schemas;
+	}
 
 	public function get_tags(): array {
 		if ( null !== $this->tags ) {
@@ -67,7 +72,7 @@ class Dynamic_Tags_Registry {
 			'label' => $tag['title'] ?? '',
 			'group' => $tag['group'] ?? '',
 			'atomic_controls' => [],
-			'props_schema' => [],
+			'props_schema' => $this->schemas->get( $tag['name'] ),
 		];
 
 		if ( ! isset( $tag['controls'] ) ) {
@@ -75,41 +80,37 @@ class Dynamic_Tags_Registry {
 		}
 
 		try {
-			$atomic_schema = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
+			$atomic_controls = $this->convert_controls_to_atomic( $tag['controls'], $tag['force_convert_to_atomic'] ?? false );
 		} catch ( \Exception $e ) {
 			return null;
 		}
 
-		if ( ! $atomic_schema ) {
+		if ( null === $atomic_controls ) {
 			return null;
 		}
 
-		$converted_tag['atomic_controls'] = $atomic_schema['atomic_controls'];
-		$converted_tag['props_schema'] = $atomic_schema['props_schema'];
+		$converted_tag['atomic_controls'] = $atomic_controls;
 
 		return $converted_tag;
 	}
 
 	private function convert_controls_to_atomic( $controls, $force = false ) {
 		$atomic_controls = [];
-		$props_schema = [];
 
 		foreach ( $controls as $control ) {
 			if ( 'section' === $control['type'] ) {
 				continue;
 			}
 
-			$atomic_schema = $this->convert_control_to_atomic( $control );
+			$atomic_control = $this->convert_control_to_atomic( $control );
 
-			if ( ! $atomic_schema ) {
+			if ( ! $atomic_control ) {
 				if ( $force ) {
 					continue;
 				}
 
 				return null;
 			}
-
-			[ 'atomic_control' => $atomic_control, 'prop_schema' => $prop_schema ] = $atomic_schema;
 
 			$section_name = $control['section'];
 
@@ -118,18 +119,10 @@ class Dynamic_Tags_Registry {
 					->set_label( $controls[ $section_name ]['label'] );
 			}
 
-			$section = $atomic_controls[ $section_name ];
-
-			$section->set_items( array_merge( $section->get_items(), [ $atomic_control ] ) );
-
-			$atomic_controls[ $section_name ] = $section;
-			$props_schema[ $control['name'] ] = $prop_schema;
+			$atomic_controls[ $section_name ] = $atomic_controls[ $section_name ]->add_item( $atomic_control );
 		}
 
-		return [
-			'atomic_controls' => array_values( $atomic_controls ),
-			'props_schema' => $props_schema,
-		];
+		return array_values( $atomic_controls );
 	}
 
 	private function convert_control_to_atomic( $control ) {
@@ -154,8 +147,8 @@ class Dynamic_Tags_Registry {
 	/**
 	 * @param $control
 	 *
+	 * @return Select_Control
 	 * @throws \Exception If control is missing options.
-	 * @return array{ atomic_control: Select_Control, prop_schema: String_Prop_Type }
 	 */
 	private function convert_select_control_to_atomic( $control ) {
 		if ( empty( $control['options'] ) ) {
@@ -171,35 +164,18 @@ class Dynamic_Tags_Registry {
 			$control['options']
 		);
 
-		$atomic_control = Select_Control::bind_to( $control['name'] )
+		return Select_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] )
 			->set_options( $options );
-
-		$prop_schema = String_Prop_Type::make()
-			->enum( array_keys( $control['options'] ) )
-			->default( $control['default'] );
-
-		return [
-			'atomic_control' => $atomic_control,
-			'prop_schema' => $prop_schema,
-		];
 	}
 
 	/**
 	 * @param $control
 	 *
-	 * @return array{ atomic_control: Text_Control, prop_schema: String_Prop_Type }
+	 * @return Text_Control
 	 */
 	private function convert_text_control_to_atomic( $control ) {
-		$atomic_control = Text_Control::bind_to( $control['name'] )
+		return Text_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] );
-
-		$prop_schema = String_Prop_Type::make()
-			->default( $control['default'] );
-
-		return [
-			'atomic_control' => $atomic_control,
-			'prop_schema' => $prop_schema,
-		];
 	}
 }

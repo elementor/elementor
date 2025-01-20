@@ -91,7 +91,7 @@ class Module extends Base_Module {
 	public function enqueue_styles() {
 		wp_enqueue_style(
 			static::ASSETS_HANDLE,
-			$this->get_css_assets_url( 'modules/' . static::ASSETS_SRC . '/' . static::ASSETS_SRC ),
+			$this->get_css_assets_url( 'modules/styleguide/editor' ),
 			[],
 			ELEMENTOR_VERSION
 		);

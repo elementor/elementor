@@ -52,7 +52,7 @@ const sass = {
 			{
 				expand: true,
 				cwd: 'modules/styleguide/assets/scss',
-				src: '*.scss',
+				src: 'editor.scss',
 				dest: 'assets/css/modules/styleguide',
 				ext: '.css',
 			},
