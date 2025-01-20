@@ -204,9 +204,9 @@ const DivBlockView = BaseElementView.extend( {
 					if ( 'horizontal' === this.getDroppableAxis() ) {
 						if ( isNotBeforeSibling ) {
 							if ( [ 'top', 'left' ].includes( side ) ) {
-								currentTarget.before( $placeholder[ 0 ] );
+								currentTarget.before( placeholderElement );
 							} else {
-								currentTarget.after( $placeholder[ 0 ] );
+								currentTarget.after( placeholderElement );
 							}
 						}
 
