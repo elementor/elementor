@@ -66,11 +66,12 @@ class Module extends BaseApp {
 		);
 
 		// This is a core script of WordPress, it is not required to pass the 'ver' argument.
-		wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+		// We should add dependencies to make sure that 'elementor-admin-bar' is loaded before 'admin-bar'.
+		wp_enqueue_script(
 			'admin-bar',
 			null,
 			[ 'elementor-admin-bar' ],
-			false,
+			false, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
 			true
 		);
 
