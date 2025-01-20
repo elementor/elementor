@@ -21,8 +21,8 @@ TemplateLibrarySaveTemplateCloudLibraryView = TemplateLibrarySaveTemplateView.ex
 					placeholder: __( 'Where do you want to save your template?', 'elementor' ),
 					dropdownParent: this.$el,
 					closeOnSelect: false,
-					templateResult: this.addCheckbox.bind(this),
-					templateSelection: this.formatSelected.bind(this),
+					templateResult: this.addCheckbox.bind( this ),
+					templateSelection: this.formatSelected.bind( this ),
 				};
 
 			this.select2Instance = new Select2( {
