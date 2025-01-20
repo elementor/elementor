@@ -906,7 +906,6 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'target_container' => [ '.e-n-accordion' ],
 			'node' => 'details',
 			'is_interlaced' => true,
-			'allows_css_id' => true,
 		] );
 	}
 
