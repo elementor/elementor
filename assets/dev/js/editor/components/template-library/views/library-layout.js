@@ -4,6 +4,7 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
 	TemplateLibraryCollectionView = require( 'elementor-templates/views/parts/templates' ),
 	TemplateLibrarySaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
+	TemplateLibrarySaveTemplateCloudLibraryView = require( 'elementor-templates/views/parts/save-template-cloud-library' ),
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
 	TemplateLibraryConnectView = require( 'elementor-templates/views/parts/connect' ),
 	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
@@ -101,7 +102,17 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	showSaveTemplateView( elementModel ) {
 		this.getHeaderView().menuArea.reset();
 
-		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
+		if ( this.shouldShowCloudLibraryTemplate( elementModel ) ) {
+			this.modalContent.show( new TemplateLibrarySaveTemplateCloudLibraryView( { model: elementModel } ) );
+		} else {
+			this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
+		}
+	},
+
+	shouldShowCloudLibraryTemplate( elementModel ) {
+		return elementModel && 
+			[ 'container', 'section' ].includes( elementModel.get( 'elType' ) ) &&
+			elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ];
 	},
 
 	showPreviewView( templateModel ) {

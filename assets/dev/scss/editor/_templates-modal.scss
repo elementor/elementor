@@ -671,9 +671,47 @@ label.elementor-template-library-order-label {
 		height: 55px;
 		font-size: 16px;
 	}
+
+	.cloud-library-form-inputs {
+		> * {
+			height: 55px;
+			font-size: 16px;
+			margin-block-end: 15px;
+		}
+
+		display: block;
+		width: 500px;
+		margin: 0 auto;
+
+		#elementor-template-library-save-template-submit {
+			float: inline-end;
+		}
+
+		.select2-selection__e-plus-button {
+			display: none;
+		}
+		
+		.select2-selection--multiple .select2-selection__rendered {
+			height: 55px;
+			font-size: 16px;
+			padding-inline-start: 25px;
+			line-height: 55px;
+		}
+
+		input.select2-search__field {
+			padding-inline-start: 25px;
+		}
+	}
 }
 
-#elementor-template-library-save-template-name {
+#select2-elementor-template-library-save-template-source-results {
+
+	.select2-results__option {
+		text-align: start;
+	}
+}
+
+#elementor-template-library-save-template-name, #elementor-template-library-save-template-source {
 	width: 500px;
 	padding-inline-start: 25px;
 	border-start-start-radius: 3px;
