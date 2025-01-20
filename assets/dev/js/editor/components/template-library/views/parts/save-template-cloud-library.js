@@ -59,11 +59,11 @@ TemplateLibrarySaveTemplateCloudLibraryView = TemplateLibrarySaveTemplateView.ex
 				<span class="middle">${option.text}</span>
 			</label>`
 		);
-    },
-
-    formatSelected( option ) {
-        return option.text;
-    },
+	},
+	
+	formatSelected( option ) {
+		return option.text;
+	},
 } );
 
 module.exports = TemplateLibrarySaveTemplateCloudLibraryView;
