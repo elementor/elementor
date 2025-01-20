@@ -102,11 +102,11 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	showSaveTemplateView( elementModel ) {
 		this.getHeaderView().menuArea.reset();
 
-		if ( this.shouldShowCloudLibraryTemplate( elementModel ) ) {
-			this.modalContent.show( new TemplateLibrarySaveTemplateCloudLibraryView( { model: elementModel } ) );
-		} else {
-			this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
-		}
+		const ViewClass = this.shouldShowCloudLibraryTemplate( elementModel )
+			? TemplateLibrarySaveTemplateCloudLibraryView
+			: TemplateLibrarySaveTemplateView;
+
+		this.modalContent.show( new ViewClass( { model: elementModel } ) );
 	},
 
 	shouldShowCloudLibraryTemplate( elementModel ) {

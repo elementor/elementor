@@ -690,7 +690,7 @@ label.elementor-template-library-order-label {
 		.select2-selection__e-plus-button {
 			display: none;
 		}
-		
+
 		.select2-selection--multiple .select2-selection__rendered {
 			height: 55px;
 			font-size: 16px;
@@ -698,8 +698,14 @@ label.elementor-template-library-order-label {
 			line-height: 55px;
 		}
 
-		input.select2-search__field {
-			padding-inline-start: 25px;
+		.select2-container .select2-search--inline {
+			float: none;
+		}
+
+		.select2-search__field {
+			max-width: 320px !important;
+			float: inline-start;
+			line-height: 45px;
 		}
 	}
 }
@@ -708,6 +714,16 @@ label.elementor-template-library-order-label {
 
 	.select2-results__option {
 		text-align: start;
+	}
+
+	.cloud-library-option {
+		display: inline-block;
+		padding-right: 10px;
+		white-space: nowrap;
+
+		.middle {
+			vertical-align: middle;
+		}
 	}
 }
 

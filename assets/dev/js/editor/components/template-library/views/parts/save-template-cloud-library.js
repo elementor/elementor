@@ -19,9 +19,7 @@ TemplateLibrarySaveTemplateCloudLibraryView = TemplateLibrarySaveTemplateView.ex
 			const $dropdown = this.$( this.ui.selectDropdown ),
 				select2Options = {
 					placeholder: __( 'Where do you want to save your template?', 'elementor' ),
-					allowClear: true,
 					dropdownParent: this.$el,
-					width: 'resolve',
 					closeOnSelect: false,
 					templateResult: this.formatOption.bind(this),
 					templateSelection: this.formatSelected.bind(this),
@@ -32,7 +30,16 @@ TemplateLibrarySaveTemplateCloudLibraryView = TemplateLibrarySaveTemplateView.ex
 				options: select2Options,
 			} );
 
-			$dropdown.val( null ).trigger( 'change' );
+			this.handlePlaceHolder( $dropdown );
+		}
+	},
+
+	// https://github.com/select2/select2/issues/3292
+	handlePlaceHolder( $dropdown ) {
+		const $searchField = $dropdown.siblings( '.select2' ).find( '.select2-search__field' );
+
+		if ( $searchField.length && $searchField.width() === 0 ) {
+			$searchField.css( 'width', '100%' );
 		}
 	},
 
@@ -42,13 +49,14 @@ TemplateLibrarySaveTemplateCloudLibraryView = TemplateLibrarySaveTemplateView.ex
 		}
 	},
 
-	formatOption(option) {
+	formatOption( option ) {
         if ( ! option.id ) {
             return option.text;
         }
 
-        const checkbox = `<input type="checkbox" ${ option.selected ? 'checked' : '' }>`;
-        return jQuery( `<span>${checkbox} ${option.text}</span>` );
+        const checkbox = `<input type="checkbox" class="middle" ${ option.selected ? 'checked' : '' }>`;
+
+        return jQuery( `<label class="cloud-library-option">${checkbox} <span class="middle">${option.text}</span></label>` );
     },
 
     formatSelected( option ) {
