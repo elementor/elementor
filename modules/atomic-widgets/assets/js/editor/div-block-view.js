@@ -193,11 +193,14 @@ const DivBlockView = BaseElementView.extend( {
 					$placeholder = this.$el.find( '.elementor-sortable-placeholder' );
 				}
 
-				const currentTargetHeight = event.currentTarget.getBoundingClientRect().height;
-				const currentTarget = event.currentTarget;
-				const isNotBeforeSibling = currentTarget !== placeholderElement.previousElementSibling;
+				const currentTargetHeight = event.currentTarget.getBoundingClientRect().height,
+					currentTarget = event.currentTarget;
+
 
 				if ( $placeholder.length ) {
+					const placeholderElement = $placeholder[ 0 ],
+						isNotBeforeSibling = currentTarget !== placeholderElement.previousElementSibling;
+
 					if ( 'horizontal' === this.getDroppableAxis() ) {
 						if ( isNotBeforeSibling ) {
 							if ( [ 'top', 'left' ].includes( side ) ) {
