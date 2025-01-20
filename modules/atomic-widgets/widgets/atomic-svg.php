@@ -3,11 +3,12 @@ namespace Elementor\Modules\AtomicWidgets\Widgets;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -37,41 +38,43 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$svg = new \WP_HTML_Tag_Processor( $svg );
 
-		if ( $svg->next_tag() ) {
-			$svg->set_attribute( 'fill', $settings['color'] ?? 'currentColor' );
-			$svg->set_attribute( 'width', $settings['width'] ?? '100%' );
-			$svg->set_attribute( 'height', $settings['height'] ?? '100%' );
-			$svg->set_attribute( 'min-width', $settings['min-width'] ?? '100%' );
-			$svg->set_attribute( 'min-height', $settings['min-height'] ?? '100%' );
-			$svg->set_attribute( 'max-width', $settings['max-width'] ?? '100%' );
-			$svg->set_attribute( 'max-height', $settings['max-height'] ?? '100%' );
-
-			if ( isset( $computed_style['-webkit-text-stroke'] ) ) {
-				$stroke_parts = explode( ' ', $computed_style['-webkit-text-stroke'] );
-				if ( count( $stroke_parts ) === 2 ) {
-					$svg->set_attribute( 'stroke-width', $stroke_parts[0] ?? '0px' );
-					$svg->set_attribute( 'stroke', $stroke_parts[1] ?? 'currentColor' );
-				}
-			}
-
-			$svg->add_class( $settings['classes'] ?? '' );
+		if ( ! $svg->next_tag() ) {
+			return;
 		}
+
+		$this->set_svg_attributes( $svg, $settings );
+		$this->set_svg_stroke_attributes( $svg, $settings );
+
+		$svg->add_class( $settings['classes'] ?? '' );
 
 		$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
+		//we need this line in order to render the svg, otherwise it will be rendered as a string
 		echo ( false === $valid_svg ) ? '' : $valid_svg; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
-	protected function define_atomic_controls(): array {
-		$content_section = Section::make()
-			->set_label( esc_html__( 'Content', 'elementor' ) )
-			->set_items( [
-				Image_Control::bind_to( 'svg2' ),
-			] );
+	private function set_svg_attributes( $svg, $settings ) {
+		$svg->set_attribute( 'fill', $settings['color'] ?? 'currentColor' );
+		$svg->set_attribute( 'width', $settings['width'] ?? '100%' );
+		$svg->set_attribute( 'height', $settings['height'] ?? '100%' );
+		$svg->set_attribute( 'min-width', $settings['min-width'] ?? '100%' );
+		$svg->set_attribute( 'min-height', $settings['min-height'] ?? '100%' );
+		$svg->set_attribute( 'max-width', $settings['max-width'] ?? '100%' );
+		$svg->set_attribute( 'max-height', $settings['max-height'] ?? '100%' );
+	}
 
-		return [
-			$content_section,
-		];
+	private function set_svg_stroke_attributes( $svg, $settings ) {
+		if ( isset( $settings['-webkit-text-stroke'] ) ) {
+			$stroke_parts = explode( ' ', $settings['-webkit-text-stroke'] );
+			if ( count( $stroke_parts ) === 2 ) {
+				$svg->set_attribute( 'stroke-width', $stroke_parts[0] ?? '0px' );
+				$svg->set_attribute( 'stroke', $stroke_parts[1] ?? 'currentColor' );
+			}
+		}
+	}
+
+	protected function define_atomic_controls(): array {
+		return [];
 	}
 	protected static function define_props_schema(): array {
 		return [
@@ -85,8 +88,6 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->default( '100%' ),
 			'-webkit-text-stroke' => String_Prop_Type::make()
 				->default( '0px #ffffff' ),
-			'svg2' => Svg_Prop_Type::make()
-				->default_icon( 'eicon-shape' )
-			];
+		];
 	}
 }
