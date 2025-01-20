@@ -38,7 +38,7 @@ TemplateLibrarySaveTemplateCloudLibraryView = TemplateLibrarySaveTemplateView.ex
 	handlePlaceHolder( $dropdown ) {
 		const $searchField = $dropdown.siblings( '.select2' ).find( '.select2-search__field' );
 
-		if ( $searchField.length && $searchField.width() === 0 ) {
+		if ( $searchField.length && 0 === $searchField.width() ) {
 			$searchField.css( 'width', '100%' );
 		}
 	},
@@ -51,16 +51,16 @@ TemplateLibrarySaveTemplateCloudLibraryView = TemplateLibrarySaveTemplateView.ex
 		if ( ! option.id ) {
 			return option.text;
 		}
-		
+
 		const checkbox = `<input type="checkbox" class="middle" ${ option.selected ? 'checked' : '' }>`;
-		
+
 		return jQuery(
-			`<label class="cloud-library-option">${checkbox}
-				<span class="middle">${option.text}</span>
-			</label>`
+			`<label class="cloud-library-option">${ checkbox }
+				<span class="middle">${ option.text }</span>
+			</label>`,
 		);
 	},
-	
+
 	formatSelected( option ) {
 		return option.text;
 	},
