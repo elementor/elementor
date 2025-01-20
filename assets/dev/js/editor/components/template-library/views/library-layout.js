@@ -110,7 +110,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	shouldShowCloudLibraryTemplate( elementModel ) {
-		return elementModel && 
+		return elementModel &&
 			[ 'container', 'section' ].includes( elementModel.get( 'elType' ) ) &&
 			elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ];
 	},
