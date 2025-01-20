@@ -6,6 +6,20 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
+    private static function getPositionEnumValues(): array {
+        return [
+            'center center',
+            'center left',
+            'center right',
+            'top center',
+            'top left',
+            'top right',
+            'bottom center',
+            'bottom left',
+            'bottom right',
+        ];
+    }
+
 	public static function get_key(): string {
 		return 'background-image-overlay';
 	}
@@ -14,7 +28,7 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 		return [
 			'image-src' => Image_Src_Prop_Type::make(),
 			'size' => String_Prop_Type::make(),
-			'position' => String_Prop_Type::make(),
+			'position' => String_Prop_Type::make()->enum( self::getPositionEnumValues() ),
 		];
 	}
 }
