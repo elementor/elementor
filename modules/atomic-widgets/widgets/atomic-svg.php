@@ -1,14 +1,10 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
-use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
