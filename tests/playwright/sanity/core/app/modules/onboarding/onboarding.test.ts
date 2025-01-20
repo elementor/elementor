@@ -110,7 +110,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const pageTitle = page.locator( '.e-onboarding__page-content-section-title' ),
 			pageTitleText = await pageTitle.innerText();
 
-		expect( pageTitleText ).toBe( 'Have a logo? Add it here.' );
+		await expect( page.locator( '.e-onboarding__page-content-section-title' ) ).toHaveText( 'Have a logo? Add it here.' );
 	} );
 
 	/**
