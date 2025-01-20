@@ -85,6 +85,7 @@ class Modules_Manager {
 			'page-templates',
 			'gutenberg',
 			'wp-cli',
+			'wp-rest',
 			'safe-mode',
 			'ai',
 			'notifications',
@@ -126,6 +127,7 @@ class Modules_Manager {
 			'global-classes',
 			'wc-product-editor',
 			'checklist',
+			'cloud-library',
 		];
 	}
 

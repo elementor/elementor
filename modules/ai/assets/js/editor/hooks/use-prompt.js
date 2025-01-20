@@ -29,6 +29,7 @@ const usePrompt = ( fetchData, initialState ) => {
 	const [ data, setData ] = useState( initialState );
 	const { updateUsagePercentage, usagePercentage } = useRequestIds();
 	const send = useRef( ( async ( payload ) => ( payload ) ) );
+	const sendUsageData = useRef( ( ( ) => {} ) );
 
 	useEffect( () => {
 		const newUsageValue = data?.usagePercentage;
@@ -70,7 +71,8 @@ const usePrompt = ( fetchData, initialState ) => {
 			.finally( () => setIsLoading( false ) );
 	} ), [ batchId, editorSessionId, fetchData, generateId, sessionId, setRequest ] );
 
-	const sendUsageData = ( usageData = data ) => usageData.responseId && setStatusFeedback( usageData.responseId );
+	sendUsageData.current = useCallback( ( usageData = data ) => usageData.responseId && setStatusFeedback( usageData.responseId ),
+		[ data ] );
 
 	const reset = () => {
 		setData( ( { credits } ) => ( { credits, result: '', responseId: '' } ) );
@@ -97,7 +99,7 @@ const usePrompt = ( fetchData, initialState ) => {
 		setResult,
 		reset,
 		send: send.current,
-		sendUsageData,
+		sendUsageData: sendUsageData.current,
 	};
 };
 
