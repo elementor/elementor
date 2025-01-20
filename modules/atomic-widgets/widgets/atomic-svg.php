@@ -1,13 +1,13 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Color_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -34,10 +34,26 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		}
 
 		$svg = $settings['svg'];
+
 		$svg = new \WP_HTML_Tag_Processor( $svg );
 
 		if ( $svg->next_tag() ) {
 			$svg->set_attribute( 'fill', $settings['color'] ?? 'currentColor' );
+			$svg->set_attribute( 'width', $settings['width'] ?? '100%' );
+			$svg->set_attribute( 'height', $settings['height'] ?? '100%' );
+			$svg->set_attribute( 'min-width', $settings['min-width'] ?? '100%' );
+			$svg->set_attribute( 'min-height', $settings['min-height'] ?? '100%' );
+			$svg->set_attribute( 'max-width', $settings['max-width'] ?? '100%' );
+			$svg->set_attribute( 'max-height', $settings['max-height'] ?? '100%' );
+
+			if ( isset( $computed_style['-webkit-text-stroke'] ) ) {
+				$stroke_parts = explode( ' ', $computed_style['-webkit-text-stroke'] );
+				if ( count( $stroke_parts ) === 2 ) {
+					$svg->set_attribute( 'stroke-width', $stroke_parts[0] ?? '0px' );
+					$svg->set_attribute( 'stroke', $stroke_parts[1] ?? 'currentColor' );
+				}
+			}
+
 			$svg->add_class( $settings['classes'] ?? '' );
 		}
 
@@ -50,27 +66,28 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$content_section = Section::make()
 			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
-				Textarea_Control::bind_to( 'svg' )
-					->set_placeholder( '<svg xmlns="http://www.w3.org/2000/svg"...' ),
-				Color_Control::bind_to( 'color' )
-					->set_label( esc_html__( 'SVG Color', 'elementor' ) )
-					->set_default( 'currentColor' )
-					->set_alpha( true ),
+				Image_Control::bind_to( 'svg2' ),
 			] );
 
 		return [
 			$content_section,
 		];
 	}
-
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
 			'svg' => String_Prop_Type::make()
-				->default( '<svg xmlns="http://www.w3.org/2000/svg" id="fcd95e07-8bd7-469f-808c-4bea57f73182" data-name="Layer 1" width="33.2114" height="12.6055" viewBox="0 0 33.2114 12.6055"><rect x="0.106" width="33" height="2"></rect><rect x="0.4016" y="9.2498" width="33.1968" height="2.0001" transform="translate(-1.4366 1.4718) rotate(-6.4411)"></rect></svg>' ),
-            'color' => String_Prop_Type::make()
-            ];
+				->default( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M.361 256C.361 397 114 511 255 511C397 511 511 397 511 256C511 116 397 2.05 255 2.05C114 2.05 .361 116 .361 256zM192 150V363H149V150H192zM234 150H362V193H234V150zM362 235V278H234V235H362zM234 320H362V363H234V320z"/></svg>' ),
+			'width' => String_Prop_Type::make()
+				->default( '100%' ),
+			'height' => String_Prop_Type::make()
+				->default( '100%' ),
+			'-webkit-text-stroke' => String_Prop_Type::make()
+				->default( '0px #ffffff' ),
+			'svg2' => Svg_Prop_Type::make()
+				->default_icon( 'eicon-shape' )
+			];
 	}
 }
