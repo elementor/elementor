@@ -97,7 +97,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const nextButton = page.locator( 'text=Next' );
 
-		await expect( nextButton ).toHaveClass( 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action' );
+		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 
 		await page.fill( 'input[type="text"]', 'Test' );
 
@@ -120,35 +120,41 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 * selected.
 	 * 2. Clicking on 'Skip' should take the user to the Good to Go screen
 	 */
+	// Constants for classes
+	const BUTTON_CLASSES = {
+		active: 'e-onboarding__button e-onboarding__button-action',
+		disabled: 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action',
+	};
+
 	test( 'Onboarding Site Logo Page', async ( { page } ) => {
+		// Navigate to the page
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteLogo' );
 
-		const nextButton = page.locator( 'text=Next' ),
-			activeButtonClasses = 'e-onboarding__button e-onboarding__button-action',
-			disabledButtonClasses = 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action',
-			siteLogoId = await page.evaluate( () => elementorAppConfig.onboarding.siteLogo.id );
+		// Initialize locators
+		const nextButton = page.locator( 'text=Next' );
+		const removeButton = page.locator( '.e-onboarding__logo-remove' );
+		const skipButton = page.locator( '.e-onboarding__button-skip' );
+		const pageTitle = page.locator( '.e-onboarding__page-content-section-title' );
+
+		// Get site logo ID from global config
+		const siteLogoId = await page.evaluate( () => elementorAppConfig.onboarding.siteLogo.id );
 
 		if ( siteLogoId ) {
-			// If there is a logo already in the test website - make sure the "Next" button is active (not disabled).
-			await expect( nextButton ).toHaveClass( activeButtonClasses );
+			// Assert "Next" button is active when logo exists
+			await expect( nextButton ).toHaveClass( BUTTON_CLASSES.active );
 
-			const removeButton = page.locator( '.e-onboarding__logo-remove' );
-
+			// Remove logo
 			await removeButton.click();
 		}
 
-		// Make sure the "Next" button is disabled when there is no site logo.
-		await expect( nextButton ).toHaveClass( disabledButtonClasses );
+		// Assert "Next" button is disabled when logo is removed
+		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 
-		const skipButton = await page.waitForSelector( '.e-onboarding__button-skip' );
-
+		// Click "Skip" button
 		await skipButton.click();
 
-		const pageTitle = page.locator( '.e-onboarding__page-content-section-title' ),
-			pageTitleText = await pageTitle.innerText();
-
-		// Test that the "Skip" button leads the user to the "Good to Go" screen.
-		expect( pageTitleText ).toContain( 'What\'s next?' );
+		// Assert redirection to the "Good to Go" screen
+		await expect( pageTitle ).toHaveText( /What's next\?/ );
 	} );
 
 	/**

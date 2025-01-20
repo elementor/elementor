@@ -36,7 +36,7 @@ export default defineConfig( {
 		},
 		headless: !! process.env.CI,
 		ignoreHTTPSErrors: true,
-		actionTimeout: 10_000,
+		actionTimeout: 5_000,
 		navigationTimeout: 10_000,
 		trace: 'retain-on-failure',
 		video: process.env.CI ? 'retain-on-failure' : 'off',
