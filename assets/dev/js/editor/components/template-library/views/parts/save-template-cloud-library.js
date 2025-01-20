@@ -44,19 +44,21 @@ TemplateLibrarySaveTemplateCloudLibraryView = TemplateLibrarySaveTemplateView.ex
 	},
 
 	onRender() {
-		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
-			this.activateSelect2();
-		}
+		this.activateSelect2();
 	},
 
 	formatOption( option ) {
-        if ( ! option.id ) {
-            return option.text;
-        }
-
-        const checkbox = `<input type="checkbox" class="middle" ${ option.selected ? 'checked' : '' }>`;
-
-        return jQuery( `<label class="cloud-library-option">${checkbox} <span class="middle">${option.text}</span></label>` );
+		if ( ! option.id ) {
+			return option.text;
+		}
+		
+		const checkbox = `<input type="checkbox" class="middle" ${ option.selected ? 'checked' : '' }>`;
+		
+		return jQuery(
+			`<label class="cloud-library-option">${checkbox}
+				<span class="middle">${option.text}</span>
+			</label>`
+		);
     },
 
     formatSelected( option ) {
