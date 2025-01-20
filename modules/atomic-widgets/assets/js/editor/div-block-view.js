@@ -123,6 +123,7 @@ const DivBlockView = BaseElementView.extend( {
 
 	getDroppableOptions() {
 		const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
+		let $placeholder = null;
 
 		return {
 			axis: this.getDroppableAxis(),
@@ -192,21 +193,34 @@ const DivBlockView = BaseElementView.extend( {
 				// User is dragging an element from the panel.
 				this.onDrop( event, { at: newIndex } );
 			},
-			onDragging: ( side, event ) => {
-				const currentTargetHeight = event.currentTarget.getBoundingClientRect().height;
-				const $placeholder = this.$el.find( '.elementor-sortable-placeholder' );
+			onDragging: (side, event) => {
+				if ( ! $placeholder ) {
+					$placeholder = this.$el.find( '.elementor-sortable-placeholder' );
+				}
 
-				if ( 'horizontal' === this.getDroppableAxis() && $placeholder.length ) {
-					// TODO Need optimize
-					event.currentTarget.after( $placeholder[ 0 ] );
-					$placeholder.css( {
-						display: 'block',
-						height: currentTargetHeight + 'px',
-						'background-color': '#eb8efb',
-						width: '10px',
-					} );
-				} else {
-					$placeholder.removeAttr( 'style' );
+				const currentTargetHeight = event.currentTarget.getBoundingClientRect().height;
+
+				if ($placeholder.length) {
+					if ('horizontal' === this.getDroppableAxis()) {
+						if (event.currentTarget !== $placeholder[ 0 ].previousElementSibling) {
+							if ( 'top' === side || 'left' === side ) {
+								event.currentTarget.before( $placeholder[ 0 ] );
+							} else {
+								event.currentTarget.after( $placeholder[ 0 ] );
+							}
+						}
+
+						if ( $placeholder.css( 'height' ) !== currentTargetHeight + 'px' ) {
+							$placeholder.css( {
+								display: 'block',
+								height: currentTargetHeight + 'px',
+								'background-color': '#eb8efb',
+								width: '10px',
+							} );
+						}
+					} else {
+						$placeholder.removeAttr( 'style' );
+					}
 				}
 			},
 		};
