@@ -839,7 +839,7 @@ class Utils {
 			return null;
 		}
 
-		if ( $_FILES === $super_global ) {
+		if ( $_FILES === $super_global ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			return isset( $super_global[ $key ]['name'] ) ?
 				self::sanitize_file_name( $super_global[ $key ] ) :
 				self::sanitize_multi_upload( $super_global[ $key ] );
@@ -906,7 +906,7 @@ class Utils {
 			return;
 		}
 
-		throw new \Exception( $message );
+		throw new \Exception( esc_html( $message ) );
 	}
 
 	public static function has_invalid_post_permissions( $post ): bool {

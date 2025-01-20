@@ -74,6 +74,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
+					Textarea_Control::bind_to( 'title' )
+						->set_label( __( 'Title', 'elementor' ) )
+						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
 					Select_Control::bind_to( 'tag' )
 						->set_label( esc_html__( 'Tag', 'elementor' ) )
 						->set_options( [
@@ -102,11 +105,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 								'label' => 'H6',
 							],
 						]),
-
-					Textarea_Control::bind_to( 'title' )
-						->set_label( __( 'Title', 'elementor' ) )
-						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
-
 					Link_Control::bind_to( 'link' )
 						->set_options( $this->get_post_query() )
 						->set_allow_custom_values( true )

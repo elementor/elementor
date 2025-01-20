@@ -65,6 +65,43 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
+	public function test_sanitize() {
+		// Arrange.
+		$prop_type = Dynamic_Prop_Type::make()->categories( [ V1DynamicTags::TEXT_CATEGORY ] );
+
+		$dynamic_tag = new Mock_Dynamic_Tag();
+
+		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
+
+		Dynamic_Tags_Module::fresh();
+
+		// Act.
+		$result = $prop_type->sanitize( [
+			'$$type' => 'dynamic',
+			'value' => [
+				'name' => 'mock-dynamic-tag',
+				'settings' => [
+					'mock-control-1' => [ '$$type' => 'string', 'value' => '<script>console.log("Hack!")</script>mock-value-1' ],
+					'not-in-schema' => [ '$$type' => 'string', 'value' => 'Not in schema' ],
+				],
+			],
+		] );
+
+		// Assert.
+		$this->assertEquals(
+			$result,
+			[
+				'$$type' => 'dynamic',
+				'value' => [
+					'name' => 'mock-dynamic-tag',
+					'settings' => [
+						'mock-control-1' => [ '$$type' => 'string', 'value' => 'mock-value-1' ],
+					],
+				],
+			]
+		);
+	}
+
 	/**
 	 * @dataProvider invalid_value_data_provider
 	 */

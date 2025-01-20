@@ -34,6 +34,12 @@ class Section implements JsonSerializable {
 		return $this;
 	}
 
+	public function add_item( $item ): self {
+		$this->items[] = $item;
+
+		return $this;
+	}
+
 	public function get_items() {
 		return $this->items;
 	}
