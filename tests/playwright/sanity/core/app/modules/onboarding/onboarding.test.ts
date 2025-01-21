@@ -4,7 +4,7 @@ import WpAdminPage from '../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
 
 const BUTTON_CLASSES = {
-	active: 'e-onboarding__button-action',
+	active: /e-onboarding__button-action/,
 	disabled: /e-onboarding__button--disabled/,
 };
 
@@ -142,7 +142,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		await skipButton.click();
 
 		// Assert redirection to the "Good to Go" screen
-		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'What\'s next?' );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
 	} );
 
 	/**
