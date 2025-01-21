@@ -33,13 +33,11 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg = $settings['svg'];
 
 		$svg = new \WP_HTML_Tag_Processor( $svg );
-
 		if ( ! $svg->next_tag() ) {
 			return;
 		}
 
 		$this->set_svg_attributes( $svg, $settings );
-		$this->set_svg_stroke_attributes( $svg, $settings );
 
 		$svg->add_class( $settings['classes'] ?? '' );
 
@@ -53,25 +51,12 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg->set_attribute( 'fill', $settings['color'] ?? 'currentColor' );
 		$svg->set_attribute( 'width', $settings['width'] ?? '100%' );
 		$svg->set_attribute( 'height', $settings['height'] ?? '100%' );
-		$svg->set_attribute( 'min-width', $settings['min-width'] ?? '100%' );
-		$svg->set_attribute( 'min-height', $settings['min-height'] ?? '100%' );
-		$svg->set_attribute( 'max-width', $settings['max-width'] ?? '100%' );
-		$svg->set_attribute( 'max-height', $settings['max-height'] ?? '100%' );
-	}
-
-	private function set_svg_stroke_attributes( $svg, $settings ) {
-		if ( isset( $settings['-webkit-text-stroke'] ) ) {
-			$stroke_parts = explode( ' ', $settings['-webkit-text-stroke'] );
-			if ( count( $stroke_parts ) === 2 ) {
-				$svg->set_attribute( 'stroke-width', $stroke_parts[0] ?? '0px' );
-				$svg->set_attribute( 'stroke', $stroke_parts[1] ?? 'currentColor' );
-			}
-		}
 	}
 
 	protected function define_atomic_controls(): array {
 		return [];
 	}
+
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()
@@ -82,8 +67,6 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->default( '100%' ),
 			'height' => String_Prop_Type::make()
 				->default( '100%' ),
-			'-webkit-text-stroke' => String_Prop_Type::make()
-				->default( '0px #ffffff' ),
 		];
 	}
 }
