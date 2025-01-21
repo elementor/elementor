@@ -4,7 +4,7 @@ import WpAdminPage from '../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
 
 const BUTTON_CLASSES = {
-	active: 'e-onboarding__button e-onboarding__button-action',
+	active: 'e-onboarding__button-action',
 	disabled: 'e-onboarding__button--disabled',
 };
 
@@ -81,11 +81,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await skipButton.click();
 
-		const PageTitle = await page.waitForSelector( '.e-onboarding__page-content-section-title' ),
-			pageTitleText = await PageTitle.innerText();
-
-		// Check that the screen changed to the Hello page.
-		expect( pageTitleText ).toBe( 'Every site starts with a theme.' );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Every site starts with a theme.' );
 	} );
 
 	/**
@@ -106,13 +102,11 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await page.fill( 'input[type="text"]', 'Test' );
 
-		await expect( nextButton ).toHaveClass( 'e-onboarding__button e-onboarding__button-action' );
+		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.active );
 
-		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
+		await page.locator( EditorSelectors.onboarding.skipButton ).click();
 
-		await skipButton.click();
-
-		const pageTitle = page.locator( '.e-onboarding__page-content-section-title' );
+		const pageTitle = page.locator( EditorSelectors.onboarding.screenTitle );
 		await expect( pageTitle ).toHaveText( 'Have a logo? Add it here.' );
 	} );
 
@@ -131,7 +125,6 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const nextButton = page.locator( 'text=Next' );
 		const removeButton = page.locator( EditorSelectors.onboarding.removeLogoButton );
 		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
-		const pageTitle = page.locator( EditorSelectors.onboarding.screenTitle );
 
 		// Get site logo ID from global config
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -149,7 +142,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		await skipButton.click();
 
 		// Assert redirection to the "Good to Go" screen
-		await expect( pageTitle ).toHaveText( /What's next\?/ );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'What\'s next?' );
 	} );
 
 	/**
@@ -193,7 +186,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		await page.goto( chooseFeaturesUrl );
 
 		const chooseFeaturesScreen = page.locator( '.e-onboarding__page-chooseFeatures' ),
-			upgradeNowBtn = page.locator( '.e-onboarding__button-action' ),
+			upgradeNowBtn = page.locator( EditorSelectors.onboarding.upgradeButton ),
 			tierLocator = page.locator( '.e-onboarding__choose-features-section__message strong' ),
 			tiers = {
 				advanced: 'Advanced',
