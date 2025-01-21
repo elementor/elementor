@@ -5,7 +5,7 @@ import EditorSelectors from '../../../../../selectors/editor-selectors';
 
 const BUTTON_CLASSES = {
 	active: 'e-onboarding__button-action',
-	disabled: 'e-onboarding__button--disabled',
+	disabled: /e-onboarding__button--disabled/,
 };
 
 test.describe( 'On boarding @onBoarding', async () => {
