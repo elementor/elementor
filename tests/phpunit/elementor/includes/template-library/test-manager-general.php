@@ -252,6 +252,19 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$this->assertCount( 2, $templates );
 	}
 
+	public function test_get_templates__from_cloud() {
+		// Arrange
+		$admin = $this->act_as_admin();
+
+		$this->create_cloud_mock_templates();
+
+		// Act
+		$templates = self::$manager->get_templates( [ 'cloud' ] );
+
+		// Assert
+		$this->assertCount( 2, $templates );
+	}
+
 	private function create_mock_templates( $user, $layout_type = '' ) {
 		$templates = [
 			[
@@ -355,5 +368,51 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				'body' => wp_json_encode( $templates ),
 			];
 		}, 10, 3 );
+	}
+	private function create_cloud_mock_templates( $layout_type = '' ) {
+		$templates = [
+			[
+				"id" => 1,
+				"createdAt" => "2025-01-21T10:45:32.541Z",
+				"updatedAt" => "2025-01-21T10:45:32.541Z",
+				"deletedAt" => null,
+				"authorEmail" => "test@test.test",
+				"authorId" => "123",
+				"title" => "AFolder",
+				"type" => "FOLDER",
+				"templateType" => "",
+				"fileId" => null,
+				"parentId" => null,
+			],
+			[
+				"id" => 2,
+				"createdAt" => "2025-01-21T10:45:32.541Z",
+				"updatedAt" => "2025-01-21T10:45:32.541Z",
+				"deletedAt" => null,
+				"parentId" => null,
+				"authorEmail" => "test@test.test",
+				"authorId" => "123",
+				"title" => "ATemplate",
+				"type" => "TEMPLATE",
+				"templateType" => "",
+				"fileId" => null
+			],
+		];
+
+		$response = [
+			"totalData" => 2,
+			"data" => $templates,
+		];
+
+		add_filter( 'pre_http_request', fn () => [
+			'headers' => [],
+			'response' => [
+				'code' => 200,
+				'message' => 'OK',
+			],
+			'cookies' => [],
+			'filename' => '',
+			'body' => wp_json_encode( $response ),
+		], 10, 3 );
 	}
 }

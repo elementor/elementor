@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -8,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Source_Cloud extends Source_Base {
+	protected function get_app(): Cloud_Library {
+		return Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
+	}
 
 	public function get_id(): string {
 		return 'cloud';
@@ -19,6 +23,9 @@ class Source_Cloud extends Source_Base {
 
 	public function register_data() {}
 
+	public function get_items( $args = [] ) {
+		return $this->get_app()->get_resources( $args );
+	}
 	public function get_items( $args = [] ) {
 		return [];
 	}

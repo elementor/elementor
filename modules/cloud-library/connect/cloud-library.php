@@ -10,6 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Cloud_Library extends Library {
 	const API_URL = 'https://my.elementor.com/api/v1';
 
+	protected function get_api_url() {
+		return static::API_URL . '/';
+	}
+
 	public function get_title(): string {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
@@ -18,8 +22,11 @@ class Cloud_Library extends Library {
 		return 'cloud-library';
 	}
 
-	public function get_resources() {
-		return $this->http_request( 'GET', 'resources' );
+
+	public function get_resources( $args = [] ) {
+		return $this->http_request( 'GET', 'resources', $args, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
 	}
 
 	protected function init() {}
