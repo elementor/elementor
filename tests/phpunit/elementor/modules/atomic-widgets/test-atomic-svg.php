@@ -4,7 +4,7 @@ use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 
-class Elementor_Tests_Elementor_Modules_AtomicWidgets_TestAtomicSvg extends Elementor_Test_Base {
+class Test_Atomic_Svg extends Elementor_Test_Base {
 	use MatchesSnapshots;
 	const MOCK = [
 		'id' => 'abcd123',
