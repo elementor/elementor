@@ -26,7 +26,7 @@
 	&:not(.elementor-drop-cap-view-default) {
 
 		.elementor-drop-cap {
-			margin-top: 8px;
+			margin-block-start: 8px;
 
 			&-letter {
 				width: 1em;
@@ -36,7 +36,7 @@
 	}
 
 	.elementor-drop-cap {
-		float: $start;
+		float: inline-start;
 		text-align: center;
 		line-height: 1;
 		font-size: 50px;

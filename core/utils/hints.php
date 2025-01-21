@@ -135,7 +135,7 @@ class Hints {
 		}
 
 		if ( ! empty( $notice_settings['button_text'] ) ) {
-			$button_settings = ( ! empty( $notice_settings['button_data'] ) ) ? ' data-settings="' . esc_attr( json_encode( $notice_settings['button_data'] ) ) . '"' : '';
+			$button_settings = ( ! empty( $notice_settings['button_data'] ) ) ? ' data-settings="' . esc_attr( wp_json_encode( $notice_settings['button_data'] ) ) . '"' : '';
 			$button = '<div class="elementor-control-notice-main-actions">
 				<button type="button" class="e-btn e-' . $notice_settings['type'] . ' e-btn-1" data-event="' . $notice_settings['button_event'] . '"' . $button_settings . '>
 					' . $notice_settings['button_text'] . '

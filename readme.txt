@@ -1,7 +1,7 @@
 === Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.3
+Requires at least: 6.5
 Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 3.12.1
@@ -254,7 +254,7 @@ Join a global community that helps each other achieve their goals.
 
 = Minimum Requirements =
 
-* WordPress 6.3 or greater
+* WordPress 6.5 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
@@ -345,6 +345,32 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.27.0 - 2025-01-20 =
+
+* New: Introducing local loading of Google Fonts to improve performance and enhance user privacy ([#4544](https://github.com/elementor/elementor/issues/4544), [#19966](https://github.com/elementor/elementor/issues/19966), [#23932](https://github.com/elementor/elementor/issues/23932), [#21716](https://github.com/elementor/elementor/issues/21716))
+* New: Introducing advanced layout customization for Grid Container with column and row span controls for precise grid-based designs ([#25256](https://github.com/elementor/elementor/issues/25256))
+* New: Added the option to animate with AI motion effects for creating AI-generated animations
+* Tweak: Add 'YouTube shorts' support in the video widget ([#24220](https://github.com/elementor/elementor/issues/24220), [#20330](https://github.com/elementor/elementor/issues/20330))
+* Tweak: Added Safari browser compatibility for the 'Fit to Size' option in the Icon Widget ([#27679](https://github.com/elementor/elementor/issues/27679))
+* Tweak: Moved style loading to the head instead of the footer to improve CLS
+* Tweak: Enabled conditional loading of `Swiper.js` based on widget dependencies to reduce unnecessary assets and improve page load times
+* Tweak: Removed the `elementor-widget-container` div from the Spacer Widget as part of the Optimized Markup experiment to improve HTML structure
+* Tweak: Improved keyboard accessibility for the nested container presets area
+* Tweak: Added accessible and descriptive names to the icon link in the Icon Box widget
+* Tweak: Optimize background video CSS by merging `elementor-html5-video` and `elementor-background-video-hosted` into a single class
+* Tweak: Added the ability to disable the Element Cache
+* Tweak: Removed animation class when no animations are set in Icon and Icon Widget widgets
+* Tweak: Added support for captions on YouTube videos
+* Tweak: Removed the limitation restricting heading hover color styling to links only
+* Tweak: Removed `aspect-ratio` workaround for unsupported Safari browsers
+* Fix: Switching between images in a lightbox on responsive mode displayed a tall blue rectangle ([#12830](https://github.com/elementor/elementor/issues/12830))
+* Fix: Image editing tools with AI are not working when launched in WooCommerce
+* Fix: Improved HTML markup validity by removing the `type` attribute from `<script>` tags
+
+= 3.26.5 - 2025-01-15 =
+
+* Fix: Background Slideshow option not working for columns
 
 = 3.26.4 - 2025-01-07 =
 
