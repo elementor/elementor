@@ -4,7 +4,7 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Elementor_Test_Manager_Remote extends Elementor_Test_Base {
+class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 	/**
 	 * @var \Elementor\TemplateLibrary\Manager
 	 */
