@@ -112,13 +112,13 @@ const DivBlockView = BaseElementView.extend( {
 	isHorizontalAxis() {
 		const styles = window.getComputedStyle( this.$el[ 0 ] );
 
-		return styles.display === 'flex' &&
+		return 'flex' === styles.display &&
 			[ 'row', 'row-reverse' ].includes( styles.flexDirection );
 	},
 
 	getDroppableOptions() {
 		const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
-		let $placeholder = null;
+		let $placeholder;
 
 		return {
 			axis: this.getDroppableAxis(),
@@ -193,34 +193,31 @@ const DivBlockView = BaseElementView.extend( {
 					$placeholder = this.$el.find( '.elementor-sortable-placeholder' );
 				}
 
-				const currentTargetHeight = event.currentTarget.getBoundingClientRect().height,
-					currentTarget = event.currentTarget;
+				if ( ! $placeholder.length ) {
+					return;
+				}
 
+				const currentTarget = event.currentTarget,
+					currentTargetHeight = currentTarget.getBoundingClientRect().height,
+					placeholderElement = $placeholder[ 0 ],
+					isNotBeforeSibling = currentTarget !== placeholderElement.previousElementSibling;
 
-				if ( $placeholder.length ) {
-					const placeholderElement = $placeholder[ 0 ],
-						isNotBeforeSibling = currentTarget !== placeholderElement.previousElementSibling;
-
-					if ( 'horizontal' === this.getDroppableAxis() ) {
-						if ( isNotBeforeSibling ) {
-							if ( [ 'top', 'left' ].includes( side ) ) {
-								currentTarget.before( placeholderElement );
-							} else {
-								currentTarget.after( placeholderElement );
-							}
-						}
-
-						if ( $placeholder.css( 'height' ) !== currentTargetHeight + 'px' ) {
-							$placeholder.css( {
-								display: 'block',
-								height: currentTargetHeight + 'px',
-								'background-color': '#eb8efb',
-								width: '10px',
-							} );
-						}
-					} else {
-						$placeholder.removeAttr( 'style' );
+				if ( 'horizontal' === this.getDroppableAxis() ) {
+					if ( isNotBeforeSibling ) {
+						const insertMethod = [ 'top', 'left' ].includes( side ) ? 'before' : 'after';
+						currentTarget[ insertMethod ]( placeholderElement );
 					}
+
+					if ( $placeholder.css( 'height' ) !== `${currentTargetHeight}px` ) {
+						$placeholder.css( {
+							display: 'block',
+							height: `${currentTargetHeight}px`,
+							'background-color': '#eb8efb',
+							width: '10px',
+						} );
+					}
+				} else {
+					$placeholder.removeAttr( 'style' );
 				}
 			},
 		};
