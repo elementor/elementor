@@ -207,7 +207,7 @@ const DivBlockView = BaseElementView.extend( {
 						this.handleDropSide( side, placeholderElement, currentTarget );
 					}
 
-					this.maybeShowCustomDropPlaceholder( $placeholder, currentTargetHeight )
+					this.maybeShowCustomDropPlaceholder( $placeholder, currentTargetHeight );
 				} else {
 					$placeholder.removeAttr( 'style' );
 				}
