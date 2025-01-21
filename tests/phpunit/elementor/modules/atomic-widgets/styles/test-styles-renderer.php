@@ -423,7 +423,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															],
 															'url' => null
 														],
-													]
+													],
+													'size' => 'auto',
 												]
 											],
 										],
