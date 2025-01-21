@@ -1,30 +1,18 @@
-import { getElementChildren } from '../../../utils/get-element-children';
-import { BaseDuplicatedStylesDetection } from './base-duplicated-styles-detection';
+import { handleDuplicatedStyles } from '../../../utils/handle-duplicated-styles';
 
-export class PasteElementHook extends BaseDuplicatedStylesDetection {
+export class PasteElementHook extends $e.modules.hookData.After {
 	getCommand() {
 		return 'document/elements/paste';
 	}
 
-	apply( args ) {
-		const { containers = [ args.container ] } = args;
-		let hasDuplicatedElement = false;
+	getId() {
+		return 'duplicate-element--document/elements/paste';
+	}
 
-		containers.forEach( ( container ) => {
-			const allElements = getElementChildren( container.lookup() );
+	apply( args, result ) {
+		const containers = Array.isArray( result ) ? result : [ result ];
 
-			const styledElements = allElements.filter( Boolean ).reduce( this.getDuplicatedStyledElements, [] );
-
-			if ( styledElements.length > 0 ) {
-				hasDuplicatedElement = true;
-			}
-
-			styledElements?.forEach( this.updateStyle );
-		} );
-
-		if ( hasDuplicatedElement ) {
-			this.notifyStyleUpdate();
-		}
+		containers.forEach( handleDuplicatedStyles );
 	}
 }
 export default PasteElementHook;

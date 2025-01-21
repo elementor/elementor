@@ -1,12 +1,12 @@
 import { handleDuplicatedStyles } from '../../../utils/handle-duplicated-styles';
 
-export class DuplicateElementHook extends $e.modules.hookData.After {
+export class ImportElementHook extends $e.modules.hookData.After {
 	getCommand() {
-		return 'document/elements/duplicate';
+		return 'document/elements/import';
 	}
 
 	getId() {
-		return 'duplicate-element--document/elements/duplicate';
+		return 'duplicate-element--document/elements/import';
 	}
 
 	apply( args, result ) {
@@ -15,4 +15,4 @@ export class DuplicateElementHook extends $e.modules.hookData.After {
 		containers.forEach( handleDuplicatedStyles );
 	}
 }
-export default DuplicateElementHook;
+export default ImportElementHook;
