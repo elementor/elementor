@@ -183,7 +183,7 @@ class Tracker {
 	 * @static
 	 */
 	public static function handle_tracker_actions() {
-		if ( ! isset( $_GET['elementor_tracker'] ) ) {
+		if ( ! isset( $_GET['elementor_tracker'] ) || ! is_admin() ) {
 			return;
 		}
 
