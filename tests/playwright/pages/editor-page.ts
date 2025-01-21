@@ -9,6 +9,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
+import { timeouts } from '../config/timeouts';
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
@@ -230,7 +231,7 @@ export default class EditorPage extends BasePage {
 	}
 
 	async waitForPreviewFrame(): Promise<Frame> {
-		await this.page.waitForSelector( '[id="elementor-preview-iframe"]', { timeout: 10000 } );
+		await this.page.waitForSelector( '[id="elementor-preview-iframe"]', { timeout: timeouts.longAction } );
 
 		const frame = this.page.frame( { name: 'elementor-preview-iframe' } );
 		if ( ! frame ) {
@@ -949,7 +950,7 @@ export default class EditorPage extends BasePage {
 		if ( hasTopBar ) {
 			await this.clickTopBarItem( TopBarSelectors.publish );
 			await this.page.waitForLoadState();
-			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: 10000 } );
+			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.longAction } );
 		} else {
 			await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 			await this.page.waitForLoadState();
@@ -1283,7 +1284,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async removeWpAdminBar(): Promise<void> {
 		const adminBar = 'wpadminbar';
-		await this.page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
+		await this.page.locator( `#${ adminBar }` ).waitFor( { timeout: timeouts.longAction } );
 		await this.page.evaluate( ( selector ) => {
 			const admin = document.getElementById( selector );
 			admin.remove();
