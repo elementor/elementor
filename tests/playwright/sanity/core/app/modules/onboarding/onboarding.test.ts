@@ -240,7 +240,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 
 		await test.step( 'Activate upgrade button', async () => {
 			await page.locator( `${ EditorSelectors.onboarding.features.essential }-0` ).check();
-			await expect( upgradeNowBtn ).not.toHaveClass( BUTTON_CLASSES.active );
+			await expect( upgradeNowBtn ).not.toHaveClass( BUTTON_CLASSES.disabled );
 		} );
 
 		await test.step( 'Check that Upgrade button opens elementor.com store', async () => {
