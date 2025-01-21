@@ -11,11 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Background_Image_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
 		$default_position = '0% 0%';
-		$image_url = $this->get_image_url( $value['image-src'] );
 
-		if ( ! isset( $image_url ) ) {
+		if ( ! isset( $value['image-src'] ) ) {
 			return '';
 		}
+
+		$image_url = $this->get_image_url( $value['image-src'] );
 
 		if ( ! isset( $value['size'] ) ) {
 			return "url(\" $image_url \")";
