@@ -346,7 +346,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeAnnouncementsIfVisible(): Promise<void> {
-		if ( await this.page.locator( '#e-announcements-root' ).isVisible() ) {
+		if ( await this.page.locator( '#e-announcements-root' ).isVisible( { timeout: 10000 } ) ) {
 			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
 		}
 		let window: WindowType;
