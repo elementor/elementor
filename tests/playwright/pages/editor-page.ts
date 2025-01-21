@@ -949,7 +949,7 @@ export default class EditorPage extends BasePage {
 		if ( hasTopBar ) {
 			await this.clickTopBarItem( TopBarSelectors.publish );
 			await this.page.waitForLoadState();
-			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
+			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: 10000 } );
 		} else {
 			await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 			await this.page.waitForLoadState();
