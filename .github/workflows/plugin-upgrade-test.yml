@@ -1,7 +1,7 @@
 name: Upgrade Elementor test
 
 on:
-  pull_request:
+  push:
     paths-ignore:
       - '**.md'
       - '**.txt'
