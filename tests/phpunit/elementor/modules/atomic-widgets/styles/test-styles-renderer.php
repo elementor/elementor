@@ -426,6 +426,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													]
 												]
 											],
+											[
+												'$$$type' => 'image-attachment-id',
+												'value' => 'top center',
+											]
 										],
 									],
 
