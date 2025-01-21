@@ -16,7 +16,7 @@ let window: WindowType;
 
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
-	postId: number | null;
+	postId: number;
 
 	/**
 	 * Create an Elementor editor page.
@@ -600,7 +600,7 @@ export default class EditorPage extends BasePage {
 	 * Set shadow control value.
 	 *
 	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} type      - Shadow type. Available options are 'text' or 'box.
+	 * @param {string} type      - Shadow type. Available options are 'text' or 'box'.
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -613,7 +613,7 @@ export default class EditorPage extends BasePage {
 	 * Set text stroke control value.
 	 *
 	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} type      - Stroke type. Available options are 'text' or 'box.
+	 * @param {string} type      - Stroke type. Available options are 'text' or 'box'.
 	 * @param {number} value     - Stroke value.
 	 * @param {string} color     - Stroke color.
 	 *
@@ -1196,8 +1196,10 @@ export default class EditorPage extends BasePage {
 	async isUiStable( locator: Locator, retries: number = 3, timeout: number = 500 ): Promise<void> {
 		const comparator = getComparator( 'image/png' );
 		let retry = 0,
-			beforeImage,
-			afterImage;
+			beforeImage: Buffer,
+			afterImage: Buffer;
+
+		await locator.waitFor();
 
 		do {
 			if ( retry === retries ) {
