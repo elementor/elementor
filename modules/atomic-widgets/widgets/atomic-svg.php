@@ -43,7 +43,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
-		//we need this line in order to render the svg, otherwise it will be rendered as a string
+		// we need this line in order to render the svg, otherwise it will be rendered as a string
 		echo ( false === $valid_svg ) ? '' : $valid_svg; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
