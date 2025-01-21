@@ -486,6 +486,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													]
 												]
 											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => 'bottom right'
+											]
 										],
 									],
 
