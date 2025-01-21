@@ -20,6 +20,7 @@ test.describe( 'Test site translation for different languages', () => {
 			await page.locator( '.update-last-checked' ).click();
 			if ( await page.locator( translationButton ).isVisible() ) {
 				await page.locator( translationButton ).click();
+				await page.waitForLoadState( 'networkidle' );
 			}
 			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
