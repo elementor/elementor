@@ -12,19 +12,13 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
 		$image_src = $value['image-src'];
 		$size = $value['size'];
-		$position = $value['position'];
+		$position = $value['position'] ?? '0% 0%';;
 
 		$image_url = $this->get_image_url( $image_src );
 
-		if ( ! isset( $size ) && ! isset( $position ) ) {
+		if ( ! isset( $size ) ) {
 			return "url(\" $image_url \")";
 		}
-
-		if ( isset( $position ) && ! isset( $size ) ) {
-			return "url(\" $image_url \") $position";
-		}
-
-		$position = $position ?? '0% 0%';
 
 		return "url(\" $image_url \") $position / $size";
 	}

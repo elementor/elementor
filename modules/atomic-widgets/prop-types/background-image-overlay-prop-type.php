@@ -14,7 +14,6 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 		return [
 			'image-src' => Image_Src_Prop_Type::make(),
 			'size' => String_Prop_Type::make()->enum( [ 'auto', 'cover', 'contain' ] ),
-			'position' => String_Prop_Type::make(),
 		];
 	}
 }
