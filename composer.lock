@@ -844,16 +844,16 @@
         },
         {
             "name": "php-di/invoker",
-            "version": "2.3.4",
+            "version": "2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/Invoker.git",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86"
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/33234b32dafa8eb69202f950a1fc92055ed76a86",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86",
+                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/59f15608528d8a8838d69b422a919fd6b16aa576",
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576",
                 "shasum": ""
             },
             "require": {
@@ -887,7 +887,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-DI/Invoker/issues",
-                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.4"
+                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.6"
             },
             "funding": [
                 {
@@ -895,7 +895,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-08T09:24:21+00:00"
+            "time": "2025-01-17T12:49:27+00:00"
         },
         {
             "name": "php-di/php-di",
@@ -4545,16 +4545,16 @@
         },
         {
             "name": "yoast/phpunit-polyfills",
-            "version": "1.1.2",
+            "version": "1.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Yoast/PHPUnit-Polyfills.git",
-                "reference": "e9c8413de4c8ae03d2923a44f17d0d7dad1b96be"
+                "reference": "0b31ce834facf03b8b44b6587e65b3cf1d7cfb94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/e9c8413de4c8ae03d2923a44f17d0d7dad1b96be",
-                "reference": "e9c8413de4c8ae03d2923a44f17d0d7dad1b96be",
+                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/0b31ce834facf03b8b44b6587e65b3cf1d7cfb94",
+                "reference": "0b31ce834facf03b8b44b6587e65b3cf1d7cfb94",
                 "shasum": ""
             },
             "require": {
@@ -4604,17 +4604,17 @@
                 "security": "https://github.com/Yoast/PHPUnit-Polyfills/security/policy",
                 "source": "https://github.com/Yoast/PHPUnit-Polyfills"
             },
-            "time": "2024-09-06T22:03:10+00:00"
+            "time": "2025-01-08T16:58:34+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
