@@ -208,10 +208,10 @@ const DivBlockView = BaseElementView.extend( {
 						currentTarget[ insertMethod ]( placeholderElement );
 					}
 
-					if ( $placeholder.css( 'height' ) !== `${currentTargetHeight}px` ) {
+					if ( $placeholder.css( 'height' ) !== `${ currentTargetHeight }px` ) {
 						$placeholder.css( {
 							display: 'block',
-							height: `${currentTargetHeight}px`,
+							height: `${ currentTargetHeight }px`,
 							'background-color': '#eb8efb',
 							width: '10px',
 						} );
