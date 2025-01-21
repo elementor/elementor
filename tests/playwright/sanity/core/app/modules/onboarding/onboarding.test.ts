@@ -3,6 +3,11 @@ import { parallelTest as test } from '../../../../../parallelTest';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
 
+const BUTTON_CLASSES = {
+	active: 'e-onboarding__button e-onboarding__button-action',
+	disabled: 'e-onboarding__button--disabled',
+};
+
 test.describe( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -107,10 +112,8 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await skipButton.click();
 
-		const pageTitle = page.locator( '.e-onboarding__page-content-section-title' ),
-			pageTitleText = await pageTitle.innerText();
-
-		await expect( page.locator( '.e-onboarding__page-content-section-title' ) ).toHaveText( 'Have a logo? Add it here.' );
+		const pageTitle = page.locator( '.e-onboarding__page-content-section-title' );
+		await expect( pageTitle ).toHaveText( 'Have a logo? Add it here.' );
 	} );
 
 	/**
@@ -120,37 +123,29 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 * selected.
 	 * 2. Clicking on 'Skip' should take the user to the Good to Go screen
 	 */
-	// Constants for classes
-	const BUTTON_CLASSES = {
-		active: 'e-onboarding__button e-onboarding__button-action',
-		disabled: 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action',
-	};
 
 	test( 'Onboarding Site Logo Page', async ( { page } ) => {
 		// Navigate to the page
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteLogo' );
 
-		// Initialize locators
 		const nextButton = page.locator( 'text=Next' );
-		const removeButton = page.locator( '.e-onboarding__logo-remove' );
-		const skipButton = page.locator( '.e-onboarding__button-skip' );
-		const pageTitle = page.locator( '.e-onboarding__page-content-section-title' );
+		const removeButton = page.locator( EditorSelectors.onboarding.removeLogoButton );
+		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
+		const pageTitle = page.locator( EditorSelectors.onboarding.screenTitle );
 
 		// Get site logo ID from global config
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-expect-error
 		const siteLogoId = await page.evaluate( () => elementorAppConfig.onboarding.siteLogo.id );
 
 		if ( siteLogoId ) {
 			// Assert "Next" button is active when logo exists
 			await expect( nextButton ).toHaveClass( BUTTON_CLASSES.active );
-
-			// Remove logo
 			await removeButton.click();
 		}
 
 		// Assert "Next" button is disabled when logo is removed
 		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
-
-		// Click "Skip" button
 		await skipButton.click();
 
 		// Assert redirection to the "Good to Go" screen
@@ -210,7 +205,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		await expect.soft( chooseFeaturesScreen ).toHaveScreenshot( 'chooseFeaturesScreen.png' );
 
 		await test.step( 'Check that Upgrade Now button is disabled', async () => {
-			await expect( upgradeNowBtn ).toHaveClass( /e-onboarding__button--disabled/ );
+			await expect( upgradeNowBtn ).toHaveClass( BUTTON_CLASSES.disabled );
 		} );
 
 		await test.step( 'Check that tier changes to Essential when checking an Essential item', async () => {
@@ -219,7 +214,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 
 		await test.step( 'Check that Upgrade Now button is not disabled', async () => {
-			await expect( upgradeNowBtn ).not.toHaveClass( /e-onboarding__button--disabled/ );
+			await expect( upgradeNowBtn ).not.toHaveClass( BUTTON_CLASSES.disabled );
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking an Advanced item', async () => {
@@ -252,7 +247,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 
 		await test.step( 'Activate upgrade button', async () => {
 			await page.locator( `${ EditorSelectors.onboarding.features.essential }-0` ).check();
-			await expect( upgradeNowBtn ).not.toHaveClass( /e-onboarding__button--disabled/ );
+			await expect( upgradeNowBtn ).not.toHaveClass( BUTTON_CLASSES.active );
 		} );
 
 		await test.step( 'Check that Upgrade button opens elementor.com store', async () => {
