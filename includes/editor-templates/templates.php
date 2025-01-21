@@ -56,7 +56,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-templates">
 	<#
 		var activeSource = elementor.templates.getFilter('source');
-		const isRemote = activeSource.startsWith('remote');
+		const isRemote = elementor.hooks.applyFilters( 'templates/modal/active-source', activeSource !== 'local', activeSource );
 	#>
 	<div id="elementor-template-library-toolbar">
 		<# if ( isRemote ) {
