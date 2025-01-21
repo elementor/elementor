@@ -1339,6 +1339,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 												[
 													'$$type' => 'background-image-overlay',
 													'value' => [
+														'size' => 'cover',
 														'image-src' => [
 															'$$type' => 'image-src',
 															'value' => [
