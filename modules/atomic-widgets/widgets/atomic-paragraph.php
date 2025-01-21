@@ -51,22 +51,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		];
 	}
 
-	protected function render(): void {
-		$settings = $this->get_atomic_settings();
-
-		$paragraph = $settings['paragraph'];
-		$tag = $settings['tag'];
-		$attrs = array_filter( [
-			'class' => $settings['classes'] ?? '',
-		] );
-
-		printf(
-			'<%1$s %2$s>%3$s</%1$s>',
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			Utils::validate_html_tag( $tag ),
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			Utils::render_html_attributes( $attrs ),
-			esc_html( $paragraph ),
-		);
+	public function get_atomic_template(): string {
+		return '<{{tag}}>{{paragraph}}</{{tag}}>';
 	}
 }
