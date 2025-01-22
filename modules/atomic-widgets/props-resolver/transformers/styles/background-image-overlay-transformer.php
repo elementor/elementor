@@ -24,7 +24,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 		$position = $value['position'] ?? $default_position;
 
-		return 'url(" ' . $image_url . ' ") ' . $default_position . ' / ' . $value['size'];
+		return 'url(" ' . $image_url . ' ") ' . $position . ' / ' . $value['size'];
 	}
 
 	private function get_image_url( $image_src ): string {
