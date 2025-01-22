@@ -57,8 +57,8 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			->disableOriginalConstructor()
 			->getMock();
 
-		$sourceCloudMock->method('get_app')->willReturn( $cloud_library_app_mock );
-		$sourceCloudMock->method('get_id')->willReturn( 'cloud' );
+		$sourceCloudMock->method( 'get_app' )->willReturn( $cloud_library_app_mock );
+		$sourceCloudMock->method( 'get_id' )->willReturn( 'cloud' );
 
 		$this->sourceCloudMock = $sourceCloudMock;
 	}
