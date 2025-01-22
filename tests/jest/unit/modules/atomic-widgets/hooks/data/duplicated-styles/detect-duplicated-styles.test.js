@@ -8,6 +8,12 @@ describe( 'Detect duplicated styles', () => {
 		import: null,
 	};
 
+	const hookNames = [
+		[ 'paste' ],
+		[ 'duplicate' ],
+		[ 'import' ],
+	];
+
 	beforeAll( async () => {
 		global.elementorCommon = {
 			helpers: {
@@ -78,11 +84,7 @@ describe( 'Detect duplicated styles', () => {
 		jest.clearAllMocks();
 	} );
 
-	it.each( [
-		[ 'paste' ],
-		[ 'duplicate' ],
-		[ 'import' ],
-	] )( 'should detect all duplicated styled atomic widgets on %d', async ( hook ) => {
+	it.each( hookNames )( 'should detect all duplicated styled atomic widgets on %d', async ( hook ) => {
 		// Arrange
 		const styledElement = createContainer( {
 			widgetType: 'a-heading',
@@ -226,11 +228,7 @@ describe( 'Detect duplicated styles', () => {
 		} );
 	} );
 
-	it.each( [
-		[ 'paste' ],
-		[ 'duplicate' ],
-		[ 'import' ],
-	] )( 'should not do anything if no styled elements are duplicated on %d', async ( hook ) => {
+	it.each( hookNames )( 'should not do anything if no styled elements are duplicated on %d', async ( hook ) => {
 		// Arrange
 		const container = createContainer( {
 			widgetType: 'div-block',
