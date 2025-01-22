@@ -54,30 +54,22 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
 			const alignContentControl = page.locator( '.elementor-control-grid_align_content' );
-
-			// Assert - Check the controls initial state
 			await expect( alignContentControl ).not.toBeVisible();
 
-			// Act - Set Grid Rows to custom unit
 			await gridRowsControl.locator( '.e-units-switcher' ).click();
 			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
 
-			// Assert - Align content control is visible
 			await expect( alignContentControl ).toBeVisible();
 		} );
 
 		await test.step( 'Assert Justify content control to be visible when Columns Grid is set to custom', async () => {
-			// Arrange
 			const justifyContentControl = page.locator( '.elementor-control-grid_justify_content' );
 
-			// Assert - Check the controls initial state
 			await expect( justifyContentControl ).not.toBeVisible();
 
-			// Act - Set Grid Columns to custom unit
 			await gridColumnsControl.locator( '.e-units-switcher' ).click();
 			await gridColumnsControl.locator( '[data-choose="custom"]' ).click();
 
-			// Assert - Justify content control should be visible
 			await expect( justifyContentControl ).toBeVisible();
 		} );
 
