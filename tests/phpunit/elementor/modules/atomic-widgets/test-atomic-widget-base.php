@@ -720,30 +720,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'background' => [
 								'$$type' => 'background',
 								'value' => [
-									'background-overlay' => [
-										'$$type' => 'background-overlay',
-										'value' => [
-											[
-												'$$type' => 'background-image-overlay',
-												'value' => [
-													'resolution' => [
-														'$$type' => 'string',
-														'value' => 'large',
-													],
-													'image-src' => [
-														'$$type' => 'image-src',
-														'value' => [
-															'id' => [
-																'$$type' => 'image-attachment-id',
-																'value' => 3
-															],
-															'url' => null
-														]
-													],
-												]
-											]
-										]
-									],
 									'color' => [
 										'$$type' => 'color',
 										'value' => '#000000',
@@ -1375,6 +1351,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														],
 														'size' => 'cover',
                                                         'position' => 'center left',
+                                                        'resolution' => null,
 													]
 												],
 											],
