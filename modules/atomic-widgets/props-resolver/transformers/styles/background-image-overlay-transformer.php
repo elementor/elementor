@@ -24,7 +24,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 		$this->add_position_and_size_style( $value );
 
-		return $this->combine_style_strings();
+		return $this->generate_background_style();
 	}
 
 	private function add_image_style( array $image_src ): void {
