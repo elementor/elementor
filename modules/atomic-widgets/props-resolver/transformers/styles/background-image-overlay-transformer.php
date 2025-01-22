@@ -71,7 +71,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		$position = $value['position'] ?? self::DEFAULT_POSITION;
 
 		$this->style_parts[] = isset( $value['size'] )
-			? "$position / { $value['size'] }"
+			? "$position / " . $value['size']
 			: $position;
 	}
 
