@@ -9,17 +9,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
+	private $active_styles = [];
+
 	public function transform( $value, $key ) {
 		if ( ! isset( $value['image-src'] ) ) {
 			return '';
 		}
 
-		$image_url = $this->get_image_url( $value['image-src'] );
+		$this->add_image_style( $value['image_src'] );
 
-		$image_style = "url(\" $image_url \")";
-		$position_and_size_style = $this->get_position_and_size_style( $value );
+		$this->add_position_and_size_style( $value );
 
-		return $image_style . $position_and_size_style;
+		return $this->build_active_style();
+	}
+
+	private function add_image_style( array $image_src ): void {
+		$image_url = $this->get_image_url( $image_src );
+
+		$this->active_styles[] = "url(\" $image_url \")";
 	}
 
 	private function get_image_url( array $image_src ): string {
@@ -48,19 +55,24 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		return $image_url;
 	}
 
-	private function get_position_and_size_style( array $value ): string {
+	private function add_position_and_size_style( array $value ): void {
 		if ( ! isset( $value['size'] ) && ! isset( $value['position'] ) ) {
-			return '';
+			return;
 		}
 
 		if ( ! isset( $value['size'] ) ) {
-			return ' ' . $value['position'];
+			$this->active_styles[] = $value['position'];
+			return;
 		}
 
 		$default_position = '0% 0%';
 
 		$position = $value['position'] ?? $default_position;
 
-		return ' ' . $position . ' / ' . $value['size'];
+		$this->active_styles[] = $position . ' / ' . $value['size'];
+	}
+
+	private function build_active_style() {
+		return implode( ' ', $this->active_styles );
 	}
 }
