@@ -10,25 +10,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
-		$image_src = $value['image-src'];
-		$size = $value['size'];
-		$position = $value['position'];
+    $default_position = '0% 0%';
 
-		$image_url = $this->get_image_url( $image_src );
+		if ( ! isset( $value['image-src'] ) ) {
+			return '';
+		}
 
-		if ( ! isset( $size ) && ! isset( $position ) ) {
+		$image_url = $this->get_image_url( $value['image-src'] );
+
+		if ( ! isset( $value['size'] && ! isset( $value['position'] ) ) {
 			return "url(\" $image_url \")";
 		}
 
-		if ( isset( $position ) && ! isset( $size ) ) {
-			return "url(\" $image_url \") $position";
-		}
+    $position = $value['position'] ?? $default_position;
 
-		$position = $position ?? '0% 0%';
-
-		return "url(\" $image_url \") $position / $size";
+		return 'url(" ' . $image_url . ' ") ' . $default_position . ' / ' . $value['size'];
 	}
-
+		
 	private function get_image_url( $image_src ): string {
 		if ( ! empty( $image_src['id'] ) ) {
 			return $this->get_image_url_by_id( $image_src['id'] );

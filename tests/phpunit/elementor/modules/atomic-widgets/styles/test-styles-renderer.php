@@ -423,7 +423,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															],
 															'url' => null
 														],
-													]
+													],
+													'size' => 'auto',
 												]
 											],
 											[
@@ -487,7 +488,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															'id' => null,
 															'url' => 'https://example.com/image.jpg',
 														],
-													]
+													],
+													'size' => 'cover',
 												]
 											],
 											[
@@ -603,7 +605,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															],
 															'url' => null,
 														],
-													]
+													],
+													'size' => 'contain',
 												]
 											],
 											[
