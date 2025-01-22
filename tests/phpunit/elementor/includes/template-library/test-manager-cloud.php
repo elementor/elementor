@@ -42,7 +42,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		// Assert
 		$this->cloud_library_app_mock
-			->expects($this->once())
+			->expects( $this->once() )
 			->method('get_resources')
 			->with([ 'force_update' => false]);
 
