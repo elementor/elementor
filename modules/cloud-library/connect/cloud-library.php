@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Cloud_Library extends Library {
-	const API_URL = 'https://my.elementor.com/api/v1';
+	const API_URL = 'https://my.elementor.com/cloud-library/api/v1';
 
-	protected function get_api_url() {
+	protected function get_api_url(): string {
 		return static::API_URL . '/';
 	}
 
@@ -21,7 +21,6 @@ class Cloud_Library extends Library {
 	protected function get_slug(): string {
 		return 'cloud-library';
 	}
-
 
 	public function get_resources( $args = [] ) {
 		return $this->http_request( 'GET', 'resources', $args, [

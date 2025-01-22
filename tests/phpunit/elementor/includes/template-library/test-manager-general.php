@@ -420,8 +420,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				"id" => 1,
 				"createdAt" => "2025-01-21T10:45:32.541Z",
 				"updatedAt" => "2025-01-21T10:45:32.541Z",
-				"deletedAt" => null,
-				"authorEmail" => "test@test.test",
 				"authorId" => "123",
 				"title" => "AFolder",
 				"type" => "FOLDER",
@@ -433,9 +431,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				"id" => 2,
 				"createdAt" => "2025-01-21T10:45:32.541Z",
 				"updatedAt" => "2025-01-21T10:45:32.541Z",
-				"deletedAt" => null,
 				"parentId" => null,
-				"authorEmail" => "test@test.test",
 				"authorId" => "123",
 				"title" => "ATemplate",
 				"type" => "TEMPLATE",
@@ -445,7 +441,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		];
 
 		$response = [
-			"totalData" => 2,
+			"total" => 2,
 			"data" => $templates,
 		];
 
