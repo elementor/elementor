@@ -687,25 +687,46 @@ label.elementor-template-library-order-label {
 			float: inline-end;
 		}
 
-		.select2-selection__e-plus-button {
-			display: none;
-		}
+		.select2 {
 
-		.select2-selection--multiple .select2-selection__rendered {
-			height: 55px;
-			font-size: 16px;
-			padding-inline-start: 25px;
-			line-height: 55px;
-		}
+			&-selection {
+				
+				&__e-plus-button {
+					display: none;
+				}
 
-		.select2-container .select2-search--inline {
-			float: none;
-		}
+				&--multiple .select2-selection__rendered {
+					height: 55px;
+					font-size: 16px;
+					padding-inline-start: 25px;
+					line-height: 55px;
+				}
+			}
 
-		.select2-search__field {
-			max-width: 320px !important;
-			float: inline-start;
-			line-height: 45px;
+			&-search__field {
+				max-width: 320px !important;
+				float: inline-start;
+				line-height: 45px;
+			}
+
+			&-container {
+				
+				.select2-search--inline {
+					float: none;
+				}
+
+				&.select2-container--default .select2-selection--multiple .select2-selection__choice {
+					background-color: transparent;
+					color: var(--e-a-color-txt);
+					line-height: 36px;
+					font-size: 16px;
+					padding: 5px 5px 5px 0px;
+
+					&__remove {
+						color: var(--e-a-color-txt);
+					}
+				}
+			}
 		}
 	}
 }
@@ -714,12 +735,18 @@ label.elementor-template-library-order-label {
 
 	.select2-results__option {
 		text-align: start;
+		font-size: 16px;
+		padding-inline-start: 25px;
 	}
 
 	.cloud-library-option {
 		display: inline-block;
 		padding-right: 10px;
 		white-space: nowrap;
+
+		input[type=checkbox]:checked {
+			background: $gray;
+		}
 
 		.middle {
 			vertical-align: middle;

@@ -242,6 +242,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
 	<form id="elementor-template-library-save-template-form">
 		<input type="hidden" name="post_id" value="<?php echo esc_attr( get_the_ID() ); ?>">
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
 			<span class="elementor-state-icon">
@@ -249,23 +250,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 			<?php echo esc_html__( 'Save', 'elementor' ); ?>
 		</button>
-	</form>
-	<div class="elementor-template-library-blank-footer">
-		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
-	</div>
-</script>
-
-<script type="text/template" id="tmpl-elementor-template-library-save-template-cloud-library">
-	<div class="elementor-template-library-blank-icon">
-		<i class="eicon-library-upload" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Save', 'elementor' ); ?></span>
-	</div>
-	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
-	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
-	<form id="elementor-template-library-save-template-form">
-		<input type="hidden" name="post_id" value="<?php echo esc_attr( get_the_ID() ); ?>">
-		<div class="cloud-library-form-inputs">
+		<?php else: ?>
+			<div class="cloud-library-form-inputs">
 			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
 			<select name="source[]" id="elementor-template-library-save-template-source" multiple="multiple">
 				<option name="local">Site Library</option>
@@ -278,6 +264,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php echo esc_html__( 'Save', 'elementor' ); ?>
 			</button>
 		</div>
+		<?php endif; ?>
 	</form>
 	<div class="elementor-template-library-blank-footer">
 		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
