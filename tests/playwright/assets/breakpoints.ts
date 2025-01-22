@@ -15,9 +15,9 @@ export default class {
 		const baseLocator = page.locator( '[aria-label="Switch Device"]' );
 		const locators = {
 			mobile: baseLocator.locator( '[data-testid="switch-device-to-mobile"]' ),
-			mobile_extra: baseLocator.locator( 'button[aria-label="Mobile Landscape (up to 880px)"]' ),
+			mobile_extra: baseLocator.locator( '[data-testid="switch-device-to-mobile_extra"]' ),
 			tablet: baseLocator.locator( '[data-testid="switch-device-to-tablet"]' ),
-			tablet_extra: baseLocator.locator( 'button[aria-label="Tablet Landscape (up to 1200px)"]' ),
+			tablet_extra: baseLocator.locator( '[data-testid="switch-device-to-tablet_extra"]' ),
 			laptop: baseLocator.locator( '[data-testid="switch-device-to-laptop"]' ),
 			desktop: baseLocator.locator( '[data-testid="switch-device-to-desktop"]' ),
 			widescreen: baseLocator.locator( '[data-testid="switch-device-to-widescreen"]' ),
