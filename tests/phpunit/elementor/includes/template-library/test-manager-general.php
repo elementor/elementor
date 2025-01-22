@@ -221,7 +221,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 
 		$document_ids = $this->create_mock_templates( $admin, 'container_flexbox' );
 
-		$this->sourceCloudMock->method('get_items')->willReturn([]);
+		$this->sourceCloudMock->method( 'get_items' )->willReturn( [] );
 
 		// Act
 		$templates = self::$manager->get_templates();
