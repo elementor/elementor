@@ -17,9 +17,9 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		$image_url = $this->get_image_url( $value['image-src'] );
 
 		$image_style = "url(\" $image_url \")";
-		$position_size_style = $this->get_position_size_styling( $value );
+		$position_and_size_style = $this->get_position_and_size_style( $value );
 
-		return $image_style . $position_size_style;
+		return $image_style . $position_and_size_style;
 	}
 
 	private function get_image_url( array $image_src ): string {
@@ -48,7 +48,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		return $image_url;
 	}
 
-	private function get_position_size_styling( array $value ): string {
+	private function get_position_and_size_style( array $value ): string {
 		if ( ! isset( $value['size'] ) && ! isset( $value['position'] ) ) {
 			return '';
 		}
