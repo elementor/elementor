@@ -146,7 +146,7 @@
 		"@elementor/schema": "0.1.2",
 		"@elementor/store": "0.8.6",
 		"@elementor/session": "0.1.0",
-		"@elementor/ui": "1.23.0",
+		"@elementor/ui": "1.23.3",
 		"@elementor/utils": "0.3.0",
 		"@elementor/wp-media": "0.2.3",
 		"@reach/router": "1.3.4",
