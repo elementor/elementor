@@ -59,7 +59,6 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	getChildView( childModel ) {
-
 		/**
 		 * Filter template source.
 		 *

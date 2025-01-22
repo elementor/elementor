@@ -56,7 +56,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-templates">
 	<#
 		var activeSource = elementor.templates.getFilter('source');
-
 		/**
 		* Filter template source.
 		*
