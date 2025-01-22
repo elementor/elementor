@@ -8,6 +8,18 @@ const usingLocalRepo = process.env.ELEMENTOR_PACKAGES_USE_LOCAL;
 
 const packages = usingLocalRepo ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries();
 
+const REGEXES = {
+	// @elementor/ui/SvgIcon. Used inside @elementor/icons
+	elementorPathImports: /^@elementor\/(ui|icons)\/(.+)$/,
+
+	// @elementor/editor
+	// We want to bundle `@elementor/design-tokens` inside the UI package since it's an internal thing.
+	elementorPackages: /^@elementor\/(?!design-tokens)(.+)$/,
+
+	// @wordpress/components
+	wordpressPackages: /^@wordpress\/(.+)$/,
+};
+
 const common = {
 	name: 'packages',
 	entry: Object.fromEntries(
@@ -37,9 +49,9 @@ const common = {
 		new GenerateWordPressAssetFileWebpackPlugin( {
 			handle: ( entryName ) => `elementor-v2-${entryName}`,
 			map: [
-				{ request: /^@elementor\/(ui|icons)(\/.+)?$/, handle: 'elementor-v2-$1' },
-				{ request: /^@elementor\/(.+)$/, handle: 'elementor-v2-$1' },
-				{ request: /^@wordpress\/(.+)$/, handle: 'wp-$1' },
+				{ request: REGEXES.elementorPathImports, handle: 'elementor-v2-$1' },
+				{ request: REGEXES.elementorPackages, handle: 'elementor-v2-$1' },
+				{ request: REGEXES.wordpressPackages, handle: 'wp-$1' },
 				{ request: 'react', handle: 'react' },
 				{ request: 'react-dom', handle: 'react-dom' },
 			]
@@ -47,9 +59,9 @@ const common = {
 		new ExternalizeWordPressAssetsWebpackPlugin( {
 			global: ( entryName ) => [ 'elementorV2', entryName ],
 			map: [
-				{ request: /^@elementor\/(ui|icons)\/(.+)$/, global: [ 'elementorV2', '$1', '$2' ] },
-				{ request: /^@elementor\/(.+)$/, global: [ 'elementorV2', '$1' ] },
-				{ request: /^@wordpress\/(.+)$/, global: [ 'wp', '$1' ] },
+				{ request: REGEXES.elementorPathImports, global: [ 'elementorV2', '$1', '$2' ] },
+				{ request: REGEXES.elementorPackages, global: [ 'elementorV2', '$1' ] },
+				{ request: REGEXES.wordpressPackages, global: [ 'wp', '$1' ] },
 				{ request: 'react', global: 'React' },
 				{ request: 'react-dom', global: 'ReactDOM' },
 			]
