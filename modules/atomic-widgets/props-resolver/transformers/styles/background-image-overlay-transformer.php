@@ -16,7 +16,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			return '';
 		}
 
-		$this->add_image_style( $value['image_src'] );
+		$this->add_image_style( $value['image-src'] );
 
 		$this->add_position_and_size_style( $value );
 
