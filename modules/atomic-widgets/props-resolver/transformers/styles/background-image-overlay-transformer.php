@@ -73,7 +73,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			: $position;
 	}
 
-	private function combine_style_strings(): string {
+	private function generate_background_style(): string {
 		return implode( ' ', $this->style_parts );
 	}
 }
