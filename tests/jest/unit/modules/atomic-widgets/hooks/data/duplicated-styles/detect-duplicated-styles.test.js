@@ -9,8 +9,8 @@ describe( 'Detect duplicated styles', () => {
 	};
 
 	const hookNames = [
-		[ 'paste' ],
 		[ 'duplicate' ],
+		[ 'paste' ],
 		[ 'import' ],
 	];
 
