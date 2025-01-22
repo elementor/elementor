@@ -1,7 +1,10 @@
 name: Upgrade Elementor test
 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'main'
+      - '3.*'
     paths-ignore:
       - '**.md'
       - '**.txt'
