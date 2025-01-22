@@ -95,7 +95,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		const checkbox = `<input type="checkbox" class="middle" ${ option.selected ? 'checked' : '' }>`;
 
-		return jQuery(
+		return this.$(
 			`<label class="cloud-library-option">${ checkbox }
 				<span class="middle">${ option.text }</span>
 			</label>`,
