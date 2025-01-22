@@ -52,9 +52,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 		expect( await ctaButton.innerText() ).toBe( 'Create my account' );
 
 		const [ popup ] = await Promise.all( [
-			// It is important to call waitForEvent before click to set up waiting.
 			page.waitForEvent( 'popup' ),
-			// Opens popup.
 			page.click( 'a.e-onboarding__button-action' ),
 		] );
 
@@ -119,29 +117,24 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 */
 
 	test( 'Onboarding Site Logo Page', async ( { page } ) => {
-		// Navigate to the page
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteLogo' );
 
 		const nextButton = page.locator( 'text=Next' );
 		const removeButton = page.locator( EditorSelectors.onboarding.removeLogoButton );
 		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
 
-		// Get site logo ID from global config
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-expect-error
 		const siteLogoId = await page.evaluate( () => elementorAppConfig.onboarding.siteLogo.id );
 
 		if ( siteLogoId ) {
-			// Assert "Next" button is active when logo exists
 			await expect( nextButton ).toHaveClass( BUTTON_CLASSES.active );
 			await removeButton.click();
 		}
 
-		// Assert "Next" button is disabled when logo is removed
 		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 		await skipButton.click();
 
-		// Assert redirection to the "Good to Go" screen
 		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
 	} );
 

@@ -597,17 +597,9 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( controlSelector ).click();
 	}
 
-	/**
-	 * Set shadow control value.
-	 *
-	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} type      - Shadow type. Available options are 'text' or 'box'.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setShadowControlValue( controlId: string, type: string ): Promise<void> {
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type label` ).first().click();
+	async setShadowControlValue( controlId: string, shadowType: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId }_${ shadowType }_shadow_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ shadowType }_shadow_type label` ).first().click();
 	}
 
 	/**
