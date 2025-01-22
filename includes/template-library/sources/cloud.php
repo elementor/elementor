@@ -13,7 +13,7 @@ class Source_Cloud extends Source_Base {
 	protected function get_app(): Cloud_Library {
 		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
 
-		if ( !$cloud_library_app ) {
+		if ( ! $cloud_library_app ) {
 			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
 
 			throw new \Exception(  $error_message, Exceptions::FORBIDDEN );
