@@ -423,7 +423,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															],
 															'url' => null
 														],
-													]
+													],
+													'size' => 'auto',
+													'position' => 'top center',
 												]
 											],
 										],
@@ -483,7 +485,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															'id' => null,
 															'url' => 'https://example.com/image.jpg',
 														],
-													]
+													],
+													'size' => 'cover',
+													'position' => 'bottom right',
 												]
 											],
 										],
@@ -595,7 +599,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															],
 															'url' => null,
 														],
-													]
+													],
+													'size' => 'contain',
+													'position' => 'center center',
 												]
 											],
 										],

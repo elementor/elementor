@@ -1372,7 +1372,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 																],
 																'url' => null
 															],
-														]
+														],
+														'size' => 'cover',
+                                                        'position' => 'center left',
 													]
 												],
 											],

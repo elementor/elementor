@@ -10,29 +10,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
-		$image_src = $value['image-src'];
-		$size = $value['size'];
-		$position = $value['position'];
-		$resolution = $value['resolution'];
-
-		$image_url = $this->get_image_url( $image_src, $resolution );
-
-		if ( ! isset( $size ) && ! isset( $position ) ) {
-			return "url(\" $image_url \")";
+		if ( ! isset( $value['image-src'] ) ) {
+			return '';
 		}
 
-		if ( isset( $position ) && ! isset( $size ) ) {
-			return "url(\" $image_url \") $position";
-		}
+		$image_url = $this->get_image_url( $value['image-src'] );
 
-		$position = $position ?? '0% 0%';
+		$image_style = "url(\" $image_url \")";
+		$position_and_size_style = $this->get_position_and_size_style( $value );
 
-		return "url(\" $image_url \") $position \ $size";
+		return $image_style . $position_and_size_style;
 	}
 
-	private function get_image_url( $image_src, $resolution ): string {
+	private function get_image_url( array $image_src ): string {
 		if ( ! empty( $image_src['id'] ) ) {
-			return $this->get_image_url_by_id( $image_src['id'], $resolution );
+			return $this->get_image_url_by_id( $image_src['id'] );
 		}
 
 		if ( empty( $image_src['url'] ) ) {
@@ -42,7 +34,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		return $image_src['url'];
 	}
 
-	private function get_image_url_by_id( $id, $resolution = 'full' ): string {
+	private function get_image_url_by_id( int $id ): string {
 		$image_src = wp_get_attachment_image_src(
 			(int) $id, $resolution
 		);
@@ -51,8 +43,24 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			throw new \Exception( 'Cannot get image src.' );
 		}
 
-		[ $src ] = $image_src;
+		[ $image_url ] = $image_src;
 
-		return $src;
+		return $image_url;
+	}
+
+	private function get_position_and_size_style( array $value ): string {
+		if ( ! isset( $value['size'] ) && ! isset( $value['position'] ) ) {
+			return '';
+		}
+
+		if ( ! isset( $value['size'] ) ) {
+			return ' ' . $value['position'];
+		}
+
+		$default_position = '0% 0%';
+
+		$position = $value['position'] ?? $default_position;
+
+		return ' ' . $position . ' / ' . $value['size'];
 	}
 }
