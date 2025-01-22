@@ -1,4 +1,39 @@
 export class AtomicWidgetView extends elementor.modules.elements.views.Widget {
+	getTemplateType() {
+		return 'twig';
+	}
+
+	renderOnChange() {
+		this.render();
+	}
+
+	_renderTemplate() {
+		const data = this.mixinTemplateHelpers( this.serializeData() );
+
+		this.triggerMethod( 'before:render:template' );
+
+		// Get the template.
+		const template = elementor.widgetsCache[ this.model.get( 'widgetType' ) ]?.atomic_template ?? '';
+
+		// Transform the settings
+		const transformed = Object.fromEntries(
+			Object.entries( data.settings )
+				.map( ( [ key, setting ] ) => [ key, setting.value ] ),
+		);
+
+		// Render the template.
+		const html = template.replaceAll( /{{([^}]+)}}/g, ( match, key ) => {
+			return transformed[ key ];
+		} );
+
+		// Attach the content to the element.
+		this.$el.html( html );
+
+		this.bindUIElements();
+
+		this.triggerMethod( 'render:template' );
+	}
+
 	// Dispatch `render` event so the overlay layer will be updated
 	onRender( ...args ) {
 		super.onRender( ...args );
