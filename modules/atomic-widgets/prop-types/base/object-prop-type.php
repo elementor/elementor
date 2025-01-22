@@ -30,6 +30,20 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		$this->shape = $this->define_shape();
 	}
 
+	public function get_default() {
+		if ( null !== $this->default ) {
+			return $this->default;
+		}
+
+		foreach ( $this->get_shape() as $item ) {
+			if ( $item->get_default() !== null ) {
+				return static::generate( [] );
+			}
+		}
+
+		return null;
+	}
+
 	/**
 	 * @return static
 	 */
@@ -77,7 +91,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 				Utils::safe_throw( "Object prop type must have a prop type for key: $key" );
 			}
 
-			if ( ! $prop_type->validate( $value[ $key ] ?? null ) ) {
+			if ( ! $prop_type->validate( $value[ $key ] ?? $prop_type->get_default() ) ) {
 				return false;
 			}
 		}
