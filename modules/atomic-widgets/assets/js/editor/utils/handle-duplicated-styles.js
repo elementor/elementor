@@ -1,4 +1,5 @@
 import { updateStyleId } from './update-style-id';
+import { getElementChildren } from './get-element-children';
 
 /**
  * @typedef {import('assets/dev/js/editor/container/container')} Container

@@ -23,16 +23,13 @@ export function createContainer( {
 		} ),
 		render: jest.fn(),
 		lookup: () => container,
-		view: {
-			_index: 0,
-		},
 	};
+
 	return container;
 }
 
 export function addChildToContainer( container, child ) {
 	const children = container.model.get( 'elements' )?.models || [];
-	const childIndex = children.length;
 
 	children.push( child );
 
@@ -40,7 +37,6 @@ export function addChildToContainer( container, child ) {
 	container.children = children;
 
 	child.parent = container;
-	child.view._index = childIndex;
 }
 
 function createModel( attributes ) {

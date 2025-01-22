@@ -1,14 +1,14 @@
 import { createContainer, addChildToContainer } from '../../../create-container';
 import { setGlobalContainers } from './utils/set-global-containers';
 
-describe( 'Duplicate element - apply', () => {
-	let duplicateElementHook;
+describe( 'Detect duplicated styles', () => {
+	const hooks = {
+		paste: null,
+		duplicate: null,
+		import: null,
+	};
 
 	beforeAll( async () => {
-		global._ = {
-			debounce: ( cb ) => ( () => cb() ),
-		};
-
 		global.elementorCommon = {
 			helpers: {
 				getUniqueId: () => 'random',
@@ -51,10 +51,14 @@ describe( 'Duplicate element - apply', () => {
 		};
 
 		const DuplicateElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/duplicated-styles/duplicate-element' ) ).default;
+		const PasteElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/duplicated-styles/paste-element' ) ).default;
+		const ImportElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/duplicated-styles/import-element' ) ).default;
+
 		const SetSettingsCommand = ( await import( 'elementor-document/elements/commands-internal/set-settings' ) ).default;
 
-		// For mocking the randomId method
-		duplicateElementHook = new DuplicateElementHook();
+		hooks.paste = new PasteElementHook();
+		hooks.duplicate = new DuplicateElementHook();
+		hooks.import = new ImportElementHook();
 
 		global.$e.internal = ( command, args ) => {
 			switch ( command ) {
@@ -68,12 +72,17 @@ describe( 'Duplicate element - apply', () => {
 		delete global.$e;
 		delete global.elementor;
 		delete global.elementorCommon;
-		delete global._;
+	} );
 
+	afterEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should detect all atomic widgets with local styles within the duplicated container and regenerate an id to each of the styles', () => {
+	it.each( [
+		[ 'paste' ],
+		[ 'duplicate' ],
+		[ 'import' ],
+	] )( 'should detect all duplicated styled atomic widgets on %d', async ( hook ) => {
 		// Arrange
 		const styledElement = createContainer( {
 			widgetType: 'a-heading',
@@ -100,7 +109,7 @@ describe( 'Duplicate element - apply', () => {
 			elType: 'widget',
 			id: '567',
 			styles: {
-				's-456-1': {		// This widget is the outcome of the duplication command - all the original settings are copied, including the style id
+				's-456-1': {
 					id: 's-456-1',
 					label: '',
 					type: 'class',
@@ -115,7 +124,27 @@ describe( 'Duplicate element - apply', () => {
 			},
 		} );
 
-		const anotherStyledElement = createContainer( {
+		const container = createContainer( {
+			widgetType: 'div-block',
+			elType: 'div-block',
+			id: '123',
+			styles: {
+				's-123-1': {
+					id: 's-123-1',
+					label: '',
+					type: 'class',
+					variants: [],
+				},
+			},
+			settings: {
+				classes: {
+					$$type: 'classes',
+					value: [ 's-123-1' ],
+				},
+			},
+		} );
+
+		const nestedStyledElement = createContainer( {
 			widgetType: 'a-heading',
 			elType: 'widget',
 			id: '678',
@@ -135,40 +164,15 @@ describe( 'Duplicate element - apply', () => {
 			},
 		} );
 
-		const container = createContainer( {
-			widgetType: 'div-block',
-			elType: 'div-block',
-			id: '123',
-			styles: {
-				's-123-1': {
-					id: 's-123-1',
-					label: '',
-					type: 'class',
-					variants: [],
-				},
-			},
-			settings: {
-				classes: {
-					$$type: 'classes',
-					value: [ 's-123-1' ],
-				},
-			},
-		} );
-
+		addChildToContainer( duplicatedStyledElement, nestedStyledElement );
 		addChildToContainer( container, styledElement );
 		addChildToContainer( container, duplicatedStyledElement );
-		addChildToContainer( container, anotherStyledElement );
+		setGlobalContainers( [ container, styledElement, duplicatedStyledElement, nestedStyledElement ] );
 
-		setGlobalContainers( [ container, styledElement, duplicatedStyledElement, anotherStyledElement ] );
-
-		const runCommand = global.$e.run = jest.fn();
+		const setSettingsCommand = jest.spyOn( global.$e, 'internal' );
 
 		// Act
-		// The original command expects to get the target container of the duplicated widget
-		// ** the hook is executed AFTER the element has been duplicated
-		duplicateElementHook.apply( {
-			containers: [ styledElement ],
-		} );
+		hooks[ hook ].apply( {}, [ duplicatedStyledElement ] );
 
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( {
@@ -180,7 +184,14 @@ describe( 'Duplicate element - apply', () => {
 			},
 		} );
 
-		expect( duplicatedStyledElement.settings.get( 'classes' ) ).toEqual( { $$type: 'classes', value: [ 's-567-random' ] } );
+		expect( styledElement.model.get( 'styles' ) ).toEqual( {
+			's-456-1': {
+				id: 's-456-1',
+				label: '',
+				type: 'class',
+				variants: [],
+			},
+		} );
 
 		expect( duplicatedStyledElement.model.get( 'styles' ) ).toEqual( {
 			's-567-random': {
@@ -191,38 +202,45 @@ describe( 'Duplicate element - apply', () => {
 			},
 		} );
 
-		expect( anotherStyledElement.settings.get( 'classes' ) ).toEqual( { $$type: 'classes', value: [ 's-678-1' ] } );
-
-		expect( anotherStyledElement.model.get( 'styles' ) ).toEqual( {
-			's-678-1': {
-				id: 's-678-1',
+		expect( nestedStyledElement.model.get( 'styles' ) ).toEqual( {
+			's-678-random': {
+				id: 's-678-random',
 				label: '',
 				type: 'class',
 				variants: [],
 			},
 		} );
 
-		expect( runCommand ).toBeCalledWith( 'document/atomic-widgets/styles-update' );
+		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
+			container: nestedStyledElement,
+			settings: {
+				classes: { $$type: 'classes', value: [ 's-678-random' ] },
+			},
+		} );
+
+		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
+			container: duplicatedStyledElement,
+			settings: {
+				classes: { $$type: 'classes', value: [ 's-567-random' ] },
+			},
+		} );
 	} );
 
-	it( 'should not do anything if no styled elements are duplicated', () => {
+	it.each( [
+		[ 'paste' ],
+		[ 'duplicate' ],
+		[ 'import' ],
+	] )( 'should not do anything if no styled elements are duplicated on %d', async ( hook ) => {
 		// Arrange
 		const container = createContainer( {
 			widgetType: 'div-block',
 			elType: 'div-block',
 			id: '123',
-			styles: {
-				's-123-1': {
-					id: 's-123-1',
-					label: '',
-					type: 'class',
-					variants: [],
-				},
-			},
+			styles: {},
 			settings: {
 				classes: {
 					$$type: 'classes',
-					value: [ 's-123-1' ],
+					value: [],
 				},
 			},
 		} );
@@ -255,17 +273,14 @@ describe( 'Duplicate element - apply', () => {
 
 		addChildToContainer( container, nonStyledElement );
 		addChildToContainer( container, duplicatedNonStyledElement );
-
 		setGlobalContainers( [ container, nonStyledElement, duplicatedNonStyledElement ] );
 
-		const runCommand = global.$e.run = jest.fn();
+		const setSettingsCommand = jest.spyOn( global.$e, 'internal' );
 
 		// Act
-		duplicateElementHook.apply( {
-			containers: [ nonStyledElement ],
-		} );
+		hooks[ hook ].apply( {}, [ duplicatedNonStyledElement ] );
 
 		// Assert
-		expect( runCommand ).not.toBeCalled();
+		expect( setSettingsCommand ).not.toBeCalled();
 	} );
 } );
