@@ -17,7 +17,7 @@ describe( 'Detect duplicated styles', () => {
 	beforeAll( async () => {
 		global.elementorCommon = {
 			helpers: {
-				getUniqueId: () => 'random',
+				getUniqueId: () => 'new',
 			},
 		};
 
@@ -60,18 +60,9 @@ describe( 'Detect duplicated styles', () => {
 		const PasteElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/duplicated-styles/paste-element' ) ).default;
 		const ImportElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/duplicated-styles/import-element' ) ).default;
 
-		const SetSettingsCommand = ( await import( 'elementor-document/elements/commands-internal/set-settings' ) ).default;
-
 		hooks.paste = new PasteElementHook();
 		hooks.duplicate = new DuplicateElementHook();
 		hooks.import = new ImportElementHook();
-
-		global.$e.internal = ( command, args ) => {
-			switch ( command ) {
-				case 'document/elements/set-settings':
-					return new SetSettingsCommand().apply( args );
-			}
-		};
 	} );
 
 	afterAll( async () => {
@@ -80,96 +71,71 @@ describe( 'Detect duplicated styles', () => {
 		delete global.elementorCommon;
 	} );
 
+	beforeEach( () => {
+		global.$e.internal = jest.fn();
+	} );
+
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	it.each( hookNames )( 'should detect all duplicated styled atomic widgets on %d', async ( hook ) => {
+	it.each( hookNames )( 'should detect all duplicated styled atomic widgets on %s', async ( hook ) => {
 		// Arrange
-		const styledElement = createContainer( {
-			widgetType: 'a-heading',
-			elType: 'widget',
-			id: '456',
-			styles: {
-				's-456-1': {
-					id: 's-456-1',
-					label: '',
-					type: 'class',
-					variants: [],
-				},
-			},
-			settings: {
-				classes: {
-					$$type: 'classes',
-					value: [ 's-456-1' ],
-				},
-			},
-		} );
-
-		const duplicatedStyledElement = createContainer( {
-			widgetType: 'a-heading',
-			elType: 'widget',
-			id: '567',
-			styles: {
-				's-456-1': {
-					id: 's-456-1',
-					label: '',
-					type: 'class',
-					variants: [],
-				},
-			},
-			settings: {
-				classes: {
-					$$type: 'classes',
-					value: [ 's-456-1' ],
-				},
-			},
-		} );
-
 		const container = createContainer( {
 			widgetType: 'div-block',
 			elType: 'div-block',
-			id: '123',
-			styles: {
-				's-123-1': {
-					id: 's-123-1',
-					label: '',
-					type: 'class',
-					variants: [],
-				},
-			},
+			id: 'widget1',
+			styles: createMockStyle( 's-widget1-1' ),
 			settings: {
-				classes: {
-					$$type: 'classes',
-					value: [ 's-123-1' ],
-				},
+				classes: createMockClassPropValue( 's-widget1-1' ),
+			},
+		} );
+
+		const styledElement = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: 'widget2',
+			styles: createMockStyle( 's-widget2-1' ),
+			settings: {
+				classes: createMockClassPropValue( 's-widget2-1' ),
 			},
 		} );
 
 		const nestedStyledElement = createContainer( {
 			widgetType: 'a-heading',
 			elType: 'widget',
-			id: '678',
-			styles: {
-				's-678-1': {
-					id: 's-678-1',
-					label: '',
-					type: 'class',
-					variants: [],
-				},
-			},
+			id: 'widget3',
+			styles: createMockStyle( 's-widget3-1' ),
 			settings: {
-				classes: {
-					$$type: 'classes',
-					value: [ 's-678-1' ],
-				},
+				classes: createMockClassPropValue( 's-widget3-1' ),
 			},
 		} );
 
-		addChildToContainer( duplicatedStyledElement, nestedStyledElement );
+		const duplicatedStyledElement = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: 'widget4',
+			styles: createMockStyle( 's-widget2-1' ),
+			settings: {
+				classes: createMockClassPropValue( 's-widget2-1' ),
+			},
+		} );
+
+		const duplicatedNestedStyledElement = createContainer( {
+			widgetType: 'a-heading',
+			elType: 'widget',
+			id: 'widget5',
+			styles: createMockStyle( 's-widget3-1' ),
+			settings: {
+				classes: createMockClassPropValue( 's-widget3-1' ),
+			},
+		} );
+
 		addChildToContainer( container, styledElement );
+		addChildToContainer( styledElement, nestedStyledElement );
 		addChildToContainer( container, duplicatedStyledElement );
-		setGlobalContainers( [ container, styledElement, duplicatedStyledElement, nestedStyledElement ] );
+		addChildToContainer( duplicatedStyledElement, duplicatedNestedStyledElement );
+		setGlobalContainers( [ container, styledElement, nestedStyledElement, duplicatedStyledElement, duplicatedNestedStyledElement ] );
 
 		const setSettingsCommand = jest.spyOn( global.$e, 'internal' );
 
@@ -177,58 +143,32 @@ describe( 'Detect duplicated styles', () => {
 		hooks[ hook ].apply( {}, [ duplicatedStyledElement ] );
 
 		// Assert
-		expect( container.model.get( 'styles' ) ).toEqual( {
-			's-123-1': {
-				id: 's-123-1',
-				label: '',
-				type: 'class',
-				variants: [],
-			},
-		} );
+		expect( container.model.get( 'styles' ) ).toEqual( createMockStyle( 's-widget1-1' ) );
 
-		expect( styledElement.model.get( 'styles' ) ).toEqual( {
-			's-456-1': {
-				id: 's-456-1',
-				label: '',
-				type: 'class',
-				variants: [],
-			},
-		} );
+		expect( styledElement.model.get( 'styles' ) ).toEqual( createMockStyle( 's-widget2-1' ) );
 
-		expect( duplicatedStyledElement.model.get( 'styles' ) ).toEqual( {
-			's-567-random': {
-				id: 's-567-random',
-				label: '',
-				type: 'class',
-				variants: [],
-			},
-		} );
+		expect( nestedStyledElement.model.get( 'styles' ) ).toEqual( createMockStyle( 's-widget3-1' ) );
 
-		expect( nestedStyledElement.model.get( 'styles' ) ).toEqual( {
-			's-678-random': {
-				id: 's-678-random',
-				label: '',
-				type: 'class',
-				variants: [],
-			},
-		} );
+		expect( duplicatedStyledElement.model.get( 'styles' ) ).toEqual( createMockStyle( 's-widget4-new' ) );
 
-		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
-			container: nestedStyledElement,
-			settings: {
-				classes: { $$type: 'classes', value: [ 's-678-random' ] },
-			},
-		} );
+		expect( duplicatedNestedStyledElement.model.get( 'styles' ) ).toEqual( createMockStyle( 's-widget5-new' ) );
 
 		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
 			container: duplicatedStyledElement,
 			settings: {
-				classes: { $$type: 'classes', value: [ 's-567-random' ] },
+				classes: createMockClassPropValue( 's-widget4-new' ),
+			},
+		} );
+
+		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
+			container: duplicatedNestedStyledElement,
+			settings: {
+				classes: createMockClassPropValue( 's-widget5-new' ),
 			},
 		} );
 	} );
 
-	it.each( hookNames )( 'should not do anything if no styled elements are duplicated on %d', async ( hook ) => {
+	it.each( hookNames )( 'should not do anything if no styled elements are duplicated on %s', async ( hook ) => {
 		// Arrange
 		const container = createContainer( {
 			widgetType: 'div-block',
@@ -281,4 +221,18 @@ describe( 'Detect duplicated styles', () => {
 		// Assert
 		expect( setSettingsCommand ).not.toBeCalled();
 	} );
+} );
+
+const createMockStyle = ( id ) => ( {
+	[ id ]: {
+		id,
+		label: 'Local',
+		type: 'class',
+		variants: [],
+	},
+} );
+
+const createMockClassPropValue = ( id ) => ( {
+	$$type: 'classes',
+	value: [ id ],
 } );
