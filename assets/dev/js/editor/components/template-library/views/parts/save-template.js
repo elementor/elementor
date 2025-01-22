@@ -74,6 +74,22 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			} );
 
 			this.handlePlaceHolder( $dropdown );
+			
+			$dropdown.on('select2:selecting select2:unselecting', () => {
+				setTimeout(function(){
+					var selectedOptions = jQuery('.select2-results__option[aria-selected=true]');
+					selectedOptions.each(function() {
+						var $checkbox = jQuery(this).find('input');
+							$checkbox.prop('checked', true);
+						});
+					
+						var unselectedOptions = jQuery('.select2-results__option[aria-selected=false]');
+						unselectedOptions.each(function() {
+							var $checkbox = jQuery(this).find('input');
+							$checkbox.prop('checked', false);
+						});
+				});
+			});
 		}
 	},
 
