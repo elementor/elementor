@@ -56,9 +56,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-templates">
 	<#
 		var activeSource = elementor.templates.getFilter('source');
+		const isRemote = elementor.hooks.applyFilters( 'templates/modal/active-source', activeSource !== 'local', activeSource );
 	#>
 	<div id="elementor-template-library-toolbar">
-		<# if ( 'remote' === activeSource ) {
+		<# if ( isRemote ) {
 			var activeType = elementor.templates.getFilter('type');
 			#>
 			<div id="elementor-template-library-filter-toolbar-remote" class="elementor-template-library-filter-toolbar">
@@ -128,7 +129,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	<# } #>
 	<div id="elementor-template-library-templates-container"></div>
-	<# if ( 'remote' === activeSource ) { #>
+	<# if ( isRemote ) { #>
 		<div id="elementor-template-library-footer-banner">
 			<img class="elementor-nerd-box-icon" src="<?php
 				Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' );

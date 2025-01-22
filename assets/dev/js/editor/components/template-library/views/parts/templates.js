@@ -59,7 +59,8 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	getChildView( childModel ) {
-		if ( 'remote' === childModel.get( 'source' ) ) {
+		const isRemote = elementor.hooks.applyFilters( 'templates/modal/active-source', childModel.get( 'source' ) !== 'local', activeSource );
+		if ( isRemote ) {
 			return TemplateLibraryTemplateRemoteView;
 		}
 
