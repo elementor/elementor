@@ -2,6 +2,9 @@ name: Playwright
 
 on:
   push:
+    branches:
+      - 'main'
+      - '3.*'
     paths-ignore:
       - '**.md'
       - '**.txt'
