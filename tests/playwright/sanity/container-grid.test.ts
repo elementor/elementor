@@ -28,6 +28,7 @@ test.describe( 'Container Grid tests @container', () => {
 			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' ),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
+		// Arrange.
 		await test.step( 'Arrange', async () => {
 			await editor.closeNavigatorIfOpen();
 			await editor.setSelectControlValue( 'container_type', 'grid' );
@@ -53,6 +54,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
+			// Arrange
 			const alignContentControl = page.locator( '.elementor-control-grid_align_content' );
 
 			// Assert - Check the controls initial state

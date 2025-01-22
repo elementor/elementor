@@ -14,13 +14,13 @@ export default class {
 		// TODO: use the new data-testid attribute
 		const baseLocator = page.locator( '[aria-label="Switch Device"]' );
 		const locators = {
-			mobile: baseLocator.locator( '[data-testid="switch-device-to-mobile"]' ),
+			mobile: baseLocator.locator( 'button[aria-label="Mobile Portrait (up to 767px)"]' ),
 			mobile_extra: baseLocator.locator( 'button[aria-label="Mobile Landscape (up to 880px)"]' ),
-			tablet: baseLocator.locator( '[data-testid="switch-device-to-tablet"]' ),
+			tablet: baseLocator.locator( 'button[aria-label="Tablet Portrait (up to 1024px)"]' ),
 			tablet_extra: baseLocator.locator( 'button[aria-label="Tablet Landscape (up to 1200px)"]' ),
-			laptop: baseLocator.locator( '[data-testid="switch-device-to-laptop"]' ),
-			desktop: baseLocator.locator( '[data-testid="switch-device-to-desktop"]' ),
-			widescreen: baseLocator.locator( '[data-testid="switch-device-to-widescreen"]' ),
+			laptop: baseLocator.locator( 'button[aria-label="Laptop (up to 1366px)"]' ),
+			desktop: baseLocator.locator( 'button[aria-label="Desktop"]' ),
+			widescreen: baseLocator.locator( 'button[aria-label="Widescreen (2400px and up)"]' ),
 		};
 
 		return locators[ device ];
