@@ -1,7 +1,10 @@
 name: Playwright
 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'main'
+      - '3.*'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -156,20 +159,20 @@ jobs:
         if: ${{ needs.Playwright.result == 'failure' }}
         uses: actions/checkout@v4
       - name: Send slack message
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+        if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
           PAYLOAD: |
             {
-              "text": "Elementor Core: Playwright with WordPress nightly has failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "Elementor Core: Playwright - ${{github.event_name}} has failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Elementor Core: Playwright with WordPress nightly failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "Elementor Core: Playwright - ${{github.event_name}} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 }
               ]
