@@ -13,11 +13,9 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 	private const DEFAULT_POSITION = '0% 0%';
 
-	public function __construct() {
-		$this->style_parts = [];
-	}
-
 	public function transform( $value, $key ) {
+		$this->style_parts = [];
+
 		if ( ! isset( $value['image-src'] ) ) {
 			return '';
 		}
