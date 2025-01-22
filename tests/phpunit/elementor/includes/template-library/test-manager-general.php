@@ -424,7 +424,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				"title" => "AFolder",
 				"type" => "FOLDER",
 				"templateType" => "",
-				"fileId" => null,
+				"fileId" => "uuid1",
 				"parentId" => null,
 			],
 			[
@@ -436,7 +436,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				"title" => "ATemplate",
 				"type" => "TEMPLATE",
 				"templateType" => "",
-				"fileId" => null
+				"fileId" => "uuid2",
 			],
 		];
 
