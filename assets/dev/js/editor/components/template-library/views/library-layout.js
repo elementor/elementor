@@ -104,12 +104,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
 	},
 
-	shouldShowCloudLibraryTemplate( elementModel ) {
-		return elementModel &&
-			[ 'container', 'section' ].includes( elementModel.get( 'elType' ) ) &&
-			elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ];
-	},
-
 	showPreviewView( templateModel ) {
 		this.modalContent.show( new TemplateLibraryPreviewView( {
 			url: templateModel.get( 'url' ),
