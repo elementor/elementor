@@ -7,30 +7,18 @@ export default class {
 	readonly page: Page;
 	constructor( page: Page ) {
 		this.page = page;
-		// TODO: throw exception if experiment Breakpoints is deactivated.
 	}
 
 	static getDeviceLocator( page: Page, device: Device ): Locator {
-		// TODO: use the new data-testid attribute
 		const baseLocator = page.locator( '[aria-label="Switch Device"]' );
-		const locators = {
-			mobile: baseLocator.locator( '[data-testid="switch-device-to-mobile"]' ),
-			mobile_extra: baseLocator.locator( '[data-testid="switch-device-to-mobile_extra"]' ),
-			tablet: baseLocator.locator( '[data-testid="switch-device-to-tablet"]' ),
-			tablet_extra: baseLocator.locator( '[data-testid="switch-device-to-tablet_extra"]' ),
-			laptop: baseLocator.locator( '[data-testid="switch-device-to-laptop"]' ),
-			desktop: baseLocator.locator( '[data-testid="switch-device-to-desktop"]' ),
-			widescreen: baseLocator.locator( '[data-testid="switch-device-to-widescreen"]' ),
-		};
-
-		return locators[ device ];
+		return baseLocator.locator( `[data-testid="switch-device-to-${ device }"]` );
 	}
 
-	static getAll() {
+	static getAll(): Device[] {
 		return [ 'mobile', 'mobile_extra', 'tablet', 'tablet_extra', 'laptop', 'desktop', 'widescreen' ];
 	}
 
-	static getBasic() {
+	static getBasic(): Device[] {
 		return [ 'mobile', 'tablet', 'desktop' ];
 	}
 
@@ -85,16 +73,7 @@ export default class {
 	}
 
 	getBreakpointInputLocator( page: Page, device: BreakpointEditableDevice ): Locator {
-		const locators = {
-			mobile: page.locator( 'input[data-setting="viewport_mobile"]' ),
-			mobile_extra: page.locator( 'input[data-setting="viewport_mobile_extra"]' ),
-			tablet: page.locator( 'input[data-setting="viewport_tablet"]' ),
-			tablet_extra: page.locator( 'input[data-setting="viewport_tablet_extra"]' ),
-			laptop: page.locator( 'input[data-setting="viewport_laptop"]' ),
-			widescreen: page.locator( 'input[data-setting="viewport_widescreen"]' ),
-		};
-
-		return locators[ device ];
+		return page.locator( `input[data-setting="viewport_${ device }"]` );
 	}
 
 	async setBreakpoint( editor: EditorPage, device: BreakpointEditableDevice, value: number ) {
