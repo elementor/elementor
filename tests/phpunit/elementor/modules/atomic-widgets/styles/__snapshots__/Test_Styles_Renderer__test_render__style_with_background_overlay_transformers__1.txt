@@ -1,1 +1,1 @@
-.test-background-overlay{background:linear-gradient(blue, blue),url(" https://example.com/image.jpg ");}
+.test-background-overlay{background:linear-gradient(blue, blue),url(" https://example.com/image.jpg ") 0% 0% / contain;}
