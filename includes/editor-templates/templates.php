@@ -254,8 +254,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="cloud-library-form-inputs">
 			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
 			<select name="source[]" id="elementor-template-library-save-template-source" multiple="multiple">
-				<option name="local">Site Library</option>
-				<option name="cloud-library">Cloud Library</option>
+				<option value="local">Site Library</option>
+				<option value="cloud">Cloud Library</option>
 			</select>
 			<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
 				<span class="elementor-state-icon">
