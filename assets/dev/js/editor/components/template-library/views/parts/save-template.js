@@ -64,8 +64,6 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 					placeholder: __( 'Where do you want to save your template?', 'elementor' ),
 					dropdownParent: this.$el,
 					closeOnSelect: false,
-					templateResult: this.addCheckbox.bind( this ),
-					templateSelection: this.formatSelected.bind( this ),
 				};
 
 			this.select2Instance = new Select2( {
@@ -74,22 +72,6 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			} );
 
 			this.handlePlaceHolder( $dropdown );
-			
-			$dropdown.on('select2:selecting select2:unselecting', () => {
-				setTimeout(function(){
-					var selectedOptions = jQuery('.select2-results__option[aria-selected=true]');
-					selectedOptions.each(function() {
-						var $checkbox = jQuery(this).find('input');
-							$checkbox.prop('checked', true);
-						});
-					
-						var unselectedOptions = jQuery('.select2-results__option[aria-selected=false]');
-						unselectedOptions.each(function() {
-							var $checkbox = jQuery(this).find('input');
-							$checkbox.prop('checked', false);
-						});
-				});
-			});
 		}
 	},
 
