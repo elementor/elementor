@@ -425,12 +425,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'size' => 'auto',
+                                                    'position' => 'top center',
 												]
 											],
-											[
-												'$$$type' => 'image-attachment-id',
-												'value' => 'top center',
-											]
 										],
 									],
 
@@ -490,12 +487,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'size' => 'cover',
+                                                    'position' => 'bottom right',
 												]
 											],
-											[
-												'$$type' => 'background-image-overlay',
-												'value' => 'bottom right'
-											]
 										],
 									],
 
@@ -607,12 +601,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'size' => 'contain',
+                                                    'position' => 'center center',
 												]
 											],
-											[
-												'$$type' => 'background-image-overlay',
-												'value' => 'center center',
-											]
 										],
 									],
 								],
