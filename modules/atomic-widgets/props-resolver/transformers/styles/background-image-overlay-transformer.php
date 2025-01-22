@@ -26,6 +26,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 	private function add_image_style( array $image_src ): void {
 		$image_url = $this->get_image_url( $image_src );
 
+        $this->active_styles = [];
 		$this->active_styles[] = "url(\" $image_url \")";
 	}
 
