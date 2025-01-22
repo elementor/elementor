@@ -654,10 +654,11 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( changedSettings, dataBinding, changedControl ) {
+	isAtomicDynamic( changedSettings, dataBinding, changedControl, bindingDynamicCssId ) {
 		return '__dynamic__' in changedSettings &&
 			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl );
+			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
+			bindingDynamicCssId === changedControl );
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
@@ -760,7 +761,7 @@ BaseElementView = BaseContainer.extend( {
 				changedControl = this.getChangedDynamicControlKey( settings );
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl ) ) {
+			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl, bindingDynamicCssId ) ) {
 				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
 
 				if ( dynamicValue ) {

@@ -938,6 +938,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		view.addRenderAttribute( 'details-container', itemWrapperAttributes, null, true );
 		view.addRenderAttribute( 'summary-container', itemTitleAttributes, null, true );
+		view.addRenderAttribute( 'text-container', itemTitleTextAttributes, null, true );
 		#>
 
 		<details {{{ view.getRenderAttributeString( 'details-container' ) }}}>
