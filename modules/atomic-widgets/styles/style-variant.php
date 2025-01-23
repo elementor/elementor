@@ -26,7 +26,7 @@ class Style_Variant implements \JsonSerializable {
 		return $this;
 	}
 
-	public function get(): array {
+	public function to_array(): array {
 		return [
 			'meta' => [
 				'breakpoint' => $this->breakpoint,
@@ -37,6 +37,6 @@ class Style_Variant implements \JsonSerializable {
 	}
 
 	public function jsonSerialize(): array {
-		return $this->get();
+		return $this->to_array();
 	}
 }

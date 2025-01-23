@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Transformer_Base {
-	public function reset() {}
 	abstract public function transform( $value, $key );
+
+	public function reset() {}
 }

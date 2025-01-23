@@ -23,7 +23,7 @@ class Style_Definition {
 	}
 
 	public function add_variant( Style_Variant $variant ): self {
-		$this->variants[] = $variant->get();
+		$this->variants[] = $variant->to_array();
 		return $this;
 	}
 
