@@ -20,7 +20,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 		add_action( 'rest_api_init', function () {
-			( new Elementor_Post_Meta() )->register();
 			( new Elementor_Settings() )->register();
 			( new Elementor_User_Meta() )->register();
 		} );
