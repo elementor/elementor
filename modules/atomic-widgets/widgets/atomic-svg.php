@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Svg extends Atomic_Widget_Base {
-	public function get_name() {
+	public static function get_element_type(): string {
 		return 'a-svg';
 	}
 

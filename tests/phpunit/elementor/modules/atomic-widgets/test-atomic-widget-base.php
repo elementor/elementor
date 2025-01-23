@@ -117,7 +117,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'transform classes' => [
 				'args' => [
 					'prop_types' => [
-						'classes' => Classes_Prop_Type::make()->default( [] ),
+						'classes' => Classes_Prop_Type::make()->default( [] )->add_fixed_class( 'fixed-class' ),
 						'inner_classes' => Classes_Prop_Type::make()->default( [] ),
 						'outer_classes' => Classes_Prop_Type::make()->default( [] ),
 					],
@@ -132,7 +132,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						],
 					],
 					'result' => [
-						'classes' => 'one two three',
+						'classes' => 'one two three fixed-class',
 						'inner_classes' => '',
 						'outer_classes' => null,
 					],
@@ -1401,7 +1401,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				], [] );
 			}
 
-			public function get_name() {
+			public static function get_element_type(): string {
 				return 'test-widget';
 			}
 

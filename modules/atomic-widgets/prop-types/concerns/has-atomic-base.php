@@ -20,6 +20,12 @@ trait Has_Atomic_Base {
 		return false;
 	}
 
+	abstract public static function get_element_type(): string;
+
+	public function get_name() {
+		return static::get_element_type();
+	}
+
 	private function get_valid_controls( array $schema, array $controls ): array {
 		$valid_controls = [];
 
@@ -152,5 +158,34 @@ trait Has_Atomic_Base {
 			'elementor/atomic-widgets/props-schema',
 			static::define_props_schema()
 		);
+	}
+
+	public static function define_default_styles(): array {
+		return [];
+	}
+
+	public static function get_default_styles() {
+		$default_styles = static::define_default_styles();
+		$style_definitions = [];
+
+		foreach ( $default_styles as $key => $style ) {
+			$id = static::get_element_type() . '-' . $key;
+
+			$style_definitions[] = $style->build( $id );
+		}
+
+		return $style_definitions;
+	}
+
+	public static function get_default_style_by_key( string $key ) {
+		$id = static::get_element_type() . '-' . $key;
+
+		$default_styles = static::define_default_styles();
+
+		if ( isset( $default_styles[ $key ] ) ) {
+			return $default_styles[ $key ]->build( $id );
+		}
+
+		return null;
 	}
 }
