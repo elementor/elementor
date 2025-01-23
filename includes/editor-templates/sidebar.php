@@ -39,7 +39,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<button id="elementor-sidebar-whats-new" class="elementor-sidebar-command tooltip-target" data-tooltip="<?php echo esc_attr__( "What's New", 'elementor' ); ?>" aria-label="<?php echo esc_attr__( "What's New", 'elementor' ); ?>" onClick="javascript: elementor.trigger( 'elementor/editor/panel/whats-new/clicked' );">
 			<i class="eicon-speakerphone" aria-hidden="true"></i>
 		</button>
-		<button id="elementor-sidebar-shortcuts" class="elementor-sidebar-command tooltip-target" data-tooltip="<?php echo esc_attr__( "Keyboard Shortcut", 'elementor' ); ?>" aria-label="<?php echo esc_attr__( "Keyboard Shortcuts", 'elementor' ); ?>" onClick="javascript: $e.run( 'shortcuts/open' );">
+		<button id="elementor-sidebar-shortcuts" class="elementor-sidebar-command tooltip-target" data-tooltip="<?php echo esc_attr__( "Keyboard Shortcuts", 'elementor' ); ?>" aria-label="<?php echo esc_attr__( "Keyboard Shortcuts", 'elementor' ); ?>" onClick="javascript: $e.run( 'shortcuts/open' );">
 			<i class="eicon-click" aria-hidden="true"></i>
 		</button>
 		<button id="elementor-sidebar-finder" class="elementor-sidebar-command tooltip-target" data-tooltip="<?php echo esc_attr__( 'Finder', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Finder', 'elementor' ); ?>" onClick="javascript: $e.run( 'finder/toggle' );">
