@@ -18,8 +18,10 @@ class Cloud_Library extends Library {
 		return 'cloud-library';
 	}
 
-	public function get_resources() {
-		return $this->http_request( 'GET', 'resources' );
+	public function get_resources( $args = [] ) {
+		return $this->http_request( 'GET', 'resources', $args, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
 	}
 
 	protected function init() {}
