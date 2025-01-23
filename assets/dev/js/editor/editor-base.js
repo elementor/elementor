@@ -1279,7 +1279,12 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onFirstPreviewLoaded() {
-		this.initSidebar();
+		const isTopBarActive = elementorCommon.config.experimentalFeatures.editor_v2;
+		const isSidebarPanelsActive = elementorCommon.config.experimentalFeatures.editor_side_panel;
+
+		if ( isTopBarActive && isSidebarPanelsActive ) {
+			this.initSidebar();
+		}
 
 		this.initPanel();
 

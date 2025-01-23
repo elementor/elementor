@@ -393,6 +393,17 @@ class Manager extends Base_Object {
 			'generator_tag' => true,
 			'default' => self::STATE_INACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'editor_side_panel',
+			'title' => esc_html__( 'Editor Side Panel', 'elementor' ),
+			'description' => esc_html__( 'Enjoy better user experience with a new editor layout with easier accesses the tools you use while editing your website.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'default' => self::STATE_INACTIVE,
+			// 'dependencies' => [
+			// 	'editor_v2',
+			// ],
+		] );
 	}
 
 	/**
