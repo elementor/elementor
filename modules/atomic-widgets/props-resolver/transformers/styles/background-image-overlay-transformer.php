@@ -14,7 +14,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			return '';
 		}
 
-		$image_url = $this->get_image_url( $value['image-src'], $value['resolution'] );
+		$image_url = $this->get_image_url( $value['image-src'], $value['resolution'] ?? 'large' );
 
 		$background_style = "url(\" $image_url \")";
 
@@ -27,7 +27,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		return $background_style;
 	}
 
-	private function get_image_url( array $image_src, ?string $resolution ): string {
+	private function get_image_url( array $image_src, string $resolution ): string {
 		if ( ! empty( $image_src['id'] ) ) {
 			return $this->get_image_url_by_id( $image_src['id'], $resolution );
 		}
@@ -39,7 +39,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		return $image_src['url'];
 	}
 
-	private function get_image_url_by_id( int $id, string $resolution = 'full' ): string {
+	private function get_image_url_by_id( int $id, string $resolution ): string {
 		$image_src = wp_get_attachment_image_src( $id, $resolution );
 
 		if ( ! $image_src ) {
