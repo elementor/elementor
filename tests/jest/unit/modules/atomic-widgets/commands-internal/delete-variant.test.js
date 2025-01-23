@@ -1,4 +1,4 @@
-import createContainer from '../createContainer';
+import { createContainer } from '../utils/container';
 
 describe( 'DeleteVariant - apply', () => {
 	let DeleteVariantCommand;

@@ -1,4 +1,4 @@
-export default function createContainer( {
+export function createContainer( {
 	elType,
 	widgetType,
 	label = 'Container',
@@ -21,7 +21,19 @@ export default function createContainer( {
 		render: jest.fn(),
 		lookup: () => container,
 	};
+
 	return container;
+}
+
+export function addChildToContainer( container, child ) {
+	const children = container.model.get( 'elements' )?.models || [];
+
+	children.push( child );
+
+	container.model.set( 'elements', { models: children } );
+	container.children = children;
+
+	child.parent = container;
 }
 
 function createModel( attributes ) {
@@ -39,5 +51,20 @@ function createModel( attributes ) {
 
 			this.attributes = { ...this.attributes, ...valueToMerge };
 		},
+	};
+}
+
+export function setGlobalContainers( containers = [] ) {
+	const containersMap = containers.reduce(
+		( obj, container ) => ( {
+			...obj,
+			[ container.id ]: container,
+		} ),
+		{},
+	);
+
+	global.elementor = {
+		...global.elementor,
+		getContainer: ( id ) => containersMap[ id ] ?? null,
 	};
 }
