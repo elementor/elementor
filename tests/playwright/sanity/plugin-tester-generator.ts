@@ -20,7 +20,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
 	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
 	{ pluginName: 'elementskit-lite', installSource: 'api' },
-	{ pluginName: 'envato-elements', installSource: 'api' },
+	{ pluginName: 'envato-elements', installSource: 'cli' },
 	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'header-footer-elementor', installSource: 'api' },
 	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
