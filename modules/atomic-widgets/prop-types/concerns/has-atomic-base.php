@@ -20,7 +20,7 @@ trait Has_Atomic_Base {
 		return false;
 	}
 
-	abstract static function get_element_type(): string;
+	abstract public static function get_element_type(): string;
 
 	public function get_name() {
 		return static::get_element_type();
