@@ -3,7 +3,6 @@ namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Atomic_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
