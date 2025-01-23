@@ -424,7 +424,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															'url' => null
 														],
 													],
-													'size' => 'auto',
+													'position' => 'top center',
 												]
 											],
 										],
@@ -486,6 +486,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'size' => 'cover',
+													'position' => 'bottom right',
 												]
 											],
 										],
@@ -624,6 +625,63 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertNotEmpty( $css, 'CSS should not be empty' );
 		$this->assertMatchesSnapshot( $css );
 	}
+
+    public function test_render__style_with_background_image_transformers_without_image() {
+        // Arrange.
+        add_filter( 'wp_get_attachment_image_src', function() {
+            return [
+                'https://example.com/image.jpg',
+                100,
+                200,
+            ];
+        } );
+
+        $styles = [
+            [
+                'id' => 'test-background-overlay',
+                'type' => 'class',
+                'variants' => [
+                    [
+                        'props' => [
+                            'background' => [
+                                '$$type' => 'background',
+                                'value' => [
+                                    'background-overlay' => [
+                                        '$$type' => 'background-overlay',
+                                        'value' => [
+                                            [
+                                                '$$type' => 'background-color-overlay',
+                                                'value' => 'blue',
+                                            ],
+                                            [
+                                                '$$type' => 'background-image-overlay',
+                                                'value' => [
+                                                    'size' => 'contain',
+                                                ]
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+
+                        'meta' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $stylesRenderer = new Styles_Renderer( [
+            'breakpoints' => [],
+        ] );
+
+        // Act.
+        $css = $stylesRenderer->render( $styles );
+
+        // Assert.
+        $this->assertNotEmpty( $css, 'CSS should not be empty' );
+        $this->assertMatchesSnapshot( $css );
+    }
 
 	public function test_render__style_with_position_transformers() {
 		// Arrange.
