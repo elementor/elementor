@@ -6,29 +6,26 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 
 class Styles_Renderer {
-	const SELECTOR_PREFIX = '.elementor ';
+	const DEFAULT_SELECTOR_PREFIX = '.elementor ';
 
 	/**
-	 * @var array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}> $breakpoints
+	 * @var array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
 	 */
 	private array $breakpoints;
 
+	private string $selector_prefix;
+
 	/**
-	 * Styles_Renderer constructor.
-	 *
-	 * Config format:
-	 * [
-	 *     breakpoints: array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
-	 * ]
-	 *
-	 * @param array $config
+	 * @param array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}> $breakpoints
+	 * @param string $selector_prefix
 	 */
-	public function __construct( array $config ) {
-		$this->breakpoints = $config['breakpoints'];
+	private function __construct( array $breakpoints, string $selector_prefix = self::DEFAULT_SELECTOR_PREFIX ) {
+		$this->breakpoints = $breakpoints;
+		$this->selector_prefix = $selector_prefix;
 	}
 
-	public static function make( array $config ): self {
-		return new self( $config );
+	public static function make( array $breakpoints, string $selector_prefix = self::DEFAULT_SELECTOR_PREFIX ): self {
+		return new self( $breakpoints, $selector_prefix );
 	}
 
 	/**
@@ -90,11 +87,10 @@ class Styles_Renderer {
 			isset( $map[ $style_def['type'] ] ) &&
 			$style_def['id']
 		) {
-			$prefix = self::SELECTOR_PREFIX;
 			$type = $map[ $style_def['type'] ];
 			$id = $style_def['id'];
 
-			return "{$prefix}{$type}{$id}";
+			return "{$this->selector_prefix}{$type}{$id}";
 		}
 
 		return null;
