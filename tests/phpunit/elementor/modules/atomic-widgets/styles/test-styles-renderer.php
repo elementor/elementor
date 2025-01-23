@@ -386,13 +386,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_nested_background_transformers() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function() {
-			return [
-				'https://example.com/image.jpg',
-				100,
-				200,
-			];
-		} );
+		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
+			$resolution = $args[2];
+			$images = $this->mock_images();
+
+			return $images[ $resolution ];
+		}, 10, 3 );
 
 		$styles = [
 			[
@@ -425,6 +424,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'position' => 'top center',
+													'resolution' => 'medium'
 												]
 											],
 										],
@@ -561,13 +561,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_background_overlay_transformers() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function() {
-			return [
-				'https://example.com/image.jpg',
-				100,
-				200,
-			];
-		} );
+		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
+			$resolution = $args[2];
+			$images = $this->mock_images();
+
+			return $images[ $resolution ];
+		}, 10, 3 );
 
 		$styles = [
 			[
@@ -600,6 +599,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'size' => 'contain',
+													'resolution' => 'large',
 												]
 											],
 										],
@@ -942,5 +942,30 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				throw new \Exception( 'Faulty transformer' );
 			}
 		};
+	}
+
+	private function mock_images() {
+		return [
+			'thumbnail' => [
+				'https://example.com/image-150x150.jpg',
+				150,
+				150,
+			],
+			'medium' => [
+				'https://example.com/image-300x300.jpg',
+				300,
+				300,
+			],
+			'large' => [
+				'https://example.com/image-1024x682.jpg',
+				1024,
+				682,
+			],
+			'full' => [
+				'https://example.com/image.jpg',
+				100,
+				200,
+			],
+		];
 	}
 }
