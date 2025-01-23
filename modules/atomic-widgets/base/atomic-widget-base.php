@@ -22,12 +22,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$this->styles = $data['styles'] ?? [];
 	}
 
-	abstract static function get_element_type() : string;
-
-	public function get_name() {
-		return static::get_element_type();
-	}
-
 	abstract protected function define_atomic_controls(): array;
 
 	final public function get_initial_config() {
