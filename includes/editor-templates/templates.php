@@ -64,7 +64,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		* @param bool   isRemote     - If `true` the source is a remote source.
 		* @param string activeSource - The current template source.
 		*/
-		const isRemote = elementor.hooks.applyFilters( 'templates/modal/active-source', activeSource !== 'local', activeSource );
+		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', activeSource !== 'local', activeSource );
 	#>
 	<div id="elementor-template-library-toolbar">
 		<# if ( isRemote ) {
