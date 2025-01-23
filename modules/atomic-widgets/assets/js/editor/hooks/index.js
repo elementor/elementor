@@ -1,3 +1,3 @@
-export { DuplicateElementHook } from './data/duplicated-styles/duplicate-element';
-export { ImportElementHook } from './data/duplicated-styles/import-element';
-export { PasteElementHook } from './data/duplicated-styles/paste-element';
+export { DuplicateElementHook } from './data/regenerate-local-style-ids/duplicate-element';
+export { ImportElementHook } from './data/regenerate-local-style-ids/import-element';
+export { PasteElementHook } from './data/regenerate-local-style-ids/paste-element';

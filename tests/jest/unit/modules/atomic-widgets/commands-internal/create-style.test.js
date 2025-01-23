@@ -1,4 +1,4 @@
-import { createContainer } from '../create-container';
+import { createContainer } from '../utils/container';
 
 describe( 'CreateStyle - apply', () => {
 	let CreateStyleCommand;

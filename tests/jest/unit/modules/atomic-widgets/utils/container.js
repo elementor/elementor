@@ -11,9 +11,6 @@ export function createContainer( {
 	const container = {
 		id,
 		label,
-		elType,
-		widgetType,
-		type: elType,
 		settings: settingsModel,
 		model: createModel( {
 			elType,
@@ -57,3 +54,17 @@ function createModel( attributes ) {
 	};
 }
 
+export function setGlobalContainers( containers = [] ) {
+	const containersMap = containers.reduce(
+		( obj, container ) => ( {
+			...obj,
+			[ container.id ]: container,
+		} ),
+		{},
+	);
+
+	global.elementor = {
+		...global.elementor,
+		getContainer: ( id ) => containersMap[ id ] ?? null,
+	};
+}

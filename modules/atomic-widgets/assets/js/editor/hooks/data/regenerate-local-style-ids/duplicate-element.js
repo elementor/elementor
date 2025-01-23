@@ -1,4 +1,4 @@
-import { handleDuplicatedStyles } from '../../../utils/handle-duplicated-styles';
+import { regenerateLocalStyleIds } from '../../../utils/regenerate-local-style-ids';
 
 export class DuplicateElementHook extends $e.modules.hookData.After {
 	getCommand() {
@@ -6,13 +6,13 @@ export class DuplicateElementHook extends $e.modules.hookData.After {
 	}
 
 	getId() {
-		return 'duplicate-element--document/elements/duplicate';
+		return 'regenerate-local-style-ids--document/elements/duplicate';
 	}
 
 	apply( args, result ) {
 		const containers = Array.isArray( result ) ? result : [ result ];
 
-		containers.forEach( handleDuplicatedStyles );
+		containers.forEach( regenerateLocalStyleIds );
 	}
 }
 export default DuplicateElementHook;

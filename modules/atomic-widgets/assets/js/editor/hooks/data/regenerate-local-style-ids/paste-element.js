@@ -1,4 +1,4 @@
-import { handleDuplicatedStyles } from '../../../utils/handle-duplicated-styles';
+import { regenerateLocalStyleIds } from '../../../utils/regenerate-local-style-ids';
 
 export class PasteElementHook extends $e.modules.hookData.After {
 	getCommand() {
@@ -6,13 +6,13 @@ export class PasteElementHook extends $e.modules.hookData.After {
 	}
 
 	getId() {
-		return 'duplicate-element--document/elements/paste';
+		return 'regenerate-local-style-ids--document/elements/paste';
 	}
 
 	apply( args, result ) {
 		const containers = Array.isArray( result ) ? result : [ result ];
 
-		containers.forEach( handleDuplicatedStyles );
+		containers.forEach( regenerateLocalStyleIds );
 	}
 }
 export default PasteElementHook;

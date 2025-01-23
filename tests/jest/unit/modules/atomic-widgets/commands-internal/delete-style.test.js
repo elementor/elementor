@@ -1,4 +1,4 @@
-import { createContainer } from '../create-container';
+import { createContainer } from '../utils/container';
 
 describe( 'DeleteStyle - apply', () => {
 	let DeleteStyleCommand;

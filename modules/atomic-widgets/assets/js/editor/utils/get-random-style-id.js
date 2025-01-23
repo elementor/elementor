@@ -7,5 +7,5 @@
  * @return {string}
  */
 export function getRandomStyleId( container ) {
-	return `s-${ container.id }-${ elementorCommon.helpers.getUniqueId() }`;
+	return `e-${ container.id }-${ elementorCommon.helpers.getUniqueId() }`;
 }
