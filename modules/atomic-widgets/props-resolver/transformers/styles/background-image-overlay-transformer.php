@@ -9,12 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
+	const DEFAULT_RESOLUTION = 'large';
+
 	public function transform( $value, $key ) {
 		if ( ! isset( $value['image-src'] ) ) {
 			return '';
 		}
 
-		$image_url = $this->get_image_url( $value['image-src'], $value['resolution'] ?? 'large' );
+		$image_url = $this->get_image_url( $value['image-src'], $value['resolution'] ?? self::DEFAULT_RESOLUTION );
 
 		$background_style = "url(\" $image_url \")";
 
