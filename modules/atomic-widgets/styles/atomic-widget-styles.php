@@ -22,7 +22,7 @@ class Atomic_Widget_Styles {
 		$styles = $element->get_raw_data()['styles'];
 		$default_styles = $element::get_default_styles();
 
-		$styles = array_merge( json_decode( json_encode( $default_styles ), true ), $styles );
+		$styles = array_merge( $default_styles, $styles );
 
 		if ( empty( $styles ) ) {
 			return;

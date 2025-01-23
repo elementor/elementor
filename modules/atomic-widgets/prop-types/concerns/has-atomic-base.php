@@ -168,8 +168,10 @@ trait Has_Atomic_Base {
 		$default_styles = static::define_default_styles();
 		$style_definitions = [];
 
-		foreach ($default_styles as $style) {
-			$style_definitions[] = $style->build( static::get_element_type() );
+		foreach ( $default_styles as $key => $style ) {
+			$id = static::get_element_type() . '-' . $key;
+
+			$style_definitions[] = $style->build( $id );
 		}
 
 		return $style_definitions;
@@ -178,10 +180,10 @@ trait Has_Atomic_Base {
 	public static function get_default_style_by_key( string $key ) {
 		$id = static::get_element_type() . '-' . $key;
 
-		foreach ( static::get_default_styles() as $style ) {
-			if ( $style->get_id() === $id ) {
-				return $style;
-			}
+		$default_styles = static::define_default_styles();
+
+		if ( isset( $default_styles[ $key ] ) ) {
+			return $default_styles[ $key ]->build( $id );
 		}
 
 		return null;

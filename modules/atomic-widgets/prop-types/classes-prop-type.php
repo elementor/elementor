@@ -9,20 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Classes_Prop_Type extends Plain_Prop_Type {
-	private array $additional_classes = [];
+	private array $fixed_classes = [];
 
 	public static function get_key(): string {
 		return 'classes';
 	}
 
-	public function add_additional_class( string $class_name ) {
-		$this->additional_classes[] = $class_name;
+	public function add_fixed_class(string $class_name ) {
+		$this->fixed_classes[] = $class_name;
 
 		return $this;
 	}
 
-	public function get_additional_classes() {
-		return $this->additional_classes;
+	public function get_fixed_classes() {
+		return $this->fixed_classes;
 	}
 
 	protected function validate_value( $value ): bool {

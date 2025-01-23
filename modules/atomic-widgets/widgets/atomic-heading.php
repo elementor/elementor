@@ -11,8 +11,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Styles\Default_Style;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Utils;
 
@@ -122,7 +121,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] )
-				->add_additional_class( $default1->get_id() ),
+				->add_fixed_class( $default1[ 'id' ] ),
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
@@ -137,17 +136,11 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	public static function define_default_styles (): array{
 		return [
-			Default_Style::key( 'default-1' )
-				->add_variant( Style_Variant::make()
-					->add_prop( 'font-size', Size_Prop_Type::generate( [
-						'size' => 20,
-						'unit' => 'px'
-					]) )
-				),
-			Default_Style::key( 'default-2' )
-				->add_variant( Style_Variant::make()
-					->add_prop( 'color', Color_Prop_Type::generate( 'red' ) )
-				),
+			'default-1' => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'color', Color_Prop_Type::generate( 'red' ) )
+				)
 		];
 	}
 

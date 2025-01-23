@@ -2,23 +2,14 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-class Style_Definition implements \JsonSerializable {
-	private string $id;
+class Style_Definition {
 	private string $type = 'class';
 	private string $label = '';
 	private array $variants = [];
 
 
-	private function __construct( string $id ) {
-		$this->id = $id;
-	}
-
-	public static function make( string $id ): self {
-		return new self( $id );
-	}
-
-	public function get_id(): string {
-		return $this->id;
+	public static function make(): self {
+		return new self();
 	}
 
 	public function set_type( string $type ): self {
@@ -37,16 +28,12 @@ class Style_Definition implements \JsonSerializable {
 	}
 
 
-	public function get(): array {
+	public function build( string $id ): array {
 		return [
-			'id' => $this->id,
+			'id' => $id,
 			'type' => $this->type,
 			'label' => $this->label,
 			'variants' => $this->variants,
 		];
-	}
-
-	public function jsonSerialize(): array {
-		return $this->get();
 	}
 }
