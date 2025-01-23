@@ -28,24 +28,13 @@ function updateStyleId( container ) {
 	const newStyles = {};
 
 	const changedIds = {}; // Conversion map - {[originalId: string]: newId: string}
-	const styleIdToClassesPropKey = classesProps.reduce( ( map, classesPropKey ) => {
-		const classes = settings[ classesPropKey ].value;
-
-		classes.forEach( ( styleId ) => {
-			map[ styleId ] = classesPropKey;
-		} );
-
-		return map;
-	}, {} );
 
 	Object.entries( originalStyles ).forEach( ( [ originalStyleId, style ] ) => {
-		if ( styleIdToClassesPropKey[ originalStyleId ] ) {
-			const newStyleId = getRandomStyleId( container );
+		const newStyleId = getRandomStyleId( container );
 
-			newStyles[ newStyleId ] = structuredClone( { ...style, id: newStyleId } );
+		newStyles[ newStyleId ] = structuredClone( { ...style, id: newStyleId } );
 
-			changedIds[ originalStyleId ] = newStyleId;
-		}
+		changedIds[ originalStyleId ] = newStyleId;
 	} );
 
 	const newClassesProps = classesProps.reduce( ( allClassesProps, classPropKey ) => {
