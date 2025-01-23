@@ -1,1 +1,1 @@
-.test-style{background:linear-gradient(blue, blue),url(" https://example.com/image.jpg ") 0% 0% / cover red;}
+.test-style{background:linear-gradient(blue, blue),url(" https://example.com/image.jpg ") bottom right / cover red;}
