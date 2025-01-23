@@ -39,7 +39,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		return $image_src['url'];
 	}
 
-	private function get_image_url_by_id( int $id, string $resolution = 'large' ): string {
+	private function get_image_url_by_id( int $id, string $resolution = 'full' ): string {
 		$image_src = wp_get_attachment_image_src( $id, $resolution );
 
 		if ( ! $image_src ) {
