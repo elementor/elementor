@@ -64,8 +64,8 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 					placeholder: __( 'Where do you want to save your template?', 'elementor' ),
 					dropdownParent: this.$el,
 					closeOnSelect: false,
-					templateResult: this.templateResult.bind(this),
-					templateSelection: this.formatSelected.bind(this),
+					templateResult: this.templateResult.bind( this ),
+					templateSelection: this.formatSelected.bind( this ),
 				};
 
 			this.select2Instance = new Select2( {

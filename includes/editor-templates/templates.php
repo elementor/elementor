@@ -250,7 +250,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 			<?php echo esc_html__( 'Save', 'elementor' ); ?>
 		</button>
-		<?php else: ?>
+		<?php else : ?>
 			<div class="cloud-library-form-inputs">
 			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
 			<select name="source[]" id="elementor-template-library-save-template-source" multiple="multiple" required>
