@@ -4,6 +4,8 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 use Elementor\Frontend;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
 use Elementor\Widget_Base;
@@ -75,6 +77,13 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 						],
 					],
 				],
+			],
+			'default_styles' => [
+				'default-1' => Style_Definition::make()
+					->add_variant(
+						Style_Variant::make()
+							->add_prop( 'color', Props_Factory::color( 'red' ) )
+					),
 			],
 		]);
 		$element_2 = $this->make_mock_widget([
@@ -317,7 +326,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 				], [] );
 			}
 
-			public function get_name() {
+			public static function get_element_type() {
 				return 'test-widget';
 			}
 
