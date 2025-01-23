@@ -3,7 +3,6 @@
 namespace Elementor\Modules\WpRest;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\WpRest\Classes\Elementor_Post_Meta;
 use Elementor\Modules\WpRest\Classes\Elementor_Settings;
 use Elementor\Modules\WpRest\Classes\Elementor_User_Meta;
 
