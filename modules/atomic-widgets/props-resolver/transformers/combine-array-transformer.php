@@ -20,7 +20,7 @@ class Combine_Array_Transformer extends Transformer_Base {
 		$this->additional_items = $items;
 	}
 
-	public function reset(){
+	public function reset() {
 		$this->additional_items = [];
 	}
 

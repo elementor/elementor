@@ -20,7 +20,7 @@ trait Has_Atomic_Base {
 		return false;
 	}
 
-	abstract static function get_element_type() : string;
+	abstract static function get_element_type(): string;
 
 	public function get_name() {
 		return static::get_element_type();
@@ -164,7 +164,7 @@ trait Has_Atomic_Base {
 		return [];
 	}
 
-	public static function get_default_styles(){
+	public static function get_default_styles() {
 		$default_styles = static::define_default_styles();
 		$style_definitions = [];
 

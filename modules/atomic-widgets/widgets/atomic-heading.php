@@ -121,7 +121,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] )
-				->add_fixed_class( $default1[ 'id' ] ),
+				->add_fixed_class( $default1['id'] ),
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
@@ -134,13 +134,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		];
 	}
 
-	public static function define_default_styles (): array{
+	public static function define_default_styles(): array {
 		return [
 			'default-1' => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'color', Color_Prop_Type::generate( 'red' ) )
-				)
+				),
 		];
 	}
 
