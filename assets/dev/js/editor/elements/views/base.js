@@ -658,7 +658,7 @@ BaseElementView = BaseContainer.extend( {
 		return '__dynamic__' in changedSettings &&
 			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
-			bindingDynamicCssId === changedControl );
+			this.isCssIdControl( changedControl, bindingDynamicCssId ) );
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
@@ -824,7 +824,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		if ( change && change.length ) {
-			dataBinding.el.closest( 'details' ).setAttribute( 'id', change );
+			dataBinding.el.closest( dataBinding.dataset.bindingSingleItemHtmlWrapperTag ).setAttribute( 'id', change );
 			return true;
 		}
 
