@@ -602,29 +602,14 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( `.elementor-control-${ controlId }_${ shadowType }_shadow_type label` ).first().click();
 	}
 
-	/**
-	 * Set text stroke control value.
-	 *
-	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} type      - Stroke type. Available options are 'text' or 'box'.
-	 * @param {number} value     - Stroke value.
-	 * @param {string} color     - Stroke color.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setTextStrokeControlValue( controlId: string, type: string, value: number, color: string ): Promise<void> {
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
+	async setTextStrokeControlValue( controlId: string, strokeType: string, value: number, color: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId }_${ strokeType }_stroke_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ strokeType }_stroke input[type="number"]` ).first().fill( value.toString() );
 		await this.page.locator( `.elementor-control-${ controlId }_stroke_color .pcr-button` ).first().click();
 		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type label` ).first().click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ strokeType }_stroke_type label` ).first().click();
 	}
 
-	/**
-	 * Set a widget mask.
-	 *
-	 * @return {Promise<void>}
-	 */
 	async setWidgetMask(): Promise<void> {
 		await this.openSection( '_section_masking' );
 		await this.setSwitcherControlValue( '_mask_switch', true );
