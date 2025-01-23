@@ -763,47 +763,50 @@ label.elementor-template-library-order-label {
 
 #select2-elementor-template-library-save-template-source-results {
 
-	.select2-results__option {
-		text-align: start;
+	.select2-results {
 
-		.main-item {
+		&__message {
 			padding-inline-start: 25px;
 			font-size: 16px;
 		}
-		
-		.sub-item {
-			padding-inline-start: 50px;
-			font-size: 14px;
+
+		&__option {
+			text-align: start;
+	
+			.main-item {
+				padding-inline-start: 25px;
+				font-size: 16px;
+			}
+			
+			.sub-item {
+				padding-inline-start: 50px;
+				font-size: 14px;
+			}
+
+			span:before {
+				content: "";
+				display: inline-block;
+				position: relative;
+				height: 15px;
+				width: 15px;
+				border: 2px solid $gray;
+				border-radius: 2px;
+				background-color: $white;
+				margin-inline-end: 10px;
+				vertical-align: middle;
+			}
+
+			&[aria-selected=true] span:before {
+				font-family:eicons;
+				content: "\e90e";
+				color: #fff;
+				border: none;
+				background-color: $gray;
+				display: inline-block;
+				padding-inline-start: 2px;
+				font-size: 11px;
+			}
 		}
-	}
-
-	.select2-results__option span:before {
-		content: "";
-		display: inline-block;
-		position: relative;
-		height: 15px;
-		width: 15px;
-		border: 2px solid $gray;
-		border-radius: 2px;
-		background-color: $white;
-		margin-inline-end: 10px;
-		vertical-align: middle;
-	}
-
-	.select2-results__option[aria-selected=true] span:before {
-		font-family:eicons;
-		content: "\e90e";
-		color: #fff;
-		border: none;
-		background-color: $gray;
-		display: inline-block;
-		padding-inline-start: 2px;
-		font-size: 11px;
-	}
-
-	.select2-results__message {
-		padding-inline-start: 25px;
-		font-size: 16px;
 	}
 }
 
