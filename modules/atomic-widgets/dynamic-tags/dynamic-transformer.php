@@ -25,8 +25,7 @@ class Dynamic_Transformer extends Transformer_Base {
 		$this->props_resolver = $props_resolver;
 	}
 
-	public function transform( $value, $key ) {
-		if ( ! isset( $value['name'] ) || ! is_string( $value['name'] ) ) {
+public function transform( $value, $key ) {		if ( ! isset( $value['name'] ) || ! is_string( $value['name'] ) ) {
 			throw new \Exception( 'Dynamic tag name must be a string' );
 		}
 

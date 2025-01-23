@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Base;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Atomic_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +23,12 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$this->styles = $data['styles'] ?? [];
 	}
 
+	abstract static function get_element_type() : string;
+
+	public function get_name() {
+		return static::get_element_type();
+	}
+
 	abstract protected function define_atomic_controls(): array;
 
 	final public function get_initial_config() {
@@ -29,6 +36,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
+		$config['default_styles'] = $this->get_default_styles();
 		$config['atomic_props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
 

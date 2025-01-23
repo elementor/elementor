@@ -2,15 +2,19 @@
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Controls\Dynamic_Section;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Default_Style;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Heading extends Atomic_Widget_Base {
-	public function get_name() {
+	public static function get_element_type(): string {
 		return 'a-heading';
 	}
 
@@ -114,9 +118,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$default1 = static::get_default_style_by_key( 'default-1' );
+
 		return [
 			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
+				->default( [] )
+				->add_additional_item( $default1->get_id() ),
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
@@ -126,6 +133,22 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'Your Title Here', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
+		];
+	}
+
+	public static function define_default_styles (): array{
+		return [
+			Default_Style::key( 'default-1' )
+				->add_variant( Style_Variant::make()
+					->add_prop( 'font-size', Size_Prop_Type::generate( [
+						'size' => 20,
+						'unit' => 'px'
+					]) )
+				),
+			Default_Style::key( 'default-2' )
+				->add_variant( Style_Variant::make()
+					->add_prop( 'color', Color_Prop_Type::generate( 'red' ) )
+				),
 		];
 	}
 

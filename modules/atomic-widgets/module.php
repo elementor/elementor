@@ -139,7 +139,11 @@ class Module extends BaseModule {
 		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
 
 		// Other
-		$transformers->register( Classes_Prop_Type::get_key(), new Combine_Array_Transformer( ' ' ) );
+		$transformers->register(
+			Classes_Prop_Type::get_key(),
+			new Combine_Array_Transformer( ' ' ),
+			fn( Combine_Array_Transformer $transformer, Classes_Prop_Type $prop_type ) => $transformer->set_additional_items( $prop_type->additional_items )
+		);
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Image_Attachment_Id_Prop_Type::get_key(), new Primitive_Transformer() );

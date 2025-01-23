@@ -123,14 +123,20 @@ class Props_Resolver {
 			);
 		}
 
-		$transformer = $this->transformers_registry->get( $value['$$type'] );
+		[ $transformer, $before_transform ] = $this->transformers_registry->get( $value['$$type'] );
 
 		if ( ! ( $transformer instanceof Transformer_Base ) ) {
 			return null;
 		}
 
+		if ( is_callable( $before_transform ) ) {
+			$before_transform( $transformer, $prop_type );
+		}
+
 		try {
 			$transformed_value = $transformer->transform( $value['value'], $key );
+
+			$transformer->reset();
 
 			return $this->transform( $transformed_value, $key, $prop_type, $depth + 1 );
 		} catch ( Exception $e ) {

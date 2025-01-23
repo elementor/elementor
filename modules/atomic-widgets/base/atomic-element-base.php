@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Base;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Atomic_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -31,9 +32,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = static::get_props_schema();
+		$config['default_styles'] = static::get_default_styles();
 		$config['version'] = $this->version;
 		$config['show_in_panel'] = true;
-		$config['categories'] = [ 'layout' ];
+		$config['categories'] = ['layout'];
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
 

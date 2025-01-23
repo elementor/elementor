@@ -9,8 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Classes_Prop_Type extends Plain_Prop_Type {
+	public array $additional_items = [];
+
 	public static function get_key(): string {
 		return 'classes';
+	}
+
+	public function add_additional_item( string $class_name ) {
+		$this->additional_items[] = $class_name;
+
+		return $this;
 	}
 
 	protected function validate_value( $value ): bool {
