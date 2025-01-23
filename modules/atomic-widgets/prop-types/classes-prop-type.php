@@ -15,7 +15,7 @@ class Classes_Prop_Type extends Plain_Prop_Type {
 		return 'classes';
 	}
 
-	public function add_fixed_class(string $class_name ) {
+	public function add_fixed_class( string $class_name ) {
 		$this->fixed_classes[] = $class_name;
 
 		return $this;
