@@ -64,6 +64,8 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 					placeholder: __( 'Where do you want to save your template?', 'elementor' ),
 					dropdownParent: this.$el,
 					closeOnSelect: false,
+					templateResult: this.templateResult.bind(this),
+					templateSelection: this.formatSelected.bind(this),
 				};
 
 			this.select2Instance = new Select2( {
@@ -88,18 +90,12 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.activateSelect2();
 	},
 
-	addCheckbox( option ) {
-		if ( ! option.id ) {
-			return option.text;
-		}
+	templateResult( option ) {
+		const className = ! option.id || 'local' === option.id || 'cloud' === option.id
+			? 'main-item'
+			: 'sub-item';
 
-		const checkbox = `<input type="checkbox" class="middle" ${ option.selected ? 'checked' : '' }>`;
-
-		return this.$(
-			`<label class="cloud-library-option">${ checkbox }
-				<span class="middle">${ option.text }</span>
-			</label>`,
-		);
+		return jQuery( `<span class="${ className }">${ option.text }</span>` );
 	},
 
 	formatSelected( option ) {
