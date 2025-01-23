@@ -704,7 +704,7 @@ label.elementor-template-library-order-label {
 			}
 
 			&-search__field {
-				max-width: 320px !important;
+				max-width: calc(100% - 50px);
 				float: inline-start;
 				line-height: 45px;
 			}
@@ -799,7 +799,7 @@ label.elementor-template-library-order-label {
 			&[aria-selected=true] span:before {
 				font-family:eicons;
 				content: "\e90e";
-				color: #fff;
+				color: $white;
 				border: none;
 				background-color: $gray;
 				display: inline-block;
