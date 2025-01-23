@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 class Background_Active_Control_Overlay_Prop_Type extends Object_Prop_Type {
