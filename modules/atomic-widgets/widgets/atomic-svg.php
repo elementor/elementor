@@ -1,10 +1,13 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Widgets;
 
+use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -54,19 +57,28 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		return [];
-	}
+        $content_section = Section::make()
+            ->set_label( esc_html__( 'Content', 'elementor' ) )
+            ->set_items( [
+                Svg_Control::bind_to( 'svg' )
+                    ->set_label( esc_html__( 'SVG', 'elementor' ) ),
+            ] );
+    
+        return [
+            $content_section,
+        ];
+    }
 
 	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-			'svg' => String_Prop_Type::make()
-				->default( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M.361 256C.361 397 114 511 255 511C397 511 511 397 511 256C511 116 397 2.05 255 2.05C114 2.05 .361 116 .361 256zM192 150V363H149V150H192zM234 150H362V193H234V150zM362 235V278H234V235H362zM234 320H362V363H234V320z"/></svg>' ),
-			'width' => String_Prop_Type::make()
-				->default( '100%' ),
-			'height' => String_Prop_Type::make()
-				->default( '100%' ),
-		];
-	}
+    return [
+        'classes' => Classes_Prop_Type::make()
+            ->default( [] ),
+        'svg' => Svg_Prop_Type::make()
+            ->default_svg( '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M.361 256C.361 397 114 511 255 511C397 511 511 397 511 256C511 116 397 2.05 255 2.05C114 2.05 .361 116 .361 256zM192 150V363H149V150H192zM234 150H362V193H234V150zM362 235V278H234V235H362zM234 320H362V363H234V320z"/></svg>' ),
+        'width' => String_Prop_Type::make()
+            ->default( '100%' ),
+        'height' => String_Prop_Type::make()
+            ->default( '100%' ),
+    ];
+}
 }
