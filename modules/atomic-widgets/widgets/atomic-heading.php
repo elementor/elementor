@@ -122,7 +122,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] )
-				->add_additional_item( $default1->get_id() ),
+				->add_additional_class( $default1->get_id() ),
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
