@@ -326,7 +326,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 				], [] );
 			}
 
-			public static function get_element_type() {
+			public static function get_element_type(): string {
 				return 'test-widget';
 			}
 
