@@ -86,10 +86,6 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
-	onRender() {
-		this.activateSelect2();
-	},
-
 	templateResult( option ) {
 		const className = ! option.id || 'local' === option.id || 'cloud' === option.id
 			? 'main-item'

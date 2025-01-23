@@ -736,11 +736,11 @@ label.elementor-template-library-order-label {
 	.select2 {
 
 		&-dropdown--above {
-			margin-top: -10px;
+			margin-block-start: -10px;
 		}
 
 		&-dropdown--below {
-			margin-top: 10px;
+			margin-block-start: 10px;
 		}
 
 		&-results__options {
