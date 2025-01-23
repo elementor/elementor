@@ -243,6 +243,7 @@ const EditorSelectors = {
 		upgradeButton: '.e-onboarding__button-action',
 		skipButton: '.e-onboarding__button-skip',
 		screenTitle: '.e-onboarding__page-content-section-title',
+		removeLogoButton: '.e-onboarding__logo-remove',
 		progressBar: {
 			skippedItem: '.e-onboarding__progress-bar-item--skipped',
 			completedItem: '.e-onboarding__progress-bar-item--completed',
