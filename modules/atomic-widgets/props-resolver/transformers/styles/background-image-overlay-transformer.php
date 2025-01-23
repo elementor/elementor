@@ -16,10 +16,15 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 		$image_url = $this->get_image_url( $value['image-src'], $value['resolution'] );
 
-		$image_style = "url(\" $image_url \")";
+		$background_style = "url(\" $image_url \")";
+
 		$position_and_size_style = $this->get_position_and_size_style( $value );
 
-		return $image_style . $position_and_size_style;
+		if ( ! empty( $position_and_size_style ) ) {
+			$background_style .= ' ' . $position_and_size_style;
+		}
+
+		return $background_style;
 	}
 
 	private function get_image_url( array $image_src, ?string $resolution ): string {
@@ -52,13 +57,13 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		}
 
 		if ( ! isset( $value['size'] ) ) {
-			return ' ' . $value['position'];
+			return $value['position'];
 		}
 
 		$default_position = '0% 0%';
 
 		$position = $value['position'] ?? $default_position;
 
-		return ' ' . $position . ' / ' . $value['size'];
+		return $position . ' / ' . $value['size'];
 	}
 }

@@ -1351,7 +1351,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														],
 														'size' => 'cover',
                                                         'position' => 'center left',
-                                                        'resolution' => null,
 													]
 												],
 											],
