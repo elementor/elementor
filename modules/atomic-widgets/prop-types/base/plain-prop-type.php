@@ -48,8 +48,8 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 			'kind' => static::KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),
-			'meta' => $this->get_meta(),
-			'settings' => $this->get_settings(),
+			'meta' => (object) $this->get_meta(),
+			'settings' => (object) $this->get_settings(),
 		];
 	}
 
