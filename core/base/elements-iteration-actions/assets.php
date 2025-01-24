@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Assets extends Base {
 	const ASSETS_META_KEY = '_elementor_page_assets';
+
 	/**
 	 * Default value must be empty.
 	 *
@@ -34,6 +35,7 @@ class Assets extends Base {
 		$element_assets_depend = [
 			'styles' => $element_data->get_style_depends(),
 			'scripts' => $element_data->get_script_depends(),
+			'script_modules' => $element_data->get_script_module_depends(),
 		];
 
 		if ( $element_assets_depend ) {
