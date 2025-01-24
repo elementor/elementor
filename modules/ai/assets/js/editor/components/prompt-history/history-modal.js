@@ -13,10 +13,11 @@ import InfiniteScroll from 'react-infinite-scroller';
 import PromptHistoryUpgrade from './parts/modal-upgrade';
 import { usePromptHistoryContext } from './context/prompt-history-context';
 import ModalContainer from './parts/modal-container';
+import useUserInfo from '../../hooks/use-user-info';
 
 const ITEMS_LIMIT = 10;
 const FREE_PLAN_ERRORS = [ 'invalid_connect_data', 'no_subscription' ];
-
+const QUOTA_UPGRADE_THRESHOLD = 50000;
 const PromptHistoryModal = ( props ) => {
 	const lastRun = useRef( () => {} );
 	const scrollContainer = useRef( null );
@@ -38,10 +39,12 @@ const PromptHistoryModal = ( props ) => {
 		deleteItem,
 	} = useDeletePromptHistoryItem();
 
+	const { quota } = useUserInfo();
+
 	const error = historyFetchingError || historyDeletingError;
 	const isLoading = isHistoryFetchingInProgress || isDeletingInProgress;
 	const isLastPage = meta && meta?.currentPage === meta?.totalPages;
-	const showUpgrade = items?.length > 0 && meta?.allowedDays < 90 && isLastPage;
+	const showUpgrade = quota < QUOTA_UPGRADE_THRESHOLD && items?.length > 0 && meta?.allowedDays < 90 && isLastPage;
 
 	useEffect( () => {
 		lastRun.current = async () => fetchData( { page: 1, limit: ITEMS_LIMIT } );
