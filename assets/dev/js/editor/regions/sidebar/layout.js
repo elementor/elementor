@@ -1,6 +1,4 @@
-var SidebarLayoutView;
-
-SidebarLayoutView = Marionette.LayoutView.extend( {
+module.exports = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-sidebar',
 
 	id: 'elementor-sidebar-inner',
@@ -34,5 +32,3 @@ SidebarLayoutView = Marionette.LayoutView.extend( {
 		} );
 	},
 } );
-
-module.exports = SidebarLayoutView;
