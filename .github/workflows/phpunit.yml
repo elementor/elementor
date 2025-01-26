@@ -47,7 +47,7 @@ jobs:
     name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
-      COVERAGE: ${{ matrix.php_versions >= 8.0 && matrix.wordpress_versions == 'latest' }}
+      COVERAGE: ${{ matrix.php_versions >= 8.0 && matrix.wordpress_versions == 'latest' && github.event_name == 'push'}}}
     services:
       mysql:
         image: mysql:5.7
