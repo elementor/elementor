@@ -6,7 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 
 class Styles_Renderer {
-	const DEFAULT_SELECTOR_PREFIX = '.elementor ';
+	const DEFAULT_SELECTOR_PREFIX = '.elementor';
 
 	/**
 	 * @var array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
@@ -90,7 +90,12 @@ class Styles_Renderer {
 			$type = $map[ $style_def['type'] ];
 			$id = $style_def['id'];
 
-			return "{$this->selector_prefix}{$type}{$id}";
+			$selector_parts = array_filter( [
+				$this->selector_prefix,
+				"{$type}{$id}",
+			] );
+
+			return implode( ' ', $selector_parts );
 		}
 
 		return null;

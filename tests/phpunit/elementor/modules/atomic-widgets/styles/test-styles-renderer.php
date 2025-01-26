@@ -880,7 +880,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
-	public function test_render__style_with_prefix() {
+	public function test_render__style_with_custom_prefix() {
 		// Arrange.
 		$styles = [
 			[
