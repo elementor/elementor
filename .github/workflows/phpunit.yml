@@ -1,6 +1,14 @@
 name: PHPUnit
 
 on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
   pull_request:
     paths-ignore:
       - '**.md'
