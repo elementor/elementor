@@ -3,12 +3,15 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Utils\Collection;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
+	private array $default_styles_per_post = [];
+
 	public function register_hooks() {
 		add_action( 'elementor/element/parse_css', fn( Post $post, Element_Base $element ) => $this->parse_element_style( $post, $element ), 10, 2 );
 	}
@@ -20,7 +23,15 @@ class Atomic_Widget_Styles {
 		}
 
 		$styles = $element->get_raw_data()['styles'];
-		$default_styles = $element::get_default_styles();
+
+		$post_default_styles = Collection::make( $this->default_styles_per_post[ $post->get_post_id() ] ?? [] );
+
+		if( ! $post_default_styles->contains( $element::get_element_type() ) ) {
+			$default_styles = $element::get_default_styles();
+			$this->default_styles_per_post[ $post->get_post_id() ][] = $element::get_element_type();
+		} else {
+			$default_styles = [];
+		}
 
 		$styles = array_merge( $default_styles, $styles );
 
