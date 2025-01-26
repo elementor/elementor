@@ -15,8 +15,9 @@ class Elementor_Post_Meta {
 		$post_types = get_post_types_by_support( 'elementor' );
 
 		foreach ( $post_types as $post_type ) {
-			register_meta( $post_type, '_elementor_edit_mode', [
+			register_meta( 'post', '_elementor_edit_mode', [
 				'single' => true,
+				'object_subtype' => $post_type,
 				'show_in_rest' => [
 					'schema' => [
 						'title' => 'Elementor edit mode',
@@ -32,8 +33,9 @@ class Elementor_Post_Meta {
 
 			$document_types = Plugin::$instance->documents->get_document_types();
 
-			register_meta( $post_type, '_elementor_template_type', [
+			register_meta( 'post', '_elementor_template_type', [
 				'single' => true,
+				'object_subtype' => $post_type,
 				'show_in_rest' => [
 					'schema' => [
 						'title' => 'Elementor template type',
@@ -47,8 +49,9 @@ class Elementor_Post_Meta {
 				'auth_callback' => [ $this, 'check_edit_permission' ],
 			]);
 
-			register_meta( $post_type, '_elementor_data', [
+			register_meta( 'post', '_elementor_data', [
 				'single' => true,
+				'object_subtype' => $post_type,
 				'show_in_rest' => [
 					'schema' => [
 						'title' => 'Elementor data',
@@ -61,8 +64,9 @@ class Elementor_Post_Meta {
 				'auth_callback' => [ $this, 'check_edit_permission' ],
 			]);
 
-			register_meta( $post_type, '_elementor_page_settings', [
+			register_meta( 'post', '_elementor_page_settings', [
 				'single' => true,
+				'object_subtype' => $post_type,
 				'show_in_rest' => [
 					'schema' => [
 						'title' => 'Elementor page settings',
@@ -84,7 +88,8 @@ class Elementor_Post_Meta {
 			]);
 
 			if ( Utils::has_pro() ) {
-				register_meta( $post_type, '_elementor_conditions', [
+				register_meta( 'post', '_elementor_conditions', [
+					'object_subtype' => $post_type,
 					'type' => 'object',
 					'title' => 'Elementor conditions',
 					'description' => 'Elementor conditions',
