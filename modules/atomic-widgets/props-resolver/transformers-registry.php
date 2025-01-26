@@ -10,17 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Transformers_Registry extends Collection {
-	public function register( string $key, Transformer_Base $transformer, callable $before_transform = null ) {
+	public function register( string $key, Transformer_Base $transformer ) {
 		if ( isset( $this->items[ $key ] ) ) {
 			Utils::safe_throw( "{$key} transformer is already registered." );
 
 			return $this;
 		}
 
-		$this->items[ $key ] = [
-			$transformer,
-			$before_transform,
-		];
+		$this->items[ $key ] = $transformer;
 
 		return $this;
 	}

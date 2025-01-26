@@ -9,20 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Classes_Prop_Type extends Plain_Prop_Type {
-	private array $fixed_classes = [];
-
 	public static function get_key(): string {
 		return 'classes';
-	}
-
-	public function add_fixed_class( string $class_name ) {
-		$this->fixed_classes[] = $class_name;
-
-		return $this;
-	}
-
-	public function get_fixed_classes() {
-		return $this->fixed_classes;
 	}
 
 	protected function validate_value( $value ): bool {

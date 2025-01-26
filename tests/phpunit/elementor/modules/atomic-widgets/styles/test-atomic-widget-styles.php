@@ -78,13 +78,6 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 					],
 				],
 			],
-			'default_styles' => [
-				'default-1' => Style_Definition::make()
-					->add_variant(
-						Style_Variant::make()
-							->add_prop( 'color', Props_Factory::color( 'red' ) )
-					),
-			],
 		]);
 		$element_2 = $this->make_mock_widget([
 			'controls' => [],
@@ -110,6 +103,52 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		// Act.
 		do_action( 'elementor/element/parse_css', $post, $element_1 );
 		do_action( 'elementor/element/parse_css', $post, $element_2 );
+
+		// Assert.
+		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
+	}
+
+	public function test_parse_atomic_widget_styles__append_css_of_widget_with_default_styles() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+		$post = $this->make_mock_post();
+		$element = $this->make_mock_widget([
+			'controls' => [],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				[
+					'id' => 'test-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'red',
+								'font-size' => '16px',
+							],
+							'meta' => [],
+						],
+						[
+							'props' => [
+								'color' => 'blue',
+								'font-size' => '18px',
+							],
+							'meta' => [],
+						],
+					],
+				],
+			],
+			'default_styles' => [
+				'default-1' => Style_Definition::make()
+					->add_variant(
+						Style_Variant::make()
+							->add_prop( 'color', Props_Factory::color( 'red' ) )
+					),
+			],
+		]);
+
+		// Act.
+		do_action( 'elementor/element/parse_css', $post, $element );
 
 		// Assert.
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
@@ -336,6 +375,10 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 			protected static function define_props_schema(): array {
 				return static::$options['props_schema'] ?? [];
+			}
+
+			public static function define_default_styles(): array {
+				return static::$options['default_styles'] ?? [];
 			}
 		};
 	}

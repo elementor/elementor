@@ -8,12 +8,15 @@ use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -117,7 +120,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'transform classes' => [
 				'args' => [
 					'prop_types' => [
-						'classes' => Classes_Prop_Type::make()->default( [] )->add_fixed_class( 'fixed-class' ),
+						'classes' => Classes_Prop_Type::make()->default( [] ),
 						'inner_classes' => Classes_Prop_Type::make()->default( [] ),
 						'outer_classes' => Classes_Prop_Type::make()->default( [] ),
 					],
@@ -132,7 +135,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						],
 					],
 					'result' => [
-						'classes' => 'one two three fixed-class',
+						'classes' => 'one two three',
 						'inner_classes' => '',
 						'outer_classes' => null,
 					],
@@ -1382,6 +1385,49 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_data_for_save();
 	}
 
+	public function test_get_default_style_by_key__returns_default_style() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'type' => 'class',
+					'label' => 'My Class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => [
+									'$$type' => 'color',
+									'value' => 'red',
+								],
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			],
+			'default_styles' => [
+				'default-1' => Style_Definition::make()
+					->add_variant(
+						Style_Variant::make()
+							->add_prop( 'color', Color_Prop_Type::generate( 'red' ) )
+					)
+			],
+		] );
+
+		// Act.
+		$default_style = $widget->get_default_style_by_key( 'default-1' );
+
+		// Assert.
+
+		$this->assertSame( $default_style['variants'][0]['props']['color'], Color_Prop_Type::generate( 'red' ) );
+	}
+
 	/**
 	 * @param array{controls: array, props_schema: array, settings: array} $options
 	 */
@@ -1411,6 +1457,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 			protected static function define_props_schema(): array {
 				return static::$options['props_schema'] ?? [];
+			}
+
+			public static function define_default_styles(): array {
+				return static::$options['default_styles'] ?? [];
 			}
 		};
 	}

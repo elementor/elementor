@@ -116,12 +116,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$default1 = static::get_default_style_by_key( 'default-1' );
-
 		return [
 			'classes' => Classes_Prop_Type::make()
-				->default( [] )
-				->add_fixed_class( $default1['id'] ),
+				->default( [] ),
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
@@ -131,16 +128,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'Your Title Here', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
-		];
-	}
-
-	public static function define_default_styles(): array {
-		return [
-			'default-1' => Style_Definition::make()
-				->add_variant(
-					Style_Variant::make()
-						->add_prop( 'color', Color_Prop_Type::generate( 'red' ) )
-				),
 		];
 	}
 
