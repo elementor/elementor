@@ -105,7 +105,7 @@ class Utils {
 	const IMAGE_CAROUSEL = 'image_carousel';
 
 	/**
-	 * Is WP CLI.
+	 * Whether WordPress CLI mode is enabled or not.
 	 *
 	 * @return bool
 	 */
@@ -114,26 +114,35 @@ class Utils {
 	}
 
 	/**
-	 * Is script debug.
-	 *
 	 * Whether script debug is enabled or not.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
-	 * @return bool True if it's a script debug is active, false otherwise.
+	 * @return bool
 	 */
 	public static function is_script_debug() {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 	}
 
+	/**
+	 * Whether Elementor debug is enabled or not.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @return bool
+	 */
 	public static function is_elementor_debug() {
 		return defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG;
 	}
 
 	/**
-	 * Whether elementor test mode is enabled or not.
+	 * Whether Elementor test mode is enabled or not.
+	 *
+	 * @access public
+	 * @static
 	 *
 	 * @return bool
 	 */
