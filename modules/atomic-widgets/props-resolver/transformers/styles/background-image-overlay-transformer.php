@@ -21,11 +21,10 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		$position_and_size_style = $this->get_position_and_size_style( $value );
 
 		if ( ! empty( $position_and_size_style ) ) {
-			$background_style .= ' ' . $position_and_size_style;
+			$background_style .= ' ' . $position_and_size_style ;
 		}
 
-		return $background_style;
-	}
+		return $background_style . ( $value['attachment'] ? ' ' . $value['attachment'] : '' );	}
 
 	private function get_image_url( array $image_src ): string {
 		if ( ! empty( $image_src['id'] ) ) {
