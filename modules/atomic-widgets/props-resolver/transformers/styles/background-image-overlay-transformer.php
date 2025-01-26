@@ -24,7 +24,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			$background_style .= ' ' . $position_and_size_style;
 		}
 
-		return $background_style;
+		return $background_style . ( $value['repeat'] ? ' ' . $value['repeat'] : '' );
 	}
 
 	private function get_image_url( array $image_src ): string {
