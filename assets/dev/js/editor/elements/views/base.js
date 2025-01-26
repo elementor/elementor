@@ -654,11 +654,11 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( changedSettings, dataBinding, changedControl ) {
+	isAtomicDynamic( changedSettings, dataBinding, changedControl, bindingDynamicCssId ) {
 		return '__dynamic__' in changedSettings &&
 			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
-			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
+			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
+			this.isCssIdControl( changedControl, bindingDynamicCssId ) );
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
@@ -757,16 +757,20 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = async ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset,
+			const { bindingSetting, bindingDynamicCssId } = dataBinding.dataset,
 				changedControl = this.getChangedDynamicControlKey( settings );
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl ) ) {
+			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl, bindingDynamicCssId ) ) {
 				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
 				}
+			}
+
+			if ( this.isCssIdControl( changedControl, bindingDynamicCssId ) ) {
+				return this.updateCssId( dataBinding, change, settings, changedControl );
 			}
 
 			if ( change !== undefined ) {
@@ -808,6 +812,23 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return changed;
+	},
+
+	isCssIdControl( changedControl, bindingDynamicCssId ) {
+		return bindingDynamicCssId === changedControl;
+	},
+
+	updateCssId( dataBinding, change, settings, changedControl ) {
+		if ( ! change ) {
+			change = settings.attributes[ changedControl ];
+		}
+
+		if ( change && change.length ) {
+			dataBinding.el.closest( dataBinding.dataset.bindingSingleItemHtmlWrapperTag ).setAttribute( 'id', change );
+			return true;
+		}
+
+		return false;
 	},
 
 	/**

@@ -207,6 +207,7 @@ test.describe( 'Promotion tests @promotions', () => {
 
 		await navigatorPanel.locator( '.elementor-navigator__element-container' ).nth( 0 ).click();
 		await navigatorPanel.evaluate( ( element ) => element.style.width = '150px' );
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert.
 		await expect.soft( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
