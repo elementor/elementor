@@ -107,6 +107,9 @@ class Utils {
 	/**
 	 * Whether WordPress CLI mode is enabled or not.
 	 *
+	 * @access public
+	 * @static
+	 *
 	 * @return bool
 	 */
 	public static function is_wp_cli() {
