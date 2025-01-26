@@ -26,7 +26,7 @@ class Atomic_Widget_Styles {
 
 		$post_default_styles = Collection::make( $this->default_styles_per_post[ $post->get_post_id() ] ?? [] );
 
-		if( ! $post_default_styles->contains( $element::get_element_type() ) ) {
+		if ( ! $post_default_styles->contains( $element::get_element_type() ) ) {
 			$default_styles = $element::get_default_styles();
 			$this->default_styles_per_post[ $post->get_post_id() ][] = $element::get_element_type();
 		} else {
