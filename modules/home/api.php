@@ -3,7 +3,6 @@ namespace Elementor\Modules\Home;
 
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\Home\Classes\Transformations_Manager;
-use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 class API {
 	protected EditorAssetsAPI $editor_assets_api;
