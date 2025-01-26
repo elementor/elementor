@@ -897,7 +897,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			],
 		];
 
-		$stylesRenderer = Styles_Renderer::make( [], '.elementor-prefix ' );
+		$stylesRenderer = Styles_Renderer::make( [], '.elementor-prefix' );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
