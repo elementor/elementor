@@ -1008,6 +1008,8 @@ class Nested_Accordion extends Widget_Nested_Base {
 						'data-binding-setting': ['item_title'],
 						'data-binding-index': itemCount,
 						'data-binding-dynamic': 'true',
+						'data-binding-dynamic-css-id': 'element_css_id',
+						'data-binding-single-item-html-wrapper-tag': 'details',
 					});
 				#>
 
