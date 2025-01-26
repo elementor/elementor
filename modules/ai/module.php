@@ -48,7 +48,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		if ( ! Preferences::is_ai_enabled( get_current_user_id() ) ) {
+		if ( ! $this->is_ai_enabled() ) {
 			return;
 		}
 
@@ -170,7 +170,15 @@ class Module extends BaseModule {
 		add_action( 'elementor/element/container/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
 	}
 
+	public function is_ai_enabled() {
+		return Preferences::is_ai_enabled( get_current_user_id() );
+	}
+
 	public function handle_kit_install( $imported_data ) {
+		if ( ! $this->is_ai_enabled() ) {
+			return;
+		}
+
 		if ( ! isset( $imported_data['status'] ) || 'success' !== $imported_data['status'] ) {
 			return;
 		}
