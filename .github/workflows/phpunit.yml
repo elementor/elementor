@@ -82,6 +82,7 @@ jobs:
       - name: Run Tests with Coverage (latest PHP & WP)
         if: ${{ env.COVERAGE != 'false' }}
         run: |
+          echo "${{ env.event_name}}" |
           composer run coverage
       - name: Run Tests without Coverage
         if: ${{ env.COVERAGE == 'false' }}
