@@ -1385,49 +1385,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_data_for_save();
 	}
 
-	public function test_get_default_style_by_key__returns_default_style() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [
-				's-1234' => [
-					'id' => 's-1234',
-					'type' => 'class',
-					'label' => 'My Class',
-					'variants' => [
-						[
-							'props' => [
-								'color' => [
-									'$$type' => 'color',
-									'value' => 'red',
-								],
-							],
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => null,
-							],
-						],
-					],
-				]
-			],
-			'default_styles' => [
-				'default-1' => Style_Definition::make()
-					->add_variant(
-						Style_Variant::make()
-							->add_prop( 'color', Color_Prop_Type::generate( 'red' ) )
-					)
-			],
-		] );
-
-		// Act.
-		$default_style = $widget->get_default_style_by_key( 'default-1' );
-
-		// Assert.
-
-		$this->assertSame( $default_style['variants'][0]['props']['color'], Color_Prop_Type::generate( 'red' ) );
-	}
-
 	/**
 	 * @param array{controls: array, props_schema: array, settings: array} $options
 	 */

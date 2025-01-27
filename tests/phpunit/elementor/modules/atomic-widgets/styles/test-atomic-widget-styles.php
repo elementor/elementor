@@ -114,7 +114,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 		$post = $this->make_mock_post();
 
-		$element1 = $this->make_mock_widget([
+		$element = $this->make_mock_widget([
 			'controls' => [],
 			'props_schema' => [],
 			'settings' => [],
@@ -142,37 +142,9 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 			],
 		]);
 
-		$element2 = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [
-				[
-					'id' => 'test-style2',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'color' => 'red',
-								'font-size' => '16px',
-							],
-							'meta' => [],
-						],
-					],
-				],
-			],
-			'default_styles' => [
-				'default-1' => Style_Definition::make()
-					->add_variant(
-						Style_Variant::make()
-							->add_prop( 'color', Props_Factory::color( 'red' ) )
-					),
-			],
-		]);
-
 		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element1 );
-		do_action( 'elementor/element/parse_css', $post, $element2 );
+		do_action( 'elementor/element/parse_css', $post, $element );
+		do_action( 'elementor/element/parse_css', $post, $element );
 
 		// Assert.
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );

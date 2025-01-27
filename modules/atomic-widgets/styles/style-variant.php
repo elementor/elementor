@@ -2,9 +2,11 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-class Style_Variant implements \JsonSerializable {
-	private string $breakpoint = 'desktop';
+class Style_Variant {
+	private ?string $breakpoint = null;
 	private ?string $state = null;
+
+	/** @var array<string, array> */
 	private array $props = [];
 
 	public static function make(): self {
@@ -26,7 +28,7 @@ class Style_Variant implements \JsonSerializable {
 		return $this;
 	}
 
-	public function to_array(): array {
+	public function build(): array {
 		return [
 			'meta' => [
 				'breakpoint' => $this->breakpoint,
@@ -34,9 +36,5 @@ class Style_Variant implements \JsonSerializable {
 			],
 			'props' => $this->props,
 		];
-	}
-
-	public function jsonSerialize(): array {
-		return $this->to_array();
 	}
 }

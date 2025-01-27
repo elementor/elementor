@@ -22,7 +22,7 @@ trait Has_Atomic_Base {
 
 	abstract public static function get_element_type(): string;
 
-	public function get_name() {
+	final public function get_name() {
 		return static::get_element_type();
 	}
 
@@ -169,7 +169,7 @@ trait Has_Atomic_Base {
 		$style_definitions = [];
 
 		foreach ( $default_styles as $key => $style ) {
-			$id = static::get_element_type() . '-' . $key;
+			$id = static::get_default_style_id( $key );
 
 			$style_definitions[] = $style->build( $id );
 		}
@@ -177,15 +177,7 @@ trait Has_Atomic_Base {
 		return $style_definitions;
 	}
 
-	public static function get_default_style_by_key( string $key ) {
-		$id = static::get_element_type() . '-' . $key;
-
-		$default_styles = static::define_default_styles();
-
-		if ( isset( $default_styles[ $key ] ) ) {
-			return $default_styles[ $key ]->build( $id );
-		}
-
-		return null;
+	public static function get_default_style_id( string $key ) {
+		return static::get_element_type() . '-' . $key;
 	}
 }

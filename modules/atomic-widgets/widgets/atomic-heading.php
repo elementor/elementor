@@ -10,6 +10,9 @@ use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,8 +48,11 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	private function get_template_args( array $settings ): array {
 		$tag = $settings['tag'];
 		$title = esc_html( $settings['title'] );
+		$classes = $settings['classes'] ?? '';
+		$classes .= ' ' . static::get_default_style_id( 'd1' );
+
 		$attrs = array_filter( [
-			'class' => $settings['classes'] ?? '',
+			'class' => $classes,
 		] );
 
 		$default_args = [
@@ -125,6 +131,16 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'Your Title Here', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
+		];
+	}
+
+	public static function define_default_styles(): array {
+		return [
+			'd1' => Style_Definition::make()
+				->add_variant( Style_Variant::make()->add_prop( 'font-size', Size_Prop_Type::generate( [
+					'size' => 24,
+					'unit' => 'px',
+				] ) ) ),
 		];
 	}
 

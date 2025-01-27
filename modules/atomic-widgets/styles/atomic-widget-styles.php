@@ -3,7 +3,6 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Files\CSS\Post;
-use Elementor\Core\Utils\Collection;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
@@ -24,14 +23,7 @@ class Atomic_Widget_Styles {
 
 		$styles = $element->get_raw_data()['styles'];
 
-		$post_default_styles = Collection::make( $this->default_styles_per_post[ $post->get_post_id() ] ?? [] );
-
-		if ( ! $post_default_styles->contains( $element::get_element_type() ) ) {
-			$default_styles = $element::get_default_styles();
-			$this->default_styles_per_post[ $post->get_post_id() ][] = $element::get_element_type();
-		} else {
-			$default_styles = [];
-		}
+		$default_styles = $this->get_element_default_styles( $element, $post->get_post_id() );
 
 		$styles = array_merge( $default_styles, $styles );
 
@@ -71,5 +63,15 @@ class Atomic_Widget_Styles {
 				}
 			}
 		}
+	}
+
+	private function get_element_default_styles( $element, string $post_id ): array {
+		$is_element_default_styles_rendered = isset( $this->default_styles_per_post[ $post_id ][ $element::get_element_type() ] );
+
+		if ( ! $is_element_default_styles_rendered ) {
+			$this->default_styles_per_post[ $post_id ][ $element::get_element_type() ] = true;
+		}
+
+		return $is_element_default_styles_rendered ? [] : $element::get_default_styles();
 	}
 }
