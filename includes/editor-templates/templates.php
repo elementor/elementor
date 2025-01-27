@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -62,7 +64,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		* @param bool   isRemote     - If `true` the source is a remote source.
 		* @param string activeSource - The current template source.
 		*/
-		const isRemote = elementor.hooks.applyFilters( 'templates/modal/active-source', activeSource !== 'local', activeSource );
+		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', activeSource !== 'local', activeSource );
 	#>
 	<div id="elementor-template-library-toolbar">
 		<# if ( isRemote ) {
@@ -247,6 +249,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
 	<form id="elementor-template-library-save-template-form">
 		<input type="hidden" name="post_id" value="<?php echo esc_attr( get_the_ID() ); ?>">
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
 			<span class="elementor-state-icon">
@@ -254,6 +257,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 			<?php echo esc_html__( 'Save', 'elementor' ); ?>
 		</button>
+		<?php else : ?>
+		<div class="cloud-library-form-inputs">
+			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
+			<select name="source[]" id="elementor-template-library-save-template-source" multiple="multiple" required>
+				<option value="local">Site Library</option>
+				<option value="cloud">Cloud Library</option>
+			</select>
+			<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
+				<span class="elementor-state-icon">
+					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
+				</span>
+				<?php echo esc_html__( 'Save', 'elementor' ); ?>
+			</button>
+		</div>
+		<?php endif; ?>
 	</form>
 	<div class="elementor-template-library-blank-footer">
 		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>

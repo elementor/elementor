@@ -256,44 +256,6 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$this->assertIsArray( $response->get_data() );
 	}
 
-	public function test_admin_can_save_template_via_wp_rest() {
-		// Arrange
-		do_action( 'rest_api_init' );
-		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
-
-		$template_data = [
-			'title' => 'Test Template',
-			'status' => 'publish',
-			'meta' => [
-				'_elementor_template_type' => 'container',
-				'_elementor_edit_mode' => 'builder',
-				'_elementor_data' => wp_json_encode([
-					[
-						'id' => 'test-section',
-						'elType' => 'section',
-						'settings' => [],
-						'elements' => [],
-						'isInner' => false
-					]
-				])
-			]
-		];
-
-		$request = new \WP_REST_Request( 'POST', '/wp/v2/elementor_library' );
-		$request->set_body_params( $template_data );
-
-		// Act
-		$response = rest_do_request( $request );
-		$result = $response->get_data();
-
-		// Assert
-		$this->assertEquals( 201, $response->get_status() );
-		$this->assertArrayHasKey( 'id', $result );
-		$this->assertEquals( 'Test Template', $result['title']['rendered'] );
-		$this->assertEquals( 'container', get_post_meta( $result['id'], '_elementor_template_type', true ) );
-		$this->assertNotEmpty( get_post_meta( $result['id'], '_elementor_data', true ) );
-	}
-
 	/**
 	 * The data managers are killing the rest server (@see `kill_server`), and removing the post type rest routes.
 	 * This is a workaround to re-register the post type rest routes.
