@@ -81,7 +81,11 @@ class Props_Resolver {
 	}
 
 	private function transform( $value, $key, Prop_Type $prop_type, int $depth = 0 ) {
-		if ( ! $value || ! $this->is_transformable( $value ) ) {
+		if ( null === $value ) {
+			return null;
+		}
+
+		if ( ! $this->is_transformable( $value ) ) {
 			return $value;
 		}
 
