@@ -36,6 +36,8 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		}
 
 		foreach ( $this->get_shape() as $item ) {
+			// If the object has at least one property with default, return an empty object so
+			// it'll be iterable for processes like validation / transformation.
 			if ( $item->get_default() !== null ) {
 				return static::generate( [] );
 			}

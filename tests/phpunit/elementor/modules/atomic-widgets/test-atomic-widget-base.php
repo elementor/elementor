@@ -217,8 +217,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'prop_types' => [
 						'image' => Image_Prop_Type::make()->default_url( 'https://example.com/default-image.jpg' ),
 						'just_default_image' => Image_Prop_Type::make()->default_url( 'https://example.com/default-image-2.jpg' ),
-						'only_url_image' => Image_Prop_Type::make(),
-						'image_with_attachment' => Image_Prop_Type::make(),
+						'only_url_image' => Image_Prop_Type::make()->default_url( 'https://example.com/default-image-3.jpg' ),
+						'image_with_attachment' => Image_Prop_Type::make()->default('https://example.com/default-image-4.jpg' )
 					],
 					'settings' => [
 						'image' => [
