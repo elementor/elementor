@@ -5,9 +5,6 @@ namespace elementor\tests\phpunit\elementor\modules\home;
 use Elementor\Modules\Home\API;
 use Elementor\Includes\EditorAssetsAPI;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
-use PHPUnit\Framework\MockObject\MockCallback;
-use PHPUnit\Framework\MockObject\MockClass;
-
 
 class Test_Filter_Hosting extends PHPUnit_TestCase {
 	public function test_homescreen_filter_called_once() {
