@@ -15,18 +15,18 @@ class Elementor_Post_Meta {
 		$post_types = get_post_types_by_support( 'elementor' );
 
 		foreach ( $post_types as $post_type ) {
-			$this->register_edit_mode_meta($post_type);
-			$this->register_template_type_meta($post_type);
-			$this->register_elementor_data_meta($post_type);
-			$this->register_page_settings_meta($post_type);
+			$this->register_edit_mode_meta( $post_type );
+			$this->register_template_type_meta( $post_type );
+			$this->register_elementor_data_meta( $post_type );
+			$this->register_page_settings_meta( $post_type );
 
 			if ( Utils::has_pro() ) {
-				$this->register_conditions_meta($post_type);
+				$this->register_conditions_meta( $post_type );
 			}
 		}
 	}
 
-	private function register_edit_mode_meta(string $post_type): void {
+	private function register_edit_mode_meta( string $post_type ): void {
 		register_meta( 'post', '_elementor_edit_mode', [
 			'single' => true,
 			'object_subtype' => $post_type,
@@ -44,7 +44,7 @@ class Elementor_Post_Meta {
 		]);
 	}
 
-	private function register_template_type_meta(string $post_type): void {
+	private function register_template_type_meta( string $post_type ): void {
 		$document_types = Plugin::$instance->documents->get_document_types();
 
 		register_meta( 'post', '_elementor_template_type', [
@@ -64,7 +64,7 @@ class Elementor_Post_Meta {
 		]);
 	}
 
-	private function register_elementor_data_meta(string $post_type): void {
+	private function register_elementor_data_meta( string $post_type ): void {
 		register_meta( 'post', '_elementor_data', [
 			'single' => true,
 			'object_subtype' => $post_type,
@@ -81,7 +81,7 @@ class Elementor_Post_Meta {
 		]);
 	}
 
-	private function register_page_settings_meta(string $post_type): void {
+	private function register_page_settings_meta( string $post_type ): void {
 		register_meta( 'post', '_elementor_page_settings', [
 			'single' => true,
 			'object_subtype' => $post_type,
@@ -106,7 +106,7 @@ class Elementor_Post_Meta {
 		]);
 	}
 
-	private function register_conditions_meta(string $post_type): void {
+	private function register_conditions_meta( string $post_type ): void {
 		register_meta( 'post', '_elementor_conditions', [
 			'object_subtype' => $post_type,
 			'type' => 'object',
