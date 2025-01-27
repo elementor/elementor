@@ -15,7 +15,7 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 			'image-src' => Image_Src_Prop_Type::make(),
 			'position' => String_Prop_Type::make()->enum( self::get_position_enum_values() ),
 			'size' => String_Prop_Type::make()->enum( [ 'auto', 'cover', 'contain' ] ),
-			'attachment' => String_Prop_Type::make()->enum( ['fixed','scroll']),
+			'attachment' => String_Prop_Type::make()->enum( [ 'fixed','scroll' ] ),
 		];
 	}
 
