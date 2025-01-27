@@ -1,7 +1,7 @@
 === Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.5
+Requires at least: 6.3
 Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 3.12.1
@@ -254,7 +254,7 @@ Join a global community that helps each other achieve their goals.
 
 = Minimum Requirements =
 
-* WordPress 6.5 or greater
+* WordPress 6.3 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
@@ -345,6 +345,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.27.2 - 2025-01-27 =
+
+* Fix: Kits could not be imported due to a compatibility issue
 
 = 3.27.1 - 2025-01-23 =
 
