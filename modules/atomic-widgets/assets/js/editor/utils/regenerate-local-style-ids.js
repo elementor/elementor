@@ -48,8 +48,6 @@ function updateStyleId( container ) {
 
 	// Update local styles
 	container.model.set( 'styles', newStyles );
-
-	console.log( 'REGENERATE', newClassesProps, newStyles );
 }
 
 /**
