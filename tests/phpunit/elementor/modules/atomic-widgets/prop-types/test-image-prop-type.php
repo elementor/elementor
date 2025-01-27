@@ -60,6 +60,22 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
+	public function test_validate__pass_with_default_url() {
+		// Arrange.
+		$prop_type = Image_Prop_Type::make()->default_url( 'https://example.com/default.jpg' );
+
+		// Act.
+		$result = $prop_type->validate( [
+			'$$type' => 'image',
+			'value' => [
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
 	public function test_validate__fail_when_passing_non_src() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();
