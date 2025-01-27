@@ -22,15 +22,19 @@ class Google_Font {
 
 	const UA_STRING = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36';
 
+	const TYPE_DEFAULT = 'default';
+
+	const TYPE_EARLYACCESS = 'earlyaccess';
+
 	private static array $folders = [];
 
-	public static function enqueue( string $font_name ): bool {
+	public static function enqueue( string $font_name, string $font_type = self::TYPE_DEFAULT ): bool {
 		if ( static::enqueue_style( $font_name ) ) {
 			return true;
 		}
 
-		if ( ! static::fetch_font_data( $font_name ) ) {
-			static::enqueue_from_cdn( $font_name );
+		if ( ! static::fetch_font_data( $font_name, $font_type ) ) {
+			static::enqueue_from_cdn( $font_name, $font_type );
 			return false;
 		}
 
@@ -79,7 +83,7 @@ class Google_Font {
 		update_option( '_elementor_local_google_fonts', $local_google_fonts );
 	}
 
-	private static function fetch_font_data( string $font_name ): bool {
+	private static function fetch_font_data( string $font_name, string $font_type ): bool {
 		$sanitize_font_name = static::sanitize_font_name( $font_name );
 
 		$fonts_folder = static::get_folder( static::FOLDER_FONTS );
@@ -89,7 +93,7 @@ class Google_Font {
 			return false;
 		}
 
-		$css_content = static::get_css_content( $font_name );
+		$css_content = static::get_css_content( $font_name, $font_type );
 
 		if ( empty( $css_content ) ) {
 			return false;
@@ -149,8 +153,8 @@ class Google_Font {
 		}
 	}
 
-	private static function get_css_content( string $font_name ): string {
-		$css_content = static::get_raw_css_content( $font_name );
+	private static function get_css_content( string $font_name, $font_type ): string {
+		$css_content = static::get_raw_css_content( $font_name, $font_type );
 
 		if ( empty( $css_content ) ) {
 			return '';
@@ -159,8 +163,8 @@ class Google_Font {
 		return static::download_fonts( $font_name, $css_content );
 	}
 
-	private static function get_raw_css_content( string $font_name ): string {
-		$font_url = static::get_google_fonts_remote_url( [ $font_name ] );
+	private static function get_raw_css_content( string $font_name, string $font_type ): string {
+		$font_url = static::get_google_fonts_remote_url( $font_name, $font_type );
 
 		$css_content_response = wp_remote_get( $font_url, [
 			'headers' => [
@@ -175,8 +179,16 @@ class Google_Font {
 		return wp_remote_retrieve_body( $css_content_response );
 	}
 
-	private static function get_google_fonts_remote_url( array $fonts ): string {
-		return Plugin::$instance->frontend->get_stable_google_fonts_url( $fonts );
+	private static function get_google_fonts_remote_url( string $font, string $font_type ): string {
+		if ( self::TYPE_EARLYACCESS === $font_type ) {
+			return static::get_earlyaccess_google_fonts_url( $font );
+		}
+
+		return Plugin::$instance->frontend->get_stable_google_fonts_url( [ $font ] );
+	}
+
+	private static function get_earlyaccess_google_fonts_url( string $font ): string {
+		return sprintf( 'https://fonts.googleapis.com/earlyaccess/%s.css', strtolower( str_replace( ' ', '', $font ) ) );
 	}
 
 	private static function download_fonts( string $font_name, string $css_content ): string {
@@ -193,16 +205,17 @@ class Google_Font {
 			$sanitize_font_name = static::sanitize_font_name( $font_name );
 
 			foreach ( $font_urls as $current_font_url ) {
-				$current_font_url = trim( $current_font_url, '\'"' );
+				$original_font_url = trim( $current_font_url, '\'"' );
 
-				$tmp_font_file = download_url( $current_font_url );
+				$cleaned_url = set_url_scheme( $original_font_url, 'https' );
+				$cleaned_url = strtok( $cleaned_url, '?#' );
+
+				$tmp_font_file = download_url( $cleaned_url );
 				if ( is_wp_error( $tmp_font_file ) ) {
-					@unlink( $tmp_font_file );
-
 					return '';
 				}
 
-				$current_font_basename = $sanitize_font_name . '-' . strtolower( sanitize_file_name( basename( $current_font_url ) ) );
+				$current_font_basename = $sanitize_font_name . '-' . strtolower( sanitize_file_name( basename( $cleaned_url ) ) );
 
 				$dest_file = $fonts_folder['path'] . $current_font_basename;
 				$dest_file_url = $fonts_folder['url'] . $current_font_basename;
@@ -216,15 +229,15 @@ class Google_Font {
 					return '';
 				}
 
-				$css_content = str_replace( $current_font_url, $dest_file_url, $css_content );
+				$css_content = str_replace( $original_font_url, $dest_file_url, $css_content );
 			}
 		}
 
 		return $css_content;
 	}
 
-	private static function enqueue_from_cdn( string $font_name ): void {
-		$font_url = static::get_google_fonts_remote_url( [ $font_name ] );
+	private static function enqueue_from_cdn( string $font_name, string $font_type ): void {
+		$font_url = static::get_google_fonts_remote_url( $font_name, $font_type );
 
 		$sanitize_font_name = static::sanitize_font_name( $font_name );
 
