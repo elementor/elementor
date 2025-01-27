@@ -346,6 +346,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.27.2 - 2025-01-27 =
+
+* Fix: Kits could not be imported due to a compatibility issue
+
 = 3.27.1 - 2025-01-23 =
 
 * Fix: Document is not being saved due to compatibility conflicts with third-party plugins ([#29970](https://github.com/elementor/elementor/issues/29970), [#29991](https://github.com/elementor/elementor/issues/29991))
