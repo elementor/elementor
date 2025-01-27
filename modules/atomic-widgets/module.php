@@ -8,6 +8,7 @@ use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Global_Variable_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
@@ -30,6 +31,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Global_Variable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -173,7 +175,7 @@ class Module extends BaseModule {
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 
-		$transformers->register( Global_Variable_Prop_Type::get_key(), new Primitive_Transformer() );
+		$transformers->register( Global_Variable_Prop_Type::get_key(), new Global_Variable_Transformer() );
 	}
 
 	/**

@@ -16,7 +16,9 @@ class Background_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'background-overlay' => Background_Overlay_Prop_Type::make(),
-			'color' => Color_Prop_Type::make(),
+			'color' => Union_Prop_Type::make()
+				->add_prop_type( Color_Prop_Type::make() )
+				->add_prop_type( Global_Variable_Prop_Type::make() ),
 		];
 	}
 }
