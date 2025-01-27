@@ -5,7 +5,6 @@ import Ajax from 'elementor-common-modules/ajax/assets/js/ajax';
 import Finder from 'elementor-common-modules/finder/assets/js/finder';
 import Connect from 'elementor-common-modules/connect/assets/js/connect';
 import WordpressComponent from './components/wordpress/component';
-import WpQueryComponent from './components/wp-query/component';
 import EventsDispatcherComponent from 'elementor-common-modules/event-tracker/assets/js/data/component';
 import Events from 'elementor-common-modules/event-tracker/assets/js/events';
 import Notifications from 'elementor-utils/notifications';
@@ -50,7 +49,6 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 		elementorCommon.elements.$window.on( 'elementor:init-components', () => {
 			$e.components.register( new WordpressComponent() );
-			$e.components.register( new WpQueryComponent() );
 		} );
 
 		this.initModules();

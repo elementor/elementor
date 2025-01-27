@@ -1,6 +1,6 @@
 export class Post extends $e.modules.CommandData {
 	static getEndpointFormat() {
-		return 'wp-query/post';
+		return 'post';
 	}
 }
 

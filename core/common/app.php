@@ -70,8 +70,6 @@ class App extends BaseApp {
 		$this->add_component( 'connect', new Connect() );
 
 		$this->add_component( 'event-tracker', new Event_Tracker() );
-
-		Plugin::$instance->data_manager_v2->register_controller( new WP_Query_Controller() );
 	}
 
 	/**
