@@ -13,8 +13,6 @@ export class CreateElementHook extends $e.modules.hookData.After {
 		const containers = Array.isArray( result ) ? result : [ result ];
 
 		containers.forEach( regenerateLocalStyleIds );
-
-		console.log( 'END HOOK' );
 	}
 }
 export default CreateElementHook;
