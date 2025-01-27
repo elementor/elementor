@@ -25,11 +25,6 @@ on:
           description: 'Provide @tag or a keyword'
           required: false
 
-# This allows a subsequently queued workflow run to interrupt previous runs
-concurrency:
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
-  cancel-in-progress: true && ${{github.head_ref != 'main'}}
-
 jobs:
   build-plugin:
     name: Build plugin
