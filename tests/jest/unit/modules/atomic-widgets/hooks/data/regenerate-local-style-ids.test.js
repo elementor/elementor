@@ -1,17 +1,7 @@
 import { createContainer, addChildToContainer, setGlobalContainers } from '../../utils/container';
 
 describe( 'Regenerate local style IDs', () => {
-	const hooks = {
-		paste: null,
-		duplicate: null,
-		import: null,
-	};
-
-	const hookNames = [
-		[ 'duplicate' ],
-		[ 'paste' ],
-		[ 'import' ],
-	];
+	let createHook;
 
 	let uniqueId = 0;
 
@@ -57,13 +47,9 @@ describe( 'Regenerate local style IDs', () => {
 			},
 		};
 
-		const DuplicateElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/regenerate-local-style-ids/duplicate-element' ) ).default;
-		const PasteElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/regenerate-local-style-ids/paste-element' ) ).default;
-		const ImportElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/regenerate-local-style-ids/import-element' ) ).default;
+		const CreateElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/regenerate-local-style-ids/create-element' ) ).default;
 
-		hooks.paste = new PasteElementHook();
-		hooks.duplicate = new DuplicateElementHook();
-		hooks.import = new ImportElementHook();
+		createHook = new CreateElementHook();
 	} );
 
 	afterAll( async () => {
@@ -81,7 +67,7 @@ describe( 'Regenerate local style IDs', () => {
 		jest.clearAllMocks();
 	} );
 
-	it.each( hookNames )( 'should detect all duplicated styled atomic widgets on %s', async ( hook ) => {
+	it( 'should detect all duplicated styled atomic widgets on create', async () => {
 		// Arrange
 		const initialContainerStyle = {
 			...createMockStyle( 'e-widget1-1' ),
@@ -157,7 +143,7 @@ describe( 'Regenerate local style IDs', () => {
 		const setSettingsCommand = jest.spyOn( global.$e, 'internal' );
 
 		// Act
-		hooks[ hook ].apply( {}, [ duplicatedStyledElement ] );
+		createHook.apply( {}, [ duplicatedStyledElement ] );
 
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( initialContainerStyle );
@@ -191,7 +177,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 	} );
 
-	it.each( hookNames )( 'should not do anything if no styled elements are duplicated on %s', async ( hook ) => {
+	it( 'should not do anything if no styled elements are duplicated on create', async () => {
 		// Arrange
 		const container = createContainer( {
 			widgetType: 'div-block',
@@ -239,7 +225,7 @@ describe( 'Regenerate local style IDs', () => {
 		const setSettingsCommand = jest.spyOn( global.$e, 'internal' );
 
 		// Act
-		hooks[ hook ].apply( {}, [ duplicatedNonStyledElement ] );
+		createHook.apply( {}, [ duplicatedNonStyledElement ] );
 
 		// Assert
 		expect( setSettingsCommand ).not.toBeCalled();

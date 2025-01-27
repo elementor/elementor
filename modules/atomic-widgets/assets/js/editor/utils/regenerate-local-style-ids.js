@@ -6,7 +6,7 @@ import { getRandomStyleId } from './get-random-style-id';
  */
 
 function isClassesProp( prop ) {
-	return prop.$$type && Array.isArray( prop.value ) && prop.value.length > 0;
+	return prop.$$type && 'classes' === prop.$$type && Array.isArray( prop.value ) && prop.value.length > 0;
 }
 
 /**
@@ -17,12 +17,8 @@ function updateStyleId( container ) {
 	const originalStyles = container.model.get( 'styles' );
 	const settings = container.settings?.toJSON() ?? {};
 
-	const classesProps = Object.entries( settings ).reduce(
-		( props, [ propKey, propValue ] ) =>
-			( isClassesProp( propValue ) )
-				? [ ...props, propKey ]
-				: props,
-		[],
+	const classesProps = Object.entries( settings ).filter(
+		( [ , propValue ] ) => ( isClassesProp( propValue ) ),
 	);
 
 	const newStyles = {};
@@ -30,31 +26,30 @@ function updateStyleId( container ) {
 	const changedIds = {}; // Conversion map - {[originalId: string]: newId: string}
 
 	Object.entries( originalStyles ).forEach( ( [ originalStyleId, style ] ) => {
-		const newStyleId = getRandomStyleId( container );
+		const newStyleId = getRandomStyleId( container, newStyles );
 
 		newStyles[ newStyleId ] = structuredClone( { ...style, id: newStyleId } );
 
 		changedIds[ originalStyleId ] = newStyleId;
 	} );
 
-	const newClassesProps = classesProps.reduce( ( allClassesProps, classPropKey ) => {
-		return {
-			...allClassesProps,
-			[ classPropKey ]: {
-				...settings[ classPropKey ],
-				value: settings[ classPropKey ].value.map( ( className ) => changedIds[ className ] ?? className ),
-			},
-		};
+	const newClassesProps = classesProps.map( ( [ key, value ] ) => {
+		return [ key, {
+			...value,
+			value: value.value.map( ( className ) => changedIds[ className ] ?? className ),
+		} ];
 	}, {} );
 
 	// Update classes array
 	$e.internal( 'document/elements/set-settings', {
 		container,
-		settings: newClassesProps,
+		settings: Object.fromEntries( newClassesProps ),
 	} );
 
 	// Update local styles
 	container.model.set( 'styles', newStyles );
+
+	console.log( 'REGENERATE', newClassesProps, newStyles );
 }
 
 /**
@@ -64,7 +59,7 @@ function updateStyleId( container ) {
 export function regenerateLocalStyleIds( container ) {
 	const allElements = getElementChildren( container );
 
-	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ).length > 0 );
+	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ?? {} ).length > 0 );
 
 	styledElements?.forEach( updateStyleId );
 }

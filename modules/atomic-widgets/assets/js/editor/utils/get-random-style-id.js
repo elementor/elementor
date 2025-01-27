@@ -4,8 +4,16 @@
 
 /**
  * @param {Container} container
+ * @param {Object}    existingStyleIds
  * @return {string}
  */
-export function getRandomStyleId( container ) {
-	return `e-${ container.id }-${ elementorCommon.helpers.getUniqueId() }`;
+export function getRandomStyleId( container, existingStyleIds = {} ) {
+	let id;
+
+	do {
+		id = `e-${ container.id }-${ elementorCommon.helpers.getUniqueId() }`;
+	}
+	while ( existingStyleIds.hasOwnProperty( id ) );
+
+	return id;
 }
