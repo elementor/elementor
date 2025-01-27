@@ -625,6 +625,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 	public function test_get_data_for_save() {
 		// Arrange.
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_mime_type' => 'image/png'] );
+
 		$widget_styles = [
 			's-1234' => [
 				'id' => 's-1234',
@@ -724,6 +726,41 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										'$$type' => 'color',
 										'value' => '#000000',
 									],
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => 'red'
+											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image-src' => [
+														'$$type' => 'image-src',
+														'value' => [
+															'id' => [
+																'$$type' => 'image-attachment-id',
+																'value' => $post->ID
+															]
+														]
+													],
+													'position' => [
+														'$$type' => 'string',
+														'value' => 'center center'
+													],
+													'resolution' => [
+														'$$type' => 'string',
+														'value' => 'medium'
+													],
+													'size' => [
+														'$$type' => 'string',
+														'value' => 'cover'
+													]
+												]
+											]
+										]
+									]
 								],
 							],
 						],
@@ -753,6 +790,12 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			],
 			'styles' => $widget_styles
 		] );
+
+		add_filter( 'get_attached_file', function ( $file, $attachment_id ) use ( $post ) {
+			$mock_path = _wp_upload_dir();
+
+			return $mock_path['path'] . '/test.png';
+		}, 9999, 2 );
 
 		// Act.
 		$data_for_save = $widget->get_data_for_save();
