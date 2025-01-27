@@ -110,7 +110,7 @@ class Control_Media extends Control_Base_Multiple {
 	public function enqueue() {
 		global $wp_version;
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 		wp_enqueue_media();
 
 		wp_enqueue_style(

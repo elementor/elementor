@@ -19,11 +19,6 @@ on:
         required: false
         default: ''
 
-# This allows a subsequently queued workflow run to interrupt previous runs
-concurrency:
-  group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
-  cancel-in-progress: true
-
 jobs:
   build-plugin:
     uses: ./.github/workflows/build.yml
