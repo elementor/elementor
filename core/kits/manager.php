@@ -295,54 +295,6 @@ class Manager {
 		$active_kit->update_settings( [ $key => $value ] );
 	}
 
-	/**
-	 * Map Scheme To Global
-	 *
-	 * Convert a given scheme value to its corresponding default global value
-	 *
-	 * @param string $type 'color'/'typography'.
-	 * @param $value
-	 * @return mixed
-	 */
-	private function map_scheme_to_global( $type, $value ) {
-		$schemes_to_globals_map = [
-			'color' => [
-				'1' => Global_Colors::COLOR_PRIMARY,
-				'2' => Global_Colors::COLOR_SECONDARY,
-				'3' => Global_Colors::COLOR_TEXT,
-				'4' => Global_Colors::COLOR_ACCENT,
-			],
-			'typography' => [
-				'1' => Global_Typography::TYPOGRAPHY_PRIMARY,
-				'2' => Global_Typography::TYPOGRAPHY_SECONDARY,
-				'3' => Global_Typography::TYPOGRAPHY_TEXT,
-				'4' => Global_Typography::TYPOGRAPHY_ACCENT,
-			],
-		];
-
-		return $schemes_to_globals_map[ $type ][ $value ];
-	}
-
-	/**
-	 * Convert Scheme to Default Global
-	 *
-	 * If a control has a scheme property, convert it to a default Global.
-	 *
-	 * @param $scheme - Control scheme property
-	 * @return array - Control/group control args
-	 * @since 3.0.0
-	 * @access public
-	 */
-	public function convert_scheme_to_global( $scheme ) {
-		if ( isset( $scheme['type'] ) && isset( $scheme['value'] ) ) {
-			// _deprecated_argument( $args['scheme'], '3.0.0', 'Schemes are now deprecated - use $args[\'global\'] instead.' );
-			return $this->map_scheme_to_global( $scheme['type'], $scheme['value'] );
-		}
-
-		// Typography control 'scheme' properties usually only include the string with the typography value ('1'-'4').
-		return $this->map_scheme_to_global( 'typography', $scheme );
-	}
-
 	public function register_controls() {
 		$controls_manager = Plugin::$instance->controls_manager;
 
