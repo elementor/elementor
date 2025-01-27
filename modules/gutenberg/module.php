@@ -71,7 +71,7 @@ class Module extends BaseModule {
 
 		$this->is_gutenberg_editor_active = true;
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js', [ 'jquery' ], ELEMENTOR_VERSION, true );
 
