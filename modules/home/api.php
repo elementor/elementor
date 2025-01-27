@@ -5,7 +5,7 @@ use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\Home\Classes\Transformations_Manager;
 
 class API {
-	public EditorAssetsAPI $editor_assets_api;
+	protected EditorAssetsAPI $editor_assets_api;
 
 	public function __construct( EditorAssetsAPI $editor_assets_api ) {
 		$this->editor_assets_api = $editor_assets_api;
@@ -19,7 +19,7 @@ class API {
 		return $this->transform_home_screen_data( $assets_data );
 	}
 
-	public function transform_home_screen_data( $json_data ): array {
+	private function transform_home_screen_data( $json_data ): array {
 		$transformers = new Transformations_Manager( $json_data );
 
 		return $transformers->run_transformations();
