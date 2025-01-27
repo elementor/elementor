@@ -20,7 +20,7 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultTabs() {
-		return {
+		const tabs = {
 			'templates/blocks': {
 				title: __( 'Blocks', 'elementor' ),
 				getFilter: () => ( {
@@ -43,6 +43,17 @@ export default class Component extends ComponentModalBase {
 				},
 			},
 		};
+
+		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
+			tabs[ 'templates/cloud-library' ] = {
+				title: __( 'Cloud Library', 'elementor' ),
+				filter: {
+					source: 'cloud',
+				},
+			};
+		}
+
+		return tabs;
 	}
 
 	defaultRoutes() {
@@ -96,8 +107,8 @@ export default class Component extends ComponentModalBase {
 	}
 
 	renderTab( tab ) {
-		const currentTab = this.tabs[ tab ],
-			filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
+		const currentTab = this.tabs[ tab ];
+		const filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
 
 		this.manager.setScreen( filter );
 	}

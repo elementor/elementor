@@ -250,8 +250,11 @@ class Source_Local extends Source_Base {
 			'exclude_from_search' => true,
 			'capability_type' => 'post',
 			'hierarchical' => false,
-			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
+			'supports' => [ 'title', 'thumbnail', 'author', 'elementor', 'custom-fields' ],
+			'show_in_rest' => true,
 		];
+
+		$this->avoid_rest_access_for_non_admins();
 
 		/**
 		 * Register template library post type args.
@@ -587,7 +590,7 @@ class Source_Local extends Source_Base {
 		);
 	}
 
-	// For testing purposes only, in order to be able to mock the `WP_CLI` constant.
+	/** For testing purposes only, in order to be able to mock the `WP_CLI` constant. */
 	protected function is_wp_cli() {
 		return Utils::is_wp_cli();
 	}
@@ -873,8 +876,8 @@ class Source_Local extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string $name - The file name
-	 * @param string $path - The file path
+	 * @param string $name - The file name.
+	 * @param string $path - The file path.
 	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
 	public function import_template( $name, $path ) {
@@ -1011,7 +1014,7 @@ class Source_Local extends Source_Base {
 	/**
 	 * Is template library supports export.
 	 *
-	 * whether the template library supports export.
+	 * Whether the template library supports export.
 	 *
 	 * Template saved by the user locally on his site, support export by default
 	 * but this can be changed using a filter.
@@ -1272,7 +1275,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
-	 * @param array $args
+	 * @param array  $args
 	 */
 	public function maybe_render_blank_state( $which, array $args = [] ) {
 		global $post_type;
@@ -1355,9 +1358,9 @@ class Source_Local extends Source_Base {
 	 * @since 3.1.0
 	 * @access public
 	 *
-	 * @param string $current_type_label The Entity title
-	 * @param string $href The URL for the 'Add New' button
-	 * @param string $description The sub title describing the Entity (Post Type, Taxonomy, etc.)
+	 * @param string $current_type_label The Entity title.
+	 * @param string $href The URL for the 'Add New' button.
+	 * @param string $description The sub title describing the Entity (Post Type, Taxonomy, etc.).
 	 */
 	public function print_blank_state_template( $current_type_label, $href, $description ) {
 		?>
@@ -1395,7 +1398,7 @@ class Source_Local extends Source_Base {
 		}
 
 		$all_items = get_taxonomy( self::TAXONOMY_CATEGORY_SLUG )->labels->all_items;
-		$dropdown_options = array(
+		$dropdown_options = [
 			'show_option_all' => $all_items,
 			'show_option_none' => $all_items,
 			'hide_empty' => 0,
@@ -1407,7 +1410,7 @@ class Source_Local extends Source_Base {
 			'name' => self::TAXONOMY_CATEGORY_SLUG,
 			//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
 			'selected' => Utils::get_super_global_value( $_GET, self::TAXONOMY_CATEGORY_SLUG ) ?? '',
-		);
+		];
 
 		printf(
 			'<label class="screen-reader-text" for="%1$s">%2$s</label>',
@@ -1744,6 +1747,18 @@ class Source_Local extends Source_Base {
 		unset( $post_types[ self::CPT ] );
 
 		return $post_types;
+	}
+
+	private function avoid_rest_access_for_non_admins(): void {
+		add_filter( 'rest_pre_dispatch', function ( $value, \WP_REST_Server $server, \WP_REST_Request $request ) {
+			if ( strpos( $request->get_route(), self::CPT ) !== false ) {
+				if ( ! current_user_can( 'manage_options' ) ) {
+					return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not allowed to do that.', 'elementor' ), [ 'status' => rest_authorization_required_code() ] );
+				}
+			}
+
+			return $value;
+		}, 10, 3 );
 	}
 
 	/**

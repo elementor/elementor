@@ -7,16 +7,6 @@ import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Image carousel tests', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			e_swiper_latest: false,
-		} );
-	} );
-
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -43,7 +33,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.setSwitcherControlValue( 'autoplay', false );
 
 		await test.step( 'Verify image population', async () => {
-			expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper-container.swiper-container-initialized' ).screenshot( {
+			expect( await editor.getPreviewFrame().locator( 'div.elementor-image-carousel-wrapper.swiper.swiper-initialized' ).screenshot( {
 				type: 'jpeg',
 				quality: 90,
 			} ) ).toMatchSnapshot( 'carousel.jpeg' );

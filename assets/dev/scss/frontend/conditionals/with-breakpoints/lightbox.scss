@@ -1,5 +1,5 @@
 @import "../../../helpers/variables";
-@import "../../breakpoints/templates";
+@import "../../../frontend/breakpoints/proxy";
 
 .elementor-lightbox {
 	--lightbox-ui-color: #{$slides_gui};
@@ -75,8 +75,7 @@
 		}
 	}
 
-	.swiper,
-	.swiper-container {
+	.swiper {
 		height: 100%;
 	}
 
@@ -135,23 +134,6 @@
 			video {
 				aspect-ratio: var( --video-aspect-ratio, 1.77777 ); // Default value 1.77777 = 16/9
 			}
-
-			// BC for browsers that don't support `aspect-ratio` (like Safari 14.1)
-			@supports not ( aspect-ratio: 1 / 1 ) {
-
-				& {
-					position: relative;
-					overflow: hidden;
-					height: 0;
-					padding-bottom: calc( 100% / var( --video-aspect-ratio, 1.77777 ) );
-
-					iframe,
-					video {
-						position: absolute;
-						inset: 0;
-					}
-				}
-			}
 		}
 
 		.elementor-video-square {
@@ -209,8 +191,7 @@
 		}
 	}
 
-	.swiper,
-	.swiper-container {
+	.swiper {
 
 		.elementor-swiper-button {
 
@@ -243,16 +224,54 @@
 			font-size: var(--lightbox-navigation-icons-size);
 		}
 
+		@media (max-width: $screen-tablet-max) {
+			&-prev,
+			&-next {
+				&:active {
+					-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
+					-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+				}
+
+				& svg,
+				i {
+					cursor: pointer;
+
+
+					&:active {
+						outline: none;
+						background-color: rgba(0, 0, 0, 0.5);
+					}
+				}
+			}
+		}
+
 		@media (max-width: $screen-mobile-max) {
 			&:focus {
 				outline: none;
 			}
 
-			&-prev, &-next {
+			&-prev,
+			&-next {
+				&:active {
+					-webkit-tap-highlight-color: transparent; /* fallback for some Androids */
+					-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+				}
+
 				width: 20%;
+
 				i {
 					padding: 10px;
 					background-color: rgba(0, 0, 0, 0.5);
+				}
+
+				& svg,
+				i {
+					cursor: pointer;
+
+					&:active {
+						outline: none;
+						background-color: rgba(0, 0, 0, 0.5);
+					}
 				}
 			}
 

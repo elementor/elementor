@@ -2,7 +2,7 @@
 namespace Elementor\Core\Logger\Loggers;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 interface Logger_Interface {
@@ -23,7 +23,7 @@ interface Logger_Interface {
 
 	/**
 	 * @param string $message
-	 * @param array $meta
+	 * @param array  $meta
 	 *
 	 * @return void
 	 */
@@ -31,7 +31,7 @@ interface Logger_Interface {
 
 	/**
 	 * @param string $message
-	 * @param array $meta
+	 * @param array  $meta
 	 *
 	 * @return void
 	 */
@@ -39,7 +39,7 @@ interface Logger_Interface {
 
 	/**
 	 * @param string $message
-	 * @param array $meta
+	 * @param array  $meta
 	 *
 	 * @return void
 	 */
@@ -47,18 +47,16 @@ interface Logger_Interface {
 
 	/**
 	 * @param string $message
-	 * @param array $meta
+	 * @param array  $meta
 	 *
 	 * @return void
 	 */
 	public function error( $message, $meta = [] );
 
 	/**
-	 * @param int $max_entries
-	 * @param bool $table use <td> in format
-	 *
+	 * @param int  $max_entries
+	 * @param bool $table use <td> in format.
 	 * @return array [ 'key' => [ 'total_count' => int, 'count' => int, 'entries' => Log_Item[] ] ]
 	 */
 	public function get_formatted_log_entries( $max_entries, $table = true );
-
 }

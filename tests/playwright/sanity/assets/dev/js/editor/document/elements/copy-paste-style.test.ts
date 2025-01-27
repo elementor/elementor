@@ -1,11 +1,13 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../pages/wp-admin-page';
+import ContextMenu from '../../../../../../../pages/widgets/context-menu';
 import EditorSelectors from '../../../../../../../selectors/editor-selectors';
 
 test( 'A page can be saved successfully after copy-paste style', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	const contextMenu = new ContextMenu( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
 	const hasTopBar = await editor.hasTopBar();
 	const heading1 = await editor.addWidget( 'heading' );
@@ -18,8 +20,8 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page,
 	await editor.setColorControlValue( 'title_color', '#77A5BD' );
 
 	// Act.
-	await editor.copyElement( heading1 );
-	await editor.pasteStyleElement( heading2 );
+	await contextMenu.copyElement( heading1 );
+	await contextMenu.pasteStyleElement( heading2 );
 
 	const heading2Title = editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
 

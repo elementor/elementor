@@ -105,7 +105,10 @@ class Utils {
 	const IMAGE_CAROUSEL = 'image_carousel';
 
 	/**
-	 * Is WP CLI.
+	 * Whether WordPress CLI mode is enabled or not.
+	 *
+	 * @access public
+	 * @static
 	 *
 	 * @return bool
 	 */
@@ -114,26 +117,35 @@ class Utils {
 	}
 
 	/**
-	 * Is script debug.
-	 *
 	 * Whether script debug is enabled or not.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
-	 * @return bool True if it's a script debug is active, false otherwise.
+	 * @return bool
 	 */
 	public static function is_script_debug() {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 	}
 
+	/**
+	 * Whether Elementor debug is enabled or not.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @return bool
+	 */
 	public static function is_elementor_debug() {
 		return defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG;
 	}
 
 	/**
-	 * Whether elementor test mode is enabled or not.
+	 * Whether Elementor test mode is enabled or not.
+	 *
+	 * @access public
+	 * @static
 	 *
 	 * @return bool
 	 */
@@ -182,11 +194,11 @@ class Utils {
 	 * @static
 	 * @access public
 	 *
-	 * @param $from
-	 * @param $to
+	 * @param string $from
+	 * @param string $to
 	 *
 	 * @return string
-	 * @throws \Exception
+	 * @throws \Exception Replace URL exception.
 	 */
 	public static function replace_urls( $from, $to ) {
 		$from = trim( $from );
@@ -430,7 +442,7 @@ class Utils {
 	 * @deprecated 3.3.0 Use `Plugin::$instance->documents->get_create_new_post_url()` instead.
 	 * @static
 	 *
-	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 * @param string      $post_type Optional. Post type slug. Default is 'page'.
 	 * @param string|null $template_type Optional. Query arg 'template_type'. Default is null.
 	 *
 	 * @return string A URL for creating new post using Elementor.
@@ -567,9 +579,10 @@ class Utils {
 	 * Add Elementor Config js vars to the relevant script handle,
 	 * WP will wrap it with <script> tag.
 	 * To make sure this script runs thru the `script_loader_tag` hook, use a known handle value.
+	 *
 	 * @param string $handle
 	 * @param string $js_var
-	 * @param mixed $config
+	 * @param mixed  $config
 	 */
 	public static function print_js_config( $handle, $js_var, $config ) {
 		$config = wp_json_encode( $config );
@@ -601,7 +614,7 @@ class Utils {
 	/**
 	 * Checks a control value for being empty, including a string of '0' not covered by PHP's empty().
 	 *
-	 * @param mixed $source
+	 * @param mixed       $source
 	 * @param bool|string $key
 	 *
 	 * @return bool
@@ -625,7 +638,7 @@ class Utils {
 	/**
 	 * Convert HTMLEntities to UTF-8 characters
 	 *
-	 * @param $string
+	 * @param string $string
 	 * @return string
 	 */
 	public static function urlencode_html_entities( $string ) {
@@ -720,8 +733,8 @@ class Utils {
 	 *
 	 * @since 3.1.0
 	 *
-	 * @param $menu_slug
-	 * @param $new_label
+	 * @param string $menu_slug
+	 * @param string $new_label
 	 * @access public
 	 */
 	public static function change_submenu_first_item_label( $menu_slug, $new_label ) {
@@ -822,15 +835,14 @@ class Utils {
 	}
 
 	/**
-	 * @param $file
-	 * @param mixed ...$args
+	 * @param string $file
+	 * @param mixed  ...$args
 	 * @return false|string
 	 */
 	public static function file_get_contents( $file, ...$args ) {
 		if ( ! is_file( $file ) || ! is_readable( $file ) ) {
 			return false;
 		}
-
 		return file_get_contents( $file, ...$args );
 	}
 
@@ -839,7 +851,7 @@ class Utils {
 			return null;
 		}
 
-		if ( $_FILES === $super_global ) {
+		if ( $_FILES === $super_global ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			return isset( $super_global[ $key ]['name'] ) ?
 				self::sanitize_file_name( $super_global[ $key ] ) :
 				self::sanitize_multi_upload( $super_global[ $key ] );
@@ -863,9 +875,9 @@ class Utils {
 	/**
 	 * Return specific object property value if exist from array of keys.
 	 *
-	 * @param $array
-	 * @param $keys
-	 * @return key|false
+	 * @param array $array
+	 * @param array $keys
+	 * @return mixed|null
 	 */
 	public static function get_array_value_by_keys( $array, $keys ) {
 		$keys = (array) $keys;
@@ -906,7 +918,7 @@ class Utils {
 			return;
 		}
 
-		throw new \Exception( $message );
+		throw new \Exception( esc_html( $message ) );
 	}
 
 	public static function has_invalid_post_permissions( $post ): bool {

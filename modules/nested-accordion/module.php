@@ -6,13 +6,13 @@ use Elementor\Core\Base\Module as BaseModule;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
 
 	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
 	}
 
 	public function get_name() {
@@ -29,7 +29,6 @@ class Module extends BaseModule {
 				'nested-elements',
 			], ELEMENTOR_VERSION, true );
 		} );
-
 	}
 
 	/**

@@ -25,7 +25,7 @@ abstract class Base extends Endpoint {
 
 	/**
 	 * @inheritDoc
-	 * @throws \Elementor\Data\V2\Base\Exceptions\Error_404
+	 * @throws \Elementor\Data\V2\Base\Exceptions\Error_404 Not found.
 	 */
 	public function get_item( $id, $request ) {
 		$items = $this->get_kit_items();

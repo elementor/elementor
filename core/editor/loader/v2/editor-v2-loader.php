@@ -19,17 +19,17 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 * Packages that should only be registered, unless some other asset depends on them.
 	 */
 	const LIBS = [
-		'editor-props',
 		'editor-responsive',
-		'editor-styles',
 		'editor-v1-adapters',
 		self::ENV_PACKAGE,
+		'http',
 		'icons',
 		'locations',
 		'menus',
 		'query',
 		'schema',
 		'store',
+		'session',
 		'ui',
 		'utils',
 		'wp-media',
@@ -124,7 +124,14 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		$env_config = $this->assets_config_provider->get( self::ENV_PACKAGE );
 
 		if ( $env_config ) {
-			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
+			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [
+				'@elementor/http' => [
+					'base_url' => rest_url( 'elementor/v1' ),
+					'headers' => [
+						'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),
+					],
+				],
+			] );
 
 			Utils::print_js_config(
 				$env_config['handle'],
@@ -192,16 +199,16 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 */
 	public function print_root_template() {
 		// Exposing the path for the view part to render the body of the editor template.
-		$body_file_path = __DIR__ . '/templates/editor-body-v2.view.php';
+		$body_file_path = __DIR__ . '/templates/editor-body-v2-view.php';
 
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
 
-	public static function get_packages_to_enqueue() : array {
+	public static function get_packages_to_enqueue(): array {
 		return apply_filters( 'elementor/editor/v2/packages', [] );
 	}
 
-	private function get_styles() : array {
+	private function get_styles(): array {
 		$styles = apply_filters( 'elementor/editor/v2/styles', [] );
 
 		return Collection::make( $styles )

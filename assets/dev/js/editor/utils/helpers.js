@@ -49,6 +49,10 @@ module.exports = {
 				widget: null,
 				container: null,
 			},
+			'div-block': {
+				widget: null,
+				'div-block': null,
+			},
 		},
 	},
 
@@ -138,14 +142,16 @@ module.exports = {
 
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
-				this.enqueuePreviewStylesheet( assetURL );
-				this.enqueueEditorStylesheet( assetURL );
+				const versionAddedURL = `${ assetURL }${ iconSetting?.ver ? '?ver=' + iconSetting.ver : '' }`;
+				this.enqueuePreviewStylesheet( versionAddedURL );
+				this.enqueueEditorStylesheet( versionAddedURL );
 			} );
 		}
 
 		if ( iconSetting.url ) {
-			this.enqueuePreviewStylesheet( iconSetting.url );
-			this.enqueueEditorStylesheet( iconSetting.url );
+			const versionAddedURL = `${ iconSetting.url }${ iconSetting?.ver ? '?ver=' + iconSetting.ver : '' }`;
+			this.enqueuePreviewStylesheet( versionAddedURL );
+			this.enqueueEditorStylesheet( versionAddedURL );
 		}
 
 		this._enqueuedIconFonts.push( iconType );
@@ -278,6 +284,13 @@ module.exports = {
 				}
 
 				enqueueOptions.crossOrigin = true;
+
+				if ( elementorCommon.config.experimentalFeatures?.e_local_google_fonts && 'preview' === target ) {
+					elementorCommon.ajax.addRequest( 'enqueue_google_fonts', {
+						data: { font_name: font },
+						unique_id: 'enqueue_google_fonts_' + font,
+					} );
+				}
 
 				break;
 
@@ -708,6 +721,14 @@ module.exports = {
 	sanitizeUrl( url ) {
 		const isValidUrl = !! url ? isValidAttribute( 'a', 'href', url ) : false;
 
-		return isValidUrl ? url : '';
+		if ( ! isValidUrl ) {
+			return '';
+		}
+
+		try {
+			return encodeURI( url );
+		} catch ( e ) {
+			return '';
+		}
 	},
 };

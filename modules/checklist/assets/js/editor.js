@@ -1,7 +1,7 @@
 import { editorV2 } from './editor-v-2';
 import Component from './component';
 import { USER_PROGRESS } from './utils/consts';
-import { fetchUserProgress, toggleChecklistPopup } from './utils/functions';
+import { fetchUserProgress, toggleChecklistPopup, dispatchChecklistOpenEvent } from './utils/functions';
 
 $e.components.register( new Component() );
 editorV2();
@@ -23,6 +23,7 @@ async function checklistStartup() {
 
 		if ( userProgress?.[ USER_PROGRESS.SHOULD_OPEN_IN_EDITOR ] ) {
 			toggleChecklistPopup();
+			dispatchChecklistOpenEvent();
 		}
 	}
 

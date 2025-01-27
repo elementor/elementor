@@ -45,7 +45,7 @@ export const getCustomCSS = ( payload ) => request( 'ai_get_custom_css', { paylo
 
 export const setGetStarted = () => request( 'ai_set_get_started' );
 
-export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId } );
+export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId }, true );
 
 export const getTextToImageGeneration = ( payload ) => request( 'ai_get_text_to_image', { payload } );
 
@@ -68,6 +68,8 @@ export const getImageToImageRemoveText = ( image ) => request( 'ai_get_image_to_
 export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_prompt_enhancer', { prompt } );
 
 export const getProductImageUnification = ( payload, immediately ) => request( 'ai_get_product_image_unification', { payload }, immediately );
+
+export const getAnimation = ( payload ) => request( 'ai_get_animation', { payload } );
 
 export const uploadImage = ( image ) => request( 'ai_upload_image', {
 	...image,

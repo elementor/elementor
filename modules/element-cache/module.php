@@ -21,7 +21,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiments();
 		$this->register_shortcode();
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
@@ -37,16 +36,20 @@ class Module extends BaseModule {
 		$this->clear_cache_on_site_changed();
 	}
 
-	private function register_experiments() {
-		Plugin::$instance->experiments->add_feature( [
+	public static function get_experimental_data(): array {
+		return [
 			'name' => 'e_element_cache',
 			'title' => esc_html__( 'Element Caching', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Elements caching reduces loading times by serving up a copy of an element instead of rendering it fresh every time the page is loaded. When active, Elementor will determine which elements can benefit from static loading - but you can override this.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
-			'default' => ExperimentsManager::STATE_ACTIVE,
+			'default' => ExperimentsManager::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.23.0',
+			],
 			'generator_tag' => true,
-		] );
+		];
 	}
 
 	private function register_shortcode() {
@@ -61,6 +64,8 @@ class Module extends BaseModule {
 				return '';
 			}
 
+			$widget_data['settings']['isShortcode'] = true;
+
 			ob_start();
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $widget_data );
@@ -74,9 +79,9 @@ class Module extends BaseModule {
 	}
 
 	private function add_advanced_tab_actions() {
-		$hooks = array(
+		$hooks = [
 			'elementor/element/common/_section_style/after_section_end' => '_css_classes', // Widgets
-		);
+		];
 
 		foreach ( $hooks as $hook => $injection_position ) {
 			add_action(
@@ -119,12 +124,13 @@ class Module extends BaseModule {
 			Settings::TAB_PERFORMANCE,
 			'element_cache_ttl',
 			[
-				'label' => esc_html__( 'Element Cache Expiration', 'elementor' ),
+				'label' => esc_html__( 'Element Cache', 'elementor' ),
 				'field_args' => [
 					'class' => 'elementor-element-cache-ttl',
 					'type' => 'select',
 					'std' => '24',
 					'options' => [
+						'disable' => esc_html__( 'Disable', 'elementor' ),
 						'1' => esc_html__( '1 Hour', 'elementor' ),
 						'6' => esc_html__( '6 Hours', 'elementor' ),
 						'12' => esc_html__( '12 Hours', 'elementor' ),
@@ -146,10 +152,11 @@ class Module extends BaseModule {
 		add_action( 'deactivated_plugin', [ $this, 'clear_cache' ] );
 		add_action( 'switch_theme', [ $this, 'clear_cache' ] );
 		add_action( 'upgrader_process_complete', [ $this, 'clear_cache' ] );
+
+		add_action( 'update_option_elementor_element_cache_ttl', [ $this, 'clear_cache' ] );
 	}
 
 	public function clear_cache() {
 		Plugin::$instance->files_manager->clear_cache();
-
 	}
 }

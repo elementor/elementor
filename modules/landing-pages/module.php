@@ -52,6 +52,7 @@ class Module extends BaseModule {
 				'default_inactive' => true,
 				'minimum_installation_version' => '3.22.0',
 			],
+			'deprecated' => true,
 		];
 	}
 
@@ -111,7 +112,7 @@ class Module extends BaseModule {
 	 * @since 3.1.0
 	 * @access public
 	 *
-	 * @param \WP_Post $post Post Object
+	 * @param \WP_Post $post Post Object.
 	 *
 	 * @return bool Whether the post was built with Elementor.
 	 */
@@ -208,7 +209,7 @@ class Module extends BaseModule {
 				<?php
 					printf(
 						/* translators: %1$s Link open tag, %2$s: Link close tag. */
-						esc_html__( 'Or view %1$sTrashed Items%1$s', 'elementor' ),
+						esc_html__( 'Or view %1$sTrashed Items%2$s', 'elementor' ),
 						'<a href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT ) ) . '">',
 						'</a>'
 					);

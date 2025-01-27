@@ -141,25 +141,12 @@ export default class extends elementorModules.ViewModule {
 		return validSelectorPattern.test( hash );
 	}
 
-	isExcludedHash( hash ) {
-		const emptyHash = '' === hash;
-		const urlActionHash = hash.startsWith( '#elementor-action' );
-
-		return emptyHash || urlActionHash;
-	}
-
 	getAnchorTarget( element ) {
 		const hash = element?.hash;
 
-		if ( this.isExcludedHash( hash ) ) {
-			return null;
-		} else if ( ! this.isValidSelector( hash ) ) {
-			// eslint-disable-next-line no-console
-			console.warn( `Invalid selector: '${ hash }'` );
-
+		if ( ! this.isValidSelector( hash ) ) {
 			return null;
 		}
-
 		return document.querySelector( hash );
 	}
 

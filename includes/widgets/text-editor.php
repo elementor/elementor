@@ -90,14 +90,16 @@ class Widget_Text_Editor extends Widget_Base {
 		return [ 'text', 'editor' ];
 	}
 
-	protected function is_dynamic_content(): bool {
-		return false;
-	}
-
 	/**
 	 * Get style dependencies.
 	 *
 	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * The 'widget-text-editor' style is required only when the drop cap is used.
+	 * Therefor, style should not be loaded on the widget level, rather only on
+	 * control level when the drop cap is active.
+	 *
+	 * Only in the Editor, these style should be loaded on the widget level.
 	 *
 	 * @since 3.24.0
 	 * @access public
@@ -105,7 +107,11 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-text-editor' ];
+		$style_dependencies = Plugin::$instance->editor->is_edit_mode() || Plugin::$instance->preview->is_preview_mode()
+			? [ 'widget-text-editor' ]
+			: [];
+
+		return $style_dependencies;
 	}
 
 	public function has_widget_inner_wrapper(): bool {
@@ -145,6 +151,23 @@ class Widget_Text_Editor extends Widget_Base {
 				'label_on' => esc_html__( 'On', 'elementor' ),
 				'prefix_class' => 'elementor-drop-cap-',
 				'frontend_available' => true,
+				'assets' => [
+					'styles' => [
+						[
+							'name' => 'widget-text-editor',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'drop_cap',
+										'operator' => '===',
+										'value' => 'yes',
+									],
+								],
+							],
+						],
+					],
+
+				],
 			]
 		);
 
@@ -428,8 +451,7 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'body:not(.rtl) {{WRAPPER}} .elementor-drop-cap' => 'margin-right: {{SIZE}}{{UNIT}};',
-					'body.rtl {{WRAPPER}} .elementor-drop-cap' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-drop-cap' => 'margin-inline-end: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

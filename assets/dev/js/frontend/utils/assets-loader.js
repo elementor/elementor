@@ -29,11 +29,9 @@ export default class AssetsLoader {
 	}
 
 	isAssetLoaded( assetData, assetType ) {
-		const tag = 'script' === assetType ? 'script' : 'link',
-			filePath = `${ tag }[src="${ assetData.src }"]`,
-			assetElements = document.querySelectorAll( filePath );
+		const filePath = 'script' === assetType ? `script[src="${ assetData.src }"]` : `link[href="${ assetData.src }"]`;
 
-		return !! assetElements?.length;
+		return !! document.querySelectorAll( filePath )?.length;
 	}
 
 	loadAsset( assetData, assetType ) {
@@ -66,14 +64,6 @@ const fileSuffix = elementorFrontendConfig.environmentMode.isScriptDebug ? '' : 
 
 const pluginVersion = elementorFrontendConfig.version;
 
-const swiperJsSource = elementorFrontendConfig.experimentalFeatures.e_swiper_latest
-	? `${ assetsUrl }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`
-	: `${ assetsUrl }lib/swiper/swiper${ fileSuffix }.js?ver=5.3.6`;
-
-const swiperCssSource = elementorFrontendConfig.experimentalFeatures.e_swiper_latest
-	? `${ assetsUrl }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`
-	: `${ assetsUrl }lib/swiper/css/swiper${ fileSuffix }.css?ver=5.3.6`;
-
 AssetsLoader.assets = {
 	script: {
 		dialog: {
@@ -82,13 +72,14 @@ AssetsLoader.assets = {
 		'share-link': {
 			src: `${ assetsUrl }lib/share-link/share-link${ fileSuffix }.js?ver=${ pluginVersion }`,
 		},
+		// TODO: Remove 'swiper' in v3.29.0 [ED-16272].
 		swiper: {
-			src: swiperJsSource,
+			src: `${ assetsUrl }lib/swiper/v8/swiper${ fileSuffix }.js?ver=8.4.5`,
 		},
 	},
 	style: {
 		swiper: {
-			src: swiperCssSource,
+			src: `${ assetsUrl }lib/swiper/v8/css/swiper${ fileSuffix }.css?ver=8.4.5`,
 			parent: 'head',
 		},
 		'e-lightbox': {

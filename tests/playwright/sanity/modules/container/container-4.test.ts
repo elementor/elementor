@@ -14,7 +14,6 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
-			e_nested_atomic_repeaters: true,
 			'nested-elements': true,
 		} );
 		await page.close();
@@ -60,7 +59,6 @@ test.describe( 'Container tests @container', () => {
 
 		if ( hasTopBar ) {
 			await editor.publishPage();
-			await page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
 		} else {
 			await page.locator( '#elementor-panel-saver-button-publish-label' ).click();
 			await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );

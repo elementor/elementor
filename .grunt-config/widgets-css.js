@@ -102,6 +102,7 @@ class WidgetsCss {
 				rtlFilename: this.cssFilePrefix + filename.replace( '.scss', '-rtl.scss' ),
 				importPath: `../frontend/widgets/${ widgetName }`,
 				filePath: this.sourceScssFolder + '/' + filename,
+				cssFileName: `${ this.cssFilePrefix }${  filename.replace( '.scss', '' ) }`,
 			} );
 		} );
 
@@ -122,6 +123,7 @@ class WidgetsCss {
 				rtlFilename: this.cssFilePrefix + widgetData.name + '-rtl.scss',
 				importPath: `../../../../modules/${  widgetData.path }`,
 				filePath,
+				cssFileName: `${ this.cssFilePrefix }${ widgetData.name }`,
 			} );
 		} );
 
@@ -144,13 +146,18 @@ class WidgetsCss {
 		return frontendScssFiles;
 	}
 
-	getWidgetDataFromPath( baseFolder, filePath, isFrontendScssFile ) {
+	getWidgetDataFromPath( baseFolder, filePath, isFrontendScssFile = false ) {
 		// Removing base-folder and first slash so that the module name will be the first value in the path.
 		filePath = filePath.replace( baseFolder, '' ).substring(1);
 
+		const getFileExtension = ( filePath ) => {
+			const match = filePath.match( /\.min\.css$/ );
+			return match ? '.min.css' : path.extname( filePath );
+		};
+
 		const widgetName = isFrontendScssFile
 			? filePath.split( path.sep )[ 0 ]
-			: path.basename( filePath, path.extname( filePath ) );
+			: path.basename( filePath, getFileExtension( filePath ) );
 
 		return {
 			path: filePath.replace( /\\/g, '/' ),
@@ -168,8 +175,9 @@ class WidgetsCss {
 		const widgetsCssFilesList = this.getWidgetsCssFilesList();
 
 		widgetsCssFilesList.forEach( ( item ) => {
-			const widgetSourceFilePath = item.filePath,
-				fileContent = fs.readFileSync( widgetSourceFilePath ).toString();
+			const cssFolder = path.resolve( __dirname, '../assets/css' );
+			const widgetSourceFilePath = path.join( cssFolder, `${ item.cssFileName }.min.css` );
+			const fileContent = fs.readFileSync( widgetSourceFilePath ).toString();
 
 			// Collecting all widgets .scss files that has @media queries in order to create templates files for custom breakpoints.
 			if ( fileContent.indexOf( '@media' ) > -1 ) {

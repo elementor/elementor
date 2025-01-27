@@ -39,6 +39,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			bind,
 			styleDefID,
 			meta,
+			label,
 		} = changes;
 		const { props } = isRedo ? changes.new : changes.old;
 
@@ -48,18 +49,20 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			styleDefID,
 			meta,
 			props,
+			label,
 		} );
 	}
 
 	/**
 	 * Function addToHistory().
 	 *
-	 * @param {Container} container
-	 * @param {string}    bind
-	 * @param {string}    styleDefID
-	 * @param {{}}        meta
-	 * @param {{}}        props
-	 * @param {{}}        oldProps
+	 * @param {Container}        container
+	 * @param {string}           bind
+	 * @param {string}           styleDefID
+	 * @param {{}}               meta
+	 * @param {{}}               props
+	 * @param {{}}               oldProps
+	 * @param {string|undefined} label
 	 */
 	addToHistory(
 		container,
@@ -68,6 +71,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 		meta,
 		props,
 		oldProps,
+		label,
 	) {
 		const newPropsEmpty = Object.keys( props ).reduce( ( emptyValues, key ) => {
 			emptyValues[ key ] = undefined;
@@ -78,6 +82,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 					bind,
 					styleDefID,
 					meta,
+					label,
 					old: {
 						props: { ...newPropsEmpty, ...oldProps },
 					},
@@ -109,18 +114,22 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 
 	apply( args ) {
 		let { container } = args;
-		const { bind, meta, props } = args;
+		const { bind, meta, props, label } = args;
 		container = container.lookup();
 
 		let styleDefID = args.styleDefID ?? null;
 
-		const currentStyle = structuredClone( container.model.get( 'styles' ) ) ?? {};
+		const currentStyle = container.model.get( 'styles' ) ?? {};
+
+		// Saving a deep clone of the style before it mutates, as part of this command
+		const oldStyle = this.isHistoryActive() ? structuredClone( currentStyle ) : null;
 
 		let style = {};
 
 		if ( ! styleDefID ) {
 			// Create a new style definition for the first time
 			style = $e.internal( 'document/atomic-widgets/create-style', {
+				label,
 				container,
 				bind,
 			} );
@@ -130,6 +139,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			// Create a new style definition with the given ID
 			// used when the style is deleted and then re-applied (i.e. history undo/redo)
 			style = $e.internal( 'document/atomic-widgets/create-style', {
+				label,
 				container,
 				styleDefID,
 				bind,
@@ -179,8 +189,8 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 			} );
 		}
 
-		if ( this.isHistoryActive() ) {
-			const oldStyleDef = currentStyle[ styleDefID ];
+		if ( null !== oldStyle ) {
+			const oldStyleDef = oldStyle[ styleDefID ];
 			const oldProps = oldStyleDef?.variants ? getVariantByMeta( oldStyleDef.variants, meta )?.props : {};
 
 			this.addToHistory(
@@ -190,6 +200,7 @@ export class Styles extends $e.modules.editor.document.CommandHistoryDebounceBas
 				meta,
 				props,
 				oldProps,
+				label,
 			);
 		}
 	}

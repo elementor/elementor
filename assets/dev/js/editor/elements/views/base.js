@@ -322,7 +322,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		jQuery.each( editButtons, ( toolName, tool ) => {
-			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title, ariaLabel: tool.title } );
+			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title, 'aria-label': tool.title } );
 			const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
 
 			$item.append( $icon );
@@ -654,11 +654,11 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( changedSettings, dataBinding, changedControl ) {
+	isAtomicDynamic( changedSettings, dataBinding, changedControl, bindingDynamicCssId ) {
 		return '__dynamic__' in changedSettings &&
 			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
-			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
+			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
+			this.isCssIdControl( changedControl, bindingDynamicCssId ) );
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
@@ -757,16 +757,20 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = async ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset,
+			const { bindingSetting, bindingDynamicCssId } = dataBinding.dataset,
 				changedControl = this.getChangedDynamicControlKey( settings );
 			let change = settings.changed[ bindingSetting ];
 
-			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl ) ) {
+			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl, bindingDynamicCssId ) ) {
 				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
 				}
+			}
+
+			if ( this.isCssIdControl( changedControl, bindingDynamicCssId ) ) {
+				return this.updateCssId( dataBinding, change, settings, changedControl );
 			}
 
 			if ( change !== undefined ) {
@@ -808,6 +812,23 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return changed;
+	},
+
+	isCssIdControl( changedControl, bindingDynamicCssId ) {
+		return bindingDynamicCssId === changedControl;
+	},
+
+	updateCssId( dataBinding, change, settings, changedControl ) {
+		if ( ! change ) {
+			change = settings.attributes[ changedControl ];
+		}
+
+		if ( change && change.length ) {
+			dataBinding.el.closest( dataBinding.dataset.bindingSingleItemHtmlWrapperTag ).setAttribute( 'id', change );
+			return true;
+		}
+
+		return false;
 	},
 
 	/**
@@ -921,6 +942,8 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderedEvent = new CustomEvent( event, { detail: { elementView: this } } );
 		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
+
+		window.top.dispatchEvent( renderedEvent );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -1046,6 +1069,10 @@ BaseElementView = BaseContainer.extend( {
 		return helper;
 	},
 
+	getDraggableElement() {
+		return this.$el;
+	},
+
 	/**
 	 * Initialize the Droppable instance.
 	 */
@@ -1059,7 +1086,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		this.$el.html5Draggable( {
+		this.getDraggableElement().html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 

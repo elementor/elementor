@@ -65,12 +65,14 @@ export default class {
 		// Enqueue CSS
 		if ( libraryConfig.enqueue ) {
 			libraryConfig.enqueue.forEach( ( assetURL ) => {
-				elementor.helpers.enqueueEditorStylesheet( assetURL );
+				const versionAddedURL = `${ assetURL }${ libraryConfig?.ver ? '?ver=' + libraryConfig.ver : '' }`;
+				elementor.helpers.enqueueEditorStylesheet( versionAddedURL );
 			} );
 		}
 
 		if ( libraryConfig.url ) {
-			elementor.helpers.enqueueEditorStylesheet( libraryConfig.url );
+			const versionAddedURL = `${ libraryConfig.url }${ libraryConfig?.ver ? '?ver=' + libraryConfig.ver : '' }`;
+			elementor.helpers.enqueueEditorStylesheet( versionAddedURL );
 		}
 
 		// Already saved an stored

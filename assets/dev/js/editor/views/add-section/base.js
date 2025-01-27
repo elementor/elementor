@@ -30,6 +30,7 @@ class AddSectionBase extends Marionette.ItemView {
 
 	attributes() {
 		return {
+			'aria-label': __( 'Add new layout element', 'elementor' ),
 			'data-view': AddSectionBase.VIEW_CHOOSE_ACTION,
 		};
 	}
@@ -43,10 +44,10 @@ class AddSectionBase extends Marionette.ItemView {
 			addTemplateButton: '.elementor-add-template-button',
 			selectPreset: '.elementor-select-preset',
 			presets: '.elementor-preset',
-			containerPresets: '.e-con-preset',
 			flexPresetButton: '.flex-preset-button',
 			gridPresetButton: '.grid-preset-button',
-			chooseGridPreset: '.e-con-choose-grid-preset',
+			chooseFlexPreset: '.e-con-select-preset-flex .e-con-preset',
+			chooseGridPreset: '.e-con-select-preset-grid .e-con-preset',
 		};
 	}
 
@@ -57,9 +58,9 @@ class AddSectionBase extends Marionette.ItemView {
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'click @ui.backButton': () => this.setView( AddSectionBase.getSelectType() ),
 			'click @ui.presets': 'onPresetSelected',
-			'click @ui.containerPresets': 'onContainerPresetSelected',
 			'click @ui.flexPresetButton': () => this.setView( AddSectionBase.VIEW_CONTAINER_FLEX_PRESET ),
 			'click @ui.gridPresetButton': () => this.setView( AddSectionBase.VIEW_CONTAINER_GRID_PRESET ),
+			'click @ui.chooseFlexPreset': 'onFlexPresetSelected',
 			'click @ui.chooseGridPreset': 'onGridPresetSelected',
 		};
 	}
@@ -74,6 +75,10 @@ class AddSectionBase extends Marionette.ItemView {
 		};
 
 		return elementor.hooks.applyFilters( 'views/add-section/behaviors', behaviors, this );
+	}
+
+	tagName() {
+		return 'section';
 	}
 
 	className() {
@@ -257,7 +262,7 @@ class AddSectionBase extends Marionette.ItemView {
 	 *
 	 * @return {Container} container
 	 */
-	onContainerPresetSelected( e ) {
+	onFlexPresetSelected( e ) {
 		this.closeSelectPresets();
 
 		return ContainerHelper.createContainerFromPreset(

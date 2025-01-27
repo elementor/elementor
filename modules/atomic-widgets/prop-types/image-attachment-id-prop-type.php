@@ -17,4 +17,8 @@ class Image_Attachment_Id_Prop_Type extends Plain_Prop_Type {
 	protected function validate_value( $value ): bool {
 		return is_numeric( $value ) && Plugin::$instance->wp->wp_attachment_is_image( $value );
 	}
+
+	protected function sanitize_value( $value ): int {
+		return (int) $value;
+	}
 }

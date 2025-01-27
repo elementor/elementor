@@ -1,7 +1,7 @@
-=== Elementor Website Builder - More than Just a Page Builder ===
+=== Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.3
+Requires at least: 6.5
 Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 3.12.1
@@ -254,7 +254,7 @@ Join a global community that helps each other achieve their goals.
 
 = Minimum Requirements =
 
-* WordPress 6.3 or greater
+* WordPress 6.5 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
@@ -346,48 +346,91 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.25.4 - 2024-11-03 =
+= 3.27.1 - 2025-01-23 =
 
-* Fix: Console warning errors related to popups ([#29137](https://github.com/elementor/elementor/issues/29137), [#29141](https://github.com/elementor/elementor/issues/29141))
+* Fix: Document is not being saved due to compatibility conflicts with third-party plugins ([#29970](https://github.com/elementor/elementor/issues/29970), [#29991](https://github.com/elementor/elementor/issues/29991))
 
-= 3.25.3 - 2024-10-30 =
+= 3.27.0 - 2025-01-20 =
 
-* Fix: Global Widgets are not displaying correctly in both the editor and frontend ([#29112](https://github.com/elementor/elementor/issues/29112))
+* New: Introducing local loading of Google Fonts to improve performance and enhance user privacy ([#4544](https://github.com/elementor/elementor/issues/4544), [#19966](https://github.com/elementor/elementor/issues/19966), [#23932](https://github.com/elementor/elementor/issues/23932), [#21716](https://github.com/elementor/elementor/issues/21716))
+* New: Introducing advanced layout customization for Grid Container with column and row span controls for precise grid-based designs ([#25256](https://github.com/elementor/elementor/issues/25256))
+* New: Added the option to animate with AI motion effects for creating AI-generated animations
+* Tweak: Add 'YouTube shorts' support in the video widget ([#24220](https://github.com/elementor/elementor/issues/24220), [#20330](https://github.com/elementor/elementor/issues/20330))
+* Tweak: Added Safari browser compatibility for the 'Fit to Size' option in the Icon Widget ([#27679](https://github.com/elementor/elementor/issues/27679))
+* Tweak: Moved style loading to the head instead of the footer to improve CLS
+* Tweak: Enabled conditional loading of `Swiper.js` based on widget dependencies to reduce unnecessary assets and improve page load times
+* Tweak: Removed the `elementor-widget-container` div from the Spacer Widget as part of the Optimized Markup experiment to improve HTML structure
+* Tweak: Improved keyboard accessibility for the nested container presets area
+* Tweak: Added accessible and descriptive names to the icon link in the Icon Box widget
+* Tweak: Optimize background video CSS by merging `elementor-html5-video` and `elementor-background-video-hosted` into a single class
+* Tweak: Added the ability to disable the Element Cache
+* Tweak: Removed animation class when no animations are set in Icon and Icon Widget widgets
+* Tweak: Added support for captions on YouTube videos
+* Tweak: Removed the limitation restricting heading hover color styling to links only
+* Tweak: Removed `aspect-ratio` workaround for unsupported Safari browsers
+* Fix: Switching between images in a lightbox on responsive mode displayed a tall blue rectangle ([#12830](https://github.com/elementor/elementor/issues/12830))
+* Fix: Image editing tools with AI are not working when launched in WooCommerce
+* Fix: Improved HTML markup validity by removing the `type` attribute from `<script>` tags
 
-= 3.25.2 - 2024-10-29 =
+= 3.26.5 - 2025-01-15 =
 
-* Fix: Global Widgets are not displaying correctly in the editor ([#29092](https://github.com/elementor/elementor/issues/29092))
-* Fix: Image captions are not displaying for non-logged-in users in Image Carousel widget
+* Fix: Background Slideshow option not working for columns
 
-= 3.25.1 - 2024-10-28 =
+= 3.26.4 - 2025-01-07 =
 
-* Fix: Custom template fails to insert into the page and displays a permission error ([#29076](https://github.com/elementor/elementor/issues/29076))
-* Fix: Global Widgets not displaying correctly on the frontend ([#29076](https://github.com/elementor/elementor/issues/29076))
+* Fix: Responsive Visibility "Hide On Mobile Portrait" option not working for hidden Sections and Containers on older sites
+* Fix: Editor fails to load when clicking on "Jumpstart your web-creation" links in Elementor Home after importing a kit
 
-= 3.25.0 - 2024-10-28 =
+= 3.26.3 - 2024-12-22 =
 
-* New: Introducing Optimized Markup as an Alpha experiment - Reduce DOM size by eliminating unnecessary HTML wrappers in various elements and widgets
-* Tweak: Reduced the use of JavaScript for smooth scrolling by implementing a modern CSS-based solution ([#13773](https://github.com/elementor/elementor/issues/13773))
-* Tweak: Updated smooth scroll behavior to respect the user's reduced motion preference setting
-* Tweak: Removed `elementor-button-wrapper` div from Button widget as part of the Optimized Markup experiment
-* Tweak: Load styles for Floating Elements separately to enhance performance
-* Tweak: Load styles for Link in Bio widgets separately to enhance performance
-* Tweak: Optimized `global.css` to exclude style generation for unused widgets
-* Tweak: Removed the Floating Elements modules from `module.js`
-* Tweak: Added "Edit with Elementor" button to WooCommerce's new product editor
-* Tweak: Merged "Build with AI" feature to version
-* Tweak: Merged "Grid Container" to "Flexbox Container" feature
-* Tweak: Activated "Editor Top Bar" feature for existing sites
-* Tweak: Activated "Optimized Control Loading" for existing sites and promoted the feature to stable
-* Tweak: Activated "Nested Elements" feature for existing sites
-* Tweak: Removed compatibility CSS support for the Twenty Fifteen theme
-* Tweak: Renamed the "Flexbox Container" feature to "Container" feature
-* Fix: Expand Icon in the Accordion widget would not display when nested inside another Accordion widget ([#24086](https://github.com/elementor/elementor/issues/24086))
-* Fix: Swiper incorrectly applied the `inert` attribute to a slide in the Nested Carousel ([#23039](https://github.com/elementor/elementor/issues/23039))
-* Fix: Footer would overlap the Archive Posts, Portfolio, and Gallery widgets in mobile view when using the Archive template
-* Fix: "Edit with Elementor AI" button is visible for unsupported file types
-* Fix: Structure panel indicator color is not visible in dark mode
-* Fix: Indentation issue with empty elements in the Structure panel
-* Fix: "Reference a website" feature in Elementor AI failed to work in Safari 17
+* Tweak: Registered `swiper.js` script to ensure Swiper is properly declared and loaded ([#29612](https://github.com/elementor/elementor/issues/29612), [#29616](https://github.com/elementor/elementor/issues/29616))
+
+= 3.26.2 - 2024-12-19 =
+
+* Fix: Reverted Activated "Element Caching" feature for existing sites ([#27502](https://github.com/elementor/elementor/issues/29613))
+* Fix: Compatibility issue with third-party plugin with `data-settings` attribute missing when Optimized Markup experiment is activated
+
+= 3.26.1 - 2024-12-19
+
+* Tweak: Return a specific error to users when images provider is not working in Elementor AI
+* Fix: Typo in `Isolation Manager`
+
+= 3.26.0 - 2024-12-16 =
+
+* New: Unify product images seamlessly with AI
+* Tweak: Added "Space Between Dots" control to Image Carousel widget ([#2526](https://github.com/elementor/elementor/issues/2526), [#3277](https://github.com/elementor/elementor/issues/3277), [#21697](https://github.com/elementor/elementor/issues/21697))
+* Tweak: Added paragraph spacing control in Text Editor widget ([#25431](https://github.com/elementor/elementor/issues/25431), [#20144](https://github.com/elementor/elementor/issues/20144))
+* Tweak: Added hover and transition color controls for a link in Heading widget ([#12877](https://github.com/elementor/elementor/issues/12877))
+* Tweak: Updated Image Spacing control to support only PX units in Image Carousel widget ([#21827](https://github.com/elementor/elementor/issues/21827))
+* Tweak: Created CSS variables for Row and Column gaps value in Container ([#24178](https://github.com/elementor/elementor/issues/24178))
+* Tweak: Added the ability to set `aria-label` in Image Carousel widget ([#28355](https://github.com/elementor/elementor/issues/28355))
+* Tweak: Replaced the Wrap Align Content select control with a choose control in Container ([#22640](https://github.com/elementor/elementor/issues/22640))
+* Tweak: Implemented accessibility improvements for pagination bullets in Image Carousel widget ([#28674](https://github.com/elementor/elementor/issues/28674))
+* Tweak: Replaced hidden `elementor-screen-only` div with `aria-label` attributes
+* Tweak: Improved behavior and messaging for the warning displayed when navigating between documents
+* Tweak: Load Nested Elements styles only when they are in use
+* Tweak: Added support for rendering Gutenberg blocks on the frontend
+* Tweak: Removed `elementor-widget-container` div from Elementor widgets as part of the Optimized Markup experiment
+* Tweak: Updated CSS to utilize `inset` CSS logical property in various locations
+* Tweak: Updated minimum required Safari version to 15.5
+* Tweak: Transition Duration controls are displayed only when a background color is set
+* Tweak: Transition Duration controls are displayed only when a border is set
+* Tweak: Improved keyboard accessibility for the section and container presets area
+* Tweak: Merged "Upgrade Swiper Library" feature to version
+* Tweak: Merged "Optimized Control Loading" feature to version
+* Tweak: Activated "Element Caching" feature for existing sites
+* Tweak: Promoted "Nested Elements" feature to Stable status
+* Tweak: Removed `elementor/core/schemes`
+* Fix: Container Gap values not transferring correctly between sites when using Cross-site Copy and Paste ([#24111](https://github.com/elementor/elementor/issues/24111), [#28343](https://github.com/elementor/elementor/issues/28343))
+* Fix: Removed anchor scroll warnings from the console ([#29199](https://github.com/elementor/elementor/issues/29199), [#29350](https://github.com/elementor/elementor/issues/29350))
+* Fix: Frontend template rendering is broken with fatal error ([#29582](https://github.com/elementor/elementor/issues/29582), [#29579](https://github.com/elementor/elementor/issues/29579))
+* Fix: PHP error log appearing due to the Usage Data Sharing cron job (([#29153](https://github.com/elementor/elementor/issues/29153))
+* Fix: Deprecated `print_emoji_styles` warning in Theme Builder screen ([#27502](https://github.com/elementor/elementor/issues/27502))
+* Fix: Display Condition feature is available without an active Elementor license in Floating Elements
+* Fix: "Generate with Elementor AI" button is missing in the Media Library list mode
+* Fix: Resized file size exceeding the maximum limit does not display an error in AI Image
+* Fix: Images from URL incorrectly open the Generate modal
+* Fix: Dropdown area is not opening correctly in certain scenarios in Menu widget
+* Fix: Swiper styling missing from Lightbox inside Gallery widgets
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

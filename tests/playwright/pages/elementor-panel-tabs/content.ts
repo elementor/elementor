@@ -1,5 +1,5 @@
 import EditorSelectors from '../../selectors/editor-selectors';
-import { expect, Locator, type Page, type TestInfo } from '@playwright/test';
+import { expect, type Frame, Locator, type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
 import path from 'path';
 import { LinkOptions } from '../../types/types';
@@ -7,23 +7,31 @@ import { LinkOptions } from '../../types/types';
 export default class Content {
 	readonly page: Page;
 	readonly editor: EditorPage;
+
 	constructor( page: Page, testInfo: TestInfo ) {
 		this.page = page;
 		this.editor = new EditorPage( this.page, testInfo );
 	}
 
-	async selectLinkSource( option: string ) {
-		await this.page.locator( EditorSelectors.image.linkSelect ).selectOption( option );
-	}
-
-	async setLink( link: string, options : LinkOptions = { targetBlank: false, noFollow: false, linkTo: false } ) {
+	/**
+	 * Set a link.
+	 *
+	 * @param {string}  link                - Link URL.
+	 * @param {Object}  options             - Link options.
+	 * @param {boolean} options.targetBlank - Optional. If true, set link to open in a new tab. Default is false.
+	 * @param {boolean} options.noFollow    - Optional. If true, set link to have a nofollow attribute. Default is false.
+	 * @param {boolean} options.linkTo      - Optional. If true, set link to custom URL. Default is false.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setLink( link: string, options : LinkOptions = { targetBlank: false, noFollow: false, linkTo: false } ): Promise<void> {
 		if ( options.linkTo ) {
-			await this.selectLinkSource( 'Custom URL' );
+			await this.editor.setSelectControlValue( EditorSelectors.image.linkSelect, 'Custom URL' );
 		}
 
 		const urlInput = this.page.locator( options.linkInpSelector ).first();
 		await urlInput.clear();
-		await urlInput.type( link );
+		await urlInput.fill( link );
 
 		const wheel = this.page.locator( EditorSelectors.button.linkOptions ).first();
 		if ( await wheel.isVisible() ) {
@@ -41,23 +49,25 @@ export default class Content {
 			await this.page
 				.locator( EditorSelectors.button.customAttributesInp )
 				.first()
-				.type( `${ options?.customAttributes.key }|${ options.customAttributes.value }` );
+				.fill( `${ options?.customAttributes.key }|${ options.customAttributes.value }` );
 		}
 		await this.editor.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
 	}
 
 	/**
-	 * @description Function verifies link ("a" HTML tag) attributes with expected values
-	 * @param {*}      element                  "a" HTML tag that contains link attributes
-	 * @param {Object} options
-	 * @param {*}      options.target           link target attribute
-	 * @param {string} options.href             link href attribute
-	 * @param {string} options.rel              link rel attribute
-	 * @param {string} options.customAttributes link custom attribute: key|value
-	 * @param {string} options.widget           widget name where we test link attributes
+	 * Verifies link (HTML `a` tag) attributes with expected values.
+	 *
+	 * @param {Locator} element                  - HTML `a` tag that contains link attributes.
+	 * @param {Object}  options                  - Link attributes options.
+	 * @param {string}  options.target           - Link `target` attribute
+	 * @param {string}  options.href             - Link `href` attribute
+	 * @param {string}  options.rel              - Link `rel` attribute
+	 * @param {string}  options.customAttributes - Link custom attribute: `key|value`
+	 * @param {string}  options.widget           - Widget name where we test link attributes
+	 *
+	 * @return {Promise<void>}
 	 */
-	async verifyLink( element: Locator,
-		options: { target:string, href: string, rel: string, customAttributes: {key: string, value: string}, widget: string } ) {
+	async verifyLink( element: Locator, options: { target: string, href: string, rel: string, customAttributes: { key: string, value: string }, widget: string } ): Promise<void> {
 		await expect( element ).toHaveAttribute( 'target', options.target );
 		await expect( element ).toHaveAttribute( 'href', options.href );
 		await expect( element ).toHaveAttribute( 'rel', options.rel );
@@ -66,20 +76,36 @@ export default class Content {
 		}
 	}
 
-	async chooseImage( imageTitle: string ) {
-		await this.page.locator( EditorSelectors.media.preview ).click();
-		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
-		await this.page.locator( EditorSelectors.media.imageByTitle( imageTitle ) ).click();
-		await this.page.locator( EditorSelectors.media.selectBtn ).click();
-	}
-
-	async selectImageSize( args: { widget: string, select: string, imageSize: string } ) {
-		await this.editor.getPreviewFrame().locator( args.widget ).click();
+	/**
+	 * Set image size.
+	 *
+	 * @param {Object} args           - Image size arguments.
+	 * @param {string} args.widget    - Widget selector.
+	 * @param {string} args.select    - Select control selector.
+	 * @param {string} args.imageSize - Image size.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async selectImageSize( args: { widget: string, select: string, imageSize: string } ): Promise<void> {
+		await this.editor.waitForPreviewFrame();
+		const frame: Frame = this.editor.getPreviewFrame();
+		await frame.locator( args.widget ).click();
 		await this.page.locator( args.select ).selectOption( args.imageSize );
-		await this.editor.getPreviewFrame().locator( EditorSelectors.pageTitle ).click();
+		await frame.locator( EditorSelectors.pageTitle ).click();
 	}
 
-	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean, isVideo: boolean } ) {
+	/**
+	 * Verify image `src` attribute has expected values.
+	 *
+	 * @param {Object}  args             - Image src arguments.
+	 * @param {string}  args.selector    - Image selector.
+	 * @param {string}  args.imageTitle  - Image title.
+	 * @param {boolean} args.isPublished - If true, the image is published.
+	 * @param {boolean} args.isVideo     - If true, the widget is a video, otherwise an image.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean, isVideo: boolean } ): Promise<void> {
 		const image = args.isPublished
 			? this.page.locator( args.selector )
 			: await this.editor.getPreviewFrame().waitForSelector( args.selector );
@@ -89,36 +115,44 @@ export default class Content {
 		expect( regex.test( src ) ).toEqual( true );
 	}
 
-	async setCustomImageSize( args: { selector: string, select: string, imageTitle: string, width: string, height: string } ) {
+	/**
+	 * Set custom image size.
+	 *
+	 * @param {Object} args            - Custom image size arguments.
+	 * @param {string} args.selector   - Image selector.
+	 * @param {string} args.select     - Select control selector.
+	 * @param {string} args.imageTitle - Image title.
+	 * @param {string} args.width      - Image width.
+	 * @param {string} args.height     - Image height.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setCustomImageSize( args: { selector: string, select: string, imageTitle: string, width: string, height: string } ): Promise<void> {
 		await this.editor.getPreviewFrame().locator( args.selector ).click();
 		await this.page.locator( args.select ).selectOption( 'custom' );
-		await this.page.locator( EditorSelectors.image.widthInp ).type( args.width );
-		await this.page.locator( EditorSelectors.image.heightInp ).type( args.height );
+		await this.page.locator( EditorSelectors.image.widthInp ).fill( args.width );
+		await this.page.locator( EditorSelectors.image.heightInp ).fill( args.height );
 		const regex = new RegExp( `http://(.*)/wp-content/uploads/elementor/thumbs/${ args.imageTitle }(.*)` );
 		const response = this.page.waitForResponse( regex );
 		await this.page.getByRole( 'button', { name: 'Apply' } ).click();
 		await response;
 	}
 
-	async setLightBox( option: string ) {
-		await this.page.getByRole( 'combobox', { name: 'Lightbox' } ).selectOption( option );
-		await this.editor.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
-	}
-
-	async toggleControls( controlSelectors: string[] ) {
-		for ( const i in controlSelectors ) {
-			await this.page.locator( controlSelectors[ i ] )
-				.locator( '..' )
-				.locator( EditorSelectors.video.switch ).click();
-		}
-	}
-
-	async uploadSVG( options? : { icon?: string, widget?: string} ) {
+	/**
+	 * Upload SVG icon.
+	 *
+	 * @param {Object} options        - SVG options.
+	 * @param {string} options.icon   - SVG icon.
+	 * @param {string} options.widget - The widget to which to upload the SVG.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async uploadSVG( options? : { icon?: string, widget?: string} ): Promise<void> {
 		const _icon = options?.icon === undefined ? 'test-svg-wide' : options.icon;
 		if ( 'text-path' === options?.widget ) {
 			await this.page.locator( EditorSelectors.plusIcon ).click();
 		} else {
-			await this.page.getByRole( 'button', { name: 'Content' } ).click();
+			await this.editor.openPanelTab( 'content' );
 			const mediaUploadControl = this.page.locator( EditorSelectors.media.preview ).first();
 			await mediaUploadControl.hover();
 			await mediaUploadControl.waitFor();
@@ -132,34 +166,37 @@ export default class Content {
 			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
 
-	async addNewTab( tabName: string, text: string ) {
-		const itemCount = await this.page.locator( EditorSelectors.item ).count();
-		await this.page.getByRole( 'button', { name: 'Add Item' } ).click();
-		await this.page.getByRole( 'textbox', { name: 'Title' } ).click();
-		await this.page.getByRole( 'textbox', { name: 'Title' } ).fill( tabName );
-		const textEditor = this.page.frameLocator( EditorSelectors.tabs.textEditorIframe ).nth( itemCount );
-		await textEditor.locator( 'html' ).click();
-		await textEditor.getByText( 'Tab Content' ).click();
-		await textEditor.locator( EditorSelectors.tabs.body ).fill( text );
-	}
-
 	/**
-	 * @description This function parses link ("a" tag) src attribute and gets Query Params and their values.
+	 * Parse link (HTML `a` tag) `src` attribute and gets Query Params and their values.
 	 * The same as you copy src attribute value and put in Postman
-	 * @param {string} src
-	 * @return {Object} options: parsed query params with key|value
+	 *
+	 * @param {string} src - Link `src` attribute value.
+	 *
+	 * @return {Record<string, string | number>} options: parsed query params with key|value
 	 */
-	parseSrc( src: string ) {
-		const options = src.split( '?' )[ 1 ].split( '&' ).reduce( ( acc, cur ) => {
+	parseSrc( src: string ): Record<string, string | number> {
+		return src.split( '?' )[ 1 ].split( '&' ).reduce( ( acc, cur ) => {
 			const [ key, value ] = cur.split( '=' );
 			acc[ key ] = value;
 			return acc;
 		}, {} );
-		return options;
 	}
 
-	verifySrcParams( src: string,
-		expectedValues: { q: string; t: string; z: string; output: string; iwloc: string; }, player: string ) {
+	/**
+	 * Verify video src attribute with expected values.
+	 *
+	 * @param {string} src                   - Video `src` attribute value.
+	 * @param {Object} expectedValues        - Expected values for video src attribute.
+	 * @param {string} expectedValues.q      - Video quality.
+	 * @param {string} expectedValues.t      - Video start time.
+	 * @param {string} expectedValues.z      - Video end time.
+	 * @param {string} expectedValues.output - Video output.
+	 * @param {string} expectedValues.iwloc  - Video location.
+	 * @param {string} player                - Video player name. For instance 'youtube' or 'vimeo'.
+	 *
+	 * @return {void}
+	 */
+	verifySrcParams( src: string, expectedValues: { q: string; t: string; z: string; output: string; iwloc: string; }, player: string ): void {
 		const videoOptions: Record< string, string | number> = this.parseSrc( src );
 		if ( 'vimeo' === player ) {
 			videoOptions.start = src.split( '#' )[ 1 ];

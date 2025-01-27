@@ -19,7 +19,7 @@ class Product_Image_Unification_Intro {
 	}
 
 	public static function product_image_unification_intro_script() {
-		if ( static::is_dismissed() || static::is_new_installation() ) {
+		if ( static::is_dismissed() ) {
 			return;
 		}
 
@@ -35,7 +35,7 @@ class Product_Image_Unification_Intro {
 		$pointer_content .= '<p>' . esc_html__( 'Now you can process images in bulk and standardized the background and ratio - no manual editing required!', 'elementor' ) . '</p>';
 
 		$pointer_content .= sprintf(
-			'<p><button style="padding: 0; border: 0"><a class="button button-primary" href="%s">%s</a></button></p>',
+			'<p><button style="padding: 0; border: 0"><a class="button button-primary" href="%s" target="_blank">%s</a></button></p>',
 			esc_js( 'https://go.elementor.com/wp-dash-unify-images-learn-more/' ),
 			esc_html__( 'Learn more', 'elementor' )
 		);
@@ -67,9 +67,5 @@ class Product_Image_Unification_Intro {
 
 	private static function is_dismissed() {
 		return User::get_introduction_meta( static::CURRENT_POINTER_SLUG );
-	}
-
-	private static function is_new_installation() {
-		return Upgrade_Manager::install_compare( static::RELEASE_VERSION, '>=' );
 	}
 }

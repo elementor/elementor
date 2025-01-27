@@ -5,7 +5,7 @@ namespace Elementor\App\Modules\Onboarding;
 use Elementor\Tracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Features_Usage {
