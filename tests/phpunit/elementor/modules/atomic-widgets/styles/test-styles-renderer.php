@@ -390,11 +390,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'position' => 'top center',
-                          
 													'attachment' => 'fixed',
-
 													'resolution' => 'medium'
-
 												]
 											],
 										],
@@ -560,7 +557,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'size' => 'contain',
-                          
+
 													'attachment' => 'scroll',
 
 													'resolution' => 'large',
