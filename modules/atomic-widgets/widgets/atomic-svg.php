@@ -35,7 +35,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$svg_data = $settings['svg'];
 
-		$svg_content = isset($svg_data['url']) ? $svg_data['url'] : '';
+		$svg_content = isset( $svg_data['url'] ) ? $svg_data['url'] : '';
 
 		if ( strpos( $svg_content, 'data:image/svg+xml;charset=utf-8,' ) === 0 ) {
 			$svg_content = urldecode( substr( $svg_content, 26 ) );
