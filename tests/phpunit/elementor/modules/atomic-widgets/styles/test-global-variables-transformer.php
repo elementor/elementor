@@ -66,7 +66,7 @@ class Test_Global_Variables_Transformer extends Elementor_Test_Base {
 								'$$type' => 'background',
 								'value' => [
 									'color' => [
-										'$$type' => 'global-var',
+										'$$type' => 'global-color-variable',
 										'value' => 'e-gc-primary',
 									],
 								],
@@ -84,6 +84,66 @@ class Test_Global_Variables_Transformer extends Elementor_Test_Base {
 		$css = $stylesRenderer->render( $styles );
 		$this->assertNotEmpty( $css, 'Styles should not be empty' );
 		// print_r( [ 'style' => $css, ] );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__font_family_style() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Verdana',
+							],
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+		$this->assertNotEmpty( $css, 'Styles should not be empty' );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__font_family_variable_style() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-family' => [
+								'$$type' => 'global-font-variable',
+								'value' => 'my-font-var',
+							],
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+		$this->assertNotEmpty( $css, 'Styles should not be empty' );
 
 		// Assert.
 		$this->assertMatchesSnapshot( $css );

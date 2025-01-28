@@ -31,7 +31,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Global_Variable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Global_Color_Variable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Global_Font_Variable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -175,7 +176,8 @@ class Module extends BaseModule {
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 
-		$transformers->register( Global_Variable_Prop_Type::get_key(), new Global_Variable_Transformer() );
+		$transformers->register( Global_Color_Variable_Prop_Type::get_key(), new Global_Variable_Transformer() );
+		$transformers->register( Global_Font_Variable_Prop_Type::get_key(), new Global_Variable_Transformer() );
 	}
 
 	/**

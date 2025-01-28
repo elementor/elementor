@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Global_Variable_Prop_Type extends Plain_Prop_Type {
+class Global_Color_Variable_Prop_Type extends Plain_Prop_Type {
 	public static function get_key(): string {
-		return 'global-var';
+		return 'global-color-variable';
 	}
 
 	protected function validate_value( $value ): bool {
