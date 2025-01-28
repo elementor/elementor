@@ -73,4 +73,3 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		return $position . ' / ' . $value['size'];
 	}
 }
-
