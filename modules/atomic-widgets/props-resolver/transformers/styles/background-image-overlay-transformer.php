@@ -26,7 +26,8 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			$background_style .= ' ' . $position_and_size_style;
 		}
 
-		return $background_style . ( $value['attachment'] ? ' ' . $value['attachment'] : '' );	}
+		return $background_style . ( $value['attachment'] ? ' ' . $value['attachment'] : '' );
+	}
 
 	private function get_image_url( array $image_src, string $resolution ): string {
 		if ( ! empty( $image_src['id'] ) ) {
