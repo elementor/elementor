@@ -510,6 +510,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 									],
 								],
 							],
+							'gap' => [
+								'$$type' => 'layout-direction',
+								'value' => [
+									'row' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 10,
+										],
+									],
+									'column' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 20,
+										],
+									],
+								],
+							],
 							'border-radius' => [
 								'$$type' => 'border-radius',
 								'value' => [
