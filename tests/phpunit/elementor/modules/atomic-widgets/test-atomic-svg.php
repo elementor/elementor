@@ -9,7 +9,8 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
     const MOCK = [
         'id' => 'abcd123',
         'elType' => 'widget',
-        'settings' => [],
+        'settings' => [
+        ],
         'widgetType' => 'a-svg',
     ];
 
@@ -20,7 +21,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
         $this->instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK );
     }
 
-    public function test__render_paragraph(): void {
+    public function test__render_svg(): void {
         // Act
         ob_start();
         $this->instance->render_content();
