@@ -3,13 +3,20 @@
  * Inspired by Laravel Collection.
  *
  * @link https://github.com/illuminate/collections
+ * @package Elementor\Core\Utils
  */
+
 namespace Elementor\Core\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Inspired by Laravel Collection.
+ *
+ * @link https://github.com/illuminate/collections
+ */
 class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * The items contained in the collection.
@@ -446,7 +453,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
-	 * @param array $values
+	 * @param array ...$values
 	 *
 	 * @return $this
 	 */

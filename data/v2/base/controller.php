@@ -224,7 +224,7 @@ abstract class Controller extends WP_REST_Controller {
 		}
 
 		if ( $result instanceof \WP_Error ) {
-			throw new WP_Error_Exception( $result );
+			throw new WP_Error_Exception( esc_html( $result ) );
 		}
 
 		return $result;

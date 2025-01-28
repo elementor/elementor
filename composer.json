@@ -34,7 +34,7 @@
 		"coverage:check": "phpunit-coverage-check -t 65 coverage-report/clover.xml",
 		"post-install-cmd": [
 			"@php -r \"if (!file_exists('vendor_prefixed')) { mkdir('vendor_prefixed', 0755, true); }\"",
-			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection.inc.php --force",
+			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection-inc.php --force",
 			"@php composer dump-autoload"
 		],
 		"pre-autoload-dump": [
@@ -42,7 +42,7 @@
 		],
 		"post-update-cmd": [
 			"@php -r \"if (!file_exists('vendor_prefixed')) { mkdir('vendor_prefixed', 0755, true); }\"",
-			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection.inc.php --force",
+			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection-inc.php --force",
 			"@php composer dump-autoload"
 		]
 	},

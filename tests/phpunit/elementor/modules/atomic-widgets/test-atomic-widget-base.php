@@ -28,7 +28,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	 */
 	public function test_get_atomic_settings( $args, $arrange_cb = null ) {
 		// Arrange.
-		$cleanup = $arrange_cb ? $arrange_cb() : fn() => null;
+		$cleanup = $arrange_cb ? $arrange_cb() : null;
 
 		$widget = $this->make_mock_widget( [
 			'props_schema' => $args['prop_types'],
@@ -41,7 +41,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( $args['result'], $settings );
 
-		$cleanup();
+		if ( $cleanup ) {
+			$cleanup();
+		}
 	}
 
 	public function get_atomic_settings_data_provider() {
@@ -59,7 +61,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'link' => [
 							'$$type' => 'link',
 							'value' => [
-								'enabled' => true,
 								'href' => 'https://elementor.com',
 								'isTargetBlank' => true,
 							],
@@ -153,7 +154,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'value' => [
 								'name' => 'dynamic-tag',
 								'settings' => [
-									'before' => 'Before text - '
+									'before' => [
+										'$$type' => 'string',
+										'value' => 'Before text - ',
+									],
+									'not-in-schema' => [
+										'$$type' => 'string',
+										'value' => 'Not in schema',
+									],
 								],
 							],
 						],
@@ -203,236 +211,79 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 					return fn() => Plugin::$instance->dynamic_tags->unregister( 'dynamic-tag' );
 				},
-			]
+			],
+			'transform image' => [
+				'args' => [
+					'prop_types' => [
+						'image' => Image_Prop_Type::make()->default_url( 'https://example.com/default-image.jpg' ),
+						'just_default_image' => Image_Prop_Type::make()->default_url( 'https://example.com/default-image-2.jpg' ),
+						'only_url_image' => Image_Prop_Type::make()->default_url( 'https://example.com/default-image-3.jpg' ),
+						'image_with_attachment' => Image_Prop_Type::make()->default('https://example.com/default-image-4.jpg' )
+					],
+					'settings' => [
+						'image' => [
+							'$$type' => 'image',
+							'value' => [
+								'size' => [ '$$type' => 'string', 'value' => 'medium' ],
+							],
+						],
+						'only_url_image' => [
+							'$$type' => 'image',
+							'value' => [
+								'src' => [
+									'$$type' => 'image-src',
+									'value' => [
+										'id' => null,
+										'url' => 'https://example.com/image.jpg',
+									],
+								],
+								'size' => [ '$$type' => 'string', 'value' => 'medium' ],
+							],
+						],
+						'image_with_attachment' => [
+							'$$type' => 'image',
+							'value' => [
+								'src' => [
+									'$$type' => 'image-src',
+									'value' => [
+										'id' => 123,
+										'url' => null,
+									],
+								],
+								'size' => [ '$$type' => 'string', 'value' => 'medium' ],
+							],
+						],
+					],
+					'result' => [
+						'image' => [
+							'src' => 'https://example.com/default-image.jpg',
+						],
+						'just_default_image' => [
+							'src' => 'https://example.com/default-image-2.jpg',
+						],
+						'only_url_image' => [
+							'src' => 'https://example.com/image.jpg',
+						],
+						'image_with_attachment' => [
+							'src' => 'https://example.com/image.jpg',
+							'width' => 100,
+							'height' => 200,
+							'srcset' => false,
+							'alt' => '',
+						],
+					],
+				],
+				'arrange_cb' => function() {
+					add_filter( 'wp_get_attachment_image_src', function() {
+						return [
+							'https://example.com/image.jpg',
+							100,
+							200,
+						];
+					} );
+				},
+			],
 		];
-	}
-
-	public function test_get_atomic_settings__transforms_image_prop_recursively__default() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'image' => Image_Prop_Type::make()->default_url( 'https://example.com/default-image.jpg' ),
-			],
-			'settings' => [
-				'image' => [
-					'$$type' => 'image',
-					'value' => [
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
-					],
-				],
-			],
-		] );
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertSame( [
-			'src' => 'https://example.com/default-image.jpg',
-		], $settings['image'] );
-	}
-
-	public function test_get_atomic_settings__transforms_image_prop_recursively__only_url() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'image' => Image_Prop_Type::make(),
-			],
-			'settings' => [
-				'image' => [
-					'$$type' => 'image',
-					'value' => [
-						'src' => [
-							'$$type' => 'image-src',
-							'value' => [
-								'id' => null,
-								'url' => 'https://example.com/image.jpg',
-							],
-						],
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
-					],
-				],
-			],
-		] );
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertSame( [
-			'src' => 'https://example.com/image.jpg',
-		], $settings['image'] );
-	}
-
-	public function test_get_atomic_settings__transforms_image_prop_recursively__only_id() {
-		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function() {
-			return [
-				'https://example.com/image.jpg',
-				100,
-				200,
-			];
-		} );
-
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'image' => Image_Prop_Type::make(),
-			],
-			'settings' => [
-				'image' => [
-					'$$type' => 'image',
-					'value' => [
-						'src' => [
-							'$$type' => 'image-src',
-							'value' => [
-								'id' => 123,
-								'url' => null,
-							],
-						],
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
-					],
-				],
-			],
-		] );
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertSame( 'https://example.com/image.jpg', $settings['image']['src'] );
-		$this->assertSame( 100, $settings['image']['width'] );
-		$this->assertSame( 200, $settings['image']['height'] );
-	}
-
-	public function test_get_atomic_settings__transforms_image_prop_recursively__invalid_id() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'image' => Image_Prop_Type::make(),
-			],
-			'settings' => [
-				'image' => [
-					'$$type' => 'image',
-					'value' => [
-						'src' => [
-							'$$type' => 'image-src',
-							'value' => [
-								'id' => -1,
-								'url' => null,
-							],
-						],
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
-					],
-				],
-			],
-		] );
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertNull( $settings['image'] );
-	}
-
-	public function test_get_atomic_settings__transforms_image_prop_recursively__no_id_or_url() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'image' => Image_Prop_Type::make(),
-			],
-			'settings' => [
-				'image' => [
-					'$$type' => 'image',
-					'value' => [
-						'src' => [
-							'$$type' => 'image-src',
-							'value' => [
-								'id' => null,
-								'url' => null,
-							],
-						],
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
-					],
-				],
-			],
-		] );
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertNull( $settings['image'] );
-	}
-
-	public function test_get_atomic_settings__transforms_image_prop_recursively__dynamic_src() {
-		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function() {
-			return [
-				'https://example.com/image.jpg',
-				100,
-				200,
-			];
-		} );
-
-		$dynamic_tag = new class extends Data_Tag {
-			public function get_name() {
-				return 'test-image-dynamic';
-			}
-
-			public function get_title() {
-				return 'Test Image Dynamic';
-			}
-
-			public function get_categories() {
-				return [
-					'image',
-				];
-			}
-
-			public function get_group() {
-				return 'basic';
-			}
-
-			protected function get_value( array $options = [] ) {
-				return [
-					'id' => 123,
-					'url' => null,
-				];
-			}
-		};
-
-		Plugin::$instance->dynamic_tags->register( $dynamic_tag );
-
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'image' => Image_Prop_Type::make(),
-			],
-			'settings' => [
-				'image' => [
-					'$$type' => 'image',
-					'value' => [
-						'src' => [
-							'$$type' => 'dynamic',
-							'value' => [
-								'name' => 'test-image-dynamic',
-							],
-						],
-						'size' => [ '$$type' => 'string', 'value' => 'medium' ],
-					],
-				],
-			],
-		] );
-
-		// Act.
-		$settings = $widget->get_atomic_settings();
-
-		// Assert.
-		$this->assertSame( 'https://example.com/image.jpg', $settings['image']['src'] );
-		$this->assertSame( 100, $settings['image']['width'] );
-		$this->assertSame( 200, $settings['image']['height'] );
-
-		// Cleanup.
-		Plugin::$instance->dynamic_tags->unregister( 'test-image-dynamic' );
 	}
 
 	public function test_get_props_schema__is_serializable() {
@@ -619,6 +470,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 	public function test_get_data_for_save() {
 		// Arrange.
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_mime_type' => 'image/png'] );
+
 		$widget_styles = [
 			's-1234' => [
 				'id' => 's-1234',
@@ -639,7 +492,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								],
 							],
 							'padding' => [
-								'$$type' => 'linked-dimensions',
+								'$$type' => 'dimensions',
 								'value' => [
 									'top' => [
 										'$$type' => 'size',
@@ -714,10 +567,45 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'background' => [
 								'$$type' => 'background',
 								'value' => [
-								    'color' => [
-									    '$$type' => 'color',
-									    'value' => '#000000',
-								    ],
+									'color' => [
+										'$$type' => 'color',
+										'value' => '#000000',
+									],
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => 'red'
+											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image-src' => [
+														'$$type' => 'image-src',
+														'value' => [
+															'id' => [
+																'$$type' => 'image-attachment-id',
+																'value' => $post->ID
+															]
+														]
+													],
+													'position' => [
+														'$$type' => 'string',
+														'value' => 'center center'
+													],
+													'resolution' => [
+														'$$type' => 'string',
+														'value' => 'medium'
+													],
+													'size' => [
+														'$$type' => 'string',
+														'value' => 'cover'
+													]
+												]
+											]
+										]
+									]
 								],
 							],
 						],
@@ -747,6 +635,12 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			],
 			'styles' => $widget_styles
 		] );
+
+		add_filter( 'get_attached_file', function ( $file, $attachment_id ) use ( $post ) {
+			$mock_path = _wp_upload_dir();
+
+			return $mock_path['path'] . '/test.png';
+		}, 9999, 2 );
 
 		// Act.
 		$data_for_save = $widget->get_data_for_save();
@@ -1326,9 +1220,33 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 										'background-overlay' => [
 											'$$type' => 'background-overlay',
 											'value' => [
-												'$$type' => 'background-color-overlay',
-												'value' => 4,
+												[
+													'$$type' => 'background-color-overlay',
+													'value' => 4,
+												],
+												[
+													'$$type' => 'background-image-overlay',
+													'value' => [
+														'image-src' => [
+															'$$type' => 'image-src',
+															'value' => [
+																'id' => [
+																	'$$type' => 'image-attachment-id',
+																	'value' => 3,
+																],
+																'url' => null
+															],
+														],
+														'size' => 'cover',
+                                                        'position' => 'center left',
+													]
+												],
 											],
+										],
+
+										'color' => [
+											'$$type' => 'color',
+											'value' => 'red',
 										],
 									],
 								],

@@ -257,7 +257,7 @@ class Module extends BaseModule {
 	private function maybe_upload_logo_image() {
 		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' );
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
@@ -342,7 +342,7 @@ class Module extends BaseModule {
 
 		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? [];
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
@@ -414,8 +414,6 @@ class Module extends BaseModule {
 	 * This method checks if there are any AJAX actions being
 	 *
 	 * @since 3.6.0
-	 *
-	 * @return array|null
 	 */
 	private function maybe_handle_ajax() {
 		$result = [];
