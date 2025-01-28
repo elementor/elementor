@@ -1,7 +1,10 @@
 name: Check CSS Size Limit
 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'main'
+      - '3.*'
     types: ['opened', 'edited', 'reopened', 'synchronize']
     paths-ignore:
       - '**.md'

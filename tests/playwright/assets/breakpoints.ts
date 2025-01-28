@@ -7,30 +7,18 @@ export default class {
 	readonly page: Page;
 	constructor( page: Page ) {
 		this.page = page;
-		// TODO: throw exception if experiment Breakpoints is deactivated.
 	}
 
 	static getDeviceLocator( page: Page, device: Device ): Locator {
-		// TODO: use the new data-testid attribute
 		const baseLocator = page.locator( '[aria-label="Switch Device"]' );
-		const locators = {
-			mobile: baseLocator.locator( 'button[aria-label="Mobile Portrait (up to 767px)"]' ),
-			mobile_extra: baseLocator.locator( 'button[aria-label="Mobile Landscape (up to 880px)"]' ),
-			tablet: baseLocator.locator( 'button[aria-label="Tablet Portrait (up to 1024px)"]' ),
-			tablet_extra: baseLocator.locator( 'button[aria-label="Tablet Landscape (up to 1200px)"]' ),
-			laptop: baseLocator.locator( 'button[aria-label="Laptop (up to 1366px)"]' ),
-			desktop: baseLocator.locator( 'button[aria-label="Desktop"]' ),
-			widescreen: baseLocator.locator( 'button[aria-label="Widescreen (2400px and up)"]' ),
-		};
-
-		return locators[ device ];
+		return baseLocator.locator( `[data-testid="switch-device-to-${ device }"]` );
 	}
 
-	static getAll() {
+	static getAll(): Device[] {
 		return [ 'mobile', 'mobile_extra', 'tablet', 'tablet_extra', 'laptop', 'desktop', 'widescreen' ];
 	}
 
-	static getBasic() {
+	static getBasic(): Device[] {
 		return [ 'mobile', 'tablet', 'desktop' ];
 	}
 
@@ -85,16 +73,7 @@ export default class {
 	}
 
 	getBreakpointInputLocator( page: Page, device: BreakpointEditableDevice ): Locator {
-		const locators = {
-			mobile: page.locator( 'input[data-setting="viewport_mobile"]' ),
-			mobile_extra: page.locator( 'input[data-setting="viewport_mobile_extra"]' ),
-			tablet: page.locator( 'input[data-setting="viewport_tablet"]' ),
-			tablet_extra: page.locator( 'input[data-setting="viewport_tablet_extra"]' ),
-			laptop: page.locator( 'input[data-setting="viewport_laptop"]' ),
-			widescreen: page.locator( 'input[data-setting="viewport_widescreen"]' ),
-		};
-
-		return locators[ device ];
+		return page.locator( `input[data-setting="viewport_${ device }"]` );
 	}
 
 	async setBreakpoint( editor: EditorPage, device: BreakpointEditableDevice, value: number ) {

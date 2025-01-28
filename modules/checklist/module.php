@@ -49,7 +49,6 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$this->elementor_adapter = $elementor_adapter ?? Isolation_Manager::get_adapter( Elementor_Adapter::class );
 
 		parent::__construct();
-		$this->register_experiment();
 		$this->init_user_progress();
 
 		if ( ! $this->is_experiment_active() ) {
@@ -219,8 +218,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		return ! $this->elementor_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 	}
 
-	private function register_experiment(): void {
-		Plugin::$instance->experiments->add_feature( [
+	public static function get_experimental_data(): array {
+		return [
 			'name' => self::EXPERIMENT_ID,
 			'title' => esc_html__( 'Launchpad Checklist', 'elementor' ),
 			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
@@ -230,7 +229,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 				'default_active' => true,
 				'minimum_installation_version' => '3.25.0',
 			],
-		] );
+		];
 	}
 
 	private function init_user_progress(): void {
