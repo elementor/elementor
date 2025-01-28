@@ -13,7 +13,7 @@ test( 'Accordion', async ( { page, apiRequests }, testInfo ) => {
 	// Assert
 	await editor.togglePreviewMode();
 	expect( await editor.getPreviewFrame()
-		.locator( '.elementor-widget-wrap > .elementor-background-overlay' )
+		.locator( '.elementor-widget-wrap > .elementor-background-overlay111' )
 		.screenshot( { type: 'jpeg', quality: 90 } ) )
 		.toMatchSnapshot( 'accordion.jpeg' );
 } );
