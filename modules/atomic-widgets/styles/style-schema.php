@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Global_Font_Variable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -68,7 +69,10 @@ class Style_Schema {
 
 	private static function get_typography_props() {
 		return [
-			'font-family' => String_Prop_Type::make(),
+			'font-family' => Union_Prop_Type::make()
+				->add_prop_type( String_Prop_Type::make() )
+				->add_prop_type( Global_Font_Variable_Prop_Type::make() ),
+
 			'font-weight' => String_Prop_Type::make()->enum([
 				'100',
 				'200',
