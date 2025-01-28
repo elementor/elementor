@@ -14,11 +14,9 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
                 'src' => [
                     'url' => 'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M0%200h24v24H0z%22%2F%3E%3C%2Fsvg%3E',
                     'id' => null
-                ]
+                ],
+                'classes' => '',
             ],
-            'classes' => '',
-            'width' => '100%',
-            'height' => '100%'
         ],
         'widgetType' => 'a-svg',
     ];
