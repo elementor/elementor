@@ -14,6 +14,8 @@ class API {
 	public function get_home_screen_items( $force_request = false ): array {
 		$assets_data = $this->editor_assets_api->get_assets_data( $force_request );
 
+		$assets_data = apply_filters( 'elementor/core/admin/homescreen', $assets_data );
+
 		return $this->transform_home_screen_data( $assets_data );
 	}
 
