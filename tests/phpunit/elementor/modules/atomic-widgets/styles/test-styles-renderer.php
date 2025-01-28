@@ -396,7 +396,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											],
 										],
 									],
-
 									'color' => [
 										'$$type' => 'color',
 										'value' => 'red',
@@ -404,7 +403,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								],
 							],
 						],
-
 						'meta' => [],
 					],
 				],
@@ -557,11 +555,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'size' => 'contain',
-
 													'attachment' => 'scroll',
-
 													'resolution' => 'large',
-
 												]
 											],
 										],
@@ -626,6 +621,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
                         ],
 
                         'meta' => [],
+
                     ],
                 ],
             ],
