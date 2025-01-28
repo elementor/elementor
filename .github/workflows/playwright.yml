@@ -167,7 +167,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Elementor Core: Playwright - ${{github.event_name}} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} , by ${{ github.actor }} "
+                    "text": "Elementor Core: Playwright - ${{github.event_name}} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 },
                 {
@@ -177,7 +177,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
+                    "text": "Github User : ${{ github.actor }}"
                   }
                 }
               ]
