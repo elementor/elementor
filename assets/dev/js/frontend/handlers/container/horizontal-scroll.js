@@ -60,6 +60,6 @@ export default class HorizontalScroll extends elementorModules.frontend.handlers
 		const scrolledDistance = this.offsetTop - this.adminBarHeight - relativeScrolledDistance;
 		const scrollSpeed = this.scrollWidth / this.wrapperWidth;
 
-		this.horizontalContainer.scrollLeft = scrollSpeed * -scrolledDistance * 0.85 + this.offsetLeft;
+		this.horizontalContainer.scrollLeft = -0.85 * scrollSpeed * scrolledDistance + this.offsetLeft;
 	}
 }
