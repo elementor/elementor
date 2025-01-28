@@ -601,6 +601,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 													'size' => [
 														'$$type' => 'string',
 														'value' => 'cover'
+													],
+													'attachment' => [
+														'$$type' => 'string',
+														'value' => 'scroll'
 													]
 												]
 											]
