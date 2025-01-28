@@ -1037,12 +1037,18 @@ class Frontend extends App {
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
-			$early_access_font_urls = $this->get_early_access_google_font_urls( $google_fonts['early'] );
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_local_google_fonts' ) ) {
+				foreach ( $google_fonts['early'] as $current_font ) {
+					Google_Font::enqueue( $current_font, Google_Font::TYPE_EARLYACCESS );
+				}
+			} else {
+				$early_access_font_urls = $this->get_early_access_google_font_urls( $google_fonts['early'] );
 
-			foreach ( $early_access_font_urls as $ea_font_url ) {
-				$this->google_fonts_index++;
+				foreach ( $early_access_font_urls as $ea_font_url ) {
+					$this->google_fonts_index++;
 
-				wp_enqueue_style( 'google-earlyaccess-' . $this->google_fonts_index, $ea_font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+					wp_enqueue_style( 'google-earlyaccess-' . $this->google_fonts_index, $ea_font_url ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+				}
 			}
 		}
 	}
