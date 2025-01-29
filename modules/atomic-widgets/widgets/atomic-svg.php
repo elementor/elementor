@@ -16,11 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Svg extends Atomic_Widget_Base {
 	const SVG_ENCODING = 'data:image/svg+xml;charset=utf-8,';
 	const SVG_START_INDEX = 26;
-    
+
 	public static function get_element_type(): string {
-        return 'a-svg';
-}
-	
+		return 'a-svg';
+	}
 
 	public function get_title() {
 		return esc_html__( 'Atomic SVG', 'elementor' );
