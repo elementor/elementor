@@ -18,7 +18,7 @@ class Div_Block extends Atomic_Element_Base {
 		return 'div-block';
 	}
 
-	public static function get_element_type(): string {
+	public function get_name() {
 		return 'div-block';
 	}
 
