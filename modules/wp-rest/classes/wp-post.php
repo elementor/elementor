@@ -3,6 +3,7 @@
 namespace Elementor\Modules\WpRest\Classes;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -10,9 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WP_Post {
 	const MAX_COUNT = 100;
+	const FORMAT = 'post';
 
 	public function register(): void {
-		register_rest_route( 'elementor/v1', 'post', [
+		register_rest_route( 'elementor/v1', self::FORMAT, [
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'permission_callback' => function (): bool {
@@ -43,13 +45,43 @@ class WP_Post {
 		] );
 	}
 
+	public function sanitize_string_array( $arr ) {
+		if ( ! is_array( $arr ) ) {
+			$arr = json_decode( sanitize_text_field( $arr ) ) ?? [];
+		}
+
+		$arr = new Collection( json_decode( json_encode( $arr ), true ) );
+
+		return $arr
+			->map( 'sanitize_text_field' )
+			->all();
+	}
+
+	public function restrict_search_to_title( $search, $wp_query ) {
+		$search_term = $wp_query->get( 'search_term' ) ?? '';
+		$is_search_titles_only = $wp_query->get( 'search_titles_only' ) ?? false;
+
+		if ( $is_search_titles_only && ! empty( $search_term ) ) {
+			$search .= " AND (";
+			$search .= "post_title LIKE '%" . esc_sql( $search_term ) . "%' ";
+			$search .= "OR guid LIKE '%" . esc_sql( $search_term ) . "%')";
+		}
+
+		return $search;
+	}
+
 	private function get_posts( \WP_REST_Request $request ) {
 		$params = $request->get_params();
 		$term = $params['term'];
-		$excluded_types = $params['excluded_post_types'] ?? [];
-		$keys_to_extract = $params['keys_to_extract'] ?? [];
+		$excluded_types = $params['excluded_post_types'];
+		$keys_to_extract = $params['keys_to_extract'];
+		$keys_dictionary = $params['keys_dictionary'];
 		$max_count = isset( $params['max_count'] ) && 0 < $params['max_count'] ? $params['max_count'] : self::MAX_COUNT;
 		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
+
+		if ( empty( $term ) ) {
+			return [];
+		}
 
 		if ( ! empty( $excluded_types ) ) {
 			$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
@@ -76,6 +108,13 @@ class WP_Post {
 		return $posts
 			->map( function ( $post ) use ( $keys_to_extract ) {
 				return $this->get_filtered_props_from_post( $post, $keys_to_extract );
+			} )
+			->map( function ( $post ) use ( $keys_dictionary, $post_types ) {
+				if ( isset( $post['post_type'] ) ) {
+					$post['post_type'] = $post_types->get( ( $post['post_type'] ) )->label;
+				}
+
+				return Utils::replace_keys_in_object( $post, $keys_dictionary );
 			} )
 			->all();
 	}
@@ -110,7 +149,8 @@ class WP_Post {
 			'term' => [
 				'description' => 'Posts to search',
 				'type' => 'string',
-				'required' => true,
+				'required' => false,
+				'default' => '',
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
@@ -118,6 +158,22 @@ class WP_Post {
 				'description' => 'Specify keys which values are to be included in the response. Leave empty for all keys',
 				'type' => [ 'array', 'string' ],
 				'required' => true,
+				'default' => [],
+				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
+				'validate_callback' => 'rest_validate_request_arg',
+			],
+			'keys_dictionary' => [
+				'description' => 'Specify conversion dictionary for keys, i.e. ["key_1" => "new_key_1"].',
+				'type' => [ 'array', 'string' ],
+				'required' => false,
+				'default' => [],
+				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
+				'validate_callback' => 'rest_validate_request_arg',
+			],
+			'values_dictionary' => [
+				'description' => 'Specify conversion dictionary for values, i.e. ["value_1" => "new_value_1"].',
+				'type' => [ 'array', 'string' ],
+				'required' => false,
 				'default' => [],
 				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
 				'validate_callback' => 'rest_validate_request_arg',
@@ -130,28 +186,5 @@ class WP_Post {
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
-	}
-
-	public function sanitize_string_array( $arr ) {
-		if ( ! is_array( $arr ) ) {
-			$arr = json_decode( sanitize_text_field( $arr ) ) ?? [];
-		}
-
-		$arr = new Collection( $arr );
-
-		return $arr
-			->map( 'sanitize_text_field' )
-			->all();
-	}
-
-	public function restrict_search_to_title( $search, $wp_query ) {
-		$search_term = $wp_query->get( 'search_term' ) ?? '';
-		$is_search_titles_only = $wp_query->get( 'search_titles_only' ) ?? false;
-
-		if ( $is_search_titles_only && ! empty( $search_term ) ) {
-			$search .= " AND (post_title LIKE '%" . esc_sql( $search_term ) . "%')";
-		}
-
-		return $search;
 	}
 }
