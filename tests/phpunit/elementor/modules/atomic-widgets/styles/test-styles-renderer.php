@@ -7,11 +7,13 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transfo
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corner_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Dimensions_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Layout_Direction_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
@@ -390,8 +392,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'position' => 'top center',
+													'resolution' => 'medium',
+													'repeat' => 'repeat-y',
 													'attachment' => 'fixed',
-													'resolution' => 'medium'
 												]
 											],
 										],
@@ -450,6 +453,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													],
 													'size' => 'cover',
 													'position' => 'bottom right',
+													'repeat' => 'repeat',
 													'attachment' => 'fixed',
 												]
 											],
@@ -557,6 +561,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													'size' => 'contain',
 													'attachment' => 'scroll',
 													'resolution' => 'large',
+													'repeat' => 'repeat-x',
 												]
 											],
 										],
@@ -675,6 +680,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
 			$registry->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 			$registry->register( Dimensions_Prop_Type::get_key(), new Dimensions_Transformer() );
+			$registry->register( Layout_Direction_Prop_Type::get_key(), new Layout_Direction_Transformer() );
 			$registry->register( Border_Radius_Prop_Type::get_key(), new Corner_Sizes_Transformer( fn( $corner ) => 'border-' . $corner . '-radius' ) );
 			$registry->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
 			$registry->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
@@ -778,6 +784,25 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 									],
 								],
 							],
+							'gap' => [
+								'$$type' => 'layout-direction',
+								'value' => [
+									'row' => [
+										'$$type' => 'size',
+										'value' => [
+											'size' => 10,
+											'unit' => 'px',
+										],
+									],
+									'column' => [
+										'$$type' => 'size',
+										'value' => [
+											'size' => 20,
+											'unit' => 'px',
+										],
+									],
+								],
+							]
 						],
 						'meta' => [],
 					],
