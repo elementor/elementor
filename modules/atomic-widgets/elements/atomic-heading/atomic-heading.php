@@ -55,7 +55,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$attrs = [
 			'class' => array_filter( [
 				$settings['classes'] ?? '',
-				static::get_base_style_class( self::BASE_STYLE_CLASS ) ?? '',
+				static::get_base_style_class( self::BASE_STYLE_KEY ) ?? '',
 			] ),
 		];
 
@@ -149,7 +149,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$font_weight_value = String_Prop_Type::generate( '600' );
 
 		return [
-			self::BASE_STYLE_CLASS => Style_Definition::make()
+			self::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'color', $color_value )
