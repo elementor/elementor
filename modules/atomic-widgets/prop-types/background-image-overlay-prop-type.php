@@ -17,6 +17,7 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 			'resolution' => String_Prop_Type::make()->enum( [ 'thumbnail', 'medium', 'medium_large', 'large', 'full' ] ),
 			'repeat' => String_Prop_Type::make()->enum( [ 'repeat', 'repeat-x', 'repeat-y', 'no-repeat' ] ),
 			'size' => String_Prop_Type::make()->enum( [ 'auto', 'cover', 'contain' ] ),
+			'attachment' => String_Prop_Type::make()->enum( [ 'fixed', 'scroll' ] ),
 		];
 	}
 
