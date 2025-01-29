@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Paragraph extends Atomic_Widget_Base {
-	const BASE_STYLE_CLASS = 'base';
+	const BASE_STYLE_KEY = 'base';
 
 	public static function get_element_type(): string {
 		return 'a-paragraph';
@@ -65,7 +65,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		$attrs = [
 			'class' => array_filter([
 				$settings['classes'] ?? '',
-				self::get_base_style_class( self::BASE_STYLE_CLASS ) ?? '',
+				self::get_base_style_class( self::BASE_STYLE_KEY ) ?? '',
 			]),
 		];
 
@@ -89,7 +89,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		$line_height_value = String_Prop_Type::generate( '1.5' );
 
 		return [
-			self::BASE_STYLE_CLASS => Style_Definition::make()
+			self::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'color', $color_value )
