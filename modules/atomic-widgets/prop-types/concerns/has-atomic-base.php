@@ -160,16 +160,16 @@ trait Has_Atomic_Base {
 		);
 	}
 
-	public static function define_default_styles(): array {
+	public static function define_base_styles(): array {
 		return [];
 	}
 
-	public static function get_default_styles() {
-		$default_styles = static::define_default_styles();
+	public static function get_base_styles() {
+		$base_styles = static::define_base_styles();
 		$style_definitions = [];
 
-		foreach ( $default_styles as $key => $style ) {
-			$id = static::get_default_style_id( $key );
+		foreach ( $base_styles as $key => $style ) {
+			$id = static::get_base_style_class( $key );
 
 			$style_definitions[] = $style->build( $id );
 		}
@@ -177,7 +177,7 @@ trait Has_Atomic_Base {
 		return $style_definitions;
 	}
 
-	public static function get_default_style_id( string $key ) {
+	public static function get_base_style_class( string $key ) {
 		return static::get_element_type() . '-' . $key;
 	}
 }

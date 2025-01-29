@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Heading extends Atomic_Widget_Base {
+	const BASE_STYLE_CLASS = 'base';
+
 	public static function get_element_type(): string {
 		return 'a-heading';
 	}
@@ -49,7 +51,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$tag = $settings['tag'];
 		$title = esc_html( $settings['title'] );
 		$classes = $settings['classes'] ?? '';
-		$classes .= ' ' . static::get_default_style_id( 'd1' );
+		$classes .= ' ' . static::get_base_style_class( self::BASE_STYLE_CLASS );
 
 		$attrs = array_filter( [
 			'class' => $classes,
@@ -134,9 +136,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		];
 	}
 
-	public static function define_default_styles(): array {
+	public static function define_base_styles(): array {
 		return [
-			'd1' => Style_Definition::make()
+			self::BASE_STYLE_CLASS => Style_Definition::make()
 				->add_variant( Style_Variant::make()->add_prop( 'font-size', Size_Prop_Type::generate( [
 					'size' => 24,
 					'unit' => 'px',

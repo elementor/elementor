@@ -1303,10 +1303,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			protected static function define_props_schema(): array {
 				return static::$options['props_schema'] ?? [];
 			}
-
-			public static function define_default_styles(): array {
-				return static::$options['default_styles'] ?? [];
-			}
 		};
 	}
 }

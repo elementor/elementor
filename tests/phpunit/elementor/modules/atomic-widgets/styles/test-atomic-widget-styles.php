@@ -108,7 +108,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
 	}
 
-	public function test_parse_atomic_widget_styles__append_css_of_widget_with_default_styles() {
+	public function test_parse_atomic_widget_styles__append_css_of_widget_with_base_styles() {
 		// Arrange.
 		( new Atomic_Widget_Styles() )->register_hooks();
 
@@ -133,7 +133,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 					],
 				],
 			],
-			'default_styles' => [
+			'base_styles' => [
 				'default-1' => Style_Definition::make()
 					->add_variant(
 						Style_Variant::make()
@@ -373,8 +373,8 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 				return static::$options['props_schema'] ?? [];
 			}
 
-			public static function define_default_styles(): array {
-				return static::$options['default_styles'] ?? [];
+			public static function define_base_styles(): array {
+				return static::$options['base_styles'] ?? [];
 			}
 		};
 	}
