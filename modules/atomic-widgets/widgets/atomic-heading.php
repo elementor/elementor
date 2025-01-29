@@ -52,12 +52,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$tag = $settings['tag'];
 		$title = esc_html( $settings['title'] );
 
-		$attrs = [
+		$attrs = array_filter([
 			'class' => array_filter( [
 				$settings['classes'] ?? '',
 				static::get_base_style_class( self::BASE_STYLE_KEY ) ?? '',
 			] ),
-		];
+		]);
 
 		$default_args = [
 			Utils::validate_html_tag( $tag ),

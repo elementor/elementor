@@ -62,12 +62,12 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 		$paragraph = $settings['paragraph'];
 		$tag = $settings['tag'];
-		$attrs = [
+		$attrs = array_filter([
 			'class' => array_filter([
 				$settings['classes'] ?? '',
 				self::get_base_style_class( self::BASE_STYLE_KEY ) ?? '',
 			]),
-		];
+		]);
 
 		printf(
 			'<%1$s %2$s>%3$s</%1$s>',
