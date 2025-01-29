@@ -613,6 +613,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														'$$type' => 'string',
 														'value' => 'center center'
 													],
+													'repeat' => [
+														'$$type' => 'string',
+														'value' => 'no-repeat'
+													],
 													'resolution' => [
 														'$$type' => 'string',
 														'value' => 'medium'
@@ -1258,6 +1262,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														],
 														'size' => 'cover',
                                                         'position' => 'center left',
+														'repeat' => 'no-repeat',
 													]
 												],
 											],
