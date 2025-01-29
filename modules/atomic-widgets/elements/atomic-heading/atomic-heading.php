@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -50,12 +51,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	private function get_template_args( array $settings ): array {
 		$tag = $settings['tag'];
 		$title = esc_html( $settings['title'] );
-		$classes = $settings['classes'] ?? '';
-		$classes .= ' ' . static::get_base_style_class( self::BASE_STYLE_CLASS );
 
-		$attrs = array_filter( [
-			'class' => $classes,
-		] );
+		$attrs = [
+			'class' => array_filter( [
+				$settings['classes'] ?? '',
+				static::get_base_style_class( self::BASE_STYLE_CLASS ) ?? '',
+			] ),
+		];
 
 		$default_args = [
 			Utils::validate_html_tag( $tag ),
@@ -137,12 +139,25 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public static function define_base_styles(): array {
+		$color_value = Color_Prop_Type::generate( 'black' );
+		$font_family_value = String_Prop_Type::generate( 'inter' );
+		$font_size_value = Size_Prop_Type::generate( [
+			'size' => 3,
+			'unit' => 'rem',
+		] );
+		$line_height_value = String_Prop_Type::generate( '1.1' );
+		$font_weight_value = String_Prop_Type::generate( '600' );
+
 		return [
 			self::BASE_STYLE_CLASS => Style_Definition::make()
-				->add_variant( Style_Variant::make()->add_prop( 'font-size', Size_Prop_Type::generate( [
-					'size' => 24,
-					'unit' => 'px',
-				] ) ) ),
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'color', $color_value )
+						->add_prop( 'font-family', $font_family_value )
+						->add_prop( 'font-size', $font_size_value )
+						->add_prop( 'line-height', $line_height_value )
+						->add_prop( 'font-weight', $font_weight_value )
+				),
 		];
 	}
 
