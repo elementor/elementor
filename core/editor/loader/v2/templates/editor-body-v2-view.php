@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $notice = Plugin::$instance->editor->notice_bar->get_notice();
-$editorSidebarFeature = Plugin::$instance->experiments->is_feature_active( 'editor_side_panel' );
+$editor_sidebar_feature = Plugin::$instance->experiments->is_feature_active( 'editor_side_panel' );
 ?>
 
 <div id="elementor-loading">
@@ -30,7 +30,7 @@ $editorSidebarFeature = Plugin::$instance->experiments->is_feature_active( 'edit
 <div id="elementor-editor-wrapper-v2"></div>
 
 <div id="elementor-editor-wrapper">
-	<?php if ( $editorSidebarFeature ) { ?>
+	<?php if ( $editor_sidebar_feature ) { ?>
 	<aside id="elementor-sidebar" class="elementor-sidebar" aria-labelledby="elementor-sidebar-heading"></aside>
 	<?php } ?>
 	<aside id="elementor-panel" class="elementor-panel" aria-labelledby="elementor-panel-header-title"></aside>

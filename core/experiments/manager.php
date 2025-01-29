@@ -400,9 +400,7 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Enjoy better user experience with a new editor layout with easier accesses the tools you use while editing your website.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_ALPHA,
 			'default' => self::STATE_INACTIVE,
-			// 'dependencies' => [
-			// 	'editor_v2',
-			// ],
+			// 'dependencies' => [ 'editor_v2' ],
 		] );
 	}
 
