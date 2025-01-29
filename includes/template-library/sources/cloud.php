@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Core\Utils\Exceptions;
+use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -8,6 +10,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Source_Cloud extends Source_Base {
+	protected function get_app(): Cloud_Library {
+		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
+
+		if ( ! $cloud_library_app ) {
+			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
+
+			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return $cloud_library_app;
+	}
 
 	public function get_id(): string {
 		return 'cloud';
@@ -20,7 +33,7 @@ class Source_Cloud extends Source_Base {
 	public function register_data() {}
 
 	public function get_items( $args = [] ) {
-		return [];
+		return $this->get_app()->get_resources( $args );
 	}
 
 	public function get_item( $template_id ) {}

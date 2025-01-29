@@ -671,9 +671,146 @@ label.elementor-template-library-order-label {
 		height: 55px;
 		font-size: 16px;
 	}
+
+	.cloud-library-form-inputs {
+		> * {
+			height: 55px;
+			font-size: 16px;
+			margin-block-end: 15px;
+		}
+
+		display: block;
+		width: 500px;
+		margin: 0 auto;
+
+		#elementor-template-library-save-template-submit {
+			float: inline-end;
+		}
+
+		.select2 {
+
+			&-selection {
+				
+				&__e-plus-button {
+					display: none;
+				}
+
+				&--multiple .select2-selection__rendered {
+					height: 55px;
+					font-size: 16px;
+					padding-inline-start: 25px;
+					line-height: 55px;
+				}
+			}
+
+			&-search__field {
+				max-width: calc(100% - 50px);
+				float: inline-start;
+				line-height: 45px;
+			}
+
+			&-container {
+				
+				.select2-search--inline {
+					float: none;
+				}
+
+				&.select2-container--default .select2-selection--multiple .select2-selection__choice {
+					background-color: transparent;
+					color: var(--e-a-color-txt);
+					line-height: 36px;
+					font-size: 16px;
+					padding: 5px 5px 5px 0px;
+
+					&__remove {
+						color: var(--e-a-color-txt);
+					}
+				}
+			}
+		}
+	}
 }
 
-#elementor-template-library-save-template-name {
+#elementor-template-library-save-template {
+
+	.select2 {
+
+		&-dropdown {
+			box-shadow: none;
+			border: 1px solid $gray-light;
+			border-radius: 2px;
+
+			&--above {
+				margin-block-start: -10px;
+			}
+
+			&--below {
+				margin-block-start: 10px;
+			}
+		}
+
+		&-results__options {
+			padding-block-start: 15px;
+			padding-block-end: 15px;
+		}
+
+		&-container.select2-container--default .select2-results__option--highlighted[aria-selected],
+		&-results__option[aria-selected=true]:not(.select2-results__option--highlighted) {
+			background-color: transparent;
+		}
+	}
+}
+
+#select2-elementor-template-library-save-template-source-results {
+
+	.select2-results {
+
+		&__message {
+			padding-inline-start: 25px;
+			font-size: 16px;
+		}
+
+		&__option {
+			text-align: start;
+	
+			.main-item {
+				padding-inline-start: 25px;
+				font-size: 16px;
+			}
+			
+			.sub-item {
+				padding-inline-start: 50px;
+				font-size: 14px;
+			}
+
+			span:before {
+				content: "";
+				display: inline-block;
+				position: relative;
+				height: 15px;
+				width: 15px;
+				border: 2px solid $gray;
+				border-radius: 2px;
+				background-color: $white;
+				margin-inline-end: 10px;
+				vertical-align: middle;
+			}
+
+			&[aria-selected=true] span:before {
+				font-family:eicons;
+				content: "\e90e";
+				color: $white;
+				border: none;
+				background-color: $gray;
+				display: inline-block;
+				padding-inline-start: 2px;
+				font-size: 11px;
+			}
+		}
+	}
+}
+
+#elementor-template-library-save-template-name, #elementor-template-library-save-template-source {
 	width: 500px;
 	padding-inline-start: 25px;
 	border-start-start-radius: 3px;

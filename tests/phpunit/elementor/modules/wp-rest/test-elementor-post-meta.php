@@ -89,4 +89,29 @@ class Test_Elementor_Post_Meta extends Elementor_Test_Base {
 		// Assert
 		$this->assertFalse( $has_permission );
 	}
+
+	public function test_meta_should_not_be_registered_for_non_elementor_post_types() {
+		// Arrange
+		$this->act_as_admin();
+
+		register_post_type( 'non_elementor', [
+			'public' => true,
+			'show_in_rest' => true,
+			'supports' => [ 'title', 'editor', 'custom-fields' ],
+		] );
+
+		do_action( 'rest_api_init' );
+
+		// Act
+		$request = new \WP_REST_Request( 'OPTIONS', '/wp/v2/non_elementor' );
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data();
+		
+		// Assert
+		$meta_schema = $data['schema']['properties']['meta']['properties'];
+		$this->assertArrayNotHasKey( '_elementor_edit_mode', $meta_schema );
+		$this->assertArrayNotHasKey( '_elementor_template_type', $meta_schema );
+		$this->assertArrayNotHasKey( '_elementor_data', $meta_schema );
+		$this->assertArrayNotHasKey( '_elementor_page_settings', $meta_schema );
+	}
 }

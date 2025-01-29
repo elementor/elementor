@@ -90,7 +90,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		// Assert
 		$css = $post->get_content();
 
-		$this->assertEquals( '.g-4-124{color:blue;}@media(max-width:767px){.g-4-123{color:pink;}}', $css );
+		$this->assertEquals( '.elementor .g-4-124{color:blue;}@media(max-width:767px){.elementor .g-4-123{color:pink;}}', $css );
 	}
 
 	public function test_it__does_not_parse_global_classes_to_kit_css_if_no_classes() {
@@ -142,7 +142,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		);
 
 		// Assert.
-		$this->assert_kit_css_contains( '.g-4-123{color:pink;}' );
+		$this->assert_kit_css_contains( '.elementor .g-4-123{color:pink;}' );
 
 		// Act.
 		$updated_class = $this->mock_global_classes['items']['g-4-123'];
@@ -151,7 +151,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		( new Global_Classes_Repository() )->put( 'g-4-123', $updated_class );
 
 		// Assert.
-		$this->assert_kit_css_contains( '.g-4-123{color:red;}' );
+		$this->assert_kit_css_contains( '.elementor .g-4-123{color:red;}' );
 	}
 
 	public function test__adds_a_class_to_the_css_file() {
@@ -173,7 +173,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		$id = $created['id'];
 
 		// Assert.
-		$this->assert_kit_css_contains( ".{$id}{color:test-color;}" );
+		$this->assert_kit_css_contains( ".elementor .{$id}{color:test-color;}" );
 	}
 
 	public function test_order__updates_the_classes_order_in_the_css_file() {
@@ -184,13 +184,13 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		);
 
 		// Assert.
-		$this->assert_kit_css_contains('.g-4-124{color:blue;}@media(max-width:767px){.g-4-123{color:pink;}}');
+		$this->assert_kit_css_contains('.elementor .g-4-124{color:blue;}@media(max-width:767px){.elementor .g-4-123{color:pink;}}');
 
 		// Act.
 		( new Global_Classes_Repository() )->arrange( [ 'g-4-123', 'g-4-124' ] );
 
 		// Assert.
-		$this->assert_kit_css_contains('@media(max-width:767px){.g-4-123{color:pink;}}.g-4-124{color:blue;}');
+		$this->assert_kit_css_contains('@media(max-width:767px){.elementor .g-4-123{color:pink;}}.elementor .g-4-124{color:blue;}');
 	}
 
 	private function assert_kit_css_contains( string $substring, bool $contains = true ) {
