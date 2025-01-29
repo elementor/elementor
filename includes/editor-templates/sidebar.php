@@ -30,6 +30,9 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<button id="elementor-sidebar-theme-builder" class="elementor-sidebar-command tooltip-target" data-tooltip="<?php echo esc_attr__( 'Theme Builder', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Theme Builder', 'elementor' ); ?>" onClick="javascript: $e.run( 'app/open' );">
 			<i class="eicon-theme-builder" aria-hidden="true"></i>
 		</button>
+		<button id="elementor-sidebar-library" class="elementor-sidebar-command tooltip-target" data-tooltip="<?php echo esc_attr__( 'Templates Library', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Templates Library', 'elementor' ); ?>" onClick="javascript: $e.run( 'library/open' );">
+			<i class="eicon-folder" aria-hidden="true"></i>
+		</button>
 		<button id="elementor-sidebar-notes" class="elementor-sidebar-command tooltip-target" data-tooltip="<?php echo esc_attr__( 'Notes', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Notes', 'elementor' ); ?>" onClick="javascript: $e.route( 'notes' );">
 			<i class="eicon-notes" aria-hidden="true"></i>
 		</button>
