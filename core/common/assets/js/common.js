@@ -119,13 +119,6 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 		this.config = elementorCommonConfig;
 
 		this.setMarionetteTemplateCompiler();
-		// console.log( '123212321', 123212321 );
-		// setTimeout( () => {
-		// 	$e.data.get( 'global-query/post', { term: 'new' }, { refresh: true } )
-		// 		.then( ( response ) => {
-		// 			console.log( response );
-		// 		} );
-		// }, 10000 );
 	}
 }
 

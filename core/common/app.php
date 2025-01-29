@@ -11,7 +11,6 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Core\Common\Data\WP_Query\Controller as WP_Query_Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
