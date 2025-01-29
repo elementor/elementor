@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Paragraph extends Atomic_Widget_Base {
-	public static function get_element_type(): string {
+	public function get_name() {
 		return 'a-paragraph';
 	}
 
