@@ -169,6 +169,16 @@ jobs:
                     "type": "mrkdwn",
                     "text": "Elementor Core: Playwright - ${{github.event_name}} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Github User : ${{ github.actor }}"
+                  }
                 }
               ]
             }

@@ -8,12 +8,15 @@ use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -510,6 +513,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 									],
 								],
 							],
+							'gap' => [
+								'$$type' => 'layout-direction',
+								'value' => [
+									'row' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 10,
+										],
+									],
+									'column' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 20,
+										],
+									],
+								],
+							],
 							'border-radius' => [
 								'$$type' => 'border-radius',
 								'value' => [
@@ -594,6 +616,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														'$$type' => 'string',
 														'value' => 'center center'
 													],
+													'repeat' => [
+														'$$type' => 'string',
+														'value' => 'no-repeat'
+													],
 													'resolution' => [
 														'$$type' => 'string',
 														'value' => 'medium'
@@ -601,6 +627,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 													'size' => [
 														'$$type' => 'string',
 														'value' => 'cover'
+													],
+													'attachment' => [
+														'$$type' => 'string',
+														'value' => 'scroll'
 													]
 												]
 											]
@@ -1239,6 +1269,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														],
 														'size' => 'cover',
                                                         'position' => 'center left',
+														'repeat' => 'no-repeat',
+														'attachment' => 'scroll',
 													]
 												],
 											],
@@ -1289,7 +1321,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				], [] );
 			}
 
-			public function get_name() {
+			public static function get_element_type(): string {
 				return 'test-widget';
 			}
 
