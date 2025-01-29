@@ -52,12 +52,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$tag = $settings['tag'];
 		$title = esc_html( $settings['title'] );
 
-		$attrs = array_filter([
+		$attrs = [
 			'class' => array_filter( [
 				$settings['classes'] ?? '',
-				static::get_base_style_class( self::BASE_STYLE_KEY ) ?? '',
+				static::get_base_style_class( self::BASE_STYLE_CLASS ) ?? '',
 			] ),
-		]);
+		];
 
 		$default_args = [
 			Utils::validate_html_tag( $tag ),
@@ -140,7 +140,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	public static function define_base_styles(): array {
 		$color_value = Color_Prop_Type::generate( 'black' );
-		$font_family_value = String_Prop_Type::generate( 'Inter' );
+		$font_family_value = String_Prop_Type::generate( 'inter' );
 		$font_size_value = Size_Prop_Type::generate( [
 			'size' => 3,
 			'unit' => 'rem',
@@ -149,7 +149,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$font_weight_value = String_Prop_Type::generate( '600' );
 
 		return [
-			self::BASE_STYLE_KEY => Style_Definition::make()
+			self::BASE_STYLE_CLASS => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'color', $color_value )
