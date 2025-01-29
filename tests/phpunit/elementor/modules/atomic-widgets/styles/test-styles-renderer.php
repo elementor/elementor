@@ -394,11 +394,11 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													'position' => 'top center',
 													'resolution' => 'medium',
 													'repeat' => 'repeat-y',
+													'attachment' => 'fixed',
 												]
 											],
 										],
 									],
-
 									'color' => [
 										'$$type' => 'color',
 										'value' => 'red',
@@ -406,7 +406,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								],
 							],
 						],
-
 						'meta' => [],
 					],
 				],
@@ -455,6 +454,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													'size' => 'cover',
 													'position' => 'bottom right',
 													'repeat' => 'repeat',
+													'attachment' => 'fixed',
 												]
 											],
 										],
@@ -559,6 +559,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'size' => 'contain',
+													'attachment' => 'scroll',
 													'resolution' => 'large',
 													'repeat' => 'repeat-x',
 												]
