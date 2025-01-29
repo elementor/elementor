@@ -390,7 +390,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'position' => 'top center',
-													'resolution' => 'medium'
+													'resolution' => 'medium',
+													'repeat' => 'repeat-y',
 												]
 											],
 										],
@@ -451,6 +452,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													],
 													'size' => 'cover',
 													'position' => 'bottom right',
+													'repeat' => 'repeat',
 												]
 											],
 										],
@@ -556,6 +558,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													],
 													'size' => 'contain',
 													'resolution' => 'large',
+													'repeat' => 'repeat-x',
 												]
 											],
 										],
