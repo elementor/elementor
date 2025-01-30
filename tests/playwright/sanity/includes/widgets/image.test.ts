@@ -39,9 +39,8 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 				await editor.waitForPanelToLoad();
 				await contentTab.selectImageSize(
 					{
-						widget: data[ i ].widget,
-						select: data[ i ].select,
-						imageSize: imageSize[ id ],
+						controlId: data[ i ].select,
+						value: imageSize[ id ],
 					} );
 				await contentTab.verifyImageSrc(
 					{
