@@ -26,7 +26,7 @@ export default class Content {
 	 */
 	async setLink( link: string, options : LinkOptions = { targetBlank: false, noFollow: false, linkTo: false } ): Promise<void> {
 		if ( options.linkTo ) {
-			await this.editor.setSelectControlValue( EditorSelectors.image.linkSelect, 'Custom URL' );
+			await this.editor.setSelectControlValue( EditorSelectors.image.linkSelect, 'custom' );
 		}
 
 		const urlInput = this.page.locator( options.linkInpSelector ).first();
@@ -90,7 +90,7 @@ export default class Content {
 		await this.editor.waitForPreviewFrame();
 		const frame: Frame = this.editor.getPreviewFrame();
 		await frame.locator( args.widget ).click();
-		await this.page.locator( args.select ).selectOption( args.imageSize );
+		await this.editor.setSelectControlValue( args.select, args.imageSize );
 		await frame.locator( EditorSelectors.pageTitle ).click();
 	}
 
