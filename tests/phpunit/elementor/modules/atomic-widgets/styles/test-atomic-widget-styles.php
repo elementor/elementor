@@ -272,7 +272,10 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
-								'font-family' => 'Roboto',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Roboto'
+								],
 							],
 							'meta' => [],
 						],
