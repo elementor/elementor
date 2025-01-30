@@ -69,7 +69,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		$format = $this->get_template( ! empty( $settings['link']['href'] ) );
 		$args = $this->get_template_args( $settings );
 
-		printf( $format, ...$args );
+		printf( $format, ...$args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	private function get_template( bool $is_link_enabled ): string {
@@ -88,7 +88,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 				$tag,
 				$attrs,
 				Utils::render_html_attributes( $settings['link'] ),
-				$paragraph
+				$paragraph,
 			];
 		}
 
