@@ -107,7 +107,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			editor.openSiteSettings( ),
+			editor.openSiteSettings(),
 		] );
 
 		// Assert.
