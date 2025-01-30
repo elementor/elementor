@@ -81,7 +81,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 	public static function define_base_styles(): array {
 		$color_value = Color_Prop_Type::generate( 'black' );
-		$font_family_value = String_Prop_Type::generate( 'poppins' );
+		$font_family_value = String_Prop_Type::generate( 'Poppins' );
 		$font_size_value = Size_Prop_Type::generate( [
 			'size' => 1.2,
 			'unit' => 'rem',
