@@ -59,7 +59,7 @@ class Atomic_Widget_Styles {
 		foreach ( $styles as $style ) {
 			foreach ( $style['variants'] as $variant ) {
 				if ( isset( $variant['props']['font-family'] ) ) {
-					Plugin::$instance->frontend->enqueue_font( $variant['props']['font-family'] );
+					Plugin::$instance->frontend->enqueue_font( $variant['props']['font-family']['value'] );
 				}
 			}
 		}
