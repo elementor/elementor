@@ -129,7 +129,7 @@ export default class Content {
 	 */
 	async setCustomImageSize( args: { selector: string, select: string, imageTitle: string, width: string, height: string } ): Promise<void> {
 		await this.editor.getPreviewFrame().locator( args.selector ).click();
-		await this.page.locator( args.select ).selectOption( 'custom' );
+		await this.editor.setSelectControlValue( args.select, 'custom' );
 		await this.page.locator( EditorSelectors.image.widthInp ).fill( args.width );
 		await this.page.locator( EditorSelectors.image.heightInp ).fill( args.height );
 		const regex = new RegExp( `http://(.*)/wp-content/uploads/elementor/thumbs/${ args.imageTitle }(.*)` );
