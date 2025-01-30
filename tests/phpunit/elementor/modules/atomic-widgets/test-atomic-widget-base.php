@@ -510,6 +510,25 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 									],
 								],
 							],
+							'gap' => [
+								'$$type' => 'layout-direction',
+								'value' => [
+									'row' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 10,
+										],
+									],
+									'column' => [
+										'$$type' => 'size',
+										'value' => [
+											'unit' => 'px',
+											'size' => 20,
+										],
+									],
+								],
+							],
 							'border-radius' => [
 								'$$type' => 'border-radius',
 								'value' => [
@@ -594,6 +613,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														'$$type' => 'string',
 														'value' => 'center center'
 													],
+													'repeat' => [
+														'$$type' => 'string',
+														'value' => 'no-repeat'
+													],
 													'resolution' => [
 														'$$type' => 'string',
 														'value' => 'medium'
@@ -601,6 +624,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 													'size' => [
 														'$$type' => 'string',
 														'value' => 'cover'
+													],
+													'attachment' => [
+														'$$type' => 'string',
+														'value' => 'scroll'
 													]
 												]
 											]
@@ -1239,6 +1266,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														],
 														'size' => 'cover',
                                                         'position' => 'center left',
+														'repeat' => 'no-repeat',
+														'attachment' => 'scroll',
 													]
 												],
 											],
