@@ -80,13 +80,18 @@ export default class Content {
 	 * Set image size.
 	 *
 	 * @param {Object} args           - Image size arguments.
-	 * @param {string} args.controlId - Image size control id.
-	 * @param {string} args.value     - Image size value.
+	 * @param {string} args.widget    - Widget selector.
+	 * @param {string} args.select    - Select control selector.
+	 * @param {string} args.imageSize - Image size.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async selectImageSize( args: { controlId: string, value: string } ): Promise<void> {
-		await this.editor.setSelectControlValue( args.controlId, args.value );
+	async selectImageSize( args: { widget: string, select: string, imageSize: string } ): Promise<void> {
+		await this.editor.waitForPreviewFrame();
+		const frame: Frame = this.editor.getPreviewFrame();
+		await frame.locator( args.widget ).click();
+		await this.editor.setSelectControlValue( args.select, args.imageSize );
+		await frame.locator( EditorSelectors.pageTitle ).click();
 	}
 
 	/**
