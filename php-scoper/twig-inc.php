@@ -24,6 +24,7 @@ return [
 				return $content;
 			}
 
+			// Example: "use Twig\Environment;\n" will replaced with "use ElementorDeps\Twig\Environment;\n"
 			return preg_replace_callback(
 				'/("use )([A-z\\\\]+;[\\\\n]*")/',
 				fn( $matches ) => str_replace( '\\\\', '\\', "{$matches[1]}{$prefix}\\{$matches[2]}" ),
