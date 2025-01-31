@@ -87,22 +87,16 @@ export async function isTabTitleVisible( context: Page | Frame, positionIndex: n
 	return itemBox >= 0 && itemBox <= titleWrapperWidth;
 }
 
-export async function deleteItemFromRepeater( editor: EditorPage, widgetID: string ) {
-	// Arrange
-	const deleteItemButton = editor.page.locator( REPEATER_DELETE_BUTTON ),
-		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
-		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
-		numberOfTitles = await nestedItemTitle.count(),
-		numberOfContents = await nestedItemContent.count();
+export async function deleteItemFromRepeater( editor: EditorPage, widgetID: string ): Promise<void> {
+	const nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` );
+	const nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tabs-content > .e-con` );
+	const initialCount = await nestedItemTitle.count();
 
-	// Act
-	await deleteItemButton.last().click();
-
+	await editor.page.locator( REPEATER_DELETE_BUTTON ).last().click();
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
-	// Assert
-	await expect.soft( nestedItemTitle ).toHaveCount( numberOfTitles - 1 );
-	await expect.soft( nestedItemContent ).toHaveCount( numberOfContents - 1 );
+	await expect.soft( nestedItemTitle ).toHaveCount( initialCount - 1 );
+	await expect.soft( nestedItemContent ).toHaveCount( initialCount - 1 );
 }
 
 export async function addItemFromRepeater( editor: EditorPage, widgetID: string ) {
