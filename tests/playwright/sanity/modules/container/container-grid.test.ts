@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Container Grid tests @container', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {

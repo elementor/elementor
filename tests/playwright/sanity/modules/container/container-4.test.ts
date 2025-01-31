@@ -28,47 +28,41 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Container no horizontal scroll', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		// Arrange.
-		const editor = await wpAdmin.openNewPage(),
-			containerSelector = '.elementor-element-edit-mode',
-			frame = editor.getPreviewFrame();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
 
+		// Act.
 		await editor.addElement( { elType: 'container' }, 'document' );
-		// Set row direction.
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		// Evaluate scroll widths in the browser context.
+		const frame = editor.getPreviewFrame();
+		const containerSelector = '.elementor-element-edit-mode';
 		const hasNoHorizontalScroll = await frame.evaluate( ( selector ) => {
 			const container = document.querySelector( selector );
 			return container.scrollWidth <= container.clientWidth;
 		}, containerSelector );
 
+		// Assert.
 		// Check for no horizontal scroll.
 		expect.soft( hasNoHorizontalScroll ).toBe( true );
 	} );
 
 	test( 'Convert to container does not show when only containers are on the page', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
-		const hasTopBar = await editor.hasTopBar();
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.addWidget( widgets.button, containerId );
-
-		if ( hasTopBar ) {
-			await editor.publishPage();
-		} else {
-			await page.locator( '#elementor-panel-saver-button-publish-label' ).click();
-			await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
-		}
-
+		// Act.
+		await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( widgets.button );
+		await editor.publishPage();
 		await page.reload();
 		await editor.waitForPanelToLoad();
-
 		await editor.openPageSettingsPanel();
 
+		// Assert.
 		expect.soft( await page.locator( '.elementor-control-convert_to_container' ).count() ).toBe( 0 );
 	} );
 
@@ -180,15 +174,18 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Gaps Control test - Check that control placeholder', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
+		// Act.
 		await editor.addElement( { elType: 'container' }, 'document' );
 
 		const desktopGapControlColumnInput = page.locator( '.elementor-control-flex_gap input[data-setting="column"]' ),
 			tabletGapControlColumnInput = page.locator( '.elementor-control-flex_gap_tablet input[data-setting="column"]' ),
 			mobileGapControlColumnInput = page.locator( '.elementor-control-flex_gap_mobile input[data-setting="column"]' );
 
+		// Assert.
 		await test.step( 'Check the control initial placeholder', async () => {
 			const gapControlPlaceholder = await desktopGapControlColumnInput.getAttribute( 'placeholder' );
 			expect( gapControlPlaceholder ).toBe( '20' );
@@ -291,10 +288,8 @@ test.describe( 'Container tests @container', () => {
 			editor = await wpAdmin.openNewPage();
 
 		await test.step( '“Boxed” Parent container to default to "Full Width" content width on child container ', async () => {
-			const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
-
 			// Act.
-			// Just in case it's not Boxed by default
+			const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setSelectControlValue( 'content_width', 'boxed' );
 
 			const childContainer = await editor.addElement( { elType: 'container' }, parentContainer );
@@ -310,14 +305,13 @@ test.describe( 'Container tests @container', () => {
 
 		await test.step( '“Full Width” Parent container to default to "Boxed" content width on child container', async () => {
 			const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
-
 			await editor.setSelectControlValue( 'content_width', 'full' );
 
 			const childContainer = await editor.addElement( { elType: 'container' }, parentContainer );
 			const nestedChildContainer1 = await editor.addElement( { elType: 'container' }, childContainer );
 			const nestedChildContainer2 = await editor.addElement( { elType: 'container' }, nestedChildContainer1 );
 
-			// Assert
+			// Assert.
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentContainer }` ) ).toHaveClass( /e-con-full/ );
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ childContainer }` ) ).toHaveClass( /e-con-boxed/ );
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ nestedChildContainer1 }` ) ).toHaveClass( /e-con-full/ );
@@ -330,6 +324,7 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
+		// Act.
 		await test.step( 'Add container with animation', async () => {
 			await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -340,6 +335,7 @@ test.describe( 'Container tests @container', () => {
 			await editor.publishAndViewPage();
 		} );
 
+		// Assert.
 		await test.step( 'Assert animation stylesheet on the frontend', async () => {
 			await expect( page.locator( EditorSelectors.container ) ).toHaveCSS( 'animation-name', 'bounceIn' );
 		} );

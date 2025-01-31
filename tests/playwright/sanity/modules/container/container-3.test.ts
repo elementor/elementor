@@ -24,41 +24,36 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
+		// Assert.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		// Arrange.
-		const editor = await wpAdmin.openNewPage(),
-			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
+		const editor = await wpAdmin.openNewPage();
 
 		await editor.closeNavigatorIfOpen();
 		await editor.setPageTemplate( 'canvas' );
 
-		await editor.selectElement( container );
-		// Set row direction.
+		// Act.
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
-		// Set flex-wrap: wrap.
 		await editor.setChooseControlValue( 'flex_wrap', 'eicon-wrap' );
 
-		// Act.
-		await editor.addWidget( 'divider', container );
+		await editor.addWidget( 'divider' );
 		await editor.setWidgetCustomWidth( '80' );
 
-		await editor.addWidget( 'google_maps', container );
+		await editor.addWidget( 'google_maps' );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
+		await editor.hideMapControls();
 		await editor.setWidgetCustomWidth( '40' );
-		// Set widget size to grow
 		await editor.setChooseControlValue( '_flex_size', 'eicon-grow' );
 		await editor.setWidgetMask();
 
-		await editor.addWidget( 'video', container );
+		await editor.addWidget( 'video' );
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
 
 		// Hide carousel navigation.
-		const carouselOneId = await editor.addWidget( 'image-carousel', container );
+		const carouselOneId = await editor.addWidget( 'image-carousel' );
 		await editor.setSelectControlValue( 'navigation', 'none' );
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.openPanelTab( 'content' );
@@ -70,16 +65,14 @@ test.describe( 'Container tests @container', () => {
 		await editor.getPreviewFrame().locator( '.elementor-element-' + carouselOneId ).click( { button: 'right' } );
 		await expect.soft( page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ).click();
-		// Add flex grow effect.
 		await editor.openPanelTab( 'advanced' );
-		// Set widget size to grow
 		await editor.setChooseControlValue( '_flex_size', 'eicon-grow' );
 
 		// Hide editor and map controls.
-		await editor.hideMapControls();
 		await editor.togglePreviewMode();
 
 		// Assert.
+		const containerElement = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + container );
 		expect.soft( await containerElement.screenshot( {
 			type: 'jpeg',
 			quality: 90,
@@ -158,31 +151,25 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Spacer alignment with container column setting', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
+		// Assert.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const editor = await wpAdmin.openNewPage(),
-			containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.openNewPage();
 
 		await editor.closeNavigatorIfOpen();
 
-		// Hide editor elements from the screenshots.
+		// Assert.
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.setChooseControlValue( 'flex_align_items', 'eicon-align-center-v' );
 		await editor.hideEditorElements();
-
-		// Act.
-		await editor.addWidget( 'spacer', containerId );
+		await editor.addWidget( 'spacer' );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );
 		await editor.openSection( '_section_background' );
 		await editor.setChooseControlValue( '_background_background', 'eicon-paint-brush' );
 		await editor.setColorControlValue( '_background_color', '#A81830' );
 
-		await editor.selectElement( containerId );
-		// Set container `align-items: center`.
-		await editor.setChooseControlValue( 'flex_align_items', 'eicon-align-center-v' );
-
+		// Assert.
 		const container = editor.getPreviewFrame().locator( '.elementor-edit-mode .elementor-element-' + containerId );
-
-		// Assert
 		expect.soft( await container.screenshot( {
 			type: 'jpeg',
 			quality: 90,
@@ -193,9 +180,7 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
-		await editor.getPreviewFrame().locator( '.elementor-add-section-button' ).click();
-		await editor.getPreviewFrame().locator( '.flex-preset-button' ).click();
-		await editor.getPreviewFrame().locator( '[data-preset="c100-c50-50"]' ).click();
+		await editor.addNewContainer( 'c100-c50-50' );
 
 		await expect.soft( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column[data-nesting-level="1"]' ).last() ).toHaveCSS( 'padding', '0px' );
 
@@ -233,14 +218,12 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Container Transform controls', async ( { page, apiRequests }, testInfo ) => {
+		// Assert.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const editor = await wpAdmin.openNewPage(),
-			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
+		const editor = await wpAdmin.openNewPage();
 
-		// Act.
-		await editor.addWidget( 'heading', containerId );
-		await editor.selectElement( containerId );
+		// Assert.
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.openPanelTab( 'advanced' );
 		await editor.openSection( '_section_transform' );
 		// Set rotation.
@@ -252,8 +235,11 @@ test.describe( 'Container tests @container', () => {
 		await page.locator( '.elementor-control-_transform_scale_effect .elementor-control-input-wrapper input' ).fill( '2' );
 		await page.locator( '.elementor-control-_transform_scale_popover .elementor-control-popover-toggle-toggle-label' ).click();
 
+		await editor.addWidget( 'heading' );
+
 		// Assert.
 		// Check rotate and scale value.
+		const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
 		await expect.soft( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-rotateZ', '2deg' );
 		await expect.soft( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-scale', '2' );
 	} );
