@@ -9,24 +9,24 @@ use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 class Test_Filter_Hosting extends PHPUnit_TestCase {
 	public function test_homescreen_filter_called_once() {
 		$mock_editor_assets_api = $this->getMockBuilder( EditorAssetsAPI::class )
-		                               ->disableOriginalConstructor()
-		                               ->getMock();
+			->disableOriginalConstructor()
+			->getMock();
 
 		$api = new API( $mock_editor_assets_api );
 
 		$mock_editor_assets_api->method( 'get_assets_data' )
-		                       ->willReturn( $this->mock_home_screen_data() );
+			->willReturn( $this->mock_home_screen_data() );
 
 		$mock = $this->getMockBuilder( \stdClass::class )
-		             ->addMethods( [ 'callback' ] )
-		             ->getMock();
+			->addMethods( [ 'callback' ] )
+			->getMock();
 
 		add_filter( 'elementor/core/admin/homescreen', [ $mock, 'callback' ] );
 
 		$mock->expects( $this->once() )
-		     ->method( 'callback' )
-		     ->with( $this->mock_home_screen_data() )
-		     ->willReturn( $this->mock_home_screen_data() );
+			->method( 'callback' )
+			->with( $this->mock_home_screen_data() )
+			->willReturn( $this->mock_home_screen_data() );
 
 		$api->get_home_screen_items();
 	}
