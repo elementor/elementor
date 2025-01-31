@@ -74,11 +74,11 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		 * @param bool   isRemote     - If `true` the source is a remote source.
 		 * @param string activeSource - The current template source.
 		 */
-		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', activeSource === 'remote', activeSource );
-		
+		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', 'remote' === activeSource, activeSource );
+
 		return isRemote
 			? TemplateLibraryTemplateRemoteView
-			: sourceMappings[activeSource] || TemplateLibraryTemplateLocalView;
+			: sourceMappings[ activeSource ] || TemplateLibraryTemplateLocalView;
 	},
 
 	initialize() {

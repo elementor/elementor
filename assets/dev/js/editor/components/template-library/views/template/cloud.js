@@ -15,7 +15,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	},
 
 	onFolderClick() {
-		if ( 'FOLDER' !== this.model.get('subType') ) {
+		if ( 'FOLDER' !== this.model.get( 'subType' ) ) {
 			return;
 		}
 

@@ -143,5 +143,5 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		};
 
 		elementorCommon.ajax.addRequest( 'get_item_children', ajaxOptions );
-	},	
+	},
 } );
