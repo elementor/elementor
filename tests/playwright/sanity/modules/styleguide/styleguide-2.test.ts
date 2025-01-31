@@ -58,7 +58,8 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await picker.click();
 
 		// Assert
-		expect( await editor.getPreviewFrame().getByText( /New Item #1#594833/i ).count() ).toEqual( 1 );
+		const number1 = await editor.getPreviewFrame().getByText( 'New Item #1' ).count();
+		expect( number1 ).toEqual( 1 );
 
 		// Arrange 2.
 		const listItem = page.locator( '.elementor-repeater-fields' ).nth( 4 ).locator( '.elementor-control-input-wrapper' ).nth( 1 );
@@ -70,8 +71,8 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await page.getByRole( 'button', { name: 'Delete' } ).click();
 
 		// Assert 2
-		const number = await editor.getPreviewFrame().getByText( /New Item #1#/i ).count();
-		expect( number ).toEqual( 0 );
+		const number2 = await editor.getPreviewFrame().getByText( 'New Item #1' ).count();
+		expect( number2 ).toEqual( 0 );
 	} );
 
 	test( 'Adding and removing new fonts', async ( { page, apiRequests }, testInfo ) => {
