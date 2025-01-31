@@ -4,6 +4,8 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 use Elementor\Frontend;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
 use Elementor\Widget_Base;
@@ -101,6 +103,48 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		// Act.
 		do_action( 'elementor/element/parse_css', $post, $element_1 );
 		do_action( 'elementor/element/parse_css', $post, $element_2 );
+
+		// Assert.
+		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
+	}
+
+	public function test_parse_atomic_widget_styles__append_css_of_widget_with_base_styles() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+
+		$post = $this->make_mock_post();
+
+		$element = $this->make_mock_widget([
+			'controls' => [],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				[
+					'id' => 'test-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'blue',
+								'font-size' => '14px',
+							],
+							'meta' => [],
+						],
+					],
+				],
+			],
+			'base_styles' => [
+				'default-1' => Style_Definition::make()
+					->add_variant(
+						Style_Variant::make()
+							->add_prop( 'color', Props_Factory::color( 'red' ) )
+					),
+			],
+		]);
+
+		// Act.
+		do_action( 'elementor/element/parse_css', $post, $element );
+		do_action( 'elementor/element/parse_css', $post, $element );
 
 		// Assert.
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
@@ -228,7 +272,10 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
-								'font-family' => 'Roboto',
+								'font-family' => [
+									'$$type' => 'string',
+									'value' => 'Roboto'
+								],
 							],
 							'meta' => [],
 						],
@@ -317,7 +364,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 				], [] );
 			}
 
-			public function get_name() {
+			public static function get_element_type(): string {
 				return 'test-widget';
 			}
 
@@ -327,6 +374,10 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 			protected static function define_props_schema(): array {
 				return static::$options['props_schema'] ?? [];
+			}
+
+			public static function define_base_styles(): array {
+				return static::$options['base_styles'] ?? [];
 			}
 		};
 	}

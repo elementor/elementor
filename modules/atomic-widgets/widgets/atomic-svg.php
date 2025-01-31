@@ -17,7 +17,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	const SVG_ENCODING = 'data:image/svg+xml;charset=utf-8,';
 	const SVG_START_INDEX = 26;
 
-	public function get_name() {
+	public static function get_element_type(): string {
 		return 'a-svg';
 	}
 

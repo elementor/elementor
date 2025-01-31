@@ -26,7 +26,7 @@ export default class Content {
 	 */
 	async setLink( link: string, options : LinkOptions = { targetBlank: false, noFollow: false, linkTo: false } ): Promise<void> {
 		if ( options.linkTo ) {
-			await this.editor.setSelectControlValue( EditorSelectors.image.linkSelect, 'Custom URL' );
+			await this.editor.setSelectControlValue( EditorSelectors.image.linkSelect, 'custom' );
 		}
 
 		const urlInput = this.page.locator( options.linkInpSelector ).first();
@@ -90,7 +90,7 @@ export default class Content {
 		await this.editor.waitForPreviewFrame();
 		const frame: Frame = this.editor.getPreviewFrame();
 		await frame.locator( args.widget ).click();
-		await this.page.locator( args.select ).selectOption( args.imageSize );
+		await this.editor.setSelectControlValue( args.select, args.imageSize );
 		await frame.locator( EditorSelectors.pageTitle ).click();
 	}
 
@@ -129,7 +129,7 @@ export default class Content {
 	 */
 	async setCustomImageSize( args: { selector: string, select: string, imageTitle: string, width: string, height: string } ): Promise<void> {
 		await this.editor.getPreviewFrame().locator( args.selector ).click();
-		await this.page.locator( args.select ).selectOption( 'custom' );
+		await this.editor.setSelectControlValue( args.select, 'custom' );
 		await this.page.locator( EditorSelectors.image.widthInp ).fill( args.width );
 		await this.page.locator( EditorSelectors.image.heightInp ).fill( args.height );
 		const regex = new RegExp( `http://(.*)/wp-content/uploads/elementor/thumbs/${ args.imageTitle }(.*)` );

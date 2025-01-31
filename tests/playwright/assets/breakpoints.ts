@@ -32,7 +32,7 @@ export default class {
 	}
 
 	async addAllBreakpoints( editor: EditorPage, experimentPostId?: string ) {
-		await editor.openSiteSettings( 'layout' );
+		await editor.openSiteSettings( 'settings-layout' );
 		await editor.openSection( 'section_breakpoints' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
@@ -61,7 +61,7 @@ export default class {
 	}
 
 	async resetBreakpoints( editor: EditorPage ) {
-		await editor.openSiteSettings( 'layout' );
+		await editor.openSiteSettings( 'settings-layout' );
 		await editor.openSection( 'section_breakpoints' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
@@ -77,7 +77,7 @@ export default class {
 	}
 
 	async setBreakpoint( editor: EditorPage, device: BreakpointEditableDevice, value: number ) {
-		await editor.openSiteSettings( 'layout' );
+		await editor.openSiteSettings( 'settings-layout' );
 		await editor.openSection( 'section_breakpoints' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
