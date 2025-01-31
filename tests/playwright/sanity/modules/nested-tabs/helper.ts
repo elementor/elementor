@@ -1,6 +1,7 @@
 import { type Page, type Frame, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import _path from 'path';
 
 export const locators = {
 	tabTitle: '.e-n-tabs-heading .e-n-tab-title',
@@ -10,6 +11,8 @@ export const locators = {
 	repeaterDeleteButton: '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close',
 	repeaterCloneButton: '.elementor-repeater-tool-duplicate',
 };
+
+export const templatePath = _path.resolve( __dirname, '../../../templates/nested-tabs-with-icons.json' );
 
 export async function editTab( editor: EditorPage, tabIndex: number ): Promise<string> {
 	await editor.getPreviewFrame().locator( `${ locators.tabTitle }[aria-selected="true"]` ).waitFor();

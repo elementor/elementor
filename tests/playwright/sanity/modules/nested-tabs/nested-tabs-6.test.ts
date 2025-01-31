@@ -2,12 +2,9 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
-import { clickTabByPosition, setupExperiments } from './helper';
-import _path from 'path';
+import { clickTabByPosition, setupExperiments, templatePath } from './helper';
 
 test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () => {
-	const templatePath = _path.resolve( __dirname, '../../../templates/nested-tabs-with-icons.json' );
-
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

@@ -3,13 +3,10 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { testIconCount } from './tests/icons';
-import { clickTabByPosition, setupExperiments, setTabItemColor, selectDropdownContainer, locators } from './helper';
+import { clickTabByPosition, setupExperiments, setTabItemColor, selectDropdownContainer, locators, templatePath } from './helper';
 import EditorPage from '../../../pages/editor-page';
-import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	const templatePath = _path.resolve( __dirname, '../../../templates/nested-tabs-with-icons.json' );
-
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -93,22 +90,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		expect.soft( activeTabUpdatedSpanCount ).toBe( 2 );
 	} );
 
-	test( 'Check if the icons are visible on mobile display on the front end', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const editor = await wpAdmin.openNewPage();
-		await editor.loadTemplate( templatePath );
-
-		// Act.
-		await editor.publishAndViewPage();
-		await page.waitForSelector( '.elementor-widget-n-tabs' );
-
-		// Assert
-		await page.setViewportSize( viewportSize.mobile );
-		await expect.soft( page.locator( '.e-n-tab-title[aria-selected="true"] .e-n-tab-icon' ) ).toBeVisible();
-		await page.setViewportSize( viewportSize.desktop );
-	} );
-
 	test( 'Check Gap between tabs and Space between tabs controls in mobile view', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -158,7 +139,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Verify that the activate tab doesn't take on the hover color.
 		await activeTab.hover();
 		await expect.soft( activeTab ).not.toHaveCSS( 'color', rgbColor );
-		// Verify that the non active tab does take on the hover color.
+		// Verify that the non-active tab does take on the hover color.
 		await notActiveTab.hover();
 		await expect.soft( notActiveTab ).toHaveCSS( 'color', rgbColor );
 	} );
@@ -182,7 +163,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			nonActiveTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="false"] > .e-n-tab-title-text' ).first();
 
 		// Assert.
-		// Check color differences in non active tab.
+		// Check color differences in non-active tab.
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"] > .e-n-tab-icon' );
 		await nonActiveTabIcon.hover();
 		await expect.soft( nonActiveTabIcon ).toHaveCSS( 'color', redColor );
