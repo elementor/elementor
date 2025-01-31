@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { testIconCount } from './tests/icons';
-import { clickTab, setup, setTabItemColor, selectDropdownContainer } from './helper';
+import { clickTabByPosition, setupExperiments, setTabItemColor, selectDropdownContainer } from './helper';
 import EditorPage from '../../../pages/editor-page';
 import _path from 'path';
 
@@ -14,7 +14,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await setup( wpAdmin );
+		await setupExperiments( wpAdmin );
 
 		await page.close();
 	} );
@@ -192,7 +192,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 const testTitlesWithHTML = async ( page: Page, editor: EditorPage ) => {
 	// Act.
-	await clickTab( editor.getPreviewFrame(), 2 );
+	await clickTabByPosition( editor.getPreviewFrame(), 2 );
 	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child' ).click();
 	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child .elementor-control-tab_title input' ).fill( '<div style="display: flex; flex-direction: column;"><strong class="test-class">Tab 3</strong><div> has<br />html <br />elements</div></div>' );
 
@@ -218,7 +218,7 @@ const testCarouselIsVisibleWhenUsingDirectionRightOrLeft = async ( editor: Edito
 	await editor.setSwitcherControlValue( 'autoplay', false );
 
 	// Set direction right.
-	await clickTab( editor.getPreviewFrame(), 0 );
+	await clickTabByPosition( editor.getPreviewFrame(), 0 );
 	await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-right' );
 	await editor.togglePreviewMode();
 
@@ -231,7 +231,7 @@ const testCarouselIsVisibleWhenUsingDirectionRightOrLeft = async ( editor: Edito
 	// Restore original view.
 	await editor.togglePreviewMode();
 	await editor.removeElement( carouselId );
-	await clickTab( editor.getPreviewFrame(), 0 );
+	await clickTabByPosition( editor.getPreviewFrame(), 0 );
 	await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-right' );
 };
 
@@ -254,16 +254,16 @@ const testTabIsVisibleInAccordionView = async ( page: Page, editor: EditorPage )
 
 	await expect.soft( tabContainer1 ).toHaveCSS( 'display', 'flex' );
 	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, 1 );
+	await clickTabByPosition( page, 1 );
 	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
 	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, 2 );
+	await clickTabByPosition( page, 2 );
 	await expect.soft( tabContainer3 ).toHaveClass( /e-active/ );
 	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, 1 );
+	await clickTabByPosition( page, 1 );
 	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
 	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, 0 );
+	await clickTabByPosition( page, 0 );
 	await expect.soft( tabContainer1 ).toHaveClass( /e-active/ );
 	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 };

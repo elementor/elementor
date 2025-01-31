@@ -2,27 +2,24 @@ import { type Page, type Frame, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
-export async function editTab( editor: EditorPage, tabIndex: string ) {
-	const tabTitleSelector = '.e-n-tabs-heading .e-n-tab-title';
-	await editor.getPreviewFrame().waitForSelector( `${ tabTitleSelector }[aria-selected="true"]` );
-	const tabTitle = editor.getPreviewFrame().locator( `${ tabTitleSelector }>>nth=${ tabIndex }` );
-	await tabTitle.click();
-	await editor.page.waitForTimeout( 100 );
-	return await editor.getPreviewFrame().locator( '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode' ).getAttribute( 'data-id' );
+const TAB_TITLE_SELECTOR = '.e-n-tabs-heading .e-n-tab-title';
+const ACTIVE_TAB_SELECTOR = '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode';
+const REPEATER_ADD_BUTTON = '.elementor-repeater-add';
+const REPEATER_DELETE_BUTTON = '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close';
+const REPEATER_CLONE_BUTTON = '.elementor-repeater-tool-duplicate';
+
+export async function editTab( editor: EditorPage, tabIndex: string ): Promise<string> {
+	await editor.getPreviewFrame().waitForSelector( `${ TAB_TITLE_SELECTOR }[aria-selected="true"]` );
+	await editor.getPreviewFrame().locator( `${ TAB_TITLE_SELECTOR } >> nth=${ tabIndex }` ).click();
+	return await editor.getPreviewFrame().locator( ACTIVE_TAB_SELECTOR ).getAttribute( 'data-id' );
 }
 
-// Click on tab by position.
-export async function clickTab( context: Page | Frame, tabPosition: number ) {
-	await context.locator( `.elementor-widget-n-tabs .e-n-tab-title >> nth=${ String( tabPosition ) }` ).first().click();
+export async function clickTabByPosition( context: Page | Frame, tabPosition: number ): Promise<void> {
+	await context.locator( `${ TAB_TITLE_SELECTOR } >> nth=${ tabPosition }` ).first().click();
 }
 
-export async function setup( wpAdmin: WpAdminPage, customExperiment: {[ n: string ]: boolean | string } | '' = '' ) {
-	let experiments = {
-		container: 'active',
-		'nested-elements': 'active',
-	};
-
-	experiments = { ...experiments, ...customExperiment };
+export async function setupExperiments( wpAdmin: WpAdminPage, customExperiment = {} ): Promise<void> {
+	const experiments = { container: 'active', 'nested-elements': 'active', ...customExperiment };
 	await wpAdmin.setExperiments( experiments );
 }
 
@@ -65,7 +62,7 @@ export async function selectDropdownContainer( editor: EditorPage, widgetId = ''
 			.evaluate( ( element ) => 'true' === element.getAttribute( 'aria-selected' ) );
 
 	if ( ! isActiveTab ) {
-		await clickTab( editor.getPreviewFrame(), itemNumber );
+		await clickTabByPosition( editor.getPreviewFrame(), itemNumber );
 	}
 
 	await editor.getPreviewFrame().locator( activeContainerSelector ).hover();
@@ -84,24 +81,15 @@ export async function setBackgroundVideoUrl( editor:EditorPage, elementId: strin
 }
 
 export async function isTabTitleVisible( context: Page | Frame, positionIndex: number = 0 ) {
-	const titleWrapperWidth = await context.locator( `.e-n-tabs-heading` ).evaluate( ( element ) => element.clientWidth ),
-		itemBox = await context.locator( `.e-n-tab-title >> nth=${ positionIndex }` ).evaluate( ( element ) => {
-			const elementBox = element.getBoundingClientRect();
-
-			return {
-				left: elementBox.left,
-			};
-		} );
-
-	const isItemPositionToTheRightOfTitleWrapper = titleWrapperWidth < itemBox.left,
-		isItemPositionToTheLeftOfTitleWrapper = 0 > ( itemBox.left );
-
-	return ! ( isItemPositionToTheRightOfTitleWrapper || isItemPositionToTheLeftOfTitleWrapper );
+	const titleWrapperWidth = await context.locator( `.e-n-tabs-heading` ).evaluate( ( el ) => el.clientWidth );
+	const itemBox = await context.locator( `${ TAB_TITLE_SELECTOR } >> nth=${ positionIndex }` )
+		.evaluate( ( el ) => el.getBoundingClientRect().left );
+	return itemBox >= 0 && itemBox <= titleWrapperWidth;
 }
 
 export async function deleteItemFromRepeater( editor: EditorPage, widgetID: string ) {
 	// Arrange
-	const deleteItemButton = editor.page.locator( '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close' ),
+	const deleteItemButton = editor.page.locator( REPEATER_DELETE_BUTTON ),
 		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
@@ -119,7 +107,7 @@ export async function deleteItemFromRepeater( editor: EditorPage, widgetID: stri
 
 export async function addItemFromRepeater( editor: EditorPage, widgetID: string ) {
 	// Arrange
-	const addItemButton = editor.page.locator( '.elementor-repeater-add' ),
+	const addItemButton = editor.page.locator( REPEATER_ADD_BUTTON ),
 		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
@@ -144,7 +132,7 @@ export async function cloneItemFromRepeater( editor: EditorPage, widgetID: strin
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count(),
-		cloneItemButton = editor.page.locator( '.elementor-repeater-tool-duplicate' ).nth( position );
+		cloneItemButton = editor.page.locator( REPEATER_CLONE_BUTTON ).nth( position );
 
 	// Act
 	// Sometimes this action causes Playwright to mistakenly think that the "click" event should trigger navigation and
