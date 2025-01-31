@@ -8,29 +8,26 @@ use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Hosting extends PHPUnit_TestCase {
 	public function test_homescreen_filter_called_once() {
-		// Arrange
 		$mock_editor_assets_api = $this->getMockBuilder( EditorAssetsAPI::class )
-		                               ->disableOriginalConstructor()
-		                               ->getMock();
+			->disableOriginalConstructor()
+			->getMock();
 
 		$api = new API( $mock_editor_assets_api );
 
 		$mock_editor_assets_api->method( 'get_assets_data' )
-		                       ->willReturn( $this->mock_home_screen_data() );
+			->willReturn( $this->mock_home_screen_data() );
 
 		$mock = $this->getMockBuilder( \stdClass::class )
-		             ->addMethods( [ 'callback' ] )
-		             ->getMock();
+			->addMethods( [ 'callback' ] )
+			->getMock();
 
-		$mock->expects( $this->once() )
-		     ->method( 'callback' )
-		     ->with( $this->mock_home_screen_data() )
-		     ->willReturn( $this->mock_home_screen_data() );
-
-		// Act
 		add_filter( 'elementor/core/admin/homescreen', [ $mock, 'callback' ] );
 
-		// Assert filter to be triggered once
+		$mock->expects( $this->once() )
+			->method( 'callback' )
+			->with( $this->mock_home_screen_data() )
+			->willReturn( $this->mock_home_screen_data() );
+
 		$api->get_home_screen_items();
 	}
 
@@ -38,7 +35,7 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 		return [
 			"top_with_licences" => [
 				[
-					"license" => ["free"],
+					"license" => [ "free" ],
 					"title_small" => "Hi!",
 					"title" => "Unleash your imagination with Elementor",
 					"description" => "Start building your website with Elementor's no code drag & drop editor.",
@@ -48,7 +45,7 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 					"youtube_embed_id" => "le72grP_Q6k?si=g2akyWNODL6usu6u",
 				],
 				[
-					"license" => ["pro"],
+					"license" => [ "pro" ],
 					"title_small" => "Hi!",
 					"title" => "Unleash your imagination with Elementor",
 					"description" => "Now you've got all the tools to start creating professional, high-performing websites - and that journey begins by creating your first page.",
@@ -60,7 +57,7 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 			],
 			"get_started" => [
 				[
-					"license" => ["free"],
+					"license" => [ "free" ],
 					"header" => [
 						"title" => "Jumpstart your web-creation",
 						"description" => "These quick actions will get your site airborne with a customized design.",
@@ -136,7 +133,7 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 					],
 				],
 				[
-					"license" => ["pro"],
+					"license" => [ "pro" ],
 					"header" => [
 						"title" => "Jumpstart your web-creation",
 						"description" => "These quick actions will get your site airborne with a customized design.",
@@ -157,7 +154,7 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 			],
 			"sidebar_upgrade" => [
 				[
-					"license" => ["free"],
+					"license" => [ "free" ],
 					"show" => true,
 					"header" => [
 						"title" => "Bring your vision to life",
@@ -170,8 +167,8 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 						"image" => "https://assets.elementor.com/home-screen/v1/images/icon-crown.svg",
 					],
 					"repeater" => [
-						["title" => "Popup Builder"],
-						["title" => "Custom Code & CSS"],
+						[ "title" => "Popup Builder" ],
+						[ "title" => "Custom Code & CSS" ],
 					],
 				],
 			],
