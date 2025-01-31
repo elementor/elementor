@@ -3,7 +3,7 @@ import ApiRequests from '../../../assets/api-requests';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { timeouts } from '../../../config/timeouts';
 
-export const getInSettingsTab = async ( page: Page, testInfo: TestInfo, apiRequests: ApiRequests, tabName: string, styleguideOpen: boolean ) => {
+export const getInSettingsTab = async ( page: Page, testInfo: TestInfo, apiRequests: ApiRequests, innerPanel: string, styleguideOpen: boolean ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 	page.setDefaultTimeout( timeouts.longAction );
@@ -22,14 +22,10 @@ export const getInSettingsTab = async ( page: Page, testInfo: TestInfo, apiReque
 
 	await Promise.all( [
 		page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-		editor.openSiteSettings( ),
+		editor.openSiteSettings( innerPanel ),
 	] );
 
 	await page.waitForTimeout( 1000 );
 
-	await page.click( `.elementor-panel-menu-item-title:has-text("${ tabName }")` );
-
-	await page.waitForTimeout( 1000 );
-
-	return { editor, wpAdmin };
+	return { editor };
 };

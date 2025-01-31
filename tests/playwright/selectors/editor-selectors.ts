@@ -81,8 +81,8 @@ const EditorSelectors = {
 	},
 	image: {
 		widget: '[data-widget_type="image.default"]',
-		linkSelect: 'select[data-setting="link_to"]',
-		imageSizeSelect: 'select[data-setting="image_size"]',
+		linkSelect: 'link_to',
+		imageSizeSelect: 'image_size',
 		widthInp: 'input[data-setting="width"]',
 		heightInp: 'input[data-setting="height"]',
 		get image() {
@@ -101,7 +101,7 @@ const EditorSelectors = {
 	},
 	imageBox: {
 		widget: '[data-widget_type="image-box.default"]',
-		imageSizeSelect: 'select[data-setting="thumbnail_size"]',
+		imageSizeSelect: 'thumbnail_size',
 		get link() {
 			return `${ this.widget } a`;
 		},
@@ -159,7 +159,7 @@ const EditorSelectors = {
 		get image() {
 			return `${ this.widget } .elementor-custom-embed-image-overlay`;
 		},
-		imageSizeSelect: '[data-setting="image_overlay_size"]',
+		imageSizeSelect: 'image_overlay_size',
 		lightBoxControlInp: '[data-setting="lightbox"]',
 		lightBoxSetting: 'div[data-elementor-open-lightbox="yes"]',
 		lightBoxDialog: '.elementor-lightbox',
