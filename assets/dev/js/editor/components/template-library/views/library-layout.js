@@ -124,7 +124,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	showFolderView( elementModel ) {
 		elementor.templates.layout.showLoadingView();
 
-		const templateId = elementModel.model.get('template_id');
+		const templateId = elementModel.model.get( 'template_id' );
 
 		const ajaxOptions = {
 			data: {
