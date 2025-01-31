@@ -150,7 +150,8 @@ export async function cloneItemFromRepeater( editor: EditorPage, widgetID: strin
 	// Sometimes this action causes Playwright to mistakenly think that the "click" event should trigger navigation and
 	// fails when the navigation never happens. This is inconsistent behavior, but setting the "noWaitAfter" option to
 	// true seems to fix the issue.
-	await cloneItemButton.click( { noWaitAfter: true } );
+	// Upd: noWaitAfter seems to be not working here - testing force: true
+	await cloneItemButton.click( { force: true } );
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	const currentTitle = nestedItemTitle.nth( position ),
