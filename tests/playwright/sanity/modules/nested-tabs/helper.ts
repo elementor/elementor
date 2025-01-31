@@ -108,7 +108,7 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 		numberOfContents = await nestedItemContent.count();
 
 	// Act
-	await addItemButton.click();
+	await addItemButton.click( { force: true } );
 
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
