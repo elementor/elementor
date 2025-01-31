@@ -275,7 +275,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async addNewContainer( preset: DataPreset ): Promise<void> {
+	async addContainerPreset( preset: DataPreset ): Promise<void> {
 		await this.getPreviewFrame().getByTitle( 'Add New Container' ).click();
 		await this.getPreviewFrame().locator( '.flex-preset-button' ).click();
 		await this.getPreviewFrame().locator( `[data-preset=${ preset }]` ).click();
