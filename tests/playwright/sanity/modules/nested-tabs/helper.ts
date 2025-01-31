@@ -80,7 +80,7 @@ export async function setBackgroundVideoUrl( editor:EditorPage, elementId: strin
 	await editor.setTextControlValue( 'background_video_link', videoUrl );
 }
 
-export async function isTabTitleVisible( context: Page | Frame, positionIndex: number = 0 ) {
+export async function isTabTitleVisible( context: Page | Frame, positionIndex: number = 0 ): Promise <boolean> {
 	const titleWrapperWidth = await context.locator( `.e-n-tabs-heading` ).evaluate( ( el ) => el.clientWidth );
 	const itemBox = await context.locator( `${ TAB_TITLE_SELECTOR } >> nth=${ positionIndex }` )
 		.evaluate( ( el ) => el.getBoundingClientRect().left );
@@ -108,10 +108,7 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 		numberOfContents = await nestedItemContent.count();
 
 	// Act
-	// Sometimes this action causes Playwright to mistakenly think that the "click" event should trigger navigation and
-	// fails when the navigation never happens. This is inconsistent behavior, but setting the "noWaitAfter" option to
-	// true seems to fix the issue.
-	await addItemButton.click( { noWaitAfter: true } );
+	await addItemButton.click();
 
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
@@ -128,12 +125,7 @@ export async function cloneItemFromRepeater( editor: EditorPage, widgetID: strin
 		numberOfContents = await nestedItemContent.count(),
 		cloneItemButton = editor.page.locator( REPEATER_CLONE_BUTTON ).nth( position );
 
-	// Act
-	// Sometimes this action causes Playwright to mistakenly think that the "click" event should trigger navigation and
-	// fails when the navigation never happens. This is inconsistent behavior, but setting the "noWaitAfter" option to
-	// true seems to fix the issue.
-	// Upd: noWaitAfter seems to be not working here - testing force: true
-	await cloneItemButton.click( { noWaitAfter: true, force: true } );
+	await cloneItemButton.click( { force: true } );
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	const currentTitle = nestedItemTitle.nth( position ),
