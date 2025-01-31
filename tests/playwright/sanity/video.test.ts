@@ -74,9 +74,7 @@ test.describe( 'Video tests inside a container @video', () => {
 				await editor.setSelectControlValue( 'rel', 'yes' );
 			}
 
-			const controls = player.controls.map( ( control ) => {
-				return EditorSelectors.video[ control ];
-			} );
+			const controls = player.controls.map( ( control ) => EditorSelectors.video[ control ] );
 
 			await videoWidget.toggleVideoControls( controls );
 			await videoWidget.setLink( player.link, { linkInpSelector: EditorSelectors.video[ video ].linkInp } );
@@ -100,12 +98,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.setSwitcherControlValue( 'show_image_overlay', true );
 		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
 		await editor.waitForPanelToLoad();
-		await videoWidget.selectImageSize(
-			{
-				widget: EditorSelectors.video.widget,
-				select: EditorSelectors.video.imageSizeSelect,
-				imageSize: 'thumbnail',
-			} );
+		await editor.setSelectControlValue( 'image_overlay_size', 'thumbnail' );
 		await videoWidget.verifyImageSrc( {
 			selector: EditorSelectors.video.image,
 			imageTitle,
