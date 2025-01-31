@@ -133,7 +133,7 @@ export async function cloneItemFromRepeater( editor: EditorPage, widgetID: strin
 	// fails when the navigation never happens. This is inconsistent behavior, but setting the "noWaitAfter" option to
 	// true seems to fix the issue.
 	// Upd: noWaitAfter seems to be not working here - testing force: true
-	await cloneItemButton.click( { force: true } );
+	await cloneItemButton.click( { noWaitAfter: true, force: true } );
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	const currentTitle = nestedItemTitle.nth( position ),
