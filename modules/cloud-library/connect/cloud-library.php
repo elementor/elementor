@@ -29,7 +29,7 @@ class Cloud_Library extends Library {
 			return $templates;
 		}
 
-		foreach( $cloud_templates['data'] as $cloud_template ) {
+		foreach ( $cloud_templates['data'] as $cloud_template ) {
 			$templates[] = $this->prepare_template( $cloud_template );
 		}
 
@@ -47,7 +47,7 @@ class Cloud_Library extends Library {
 			return $templates;
 		}
 
-		foreach( $cloud_templates['data'] as $cloud_template ) {
+		foreach ( $cloud_templates['data'] as $cloud_template ) {
 			$templates[] = $this->prepare_template( $cloud_template );
 		}
 
