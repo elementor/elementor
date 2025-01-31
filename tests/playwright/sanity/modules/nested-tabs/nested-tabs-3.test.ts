@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
-import { editTab, clickTabByPosition, setupExperiments, selectDropdownContainer } from './helper';
+import { editTab, clickTabByPosition, setupExperiments, selectDropdownContainer, locators } from './helper';
 import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -145,7 +145,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.addWidget( 'nested-tabs', container );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs .e-active' );
 		// Add image-carousel widget to tab #2.
-		const activeContainerId = await editTab( editor, '1' );
+		const activeContainerId = await editTab( editor, 1 );
 		await editor.addWidget( 'image-carousel', activeContainerId );
 		// Add images to the image-carousel widget.
 		await page.locator( '.elementor-control-carousel .elementor-control-gallery-add' ).click();
@@ -165,7 +165,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Wait for Nested Tabs widget to be initialized and click to activate second tab.
 		await page.waitForSelector( `.e-n-tabs-content .e-con.e-active` );
-		await page.locator( `.e-n-tabs-heading .e-n-tab-title>>nth=1` ).click();
+		await page.locator( locators.tabTitle ).nth( 1 ).click();
 
 		// Assert.
 		// Check the swiper in the second nested tab has initialized.
@@ -179,7 +179,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			tabsWidgetId = await editor.addWidget( 'nested-tabs', container );
 
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
+		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
 		// Act.
 		// Click on last tab.
@@ -217,7 +217,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.addWidget( 'nested-tabs', container );
 		await editor.addWidget( 'heading', container );
 
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
+		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
 		const tabButtonOne = editor.getPreviewFrame().locator( '.e-n-tabs .e-n-tab-title >> nth=0' ),
 			contentContainerOne = editor.getPreviewFrame().locator( `.e-n-tabs-content .e-con >> nth=0` ),
@@ -285,7 +285,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs' );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
+		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
 		// Act.
 		await page.locator( '.elementor-control-tabs .elementor-repeater-fields:nth-child(2) .elementor-repeater-tool-duplicate' ).click();

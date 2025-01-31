@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { testIconCount } from './tests/icons';
-import { clickTabByPosition, setupExperiments, setTabItemColor, selectDropdownContainer } from './helper';
+import { clickTabByPosition, setupExperiments, setTabItemColor, selectDropdownContainer, locators } from './helper';
 import EditorPage from '../../../pages/editor-page';
 import _path from 'path';
 
@@ -36,7 +36,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
+		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
 		// Tests.
 		await testIconCount( editor );
@@ -53,7 +53,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
+		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
 		// Act.
 		await editor.openSection( 'section_tabs_responsive' );

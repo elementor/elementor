@@ -2,20 +2,23 @@ import { type Page, type Frame, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
-const TAB_TITLE_SELECTOR = '.e-n-tabs-heading .e-n-tab-title';
-const ACTIVE_TAB_SELECTOR = '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode';
-const REPEATER_ADD_BUTTON = '.elementor-repeater-add';
-const REPEATER_DELETE_BUTTON = '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close';
-const REPEATER_CLONE_BUTTON = '.elementor-repeater-tool-duplicate';
+export const locators = {
+	tabTitle: '.e-n-tabs-heading .e-n-tab-title',
+	selectedTabTitle: '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]',
+	activeTab: '.e-n-tabs-content .e-con.e-active.elementor-element-edit-mode',
+	repeaterAddButton: '.elementor-repeater-add',
+	repeaterDeleteButton: '.elementor-repeater-row-tool.elementor-repeater-tool-remove .eicon-close',
+	repeaterCloneButton: '.elementor-repeater-tool-duplicate',
+};
 
-export async function editTab( editor: EditorPage, tabIndex: string ): Promise<string> {
-	await editor.getPreviewFrame().waitForSelector( `${ TAB_TITLE_SELECTOR }[aria-selected="true"]` );
-	await editor.getPreviewFrame().locator( `${ TAB_TITLE_SELECTOR } >> nth=${ tabIndex }` ).click();
-	return await editor.getPreviewFrame().locator( ACTIVE_TAB_SELECTOR ).getAttribute( 'data-id' );
+export async function editTab( editor: EditorPage, tabIndex: number ): Promise<string> {
+	await editor.getPreviewFrame().locator( `${ locators.tabTitle }[aria-selected="true"]` ).waitFor();
+	await editor.getPreviewFrame().locator( locators.tabTitle ).nth( tabIndex ).click();
+	return await editor.getPreviewFrame().locator( locators.activeTab ).getAttribute( 'data-id' );
 }
 
 export async function clickTabByPosition( context: Page | Frame, tabPosition: number ): Promise<void> {
-	await context.locator( `${ TAB_TITLE_SELECTOR } >> nth=${ tabPosition }` ).first().click();
+	await context.locator( locators.tabTitle ).nth( tabPosition ).first().click();
 }
 
 export async function setupExperiments( wpAdmin: WpAdminPage, customExperiment = {} ): Promise<void> {
@@ -56,7 +59,7 @@ export async function setTabBorderColor(
 
 export async function selectDropdownContainer( editor: EditorPage, widgetId = '', itemNumber = 0 ) {
 	const widgetSelector = !! widgetId ? `.elementor-element-${ widgetId } ` : '',
-		activeContainerSelector = `${ widgetSelector }.e-n-tabs-content > .e-con >> nth=${ itemNumber }`,
+		activeContainerSelector = `${ widgetSelector } .e-n-tabs-content > .e-con`,
 		isActiveTab = await editor.getPreviewFrame()
 			.locator( `${ widgetSelector }.e-n-tab-title >> nth=${ String( itemNumber ) }` )
 			.evaluate( ( element ) => 'true' === element.getAttribute( 'aria-selected' ) );
@@ -65,12 +68,12 @@ export async function selectDropdownContainer( editor: EditorPage, widgetId = ''
 		await clickTabByPosition( editor.getPreviewFrame(), itemNumber );
 	}
 
-	await editor.getPreviewFrame().locator( activeContainerSelector ).hover();
+	await editor.getPreviewFrame().locator( activeContainerSelector ).nth( itemNumber ).hover();
 	const elementEditButton = editor.getPreviewFrame()
-		.locator( activeContainerSelector ).locator( '> .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
+		.locator( activeContainerSelector ).nth( itemNumber ).locator( '> .elementor-element-overlay > .elementor-editor-element-settings > .elementor-editor-element-edit' );
 	await elementEditButton.click();
-	await editor.getPreviewFrame().waitForSelector( activeContainerSelector );
-	return await editor.getPreviewFrame().locator( activeContainerSelector ).getAttribute( 'data-id' );
+	await editor.getPreviewFrame().locator( activeContainerSelector ).nth( itemNumber ).waitFor();
+	return editor.getPreviewFrame().locator( activeContainerSelector ).nth( itemNumber ).getAttribute( 'data-id' );
 }
 
 export async function setBackgroundVideoUrl( editor:EditorPage, elementId: string, videoUrl: string ) {
@@ -82,7 +85,7 @@ export async function setBackgroundVideoUrl( editor:EditorPage, elementId: strin
 
 export async function isTabTitleVisible( context: Page | Frame, positionIndex: number = 0 ): Promise <boolean> {
 	const titleWrapperWidth = await context.locator( `.e-n-tabs-heading` ).evaluate( ( el ) => el.clientWidth );
-	const itemBox = await context.locator( `${ TAB_TITLE_SELECTOR } >> nth=${ positionIndex }` )
+	const itemBox = await context.locator( `${ locators.tabTitle } >> nth=${ positionIndex }` )
 		.evaluate( ( el ) => el.getBoundingClientRect().left );
 	return itemBox >= 0 && itemBox <= titleWrapperWidth;
 }
@@ -92,7 +95,7 @@ export async function deleteItemFromRepeater( editor: EditorPage, widgetID: stri
 	const nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tabs-content > .e-con` );
 	const initialCount = await nestedItemTitle.count();
 
-	await editor.page.locator( REPEATER_DELETE_BUTTON ).last().click();
+	await editor.page.locator( locators.repeaterDeleteButton ).last().click();
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
 
 	await expect.soft( nestedItemTitle ).toHaveCount( initialCount - 1 );
@@ -101,7 +104,7 @@ export async function deleteItemFromRepeater( editor: EditorPage, widgetID: stri
 
 export async function addItemFromRepeater( editor: EditorPage, widgetID: string ) {
 	// Arrange
-	const addItemButton = editor.page.locator( REPEATER_ADD_BUTTON ),
+	const addItemButton = editor.page.locator( locators.repeaterAddButton ),
 		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
@@ -123,7 +126,7 @@ export async function cloneItemFromRepeater( editor: EditorPage, widgetID: strin
 		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count(),
-		cloneItemButton = editor.page.locator( REPEATER_CLONE_BUTTON ).nth( position );
+		cloneItemButton = editor.page.locator( locators.repeaterCloneButton ).nth( position );
 
 	await cloneItemButton.click( { force: true } );
 	await editor.getPreviewFrame().locator( `.elementor-element-${ widgetID }` ).waitFor();
