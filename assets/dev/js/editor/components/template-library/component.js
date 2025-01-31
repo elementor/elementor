@@ -57,7 +57,7 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultRoutes() {
-		return {
+		const defaultRoutes = {
 			import: () => {
 				this.manager.layout.showImportView();
 			},
@@ -77,6 +77,14 @@ export default class Component extends ComponentModalBase {
 				this.manager.layout.showConnectView( args );
 			},
 		};
+
+		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
+			defaultRoutes[ 'view-folder' ] = ( args ) => {
+				this.manager.layout.showFolderView( args );
+			};
+		}
+
+		return defaultRoutes;
 	}
 
 	defaultCommands() {
