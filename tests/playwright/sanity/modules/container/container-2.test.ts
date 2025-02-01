@@ -61,12 +61,12 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addElement( { elType: 'container' }, 'document' );
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
-		await editor.addWidget( widgets.button );
-		await editor.addWidget( widgets.heading );
-		await editor.addWidget( widgets.image );
+		await editor.addWidget( widgets.button, containerId );
+		await editor.addWidget( widgets.heading, containerId );
+		await editor.addWidget( widgets.image, containerId );
 
 		// Assert.
 		const resizers = editor.getPreviewFrame().locator( '.ui-resizable-handle.ui-resizable-e' );
@@ -124,15 +124,15 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		// Act.
-		// Add containers and widgets.
+		// Add containers.
 		const containerId1 = await editor.addElement( { elType: 'container' }, 'document' );
-		await editor.addWidget( widgets.button );
-
 		const containerId2 = await editor.addElement( { elType: 'container' }, 'document' );
-		const headingId = await editor.addWidget( widgets.heading );
-
 		const containerId3 = await editor.addElement( { elType: 'container' }, 'document' );
-		await editor.addWidget( widgets.spacer );
+
+		// Add widgets.
+		await editor.addWidget( widgets.button, containerId1 );
+		const headingId = await editor.addWidget( widgets.heading, containerId2 );
+		await editor.addWidget( widgets.spacer, containerId3 );
 
 		// Copy container 2 and paste it at the top of the page.
 		await contextMenu.copyElement( containerId2 );

@@ -55,8 +55,8 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addElement( { elType: 'container' }, 'document' );
-		await editor.addWidget( widgets.button );
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( widgets.button, container );
 		await editor.publishPage();
 		await page.reload();
 		await editor.waitForPanelToLoad();
@@ -134,40 +134,27 @@ test.describe( 'Container tests @container', () => {
 		} );
 
 		await test.step( 'Spacer added and container set to row', async () => {
-			const container = await editor.addElement( { elType: 'container' }, 'document' ),
-				spacer = await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
-
-			await editor.addWidget( widgets.image, container );
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
+			const spacer = await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
 			await editor.selectElement( spacer );
 			await editor.setSliderControlValue( 'space', spacerSize );
-
-			await editor.selectElement( container );
-
-			// Set row direction.
-			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
+			await editor.addWidget( widgets.image, container );
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
-
 			expect.soft( String( spacerElementWidth ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
 		await test.step( 'Container set to row and then Spacer added', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
-
-			await editor.selectElement( container );
-
-			// Set row direction.
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
-
 			const spacer = await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
-
 			await editor.addWidget( widgets.image, container );
 			await editor.selectElement( spacer );
 			await editor.setSliderControlValue( 'space', spacerSize );
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
-
 			expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );

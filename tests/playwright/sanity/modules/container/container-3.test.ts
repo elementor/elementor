@@ -36,24 +36,24 @@ test.describe( 'Container tests @container', () => {
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 		await editor.setChooseControlValue( 'flex_wrap', 'eicon-wrap' );
 
-		await editor.addWidget( 'divider' );
+		await editor.addWidget( 'divider', container );
 		await editor.setWidgetCustomWidth( '80' );
 
-		await editor.addWidget( 'google_maps' );
+		await editor.addWidget( 'google_maps', container );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
 		await editor.hideMapControls();
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.setChooseControlValue( '_flex_size', 'eicon-grow' );
 		await editor.setWidgetMask();
 
-		await editor.addWidget( 'video' );
+		await editor.addWidget( 'video', container );
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
 
 		// Hide carousel navigation.
-		const carouselOneId = await editor.addWidget( 'image-carousel' );
+		const carouselOneId = await editor.addWidget( 'image-carousel', container );
 		await editor.setSelectControlValue( 'navigation', 'none' );
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.openPanelTab( 'content' );
@@ -161,7 +161,7 @@ test.describe( 'Container tests @container', () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setChooseControlValue( 'flex_align_items', 'eicon-align-center-v' );
 		await editor.hideEditorElements();
-		await editor.addWidget( 'spacer' );
+		await editor.addWidget( 'spacer', containerId );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );
 		await editor.openSection( '_section_background' );
@@ -235,7 +235,7 @@ test.describe( 'Container tests @container', () => {
 		await page.locator( '.elementor-control-_transform_scale_effect .elementor-control-input-wrapper input' ).fill( '2' );
 		await page.locator( '.elementor-control-_transform_scale_popover .elementor-control-popover-toggle-toggle-label' ).click();
 
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( 'heading', containerId );
 
 		// Assert.
 		// Check rotate and scale value.
