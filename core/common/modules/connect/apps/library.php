@@ -114,7 +114,7 @@ class Library extends Common_App {
 			],
 			'remote_info_library' => [
 				'label' => 'Remote Library Info',
-				'value' => get_option( 'elementor_remote_info_library' ),
+				'value' => API::get_library_data(),
 			],
 		];
 	}

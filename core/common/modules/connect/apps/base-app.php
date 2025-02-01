@@ -171,7 +171,7 @@ abstract class Base_App {
 
 	public function action_reset() {
 		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( 'elementor_remote_info_library' );
+			delete_transient( 'elementor_remote_templates_api_data_' . ELEMENTOR_VERSION );
 		}
 
 		$this->redirect_to_admin_page();
