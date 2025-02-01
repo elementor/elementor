@@ -76,7 +76,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Column container, spacer default size', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 
-			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
+			await editor.addWidget( widgets.spacer, container );
 			await editor.addWidget( widgets.image, container );
 
 			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
@@ -90,7 +90,7 @@ test.describe( 'Container tests @container', () => {
 
 			// Set row direction.
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
-			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
+			await editor.addWidget( widgets.spacer, container );
 			await editor.addWidget( widgets.image, container );
 
 			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
@@ -101,7 +101,7 @@ test.describe( 'Container tests @container', () => {
 
 		await test.step( 'Spacer added and container set to column', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
-			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
+			await editor.addWidget( widgets.spacer, container );
 			await editor.setSliderControlValue( 'space', spacerSize );
 			await editor.addWidget( widgets.image, container );
 
@@ -114,7 +114,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Container set to column and then Spacer added', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-down' );
-			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
+			await editor.addWidget( widgets.spacer, container );
 			await editor.setSliderControlValue( 'space', spacerSize );
 			await editor.addWidget( widgets.image, container );
 
@@ -126,7 +126,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Spacer added and container set to row', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
-			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
+			await editor.addWidget( widgets.spacer, container );
 			await editor.setSliderControlValue( 'space', spacerSize );
 			await editor.addWidget( widgets.image, container );
 
@@ -138,7 +138,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Container set to row and then Spacer added', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
-			await editor.addElement( { widgetType: widgets.spacer, elType: 'widget' }, container );
+			await editor.addWidget( widgets.spacer, container );
 			await editor.setSliderControlValue( 'space', spacerSize );
 			await editor.addWidget( widgets.image, container );
 
