@@ -22,7 +22,7 @@ class Cloud_Library extends Library {
 		$templates = [];
 
 		$endpoint = 'resources';
-		if ( isset( $args['template_id'] ) && ! empty( $args['template_id'] ) ) {
+		if ( ! empty( $args['template_id'] ) ) {
 			$endpoint .= '?parentId=' . $args['template_id'];
 		}
 
