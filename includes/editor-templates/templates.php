@@ -64,7 +64,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		* @param bool   isRemote     - If `true` the source is a remote source.
 		* @param string activeSource - The current template source.
 		*/
-		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', activeSource !== 'local', activeSource );
+		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', activeSource === 'remote', activeSource );
 	#>
 	<div id="elementor-template-library-toolbar">
 		<# if ( isRemote ) {
@@ -113,7 +113,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon-search"></i>
 		</div>
 	</div>
-	<# if ( 'local' === activeSource ) { #>
+	<# if ( 'local' === activeSource || 'cloud' === activeSource ) { #>
 		<div id="elementor-template-library-order-toolbar-local">
 			<div class="elementor-template-library-local-column-1">
 				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
@@ -123,10 +123,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<input type="radio" id="elementor-template-library-order-local-type" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="type" data-default-ordering-direction="asc">
 				<label for="elementor-template-library-order-local-type" class="elementor-template-library-order-label"><?php echo esc_html__( 'Type', 'elementor' ); ?></label>
 			</div>
+			<# if ( 'local' === activeSource ) { #>
 			<div class="elementor-template-library-local-column-3">
 				<input type="radio" id="elementor-template-library-order-local-author" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="author" data-default-ordering-direction="asc">
 				<label for="elementor-template-library-order-local-author" class="elementor-template-library-order-label"><?php echo esc_html__( 'Created By', 'elementor' ); ?></label>
 			</div>
+			<# } #>
 			<div class="elementor-template-library-local-column-4">
 				<input type="radio" id="elementor-template-library-order-local-date" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="date">
 				<label for="elementor-template-library-order-local-date" class="elementor-template-library-order-label"><?php echo esc_html__( 'Creation Date', 'elementor' ); ?></label>
@@ -173,10 +175,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
-	<div class="elementor-template-library-template-name elementor-template-library-local-column-1">{{ title }}</div>
+	<#
+		const activeSource = elementor.templates.getFilter('source');
+	#>
+	<div class="elementor-template-library-template-name elementor-template-library-local-column-1">
+		<# if ( 'cloud' === activeSource ) {
+			const sourceIcon = 'FOLDER' === subType
+				? '<i class="eicon-folder-o" aria-hidden="true"></i>'
+				: '<i class="eicon-global-colors" aria-hidden="true"></i>';
+
+				print( sourceIcon );
+		} #>
+		{{ title }}
+	</div>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-type elementor-template-library-local-column-2">{{{ elementor.translate( type ) }}}</div>
+	<# if ( 'local' === activeSource ) { #>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-author elementor-template-library-local-column-3">{{{ author }}}</div>
+	<# } #>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>
+	<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
 	<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
 		<div class="elementor-template-library-template-preview elementor-button e-btn-txt">
 			<i class="eicon-preview-medium" aria-hidden="true"></i>
@@ -203,6 +220,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 	</div>
+	<# } #>
+	<# if ( typeof subType !== 'undefined' && 'FOLDER' === subType ) { #>
+		<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
+			<div class="elementor-template-library-template-preview elementor-button e-btn-txt">
+				<i class="eicon-preview-medium" aria-hidden="true"></i>
+				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Open', 'elementor' ); ?></span>
+			</div>
+		</div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-button">
