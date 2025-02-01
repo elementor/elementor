@@ -21,29 +21,16 @@ class Cloud_Library extends Library {
 	public function get_resources( $args = [] ): array {
 		$templates = [];
 
-		$cloud_templates = $this->http_request( 'GET', 'resources', $args, [
+		$endpoint = 'resources';
+		if ( isset( $args['template_id'] ) && ! empty( $args['template_id'] ) ) {
+			$endpoint .= '?parentId=' . $args['template_id'];
+		}
+
+		$cloud_templates = $this->http_request( 'GET', $endpoint, $args, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 
 		if ( is_wp_error( $cloud_templates ) || ! is_array( $cloud_templates['data'] ) ) {
-			return $templates;
-		}
-
-		foreach ( $cloud_templates['data'] as $cloud_template ) {
-			$templates[] = $this->prepare_template( $cloud_template );
-		}
-
-		return $templates;
-	}
-
-	public function get_resources_children( $args = [] ): array {
-		$templates = [];
-
-		$cloud_templates = $this->http_request( 'GET', 'resources?parentId=' . $args['template_id'], $args, [
-			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
-		] );
-
-		if ( ! is_array( $cloud_templates['data'] ) ) {
 			return $templates;
 		}
 
@@ -63,10 +50,6 @@ class Cloud_Library extends Library {
 			'title' => $template_data['title'],
 			'human_date' => date_i18n( get_option( 'date_format' ), strtotime( $template_data['createdAt'] ) ),
 		];
-	}
-
-	public function get_item_children( $id ) {
-		return $source->get_item_children( $id );
 	}
 
 	protected function init() {}
