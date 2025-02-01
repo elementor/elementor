@@ -24,7 +24,7 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
-		// Assert.
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -85,6 +85,7 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Fallback image is not on top of background video AND border radius with background image', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await page.goto( '/wp-admin/media-new.php' );
 
@@ -98,15 +99,14 @@ test.describe( 'Container tests @container', () => {
 		await page.locator( 'ul.attachments li' ).nth( 0 ).click();
 		await page.waitForSelector( '.attachment-details-copy-link' );
 
-		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue(),
-			editor = await wpAdmin.openNewPage(),
-			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
+		const videoURL = await page.locator( '.attachment-details-copy-link' ).inputValue();
+		const editor = await wpAdmin.openNewPage();
 
 		await editor.closeNavigatorIfOpen();
 		await editor.setPageTemplate( 'canvas' );
 
-		await editor.selectElement( containerId );
+		// Act.
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setSliderControlValue( 'min_height', '200' );
 		await editor.openPanelTab( 'style' );
 		await editor.setChooseControlValue( 'background_background', 'eicon-video-camera' );
@@ -119,16 +119,17 @@ test.describe( 'Container tests @container', () => {
 		await editor.openSection( 'section_background_overlay' );
 		await editor.setChooseControlValue( 'background_overlay_background', 'eicon-paint-brush' );
 		await editor.setColorControlValue( 'background_overlay_color', '#61CE70' );
-
 		await editor.togglePreviewMode();
 
+		// Assert.
+		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 		expect.soft( await container.screenshot( {
 			type: 'jpeg',
 			quality: 90,
 		} ) ).toMatchSnapshot( 'container-background.jpeg' );
 
+		// Act.
 		await editor.togglePreviewMode();
-
 		await editor.selectElement( containerId );
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_border' );
@@ -137,9 +138,9 @@ test.describe( 'Container tests @container', () => {
 		await editor.setDimensionsValue( 'border_radius', '60' );
 		await editor.setColorControlValue( 'border_color', '#333333' );
 		await page.locator( 'body' ).click();
-
 		await editor.togglePreviewMode();
 
+		// Assert.
 		expect.soft( await container.screenshot( {
 			type: 'jpeg',
 			quality: 100,
@@ -177,11 +178,14 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Right container padding for preset c100-c50-50', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
+		// Act.
 		await editor.addContainerPreset( 'c100-c50-50' );
 
+		// Assert.
 		await expect.soft( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column[data-nesting-level="1"]' ).last() ).toHaveCSS( 'padding', '0px' );
 
 		await test.step( 'Wrap value is not selected in c100-c50-50 preset', async () => {
@@ -218,11 +222,11 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Container Transform controls', async ( { page, apiRequests }, testInfo ) => {
-		// Assert.
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
-		// Assert.
+		// Act.
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.openPanelTab( 'advanced' );
 		await editor.openSection( '_section_transform' );
