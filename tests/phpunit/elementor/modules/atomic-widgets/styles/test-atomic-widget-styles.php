@@ -3,7 +3,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Frontend;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
