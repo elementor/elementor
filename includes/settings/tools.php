@@ -296,7 +296,7 @@ class Tools extends Settings_Page {
 								'field_args' => [
 									'type' => 'raw_html',
 									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Clear Cache', 'elementor' ) ),
-									'desc' => esc_html__( 'Delete cached CSS files, rendered HTML, JS/CSS assets in post meta and additional data stored in the database.', 'elementor' ),
+									'desc' => esc_html__( "Clear outdated CSS files and cached data in the database (rendered HTML, JS/CSS assets, etc.). We'll regenerate those files the next time someone visits any page on your website.", 'elementor' ),
 								],
 							],
 							'reset_api_data' => [
