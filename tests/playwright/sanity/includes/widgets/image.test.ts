@@ -8,17 +8,17 @@ import Content from '../../../pages/elementor-panel-tabs/content';
 test.describe( 'Image widget tests @styleguide_image_link', () => {
 	const data = [
 		{
-			widgetTitle: 'image',
-			image: EditorSelectors.image.image,
-			widget: EditorSelectors.image.widget,
-			select: EditorSelectors.image.imageSizeSelect,
-			isVideo: false,
-		},
-		{
 			widgetTitle: 'image-box',
 			image: EditorSelectors.imageBox.image,
 			widget: EditorSelectors.imageBox.widget,
 			select: EditorSelectors.imageBox.imageSizeSelect,
+			isVideo: false,
+		},
+		{
+			widgetTitle: 'image',
+			image: EditorSelectors.image.image,
+			widget: EditorSelectors.image.widget,
+			select: EditorSelectors.image.imageSizeSelect,
 			isVideo: false,
 		},
 	];
@@ -86,6 +86,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			await wpAdmin.openNewPage();
 			await editor.addWidget( data[ i ].widgetTitle );
 			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
+			await editor.waitForPanelToLoad();
 			await contentTab.setCustomImageSize(
 				{
 					selector: data[ i ].image,

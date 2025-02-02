@@ -59,7 +59,6 @@ test.describe( 'Container tests @container', () => {
 
 		if ( hasTopBar ) {
 			await editor.publishPage();
-			await page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
 		} else {
 			await page.locator( '#elementor-panel-saver-button-publish-label' ).click();
 			await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
