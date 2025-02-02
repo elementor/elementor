@@ -15,8 +15,12 @@ class Link_Transformer extends Transformer_Base {
 		}
 
 		$is_post_id = (int) $value['target'];
-		$href = $is_post_id ? get_post( (int)
-		$value['target'] )->guid : $value['target'];
+		$post = $is_post_id ? get_post( (int) $value['target'] ) : null;
+		$href = $post ? $post->guid : $value['target'];
+
+		if ( wp_http_validate_url( $href ) ) {
+			throw new \Exception( 'Url is invalid.' );
+		}
 
 		$link_attrs = [
 			'href' => esc_url( $href ),

@@ -64,7 +64,7 @@ class WP_Post {
 		if ( $is_search_titles_only && ! empty( $search_term ) ) {
 			$search .= " AND (";
 			$search .= "post_title LIKE '%" . esc_sql( $search_term ) . "%' ";
-			$search .= "OR guid LIKE '%" . esc_sql( $search_term ) . "%')";
+			$search .= "OR ID LIKE '%" . esc_sql( $search_term ) . "%')";
 		}
 
 		return $search;
