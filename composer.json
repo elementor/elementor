@@ -23,7 +23,8 @@
 		"thor-juhasz/phpunit-coverage-check": "^0.3.0",
 		"spatie/phpunit-snapshot-assertions": "^4.2",
 		"humbug/php-scoper": "0.17.5",
-		"php-di/php-di": "6.4.0"
+		"php-di/php-di": "6.4.0",
+		"twig/twig": "3.11.3"
 	},
 	"scripts": {
 		"lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
@@ -32,17 +33,16 @@
 		"coverage": "composer run coverage:test && composer run coverage:check",
 		"coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
 		"coverage:check": "phpunit-coverage-check -t 65 coverage-report/clover.xml",
+		"php-scoper": [
+			"php-scoper add-prefix --output-dir=./vendor_prefixed/dependency-injection --config=php-scoper/dependency-injection-inc.php --force",
+			"php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"
+		],
 		"post-install-cmd": [
-			"@php -r \"if (!file_exists('vendor_prefixed')) { mkdir('vendor_prefixed', 0755, true); }\"",
-			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection.inc.php --force",
+			"@php composer run php-scoper",
 			"@php composer dump-autoload"
 		],
-		"pre-autoload-dump": [
-			"@php -r \"if (!file_exists('vendor_prefixed')) { mkdir('vendor_prefixed', 0755, true); }\""
-		],
 		"post-update-cmd": [
-			"@php -r \"if (!file_exists('vendor_prefixed')) { mkdir('vendor_prefixed', 0755, true); }\"",
-			"@php ./vendor/bin/php-scoper add-prefix --output-dir=./vendor_prefixed --config=php-scoper/dependency-injection.inc.php --force",
+			"@php composer run php-scoper",
 			"@php composer dump-autoload"
 		]
 	},

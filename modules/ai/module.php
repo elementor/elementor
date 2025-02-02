@@ -48,7 +48,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		if ( ! Preferences::is_ai_enabled( get_current_user_id() ) ) {
+		if ( ! $this->is_ai_enabled() ) {
 			return;
 		}
 
@@ -170,7 +170,15 @@ class Module extends BaseModule {
 		add_action( 'elementor/element/container/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
 	}
 
+	public function is_ai_enabled() {
+		return Preferences::is_ai_enabled( get_current_user_id() );
+	}
+
 	public function handle_kit_install( $imported_data ) {
+		if ( ! $this->is_ai_enabled() ) {
+			return;
+		}
+
 		if ( ! isset( $imported_data['status'] ) || 'success' !== $imported_data['status'] ) {
 			return;
 		}
@@ -464,11 +472,6 @@ class Module extends BaseModule {
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'connect_url' => $this->get_ai_connect_url(),
 		];
-
-		if ( $this->get_ai_app()->is_connected() ) {
-			// Use a cached version, don't call the API on every editor load.
-			$config['usage'] = $this->get_ai_app()->get_cached_usage();
-		}
 
 		wp_localize_script(
 			'elementor-ai',

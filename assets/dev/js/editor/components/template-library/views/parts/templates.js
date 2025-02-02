@@ -1,5 +1,6 @@
 var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
+	TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' ),
 	TemplateLibraryCollectionView;
 
 import Select2 from 'elementor-editor-utils/select2.js';
@@ -59,11 +60,25 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	getChildView( childModel ) {
-		if ( 'remote' === childModel.get( 'source' ) ) {
-			return TemplateLibraryTemplateRemoteView;
-		}
+		const sourceMappings = {
+			local: TemplateLibraryTemplateLocalView,
+			remote: TemplateLibraryTemplateRemoteView,
+			cloud: TemplateLibraryTemplateCloudView,
+		};
 
-		return TemplateLibraryTemplateLocalView;
+		const activeSource = childModel.get( 'source' ) ? childModel.get( 'source' ) : 'local';
+
+		/**
+		 * Filter template source.
+		 *
+		 * @param bool   isRemote     - If `true` the source is a remote source.
+		 * @param string activeSource - The current template source.
+		 */
+		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', 'remote' === activeSource, activeSource );
+
+		return isRemote
+			? TemplateLibraryTemplateRemoteView
+			: sourceMappings[ activeSource ] || TemplateLibraryTemplateLocalView;
 	},
 
 	initialize() {

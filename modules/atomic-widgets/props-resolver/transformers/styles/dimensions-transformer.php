@@ -10,14 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Gap_Transformer extends Transformer_Base {
-	public function transform( $value, $key ): array {
-		$gap = Collection::make( $value )
-			->only( [ 'row', 'column' ] )
+class Dimensions_Transformer extends Transformer_Base {
+	public function transform( $value, $key ) {
+		$dimensions = Collection::make( $value )
+			->only( [ 'top', 'right', 'bottom', 'left' ] )
 			->filter()
-			->map_with_keys( fn( $gap, $gap_direction ) => [ $gap_direction . '-' . $key => $gap ] )
+			->map_with_keys( fn( $dimension, $side ) => [ $key . '-' . $side => $dimension ] )
 			->all();
 
-		return Multi_Props::generate( $gap );
+		return Multi_Props::generate( $dimensions );
 	}
 }

@@ -1,16 +1,19 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Widgets;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Controls\Dynamic_Section;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +21,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Heading extends Atomic_Widget_Base {
-	public function get_name() {
+	const BASE_STYLE_KEY = 'base';
+
+	public static function get_element_type(): string {
 		return 'a-heading';
 	}
 
@@ -46,9 +51,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	private function get_template_args( array $settings ): array {
 		$tag = $settings['tag'];
 		$title = esc_html( $settings['title'] );
-		$attrs = array_filter( [
-			'class' => $settings['classes'] ?? '',
-		] );
+		$attrs = array_filter([
+			'class' => array_filter( [
+				$settings['classes'] ?? '',
+				static::get_base_style_class( self::BASE_STYLE_KEY ) ?? '',
+			] ),
+		]);
 
 		$default_args = [
 			Utils::validate_html_tag( $tag ),
@@ -74,6 +82,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
+					Textarea_Control::bind_to( 'title' )
+						->set_label( __( 'Title', 'elementor' ) )
+						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
 					Select_Control::bind_to( 'tag' )
 						->set_label( esc_html__( 'Tag', 'elementor' ) )
 						->set_options( [
@@ -102,11 +113,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 								'label' => 'H6',
 							],
 						]),
-
-					Textarea_Control::bind_to( 'title' )
-						->set_label( __( 'Title', 'elementor' ) )
-						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
-
 					Link_Control::bind_to( 'link' )
 						->set_options( $this->get_post_query() )
 						->set_allow_custom_values( true )
@@ -128,6 +134,29 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'Your Title Here', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
+		];
+	}
+
+	public static function define_base_styles(): array {
+		$color_value = Color_Prop_Type::generate( 'black' );
+		$font_family_value = String_Prop_Type::generate( 'Inter' );
+		$font_size_value = Size_Prop_Type::generate( [
+			'size' => 3,
+			'unit' => 'rem',
+		] );
+		$line_height_value = String_Prop_Type::generate( '1.1' );
+		$font_weight_value = String_Prop_Type::generate( '600' );
+
+		return [
+			self::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'color', $color_value )
+						->add_prop( 'font-family', $font_family_value )
+						->add_prop( 'font-size', $font_size_value )
+						->add_prop( 'line-height', $line_height_value )
+						->add_prop( 'font-weight', $font_weight_value )
+				),
 		];
 	}
 

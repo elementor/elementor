@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, deleteItemFromRepeater, addItemFromRepeater } from './helper';
 import _path from 'path';
-import { setup } from '../nested-tabs/helper';
+import { setupExperiments } from '../nested-tabs/helper';
 import AxeBuilder from '@axe-core/playwright';
 
 test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
@@ -57,7 +57,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await setup( wpAdmin, {} );
+		await setupExperiments( wpAdmin, {} );
 
 		await page.close();
 	} );

@@ -70,10 +70,7 @@ class Module extends BaseModule {
 	 * Stop WordPress core fetchpriority logic by setting the wp_high_priority_element_flag flag to false.
 	 */
 	public function stop_core_fetchpriority_high_logic() {
-		// wp_high_priority_element_flag was only introduced in 6.3.0
-		if ( function_exists( 'wp_high_priority_element_flag' ) ) {
-			wp_high_priority_element_flag( false );
-		}
+		wp_high_priority_element_flag( false );
 	}
 
 	/**

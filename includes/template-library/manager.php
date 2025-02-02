@@ -483,7 +483,7 @@ class Manager {
 	public function direct_import_template() {
 		/** @var Source_Local $source */
 		$source = $this->get_source( 'local' );
-		$file = Utils::get_super_global_value( $_FILES, 'file' );
+		$file = Utils::get_super_global_value( $_FILES, 'file' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		return $source->import_template( $file['name'], $file['tmp_name'] );
 	}
 
@@ -584,6 +584,22 @@ class Manager {
 		return $import_data['content'];
 	}
 
+	public function get_item_children( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		return $source->get_item_children( $args );
+	}
+
 	/**
 	 * Register default template sources.
 	 *
@@ -598,6 +614,10 @@ class Manager {
 			'local',
 			'remote',
 		];
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
+			$sources[] = 'cloud';
+		}
 
 		foreach ( $sources as $source_filename ) {
 			$class_name = ucwords( $source_filename );
@@ -640,10 +660,10 @@ class Manager {
 		$result = call_user_func( [ $this, $ajax_request ], $data );
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
-		return $result;
+		return $result; // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 	}
 
 	/**
@@ -666,6 +686,7 @@ class Manager {
 			'import_template',
 			'mark_template_as_favorite',
 			'import_from_json',
+			'get_item_children',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
+namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
@@ -18,6 +18,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Atomic_Base {
 	public function has_widget_inner_wrapper(): bool {
 		return false;
+	}
+
+	abstract public static function get_element_type(): string;
+
+	final public function get_name() {
+		return static::get_element_type();
 	}
 
 	private function get_valid_controls( array $schema, array $controls ): array {
@@ -75,7 +81,7 @@ trait Has_Atomic_Base {
 			[ $is_valid, $sanitized_style, $errors ] = $style_parser->parse( $style );
 
 			if ( ! $is_valid ) {
-				throw new \Exception( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) );
+				throw new \Exception( esc_html( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) ) );
 			}
 
 			$styles[ $style_id ] = $sanitized_style;
@@ -91,7 +97,7 @@ trait Has_Atomic_Base {
 		[ $is_valid, $parsed, $errors ] = $props_parser->parse( $settings );
 
 		if ( ! $is_valid ) {
-			throw new \Exception( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) );
+			throw new \Exception( esc_html( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) ) );
 		}
 
 		return $parsed;
@@ -152,5 +158,26 @@ trait Has_Atomic_Base {
 			'elementor/atomic-widgets/props-schema',
 			static::define_props_schema()
 		);
+	}
+
+	public static function define_base_styles(): array {
+		return [];
+	}
+
+	public static function get_base_styles() {
+		$base_styles = static::define_base_styles();
+		$style_definitions = [];
+
+		foreach ( $base_styles as $key => $style ) {
+			$id = static::get_base_style_class( $key );
+
+			$style_definitions[] = $style->build( $id );
+		}
+
+		return $style_definitions;
+	}
+
+	public static function get_base_style_class( string $key ) {
+		return static::get_element_type() . '-' . $key;
 	}
 }
