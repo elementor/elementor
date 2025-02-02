@@ -60,7 +60,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'link' => [
 							'$$type' => 'link',
 							'value' => [
-								'href' => 'https://elementor.com',
+								'destination' => [
+									'$$type' => 'url',
+									'value' => 'https://elementor.com',
+								],
 								'isTargetBlank' => true,
 							],
 						],
@@ -69,7 +72,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'text' => 'This text is more great than the greatest text',
 						'tag' => 'h2',
 						'link' => [
-							'href' => 'https://elementor.com',
+							'destination' => [
+								'$$type' => 'url',
+								'value' => 'https://elementor.com',
+							],
 							'target' => '_blank',
 						],
 					],
