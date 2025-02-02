@@ -99,7 +99,6 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
 		await editor.waitForPanelToLoad();
 		await editor.setSelectControlValue( 'image_overlay_size', 'thumbnail' );
-		await editor.waitForIframeToLoaded( 'video' );
 		await videoWidget.verifyImageSrc( {
 			selector: EditorSelectors.video.image,
 			imageTitle,
