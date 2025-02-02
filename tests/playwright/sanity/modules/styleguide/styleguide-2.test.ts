@@ -16,7 +16,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Change font title', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-typography', true );
 
 		const input = page.locator( '.elementor-repeater-fields' ).nth( 2 );
 
@@ -31,7 +31,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Change color title', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', true );
 
 		const input = page.locator( '.elementor-repeater-fields' ).nth( 1 );
 
@@ -46,7 +46,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Adding and removing new colors', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', true );
 
 		const picker = page.locator( '.elementor-repeater-fields' ).nth( 4 ).locator( '.pcr-button' );
 		const addButton = page.getByRole( 'button', { name: 'Add Color' } );
@@ -58,7 +58,8 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await picker.click();
 
 		// Assert
-		expect( await editor.getPreviewFrame().getByText( /New Item #1#594833/i ).count() ).toEqual( 1 );
+		const number1 = await editor.getPreviewFrame().getByText( 'New Item #1' ).count();
+		expect( number1 ).toEqual( 1 );
 
 		// Arrange 2.
 		const listItem = page.locator( '.elementor-repeater-fields' ).nth( 4 ).locator( '.elementor-control-input-wrapper' ).nth( 1 );
@@ -70,13 +71,13 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		await page.getByRole( 'button', { name: 'Delete' } ).click();
 
 		// Assert 2
-		const number = await editor.getPreviewFrame().getByText( /New Item #1#/i ).count();
-		expect( number ).toEqual( 0 );
+		const number2 = await editor.getPreviewFrame().getByText( 'New Item #1' ).count();
+		expect( number2 ).toEqual( 0 );
 	} );
 
 	test( 'Adding and removing new fonts', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-typography', true );
 		const addButton = page.getByRole( 'button', { name: 'Add Style' } );
 
 		// Act.
@@ -102,7 +103,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Changed color in picker to reflect in styleguide', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', true );
 		const secondaryColor = editor.getPreviewFrame().getByText( /Secondary#[A-Fa-f0-9]{6}/i );
 
 		const picker = page.locator( '.elementor-repeater-fields' ).nth( 1 ).locator( '.pcr-button' );
@@ -116,7 +117,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Changed font values in picker to reflect in styleguide', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-typography', true );
 
 		const textFont = editor.getPreviewFrame().getByText( 'Text' + fontsContentText );
 		const picker = page.locator( '.elementor-repeater-fields' ).nth( 2 ).locator( '.eicon-edit' ).first();
@@ -136,7 +137,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Clicking header buttons makes relevant area visible', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', true );
 
 		const fontsButton = editor.getPreviewFrame().getByRole( 'button', { name: 'Fonts' } );
 		const colorButton = editor.getPreviewFrame().getByRole( 'button', { name: 'Colors' } );
@@ -156,7 +157,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Clicks on font trigger picker state and active state', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-typography', true );
 
 		const secondaryFont = editor.getPreviewFrame().getByText( 'Secondary' + fontsContentText );
 		const picker = page.locator( '.elementor-control-popover-toggle-toggle-label' ).nth( 1 );

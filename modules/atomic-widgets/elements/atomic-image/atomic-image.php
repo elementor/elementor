@@ -1,12 +1,14 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Widgets;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Image;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
+use ElementorDeps\Twig\Environment;
+use ElementorDeps\Twig\Loader\ArrayLoader;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -28,10 +30,6 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
-		if ( ! isset( $settings['image'] ) ) {
-			return;
-		}
-
 		$attrs = array_filter( array_merge(
 			$settings['image'],
 			[ 'class' => $settings['classes'] ?? '' ]
@@ -39,13 +37,13 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 		$attrs['src'] = esc_url( $attrs['src'] );
 
-		Utils::print_wp_kses_extended(
-			sprintf(
-				'<img %1$s >',
-				Utils::render_html_attributes( $attrs )
-			),
-			[ 'image' ]
-		);
+		$loader = new ArrayLoader();
+		$twig = new Environment( $loader );
+
+		$loader->setTemplate( 'image', '<img {{ attributes | raw }}>' );
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $twig->load( 'image' )->render( [ 'attributes' => Utils::render_html_attributes( $attrs ) ] );
 	}
 
 	protected function define_atomic_controls(): array {
