@@ -72,10 +72,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'text' => 'This text is more great than the greatest text',
 						'tag' => 'h2',
 						'link' => [
-							'destination' => [
-								'$$type' => 'url',
-								'value' => 'https://elementor.com',
-							],
+							'href' => 'https://elementor.com',
 							'target' => '_blank',
 						],
 					],
