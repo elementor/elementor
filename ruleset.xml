@@ -13,6 +13,7 @@
 	<exclude-pattern>build/</exclude-pattern>
 	<exclude-pattern>node_modules/</exclude-pattern>
 	<exclude-pattern>includes/libraries/</exclude-pattern>
+	<exclude-pattern>assets/js/packages/</exclude-pattern>
 	<exclude-pattern>tests/*.php</exclude-pattern>
 
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax" />
@@ -36,6 +37,7 @@
 		<exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType" />
 		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
 		<exclude name="Squiz.Commenting.FunctionCommentThrowTag.Missing" />
+		<exclude name="Squiz.Commenting.FunctionComment.EmptyThrows" />
 		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
 		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.SpaceAfterFunction" />
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamType" />

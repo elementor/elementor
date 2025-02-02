@@ -24,8 +24,6 @@ class Module extends BaseApp {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_layout_experiment();
-
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
@@ -86,15 +84,15 @@ class Module extends BaseApp {
 		return $edit_link;
 	}
 
-	private function register_layout_experiment(): void {
-		Plugin::$instance->experiments->add_feature( [
+	public static function get_experimental_data(): array {
+		return [
 			'name' => static::PAGE_ID,
 			'title' => esc_html__( 'Elementor Home Screen', 'elementor' ),
 			'description' => esc_html__( 'Default Elementor menu page.', 'elementor' ),
 			'hidden' => true,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'default' => Experiments_Manager::STATE_ACTIVE,
-		] );
+		];
 	}
 
 	private function get_app_js_config(): array {

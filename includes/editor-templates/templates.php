@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -56,9 +58,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-templates">
 	<#
 		var activeSource = elementor.templates.getFilter('source');
+		/**
+		* Filter template source.
+		*
+		* @param bool   isRemote     - If `true` the source is a remote source.
+		* @param string activeSource - The current template source.
+		*/
+		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', activeSource === 'remote', activeSource );
 	#>
 	<div id="elementor-template-library-toolbar">
-		<# if ( 'remote' === activeSource ) {
+		<# if ( isRemote ) {
 			var activeType = elementor.templates.getFilter('type');
 			#>
 			<div id="elementor-template-library-filter-toolbar-remote" class="elementor-template-library-filter-toolbar">
@@ -104,7 +113,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon-search"></i>
 		</div>
 	</div>
-	<# if ( 'local' === activeSource ) { #>
+	<# if ( 'local' === activeSource || 'cloud' === activeSource ) { #>
 		<div id="elementor-template-library-order-toolbar-local">
 			<div class="elementor-template-library-local-column-1">
 				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
@@ -114,10 +123,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<input type="radio" id="elementor-template-library-order-local-type" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="type" data-default-ordering-direction="asc">
 				<label for="elementor-template-library-order-local-type" class="elementor-template-library-order-label"><?php echo esc_html__( 'Type', 'elementor' ); ?></label>
 			</div>
+			<# if ( 'local' === activeSource ) { #>
 			<div class="elementor-template-library-local-column-3">
 				<input type="radio" id="elementor-template-library-order-local-author" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="author" data-default-ordering-direction="asc">
 				<label for="elementor-template-library-order-local-author" class="elementor-template-library-order-label"><?php echo esc_html__( 'Created By', 'elementor' ); ?></label>
 			</div>
+			<# } #>
 			<div class="elementor-template-library-local-column-4">
 				<input type="radio" id="elementor-template-library-order-local-date" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="date">
 				<label for="elementor-template-library-order-local-date" class="elementor-template-library-order-label"><?php echo esc_html__( 'Creation Date', 'elementor' ); ?></label>
@@ -128,7 +139,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	<# } #>
 	<div id="elementor-template-library-templates-container"></div>
-	<# if ( 'remote' === activeSource ) { #>
+	<# if ( isRemote ) { #>
 		<div id="elementor-template-library-footer-banner">
 			<img class="elementor-nerd-box-icon" src="<?php
 				Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' );
@@ -164,10 +175,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
-	<div class="elementor-template-library-template-name elementor-template-library-local-column-1">{{ title }}</div>
+	<#
+		const activeSource = elementor.templates.getFilter('source');
+	#>
+	<div class="elementor-template-library-template-name elementor-template-library-local-column-1">
+		<# if ( 'cloud' === activeSource ) {
+			const sourceIcon = 'FOLDER' === subType
+				? '<i class="eicon-folder-o" aria-hidden="true"></i>'
+				: '<i class="eicon-global-colors" aria-hidden="true"></i>';
+
+				print( sourceIcon );
+		} #>
+		{{ title }}
+	</div>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-type elementor-template-library-local-column-2">{{{ elementor.translate( type ) }}}</div>
+	<# if ( 'local' === activeSource ) { #>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-author elementor-template-library-local-column-3">{{{ author }}}</div>
+	<# } #>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>
+	<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
 	<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
 		<div class="elementor-template-library-template-preview elementor-button e-btn-txt">
 			<i class="eicon-preview-medium" aria-hidden="true"></i>
@@ -194,6 +220,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 	</div>
+	<# } #>
+	<# if ( typeof subType !== 'undefined' && 'FOLDER' === subType ) { #>
+		<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
+			<div class="elementor-template-library-template-preview elementor-button e-btn-txt">
+				<i class="eicon-preview-medium" aria-hidden="true"></i>
+				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Open', 'elementor' ); ?></span>
+			</div>
+		</div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-button">
@@ -239,7 +274,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
 	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
 	<form id="elementor-template-library-save-template-form">
-		<input type="hidden" name="post_id" value="<?php echo get_the_ID(); ?>">
+		<input type="hidden" name="post_id" value="<?php echo esc_attr( get_the_ID() ); ?>">
+		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
 			<span class="elementor-state-icon">
@@ -247,6 +283,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 			<?php echo esc_html__( 'Save', 'elementor' ); ?>
 		</button>
+		<?php else : ?>
+		<div class="cloud-library-form-inputs">
+			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
+			<select name="source[]" id="elementor-template-library-save-template-source" multiple="multiple" required>
+				<option value="local">Site Library</option>
+				<option value="cloud">Cloud Library</option>
+			</select>
+			<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
+				<span class="elementor-state-icon">
+					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
+				</span>
+				<?php echo esc_html__( 'Save', 'elementor' ); ?>
+			</button>
+		</div>
+		<?php endif; ?>
 	</form>
 	<div class="elementor-template-library-blank-footer">
 		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>

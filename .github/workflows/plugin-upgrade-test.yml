@@ -1,7 +1,10 @@
 name: Upgrade Elementor test
 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'main'
+      - '3.*'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -15,11 +18,6 @@ on:
         description: 'Elementor version from WordPress svn'
         required: false
         default: ''
-
-# This allows a subsequently queued workflow run to interrupt previous runs
-concurrency:
-  group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
-  cancel-in-progress: true
 
 jobs:
   build-plugin:

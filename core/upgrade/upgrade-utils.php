@@ -70,7 +70,7 @@ class Upgrade_Utils {
 
 				update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 			}
-		} // End foreach().
+		}
 
 		return $updater->should_run_again( $post_ids );
 	}
