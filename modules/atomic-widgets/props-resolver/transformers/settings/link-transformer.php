@@ -10,12 +10,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Link_Transformer extends Transformer_Base {
 	public function transform( $value, $key ): array {
-		if ( empty( $value['href'] ) ) {
-			throw new \Exception( 'Url is not provided.' );
+		if ( empty( $value['target'] ) ) {
+			throw new \Exception( 'Post ID or custom URL are not provided.' );
 		}
 
+		$is_post_id = (int) $value['target'];
+		$href = $is_post_id ? get_post( (int)
+		$value['target'] )->guid : $value['target'];
+
 		$link_attrs = [
-			'href' => esc_url( $value['href'] ),
+			'href' => esc_url( $href ),
 			'target' => $value['isTargetBlank'] ? '_blank' : '',
 		];
 

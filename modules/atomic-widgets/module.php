@@ -149,7 +149,7 @@ class Module extends BaseModule {
 		$transformers->register( Image_Attachment_Id_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Url_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
-		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
+//		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {

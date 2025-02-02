@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Query_Prop_Type extends Object_Prop_Type {
+	const KIND = 'object';
+
 	public static function get_key(): string {
 		return 'link';
 	}

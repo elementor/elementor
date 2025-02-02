@@ -16,7 +16,8 @@ class Query_Transformer extends Transformer_Base {
 		}
 
 		$is_post_id = (int) $value['target'];
-		$href = $is_post_id ? get_post( (int) $value['target'] )->guid : $value['target'];
+		$href = $is_post_id ? get_post( (int)
+		$value['target'] )->guid : $value['target'];
 
 		$link_attrs = [
 			'href' => esc_url( $href ),
