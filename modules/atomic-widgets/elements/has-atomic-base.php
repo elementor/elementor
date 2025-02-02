@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
+namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
