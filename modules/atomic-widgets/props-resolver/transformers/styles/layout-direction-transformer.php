@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Gap_Transformer extends Transformer_Base {
+class Layout_Direction_Transformer extends Transformer_Base {
 	public function transform( $value, $key ): array {
 		$gap = Collection::make( $value )
 			->only( [ 'row', 'column' ] )

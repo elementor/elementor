@@ -790,7 +790,7 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 
 		if ( innerPanel ) {
-			await this.page.locator( `.elementor-panel-menu-item-settings-${ innerPanel }` ).click();
+			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
 		}
 	}
 
