@@ -481,7 +481,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ): Promise<void> {
-		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+		const control = `.elementor-control-${ controlId } select`;
+		await this.page.locator( control ).waitFor( { state: 'attached' } );
+		await this.page.selectOption( control, value );
 	}
 
 	/**
