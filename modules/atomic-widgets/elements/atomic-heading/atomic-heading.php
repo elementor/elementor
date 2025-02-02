@@ -15,7 +15,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Utils;
-use Elementor\Modules\WpRest\Classes\WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -114,7 +113,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 								'label' => 'H6',
 							],
 						]),
-					Link_Control::bind_to( 'query' )
+					Link_Control::bind_to( 'link' )
 						->set_ajax_url( WP_Post::FORMAT )
 						->set_ajax_params( [
 							'keys_to_extract' => json_encode( [ 'ID', 'post_title', 'guid', 'post_type' ] ),
@@ -138,7 +137,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'title' => String_Prop_Type::make()
 				->default( __( 'Your Title Here', 'elementor' ) ),
 
-			'query' => Link_Prop_Type::make(),
+			'link' => Link_Prop_Type::make(),
 		];
 	}
 

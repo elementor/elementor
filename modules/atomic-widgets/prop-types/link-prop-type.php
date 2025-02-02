@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +18,11 @@ class Link_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'target' => String_Prop_Type::make(),
+			'destination' => Union_Prop_Type::make()
+				->add_prop_type( Url_Prop_Type::make() )
+				->add_prop_type( Number_Prop_Type::make() ),
+			'label' => Union_Prop_Type::make()
+				->add_prop_type( String_Prop_Type::make() ),
 			'isTargetBlank' => Boolean_Prop_Type::make(),
 		];
 	}

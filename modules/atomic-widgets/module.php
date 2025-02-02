@@ -16,7 +16,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Sr
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes_Transformer;
@@ -149,7 +148,6 @@ class Module extends BaseModule {
 		$transformers->register( Image_Attachment_Id_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Url_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
-//		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
