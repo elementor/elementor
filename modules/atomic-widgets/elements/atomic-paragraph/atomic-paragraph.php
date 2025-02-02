@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Widgets;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph;
 
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
