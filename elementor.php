@@ -46,7 +46,7 @@ if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 	require_once ELEMENTOR_PATH . 'vendor/autoload.php';
 	// We need this file because of the DI\create function that we are using.
 	// Autoload classmap doesn't include this file.
-	require_once ELEMENTOR_PATH . 'vendor_prefixed/php-di/php-di/src/functions.php';
+	require_once ELEMENTOR_PATH . 'vendor_prefixed/dependency-injection/php-di/php-di/src/functions.php';
 }
 
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {

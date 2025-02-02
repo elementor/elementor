@@ -81,7 +81,8 @@ $remote-templates-items-space: 30px;
 
 #elementor-template-library-templates {
 
-	&[data-template-source="local"] {
+	&[data-template-source="local"],
+	&[data-template-source="cloud"] {
 
 		#elementor-template-library-templates-container {
 			margin-block-start: 10px;
@@ -479,7 +480,8 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-template-library-order-toolbar-local,
-.elementor-template-library-template-local {
+.elementor-template-library-template-local,
+.elementor-template-library-template-cloud {
 	display: flex;
 	align-items: center;
 	padding: 0 25px;
@@ -496,7 +498,8 @@ label.elementor-template-library-order-label {
 	}
 }
 
-.elementor-template-library-template-local {
+.elementor-template-library-template-local,
+.elementor-template-library-template-cloud {
 	height: 50px;
 	width: 100%;
 	margin-block-start: 1px;
@@ -527,6 +530,10 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-template-name,
 	.elementor-template-library-template-meta {
 		padding-inline-end: 20px;
+	}
+
+	.elementor-template-library-local-column-1 i {
+		padding-inline-end: 10px;
 	}
 
 	.elementor-template-library-template-name,
