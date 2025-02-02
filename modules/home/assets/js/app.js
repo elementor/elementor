@@ -1,7 +1,5 @@
-import { DirectionProvider, LocalizationProvider } from '@elementor/ui';
-import { ThemeProvider } from '@elementor/ui/styles';
 import ReactUtils from 'elementor-utils/react';
-
+import { DirectionProvider, LocalizationProvider, ThemeProvider } from '@elementor/ui';
 import HomeScreen from './components/home-screen';
 
 const App = ( props ) => {

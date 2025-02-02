@@ -14,8 +14,6 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
-			container_grid: true,
-			e_nested_atomic_repeaters: true,
 			'nested-elements': true,
 		} );
 		await page.close();
@@ -61,7 +59,6 @@ test.describe( 'Container tests @container', () => {
 
 		if ( hasTopBar ) {
 			await editor.publishPage();
-			await page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
 		} else {
 			await page.locator( '#elementor-panel-saver-button-publish-label' ).click();
 			await page.waitForSelector( '#elementor-panel-saver-button-publish.elementor-disabled', { state: 'visible' } );
@@ -325,6 +322,26 @@ test.describe( 'Container tests @container', () => {
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ childContainer }` ) ).toHaveClass( /e-con-boxed/ );
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ nestedChildContainer1 }` ) ).toHaveClass( /e-con-full/ );
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ nestedChildContainer2 }` ) ).toHaveClass( /e-con-full/ );
+		} );
+	} );
+
+	test( 'Test animation style inside the container', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add container with animation', async () => {
+			await editor.addElement( { elType: 'container' }, 'document' );
+
+			await editor.openPanelTab( 'advanced' );
+			await editor.openSection( 'section_effects' );
+			await editor.setSelect2ControlValue( 'animation', 'Bounce In' );
+
+			await editor.publishAndViewPage();
+		} );
+
+		await test.step( 'Assert animation stylesheet on the frontend', async () => {
+			await expect( page.locator( EditorSelectors.container ) ).toHaveCSS( 'animation-name', 'bounceIn' );
 		} );
 	} );
 } );

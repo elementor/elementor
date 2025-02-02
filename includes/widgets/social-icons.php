@@ -56,10 +56,6 @@ class Widget_Social_Icons extends Widget_Base {
 		return 'eicon-social-icons';
 	}
 
-	public function get_style_depends(): array {
-		return [ 'e-apple-webkit' ];
-	}
-
 	/**
 	 * Get widget keywords.
 	 *
@@ -76,6 +72,24 @@ class Widget_Social_Icons extends Widget_Base {
 
 	protected function is_dynamic_content(): bool {
 		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-social-icons', 'e-apple-webkit' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**
@@ -300,6 +314,10 @@ class Widget_Social_Icons extends Widget_Base {
 		$start = is_rtl() ? 'end' : 'start';
 		$end = is_rtl() ? 'start' : 'end';
 
+		$align_selector = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_inner_wrapper()
+			? '{{WRAPPER}}'
+			: '{{WRAPPER}} .elementor-widget-container';
+
 		$this->add_responsive_control(
 			'align',
 			[
@@ -322,7 +340,7 @@ class Widget_Social_Icons extends Widget_Base {
 				'prefix_class' => 'e-grid-align%s-',
 				'default' => 'center',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-widget-container' => 'text-align: {{VALUE}}',
+					$align_selector => 'text-align: {{VALUE}}',
 				],
 			]
 		);
@@ -562,7 +580,6 @@ class Widget_Social_Icons extends Widget_Base {
 		);
 
 		$this->end_controls_section();
-
 	}
 
 	/**

@@ -33,11 +33,11 @@ abstract class Floating_Bars_Render_Base {
 		] );
 	}
 
-	protected function build_layout_render_attribute(): void {
-		$layout_classnames = 'e-floating-bars e-' . $this->widget->get_name();
-		$vertical_position = $this->settings['advanced_vertical_position'];
-		$is_sticky = $this->settings['advanced_toggle_sticky'];
-		$has_close_button = $this->settings['floating_bar_close_switch'];
+	public static function get_layout_classnames( Widget_Floating_Bars_Base $widget, array $settings ): string {
+		$layout_classnames = 'e-floating-bars e-' . $widget->get_name();
+		$vertical_position = $settings['advanced_vertical_position'];
+		$is_sticky = $settings['advanced_toggle_sticky'];
+		$has_close_button = $settings['floating_bar_close_switch'];
 
 		$layout_classnames .= ' has-vertical-position-' . $vertical_position;
 
@@ -48,6 +48,12 @@ abstract class Floating_Bars_Render_Base {
 		if ( 'yes' === $is_sticky ) {
 			$layout_classnames .= ' is-sticky';
 		}
+
+		return $layout_classnames;
+	}
+
+	protected function build_layout_render_attribute(): void {
+		$layout_classnames = static::get_layout_classnames( $this->widget, $this->settings );
 
 		$this->add_layout_render_attribute( $layout_classnames );
 	}

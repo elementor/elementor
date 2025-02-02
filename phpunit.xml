@@ -5,6 +5,7 @@
 		convertErrorsToExceptions="true"
 		convertNoticesToExceptions="true"
 		convertWarningsToExceptions="true"
+		failOnIncomplete="true"
 >
 	<php>
 		<env name="PLUGIN_FILE" value="elementor.php"/>
@@ -30,6 +31,7 @@
 				<directory>tests</directory>
 				<directory>includes/libraries</directory>
 				<directory>vendor</directory>
+				<directory>vendor_prefixed</directory>
 			</exclude>
 		</whitelist>
 	</filter>

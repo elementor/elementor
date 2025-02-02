@@ -11,7 +11,6 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await wpAdmin.setExperiments( {
 			container: 'active',
 			'nested-elements': 'active',
-			e_nested_atomic_repeaters: 'active',
 		} );
 
 		await page.close();
@@ -24,7 +23,6 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await wpAdmin.setExperiments( {
 			'nested-elements': 'inactive',
 			container: 'inactive',
-			e_nested_atomic_repeaters: 'inactive',
 		} );
 
 		await page.close();
@@ -180,8 +178,13 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			const editorFirstItem = frame.locator( '.e-n-accordion-item' ).first();
 
 			await test.step( 'Expect no icon or .e-n-accordion-item-title-icon wrapper to be displayed in preview frame', async () => {
-				await frame.locator( '.e-n-accordion-item-title' ).first().click();
+				await frame.locator( '.e-n-accordion-item[open="true"] > .e-n-accordion-item-title' ).click();
 				await editor.isUiStable( editorFirstItem );
+				// Sometimes a single click doesn't work with Playwright, so we need to click twice
+				const accordionItemTitle = await frame.locator( '.e-n-accordion-item[open="true"] > .e-n-accordion-item-title' ).all();
+				if ( accordionItemTitle.length > 0 ) {
+					await accordionItemTitle[ 0 ].click();
+				}
 				await expectScreenshotToMatchLocator( 'nested-accordion-no-icons.png', editorFirstItem );
 			} );
 
@@ -286,11 +289,10 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		await test.step( 'Change to mobile mode', async () => {
 			// Act
 			await editor.selectElement( nestedAccordionWidgetId );
-			await page.getByText( 'Desktop Tablet Portrait Mobile Portrait' ).first().click();
-			await page.getByRole( 'button', { name: 'Mobile Portrait' } ).first().click();
+			await editor.changeResponsiveView( 'mobile' );
 		} );
 
-		await test.step( 'Mobile -Check that the title icon is displayed', async () => {
+		await test.step( 'Mobile - Check that the title icon is displayed', async () => {
 			// Assert
 			await expect.soft( nestedAccordionTitle.locator( '.e-opened' ).locator( 'i' ) ).toHaveClass( 'fas fa-minus' );
 			await expect.soft( nestedAccordionTitle.locator( '.e-opened' ) ).toBeVisible();

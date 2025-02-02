@@ -9,6 +9,8 @@ export const LOCATIONS = {
 	REMOVE_BACKGROUND: 'remove-background',
 	REPLACE_BACKGROUND: 'replace-background',
 	REMOVE_TEXT: 'remove-text',
+	CLEANUP: 'cleanup',
+	PRODUCT_IMAGE_UNIFICATION: 'product-image-unification',
 };
 
 export const IMAGE_PROMPT_SETTINGS = {
@@ -18,6 +20,7 @@ export const IMAGE_PROMPT_SETTINGS = {
 	IMAGE_RATIO: 'ratio',
 	IMAGE_ZOOM: 'zoom',
 	IMAGE_UPSCALE: 'upscale_to',
+	IMAGE_BACKGROUND_COLOR: 'background_color',
 };
 
 export const IMAGE_PROMPT_CATEGORIES = {

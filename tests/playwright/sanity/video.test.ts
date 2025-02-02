@@ -28,29 +28,6 @@ test.describe( 'Video tests inside a container @video', () => {
 		} );
 	} );
 
-	test( 'Verify Video Promotions', async ( { browser, apiRequests }, testInfo ) => {
-		// Arrange.
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const editor = new EditorPage( page, testInfo );
-		await wpAdmin.openNewPage();
-		await editor.closeNavigatorIfOpen();
-
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		const videoId = await editor.addWidget( widgets.video, containerId );
-		const promotion = page.locator( '.elementor-nerd-box--upsale' );
-
-		// Act.
-		await editor.selectElement( videoId );
-		await editor.closeSection( 'section_video' );
-
-		// Assert
-		expect.soft( await promotion.screenshot( {
-			type: 'png',
-		} ) ).toMatchSnapshot( 'video-widget-sidebar-promotion.png' );
-	} );
-
 	test( 'Verify that there is no gap between the video widget and the container', async ( { browser, apiRequests }, testInfo ) => {
 		// Arrange.
 		const context = await browser.newContext();
@@ -97,11 +74,9 @@ test.describe( 'Video tests inside a container @video', () => {
 				await editor.setSelectControlValue( 'rel', 'yes' );
 			}
 
-			const controls = player.controls.map( ( control ) => {
-				return EditorSelectors.video[ control ];
-			} );
+			const controls = player.controls.map( ( control ) => EditorSelectors.video[ control ] );
 
-			await videoWidget.toggleControls( controls );
+			await videoWidget.toggleVideoControls( controls );
 			await videoWidget.setLink( player.link, { linkInpSelector: EditorSelectors.video[ video ].linkInp } );
 			let src = await videoWidget.getVideoSrc( false );
 			videoWidget.verifySrcParams( src, player.expected, video );
@@ -123,12 +98,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.setSwitcherControlValue( 'show_image_overlay', true );
 		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
 		await editor.waitForPanelToLoad();
-		await videoWidget.selectImageSize(
-			{
-				widget: EditorSelectors.video.widget,
-				select: EditorSelectors.video.imageSizeSelect,
-				imageSize: 'thumbnail',
-			} );
+		await editor.setSelectControlValue( 'image_overlay_size', 'thumbnail' );
 		await videoWidget.verifyImageSrc( {
 			selector: EditorSelectors.video.image,
 			imageTitle,

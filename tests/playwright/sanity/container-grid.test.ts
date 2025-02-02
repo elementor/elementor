@@ -9,7 +9,6 @@ test.describe( 'Container Grid tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
-			container_grid: true,
 		} );
 	} );
 
@@ -19,7 +18,6 @@ test.describe( 'Container Grid tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: false,
-			container_grid: false,
 		} );
 	} );
 
@@ -30,7 +28,6 @@ test.describe( 'Container Grid tests @container', () => {
 			gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' ),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
-		// Arrange.
 		await test.step( 'Arrange', async () => {
 			await editor.closeNavigatorIfOpen();
 			await editor.setSelectControlValue( 'container_type', 'grid' );
@@ -50,38 +47,29 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.changeResponsiveView( 'mobile' );
 
 			const rowsMobileUnitLabel = page.locator( '.elementor-group-control-rows_grid .e-units-switcher' ).first();
-			expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
+			await expect( rowsMobileUnitLabel ).toHaveAttribute( 'data-selected', 'fr' );
 
 			await editor.changeResponsiveView( 'desktop' );
 		} );
 
 		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
-			// Arrange
 			const alignContentControl = page.locator( '.elementor-control-grid_align_content' );
-
-			// Assert - Check the controls initial state
 			await expect( alignContentControl ).not.toBeVisible();
 
-			// Act - Set Grid Rows to custom unit
 			await gridRowsControl.locator( '.e-units-switcher' ).click();
 			await gridRowsControl.locator( '[data-choose="custom"]' ).click();
 
-			// Assert - Align content control is visible
 			await expect( alignContentControl ).toBeVisible();
 		} );
 
 		await test.step( 'Assert Justify content control to be visible when Columns Grid is set to custom', async () => {
-			// Arrange
 			const justifyContentControl = page.locator( '.elementor-control-grid_justify_content' );
 
-			// Assert - Check the controls initial state
 			await expect( justifyContentControl ).not.toBeVisible();
 
-			// Act - Set Grid Columns to custom unit
 			await gridColumnsControl.locator( '.e-units-switcher' ).click();
 			await gridColumnsControl.locator( '[data-choose="custom"]' ).click();
 
-			// Assert - Justify content control should be visible
 			await expect( justifyContentControl ).toBeVisible();
 		} );
 
@@ -391,10 +379,11 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Check that gap control effects the grid outline ', async () => {
-			const desiredGapValue = '30px 30px';
+			const desiredGapValue = '30px';
 			await page.locator( '.elementor-control-grid_gaps .elementor-control-gap >> nth=0' ).locator( 'input' ).fill( '30' );
 
-			await expect( gridOutline ).toHaveCSS( 'grid-gap', desiredGapValue );
+			await expect( gridOutline ).toHaveCSS( 'row-gap', desiredGapValue );
+			await expect( gridOutline ).toHaveCSS( 'column-gap', desiredGapValue );
 		} );
 
 		await test.step( 'Check that Custom control is set to grid outline', async () => {
@@ -673,7 +662,7 @@ test.describe( 'Container Grid tests @container', () => {
 			// Act
 			await frame.locator( '.elementor-add-section-area-button' ).first().click();
 			await frame.locator( '.e-con-select-type__icons__icon.flex-preset-button' ).click();
-			await frame.locator( '.e-con-select-preset__list .e-con-preset' ).first().click();
+			await frame.locator( '.e-con-select-preset-flex .e-con-preset' ).first().click();
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
@@ -684,7 +673,7 @@ test.describe( 'Container Grid tests @container', () => {
 			// Act
 			await frame.locator( '.elementor-add-section-area-button' ).first().click();
 			await frame.locator( '.e-con-select-type__icons__icon.grid-preset-button' ).click();
-			await frame.locator( '.e-con-select-preset-grid__list .e-con-choose-grid-preset' ).first().click();
+			await frame.locator( '.e-con-select-preset-grid .e-con-preset' ).first().click();
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );

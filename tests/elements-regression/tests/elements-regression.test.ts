@@ -5,7 +5,26 @@ import EditorPage from '../../playwright/pages/editor-page';
 import ElementRegressionHelper from '../helper';
 
 test.describe( 'Elementor regression tests with templates for CORE', () => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const page = await browser.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
+		await wpAdmin.setExperiments( { e_optimized_markup: 'active' } );
+
+		await page.close();
+	} );
+
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
+		await page.close();
+	} );
+
 	const testData = [
+		'container_flexbox',
+		'container_grid',
 		'divider',
 		'heading',
 		'text_editor',
@@ -51,10 +70,10 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 				text_path_hover: 'textPath',
 			};
 
-			const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
 			const helper = new ElementRegressionHelper( page, testInfo );
-			await wpAdminPage.openNewPage();
+			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
 
 			await editor.loadTemplate( filePath, true );

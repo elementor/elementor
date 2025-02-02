@@ -102,6 +102,7 @@ class WidgetsCss {
 				rtlFilename: this.cssFilePrefix + filename.replace( '.scss', '-rtl.scss' ),
 				importPath: `../frontend/widgets/${ widgetName }`,
 				filePath: this.sourceScssFolder + '/' + filename,
+				cssFileName: `${ this.cssFilePrefix }${  filename.replace( '.scss', '' ) }`,
 			} );
 		} );
 
@@ -113,7 +114,8 @@ class WidgetsCss {
 			moduleWidgetsList = this.getModulesFrontendScssFiles( this.sourceModulesScssFolder );
 
 		moduleWidgetsList.forEach( ( filePath ) => {
-			const widgetData = this.getWidgetDataFromPath( this.sourceModulesScssFolder, filePath );
+			const isFrontendScssFile = filePath.indexOf( 'frontend.scss' ) > -1;
+			const widgetData = this.getWidgetDataFromPath( this.sourceModulesScssFolder, filePath, isFrontendScssFile );
 
 			moduleWidgetData.push( {
 				widgetName: widgetData.name,
@@ -121,6 +123,7 @@ class WidgetsCss {
 				rtlFilename: this.cssFilePrefix + widgetData.name + '-rtl.scss',
 				importPath: `../../../../modules/${  widgetData.path }`,
 				filePath,
+				cssFileName: `${ this.cssFilePrefix }${ widgetData.name }`,
 			} );
 		} );
 
@@ -130,10 +133,12 @@ class WidgetsCss {
 	getModulesFrontendScssFiles( filePath, frontendScssFiles = [] ) {
 		fs.readdirSync( filePath ).forEach( ( fileName ) => {
 			const fileFullPath = path.join( filePath, fileName );
+			const isFrontendScssFile = fileName.indexOf( 'frontend.scss' ) > -1;
+			const isWidgetsScssFile = fileName.indexOf( '.scss' ) > -1 && filePath.indexOf( '/widgets' ) > -1;
 
 			if ( fs.lstatSync( fileFullPath ).isDirectory() ) {
 				this.getModulesFrontendScssFiles( fileFullPath, frontendScssFiles );
-			} else if ( fileName.indexOf( 'frontend.scss' ) > -1 ) {
+			} else if ( isFrontendScssFile || isWidgetsScssFile ) {
 				frontendScssFiles.push( fileFullPath );
 			}
 		} );
@@ -141,13 +146,22 @@ class WidgetsCss {
 		return frontendScssFiles;
 	}
 
-	getWidgetDataFromPath( baseFolder, filePath ) {
+	getWidgetDataFromPath( baseFolder, filePath, isFrontendScssFile = false ) {
 		// Removing base-folder and first slash so that the module name will be the first value in the path.
 		filePath = filePath.replace( baseFolder, '' ).substring(1);
 
+		const getFileExtension = ( filePath ) => {
+			const match = filePath.match( /\.min\.css$/ );
+			return match ? '.min.css' : path.extname( filePath );
+		};
+
+		const widgetName = isFrontendScssFile
+			? filePath.split( path.sep )[ 0 ]
+			: path.basename( filePath, getFileExtension( filePath ) );
+
 		return {
 			path: filePath.replace( /\\/g, '/' ),
-			name: filePath.split( path.sep )[ 0 ],
+			name: widgetName,
 		};
 	}
 
@@ -161,8 +175,9 @@ class WidgetsCss {
 		const widgetsCssFilesList = this.getWidgetsCssFilesList();
 
 		widgetsCssFilesList.forEach( ( item ) => {
-			const widgetSourceFilePath = item.filePath,
-				fileContent = fs.readFileSync( widgetSourceFilePath ).toString();
+			const cssFolder = path.resolve( __dirname, '../assets/css' );
+			const widgetSourceFilePath = path.join( cssFolder, `${ item.cssFileName }.min.css` );
+			const fileContent = fs.readFileSync( widgetSourceFilePath ).toString();
 
 			// Collecting all widgets .scss files that has @media queries in order to create templates files for custom breakpoints.
 			if ( fileContent.indexOf( '@media' ) > -1 ) {

@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Includes\Widgets\Traits\Button_Trait;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -81,26 +82,8 @@ class Widget_Button extends Widget_Base {
 		return false;
 	}
 
-	/**
-	 * Get widget upsale data.
-	 *
-	 * Retrieve the widget promotion data.
-	 *
-	 * @since 3.19.0
-	 * @access protected
-	 *
-	 * @return array Widget promotion data.
-	 */
-	protected function get_upsale_data() {
-		return [
-			'condition' => ! Utils::has_pro(),
-			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
-			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
-			'title' => esc_html__( 'Convert visitors into customers', 'elementor' ),
-			'description' => esc_html__( 'Get the Call to Action widget and grow your toolbox with Elementor Pro.', 'elementor' ),
-			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-button-widget/' ),
-			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-		];
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	protected function register_controls() {
@@ -112,6 +95,16 @@ class Widget_Button extends Widget_Base {
 		);
 
 		$this->register_button_content_controls();
+
+		if ( ! Utils::has_pro() ) {
+			$this->add_control(
+				Utils::CTA . '_promotion',
+				[
+					'label' => esc_html__( 'Call to Action widget', 'elementor' ),
+					'type' => Promotion_Control::TYPE,
+				]
+			);
+		}
 
 		$this->end_controls_section();
 

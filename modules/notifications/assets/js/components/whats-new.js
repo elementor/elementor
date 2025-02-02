@@ -54,7 +54,7 @@ export const WhatsNew = ( props ) => {
 										padding: '16px',
 									} }
 								>
-									<WhatsNewDrawerContent />
+									<WhatsNewDrawerContent setIsOpen={ setIsOpen } />
 								</Box>
 							</Box>
 						</Drawer>

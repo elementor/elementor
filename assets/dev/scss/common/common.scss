@@ -2,12 +2,15 @@
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/editor/breakpoints";
 @import "../global/global";
+@import "../global/dialog-base";
+@import "../global/dialog-lightbox";
+@import "../global/dialog-confirm";
 @import "dialog-common";
 @import "dialog-templates";
 @import "notifications";
 @import "app/modules/site-editor/assets/scss/admin/admin-bar";
 
-//Elementor icon logo wrapper
+// Elementor icon logo wrapper
 .e-logo-wrapper {
 	background: var(--e-a-bg-logo);
 	display: inline-block;

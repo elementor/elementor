@@ -6,8 +6,8 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\Shapes\Module as Shapes_Module;
-use Elementor\Utils;
 use Elementor\Group_Control_Text_Stroke;
+use Elementor\Plugin;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor WordArt widget.
  *
  * Elementor widget that displays text along SVG path.
- *
  */
 class TextPath extends Widget_Base {
 
@@ -31,7 +30,6 @@ class TextPath extends Widget_Base {
 	 *
 	 * @return string Widget name.
 	 * @access public
-	 *
 	 */
 	public function get_name() {
 		return 'text-path';
@@ -48,7 +46,6 @@ class TextPath extends Widget_Base {
 	 *
 	 * @return string Widget title.
 	 * @access public
-	 *
 	 */
 	public function get_title() {
 		return esc_html__( 'Text Path', 'elementor' );
@@ -61,7 +58,6 @@ class TextPath extends Widget_Base {
 	 *
 	 * @return string Widget icon.
 	 * @access public
-	 *
 	 */
 	public function get_icon() {
 		return 'eicon-wordart';
@@ -74,10 +70,27 @@ class TextPath extends Widget_Base {
 	 *
 	 * @return array Widget keywords.
 	 * @access public
-	 *
 	 */
 	public function get_keywords() {
 		return [ 'text path', 'word path', 'text on path', 'wordart', 'word art' ];
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-text-path' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**

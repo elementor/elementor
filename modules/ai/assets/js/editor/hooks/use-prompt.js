@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { setStatusFeedback } from '../api';
 import { useRequestIds } from '../context/requests-ids';
 
@@ -28,6 +28,8 @@ const usePrompt = ( fetchData, initialState ) => {
 	const [ error, setError ] = useState( '' );
 	const [ data, setData ] = useState( initialState );
 	const { updateUsagePercentage, usagePercentage } = useRequestIds();
+	const send = useRef( ( async ( payload ) => ( payload ) ) );
+	const sendUsageData = useRef( ( ( ) => {} ) );
 
 	useEffect( () => {
 		const newUsageValue = data?.usagePercentage;
@@ -38,7 +40,7 @@ const usePrompt = ( fetchData, initialState ) => {
 
 	const { setRequest, editorSessionId, sessionId, generateId, batchId } = useRequestIds();
 
-	const send = async ( payload ) => new Promise( ( resolve, reject ) => {
+	send.current = useCallback( async ( payload ) => new Promise( ( resolve, reject ) => {
 		setError( '' );
 		setIsLoading( true );
 		const requestId = setRequest();
@@ -67,9 +69,10 @@ const usePrompt = ( fetchData, initialState ) => {
 				reject( finalError );
 			} )
 			.finally( () => setIsLoading( false ) );
-	} );
+	} ), [ batchId, editorSessionId, fetchData, generateId, sessionId, setRequest ] );
 
-	const sendUsageData = ( usageData = data ) => usageData.responseId && setStatusFeedback( usageData.responseId );
+	sendUsageData.current = useCallback( ( usageData = data ) => usageData.responseId && setStatusFeedback( usageData.responseId ),
+		[ data ] );
 
 	const reset = () => {
 		setData( ( { credits } ) => ( { credits, result: '', responseId: '' } ) );
@@ -95,8 +98,8 @@ const usePrompt = ( fetchData, initialState ) => {
 		data,
 		setResult,
 		reset,
-		send,
-		sendUsageData,
+		send: send.current,
+		sendUsageData: sendUsageData.current,
 	};
 };
 

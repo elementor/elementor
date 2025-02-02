@@ -7,6 +7,14 @@ export type Image = {
     filePath?: string
 }
 
+export type User = {
+	id?: string,
+	username: string,
+	password: string,
+	email: string,
+	roles?: string[],
+}
+
 export type LinkOptions = {
     targetBlank?: boolean,
     noFollow?: boolean,
@@ -88,7 +96,10 @@ export type ElementorType = {
 		initial_document:{
 			id: string
 		}
-	}
+	},
+	isDeviceModeActive?: () => unknown
 }
 
 export type Device = 'mobile' | 'mobile_extra' | 'tablet' | 'tablet_extra' | 'laptop' | 'desktop' | 'widescreen';
+
+export type BreakpointEditableDevice = Exclude<Device, 'desktop'>;

@@ -51,6 +51,7 @@ abstract class Contact_Buttons_Render_Base {
 		$entrance_animation = $this->settings['style_chat_button_animation'];
 		$entrance_animation_duration = $this->settings['style_chat_button_animation_duration'];
 		$entrance_animation_delay = $this->settings['style_chat_button_animation_delay'];
+		$accessible_name = $this->settings['chat_aria_label'];
 
 		$button_classnames = 'e-contact-buttons__chat-button e-contact-buttons__chat-button-shadow';
 
@@ -81,11 +82,17 @@ abstract class Contact_Buttons_Render_Base {
 		$this->widget->add_render_attribute( 'button', [
 			'class' => $button_classnames,
 			'aria-controls' => 'e-contact-buttons__content-wrapper',
+			'aria-label' => sprintf(
+				/* translators: 1: Accessible name. */
+				esc_html__( 'Toggle %1$s', 'elementor' ),
+				$accessible_name,
+			),
+			'type' => 'button',
 		] );
 
 		?>
 		<div class="e-contact-buttons__chat-button-container">
-			<button <?php echo $this->widget->get_render_attribute_string( 'button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> type="button" aria-label="<?php echo esc_attr__( 'Toggle Links Popup', 'elementor' ); ?>">
+			<button <?php echo $this->widget->get_render_attribute_string( 'button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<?php
 					$this->render_chat_button_icon();
 				?>
@@ -95,8 +102,21 @@ abstract class Contact_Buttons_Render_Base {
 	}
 
 	protected function render_close_button(): void {
+		$accessible_name = $this->settings['chat_aria_label'];
+
+		$this->widget->add_render_attribute( 'close-button', [
+			'class' => 'e-contact-buttons__close-button',
+			'aria-controls' => 'e-contact-buttons__content-wrapper',
+			'aria-label' => sprintf(
+				/* translators: 1: Accessible name. */
+				esc_html__( 'Close %1$s', 'elementor' ),
+				$accessible_name,
+			),
+			'type' => 'button',
+		] );
+
 		?>
-			<button type="button" class="e-contact-buttons__close-button" aria-label="<?php echo esc_attr__( 'Close Links Popup', 'elementor' ); ?>" aria-controls="e-contact-buttons__content-wrapper">
+			<button <?php echo $this->widget->get_render_attribute_string( 'close-button' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 				<i class="eicon-close"></i>
 			</button>
 		<?php
@@ -244,6 +264,12 @@ abstract class Contact_Buttons_Render_Base {
 			<div class="e-contact-buttons__contact-links">
 				<?php
 				foreach ( $contact_icons as $key => $icon ) {
+					$icon_text_mapping = Social_Network_Provider::get_text_mapping( $icon['contact_icon_platform'] );
+					$aria_label = sprintf(
+						/* translators: 1: Platform name. */
+						esc_html__( 'Open %1$s', 'elementor' ),
+						$icon_text_mapping,
+					);
 
 					$link = [
 						'platform' => $icon['contact_icon_platform'],
@@ -266,7 +292,7 @@ abstract class Contact_Buttons_Render_Base {
 					}
 
 					$this->widget->add_render_attribute( 'icon-link-' . $key, [
-						'aria-label' => esc_attr( $icon['contact_icon_platform'] ),
+						'aria-label' => $aria_label,
 						'class' => $icon_classnames,
 						'href' => $formatted_link,
 						'rel' => 'noopener noreferrer',

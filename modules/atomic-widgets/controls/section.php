@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Controls;
 use JsonSerializable;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Section implements JsonSerializable {
@@ -32,6 +32,16 @@ class Section implements JsonSerializable {
 		$this->items = $items;
 
 		return $this;
+	}
+
+	public function add_item( $item ): self {
+		$this->items[] = $item;
+
+		return $this;
+	}
+
+	public function get_items() {
+		return $this->items;
 	}
 
 	public function jsonSerialize(): array {

@@ -14,6 +14,15 @@ import useKit from '../../../hooks/use-kit';
 import useImportActions from '../hooks/use-import-actions';
 import { useImportKitLibraryApplyAllPlugins } from '../import-kit/hooks/use-import-kit-library-apply-all-plugins';
 
+function isValidRedirectUrl( url ) {
+	try {
+		const parsedUrl = new URL( url );
+		return parsedUrl.hostname === window.location.hostname;
+	} catch ( e ) {
+		return false;
+	}
+}
+
 export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
 		importContext = useContext( ImportContext ),
@@ -22,9 +31,10 @@ export default function ImportProcess() {
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
 		[ plugins, setPlugins ] = useState( [] ),
+		[ returnTo, setReturnTo ] = useState( '' ),
 		missing = useImportKitLibraryApplyAllPlugins( plugins ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		{ id, referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
+		{ id, referrer, file_url: fileURL, action_type: actionType, nonce, return_to: returnToParam } = useQueryParams().getAll(),
 		{ includes, selectedCustomPostTypes, currentPage } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions, isResolvedData } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
@@ -89,6 +99,10 @@ export default function ImportProcess() {
 			importContext.dispatch( { type: 'SET_ACTION_TYPE', payload: actionType } );
 		}
 
+		if ( returnToParam ) {
+			setReturnTo( returnToParam );
+		}
+
 		if ( fileURL && ! file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
 			uploadKit();
@@ -136,13 +150,21 @@ export default function ImportProcess() {
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || ( isResolvedData && 'apply-all' === importContext.data.actionType ) ) {
 			if ( importedData ) { // After kit upload.
+				if ( returnTo && isValidRedirectUrl( decodeURIComponent( returnTo ) ) ) {
+					window.location.href = decodeURIComponent( returnTo );
+					return;
+				}
 				navigate( '/import/complete' );
 			} else if ( 'apply-all' === importContext.data.actionType ) { // Forcing apply-all kit content.
 				if ( kitState.data?.manifest?.plugins || importContext.data.uploadedData?.manifest.plugins ) {
 					importContext.dispatch( { type: 'SET_PLUGINS_STATE', payload: 'have' } );
 				}
 				if ( uploadedData.conflicts && Object.keys( uploadedData.conflicts ).length && ! isResolvedData ) {
-					navigate( '/import/resolver' );
+					if ( returnTo ) {
+						navigate( '/import/resolver?return_to=' + returnTo );
+					} else {
+						navigate( '/import/resolver' );
+					}
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
 					kitActions.reset();
@@ -160,7 +182,7 @@ export default function ImportProcess() {
 				navigate( '/import/plugins' );
 			}
 		}
-	}, [ uploadedData, importedData, importContext.data.pluginsState ] );
+	}, [ uploadedData, importedData, importContext.data.pluginsState, returnTo ] );
 
 	useEffect( () => {
 		if ( missing?.length > 0 ) {

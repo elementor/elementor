@@ -365,4 +365,8 @@ abstract class Source_Base {
 
 		return $element_data;
 	}
+
+	public function get_item_children( array $args = [] ) {
+		return [];
+	}
 }

@@ -28,4 +28,8 @@ export default {
 		attribute: 'text',
 		attributeValue: 'Publish',
 	},
+	checklistToggle: {
+		attribute: 'aria-label',
+		attributeValue: 'Checklist',
+	},
 };

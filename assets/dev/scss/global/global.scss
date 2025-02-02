@@ -1,9 +1,6 @@
 // Global for all (editor, admin, preview, front-end USER)
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/editor/breakpoints";
-@import "dialog-base";
-@import "dialog-lightbox";
-@import "dialog-confirm";
 
 .elementor-hidden {
 	display: none;
@@ -37,7 +34,7 @@
 	height: 0;
 }
 
-//Elementor icon logo wrapper
+// Elementor icon logo wrapper
 .e-logo-wrapper {
 	background: var(--e-a-bg-logo);
 	display: inline-block;

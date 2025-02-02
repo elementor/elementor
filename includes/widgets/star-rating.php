@@ -78,6 +78,20 @@ class Widget_Star_Rating extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-star-rating' ];
+	}
+
+	/**
 	 * Hide widget from panel.
 	 *
 	 * Hide the star rating widget from the panel.
@@ -87,6 +101,10 @@ class Widget_Star_Rating extends Widget_Base {
 	 */
 	public function show_in_panel(): bool {
 		return false;
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**

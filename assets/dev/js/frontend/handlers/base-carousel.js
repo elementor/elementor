@@ -4,7 +4,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				carousel: `.${ elementorFrontend.config.swiperClass }`,
+				carousel: '.swiper',
 				swiperWrapper: '.swiper-wrapper',
 				slideContent: '.swiper-slide',
 				swiperArrow: '.elementor-swiper-button',
@@ -105,7 +105,7 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 				type: !! elementSettings.pagination ? elementSettings.pagination : 'bullets',
 				clickable: true,
 				renderBullet: ( index, classname ) => {
-					return `<span class="${ classname }" data-bullet-index="${ index }" aria-label="${ elementorFrontend.config.i18n.a11yCarouselPaginationBulletMessage } ${ index + 1 }"></span>`;
+					return `<span class="${ classname }" role="button" tabindex="0" data-bullet-index="${ index }" aria-label="${ elementorFrontend.config.i18n.a11yCarouselPaginationBulletMessage } ${ index + 1 }"></span>`;
 				},
 			};
 		}
@@ -126,15 +126,12 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		};
 
 		swiperOptions.on = {
-			slideChangeTransitionEnd: () => {
-				this.a11ySetSlideAriaHidden();
-			},
 			slideChange: () => {
 				this.a11ySetPaginationTabindex();
 				this.handleElementHandlers();
+				this.a11ySetSlideAriaHidden();
 			},
 			init: () => {
-				this.a11ySetWidgetAriaDetails();
 				this.a11ySetPaginationTabindex();
 				this.a11ySetSlideAriaHidden( 'initialisation' );
 			},
@@ -297,7 +294,8 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	getSpaceBetween( device = null ) {
-		return elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device ) || 0;
+		const responsiveControlValue = elementorFrontend.utils.controls.getResponsiveControlValue( this.getElementSettings(), 'image_spacing_custom', 'size', device );
+		return Number( responsiveControlValue ) || 0;
 	}
 
 	updateSpaceBetween( propertyName ) {
@@ -318,13 +316,6 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 		const paginationBullets = this.$element.find( this.getSettings( 'selectors' ).paginationBullet );
 
 		return 'array' === type ? Array.from( paginationBullets ) : paginationBullets;
-	}
-
-	a11ySetWidgetAriaDetails() {
-		const $widget = this.$element;
-
-		$widget.attr( 'aria-roledescription', 'carousel' );
-		$widget.attr( 'aria-label', elementorFrontend.config.i18n.a11yCarouselWrapperAriaLabel );
 	}
 
 	a11ySetPaginationTabindex() {

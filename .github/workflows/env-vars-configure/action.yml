@@ -29,9 +29,9 @@ runs:
             # and extracts the version number from the tag name using awk. E.g. retrieves the number 7 from `3.11.0-cloud7`.
             # If inputs.POSTFIX == '-test', then get the latest prerelease version E.g, `3.11.0-cloud7-test`
             if [[ "${{ inputs.POSTFIX }}" == "-test" ]]; then
-              CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep "\-test" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' | awk -F'${{ inputs.POSTFIX }}' '{print $1}' || echo 0)
+              CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep "\-test" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "$(echo "${{ env.CLEAN_PACKAGE_VERSION }}" | sed 's/\./\\./g')" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' | awk -F'${{ inputs.POSTFIX }}' '{print $1}' || echo 0)
             else
-              CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep -v "\-rc" | grep -v "\-test" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "${{ env.CLEAN_PACKAGE_VERSION }}" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
+              CURRENT_CHANNEL_VERSION=$(git ls-remote --tags | grep -v "\-rc" | grep -v "\-test" | grep -v "refs/tags/v" | grep "${{ inputs.CHANNEL }}" | grep "$(echo "${{ env.CLEAN_PACKAGE_VERSION }}" | sed 's/\./\\./g')" | tail -n1 | awk -F'${{ inputs.CHANNEL }}' '{print $2}' || echo 0)
             fi
 
             # If value is not a number (e.g. empty string) then set it to 0

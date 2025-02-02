@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import ImageCarousel from '../../../pages/widgets/image-carousel';
 import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Container tests @container', () => {
@@ -11,8 +10,6 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
-			container_grid: true,
-			e_nested_atomic_repeaters: true,
 			'nested-elements': true,
 		} );
 		await page.close();
@@ -28,7 +25,6 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const imageCarousel = new ImageCarousel( page, testInfo );
 
 		// Arrange.
 		const editor = await wpAdmin.openNewPage(),
@@ -46,22 +42,17 @@ test.describe( 'Container tests @container', () => {
 
 		// Act.
 		await editor.addWidget( 'divider', container );
-		// Set widget custom width to 80%.
 		await editor.setWidgetCustomWidth( '80' );
 
 		await editor.addWidget( 'google_maps', container );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
-		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
 		// Set widget size to grow
 		await editor.setChooseControlValue( '_flex_size', 'eicon-grow' );
-		// Set widget mask.
 		await editor.setWidgetMask();
 
 		await editor.addWidget( 'video', container );
-		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
-		// Set widget mask.
 		await editor.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
@@ -69,10 +60,9 @@ test.describe( 'Container tests @container', () => {
 		// Hide carousel navigation.
 		const carouselOneId = await editor.addWidget( 'image-carousel', container );
 		await editor.setSelectControlValue( 'navigation', 'none' );
-		// Set widget custom width to 40%.
 		await editor.setWidgetCustomWidth( '40' );
-		// Add images.
-		await imageCarousel.addImageGallery();
+		await editor.openPanelTab( 'content' );
+		await editor.addImagesToGalleryControl();
 		await editor.openSection( 'section_additional_options' );
 		await editor.setSwitcherControlValue( 'autoplay', false );
 
@@ -179,7 +169,6 @@ test.describe( 'Container tests @container', () => {
 		await editor.hideEditorElements();
 
 		// Act.
-		// Add widgets.
 		await editor.addWidget( 'spacer', containerId );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );

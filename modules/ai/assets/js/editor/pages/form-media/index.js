@@ -92,7 +92,7 @@ const FormMedia = ( {
 		<>
 			<PromptDialog id="e-form-media" onClose={ () => onCloseIntent() } maxWidth="lg" { ...DialogProps }>
 				<PromptDialog.Header onClose={ () => onCloseIntent() }>
-					<PromptHistory />
+					{ ! additionalOptions.withoutHistory && <PromptHistory /> }
 
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
@@ -103,7 +103,7 @@ const FormMedia = ( {
 					<GlobalActionsProvider actions={ globalActions }>
 						<LocationProvider>
 							<EditImageProvider imageData={ editImageInitialData }>
-								<MediaOutlet additionalOptions={ additionalOptions } />
+								<MediaOutlet additionalOptions={ additionalOptions } onClose={ onClose } />
 							</EditImageProvider>
 						</LocationProvider>
 					</GlobalActionsProvider>

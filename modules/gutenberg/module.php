@@ -71,7 +71,7 @@ class Module extends BaseModule {
 
 		$this->is_gutenberg_editor_active = true;
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js', [ 'jquery' ], ELEMENTOR_VERSION, true );
 
@@ -174,11 +174,11 @@ class Module extends BaseModule {
 	 * @since 3.21.0
 	 * @access private
 	 */
-	private static function is_optimized_gutenberg_loading_enabled() : bool {
+	private static function is_optimized_gutenberg_loading_enabled(): bool {
 		return (bool) get_option( 'elementor_optimized_gutenberg_loading', '1' );
 	}
 
-	private static function should_dequeue_gutenberg_assets() : bool {
+	private static function should_dequeue_gutenberg_assets(): bool {
 		$post = get_post();
 
 		if ( empty( $post->ID ) ) {
@@ -196,7 +196,7 @@ class Module extends BaseModule {
 		return true;
 	}
 
-	private static function is_built_with_elementor( $post ) : bool {
+	private static function is_built_with_elementor( $post ): bool {
 		$document = Plugin::$instance->documents->get( $post->ID );
 
 		if ( ! $document || ! $document->is_built_with_elementor() ) {
@@ -206,7 +206,7 @@ class Module extends BaseModule {
 		return true;
 	}
 
-	private static function is_gutenberg_in_post( $post ) : bool {
+	private static function is_gutenberg_in_post( $post ): bool {
 		if ( has_blocks( $post ) ) {
 			return true;
 		}
@@ -218,7 +218,7 @@ class Module extends BaseModule {
 		return false;
 	}
 
-	private static function current_theme_is_fse_theme() : bool {
+	private static function current_theme_is_fse_theme(): bool {
 		if ( function_exists( 'wp_is_block_theme' ) ) {
 			return (bool) wp_is_block_theme();
 		}

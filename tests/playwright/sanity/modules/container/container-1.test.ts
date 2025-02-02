@@ -11,8 +11,6 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
-			container_grid: true,
-			e_nested_atomic_repeaters: true,
 			'nested-elements': true,
 		} );
 		await page.close();
@@ -24,6 +22,31 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 		await page.close();
+	} );
+
+	test( 'Background slideshow', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( 'heading', containerId );
+		await editor.selectElement( containerId );
+
+		await editor.closeNavigatorIfOpen();
+		await editor.openPanelTab( 'style' );
+		await editor.openSection( 'section_background' );
+		await editor.setChooseControlValue( 'background_background', 'eicon-slideshow' );
+		await editor.addImagesToGalleryControl();
+
+		await test.step( 'Verify background slideshow', async () => {
+			await editor.togglePreviewMode();
+			await expect.soft( editor.getPreviewFrame().locator( '.e-con' ).nth( 0 ) ).toHaveScreenshot( 'editor-container-background-slideshow.png' );
+			await editor.togglePreviewMode();
+			await editor.publishAndViewPage();
+		} );
+
+		await test.step( 'Verify background slideshow on the frontend', async () => {
+			await expect.soft( page.locator( '.e-con' ) ).toHaveScreenshot( 'frontend-container-background-slideshow.png' );
+		} );
 	} );
 
 	test( 'Sort items in a Container using DnD', async ( { page, apiRequests }, testInfo ) => {
@@ -108,7 +131,6 @@ test.describe( 'Container tests @container', () => {
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-down' );
 		// Align items: flex-start
 		await editor.setChooseControlValue( 'flex_align_items', 'eicon-align-start-v' );
-		// Set `min-height` to test if there are `flex-grow` issues.
 		await editor.setSliderControlValue( 'min_height', '1500' );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
@@ -141,7 +163,6 @@ test.describe( 'Container tests @container', () => {
 		// Act.
 		await editor.addWidget( widgets.heading, container );
 		await editor.selectElement( container );
-		// Set position absolute.
 		await editor.openPanelTab( 'advanced' );
 		await editor.setSelectControlValue( 'position', 'absolute' );
 		await editor.setNumberControlValue( 'z_index', '50' );
@@ -151,22 +172,19 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		// Take screenshot.
 		await expect.soft( pageView ).toHaveScreenshot( 'heading-boxed-absolute.png' );
 
 		await editor.togglePreviewMode();
 
 		// Act
-		// Select container.
 		await editor.selectElement( container );
-		// Set full content width
 		await editor.openPanelTab( 'layout' );
 		await editor.setSelectControlValue( 'content_width', 'full' );
 
 		await editor.togglePreviewMode();
 
 		// Assert
-		await expect( pageView ).toHaveScreenshot( 'heading-full-absolute.png' );
+		await expect.soft( pageView ).toHaveScreenshot( 'heading-full-absolute.png' );
 
 		// Reset the Default template.
 		await editor.togglePreviewMode();
@@ -185,11 +203,8 @@ test.describe( 'Container tests @container', () => {
 			pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
 
 		// Act.
-		// Add widget.
 		await editor.addWidget( 'heading', container );
-		// Select container.
 		await editor.selectElement( container );
-		// Set position fixed.
 		await editor.openPanelTab( 'advanced' );
 		await editor.setSelectControlValue( 'position', 'fixed' );
 		await editor.setNumberControlValue( 'z_index', '50' );
@@ -198,8 +213,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.togglePreviewMode();
 
 		// Assert
-		// Take screenshot.
-		await expect( pageView ).toHaveScreenshot( 'heading-boxed-fixed.png' );
+		await expect.soft( pageView ).toHaveScreenshot( 'heading-boxed-fixed.png' );
 
 		// Reset the Default template.
 		await editor.togglePreviewMode();
@@ -218,27 +232,22 @@ test.describe( 'Container tests @container', () => {
 			pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
 
 		// Act
-		// Set container content full content width.
 		await editor.selectElement( container );
 		await editor.openPanelTab( 'layout' );
 		await editor.setSelectControlValue( 'content_width', 'full' );
 
 		// Act.
-		// Add widget.
 		await editor.addWidget( 'heading', container );
-		// Select container.
 		await editor.selectElement( container );
-		// Set position fixed.
 		await editor.openPanelTab( 'advanced' );
 		await editor.setSelectControlValue( 'position', 'fixed' );
 		await editor.setNumberControlValue( 'z_index', '50' );
 		await editor.setSliderControlValue( '_offset_x', '50' );
 		await editor.setSliderControlValue( '_offset_y', '50' );
-
 		await editor.togglePreviewMode();
 
 		// Assert
-		await expect( pageView ).toHaveScreenshot( 'heading-full-fixed.png' );
+		await expect.soft( pageView ).toHaveScreenshot( 'heading-full-fixed.png' );
 	} );
 
 	test( 'Right click should add Full Width container', async ( { page, apiRequests }, testInfo ) => {
@@ -246,7 +255,6 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await editor.addElement( { elType: 'container' }, 'document' );
-
 		await editor.getPreviewFrame().locator( '.elementor-editor-element-edit' ).click( { button: 'right' } );
 		await expect.soft( page.locator( '.elementor-context-menu-list__item-newContainer' ) ).toBeVisible();
 		await page.locator( '.elementor-context-menu-list__item-newContainer' ).click();

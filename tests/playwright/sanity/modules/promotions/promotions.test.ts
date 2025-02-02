@@ -56,6 +56,43 @@ test.describe( 'Promotion tests @promotions', () => {
 		} );
 	} );
 
+	test( 'Widgets React Modal Promotions', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage(),
+			promotionsHelper = new PromotionsHelper( page, testInfo ),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await test.step( 'Free to Pro - react animated headline modal visible', async () => {
+			await editor.addWidget( 'heading', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'animated_headline_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react video playlist modal visible', async () => {
+			await editor.addWidget( 'video', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'video_playlist_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react cta button modal visible', async () => {
+			await editor.addWidget( 'button', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'cta_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react image carousel modal visible', async () => {
+			await editor.addWidget( 'image-carousel', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'image_carousel_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react testimonial modal visible', async () => {
+			await editor.addWidget( 'testimonial', container );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'testimonial_widget_promotion' );
+		} );
+	} );
+
 	test( 'Context Menu Promotions - Free to Pro', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
@@ -100,7 +137,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
+		await expect.soft( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
 	} );
 
 	test( 'Promotions - Free to Pro - Navigator - Dark Mode', async ( { page, apiRequests }, testInfo ) => {
@@ -116,7 +153,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
+		await expect.soft( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
 	} );
 
 	test( 'Promotions - Sticky Free to Pro - Editor- Top Bar Off', async ( { page, apiRequests }, testInfo ) => {
@@ -135,7 +172,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
+		await expect.soft( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
 	} );
 
 	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page, apiRequests }, testInfo ) => {
@@ -154,7 +191,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
+		await expect.soft( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
 	} );
 
 	test( 'Promotion text behavior on resizing the structure panel', async ( { page, apiRequests }, testInfo ) => {
@@ -170,9 +207,10 @@ test.describe( 'Promotion tests @promotions', () => {
 
 		await navigatorPanel.locator( '.elementor-navigator__element-container' ).nth( 0 ).click();
 		await navigatorPanel.evaluate( ( element ) => element.style.width = '150px' );
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert.
-		await expect( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
+		await expect.soft( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
 	} );
 } );
 

@@ -1,4 +1,4 @@
-import { APIRequest, APIRequestContext } from '@playwright/test';
+import { APIRequest, APIRequestContext, Page, chromium, APIResponse } from '@playwright/test';
 
 export async function login( apiRequest: APIRequest, user: string, password: string, baseUrl: string ) {
 	// Important: make sure we authenticate in a clean environment by unsetting storage state.
@@ -19,18 +19,42 @@ export async function login( apiRequest: APIRequest, user: string, password: str
 export async function fetchNonce( context: APIRequestContext, baseUrl: string ) {
 	const response = await context.get( `${ baseUrl }/wp-admin/post-new.php` );
 
-	if ( ! response.ok() ) {
-		throw new Error( `
-				Failed to fetch nonce: ${ response.status() }.
-				${ await response.text() }
-				${ response.url() }
-			` );
+	await validateResponse( response, 'Failed to fetch page' );
+
+	let pageText = await response.text();
+	if ( pageText.includes( 'WordPress has been updated!' ) ) {
+		pageText = await updateDatabase( context, baseUrl );
 	}
-	const pageText = await response.text();
+
 	const nonceMatch = pageText.match( /var wpApiSettings = .*;/ );
 	if ( ! nonceMatch ) {
 		throw new Error( `Nonce not found on the page:\n"${ pageText }"` );
 	}
 
 	return nonceMatch[ 0 ].replace( /^.*"nonce":"([^"]*)".*$/, '$1' );
+}
+
+async function updateDatabase( context: APIRequestContext, baseUrl: string ): Promise<string> {
+	const browser = await chromium.launch();
+	const browserContext = await browser.newContext();
+	const page: Page = await browserContext.newPage();
+	await page.goto( `${ baseUrl }/wp-admin/post-new.php` );
+	await page.getByText( 'Update WordPress Database' ).click();
+	await page.getByText( 'Continue' ).click();
+
+	const retryResponse = await context.get( `${ baseUrl }/wp-admin/post-new.php` );
+
+	const pageText = await retryResponse.text();
+	await browser.close();
+	return pageText;
+}
+
+async function validateResponse( response: APIResponse, errorMessage: string ) {
+	if ( ! response.ok() ) {
+		throw new Error( `
+            ${ errorMessage }: ${ response.status }.
+            ${ await response.text() }
+            ${ response.url() }
+        ` );
+	}
 }

@@ -85,6 +85,10 @@ class Widget_Audio extends Widget_Base {
 		return false;
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register audio widget controls.
 	 *
@@ -250,7 +254,6 @@ class Widget_Audio extends Widget_Base {
 		);
 
 		$this->end_controls_section();
-
 	}
 
 	/**

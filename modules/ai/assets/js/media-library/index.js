@@ -3,6 +3,7 @@ import AIMediaGenerateAppWrapper from './generate';
 import { createRoot } from '@wordpress/element';
 import AIMediaEditAppButtonWrapper from './edit-button';
 import AIMediaEditAppLinkWrapper from './edit-link';
+import { getUniqueId } from '../editor/context/requests-ids';
 
 const isMediaLibrary = () => window.location.href.includes( '/upload.php' );
 
@@ -39,8 +40,15 @@ const addEventListener = ( eventName, containerId, Component ) => {
 	} );
 };
 
+const addEditorPostIdRequestConstant = () => {
+	if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
+		elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
+	}
+};
+
 ( function() {
 	if ( isMediaLibrary() ) {
+		window.EDITOR_SESSION_ID = getUniqueId( 'wp-media-lib-session' );
 		const mediaLibrary = document.querySelector( '.page-title-action' );
 
 		if ( mediaLibrary ) {
@@ -66,6 +74,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai-insert-media';
 				compatMeta.insertAdjacentElement( 'beforeend', container );
+				addEditorPostIdRequestConstant();
 
 				window.dispatchEvent( new CustomEvent( 'renderInsertMediaEvent' ) );
 				return content.innerHTML;
@@ -88,6 +97,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai-attachment-details';
 				details.appendChild( container );
+				addEditorPostIdRequestConstant();
 
 				window.dispatchEvent( new CustomEvent( 'renderAttachmentsDetailsEvent' ) );
 				return content.innerHTML;

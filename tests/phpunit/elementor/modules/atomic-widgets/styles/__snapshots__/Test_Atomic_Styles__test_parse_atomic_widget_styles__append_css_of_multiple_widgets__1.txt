@@ -1,0 +1,2 @@
+.elementor .test-style-1{font-size:16px;color:red;}.elementor .test-style-2{font-weight:bold;color:blue;}
+.elementor .test-style-3{font-size:18px;color:green;}

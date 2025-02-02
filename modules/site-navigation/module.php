@@ -3,6 +3,7 @@
 namespace Elementor\Modules\SiteNavigation;
 
 use Elementor\Core\Base\Module as Module_Base;
+use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\SiteNavigation\Data\Controller;
 use Elementor\Modules\SiteNavigation\Rest_Fields\Page_User_Can;
@@ -11,7 +12,7 @@ use Elementor\Utils;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends Module_Base {
@@ -19,8 +20,9 @@ class Module extends Module_Base {
 
 	/**
 	 * Initialize the Site navigation module.
+	 *
 	 * @return void
-	 * @throws \Exception
+	 * @throws \Exception If the experiment registration fails.
 	 */
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
@@ -30,8 +32,6 @@ class Module extends Module_Base {
 		if ( ! $is_v2_experiment_on && ! $is_tests ) {
 			return;
 		}
-
-		$this->register_pages_panel_experiment();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
@@ -54,16 +54,8 @@ class Module extends Module_Base {
 		return 'site-navigation';
 	}
 
-	/**
-	 * Register Experiment
-	 *
-	 * @since 3.16.0
-	 *
-	 * @return void
-	 * @throws \Exception
-	 */
-	private function register_pages_panel_experiment() {
-		Plugin::$instance->experiments->add_feature( [
+	public static function get_experimental_data(): array {
+		return [
 			'name' => self::PAGES_PANEL_EXPERIMENT_NAME,
 			'title' => esc_html__( 'Pages Panel', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
@@ -72,7 +64,7 @@ class Module extends Module_Base {
 			'dependencies' => [
 				'editor_v2',
 			],
-		] );
+		];
 	}
 
 	private function register_rest_fields() {
@@ -80,5 +72,4 @@ class Module extends Module_Base {
 			( new Page_User_Can() )->register_rest_field();
 		} );
 	}
-
 }

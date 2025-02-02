@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import ContextMenu from '../../../pages/widgets/context-menu';
 import widgets from '../../../enums/widgets';
 import Breakpoints from '../../../assets/breakpoints';
 import EditorPage from '../../../pages/editor-page';
@@ -12,8 +13,6 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: true,
-			container_grid: true,
-			e_nested_atomic_repeaters: true,
 			'nested-elements': true,
 		} );
 		await page.close();
@@ -89,14 +88,10 @@ test.describe( 'Container tests @container', () => {
 
 		// Add containers and set various controls.
 		for ( const [ index, container ] of Object.entries( containers ) ) {
-			// Add container.
 			containers[ index ].id = await editor.addElement( { elType: 'container' }, 'document' );
-
-			// Set various controls
 			await editor.setSelectControlValue( 'container_type', 'grid' );
-			const clickOptions = { position: { x: 0, y: 0 } }; // This is to avoid the "tipsy" alt info that can block the click of the next item.
-			await page.locator( `.elementor-control-grid_justify_items .eicon-align-${ container.setting }-h` ).click( clickOptions );
-			await page.locator( `.elementor-control-grid_align_items .eicon-align-${ container.setting }-v` ).click( clickOptions );
+			await editor.setChooseControlValue( 'grid_justify_items', `eicon-align-${ container.setting }-h` );
+			await editor.setChooseControlValue( 'grid_align_items', `eicon-align-${ container.setting }-v` );
 		}
 
 		// Assert.
@@ -121,6 +116,7 @@ test.describe( 'Container tests @container', () => {
 	test( 'Verify pasting of elements into the Container Element Add section', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const contextMenu = new ContextMenu( page, testInfo );
 		const editor = await wpAdmin.openNewPage(),
 			containerId1 = await editor.addElement( { elType: 'container' }, 'document' ),
 			containerId2 = await editor.addElement( { elType: 'container' }, 'document' ),
@@ -132,19 +128,19 @@ test.describe( 'Container tests @container', () => {
 		await editor.addWidget( widgets.spacer, containerId3 );
 
 		// Copy container 2 and paste it at the top of the page.
-		await editor.copyElement( containerId2 );
+		await contextMenu.copyElement( containerId2 );
 		await editor.openAddElementSection( containerId1 );
-		await editor.pasteElement( '.elementor-add-section-inline' );
+		await contextMenu.pasteElement( '.elementor-add-section-inline' );
 
 		// Copy container 3 and paste it above container 2.
-		await editor.copyElement( containerId3 );
+		await contextMenu.copyElement( containerId3 );
 		await editor.openAddElementSection( containerId2 );
-		await editor.pasteElement( '.elementor-add-section-inline' );
+		await contextMenu.pasteElement( '.elementor-add-section-inline' );
 
 		// Copy the heading widget and paste it above container 3.
-		await editor.copyElement( headingId );
+		await contextMenu.copyElement( headingId );
 		await editor.openAddElementSection( containerId3 );
-		await editor.pasteElement( '.elementor-add-section-inline' );
+		await contextMenu.pasteElement( '.elementor-add-section-inline' );
 
 		// Assert.
 		// Expected order:
@@ -197,7 +193,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Test wizard flex container', async () => {
 			await frame.locator( '.elementor-add-section-button' ).click();
 			await frame.locator( '.flex-preset-button' ).click();
-			const flexList = frame.locator( '.e-con-select-preset__list' );
+			const flexList = frame.locator( '.e-con-select-preset-flex .e-con-select-preset__list' );
 			await expect.soft( flexList ).toBeVisible();
 			await frame.locator( '.elementor-add-section-close' ).click();
 		} );
@@ -205,7 +201,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Test wizard grid container', async () => {
 			await frame.locator( '.elementor-add-section-button' ).click();
 			await frame.locator( '.grid-preset-button' ).click();
-			const gridList = frame.locator( '.e-con-select-preset-grid__list' );
+			const gridList = frame.locator( '.e-con-select-preset-grid .e-con-select-preset__list' );
 			await expect.soft( gridList ).toBeVisible();
 		} );
 	} );

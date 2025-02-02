@@ -54,6 +54,15 @@ const useImageActions = () => {
 		saveAndClose();
 	};
 
+	const useMultipleImages = async ( imagesToUpload ) => {
+		const results = await Promise.all( imagesToUpload.map( async ( img ) => await ( getFinalImage( img, null ) )
+			// eslint-disable-next-line no-unused-vars
+			.catch( ( _ ) => null ) ) );
+
+		await Promise.all( results.filter( ( result ) => result )
+			.map( async ( result ) => await setControlValue( result ) ) );
+	};
+
 	return {
 		use,
 		edit,
@@ -61,6 +70,7 @@ const useImageActions = () => {
 		error: uploadError,
 		data: attachmentData,
 		isLoading: isUploading,
+		useMultipleImages,
 	};
 };
 
