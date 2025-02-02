@@ -18,7 +18,7 @@ class Link_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'href' => Url_Prop_Type::make(),
+			'target' => String_Prop_Type::make(),
 			'isTargetBlank' => Boolean_Prop_Type::make(),
 		];
 	}

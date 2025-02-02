@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\WpRest\Classes\Elementor_Post_Meta;
 use Elementor\Modules\WpRest\Classes\Elementor_Settings;
 use Elementor\Modules\WpRest\Classes\Elementor_User_Meta;
+use Elementor\Modules\WpRest\Classes\WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -23,6 +24,7 @@ class Module extends BaseModule {
 			( new Elementor_Post_Meta() )->register();
 			( new Elementor_Settings() )->register();
 			( new Elementor_User_Meta() )->register();
+			( new WP_Post() )->register();
 		} );
 	}
 }
