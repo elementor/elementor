@@ -1,1 +1,1 @@
-			<p >Type your paragraph here</p>		
+			<p class="a-paragraph-base">Type your paragraph here</p>		
