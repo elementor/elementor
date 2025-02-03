@@ -112,6 +112,10 @@ class Library extends Common_App {
 				'label' => 'Site Key',
 				'value' => get_option( self::OPTION_CONNECT_SITE_KEY ),
 			],
+			'remote_info_library' => [
+				'label' => 'Remote Library Info',
+				'value' => get_option( 'elementor_remote_info_library' ),
+			],
 		];
 	}
 
