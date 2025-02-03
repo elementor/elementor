@@ -144,7 +144,7 @@ TemplateLibraryManager = function() {
 		elementorCommon.ajax.addRequest( 'get_item_children', ajaxOptions );
 	};
 
-	this.handleGetFolderDataSuccess =function ( templateModel, options, data ) {
+	this.handleGetFolderDataSuccess = function( templateModel, options, data ) {
 		const dialog = this.getDeleteFolderDialog( templateModel, data );
 
 		dialog.onConfirm = () => {
