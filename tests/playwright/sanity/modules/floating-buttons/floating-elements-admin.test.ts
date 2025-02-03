@@ -4,7 +4,7 @@ import { expect } from '@playwright/test';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Verify floating buttons editor, admin page and front page behavior', () => {
-	test.only( 'Verify editor behavior by creating post through API and also FE behavior', async (
+	test( 'Verify editor behavior by creating post through API and also FE behavior', async (
 		{
 			browser,
 			page,
