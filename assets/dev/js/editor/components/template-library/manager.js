@@ -309,7 +309,7 @@ TemplateLibraryManager = function() {
 			options = {};
 
 		// TODO: Remove - it when all the data commands is ready, manage the cache!.
-		if ( 'local' === query.source ) {
+		if ( 'local' === query.source || 'cloud' === query.source ) {
 			options.refresh = true;
 		}
 

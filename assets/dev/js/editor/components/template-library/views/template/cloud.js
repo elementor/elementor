@@ -2,24 +2,13 @@ var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/templ
 	TemplateLibraryTemplateCloudView;
 
 TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
-	ui() {
-		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
-			folderItem: '.elementor-template-library-local-column-1',
-		} );
-	},
-
-	events() {
-		return jQuery.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
-			'click @ui.folderItem': 'onFolderClick',
-		} );
-	},
-
-	onFolderClick() {
-		if ( 'FOLDER' !== this.model.get( 'subType' ) ) {
+	onPreviewButtonClick() {
+		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
+			$e.route( 'library/view-folder', { model: this.model } );
 			return;
 		}
 
-		$e.route( 'library/view-folder', { model: this.model } );
+		TemplateLibraryTemplateLocalView.prototype.onPreviewButtonClick.apply( this, arguments );
 	},
 } );
 
