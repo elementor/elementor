@@ -10,6 +10,28 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 
 		TemplateLibraryTemplateLocalView.prototype.onPreviewButtonClick.apply( this, arguments );
 	},
+
+	onDeleteButtonClick() {
+		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
+			this.deleteFolderClick();
+			return;
+		}
+
+		TemplateLibraryTemplateLocalView.prototype.onDeleteButtonClick.apply( this, arguments );
+	},
+
+	deleteFolderClick() {
+		var toggleMoreIcon = this.ui.toggleMoreIcon;
+
+		elementor.templates.deleteFolder( this.model, {
+			onConfirm() {
+				toggleMoreIcon.removeClass( 'eicon-ellipsis-h' ).addClass( 'eicon-loading eicon-animation-spin' );
+			},
+			onSuccess() {
+				elementor.templates.showTemplates();
+			},
+		} );
+	},
 } );
 
 module.exports = TemplateLibraryTemplateCloudView;
