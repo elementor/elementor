@@ -21,7 +21,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	},
 
 	handleDeleteFolderClick() {
-		var toggleMoreIcon = this.ui.toggleMoreIcon;
+		const toggleMoreIcon = this.ui.toggleMoreIcon;
 
 		elementor.templates.deleteFolder( this.model, {
 			onConfirm() {
