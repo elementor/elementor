@@ -24,7 +24,7 @@ class Hooks {
 		} );
 
 		$this->wp_kernel->add_filter( 'elementor/atomic-widgets/styles/schema', function ( $schema ) {
-			return $this->filter_style_schema( $schema );
+			return $this->augment_style_schema( $schema );
 		} );
 
 		return $this;
@@ -34,7 +34,7 @@ class Hooks {
 		$transformers->register( Color_Variable_Prop_Type::get_key(), new Global_Variable_Transformer() );
 	}
 
-	private function filter_style_schema( array $schema ): array {
+	private function augment_style_schema( array $schema ): array {
 		return ( new Style_Schema() )->augment( $schema );
 	}
 }

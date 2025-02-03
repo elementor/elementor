@@ -2,8 +2,10 @@
 
 namespace Elementor\Modules\AtomicGlobalVariables\Classes;
 
+require_once dirname( __FILE__ )
+	. '/stub-array-of-colors-prop-type.php';
+
 use Elementor\Modules\AtomicGlobalVariables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
@@ -48,6 +50,28 @@ class Test_Style_Schema extends TestCase {
 			'color' => Union_Prop_Type::make()
 				->add_prop_type( Color_Prop_Type::make() )
 				->add_prop_type( Color_Variable_Prop_Type::make() ),
+		];
+
+		$this->assertEquals( $expected, $schema );
+	}
+
+	public function test_augment__will_convert_item_of_array_prop_type() {
+		// Arrange.
+		$style_def = [
+			'color-gradient' => Stub_Array_Of_Colors_Prop_Type::make(),
+		];
+
+		// Act.
+		$schema = $this->style_schema()->augment( $style_def );
+
+		// Assert.
+		$expected = [
+			'color-gradient' => Stub_Array_Of_Colors_Prop_Type::make()
+				->set_item_type(
+					Union_Prop_Type::make()
+						->add_prop_type( Color_Variable_Prop_Type::make() )
+						->add_prop_type( Color_Prop_Type::make() )
+				)
 		];
 
 		$this->assertEquals( $expected, $schema );

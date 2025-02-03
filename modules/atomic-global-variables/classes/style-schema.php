@@ -26,21 +26,21 @@ class Style_Schema {
 	}
 
 	private function process( $node ) {
-		if ( ! $node instanceof Prop_Type ) {
-			return $node;
-		}
-
 		if ( $node instanceof Color_Prop_Type ) {
 			return Union_Prop_Type::create_from( $node )
 				->add_prop_type( Color_Variable_Prop_Type::make() );
 		}
 
 		if ( $node instanceof Object_Prop_Type ) {
-			$node->set_shape(
+			return $node->set_shape(
 				$this->augment( $node->get_shape() )
 			);
+		}
 
-			return $node;
+		if ( $node instanceof Array_Prop_Type ) {
+			return $node->set_item_type(
+				$this->process( $node->get_item_type() )
+			);
 		}
 
 		return $node;
