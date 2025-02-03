@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\WpRest\Classes;
 
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Utils\Collection;
 use Elementor\Utils;
 
@@ -11,10 +13,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WP_Post {
 	const MAX_COUNT = 100;
-	const FORMAT = 'post';
+	const NAMESPACE = 'elementor/v1';
+	const ENDPOINT = 'post';
+
+	const EXCLUDED_POST_TYPES_KEY = 'excluded_post_types';
+	const TERM_KEY = 'term';
+	const KEYS_FORMAT_MAP_KEY = 'keys_format_map';
+	const MAX_COUNT_KEY = 'max_count';
+
+	private ?Wordpress_Adapter_Interface $wp_adapter = null;
+
+	public function __construct( ?Wordpress_Adapter_Interface $wp_adapter = null ) {
+		$this->wp_adapter = $wp_adapter ? new $wp_adapter() : new Wordpress_Adapter();
+	}
 
 	public function register(): void {
-		register_rest_route( 'elementor/v1', self::FORMAT, [
+		register_rest_route( self::NAMESPACE, self::ENDPOINT, [
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'permission_callback' => function (): bool {
@@ -57,12 +71,12 @@ class WP_Post {
 			->all();
 	}
 
-	public function restrict_search_to_title( $search, $wp_query ) {
+	public function advanced_search( $search, $wp_query ) {
 		$search_term = $wp_query->get( 'search_term' ) ?? '';
-		$is_search_titles_only = $wp_query->get( 'search_titles_only' ) ?? false;
+		$is_advanced_search = $wp_query->get( 'advanced_search' ) ?? false;
 
-		if ( $is_search_titles_only && ! empty( $search_term ) ) {
-			$search .= " AND (";
+		if ( $is_advanced_search && ! empty( $search_term ) ) {
+			$search .= ' AND (';
 			$search .= "post_title LIKE '%" . esc_sql( $search_term ) . "%' ";
 			$search .= "OR ID LIKE '%" . esc_sql( $search_term ) . "%')";
 		}
@@ -72,12 +86,11 @@ class WP_Post {
 
 	private function get_posts( \WP_REST_Request $request ) {
 		$params = $request->get_params();
-		$term = $params['term'];
-		$excluded_types = $params['excluded_post_types'];
-		$keys_to_extract = $params['keys_to_extract'];
-		$keys_dictionary = $params['keys_dictionary'];
-		$max_count = isset( $params['max_count'] ) && 0 < $params['max_count'] ? $params['max_count'] : self::MAX_COUNT;
-		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
+		$term = $params[ self::TERM_KEY ];
+		$excluded_types = $params[ self::EXCLUDED_POST_TYPES_KEY ];
+		$keys_format_map = $params[ self::KEYS_FORMAT_MAP_KEY ];
+		$max_count = isset( $params[ self::MAX_COUNT_KEY ] ) && 0 < $params[ self::MAX_COUNT_KEY ] ? $params[ self::MAX_COUNT_KEY ] : self::MAX_COUNT;
+		$post_types = new Collection( $this->wp_adapter->get_post_types( [ 'public' => true ], 'object' ) );
 
 		if ( empty( $term ) ) {
 			return [];
@@ -93,52 +106,34 @@ class WP_Post {
 			return $post_type->name;
 		} );
 
-		add_filter( 'posts_search', [ $this, 'restrict_search_to_title' ], 10, 2 );
+		add_filter( 'posts_search', [ $this, 'advanced_search' ], 10, 2 );
 
-		$posts = new Collection( get_posts( [
+		$posts = new Collection( $this->wp_adapter->get_posts( [
 			'post_type' => $post_type_slugs->all(),
 			'numberposts' => min( $max_count, self::MAX_COUNT ),
 			'suppress_filters' => false,
-			'search_titles_only' => true,
+			'advanced_search' => true,
 			'search_term' => $term,
 		] ) );
 
-		remove_filter( 'posts_search', [ $this, 'restrict_search_to_title' ], 10, 2 );
+		remove_filter( 'posts_search', [ $this, 'advanced_search' ], 10, 2 );
 
 		return $posts
-			->map( function ( $post ) use ( $keys_to_extract ) {
-				return $this->get_filtered_props_from_post( $post, $keys_to_extract );
-			} )
-			->map( function ( $post ) use ( $keys_dictionary, $post_types ) {
-				if ( isset( $post['post_type'] ) ) {
-					$post['post_type'] = $post_types->get( ( $post['post_type'] ) )->label;
+			->map( function ( $post ) use ( $keys_format_map, $post_types ) {
+				$post_object = (array) $post;
+
+				if ( isset( $post_object['post_type'] ) ) {
+					$post_object['post_type'] = $post_types->get( ( $post_object['post_type'] ) )->label;
 				}
 
-				return Utils::replace_keys_in_object( $post, $keys_dictionary );
+				return Utils::replace_keys_in_object( $post_object, $keys_format_map );
 			} )
 			->all();
 	}
 
-	private function get_filtered_props_from_post( \WP_Post $post, $keys_to_extract = [] ) {
-		if ( empty( $keys_to_extract ) ) {
-			return $post;
-		}
-
-		$post_object = (array) $post;
-		$filtered_post = [];
-
-		foreach ( $keys_to_extract as $key ) {
-			if ( array_key_exists( $key, $post_object ) ) {
-				$filtered_post[ $key ] = $post_object[ $key ];
-			}
-		}
-
-		return $filtered_post;
-	}
-
 	private function get_args() {
 		return [
-			'excluded_post_types' => [
+			self::EXCLUDED_POST_TYPES_KEY => [
 				'description' => 'Post type to exclude',
 				'type' => [ 'array', 'string' ],
 				'required' => false,
@@ -146,7 +141,7 @@ class WP_Post {
 				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
 				'validate_callback' => 'rest_validate_request_arg',
 			],
-			'term' => [
+			self::TERM_KEY => [
 				'description' => 'Posts to search',
 				'type' => 'string',
 				'required' => false,
@@ -154,31 +149,15 @@ class WP_Post {
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
-			'keys_to_extract' => [
-				'description' => 'Specify keys which values are to be included in the response. Leave empty for all keys',
-				'type' => [ 'array', 'string' ],
-				'required' => true,
-				'default' => [],
-				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'keys_dictionary' => [
-				'description' => 'Specify conversion dictionary for keys, i.e. ["key_1" => "new_key_1"].',
+			self::KEYS_FORMAT_MAP_KEY => [
+				'description' => 'Specify keys to extract and convert, i.e. ["key_1" => "new_key_1"].',
 				'type' => [ 'array', 'string' ],
 				'required' => false,
 				'default' => [],
 				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
 				'validate_callback' => 'rest_validate_request_arg',
 			],
-			'values_dictionary' => [
-				'description' => 'Specify conversion dictionary for values, i.e. ["value_1" => "new_value_1"].',
-				'type' => [ 'array', 'string' ],
-				'required' => false,
-				'default' => [],
-				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'max_count' => [
+			self::MAX_COUNT_KEY => [
 				'description' => 'Max count of returned items',
 				'type' => 'number',
 				'required' => false,

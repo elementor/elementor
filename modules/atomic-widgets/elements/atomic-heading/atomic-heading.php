@@ -10,10 +10,10 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\WpRest\Classes\WP_Post;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\WpRest\Classes\WP_Post;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -114,10 +114,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 							],
 						]),
 					Link_Control::bind_to( 'link' )
-						->set_ajax_url( WP_Post::FORMAT )
+						->set_ajax_url( WP_Post::ENDPOINT )
 						->set_ajax_params( [
-							'keys_to_extract' => json_encode( [ 'ID', 'post_title', 'guid', 'post_type' ] ),
-							'keys_dictionary' => json_encode( [ 'ID' => 'id', 'post_title' => 'label', 'guid' => 'value', 'post_type' => 'groupLabel' ] ),
+							WP_Post::KEYS_FORMAT_MAP_KEY => json_encode( [
+								'ID' => 'id',
+								'post_title' => 'label',
+								'post_type' => 'groupLabel',
+							] ),
 						] )
 						->set_allow_custom_values( true )
 						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),

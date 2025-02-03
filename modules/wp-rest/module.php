@@ -7,6 +7,8 @@ use Elementor\Modules\WpRest\Classes\Elementor_Post_Meta;
 use Elementor\Modules\WpRest\Classes\Elementor_Settings;
 use Elementor\Modules\WpRest\Classes\Elementor_User_Meta;
 use Elementor\Modules\WpRest\Classes\WP_Post;
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,24 +20,16 @@ class Module extends BaseModule {
 		return 'wp-rest';
 	}
 
-	public function __construct() {
+	public function __construct( Wordpress_Adapter_Interface $wp_adapter = null ) {
 		parent::__construct();
-		add_action( 'rest_api_init', function () {
+
+		$wp_adapter = $wp_adapter ? new $wp_adapter() : new Wordpress_Adapter();
+
+		add_action( 'rest_api_init', function () use ( $wp_adapter ) {
 			( new Elementor_Post_Meta() )->register();
 			( new Elementor_Settings() )->register();
 			( new Elementor_User_Meta() )->register();
-			( new WP_Post() )->register();
+			( new WP_Post( $wp_adapter ) )->register();
 		} );
-		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->register_scripts() );
-	}
-
-	public function register_scripts() {
-		wp_enqueue_script(
-			'elementor-wp-rest',
-			$this->get_js_assets_url( 'wp-rest' ),
-			[],
-			ELEMENTOR_VERSION,
-			true
-		);
 	}
 }
