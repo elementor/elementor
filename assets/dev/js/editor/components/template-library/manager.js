@@ -132,7 +132,7 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
-	this.deleteFolder = function ( templateModel, options ) {
+	this.deleteFolder = function( templateModel, options ) {
 		const ajaxOptions = {
 			data: {
 				source: 'cloud',
@@ -141,15 +141,15 @@ TemplateLibraryManager = function() {
 			success: ( data ) => this.handleGetFolderDataSuccess( templateModel, options, data ),
 		};
 
-		elementorCommon.ajax.addRequest( 'get_item_children', ajaxOptions ) ;
+		elementorCommon.ajax.addRequest( 'get_item_children', ajaxOptions );
 	};
 
-	this.handleGetFolderDataSuccess = function ( templateModel, options, data ) {
+	this.handleGetFolderDataSuccess =function ( templateModel, options, data ) {
 		const dialog = this.getDeleteFolderDialog( templateModel, data );
 
 		dialog.onConfirm = () => {
 			options.onConfirm?.();
-	
+
 			this.sendDeleteRequest( templateModel, options );
 		};
 
@@ -160,10 +160,11 @@ TemplateLibraryManager = function() {
 		return elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-delete-dialog',
 			headerMessage: __( 'Delete Folder', 'elementor' ),
+			/* translators: 1: Folder name, 2: Number of templates */
 			message: sprintf(
-				__( 'Are you sure you want to delete "%s" folder with all %d templates?', 'elementor' ),
-				templateModel.get( 'title' ),
-				data.length
+				__( 'Are you sure you want to delete "%1$s" folder with all %2$d templates?', 'elementor' ),
+				templateModel.get('title'),
+				data.length,
 			),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
@@ -171,13 +172,13 @@ TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.sendDeleteRequest = function ( templateModel, options ) {
+	this.sendDeleteRequest = function( templateModel, options ) {
 		elementorCommon.ajax.addRequest( 'delete_template', {
 			data: {
 				source: templateModel.get( 'source' ),
 				template_id: templateModel.get( 'template_id' ),
 			},
-			success: (response) => {
+			success: ( response ) => {
 				templatesCollection.remove( templateModel, { silent: true } );
 				options.onSuccess?.( response );
 			},
