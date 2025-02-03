@@ -116,7 +116,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		if ( ! empty( $settings['link']['href'] ) ) {
 			return [
 				$tag,
-				$attrs,
+				Utils::render_html_attributes( $attrs ),
 				Utils::render_html_attributes( $settings['link'] ),
 				$paragraph,
 			];
@@ -124,7 +124,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 		return [
 			$tag,
-			$attrs,
+			Utils::render_html_attributes( $attrs ),
 			$paragraph,
 		];
 	}
