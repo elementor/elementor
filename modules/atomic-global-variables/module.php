@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const MODULE_NAME     = 'atomic-global-variables';
+	const MODULE_NAME = 'atomic-global-variables';
 	const EXPERIMENT_NAME = 'atomic_global_variables';
 
 	public function get_name() {

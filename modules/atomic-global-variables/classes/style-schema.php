@@ -22,8 +22,6 @@ class Style_Schema {
 			$result[ $key ] = $this->process( $node );
 		}
 
-		file_put_contents('/tmp/atomic-widgets.styles.log', print_r( $result, true ) );
-
 		return $result;
 	}
 
