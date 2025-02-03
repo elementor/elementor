@@ -13,14 +13,14 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 
 	onDeleteButtonClick() {
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			this.deleteFolderClick();
+			this.handleDeleteFolderClick();
 			return;
 		}
 
 		TemplateLibraryTemplateLocalView.prototype.onDeleteButtonClick.apply( this, arguments );
 	},
 
-	deleteFolderClick() {
+	handleDeleteFolderClick() {
 		var toggleMoreIcon = this.ui.toggleMoreIcon;
 
 		elementor.templates.deleteFolder( this.model, {
