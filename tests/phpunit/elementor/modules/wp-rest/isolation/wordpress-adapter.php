@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Wordpress_Adapter extends Core_Adapter {
+class WordpressAdapter extends Core_Adapter {
 	private array $post_types;
 	private array $posts;
 

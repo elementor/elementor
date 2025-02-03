@@ -2,9 +2,9 @@
 
 namespace Elementor\Testing\Modules\WpRest;
 
-use Elementor\Modules\WpRest\Classes\WP_Post;
-use Elementor\Testing\Modules\WpRest\Isolation\Wordpress_Adapter;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\WpRest\Classes\WP_Post;
+use Elementor\Testing\Modules\WpRest\Isolation\WordpressAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,7 +18,7 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->post_query = new WP_Post( new Wordpress_Adapter() );
+		$this->post_query = new WP_Post( new WordpressAdapter() );
 		$this->post_query->register();
 
 		do_action( 'rest_api_init' );
@@ -39,6 +39,7 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 				'title' => 'label',
 				'post_type' => 'groupLabel',
 			] ),
+			WP_Post::TERM_KEY => 'Us',
 		];
 
 		$query_string = '?' . http_build_query( $params );
