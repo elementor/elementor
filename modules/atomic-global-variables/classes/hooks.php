@@ -35,6 +35,6 @@ class Hooks {
 	}
 
 	private function filter_style_schema( array $schema ): array {
-		return ( new Style_Schema() )->append( $schema );
+		return ( new Style_Schema() )->augment( $schema );
 	}
 }

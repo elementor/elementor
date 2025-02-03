@@ -15,12 +15,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Style_Schema {
-	public function append( array $schema ): array {
+	public function augment( array $schema ): array {
 		$result = [];
+
 		foreach ( $schema as $key => $node ) {
 			$result[ $key ] = $this->process( $node );
 		}
+
 		file_put_contents('/tmp/atomic-widgets.styles.log', print_r( $result, true ) );
+
 		return $result;
 	}
 
@@ -30,34 +33,19 @@ class Style_Schema {
 		}
 
 		if ( $node instanceof Color_Prop_Type ) {
-			$node = Union_Prop_Type::create_from( $node )
+			return Union_Prop_Type::create_from( $node )
 				->add_prop_type( Color_Variable_Prop_Type::make() );
-
-			return $node;
 		}
 
 		if ( $node instanceof Object_Prop_Type ) {
 			$node->set_shape(
-				$this->append( $node->get_shape() )
+				$this->augment( $node->get_shape() )
 			);
 
 			return $node;
 		}
 
 		return $node;
-
-//		if ( $node instanceof Color_Prop_Type ) {
-//			return Union_Prop_Type::make()
-//				->add_prop_type( Color_Variable_Prop_Type::make() )
-//				->add_prop_type( $node );
-//		}
-//
-//		if ( $node instanceof Object_Prop_Type ) {
-//			$node->set_shape( $this->process( $node->get_shape() );
-//			return $node;
-//		}
-//
-//		return $node;
 	}
 
 	private function extract_prop_types_from( Prop_Type $node ): array {
