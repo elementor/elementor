@@ -160,8 +160,8 @@ TemplateLibraryManager = function() {
 		return elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-delete-dialog',
 			headerMessage: __( 'Delete Folder', 'elementor' ),
-			// Translators: %1$s: Folder name, %2$s: Number of templates.
 			message: sprintf(
+				// Translators: %1$s: Folder name, %2$s: Number of templates.
 				__( 'Are you sure you want to delete "%1$s" folder with all %2$d templates?', 'elementor' ),
 				templateModel.get( 'title' ),
 				data.length,
