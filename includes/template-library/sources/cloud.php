@@ -44,7 +44,9 @@ class Source_Cloud extends Source_Base {
 
 	public function get_data( array $args ) {}
 
-	public function delete_template( $template_id ) {}
+	public function delete_template( $template_id ) {
+		return $this->get_app()->delete_resource( $template_id );
+	}
 
 	public function save_item( $template_data ) {}
 
