@@ -163,7 +163,7 @@ TemplateLibraryManager = function() {
 			/* translators: 1: Folder name, 2: Number of templates */
 			message: sprintf(
 				__( 'Are you sure you want to delete "%1$s" folder with all %2$d templates?', 'elementor' ),
-				templateModel.get('title'),
+				templateModel.get( 'title' ),
 				data.length,
 			),
 			strings: {
