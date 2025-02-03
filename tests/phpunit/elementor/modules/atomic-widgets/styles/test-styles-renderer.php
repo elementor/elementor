@@ -376,7 +376,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'value' => [
 											[
 												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => 'blue',
+													],
+												],
 											],
 											[
 												'$$type' => 'background-image-overlay',
@@ -439,7 +444,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'value' => [
 											[
 												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => 'blue',
+													],
+												],
 											],
 											[
 												'$$type' => 'background-image-overlay',
@@ -543,7 +553,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'value' => [
 											[
 												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => 'blue',
+													],
+												],
 											],
 											[
 												'$$type' => 'background-image-overlay',
@@ -610,8 +625,13 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
                                         '$$type' => 'background-overlay',
                                         'value' => [
                                             [
-                                                '$$type' => 'background-color-overlay',
-                                                'value' => 'blue',
+	                                            '$$type' => 'background-color-overlay',
+	                                            'value' => [
+		                                            'color' => [
+			                                            '$$type' => 'color',
+			                                            'value' => 'blue',
+		                                            ],
+	                                            ],
                                             ],
                                             [
                                                 '$$type' => 'background-image-overlay',
