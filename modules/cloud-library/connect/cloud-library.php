@@ -52,5 +52,15 @@ class Cloud_Library extends Library {
 		];
 	}
 
+	public function delete_resource( $template_id ) {
+		$request = $this->http_request( 'DELETE', 'resources/' . $template_id );
+
+		if ( is_wp_error( $request ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	protected function init() {}
 }
