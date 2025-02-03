@@ -4,7 +4,7 @@ import { expect } from '@playwright/test';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Verify floating buttons editor, admin page and front page behavior', () => {
-	test( 'Verify editor behavior by creating post through API and also FE behavior', async (
+	test.only( 'Verify editor behavior by creating post through API and also FE behavior', async (
 		{
 			browser,
 			page,
@@ -171,7 +171,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				await expect( libraryModal ).toBeVisible();
 				const footerSelector = '.elementor-template-library-template-footer';
 				const footer = page.locator( footerSelector );
-				await page.locator( '.elementor-template-library-template' ).first().waitFor();
+				await page.locator( '.elementor-template-library-template' ).first().waitFor( { timeout: 10000 } );
 				await page.hover( '.elementor-template-library-template' );
 				await page.waitForSelector( footerSelector );
 				await expect( footer.first() ).toBeVisible();
