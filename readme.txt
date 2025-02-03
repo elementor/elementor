@@ -346,6 +346,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.27.3 - 2025-02-03 =
+
+* Tweak: Added support for Early Access fonts when using Load Google Fonts Locally experiment
+* Tweak: Updated minified `flatpickr` CSS file to v4.6.13
+* Fix: Kits could not be imported due to compatibility issue
+
 = 3.27.2 - 2025-01-27 =
 
 * Fix: Kits could not be imported due to a compatibility issue
