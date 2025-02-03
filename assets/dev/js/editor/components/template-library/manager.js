@@ -132,6 +132,59 @@ TemplateLibraryManager = function() {
 		dialog.show();
 	};
 
+	this.deleteFolder = function( templateModel, options ) {
+		const ajaxOptions = {
+			data: {
+				source: 'cloud',
+				template_id: templateModel.get( 'template_id' ),
+			},
+			success: ( data ) => this.handleGetFolderDataSuccess( templateModel, options, data ),
+		};
+
+		elementorCommon.ajax.addRequest( 'get_item_children', ajaxOptions );
+	};
+
+	this.handleGetFolderDataSuccess = function( templateModel, options, data ) {
+		const dialog = this.getDeleteFolderDialog( templateModel, data );
+
+		dialog.onConfirm = () => {
+			options.onConfirm?.();
+
+			this.sendDeleteRequest( templateModel, options );
+		};
+
+		dialog.show();
+	};
+
+	this.getDeleteFolderDialog = function( templateModel, data ) {
+		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-template-library-delete-dialog',
+			headerMessage: __( 'Delete Folder', 'elementor' ),
+			message: sprintf(
+				// Translators: %1$s: Folder name, %2$s: Number of templates.
+				__( 'Are you sure you want to delete "%1$s" folder with all %2$d templates?', 'elementor' ),
+				templateModel.get( 'title' ),
+				data.length,
+			),
+			strings: {
+				confirm: __( 'Delete', 'elementor' ),
+			},
+		} );
+	};
+
+	this.sendDeleteRequest = function( templateModel, options ) {
+		elementorCommon.ajax.addRequest( 'delete_template', {
+			data: {
+				source: templateModel.get( 'source' ),
+				template_id: templateModel.get( 'template_id' ),
+			},
+			success: ( response ) => {
+				templatesCollection.remove( templateModel, { silent: true } );
+				options.onSuccess?.( response );
+			},
+		} );
+	};
+
 	/**
 	 * @param {*}      model - Template model.
 	 * @param {Object} args  - Template arguments.
@@ -309,7 +362,7 @@ TemplateLibraryManager = function() {
 			options = {};
 
 		// TODO: Remove - it when all the data commands is ready, manage the cache!.
-		if ( 'local' === query.source ) {
+		if ( 'local' === query.source || 'cloud' === query.source ) {
 			options.refresh = true;
 		}
 
