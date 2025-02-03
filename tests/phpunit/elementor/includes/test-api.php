@@ -56,7 +56,6 @@ class Test_Api extends Elementor_Test_AJAX {
 
 		// Assert
 		$this->assertEquals( true, $response['success'] );
-		$this->assertEquals( 'test-library', get_option( Api::LIBRARY_OPTION_KEY ) );
 		$this->assertEquals( 'test-feed', get_option( Api::FEED_OPTION_KEY ) );
 		$this->assertEqualSets( [
 			'additional-data' => 'test-additional-data',
@@ -77,7 +76,6 @@ class Test_Api extends Elementor_Test_AJAX {
 				'cookies' => [],
 				'filename' => '',
 				'body' => wp_json_encode( [
-					'library' => 'test-library',
 					'feed' => 'test-feed',
 					'additional-data' => 'test-additional-data',
 				] ),
