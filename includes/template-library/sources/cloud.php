@@ -37,7 +37,7 @@ class Source_Cloud extends Source_Base {
 	}
 
 	public function get_item_children( array $args = [] ) {
-		return $this->get_app()->get_resources_children( $args );
+		return $this->get_app()->get_resources( $args );
 	}
 
 	public function get_item( $template_id ) {}
