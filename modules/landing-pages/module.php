@@ -427,7 +427,28 @@ class Module extends BaseModule {
 		return false;
 	}
 
+	private function should_disable_feature(): bool {
+		$feature_status = get_option( 'elementor_experiment-landing-pages' );
+		$is_feature_disabled = ( 'default' === $feature_status || 'inactive' === $feature_status );
+
+		if ( $is_feature_disabled ) {
+			return true;
+		}
+
+		if ( ! $this->has_landing_pages() ) {
+			update_option( 'elementor_experiment-landing-pages', 'default' );
+			return true;
+		}
+
+		return false;
+	}
+
 	public function __construct() {
+		if ( $this->should_disable_feature() ) {
+			// wp_die( esc_html__( 'Landing Pages feature is disabled.', 'elementor' ) );
+			return;
+		}
+
 		$this->permalink_structure = get_option( 'permalink_structure' );
 
 		$this->register_landing_page_cpt();
