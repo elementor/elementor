@@ -25,11 +25,6 @@ export default class ElementRegressionHelper {
 			return;
 		}
 
-		// TODO: Fix in a separate task.
-		if ( 'text_path' === widgetType ) {
-			return;
-		}
-
 		const locator = isPublished
 			? this.page.locator( EditorSelectors.container + ' >> nth=0' )
 			: this.editor.getPreviewFrame().locator( EditorSelectors.container + ' >> nth=0' );
@@ -84,12 +79,7 @@ export default class ElementRegressionHelper {
 		let label = '';
 		const deviceParams = { mobile: { width: 360, height: 736 }, tablet: { width: 768, height: 787 } };
 
-		// TODO: Fix in a separate task.
-		if ( 'text_path' === args.widgetType ) {
-			return;
-		}
-
-		if ( args.widgetType.includes( 'hover' ) ) {
+		if ( this.scenariosToSkip( args ) ) {
 			return;
 		}
 
@@ -97,7 +87,7 @@ export default class ElementRegressionHelper {
 			page = this.page;
 			await page.setViewportSize( deviceParams[ args.device ] );
 
-			if ( 'container_grid' === args.widgetType && 'mobile' === args.device ) {
+			if ( this.timedOutScenarios( args ) ) {
 				await page.waitForTimeout( 500 );
 			}
 
@@ -114,5 +104,18 @@ export default class ElementRegressionHelper {
 			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		}
+	}
+
+	scenariosToSkip( args: { widgetType: string; device: string; } ) {
+		return (
+			( args.widgetType.includes( 'hover' ) )
+		);
+	}
+
+	timedOutScenarios( args: { widgetType: string; device: string; } ) {
+		return (
+			( 'container_grid' === args.widgetType && 'mobile' === args.device ) ||
+			( 'text_path' === args.widgetType && 'tablet' === args.device )
+		);
 	}
 }
