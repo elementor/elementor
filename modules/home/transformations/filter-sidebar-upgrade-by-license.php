@@ -2,45 +2,51 @@
 namespace elementor\modules\home\transformations;
 
 use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
+use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Utils;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
-	public bool $has_pro;
-
-	public function __construct( $args ) {
-		parent::__construct( $args );
-
-		$this->has_pro = Utils::has_pro();
-	}
-
-	private function is_valid_item( $item ) {
-		$has_pro_json_not_free = $this->has_pro && 'pro' === $item['license'][0];
-		$is_not_pro_json_not_pro = ! $this->has_pro && 'free' === $item['license'][0];
-		$should_show = ! isset( $item['show'] ) || 'true' === $item['show'];
-		return $has_pro_json_not_free && $should_show || $is_not_pro_json_not_pro && $should_show;
-	}
 
 	public function transform( array $home_screen_data ): array {
 		$new_sidebar_upgrade = [];
+		$user_tier = $this->get_tier();
 
-		foreach ( $home_screen_data['sidebar_upgrade'] as $index => $item ) {
-			if ( $this->is_valid_item( $item ) ) {
+		array_filter( $home_screen_data['sidebar_upgrade'], function( $item ) use ( &$new_sidebar_upgrade, $user_tier ) {
+			if ( $this->is_enabled( $item ) && $this->is_tier_acceptable( $item, $user_tier ) ) {
 				$new_sidebar_upgrade[] = $item;
 			}
-		}
+		});
 
 		if ( empty( $new_sidebar_upgrade ) ) {
 			unset( $home_screen_data['sidebar_upgrade'] );
+
 			return $home_screen_data;
 		}
 
 		$home_screen_data['sidebar_upgrade'] = reset( $new_sidebar_upgrade );
 
 		return $home_screen_data;
+	}
+
+	private function get_tier() {
+		$license = Utils::has_pro();
+
+		if ( ! $license ) {
+			return ConnectModule::ACCESS_TIER_FREE;
+		}
+
+		return apply_filters( 'elementor/admin/homescreen_promotion_tier', ConnectModule::ACCESS_TIER_PRO_LEGACY );
+	}
+
+	private function is_enabled( $item ) {
+		return ! isset( $item['show'] ) || 'true' === $item['show'];
+	}
+
+	private function is_tier_acceptable( $item, $user_tier ) {
+		return !empty( $item['license'] ) && in_array( $user_tier, $item['license'] );
 	}
 }
