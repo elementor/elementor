@@ -53,10 +53,4 @@ class Style_Schema {
 
 		return $node;
 	}
-
-	private function extract_prop_types_from( Prop_Type $node ): array {
-		return ( $node instanceof Union_Prop_Type )
-			? $node->get_prop_types()
-			: [ $node ];
-	}
 }
