@@ -138,34 +138,6 @@ export default class Content {
 	}
 
 	/**
-	 * Upload SVG icon.
-	 *
-	 * @param {Object} options        - SVG options.
-	 * @param {string} options.icon   - SVG icon.
-	 * @param {string} options.widget - The widget to which to upload the SVG.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async uploadSVG( options? : { icon?: string, widget?: string} ): Promise<void> {
-		const _icon = options?.icon === undefined ? 'test-svg-wide' : options.icon;
-		if ( 'text-path' === options?.widget ) {
-			await this.page.locator( EditorSelectors.plusIcon ).click();
-		} else {
-			await this.editor.openPanelTab( 'content' );
-			const mediaUploadControl = this.page.locator( EditorSelectors.media.preview ).first();
-			await mediaUploadControl.hover();
-			await mediaUploadControl.waitFor();
-			await this.page.getByText( 'Upload SVG' ).first().click();
-		}
-		const regex = new RegExp( _icon );
-		const response = this.page.waitForResponse( regex );
-		await this.page.setInputFiles( EditorSelectors.media.imageInp, path.resolve( __dirname, `../../resources/${ _icon }.svg` ) );
-		await response;
-		await this.page.getByRole( 'button', { name: 'Insert Media' } )
-			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
-	}
-
-	/**
 	 * Parse link (HTML `a` tag) `src` attribute and gets Query Params and their values.
 	 * The same as you copy src attribute value and put in Postman
 	 *
