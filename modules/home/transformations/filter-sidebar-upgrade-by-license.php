@@ -43,7 +43,7 @@ class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
 	}
 
 	private function is_enabled( $item ) {
-		return ! empty( $item['is_enabled'] ) && 'true' === $item['show'];
+		return ! empty( $item['is_enabled'] ) && 'true' === $item['is_enabled'];
 	}
 
 	private function is_tier_acceptable( $item, $user_tier ) {
