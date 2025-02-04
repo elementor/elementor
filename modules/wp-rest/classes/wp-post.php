@@ -87,14 +87,15 @@ class WP_Post {
 	private function get_posts( \WP_REST_Request $request ) {
 		$params = $request->get_params();
 		$term = $params[ self::TERM_KEY ];
-		$excluded_types = $params[ self::EXCLUDED_POST_TYPES_KEY ];
-		$keys_format_map = $params[ self::KEYS_FORMAT_MAP_KEY ];
-		$max_count = isset( $params[ self::MAX_COUNT_KEY ] ) && 0 < $params[ self::MAX_COUNT_KEY ] ? $params[ self::MAX_COUNT_KEY ] : self::MAX_COUNT;
-		$post_types = new Collection( $this->wp_adapter->get_post_types( [ 'public' => true ], 'object' ) );
 
 		if ( empty( $term ) ) {
 			return [];
 		}
+
+		$excluded_types = $params[ self::EXCLUDED_POST_TYPES_KEY ];
+		$keys_format_map = $params[ self::KEYS_FORMAT_MAP_KEY ];
+		$max_count = isset( $params[ self::MAX_COUNT_KEY ] ) && 0 < $params[ self::MAX_COUNT_KEY ] ? $params[ self::MAX_COUNT_KEY ] : self::MAX_COUNT;
+		$post_types = new Collection( $this->wp_adapter->get_post_types( [ 'public' => true ], 'object' ) );
 
 		if ( ! empty( $excluded_types ) ) {
 			$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {

@@ -47,7 +47,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 					Link_Control::bind_to( 'link' )
 						->set_ajax_url( WP_Post::ENDPOINT )
 						->set_ajax_params( [
-							WP_Post::KEYS_FORMAT_MAP_KEY => json_encode( [
+							WP_Post::KEYS_FORMAT_MAP_KEY => wp_json_encode( [
 								'ID' => 'id',
 								'post_title' => 'label',
 								'post_type' => 'groupLabel',
