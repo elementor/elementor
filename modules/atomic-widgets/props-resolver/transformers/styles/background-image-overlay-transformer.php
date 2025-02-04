@@ -70,10 +70,17 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			return $value['position'];
 		}
 
-		$default_position = '0% 0%';
+		$size = $value['size'];
+		if ( $value['size'] === 'custom' ) {
+			$default_custom_size = 'auto';
+			$custom_width = $value['size-custom-width'] ?? $default_custom_size;
+			$custom_height = $value['size-custom-height'] ?? $default_custom_size;
+			$size = "$custom_width $custom_height";
+		}
 
+		$default_position = '0% 0%';
 		$position = $value['position'] ?? $default_position;
 
-		return $position . ' / ' . $value['size'];
+		return $position . ' / ' . $size;
 	}
 }

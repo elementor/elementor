@@ -627,7 +627,21 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 													'attachment' => [
 														'$$type' => 'string',
 														'value' => 'scroll'
-													]
+													],
+													'size-custom-width' => [
+														'$$type' => 'size',
+														'value' => [
+															'unit' => 'px',
+															'size' => 100
+														]
+													],
+													'size-custom-height' => [
+														'$$type' => 'size',
+														'value' => [
+															'unit' => 'px',
+															'size' => 200
+														]
+													],
 												]
 											]
 										]
@@ -1264,7 +1278,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 															],
 														],
 														'size' => 'cover',
-                                                        'position' => 'center left',
+														'position' => 'center left',
 														'repeat' => 'no-repeat',
 														'attachment' => 'scroll',
 													]

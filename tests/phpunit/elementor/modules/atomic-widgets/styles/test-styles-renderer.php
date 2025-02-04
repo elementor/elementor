@@ -310,7 +310,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			],
 		];
 
-		$stylesRenderer =  Styles_Renderer::make( [], '' );
+		$stylesRenderer = Styles_Renderer::make( [], '' );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
@@ -321,9 +321,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_transformers_receiving_faulty_values() {
 		// Arrange.
-		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
+		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			$registry->register( Size_Prop_Type::get_key(), new Size_Transformer() );
-		});
+		} );
 
 		$styles = [
 			[
@@ -343,7 +343,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			],
 		];
 
-		$stylesRenderer =  Styles_Renderer::make( [], '' );
+		$stylesRenderer = Styles_Renderer::make( [], '' );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
@@ -354,7 +354,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_nested_background_transformers() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
+		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
 			$images = $this->mock_images();
 
@@ -395,6 +395,19 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													'resolution' => 'medium',
 													'repeat' => 'repeat-y',
 													'attachment' => 'fixed',
+													'size' => 'custom',
+													'size-custom-height' => [ '$$type' => 'size',
+														'value' => [
+															'size' => 140,
+															'unit' => 'px'
+														]
+													],
+													'size-custom-width' => [ '$$type' => 'size',
+														'value' => [
+															'size' => 500,
+															'unit' => 'px'
+														]
+													],
 												]
 											],
 										],
@@ -483,6 +496,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertNotEmpty( $css, 'CSS should not be empty' );
 		$this->assertMatchesSnapshot( $css );
 	}
+
 	public function test_render__style_with_background_color_transformers() {
 		// Arrange.
 		$styles = [
@@ -521,7 +535,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_background_overlay_transformers() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
+		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
 			$images = $this->mock_images();
 
@@ -586,64 +600,64 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
-    public function test_render__style_with_background_image_transformers_without_image() {
-        // Arrange.
-        add_filter( 'wp_get_attachment_image_src', function() {
-            return [
-                'https://example.com/image.jpg',
-                100,
-                200,
-            ];
-        } );
+	public function test_render__style_with_background_image_transformers_without_image() {
+		// Arrange.
+		add_filter( 'wp_get_attachment_image_src', function () {
+			return [
+				'https://example.com/image.jpg',
+				100,
+				200,
+			];
+		} );
 
-        $styles = [
-            [
-                'id' => 'test-background-overlay',
-                'type' => 'class',
-                'variants' => [
-                    [
-                        'props' => [
-                            'background' => [
-                                '$$type' => 'background',
-                                'value' => [
-                                    'background-overlay' => [
-                                        '$$type' => 'background-overlay',
-                                        'value' => [
-                                            [
-                                                '$$type' => 'background-color-overlay',
-                                                'value' => 'blue',
-                                            ],
-                                            [
-                                                '$$type' => 'background-image-overlay',
-                                                'value' => [
-                                                    'size' => 'contain',
-                                                ]
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+		$styles = [
+			[
+				'id' => 'test-background-overlay',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => 'blue',
+											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'size' => 'contain',
+												]
+											],
+										],
+									],
+								],
+							],
+						],
 
-                        'meta' => [],
-                    ],
-                ],
-            ],
-        ];
+						'meta' => [],
+					],
+				],
+			],
+		];
 
-        $stylesRenderer = Styles_Renderer::make( [], '' );
+		$stylesRenderer = Styles_Renderer::make( [], '' );
 
-        // Act.
-        $css = $stylesRenderer->render( $styles );
+		// Act.
+		$css = $stylesRenderer->render( $styles );
 
-        // Assert.
-        $this->assertNotEmpty( $css, 'CSS should not be empty' );
-        $this->assertMatchesSnapshot( $css );
-    }
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
 
 	public function test_render__style_with_position_transformers() {
 		// Arrange.
-		add_action('elementor/atomic-widgets/styles/transformers/register', function( $registry ) {
+		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			$registry->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
 		} );
 
@@ -677,15 +691,15 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_nested_transformers() {
 		// Arrange.
-		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
+		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			$registry->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 			$registry->register( Dimensions_Prop_Type::get_key(), new Dimensions_Transformer() );
 			$registry->register( Layout_Direction_Prop_Type::get_key(), new Layout_Direction_Transformer() );
-			$registry->register( Border_Radius_Prop_Type::get_key(), new Corner_Sizes_Transformer( fn( $corner ) => 'border-' . $corner . '-radius' ) );
-			$registry->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
+			$registry->register( Border_Radius_Prop_Type::get_key(), new Corner_Sizes_Transformer( fn ( $corner ) => 'border-' . $corner . '-radius' ) );
+			$registry->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn ( $edge ) => 'border-' . $edge . '-width' ) );
 			$registry->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 			$registry->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
-		});
+		} );
 
 		$styles = [
 			[
@@ -821,9 +835,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_thrown_exceptions_in_transformer() {
 		// Arrange.
-		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
+		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			$registry->register( 'faulty', $this->make_mock_faulty_transformer() );
-		});
+		} );
 
 		$styles = [
 			[
