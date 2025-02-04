@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements;
+namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -18,7 +18,7 @@ class Div_Block extends Atomic_Element_Base {
 		return 'div-block';
 	}
 
-	public function get_name() {
+	public static function get_element_type(): string {
 		return 'div-block';
 	}
 

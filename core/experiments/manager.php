@@ -371,7 +371,7 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Optimized Markup', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Reduce the DOM size by eliminating HTML tags in various elements and widgets. This experiment includes markup changes so it might require updating custom CSS/JS code and cause compatibility issues with third party plugins.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_ALPHA,
+			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
 		] );
 
@@ -389,9 +389,9 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Load Google Fonts locally', 'elementor' ),
 			'description' => esc_html__( "To improve page load performance and user privacy, replace Google Fonts CDN links with self-hosted font files. This approach downloads and serves font files directly from your server, eliminating external requests to Google's servers.", 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'generator_tag' => true,
-			'default' => self::STATE_INACTIVE,
+			'default' => self::STATE_ACTIVE,
 		] );
 
 		$this->add_feature( [

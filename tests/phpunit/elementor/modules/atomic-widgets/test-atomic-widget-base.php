@@ -2,9 +2,8 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
-use Elementor\Core\DynamicTags\Data_Tag;
 use Elementor\Core\DynamicTags\Tag;
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
@@ -1318,7 +1317,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				], [] );
 			}
 
-			public function get_name() {
+			public static function get_element_type(): string {
 				return 'test-widget';
 			}
 
