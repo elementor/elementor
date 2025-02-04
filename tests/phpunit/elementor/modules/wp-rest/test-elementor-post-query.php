@@ -1,10 +1,10 @@
 <?php
 
-namespace Elementor\Testing\Modules\WpRest;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\WpRest\Classes\WP_Post;
-use Elementor\Testing\Modules\WpRest\Isolation\WordpressAdapter;
+use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Isolation\Wordpress_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,7 +18,7 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->post_query = new WP_Post( new WordpressAdapter() );
+		$this->post_query = new WP_Post( new Wordpress_Adapter() );
 		$this->post_query->register();
 
 		do_action( 'rest_api_init' );

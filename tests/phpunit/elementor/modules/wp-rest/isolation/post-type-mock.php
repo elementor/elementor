@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Testing\Modules\WpRest\Isolation;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Isolation;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

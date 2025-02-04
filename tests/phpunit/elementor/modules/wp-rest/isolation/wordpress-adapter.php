@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Testing\Modules\WpRest\Isolation;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Isolation;
 
 use Elementor\Core\Isolation\Wordpress_Adapter as Core_Adapter;
 
@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class WordpressAdapter extends Core_Adapter {
+class Wordpress_Adapter extends Core_Adapter {
 	private array $post_types;
 	private array $posts;
 
