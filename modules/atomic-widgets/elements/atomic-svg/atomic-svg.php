@@ -33,7 +33,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg_url = $settings['svg']['src'] ?? '';
 
 		$svg_content = ( strpos( $svg_url, self::SVG_PREFIX ) === 0 )
-			? urldecode( substr( $svg_url, strlen(self::SVG_PREFIX) ) )
+			? urldecode( substr( $svg_url, strlen( self::SVG_PREFIX ) ) )
 			: wp_remote_retrieve_body( wp_remote_get( $svg_url ) );
 
 		$svg = new \WP_HTML_Tag_Processor( $svg_content );
@@ -42,15 +42,17 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			$this->set_svg_attributes( $svg, $settings );
 		}
 
-		while ( $svg->next_tag( array( 'path', 'rect', 'circle', 'g' ) ) ) {
+		while ( $svg->next_tag( [ 'path', 'rect', 'circle', 'g' ] ) ) {
 			$svg->remove_attribute( 'fill' );
 		}
 
 		$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
-		echo ( false === $valid_svg ) ? self::get_default_svg() : $valid_svg;
+
+		// we need this line in order to render the svg, otherwise it will be rendered as a string
+		echo ( false === $valid_svg ) ?  self::get_default_svg()  : $valid_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
-	private function set_svg_attributes(\WP_HTML_Tag_Processor $svg, $settings ) {
+	private function set_svg_attributes( \WP_HTML_Tag_Processor $svg, $settings ) {
 		$svg->set_attribute( 'fill', $settings['color'] ?? 'currentColor' );
 		$svg->set_attribute( 'width', $settings['width'] ?? '100px' );
 		$svg->set_attribute( 'height', $settings['height'] ?? '100px' );
@@ -58,11 +60,11 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		return array(
+		return [
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
-				->set_items( array( Svg_Control::bind_to( 'svg' ) ) ),
-		);
+				->set_items( [ Svg_Control::bind_to( 'svg' ) ] ),
+		];
 	}
 
 	protected static function get_default_svg(): string {
@@ -83,12 +85,12 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return array(
-			'classes' => Classes_Prop_Type::make()->default( array() ),
+		return [
+			'classes' => Classes_Prop_Type::make()->default( [] ),
 			'width' => String_Prop_Type::make()->default( '100px' ),
 			'height' => String_Prop_Type::make()->default( '100px' ),
 			'margin-inline' => String_Prop_Type::make()->default( 'auto' ),
 			'svg' => Svg_Prop_Type::make()->default_url( self::get_placeholder() ),
-		);
+		];
 	}
 }
