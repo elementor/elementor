@@ -2,12 +2,15 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -27,6 +30,14 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 	public function get_icon() {
 		return 'eicon-shape';
+	}
+
+	/**
+	 * @param array $settings
+	 * @return bool
+	 */
+	private function is_linked( array $settings ): bool {
+		return isset( $settings['link'] ) && isset( $settings['link']['href'] ) && ! empty( $settings['link']['href'] );
 	}
 
 	protected function render() {
@@ -55,9 +66,19 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg->add_class( $settings['classes'] ?? '' );
 
 		$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
+		$valid_svg = $valid_svg ?: '';
 
+		$render_template = $valid_svg;
+		if ( $this->is_linked( $settings ) ) {
+			$attrs = Utils::render_html_attributes( $settings['link'] );
+			$render_template = sprintf(
+				'<a %s> %s </a>',
+				$attrs,
+				$valid_svg
+			);
+		}
 		// we need this line in order to render the svg, otherwise it will be rendered as a string
-		echo ( false === $valid_svg ) ? '' : $valid_svg; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $render_template; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	private function set_svg_attributes( $svg, $settings ) {
@@ -71,6 +92,11 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
 				Svg_Control::bind_to( 'svg' ),
+				Link_Control::bind_to( 'link' )
+					->set_options([])
+					->set_allow_custom_values( true )
+					->set_placeholder( __( 'Paste URL or type', 'elementor' ) )
+
 			] );
 
 		return [
@@ -107,6 +133,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->default( '100%' ),
 			'svg' => Image_Prop_Type::make()
 				->default_url( self::get_placeholder() ),
+			'link' => Link_Prop_Type::make(),
 		];
 	}
 }
