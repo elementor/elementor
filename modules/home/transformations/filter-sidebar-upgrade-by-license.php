@@ -33,13 +33,9 @@ class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
 	}
 
 	private function get_tier() {
-		$license = Utils::has_pro();
+		$license = Utils::has_pro() ? ConnectModule::ACCESS_TIER_PRO_LEGACY : ConnectModule::ACCESS_TIER_FREE;
 
-		if ( ! $license ) {
-			return ConnectModule::ACCESS_TIER_FREE;
-		}
-
-		return apply_filters( 'elementor/admin/homescreen_promotion_tier', ConnectModule::ACCESS_TIER_PRO_LEGACY );
+		return apply_filters( 'elementor/admin/homescreen_promotion_tier', $license );
 	}
 
 	private function is_enabled( $item ) {
