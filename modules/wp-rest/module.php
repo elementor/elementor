@@ -20,10 +20,10 @@ class Module extends BaseModule {
 		return 'wp-rest';
 	}
 
-	public function __construct( Wordpress_Adapter_Interface $wp_adapter = null ) {
+	public function __construct( ?Wordpress_Adapter_Interface $wp_adapter = null ) {
 		parent::__construct();
 
-		$wp_adapter = $wp_adapter ? new $wp_adapter() : new Wordpress_Adapter();
+		$wp_adapter = $wp_adapter ?? new Wordpress_Adapter();
 
 		add_action( 'rest_api_init', function () use ( $wp_adapter ) {
 			( new Elementor_Post_Meta() )->register();

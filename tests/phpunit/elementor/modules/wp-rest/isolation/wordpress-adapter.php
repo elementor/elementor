@@ -3,21 +3,22 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Isolation;
 
 use Elementor\Core\Isolation\Wordpress_Adapter as Core_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Wordpress_Adapter extends Core_Adapter {
+class Wordpress_Adapter extends Core_Adapter implements Wordpress_Adapter_Interface {
 	private array $post_types;
 	private array $posts;
 
 	public function __construct() {
 		$this->post_types = [
-			new Post_Type_Mock( 'Post', 'post' ),
-			new Post_Type_Mock( 'Page', 'page' ),
-			new Post_Type_Mock( 'Product', 'product' ),
-			new Post_Type_Mock( 'Movie', 'movie' ),
+			'post' => new Post_Type_Mock( 'Post', 'post' ),
+			'page' => new Post_Type_Mock( 'Page', 'page' ),
+			'product' => new Post_Type_Mock( 'Product', 'product' ),
+			'movie' => new Post_Type_Mock( 'Movie', 'movie' ),
 		];
 
 		$this->posts = [
@@ -37,10 +38,10 @@ class Wordpress_Adapter extends Core_Adapter {
 	}
 
 	public function get_posts( $args ): array {
-		return [];
+		return $this->posts;
 	}
 
 	public function get_post_types( $args = [], $output = 'names', $operator = 'and' ): array {
-		return [];
+		return $this->post_types;
 	}
 }

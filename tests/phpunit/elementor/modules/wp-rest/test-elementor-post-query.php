@@ -2,8 +2,10 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest;
 
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\WpRest\Classes\WP_Post;
+use Elementor\Modules\WpRest\Module as WpRestModule;
 use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Isolation\Wordpress_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,44 +15,42 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Elementor_Post_Query extends Elementor_Test_Base {
 	const URL = '/elementor/v1/post';
 
-	protected ?WP_Post $post_query;
+	protected ?Wordpress_Adapter_Interface $wordpress_adapter;
+	protected ?WpRestModule $rest_module;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->post_query = new WP_Post( new Wordpress_Adapter() );
-		$this->post_query->register();
+		$this->act_as_admin();
+		$this->wordpress_adapter = new Wordpress_Adapter();
+
+		add_action( 'rest_api_init', function () {
+			( new WP_Post( $this->wordpress_adapter ) )->register();
+		} );
 
 		do_action( 'rest_api_init' );
 	}
 
 	public function tearDown(): void {
-		$this->post_query = null;
-
 		parent::tearDown();
 	}
 
 	public function test_register() {
 		// Arrange
-		$params = [
-			WP_Post::EXCLUDED_POST_TYPES_KEY => http_build_query( [ 'page' ] ),
-			WP_Post::KEYS_FORMAT_MAP_KEY => http_build_query( [
-				'ID' => 'id',
-				'title' => 'label',
-				'post_type' => 'groupLabel',
-			] ),
-			WP_Post::TERM_KEY => 'Us',
-		];
 
-		$query_string = '?' . http_build_query( $params );
+		$request = new \WP_REST_Request( 'GET', self::URL );
+		$request->set_param( WP_Post::EXCLUDED_POST_TYPES_KEY, wp_json_encode( [ 'page' ] ) );
+		$request->set_param( WP_Post::TERM_KEY, 'Us' );
+		$request->set_param( WP_Post::KEYS_FORMAT_MAP_KEY, wp_json_encode( [
+			'ID' => 'id',
+			'title' => 'label',
+			'post_type' => 'groupLabel',
+		] ) );
 
 		// Act
-		$request = new \WP_REST_Request( 'GET', self::URL . $query_string );
 		$response = rest_get_server()->dispatch( $request );
-		var_dump( $response );
 		$data = $response->get_data();
-		$value = $data['data']['value'];
-		var_dump( $value );
+		var_dump( $data );
 
 		// Assert
 	}

@@ -24,7 +24,7 @@ class WP_Post {
 	private ?Wordpress_Adapter_Interface $wp_adapter = null;
 
 	public function __construct( ?Wordpress_Adapter_Interface $wp_adapter = null ) {
-		$this->wp_adapter = $wp_adapter ? new $wp_adapter() : new Wordpress_Adapter();
+		$this->wp_adapter = $wp_adapter ?? new Wordpress_Adapter();
 	}
 
 	public function register(): void {
@@ -56,7 +56,7 @@ class WP_Post {
 					}
 				},
 			],
-		] );
+		], true );
 	}
 
 	public function sanitize_string_array( $arr ) {
@@ -125,7 +125,7 @@ class WP_Post {
 				if ( isset( $post_object['post_type'] ) ) {
 					$post_object['post_type'] = $post_types->get( ( $post_object['post_type'] ) )->label;
 				}
-
+var_dump($post_object);
 				return Utils::replace_keys_in_object( $post_object, $keys_format_map );
 			} )
 			->all();
