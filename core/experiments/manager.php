@@ -376,15 +376,6 @@ class Manager extends Base_Object {
 		] );
 
 		$this->add_feature( [
-			'name' => 'e_onboarding',
-			'title' => esc_html__( 'Plugin Onboarding', 'elementor' ),
-			'description' => esc_html__( 'New plugin onboarding.', 'elementor' ),
-			static::TYPE_HIDDEN => true,
-			'release_status' => self::RELEASE_STATUS_ALPHA,
-			'default' => self::STATE_ACTIVE,
-		] );
-
-		$this->add_feature( [
 			'name' => 'e_local_google_fonts',
 			'title' => esc_html__( 'Load Google Fonts locally', 'elementor' ),
 			'description' => esc_html__( "To improve page load performance and user privacy, replace Google Fonts CDN links with self-hosted font files. This approach downloads and serves font files directly from your server, eliminating external requests to Google's servers.", 'elementor' ),
