@@ -1,7 +1,6 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Base;
+namespace Elementor\Modules\AtomicWidgets\Elements;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Atomic_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Widget_Base;
 

@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
-import { clickTab, setup, setBackgroundVideoUrl, isTabTitleVisible } from './helper';
+import { clickTabByPosition, setupExperiments, setBackgroundVideoUrl, isTabTitleVisible } from './helper';
 import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -10,7 +10,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await setup( wpAdmin );
+		await setupExperiments( wpAdmin );
 
 		await page.close();
 	} );
@@ -78,12 +78,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Assert that the iframe loaded. It's impossible to check if the video is playing due to issue in Chromium.
 		await expect.soft( contentContainerThree.locator( '.elementor-background-video-container iframe' ) ).toHaveCount( 1 );
 
-		await clickTab( editor.getPreviewFrame(), 1 );
+		await clickTabByPosition( editor.getPreviewFrame(), 1 );
 		await page.waitForTimeout( 3000 );
 		// Assert that the iframe loaded. It's impossible to check if the video is playing due to issue in Chromium.
 		await expect.soft( contentContainerTwo.locator( '.elementor-background-video-container iframe' ) ).toHaveCount( 1 );
 
-		await clickTab( editor.getPreviewFrame(), 0 );
+		await clickTabByPosition( editor.getPreviewFrame(), 0 );
 		await page.waitForTimeout( 3000 );
 		// Assert that the iframe loaded. It's impossible to check if the video is playing due to issue in Chromium.
 		await expect.soft( contentContainerOne.locator( '.elementor-background-video-container iframe' ) ).toHaveCount( 1 );
