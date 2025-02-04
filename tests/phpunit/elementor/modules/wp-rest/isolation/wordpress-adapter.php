@@ -38,7 +38,34 @@ class Wordpress_Adapter extends Core_Adapter implements Wordpress_Adapter_Interf
 	}
 
 	public function get_posts( $args ): array {
-		return $this->posts;
+		$default_args = [
+			'post_type' => [],
+			'numberposts' => -1,
+			'search_term' => '',
+		];
+
+		$args = wp_parse_args( $args, $default_args );
+		$search_term = trim( $args['search_term'] );
+		$post_types = (array) $args['post_type'];
+
+		$filtered_posts = array_filter( $this->posts, function ( $post ) use ( $search_term, $post_types ) {
+			$post_id = is_object( $post ) ? $post->ID : ( $post['ID'] ?? 0 );
+			$post_title = is_object( $post ) ? $post->post_title : ( $post['post_title'] ?? '' );
+			$post_type = is_object( $post ) ? $post->post_type : ( $post['post_type'] ?? '' );
+
+			if ( ! empty( $post_types ) && ! in_array( $post_type, $post_types, true ) ) {
+				return false;
+			}
+
+			if ( $search_term !== '' ) {
+				return ( stripos( $post_title, $search_term ) !== false )
+					|| ( stripos( (string) $post_id, $search_term ) !== false );
+			}
+
+			return true;
+		} );
+
+		return array_slice( array_values( $filtered_posts ), 0, $args['numberposts'] > 0 ? $args['numberposts'] : null );
 	}
 
 	public function get_post_types( $args = [], $output = 'names', $operator = 'and' ): array {

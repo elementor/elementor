@@ -125,7 +125,7 @@ class WP_Post {
 				if ( isset( $post_object['post_type'] ) ) {
 					$post_object['post_type'] = $post_types->get( ( $post_object['post_type'] ) )->label;
 				}
-var_dump($post_object);
+
 				return Utils::replace_keys_in_object( $post_object, $keys_format_map );
 			} )
 			->all();
