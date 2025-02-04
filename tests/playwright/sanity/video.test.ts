@@ -87,11 +87,13 @@ test.describe( 'Video tests inside a container @video', () => {
 	}
 
 	test( 'Choose image test', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		const videoWidget = new VideoWidget( page, testInfo );
 		const imageTitle = 'About-Pic-3-1';
 
+		// Act 1.
 		await wpAdmin.openNewPage();
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
@@ -99,18 +101,24 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
 		await editor.waitForPanelToLoad();
 		await editor.setSelectControlValue( 'image_overlay_size', 'thumbnail' );
-		await videoWidget.verifyImageSrc( {
+
+		// Assert 1 - in the Editor.
+		await videoWidget.verifyVideoOverlayImageSrc( {
 			selector: EditorSelectors.video.image,
 			imageTitle,
 			isPublished: false,
-			isVideo: true } );
+		} );
+
+		// Act 2.
 		await editor.publishAndViewPage();
 		await editor.waitForPanelToLoad();
-		await videoWidget.verifyImageSrc( {
+
+		// Assert 2 - in the frontend.
+		await videoWidget.verifyVideoOverlayImageSrc( {
 			selector: EditorSelectors.video.image,
 			imageTitle,
 			isPublished: true,
-			isVideo: true } );
+		} );
 	} );
 
 	test( 'Lightbox video test', async ( { page, apiRequests }, testInfo ) => {

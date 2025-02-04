@@ -17,6 +17,31 @@ export default class VideoWidget extends Content {
 	}
 
 	/**
+	 * Verify image `src` attribute has expected values.
+	 *
+	 * @param {Object}  args             - Image src arguments.
+	 * @param {string}  args.selector    - Image selector.
+	 * @param {string}  args.imageTitle  - Image title.
+	 * @param {boolean} args.isPublished - If true, the image is published.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async verifyVideoOverlayImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean } ): Promise<void> {
+		let imageLocator;
+		let imageSrc;
+
+		if ( args.isPublished ) {
+			imageLocator = this.page.locator( args.selector );
+			imageSrc = imageLocator.getAttribute( 'style' );
+		} else {
+			imageLocator = await this.editor.getPreviewFrame().waitForSelector( args.selector );
+			imageSrc = await imageLocator.getAttribute( 'style' );
+		}
+
+		expect( imageSrc.includes( args.imageTitle ) ).toEqual( true );
+	}
+
+	/**
 	 * Verify the video widget has lightbox set.
 	 *
 	 * @param {boolean} isPublished - Whether the page is published.
