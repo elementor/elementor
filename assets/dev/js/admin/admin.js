@@ -345,11 +345,6 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				$( '.elementor_font_display' ).toggle( '1' === $( this ).val() );
 			} ).trigger( 'change' );
 
-			$( '#e-experiment-landing-pages' ).on( 'change', function( event ) {
-				if ( 'inactive' === event.target.value ) {
-					$( '.elementor_experiment-landing-pages' ).hide();
-				}
-			} );
 		},
 
 		onInit() {

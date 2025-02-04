@@ -32,17 +32,8 @@ class Module extends BaseModule {
 		return 'landing-pages';
 	}
 
-	/**
-	 * Get Experimental Data
-	 *
-	 * Implementation of this method makes the module an experiment.
-	 *
-	 * @since 3.1.0
-	 *
-	 * @return array
-	 */
-	public static function get_experimental_data() {
-		return [
+	private function register_experiment() {
+		Plugin::$instance->experiments->add_feature( [
 			'name' => 'landing-pages',
 			'title' => esc_html__( 'Landing Pages', 'elementor' ),
 			'description' => esc_html__( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
@@ -53,7 +44,7 @@ class Module extends BaseModule {
 				'minimum_installation_version' => '3.22.0',
 			],
 			'deprecated' => true,
-		];
+		] );
 	}
 
 	/**
@@ -427,27 +418,12 @@ class Module extends BaseModule {
 		return false;
 	}
 
-	private function should_disable_feature(): bool {
-		$feature_status = get_option( 'elementor_experiment-landing-pages' );
-		$is_feature_disabled = ( 'default' === $feature_status || 'inactive' === $feature_status );
-
-		if ( $is_feature_disabled ) {
-			return true;
-		}
-
-		if ( ! $this->has_landing_pages() ) {
-			update_option( 'elementor_experiment-landing-pages', 'default' );
-			return true;
-		}
-
-		return false;
-	}
-
 	public function __construct() {
-		if ( $this->should_disable_feature() ) {
-			// wp_die( esc_html__( 'Landing Pages feature is disabled.', 'elementor' ) );
+		if ( ! $this->has_landing_pages() ) {
 			return;
 		}
+
+		$this->register_experiment();
 
 		$this->permalink_structure = get_option( 'permalink_structure' );
 
