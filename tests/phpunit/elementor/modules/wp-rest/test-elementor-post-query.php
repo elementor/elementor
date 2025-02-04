@@ -47,10 +47,11 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 		// Act
 		$request = new \WP_REST_Request( 'GET', self::URL . $query_string );
 		$response = rest_get_server()->dispatch( $request );
+		var_dump( $response );
 		$data = $response->get_data();
-		$value = $data['value'];
+		$value = $data['data']['value'];
+		var_dump( $value );
 
 		// Assert
-		var_dump( $value );
 	}
 }
