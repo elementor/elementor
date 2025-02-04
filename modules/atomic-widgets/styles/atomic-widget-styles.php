@@ -4,8 +4,8 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Element_Base;
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
