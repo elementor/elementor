@@ -43,6 +43,14 @@ class Style_Schema {
 			);
 		}
 
+		if ( $node instanceof Union_Prop_Type ) {
+			$prop_type = Union_Prop_Type::make();
+			foreach ( $node->get_prop_types() as $type ) {
+				$prop_type->add_prop_type( $this->process( $type ) );
+			}
+			return $prop_type;
+		}
+
 		return $node;
 	}
 
