@@ -344,7 +344,6 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			$( '.elementor_google_font select' ).on( 'change', function() {
 				$( '.elementor_font_display' ).toggle( '1' === $( this ).val() );
 			} ).trigger( 'change' );
-
 		},
 
 		onInit() {
