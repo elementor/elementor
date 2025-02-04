@@ -18,6 +18,8 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 			'repeat' => String_Prop_Type::make()->enum( [ 'repeat', 'repeat-x', 'repeat-y', 'no-repeat' ] ),
 			'size' => String_Prop_Type::make()->enum( [ 'auto', 'cover', 'contain' ] ),
 			'attachment' => String_Prop_Type::make()->enum( [ 'fixed', 'scroll' ] ),
+            'position-custom-x' => Size_Prop_Type::make(),
+            'position-custom-y' => Size_Prop_Type::make(),
 		];
 	}
 
@@ -32,6 +34,7 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 			'bottom center',
 			'bottom left',
 			'bottom right',
+			'custom',
 		];
 	}
 }

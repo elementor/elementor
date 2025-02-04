@@ -70,6 +70,10 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			return $value['position'];
 		}
 
+		if ( $value['position'] === 'custom' ) {
+			return $value['position-custom-x'] . ' ' . $value['position-custom-y'];
+		}
+
 		$default_position = '0% 0%';
 
 		$position = $value['position'] ?? $default_position;
