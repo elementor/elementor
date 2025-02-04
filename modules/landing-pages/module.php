@@ -32,6 +32,13 @@ class Module extends BaseModule {
 		return 'landing-pages';
 	}
 
+	/**
+	 * Register Experimental Feature
+	 *
+	 * Implementation of this method makes the module an experiment.
+	 *
+	 * @since 3.28.0
+	 */
 	private function register_experiment() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => 'landing-pages',
