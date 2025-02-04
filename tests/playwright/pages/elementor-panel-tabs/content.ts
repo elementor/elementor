@@ -1,7 +1,6 @@
 import EditorSelectors from '../../selectors/editor-selectors';
 import { expect, type Frame, Locator, type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
-import path from 'path';
 import { LinkOptions } from '../../types/types';
 
 export default class Content {
