@@ -11,6 +11,9 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 		$original_data = $this->mock_home_screen_data();
 
 		$transformation = new Filter_Sidebar_Upgrade_By_License( [] );
+		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
+			return 'free';
+		} );
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
@@ -23,9 +26,10 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 	public function test_transform__pro_plugin() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
-
 		$transformation = new Filter_Sidebar_Upgrade_By_License( [] );
-		$transformation->has_pro = true;
+		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
+			return 'pro';
+		} );
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
@@ -35,9 +39,9 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 		$this->assertEquals( $transformed_data, $expected_data );
 	}
 
-	public function test_transform__core_show_is_false() {
+	public function test_transform__core_is_enabled_is_false() {
 		// Arrange
-		$original_data = $this->mock_home_screen_data_show_is_false();
+		$original_data = $this->mock_home_screen_data_is_enabled_is_false();
 
 		$transformation = new Filter_Sidebar_Upgrade_By_License( [] );
 
@@ -53,22 +57,22 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 		return [
 			'sidebar_upgrade' => [
 				[
-					'thing' => [
+					'data' => [
 						'key' => 'value',
 					],
 					'license' => [
 						'free'
 					],
-					'show' => 'true',
+					'is_enabled' => 'true',
 				],
 				[
-					'thing' => [
+					'data' => [
 						'key' => 'value',
 					],
 					'license' => [
 						'pro'
 					],
-					'show' => 'true',
+					'is_enabled' => 'true',
 				],
 			],
 			'misc' => [
@@ -78,7 +82,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 		];
 	}
 
-	private function mock_home_screen_data_show_is_false() {
+	private function mock_home_screen_data_is_enabled_is_false() {
 		return [
 			'sidebar_upgrade' => [
 				[
@@ -88,7 +92,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 					'license' => [
 						'free'
 					],
-					'show' => 'false',
+					'is_enabled' => 'false',
 				],
 				[
 					'thing' => [
@@ -97,7 +101,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 					'license' => [
 						'pro'
 					],
-					'show' => 'false',
+					'is_enabled' => 'false',
 				],
 			],
 			'misc' => [
@@ -117,7 +121,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 				'license' => [
 					'free'
 				],
-				'show' => 'true',
+				'is_enabled' => 'true',
 			],
 			'misc' => [
 				'Name' => 'Microsoft',
@@ -135,7 +139,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 				'license' => [
 					'pro'
 				],
-				'show' => 'true',
+				'is_enabled' => 'true',
 			],
 			'misc' => [
 				'Name' => 'Microsoft',
