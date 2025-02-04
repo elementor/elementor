@@ -20,6 +20,14 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 		$background_style = "url(\" $image_url \")";
 
+		if ( $value['repeat'] ) {
+			$background_style .= ' ' . $value['repeat'];
+		}
+
+		if ( $value['attachment'] ) {
+			$background_style .= ' ' . $value['attachment'];
+		}
+
 		$position_and_size_style = $this->get_position_and_size_style( $value );
 
 		if ( ! empty( $position_and_size_style ) ) {
