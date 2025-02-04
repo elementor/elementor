@@ -86,7 +86,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 		return [
 			'sidebar_upgrade' => [
 				[
-					'thing' => [
+					'data' => [
 						'key' => 'value',
 					],
 					'license' => [
@@ -95,7 +95,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 					'is_enabled' => 'false',
 				],
 				[
-					'thing' => [
+					'data' => [
 						'key' => 'value',
 					],
 					'license' => [
@@ -115,7 +115,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 	private function mock_home_screen_data_transformed_core() {
 		return [
 			'sidebar_upgrade' => [
-				'thing' => [
+				'data' => [
 					'key' => 'value',
 				],
 				'license' => [
@@ -133,7 +133,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 	private function mock_home_screen_data_transformed_pro() {
 		return [
 			'sidebar_upgrade' => [
-				'thing' => [
+				'data' => [
 					'key' => 'value',
 				],
 				'license' => [
