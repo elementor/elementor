@@ -111,8 +111,7 @@ export default class Content {
 			: await this.editor.getPreviewFrame().waitForSelector( args.selector );
 		const attribute = args.isVideo ? 'style' : 'src';
 		const src = await image.getAttribute( attribute );
-		const regex = new RegExp( args.imageTitle );
-		expect( regex.test( src ) ).toEqual( true );
+		expect( src.includes( args.imageTitle ) ).toEqual( true );
 	}
 
 	/**
