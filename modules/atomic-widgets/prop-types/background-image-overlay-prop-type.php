@@ -16,9 +16,9 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 			'position' => String_Prop_Type::make()->enum( self::get_position_enum_values() ),
 			'resolution' => String_Prop_Type::make()->enum( array( 'thumbnail', 'medium', 'medium_large', 'large', 'full' ) ),
 			'repeat' => String_Prop_Type::make()->enum( array( 'repeat', 'repeat-x', 'repeat-y', 'no-repeat' ) ),
-			'size' => String_Prop_Type::make()->enum( array( 'auto', 'cover', 'contain', 'custom' ) ),
-			'size-custom-width' => Size_Prop_Type::make(),
-			'size-custom-height' => Size_Prop_Type::make(),
+			'size' => Union_Prop_Type::make()
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto', 'cover', 'contain' ] ) )
+				->add_prop_type( Background_Image_Overlay_Offset_Prop_Type::make() ),
 			'attachment' => String_Prop_Type::make()->enum( array( 'fixed', 'scroll' ) ),
 		];
 	}
