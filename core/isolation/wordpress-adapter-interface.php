@@ -35,4 +35,8 @@ interface Wordpress_Adapter_Interface {
 	public function current_user_can( $capability, $args );
 
 	public function get_post_status( $post_id );
+
+	public function add_filter( string $hook_name, callable $callback, int $priority = 10, int $accepted_args = 1 ): bool;
+
+	public function add_action( string $hook_name, callable $callback, int $priority = 10, int $accepted_args = 1 ): bool;
 }

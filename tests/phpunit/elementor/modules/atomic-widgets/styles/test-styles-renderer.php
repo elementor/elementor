@@ -376,7 +376,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'value' => [
 											[
 												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => 'blue',
+													],
+												],
 											],
 											[
 												'$$type' => 'background-image-overlay',
@@ -439,7 +444,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'value' => [
 											[
 												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => 'blue',
+													],
+												],
 											],
 											[
 												'$$type' => 'background-image-overlay',
@@ -519,6 +529,62 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
+	public function test_render__style_with_background_overlay_using_global_variable() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-bg-overlay',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => [
+													'color' => [
+														'$$type' => 'global-color-variable',
+														'value' => 'my-global-var',
+													],
+												],
+											],
+
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => 'blue',
+													],
+												],
+											],
+										],
+									],
+								],
+							],
+						],
+
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
+
 	public function test_render__style_with_background_overlay_transformers() {
 		// Arrange.
 		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
@@ -543,7 +609,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'value' => [
 											[
 												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => 'blue',
+													],
+												],
 											],
 											[
 												'$$type' => 'background-image-overlay',
@@ -610,8 +681,13 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
                                         '$$type' => 'background-overlay',
                                         'value' => [
                                             [
-                                                '$$type' => 'background-color-overlay',
-                                                'value' => 'blue',
+	                                            '$$type' => 'background-color-overlay',
+	                                            'value' => [
+		                                            'color' => [
+			                                            '$$type' => 'color',
+			                                            'value' => 'blue',
+		                                            ],
+	                                            ],
                                             ],
                                             [
                                                 '$$type' => 'background-image-overlay',
