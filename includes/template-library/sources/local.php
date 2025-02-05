@@ -620,11 +620,11 @@ class Source_Local extends Source_Base {
 
 		$save_data = [];
 
-		if ( isset($new_data['title']) ) {
+		if ( isset( $new_data['title'] ) ) {
 			$save_data['post_title'] = $new_data['title'];
 		}
 
-		if ( isset($new_data['content']) ) {
+		if ( isset( $new_data['content'] ) ) {
 			$save_data['elements'] = $new_data['content'];
 		}
 
@@ -1673,11 +1673,11 @@ class Source_Local extends Source_Base {
 		);
 	}
 
-	public function on_template_update(\Elementor\Core\Base\Document $document, array $data) {
-		if ( ! empty( $data[ 'post_title' ] ) ) {
+	public function on_template_update( \Elementor\Core\Base\Document $document, array $data ) {
+		if ( ! empty( $data['post_title'] ) ) {
 			wp_update_post( [
 				'ID' => $document->get_main_id(),
-				'post_title' => $data[ 'post_title' ]
+				'post_title' => $data['post_title'],
 			] );
 		}
 	}
