@@ -119,5 +119,19 @@ class Cloud_Library extends Library {
 		return true;
 	}
 
+	public function update_resource( array $template_data ) {
+		$endpoint = 'resources/' . $template_data['template_id'];
+
+		$request = $this->http_request( 'PATCH', $endpoint, [ 'body' => $template_data ], [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+
+		if ( is_wp_error( $request ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	protected function init() {}
 }

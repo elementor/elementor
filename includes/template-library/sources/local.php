@@ -620,11 +620,11 @@ class Source_Local extends Source_Base {
 
 		$save_data = [];
 
-		if ( isset( $new_data['title'] ) ) {
+		if ( isset($new_data['title']) ) {
 			$save_data['post_title'] = $new_data['title'];
 		}
 
-		if ( isset( $new_data['content'] ) ) {
+		if ( isset($new_data['content']) ) {
 			$save_data['elements'] = $new_data['content'];
 		}
 
