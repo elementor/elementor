@@ -57,7 +57,6 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 				this.ui.toggleMoreIcon.removeClass( 'eicon-ellipsis-h' ).addClass( 'eicon-loading eicon-animation-spin' );
 			},
 			onSuccess: () => {
-				// elementor.templates.showTemplates();
 				this.ui.toggleMoreIcon.addClass( 'eicon-ellipsis-h' ).removeClass( 'eicon-loading eicon-animation-spin' );
 			},
 			onError: () => {
