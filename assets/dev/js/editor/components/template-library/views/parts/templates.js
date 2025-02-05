@@ -1,11 +1,11 @@
 var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
 	TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' ),
-	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
+	TemplateLibraryCollectionView;
 
 import Select2 from 'elementor-editor-utils/select2.js';
 
-const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
+TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
 
 	id: 'elementor-template-library-templates',
