@@ -12,18 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Hooks {
-	private Wordpress_Adapter_Interface $wp_kernel;
+	private Wordpress_Adapter_Interface $wp_adapter;
 
-	public function __construct( Wordpress_Adapter_Interface $wp_kernel ) {
-		$this->wp_kernel = $wp_kernel;
+	public function __construct( Wordpress_Adapter_Interface $wp_adapter ) {
+		$this->wp_adapter = $wp_adapter;
 	}
 
 	public function register() {
-		$this->wp_kernel->add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $transformers ) {
+		$this->wp_adapter->add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $transformers ) {
 			$this->register_style_transformers( $transformers );
 		} );
 
-		$this->wp_kernel->add_filter( 'elementor/atomic-widgets/styles/schema', function ( $schema ) {
+		$this->wp_adapter->add_filter( 'elementor/atomic-widgets/styles/schema', function ( $schema ) {
 			return $this->augment_style_schema( $schema );
 		} );
 
