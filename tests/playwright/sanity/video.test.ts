@@ -9,23 +9,19 @@ import videos from '../testData/video.json';
 
 test.describe( 'Video tests inside a container @video', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			container: true,
-		} );
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( { container: true } );
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
+		await page.close();
 	} );
 
 	test( 'Verify that there is no gap between the video widget and the container', async ( { browser, apiRequests }, testInfo ) => {
