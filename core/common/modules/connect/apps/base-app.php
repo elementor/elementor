@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
+use Elementor\Api;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
 use Elementor\Core\Utils\Collection;
@@ -171,7 +172,7 @@ abstract class Base_App {
 
 	public function action_reset() {
 		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( 'elementor_remote_info_library' );
+			delete_transient( Api::TRANSIENT_KEY_PREFIX_TEMPLATES . ELEMENTOR_VERSION );
 		}
 
 		$this->redirect_to_admin_page();
