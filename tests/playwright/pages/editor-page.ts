@@ -61,7 +61,10 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Upload SVG in the Media Library. Expects media library to be open.
+	 * Upload SVG in the Media Library. Can be used on both Media Control and Icons Control.
+	 *
+	 * Please note that this method expects media library to be open as different controls
+	 * have different ways to open the media library.
 	 *
 	 * @param {string} svgFileName - Optional. SVG file name, without extension.
 	 *
