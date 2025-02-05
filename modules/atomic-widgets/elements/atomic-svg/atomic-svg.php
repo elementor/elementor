@@ -32,9 +32,15 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$settings = $this->get_atomic_settings();
 		$svg_url = $settings['svg']['src'] ?? '';
 
+		if ( ! $svg_url ) {
+			// we need this line in order to render the svg, otherwise it will be rendered as a string
+			echo self::get_default_svg(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			return;
+		}
+
 		$svg_content = ( strpos( $svg_url, self::SVG_PREFIX ) === 0 )
 			? urldecode( substr( $svg_url, strlen( self::SVG_PREFIX ) ) )
-			: wp_remote_retrieve_body( wp_remote_get( $svg_url ) );
+			: wp_remote_retrieve_body( wp_safe_remote_get( $svg_url ) );
 
 		$svg = new \WP_HTML_Tag_Processor( $svg_content );
 
@@ -49,7 +55,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
 		// we need this line in order to render the svg, otherwise it will be rendered as a string
-		echo ( false === $valid_svg ) ?  self::get_default_svg()  : $valid_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $valid_svg ?  $valid_svg : self::get_default_svg(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	private function set_svg_attributes( \WP_HTML_Tag_Processor $svg, $settings ) {
