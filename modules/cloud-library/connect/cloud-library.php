@@ -14,8 +14,8 @@ class Cloud_Library extends Library {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	protected function get_slug(): string {
-		return 'cloud-library';
+	protected function get_api_url(): string {
+		return 'http://localhost:3000/api/v1/cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
@@ -94,23 +94,9 @@ class Cloud_Library extends Library {
 	public function delete_resource( $template_id ): bool {
 		$request = $this->http_request( 'DELETE', 'resources/' . $template_id );
 
-		if ( isset( $request->errors[204] ) && 'No Content' === $request->errors[204][0] ) {
-			return true;
-		}
-
-		if ( is_wp_error( $request ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public function update_resource( array $template_data ) {
-		$endpoint = 'resources/' . $template_data['template_id'];
-
-		$request = $this->http_request( 'PATCH', $endpoint, [ 'body' => $template_data ], [
-			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
-		] );
+		if ( isset( $request->errors[ 204 ] ) && 'No Content' === $request->errors[ 204 ][ 0 ] ) {
+            return true;
+        }
 
 		if ( is_wp_error( $request ) ) {
 			return false;
