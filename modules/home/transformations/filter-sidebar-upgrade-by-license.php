@@ -12,13 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
 
 	public function transform( array $home_screen_data ): array {
-		$new_sidebar_upgrade = [];
 		$user_tier = $this->get_tier();
 
-		array_filter( $home_screen_data['sidebar_upgrade'], function( $item ) use ( &$new_sidebar_upgrade, $user_tier ) {
-			if ( $this->is_enabled( $item ) && $this->is_tier_acceptable( $item, $user_tier ) ) {
-				$new_sidebar_upgrade[] = $item;
-			}
+		$new_sidebar_upgrade = array_filter( $home_screen_data['sidebar_upgrade'], function( $item ) use ( $user_tier ) {
+			return $this->is_enabled( $item ) && $this->is_tier_acceptable( $item, $user_tier );
 		});
 
 		if ( empty( $new_sidebar_upgrade ) ) {

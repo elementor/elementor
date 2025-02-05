@@ -8,13 +8,23 @@ import ListItemText from '@elementor/ui/ListItemText';
 const SidebarDefault = ( { header, cta, repeater } ) => {
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3 } }>
-			<Stack gap={ 1.5 } sx={ { alignItems: 'center', textAlign: 'center', pb: 4 } }>
+			<Stack gap={ 1.5 } alignItems="center" textAlign="center" sx={ { pb: 4 } }>
 				<Box component="img" src={ header.image }></Box>
 				<Box>
 					<Typography variant="h6">{ header.title }</Typography>
 					<Typography variant="body2" color="text.secondary">{ header.description }</Typography>
 				</Box>
-				<Button variant="contained" size="medium" color="promotion" href={ cta.url } startIcon={ <Box component="img" src={ cta.image } sx={ { width: '16px' } }></Box> } target="_blank" sx={ { maxWidth: 'fit-content' } }>{ cta.label }</Button>
+				<Button
+					variant="contained"
+					size="medium"
+					color="promotion"
+					href={ cta.url }
+					startIcon={ <Box component="img" src={ cta.image } sx={ { width: '16px' } }></Box> }
+					target="_blank"
+					sx={ { maxWidth: 'fit-content' } }
+				>
+					{ cta.label }
+				</Button>
 			</Stack>
 			<List sx={ { p: 0 } }>
 				{
