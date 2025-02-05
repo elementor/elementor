@@ -13,13 +13,10 @@ const SidebarBanner = ( { image, link } ) => {
 						width: '100%',
 						height: '100%',
 						boxShadow: 'none',
-						outline: 'none',
 						'&:focus': {
-							outline: 'none',
 							boxShadow: 'none',
 						},
 						'&:active': {
-							outline: 'none',
 							boxShadow: 'none',
 						}
 					}
