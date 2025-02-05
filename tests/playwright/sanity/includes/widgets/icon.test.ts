@@ -31,6 +31,7 @@ test.describe( 'Icon and social icon widget tests', () => {
 		} );
 
 		await test.step( 'Act', async () => {
+			await editor.openPanelTab( 'content' );
 			const mediaUploadControl = page.locator( '.elementor-control-selected_icon .elementor-control-media__preview' ).first();
 			await mediaUploadControl.hover();
 			await mediaUploadControl.waitFor();
