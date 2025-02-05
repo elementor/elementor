@@ -335,7 +335,7 @@ class Manager {
 	}
 
 	public function rename_template( array $template_data ) {
-		$validate_args = $this->ensure_args( [ 'source', 'title' ], $template_data );
+		$validate_args = $this->ensure_args( [ 'source', 'title', 'id' ], $template_data );
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;

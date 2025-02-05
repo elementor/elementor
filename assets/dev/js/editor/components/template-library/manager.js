@@ -143,11 +143,8 @@ const TemplateLibraryManager = function() {
 			elementorCommon.ajax.addRequest( 'rename_template', {
 				data: {
 					source: templateModel.get( 'source' ),
-					template_id: templateModel.get( 'template_id' ),
 					id: templateModel.get( 'template_id' ),
 					title: templateModel.get( 'title' ),
-					type: templateModel.get( 'type' ),
-					subType: templateModel.get( 'subType' ),
 				},
 				success: ( response ) => {
 					if ( options.onSuccess ) {
