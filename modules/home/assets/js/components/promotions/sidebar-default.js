@@ -1,11 +1,11 @@
-import { Box, Paper, Stack, Typography } from "@elementor/ui";
-import Button from "@elementor/ui/Button";
-import List from "@elementor/ui/List";
-import ListItem from "@elementor/ui/ListItem";
-import SideBarCheckIcon from "../../icons/side-bar-check-icon";
-import ListItemText from "@elementor/ui/ListItemText";
+import { Box, Paper, Stack, Typography } from '@elementor/ui';
+import Button from '@elementor/ui/Button';
+import List from '@elementor/ui/List';
+import ListItem from '@elementor/ui/ListItem';
+import SideBarCheckIcon from '../../icons/side-bar-check-icon';
+import ListItemText from '@elementor/ui/ListItemText';
 
-const SidebarDefault = ( { header, cta, repeater }) => {
+const SidebarDefault = ( { header, cta, repeater } ) => {
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3 } }>
 			<Stack gap={ 1.5 } alignItems="center" textAlign="center" sx={ { pb: 4 } }>
@@ -40,7 +40,7 @@ const SidebarDefault = ( { header, cta, repeater }) => {
 			</List>
 		</Paper>
 	);
-}
+};
 
 export default SidebarDefault;
 
@@ -48,4 +48,4 @@ SidebarDefault.propTypes = {
 	header: PropTypes.object.isRequired,
 	cta: PropTypes.object.isRequired,
 	repeater: PropTypes.array,
-}
+};

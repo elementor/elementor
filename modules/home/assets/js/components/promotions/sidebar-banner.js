@@ -1,12 +1,12 @@
-import { Box, Paper } from "@elementor/ui";
-import Link from "@elementor/ui/Link";
+import { Box, Paper } from '@elementor/ui';
+import Link from '@elementor/ui/Link';
 
 const SidebarBanner = ( { image, link } ) => {
 	return (
-		<Paper elevation={ 0 } sx={{ overflow: 'hidden' }}>
+		<Paper elevation={ 0 } sx={ { overflow: 'hidden' } }>
 			<Link
 				target="_blank"
-				href={link}
+				href={ link }
 				sx={
 					{
 						display: 'block',
@@ -18,11 +18,11 @@ const SidebarBanner = ( { image, link } ) => {
 						},
 						'&:active': {
 							boxShadow: 'none',
-						}
+						},
 					}
 				}
 			>
-				<Box component={'img'} src={image} sx={
+				<Box component={ 'img' } src={ image } sx={
 					{
 						width: '100%',
 						height: '100%',
@@ -30,8 +30,8 @@ const SidebarBanner = ( { image, link } ) => {
 				}></Box>
 			</Link>
 		</Paper>
-	)
-}
+	);
+};
 
 export default SidebarBanner;
 

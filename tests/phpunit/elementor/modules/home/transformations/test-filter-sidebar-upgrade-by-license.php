@@ -11,9 +11,6 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 		$original_data = $this->mock_home_screen_data();
 
 		$transformation = new Filter_Sidebar_Upgrade_By_License( [] );
-		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
-			return 'free';
-		} );
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
@@ -27,6 +24,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
 		$transformation = new Filter_Sidebar_Upgrade_By_License( [] );
+
 		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
 			return 'pro';
 		} );
