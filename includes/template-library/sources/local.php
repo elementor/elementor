@@ -618,9 +618,17 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', esc_html__( 'Template not exist.', 'elementor' ) );
 		}
 
-		$document->save( [
-			'elements' => $new_data['content'],
-		] );
+		$save_data = [];
+
+		if ( isset($new_data['title']) ) {
+			$save_data['post_title'] = $new_data['title'];
+		}
+
+		if ( isset($new_data['content']) ) {
+			$save_data['elements'] = $new_data['content'];
+		}
+
+		$document->save( $save_data );
 
 		/**
 		 * After template library update.
@@ -1632,6 +1640,8 @@ class Source_Local extends Source_Base {
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
+			add_action( 'elementor/document/after_save', [ $this, 'on_template_update' ], 10, 2 );
+
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 
 			// Template filter by category.
@@ -1661,6 +1671,15 @@ class Source_Local extends Source_Base {
 				return $this->remove_elementor_cpt_from_sitemap( $post_types );
 			}
 		);
+	}
+
+	public function on_template_update(\Elementor\Core\Base\Document $document, array $data) {
+		if ( ! empty( $data[ 'post_title' ] ) ) {
+			wp_update_post( [
+				'ID' => $document->get_main_id(),
+				'post_title' => $data[ 'post_title' ]
+			] );
+		}
 	}
 
 	/**

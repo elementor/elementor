@@ -1,9 +1,8 @@
 import Component from './component';
 
-var TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
-	TemplateLibraryManager;
+const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
-TemplateLibraryManager = function() {
+const TemplateLibraryManager = function() {
 	this.modalConfig = {};
 
 	const self = this,
@@ -130,6 +129,78 @@ TemplateLibraryManager = function() {
 		};
 
 		dialog.show();
+	};
+
+	this.renameTemplate = ( templateModel, options ) => {
+		const originalTitle = templateModel.get( 'title' );
+		const dialog = this.getRenameDialog( templateModel );
+
+		dialog.onConfirm = () => {
+			if ( options.onConfirm ) {
+				options.onConfirm();
+			}
+
+			elementorCommon.ajax.addRequest( 'rename_template', {
+				data: {
+					source: templateModel.get( 'source' ),
+					template_id: templateModel.get( 'template_id' ),
+					id: templateModel.get( 'template_id' ),
+					title: templateModel.get( 'title' ),
+					type: templateModel.get( 'type' ),
+					subType: templateModel.get( 'subType' ),
+				},
+				success: ( response ) => {
+					if ( options.onSuccess ) {
+						options.onSuccess( response );
+					}
+				},
+				error: ( error ) => {
+					this.showErrorDialog( error );
+					templateModel.set( 'title', originalTitle );
+				},
+			} );
+		};
+
+		dialog.show();
+	};
+
+	this.getRenameDialog = function( templateModel ) {
+		const headerMessage = sprintf(
+			// Translators: %1$s: Folder name, %2$s: Number of templates.
+			__( 'Rename "%1$s".', 'elementor' ),
+			templateModel.get( 'title' ),
+		);
+
+		const originalTitle = templateModel.get( 'title' );
+
+		const $inputArea = jQuery( '<input>', {
+			id: 'elementor-rename-template-dialog__input',
+			type: 'text',
+			value: templateModel.get( 'title' ),
+		} )
+			.attr( 'autocomplete', 'off' )
+			.on( 'change', ( event ) => {
+				event.preventDefault();
+				templateModel.set( 'title', event.target.value );
+			} );
+
+		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-template-library-rename-dialog',
+			headerMessage,
+			message: $inputArea,
+			strings: {
+				confirm: __( 'Rename', 'elementor' ),
+			},
+			hide: {
+				ignore: '#elementor-template-library-modal',
+			},
+			onCancel: () => {
+				templateModel.set( 'title', originalTitle );
+			},
+			onShow: () => {
+				$inputArea.trigger( 'focus' );
+			},
+		} );
 	};
 
 	this.deleteFolder = function( templateModel, options ) {
