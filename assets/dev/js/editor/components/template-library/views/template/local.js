@@ -11,6 +11,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			toggleMore: '.elementor-template-library-template-more-toggle',
 			toggleMoreIcon: '.elementor-template-library-template-more-toggle i',
 			titleCell: '.elementor-template-library-template-name',
+			resourceIcon: '.elementor-template-library-template-name i',
 		} );
 	},
 
@@ -27,7 +28,17 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onTitleChange() {
-		this.ui.titleCell.text( this.model.get( 'title' ) );
+		const isCloudSource = 'cloud' === this.model.get( 'source' );
+		const title = _.escape( this.model.get( 'title' ) );
+
+		let content = title;
+
+		if ( isCloudSource ) {
+			const resourceIcon = this.ui.resourceIcon[ 0 ]?.outerHTML;
+			content = resourceIcon + title;
+		}
+
+		this.ui.titleCell.html( content );
 	},
 
 	onDeleteButtonClick() {
