@@ -94,9 +94,9 @@ class Cloud_Library extends Library {
 	public function delete_resource( $template_id ): bool {
 		$request = $this->http_request( 'DELETE', 'resources/' . $template_id );
 
-		if ( isset( $request->errors[ 204 ] ) && 'No Content' === $request->errors[ 204 ][ 0 ] ) {
-            return true;
-        }
+		if ( isset( $request->errors[204] ) && 'No Content' === $request->errors[204][0] ) {
+			return true;
+		}
 
 		if ( is_wp_error( $request ) ) {
 			return false;
