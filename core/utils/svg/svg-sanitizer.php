@@ -352,6 +352,24 @@ class Svg_Sanitizer {
 			'dy',
 			'rotate',
 			'textlength',
+			'accumulate',
+			'additive',
+			'attributename',
+			'begin',
+			'by',
+			'calcmode',
+			'dur',
+			'end',
+			'from',
+			'keysplines',
+			'keytimes',
+			'max',
+			'min',
+			'repeatcount',
+			'repeatdur',
+			'restart',
+			'to',
+			'values'
 		];
 
 		/**
@@ -385,6 +403,7 @@ class Svg_Sanitizer {
 	private function get_allowed_elements() {
 		$allowed_elements = [
 			'a',
+			'animate',
 			'circle',
 			'clippath',
 			'defs',
