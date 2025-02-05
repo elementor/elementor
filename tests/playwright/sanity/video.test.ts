@@ -104,7 +104,7 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		// Assert 1 - in the Editor.
 		await videoWidget.verifyVideoOverlayImageSrc( {
-			selector: EditorSelectors.video.image,
+			imageSelector: EditorSelectors.video.image,
 			imageTitle,
 			isPublished: false,
 		} );
@@ -115,7 +115,7 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		// Assert 2 - in the frontend.
 		await videoWidget.verifyVideoOverlayImageSrc( {
-			selector: EditorSelectors.video.image,
+			imageSelector: EditorSelectors.video.image,
 			imageTitle,
 			isPublished: true,
 		} );

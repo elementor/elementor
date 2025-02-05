@@ -19,26 +19,21 @@ export default class VideoWidget extends Content {
 	/**
 	 * Verify image `src` attribute has expected values.
 	 *
-	 * @param {Object}  args             - Image src arguments.
-	 * @param {string}  args.selector    - Image selector.
-	 * @param {string}  args.imageTitle  - Image title.
-	 * @param {boolean} args.isPublished - If true, the image is published.
+	 * @param {Object}  args               - Image arguments.
+	 * @param {string}  args.imageSelector - Image selector.
+	 * @param {string}  args.imageTitle    - Image title.
+	 * @param {boolean} args.isPublished   - If true, the image is published.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async verifyVideoOverlayImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean } ): Promise<void> {
-		let imageLocator;
-		let imageSrc;
+	async verifyVideoOverlayImageSrc( args: { imageSelector: string, imageTitle: string, isPublished: boolean } ): Promise<void> {
+		const imageLocator = ( args.isPublished )
+			? this.page.locator( args.imageSelector )
+			: await this.editor.getPreviewFrame().waitForSelector( args.imageSelector );
 
-		if ( args.isPublished ) {
-			imageLocator = this.page.locator( args.selector );
-			imageSrc = imageLocator.getAttribute( 'style' );
-		} else {
-			imageLocator = await this.editor.getPreviewFrame().waitForSelector( args.selector );
-			imageSrc = await imageLocator.getAttribute( 'style' );
-		}
+		const imageSrc = await imageLocator.getAttribute( 'style' );
 
-		expect( imageSrc.includes( args.imageTitle ) ).toEqual( true );
+		expect( imageSrc ).toContain( args.imageTitle );
 	}
 
 	/**
