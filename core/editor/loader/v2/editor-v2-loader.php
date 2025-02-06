@@ -20,6 +20,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 */
 	const LIBS = [
 		'editor-responsive',
+		'editor-ui',
 		'editor-v1-adapters',
 		self::ENV_PACKAGE,
 		'http',
