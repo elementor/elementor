@@ -86,6 +86,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			await wpAdmin.openNewPage();
 			await editor.addWidget( data[ i ].widgetTitle );
 			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
+			await editor.waitForPanelToLoad();
 			await contentTab.setCustomImageSize(
 				{
 					selector: data[ i ].image,

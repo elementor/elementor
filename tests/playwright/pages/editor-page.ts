@@ -61,7 +61,10 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Upload SVG in the Media Library. Expects media library to be open.
+	 * Upload SVG in the Media Library. Can be used on both Media Control and Icons Control.
+	 *
+	 * Please note that this method expects media library to be open as different controls
+	 * have different ways to open the media library.
 	 *
 	 * @param {string} svgFileName - Optional. SVG file name, without extension.
 	 *
@@ -481,7 +484,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ): Promise<void> {
-		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+		const control = `.elementor-control-${ controlId } select`;
+		await this.page.locator( control ).waitFor( { state: 'attached' } );
+		await this.page.selectOption( control, value );
 	}
 
 	/**
@@ -790,7 +795,7 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 
 		if ( innerPanel ) {
-			await this.page.locator( `.elementor-panel-menu-item-settings-${ innerPanel }` ).click();
+			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
 		}
 	}
 

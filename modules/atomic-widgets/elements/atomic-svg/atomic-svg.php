@@ -1,11 +1,11 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Widgets;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 
@@ -17,7 +17,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	const SVG_ENCODING = 'data:image/svg+xml;charset=utf-8,';
 	const SVG_START_INDEX = 26;
 
-	public function get_name() {
+	public static function get_element_type(): string {
 		return 'a-svg';
 	}
 
