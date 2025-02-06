@@ -54,6 +54,21 @@ class Module extends BaseModule {
 		] );
 	}
 
+	private function should_activate_landing_pages() {
+		if ( '1' === get_option( 'elementor_landing_pages_activation' ) ) {
+			return true;
+		}
+
+		// Load this at the end, it's an expensive query.
+		if ( $this->has_landing_pages() ) {
+			add_option( 'elementor_landing_pages_activation', '1' );
+			return true;
+		} else {
+			add_option( 'elementor_landing_pages_activation', '0' );
+			return false;
+		}
+	}
+
 	/**
 	 * Get Trashed Landing Pages Posts
 	 *
@@ -426,7 +441,11 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		if ( ! $this->has_landing_pages() ) {
+		if ( ! $this->should_activate_landing_pages() ) {
+			return;
+		}
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'landing-pages' ) ) {
 			return;
 		}
 
