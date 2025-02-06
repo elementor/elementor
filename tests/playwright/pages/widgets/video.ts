@@ -17,19 +17,18 @@ export default class VideoWidget extends Content {
 	}
 
 	/**
-	 * Verify image `src` attribute has expected values.
+	 * Verify that the video overlay image has expected value.
 	 *
-	 * @param {Object}  args               - Image arguments.
-	 * @param {string}  args.imageSelector - Image selector.
-	 * @param {string}  args.imageTitle    - Image title.
-	 * @param {boolean} args.isPublished   - If true, the image is published.
+	 * @param {Object}  args             - Image arguments.
+	 * @param {string}  args.imageTitle  - Image title.
+	 * @param {boolean} args.isPublished - Whether the post/page is published.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async verifyVideoOverlayImageSrc( args: { imageSelector: string, imageTitle: string, isPublished: boolean } ): Promise<void> {
+	async verifyVideoOverlayImageSrc( args: { imageTitle: string, isPublished: boolean } ): Promise<void> {
 		const imageLocator = ( args.isPublished )
-			? this.page.locator( args.imageSelector )
-			: await this.editor.getPreviewFrame().waitForSelector( args.imageSelector );
+			? this.page.locator( EditorSelectors.video.image )
+			: await this.editor.getPreviewFrame().waitForSelector( EditorSelectors.video.image );
 
 		const imageSrc = await imageLocator.getAttribute( 'style' );
 

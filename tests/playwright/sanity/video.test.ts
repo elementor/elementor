@@ -103,22 +103,14 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.setSelectControlValue( 'image_overlay_size', 'thumbnail' );
 
 		// Assert 1 - in the Editor.
-		await videoWidget.verifyVideoOverlayImageSrc( {
-			imageSelector: EditorSelectors.video.image,
-			imageTitle,
-			isPublished: false,
-		} );
+		await videoWidget.verifyVideoOverlayImageSrc( { imageTitle, isPublished: false } );
 
 		// Act 2.
 		await editor.publishAndViewPage();
 		await editor.waitForPanelToLoad();
 
 		// Assert 2 - in the frontend.
-		await videoWidget.verifyVideoOverlayImageSrc( {
-			imageSelector: EditorSelectors.video.image,
-			imageTitle,
-			isPublished: true,
-		} );
+		await videoWidget.verifyVideoOverlayImageSrc( { imageTitle, isPublished: true } );
 	} );
 
 	test( 'Lightbox video test', async ( { page, apiRequests }, testInfo ) => {
