@@ -1,5 +1,4 @@
 const EditorSelectors = {
-	addNewPreset: ( preset: string ) => `[data-preset=${ preset }]`,
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
 	widget: '[data-element_type="widget"]',
 	container: '[data-element_type="container"]',

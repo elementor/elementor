@@ -27,11 +27,16 @@ test.describe( 'Container tests @container', () => {
 	} );
 
 	test( 'Justify icons are displayed correctly', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const breakpoints = Breakpoints.getBasic().reverse();
 		const directions = [ 'right', 'down', 'left', 'up' ];
 		const editor = await wpAdmin.openNewPage();
+
+		// Act.
 		await editor.addElement( { elType: 'container' }, 'document' );
+
+		// Assert.
 		await testJustifyDirections( directions, breakpoints, editor, page, 'ltr' );
 	} );
 
@@ -53,20 +58,18 @@ test.describe( 'Container tests @container', () => {
 	test( 'Widgets are not editable in preview mode', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const editor = await wpAdmin.openNewPage(),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.openNewPage();
 
-		// Set row direction.
+		// Act.
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
-		// Add widgets.
-		await editor.addWidget( widgets.button, container );
-		await editor.addWidget( widgets.heading, container );
-		await editor.addWidget( widgets.image, container );
+		await editor.addWidget( widgets.button, containerId );
+		await editor.addWidget( widgets.heading, containerId );
+		await editor.addWidget( widgets.image, containerId );
 
-		const preview = editor.getPreviewFrame();
-
-		const resizers = preview.locator( '.ui-resizable-handle.ui-resizable-e' );
+		// Assert.
+		const resizers = editor.getPreviewFrame().locator( '.ui-resizable-handle.ui-resizable-e' );
 		await expect.soft( resizers ).toHaveCount( 4 );
 
 		await editor.togglePreviewMode();
@@ -75,18 +78,19 @@ test.describe( 'Container tests @container', () => {
 
 	test( 'Test grid container controls', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-			editor = await wpAdmin.openNewPage(),
-			containers = [
-				{ setting: 'start', id: '' },
-				{ setting: 'center', id: '' },
-				{ setting: 'end', id: '' },
-				{ setting: 'stretch', id: '' },
-			];
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
 
 		await editor.closeNavigatorIfOpen();
 
+		// Act.
 		// Add containers and set various controls.
+		const containers = [
+			{ setting: 'start', id: '' },
+			{ setting: 'center', id: '' },
+			{ setting: 'end', id: '' },
+			{ setting: 'stretch', id: '' },
+		];
 		for ( const [ index, container ] of Object.entries( containers ) ) {
 			containers[ index ].id = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setSelectControlValue( 'container_type', 'grid' );
@@ -117,10 +121,13 @@ test.describe( 'Container tests @container', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
-		const editor = await wpAdmin.openNewPage(),
-			containerId1 = await editor.addElement( { elType: 'container' }, 'document' ),
-			containerId2 = await editor.addElement( { elType: 'container' }, 'document' ),
-			containerId3 = await editor.addElement( { elType: 'container' }, 'document' );
+		const editor = await wpAdmin.openNewPage();
+
+		// Act.
+		// Add containers.
+		const containerId1 = await editor.addElement( { elType: 'container' }, 'document' );
+		const containerId2 = await editor.addElement( { elType: 'container' }, 'document' );
+		const containerId3 = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
 		await editor.addWidget( widgets.button, containerId1 );
