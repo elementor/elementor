@@ -12,14 +12,12 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			image: EditorSelectors.imageBox.image,
 			widget: EditorSelectors.imageBox.widget,
 			select: EditorSelectors.imageBox.imageSizeSelect,
-			isVideo: false,
 		},
 		{
 			widgetTitle: 'image',
 			image: EditorSelectors.image.image,
 			widget: EditorSelectors.image.widget,
 			select: EditorSelectors.image.imageSizeSelect,
-			isVideo: false,
 		},
 	];
 
@@ -47,7 +45,6 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 					{
 						selector: data[ i ].image,
 						isPublished: false,
-						isVideo: data[ i ].isVideo,
 						imageTitle,
 					} );
 				await editor.verifyClassInElement(
@@ -62,7 +59,6 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 					{
 						selector: data[ i ].image,
 						isPublished: true,
-						isVideo: data[ i ].isVideo,
 						imageTitle,
 					} );
 				await editor.verifyClassInElement(
