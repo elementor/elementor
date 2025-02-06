@@ -95,13 +95,12 @@ class WP_Post {
 		$excluded_types = $params[ self::EXCLUDED_POST_TYPES_KEY ];
 		$keys_format_map = $params[ self::KEYS_FORMAT_MAP_KEY ];
 		$max_count = isset( $params[ self::MAX_COUNT_KEY ] ) && 0 < $params[ self::MAX_COUNT_KEY ] ? $params[ self::MAX_COUNT_KEY ] : self::MAX_COUNT;
+		$max_count = min( $max_count, self::MAX_COUNT );
 		$post_types = new Collection( $this->wp_adapter->get_post_types( [ 'public' => true ], 'object' ) );
 
-		if ( ! empty( $excluded_types ) ) {
-			$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
-				return ! in_array( $post_type->name, $excluded_types, true );
-			} );
-		}
+		$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
+			return ! in_array( $post_type->name, $excluded_types, true );
+		} );
 
 		$post_type_slugs = $post_types->map( function ( $post_type ) {
 			return $post_type->name;
@@ -111,7 +110,7 @@ class WP_Post {
 
 		$posts = new Collection( $this->wp_adapter->get_posts( [
 			'post_type' => $post_type_slugs->all(),
-			'numberposts' => min( $max_count, self::MAX_COUNT ),
+			'numberposts' => $max_count,
 			'suppress_filters' => false,
 			'advanced_search' => true,
 			'search_term' => $term,
@@ -127,7 +126,7 @@ class WP_Post {
 					$post_object['post_type'] = $post_types->get( ( $post_object['post_type'] ) )->label;
 				}
 
-				return Utils::replace_keys_in_object( $post_object, $keys_format_map );
+				return $this->translate_keys( $post_object, $keys_format_map );
 			} )
 			->all();
 	}
@@ -166,5 +165,19 @@ class WP_Post {
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
+	}
+
+	private function translate_keys( array $item, array $dictionary ): array {
+		$replaced = [];
+
+		foreach ( $item as $key => $value ) {
+			if ( ! isset( $dictionary[ $key ] ) ) {
+				continue;
+			}
+
+			$replaced[ $dictionary[ $key ] ] = $value;
+		}
+
+		return $replaced;
 	}
 }
