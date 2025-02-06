@@ -40,12 +40,10 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.openPanelTab( 'advanced' );
 		await editor.setDimensionsValue( 'padding', '0' );
 
+		// Assert - verify that the container has an equal height to the video iFrame.
 		const container = editor.getPreviewFrame().locator( `.elementor-element-${ containerId }` );
 		const containerHeight = await container.boundingBox();
 		const videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();
-
-		// Assert.
-		// Verify that the container has an equal height to the video iFrame.
 		expect( containerHeight.height ).toEqual( videoIframeHeight.height );
 	} );
 
@@ -58,27 +56,26 @@ test.describe( 'Video tests inside a container @video', () => {
 			const player = videos[ video ];
 			const startTime = '10';
 			const endTime = '20';
-
 			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
 
 			// Act.
 			await editor.addWidget( 'video' );
 			await editor.setSelectControlValue( 'video_type', video );
-
 			await editor.setNumberControlValue( 'start', startTime );
 			if ( 'youtube' === video ) {
 				await editor.setNumberControlValue( 'end', endTime );
 				await editor.setSelectControlValue( 'rel', 'yes' );
 			}
-
 			const controls = player.controls.map( ( control ) => EditorSelectors.video[ control ] );
 			await videoWidget.toggleVideoControls( controls );
 			await videoWidget.setLink( player.link, { linkInpSelector: EditorSelectors.video[ video ].linkInp } );
 
-			// Assert.
+			// Assert 1 - in the Editor.
 			let src = await videoWidget.getVideoSrc( false );
 			videoWidget.verifySrcParams( src, player.expected, video );
+
+			// Assert 2 - in the Frontend.
 			await editor.publishAndViewPage();
 			src = await videoWidget.getVideoSrc( true );
 			videoWidget.verifySrcParams( src, player.expected, video );
@@ -91,25 +88,25 @@ test.describe( 'Video tests inside a container @video', () => {
 		const editor = new EditorPage( page, testInfo );
 		const videoWidget = new VideoWidget( page, testInfo );
 		const imageTitle = 'About-Pic-3-1';
+		await wpAdmin.openNewPage();
 
 		// Act 1.
-		await wpAdmin.openNewPage();
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
 		await editor.setSwitcherControlValue( 'show_image_overlay', true );
+		await editor.waitForPreviewFrame();
 		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
 		await editor.waitForPanelToLoad();
 		await editor.waitForPreviewFrame();
 		await editor.setSelectControlValue( 'image_overlay_size', 'thumbnail' );
+		await editor.waitForPreviewFrame();
 
 		// Assert 1 - in the Editor.
 		await videoWidget.verifyVideoOverlayImageSrc( { imageTitle, isPublished: false } );
 
-		// Act 2.
+		// Assert 2 - in the Frontend.
 		await editor.publishAndViewPage();
 		await editor.waitForPanelToLoad();
-
-		// Assert 2 - in the frontend.
 		await videoWidget.verifyVideoOverlayImageSrc( { imageTitle, isPublished: true } );
 	} );
 
@@ -128,8 +125,10 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.setMediaControlImageValue( 'image_overlay', 'About-Pic-3-1.png' );
 		await editor.setSwitcherControlValue( 'lightbox', true );
 
-		// Assert.
+		// Assert 1 - in the Editor.
 		await videoWidget.verifyVideoLightBox( false );
+
+		// Assert 2 - in the Frontend.
 		await editor.publishAndViewPage();
 		await videoWidget.verifyVideoLightBox( true );
 	} );
@@ -155,7 +154,8 @@ test.describe( 'Video tests inside a section @video', () => {
 	test( 'Verify that there is no gap between the video widget and the section', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const editor = await wpAdmin.openNewPage();
+		const editor = new EditorPage( page, testInfo );
+		await wpAdmin.openNewPage();
 
 		// Act.
 		const sectionId = await editor.addElement( { elType: 'section' }, 'document' );
@@ -166,11 +166,9 @@ test.describe( 'Video tests inside a section @video', () => {
 		await editor.openPanelTab( 'advanced' );
 		await editor.setDimensionsValue( 'padding', '0' );
 
-		const columnHeight = await column.boundingBox(),
-			videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();
-
-		// Assert.
-		// Verify that the column has an equal height to the video iFrame.
+		// Assert - verify that the column has an equal height to the video iFrame.
+		const columnHeight = await column.boundingBox();
+		const videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();
 		expect( columnHeight.height ).toEqual( videoIframeHeight.height );
 	} );
 } );
