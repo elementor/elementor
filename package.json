@@ -136,6 +136,7 @@
 		"@elementor/editor-site-navigation": "0.29.0",
 		"@elementor/editor-styles": "0.5.3",
 		"@elementor/editor-styles-repository": "0.5.0",
+		"@elementor/editor-ui": "0.1.0",
 		"@elementor/editor-v1-adapters": "0.9.0",
 		"@elementor/env": "0.3.5",
 		"@elementor/http": "0.1.3",
