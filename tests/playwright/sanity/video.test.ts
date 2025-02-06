@@ -82,7 +82,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		} );
 	}
 
-	test( 'Choose image test', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Set overlay image', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
@@ -96,8 +96,8 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.setSwitcherControlValue( 'show_image_overlay', true );
 		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
 		await editor.waitForPanelToLoad();
+		await editor.waitForPreviewFrame();
 		await editor.setSelectControlValue( 'image_overlay_size', 'thumbnail' );
-		await page.waitForTimeout( 500 );
 
 		// Assert 1 - in the Editor.
 		await videoWidget.verifyVideoOverlayImageSrc( {
