@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Modules\LandingPages;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\LandingPages\Module;
@@ -10,6 +11,21 @@ use ElementorEditorTesting\Traits\Elementor_Library;
 class Elementor_Test_Landing_Pages_Module extends Elementor_Test_Base {
 
 	use Elementor_Library;
+	
+	private $experiment_default_state;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->experiment_default_state = Plugin::instance()->experiments->is_feature_active( 'landing-pages' );
+		Plugin::instance()->experiments->set_feature_default_state( 'landing-pages', Experiments_Manager::STATE_ACTIVE );
+	}
+
+	public function tear_down() {
+		parent::tear_down();
+		
+		Plugin::instance()->experiments->set_feature_default_state( 'landing-pages', $this->experiment_default_state );
+	}
 
 	public function test__construct() {
 		$this->assert_document_type_registered( Module::DOCUMENT_TYPE );
