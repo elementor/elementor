@@ -45,6 +45,12 @@ class Cloud_Library extends Library {
 		return $templates;
 	}
 
+	public function get_resource( array $args ): array {
+		return $this->http_request( 'GET', 'resources/' . $args['template_id'], $args, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+	}
+
 	protected function prepare_template( array $template_data ): array {
 		return [
 			'template_id' => $template_data['id'],
