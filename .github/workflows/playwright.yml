@@ -86,7 +86,7 @@ jobs:
           matrix.shardIndex != 'elements-regression' &&
           matrix.shardIndex != 'plugin_tester'
           }}
-        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npm run test:playwright -- --grep-invert="@plugin_tester" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run Playwright Plugin Tester tests
         if: ${{ matrix.shardIndex == 'plugin_tester' }}
         run: |
