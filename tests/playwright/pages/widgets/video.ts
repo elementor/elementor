@@ -29,9 +29,7 @@ export default class VideoWidget extends Content {
 		const imageLocator = ( args.isPublished )
 			? this.page.locator( EditorSelectors.video.image )
 			: await this.editor.getPreviewFrame().waitForSelector( EditorSelectors.video.image );
-
 		const imageSrc = await imageLocator.getAttribute( 'style' );
-
 		expect( imageSrc ).toContain( args.imageTitle );
 	}
 
@@ -62,9 +60,7 @@ export default class VideoWidget extends Content {
 	 */
 	async toggleVideoControls( controlSelectors: string[] ): Promise<void> {
 		for ( const i in controlSelectors ) {
-			await this.page.locator( controlSelectors[ i ] )
-				.locator( '..' )
-				.locator( EditorSelectors.video.switch ).click();
+			await this.editor.setSwitcherControlValue( controlSelectors[ i ], true );
 		}
 	}
 }

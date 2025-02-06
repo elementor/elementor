@@ -67,9 +67,8 @@ test.describe( 'Video tests inside a container @video', () => {
 				await editor.setNumberControlValue( 'end', endTime );
 				await editor.setSelectControlValue( 'rel', 'yes' );
 			}
-			const controls = player.controls.map( ( control ) => EditorSelectors.video[ control ] );
-			await videoWidget.toggleVideoControls( controls );
-			await videoWidget.setLink( player.link, { linkInpSelector: EditorSelectors.video[ video ].linkInp } );
+			await videoWidget.toggleVideoControls( player.controls );
+			await editor.setTextControlValue( `${ video }_url`, player.link );
 
 			// Assert 1 - in the Editor.
 			let src = await videoWidget.getVideoSrc( false );
