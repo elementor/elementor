@@ -5,7 +5,6 @@ namespace Elementor\Modules\AtomicGlobalVariables;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
-use Elementor\Modules\AtomicGlobalVariables\Classes\Hooks;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
 

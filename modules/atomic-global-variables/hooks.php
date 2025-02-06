@@ -1,9 +1,10 @@
 <?php
 
-namespace Elementor\Modules\AtomicGlobalVariables\Classes;
+namespace Elementor\Modules\AtomicGlobalVariables;
 
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Modules\AtomicGlobalVariables\Classes\CSS as Global_Variables_CSS;
+use Elementor\Modules\AtomicGlobalVariables\Classes\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,16 +18,16 @@ class Hooks {
 	}
 
 	public function register() {
+		$this->wp_adapter->add_action( 'elementor/css-file/post/parse', function ( $post ) {
+			$this->inject_global_variables_css( $post );
+		} );
+
 		$this->wp_adapter->add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $transformers ) {
 			$this->register_style_transformers( $transformers );
 		} );
 
 		$this->wp_adapter->add_filter( 'elementor/atomic-widgets/styles/schema', function ( $schema ) {
 			return $this->augment_style_schema( $schema );
-		} );
-
-		$this->wp_adapter->add_action( 'elementor/css-file/post/parse', function ( $post ) {
-			$this->inject_global_variables_css( $post );
 		} );
 
 		return $this;
