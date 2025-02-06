@@ -38,23 +38,7 @@ class WP_Post {
 				'sanitize_callback' => function ( string $param ): string {
 					return esc_attr( $param );
 				},
-				'callback' => function ( $request ): \WP_REST_Response {
-					try {
-						return new \WP_REST_Response( [
-							'success' => true,
-							'data' => [
-								'value' => $this->get_posts( $request ),
-							],
-						], 200 );
-					} catch ( \Exception $e ) {
-						return new \WP_REST_Response( [
-							'success' => false,
-							'data' => [
-								'message' => $e->getMessage(),
-							],
-						], 500 );
-					}
-				},
+				'callback' => fn ( $request ): \WP_REST_Response => $this->fetch( $request ),
 			],
 		], true );
 	}
@@ -82,6 +66,24 @@ class WP_Post {
 		}
 
 		return $search;
+	}
+
+	private function fetch( $request ): \WP_REST_Response {
+		try {
+			return new \WP_REST_Response( [
+				'success' => true,
+				'data' => [
+					'value' => $this->get_posts( $request ),
+				],
+			], 200 );
+		} catch ( \Exception $e ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'data' => [
+					'message' => $e->getMessage(),
+				],
+			], 500 );
+		}
 	}
 
 	private function get_posts( \WP_REST_Request $request ) {
