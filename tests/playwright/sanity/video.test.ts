@@ -82,7 +82,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		} );
 	}
 
-	test( 'Set overlay image', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Add overlay image to the video', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
