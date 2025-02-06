@@ -445,11 +445,11 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$this->register_experiment();
+		
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'landing-pages' ) ) {
 			return;
 		}
-
-		$this->register_experiment();
 
 		$this->permalink_structure = get_option( 'permalink_structure' );
 
