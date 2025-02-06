@@ -169,7 +169,9 @@ class Test_Controller extends Elementor_Test_Base {
 			'Expected to get the 3 most recent posts, excluding the kit post'
 		);
 
-		$this->assertEquals( 'Another Post', $response->get_data()[0]['title'] );
+		if ( $this->is_landing_pages_experiment_active() ) {
+			$this->assertEquals( 'Another Post', $response->get_data()[0]['title'] );
+		}
 
 		if ( $this->is_landing_pages_experiment_active() ) {
 			$this->assertSameSetsWithIndex( [

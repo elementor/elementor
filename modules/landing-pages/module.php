@@ -446,7 +446,7 @@ class Module extends BaseModule {
 		}
 
 		$this->register_experiment();
-		
+
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'landing-pages' ) ) {
 			return;
 		}
