@@ -12,6 +12,7 @@ class Link_Control extends Atomic_Control_Base {
 	private ?string $placeholder = null;
 	private ?array $options = null;
 	private ?bool $allow_custom_values = null;
+	private ?bool $should_hide_previous_element = null;
 
 	public function get_type(): string {
 		return 'link';
@@ -44,11 +45,18 @@ class Link_Control extends Atomic_Control_Base {
 			'placeholder' => $this->placeholder,
 			'options' => $this->options,
 			'allowCustomValues' => $this->allow_custom_values,
+			'shouldHidePreviousElement' => $this->should_hide_previous_element,
 		];
 	}
 
 	public function set_allow_custom_values( bool $allow_custom_values ): self {
 		$this->allow_custom_values = $allow_custom_values;
+
+		return $this;
+	}
+
+	public function set_hide_previous_element( string $should_hide_previous_element ): self {
+		$this->should_hide_previous_element = $should_hide_previous_element;
 
 		return $this;
 	}

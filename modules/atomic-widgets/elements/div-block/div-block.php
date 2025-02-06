@@ -1,10 +1,13 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Link_Query;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -14,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Div_Block extends Atomic_Element_Base {
+	use Link_Query;
+
 	public static function get_type() {
 		return 'div-block';
 	}
@@ -67,6 +72,12 @@ class Div_Block extends Atomic_Element_Base {
 								'label' => 'Footer',
 							],
 						]),
+
+					Link_Control::bind_to( 'link' )
+						->set_options( $this->get_post_query() )
+						->set_allow_custom_values( true )
+						->set_hide_previous_element( true )
+						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 				]),
 		];
 	}
@@ -79,6 +90,8 @@ class Div_Block extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' ),
+
+			'link' => Link_Prop_Type::make(),
 		];
 	}
 
@@ -99,12 +112,18 @@ class Div_Block extends Atomic_Element_Base {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 
-		$this->add_render_attribute( '_wrapper', [
+		$attributes = [
 			'class' => [
 				'e-div-block',
 				$settings['classes'] ?? '',
 			],
-		] );
+		];
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$attributes = array_merge( $attributes, $settings['link'] );
+		}
+
+		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 
 	public function before_render() {
@@ -125,7 +144,13 @@ class Div_Block extends Atomic_Element_Base {
 	 * @return void
 	 */
 	protected function print_html_tag() {
-		$html_tag = $this->get_atomic_settings()['tag'] ?? 'div';
+		$html_tag = $this->get_html_tag();
 		Utils::print_validated_html_tag( $html_tag );
+	}
+
+	protected function get_html_tag(): string {
+		$settings = $this->get_atomic_settings();
+
+		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? 'div' );
 	}
 }
