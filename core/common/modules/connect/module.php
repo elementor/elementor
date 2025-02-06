@@ -25,6 +25,7 @@ class Module extends BaseModule {
 	const ACCESS_TIER_ADVANCED = 'advanced';
 	const ACCESS_TIER_EXPERT = 'expert';
 	const ACCESS_TIER_AGENCY = 'agency';
+	const ACCESS_TIER_PRO_LEGACY = 'pro';
 
 	/**
 	 * @since 2.3.0
