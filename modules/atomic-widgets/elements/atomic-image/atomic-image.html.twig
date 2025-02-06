@@ -1,0 +1,7 @@
+{# TODO: Need to escape the image src #}
+<img
+    class="{{ settings.classes }}"
+    {% for attr, value in settings.image %}
+        {{ attr | e('html_attr') }}="{{ value }}"
+    {% endfor %}
+>

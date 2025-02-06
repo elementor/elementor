@@ -1,0 +1,63 @@
+<?php
+
+namespace Elementor\Modules\AtomicWidgets\TemplateRenderer;
+
+use Elementor\Modules\AtomicWidgets\Elements\Has_Atomic_Base;
+use Elementor\Utils;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * @mixin Has_Atomic_Base
+ */
+trait Has_Template {
+	protected function render() {
+		try {
+			$renderer = Template_Renderer::instance();
+
+			foreach ( $this->get_templates() as $name => $path ) {
+				if ( $renderer->is_registered( $name ) ) {
+					continue;
+				}
+
+				$renderer->register( $name, $path );
+			}
+
+			$context = [
+				'id' => $this->get_id(),
+				'type' => $this->get_name(),
+				'settings' => $this->get_atomic_settings(),
+			];
+
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo $renderer->render( $this->get_main_template(), $context );
+		} catch ( \Exception $e ) {
+			if ( Utils::is_elementor_debug() ) {
+				throw $e;
+			}
+
+			return;
+		}
+	}
+
+	protected function get_main_template() {
+		$templates = $this->get_templates();
+
+		if ( count( $templates ) > 1 ) {
+			Utils::safe_throw( 'When having more than one template, you should override this method to return the main template.' );
+
+			return null;
+		}
+
+		foreach ( $templates as $key => $path ) {
+			// Returns first key in the array.
+			return $key;
+		}
+
+		return null;
+	}
+
+	abstract protected function get_templates(): array;
+}
