@@ -280,6 +280,10 @@ label.elementor-template-library-order-label {
 		top: 50%;
 		@include end(0);
 		transform: translateY(-50%);
+
+		&.eicon-loading.eicon-animation-spin {
+			top: 25%;
+		}
 	}
 }
 

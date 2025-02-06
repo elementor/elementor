@@ -26,6 +26,10 @@ class Cloud_Library extends Library {
 			$endpoint .= '?parentId=' . $args['template_id'];
 		}
 
+		if ( ! empty( $args['search'] ) ) {
+			$endpoint .= '?search=' . $args['search'];
+		}
+
 		$cloud_templates = $this->http_request( 'GET', $endpoint, $args, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
