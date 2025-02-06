@@ -41,7 +41,8 @@ jobs:
         shardTotal: [ 10 ]
         include:
         - shardIndex: "elements-regression"
-        - shardIndex: "plugin_tester"
+        - shardIndex: "plugin_tester_section"
+        - shardIndex: "plugin_tester_container"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
