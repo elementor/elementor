@@ -25,6 +25,8 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 		parent::tear_down();
 
 		Template_Renderer::reset();
+
+		ob_end_clean();
 	}
 
 	public function test_render__basic_template() {
