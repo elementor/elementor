@@ -37,8 +37,6 @@ trait Has_Template {
 			if ( Utils::is_elementor_debug() ) {
 				throw $e;
 			}
-
-			return;
 		}
 	}
 

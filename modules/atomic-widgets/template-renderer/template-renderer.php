@@ -30,7 +30,7 @@ class Template_Renderer {
 	}
 
 	public static function instance(): self {
-		if ( ! isset( self::$instance ) ) {
+		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
 

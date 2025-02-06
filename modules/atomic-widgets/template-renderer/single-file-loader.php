@@ -19,9 +19,9 @@ class Single_File_Loader implements LoaderInterface {
 		$path = $this->get_template_path( $name );
 
 		return new Source(
-			// This is safe to use because we're validating the file path. inside `get_template_path`.
+			// This is safe to use because we're validating the file path inside `get_template_path`.
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-			\file_get_contents( $path ),
+			file_get_contents( $path ),
 			$name,
 			$path
 		);
@@ -34,7 +34,7 @@ class Single_File_Loader implements LoaderInterface {
 	public function isFresh( string $name, int $time ): bool {
 		$path = $this->get_template_path( $name );
 
-		return \filemtime( $path ) < $time;
+		return filemtime( $path ) < $time;
 	}
 
 	public function exists( string $name ) {

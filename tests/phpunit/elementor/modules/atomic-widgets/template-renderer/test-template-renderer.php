@@ -21,16 +21,10 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 		Template_Renderer::reset();
 	}
 
-	public function set_up(): void {
-		parent::set_up();
-
-		Template_Renderer::reset();
-	}
-
 	public function tear_down() {
 		parent::tear_down();
 
-		ob_clean();
+		Template_Renderer::reset();
 	}
 
 	public function test_render__basic_template() {
