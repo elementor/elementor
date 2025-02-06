@@ -10,7 +10,6 @@
             "yt_privacy",
             "lazy_load"
         ],
-        "source": "youtube",
         "expected": {
             "autoplay": "1",
             "controls": "1",
@@ -30,7 +29,6 @@
             "loop",
             "yt_privacy"
         ],
-        "source": "vimeo",
         "expected": {
             "autoplay": "1",
             "autopause": "0",
@@ -50,7 +48,6 @@
             "play_on_mobile",
             "mute"
         ],
-        "source": "vimeo",
         "expected": {
             "autoplay": "1",
             "endscreen-enable": "0",

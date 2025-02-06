@@ -11,7 +11,9 @@ export default class VideoWidget extends Content {
 	 * @return {Promise<string>}
 	 */
 	async getVideoSrc( isPublished: boolean ): Promise<string> {
-		const page = true === isPublished ? this.page : this.editor.getPreviewFrame();
+		const page = ( true === isPublished )
+			? this.page
+			: this.editor.getPreviewFrame();
 		const src = await page.locator( EditorSelectors.video.iframe ).getAttribute( 'src' );
 		return src;
 	}
