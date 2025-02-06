@@ -87,5 +87,4 @@ class Single_File_Loader implements LoaderInterface {
 
 		return $is_valid;
 	}
-
 }
