@@ -27,7 +27,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
 		orderInputs: '.elementor-template-library-order-input',
 		orderLabels: 'label.elementor-template-library-order-label',
-		icon: '#elementor-template-library-filter-text-wrapper i',
+		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
 	},
 
 	events: {
@@ -265,11 +265,11 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	showLoadingSpinner() {
-		this.ui.icon.removeClass( 'eicon-search' ).addClass( 'eicon-loading eicon-animation-spin' );
+		this.ui.searchInputIcon.removeClass( 'eicon-search' ).addClass( 'eicon-loading eicon-animation-spin' );
 	},
 
 	showSearchIcon() {
-		this.ui.icon.removeClass( 'eicon-loading eicon-animation-spin' ).addClass( 'eicon-search' );
+		this.ui.searchInputIcon.removeClass( 'eicon-loading eicon-animation-spin' ).addClass( 'eicon-search' );
 	},
 
 	onSelectFilterChange( event ) {
