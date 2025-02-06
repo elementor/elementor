@@ -94,12 +94,10 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
 		await editor.setSwitcherControlValue( 'show_image_overlay', true );
-		await editor.waitForPreviewFrame();
 		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
 		const frame: Frame = editor.getPreviewFrame();
 		await frame.locator( EditorSelectors.video.widget ).click();
 		await editor.setSelectControlValue( 'image_overlay_size', 'thumbnail' );
-		await editor.waitForPreviewFrame();
 
 		// Assert 1 - in the Editor.
 		await videoWidget.verifyVideoOverlayImageSrc( { imageTitle, isPublished: false } );
