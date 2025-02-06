@@ -600,6 +600,22 @@ class Manager {
 		return $source->get_item_children( $args );
 	}
 
+	public function search_templates( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'search' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		return $source->search_templates( $args );
+	}
+
 	/**
 	 * Register default template sources.
 	 *
@@ -687,6 +703,7 @@ class Manager {
 			'mark_template_as_favorite',
 			'import_from_json',
 			'get_item_children',
+			'search_templates',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {

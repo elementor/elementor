@@ -53,4 +53,8 @@ class Source_Cloud extends Source_Base {
 	public function update_item( $new_data ) {}
 
 	public function export_template( $template_id ) {}
+
+	public function search_templates( array $args = [] ) {
+		return $this->get_app()->get_resources( $args );
+	}
 }

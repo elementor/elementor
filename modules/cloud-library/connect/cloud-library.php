@@ -14,8 +14,8 @@ class Cloud_Library extends Library {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	protected function get_slug(): string {
-		return 'cloud-library';
+	protected function get_api_url(): string {
+		return 'http://localhost:3000/api/v1/cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
@@ -24,6 +24,10 @@ class Cloud_Library extends Library {
 		$endpoint = 'resources';
 		if ( ! empty( $args['template_id'] ) ) {
 			$endpoint .= '?parentId=' . $args['template_id'];
+		}
+
+		if ( ! empty( $args['search'] ) ) {
+			$endpoint .= '?search=' . $args['search'];
 		}
 
 		$cloud_templates = $this->http_request( 'GET', $endpoint, $args, [
