@@ -31,7 +31,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 
 	public function test_render__basic_template() {
 		// Arrange.
-		$widget = $this->make_mock_widget([
+		$widget = $this->make_mock_widget( [
 			'templates' => [
 				'elementor/elements/test' => __DIR__ . '/mocks/basic.html.twig'
 			],
@@ -39,8 +39,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 				'classes' => 'class1 class2',
 				'title' => 'This is my title',
 			],
-		]);
-
+		] );
 
 		// Act.
 		ob_start();
@@ -55,7 +54,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 
 	public function test_render__multiple_templates() {
 		// Arrange.
-		$widget = $this->make_mock_widget([
+		$widget = $this->make_mock_widget( [
 			'templates' => [
 				'elementor/parts/part' => __DIR__ . '/mocks/part.html.twig',
 				'elementor/elements/test' => __DIR__ . '/mocks/with-part.html.twig',
@@ -64,8 +63,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 			'settings' => [
 				'title' => 'This is my title',
 			],
-		]);
-
+		] );
 
 		// Act.
 		ob_start();
@@ -80,7 +78,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 
 	public function test_render__multiple_templates_without_main() {
 		// Arrange.
-		$widget = $this->make_mock_widget([
+		$widget = $this->make_mock_widget( [
 			'templates' => [
 				'elementor/parts/part' => __DIR__ . '/mocks/part.html.twig',
 				'elementor/elements/test' => __DIR__ . '/mocks/with-part.html.twig',
@@ -88,7 +86,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 			'settings' => [
 				'title' => 'This is my title',
 			],
-		]);
+		] );
 
 		// Expect.
 		$this->expectException( \Exception::class );
@@ -104,14 +102,14 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 
 	public function test_render__template_file_not_exists() {
 		// Arrange.
-		$widget = $this->make_mock_widget([
+		$widget = $this->make_mock_widget( [
 			'templates' => [
 				'elementor/elements/test' => __DIR__ . '/mocks/not-exists.html.twig'
 			],
 			'settings' => [
 				'title' => 'This is my title',
 			],
-		]);
+		] );
 
 		// Expect.
 		$this->expectException( \Exception::class );
@@ -129,7 +127,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 	 * @param array{templates: array, settings: array, main: string} $options
 	 */
 	private function make_mock_widget( array $options ) {
-		return new class($options) extends Atomic_Widget_Base {
+		return new class( $options ) extends Atomic_Widget_Base {
 			use Has_Template {
 				get_main_template as protected original_get_main_template;
 			}
@@ -165,7 +163,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 			}
 
 			protected function get_main_template() {
-				if (isset($this->options['main'])) {
+				if ( isset( $this->options['main'] ) ) {
 					return $this->options['main'];
 				}
 
