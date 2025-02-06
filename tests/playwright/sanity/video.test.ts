@@ -33,10 +33,9 @@ test.describe( 'Video tests inside a container @video', () => {
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 
+		// Act.
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const videoId = await editor.addWidget( widgets.video, containerId );
-
-		// Act.
 		await editor.selectElement( containerId );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setDimensionsValue( 'padding', '0' );
@@ -52,15 +51,18 @@ test.describe( 'Video tests inside a container @video', () => {
 
 	for ( const video in videos ) {
 		test( `${ video } controls and link test`, async ( { page, apiRequests }, testInfo ) => {
-			const player = videos[ video ];
+			// Arrange.
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
 			const videoWidget = new VideoWidget( page, testInfo );
+			const player = videos[ video ];
 			const startTime = '10';
 			const endTime = '20';
 
 			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
+
+			// Act.
 			await editor.addWidget( 'video' );
 			await editor.setSelectControlValue( 'video_type', video );
 
@@ -71,9 +73,10 @@ test.describe( 'Video tests inside a container @video', () => {
 			}
 
 			const controls = player.controls.map( ( control ) => EditorSelectors.video[ control ] );
-
 			await videoWidget.toggleVideoControls( controls );
 			await videoWidget.setLink( player.link, { linkInpSelector: EditorSelectors.video[ video ].linkInp } );
+
+			// Assert.
 			let src = await videoWidget.getVideoSrc( false );
 			videoWidget.verifySrcParams( src, player.expected, video );
 			await editor.publishAndViewPage();
@@ -119,44 +122,54 @@ test.describe( 'Video tests inside a container @video', () => {
 	} );
 
 	test( 'Lightbox video test', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		const videoWidget = new VideoWidget( page, testInfo );
-
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
+
+		// Act.
 		await editor.addWidget( 'video' );
 		await editor.openSection( 'section_image_overlay' );
 		await editor.setSwitcherControlValue( 'show_image_overlay', true );
 		await editor.setMediaControlImageValue( 'image_overlay', 'About-Pic-3-1.png' );
 		await editor.setSwitcherControlValue( 'lightbox', true );
+
+		// Assert.
 		await videoWidget.verifyVideoLightBox( false );
 		await editor.publishAndViewPage();
 		await videoWidget.verifyVideoLightBox( true );
 	} );
 } );
 
-test.describe( 'Video tests inside a section', () => {
+test.describe( 'Video tests inside a section @video', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext(),
-			page = await context.newPage(),
-			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( { container: false } );
+		await page.close();
+	} );
 
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
+		await page.close();
 	} );
 
 	test( 'Verify that there is no gap between the video widget and the section', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-			editor = await wpAdmin.openNewPage(),
-			sectionId = await editor.addElement( { elType: 'section' }, 'document' ),
-			column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' ),
-			columnId = await column.getAttribute( 'data-id' ),
-			videoId = await editor.addWidget( widgets.video, columnId );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
 
 		// Act.
+		const sectionId = await editor.addElement( { elType: 'section' }, 'document' );
+		const column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' );
+		const columnId = await column.getAttribute( 'data-id' );
+		const videoId = await editor.addWidget( widgets.video, columnId );
 		await editor.selectElement( columnId );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setDimensionsValue( 'padding', '0' );
@@ -165,7 +178,7 @@ test.describe( 'Video tests inside a section', () => {
 			videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();
 
 		// Assert.
-		// Verify that the container has an equal height to the video iFrame.
+		// Verify that the column has an equal height to the video iFrame.
 		expect( columnHeight.height ).toEqual( videoIframeHeight.height );
 	} );
 } );
