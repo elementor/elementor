@@ -35,9 +35,11 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( $this->is_experiment_active() ) {
-			( new Hooks( new Wordpress_Adapter() ) )->register();
+		if ( ! $this->is_experiment_active() ) {
+			return;
 		}
+
+		( new Hooks( new Wordpress_Adapter() ) )->register();
 	}
 
 	private function is_experiment_active(): bool {
