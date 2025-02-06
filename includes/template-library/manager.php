@@ -334,6 +334,28 @@ class Manager {
 		return $source->get_item( $template_data['id'] );
 	}
 
+	public function rename_template( array $template_data ) {
+		$validate_args = $this->ensure_args( [ 'source', 'title', 'id' ], $template_data );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $template_data['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		$update = $source->update_item( $template_data );
+
+		if ( is_wp_error( $update ) ) {
+			return $update;
+		}
+
+		return $source->get_item( $template_data['id'] );
+	}
+
 	/**
 	 * Update templates.
 	 *
@@ -704,6 +726,7 @@ class Manager {
 			'import_from_json',
 			'get_item_children',
 			'search_templates',
+			'rename_template',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {

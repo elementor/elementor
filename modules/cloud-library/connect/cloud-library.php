@@ -65,6 +65,24 @@ class Cloud_Library extends Library {
 	public function delete_resource( $template_id ) {
 		$request = $this->http_request( 'DELETE', 'resources/' . $template_id );
 
+		if ( isset( $request->errors[204] ) && 'No Content' === $request->errors[204][0] ) {
+			return true;
+		}
+
+		if ( is_wp_error( $request ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function update_resource( array $template_data ) {
+		$endpoint = 'resources/' . $template_data['template_id'];
+
+		$request = $this->http_request( 'PATCH', $endpoint, [ 'body' => $template_data ], [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+
 		if ( is_wp_error( $request ) ) {
 			return false;
 		}
