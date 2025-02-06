@@ -498,6 +498,22 @@ class Manager {
 		return $source->export_template( $args['template_id'] );
 	}
 
+	public function export_cloud_template( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found' );
+		}
+
+		return $source->export_template( $args['template_id'] );
+	}
+
 	/**
 	 * @since 2.3.0
 	 * @access public
@@ -757,6 +773,7 @@ class Manager {
 		$whitelist_methods = [
 			'export_template',
 			'direct_import_template',
+			'export_cloud_template',
 		];
 
 		if ( 'direct_import_template' === $action && ! User::is_current_user_can_upload_json() ) {

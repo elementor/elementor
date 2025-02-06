@@ -4,12 +4,18 @@ namespace Elementor\TemplateLibrary;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Plugin;
+use Elementor\DB;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Source_Cloud extends Source_Base {
+	/**
+	 * Elementor template-library temporary files folder.
+	 */
+	const TEMP_FILES_DIR = 'elementor/tmp';
+
 	protected function get_app(): Cloud_Library {
 		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
 
@@ -78,9 +84,144 @@ class Source_Cloud extends Source_Base {
 		return $this->get_app()->update_resource( $template_data );
 	}
 
-	public function export_template( $template_id ) {}
-
 	public function search_templates( array $args = [] ) {
 		return $this->get_app()->get_resources( $args );
+	}
+
+	public function export_template( $template_id ) {
+		$data = $this->get_app()->get_resource( [ 'template_id' => $template_id ] );
+
+		if ( is_wp_error( $data ) ) {
+			return new \WP_Error( 'export_template_error', 'An error has occured' );
+		}
+
+		if ( 'FOLDER' === $data['type'] ) {
+			$this->handle_export_folder( $template_id );
+			return;
+		}
+
+		$file_data = $this->prepare_template_export( $data );
+
+		if ( is_wp_error( $file_data ) ) {
+			return $file_data;
+		}
+
+		$this->send_file_headers( $file_data['name'], strlen( $file_data['content'] ) );
+
+		// Clear buffering just in case.
+		@ob_end_clean();
+
+		flush();
+
+		// Output file contents.
+		// PHPCS - Export widget json
+		echo $file_data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+		die;
+	}
+
+	private function prepare_template_export( $data ) {
+		if ( empty( $data['content'] ) ) {
+			return new \WP_Error( 'empty_template', 'The template is empty' );
+		}
+
+		$data['content'] = json_decode( $data['content'], true );
+
+		$export_data = [
+			'content' => $data['content'],
+			'page_settings' => [],
+			'version' => DB::DB_VERSION,
+			'title' => $data['title'],
+			'type' => $data['templateType'],
+		];
+
+		return [
+			'name' => 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json',
+			'content' => wp_json_encode( $export_data ),
+		];
+	}
+
+	private function send_file_headers( $file_name, $file_size ) {
+		header( 'Content-Type: application/octet-stream' );
+		header( 'Content-Disposition: attachment; filename=' . $file_name );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate' );
+		header( 'Pragma: public' );
+		header( 'Content-Length: ' . $file_size );
+	}
+
+	private function handle_export_folder( $folder_id ) {
+		$templates = $this->get_app()->get_resources( [ 'template_id' => $folder_id ] );
+
+		$template_ids = array_map( fn( $template ) => $template['template_id'], $templates );
+
+		$this->export_multiple_templates( $template_ids );
+	}
+
+	public function export_multiple_templates( array $template_ids ) {
+		$files = [];
+
+		$wp_upload_dir = wp_upload_dir();
+
+		$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR;
+
+		// Create temp path if it doesn't exist
+		wp_mkdir_p( $temp_path );
+
+		// Create all json files
+		foreach ( $template_ids as $template_id ) {
+			$data = $this->get_app()->get_resource( [ 'template_id' => $template_id ] );
+			$file_data = $this->prepare_template_export( $data );
+
+			if ( is_wp_error( $file_data ) ) {
+				continue;
+			}
+
+			$complete_path = $temp_path . '/' . $file_data['name'];
+
+			$put_contents = file_put_contents( $complete_path, $file_data['content'] );
+
+			if ( ! $put_contents ) {
+				return new \WP_Error( '404', sprintf( 'Cannot create file "%s".', $file_data['name'] ) );
+			}
+
+			$files[] = [
+				'path' => $complete_path,
+				'name' => $file_data['name'],
+			];
+		}
+
+		if ( ! $files ) {
+			return new \WP_Error( 'empty_files', 'There is no files to export (probably all the requested templates are empty).' );
+		}
+
+		// Create temporary .zip file
+		$zip_archive_filename = 'elementor-templates-' . gmdate( 'Y-m-d' ) . '.zip';
+
+		$zip_archive = new \ZipArchive();
+
+		$zip_complete_path = $temp_path . '/' . $zip_archive_filename;
+
+		$zip_archive->open( $zip_complete_path, \ZipArchive::CREATE );
+
+		foreach ( $files as $file ) {
+			$zip_archive->addFile( $file['path'], $file['name'] );
+		}
+
+		$zip_archive->close();
+
+		foreach ( $files as $file ) {
+			unlink( $file['path'] );
+		}
+
+		$this->send_file_headers( $zip_archive_filename, filesize( $zip_complete_path ) );
+
+		@ob_end_flush();
+
+		@readfile( $zip_complete_path );
+
+		unlink( $zip_complete_path );
+
+		die;
 	}
 }

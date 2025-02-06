@@ -14,8 +14,8 @@ class Cloud_Library extends Library {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	protected function get_slug(): string {
-		return 'cloud-library';
+	protected function get_api_url(): string {
+		return 'http://localhost:3000/api/v1/cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
@@ -59,7 +59,21 @@ class Cloud_Library extends Library {
 			'subType' => $template_data['type'],
 			'title' => $template_data['title'],
 			'human_date' => date_i18n( get_option( 'date_format' ), strtotime( $template_data['createdAt'] ) ),
+			'export_link' => $this->get_export_link( $template_data['id'] ),
 		];
+	}
+
+	private function get_export_link( $template_id ) {
+		return add_query_arg(
+			[
+				'action' => 'elementor_library_direct_actions',
+				'library_action' => 'export_cloud_template',
+				'source' => 'cloud',
+				'_nonce' => wp_create_nonce( 'elementor_ajax' ),
+				'template_id' => $template_id,
+			],
+			admin_url( 'admin-ajax.php' )
+		);
 	}
 
 	public function delete_resource( $template_id ) {
