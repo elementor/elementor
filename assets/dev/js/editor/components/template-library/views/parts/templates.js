@@ -27,7 +27,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
 		orderInputs: '.elementor-template-library-order-input',
 		orderLabels: 'label.elementor-template-library-order-label',
-		icon: '#elementor-template-library-filter-text-wrapper i'
+		icon: '#elementor-template-library-filter-text-wrapper i',
 	},
 
 	events: {
@@ -234,7 +234,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	onTextFilterInput() {
 		const activeSource = elementor.templates.getFilter( 'source' );
-		
+
 		if ( 'cloud' === activeSource ) {
 			this.debouncedSearchTemplates( activeSource );
 			return;
@@ -248,7 +248,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		const ajaxOptions = {
 			data: {
-				source: source,
+				source,
 				search: this.ui.textFilter.val(),
 			},
 			success: ( data ) => {
@@ -260,7 +260,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 				this.showSearchIcon();
 			},
 		};
-	
+
 		elementorCommon.ajax.addRequest( 'search_templates', ajaxOptions );
 	},
 
