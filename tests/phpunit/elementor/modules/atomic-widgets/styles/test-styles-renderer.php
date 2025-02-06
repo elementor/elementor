@@ -395,18 +395,24 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													'resolution' => 'medium',
 													'repeat' => 'repeat-y',
 													'attachment' => 'fixed',
-													'size' => 'custom',
-													'size-custom-height' => [ '$$type' => 'size',
+													'size' => [
+														'$$type' => 'background-image-overlay-offset',
 														'value' => [
-															'size' => 140,
-															'unit' => 'px'
-														]
-													],
-													'size-custom-width' => [ '$$type' => 'size',
-														'value' => [
-															'size' => 500,
-															'unit' => 'px'
-														]
+															'height' => [
+																'$$type' => 'size',
+																'value' => [
+																	'size' => 500,
+																	'unit' => 'px'
+																]
+															],
+															'width' => [
+																'$$type' => 'size',
+																'value' => [
+																	'size' => 140,
+																	'unit' => 'px'
+																]
+															],
+														],
 													],
 												]
 											],

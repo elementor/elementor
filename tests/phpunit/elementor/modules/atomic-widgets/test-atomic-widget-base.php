@@ -628,20 +628,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														'$$type' => 'string',
 														'value' => 'scroll'
 													],
-													'size-custom-width' => [
-														'$$type' => 'size',
-														'value' => [
-															'unit' => 'px',
-															'size' => 100
-														]
-													],
-													'size-custom-height' => [
-														'$$type' => 'size',
-														'value' => [
-															'unit' => 'px',
-															'size' => 200
-														]
-													],
 												]
 											]
 										]
