@@ -1,16 +1,16 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Modules\Home\Transformations\Filter_Sidebar_Upgrade_By_License;
+use Elementor\Modules\Home\Transformations\Filter_Sidebar_Promotion_By_License;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
-class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
+class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 
 	public function test_transform__core_plugin() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
 
-		$transformation = new Filter_Sidebar_Upgrade_By_License( [] );
+		$transformation = new Filter_Sidebar_Promotion_By_License( [] );
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
@@ -23,7 +23,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 	public function test_transform__pro_plugin() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
-		$transformation = new Filter_Sidebar_Upgrade_By_License( [] );
+		$transformation = new Filter_Sidebar_Promotion_By_License( [] );
 
 		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
 			return 'pro';
@@ -41,7 +41,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 		// Arrange
 		$original_data = $this->mock_home_screen_data_is_enabled_is_false();
 
-		$transformation = new Filter_Sidebar_Upgrade_By_License( [] );
+		$transformation = new Filter_Sidebar_Promotion_By_License( [] );
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
@@ -53,7 +53,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 
 	private function mock_home_screen_data() {
 		return [
-			'sidebar_upgrade' => [
+			'sidebar_promotion_variants' => [
 				[
 					'data' => [
 						'key' => 'value',
@@ -82,7 +82,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 
 	private function mock_home_screen_data_is_enabled_is_false() {
 		return [
-			'sidebar_upgrade' => [
+			'sidebar_promotion_variants' => [
 				[
 					'data' => [
 						'key' => 'value',
@@ -112,7 +112,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 
 	private function mock_home_screen_data_transformed_core() {
 		return [
-			'sidebar_upgrade' => [
+			'sidebar_promotion_variants' => [
 				'data' => [
 					'key' => 'value',
 				],
@@ -130,7 +130,7 @@ class Test_Filter_Sidebar_Upgrade_By_License extends PHPUnit_TestCase {
 
 	private function mock_home_screen_data_transformed_pro() {
 		return [
-			'sidebar_upgrade' => [
+			'sidebar_promotion_variants' => [
 				'data' => [
 					'key' => 'value',
 				],
