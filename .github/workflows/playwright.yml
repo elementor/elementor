@@ -84,12 +84,16 @@ jobs:
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression' &&
-          matrix.shardIndex != 'plugin_tester'
+          matrix.shardIndex != 'plugin_tester_container' &&
+          matrix.shardIndex != 'plugin_tester_section'
           }}
-        run: npm run test:playwright -- --grep-invert="@plugin_tester" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Run Playwright Plugin Tester tests
-        if: ${{ matrix.shardIndex == 'plugin_tester' }}
-        run: npm run test:playwright -- --grep="@pluginTester"
+        run: npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run Playwright Plugin Container tests
+        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        run: npm run test:playwright -- --grep="@plugin_tester_container"
+      - name: Run Playwright Plugin Container tests
+        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        run: npm run test:playwright -- --grep="@plugin_tester_section"
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression
