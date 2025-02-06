@@ -9,22 +9,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Filter_Sidebar_Upgrade_By_License extends Transformations_Abstract {
+class Filter_Sidebar_Promotion_By_License extends Transformations_Abstract {
 
 	public function transform( array $home_screen_data ): array {
 		$user_tier = $this->get_tier();
 
-		$new_sidebar_upgrade = array_filter( $home_screen_data['sidebar_upgrade'], function( $item ) use ( $user_tier ) {
+		$new_sidebar_promotion= array_filter( $home_screen_data['sidebar_promotion_variants'], function( $item ) use ( $user_tier ) {
 			return $this->is_enabled( $item ) && $this->is_tier_acceptable( $item, $user_tier );
 		});
 
-		if ( empty( $new_sidebar_upgrade ) ) {
-			unset( $home_screen_data['sidebar_upgrade'] );
+		if ( empty( $new_sidebar_promotion ) ) {
+			unset( $home_screen_data['sidebar_promotion_variants'] );
 
 			return $home_screen_data;
 		}
 
-		$home_screen_data['sidebar_upgrade'] = reset( $new_sidebar_upgrade );
+		$home_screen_data['sidebar_promotion_variants'] = reset( $new_sidebar_promotion );
 
 		return $home_screen_data;
 	}
