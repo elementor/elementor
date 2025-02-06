@@ -41,6 +41,7 @@ jobs:
         shardTotal: [ 10 ]
         include:
         - shardIndex: "elements-regression"
+        - shardIndex: "plugin_tester"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -81,8 +82,16 @@ jobs:
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
-        if: ${{ matrix.shardIndex != 'elements-regression' }}
+        if: ${{
+          matrix.shardIndex != 'elements-regression' &&
+          matrix.shardIndex != 'plugin_tester'
+          }}
         run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run Playwright Plugin Tester tests
+        if: ${{ matrix.shardIndex == 'plugin_tester' }}
+        run: |
+          npm run test:setup
+          npm run test:playwright -- --grep="@pluginTester"
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression
