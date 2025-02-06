@@ -1,13 +1,14 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 
-use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Link_Query;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -20,7 +21,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Heading extends Atomic_Widget_Base {
-	const BASE_STYLE_CLASS = 'base';
+	use Link_Query;
+
+	const BASE_STYLE_KEY = 'base';
 
 	public static function get_element_type(): string {
 		return 'a-heading';
@@ -50,12 +53,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	private function get_template_args( array $settings ): array {
 		$tag = $settings['tag'];
 		$title = esc_html( $settings['title'] );
-		$classes = $settings['classes'] ?? '';
-		$classes .= ' ' . static::get_base_style_class( self::BASE_STYLE_CLASS );
-
-		$attrs = array_filter( [
-			'class' => $classes,
-		] );
+		$attrs = array_filter([
+			'class' => array_filter( [
+				$settings['classes'] ?? '',
+				static::get_base_style_class( self::BASE_STYLE_KEY ) ?? '',
+			] ),
+		]);
 
 		$default_args = [
 			Utils::validate_html_tag( $tag ),
@@ -137,78 +140,25 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public static function define_base_styles(): array {
+		$color_value = Color_Prop_Type::generate( 'black' );
+		$font_family_value = String_Prop_Type::generate( 'Inter' );
+		$font_size_value = Size_Prop_Type::generate( [
+			'size' => 3,
+			'unit' => 'rem',
+		] );
+		$line_height_value = String_Prop_Type::generate( '1.1' );
+		$font_weight_value = String_Prop_Type::generate( '600' );
+
 		return [
-			self::BASE_STYLE_CLASS => Style_Definition::make()
-				->add_variant( Style_Variant::make()->add_prop( 'font-size', Size_Prop_Type::generate( [
-					'size' => 24,
-					'unit' => 'px',
-				] ) ) ),
+			self::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'color', $color_value )
+						->add_prop( 'font-family', $font_family_value )
+						->add_prop( 'font-size', $font_size_value )
+						->add_prop( 'line-height', $line_height_value )
+						->add_prop( 'font-weight', $font_weight_value )
+				),
 		];
-	}
-
-	/**
-	 * Todo: Remove and replace with REST API as part of ED-16723
-	 */
-	private function get_posts_per_post_type_map( $excluded_types = [] ) {
-		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
-
-		if ( ! empty( $excluded_types ) ) {
-			$post_types = $post_types->filter( function( $post_type ) use ( $excluded_types ) {
-				return ! in_array( $post_type->name, $excluded_types, true );
-			} );
-		}
-
-		$post_type_slugs = $post_types->map( function( $post_type ) {
-			return $post_type->name;
-		} );
-
-		$posts = new Collection( get_posts( [
-			'post_type' => $post_type_slugs->all(),
-			'numberposts' => -1,
-		] ) );
-
-		return $posts->reduce( function ( $carry, $post ) use ( $post_types ) {
-			$post_type_label = $post_types->get( $post->post_type )->label;
-
-			if ( ! isset( $carry[ $post->post_type ] ) ) {
-				$carry[ $post->post_type ] = [
-					'label' => $post_type_label,
-					'items' => [],
-				];
-			}
-
-			$carry[ $post->post_type ]['items'][] = $post;
-
-			return $carry;
-		}, [] );
-	}
-
-	private function get_excluded_post_types( ?array $additional_exclusions = [] ) {
-		return array_merge( [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ], $additional_exclusions );
-	}
-
-	private function get_post_query(): array {
-		$excluded_types = $this->get_excluded_post_types();
-		$posts_map = $this->get_posts_per_post_type_map( $excluded_types );
-		$options = new Collection( [] );
-
-		foreach ( $posts_map as $post_type_slug => $data ) {
-			$options = $options->union( $this->get_formatted_post_options( $data['items'], $posts_map[ $post_type_slug ]['label'] ) );
-		}
-
-		return $options->all();
-	}
-
-	private function get_formatted_post_options( $items, $group_label ) {
-		$options = [];
-
-		foreach ( $items as $post ) {
-			$options[ $post->guid ] = [
-				'label' => $post->post_title,
-				'groupLabel' => $group_label,
-			];
-		}
-
-		return $options;
 	}
 }
