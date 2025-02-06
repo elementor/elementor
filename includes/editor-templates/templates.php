@@ -214,15 +214,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="elementor-screen-only"><?php echo esc_html__( 'More actions', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-template-library-template-more">
-			<div class="elementor-template-library-template-delete">
-				<i class="eicon-trash-o" aria-hidden="true"></i>
-				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
-			</div>
 			<div class="elementor-template-library-template-export">
 				<a href="{{ export_link }}">
 					<i class="eicon-sign-out" aria-hidden="true"></i>
 					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Export', 'elementor' ); ?></span>
 				</a>
+			</div>
+			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+				<div class="elementor-template-library-template-rename">
+					<i class="eicon-pencil" aria-hidden="true"></i>
+					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Rename', 'elementor' ); ?></span>
+				</div>
+			<?php endif; ?>
+			<div class="elementor-template-library-template-delete">
+				<i class="eicon-trash-o" aria-hidden="true"></i>
+				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
 			</div>
 		</div>
 	</div>
