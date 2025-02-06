@@ -939,18 +939,4 @@ class Utils {
 
 		return $is_private || $not_allowed || $password_required;
 	}
-
-	public static function replace_keys_in_object( array $item, array $dictionary ): array {
-		$replaced = [];
-
-		foreach ( $item as $key => $value ) {
-			if ( ! isset( $dictionary[ $key ] ) ) {
-				continue;
-			}
-
-			$replaced[ $dictionary[ $key ] ] = $value;
-		}
-
-		return $replaced;
-	}
 }

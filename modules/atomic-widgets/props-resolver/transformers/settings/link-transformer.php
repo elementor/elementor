@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -14,8 +15,13 @@ class Link_Transformer extends Transformer_Base {
 			throw new \Exception( 'Post ID or custom URL are not provided.' );
 		}
 
-		$post = get_post( (int) $value['destination'] );
-		$href = $post ? $post->guid : $value['destination'];
+		$destination = $value['destination'];
+		$post = is_numeric( $destination ) ? get_post( $destination ) : null;
+		$href = $post ? $post->guid : $destination;
+
+		if ( ! Url_Prop_Type::validate_url( $href ) ) {
+			return [];
+		}
 
 		$link_attrs = [
 			'href' => esc_url( $href ),
