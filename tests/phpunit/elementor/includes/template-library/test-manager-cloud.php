@@ -16,7 +16,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 		$this->cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
-			->onlyMethods( [ 'get_resources' ] )
+			->onlyMethods( [ 'get_resources', 'get_resource', 'post_resource' ] )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -56,7 +56,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->manager->get_source( 'cloud' )->get_items();
 	}
 
-	public function test_should_call_get_resources() {
+	public function test_get_templates_should_call_get_resources() {
 		// Arrange
 		$this->cloud_library_app_mock
 			->method('get_resources')
@@ -70,5 +70,53 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		// Act
 		$this->manager->get_templates(['cloud']);
+	}
+
+	public function test_save_template() {
+		// Arrange
+		$post_resource_response = [
+			"id" => 1,
+			"createdAt" => "2025-01-21T10:45:32.541Z",
+			"updatedAt" => "2025-01-21T10:45:32.541Z",
+			"parentId" => null,
+			"authorId" => "123",
+			"authorEmail" => "mock@email.com",
+			"title" => "AFolder",
+			"type" => "FOLDER",
+			"templateType" => "",
+		];
+
+		$mock_content = json_encode( ['content' => 'mock_content'] );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->method('post_resource')
+			->willReturn($post_resource_response);
+
+		$this->cloud_library_app_mock
+			->method('get_resource')
+			->with([ 'id' => 1 ]);
+
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method('post_resource')
+			->with([
+				'title' => 'ATemplate',
+				'type' => 'TEMPLATE',
+				'templateType' => 'container',
+				'parentId' => null,
+				'content' => $mock_content,
+			]);
+
+		// Act
+		$this->manager->save_template([
+			'post_id' => 1,
+			'source' => 'cloud',
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => $mock_content,
+			'parentId' => null,
+		]);
 	}
 }
