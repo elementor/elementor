@@ -20,11 +20,11 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 		$background_style = "url(\" $image_url \")";
 
-		if ( $value['repeat'] ) {
+		if ( ! empty( $value['repeat'] ) ) {
 			$background_style .= ' ' . $value['repeat'];
 		}
 
-		if ( $value['attachment'] ) {
+		if ( ! empty( $value['attachment'] ) ) {
 			$background_style .= ' ' . $value['attachment'];
 		}
 
@@ -66,12 +66,11 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			return '';
 		}
 
-		if ( ! isset( $value['size'] ) ) {
+		if ( ! isset( $value['size'] ) || 'custom' === $value['size'] ) {
 			return $value['position'];
 		}
 
 		$default_position = '0% 0%';
-
 		$position = $value['position'] ?? $default_position;
 
 		return $position . ' / ' . $value['size'];
