@@ -3,11 +3,11 @@
 namespace Elementor\Modules\AtomicGlobalVariables\Classes;
 
 use Elementor\Modules\AtomicGlobalVariables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\AtomicGlobalVariables\Transformers\Global_Variable as Global_Variable_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,6 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Style_Schema {
+	public function append_to( Transformers_Registry $transformers ) {
+		$transformers->register( Color_Variable_Prop_Type::get_key(), new Global_Variable_Transformer() );
+
+		return $this;
+	}
+
 	public function augment( array $schema ): array {
 		$result = [];
 

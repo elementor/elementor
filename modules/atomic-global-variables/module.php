@@ -5,7 +5,6 @@ namespace Elementor\Modules\AtomicGlobalVariables;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Core\Isolation\Wordpress_Adapter;
-use Elementor\Modules\AtomicGlobalVariables\Classes\Hooks;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
 
@@ -35,9 +34,11 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( $this->is_experiment_active() ) {
-			( new Hooks( new Wordpress_Adapter() ) )->register();
+		if ( ! $this->is_experiment_active() ) {
+			return;
 		}
+
+		( new Hooks( new Wordpress_Adapter() ) )->register();
 	}
 
 	private function is_experiment_active(): bool {
