@@ -7,7 +7,7 @@ import ExternalLinksSection from './external-links-section';
 import GetStarted from './get-started-section';
 
 const HomeScreen = ( props ) => {
-	const hasSidebarUpgrade = props.homeScreenData.hasOwnProperty( 'sidebar_upgrade' );
+	const hasSidebarPromotion = props.homeScreenData.hasOwnProperty( 'sidebar_promotion_variants' );
 
 	return (
 		/*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */
@@ -29,8 +29,8 @@ const HomeScreen = ( props ) => {
 						/>
 					</Stack>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
-						{ hasSidebarUpgrade &&
-							<SideBarPromotion sideData={ props.homeScreenData.sidebar_upgrade } />
+						{ hasSidebarPromotion &&
+							<SideBarPromotion sideData={ props.homeScreenData.sidebar_promotion_variants } />
 						}
 						<ExternalLinksSection externalLinksData={ props.homeScreenData.external_links } />
 					</Container>
