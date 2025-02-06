@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, type Frame } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import widgets from '../enums/widgets';
@@ -97,7 +97,8 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.openSection( 'section_image_overlay' );
 		await editor.setSwitcherControlValue( 'show_image_overlay', true );
 		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
-		await editor.waitForPanelToLoad();
+		const frame: Frame = editor.getPreviewFrame();
+		await frame.locator( EditorSelectors.video.widget ).click();
 		await editor.setSelectControlValue( 'image_overlay_size', 'thumbnail' );
 		await videoWidget.verifyImageSrc( {
 			selector: EditorSelectors.video.image,
