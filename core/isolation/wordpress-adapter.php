@@ -94,4 +94,8 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function add_action( string $hook_name, callable $callback, int $priority = 10, int $accepted_args = 1 ): bool {
 		return add_action( $hook_name, $callback, $priority, $accepted_args );
 	}
+
+	public function apply_filters( string $hook_name, $value, ...$args ) {
+		return apply_filters( $hook_name, $value, ...$args );
+	}
 }

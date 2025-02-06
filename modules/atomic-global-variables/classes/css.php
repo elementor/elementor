@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicGlobalVariables\Classes;
 
-use Elementor\Plugin;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Files\CSS\Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,15 +25,17 @@ class CSS {
 		],
 	];
 
+	private Wordpress_Adapter_Interface $wp_adapter;
+
+	public function __construct( Wordpress_Adapter_Interface $wp_adapter ) {
+		$this->wp_adapter = $wp_adapter;
+	}
+
 	private function global_variables(): array {
-		return $this->global_variables;
+		return $this->wp_adapter->apply_filters( 'elementor/atomic-global-variables/css/variables', $this->global_variables );
 	}
 
 	public function append_to( Post $post ) {
-		if ( ! Plugin::$instance->kits_manager->is_kit( $post->get_post_id() ) ) {
-			// return;
-		}
-
 		$post->get_stylesheet()->add_raw_css(
 			$this->raw_css()
 		);

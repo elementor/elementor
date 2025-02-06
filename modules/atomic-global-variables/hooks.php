@@ -42,6 +42,6 @@ class Hooks {
 	}
 
 	private function inject_global_variables_css( $post ): void {
-		( new Global_Variables_CSS() )->append_to( $post );
+		( new Global_Variables_CSS( $this->wp_adapter ) )->append_to( $post );
 	}
 }
