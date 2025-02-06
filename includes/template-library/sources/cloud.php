@@ -44,7 +44,7 @@ class Source_Cloud extends Source_Base {
 	}
 
 	public function get_item( $id ) {
-		return $this->get_app()->get_resource( ['id' => $id] );
+		return $this->get_app()->get_resource( [ 'id' => $id ] );
 	}
 
 	public function get_data( array $args ) {
@@ -81,7 +81,7 @@ class Source_Cloud extends Source_Base {
 		$app = $this->get_app();
 
 		$resource_data = [
-			'title' => $template_data['title'] ??  esc_html__( '(no title)', 'elementor' ),
+			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
 			'type' => $template_data['resourceType'] ?? self::TEMPLATE_RESOURCE_TYPE,
 			'templateType' => $template_data['type'],
 			'parentId' => $template_data['parentId'] ?? null,

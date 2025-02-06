@@ -71,7 +71,7 @@ class Cloud_Library extends Library {
 			'body' => wp_json_encode( $data ),
 		];
 
-		return $this->http_request( 'POST', 'resources', $resource ,[
+		return $this->http_request( 'POST', 'resources', $resource, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 	}
