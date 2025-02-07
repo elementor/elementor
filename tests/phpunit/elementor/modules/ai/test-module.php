@@ -177,4 +177,20 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		do_action( 'elementor/import-export/import-kit/runner/after-run', $imported_data );
 	}
+
+	public function test_is_ai_enabled_should_return_true_if_container_experiment_active() {
+		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
+
+		$module = new Module();
+
+		$this->assertTrue( $module->is_ai_enabled() );
+	}
+
+	public function test_is_ai_enabled_should_return_false_if_container_experiment_inactive() {
+		Plugin::$instance->experiments->set_feature_default_state( 'container', 'inactive' );
+		
+		$module = new Module();
+
+		$this->assertFalse( $module->is_ai_enabled() );
+	}
 }
