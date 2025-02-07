@@ -1,11 +1,10 @@
 <?php
 
-namespace Elementor\Modules\AtomicGlobalVariables\Classes;
+namespace Elementor\Modules\AtomicGlobalVariables;
 
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Modules\AtomicGlobalVariables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\AtomicGlobalVariables\Transformers\Global_Variable as Global_Variable_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
+use Elementor\Modules\AtomicGlobalVariables\Classes\CSS as Global_Variables_CSS;
+use Elementor\Modules\AtomicGlobalVariables\Classes\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,6 +18,10 @@ class Hooks {
 	}
 
 	public function register() {
+		$this->wp_adapter->add_action( 'elementor/css-file/post/parse', function ( $post ) {
+			$this->inject_global_variables_css( $post );
+		} );
+
 		$this->wp_adapter->add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $transformers ) {
 			$this->register_style_transformers( $transformers );
 		} );
@@ -30,11 +33,15 @@ class Hooks {
 		return $this;
 	}
 
-	private function register_style_transformers( Transformers_Registry $transformers ) {
-		$transformers->register( Color_Variable_Prop_Type::get_key(), new Global_Variable_Transformer() );
+	private function register_style_transformers( $transformers ) {
+		( new Style_Schema() )->append_to( $transformers );
 	}
 
 	private function augment_style_schema( array $schema ): array {
 		return ( new Style_Schema() )->augment( $schema );
+	}
+
+	private function inject_global_variables_css( $post ): void {
+		( new Global_Variables_CSS( $this->wp_adapter ) )->append_to( $post );
 	}
 }
