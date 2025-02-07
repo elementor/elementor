@@ -313,8 +313,11 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 				this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
 
-				elementor.templates.loadMore( () => {
-					this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+				elementor.templates.loadMore( {
+					onUpdate: () => {
+						this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+					},
+					search: this.ui.textFilter.val(),
 				} );
 			},
 		} );

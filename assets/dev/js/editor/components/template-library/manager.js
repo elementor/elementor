@@ -473,12 +473,16 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.loadMore = ( onUpdate ) => {
+	this.loadMore = ( {
+		onUpdate,
+		search = '',
+	} = {} ) => {
 		isLoading = true;
 
 		const query = {
 			source: this.getFilter( 'source' ),
 			offset: templatesCollection.length,
+			search,
 		};
 
 		$e.data.get( 'library/templates', query, { } ).then( ( result ) => {
