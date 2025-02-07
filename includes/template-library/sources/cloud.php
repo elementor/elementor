@@ -54,7 +54,8 @@ class Source_Cloud extends Source_Base {
 			return $data;
 		}
 
-		$data['content'] = json_decode( $data['content'], true )['content'];
+		$decoded_data = json_decode( $data['content'], true );
+		$data['content'] = $decoded_data['content'];
 
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
@@ -65,6 +66,10 @@ class Source_Cloud extends Source_Base {
 		$document = Plugin::$instance->documents->get( $post_id );
 		if ( $document ) {
 			$data['content'] = $document->get_elements_raw_data( $data['content'], true );
+		}
+
+		if ( ! empty( $args['with_page_settings'] ) ) {
+			$data['page_settings'] = $decoded_data['page_settings'];
 		}
 
 		// After the upload complete, set the elementor upload state back to false
