@@ -130,7 +130,7 @@ class Source_Cloud extends Source_Base {
 	}
 
 	private function prepare_template_export( $data ) {
-		if ( empty( $data['content'] ) ) {
+		if ( empty( $data['content']['content'] ) ) {
 			return new \WP_Error( 'empty_template', 'The template is empty' );
 		}
 
