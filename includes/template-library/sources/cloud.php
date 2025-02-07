@@ -158,7 +158,7 @@ class Source_Cloud extends Source_Base {
 			$files[] = $this->get_file_item( $template_id, $temp_path );
 		}
 
-		if ( empty ( $files ) ) {
+		if ( empty( $files ) ) {
 			return new \WP_Error( 'empty_files', 'There is no files to export (probably all the requested templates are empty).' );
 		}
 
