@@ -1,11 +1,10 @@
-var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
-	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
-	TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' ),
-	TemplateLibraryCollectionView;
+const TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' );
+const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' );
+const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
 
-TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
+const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
 
 	id: 'elementor-template-library-templates',
@@ -248,22 +247,22 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	searchTemplates( source ) {
 		this.showLoadingSpinner();
 
-		const ajaxOptions = {
+		const self = this;
+
+		const options = {
 			data: {
 				source,
 				search: this.ui.textFilter.val(),
 			},
-			success: ( data ) => {
-				this.collection = new TemplateLibraryCollection( data ); // Update Marionette 'collection' property.
-				elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
-				this.showSearchIcon();
+			onSuccess: () => {
+				self.ui.searchInputIcon.removeClass( 'eicon-loading eicon-animation-spin' ).addClass( 'eicon-search' );
 			},
-			error: () => {
-				this.showSearchIcon();
+			onError: () => {
+				self.ui.searchInputIcon.removeClass( 'eicon-loading eicon-animation-spin' ).addClass( 'eicon-search' );
 			},
 		};
 
-		elementorCommon.ajax.addRequest( 'search_templates', ajaxOptions );
+		elementor.templates.searchTemplates( options );
 	},
 
 	showLoadingSpinner() {

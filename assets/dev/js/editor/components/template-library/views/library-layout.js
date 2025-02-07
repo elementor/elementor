@@ -84,6 +84,14 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		} ) );
 	},
 
+	updateViewCollection( models ) {
+		this.modalContent.currentView.collection.reset( models );
+	},
+
+	addTemplates( models ) {
+		this.modalContent.currentView.collection.add( models, { merge: true } );
+	},
+
 	showImportView() {
 		const headerView = this.getHeaderView();
 

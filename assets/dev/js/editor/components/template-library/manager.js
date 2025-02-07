@@ -473,6 +473,39 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
+	this.searchTemplates = ( {
+		onSuccess,
+		onError,
+		data,
+	} = {} ) => {
+		isLoading = true;
+		const ajaxOptions = {
+			data,
+			success: ( result ) => {
+				isLoading = false;
+
+				templatesCollection = new TemplateLibraryCollection( result.templates );
+				total = result.total;
+
+				self.layout.updateViewCollection( templatesCollection.models );
+
+				this.setFilter( 'text', data.search );
+
+				if ( onSuccess ) {
+					onSuccess( result.templates );
+				}
+			},
+			error: () => {
+				isLoading = false;
+				if ( onError ) {
+					onError();
+				}
+			},
+		};
+
+		elementorCommon.ajax.addRequest( 'search_templates', ajaxOptions );
+	};
+
 	this.loadMore = ( {
 		onUpdate,
 		search = '',
@@ -485,11 +518,14 @@ const TemplateLibraryManager = function() {
 			search,
 		};
 
-		$e.data.get( 'library/templates', query, { } ).then( ( result ) => {
+		$e.data.get( 'library/templates', query, { refresh: true } ).then( ( result ) => {
 			const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
 
-			templatesCollection.add( templates );
+			const collection = new TemplateLibraryCollection( templates );
 
+			templatesCollection.add( collection.models, { merge: true } );
+
+			self.layout.addTemplates( collection.models );
 			self.layout.hideLoadingView();
 
 			if ( onUpdate ) {

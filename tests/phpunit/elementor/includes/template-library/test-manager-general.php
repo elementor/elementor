@@ -241,7 +241,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$document_ids = $this->create_mock_templates( $admin );
 
 		// Act
-		$templates = self::$manager->get_templates( [ 'local' ] );
+		$templates = self::$manager->get_templates( [ 'source' => 'local' ] );
 
 		// Assert
 		$ids = array_map( function ( $item ) {
@@ -259,7 +259,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$document_ids = $this->create_mock_templates( $admin, 'container_flexbox' );
 
 		// Act
-		$templates = self::$manager->get_templates( [ 'remote' ] );
+		$templates = self::$manager->get_templates( [ 'source' => 'remote' ] );
 
 		// Assert
 		$ids = array_map( function ( $item ) {
@@ -277,7 +277,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$this->create_remote_mock_templates();
 
 		// Act
-		$templates = self::$manager->get_templates( [ 'remote' ] );
+		$templates = self::$manager->get_templates( [ 'source' => 'remote' ] );
 
 		// Assert
 		$this->assertCount( 2, $templates );
@@ -290,7 +290,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$this->create_remote_mock_templates();
 
 		// Act
-		$templates = self::$manager->get_templates( [ 'remote' ], true );
+		$templates = self::$manager->get_templates( [ 'source' => 'remote', 'sync' => true ] );
 
 		// Assert
 		$this->assertCount( 2, $templates );
@@ -303,7 +303,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$this->create_cloud_mock_templates();
 
 		// Act
-		$templates = self::$manager->get_templates( [ 'cloud' ] );
+		$templates = self::$manager->get_templates( [ 'source' => 'cloud' ] );
 
 		// Assert
 		$this->assertCount( 2, $templates );

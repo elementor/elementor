@@ -212,15 +212,18 @@ class Manager {
 	 * @param bool  $force_update
 	 * @return array
 	 */
-	public function get_templates( array $filter_sources = [], bool $force_update = false ): array {
+	public function get_templates( array $args = [] ): array {
 		$templates = [];
+
+		$force_update = ! empty( $args['sync'] );
+		$filter_sources = ! empty( $args['source'] ) ? [ $args['source'] ] : [];
 
 		foreach ( $this->get_registered_sources() as $source ) {
 			if ( ! empty( $filter_sources ) && ! in_array( $source->get_id(), $filter_sources, true ) ) {
 				continue;
 			}
 
-			$templates = array_merge( $templates, $source->get_items( [ 'force_update' => $force_update ] ) );
+			$templates = array_merge( $templates, $source->get_items( [ 'force_update' => $force_update, ...$args ] ) );
 		}
 
 		return $templates;
@@ -248,11 +251,8 @@ class Manager {
 		// Ensure all document are registered.
 		Plugin::$instance->documents->get_document_types();
 
-		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : [];
-		$force_update = ! empty( $args['sync'] );
-
 		return [
-			'templates' => $this->get_templates( $filter_sources, $force_update ),
+			'templates' => $this->get_templates( $args ),
 			'config' => $library_data['types_data'],
 		];
 	}
