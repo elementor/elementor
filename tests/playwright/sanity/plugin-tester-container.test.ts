@@ -4,7 +4,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 
 test.describe.configure( { mode: 'parallel' } );
 
-test.describe( `Plugin tester tests: containers`, () => {
+test.describe( `Plugin tester tests: containers @plugin_tester_container`, () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

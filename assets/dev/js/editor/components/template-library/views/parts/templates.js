@@ -1,5 +1,7 @@
 var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
 	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
+	TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' ),
+	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
 	TemplateLibraryCollectionView;
 
 import Select2 from 'elementor-editor-utils/select2.js';
@@ -25,6 +27,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
 		orderInputs: '.elementor-template-library-order-input',
 		orderLabels: 'label.elementor-template-library-order-label',
+		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
 	},
 
 	events: {
@@ -59,26 +62,39 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	getChildView( childModel ) {
+		const sourceMappings = {
+			local: TemplateLibraryTemplateLocalView,
+			remote: TemplateLibraryTemplateRemoteView,
+			cloud: TemplateLibraryTemplateCloudView,
+		};
+
 		const activeSource = childModel.get( 'source' ) ? childModel.get( 'source' ) : 'local';
+
 		/**
 		 * Filter template source.
 		 *
 		 * @param bool   isRemote     - If `true` the source is a remote source.
 		 * @param string activeSource - The current template source.
 		 */
-		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', activeSource !== 'local', activeSource );
-		if ( isRemote ) {
-			return TemplateLibraryTemplateRemoteView;
-		}
+		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', 'remote' === activeSource, activeSource );
 
-		return TemplateLibraryTemplateLocalView;
+		return isRemote
+			? TemplateLibraryTemplateRemoteView
+			: sourceMappings[ activeSource ] || TemplateLibraryTemplateLocalView;
 	},
 
 	initialize() {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
 
 	filter( childModel ) {
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		if ( 'cloud' === activeSource ) {
+			return true; // Filtering happens on the backend.
+		}
+
 		var filterTerms = elementor.templates.getFilterTerms(),
 			passingFilter = true;
 
@@ -217,7 +233,43 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onTextFilterInput() {
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		if ( 'cloud' === activeSource ) {
+			this.debouncedSearchTemplates( activeSource );
+			return;
+		}
+
 		elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
+	},
+
+	searchTemplates( source ) {
+		this.showLoadingSpinner();
+
+		const ajaxOptions = {
+			data: {
+				source,
+				search: this.ui.textFilter.val(),
+			},
+			success: ( data ) => {
+				this.collection = new TemplateLibraryCollection( data ); // Update Marionette 'collection' property.
+				elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
+				this.showSearchIcon();
+			},
+			error: () => {
+				this.showSearchIcon();
+			},
+		};
+
+		elementorCommon.ajax.addRequest( 'search_templates', ajaxOptions );
+	},
+
+	showLoadingSpinner() {
+		this.ui.searchInputIcon.removeClass( 'eicon-search' ).addClass( 'eicon-loading eicon-animation-spin' );
+	},
+
+	showSearchIcon() {
+		this.ui.searchInputIcon.removeClass( 'eicon-loading eicon-animation-spin' ).addClass( 'eicon-search' );
 	},
 
 	onSelectFilterChange( event ) {
