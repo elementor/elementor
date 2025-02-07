@@ -146,7 +146,7 @@ trait Has_Atomic_Base {
 		];
 	}
 
-	final public function get_atomic_settings(): array {
+	public function get_atomic_settings(): array {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
 
