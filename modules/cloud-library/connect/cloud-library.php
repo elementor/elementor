@@ -42,7 +42,10 @@ class Cloud_Library extends Library {
 			$templates[] = $this->prepare_template( $cloud_template );
 		}
 
-		return $templates;
+		return [
+			'templates' => $templates,
+			'total' => $cloud_templates['total'],
+		];
 	}
 
 	public function get_resource( array $args ): array {

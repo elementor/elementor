@@ -27,6 +27,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		orderInputs: '.elementor-template-library-order-input',
 		orderLabels: 'label.elementor-template-library-order-label',
 		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
+		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
 	},
 
 	events: {
@@ -215,6 +216,8 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) && 'lb' !== elementor.templates.getFilter( 'type' ) ) {
 			this.setFiltersUI();
 		}
+
+		this.handleInfiniteScroll();
 	},
 
 	onRenderCollection() {
@@ -293,6 +296,30 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
 
 		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
+	},
+
+	handleInfiniteScroll() {
+		if ( ! this.ui.loadMoreAnchor[ 0 ] ) {
+			return;
+		}
+
+		this.observer = elementorModules.utils.Scroll.scrollObserver( {
+			callback: ( event ) => {
+				const canLoadMore = elementor.templates.canLoadMore() && ! elementor.templates.isLoading();
+
+				if ( ! event.isInViewport || ! canLoadMore ) {
+					return;
+				}
+
+				this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+
+				elementor.templates.loadMore( () => {
+					this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+				} );
+			},
+		} );
+
+		this.observer.observe( this.ui.loadMoreAnchor[ 0 ] );
 	},
 } );
 

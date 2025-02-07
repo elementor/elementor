@@ -12,7 +12,9 @@ const TemplateLibraryManager = function() {
 		errorDialog,
 		templatesCollection,
 		config = {},
-		filterTerms = {};
+		filterTerms = {},
+		isLoading = false,
+		total = 0;
 
 	const registerDefaultTemplateTypes = function() {
 		var data = {
@@ -79,6 +81,16 @@ const TemplateLibraryManager = function() {
 			subtype: {},
 			favorite: {},
 		};
+	};
+
+	this.isLoading = () => isLoading;
+
+	this.canLoadMore = () => {
+		if ( ! templatesCollection ) {
+			return false;
+		}
+
+		return templatesCollection.length < total;
 	};
 
 	this.init = function() {
@@ -424,6 +436,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.loadTemplates = function( onUpdate ) {
+		isLoading = true;
+		total = 0;
 		self.layout.showLoadingView();
 
 		const query = { source: this.getFilter( 'source' ) },
@@ -435,9 +449,15 @@ const TemplateLibraryManager = function() {
 		}
 
 		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
+			const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
+
 			templatesCollection = new TemplateLibraryCollection(
-				result.data.templates,
+				templates,
 			);
+
+			if ( result.data?.templates?.total ) {
+				total = result.data?.templates?.total;
+			}
 
 			if ( result.data.config ) {
 				config = result.data.config;
@@ -448,6 +468,31 @@ const TemplateLibraryManager = function() {
 			if ( onUpdate ) {
 				onUpdate();
 			}
+		} ).finally( ( ) => {
+			isLoading = false;
+		} );
+	};
+
+	this.loadMore = ( onUpdate ) => {
+		isLoading = true;
+
+		const query = {
+			source: this.getFilter( 'source' ),
+			offset: templatesCollection.length,
+		};
+
+		$e.data.get( 'library/templates', query, { } ).then( ( result ) => {
+			const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
+
+			templatesCollection.add( templates );
+
+			self.layout.hideLoadingView();
+
+			if ( onUpdate ) {
+				onUpdate();
+			}
+		} ).finally( ( ) => {
+			isLoading = false;
 		} );
 	};
 
