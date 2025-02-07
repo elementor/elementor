@@ -94,12 +94,12 @@ class Source_Cloud extends Source_Base {
 			return new \WP_Error( 'export_template_error', 'An error has occured' );
 		}
 
-		if ( static::RESOURCE_TYPE_FOLDER === $data['type'] ) {
-			$this->handle_export_folder( $id );
-		}
-
 		if ( static::RESOURCE_TYPE_TEMPLATE === $data['type'] ) {
 			$this->handle_export_file( $data );
+		}
+
+		if ( static::RESOURCE_TYPE_FOLDER === $data['type'] ) {
+			$this->handle_export_folder( $id );
 		}
 	}
 
@@ -150,6 +150,29 @@ class Source_Cloud extends Source_Base {
 		];
 	}
 
+	public function export_multiple_templates( array $template_ids ) {
+		$files = [];
+		$temp_path = $this->get_temp_path();
+
+		foreach ( $template_ids as $template_id ) {
+			$files[] = $this->get_file_item( $template_id, $temp_path );
+		}
+
+		if ( empty ( $files ) ) {
+			return new \WP_Error( 'empty_files', 'There is no files to export (probably all the requested templates are empty).' );
+		}
+
+		list( $zip_archive_filename, $zip_complete_path ) = $this->handle_zip_file( $temp_path, $files );
+
+		$this->delete_temp_files( $files );
+
+		$this->send_file_headers( $zip_archive_filename, filesize( $zip_complete_path ) );
+
+		$this->serve_and_delete_zip( $zip_complete_path );
+
+		die;
+	}
+
 	private function send_file_headers( $file_name, $file_size ) {
 		header( 'Content-Type: application/octet-stream' );
 		header( 'Content-Disposition: attachment; filename=' . $file_name );
@@ -159,41 +182,17 @@ class Source_Cloud extends Source_Base {
 		header( 'Content-Length: ' . $file_size );
 	}
 
-	public function export_multiple_templates( array $template_ids ) {
-		$files = [];
-
+	private function get_temp_path(): string {
 		$wp_upload_dir = wp_upload_dir();
 
 		$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR;
 
 		wp_mkdir_p( $temp_path );
 
-		foreach ( $template_ids as $template_id ) {
-			$data = $this->get_app()->get_resource( [ 'template_id' => $template_id ] );
-			$file_data = $this->prepare_template_export( $data );
+		return $temp_path;
+	}
 
-			if ( is_wp_error( $file_data ) ) {
-				continue;
-			}
-
-			$complete_path = $temp_path . '/' . $file_data['name'];
-
-			$put_contents = file_put_contents( $complete_path, $file_data['content'] );
-
-			if ( ! $put_contents ) {
-				return new \WP_Error( '404', sprintf( 'Cannot create file "%s".', $file_data['name'] ) );
-			}
-
-			$files[] = [
-				'path' => $complete_path,
-				'name' => $file_data['name'],
-			];
-		}
-
-		if ( ! $files ) {
-			return new \WP_Error( 'empty_files', 'There is no files to export (probably all the requested templates are empty).' );
-		}
-
+	private function handle_zip_file( string $temp_path, array $files ): array {
 		$zip_archive_filename = 'elementor-templates-' . gmdate( 'Y-m-d' ) . '.zip';
 
 		$zip_archive = new \ZipArchive();
@@ -208,18 +207,40 @@ class Source_Cloud extends Source_Base {
 
 		$zip_archive->close();
 
+		return [ $zip_archive_filename, $zip_complete_path ];
+	}
+
+	private function delete_temp_files( array $files ): void {
 		foreach ( $files as $file ) {
 			unlink( $file['path'] );
 		}
+	}
 
-		$this->send_file_headers( $zip_archive_filename, filesize( $zip_complete_path ) );
+	private function get_file_item( $template_id, string $temp_path ) {
+		$data      = $this->get_app()->get_resource( [ 'template_id' => $template_id ] );
+		$file_data = $this->prepare_template_export( $data );
 
+		if ( is_wp_error( $file_data ) ) {
+			return;
+		}
+
+		$complete_path = $temp_path . '/' . $file_data['name'];
+
+		$put_contents = file_put_contents( $complete_path, $file_data['content'] );
+
+		if ( ! $put_contents ) {
+			return new \WP_Error( '404', sprintf( 'Cannot create file "%s".', $file_data['name'] ) );
+		}
+
+		return [
+			'path' => $complete_path,
+			'name' => $file_data['name'],
+		];
+	}
+
+	private function serve_and_delete_zip( $zip_complete_path ): void {
 		@ob_end_flush();
-
 		@readfile( $zip_complete_path );
-
 		unlink( $zip_complete_path );
-
-		die;
 	}
 }
