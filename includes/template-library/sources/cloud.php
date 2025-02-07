@@ -11,10 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Source_Cloud extends Source_Base {
-	/**
-	 * Elementor template-library temporary files folder.
-	 */
 	const TEMP_FILES_DIR = 'elementor/tmp';
+	const RESOURCE_TYPE_FOLDER = 'FOLDER';
+	const RESOURCE_TYPE_TEMPLATE = 'TEMPLATE';
 
 	protected function get_app(): Cloud_Library {
 		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
@@ -55,7 +54,7 @@ class Source_Cloud extends Source_Base {
 			return $data;
 		}
 
-		$data['content'] = json_decode( $data['content'], true );
+		$data['content'] = json_decode( $data['content'], true )['content'];
 
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
@@ -88,18 +87,23 @@ class Source_Cloud extends Source_Base {
 		return $this->get_app()->get_resources( $args );
 	}
 
-	public function export_template( $template_id ) {
-		$data = $this->get_app()->get_resource( [ 'template_id' => $template_id ] );
+	public function export_template( $id ) {
+		$data = $this->get_app()->get_resource( [ 'template_id' => $id ] );
 
 		if ( is_wp_error( $data ) ) {
 			return new \WP_Error( 'export_template_error', 'An error has occured' );
 		}
 
-		if ( 'FOLDER' === $data['type'] ) {
-			$this->handle_export_folder( $template_id );
-			return;
+		if ( static::RESOURCE_TYPE_FOLDER === $data['type'] ) {
+			$this->handle_export_folder( $id );
 		}
 
+		if ( static::RESOURCE_TYPE_TEMPLATE === $data['type'] ) {
+			$this->handle_export_file( $data );
+		}
+	}
+
+	private function handle_export_file( $data ) {
 		$file_data = $this->prepare_template_export( $data );
 
 		if ( is_wp_error( $file_data ) ) {
@@ -108,16 +112,21 @@ class Source_Cloud extends Source_Base {
 
 		$this->send_file_headers( $file_data['name'], strlen( $file_data['content'] ) );
 
-		// Clear buffering just in case.
 		@ob_end_clean();
-
 		flush();
 
-		// Output file contents.
 		// PHPCS - Export widget json
 		echo $file_data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		die;
+	}
+
+	private function handle_export_folder( $folder_id ) {
+		$templates = $this->get_app()->get_resources( [ 'template_id' => $folder_id ] );
+
+		$template_ids = array_map( fn( $template ) => $template['template_id'], $templates );
+
+		$this->export_multiple_templates( $template_ids );
 	}
 
 	private function prepare_template_export( $data ) {
@@ -128,8 +137,8 @@ class Source_Cloud extends Source_Base {
 		$data['content'] = json_decode( $data['content'], true );
 
 		$export_data = [
-			'content' => $data['content'],
-			'page_settings' => [],
+			'content' => $data['content']['content'],
+			'page_settings' => $data['content']['page_settings'] ?? [],
 			'version' => DB::DB_VERSION,
 			'title' => $data['title'],
 			'type' => $data['templateType'],
@@ -150,14 +159,6 @@ class Source_Cloud extends Source_Base {
 		header( 'Content-Length: ' . $file_size );
 	}
 
-	private function handle_export_folder( $folder_id ) {
-		$templates = $this->get_app()->get_resources( [ 'template_id' => $folder_id ] );
-
-		$template_ids = array_map( fn( $template ) => $template['template_id'], $templates );
-
-		$this->export_multiple_templates( $template_ids );
-	}
-
 	public function export_multiple_templates( array $template_ids ) {
 		$files = [];
 
@@ -165,10 +166,8 @@ class Source_Cloud extends Source_Base {
 
 		$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR;
 
-		// Create temp path if it doesn't exist
 		wp_mkdir_p( $temp_path );
 
-		// Create all json files
 		foreach ( $template_ids as $template_id ) {
 			$data = $this->get_app()->get_resource( [ 'template_id' => $template_id ] );
 			$file_data = $this->prepare_template_export( $data );
@@ -195,7 +194,6 @@ class Source_Cloud extends Source_Base {
 			return new \WP_Error( 'empty_files', 'There is no files to export (probably all the requested templates are empty).' );
 		}
 
-		// Create temporary .zip file
 		$zip_archive_filename = 'elementor-templates-' . gmdate( 'Y-m-d' ) . '.zip';
 
 		$zip_archive = new \ZipArchive();

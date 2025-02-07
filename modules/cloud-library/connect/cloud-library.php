@@ -60,6 +60,7 @@ class Cloud_Library extends Library {
 			'title' => $template_data['title'],
 			'human_date' => date_i18n( get_option( 'date_format' ), strtotime( $template_data['createdAt'] ) ),
 			'export_link' => $this->get_export_link( $template_data['id'] ),
+			'hasPageSettings' => $template_data['hasPageSettings'],
 		];
 	}
 
