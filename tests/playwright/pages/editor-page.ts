@@ -6,10 +6,11 @@ import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
+import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
+
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
@@ -566,6 +567,32 @@ export default class EditorPage extends BasePage {
 
 		if ( currentState !== Boolean( value ) ) {
 			await controlLabel.click();
+		}
+	}
+
+	/**
+	 * Set gap control value.
+	 *
+	 * @param {string}     controlId    - The control to set the value to.
+	 * @param {GapControl} value        - The value to set, or an object with column and row values.
+	 * @param {string }    value.column - The column value to set.
+	 * @param {string }    value.row    - The row value to set.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setGapControlValue( controlId: string, value: GapControl ): Promise<void> {
+		const control = this.page.locator( `.elementor-control-${ controlId }` );
+
+		if ( 'string' === typeof value ) {
+			await control.locator( '.elementor-control-gap >> nth=0' ).locator( 'input' ).fill( value );
+		} else if ( 'object' === typeof value ) {
+			await control.locator( '.elementor-link-gaps' ).first().click();
+			await control.locator( '.elementor-control-gap input[data-setting="column"]' ).first().fill( value.column );
+			await control.locator( '.elementor-control-gap input[data-setting="row"]' ).first().fill( value.row );
+			if ( value.unit ) {
+				await control.locator( '.e-units-switcher' ).click();
+				await control.locator( `[data-choose="${ value.unit }"]` ).click();
+			}
 		}
 	}
 
