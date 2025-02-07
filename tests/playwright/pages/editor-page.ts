@@ -573,10 +573,8 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Set gap control value.
 	 *
-	 * @param {string}     controlId    - The control to set the value to.
-	 * @param {GapControl} value        - The value to set, or an object with column and row values.
-	 * @param {string }    value.column - The column value to set.
-	 * @param {string }    value.row    - The row value to set.
+	 * @param {string}     controlId - The control to set the value to.
+	 * @param {GapControl} value     - The value to set. Either a string or an object with column, row and unit values.
 	 *
 	 * @return {Promise<void>}
 	 */
@@ -586,9 +584,9 @@ export default class EditorPage extends BasePage {
 		if ( 'string' === typeof value ) {
 			await control.locator( '.elementor-control-gap >> nth=0' ).locator( 'input' ).fill( value );
 		} else if ( 'object' === typeof value ) {
-			await control.locator( '.elementor-link-gaps' ).first().click();
-			await control.locator( '.elementor-control-gap input[data-setting="column"]' ).first().fill( value.column );
-			await control.locator( '.elementor-control-gap input[data-setting="row"]' ).first().fill( value.row );
+			await control.locator( '.elementor-link-gaps' ).click();
+			await control.locator( '.elementor-control-gap input[data-setting="column"]' ).fill( value.column );
+			await control.locator( '.elementor-control-gap input[data-setting="row"]' ).fill( value.row );
 			if ( value.unit ) {
 				await control.locator( '.e-units-switcher' ).click();
 				await control.locator( `[data-choose="${ value.unit }"]` ).click();
