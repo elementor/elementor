@@ -100,16 +100,14 @@ export default class Content {
 	 * @param {string}  args.selector    - Image selector.
 	 * @param {string}  args.imageTitle  - Image title.
 	 * @param {boolean} args.isPublished - If true, the image is published.
-	 * @param {boolean} args.isVideo     - If true, the widget is a video, otherwise an image.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean, isVideo: boolean } ): Promise<void> {
+	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean } ): Promise<void> {
 		const image = args.isPublished
 			? this.page.locator( args.selector )
 			: await this.editor.getPreviewFrame().waitForSelector( args.selector );
-		const attribute = args.isVideo ? 'style' : 'src';
-		const src = await image.getAttribute( attribute );
+		const src = await image.getAttribute( 'src' );
 		expect( src.includes( args.imageTitle ) ).toEqual( true );
 	}
 
