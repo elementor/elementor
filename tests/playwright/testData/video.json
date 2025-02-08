@@ -5,7 +5,6 @@
             "play_on_mobile",
             "mute",
             "loop",
-            "modestbranding",
             "cc_load_policy",
             "yt_privacy",
             "lazy_load"
@@ -15,7 +14,6 @@
             "controls": "1",
             "start": 10,
             "end": 20,
-            "modestbranding": "1",
             "cc_load_policy": "1",
             "playsinline": "1"
         },
