@@ -43,8 +43,8 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		return new \WP_Query( $args );
 	}
 
-	public function get_option( $option_key ) {
-		return get_option( $option_key );
+	public function get_option( $option_key, $default_value = false ) {
+		return get_option( $option_key, $default_value );
 	}
 
 	public function update_option( $option_key, $option_value ): void {

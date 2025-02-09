@@ -39,6 +39,7 @@ class Module extends BaseModule {
 		}
 
 		( new Hooks( new Wordpress_Adapter() ) )->register();
+		( new Cache( new Wordpress_Adapter() ) )->validate();
 	}
 
 	private function is_experiment_active(): bool {
