@@ -23,7 +23,7 @@ class Cache {
 	public function validate() {
 		if ( $this->cache_expired() ) {
 			$this->clear_kit_css_cache();
-			$this->update_sginature();
+			$this->update_signature();
 		}
 
 		return $this;
@@ -56,7 +56,7 @@ class Cache {
 		return $this;
 	}
 
-	private function update_sginature() {
+	private function update_signature() {
 		if ( ! $this->wp_adapter->get_option( self::DB_KEY ) ) {
 			$this->wp_adapter->add_option( self::DB_KEY, $this->signature() );
 			return $this;
