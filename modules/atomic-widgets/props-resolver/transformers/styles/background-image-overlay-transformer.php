@@ -66,7 +66,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			return '';
 		}
 
-		if ( ! isset( $value['size'] ) || 'custom' === $value['size'] ) {
+		if ( ! isset( $value['size'] ) ) {
 			return $value['position'];
 		}
 

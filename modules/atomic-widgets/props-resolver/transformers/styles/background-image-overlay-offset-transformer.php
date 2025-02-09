@@ -9,10 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Image_Overlay_Offset_Transformer extends Transformer_Base {
 	public function transform( $value, $key ): string {
-		//TODO: check about the type it should be
-		if ( empty( $value['size'] ) ) {
-			return '';
-		}
+//		if ( empty( $value['size'] ) ) {
+//			return '';
+//		}
 
 		if ( is_string( $value ) ) {
 			return $value;
