@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Files\CSS\Post;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
@@ -25,7 +26,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Layout_Dir
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Gap_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
@@ -50,10 +50,9 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Gap_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
-use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 
@@ -93,6 +92,7 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
+			add_action( 'elementor/css-file/post/parse', fn( Post $post ) => $this->inject_base_styles( $post ), 10 );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 			add_action( 'elementor/frontend/after_register_styles', fn() => $this->register_styles() );
 		}
@@ -123,15 +123,31 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
+	private static function get_atomic_widgets() {
+		return [
+			Atomic_Heading::class,
+			Atomic_Image::class,
+			Atomic_Paragraph::class,
+			Atomic_Svg::class,
+		];
+	}
+
+	private static function get_atomic_elements() {
+		return [
+			Div_Block::class,
+		];
+	}
+
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
-		$widgets_manager->register( new Atomic_Heading() );
-		$widgets_manager->register( new Atomic_Image() );
-		$widgets_manager->register( new Atomic_Paragraph() );
-		$widgets_manager->register( new Atomic_Svg() );
+		foreach ( static::get_atomic_widgets() as $widget ) {
+			$widgets_manager->register( new $widget() );
+		}
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
-		$elements_manager->register_element_type( new Div_Block() );
+		foreach ( static::get_atomic_elements() as $element ) {
+			$elements_manager->register_element_type( new $element() );
+		}
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
@@ -174,6 +190,53 @@ class Module extends BaseModule {
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
+	}
+
+	public function inject_base_styles( Post $post, array $elements = [] ) {
+		if ( ! Plugin::$instance->kits_manager->is_kit( $post->get_post_id() ) ) {
+			return;
+		}
+
+		$elements = empty( $elements ) ? static::get_atomic_widgets() : $elements;
+
+		$base_styles = [];
+
+		foreach ( $elements as $element ) {
+			$base_styles = array_merge( $element::get_base_styles(), $base_styles );
+		}
+
+		$this->styles_enqueue_fonts( $base_styles );
+
+		$css = Styles_Renderer::make(
+			Plugin::$instance->breakpoints->get_breakpoints_config()
+		)->render( $base_styles );
+
+		$post->get_stylesheet()->add_raw_css( $css );
+	}
+
+	/**
+	 * Enqueue styles fonts.
+	 *
+	 * Styles format:
+	 *   <int, array{
+	 *     id: string,
+	 *     type: string,
+	 *     variants: array<int, array{
+	 *       props: array<string, mixed>,
+	 *       meta: array<string, mixed>
+	 *     }>
+	 *   }>
+	 *
+	 * @param array $styles
+	 */
+	private function styles_enqueue_fonts( array $styles ): void {
+		foreach ( $styles as $style ) {
+			foreach ( $style['variants'] as $variant ) {
+				if ( isset( $variant['props']['font-family'] ) ) {
+					Plugin::$instance->frontend->enqueue_font( $variant['props']['font-family']['value'] );
+				}
+			}
+		}
 	}
 
 	/**
