@@ -16,7 +16,7 @@ interface Wordpress_Adapter_Interface {
 
 	public function get_query( $args );
 
-	public function get_option( $option_key );
+	public function get_option( $option_key, $default_value = false );
 
 	public function add_option( $option_key, $option_value );
 
