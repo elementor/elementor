@@ -346,6 +346,9 @@ class Widget_Text_Editor extends Widget_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => 'color: {{VALUE}};',
 				],
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
+				],
 			]
 		);
 
