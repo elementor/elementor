@@ -493,6 +493,10 @@ abstract class Base_App {
 			return new \WP_Error( 422, 'Wrong Server Response' );
 		}
 
+		if ( 201 === $response_code ) {
+			return $body;
+		}
+
 		if ( 200 !== $response_code ) {
 			// In case $as_array = true.
 			$body = (object) $body;
