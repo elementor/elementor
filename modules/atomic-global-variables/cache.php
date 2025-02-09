@@ -20,7 +20,7 @@ class Cache {
 		$this->wp_adapter = $wp_adapter;
 	}
 
-	public function validate() {
+	public function clear_if_expired() {
 		if ( $this->cache_expired() ) {
 			$this->clear_kit_css_cache();
 			$this->update_signature();
@@ -45,9 +45,7 @@ class Cache {
 	}
 
 	private function cache_expired() {
-		$signature = $this->wp_adapter->get_option( self::DB_KEY );
-
-		return $signature !== $this->signature();
+		return $this->signature() !== $this->wp_adapter->get_option( self::DB_KEY );
 	}
 
 	private function clear_kit_css_cache() {
