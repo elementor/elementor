@@ -6,12 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 class Background_Image_Overlay_Offset_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'offset';
+		return 'background-image-overlay-offset';
 	}
 	protected function define_shape(): array {
 		return [
-			'x' => Size_Prop_Type::make(),
-			'y' => Size_Prop_Type::make(),
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
 		];
 	}
 }

@@ -22,11 +22,11 @@ class Background_Image_Overlay_Transformer extends Transformer_Base
 
 		$background_style = "url(\" $image_url \")";
 
-		if ($value['repeat']) {
+		if ( ! empty( $value['repeat'] ) ) {
 			$background_style .= ' ' . $value['repeat'];
 		}
 
-		if ($value['attachment']) {
+		if ( ! empty( $value['attachment'] ) ) {
 			$background_style .= ' ' . $value['attachment'];
 		}
 
