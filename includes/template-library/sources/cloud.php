@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Source_Cloud extends Source_Base {
+	const FOLDER_RESOURCE_TYPE = 'FOLDER';
+	const TEMPLATE_RESOURCE_TYPE = 'TEMPLATE';
+
 	protected function get_app(): Cloud_Library {
 		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
 
@@ -40,7 +43,9 @@ class Source_Cloud extends Source_Base {
 		return $this->get_app()->get_resources( $args );
 	}
 
-	public function get_item( $template_id ) {}
+	public function get_item( $id ) {
+		return $this->get_app()->get_resource( [ 'id' => $id ] );
+	}
 
 	public function get_data( array $args ) {
 		$data = $this->get_app()->get_resource( $args );
@@ -72,9 +77,29 @@ class Source_Cloud extends Source_Base {
 		return $this->get_app()->delete_resource( $template_id );
 	}
 
-	public function save_item( $template_data ) {}
+	public function save_item( $template_data ): int {
+		$app = $this->get_app();
 
-	public function update_item( $new_data ) {}
+		$resource_data = [
+			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
+			'type' => $template_data['resourceType'] ?? self::TEMPLATE_RESOURCE_TYPE,
+			'templateType' => $template_data['type'],
+			'parentId' => $template_data['parentId'] ?? null,
+			'content' => wp_json_encode( $template_data['content'] ),
+		];
+
+		$response = $app->post_resource( $resource_data );
+
+		return (int) $response['id'];
+	}
+
+	public function update_item( $template_data ) {
+		return $this->get_app()->update_resource( $template_data );
+	}
 
 	public function export_template( $template_id ) {}
+
+	public function search_templates( array $args = [] ) {
+		return $this->get_app()->get_resources( $args );
+	}
 }

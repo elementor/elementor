@@ -369,4 +369,8 @@ abstract class Source_Base {
 	public function get_item_children( array $args = [] ) {
 		return [];
 	}
+
+	public function search_templates( array $args = [] ) {
+		return [];
+	}
 }

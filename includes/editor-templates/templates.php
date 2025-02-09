@@ -123,12 +123,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<input type="radio" id="elementor-template-library-order-local-type" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="type" data-default-ordering-direction="asc">
 				<label for="elementor-template-library-order-local-type" class="elementor-template-library-order-label"><?php echo esc_html__( 'Type', 'elementor' ); ?></label>
 			</div>
-			<# if ( 'local' === activeSource ) { #>
 			<div class="elementor-template-library-local-column-3">
 				<input type="radio" id="elementor-template-library-order-local-author" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="author" data-default-ordering-direction="asc">
 				<label for="elementor-template-library-order-local-author" class="elementor-template-library-order-label"><?php echo esc_html__( 'Created By', 'elementor' ); ?></label>
 			</div>
-			<# } #>
 			<div class="elementor-template-library-local-column-4">
 				<input type="radio" id="elementor-template-library-order-local-date" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="date">
 				<label for="elementor-template-library-order-local-date" class="elementor-template-library-order-label"><?php echo esc_html__( 'Creation Date', 'elementor' ); ?></label>
@@ -189,9 +187,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		{{ title }}
 	</div>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-type elementor-template-library-local-column-2">{{{ elementor.translate( type ) }}}</div>
-	<# if ( 'local' === activeSource ) { #>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-author elementor-template-library-local-column-3">{{{ author }}}</div>
-	<# } #>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>
 	<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
 		<div class="elementor-template-library-template-preview elementor-button e-btn-txt">
@@ -214,15 +210,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="elementor-screen-only"><?php echo esc_html__( 'More actions', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-template-library-template-more">
-			<div class="elementor-template-library-template-delete">
-				<i class="eicon-trash-o" aria-hidden="true"></i>
-				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
-			</div>
 			<div class="elementor-template-library-template-export">
 				<a href="{{ export_link }}">
 					<i class="eicon-sign-out" aria-hidden="true"></i>
 					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Export', 'elementor' ); ?></span>
 				</a>
+			</div>
+			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+				<div class="elementor-template-library-template-rename">
+					<i class="eicon-pencil" aria-hidden="true"></i>
+					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Rename', 'elementor' ); ?></span>
+				</div>
+			<?php endif; ?>
+			<div class="elementor-template-library-template-delete">
+				<i class="eicon-trash-o" aria-hidden="true"></i>
+				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
 			</div>
 		</div>
 	</div>
