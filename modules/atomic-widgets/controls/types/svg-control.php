@@ -17,17 +17,6 @@ class Svg_Control extends Atomic_Control_Base {
 	public function get_props(): array {
 		return [
 			'type' => $this->get_type(),
-			'sizes' => Image_Sizes::get_all(),
-			'src' => [
-				'id' => [
-					'$$type' => 'image-attachment-id',
-					'value' => null,
-				],
-				'url' => [
-					'$$type' => 'image-url',
-					'value' => null,
-				],
-			],
 		];
 	}
 }
