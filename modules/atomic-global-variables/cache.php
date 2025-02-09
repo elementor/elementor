@@ -33,8 +33,15 @@ class Cache {
 		return ( new Variables( $this->wp_adapter ) )->get_all();
 	}
 
+	private function active_kit_id() {
+		return Plugin::$instance->kits_manager->get_active_id();
+	}
+
 	private function signature() {
-		return sha1( serialize( $this->global_variables() ) );
+		return sha1( serialize( [
+			'kit' => $this->active_kit_id(),
+			'variables' => $this->global_variables(),
+		] ) );
 	}
 
 	private function cache_expired() {
@@ -44,9 +51,7 @@ class Cache {
 	}
 
 	private function clear_kit_css_cache() {
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-
-		Post::create( $kit_id )->delete();
+		Post::create( $this->active_kit_id() )->delete();
 
 		return $this;
 	}
