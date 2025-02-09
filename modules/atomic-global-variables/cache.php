@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Cache {
 	const DB_KEY = 'elementor-atomic-global-variables';
 
-	private Wordpress_Adapter_Interface $wo_adapter;
+	private Wordpress_Adapter_Interface $wp_adapter;
 
 	public function __construct( Wordpress_Adapter_Interface $wp_adapter ) {
 		$this->wp_adapter = $wp_adapter;
