@@ -12,13 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Svg_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'image/svg+xml';
+		return 'svg';
 	}
 
 	protected function define_shape(): array {
 		return [
 			'src' => Image_Src_Prop_Type::make()->required(),
-			'size' => String_Prop_Type::make()->enum( Image_Sizes::get_keys() )->required(),
 		];
 	}
 
@@ -27,20 +26,6 @@ class Svg_Prop_Type extends Object_Prop_Type {
 			'id' => null,
 			'url' => Url_Prop_Type::generate( $url ),
 		] );
-
-		return $this;
-	}
-	public function default_svg( string $url ): self {
-		$this->get_shape_field( 'src' )->default( [
-			'id' => null,
-			'url' => $url,
-		] );
-
-		return $this;
-	}
-
-	public function default_size( string $size ): self {
-		$this->get_shape_field( 'size' )->default( $size );
 
 		return $this;
 	}
