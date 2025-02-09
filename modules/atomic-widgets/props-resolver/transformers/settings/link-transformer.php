@@ -10,22 +10,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Link_Transformer extends Transformer_Base {
-	public function transform( $value, $key ): array {
-		if ( empty( $value['destination'] ) ) {
-			throw new \Exception( 'Post ID or custom URL are not provided.' );
-		}
-
+	public function transform( $value, $key ): ?array {
 		$destination = $value['destination'];
 		$post = is_numeric( $destination ) ? get_post( $destination ) : null;
-		$href = $post ? $post->guid : $destination;
+		$url = $post ? $post->guid : $destination;
 
-		if ( ! Url_Prop_Type::validate_url( $href ) ) {
-			return [];
+		if ( ! Url_Prop_Type::validate_url( $url ) ) {
+			return null;
 		}
 
 		$link_attrs = [
-			'href' => esc_url( $href ),
-			'target' => $value['isTargetBlank'] ? '_blank' : '',
+			'href' => esc_url( $url ),
+			'target' => $value['isTargetBlank'] ? '_blank' : null,
 		];
 
 		return array_filter( $link_attrs );

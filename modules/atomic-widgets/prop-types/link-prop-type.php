@@ -20,7 +20,8 @@ class Link_Prop_Type extends Object_Prop_Type {
 		return [
 			'destination' => Union_Prop_Type::make()
 				->add_prop_type( Url_Prop_Type::make() )
-				->add_prop_type( Number_Prop_Type::make() ),
+				->add_prop_type( Number_Prop_Type::make() )
+				->required(),
 			'label' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make() ),
 			'isTargetBlank' => Boolean_Prop_Type::make(),

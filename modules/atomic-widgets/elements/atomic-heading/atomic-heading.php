@@ -63,7 +63,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Utils::render_html_attributes( $attrs ),
 		];
 
-		if ( ! empty( $settings['link']['href'] ) ) {
+		if ( isset( $settings['link']['href'] ) ) {
 			$link_args = [
 				Utils::render_html_attributes( $settings['link'] ),
 				esc_html( $title ),
@@ -114,8 +114,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 							],
 						]),
 					Link_Control::bind_to( 'link' )
-						->set_ajax_url( WP_Post::ENDPOINT )
-						->set_ajax_params( [
+						->set_endpoint( WP_Post::ENDPOINT )
+						->set_request_params( [
 							WP_Post::KEYS_FORMAT_MAP_KEY => wp_json_encode( [
 								'ID' => 'id',
 								'post_title' => 'label',
@@ -123,7 +123,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 							] ),
 						] )
 						->set_allow_custom_values( true )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+						->set_placeholder( __( 'Paste URL or type', 'elementor' ) )
+						->set_minimum_input_length( 2 ),
 				] ),
 		];
 	}

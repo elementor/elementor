@@ -10,8 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Link_Control extends Atomic_Control_Base {
 	private ?string $placeholder = null;
 	private ?bool $allow_custom_values = null;
-	private ?string $ajax_url = null;
-	private ?array $ajax_params = null;
+	private ?string $endpoint = null;
+	private ?array $request_params = null;
+	private ?int $minimum_input_length = null;
 
 	public function get_type(): string {
 		return 'link';
@@ -27,8 +28,9 @@ class Link_Control extends Atomic_Control_Base {
 		return [
 			'placeholder' => $this->placeholder,
 			'allowCustomValues' => $this->allow_custom_values,
-			'ajaxUrl' => $this->ajax_url,
-			'ajaxParams' => $this->ajax_params,
+			'endpoint' => $this->endpoint,
+			'requestParams' => $this->request_params,
+			'minInputLength' => $this->minimum_input_length,
 		];
 	}
 
@@ -38,14 +40,20 @@ class Link_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
-	public function set_ajax_url( string $url ): self {
-		$this->ajax_url = $url;
+	public function set_endpoint( string $url ): self {
+		$this->endpoint = $url;
 
 		return $this;
 	}
 
-	public function set_ajax_params( array $params ): self {
-		$this->ajax_params = $params;
+	public function set_request_params( array $params ): self {
+		$this->request_params = $params;
+
+		return $this;
+	}
+
+	public function set_minimum_input_length( int $input_length ): self {
+		$this->minimum_input_length = $input_length;
 
 		return $this;
 	}
