@@ -13,8 +13,6 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 	private $cloud_library_app_mock;
 
-	private $cloud_source_mock;
-
 	public function setUp(): void {
 		parent::setUp();
 		$this->cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
@@ -31,10 +29,6 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		Plugin::$instance->common->add_component( 'connect', $module_mock );
 
 		$this->manager = Plugin::$instance->templates_manager;
-
-		$this->cloud_source_mock = $this->getMockBuilder( \Elementor\TemplateLibrary\Source_Cloud::class )
-			->onlyMethods( [ 'handle_export_folder' ] )
-			->getMock();
 	}
 
 	public function test_should_return_cloud_source() {
@@ -126,23 +120,28 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		]);
 	}
 
-	public function test_export_template__folder_type() {
+	public function testExportTemplateWithFolderType() {
+		$mock_source_cloud = $this->getMockBuilder( \Elementor\TemplateLibrary\Source_Cloud::class )
+		                          ->onlyMethods( [ 'handle_export_folder' ] )
+		                          ->getMock();
+
 		$data = [
-			'title' => 'Folder 1',
-			'type' => 'FOLDER',
-			'parentId' => null,
-			'templateType' => 'folder',
+			'type' => 'FOLDER'
 		];
 
-		$this->cloud_library_app_mock
-			->method( 'get_resource' )
-			->willReturn( $data );
+		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
 
-		$this->cloud_source_mock->expects( $this->once() )
-		    ->method( 'handle_export_folder' )
-		    ->with( 123 );
+		$mock_manager = $this->getMockBuilder( \Elementor\TemplateLibrary\Manager::class )
+		                     ->onlyMethods( [ 'get_source' ] )
+		                     ->getMock();
 
-		$result = $this->manager->export_template( [ 'source' => 'cloud', 'template_id' => 123 ] );
+		$mock_manager->method( 'get_source' )->willReturn( $mock_source_cloud );
+
+		$mock_source_cloud->expects( $this->once() )
+		                  ->method( 'handle_export_folder' )
+		                  ->with( 123 );
+
+		$result = $mock_manager->export_template( [ 'source' => 'cloud', 'template_id' => 123 ] );
 
 		$this->assertNull( $result );
 	}
