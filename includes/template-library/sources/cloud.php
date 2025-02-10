@@ -85,6 +85,7 @@ class Source_Cloud extends Source_Base {
 
 	public function save_item( $template_data ): int {
 		$app = $this->get_app();
+	
 		$resource_data = [
 			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
 			'type' => $template_data['resourceType'] ?? self::TEMPLATE_RESOURCE_TYPE,
@@ -92,7 +93,9 @@ class Source_Cloud extends Source_Base {
 			'parentId' => $template_data['parentId'] ?? null,
 			'content' => wp_json_encode( $template_data['content'] ),
 		];
+
 		$response = $app->post_resource( $resource_data );
+
 		return (int) $response['id'];
 	}
 
