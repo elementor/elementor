@@ -104,6 +104,12 @@ export type Device = 'mobile' | 'mobile_extra' | 'tablet' | 'tablet_extra' | 'la
 
 export type BreakpointEditableDevice = Exclude<Device, 'desktop'>;
 
+export type GapControl = string | {
+	column: string,
+	row: string,
+	unit?: string
+}
+
 export type DataPreset =
 	| 'c100'
 	| 'r100'
