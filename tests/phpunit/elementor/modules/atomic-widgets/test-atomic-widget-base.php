@@ -125,7 +125,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'settings' => [
 						'classes' => [
 							'$$type' => 'classes',
-							'value' => [ 'one', 'two', 'three' ],
+							'value' => [ 'one', 'two', 'three', null ],
 						],
 						'outer_classes' => [
 							'$$type' => 'classes',
@@ -133,8 +133,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						],
 					],
 					'result' => [
-						'classes' => 'one two three',
-						'inner_classes' => '',
+						'classes' => [ 'one', 'two', 'three' ],
+						'inner_classes' => [],
 						'outer_classes' => null,
 					],
 				],

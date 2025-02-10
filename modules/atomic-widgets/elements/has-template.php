@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\TemplateRenderer;
+namespace Elementor\Modules\AtomicWidgets\Elements;
 
-use Elementor\Modules\AtomicWidgets\Elements\Has_Atomic_Base;
+use Elementor\Modules\AtomicWidgets\TemplateRenderer\Template_Renderer;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,6 +29,7 @@ trait Has_Template {
 				'id' => $this->get_id(),
 				'type' => $this->get_name(),
 				'settings' => $this->get_atomic_settings(),
+				'base_styles' => $this->get_base_styles_dictionary(),
 			];
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
