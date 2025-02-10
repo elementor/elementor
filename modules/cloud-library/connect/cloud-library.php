@@ -77,6 +77,19 @@ class Cloud_Library extends Library {
 		);
 	}
 
+	public function post_resource( $data ): array {
+		$resource = [
+			'headers' => [
+				'Content-Type' => 'application/json',
+			],
+			'body' => wp_json_encode( $data ),
+		];
+
+		return $this->http_request( 'POST', 'resources', $resource, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+	}
+
 	public function delete_resource( $template_id ) {
 		$request = $this->http_request( 'DELETE', 'resources/' . $template_id );
 
