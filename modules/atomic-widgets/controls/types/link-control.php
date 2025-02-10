@@ -48,7 +48,7 @@ class Link_Control extends Atomic_Control_Base {
 	}
 
 	public function set_request_params( array $params ): self {
-		$this->query_options['request_params'] = $params;
+		$this->query_options['requestParams'] = $params;
 
 		return $this;
 	}
