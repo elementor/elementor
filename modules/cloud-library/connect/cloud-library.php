@@ -69,7 +69,7 @@ class Cloud_Library extends Library {
 		return add_query_arg(
 			[
 				'action' => 'elementor_library_direct_actions',
-				'library_action' => 'export_cloud_template',
+				'library_action' => 'export_template',
 				'source' => 'cloud',
 				'_nonce' => wp_create_nonce( 'elementor_ajax' ),
 				'template_id' => $template_id,
