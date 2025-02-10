@@ -52,7 +52,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$this->set_svg_attributes( $svg, $settings );
 
-		$svg->add_class( $settings['classes'] ?? '' );
+		$svg->add_class( implode( ' ', $settings['classes'] ?? [] ) );
 
 		$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
