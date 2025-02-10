@@ -5,7 +5,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\Link_Query;
@@ -21,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Heading extends Atomic_Element_Base {
+class Atomic_Heading extends Atomic_Widget_Base {
 	use Link_Query;
 	use Has_Template;
 
