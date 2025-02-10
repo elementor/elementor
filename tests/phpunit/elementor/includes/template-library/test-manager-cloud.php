@@ -15,6 +15,8 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 	private $cloud_source_mock;
 
+	private $manager_mock;
+
 	public function setUp(): void {
 		parent::setUp();
 		$this->cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
@@ -36,6 +38,11 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			->onlyMethods( [ 'handle_export_folder', 'handle_export_file' ] )
 			->getMock();
 
+		$this->manager_mock = $this->getMockBuilder( \Elementor\TemplateLibrary\Manager::class )
+			->onlyMethods( [ 'get_source' ] )
+			->getMock()
+			->method( 'get_source' )
+			->willReturn( $this->cloud_source_mock );
 	}
 
 	public function test_should_return_cloud_source() {
@@ -129,6 +136,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 	public function test_export_template__folder_type() {
 		$data = [
+			'id' => 1,
 			'title' => 'Folder 1',
 			'type' => 'FOLDER',
 			'parentId' => null,
@@ -136,12 +144,6 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		];
 
 		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
-
-		$mock_manager = $this->getMockBuilder( \Elementor\TemplateLibrary\Manager::class )
-			->onlyMethods( [ 'get_source' ] )
-			->getMock();
-
-		$mock_manager->method( 'get_source' )->willReturn( $this->cloud_source_mock );
 
 		$this->cloud_source_mock->expects( $this->once() )
 			->method( 'handle_export_folder' )
@@ -154,6 +156,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 	public function test_export_template__template_type() {
 		$data = [
+			'id' => 1,
 			'title' => 'Template 1',
 			'type' => 'TEMPLATE',
 			'parentId' => null,
@@ -162,12 +165,6 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		];
 
 		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
-
-		// $mock_manager = $this->getMockBuilder( \Elementor\TemplateLibrary\Manager::class )
-		// 	->onlyMethods( [ 'get_source' ] )
-		// 	->getMock();
-
-		// $mock_manager->method( 'get_source' )->willReturn( $this->cloud_source_mock );
 
 		$this->cloud_source_mock->expects( $this->once() )
 			->method( 'handle_export_file' )
