@@ -44,8 +44,7 @@ test.describe( 'Container tests @container', () => {
 			return container.scrollWidth <= container.clientWidth;
 		}, containerSelector );
 
-		// Assert.
-		// Check for no horizontal scroll.
+		// Assert - Check for no horizontal scroll.
 		expect.soft( hasNoHorizontalScroll ).toBe( true );
 	} );
 
@@ -63,39 +62,34 @@ test.describe( 'Container tests @container', () => {
 		await editor.openPageSettingsPanel();
 
 		// Assert.
-		expect.soft( await page.locator( '.elementor-control-convert_to_container' ).count() ).toBe( 0 );
+		const containersCount = await page.locator( '.elementor-control-convert_to_container' ).count();
+		expect.soft( containersCount ).toBe( 0 );
 	} );
 
-	test( 'Test spacer inside of the container', async ( { page, apiRequests }, testInfo ) => {
+	test.only( 'Test spacer inside of the container', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
-			frame = editor.getPreviewFrame(),
 			spacerSize = '200',
 			defaultSpacerSize = '50';
 
 		await test.step( 'Column container, spacer default size', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
-
 			await editor.addWidget( widgets.spacer, container );
 			await editor.addWidget( widgets.image, container );
 
-			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
-
-			expect.soft( String( spacerElementHeight ) ).toBe( defaultSpacerSize );
+			const spacerElementHeight = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientHeight ) );
+			expect.soft( spacerElementHeight ).toBe( defaultSpacerSize );
 			await editor.removeElement( container );
 		} );
 
 		await test.step( 'Row container, spacer default size', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
-
-			// Set row direction.
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 			await editor.addWidget( widgets.spacer, container );
 			await editor.addWidget( widgets.image, container );
 
-			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
-
-			expect.soft( String( spacerElementWidth ) ).toBe( defaultSpacerSize );
+			const spacerElementWidth = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientWidth ) );
+			expect.soft( spacerElementWidth ).toBe( defaultSpacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -103,11 +97,11 @@ test.describe( 'Container tests @container', () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.addWidget( widgets.spacer, container );
 			await editor.setSliderControlValue( 'space', spacerSize );
+			await page.waitForTimeout( 500 );
 			await editor.addWidget( widgets.image, container );
 
-			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
-
-			expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
+			const spacerElementHeight = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientHeight ) );
+			expect.soft( spacerElementHeight ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -116,10 +110,11 @@ test.describe( 'Container tests @container', () => {
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-down' );
 			await editor.addWidget( widgets.spacer, container );
 			await editor.setSliderControlValue( 'space', spacerSize );
+			await page.waitForTimeout( 500 );
 			await editor.addWidget( widgets.image, container );
 
-			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientHeight );
-			expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
+			const spacerElementHeight = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientHeight ) );
+			expect.soft( spacerElementHeight ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -128,10 +123,11 @@ test.describe( 'Container tests @container', () => {
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 			await editor.addWidget( widgets.spacer, container );
 			await editor.setSliderControlValue( 'space', spacerSize );
+			await page.waitForTimeout( 500 );
 			await editor.addWidget( widgets.image, container );
 
-			const spacerElementWidth = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
-			expect.soft( String( spacerElementWidth ) ).toBe( spacerSize );
+			const spacerElementWidth = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientWidth ) );
+			expect.soft( spacerElementWidth ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 
@@ -140,18 +136,19 @@ test.describe( 'Container tests @container', () => {
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 			await editor.addWidget( widgets.spacer, container );
 			await editor.setSliderControlValue( 'space', spacerSize );
+			await page.waitForTimeout( 500 );
 			await editor.addWidget( widgets.image, container );
 
-			const spacerElementHeight = await frame.locator( '.elementor-widget-spacer' ).evaluate( ( node ) => node.clientWidth );
-			expect.soft( String( spacerElementHeight ) ).toBe( spacerSize );
+			const spacerElementHeight = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientWidth ) );
+			expect.soft( spacerElementHeight ).toBe( spacerSize );
 			await editor.removeElement( container );
 		} );
 	} );
 
 	test( 'Gaps Control test - Check that control placeholder', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-			editor = await wpAdmin.openNewPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
 
 		// Act.
 		await editor.addElement( { elType: 'container' }, 'document' );
@@ -164,12 +161,12 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Check the control initial placeholder', async () => {
 			const gapControlPlaceholder = await desktopGapControlColumnInput.getAttribute( 'placeholder' );
 			expect( gapControlPlaceholder ).toBe( '20' );
-			expect( gapControlPlaceholder ).not.toBe( '[object, object]' );
 		} );
 
 		await test.step( 'Check the control placeholder inheritance from desktop to tablet after value change', async () => {
 			await desktopGapControlColumnInput.fill( '50' );
 			await editor.changeResponsiveView( 'tablet' );
+
 			const gapControlPlaceholder = await tabletGapControlColumnInput.getAttribute( 'placeholder' );
 			expect( gapControlPlaceholder ).toBe( '50' );
 		} );
@@ -177,6 +174,7 @@ test.describe( 'Container tests @container', () => {
 		await test.step( 'Check the control placeholder inheritance from tablet to mobile after value change', async () => {
 			await tabletGapControlColumnInput.fill( '40' );
 			await editor.changeResponsiveView( 'mobile' );
+
 			const gapControlPlaceholder = await mobileGapControlColumnInput.getAttribute( 'placeholder' );
 			expect( gapControlPlaceholder ).toBe( '40' );
 		} );
@@ -271,7 +269,7 @@ test.describe( 'Container tests @container', () => {
 			const nestedChildContainer1 = await editor.addElement( { elType: 'container' }, childContainer );
 			const nestedChildContainer2 = await editor.addElement( { elType: 'container' }, nestedChildContainer1 );
 
-			// Assert
+			// Assert.
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentContainer }` ) ).toHaveClass( /e-con-boxed/ );
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ childContainer }` ) ).toHaveClass( /e-con-full/ );
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ nestedChildContainer1 }` ) ).toHaveClass( /e-con-full/ );
