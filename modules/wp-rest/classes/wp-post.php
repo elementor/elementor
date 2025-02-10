@@ -43,18 +43,6 @@ class WP_Post {
 		], true );
 	}
 
-	public function sanitize_string_array( $arr ) {
-		if ( ! is_array( $arr ) ) {
-			$arr = json_decode( sanitize_text_field( $arr ) ) ?? [];
-		}
-
-		$arr = new Collection( json_decode( json_encode( $arr ), true ) );
-
-		return $arr
-			->map( 'sanitize_text_field' )
-			->all();
-	}
-
 	public function advanced_search( $search, $wp_query ) {
 		$search_term = $wp_query->get( 'search_term' ) ?? '';
 		$is_advanced_search = $wp_query->get( 'advanced_search' ) ?? false;
@@ -108,7 +96,7 @@ class WP_Post {
 			return $post_type->name;
 		} );
 
-		add_filter( 'posts_search', [ $this, 'advanced_search' ], 10, 2 );
+		$this->add_filter_to_customize_query();
 
 		$posts = new Collection( $this->wp_adapter->get_posts( [
 			'post_type' => $post_type_slugs->all(),
@@ -118,7 +106,7 @@ class WP_Post {
 			'search_term' => $term,
 		] ) );
 
-		remove_filter( 'posts_search', [ $this, 'advanced_search' ], 10, 2 );
+		$this->remove_filter_to_customize_query();
 
 		return $posts
 			->map( function ( $post ) use ( $keys_format_map, $post_types ) {
@@ -131,6 +119,14 @@ class WP_Post {
 				return $this->translate_keys( $post_object, $keys_format_map );
 			} )
 			->all();
+	}
+
+	private function add_filter_to_customize_query() {
+		add_filter( 'posts_search', [ $this, 'advanced_search' ], 10, 2 );
+	}
+
+	private function remove_filter_to_customize_query() {
+		remove_filter( 'posts_search', [ $this, 'advanced_search' ], 10, 2 );
 	}
 
 	private function get_args() {
@@ -167,6 +163,18 @@ class WP_Post {
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
+	}
+
+	private function sanitize_string_array( $arr ) {
+		if ( ! is_array( $arr ) ) {
+			$arr = json_decode( sanitize_text_field( $arr ) ) ?? [];
+		}
+
+		$arr = new Collection( json_decode( json_encode( $arr ), true ) );
+
+		return $arr
+			->map( 'sanitize_text_field' )
+			->all();
 	}
 
 	private function translate_keys( array $item, array $dictionary ): array {

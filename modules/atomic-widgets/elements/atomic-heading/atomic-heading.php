@@ -14,7 +14,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\WpRest\Classes\WP_Post;
-use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\TemplateRenderer\Has_Template;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -89,9 +88,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 								'post_type' => 'groupLabel',
 							] ),
 						] )
-						->set_allow_custom_values( true )
 						->set_placeholder( __( 'Paste URL or type', 'elementor' ) )
-						->set_minimum_input_length( 2 ),
 				] ),
 		];
 	}

@@ -8,11 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Link_Control extends Atomic_Control_Base {
+	private bool $allow_custom_values = true;
+	private int $minimum_input_length = 2;
 	private ?string $placeholder = null;
-	private ?bool $allow_custom_values = null;
-	private ?string $endpoint = null;
-	private ?array $request_params = null;
-	private ?int $minimum_input_length = null;
+	private array $query_options = [
+		'endpoint' => '',
+		'requestParams' => [],
+	];
 
 	public function get_type(): string {
 		return 'link';
@@ -28,8 +30,7 @@ class Link_Control extends Atomic_Control_Base {
 		return [
 			'placeholder' => $this->placeholder,
 			'allowCustomValues' => $this->allow_custom_values,
-			'endpoint' => $this->endpoint,
-			'requestParams' => $this->request_params,
+			'queryOptions' => $this->query_options,
 			'minInputLength' => $this->minimum_input_length,
 		];
 	}
@@ -41,13 +42,13 @@ class Link_Control extends Atomic_Control_Base {
 	}
 
 	public function set_endpoint( string $url ): self {
-		$this->endpoint = $url;
+		$this->query_options['endpoint'] = $url;
 
 		return $this;
 	}
 
 	public function set_request_params( array $params ): self {
-		$this->request_params = $params;
+		$this->query_options['request_params'] = $params;
 
 		return $this;
 	}
