@@ -66,7 +66,7 @@ test.describe( 'Container tests @container', () => {
 		expect.soft( containersCount ).toBe( 0 );
 	} );
 
-	test.only( 'Test spacer inside of the container', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Test spacer inside of the container', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			spacerSize = '200',
