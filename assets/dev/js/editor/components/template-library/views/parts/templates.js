@@ -211,12 +211,19 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		return 'page' === templatesType || 'lp' === templatesType;
 	},
 
+	onDestroy() {
+		if ( this.removeScrollListener ) {
+			this.removeScrollListener();
+		}
+	},
+
 	onRender() {
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) && 'lb' !== elementor.templates.getFilter( 'type' ) ) {
+		const activeSource = elementor.templates.getFilter( 'source' );
+		const templateType = elementor.templates.getFilter( 'type' );
+
+		if ( 'remote' === activeSource && 'page' !== templateType && 'lb' !== templateType ) {
 			this.setFiltersUI();
 		}
-
-		this.handleInfiniteScroll();
 	},
 
 	onRenderCollection() {
@@ -224,8 +231,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.toggleFilterClass();
 
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && ! this.isPageOrLandingPageTemplates() ) {
+		const activeSource = elementor.templates.getFilter( 'source' )
+
+		if ( 'remote' === activeSource && ! this.isPageOrLandingPageTemplates() ) {
 			this.setMasonrySkin();
+		}
+
+		if ( 'cloud' === activeSource ) {
+			this.handleLoadMore();
 		}
 	},
 
@@ -297,32 +310,37 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
 	},
 
-	handleInfiniteScroll() {
-		if ( ! this.ui.loadMoreAnchor[ 0 ] ) {
-			return;
-		}
+	handleLoadMore() {
+		const scrollableContainer = elementor?.templates?.layout?.modal.getElements( 'message' );
 
-		this.observer = elementorModules.utils.Scroll.scrollObserver( {
-			callback: ( event ) => {
-				const canLoadMore = elementor.templates.canLoadMore() && ! elementor.templates.isLoading();
+		const listener = () => {
+			const scrollTop = scrollableContainer.scrollTop();
+			const scrollHeight = scrollableContainer[ 0 ].scrollHeight;
+			const clientHeight = scrollableContainer.outerHeight();
 
-				if ( ! event.isInViewport || ! canLoadMore ) {
-					return;
-				}
+			const scrollPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100;
 
-				this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+			const canLoadMore = elementor.templates.canLoadMore() && ! elementor.templates.isLoading();
 
-				elementor.templates.loadMore( {
-					onUpdate: () => {
-						this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
-					},
-					search: this.ui.textFilter.val(),
-				} );
-			},
-		} );
+			if ( scrollPercentage < 90 || ! canLoadMore ) {
+				return;
+			}
 
-		this.observer.observe( this.ui.loadMoreAnchor[ 0 ] );
+			this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+
+			elementor.templates.loadMore( {
+				onUpdate: () => {
+					this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+				},
+				search: this.ui.textFilter.val(),
+			} );
+		};
+
+		scrollableContainer.on( 'scroll', listener );
+
+		this.removeScrollListener = () => scrollableContainer.off( 'scroll', listener );
 	},
+
 } );
 
 module.exports = TemplateLibraryCollectionView;

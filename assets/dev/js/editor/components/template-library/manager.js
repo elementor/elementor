@@ -526,7 +526,6 @@ const TemplateLibraryManager = function() {
 			templatesCollection.add( collection.models, { merge: true } );
 
 			self.layout.addTemplates( collection.models );
-			self.layout.hideLoadingView();
 
 			if ( onUpdate ) {
 				onUpdate();
