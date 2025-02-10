@@ -88,7 +88,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 								'post_type' => 'groupLabel',
 							] ),
 						] )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) )
+						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 				] ),
 		];
 	}
