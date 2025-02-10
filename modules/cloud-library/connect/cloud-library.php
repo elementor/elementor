@@ -46,7 +46,7 @@ class Cloud_Library extends Library {
 	}
 
 	public function get_resource( array $args ): array {
-		return $this->http_request( 'GET', 'resources/' . $args['template_id'], $args, [
+		return $this->http_request( 'GET', 'resources/' . $args['id'], $args, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 	}
@@ -58,6 +58,7 @@ class Cloud_Library extends Library {
 			'type' => ucfirst( $template_data['templateType'] ),
 			'subType' => $template_data['type'],
 			'title' => $template_data['title'],
+			'author' => $template_data['authorEmail'],
 			'human_date' => date_i18n( get_option( 'date_format' ), strtotime( $template_data['createdAt'] ) ),
 			'export_link' => $this->get_export_link( $template_data['id'] ),
 			'hasPageSettings' => $template_data['hasPageSettings'],
@@ -90,7 +91,7 @@ class Cloud_Library extends Library {
 		] );
 	}
 
-	public function delete_resource( $template_id ) {
+	public function delete_resource( $template_id ): bool {
 		$request = $this->http_request( 'DELETE', 'resources/' . $template_id );
 
 		if ( isset( $request->errors[204] ) && 'No Content' === $request->errors[204][0] ) {
