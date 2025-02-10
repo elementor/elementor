@@ -799,7 +799,7 @@ class Source_Local extends Source_Base {
 
 	private function validate_local_template_export_permissions( $template_id ) {
 		$post_id = intval( $template_id );
-		if ( get_post_type( $post_id ) !== Source_Local::CPT ) {
+		if ( get_post_type( $post_id ) !== self::CPT ) {
 			return new \WP_Error( 'template_error', esc_html__( 'Invalid template type or template does not exist.', 'elementor' ) );
 		}
 
