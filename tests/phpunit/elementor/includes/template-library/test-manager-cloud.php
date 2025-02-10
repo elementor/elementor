@@ -33,7 +33,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->manager = Plugin::$instance->templates_manager;
 
 		$this->cloud_source_mock = $this->getMockBuilder( \Elementor\TemplateLibrary\Source_Cloud::class )
-			->onlyMethods( [ 'handle_export_folder' ] )
+			->onlyMethods( [ 'handle_export_folder', 'handle_export_template' ] )
 			->getMock();
 
 	}
@@ -148,6 +148,32 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			->with( 123 );
 
 		$result = $mock_manager->export_template( [ 'source' => 'cloud', 'template_id' => 123 ] );
+
+		$this->assertNull( $result );
+	}
+
+	public function test_export_template__template_type() {
+		$data = [
+			'title' => 'Template 1',
+			'type' => 'TEMPLATE',
+			'parentId' => null,
+			'templateType' => 'container',
+			'content' => json_encode( ['content' => 'mock_content'] ),
+		];
+
+		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
+
+		$mock_manager = $this->getMockBuilder( \Elementor\TemplateLibrary\Manager::class )
+			->onlyMethods( [ 'get_source' ] )
+			->getMock();
+
+		$mock_manager->method( 'get_source' )->willReturn( $this->cloud_source_mock );
+
+		$this->cloud_source_mock->expects( $this->once() )
+			->method( 'handle_export_template' )
+			->with( $data );
+
+		$result = $mock_manager->export_template( [ 'source' => 'cloud', 'template_id' => 456 ] );
 
 		$this->assertNull( $result );
 	}
