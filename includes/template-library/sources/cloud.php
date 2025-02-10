@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Source_Cloud extends Source_Base {
 	const FOLDER_RESOURCE_TYPE = 'FOLDER';
 	const TEMPLATE_RESOURCE_TYPE = 'TEMPLATE';
-	const TEMP_FILES_DIR = 'elementor/tmp';
 
 	protected function get_app(): Cloud_Library {
 		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
@@ -124,11 +123,11 @@ class Source_Cloud extends Source_Base {
 		}
 	}
 
-	private function handle_export_file( $data ) {
+	private function handle_export_file( array $data ): void {
 		$file_data = $this->prepare_template_export( $data );
 
 		if ( is_wp_error( $file_data ) ) {
-			return $file_data;
+			return;
 		}
 
 		$this->send_file_headers( $file_data['name'], strlen( $file_data['content'] ) );
@@ -142,7 +141,7 @@ class Source_Cloud extends Source_Base {
 		die;
 	}
 
-	private function handle_export_folder( $folder_id ) {
+	private function handle_export_folder( int $folder_id ): void {
 		$templates = $this->get_app()->get_resources( [ 'id' => $folder_id ] );
 
 		$template_ids = array_map( fn( $template ) => $template['template_id'], $templates );
@@ -177,7 +176,7 @@ class Source_Cloud extends Source_Base {
 
 	public function export_multiple_templates( array $template_ids ) {
 		$files = [];
-		$temp_path = $this->get_temp_path();
+		$temp_path = Plugin::$instance->uploads_manager->create_unique_dir();
 
 		foreach ( $template_ids as $template_id ) {
 			$files[] = $this->get_file_item( $template_id, $temp_path );
@@ -189,11 +188,11 @@ class Source_Cloud extends Source_Base {
 
 		list( $zip_archive_filename, $zip_complete_path ) = $this->handle_zip_file( $temp_path, $files );
 
-		$this->delete_temp_files( $files );
-
 		$this->send_file_headers( $zip_archive_filename, filesize( $zip_complete_path ) );
 
-		$this->serve_and_delete_zip( $zip_complete_path );
+		$this->serve_zip( $zip_complete_path );
+
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $temp_path );
 
 		die;
 	}
@@ -207,17 +206,11 @@ class Source_Cloud extends Source_Base {
 		header( 'Content-Length: ' . $file_size );
 	}
 
-	private function get_temp_path(): string {
-		$wp_upload_dir = wp_upload_dir();
-
-		$temp_path = $wp_upload_dir['basedir'] . '/' . self::TEMP_FILES_DIR;
-
-		wp_mkdir_p( $temp_path );
-
-		return $temp_path;
-	}
-
 	private function handle_zip_file( string $temp_path, array $files ): array {
+		if ( ! class_exists( 'ZipArchive' ) ) {
+			throw new \Error( "ZipArchive module missing" );
+		}
+
 		$zip_archive_filename = 'elementor-templates-' . gmdate( 'Y-m-d' ) . '.zip';
 
 		$zip_archive = new \ZipArchive();
@@ -235,12 +228,6 @@ class Source_Cloud extends Source_Base {
 		return [ $zip_archive_filename, $zip_complete_path ];
 	}
 
-	private function delete_temp_files( array $files ): void {
-		foreach ( $files as $file ) {
-			unlink( $file['path'] );
-		}
-	}
-
 	private function get_file_item( $template_id, string $temp_path ) {
 		$data      = $this->get_app()->get_resource( [ 'id' => $template_id ] );
 		$file_data = $this->prepare_template_export( $data );
@@ -249,7 +236,7 @@ class Source_Cloud extends Source_Base {
 			return;
 		}
 
-		$complete_path = $temp_path . '/' . $file_data['name'];
+		$complete_path = $temp_path . $file_data['name'];
 
 		$put_contents = file_put_contents( $complete_path, $file_data['content'] );
 
@@ -263,9 +250,8 @@ class Source_Cloud extends Source_Base {
 		];
 	}
 
-	private function serve_and_delete_zip( $zip_complete_path ): void {
+	private function serve_zip( $zip_complete_path ): void {
 		@ob_end_flush();
 		@readfile( $zip_complete_path );
-		unlink( $zip_complete_path );
 	}
 }
