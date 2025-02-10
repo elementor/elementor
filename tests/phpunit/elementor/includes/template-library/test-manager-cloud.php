@@ -139,7 +139,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		$mock_source_cloud->expects( $this->once() )
 		                  ->method( 'handle_export_folder' )
-		                  ->with( $data );
+		                  ->with( 123 );
 
 		$result = $mock_manager->export_template( [ 'source' => 'cloud', 'template_id' => 123 ] );
 
