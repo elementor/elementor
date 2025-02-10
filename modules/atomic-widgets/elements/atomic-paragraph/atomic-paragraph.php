@@ -108,7 +108,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		$tag = Utils::validate_html_tag( $settings['tag'] );
 		$attrs = array_filter([
 			'class' => array_filter([
-				$settings['classes'] ?? '',
+				...( $settings['classes'] ?? [] ),
 				self::get_base_style_class( self::BASE_STYLE_KEY ) ?? '',
 			]),
 		]);

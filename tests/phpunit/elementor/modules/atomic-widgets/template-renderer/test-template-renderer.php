@@ -34,7 +34,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 				'elementor/elements/test' => __DIR__ . '/mocks/basic.html.twig'
 			],
 			'settings' => [
-				'classes' => 'class1 class2',
+				'classes' => [ 'class1', 'class2' ],
 				'title' => 'This is my title',
 			],
 		] );
@@ -59,6 +59,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 			],
 			'main' => 'elementor/elements/test',
 			'settings' => [
+				'classes' => null,
 				'title' => 'This is my title',
 			],
 		] );
