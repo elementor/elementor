@@ -85,7 +85,7 @@ class Source_Cloud extends Source_Base {
 
 	public function save_item( $template_data ): int {
 		$app = $this->get_app();
-	
+
 		$resource_data = [
 			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
 			'type' => $template_data['resourceType'] ?? self::TEMPLATE_RESOURCE_TYPE,
