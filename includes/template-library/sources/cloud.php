@@ -123,7 +123,7 @@ class Source_Cloud extends Source_Base {
 		}
 	}
 
-	private function handle_export_file( array $data ): void {
+	protected function handle_export_file( array $data ): void {
 		$file_data = $this->prepare_template_export( $data );
 
 		if ( is_wp_error( $file_data ) ) {
@@ -137,7 +137,7 @@ class Source_Cloud extends Source_Base {
 		die;
 	}
 
-	private function handle_export_folder( int $folder_id ): void {
+	protected function handle_export_folder( int $folder_id ): void {
 		$templates = $this->get_item_children( [ 'template_id' => $folder_id ] );
 
 		$template_ids = array_map( fn( $template ) => $template['template_id'], $templates );

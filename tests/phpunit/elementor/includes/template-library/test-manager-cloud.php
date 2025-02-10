@@ -120,20 +120,29 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		]);
 	}
 
-	public function testExportTemplateWithTemplateType() {
-        $data = [
-			'type' => 'TEMPLATE'
+	public function testExportTemplateWithFolderType() {
+		$mock_source_cloud = $this->getMockBuilder( \Elementor\TemplateLibrary\Source_Cloud::class )
+		                          ->onlyMethods( [ 'handle_export_folder' ] )
+		                          ->getMock();
+
+		$data = [
+			'type' => 'FOLDER'
 		];
 
-        $this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
+		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
 
-        $this->manager
-			->expects( $this->once() )
-			->method( 'handle_export_file' )
-			->with( $data );
+		$mock_manager = $this->getMockBuilder( \Elementor\TemplateLibrary\Manager::class )
+		                     ->onlyMethods( [ 'get_source' ] )
+		                     ->getMock();
 
-        $result = $this->manager->export_template( 123 );
+		$mock_manager->method( 'get_source' )->willReturn( $mock_source_cloud );
 
-        $this->assertNull($result);
-    }
+		$mock_source_cloud->expects( $this->once() )
+		                  ->method( 'handle_export_folder' )
+		                  ->with( $data );
+
+		$result = $mock_manager->export_template( [ 'source' => 'cloud', 'template_id' => 123 ] );
+
+		$this->assertNull( $result );
+	}
 }
