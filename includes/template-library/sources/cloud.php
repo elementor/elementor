@@ -212,7 +212,7 @@ class Source_Cloud extends Source_Base {
 
 	private function handle_zip_file( string $temp_path, array $files ): array {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			throw new \Error( "ZipArchive module missing" );
+			throw new \Error( 'ZipArchive module missing' );
 		}
 
 		$zip_archive_filename = 'elementor-templates-' . gmdate( 'Y-m-d' ) . '.zip';
