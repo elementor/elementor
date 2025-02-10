@@ -59,9 +59,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	private function set_svg_attributes( \WP_HTML_Tag_Processor $svg, $settings ) {
-		$svg->set_attribute( 'fill', $settings['color'] ?? 'currentColor' );
-		$svg->set_attribute( 'width', $settings['width'] ?? '' );
-		$svg->set_attribute( 'height', $settings['height'] ?? '' );
+		$svg->set_attribute( 'fill',  'currentColor' );
 		$svg->add_class( $settings['classes'] ?? '' );
 	}
 
@@ -93,8 +91,6 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'width' => String_Prop_Type::make()->default( '100px' ),
-			'height' => String_Prop_Type::make()->default( '100px' ),
 			'svg' => Svg_Prop_Type::make()->default_url( self::get_placeholder() ),
 		];
 	}
