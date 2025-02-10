@@ -41,7 +41,7 @@ class Source_Cloud extends Source_Base {
 	}
 
 	public function get_item_children( array $args = [] ) {
-		return $this->get_app()->get_resources( [ 'id' => $args['template_id'] ] );
+		return $this->get_app()->get_resources( [ 'parentId' => $args['template_id'] ] );
 	}
 
 	public function get_item( $id ) {
@@ -138,7 +138,7 @@ class Source_Cloud extends Source_Base {
 	}
 
 	private function handle_export_folder( int $folder_id ): void {
-		$templates = $this->get_app()->get_resources( [ 'id' => $folder_id ] );
+		$templates = $this->get_item_children( [ 'template_id' => $folder_id ] );
 
 		$template_ids = array_map( fn( $template ) => $template['template_id'], $templates );
 
