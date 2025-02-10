@@ -15,12 +15,15 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\WpRest\Classes\WP_Post;
 use Elementor\Utils;
+use Elementor\Modules\AtomicWidgets\TemplateRenderer\Has_Template;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Atomic_Heading extends Atomic_Widget_Base {
+	use Has_Template;
+
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_element_type(): string {
@@ -35,46 +38,10 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return 'eicon-t-letter';
 	}
 
-	protected function render() {
-		$settings = $this->get_atomic_settings();
-
-		$format = $this->get_heading_template( ! empty( $settings['link']['href'] ) );
-		$args = $this->get_template_args( $settings );
-
-		printf( $format, ...$args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	}
-
-	private function get_heading_template( bool $is_link_enabled ): string {
-		return $is_link_enabled ? '<%1$s %2$s><a %3$s>%4$s</a></%1$s>' : '<%1$s %2$s>%3$s</%1$s>';
-	}
-
-	private function get_template_args( array $settings ): array {
-		$tag = $settings['tag'];
-		$title = esc_html( $settings['title'] );
-		$attrs = array_filter([
-			'class' => array_filter( [
-				$settings['classes'] ?? '',
-				static::get_base_style_class( self::BASE_STYLE_KEY ) ?? '',
-			] ),
-		]);
-
-		$default_args = [
-			Utils::validate_html_tag( $tag ),
-			Utils::render_html_attributes( $attrs ),
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',
 		];
-
-		if ( isset( $settings['link']['href'] ) ) {
-			$link_args = [
-				Utils::render_html_attributes( $settings['link'] ),
-				esc_html( $title ),
-			];
-
-			return array_merge( $default_args, $link_args );
-		}
-
-		$default_args[] = $title;
-
-		return $default_args;
 	}
 
 	protected function define_atomic_controls(): array {

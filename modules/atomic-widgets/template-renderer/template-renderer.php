@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\TemplateRenderer;
 
 use Elementor\Utils;
 use ElementorDeps\Twig\Environment;
-use ElementorDeps\Twig\TemplateWrapper;
+use ElementorDeps\Twig\Runtime\EscaperRuntime;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -27,6 +27,11 @@ class Template_Renderer {
 				'autoescape' => 'name',
 			]
 		);
+
+		$escaper = $this->env->getRuntime( EscaperRuntime::class );
+
+		$escaper->setEscaper( 'full_url', 'esc_url' );
+		$escaper->setEscaper( 'html_tag', [ Utils::class, 'validate_html_tag' ] );
 	}
 
 	public static function instance(): self {
