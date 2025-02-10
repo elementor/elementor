@@ -49,7 +49,7 @@ class Source_Cloud extends Source_Base {
 	}
 
 	public function get_data( array $args ) {
-		$data = $this->get_app()->get_resource( $args );
+		$data = $this->get_app()->get_resource( [ 'id' => $args['template_id'] ] );
 
 		if ( is_wp_error( $data ) || empty( $data['content'] ) ) {
 			return $data;
