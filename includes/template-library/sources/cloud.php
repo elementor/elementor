@@ -127,9 +127,9 @@ class Source_Cloud extends Source_Base {
 	}
 
 	private function handle_export_folder( $folder_id ) {
-		$templates = $this->get_app()->get_resources( [ 'template_id' => $folder_id ] );
+		$templates = $this->get_app()->get_resources( [ 'id' => $folder_id ] );
 
-		$template_ids = array_map( fn( $template ) => $template['template_id'], $templates );
+		$template_ids = array_map( fn( $template ) => $template['id'], $templates );
 
 		$this->export_multiple_templates( $template_ids );
 	}

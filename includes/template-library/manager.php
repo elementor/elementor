@@ -474,19 +474,11 @@ class Manager {
 			return $validate_args;
 		}
 
-		$post_id = intval( $args['template_id'] );
-		$post_status = get_post_status( $post_id );
-
-		if ( get_post_type( $post_id ) !== Source_Local::CPT ) {
-			return new \WP_Error( 'template_error', esc_html__( 'Invalid template type or template does not exist.', 'elementor' ) );
-		}
-
-		if ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) ) {
-			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template.', 'elementor' ) );
-		}
-
-		if ( 'publish' !== $post_status && ! current_user_can( 'edit_post', $post_id ) ) {
-			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to export this template.', 'elementor' ) );
+		if ( 'local' === $args['source'] ) {
+			$permissions_error = $this->validate_local_template_export_permissions( $args['template_id'] );
+			if ( is_wp_error( $permissions_error ) ) {
+				return $permissions_error;
+			}
 		}
 
 		$source = $this->get_source( $args['source'] );
@@ -498,20 +490,22 @@ class Manager {
 		return $source->export_template( $args['template_id'] );
 	}
 
-	public function export_cloud_template( array $args ) {
-		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
-
-		if ( is_wp_error( $validate_args ) ) {
-			return $validate_args;
+	private function validate_local_template_export_permissions( $template_id ) {
+		$post_id = intval( $template_id );
+		if ( get_post_type( $post_id ) !== Source_Local::CPT ) {
+			return new \WP_Error( 'template_error', esc_html__( 'Invalid template type or template does not exist.', 'elementor' ) );
 		}
-
-		$source = $this->get_source( $args['source'] );
-
-		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found' );
+	
+		$post_status = get_post_status( $post_id );
+		if ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) ) {
+			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template.', 'elementor' ) );
 		}
-
-		return $source->export_template( $args['template_id'] );
+	
+		if ( 'publish' !== $post_status && ! current_user_can( 'edit_post', $post_id ) ) {
+			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to export this template.', 'elementor' ) );
+		}
+	
+		return null;
 	}
 
 	/**
@@ -773,7 +767,6 @@ class Manager {
 		$whitelist_methods = [
 			'export_template',
 			'direct_import_template',
-			'export_cloud_template',
 		];
 
 		if ( 'direct_import_template' === $action && ! User::is_current_user_can_upload_json() ) {
