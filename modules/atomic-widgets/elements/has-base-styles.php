@@ -18,7 +18,7 @@ trait Has_Base_Styles {
 		$style_definitions = [];
 
 		foreach ( $base_styles as $key => $style ) {
-			$id = $this->get_base_style_class( $key );
+			$id = static::get_element_type() . '-' . $key;
 
 			$style_definitions[ $key ] = $style->build( $id );
 		}
@@ -41,9 +41,5 @@ trait Has_Base_Styles {
 	 */
 	protected function define_base_styles(): array {
 		return [];
-	}
-
-	protected function get_base_style_class( string $key ) {
-		return static::get_element_type() . '-' . $key;
 	}
 }
