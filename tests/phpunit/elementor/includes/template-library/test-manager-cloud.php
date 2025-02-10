@@ -163,17 +163,17 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
 
-		$mock_manager = $this->getMockBuilder( \Elementor\TemplateLibrary\Manager::class )
-			->onlyMethods( [ 'get_source' ] )
-			->getMock();
+		// $mock_manager = $this->getMockBuilder( \Elementor\TemplateLibrary\Manager::class )
+		// 	->onlyMethods( [ 'get_source' ] )
+		// 	->getMock();
 
-		$mock_manager->method( 'get_source' )->willReturn( $this->cloud_source_mock );
+		// $mock_manager->method( 'get_source' )->willReturn( $this->cloud_source_mock );
 
 		$this->cloud_source_mock->expects( $this->once() )
 			->method( 'handle_export_file' )
 			->with( $data );
 
-		$result = $mock_manager->export_template( [ 'source' => 'cloud', 'template_id' => 456 ] );
+		$result = $this->manager->export_template( [ 'source' => 'cloud', 'template_id' => 456 ] );
 
 		$this->assertNull( $result );
 	}
