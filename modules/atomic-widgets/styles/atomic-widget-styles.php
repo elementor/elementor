@@ -74,6 +74,6 @@ class Atomic_Widget_Styles {
 			$this->rendered_base_styles[ $key ] = true;
 		}
 
-		return $is_base_styles_rendered ? [] : $element::get_base_styles();
+		return $is_base_styles_rendered ? [] : $element->get_base_styles();
 	}
 }
