@@ -786,14 +786,7 @@ class Source_Local extends Source_Base {
 
 		$this->send_file_headers( $file_data['name'], strlen( $file_data['content'] ) );
 
-		// Clear buffering just in case.
-		@ob_end_clean();
-
-		flush();
-
-		// Output file contents.
-		// PHPCS - Export widget json
-		echo $file_data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$this->serve_file( $file_data['content'] );
 
 		die;
 	}
@@ -867,9 +860,7 @@ class Source_Local extends Source_Base {
 
 		$this->send_file_headers( $zip_archive_filename, filesize( $zip_complete_path ) );
 
-		@ob_end_flush();
-
-		@readfile( $zip_complete_path );
+		$this->serve_zip( $zip_complete_path );
 
 		unlink( $zip_complete_path );
 
@@ -1518,26 +1509,6 @@ class Source_Local extends Source_Base {
 			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
 			'content' => wp_json_encode( $export_data ),
 		];
-	}
-
-	/**
-	 * Send file headers.
-	 *
-	 * Set the file header when export template data to a file.
-	 *
-	 * @since 1.6.0
-	 * @access private
-	 *
-	 * @param string $file_name File name.
-	 * @param int    $file_size File size.
-	 */
-	private function send_file_headers( $file_name, $file_size ) {
-		header( 'Content-Type: application/octet-stream' );
-		header( 'Content-Disposition: attachment; filename=' . $file_name );
-		header( 'Expires: 0' );
-		header( 'Cache-Control: must-revalidate' );
-		header( 'Pragma: public' );
-		header( 'Content-Length: ' . $file_size );
 	}
 
 	/**

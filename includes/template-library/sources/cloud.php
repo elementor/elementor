@@ -137,14 +137,6 @@ class Source_Cloud extends Source_Base {
 		die;
 	}
 
-	private function serve_file( string $file_content ): void {
-		@ob_end_clean();
-		flush();
-
-		// PHPCS - Export widget json
-		echo $file_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	}
-
 	private function handle_export_folder( int $folder_id ): void {
 		$templates = $this->get_app()->get_resources( [ 'id' => $folder_id ] );
 
@@ -201,15 +193,6 @@ class Source_Cloud extends Source_Base {
 		die;
 	}
 
-	private function send_file_headers( $file_name, $file_size ) {
-		header( 'Content-Type: application/octet-stream' );
-		header( 'Content-Disposition: attachment; filename=' . $file_name );
-		header( 'Expires: 0' );
-		header( 'Cache-Control: must-revalidate' );
-		header( 'Pragma: public' );
-		header( 'Content-Length: ' . $file_size );
-	}
-
 	private function handle_zip_file( string $temp_path, array $files ): array {
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			throw new \Error( 'ZipArchive module missing' );
@@ -252,10 +235,5 @@ class Source_Cloud extends Source_Base {
 			'path' => $complete_path,
 			'name' => $file_data['name'],
 		];
-	}
-
-	private function serve_zip( $zip_complete_path ): void {
-		@ob_end_flush();
-		@readfile( $zip_complete_path );
 	}
 }
