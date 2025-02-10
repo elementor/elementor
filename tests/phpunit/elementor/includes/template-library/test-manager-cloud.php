@@ -119,4 +119,18 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'parentId' => null,
 		]);
 	}
+
+	public function test_export_template__with_error() {
+		// Arrange
+        $this->cloud_library_app_mock
+			->method( 'get_resource' )
+			->willReturn( new \WP_Error( 'some_error', 'An error occurred' ) );
+
+		// Act
+        $result = $this->manager->export_template( 123 );
+
+		// Assert
+        $this->assertInstanceOf( \WP_Error::class, $result );
+        $this->assertEquals( 'export_template_error', $result->get_error_code() );
+    }
 }
