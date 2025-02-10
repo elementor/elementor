@@ -1,5 +1,7 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
+
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
