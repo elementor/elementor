@@ -22,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Paragraph extends Atomic_Widget_Base {
 	const BASE_STYLE_KEY = 'base';
+	use Has_Template;
 
 	public static function get_element_type(): string {
 		return 'a-paragraph';
@@ -33,6 +34,12 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 	public function get_title() {
 		return esc_html__( 'Atomic Paragraph', 'elementor' );
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-paragraph' => __DIR__ . '/atomic-paragraph.html.twig',
+		];
 	}
 
 	protected function define_atomic_controls(): array {
@@ -64,9 +71,6 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'tag' => String_Prop_Type::make()
-				->default( 'p' ),
-
 			'paragraph' => String_Prop_Type::make()
 				->default( __( 'Type your paragraph here', 'elementor' ) ),
 
@@ -74,7 +78,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		];
 	}
 
-	public static function define_base_styles(): array {
+	protected function define_base_styles(): array {
 		$color_value = Color_Prop_Type::generate( 'black' );
 		$font_family_value = String_Prop_Type::generate( 'Poppins' );
 		$font_size_value = Size_Prop_Type::generate( [
@@ -84,7 +88,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		$line_height_value = String_Prop_Type::generate( '1.5' );
 
 		return [
-			self::BASE_STYLE_KEY => Style_Definition::make()
+			'base' => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'color', $color_value )
@@ -92,45 +96,6 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 						->add_prop( 'font-size', $font_size_value )
 						->add_prop( 'line-height', $line_height_value )
 				),
-		];
-	}
-
-	protected function render(): void {
-		$settings = $this->get_atomic_settings();
-
-		$format = $this->get_template( ! empty( $settings['link']['href'] ) );
-		$args = $this->get_template_args( $settings );
-
-		printf( $format, ...$args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	}
-
-	private function get_template( bool $is_link_enabled ): string {
-		return $is_link_enabled ? '<%1$s %2$s><a %3$s>%4$s</a></%1$s>' : '<%1$s %2$s>%3$s</%1$s>';
-	}
-
-	private function get_template_args( array $settings ): array {
-		$paragraph = esc_html( $settings['paragraph'] );
-		$tag = Utils::validate_html_tag( $settings['tag'] );
-		$attrs = array_filter([
-			'class' => array_filter([
-				...( $settings['classes'] ?? [] ),
-				self::get_base_style_class( self::BASE_STYLE_KEY ) ?? '',
-			]),
-		]);
-
-		if ( ! empty( $settings['link']['href'] ) ) {
-			return [
-				$tag,
-				Utils::render_html_attributes( $attrs ),
-				Utils::render_html_attributes( $settings['link'] ),
-				$paragraph,
-			];
-		}
-
-		return [
-			$tag,
-			Utils::render_html_attributes( $attrs ),
-			$paragraph,
 		];
 	}
 }

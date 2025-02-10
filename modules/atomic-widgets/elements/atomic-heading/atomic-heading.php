@@ -23,8 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Heading extends Atomic_Widget_Base {
 	use Has_Template;
 
-	const BASE_STYLE_KEY = 'base';
-
 	public static function get_element_type(): string {
 		return 'a-heading';
 	}
@@ -109,7 +107,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		];
 	}
 
-	public static function define_base_styles(): array {
+	protected function define_base_styles(): array {
 		$color_value = Color_Prop_Type::generate( 'black' );
 		$font_family_value = String_Prop_Type::generate( 'Inter' );
 		$font_size_value = Size_Prop_Type::generate( [
@@ -120,7 +118,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$font_weight_value = String_Prop_Type::generate( '600' );
 
 		return [
-			self::BASE_STYLE_KEY => Style_Definition::make()
+			'base' => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'color', $color_value )
