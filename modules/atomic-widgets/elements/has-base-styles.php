@@ -30,7 +30,7 @@ trait Has_Base_Styles {
 		$result = [];
 
 		foreach ( $this->get_base_styles() as $key => $style ) {
-			$result[ $key ] = $style->get_id();
+			$result[ $key ] = $style['id'];
 		}
 
 		return $result;
