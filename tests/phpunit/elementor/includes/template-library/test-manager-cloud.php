@@ -120,17 +120,20 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		]);
 	}
 
-	public function test_export_template__with_error() {
-		// Arrange
-        $this->cloud_library_app_mock
-			->method( 'get_resource' )
-			->willReturn( new \WP_Error( 'some_error', 'An error occurred' ) );
+	public function testExportTemplateWithTemplateType() {
+        $data = [
+			'type' => 'TEMPLATE'
+		];
 
-		// Act
+        $this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
+
+        $this->manager
+			->expects( $this->once() )
+			->method( 'handle_export_file' )
+			->with( $data );
+
         $result = $this->manager->export_template( 123 );
 
-		// Assert
-        $this->assertInstanceOf( \WP_Error::class, $result );
-        $this->assertEquals( 'export_template_error', $result->get_error_code() );
+        $this->assertNull($result);
     }
 }
