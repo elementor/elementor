@@ -33,7 +33,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->manager = Plugin::$instance->templates_manager;
 
 		$this->cloud_source_mock = $this->getMockBuilder( \Elementor\TemplateLibrary\Source_Cloud::class )
-			->onlyMethods( [ 'handle_export_folder', 'handle_export_template' ] )
+			->onlyMethods( [ 'handle_export_folder', 'handle_export_file' ] )
 			->getMock();
 
 	}
@@ -170,7 +170,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$mock_manager->method( 'get_source' )->willReturn( $this->cloud_source_mock );
 
 		$this->cloud_source_mock->expects( $this->once() )
-			->method( 'handle_export_template' )
+			->method( 'handle_export_file' )
 			->with( $data );
 
 		$result = $mock_manager->export_template( [ 'source' => 'cloud', 'template_id' => 456 ] );
