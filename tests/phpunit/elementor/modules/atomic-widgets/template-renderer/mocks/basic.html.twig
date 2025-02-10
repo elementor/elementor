@@ -1,4 +1,4 @@
-<div class="{{ settings.classes }}">
+<div class="{{ settings.classes | join (' ') }}">
     <h1>{{ settings.title }}</h1>
     <p>widget id: {{ id }}, widget type: {{ type }}</p>
     {{ settings.prop_not_exists }}
