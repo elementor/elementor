@@ -132,13 +132,17 @@ class Source_Cloud extends Source_Base {
 
 		$this->send_file_headers( $file_data['name'], strlen( $file_data['content'] ) );
 
+		$this->serve_file( $file_data['content'] );
+
+		die;
+	}
+
+	private function serve_file( string $file_content ): void {
 		@ob_end_clean();
 		flush();
 
 		// PHPCS - Export widget json
-		echo $file_data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-
-		die;
+		echo $file_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	private function handle_export_folder( int $folder_id ): void {
