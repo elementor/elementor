@@ -318,7 +318,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			const scrollHeight = scrollableContainer[ 0 ].scrollHeight;
 			const clientHeight = scrollableContainer.outerHeight();
 
-			const scrollPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100;
+			const scrollPercentage = ( scrollTop / ( scrollHeight - clientHeight ) ) * 100;
 
 			const canLoadMore = elementor.templates.canLoadMore() && ! elementor.templates.isLoading();
 
