@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Source_Cloud extends Source_Base {
 	const FOLDER_RESOURCE_TYPE = 'FOLDER';
 	const TEMPLATE_RESOURCE_TYPE = 'TEMPLATE';
+	const TEMP_FILES_DIR = 'elementor/tmp';
 
 	protected function get_app(): Cloud_Library {
 		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
@@ -41,7 +42,7 @@ class Source_Cloud extends Source_Base {
 	}
 
 	public function get_item_children( array $args = [] ) {
-		return $this->get_app()->get_resources( $args );
+		return $this->get_app()->get_resources( [ 'id' => $args['template_id'] ] );
 	}
 
 	public function get_item( $id ) {
@@ -144,17 +145,21 @@ class Source_Cloud extends Source_Base {
 	private function handle_export_folder( $folder_id ) {
 		$templates = $this->get_app()->get_resources( [ 'id' => $folder_id ] );
 
-		$template_ids = array_map( fn( $template ) => $template['id'], $templates );
+		$template_ids = array_map( fn( $template ) => $template['template_id'], $templates );
 
 		$this->export_multiple_templates( $template_ids );
 	}
 
 	private function prepare_template_export( $data ) {
 		if ( empty( $data['content'] ) ) {
-			return new \WP_Error( 'empty_template', 'The template is empty' );
+			return new \WP_Error( 'no_content', 'Template data not found' );
 		}
 
 		$data['content'] = json_decode( $data['content'], true );
+
+		if ( empty( $data['content']['content'] ) ) {
+			return new \WP_Error( 'empty_template', 'The template is empty' );
+		}
 
 		$export_data = [
 			'content' => $data['content']['content'],
@@ -237,7 +242,7 @@ class Source_Cloud extends Source_Base {
 	}
 
 	private function get_file_item( $template_id, string $temp_path ) {
-		$data      = $this->get_app()->get_resource( [ 'template_id' => $template_id ] );
+		$data      = $this->get_app()->get_resource( [ 'id' => $template_id ] );
 		$file_data = $this->prepare_template_export( $data );
 
 		if ( is_wp_error( $file_data ) ) {
