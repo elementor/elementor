@@ -35,7 +35,8 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->manager = Plugin::$instance->templates_manager;
 
 		$this->cloud_source_mock = $this->getMockBuilder( \Elementor\TemplateLibrary\Source_Cloud::class )
-			->onlyMethods( [ 'handle_export_folder', 'handle_export_file' ] )
+			->onlyMethods( [ 'send_file_headers', 'serve_file' ] )
+			->disableOriginalConstructor()
 			->getMock();
 
 		$this->manager_mock = $this->getMockBuilder( \Elementor\TemplateLibrary\Manager::class )
@@ -136,44 +137,34 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		]);
 	}
 
-	public function test_export_template__folder_type() {
-		$data = [
-			'id' => 123,
-			'title' => 'Folder 1',
-			'type' => 'FOLDER',
-			'parentId' => null,
-			'templateType' => 'folder',	
-		];
-
-		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
-
-		$this->cloud_source_mock->expects( $this->once() )
-			->method( 'handle_export_folder' )
-			->with( 123 );
-
-		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );
-
-		$this->assertNull( $result );
-	}
-
 	public function test_export_template__template_type() {
+		// Arrange
 		$data = [
 			'id' => 456,
 			'title' => 'Template 1',
 			'type' => 'TEMPLATE',
 			'parentId' => null,
 			'templateType' => 'container',
-			'content' => json_encode( ['content' => 'mock_content'] ),
+			'content' => json_encode(['content' => 'mock_content']),
 		];
 
+		$expected_file_content = '{"content":"mock_content","page_settings":[],"version":"0.4","title":"Template 1","type":"container"}';
+		$expected_file_name = 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json';
+	
 		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
 
-		$this->cloud_source_mock->expects( $this->once() )
-			->method( 'handle_export_file' )
-			->with( $data );
+		// Assert
+		$this->cloud_source_mock
+			->expects( $this->once() )
+        	->method( 'send_file_headers' )
+        	->with( $this->equalTo( $expected_file_name ), $this->equalTo( strlen( $expected_file_content ) ) );
 
-		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );
+		$this->cloud_source_mock
+			->expects( $this->once() )
+			->method( 'serve_file' )
+			->with( $this->equalTo( $expected_file_content ) );
 
-		$this->assertNull( $result );
+		// Act
+		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );	
 	}
 }
