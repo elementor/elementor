@@ -221,6 +221,7 @@ const TemplateLibraryManager = function() {
 					template_id: templateId,
 				},
 				success: ( data ) => {
+					this.setFilter( 'parent', templateId );
 					templatesCollection = new TemplateLibraryCollection( data.templates );
 
 					elementor.templates.layout.hideLoadingView();
@@ -475,6 +476,8 @@ const TemplateLibraryManager = function() {
 			options.refresh = true;
 		}
 
+		this.setFilter( 'parent', null, query );
+
 		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
 			const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
 
@@ -502,6 +505,7 @@ const TemplateLibraryManager = function() {
 
 	this.searchTemplates = ( data ) => {
 		return new Promise( ( resolve ) => {
+			this.setFilter( 'parent', null );
 			isLoading = true;
 			const ajaxOptions = {
 				data,
@@ -534,12 +538,14 @@ const TemplateLibraryManager = function() {
 		isLoading = true;
 
 		const source = this.getFilter( 'source' );
+		const parentId = this.getFilter( 'parent' );
 
 		const ajaxOptions = {
 			data: {
 				source,
 				offset: templatesCollection.length,
 				search,
+				template_id: parentId,
 			},
 			success: ( result ) => {
 				const collection = new TemplateLibraryCollection( result.templates );
