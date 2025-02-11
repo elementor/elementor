@@ -110,7 +110,9 @@ export type GapControl = string | {
 	unit?: string
 }
 
-export type DataPreset =
+export type ContainerType = 'flex' | 'grid';
+
+export type ContainerPreset =
 	| 'c100'
 	| 'r100'
 	| '50-50'

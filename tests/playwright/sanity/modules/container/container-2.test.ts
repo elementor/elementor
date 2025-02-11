@@ -83,8 +83,7 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.closeNavigatorIfOpen();
 
-		// Act.
-		// Add containers and set various controls.
+		// Act - Add containers and set various controls.
 		const containers = [
 			{ setting: 'start', id: '' },
 			{ setting: 'center', id: '' },
@@ -98,8 +97,7 @@ test.describe( 'Container tests @container', () => {
 			await editor.setChooseControlValue( 'grid_align_items', `eicon-align-${ container.setting }-v` );
 		}
 
-		// Assert.
-		// Check container settings are set as expected in the editor.
+		// Assert - Check container settings are set as expected in the editor.
 		for ( const container of containers ) {
 			const element = editor.getPreviewFrame().locator( `.elementor-element-${ container.id }.e-grid .e-con-inner` );
 			await expect.soft( element ).toHaveCSS( 'justify-items', container.setting );
@@ -108,8 +106,7 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.publishAndViewPage();
 
-		// Assert.
-		// Check container settings are set as expected on frontend.
+		// Assert - Check container settings are set as expected on frontend.
 		for ( const container of containers ) {
 			const element = page.locator( `.elementor-element-${ container.id }.e-grid .e-con-inner` );
 			await expect.soft( element ).toHaveCSS( 'justify-items', container.setting );

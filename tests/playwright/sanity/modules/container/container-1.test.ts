@@ -69,12 +69,10 @@ test.describe( 'Container tests @container', () => {
 			getElementSelector( button ),
 			getElementSelector( image ),
 		);
-
-		const buttonEl = await editor.getElementHandle( button ),
-			headingEl = await editor.getElementHandle( heading );
-
-		const elBeforeButton = await buttonEl.evaluate( ( node ) => node.previousElementSibling ),
-			elAfterHeading = await headingEl.evaluate( ( node ) => node.nextElementSibling );
+		const buttonEl = await editor.getElementHandle( button );
+		const headingEl = await editor.getElementHandle( heading );
+		const elBeforeButton = await buttonEl.evaluate( ( node ) => node.previousElementSibling );
+		const elAfterHeading = await headingEl.evaluate( ( node ) => node.nextElementSibling );
 
 		// Assert - Test that the image is between the heading & button.
 		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
@@ -166,13 +164,11 @@ test.describe( 'Container tests @container', () => {
 		const pageView = editor.page.locator( '#elementor-preview-responsive-wrapper' );
 		await expect.soft( pageView ).toHaveScreenshot( 'heading-boxed-absolute.png' );
 
-		await editor.togglePreviewMode();
-
 		// Act.
+		await editor.togglePreviewMode();
 		await editor.selectElement( containerId );
 		await editor.openPanelTab( 'layout' );
 		await editor.setSelectControlValue( 'content_width', 'full' );
-
 		await editor.togglePreviewMode();
 
 		// Assert.

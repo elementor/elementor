@@ -183,7 +183,7 @@ test.describe( 'Container tests @container', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addContainerPreset( 'c100-c50-50' );
+		await editor.addNewContainerPreset( 'flex', 'c100-c50-50' );
 
 		// Assert.
 		await expect.soft( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column[data-nesting-level="1"]' ).last() ).toHaveCSS( 'padding', '0px' );
