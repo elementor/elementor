@@ -184,7 +184,7 @@ class Source_Cloud extends Source_Base {
 
 		list( $zip_archive_filename, $zip_complete_path ) = $this->handle_zip_file( $temp_path, $files );
 
-		$this->send_file_headers( $zip_archive_filename, filesize( $zip_complete_path ) );
+		$this->send_file_headers( $zip_archive_filename, $this->filesize( $zip_complete_path ) );
 
 		$this->serve_zip( $zip_complete_path );
 
@@ -193,7 +193,7 @@ class Source_Cloud extends Source_Base {
 		die;
 	}
 
-	private function handle_zip_file( string $temp_path, array $files ): array {
+	protected function handle_zip_file( string $temp_path, array $files ): array {
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			throw new \Error( 'ZipArchive module missing' );
 		}

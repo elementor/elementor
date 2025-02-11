@@ -36,7 +36,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->manager = Plugin::$instance->templates_manager;
 
 		$this->cloud_source_mock = $this->getMockBuilder( \Elementor\TemplateLibrary\Source_Cloud::class )
-			->onlyMethods( [ 'send_file_headers', 'serve_file' ] )
+			->onlyMethods( [ 'send_file_headers', 'serve_file', 'get_item_children', 'handle_zip_file', 'filesize' ] )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -47,6 +47,14 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->manager_mock
 			->method( 'get_source' )
 			->willReturn( $this->cloud_source_mock );
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+		$this->cloud_library_app_mock = null;
+		$this->cloud_source_mock = null;
+		$this->manager_mock = null;
+		$this->manager = null;
 	}
 
 	public function test_should_return_cloud_source() {
@@ -164,6 +172,70 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'serve_file' )
 			->with( $this->equalTo( $expected_file_content ) );
+
+		// Act
+		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );	
+	}
+
+	public function test_export_template__folder_type() {
+		// Arrange
+		$data = [
+			'id' => 123,
+			'title' => 'Folder 1',
+			'type' => 'FOLDER',
+			'parentId' => null,
+			'templateType' => 'folder',
+		];
+	
+		
+		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
+		$this->cloud_source_mock->method( 'get_item_children' )->willReturn(
+			[
+				[
+					'template_id' => 101,
+					'title' => 'Header Template',
+					'type' => 'TEMPLATE',
+					'parentId' => 123,
+					'templateType' => 'container'
+				],
+				[
+					'template_id' => 102,
+					'title' => 'Footer Template',
+					'type' => 'TEMPLATE',
+					'parentId' => 123,
+					'templateType' => 'container'
+				],
+				[
+					'template_id' => 103,
+					'title' => 'Sidebar Template',
+					'type' => 'TEMPLATE',
+					'parentId' => 123,
+					'templateType' => 'container'
+				],
+			]			
+		);
+
+		$zip_archive_filename = 'zip-file.zip';
+    	$zip_complete_path = 'some/dir/name';
+		$mocked_file_size = 12345;
+
+		// Assert
+		$this->cloud_source_mock
+			->method( 'handle_zip_file' )
+			->willReturn( [ $zip_archive_filename, $zip_complete_path ] );
+
+		$this->cloud_source_mock
+			->method( 'filesize' )
+			->with( $zip_complete_path )
+			->willReturn( $mocked_file_size );
+
+		$this->cloud_source_mock
+			->expects( $this->once() )
+			->method( 'send_file_headers' )
+			->with(
+				$this->equalTo( $zip_archive_filename ),
+				$this->equalTo( $mocked_file_size )
+			);
 
 		// Act
 		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );	

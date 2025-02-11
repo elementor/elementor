@@ -394,6 +394,10 @@ abstract class Source_Base {
 		header( 'Content-Length: ' . $file_size );
 	}
 
+	protected function filesize( $path ) {
+		return filesize( $path );
+	}
+
 	protected function serve_zip( $zip_complete_path ): void {
 		@ob_end_flush();
 		@readfile( $zip_complete_path );

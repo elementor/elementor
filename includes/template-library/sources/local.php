@@ -882,7 +882,7 @@ class Source_Local extends Source_Base {
 			unlink( $file['path'] );
 		}
 
-		$this->send_file_headers( $zip_archive_filename, filesize( $zip_complete_path ) );
+		$this->send_file_headers( $zip_archive_filename, $this->filesize( $zip_complete_path ) );
 
 		$this->serve_zip( $zip_complete_path );
 
