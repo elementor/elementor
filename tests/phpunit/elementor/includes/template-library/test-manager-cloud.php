@@ -281,7 +281,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		];
 
 		// Act
-		$result = $this->manager->load_more_templates($args);
+		$result = $this->manager->load_more_templates( $args );
 
 		// Assert
 		$this->cloud_library_app_mock
