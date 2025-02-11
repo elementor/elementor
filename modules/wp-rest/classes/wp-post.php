@@ -43,11 +43,11 @@ class WP_Post {
 		], true );
 	}
 
-	public function advanced_search( $search, $wp_query ) {
+	private function customize_search( $search, $wp_query ) {
 		$search_term = $wp_query->get( 'search_term' ) ?? '';
-		$is_advanced_search = $wp_query->get( 'advanced_search' ) ?? false;
+		$is_custom_search = $wp_query->get( 'custom_search' ) ?? false;
 
-		if ( $is_advanced_search && ! empty( $search_term ) ) {
+		if ( $is_custom_search && ! empty( $search_term ) ) {
 			$search .= ' AND (';
 			$search .= "post_title LIKE '%" . esc_sql( $search_term ) . "%' ";
 			$search .= "OR ID LIKE '%" . esc_sql( $search_term ) . "%')";
@@ -102,7 +102,7 @@ class WP_Post {
 			'post_type' => $post_type_slugs->all(),
 			'numberposts' => $max_count,
 			'suppress_filters' => false,
-			'advanced_search' => true,
+			'custom_search' => true,
 			'search_term' => $term,
 		] ) );
 
@@ -122,11 +122,11 @@ class WP_Post {
 	}
 
 	private function add_filter_to_customize_query() {
-		add_filter( 'posts_search', [ $this, 'advanced_search' ], 10, 2 );
+		add_filter( 'posts_search', fn ( $search_term, $wp_query ) => $this->customize_search( $search_term, $wp_query ), 10, 2 );
 	}
 
 	private function remove_filter_to_customize_query() {
-		remove_filter( 'posts_search', [ $this, 'advanced_search' ], 10, 2 );
+		remove_filter( 'posts_search', fn ( $search_term, $wp_query ) => $this->customize_search( $search_term, $wp_query ), 10, 2 );
 	}
 
 	private function get_args() {
