@@ -134,7 +134,7 @@ class Source_Cloud extends Source_Base {
 
 		$this->serve_file( $file_data['content'] );
 
-		die;
+		$this->die();
 	}
 
 	protected function handle_export_folder( int $folder_id ): void {
@@ -190,7 +190,7 @@ class Source_Cloud extends Source_Base {
 
 		Plugin::$instance->uploads_manager->remove_file_or_dir( $temp_path );
 
-		die;
+		$this->die();
 	}
 
 	protected function handle_zip_file( string $temp_path, array $files ): array {
