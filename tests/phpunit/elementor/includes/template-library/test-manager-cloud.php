@@ -4,6 +4,7 @@ namespace Elementor\Testing\Includes\TemplateLibrary;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\DB;
 
 class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 	/**
@@ -148,7 +149,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'content' => json_encode(['content' => 'mock_content']),
 		];
 
-		$expected_file_content = '{"content":"mock_content","page_settings":[],"version":"0.4","title":"Template 1","type":"container"}';
+		$expected_file_content = '{"content":"mock_content","page_settings":[],"version":"'.DB::DB_VERSION.'","title":"Template 1","type":"container"}';
 		$expected_file_name = 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json';
 	
 		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
@@ -156,8 +157,8 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		// Assert
 		$this->cloud_source_mock
 			->expects( $this->once() )
-        	->method( 'send_file_headers' )
-        	->with( $this->equalTo( $expected_file_name ), $this->equalTo( strlen( $expected_file_content ) ) );
+			->method( 'send_file_headers' )
+			->with( $this->equalTo( $expected_file_name ), $this->equalTo( strlen( $expected_file_content ) ) );
 
 		$this->cloud_source_mock
 			->expects( $this->once() )
