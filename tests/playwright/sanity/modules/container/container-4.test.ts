@@ -36,16 +36,9 @@ test.describe( 'Container tests @container', () => {
 		await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
-		// Evaluate scroll widths in the browser context.
-		const frame = editor.getPreviewFrame();
-		const containerSelector = '.elementor-element-edit-mode';
-		const hasNoHorizontalScroll = await frame.evaluate( ( selector ) => {
-			const container = document.querySelector( selector );
-			return container.scrollWidth <= container.clientWidth;
-		}, containerSelector );
-
-		// Assert - Check for no horizontal scroll.
-		expect.soft( hasNoHorizontalScroll ).toBe( true );
+		// Assert - Evaluate scroll widths in the browser context and check it has no horizontal scroll.
+		const container = await editor.getPreviewFrame().evaluate( () => document.querySelector( '.elementor-element-edit-mode' ) );
+		expect.soft( container.scrollWidth ).toBe( container.clientWidth );
 	} );
 
 	test( 'Convert to container does not show when only containers are on the page', async ( { page, apiRequests }, testInfo ) => {
