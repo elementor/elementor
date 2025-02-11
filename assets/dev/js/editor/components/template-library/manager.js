@@ -553,7 +553,7 @@ const TemplateLibraryManager = function() {
 				source,
 				offset: templatesCollection.length,
 				search,
-				template_id: parentId,
+				parentId,
 			},
 			success: ( result ) => {
 				const collection = new TemplateLibraryCollection( result.templates );
