@@ -253,7 +253,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->manager->load_more_templates($args);
 	}
 
-	public function test_load_more_templates_fails_wuthout_source() {
+	public function test_load_more_templates_fails_without_source() {
 		// Arrange
 		$args = [
 			'search' => 'search',
