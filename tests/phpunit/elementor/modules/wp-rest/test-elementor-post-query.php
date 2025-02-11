@@ -24,14 +24,14 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 		$this->wordpress_adapter = new Wordpress_Adapter();
 
 		add_action( 'rest_api_init', function () {
-			( new WP_Post( $this->wordpress_adapter ) )->register();
+			( new WP_Post( $this->wordpress_adapter ) )->register( true );
 		} );
 		do_action( 'rest_api_init' );
 	}
 
 	public function tearDown(): void {
 		add_action( 'rest_api_init', function () {
-			( new WP_Post() )->register();
+			( new WP_Post() )->register( true );
 		} );
 		do_action( 'rest_api_init' );
 		parent::tearDown();

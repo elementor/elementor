@@ -5,7 +5,6 @@ namespace Elementor\Modules\WpRest\Classes;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Utils\Collection;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -27,7 +26,7 @@ class WP_Post {
 		$this->wp_adapter = $wp_adapter ?? new Wordpress_Adapter();
 	}
 
-	public function register(): void {
+	public function register( bool $override_existing_endpoints = false ): void {
 		register_rest_route( self::NAMESPACE, self::ENDPOINT, [
 			[
 				'methods' => \WP_REST_Server::READABLE,
@@ -40,23 +39,36 @@ class WP_Post {
 				},
 				'callback' => fn ( $request ): \WP_REST_Response => $this->fetch( $request ),
 			],
-		], true );
+		], $override_existing_endpoints );
 	}
 
-	private function customize_search( $search, $wp_query ) {
-		$search_term = $wp_query->get( 'search_term' ) ?? '';
+	/**
+	 * Alters the SQL search query to filter by post title or ID.
+	 *
+	 * @param string   $search_term The original search query.
+	 * @param \WP_Query $wp_query   The WP_Query instance.
+	 * @return string Modified search query.
+	 */
+	private function customize_search( string $search_term, \WP_Query $wp_query ) {
+		$term = $wp_query->get( 'search_term' ) ?? '';
 		$is_custom_search = $wp_query->get( 'custom_search' ) ?? false;
 
-		if ( $is_custom_search && ! empty( $search_term ) ) {
-			$search .= ' AND (';
-			$search .= "post_title LIKE '%" . esc_sql( $search_term ) . "%' ";
-			$search .= "OR ID LIKE '%" . esc_sql( $search_term ) . "%')";
+		if ( $is_custom_search && ! empty( $term ) ) {
+			$search_term .= ' AND (';
+			$search_term .= "post_title LIKE '%" . esc_sql( $term ) . "%' ";
+			$search_term .= "OR ID LIKE '%" . esc_sql( $term ) . "%')";
 		}
 
-		return $search;
+		return $search_term;
 	}
 
-	private function fetch( $request ): \WP_REST_Response {
+	/**
+	 * Tries to fetch posts, wraps the result in a response object, and returns it.
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return \WP_REST_Response
+	 */
+	private function fetch( \WP_REST_Request $request ): \WP_REST_Response {
 		try {
 			return new \WP_REST_Response( [
 				'success' => true,
@@ -74,6 +86,12 @@ class WP_Post {
 		}
 	}
 
+	/**
+	 * Fetches posts based on the search term, formats them based on the keys format map, and returns them.
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return array
+	 */
 	private function get_posts( \WP_REST_Request $request ) {
 		$params = $request->get_params();
 		$term = $params[ self::TERM_KEY ];
@@ -121,14 +139,28 @@ class WP_Post {
 			->all();
 	}
 
+	/**
+	 * Hooks into the flow of wordpress's get_post querying.
+	 *
+	 * @return void
+	 */
 	private function add_filter_to_customize_query() {
 		add_filter( 'posts_search', fn ( $search_term, $wp_query ) => $this->customize_search( $search_term, $wp_query ), 10, 2 );
 	}
 
+	/**
+	 * Hooks out of the flow of wordpress's get_post querying.
+ * @return void
+	 */
 	private function remove_filter_to_customize_query() {
 		remove_filter( 'posts_search', fn ( $search_term, $wp_query ) => $this->customize_search( $search_term, $wp_query ), 10, 2 );
 	}
 
+	/**
+	 * Arguments for registering an endpoint.
+	 *
+	 * @return array
+	 */
 	private function get_args() {
 		return [
 			self::EXCLUDED_POST_TYPES_KEY => [
@@ -165,18 +197,35 @@ class WP_Post {
 		];
 	}
 
-	private function sanitize_string_array( $arr ) {
-		if ( ! is_array( $arr ) ) {
-			$arr = json_decode( sanitize_text_field( $arr ) ) ?? [];
+	/**
+	 * Sanitizes an array of strings.
+	 *
+	 * Ensures the input is an array, converts it if necessary,
+	 * and applies `sanitize_text_field` to each element.
+	 *
+	 * @param Array<string>|string $input The input data, expected to be an array or JSON-encoded string.
+	 * @return array The sanitized array of strings.
+	 */
+
+	private function sanitize_string_array( $input ) {
+		if ( ! is_array( $input ) ) {
+			$input = json_decode( sanitize_text_field( $input ) ) ?? [];
 		}
 
-		$arr = new Collection( json_decode( json_encode( $arr ), true ) );
+		$array = new Collection( json_decode( json_encode( $input ), true ) );
 
-		return $arr
+		return $array
 			->map( 'sanitize_text_field' )
 			->all();
 	}
 
+	/**
+	 * Replaces array keys based on a dictionary mapping.
+	 *
+	 * @param array $item       The input array with original keys.
+	 * @param array $dictionary An associative array mapping old keys to new keys.
+	 * @return array The array with translated keys.
+	 */
 	private function translate_keys( array $item, array $dictionary ): array {
 		$replaced = [];
 
