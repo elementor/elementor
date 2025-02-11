@@ -64,8 +64,7 @@ test.describe( 'Container tests @container', () => {
 		const heading = await editor.addWidget( widgets.heading, containerId );
 		const image = await editor.addWidget( widgets.image, containerId );
 
-		// Act.
-		// Move the button to be last.
+		// Act - Move the button to be last.
 		await editor.previewFrame.dragAndDrop(
 			getElementSelector( button ),
 			getElementSelector( image ),
@@ -77,8 +76,7 @@ test.describe( 'Container tests @container', () => {
 		const elBeforeButton = await buttonEl.evaluate( ( node ) => node.previousElementSibling ),
 			elAfterHeading = await headingEl.evaluate( ( node ) => node.nextElementSibling );
 
-		// Assert.
-		// Test that the image is between the heading & button.
+		// Assert - Test that the image is between the heading & button.
 		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
 	} );
 
@@ -104,11 +102,11 @@ test.describe( 'Container tests @container', () => {
 
 		await editor.addWidget( widgets.toggle, containerId );
 		await editor.addWidget( widgets.video, containerId );
+		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
 
 		// Assert.
-		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 		await expect.soft( container ).toHaveScreenshot( 'container-row.png' );
 
 		// Act.
@@ -118,6 +116,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
 
+		// Assert.
 		await expect.soft( container ).toHaveScreenshot( 'container-row-full.png' );
 
 		// Act.
