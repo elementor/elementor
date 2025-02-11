@@ -206,7 +206,6 @@ class WP_Post {
 	 * @param Array<string>|string $input The input data, expected to be an array or JSON-encoded string.
 	 * @return array The sanitized array of strings.
 	 */
-
 	private function sanitize_string_array( $input ) {
 		if ( ! is_array( $input ) ) {
 			$input = json_decode( sanitize_text_field( $input ) ) ?? [];
