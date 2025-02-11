@@ -558,7 +558,25 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															'url' => null,
 														],
 													],
-													'size' => 'contain',
+													'size' => [
+														'$$type' => 'background-image-size-scale',
+														'value'  => [
+															'height' => [
+																'$$type' => 'size',
+																'value'  => [
+																	'size' => 500,
+																	'unit' => 'px'
+																]
+															],
+															'width'  => [
+																'$$type' => 'size',
+																'value'  => [
+																	'size' => 140,
+																	'unit' => 'px'
+																]
+															],
+														],
+													],
 													'attachment' => 'scroll',
 													'resolution' => 'large',
 													'repeat' => 'repeat-x',
@@ -612,30 +630,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											[
 												'$$type' => 'background-color-overlay',
 												'value' => 'blue',
-											],
-											[
-												'$$type' => 'background-image-overlay',
-												'value' => [
-													'size' => [
-														'$$type' => 'background-image-size-scale',
-														'value'  => [
-															'height' => [
-																'$$type' => 'size',
-																'value'  => [
-																	'size' => 500,
-																	'unit' => 'px'
-																]
-															],
-															'width'  => [
-																'$$type' => 'size',
-																'value'  => [
-																	'size' => 140,
-																	'unit' => 'px'
-																]
-															],
-														],
-													],
-												]
 											],
 										],
 									],
