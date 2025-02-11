@@ -778,7 +778,7 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error WordPress error if template export failed.
 	 */
 	public function export_template( $template_id ) {
-		$permissions_error = $this->validate_local_template_export_permissions( $template_id );
+		$permissions_error = $this->validate_template_export_permissions( $template_id );
 
 		if ( is_wp_error( $permissions_error ) ) {
 			return $permissions_error;
@@ -797,7 +797,7 @@ class Source_Local extends Source_Base {
 		die;
 	}
 
-	private function validate_local_template_export_permissions( $template_id ) {
+	private function validate_template_export_permissions( $template_id ) {
 		$post_id = intval( $template_id );
 		if ( get_post_type( $post_id ) !== self::CPT ) {
 			return new \WP_Error( 'template_error', esc_html__( 'Invalid template type or template does not exist.', 'elementor' ) );
