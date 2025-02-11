@@ -631,6 +631,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 												'$$type' => 'background-color-overlay',
 												'value' => 'blue',
 											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'size' => 'contain',
+												]
+											],
 										],
 									],
 								],
