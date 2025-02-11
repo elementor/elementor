@@ -36,7 +36,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->manager = Plugin::$instance->templates_manager;
 
 		$this->cloud_source_mock = $this->getMockBuilder( \Elementor\TemplateLibrary\Source_Cloud::class )
-			->onlyMethods( [ 'send_file_headers', 'serve_file', 'get_item_children', 'handle_zip_file', 'filesize' ] )
+			->onlyMethods( [ 'send_file_headers', 'serve_file', 'get_item_children', 'handle_zip_file', 'filesize', 'serve_zip' ] )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -216,7 +216,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		);
 
 		$zip_archive_filename = 'zip-file.zip';
-    	$zip_complete_path = 'some/dir/name';
+		$zip_complete_path = 'some/dir/name';
 		$mocked_file_size = 12345;
 
 		// Assert
@@ -236,6 +236,11 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				$this->equalTo( $zip_archive_filename ),
 				$this->equalTo( $mocked_file_size )
 			);
+
+		$this->cloud_source_mock
+			->expects( $this->once() )
+			->method( 'serve_zip' )
+			->with( $this->equalTo( $zip_complete_path ) );
 
 		// Act
 		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );	
