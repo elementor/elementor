@@ -410,8 +410,4 @@ abstract class Source_Base {
 		// PHPCS - Export widget json
 		echo $file_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
-
-	protected function die(): void {
-		die();
-	}
 }
