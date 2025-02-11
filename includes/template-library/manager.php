@@ -623,6 +623,22 @@ class Manager {
 		return $source->search_templates( $args );
 	}
 
+	public function load_more_templates( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'offset' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		return $source->get_items( $args );
+	}
+
 	/**
 	 * Register default template sources.
 	 *
@@ -712,6 +728,7 @@ class Manager {
 			'get_item_children',
 			'search_templates',
 			'rename_template',
+			'load_more_templates',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
