@@ -43,7 +43,6 @@ const useUserInfo = ( immediately = false ) => {
 		connectUrl: userInfo.connect_url,
 		builderUrl: userInfo.usage.builderUrl,
 		hasSubscription: userInfo.usage.hasAiSubscription,
-		quota: userInfo.usage.quota,
 		credits: credits < 0 ? 0 : credits,
 		usagePercentage: Math.round( usagePercentage ),
 		fetchData,
