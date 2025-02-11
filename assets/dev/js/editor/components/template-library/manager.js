@@ -512,27 +512,32 @@ const TemplateLibraryManager = function() {
 	} = {} ) => {
 		isLoading = true;
 
-		const query = {
-			source: this.getFilter( 'source' ),
-			offset: templatesCollection.length,
-			search,
+		const source = this.getFilter( 'source' );
+
+		const ajaxOptions = {
+			data: {
+				source,
+				offset: templatesCollection.length,
+				search,
+			},
+			success: ( result ) => {
+				const collection = new TemplateLibraryCollection( result.templates );
+
+				templatesCollection.add( collection.models, { merge: true } );
+
+				self.layout.addTemplates( collection.models );
+
+				if ( onUpdate ) {
+					onUpdate();
+				}
+				isLoading = false;
+			},
+			error: () => {
+				isLoading = false;
+			},
 		};
 
-		$e.data.get( 'library/templates', query, { refresh: true } ).then( ( result ) => {
-			const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
-
-			const collection = new TemplateLibraryCollection( templates );
-
-			templatesCollection.add( collection.models, { merge: true } );
-
-			self.layout.addTemplates( collection.models );
-
-			if ( onUpdate ) {
-				onUpdate();
-			}
-		} ).finally( ( ) => {
-			isLoading = false;
-		} );
+		elementorCommon.ajax.addRequest( 'load_more_templates', ajaxOptions );
 	};
 
 	this.showTemplates = function() {
