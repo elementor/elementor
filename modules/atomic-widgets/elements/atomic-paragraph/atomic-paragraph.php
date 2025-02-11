@@ -15,7 +15,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\WpRest\Classes\WP_Post;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
