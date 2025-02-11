@@ -794,7 +794,7 @@ class Source_Local extends Source_Base {
 
 		$this->serve_file( $file_data['content'] );
 
-		die();
+		die;
 	}
 
 	private function validate_local_template_export_permissions( $template_id ) {
@@ -888,7 +888,7 @@ class Source_Local extends Source_Base {
 
 		unlink( $zip_complete_path );
 
-		die();
+		die;
 	}
 
 	/**
