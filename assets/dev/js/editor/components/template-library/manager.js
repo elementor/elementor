@@ -466,6 +466,7 @@ const TemplateLibraryManager = function() {
 	this.loadTemplates = function( onUpdate ) {
 		isLoading = true;
 		total = 0;
+
 		self.layout.showLoadingView();
 
 		const query = { source: this.getFilter( 'source' ) },
@@ -506,23 +507,29 @@ const TemplateLibraryManager = function() {
 	this.searchTemplates = ( data ) => {
 		return new Promise( ( resolve ) => {
 			this.setFilter( 'parent', null );
+
 			isLoading = true;
+
 			const ajaxOptions = {
 				data,
 				success: ( result ) => {
 					isLoading = false;
 
 					templatesCollection = new TemplateLibraryCollection( result.templates );
+
 					total = result.total;
 
 					self.layout.updateViewCollection( templatesCollection.models );
 
 					this.setFilter( 'text', data.search );
+
 					resolve( result );
 				},
 				error: ( error ) => {
 					isLoading = false;
+
 					this.showErrorDialog( error );
+
 					resolve();
 				},
 			};
@@ -538,6 +545,7 @@ const TemplateLibraryManager = function() {
 		isLoading = true;
 
 		const source = this.getFilter( 'source' );
+
 		const parentId = this.getFilter( 'parent' );
 
 		const ajaxOptions = {
@@ -557,6 +565,7 @@ const TemplateLibraryManager = function() {
 				if ( onUpdate ) {
 					onUpdate();
 				}
+
 				isLoading = false;
 			},
 			error: () => {
@@ -580,6 +589,7 @@ const TemplateLibraryManager = function() {
 
 	this.filterTemplates = function() {
 		const activeSource = self.getFilter( 'source' );
+
 		return templatesCollection.filter( function( model ) {
 			if ( activeSource !== model.get( 'source' ) ) {
 				return false;
