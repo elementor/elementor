@@ -184,6 +184,7 @@ export default class EditorBase extends Marionette.Application {
 			Box_shadow: require( 'elementor-controls/box-shadow' ),
 			Button: require( 'elementor-controls/button' ),
 			Choose: require( 'elementor-controls/choose' ),
+			ChooseVisual: require( 'elementor-controls/choose-visual' ),
 			Code: require( 'elementor-controls/code' ),
 			Color: ColorControl,
 			Date_time: DateTimeControl,

@@ -1,0 +1,62 @@
+@import "../../../helpers/variables.scss";
+
+.elementor-control-type-choose-visual {
+
+	& .elementor-choices {
+		width: 100%;
+
+		&-visual {
+			column-gap: 4px;
+			display: grid;
+			grid-template-columns: repeat(var(--elementor-choices-columns), 1fr);
+			height: fit-content;
+			line-height: normal;
+			row-gap: 4px;
+		}
+
+		&-element {
+			align-items: center;
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			justify-content: center;
+			padding: 4px;
+			width: auto;
+		}
+
+		&-image {
+			height: auto;
+			width: 100%;
+		}
+
+		&-label {
+			flex-basis: unset !important; // to override elementor core styles
+			padding: 8px;
+			transition: transform .2s;
+		}
+
+		& input {
+
+			&:not(:checked) + .elementor-choices-label {
+				opacity: 0.7;
+			}
+
+			&:hover + .elementor-choices-label {
+				opacity: 1;
+				transform: scale(1.05);
+			}
+
+			&.e-choose-placeholder + .elementor-choices-label,
+			&:checked + .elementor-choices-label {
+				background-color: initial;
+				border: 2px solid $e-pink-300;
+				border-radius: 3px;
+				opacity: 1;
+			}
+		}
+	}
+}
+
+.tipsy-inner {
+	white-space: pre-line;
+}
