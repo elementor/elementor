@@ -257,25 +257,17 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
 	},
 
-	searchTemplates( source ) {
+	async searchTemplates( source ) {
 		this.showLoadingSpinner();
 
-		const self = this;
-
-		const options = {
-			data: {
+		try {
+			await elementor.templates.searchTemplates( {
 				source,
 				search: this.ui.textFilter.val(),
-			},
-			onSuccess: () => {
-				self.ui.searchInputIcon.removeClass( 'eicon-loading eicon-animation-spin' ).addClass( 'eicon-search' );
-			},
-			onError: () => {
-				self.ui.searchInputIcon.removeClass( 'eicon-loading eicon-animation-spin' ).addClass( 'eicon-search' );
-			},
-		};
-
-		elementor.templates.searchTemplates( options );
+			} );
+		} finally {
+			this.showSearchIcon();
+		}
 	},
 
 	showLoadingSpinner() {
