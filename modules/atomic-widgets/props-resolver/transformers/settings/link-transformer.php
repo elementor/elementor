@@ -11,9 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Link_Transformer extends Transformer_Base {
 	public function transform( $value, $key ): ?array {
-		$destination = $value['destination'];
-		$post = is_numeric( $destination ) ? get_post( $destination ) : null;
-		$url = $post ? $post->guid : $destination;
+		$url = $this->extract_url( $value );
 
 		if ( ! Url_Prop_Type::validate_url( $url ) ) {
 			return null;
@@ -25,5 +23,12 @@ class Link_Transformer extends Transformer_Base {
 		];
 
 		return array_filter( $link_attrs );
+	}
+
+	private function extract_url( $value ): ?string {
+		$destination = $value['destination'];
+		$post = is_numeric( $destination ) ? get_post( $destination ) : null;
+
+		return $post ? $post->guid : $destination;
 	}
 }
