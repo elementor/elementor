@@ -49,14 +49,6 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			->willReturn( $this->cloud_source_mock );
 	}
 
-	public function tearDown(): void {
-		parent::tearDown();
-		$this->cloud_library_app_mock = null;
-		$this->cloud_source_mock = null;
-		$this->manager_mock = null;
-		$this->manager = null;
-	}
-
 	public function test_should_return_cloud_source() {
 		$this->assertInstanceOf( '\Elementor\TemplateLibrary\Source_Cloud', $this->manager->get_source( 'cloud' ) );
 	}
