@@ -7,11 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Background_Image_Overlay_Offset_Transformer extends Transformer_Base {
+class Background_Image_Overlay_Size_Scale_Transformer extends Transformer_Base {
 	public function transform( $value, $key ): string {
-		if ( is_string( $value ) ) {
-			return $value;
-		}
 
 		$default_custom_size = 'auto';
 		$width  = $value['width'] ?? $default_custom_size;

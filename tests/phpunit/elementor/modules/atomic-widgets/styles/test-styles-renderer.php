@@ -36,15 +36,15 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
-							'color' => 'red',
+							'color'     => 'red',
 							'font-size' => '16px',
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 				],
 			],
@@ -63,28 +63,28 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style-1',
-				'type' => 'id', // currently only supports 'class'
+				'id'       => 'test-style-1',
+				'type'     => 'id', // currently only supports 'class'
 				'variants' => [
 					[
 						'props' => [
-							'color' => 'red',
+							'color'    => 'red',
 							'fontSize' => '16px',
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 				],
 			],
 			[
-				'id' => 'test-style-2',
-				'type' => 'class', // valid
+				'id'       => 'test-style-2',
+				'type'     => 'class', // valid
 				'variants' => [
 					[
 						'props' => [
-							'color' => 'red',
+							'color'    => 'red',
 							'fontSize' => '16px',
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 				],
 			],
@@ -103,8 +103,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [],
 			],
 		];
@@ -128,14 +128,14 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'color' => 'blue',
 						],
-						'meta' => [
+						'meta'  => [
 							'state' => 'hover',
 						],
 					],
@@ -156,14 +156,14 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'color' => 'green',
 						],
-						'meta' => [
+						'meta'  => [
 							'breakpoint' => 'mobile',
 						],
 					],
@@ -171,7 +171,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 						'props' => [
 							'color' => 'blue',
 						],
-						'meta' => [
+						'meta'  => [
 							'breakpoint' => 'tablet', // non-existing breakpoint
 						],
 					]
@@ -181,8 +181,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$stylesRenderer = Styles_Renderer::make( [
 			'mobile' => [
-				'direction' => 'max',
-				'value' => 768,
+				'direction'  => 'max',
+				'value'      => 768,
 				'is_enabled' => true,
 			],
 		], '' );
@@ -198,14 +198,14 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'color' => 'green',
 						],
-						'meta' => [
+						'meta'  => [
 							'breakpoint' => 'mobile',
 						],
 					],
@@ -213,7 +213,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 						'props' => [
 							'color' => 'blue',
 						],
-						'meta' => [
+						'meta'  => [
 							'breakpoint' => 'tablet',
 						],
 					]
@@ -223,13 +223,13 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$stylesRenderer = Styles_Renderer::make( [
 			'mobile' => [
-				'direction' => 'max',
-				'value' => 768,
+				'direction'  => 'max',
+				'value'      => 768,
 				'is_enabled' => true,
 			],
 			'tablet' => [
-				'direction' => 'max',
-				'value' => 1024,
+				'direction'  => 'max',
+				'value'      => 1024,
 				'is_enabled' => false,
 			],
 		], '' );
@@ -245,25 +245,25 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'color' => 'green',
 						],
-						'meta' => [
+						'meta'  => [
 							'breakpoint' => 'mobile',
-							'state' => 'hover',
+							'state'      => 'hover',
 						],
 					],
 					[
 						'props' => [
 							'color' => 'blue',
 						],
-						'meta' => [
+						'meta'  => [
 							'breakpoint' => 'tablet',
-							'state' => 'focus'
+							'state'      => 'focus'
 						],
 					]
 				],
@@ -272,13 +272,13 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$stylesRenderer = Styles_Renderer::make( [
 			'mobile' => [
-				'direction' => 'max',
-				'value' => 768,
+				'direction'  => 'max',
+				'value'      => 768,
 				'is_enabled' => true,
 			],
 			'tablet' => [
-				'direction' => 'max',
-				'value' => 1024,
+				'direction'  => 'max',
+				'value'      => 1024,
 				'is_enabled' => true,
 			],
 		], '' );
@@ -294,17 +294,17 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'text-decoration' => [
 								'$$type' => 'text-decoration', // non-existing transformer
-								'value' => 'underline'
+								'value'  => 'underline'
 							],
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 				],
 			],
@@ -327,17 +327,17 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'font-size' => [
 								'$$type' => 'size',
-								'value' => 14 // expected array{size: int, unit: string}
+								'value'  => 14 // expected array{size: int, unit: string}
 							],
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 				],
 			],
@@ -356,37 +356,37 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
-			$images = $this->mock_images();
+			$images     = $this->mock_images();
 
 			return $images[ $resolution ];
 		}, 10, 3 );
 
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'background' => [
 								'$$type' => 'background',
-								'value' => [
+								'value'  => [
 									'background-overlay' => [
 										'$$type' => 'background-overlay',
-										'value' => [
+										'value'  => [
 											[
 												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
+												'value'  => 'blue',
 											],
 											[
 												'$$type' => 'background-image-overlay',
-												'value' => [
-													'image-src' => [
+												'value'  => [
+													'image-src'  => [
 														'$$type' => 'image-src',
-														'value' => [
-															'id' => [
+														'value'  => [
+															'id'  => [
 																'$$type' => 'image-attachment-id',
-																'value' => 3,
+																'value'  => 3,
 															],
 															'url' => null
 														],
@@ -396,18 +396,18 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													'repeat' => 'repeat-y',
 													'attachment' => 'fixed',
 													'size' => [
-														'$$type' => 'background-image-overlay-offset',
-														'value' => [
+														'$$type' => 'background-image-size-scale',
+														'value'  => [
 															'height' => [
 																'$$type' => 'size',
-																'value' => [
+																'value'  => [
 																	'size' => 500,
 																	'unit' => 'px'
 																]
 															],
-															'width' => [
+															'width'  => [
 																'$$type' => 'size',
-																'value' => [
+																'value'  => [
 																	'size' => 140,
 																	'unit' => 'px'
 																]
@@ -420,12 +420,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 									],
 									'color' => [
 										'$$type' => 'color',
-										'value' => 'red',
+										'value'  => 'red',
 									],
 								],
 							],
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 				],
 			],
@@ -445,34 +445,34 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'background' => [
 								'$$type' => 'background',
-								'value' => [
+								'value'  => [
 									'background-overlay' => [
 										'$$type' => 'background-overlay',
-										'value' => [
+										'value'  => [
 											[
 												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
+												'value'  => 'blue',
 											],
 											[
 												'$$type' => 'background-image-overlay',
-												'value' => [
-													'image-src' => [
+												'value'  => [
+													'image-src'  => [
 														'$$type' => 'image-src',
-														'value' => [
-															'id' => null,
+														'value'  => [
+															'id'  => null,
 															'url' => 'https://example.com/image.jpg',
 														],
 													],
-													'size' => 'cover',
-													'position' => 'bottom right',
-													'repeat' => 'repeat',
+													'size'       => 'cover',
+													'position'   => 'bottom right',
+													'repeat'     => 'repeat',
 													'attachment' => 'fixed',
 												]
 											],
@@ -481,7 +481,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 									'color' => [
 										'$$type' => 'color',
-										'value' => 'red',
+										'value'  => 'red',
 									],
 								],
 							],
@@ -507,17 +507,17 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-background-color',
-				'type' => 'class',
+				'id'       => 'test-background-color',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'background' => [
 								'$$type' => 'background',
-								'value' => [
+								'value'  => [
 									'color' => [
 										'$$type' => 'color',
-										'value' => 'red',
+										'value'  => 'red',
 									],
 								],
 							],
@@ -543,45 +543,45 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
-			$images = $this->mock_images();
+			$images     = $this->mock_images();
 
 			return $images[ $resolution ];
 		}, 10, 3 );
 
 		$styles = [
 			[
-				'id' => 'test-background-overlay',
-				'type' => 'class',
+				'id'       => 'test-background-overlay',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'background' => [
 								'$$type' => 'background',
-								'value' => [
+								'value'  => [
 									'background-overlay' => [
 										'$$type' => 'background-overlay',
-										'value' => [
+										'value'  => [
 											[
 												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
+												'value'  => 'blue',
 											],
 											[
 												'$$type' => 'background-image-overlay',
-												'value' => [
-													'image-src' => [
+												'value'  => [
+													'image-src'  => [
 														'$$type' => 'image-src',
-														'value' => [
-															'id' => [
+														'value'  => [
+															'id'  => [
 																'$$type' => 'image-attachment-id',
-																'value' => 3,
+																'value'  => 3,
 															],
 															'url' => null,
 														],
 													],
-													'size' => 'contain',
+													'size'       => 'contain',
 													'attachment' => 'scroll',
 													'resolution' => 'large',
-													'repeat' => 'repeat-x',
+													'repeat'     => 'repeat-x',
 												]
 											],
 										],
@@ -618,24 +618,24 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$styles = [
 			[
-				'id' => 'test-background-overlay',
-				'type' => 'class',
+				'id'       => 'test-background-overlay',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'background' => [
 								'$$type' => 'background',
-								'value' => [
+								'value'  => [
 									'background-overlay' => [
 										'$$type' => 'background-overlay',
-										'value' => [
+										'value'  => [
 											[
 												'$$type' => 'background-color-overlay',
-												'value' => 'blue',
+												'value'  => 'blue',
 											],
 											[
 												'$$type' => 'background-image-overlay',
-												'value' => [
+												'value'  => [
 													'size' => 'contain',
 												]
 											],
@@ -669,17 +669,17 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'position' => [
 								'$$type' => 'string',
-								'value' => 'sticky',
+								'value'  => 'sticky',
 							],
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 				],
 			],
@@ -709,79 +709,79 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
-							'font-size' => [
+							'font-size'           => [
 								'$$type' => 'size',
-								'value' => [
+								'value'  => [
 									'size' => 14,
 									'unit' => 'px'
 								]
 							],
-							'padding' => [
+							'padding'             => [
 								'$$type' => 'dimensions',
-								'value' => [
-									'top' => [
+								'value'  => [
+									'top'    => [
 										'$$type' => 'size',
-										'value' => [
+										'value'  => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
 									'bottom' => null,
-									'left' => [
+									'left'   => [
 										'$$type' => 'size',
-										'value' => [
+										'value'  => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
 								]
 							],
-							'border-radius' => [
+							'border-radius'       => [
 								'$$type' => 'border-radius',
-								'value' => [
-									'top-left' => [
+								'value'  => [
+									'top-left'     => [
 										'$$type' => 'size',
-										'value' => [
+										'value'  => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'top-right' => [
+									'top-right'    => [
 										'$$type' => 'size',
-										'value' => [
+										'value'  => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
 									'bottom-right' => null,
-									'bottom-left' => [
+									'bottom-left'  => [
 										'$$type' => 'size',
-										'value' => [
+										'value'  => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
 								]
 							],
-							'border-width' => [
+							'border-width'        => [
 								'$$type' => 'border-width',
-								'value' => [
-									'top' => [
+								'value'  => [
+									'top'    => [
 										'$$type' => 'size',
-										'value' => [
+										'value'  => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
 									'bottom' => null,
-									'left' => [
+									'left'   => [
 										'$$type' => 'size',
-										'value' => [
+										'value'  => [
 											'size' => 1,
 											'unit' => 'px'
 										]
@@ -790,33 +790,33 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							],
 							'-webkit-text-stroke' => [
 								'$$type' => 'stroke',
-								'value' => [
+								'value'  => [
 									'color' => [
 										'$$type' => 'color',
-										'value' => '#ff0000',
+										'value'  => '#ff0000',
 									],
 									'width' => [
 										'$$type' => 'size',
-										'value' => [
+										'value'  => [
 											'unit' => 'px',
 											'size' => 10,
 										],
 									],
 								],
 							],
-							'gap' => [
+							'gap'                 => [
 								'$$type' => 'layout-direction',
-								'value' => [
-									'row' => [
+								'value'  => [
+									'row'    => [
 										'$$type' => 'size',
-										'value' => [
+										'value'  => [
 											'size' => 10,
 											'unit' => 'px',
 										],
 									],
 									'column' => [
 										'$$type' => 'size',
-										'value' => [
+										'value'  => [
 											'size' => 20,
 											'unit' => 'px',
 										],
@@ -824,7 +824,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								],
 							]
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 				],
 			],
@@ -847,17 +847,17 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'z-index' => [
 								'$$type' => 'faulty',
-								'value' => true // no matter what the value here is really...
+								'value'  => true // no matter what the value here is really...
 							],
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 				],
 			],
@@ -876,40 +876,40 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style-1',
-				'type' => 'class',
+				'id'       => 'test-style-1',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'color' => 'red',
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 					[
 						'props' => [
 							'color' => 'purple',
 						],
-						'meta' => [
+						'meta'  => [
 							'state' => 'hover',
 						],
 					],
 				],
 			],
 			[
-				'id' => 'test-style-2',
-				'type' => 'class',
+				'id'       => 'test-style-2',
+				'type'     => 'class',
 				'variants' => [
 					[
 						'props' => [
 							'color' => 'blue',
 						],
-						'meta' => [],
+						'meta'  => [],
 					],
 					[
 						'props' => [
 							'color' => 'green',
 						],
-						'meta' => [
+						'meta'  => [
 							'state' => 'hover',
 						],
 					],
@@ -930,11 +930,11 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		// Arrange.
 		$styles = [
 			[
-				'id' => 'test-style',
-				'type' => 'class',
+				'id'       => 'test-style',
+				'type'     => 'class',
 				'variants' => [
 					[
-						'meta' => [],
+						'meta'  => [],
 						'props' => [
 							'color' => 'red',
 						],
@@ -967,17 +967,17 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				150,
 				150,
 			],
-			'medium' => [
+			'medium'    => [
 				'https://example.com/image-300x300.jpg',
 				300,
 				300,
 			],
-			'large' => [
+			'large'     => [
 				'https://example.com/image-1024x682.jpg',
 				1024,
 				682,
 			],
-			'full' => [
+			'full'      => [
 				'https://example.com/image.jpg',
 				100,
 				200,

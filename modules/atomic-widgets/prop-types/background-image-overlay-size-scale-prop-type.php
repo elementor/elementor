@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Background_Image_Overlay_Offset_Prop_Type extends Object_Prop_Type {
+class Background_Image_Overlay_Size_Scale_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'background-image-overlay-offset';
+		return 'background-image-size-scale';
 	}
 
 	protected function define_shape(): array {
