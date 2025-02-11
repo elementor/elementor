@@ -22,8 +22,8 @@ class Cloud_Library extends Library {
 		$templates = [];
 
 		$endpoint = 'resources';
-		if ( ! empty( $args['template_id'] ) ) {
-			$endpoint .= '?parentId=' . $args['template_id'];
+		if ( ! empty( $args['parentId'] ) ) {
+			$endpoint .= '?parentId=' . $args['parentId'];
 		}
 
 		if ( ! empty( $args['search'] ) ) {
@@ -60,7 +60,22 @@ class Cloud_Library extends Library {
 			'title' => $template_data['title'],
 			'author' => $template_data['authorEmail'],
 			'human_date' => date_i18n( get_option( 'date_format' ), strtotime( $template_data['createdAt'] ) ),
+			'export_link' => $this->get_export_link( $template_data['id'] ),
+			'hasPageSettings' => $template_data['hasPageSettings'],
 		];
+	}
+
+	private function get_export_link( $template_id ) {
+		return add_query_arg(
+			[
+				'action' => 'elementor_library_direct_actions',
+				'library_action' => 'export_template',
+				'source' => 'cloud',
+				'_nonce' => wp_create_nonce( 'elementor_ajax' ),
+				'template_id' => $template_id,
+			],
+			admin_url( 'admin-ajax.php' )
+		);
 	}
 
 	public function post_resource( $data ): array {
