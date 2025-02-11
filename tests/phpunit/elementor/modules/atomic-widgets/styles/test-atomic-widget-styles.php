@@ -376,7 +376,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 				return static::$options['props_schema'] ?? [];
 			}
 
-			public static function define_base_styles(): array {
+			public function define_base_styles(): array {
 				return static::$options['base_styles'] ?? [];
 			}
 		};
