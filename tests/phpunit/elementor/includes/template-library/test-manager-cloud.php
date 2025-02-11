@@ -186,21 +186,21 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 					'template_id' => 101,
 					'title' => 'Header Template',
 					'type' => 'TEMPLATE',
-					'parentId' => 123,
+					'parentId' => $data['id'],
 					'templateType' => 'container'
 				],
 				[
 					'template_id' => 102,
 					'title' => 'Footer Template',
 					'type' => 'TEMPLATE',
-					'parentId' => 123,
+					'parentId' => $data['id'],
 					'templateType' => 'container'
 				],
 				[
 					'template_id' => 103,
 					'title' => 'Sidebar Template',
 					'type' => 'TEMPLATE',
-					'parentId' => 123,
+					'parentId' => $data['id'],
 					'templateType' => 'container'
 				],
 			]			
