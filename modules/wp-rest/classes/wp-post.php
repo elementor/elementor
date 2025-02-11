@@ -150,7 +150,7 @@ class WP_Post {
 
 	/**
 	 * Hooks out of the flow of wordpress's get_post querying.
-	 * 
+	 *
 	 * @return void
 	 */
 	private function remove_filter_to_customize_query() {
@@ -200,7 +200,6 @@ class WP_Post {
 
 	/**
 	 * Sanitizes an array of strings.
-	 *
 	 * Ensures the input is an array, converts it if necessary,
 	 * and applies `sanitize_text_field` to each element.
 	 *
