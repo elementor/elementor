@@ -452,7 +452,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'size' => 'cover',
-													'position' => 'bottom right',
+													'position' => [
+														'x' => '40px',
+														'y' => '70px',
+													],
 													'repeat' => 'repeat',
 													'attachment' => 'fixed',
 												]
