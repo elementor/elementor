@@ -291,18 +291,18 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		$schema = [
 			'string_prop' => String_Prop_Type::make()
-			->enum( [ 'value-a', 'value-b' ] )
-			->default( 'value-a' ),
+				->enum( [ 'value-a', 'value-b' ] )
+				->default( 'value-a' ),
 
 			'number_prop' => Number_Prop_Type::make()
-			->default( 123 ),
+				->default( 123 ),
 
 			'boolean_prop' => Boolean_Prop_Type::make()
-			->default( true ),
+				->default( true ),
 
 			'image_prop' => Image_Prop_Type::make()
-			->default_url( 'https://example.com/image.jpg' )
-			->default_size( 'full' ),
+				->default_url( 'https://example.com/image.jpg' )
+				->default_size( 'full' ),
 
 			'classes_prop' => Classes_Prop_Type::make(),
 		];
@@ -338,8 +338,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Arrange,
 		$schema = [
 			'string_prop' => String_Prop_Type::make()
-			->enum( [ 'value-a', 'value-b' ] )
-			->default( 'value-a' ),
+				->enum( [ 'value-a', 'value-b' ] )
+				->default( 'value-a' ),
 		];
 
 		$widget = $this->make_mock_widget( [ 'props_schema' => $schema ] );
