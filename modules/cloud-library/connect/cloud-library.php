@@ -27,8 +27,8 @@ class Cloud_Library extends Library {
 			'limit' => $args['limit'] ? (int) $args['limit'] : null,
 			'offset' => $args['offset'] ? (int) $args['offset'] : null,
 			'search' => $args['search'],
-			'parentId' => $args['parentId']
-		]);
+			'parentId' => $args['parentId'],
+		] );
 
 		$endpoint .= '?' . $query_string;
 

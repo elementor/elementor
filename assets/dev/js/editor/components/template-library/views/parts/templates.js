@@ -231,7 +231,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.toggleFilterClass();
 
-		const activeSource = elementor.templates.getFilter( 'source' )
+		const activeSource = elementor.templates.getFilter( 'source' );
 
 		if ( 'remote' === activeSource && ! this.isPageOrLandingPageTemplates() ) {
 			this.setMasonrySkin();
