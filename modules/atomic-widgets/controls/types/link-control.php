@@ -1,7 +1,9 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
+use Elementor\Modules\WpRest\Classes\WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -15,6 +17,20 @@ class Link_Control extends Atomic_Control_Base {
 		'endpoint' => '',
 		'requestParams' => [],
 	];
+
+	public static function bind_to( string $prop_name ) {
+		$instance = parent::bind_to( $prop_name );
+		$instance->set_endpoint( WP_Post::ENDPOINT );
+		$instance->set_request_params( WP_Post::build_query_params( [
+			WP_Post::KEYS_FORMAT_MAP_KEY => [
+				'ID' => 'id',
+				'post_title' => 'label',
+				'post_type' => 'groupLabel',
+			],
+		] ) );
+
+		return $instance;
+	}
 
 	public function get_type(): string {
 		return 'link';

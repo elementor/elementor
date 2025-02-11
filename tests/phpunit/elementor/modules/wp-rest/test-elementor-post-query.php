@@ -46,6 +46,7 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 		$request->set_param( WP_Post::EXCLUDED_POST_TYPES_KEY, $params[ WP_Post::EXCLUDED_POST_TYPES_KEY ] );
 		$request->set_param( WP_Post::TERM_KEY, $params[ WP_Post::TERM_KEY ] );
 		$request->set_param( WP_Post::KEYS_FORMAT_MAP_KEY, $params[ WP_Post::KEYS_FORMAT_MAP_KEY ] );
+		$request->set_header( WP_Post::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );

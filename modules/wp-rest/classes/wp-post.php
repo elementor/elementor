@@ -5,6 +5,7 @@ namespace Elementor\Modules\WpRest\Classes;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -19,6 +20,7 @@ class WP_Post {
 	const TERM_KEY = 'term';
 	const KEYS_FORMAT_MAP_KEY = 'keys_format_map';
 	const MAX_COUNT_KEY = 'max_count';
+	const NONCE_KEY = 'x_wp_nonce';
 
 	private ?Wordpress_Adapter_Interface $wp_adapter = null;
 
@@ -33,22 +35,54 @@ class WP_Post {
 				'permission_callback' => fn ( \WP_REST_Request $request ) => $this->validate_access_permission( $request ),
 				'args' => $this->get_args(),
 				'sanitize_callback' => 'esc_attr',
-				'callback' => fn ( \WP_REST_Request $request ) => $this->fetch( $request ),
+				'callback' => fn ( \WP_REST_Request $request ) => $this->route_wrapper( [ $this, 'get_posts' ], $request ),
 			],
 		], $override_existing_endpoints );
 	}
 
-	private function validate_access_permission( $request ): bool {
-		$nonce = $request->get_header( 'x_wp_nonce' );
+	/**
+	 * Builds the query parameters for the REST request.
+	 *
+	 * @param array{
+	 *     excluded_post_types: array,
+	 *     keys_format_map: array,
+	 *     max_count: int,
+	 * } $args The query parameters
+	 * @return array The query parameters.
+	 */
+	public static function build_query_params( array $args ): array {
+		$allowed_keys = [ self::EXCLUDED_POST_TYPES_KEY, self::KEYS_FORMAT_MAP_KEY, self::MAX_COUNT_KEY ];
+		$keys_to_encode = [ self::EXCLUDED_POST_TYPES_KEY, self::KEYS_FORMAT_MAP_KEY ];
 
-		return current_user_can( 'edit_posts' ) && wp_verify_nonce( $nonce,'wp_rest' );
+		$params = [];
+
+		foreach ( $args as $key => $value ) {
+			if ( ! in_array( $key, $allowed_keys, true ) || ! isset( $value ) ) {
+				continue;
+			}
+
+			if ( ! in_array( $key, $keys_to_encode, true ) ) {
+				$params[ $key ] = $value;
+				continue;
+			}
+
+			$params[ $key ] = wp_json_encode( $value );
+		}
+
+		return $params;
+	}
+
+	private function validate_access_permission( $request ): bool {
+		$nonce = $request->get_header( self::NONCE_KEY );
+
+		return current_user_can( 'edit_posts' ) && wp_verify_nonce( $nonce, 'wp_rest' );
 	}
 
 	/**
 	 * Alters the SQL search query to filter by post title or ID.
 	 *
-	 * @param string   $search_term The original search query.
-	 * @param \WP_Query $wp_query   The WP_Query instance.
+	 * @param string $search_term The original search query.
+	 * @param \WP_Query $wp_query The WP_Query instance.
 	 * @return string Modified search query.
 	 */
 	private function customize_search( string $search_term, \WP_Query $wp_query ) {
@@ -65,47 +99,48 @@ class WP_Post {
 	}
 
 	/**
-	 * Tries to fetch posts, wraps the result in a response object, and returns it.
+	 * Wraps the route callback with try/catch to handle exceptions.
 	 *
-	 * @param \WP_REST_Request $request
-	 * @return \WP_REST_Response
+	 * @param callable $cb The route callback.
+	 * @param \WP_REST_Request $request The request object.
+	 * @return \WP_REST_Response | \WP_Error
 	 */
-	private function fetch( \WP_REST_Request $request ): \WP_REST_Response {
+	private function route_wrapper( callable $cb, \WP_REST_Request $request ) {
 		try {
-			return new \WP_REST_Response( [
-				'success' => true,
-				'data' => [
-					'value' => $this->get_posts( $request ),
-				],
-			], 200 );
+			$response = $cb( $request );
 		} catch ( \Exception $e ) {
-			return new \WP_REST_Response( [
-				'success' => false,
-				'data' => [
-					'message' => $e->getMessage(),
-				],
-			], 500 );
+			return Error_Builder::make( $e->getCode() )
+				->set_message( $e->getMessage() )
+				->build();
 		}
+
+		return $response;
 	}
 
 	/**
 	 * Fetches posts based on the search term, formats them based on the keys format map, and returns them.
 	 *
 	 * @param \WP_REST_Request $request
-	 * @return array
+	 * @return \WP_REST_Response
 	 */
 	private function get_posts( \WP_REST_Request $request ) {
 		$params = $request->get_params();
 		$term = $params[ self::TERM_KEY ];
 
 		if ( empty( $term ) ) {
-			return [];
+			return new \WP_REST_Response( [
+				'success' => true,
+				'data' => [
+					'value' => [],
+				],
+			], 200 );
 		}
 
 		$excluded_types = $params[ self::EXCLUDED_POST_TYPES_KEY ];
 		$keys_format_map = $params[ self::KEYS_FORMAT_MAP_KEY ];
-		$max_count = isset( $params[ self::MAX_COUNT_KEY ] ) && 0 < $params[ self::MAX_COUNT_KEY ] ? $params[ self::MAX_COUNT_KEY ] : self::MAX_COUNT;
-		$max_count = min( $max_count, self::MAX_COUNT );
+		$requested_count = $params[ self::MAX_COUNT_KEY ] ?? 0;
+		$validated_count = max( $requested_count, 1 );
+		$max_count = min( $validated_count, self::MAX_COUNT );
 		$post_types = new Collection( $this->wp_adapter->get_post_types( [ 'public' => true ], 'object' ) );
 
 		$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
@@ -128,17 +163,22 @@ class WP_Post {
 
 		$this->remove_filter_to_customize_query();
 
-		return $posts
-			->map( function ( $post ) use ( $keys_format_map, $post_types ) {
-				$post_object = (array) $post;
+		return new \WP_REST_Response( [
+			'success' => true,
+			'data' => [
+				'value' => $posts
+					->map( function ( $post ) use ( $keys_format_map, $post_types ) {
+						$post_object = (array) $post;
 
-				if ( isset( $post_object['post_type'] ) ) {
-					$post_object['post_type'] = $post_types->get( ( $post_object['post_type'] ) )->label;
-				}
+						if ( isset( $post_object['post_type'] ) ) {
+							$post_object['post_type'] = $post_types->get( ( $post_object['post_type'] ) )->label;
+						}
 
-				return $this->translate_keys( $post_object, $keys_format_map );
-			} )
-			->all();
+						return $this->translate_keys( $post_object, $keys_format_map );
+					} )
+					->all(),
+			],
+		], 200 );
 	}
 
 	/**
@@ -223,11 +263,15 @@ class WP_Post {
 	/**
 	 * Replaces array keys based on a dictionary mapping.
 	 *
-	 * @param array $item       The input array with original keys.
+	 * @param array $item The input array with original keys.
 	 * @param array $dictionary An associative array mapping old keys to new keys.
 	 * @return array The array with translated keys.
 	 */
 	private function translate_keys( array $item, array $dictionary ): array {
+		if ( empty( $dictionary ) ) {
+			return $item;
+		}
+
 		$replaced = [];
 
 		foreach ( $item as $key => $value ) {
