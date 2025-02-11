@@ -273,7 +273,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
 	}
 
-	public function test_load_more_templates_fails_wuthout_offset() {
+	public function test_load_more_templates_fails_without_offset() {
 		// Arrange
 		$args = [
 			'search' => 'search',
