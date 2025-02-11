@@ -30,16 +30,18 @@ class WP_Post {
 		register_rest_route( self::NAMESPACE, self::ENDPOINT, [
 			[
 				'methods' => \WP_REST_Server::READABLE,
-				'permission_callback' => function (): bool {
-					return current_user_can( 'edit_posts' );
-				},
+				'permission_callback' => fn ( \WP_REST_Request $request ) => $this->validate_access_permission( $request ),
 				'args' => $this->get_args(),
-				'sanitize_callback' => function ( string $param ): string {
-					return esc_attr( $param );
-				},
-				'callback' => fn ( $request ): \WP_REST_Response => $this->fetch( $request ),
+				'sanitize_callback' => 'esc_attr',
+				'callback' => fn ( \WP_REST_Request $request ) => $this->fetch( $request ),
 			],
 		], $override_existing_endpoints );
+	}
+
+	private function validate_access_permission( $request ): bool {
+		$nonce = $request->get_header( 'x_wp_nonce' );
+
+		return current_user_can( 'edit_posts' ) && wp_verify_nonce( $nonce,'wp_rest' );
 	}
 
 	/**
