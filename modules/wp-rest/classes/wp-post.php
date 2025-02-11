@@ -150,7 +150,8 @@ class WP_Post {
 
 	/**
 	 * Hooks out of the flow of wordpress's get_post querying.
- * @return void
+	 * 
+	 * @return void
 	 */
 	private function remove_filter_to_customize_query() {
 		remove_filter( 'posts_search', fn ( $search_term, $wp_query ) => $this->customize_search( $search_term, $wp_query ), 10, 2 );
