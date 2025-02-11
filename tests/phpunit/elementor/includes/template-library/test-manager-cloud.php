@@ -151,7 +151,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		$expected_file_content = '{"content":"mock_content","page_settings":[],"version":"'.DB::DB_VERSION.'","title":"Template 1","type":"container"}';
 		$expected_file_name = 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json';
-	
+
 		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
 
 		// Assert
@@ -178,8 +178,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'parentId' => null,
 			'templateType' => 'folder',
 		];
-	
-		
+
 		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
 		$this->cloud_source_mock->method( 'get_item_children' )->willReturn(
 			[
