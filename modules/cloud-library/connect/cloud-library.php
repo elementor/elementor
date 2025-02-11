@@ -22,13 +22,15 @@ class Cloud_Library extends Library {
 		$templates = [];
 
 		$endpoint = 'resources';
-		if ( ! empty( $args['parentId'] ) ) {
-			$endpoint .= '?parentId=' . $args['parentId'];
-		}
 
-		if ( ! empty( $args['search'] ) ) {
-			$endpoint .= '?search=' . $args['search'];
-		}
+		$query_string = http_build_query( [
+			'limit' => $args['limit'] ? (int) $args['limit'] : null,
+			'offset' => $args['offset'] ? (int) $args['offset'] : null,
+			'search' => $args['search'],
+			'parentId' => $args['parentId'],
+		] );
+
+		$endpoint .= '?' . $query_string;
 
 		$cloud_templates = $this->http_request( 'GET', $endpoint, $args, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
@@ -42,7 +44,10 @@ class Cloud_Library extends Library {
 			$templates[] = $this->prepare_template( $cloud_template );
 		}
 
-		return $templates;
+		return [
+			'templates' => $templates,
+			'total' => $cloud_templates['total'],
+		];
 	}
 
 	public function get_resource( array $args ): array {
