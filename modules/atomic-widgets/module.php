@@ -5,8 +5,10 @@ namespace Elementor\Modules\AtomicWidgets;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Utils\Collection;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
@@ -124,31 +126,15 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
-	private static function get_atomic_widgets() {
-		return [
-			Atomic_Heading::class,
-			Atomic_Image::class,
-			Atomic_Paragraph::class,
-			Atomic_Svg::class,
-		];
-	}
-
-	private static function get_atomic_elements() {
-		return [
-			Div_Block::class,
-		];
-	}
-
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
-		foreach ( static::get_atomic_widgets() as $widget ) {
-			$widgets_manager->register( new $widget() );
-		}
+		$widgets_manager->register( new Atomic_Heading() );
+		$widgets_manager->register( new Atomic_Image() );
+		$widgets_manager->register( new Atomic_Paragraph() );
+		$widgets_manager->register( new Atomic_Svg() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
-		foreach ( static::get_atomic_elements() as $element ) {
-			$elements_manager->register_element_type( new $element() );
-		}
+		$elements_manager->register_element_type( new Div_Block() );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
@@ -193,18 +179,20 @@ class Module extends BaseModule {
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 	}
 
-	public function inject_base_styles( Post $post, array $elements = [] ) {
+	private function inject_base_styles( Post $post ) {
 		if ( ! Plugin::$instance->kits_manager->is_kit( $post->get_post_id() ) ) {
 			return;
 		}
 
-		$elements = empty( $elements ) ? static::get_atomic_widgets() : $elements;
+		$elements = Plugin::$instance->elements_manager->get_element_types();
+		$widgets = Plugin::$instance->widgets_manager->get_widget_types();
 
-		$base_styles = [];
-
-		foreach ( $elements as $element ) {
-			$base_styles = array_merge( $element::get_base_styles(), $base_styles );
-		}
+		$base_styles = Collection::make( $elements )
+			->merge( $widgets )
+			->filter( fn( $element ) => $element instanceof Atomic_Widget_Base )
+			->map( fn( Atomic_Widget_Base $element ) => $element::get_base_styles() )
+			->flatten()
+			->all();
 
 		$this->styles_enqueue_fonts( $base_styles );
 
