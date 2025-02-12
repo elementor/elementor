@@ -145,6 +145,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-excerpt"><?php echo esc_html__( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
 		</div>
 	<# } #>
+	<# if ( 'cloud' === activeSource ) { #>
+		<div id="elementor-template-library-load-more-anchor" class="elementor-visibility-hidden"><i class="eicon-loading eicon-animation-spin"></i></div>
+	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">
