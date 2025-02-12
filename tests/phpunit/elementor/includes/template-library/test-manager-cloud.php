@@ -166,7 +166,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			->with( $this->equalTo( $expected_file_content ) );
 
 		// Act
-		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );	
+		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );
 	}
 
 	public function test_export_template__folder_type() {
@@ -203,7 +203,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 					'parentId' => $data['id'],
 					'templateType' => 'container'
 				],
-			]			
+			]
 		);
 
 		$zip_archive_filename = 'zip-file.zip';
@@ -234,6 +234,62 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			->with( $this->equalTo( $zip_complete_path ) );
 
 		// Act
-		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );	
+		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );
+	}
+
+	public function test_load_more_templates() {
+		// Arrange
+		$args = [
+			'offset' => 10,
+			'search' => 'search',
+			'source' => 'cloud',
+		];
+
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method('get_resources')
+			->with($args);
+		// Act
+		$this->manager->load_more_templates($args);
+	}
+
+	public function test_load_more_templates_fails_without_source() {
+		// Arrange
+		$args = [
+			'search' => 'search',
+			'offset' => 10,
+		];
+
+		// Act
+		$result = $this->manager->load_more_templates($args);
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->never() )
+			->method('get_resources');
+
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_load_more_templates_fails_without_offset() {
+		// Arrange
+		$args = [
+			'search' => 'search',
+			'source' => 'cloud',
+		];
+
+		// Act
+		$result = $this->manager->load_more_templates( $args );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->never() )
+			->method('get_resources');
+
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "offset" not specified.', $result->get_error_message() );
 	}
 }
