@@ -20,7 +20,6 @@ class Atomic_Widget_Base_Styles {
 		$elements = Plugin::$instance->elements_manager->get_element_types();
 		$widgets = Plugin::$instance->widgets_manager->get_widget_types();
 
-
 		$base_styles = Collection::make( $elements )
 			->merge( $widgets )
 			->filter( fn( $element ) => $element instanceof Atomic_Widget_Base || $element instanceof Atomic_Widget_Base )
