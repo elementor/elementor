@@ -43,11 +43,11 @@ class WP_Post {
 	/**
 	 * Builds the query parameters for the REST request.
 	 *
-	 * @param array{
+	 * @param $args array{
 	 *     excluded_post_types: array,
 	 *     keys_format_map: array,
 	 *     max_count: int,
-	 * } $args The query parameters
+	 * } The query parameters
 	 * @return array The query parameters.
 	 */
 	public static function build_query_params( array $args ): array {
