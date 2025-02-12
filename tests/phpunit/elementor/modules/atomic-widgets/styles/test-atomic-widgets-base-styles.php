@@ -111,5 +111,4 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 			}
 		};
 	}
-	}
 }
