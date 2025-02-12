@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -68,7 +69,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'size' => 16,
 			'unit' => 'px',
 		] );
-		$background_color_value = Color_Prop_Type::generate( '#375EFB' );
+//		$background_color_value = Background_Prop_Type::generate( Color_Prop_Type::generate( '#375EFB' ) );
 		$display_value = String_Prop_Type::generate( 'inline-block' );
 		$padding_value = String_Prop_Type::generate( '12px 24px' );
 		$text_align_value = String_Prop_Type::generate( 'center' );
@@ -82,7 +83,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 						->add_prop( 'text-color', $color_value )
 						->add_prop( 'font-family', $font_family_value )
 						->add_prop( 'font-size', $font_size_value )
-						->add_prop( 'background-color', $background_color_value )
+//						->add_prop( 'background', $background_color_value )
 						->add_prop( 'display', $display_value )
 						->add_prop( 'font-weight', $font_weight_value )
 						->add_prop( 'padding', $padding_value )

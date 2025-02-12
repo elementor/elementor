@@ -1,7 +1,5 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets;
-
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
