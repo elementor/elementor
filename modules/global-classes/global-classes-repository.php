@@ -33,7 +33,7 @@ class Global_Classes_Repository {
 			return;
 		}
 
-		$value = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, $updated_value  );
+		$value = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, $updated_value );
 
 		if ( ! $value ) {
 			throw new \Exception( 'Failed to update global classes' );
