@@ -178,6 +178,7 @@ test.describe( 'Container Grid tests @container', () => {
 			// First container should be the new container.
 			const newContainerId = await frame.locator( '.e-con >> nth=0' ).getAttribute( 'data-id' );
 			expect( newContainerId ).not.toEqual( containerId );
+
 			// The second container should be the existing container.
 			expect( await frame.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
 
