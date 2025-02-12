@@ -122,8 +122,7 @@ class Global_Classes_REST_API {
 			$order
 		);
 
-		// TODO: What to return?
-		return Response_Builder::make()->build();
+		return Response_Builder::make()->no_content()->build();
 	}
 
 	private function sanitize_items( array $items ) {

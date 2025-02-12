@@ -150,7 +150,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
 
-		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertNull( $response->get_data() );
 
 		$this->assertSame( [
 			'items' => [
@@ -379,7 +380,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
 
-		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertNull( $response->get_data() );
 		$this->assertSame( $initial, $classes );
 	}
 
