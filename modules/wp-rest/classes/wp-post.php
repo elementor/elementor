@@ -35,7 +35,7 @@ class WP_Post {
 				'permission_callback' => fn ( \WP_REST_Request $request ) => $this->validate_access_permission( $request ),
 				'args' => $this->get_args(),
 				'sanitize_callback' => 'esc_attr',
-				'callback' => fn ( \WP_REST_Request $request ) => $this->route_wrapper( [ $this, 'get_posts' ], $request ),
+				'callback' => fn ( \WP_REST_Request $request ) => $this->route_wrapper( fn() => $this->get_posts( $request ) ),
 			],
 		], $override_existing_endpoints );
 	}
@@ -105,9 +105,9 @@ class WP_Post {
 	 * @param \WP_REST_Request $request The request object.
 	 * @return \WP_REST_Response | \WP_Error
 	 */
-	private function route_wrapper( callable $cb, \WP_REST_Request $request ) {
+	private function route_wrapper( callable $cb ) {
 		try {
-			$response = $cb( $request );
+			$response = $cb();
 		} catch ( \Exception $e ) {
 			return Error_Builder::make( $e->getCode() )
 				->set_message( $e->getMessage() )
