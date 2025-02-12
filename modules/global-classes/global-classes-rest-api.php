@@ -42,69 +42,51 @@ class Global_Classes_REST_API {
 			],
 		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
-			[
-				'methods' => 'GET',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get( $request ) ),
-				'args' => [
-					'id' => [
-						'type' => 'string',
-						'required' => true,
-					],
-				],
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			],
-		] );
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
-			[
-				'methods' => 'DELETE',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->delete( $request ) ),
-				'args' => [
-					'id' => [
-						'type' => 'string',
-						'required' => true,
-					],
-				],
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			],
-		] );
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/(?P<id>[\w-]+)', [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			],
-		] );
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
-			[
-				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->post( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-			],
-		] );
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '-order', [
-			[
-				'methods' => 'PUT',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() =>  $this->arrange( $request ) ),
-				'validate_callback' => function( \WP_REST_Request $request ) {
-					$order = $request->get_params();
-
-					if ( ! is_array( $order ) ) {
-						return false;
-					}
-
-					$classes = $this->get_repository()->all();
-
-					$missing_items = Collection::make( $classes->get_items()->keys() )->diff( $order );
-					$extra_items = Collection::make( $order )->diff( $classes->get_items()->keys() );
-
-					return $missing_items->is_empty() && $extra_items->is_empty();
-				},
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'items' => [
+						'required' => true,
+						'type' => 'object',
+						'additionalProperties' => false,
+						'patternProperties' => [
+							'^g-[a-z0-9]+$' => [
+								'type' => 'object',
+								'properties' => [
+									'id' => [
+										'type' => 'string',
+										'pattern' => '^g-[a-z0-9]+$',
+										'required' => true,
+									],
+									'variants' => [
+										'type' => 'array',
+										'required' => true,
+									],
+									'type' => [
+										'type' => 'string',
+										'enum' => [ 'class' ],
+										'required' => true,
+									],
+									'label' => [
+										'type' => 'string',
+										'required' => true,
+									],
+								],
+							],
+						],
+					],
+					'order' => [
+						'required' => true,
+						'type' => 'array',
+						'items' => [
+							'type' => 'string',
+							'pattern' => '^g-[a-z0-9]+$',
+						],
+					],
+				],
 			],
 		] );
 	}
@@ -117,109 +99,78 @@ class Global_Classes_REST_API {
 			->build();
 	}
 
-	private function get( \WP_REST_Request $request ) {
-		$id = $request->get_param( 'id' );
-		$class = $this->get_repository()->get( $id );
-
-		if ( null === $class ) {
-			return Error_Builder::make( 'entity_not_found' )
-				->set_message( __( 'Global class not found', 'elementor' ) )
-				->set_status( 404 )
-				->build();
-		}
-
-		return Response_Builder::make( $class )->build();
-	}
-
-	private function delete( \WP_REST_Request $request ) {
-		$id = $request->get_param( 'id' );
-		$class = $this->get_repository()->get( $id );
-
-		if ( null === $class ) {
-			return Error_Builder::make( 'entity_not_found' )
-				->set_message( __( 'Global class not found', 'elementor' ) )
-				->set_status( 404 )
-				->build();
-		}
-
-		$this->get_repository()->delete( $id );
-
-		return Response_Builder::make()
-			->set_status( 204 )
-			->set_meta( [ 'order' => $this->get_repository()->all()->get_order()->all() ] )
-			->build();
-	}
-
 	private function put( \WP_REST_Request $request ) {
-		$id = $request->get_param( 'id' );
-		$value = Collection::make( $request->get_params() )
-			->only( [ 'label', 'variants' ] )
-			->merge( [
-				'type' => 'class',
-				'id' => $id,
-			] )
-			->all();
+		$items = $request->get_param( 'items' );
 
-		$class = $this->get_repository()->get( $id );
+		[$sanitized_items, $error] = $this->sanitize_items( $items );
 
-		if ( null === $class ) {
-			return Error_Builder::make( 'entity_not_found' )
-				->set_message( __( 'Global class not found', 'elementor' ) )
-				->set_status( 404 )
-				->build();
+		if ( $error ) {
+			return $error;
 		}
 
-		[$is_valid, $parsed, $errors] = Style_Parser::make( Style_Schema::get() )->parse( $value );
+		$order = $request->get_param( 'order' );
 
-		if ( ! $is_valid ) {
-			return Error_Builder::make( 'invalid_data' )
+		if ( ! $this->is_valid_order( $order, $sanitized_items ) ) {
+			return Error_Builder::make( 'invalid_order' )
 				->set_status( 400 )
-				->set_message( join( ', ', $errors ) )
+				->set_message( 'Invalid order' )
 				->build();
 		}
 
-		$updated = $this->get_repository()->put( $id, $parsed );
-		$order = $this->get_repository()->all()->get_order()->all();
+		$this->get_repository()->put(
+			$sanitized_items,
+			$order
+		);
 
-		return Response_Builder::make( (object) $updated )
-			->set_meta( [ 'order' => $order ] )
-			->build();
+		// TODO: What to return?
+		return Response_Builder::make()->build();
 	}
 
-	private function post( \WP_REST_Request $request ) {
-		$class = Collection::make( $request->get_params() )
-			->only( [ 'label' ] )
-			->merge( [
-				'variants' => $request->get_param( 'variants' ) ?? [],
-				'type' => 'class',
-			] )
-			->all();
+	private function sanitize_items( array $items ) {
+		$sanitized_items = [];
 
-		[ $is_valid, $parsed, $errors ] = Style_Parser::make( Style_Schema::get() )
-			->without_id()
-			->parse( $class );
+		foreach ( $items as $item_id => $item ) {
+			[$is_valid, $sanitized, $errors] = Style_Parser::make( Style_Schema::get() )->parse( $item );
 
-		if ( ! $is_valid ) {
-			return Error_Builder::make( 'invalid_data' )
-				->set_status( 400 )
-				->set_message( join( ', ', $errors ) )
-				->build();
+			if ( ! $is_valid ) {
+				return [
+					null,
+					Error_Builder::make( 'invalid_item' )
+						->set_status( 400 )
+						->set_message( join( ', ', $errors ) )
+						->build(),
+				];
+			}
+
+			if ( $item_id !== $sanitized['id'] ) {
+				return [
+					null,
+					Error_Builder::make( 'invalid_item' )
+						->set_status( 400 )
+						->set_message( 'Invalid id ' . $item['id'] )
+						->build(),
+				];
+			}
+
+			$sanitized_items[ $sanitized['id'] ] = $sanitized;
 		}
 
-		$new = $this->get_repository()->create( $parsed );
-		$order = $this->get_repository()->all()->get_order()->all();
-
-		return Response_Builder::make( (object) $new )
-			->set_status( 201 )
-			->set_meta( [ 'order' => $order ] )
-			->build();
+		return [ $sanitized_items, null ];
 	}
 
-	private function arrange( \WP_REST_Request $request ) {
-		$order = $request->get_params();
-		$updated = $this->get_repository()->arrange( $order );
+	private function is_valid_order( array $order, array $items ) {
+		$existing_ids = array_keys( $items );
 
-		return Response_Builder::make( $updated )->build();
+		$excess_ids = Collection::make( $order )->diff( $existing_ids );
+		$missing_ids = Collection::make( $existing_ids )->diff( $order );
+
+		$has_duplications = Collection::make( $order )->unique()->all() !== $order;
+
+		return (
+			$excess_ids->is_empty() &&
+			$missing_ids->is_empty() &&
+			! $has_duplications
+		);
 	}
 
 	private function route_wrapper( callable $cb ) {
