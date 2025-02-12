@@ -8,7 +8,7 @@ use Elementor\Plugin;
 
 class Global_Classes_CSS {
 	public function register_hooks() {
-		add_action( 'elementor/css-file/post/parse', fn( Post_CSS $post ) => $this->inject_global_classes( $post ) );
+		add_action( 'elementor/css-file/post/parse', fn( Post_CSS $post ) => $this->inject_global_classes( $post ), 20 );
 
 		add_action( 'elementor/global_classes/create', fn() => $this->clear_kit_css_cache() );
 		add_action( 'elementor/global_classes/update', fn() => $this->clear_kit_css_cache() );
