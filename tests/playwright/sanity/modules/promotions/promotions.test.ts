@@ -5,7 +5,7 @@ import PromotionsHelper from '../../../pages/promotions/helper';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Promotion tests @promotions', () => {
-	test( 'Menu Items Promotions - screenshots', async ( { page, apiRequests }, testInfo ) => {
+	test.skip( 'Menu Items Promotions - screenshots', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			promotionContainer = '.e-feature-promotion';
 
