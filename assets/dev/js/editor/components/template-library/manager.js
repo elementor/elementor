@@ -272,7 +272,7 @@ const TemplateLibraryManager = function() {
 				// Translators: %1$s: Folder name, %2$s: Number of templates.
 				__( 'Are you sure you want to delete "%1$s" folder with all %2$d templates?', 'elementor' ),
 				templateModel.get( 'title' ),
-				data.length,
+				data.total,
 			),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
