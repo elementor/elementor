@@ -215,43 +215,6 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
 	}
 
-	public function test_parse_atomic_widget_styles__enqueue_font_family() {
-		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
-		$post = $this->make_mock_post();
-		$element = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [
-				[
-					'id' => 'test-style',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Roboto'
-								],
-							],
-							'meta' => [],
-						],
-					],
-				],
-			],
-		]);
-
-		// Assert.
-		$this->frontend_mock->expects( $this->once() )
-			->method( 'enqueue_font' )
-			->with( 'Roboto' );
-
-
-		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element );
-	}
-
 	public function test_parse_atomic_widget_styles__no_append_when_styles_are_empty() {
 		// Arrange.
 		( new Atomic_Widget_Styles() )->register_hooks();

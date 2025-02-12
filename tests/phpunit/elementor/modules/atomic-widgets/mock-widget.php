@@ -36,7 +36,7 @@ class Mock_Widget {
 				return static::$options['props_schema'] ?? [];
 			}
 
-			public static function define_base_styles(): array {
+			public function define_base_styles(): array {
 				return static::$options['base_styles'] ?? [];
 			}
 		};

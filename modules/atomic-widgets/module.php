@@ -5,10 +5,8 @@ namespace Elementor\Modules\AtomicWidgets;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\CSS\Post;
-use Elementor\Core\Utils\Collection;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
@@ -53,9 +51,9 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 
@@ -88,6 +86,7 @@ class Module extends BaseModule {
 			Dynamic_Tags_Module::instance()->register_hooks();
 
 			( new Atomic_Widget_Styles() )->register_hooks();
+			( new Atomic_Widget_Base_Styles() )->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
@@ -95,7 +94,6 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
-			add_action( 'elementor/css-file/post/parse', fn( Post $post ) => $this->inject_base_styles( $post ), 10 );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 			add_action( 'elementor/frontend/after_register_styles', fn() => $this->register_styles() );
 		}
@@ -177,55 +175,6 @@ class Module extends BaseModule {
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
-	}
-
-	private function inject_base_styles( Post $post ) {
-		if ( ! Plugin::$instance->kits_manager->is_kit( $post->get_post_id() ) ) {
-			return;
-		}
-
-		$elements = Plugin::$instance->elements_manager->get_element_types();
-		$widgets = Plugin::$instance->widgets_manager->get_widget_types();
-
-		$base_styles = Collection::make( $elements )
-			->merge( $widgets )
-			->filter( fn( $element ) => $element instanceof Atomic_Widget_Base )
-			->map( fn( Atomic_Widget_Base $element ) => $element::get_base_styles() )
-			->flatten()
-			->all();
-
-		$this->styles_enqueue_fonts( $base_styles );
-
-		$css = Styles_Renderer::make(
-			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->render( $base_styles );
-
-		$post->get_stylesheet()->add_raw_css( $css );
-	}
-
-	/**
-	 * Enqueue styles fonts.
-	 *
-	 * Styles format:
-	 *   <int, array{
-	 *     id: string,
-	 *     type: string,
-	 *     variants: array<int, array{
-	 *       props: array<string, mixed>,
-	 *       meta: array<string, mixed>
-	 *     }>
-	 *   }>
-	 *
-	 * @param array $styles
-	 */
-	private function styles_enqueue_fonts( array $styles ): void {
-		foreach ( $styles as $style ) {
-			foreach ( $style['variants'] as $variant ) {
-				if ( isset( $variant['props']['font-family'] ) ) {
-					Plugin::$instance->frontend->enqueue_font( $variant['props']['font-family']['value'] );
-				}
-			}
-		}
 	}
 
 	/**
