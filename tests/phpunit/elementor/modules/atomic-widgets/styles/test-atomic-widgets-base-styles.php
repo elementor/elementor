@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -17,8 +18,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
-require_once __DIR__ . '/../mock-widget.php';
 
 class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 	private Widgets_Manager $widgets_manager;
@@ -51,7 +50,7 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 		// Arrange
 		( new Atomic_Widget_Base_Styles() )->register_hooks();
 
-		$widget = Mock_Widget::make( [
+		$widget = $this->make_mock_widget( [
 			'base_styles' => [
 				'base' => Style_Definition::make()
 					->add_variant(
@@ -74,5 +73,43 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 		// Assert
 		$css = $post_css->get_content();
 		$this->assertStringContainsString( '.elementor .test-widget-base{font-family:Poppins;color:red;}', $css );
+	}
+
+	/**
+	 * @param array{controls: array, props_schema: array, settings: array} $options
+	 */
+	public static function make_mock_widget( array $options ): Atomic_Widget_Base {
+		return new class( $options ) extends Atomic_Widget_Base {
+			private static array $options;
+
+			public function __construct( $options ) {
+				static::$options = $options;
+
+				parent::__construct( [
+					'id' => 1,
+					'settings' => $options['settings'] ?? [],
+					'styles' => $options['styles'] ?? [],
+					'elType' => 'widget',
+					'widgetType' => 'test-widget',
+				], [] );
+			}
+
+			public static function get_element_type(): string {
+				return 'test-widget';
+			}
+
+			protected function define_atomic_controls(): array {
+				return static::$options['controls'] ?? [];
+			}
+
+			protected static function define_props_schema(): array {
+				return static::$options['props_schema'] ?? [];
+			}
+
+			public function define_base_styles(): array {
+				return static::$options['base_styles'] ?? [];
+			}
+		};
+	}
 	}
 }
