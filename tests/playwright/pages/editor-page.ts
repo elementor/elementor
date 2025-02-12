@@ -6,7 +6,7 @@ import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl } from '../types/types';
+import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, ContainerType, ContainerPreset } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
@@ -270,6 +270,21 @@ export default class EditorPage extends BasePage {
 
 		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + '.elementor-element-editable' );
 		return this.getPreviewFrame().locator( '.elementor-element-' + elementId );
+	}
+
+	/**
+	 * Add new container preset.
+	 *
+	 * @param {ContainerType}   element - Element type. Available values: 'flex', 'grid'.
+	 * @param {ContainerPreset} preset  - Container preset.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async addNewContainerPreset( element: ContainerType, preset: ContainerPreset ): Promise<void> {
+		const frame = this.getPreviewFrame();
+		await frame.locator( '.elementor-add-section-button' ).click();
+		await frame.locator( `.${ element }-preset-button` ).click();
+		await frame.locator( `[data-preset=${ preset }]` ).click();
 	}
 
 	/**
