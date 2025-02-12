@@ -102,7 +102,6 @@ class WP_Post {
 	 * Wraps the route callback with try/catch to handle exceptions.
 	 *
 	 * @param callable $cb The route callback.
-	 * @param \WP_REST_Request $request The request object.
 	 * @return \WP_REST_Response | \WP_Error
 	 */
 	private function route_wrapper( callable $cb ) {
@@ -212,7 +211,6 @@ class WP_Post {
 				'required' => false,
 				'default' => [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ],
 				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
-				'validate_callback' => 'rest_validate_request_arg',
 			],
 			self::TERM_KEY => [
 				'description' => 'Posts to search',
@@ -220,7 +218,6 @@ class WP_Post {
 				'required' => false,
 				'default' => '',
 				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
 			],
 			self::KEYS_FORMAT_MAP_KEY => [
 				'description' => 'Specify keys to extract and convert, i.e. ["key_1" => "new_key_1"].',
@@ -228,14 +225,12 @@ class WP_Post {
 				'required' => false,
 				'default' => [],
 				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
-				'validate_callback' => 'rest_validate_request_arg',
 			],
 			self::MAX_COUNT_KEY => [
 				'description' => 'Max count of returned items',
 				'type' => 'number',
 				'required' => false,
 				'default' => self::MAX_COUNT,
-				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
 	}
