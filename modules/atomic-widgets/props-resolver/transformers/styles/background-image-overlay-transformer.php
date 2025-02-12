@@ -4,44 +4,41 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
-if (!defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 }
 
-class Background_Image_Overlay_Transformer extends Transformer_Base
-{
+class Background_Image_Overlay_Transformer extends Transformer_Base {
 	const DEFAULT_RESOLUTION = 'large';
 
-	public function transform($value, $key)
-	{
-		if (!isset($value['image-src'])) {
+	public function transform($value, $key) {
+		if (! isset($value['image-src'])) {
 			return '';
 		}
 
 		$image_url = $this->get_image_url($value['image-src'], $value['resolution'] ?? self::DEFAULT_RESOLUTION);
 
-		$background_style = "url(\" $image_url \")";
+		$background_style = "url(\"$image_url\")";
 
-		if ( ! empty( $value['repeat'] ) ) {
+		if (! empty($value['repeat'])) {
 			$background_style .= ' ' . $value['repeat'];
 		}
 
-		if ( ! empty( $value['attachment'] ) ) {
+		if (! empty($value['attachment'])) {
 			$background_style .= ' ' . $value['attachment'];
 		}
 
 		$position_and_size_style = $this->get_position_and_size_style($value);
 
-		if (!empty($position_and_size_style)) {
+		if (! empty($position_and_size_style)) {
 			$background_style .= ' ' . $position_and_size_style;
 		}
 
 		return $background_style;
 	}
 
-	private function get_image_url(array $image_src, string $resolution): string
-	{
-		if (!empty($image_src['id'])) {
+	private function get_image_url(array $image_src, string $resolution): string {
+		if (! empty($image_src['id'])) {
 			return $this->get_image_url_by_id($image_src['id'], $resolution);
 		}
 
@@ -52,11 +49,10 @@ class Background_Image_Overlay_Transformer extends Transformer_Base
 		return $image_src['url'];
 	}
 
-	private function get_image_url_by_id(int $id, string $resolution): string
-	{
+	private function get_image_url_by_id(int $id, string $resolution): string {
 		$image_src = wp_get_attachment_image_src($id, $resolution);
 
-		if (!$image_src) {
+		if (! $image_src) {
 			throw new \Exception('Cannot get image src.');
 		}
 
@@ -65,24 +61,24 @@ class Background_Image_Overlay_Transformer extends Transformer_Base
 		return $image_url;
 	}
 
-	private function get_position_and_size_style(array $value): string
-	{
-		if (!isset($value['size']) && !isset($value['position'])) {
+	private function get_position_and_size_style(array $value): string {
+		if (! isset($value['size']) && ! isset($value['position'])) {
 			return '';
 		}
 
 		$position = $value['position'];
-		if (is_array($position)) { // Check if $position is an array
+		if (is_array($position)) {
 			$position = $position['x'] . ' ' . $position['y'];
 		}
 
-		if (!isset($value['size'])) {
-			return $value['position'];
+		if (! isset($value['size'])) {
+			return $position;
 		}
 
-		if (!$position) {
+		if (! $position) {
 			$position = '0% 0%';
 		}
+
 		return $position . ' / ' . $value['size'];
 	}
 }
