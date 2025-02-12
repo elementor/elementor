@@ -32,8 +32,8 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$this->frontend_mock = $this->createMock( Frontend::class );
 		Plugin::$instance->frontend = $this->frontend_mock;
 
-		remove_all_actions( 'elementor/element/parse_css' );
 		remove_all_filters( 'elementor/atomic-widgets/styles/transformers' );
+		remove_all_actions( 'elementor/element/parse_css' );
 	}
 
 	public function tear_down() {
