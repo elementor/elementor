@@ -13,8 +13,12 @@ class Url_Prop_Type extends Plain_Prop_Type {
 		return 'url';
 	}
 
-	protected function validate_value( $value ): bool {
+	public static function validate_url( $value ): bool {
 		return (bool) wp_http_validate_url( $value );
+	}
+
+	protected function validate_value( $value ): bool {
+		return self::validate_url( $value );
 	}
 
 	protected function sanitize_value( $value ) {
