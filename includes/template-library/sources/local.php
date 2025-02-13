@@ -1635,8 +1635,6 @@ class Source_Local extends Source_Base {
 			add_action( 'save_post', [ $this, 'on_save_post' ], 10, 2 );
 			add_filter( 'display_post_states', [ $this, 'remove_elementor_post_state_from_library' ], 11, 2 );
 
-			add_action( 'elementor/document/after_save', [ $this, 'on_template_update' ], 10, 2 );
-
 			add_action( 'parse_query', [ $this, 'admin_query_filter_types' ] );
 
 			// Template filter by category.
@@ -1656,6 +1654,7 @@ class Source_Local extends Source_Base {
 			// Show blank state.
 			add_action( 'manage_posts_extra_tablenav', [ $this, 'maybe_render_blank_state' ] );
 		}
+		add_action( 'elementor/document/after_save', [ $this, 'on_template_update' ], 10, 2 );
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 

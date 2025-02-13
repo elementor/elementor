@@ -21,7 +21,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 		$this->cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
-			->onlyMethods( [ 'get_resources', 'get_resource', 'post_resource' ] )
+			->onlyMethods( [ 'get_resources', 'get_resource', 'post_resource', 'update_resource' ] )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -108,10 +108,6 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		// Assert
 		$this->cloud_library_app_mock
-			->method('post_resource')
-			->willReturn($post_resource_response);
-
-		$this->cloud_library_app_mock
 			->method('get_resource')
 			->with([ 'id' => 1 ]);
 
@@ -124,7 +120,8 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'templateType' => 'container',
 				'parentId' => null,
 				'content' => $mock_content,
-			]);
+			])
+			->willReturn($post_resource_response);;
 
 		// Act
 		$this->manager->save_template([
@@ -136,6 +133,49 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'content' => $mock_content,
 			'parentId' => null,
 		]);
+	}
+
+	public function test_rename_template() {
+		// Arrange & Assert
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method('update_resource')
+			->with([
+				'source' => 'cloud',
+				'title' => 'Updated Template Title',
+				'id' => 1,
+			]);
+
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method('get_resource')
+			->with([ 'id' => 1 ]);
+
+		// Act
+		$this->manager->rename_template([
+			'source' => 'cloud',
+			'title' => 'Updated Template Title',
+			'id' => 1,
+		]);
+	}
+
+	public function test_rename_template__should_throw_error_when_failed_to_update_resource() {
+		// Arrange & Assert
+		$this->cloud_library_app_mock
+			->method('update_resource')
+			->with([
+				'source' => 'cloud',
+				'title' => 'Updated Template Title',
+				'id' => 1,
+			])
+			->willReturn( new \WP_Error( 'update_error', 'An error has occured' ) );
+
+		// Act & Assert
+		$this->assertWPError( $this->manager->rename_template([
+			'source' => 'cloud',
+			'title' => 'Updated Template Title',
+			'id' => 1,
+		]) );
 	}
 
 	public function test_export_template__template_type() {
