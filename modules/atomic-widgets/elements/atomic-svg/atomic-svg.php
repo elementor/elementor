@@ -38,21 +38,20 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 	protected function render() {
 		$settings = $this->get_atomic_settings();
-		$svg_url = $settings['svg']['url'] ?? null;
+		$svg_url = isset($settings['svg']['url']) ? $settings['svg']['url'] : null;
 
 		if ( ! $svg_url && isset( $settings['svg']['id'] ) ) {
-			$attachment = wp_get_attachment_image_src( (int) $settings['svg']['id'], 'full' );
-			$svg_url = $attachment[0] ?? null;
+			$attachment = wp_get_attachment_image_src( $settings['svg']['id'], 'full' );
+			$svg_url = isset($attachment[0]) ? $attachment[0] : null;
 		}
 
 		if ( ! $svg_url ) {
 			// Render default SVG if no URL is provided
-			printf( '%s', file_get_contents( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			printf( '%s', wp_safe_remote_get( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			return;
 		}
 
 		$svg = new \WP_HTML_Tag_Processor( file_get_contents($svg_url) );
-
 		if ( $svg->next_tag( 'svg' ) ) {
 			$this->set_svg_attributes( $svg, $settings );
 		}
@@ -64,13 +63,15 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
 		// Render the SVG content
-		printf( '%s', $valid_svg ? $valid_svg : file_get_contents( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		printf( '%s', $valid_svg ?? wp_safe_remote_get( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	private function set_svg_attributes( \WP_HTML_Tag_Processor $svg, $settings ) {
 		$svg->set_attribute( 'fill',  'currentColor' );
-		$svg->add_class( $settings['classes'] ?? '' );
-		$svg->add_class( static::get_base_style_class( self::BASE_STYLE_KEY ) ?? '' );
+		$string_classes = implode(' ', $settings['classes']);
+		$svg->add_class( $string_classes ?? '' );
+		$base_styles = $this->get_base_styles_dictionary()[self::BASE_STYLE_KEY];
+		$svg->add_class( $base_styles );
 	}
 
 	protected function define_atomic_controls(): array {
@@ -81,7 +82,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		];
 	}
 
-	public static function define_base_styles(): array {
+	protected function define_base_styles(): array {
 		$width = Size_Prop_Type::generate( [
 			'size' => 100,
 			'unit' => 'px',
@@ -104,7 +105,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'svg' => Image_Src_Prop_Type::make()->default( ['url' => ELEMENTOR_ASSETS_URL . 'images/defaultsvg.svg' ]),
+			'svg' => Image_Src_Prop_Type::make()->default_url(  ELEMENTOR_ASSETS_URL . 'images/defaultsvg.svg' ),
 		];
 	}
 }
