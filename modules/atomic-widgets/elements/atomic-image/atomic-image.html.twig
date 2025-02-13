@@ -1,0 +1,10 @@
+<img
+    class="{{ settings.classes | join(' ') }}"
+    {% for attr, value in settings.image %}
+        {% if attr == 'src' %}
+            src="{{ value | e('full_url') }}"
+        {% else %}
+            {{ attr | e('html_attr') }}="{{ value }}"
+        {% endif %}
+    {% endfor %}
+>

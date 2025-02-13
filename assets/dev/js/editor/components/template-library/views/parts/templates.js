@@ -1,11 +1,10 @@
-var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
-	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
-	TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' ),
-	TemplateLibraryCollectionView;
+const TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' );
+const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' );
+const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
 
-TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
+const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
 
 	id: 'elementor-template-library-templates',
@@ -26,6 +25,8 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		myFavoritesFilter: '#elementor-template-library-filter-my-favorites',
 		orderInputs: '.elementor-template-library-order-input',
 		orderLabels: 'label.elementor-template-library-order-label',
+		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
+		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
 	},
 
 	events: {
@@ -83,9 +84,16 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	initialize() {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
 
 	filter( childModel ) {
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		if ( 'cloud' === activeSource ) {
+			return true; // Filtering happens on the backend.
+		}
+
 		var filterTerms = elementor.templates.getFilterTerms(),
 			passingFilter = true;
 
@@ -203,8 +211,17 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		return 'page' === templatesType || 'lp' === templatesType;
 	},
 
+	onDestroy() {
+		if ( this.removeScrollListener ) {
+			this.removeScrollListener();
+		}
+	},
+
 	onRender() {
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) && 'lb' !== elementor.templates.getFilter( 'type' ) ) {
+		const activeSource = elementor.templates.getFilter( 'source' );
+		const templateType = elementor.templates.getFilter( 'type' );
+
+		if ( 'remote' === activeSource && 'page' !== templateType && 'lb' !== templateType ) {
 			this.setFiltersUI();
 		}
 	},
@@ -214,8 +231,14 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.toggleFilterClass();
 
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && ! this.isPageOrLandingPageTemplates() ) {
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		if ( 'remote' === activeSource && ! this.isPageOrLandingPageTemplates() ) {
 			this.setMasonrySkin();
+		}
+
+		if ( 'cloud' === activeSource ) {
+			this.handleLoadMore();
 		}
 	},
 
@@ -224,7 +247,35 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onTextFilterInput() {
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		if ( 'cloud' === activeSource ) {
+			this.debouncedSearchTemplates( activeSource );
+			return;
+		}
+
 		elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
+	},
+
+	async searchTemplates( source ) {
+		this.showLoadingSpinner();
+
+		try {
+			await elementor.templates.searchTemplates( {
+				source,
+				search: this.ui.textFilter.val(),
+			} );
+		} finally {
+			this.showSearchIcon();
+		}
+	},
+
+	showLoadingSpinner() {
+		this.ui.searchInputIcon.removeClass( 'eicon-search' ).addClass( 'eicon-loading eicon-animation-spin' );
+	},
+
+	showSearchIcon() {
+		this.ui.searchInputIcon.removeClass( 'eicon-loading eicon-animation-spin' ).addClass( 'eicon-search' );
 	},
 
 	onSelectFilterChange( event ) {
@@ -250,6 +301,38 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
 	},
+
+	handleLoadMore() {
+		const scrollableContainer = elementor?.templates?.layout?.modal.getElements( 'message' );
+
+		const listener = () => {
+			const scrollTop = scrollableContainer.scrollTop();
+			const scrollHeight = scrollableContainer[ 0 ].scrollHeight;
+			const clientHeight = scrollableContainer.outerHeight();
+
+			const scrollPercentage = ( scrollTop / ( scrollHeight - clientHeight ) ) * 100;
+
+			const canLoadMore = elementor.templates.canLoadMore() && ! elementor.templates.isLoading();
+
+			if ( scrollPercentage < 90 || ! canLoadMore ) {
+				return;
+			}
+
+			this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+
+			elementor.templates.loadMore( {
+				onUpdate: () => {
+					this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+				},
+				search: this.ui.textFilter.val(),
+			} );
+		};
+
+		scrollableContainer.on( 'scroll', listener );
+
+		this.removeScrollListener = () => scrollableContainer.off( 'scroll', listener );
+	},
+
 } );
 
 module.exports = TemplateLibraryCollectionView;

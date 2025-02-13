@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
+use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
@@ -15,7 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * @mixin Element_Base
+ */
 trait Has_Atomic_Base {
+	use Has_Base_Styles;
+
 	public function has_widget_inner_wrapper(): bool {
 		return false;
 	}
@@ -146,7 +152,7 @@ trait Has_Atomic_Base {
 		];
 	}
 
-	final public function get_atomic_settings(): array {
+	public function get_atomic_settings(): array {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
 
@@ -158,26 +164,5 @@ trait Has_Atomic_Base {
 			'elementor/atomic-widgets/props-schema',
 			static::define_props_schema()
 		);
-	}
-
-	public static function define_base_styles(): array {
-		return [];
-	}
-
-	public static function get_base_styles() {
-		$base_styles = static::define_base_styles();
-		$style_definitions = [];
-
-		foreach ( $base_styles as $key => $style ) {
-			$id = static::get_base_style_class( $key );
-
-			$style_definitions[] = $style->build( $id );
-		}
-
-		return $style_definitions;
-	}
-
-	public static function get_base_style_class( string $key ) {
-		return static::get_element_type() . '-' . $key;
 	}
 }
