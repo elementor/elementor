@@ -107,13 +107,13 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.getStorageItem = function ( key ) {
+	this.getStorageItem = function( key ) {
 		return storage.getItem( key );
-	}
+	};
 
-	this.setStorageItem = function ( key, value ) {
+	this.setStorageItem = function( key, value ) {
 		return storage.setItem( key, value );
-	}
+	};
 
 	this.getTemplateTypes = function( type ) {
 		if ( type ) {
