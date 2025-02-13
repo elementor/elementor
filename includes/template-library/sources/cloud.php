@@ -136,7 +136,7 @@ class Source_Cloud extends Source_Base {
 	}
 
 	protected function handle_export_folder( int $folder_id ): void {
-		$templates = $this->get_item_children( [ 'template_id' => $folder_id ] );
+		$templates = $this->get_item_children( [ 'template_id' => $folder_id ] )['templates'];
 
 		$template_ids = array_map( fn( $template ) => $template['template_id'], $templates );
 

@@ -1,6 +1,7 @@
 const TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' );
 const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' );
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
+const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
 
@@ -27,6 +28,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		orderLabels: 'label.elementor-template-library-order-label',
 		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
+		selectSourceFilter: '.elementor-template-library-filter-select-source',
 	},
 
 	events: {
@@ -34,6 +36,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'change @ui.selectFilter': 'onSelectFilterChange',
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
+		'change @ui.selectSourceFilter': 'onSelectSourceFilterChange',
 	},
 
 	comparators: {
@@ -283,6 +286,21 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			filterName = $select.data( 'elementor-filter' );
 
 		elementor.templates.setFilter( filterName, $select.val() );
+	},
+
+	onSelectSourceFilterChange( event ) {
+		const $select = jQuery( event.currentTarget ),
+			filterName = $select.data( 'elementor-filter' ),
+			templatesSource = $select.val();
+
+		elementor.templates.setStorageItem( 'my_templates_source', templatesSource );
+		elementor.templates.setFilter( filterName, templatesSource, true );
+
+		elementor.templates.loadTemplates( function() {
+			const templatesToShow = elementor.templates.filterTemplates();
+
+			elementor.templates.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
+		} );
 	},
 
 	onMyFavoritesFilterChange() {

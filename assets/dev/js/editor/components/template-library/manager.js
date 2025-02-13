@@ -1,4 +1,5 @@
 import Component from './component';
+import LocalStorage from 'elementor-api/core/data/storages/local-storage';
 
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
@@ -6,7 +7,8 @@ const TemplateLibraryManager = function() {
 	this.modalConfig = {};
 
 	const self = this,
-		templateTypes = {};
+		templateTypes = {},
+		storage = new LocalStorage();
 
 	let deleteDialog,
 		errorDialog,
@@ -104,6 +106,14 @@ const TemplateLibraryManager = function() {
 			element: '.elementor-template-library-template-more',
 		} );
 	};
+
+	this.getStorageItem = function ( key ) {
+		return storage.getItem( key );
+	}
+
+	this.setStorageItem = function ( key, value ) {
+		return storage.setItem( key, value );
+	}
 
 	this.getTemplateTypes = function( type ) {
 		if ( type ) {
