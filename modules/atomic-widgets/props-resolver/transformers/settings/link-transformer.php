@@ -16,7 +16,7 @@ class Link_Transformer extends Transformer_Base {
 
 		$link_attrs = [
 			'href' => esc_url( $value['href'] ),
-			'target' => $value['isTargetBlank'] ? '_blank' : '',
+			'target' => $value['isTargetBlank'] ? '_blank' : '_self',
 		];
 
 		return array_filter( $link_attrs );

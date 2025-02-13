@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Transformer;
@@ -25,7 +26,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Layout_Dir
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Gap_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
@@ -50,9 +50,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Gap_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
-use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -86,6 +85,7 @@ class Module extends BaseModule {
 			Dynamic_Tags_Module::instance()->register_hooks();
 
 			( new Atomic_Widget_Styles() )->register_hooks();
+			( new Atomic_Widget_Base_Styles() )->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
@@ -141,7 +141,7 @@ class Module extends BaseModule {
 		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
 
 		// Other
-		$transformers->register( Classes_Prop_Type::get_key(), new Combine_Array_Transformer( ' ' ) );
+		$transformers->register( Classes_Prop_Type::get_key(), new Array_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Image_Attachment_Id_Prop_Type::get_key(), new Primitive_Transformer() );
