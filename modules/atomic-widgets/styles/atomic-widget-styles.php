@@ -27,7 +27,13 @@ class Atomic_Widget_Styles {
 
 		$css = Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->render( $styles );
+		)->on_prop_transform( function($key, $value ) use ( &$post ) {
+			if ( 'font-family' !== $key ) {
+				return;
+			}
+
+			$post->add_font( $value );
+		} )->render( $styles );
 
 		$post->get_stylesheet()->add_raw_css( $css );
 	}

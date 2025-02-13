@@ -1026,4 +1026,10 @@ abstract class Base extends Base_File {
 
 		return ! empty( $globals[ $control_global_key ] );
 	}
+
+	public function add_font( $font ) {
+		if ( ! in_array( $font, $this->fonts, true ) ) {
+			$this->fonts[] = $font;
+		}
+	}
 }

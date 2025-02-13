@@ -483,6 +483,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertNotEmpty( $css, 'CSS should not be empty' );
 		$this->assertMatchesSnapshot( $css );
 	}
+
 	public function test_render__style_with_background_color_transformers() {
 		// Arrange.
 		$styles = [
@@ -930,6 +931,66 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_with_after_prop_transform() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [],
+						'props' => [
+							'color' => 'red',
+							'font-size' => '16px',
+							'font-family' => 'Inter',
+						],
+					],
+					[
+						'meta' => [
+							'state' => 'hover',
+						],
+						'props' => [
+							'color' => 'blue',
+							'font-size' => '18px',
+							'font-family' => 'Poppins',
+						],
+					],
+					[
+						'meta' => [
+							'breakpoint' => 'mobile',
+						],
+						'props' => [
+							'color' => 'green',
+							'font-size' => '20px',
+							'font-family' => 'Inter',
+						],
+					]
+				],
+
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		$enqueued_fonts = [];
+
+		$stylesRenderer->on_prop_transform( function($prop, $value ) use (&$enqueued_fonts){
+			if ( 'font-family' !== $prop ) {
+				return;
+			}
+
+			$enqueued_fonts[] = $value;
+		} );
+
+		// Act.
+		$stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertContains( 'Inter', $enqueued_fonts );
+		$this->assertContains( 'Poppins', $enqueued_fonts );
 	}
 
 	private function make_mock_faulty_transformer() {
