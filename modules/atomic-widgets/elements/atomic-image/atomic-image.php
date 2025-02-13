@@ -1,9 +1,12 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Image;
 
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Link_Query;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
@@ -14,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Image extends Atomic_Widget_Base {
+	use Link_Query;
 	use Has_Template;
 
 	public static function get_element_type(): string {
@@ -39,6 +43,11 @@ class Atomic_Image extends Atomic_Widget_Base {
 			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
 				Image_Control::bind_to( 'image' ),
+
+				Link_Control::bind_to( 'link' )
+					->set_options( $this->get_post_query() )
+					->set_allow_custom_values( true )
+					->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 			] );
 
 		return [
@@ -54,6 +63,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 			'image' => Image_Prop_Type::make()
 				->default_url( Utils::get_placeholder_image_src() )
 				->default_size( 'full' ),
+
+			'link' => Link_Prop_Type::make(),
 		];
 	}
 }
