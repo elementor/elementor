@@ -13,8 +13,8 @@ test( 'Visible widgets should be shown in search result', async ( { page, apiReq
 	await page.locator( widgetSearchBar ).fill( 'Spacer' );
 
 	// Assert - the widget should be shown in search result.
-	const widgetsInSearchResult = await page.$$( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
-	expect( widgetsInSearchResult ).toHaveLength( 1 );
+	const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
+	expect( widgetsInSearchResult ).toHaveCount( 1 );
 } );
 
 test( 'Hidden widgets should not be shown in search result', async ( { page, apiRequests }, testInfo ) => {
@@ -28,6 +28,6 @@ test( 'Hidden widgets should not be shown in search result', async ( { page, api
 	await page.locator( widgetSearchBar ).fill( 'RSS' );
 
 	// Assert - the widget should not be shown in search result.
-	const widgetsInSearchResult = await page.$$( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
-	expect( widgetsInSearchResult ).toHaveLength( 0 );
+	const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
+	expect( widgetsInSearchResult ).toHaveCount( 0 );
 } );
