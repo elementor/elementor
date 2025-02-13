@@ -289,11 +289,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onSelectSourceFilterChange( event ) {
-		const $select = jQuery( event.currentTarget ),
-			filterName = $select.data( 'elementor-filter' ),
-			templatesSource = $select.val();
+		const select = event.currentTarget,
+			filterName = select.dataset.elementorFilter,
+			templatesSource = select.value;
 
-		elementor.templates.setStorageItem( 'my_templates_source', templatesSource );
+		elementor.templates.setSourceSelection( templatesSource );
 		elementor.templates.setFilter( filterName, templatesSource, true );
 
 		elementor.templates.loadTemplates( function() {

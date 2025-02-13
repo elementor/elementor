@@ -8,7 +8,8 @@ const TemplateLibraryManager = function() {
 
 	const self = this,
 		templateTypes = {},
-		storage = new LocalStorage();
+		storage = new LocalStorage(),
+		storageSelectionKey = 'my_templates_source';
 
 	let deleteDialog,
 		errorDialog,
@@ -107,12 +108,12 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.getStorageItem = function( key ) {
-		return storage.getItem( key );
+	this.getSourceSelection = function() {
+		return storage.getItem( storageSelectionKey );
 	};
 
-	this.setStorageItem = function( key, value ) {
-		return storage.setItem( key, value );
+	this.setSourceSelection = function( value ) {
+		return storage.setItem( storageSelectionKey, value );
 	};
 
 	this.getTemplateTypes = function( type ) {

@@ -39,7 +39,7 @@ export default class Component extends ComponentModalBase {
 			'templates/my-templates': {
 				title: __( 'My Templates', 'elementor' ),
 				getFilter: () => ( {
-					source: elementor.templates.getStorageItem( 'my_templates_source' ) ?? 'local',
+					source: elementor.templates.getSourceSelection() ?? 'local',
 				} ),
 			},
 		};
