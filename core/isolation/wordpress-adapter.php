@@ -86,4 +86,12 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function get_post_status( $post_id ): string {
 		return get_post_status( $post_id );
 	}
+
+	public function get_posts( $args ): array {
+		return get_posts( $args );
+	}
+
+	public function get_post_types( $args = [], $output = 'names', $operator = 'and' ): array {
+		return get_post_types( $args, $output, $operator );
+	}
 }
