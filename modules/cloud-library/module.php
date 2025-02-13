@@ -42,5 +42,8 @@ class Module extends BaseModule {
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'cloud-library', Cloud_Library::get_class_name() );
 		} );
+
+		Plugin::$instance->documents
+			->register_document_type( 'folder', Documents\Folder::get_class_full_name() );
 	}
 }
