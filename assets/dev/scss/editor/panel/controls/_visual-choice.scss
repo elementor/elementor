@@ -1,11 +1,11 @@
 @import "../../../helpers/variables.scss";
 
-.elementor-control-type-choose-visual {
+.elementor-control-type-visual-choice {
 
 	& .elementor-choices {
 		width: 100%;
 
-		&-visual {
+		&-visual-choice {
 			column-gap: 4px;
 			display: grid;
 			grid-template-columns: repeat(var(--elementor-choices-columns), 1fr);

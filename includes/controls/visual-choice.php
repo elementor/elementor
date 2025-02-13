@@ -8,16 +8,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Control_Choose;
 
 /**
- * Elementor choose SVG or Image control.
+ * Elementor Visual Choice control.
  *
  * This control extends the base Choose control allowing the user to choose between options represented by SVG or Image.
  *
  * @since 1.0.0
  */
-class Control_Choose_Visual extends Control_Choose {
+class Control_Visual_Choice extends Control_Choose {
 
 	public function get_type() {
-		return 'choose-visual';
+		return 'visual-choice';
 	}
 
 	public function content_template() {
@@ -27,7 +27,7 @@ class Control_Choose_Visual extends Control_Choose {
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
 				<div
-						class="elementor-choices elementor-choices-visual"
+						class="elementor-choices elementor-choices-visual-choice"
 						style="--elementor-choices-columns: {{ data.columns }};">
 
 					<# _.each( data.options, function( options, value ) { #>
