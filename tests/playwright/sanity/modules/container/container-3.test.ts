@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
+import ContextMenu from '../../../pages/widgets/context-menu';
 
 test.describe( 'Container tests @container', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -26,6 +27,7 @@ test.describe( 'Container tests @container', () => {
 	test( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const contextMenu = new ContextMenu( page, testInfo );
 		const editor = await wpAdmin.openNewPage();
 
 		await editor.closeNavigatorIfOpen();
@@ -53,7 +55,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.hideVideoControls();
 
 		// Hide carousel navigation.
-		const carouselOneId = await editor.addWidget( 'image-carousel', container );
+		await editor.addWidget( 'image-carousel', container );
 		await editor.setSelectControlValue( 'navigation', 'none' );
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.openPanelTab( 'content' );
@@ -62,9 +64,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.setSwitcherControlValue( 'autoplay', false );
 
 		// Duplicate carousel widget.
-		await editor.getPreviewFrame().locator( '.elementor-element-' + carouselOneId ).click( { button: 'right' } );
-		await expect.soft( page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ) ).toBeVisible();
-		await page.locator( '.elementor-context-menu-list__item-duplicate .elementor-context-menu-list__item__title' ).click();
+		await contextMenu.selectWidgetContextMenuItem( 'image-carousel', 'Duplicate' );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setChooseControlValue( '_flex_size', 'eicon-grow' );
 
