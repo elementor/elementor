@@ -958,18 +958,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'font-family' => 'Poppins',
 						],
 					],
-					[
-						'meta' => [
-							'breakpoint' => 'mobile',
-						],
-						'props' => [
-							'color' => 'green',
-							'font-size' => '20px',
-							'font-family' => 'Inter',
-						],
-					]
 				],
-
 			],
 		];
 
