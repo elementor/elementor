@@ -1,12 +1,10 @@
-var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' ),
-	TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' ),
-	TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' ),
-	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' ),
-	TemplateLibraryCollectionView;
+const TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' );
+const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' );
+const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
 
-TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
+const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
 
 	id: 'elementor-template-library-templates',
@@ -28,6 +26,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		orderInputs: '.elementor-template-library-order-input',
 		orderLabels: 'label.elementor-template-library-order-label',
 		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
+		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
 	},
 
 	events: {
@@ -212,8 +211,17 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		return 'page' === templatesType || 'lp' === templatesType;
 	},
 
+	onDestroy() {
+		if ( this.removeScrollListener ) {
+			this.removeScrollListener();
+		}
+	},
+
 	onRender() {
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && 'page' !== elementor.templates.getFilter( 'type' ) && 'lb' !== elementor.templates.getFilter( 'type' ) ) {
+		const activeSource = elementor.templates.getFilter( 'source' );
+		const templateType = elementor.templates.getFilter( 'type' );
+
+		if ( 'remote' === activeSource && 'page' !== templateType && 'lb' !== templateType ) {
 			this.setFiltersUI();
 		}
 	},
@@ -223,8 +231,14 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.toggleFilterClass();
 
-		if ( 'remote' === elementor.templates.getFilter( 'source' ) && ! this.isPageOrLandingPageTemplates() ) {
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		if ( 'remote' === activeSource && ! this.isPageOrLandingPageTemplates() ) {
 			this.setMasonrySkin();
+		}
+
+		if ( 'cloud' === activeSource ) {
+			this.handleLoadMore();
 		}
 	},
 
@@ -243,25 +257,17 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
 	},
 
-	searchTemplates( source ) {
+	async searchTemplates( source ) {
 		this.showLoadingSpinner();
 
-		const ajaxOptions = {
-			data: {
+		try {
+			await elementor.templates.searchTemplates( {
 				source,
 				search: this.ui.textFilter.val(),
-			},
-			success: ( data ) => {
-				this.collection = new TemplateLibraryCollection( data ); // Update Marionette 'collection' property.
-				elementor.templates.setFilter( 'text', this.ui.textFilter.val() );
-				this.showSearchIcon();
-			},
-			error: () => {
-				this.showSearchIcon();
-			},
-		};
-
-		elementorCommon.ajax.addRequest( 'search_templates', ajaxOptions );
+			} );
+		} finally {
+			this.showSearchIcon();
+		}
 	},
 
 	showLoadingSpinner() {
@@ -295,6 +301,38 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
 	},
+
+	handleLoadMore() {
+		const scrollableContainer = elementor?.templates?.layout?.modal.getElements( 'message' );
+
+		const listener = () => {
+			const scrollTop = scrollableContainer.scrollTop();
+			const scrollHeight = scrollableContainer[ 0 ].scrollHeight;
+			const clientHeight = scrollableContainer.outerHeight();
+
+			const scrollPercentage = ( scrollTop / ( scrollHeight - clientHeight ) ) * 100;
+
+			const canLoadMore = elementor.templates.canLoadMore() && ! elementor.templates.isLoading();
+
+			if ( scrollPercentage < 90 || ! canLoadMore ) {
+				return;
+			}
+
+			this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+
+			elementor.templates.loadMore( {
+				onUpdate: () => {
+					this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+				},
+				search: this.ui.textFilter.val(),
+			} );
+		};
+
+		scrollableContainer.on( 'scroll', listener );
+
+		this.removeScrollListener = () => scrollableContainer.off( 'scroll', listener );
+	},
+
 } );
 
 module.exports = TemplateLibraryCollectionView;
