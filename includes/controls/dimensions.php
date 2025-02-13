@@ -117,12 +117,12 @@ class Control_Dimensions extends Control_Base_Units {
 										// PHPCS - the variable $dimension_key is a plain text.
 										echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 									?> ) ) {
-											print( placeholder.<?php
+											print( encodeURIComponent( placeholder.<?php
 											// PHPCS - the variable $dimension_key is a plain text.
 											echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-											?> );
+											?> ) );
 									} else {
-										print( placeholder );
+										print( encodeURIComponent( placeholder ) );
 									} #>"
 							<# if ( -1 === _.indexOf( allowed_dimensions, '<?php
 								// PHPCS - the variable $dimension_key is a plain text.
