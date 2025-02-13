@@ -337,10 +337,17 @@ class Utils {
 	 * @access public
 	 * @static
 	 *
+	 * @param string $version The placeholder image version. Defaults to 'v3'. Options: 'v3', 'v4'.                     Options: 'v3', 'v4'.
+	 *
 	 * @return string The source of the default placeholder image used by Elementor.
 	 */
-	public static function get_placeholder_image_src() {
-		$placeholder_image = ELEMENTOR_ASSETS_URL . 'images/placeholder.png';
+	public static function get_placeholder_image_src( $version = 'v3' ) {
+		$placeholder_image_by_version = [
+			'v3' => 'placeholder.png',
+			'v4' => 'placeholder-v4.png',
+		];
+
+		$placeholder_image = ELEMENTOR_ASSETS_URL . "images/" . ( $placeholder_image_by_version[ $version ] );
 
 		/**
 		 * Get placeholder image source.
