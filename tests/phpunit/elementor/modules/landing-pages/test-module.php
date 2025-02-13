@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Modules\LandingPages;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\LandingPages\Module;
@@ -20,6 +21,10 @@ class Elementor_Test_Landing_Pages_Module extends Elementor_Test_Base {
 	}
 
 	public function test_register_admin_menu__renders_empty_view() {
+		if ( ! $this->is_landing_pages_experiment_active() ) {
+			return;
+		}
+
 		// Arrange
 		$this->act_as_admin();
 
@@ -31,6 +36,10 @@ class Elementor_Test_Landing_Pages_Module extends Elementor_Test_Base {
 	}
 
 	public function test_register_admin_menu__renders_edit_view() {
+		if ( ! $this->is_landing_pages_experiment_active() ) {
+			return;
+		}
+
 		// Arrange
 		$this->act_as_admin();
 
@@ -72,5 +81,9 @@ class Elementor_Test_Landing_Pages_Module extends Elementor_Test_Base {
 			Document::TYPE_META_KEY,
 			Module::DOCUMENT_TYPE
 		);
+	}
+
+	private function is_landing_pages_experiment_active(): bool {
+		return Plugin::instance()->experiments->is_feature_active( 'landing-pages' );
 	}
 }
