@@ -1,4 +1,5 @@
 import Component from './component';
+import LocalStorage from 'elementor-api/core/data/storages/local-storage';
 
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
@@ -6,7 +7,9 @@ const TemplateLibraryManager = function() {
 	this.modalConfig = {};
 
 	const self = this,
-		templateTypes = {};
+		templateTypes = {},
+		storage = new LocalStorage(),
+		storageSelectionKey = 'my_templates_source';
 
 	let deleteDialog,
 		errorDialog,
@@ -103,6 +106,14 @@ const TemplateLibraryManager = function() {
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
 		} );
+	};
+
+	this.getSourceSelection = function() {
+		return storage.getItem( storageSelectionKey );
+	};
+
+	this.setSourceSelection = function( value ) {
+		return storage.setItem( storageSelectionKey, value );
 	};
 
 	this.getTemplateTypes = function( type ) {
