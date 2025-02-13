@@ -6,7 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
-use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -38,19 +38,20 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 	protected function render() {
 		$settings = $this->get_atomic_settings();
-		$svg_url = $settings['svg']['src'] ?? '';
+		$svg_url = $settings['svg']['url'] ?? null;
+
+		if ( ! $svg_url && isset( $settings['svg']['id'] ) ) {
+			$attachment = wp_get_attachment_image_src( (int) $settings['svg']['id'], 'full' );
+			$svg_url = $attachment[0] ?? null;
+		}
 
 		if ( ! $svg_url ) {
 			// Render default SVG if no URL is provided
-			printf( '%s', file_get_contents( $this->get_default_svg_path() )); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			printf( '%s', file_get_contents( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			return;
 		}
 
-		$svg_content = ( strpos( $svg_url, self::SVG_PREFIX ) === 0 )
-			? urldecode( substr( $svg_url, strlen( self::SVG_PREFIX ) ) )
-			: wp_remote_retrieve_body( wp_safe_remote_get( $svg_url ) );
-
-		$svg = new \WP_HTML_Tag_Processor( $svg_content );
+		$svg = new \WP_HTML_Tag_Processor( file_get_contents($svg_url) );
 
 		if ( $svg->next_tag( 'svg' ) ) {
 			$this->set_svg_attributes( $svg, $settings );
@@ -65,6 +66,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		// Render the SVG content
 		printf( '%s', $valid_svg ? $valid_svg : file_get_contents( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
+
 	private function set_svg_attributes( \WP_HTML_Tag_Processor $svg, $settings ) {
 		$svg->set_attribute( 'fill',  'currentColor' );
 		$svg->add_class( $settings['classes'] ?? '' );
@@ -102,7 +104,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'svg' => Svg_Prop_Type::make()->default_url( ELEMENTOR_ASSETS_URL . 'images/defaultsvg.svg' ),
+			'svg' => Image_Src_Prop_Type::make()->default( ['url' => ELEMENTOR_ASSETS_URL . 'images/defaultsvg.svg' ]),
 		];
 	}
 }
