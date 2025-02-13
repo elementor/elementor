@@ -13,7 +13,9 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'image-src' => Image_Src_Prop_Type::make(),
-			'position' => String_Prop_Type::make()->enum( self::get_position_enum_values() ),
+			'position' => Union_Prop_Type::make()
+				->add_prop_type( String_Prop_Type::make()->enum( self::get_position_enum_values() ) )
+				->add_prop_type( Background_Image_Position_Offset_Prop_Type::make() ),
 			'resolution' => String_Prop_Type::make()->enum( [ 'thumbnail', 'medium', 'medium_large', 'large', 'full' ] ),
 			'repeat' => String_Prop_Type::make()->enum( [ 'repeat', 'repeat-x', 'repeat-y', 'no-repeat' ] ),
 			'size' => String_Prop_Type::make()->enum( [ 'auto', 'cover', 'contain' ] ),
@@ -32,6 +34,7 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 			'bottom center',
 			'bottom left',
 			'bottom right',
+			'custom',
 		];
 	}
 }
