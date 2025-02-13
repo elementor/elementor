@@ -346,6 +346,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.27.4 - 2025-02-13 =
+
+* Fix: Preventing page saving in Gutenberg with ACF and active Elementor post settings ([#30160](https://github.com/elementor/elementor/issues/30160))
+
 = 3.27.3 - 2025-02-03 =
 
 * Tweak: Added support for Early Access fonts when using Load Google Fonts Locally experiment
