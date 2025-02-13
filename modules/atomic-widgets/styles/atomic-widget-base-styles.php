@@ -29,7 +29,13 @@ class Atomic_Widget_Base_Styles {
 
 		$css = Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->render( $base_styles );
+		)->on_prop_transform( function($key, $value ) use ( &$post ) {
+			if ( 'font-family' !== $key ) {
+				return;
+			}
+
+			$post->add_font( $value );
+		} )->render( $base_styles );
 
 		$post->get_stylesheet()->add_raw_css( $css );
 	}
