@@ -139,7 +139,7 @@ class Source_Cloud extends Source_Base {
 		$data = $this->get_item_children( [ 'template_id' => $folder_id ] );
 
 		if ( empty( $data['templates'] ) ) {
-			return new \WP_Error( 'no_children', 'Folder does not have any templates to export' );
+			throw new \Exception( 'Folder does not have any templates to export' );
 		}
 
 		$template_ids = array_map( fn( $template ) => $template['template_id'], $data['templates'] );
@@ -149,13 +149,13 @@ class Source_Cloud extends Source_Base {
 
 	private function prepare_template_export( $data ) {
 		if ( empty( $data['content'] ) ) {
-			return new \WP_Error( 'no_content', 'Template data not found' );
+			throw new \Exception( 'Template data not found' );
 		}
 
 		$data['content'] = json_decode( $data['content'], true );
 
 		if ( empty( $data['content']['content'] ) ) {
-			return new \WP_Error( 'empty_template', 'The template is empty' );
+			throw new \Exception( 'The template is empty' );
 		}
 
 		$export_data = [
@@ -181,7 +181,7 @@ class Source_Cloud extends Source_Base {
 		}
 
 		if ( empty( $files ) ) {
-			return new \WP_Error( 'empty_files', 'There is no files to export (probably all the requested templates are empty).' );
+			throw new \Exception( 'There are no files to export (probably all the requested templates are empty).' );
 		}
 
 		list( $zip_archive_filename, $zip_complete_path ) = $this->handle_zip_file( $temp_path, $files );
@@ -228,7 +228,7 @@ class Source_Cloud extends Source_Base {
 		$put_contents = file_put_contents( $complete_path, $file_data['content'] );
 
 		if ( ! $put_contents ) {
-			return new \WP_Error( '404', sprintf( 'Cannot create file "%s".', $file_data['name'] ) );
+			throw new \Exception( sprintf( 'Cannot create file "%s".', $file_data['name'] ) );
 		}
 
 		return [
