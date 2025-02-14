@@ -23,6 +23,10 @@ TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 			title: __( 'No Favorite Templates', 'elementor' ),
 			message: __( 'You can mark any pre-designed template as a favorite.', 'elementor' ),
 		},
+		cloudEmpty: {
+			title: __( 'Haven’t saved templates to cloud library yet?', 'elementor' ),
+			message: __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
+		},
 	},
 
 	getCurrentMode() {
@@ -32,6 +36,10 @@ TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 
 		if ( elementor.templates.getFilter( 'favorite' ) ) {
 			return 'noFavorites';
+		}
+
+		if ( 'cloud' === elementor.templates.getFilter( 'source' ) ) {
+			return 'cloudEmpty';
 		}
 
 		return 'empty';
