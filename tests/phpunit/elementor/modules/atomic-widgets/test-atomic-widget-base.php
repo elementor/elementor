@@ -599,12 +599,22 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 											[
 												'$$type' => 'background-image-overlay',
 												'value' => [
-													'image-src' => [
-														'$$type' => 'image-src',
+													'image' => [
+														'$$type' => 'image',
 														'value' => [
-															'id' => [
-																'$$type' => 'image-attachment-id',
-																'value' => $post->ID
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => [
+																		'$$type' => 'image-attachment-id',
+																		'value' => $post->ID,
+																	],
+																	'url' => null
+																],
+															],
+															'size' => [
+																'$$type' => 'string',
+																'value' => 'medium'
 															]
 														]
 													],
@@ -1253,15 +1263,24 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 												[
 													'$$type' => 'background-image-overlay',
 													'value' => [
-														'image-src' => [
-															'$$type' => 'image-src',
+														'image' => [
+															'$$type' => 'image',
 															'value' => [
-																'id' => [
-																	'$$type' => 'image-attachment-id',
-																	'value' => 3,
+																'src' => [
+																	'$$type' => 'image-src',
+																	'value' => [
+																		'id' => [
+																			'$$type' => 'image-attachment-id',
+																			'value' => 3,
+																		],
+																		'url' => null
+																	],
 																],
-																'url' => null
-															],
+																'size' => [
+																	'$$type' => 'string',
+																	'value' => 'medium',
+																]
+															]
 														],
 														'size' => 'cover',
                                                         'position' => 'center left',
