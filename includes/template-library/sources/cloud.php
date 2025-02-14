@@ -228,7 +228,7 @@ class Source_Cloud extends Source_Base {
 		$put_contents = file_put_contents( $complete_path, $file_data['content'] );
 
 		if ( ! $put_contents ) {
-			throw new \Exception( sprintf( 'Cannot create file "%s".', $file_data['name'] ) );
+			throw new \Exception( sprintf( 'Cannot create file "%s".', esc_html( $file_data['name'] ) ) );
 		}
 
 		return [
