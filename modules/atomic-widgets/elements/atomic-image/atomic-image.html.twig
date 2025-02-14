@@ -1,6 +1,5 @@
 {% set imageTag %}
-	<img
-		class="{{ settings.classes | join(' ') }}"
+	<img class="{{ settings.classes | join(' ') }}"
 		{% for attr, value in settings.image %}
 			{% if attr == 'src' %}
 				src="{{ value | e('full_url') }}"

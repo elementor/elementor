@@ -1,8 +1,9 @@
-				<a href="https://example.com" target="_blank">
-		<img
-		class=""
+			
+	<a href="https://example.com" target="_blank">
+			<img class=""
 									id="123"
 												url="https://example.com/image.jpg"
-							/>
+						/>
+
 	</a>
 		
