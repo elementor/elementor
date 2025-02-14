@@ -38,20 +38,11 @@ export default class Component extends ComponentModalBase {
 			},
 			'templates/my-templates': {
 				title: __( 'My Templates', 'elementor' ),
-				filter: {
-					source: 'local',
-				},
+				getFilter: () => ( {
+					source: elementor.templates.getSourceSelection() ?? 'local',
+				} ),
 			},
 		};
-
-		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
-			tabs[ 'templates/cloud-library' ] = {
-				title: __( 'Cloud Library', 'elementor' ),
-				filter: {
-					source: 'cloud',
-				},
-			};
-		}
 
 		return tabs;
 	}
