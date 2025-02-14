@@ -3,7 +3,6 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Image;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
-use Elementor\Modules\AtomicWidgets\Link_Query;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
