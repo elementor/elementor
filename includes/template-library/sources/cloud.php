@@ -135,10 +135,14 @@ class Source_Cloud extends Source_Base {
 		$this->serve_file( $file_data['content'] );
 	}
 
-	protected function handle_export_folder( int $folder_id ): void {
-		$templates = $this->get_item_children( [ 'template_id' => $folder_id ] );
+	protected function handle_export_folder( int $folder_id ) {
+		$data = $this->get_item_children( [ 'template_id' => $folder_id ] );
 
-		$template_ids = array_map( fn( $template ) => $template['template_id'], $templates );
+		if ( empty( $data['templates'] ) ) {
+			return new \WP_Error( 'no_children', 'Folder does not have any templates to export' );
+		}
+
+		$template_ids = array_map( fn( $template ) => $template['template_id'], $data['templates'] );
 
 		$this->export_multiple_templates( $template_ids );
 	}

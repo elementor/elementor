@@ -182,27 +182,30 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
 		$this->cloud_source_mock->method( 'get_item_children' )->willReturn(
 			[
-				[
-					'template_id' => 101,
-					'title' => 'Header Template',
-					'type' => 'TEMPLATE',
-					'parentId' => $data['id'],
-					'templateType' => 'container'
+				'templates' => [
+					[
+						'template_id' => 101,
+						'title' => 'Header Template',
+						'type' => 'TEMPLATE',
+						'parentId' => $data['id'],
+						'templateType' => 'container'
+					],
+					[
+						'template_id' => 102,
+						'title' => 'Footer Template',
+						'type' => 'TEMPLATE',
+						'parentId' => $data['id'],
+						'templateType' => 'container'
+					],
+					[
+						'template_id' => 103,
+						'title' => 'Sidebar Template',
+						'type' => 'TEMPLATE',
+						'parentId' => $data['id'],
+						'templateType' => 'container'
+					],
 				],
-				[
-					'template_id' => 102,
-					'title' => 'Footer Template',
-					'type' => 'TEMPLATE',
-					'parentId' => $data['id'],
-					'templateType' => 'container'
-				],
-				[
-					'template_id' => 103,
-					'title' => 'Sidebar Template',
-					'type' => 'TEMPLATE',
-					'parentId' => $data['id'],
-					'templateType' => 'container'
-				],
+				'total' => 3,
 			]
 		);
 
