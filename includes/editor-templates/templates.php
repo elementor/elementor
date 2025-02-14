@@ -326,7 +326,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-templates-empty">
 	<#
-		const activeSource = elementor.templates.getFilter( 'source' );
+		const activeSource = elementor.templates.getFilter( 'source' ),
 			assetsUrl = '<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL ); ?>',
 			imgSrc = `${assetsUrl}images/no-search-results${activeSource === 'cloud' ? '-cloud' : ''}.svg`;
 	#>
