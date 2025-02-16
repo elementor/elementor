@@ -33,7 +33,7 @@ abstract class Transformations_Abstract {
 
 	protected function get_tier() {
 		$tier = $this->elementor_adapter->get_tier();
-var_dump(['original' => $tier]);
+
 		return apply_filters( 'elementor/admin/homescreen_promotion_tier', $tier );
 	}
 

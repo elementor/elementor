@@ -2,7 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Tests\Phpunit\Elementor\Modules\Home\Mocks\Elementor_Adapter_Mock;
 use Elementor\Modules\Home\Transformations\Filter_Top_Section_By_License;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
@@ -41,12 +40,13 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 		// Arrange
 		$original_data = $this->mock_top_section_data();
 
-		$transformation = new Filter_Top_Section_By_License( [
-			'elementor_adapter' => new Elementor_Adapter_Mock( 'essential' ),
-		] );
+		$transformation = new Filter_Top_Section_By_License();
 		$transformation->has_pro = true;
-var_dump('!!!!!!!!!!!!!');
+
 		// Act
+		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
+			return 'essential';
+		} );
 		$transformed_data = $transformation->transform( $original_data );
 		$expected_data = $this->mock_top_section_data_transformed_essential();
 

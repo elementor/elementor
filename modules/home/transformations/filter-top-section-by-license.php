@@ -24,7 +24,7 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 		if ( isset( $item['license'] ) ) {
 			$item_tier = $item['license'][0];
 			$user_tier = $this->get_tier();
-			var_dump( [ 'user' => $user_tier, 'item' => $item_tier ] );
+
 			if ( $user_tier && $user_tier === $item_tier ) {
 				return true;
 			}
@@ -55,7 +55,6 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 				$new_top[] = $item;
 			}
 		}
-		var_dump($new_top);
 
 		$home_screen_data['top_with_licences'] = reset( $new_top );
 
