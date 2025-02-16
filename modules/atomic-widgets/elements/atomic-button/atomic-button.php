@@ -74,19 +74,19 @@ class Atomic_Button extends Atomic_Widget_Base {
 		] );
 		$display_value = String_Prop_Type::generate( 'inline-block' );
 		$padding_value = Dimensions_Prop_Type::generate( [
-			'top'=> Size_Prop_Type::generate( [
+			'top' => Size_Prop_Type::generate( [
 				'size' => 12,
 				'unit' => 'px',
 			]),
-			'right'=> Size_Prop_Type::generate( [
+			'right' => Size_Prop_Type::generate( [
 				'size' => 24,
 				'unit' => 'px',
 			]),
-			'bottom'=> Size_Prop_Type::generate( [
+			'bottom' => Size_Prop_Type::generate( [
 				'size' => 12,
 				'unit' => 'px',
 			]),
-			'left'=> Size_Prop_Type::generate( [
+			'left' => Size_Prop_Type::generate( [
 				'size' => 24,
 				'unit' => 'px',
 			]),
