@@ -12,7 +12,7 @@ const TopSection = ( { ...props } ) => {
 					<Typography variant="body2" color="secondary">{ props.topData.description }</Typography>
 				</Box>
 				<Box sx={ { display: 'flex', gap: 1 } }>
-					<Button variant="contained" size="small" href={ props.topData.button_cta_url } target="_blank">{ props.topData.button_cta_text }</Button>
+					<Button variant="contained" size="small" href={ props.topData.button_cta_url } target="_blank">{ props.topData.button_cta_title }</Button>
 					<Button variant="outlined" color="secondary" size="small" startIcon={ <YoutubeIcon /> } href={ props.topData.button_watch_url } target="_blank">{ props.topData.button_watch_title }</Button>
 				</Box>
 			</Stack>

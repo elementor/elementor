@@ -6,7 +6,6 @@ use Elementor\Modules\Home\Transformations\Filter_Top_Section_By_License;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
-
 	public function test_transform__core_plugin() {
 		// Arrange
 		$original_data = $this->mock_top_section_data();
@@ -52,6 +51,11 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 
 		// Assert
 		$this->assertEquals( $expected_data, $transformed_data );
+
+		// Tear down
+		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
+			return 'pro';
+		} );
 	}
 
 	private function mock_top_section_data() {
