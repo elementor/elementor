@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Svg_Control extends Atomic_Control_Base {
 	public function get_type(): string {
-		return 'svg';
+		return 'svg-media';
 	}
 
 	public function get_props(): array {
