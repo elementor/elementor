@@ -45,42 +45,21 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 			'elementor_adapter' => new Elementor_Adapter_Mock( 'essential' ),
 		] );
 		$transformation->has_pro = true;
-
+var_dump('!!!!!!!!!!!!!');
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
 		$expected_data = $this->mock_top_section_data_transformed_essential();
 
 		// Assert
-		$this->assertEquals( $transformed_data, $expected_data );
+		$this->assertEquals( $expected_data, $transformed_data );
 	}
 
 	private function mock_top_section_data() {
 		return [
 			'top_with_licences' => [
-				[
-					'thing' => [
-						'key' => 'value',
-					],
-					'license' => [
-						'free'
-					],
-				],
-				[
-					'thing' => [
-						'key' => 'value',
-					],
-					'license' => [
-						'essential'
-					],
-				],
-				[
-					'thing' => [
-						'key' => 'value',
-					],
-					'license' => [
-						'pro'
-					],
-				],
+				$this->mock_top_section_data_transformed_core()['top_with_licences'],
+				$this->mock_top_section_data_transformed_pro()['top_with_licences'],
+				$this->mock_top_section_data_transformed_essential()['top_with_licences'],
 			],
 			'misc' => [
 				'Name' => 'Microsoft',
