@@ -13,9 +13,10 @@ class Background_Image_Position_Offset_Transformer extends Transformer_Base {
 			return '';
 		}
 
-		$x	= $value['x'] ?? '0px';
-		$y	= $value['y'] ?? '0px';
+		$x = $value['x'] ?? '0px';
+		$y = $value['y'] ?? '0px';
 
 		return $x . ' ' . $y;
 	}
 }
+\
