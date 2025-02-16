@@ -173,24 +173,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 	 * CSS Caching.
 	 */
 
-	public function test__removes_the_class_from_the_css_file() {
-		// Arrange.
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta(
-			Global_Classes_Repository::META_KEY,
-			$this->mock_global_classes
-		);
-
-		// Assert.
-		$this->assert_kit_css_contains( 'g-4-123' );
-
-		// Act.
-		( new Global_Classes_Repository() )->delete( 'g-4-123' );
-
-		// Assert.
-		$this->assert_kit_css_not_contains( 'g-4-123' );
-	}
-
-	public function test__updates_the_class_in_the_css_file() {
+	public function test__updates_the_classes_in_the_css_file() {
 		// Arrange.
 		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta(
 			Global_Classes_Repository::META_KEY,
@@ -199,54 +182,29 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assert_kit_css_contains( '.elementor .g-4-123{color:pink;}' );
+		$this->assert_kit_css_contains( '.elementor .g-4-124{color:blue;}' );
+
+		// Arrange.
+		$updated_classes = $this->mock_global_classes['items'];
+
+		// Update an existing class.
+		$updated_classes['g-4-123']['variants'][0]['props']['color']['value'] = 'red';
+
+		// Delete a class.
+		unset( $updated_classes['g-4-124'] );
+
+		// Add a new class.
+		$updated_classes['g-4-125'] = $this->mock_global_classes['items']['g-4-123'];
+		$updated_classes['g-4-125']['id'] = 'g-4-125';
+		$updated_classes['g-4-125']['variants'][0]['props']['color']['value'] = 'pink';
 
 		// Act.
-		$updated_class = $this->mock_global_classes['items']['g-4-123'];
-		$updated_class['variants'][0]['props']['color']['value'] = 'red';
-
-		( new Global_Classes_Repository() )->put( 'g-4-123', $updated_class );
+		( new Global_Classes_Repository() )->put( $updated_classes, [ 'g-4-123', 'g-4-125' ] );
 
 		// Assert.
 		$this->assert_kit_css_contains( '.elementor .g-4-123{color:red;}' );
-	}
-
-	public function test__adds_a_class_to_the_css_file() {
-		// Arrange.
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta(
-			Global_Classes_Repository::META_KEY,
-			$this->mock_global_classes
-		);
-
-		// Assert.
-		$this->assert_kit_css_not_contains( '{color:test-color;}' );
-
-		// Act.
-		$new_class = $this->mock_global_classes['items']['g-4-123'];
-		$new_class['variants'][0]['props']['color']['value'] = 'test-color';
-
-		$created = ( new Global_Classes_Repository() )->create( $new_class );
-
-		$id = $created['id'];
-
-		// Assert.
-		$this->assert_kit_css_contains( ".elementor .{$id}{color:test-color;}" );
-	}
-
-	public function test_order__updates_the_classes_order_in_the_css_file() {
-		// Arrange.
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta(
-			Global_Classes_Repository::META_KEY,
-			$this->mock_global_classes
-		);
-
-		// Assert.
-		$this->assert_kit_css_contains('.elementor .g-4-124{color:blue;}@media(max-width:767px){.elementor .g-4-123{color:pink;}}');
-
-		// Act.
-		( new Global_Classes_Repository() )->arrange( [ 'g-4-123', 'g-4-124' ] );
-
-		// Assert.
-		$this->assert_kit_css_contains('@media(max-width:767px){.elementor .g-4-123{color:pink;}}.elementor .g-4-124{color:blue;}');
+		$this->assert_kit_css_not_contains( '.elementor .g-4-124{color:blue;}' );
+		$this->assert_kit_css_contains( '.elementor .g-4-125{color:pink;}' );
 	}
 
 	public function test__enqueues_fonts() {
@@ -277,7 +235,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 
 		// Emulate runtime behavior that creates the CSS file only when necessary.
 		// See: `Elementor\Core\Files\CSS\Base:enqueue()`.
-		if ( '' === $meta['status'] || $post_css->is_update_required() ) {
+		if ( '' === $meta['status'] ) {
 			$post_css->update();
 		}
 
