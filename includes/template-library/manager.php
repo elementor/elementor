@@ -832,7 +832,7 @@ class Manager {
 	}
 
 	private function is_allowed_to_read_template( array $args ): bool {
-		if ( 'remote' === $args['source'] ) {
+		if ( 'remote' === $args['source'] || 'cloud' === $args['source'] ) {
 			return true;
 		}
 

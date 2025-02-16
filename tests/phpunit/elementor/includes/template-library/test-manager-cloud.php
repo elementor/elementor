@@ -21,7 +21,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 		$this->cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
-			->onlyMethods( [ 'get_resources', 'get_resource', 'post_resource', 'update_resource' ] )
+			->onlyMethods( [ 'get_resources', 'get_resource', 'post_resource', 'update_resource', 'delete_resource' ] )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -176,6 +176,57 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'title' => 'Updated Template Title',
 			'id' => 1,
 		]) );
+	}
+
+	public function test_get_template_data() {
+		// Arrange
+		$template_id = 1;
+		$template_content = [
+			'content' => [
+				'id' => 'test',
+				'elType' => 'section',
+			],
+		];
+		$template_data = [
+			'id' => $template_id,
+			'title' => 'Template 1',
+			'type' => 'TEMPLATE',
+			'parentId' => null,
+			'templateType' => 'container',
+			'content' => json_encode( $template_content ),
+		];
+
+		$this->cloud_library_app_mock
+			->method('get_resource')
+			->with([ 'id' => $template_id ])
+			->willReturn($template_data);
+
+		// Act
+		$result = $this->manager->get_template_data([ 'source' => 'cloud', 'template_id' => $template_id, 'editor_post_id' => 1, ]);
+
+		// Assert
+		$this->assertArrayHasKey( 'id', $result );
+		$this->assertArrayHasKey( 'title', $result );
+		$this->assertArrayHasKey( 'type', $result );
+		$this->assertArrayHasKey( 'templateType', $result );
+		$this->assertArrayHasKey( 'content', $result );
+	}
+
+	public function test_delete_template() {
+		// Arrange
+		$template_id = 1;
+
+		$this->cloud_library_app_mock
+			->method('delete_resource')
+			->with($template_id)
+			->willReturn(true);
+
+		// Act
+		$result = $this->manager->delete_template([ 'source' => 'cloud', 'template_id' => $template_id ]);
+
+		// Assert
+		$this->assertTrue($result);
+
 	}
 
 	public function test_export_template__template_type() {
