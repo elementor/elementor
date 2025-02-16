@@ -62,14 +62,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		);
 	}
 
-	private function mock_file_system() {
-		if (!function_exists('override_function')) {
-			runkit_function_redefine('file_get_contents', '$filename', 'return "<svg width=\"100\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0h100v100H0z\"/></svg>";');
-		}
-	}
-
 	public function test__render_svg_from_id(): void {
-		$this->mock_file_system();
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance(self::MOCK_ID);
 
 		// Act
