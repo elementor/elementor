@@ -11,8 +11,15 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		'elType' => 'widget',
 		'settings' => [
 			'svg' => [
-				'url' => '/assets/images/a-default-svg.svg',
-				'id' => 123,
+				'src' => [
+					'$$type' => 'svg-src',
+					'value' => [
+						'id' => [
+							'$$type' => 'image-attachment-id',
+							'value' => 123,
+						],
+					],
+				],
 			],
 		],
 		'widgetType' => 'a-svg',
@@ -22,6 +29,20 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
+		
+		add_filter('pre_http_request', function($preempt, $args, $url) {
+			return [
+				'body' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"/></svg>',
+			];
+		}, 10, 3);
+
+		add_filter('wp_get_attachment_url', function($url, $attachment_id) {
+			if ($attachment_id === 123) {
+				return 'https://example.com/test.svg';
+			}
+			return $url;
+		}, 10, 2);
+
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK );
 	}
 
@@ -33,5 +54,11 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+		remove_all_filters('pre_http_request');
+		remove_all_filters('wp_get_attachment_url');
 	}
 }
