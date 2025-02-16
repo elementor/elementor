@@ -346,6 +346,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.27.5 - 2025-02-16 =
+
+* Security Fix: Improved code security enforcement in Dimensions control
+
 = 3.27.4 - 2025-02-13 =
 
 * Fix: Preventing page saving in Gutenberg with ACF and active Elementor post settings ([#30160](https://github.com/elementor/elementor/issues/30160))
