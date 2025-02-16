@@ -6,20 +6,14 @@ use Spatie\Snapshots\MatchesSnapshots;
 
 class Test_Atomic_Svg extends Elementor_Test_Base {
 	use MatchesSnapshots;
+
 	const MOCK = [
 		'id' => 'abcd123',
 		'elType' => 'widget',
 		'settings' => [
 			'svg' => [
-				'src' => [
-					'$$type' => 'svg-src',
-					'value' => [
-						'id' => [
-							'$$type' => 'image-attachment-id',
-							'value' => 123,
-						],
-					],
-				],
+				'id' => 123,
+				'url' => ELEMENTOR_ASSETS_URL . 'images/test.svg',
 			],
 		],
 		'widgetType' => 'a-svg',
@@ -29,19 +23,13 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
-		
-		add_filter('pre_http_request', function($preempt, $args, $url) {
-			return [
-				'body' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"/></svg>',
-			];
-		}, 10, 3);
 
-		add_filter('wp_get_attachment_url', function($url, $attachment_id) {
-			if ($attachment_id === 123) {
-				return 'https://example.com/test.svg';
+		add_filter( 'wp_get_attachment_image_src', function( $image, $attachment_id, $size ) {
+			if ( $attachment_id === 123 ) {
+				return [ ELEMENTOR_ASSETS_URL . 'images/test.svg' ];
 			}
-			return $url;
-		}, 10, 2);
+			return $image;
+		}, 10, 3 );
 
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK );
 	}
@@ -58,7 +46,6 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		parent::tearDown();
-		remove_all_filters('pre_http_request');
-		remove_all_filters('wp_get_attachment_url');
+		remove_all_filters( 'wp_get_attachment_url' );
 	}
 }
