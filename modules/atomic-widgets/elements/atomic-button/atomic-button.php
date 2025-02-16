@@ -36,7 +36,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 
 	protected function get_templates(): array {
 		return [
-			'elementor/elements/atomic-paragraph' => __DIR__ . '/atomic-button.html.twig',
+			'elementor/elements/atomic-button' => __DIR__ . '/atomic-button.html.twig',
 		];
 	}
 
