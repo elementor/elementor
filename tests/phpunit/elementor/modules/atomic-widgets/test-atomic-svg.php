@@ -11,7 +11,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		'elType' => 'widget',
 		'settings' => [
 			'svg' => [
-				'url' => 'path/file.svg',
+				'url' => 'http://elementor-dev.local/wp-content/plugins/elementor/assets/images/a-default-svg.svg',
 				'id' => 123,
 			],
 		],
