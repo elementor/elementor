@@ -337,20 +337,24 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Act.
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
 
-		$class = $this->create_global_class( 'g-1' );
+		$class_1 = $this->create_global_class( 'g-1' );
+		$class_2 = $this->create_global_class( 'g-2' );
 
 		$request->set_body_params( [
 			'items' => [
-				'g-2' => $class,
+				'g-1' => $class_1,
+				'g-222' => $class_2,
 			],
-			'order' => [ 'g-2' ],
+			'order' => [ 'g-1', 'g-222' ],
 		] );
 
 		$response = rest_do_request( $request );
 
 		// Assert.
 		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'invalid_item', $response->get_data()['code'] );
+		$this->assertSame( 'invalid_items', $response->get_data()['code'] );
+		$this->assertStringNotContainsString( 'g-1', $response->get_data()['message'] );
+		$this->assertStringContainsString( 'g-222', $response->get_data()['message'] );
 	}
 
 	public function test_put__does_not_fail_when_data_is_identical() {

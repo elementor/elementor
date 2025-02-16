@@ -102,10 +102,13 @@ class Global_Classes_REST_API {
 	private function put( \WP_REST_Request $request ) {
 		$items = $request->get_param( 'items' );
 
-		[$sanitized_items, $error] = $this->sanitize_items( $items );
+		[$is_valid, $sanitized_items, $errors] = $this->sanitize_items( $items );
 
-		if ( $error ) {
-			return $error;
+		if ( ! $is_valid ) {
+			return Error_Builder::make( 'invalid_items' )
+				->set_status( 400 )
+				->set_message( 'Invalid items: ' . join( ', ', array_keys( $errors ) ) )
+				->build();
 		}
 
 		$order = $request->get_param( 'order' );
@@ -126,35 +129,29 @@ class Global_Classes_REST_API {
 	}
 
 	private function sanitize_items( array $items ) {
+		$errors = [];
 		$sanitized_items = [];
 
 		foreach ( $items as $item_id => $item ) {
-			[$is_valid, $sanitized, $errors] = Style_Parser::make( Style_Schema::get() )->parse( $item );
+			[$is_item_valid, $sanitized_item, $item_errors] = Style_Parser::make( Style_Schema::get() )->parse( $item );
 
-			if ( ! $is_valid ) {
-				return [
-					null,
-					Error_Builder::make( 'invalid_item' )
-						->set_status( 400 )
-						->set_message( join( ', ', $errors ) )
-						->build(),
-				];
+			if ( ! $is_item_valid ) {
+				$errors[ $item_id ] = $item_errors;
+				continue;
 			}
 
-			if ( $item_id !== $sanitized['id'] ) {
-				return [
-					null,
-					Error_Builder::make( 'invalid_item' )
-						->set_status( 400 )
-						->set_message( 'Invalid id ' . $item['id'] )
-						->build(),
-				];
+			if ( $item_id !== $sanitized_item['id'] ) {
+				$errors[ $item_id ] = [ 'id' ];
+
+				continue;
 			}
 
-			$sanitized_items[ $sanitized['id'] ] = $sanitized;
+			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
 		}
 
-		return [ $sanitized_items, null ];
+		$is_valid = count( $errors ) === 0;
+
+		return [ $is_valid, $sanitized_items, $errors ];
 	}
 
 	private function is_valid_order( array $order, array $items ) {
