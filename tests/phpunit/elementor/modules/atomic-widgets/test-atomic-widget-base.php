@@ -624,8 +624,17 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														'value' => 'medium'
 													],
 													'size' => [
-														'$$type' => 'string',
-														'value' => 'cover'
+														'$$type' => 'background-image-size-scale',
+														'value'  => [
+															//Missing width
+															'height'    => [
+																'$$type' => 'size',
+																'value'  => [
+																	'size' => 160,
+																	'unit' => 'px'
+																],
+															],
+														]
 													],
 													'attachment' => [
 														'$$type' => 'string',
