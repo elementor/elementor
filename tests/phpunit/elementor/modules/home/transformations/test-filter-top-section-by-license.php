@@ -8,6 +8,9 @@ use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 	public function test_transform__core_plugin() {
 		// Arrange
+		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
+			return 'free';
+		} );
 		$original_data = $this->mock_top_section_data();
 
 		$transformation = new Filter_Top_Section_By_License();
@@ -54,7 +57,7 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 
 		// Tear down
 		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
-			return 'pro';
+			return 'free';
 		} );
 	}
 
