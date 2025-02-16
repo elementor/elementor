@@ -7,16 +7,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-
 class Background_Image_Position_Offset_Transformer extends Transformer_Base {
-    public function transform( $value, $key ): string {
-        if ( empty( $value['position'] ) ) {
-            return '';
-        }
+	public function transform( $value, $key ): string {
+		if ( empty( $value['position'] ) ) {
+			return '';
+		}
 
-        $x  = $value['x'] ?? '0px';
-        $y = $value['y'] ?? '0px';
+		$x	= $value['x'] ?? '0px';
+		$y	= $value['y'] ?? '0px';
 
-        return $x . ' ' . $y;
-    }
+		return $x . ' ' . $y;
+	}
 }
