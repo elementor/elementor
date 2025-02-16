@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Button;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -45,7 +45,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
-					Textarea_Control::bind_to( 'text' )
+					Text_Control::bind_to( 'text' )
 						->set_label( __( 'Button text', 'elementor' ) )
 						->set_placeholder( __( 'Click here', 'elementor' ) ),
 				] ),
