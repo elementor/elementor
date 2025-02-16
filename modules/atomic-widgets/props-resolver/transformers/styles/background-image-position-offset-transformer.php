@@ -19,4 +19,3 @@ class Background_Image_Position_Offset_Transformer extends Transformer_Base {
 		return $x . ' ' . $y;
 	}
 }
-\
