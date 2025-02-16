@@ -491,7 +491,7 @@ abstract class Base extends Base_File {
 		}
 
 		if ( Controls_Manager::FONT === $control['type'] ) {
-			$this->fonts[] = $value;
+			$this->add_font( $value );
 		}
 
 		/** @var Base_Data_Control $control_obj */

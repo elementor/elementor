@@ -58,6 +58,62 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		'order' => [ 'g-4-124', 'g-4-123' ],
 	];
 
+	private $mock_global_classes_with_fonts = [
+		'items' => [
+			'g-4-123' => [
+				'type' => 'class',
+				'id' => 'g-4-123',
+				'label' => 'pinky',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'mobile',
+							'state' => null,
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Poppins',
+							],
+						],
+					],
+					[
+						'meta' => [
+							'breakpoint' => 'tablet',
+							'state' => null,
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Inter',
+							],
+						],
+					],
+				],
+			],
+			'g-4-124' => [
+				'id' => 'g-4-124',
+				'type' => 'class',
+				'label' => 'bluey',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => null,
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Inter',
+							],
+						],
+					],
+				],
+			],
+		],
+		'order' => [ 'g-4-124', 'g-4-123' ],
+	];
+
 	private Kit $kit;
 
 	public function setUp(): void {
@@ -193,7 +249,38 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		$this->assert_kit_css_contains('@media(max-width:767px){.elementor .g-4-123{color:pink;}}.elementor .g-4-124{color:blue;}');
 	}
 
+	public function test__enqueues_fonts() {
+		// Arrange.
+		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta(
+			Global_Classes_Repository::META_KEY,
+			$this->mock_global_classes_with_fonts
+		);
+
+		// Act.
+		$post_css = $this->regenerate_kit_css();
+
+		$post_css->get_content();
+
+		// Assert.
+		$this->assertSame( [
+			'Inter',
+			'Poppins',
+		], $post_css->get_fonts() );
+	}
+
 	private function assert_kit_css_contains( string $substring, bool $contains = true ) {
+		$post_css = $this->regenerate_kit_css();
+
+		$css_content = file_get_contents( $post_css->get_path() );
+
+		if ( $contains ) {
+			$this->assertStringContainsString( $substring, $css_content );
+		} else {
+			$this->assertStringNotContainsString( $substring, $css_content );
+		}
+	}
+
+	private function regenerate_kit_css() {
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 
 		// Intentionally not using the `Post_CSS::create` function to force a new instance.
@@ -206,13 +293,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 			$post_css->update();
 		}
 
-		$css_content = file_get_contents( $post_css->get_path() );
-
-		if ( $contains ) {
-			$this->assertStringContainsString( $substring, $css_content );
-		} else {
-			$this->assertStringNotContainsString( $substring, $css_content );
-		}
+		return $post_css;
 	}
 
 	private function assert_kit_css_not_contains( string $substring ) {

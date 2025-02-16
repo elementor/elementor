@@ -7,6 +7,7 @@ use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
@@ -73,6 +74,47 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 		// Assert
 		$css = $post_css->get_content();
 		$this->assertStringContainsString( '.elementor .test-widget-base{font-family:Poppins;color:red;}', $css );
+	}
+
+	public function test_it__enqueues_fonts() {
+		// Arrange
+		( new Atomic_Widget_Base_Styles() )->register_hooks();
+
+		$widget = $this->make_mock_widget( [
+			'base_styles' => [
+				'base' => Style_Definition::make()
+					->add_variant(
+						Style_Variant::make()
+							->add_prop( 'color', String_Prop_Type::generate( 'red' ) )
+							->add_prop( 'font-family', String_Prop_Type::generate( 'Poppins' ) )
+					)
+					->add_variant( Style_Variant::make()
+						->set_breakpoint( 'mobile' )
+						->add_prop( 'font-family', String_Prop_Type::generate( 'Inter' ) )
+					)
+					->add_variant( Style_Variant::make()
+						->set_breakpoint( 'tablet' )
+						->add_prop( 'font-family', String_Prop_Type::generate( 'Inter' ) )
+					)
+			]
+		] );
+
+		$this->widgets_manager_mock->method( 'get_widget_types' )->willReturn( [ $widget ] );
+		$this->elements_manager_mock->method( 'get_element_types' )->willReturn( [] );
+
+		Plugin::$instance->kits_manager->create_new_kit( 'kit' );
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		// Act
+		$post_css = Post::create( $kit->get_id() );
+
+		// Assert
+		$post_css->get_content();
+
+		$this->assertSame( [
+			'Poppins',
+			'Inter',
+		], $post_css->get_fonts() );
 	}
 
 	/**
