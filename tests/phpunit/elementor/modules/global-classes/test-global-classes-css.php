@@ -257,30 +257,18 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		);
 
 		// Act.
-		$post_css = $this->regenerate_kit_css();
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+
+		// Intentionally not using the `Post_CSS::create` function to force a new instance.
+		$post_css = new Post_CSS( $kit_id );
 
 		$post_css->get_content();
 
 		// Assert.
-		$this->assertSame( [
-			'Inter',
-			'Poppins',
-		], $post_css->get_fonts() );
+		$this->assertSame( [ 'Inter', 'Poppins' ], $post_css->get_fonts() );
 	}
 
 	private function assert_kit_css_contains( string $substring, bool $contains = true ) {
-		$post_css = $this->regenerate_kit_css();
-
-		$css_content = file_get_contents( $post_css->get_path() );
-
-		if ( $contains ) {
-			$this->assertStringContainsString( $substring, $css_content );
-		} else {
-			$this->assertStringNotContainsString( $substring, $css_content );
-		}
-	}
-
-	private function regenerate_kit_css() {
 		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 
 		// Intentionally not using the `Post_CSS::create` function to force a new instance.
@@ -293,7 +281,13 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 			$post_css->update();
 		}
 
-		return $post_css;
+		$css_content = file_get_contents( $post_css->get_path() );
+
+		if ( $contains ) {
+			$this->assertStringContainsString( $substring, $css_content );
+		} else {
+			$this->assertStringNotContainsString( $substring, $css_content );
+		}
 	}
 
 	private function assert_kit_css_not_contains( string $substring ) {

@@ -1,14 +1,12 @@
 <?php
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Frontend;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Plugin;
 use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
 use Elementor\Widget_Base;
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Spatie\Snapshots\MatchesSnapshots;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -250,7 +248,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 	public function test_parse_atomic_widget_styles__enqueues_fonts() {
 		// Arrange.
 		( new Atomic_Widget_Styles() )->register_hooks();
-		$post = $this->make_mock_post();
+		$post_css = $this->make_mock_post();
 		$element = $this->make_mock_widget([
 			'controls' => [],
 			'props_schema' => [],
@@ -305,16 +303,17 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		]);
 
 		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element );
-		$post->get_content();
+		do_action( 'elementor/element/parse_css', $post_css, $element );
+		$post_css->get_content();
 
 		// Assert.
-		$this->assertSame( [ 'Poppins', 'Roboto' ], $post->get_fonts() );
+		$this->assertSame( [ 'Poppins', 'Roboto' ], $post_css->get_fonts() );
 	}
 
 	private function make_mock_post() {
-		$doc = $this->factory()->documents->create_and_get();
-		return new Post( $doc->get_id() );
+		$document = $this->factory()->documents->create_and_get();
+
+		return new Post_CSS( $document->get_id() );
 	}
 
 	/**

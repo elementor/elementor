@@ -103,18 +103,15 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 		$this->elements_manager_mock->method( 'get_element_types' )->willReturn( [] );
 
 		Plugin::$instance->kits_manager->create_new_kit( 'kit' );
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit_id = Plugin::$instance->kits_manager->get_active_id();
 
 		// Act
-		$post_css = Post::create( $kit->get_id() );
+		$post_css = Post::create( $kit_id );
 
 		// Assert
 		$post_css->get_content();
 
-		$this->assertSame( [
-			'Poppins',
-			'Inter',
-		], $post_css->get_fonts() );
+		$this->assertSame( [ 'Poppins', 'Inter' ], $post_css->get_fonts() );
 	}
 
 	/**

@@ -483,7 +483,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertNotEmpty( $css, 'CSS should not be empty' );
 		$this->assertMatchesSnapshot( $css );
 	}
-
 	public function test_render__style_with_background_color_transformers() {
 		// Arrange.
 		$styles = [
