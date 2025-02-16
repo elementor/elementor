@@ -2,8 +2,6 @@
 namespace elementor\modules\home\transformations;
 
 use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
-use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -27,12 +25,6 @@ class Filter_Sidebar_Promotion_By_License extends Transformations_Abstract {
 		$home_screen_data['sidebar_promotion_variants'] = reset( $new_sidebar_promotion );
 
 		return $home_screen_data;
-	}
-
-	private function get_tier() {
-		$license = Utils::has_pro() ? ConnectModule::ACCESS_TIER_PRO_LEGACY : ConnectModule::ACCESS_TIER_FREE;
-
-		return apply_filters( 'elementor/admin/homescreen_promotion_tier', $license );
 	}
 
 	private function is_enabled( $item ) {

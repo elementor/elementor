@@ -10,6 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Filter_Top_Section_By_License extends Transformations_Abstract {
 	public bool $has_pro;
 
+	private const FREE = 'free';
+	private const ESSENTIAL = 'essential';
+	private const PRO = 'pro';
+
 	public function __construct( $args ) {
 		parent::__construct( $args );
 
@@ -18,14 +22,34 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 
 	private function is_valid_item( $item ) {
 		if ( isset( $item['license'] ) ) {
-			$has_pro_json_not_free = $this->has_pro && 'pro' === $item['license'][0];
-			$is_not_pro_json_not_pro = ! $this->has_pro && 'free' === $item['license'][0];
+			$item_tier = $item['license'][0];
+			$user_tier = $this->get_tier();
 
-			return $has_pro_json_not_free || $is_not_pro_json_not_pro;
+			if ( $user_tier && $user_tier === $item_tier ) {
+				return true;
+			}
+
+			return ! $user_tier && $this->validate_tier( $item_tier );
 		}
+
+		return false;
+	}
+
+	private function validate_tier( $tier ): bool {
+		return $this->validate_pro_tier( $tier ) || $this->validate_free_tier( $tier );
+	}
+
+	private function validate_pro_tier( string $tier ): bool {
+		return $this->has_pro && in_array( $tier, [ self::PRO, self::ESSENTIAL ], true );
+	}
+
+	private function validate_free_tier( string $tier ): bool {
+		return ! $this->has_pro && self::FREE === $tier;
 	}
 
 	public function transform( array $home_screen_data ): array {
+		$new_top = [];
+
 		foreach ( $home_screen_data['top_with_licences'] as $index => $item ) {
 			if ( $this->is_valid_item( $item ) ) {
 				$new_top[] = $item;

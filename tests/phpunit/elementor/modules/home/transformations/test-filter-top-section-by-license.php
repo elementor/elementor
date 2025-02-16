@@ -1,6 +1,8 @@
 <?php
-namespace elementor\tests\phpunit\elementor\modules\home\transformations;
 
+namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
+
+use Elementor\Tests\Phpunit\Elementor\Modules\Home\Mocks\Elementor_Adapter_Mock;
 use Elementor\Modules\Home\Transformations\Filter_Top_Section_By_License;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
@@ -10,7 +12,7 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 		// Arrange
 		$original_data = $this->mock_top_section_data();
 
-		$transformation = new Filter_Top_Section_By_License( [] );
+		$transformation = new Filter_Top_Section_By_License();
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
@@ -24,12 +26,29 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 		// Arrange
 		$original_data = $this->mock_top_section_data();
 
-		$transformation = new Filter_Top_Section_By_License( [] );
+		$transformation = new Filter_Top_Section_By_License();
 		$transformation->has_pro = true;
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
 		$expected_data = $this->mock_top_section_data_transformed_pro();
+
+		// Assert
+		$this->assertEquals( $transformed_data, $expected_data );
+	}
+
+	public function test_transform__essential_plugin() {
+		// Arrange
+		$original_data = $this->mock_top_section_data();
+
+		$transformation = new Filter_Top_Section_By_License( [
+			'elementor_adapter' => new Elementor_Adapter_Mock( 'essential' ),
+		] );
+		$transformation->has_pro = true;
+
+		// Act
+		$transformed_data = $transformation->transform( $original_data );
+		$expected_data = $this->mock_top_section_data_transformed_essential();
 
 		// Assert
 		$this->assertEquals( $transformed_data, $expected_data );
@@ -44,6 +63,14 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 					],
 					'license' => [
 						'free'
+					],
+				],
+				[
+					'thing' => [
+						'key' => 'value',
+					],
+					'license' => [
+						'essential'
 					],
 				],
 				[
@@ -87,6 +114,23 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 				],
 				'license' => [
 					'pro'
+				],
+			],
+			'misc' => [
+				'Name' => 'Microsoft',
+				'Version' => 'Windows',
+			],
+		];
+	}
+
+	private function mock_top_section_data_transformed_essential() {
+		return [
+			'top_with_licences' => [
+				'thing' => [
+					'key' => 'value',
+				],
+				'license' => [
+					'essential'
 				],
 			],
 			'misc' => [
