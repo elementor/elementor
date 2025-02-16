@@ -35,14 +35,13 @@ class Global_Classes_CSS {
 
 		$css = Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform( function($key, $value ) use ( &$post ) {
+		)->on_prop_transform( function( $key, $value ) use ( &$post ) {
 			if ( 'font-family' !== $key ) {
 				return;
 			}
 
 			$post->add_font( $value );
 		} )->render( $sorted_items->all() );
-
 
 		$post->get_stylesheet()->add_raw_css( $css );
 	}
