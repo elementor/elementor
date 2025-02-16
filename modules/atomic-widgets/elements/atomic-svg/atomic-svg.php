@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Svg extends Atomic_Widget_Base {
-	const SVG_PREFIX = 'data:image/svg+xml;charset=utf-8,';
 	const BASE_STYLE_KEY = 'base';
+	const DEFAULT_SIZE = 'full';
 
 	public static function get_element_type(): string {
 		return 'a-svg';
@@ -33,7 +33,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	public function get_default_svg_path() {
-		return ELEMENTOR_ASSETS_URL . 'images/defaultsvg.svg';
+		return ELEMENTOR_ASSETS_URL . 'images/a-default-svg.svg';
 	}
 
 	protected function render() {
@@ -41,14 +41,8 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg_url = isset($settings['svg']['url']) ? $settings['svg']['url'] : null;
 
 		if ( ! $svg_url && isset( $settings['svg']['id'] ) ) {
-			$attachment = wp_get_attachment_image_src( $settings['svg']['id'], 'full' );
+			$attachment = wp_get_attachment_image_src( $settings['svg']['id'], self::DEFAULT_SIZE );
 			$svg_url = isset($attachment[0]) ? $attachment[0] : null;
-		}
-
-		if ( ! $svg_url ) {
-			// Render default SVG if no URL is provided
-			printf( '%s', wp_safe_remote_get( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			return;
 		}
 
 		$svg = new \WP_HTML_Tag_Processor( file_get_contents($svg_url) );
@@ -105,7 +99,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'svg' => Image_Src_Prop_Type::make()->default_url(  ELEMENTOR_ASSETS_URL . 'images/defaultsvg.svg' ),
+			'svg' => Image_Src_Prop_Type::make()->default_url(  ELEMENTOR_ASSETS_URL . 'images/a-default-svg.svg' ),
 		];
 	}
 }
