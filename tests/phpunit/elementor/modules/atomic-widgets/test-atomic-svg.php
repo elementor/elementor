@@ -36,7 +36,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 
 		add_filter('wp_get_attachment_image_src', function($image, $attachment_id, $size) {
 			if ($attachment_id === 123) {
-				return [ELEMENTOR_ASSETS_PATH . 'images/test.svg'];
+				return [ELEMENTOR_ASSETS_URL . 'images/test.svg'];
 			}
 			return $image;
 		}, 10, 3);
@@ -49,6 +49,17 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			}
 			return $preempt;
 		}, 10, 3);
+
+		add_filter('pre_filesystem_method', function() {
+			return 'direct';
+		});
+
+		WP_Filesystem();
+		global $wp_filesystem;
+		$wp_filesystem->put_contents(
+			ELEMENTOR_ASSETS_PATH . 'images/test.svg',
+			'<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z"/></svg>'
+		);
 	}
 
 	private function mock_file_system() {
