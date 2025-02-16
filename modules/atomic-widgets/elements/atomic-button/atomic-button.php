@@ -70,28 +70,28 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'unit' => 'px',
 		] );
 		$background_color_value = Background_Prop_Type::generate( [
-			'color' => Color_Prop_Type::generate( '#375EFB' )
+			'color' => Color_Prop_Type::generate( '#375EFB' ),
 		] );
 		$display_value = String_Prop_Type::generate( 'inline-block' );
 		$padding_value = Dimensions_Prop_Type::generate( [
-				'top'=> Size_Prop_Type::generate( [
-					'size'=> 12,
-					'unit' => 'px',
-				]),
-				'right'=> Size_Prop_Type::generate( [
-				'size'=> 24,
+			'top'=> Size_Prop_Type::generate( [
+				'size' => 12,
 				'unit' => 'px',
-				]),
-				'bottom'=> Size_Prop_Type::generate( [
-				'size'=> 12,
+			]),
+			'right'=> Size_Prop_Type::generate( [
+				'size' => 24,
 				'unit' => 'px',
-				]),
-				'left'=> Size_Prop_Type::generate( [
-				'size'=> 24,
+			]),
+			'bottom'=> Size_Prop_Type::generate( [
+				'size' => 12,
 				'unit' => 'px',
-				]),
+			]),
+			'left'=> Size_Prop_Type::generate( [
+				'size' => 24,
+				'unit' => 'px',
+			]),
 		]);
-
+		$align_self_value = String_Prop_Type::generate( 'baseline' );
 		$text_align_value = String_Prop_Type::generate( 'center' );
 		$font_weight_value = String_Prop_Type::generate( '500' );
 
@@ -107,6 +107,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 						->add_prop( 'font-weight', $font_weight_value )
 						->add_prop( 'padding', $padding_value )
 						->add_prop( 'text-align', $text_align_value )
+						->add_prop( 'align-self', $align_self_value )
 				),
 		];
 	}
