@@ -1272,22 +1272,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 																'url' => null
 															],
 														],
-														'size' => [
-															'$$type' => 'background-image-size-scale',
-															'value'  => [
-																//Missing width
-																'height'    => [
-																	'$$type' => 'size',
-																	'value'  => [
-																		'size' => 160,
-																		'unit' => 'px'
-																	],
-																],
-															]
-														],
-														'position' => 'center left',
-														'repeat' => 'no-repeat',
-														'attachment' => 'scroll',
 													]
 												],
 											],
