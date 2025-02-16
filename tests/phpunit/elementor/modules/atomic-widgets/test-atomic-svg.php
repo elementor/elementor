@@ -89,4 +89,28 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		// Assert
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
+
+	public function test__render_svg_from_url(): void {
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance(self::MOCK_URL);
+
+		// Act
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert
+		$this->assertMatchesSnapshot($rendered_output);
+	}
+
+	public function test__render_svg_from_id(): void {
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance(self::MOCK_ID);
+
+		// Act
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert
+		$this->assertMatchesSnapshot($rendered_output);
+	}
 }
