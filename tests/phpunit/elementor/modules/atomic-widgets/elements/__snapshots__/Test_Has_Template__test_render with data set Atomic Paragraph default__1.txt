@@ -1,4 +1,3 @@
 			<p class="a-paragraph-base">
             Type your paragraph here
     </p>
-		
