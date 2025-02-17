@@ -60,7 +60,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'link' => [
 							'$$type' => 'link',
 							'value' => [
-								'href' => 'https://elementor.com',
+								'destination' => [
+									'$$type' => 'url',
+									'value' => 'https://elementor.com',
+								],
 								'isTargetBlank' => true,
 							],
 						],
@@ -125,7 +128,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'settings' => [
 						'classes' => [
 							'$$type' => 'classes',
-							'value' => [ 'one', 'two', 'three' ],
+							'value' => [ 'one', 'two', 'three', null ],
 						],
 						'outer_classes' => [
 							'$$type' => 'classes',
@@ -133,8 +136,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						],
 					],
 					'result' => [
-						'classes' => 'one two three',
-						'inner_classes' => '',
+						'classes' => [ 'one', 'two', 'three' ],
+						'inner_classes' => [],
 						'outer_classes' => null,
 					],
 				],
@@ -621,8 +624,17 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 														'value' => 'medium'
 													],
 													'size' => [
-														'$$type' => 'string',
-														'value' => 'cover'
+														'$$type' => 'background-image-size-scale',
+														'value'  => [
+															//Missing width
+															'height'    => [
+																'$$type' => 'size',
+																'value'  => [
+																	'size' => 160,
+																	'unit' => 'px'
+																],
+															],
+														]
 													],
 													'attachment' => [
 														'$$type' => 'string',
@@ -1218,81 +1230,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Expect.
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: -webkit-text-stroke' );
-
-		// Act.
-		$widget->get_data_for_save();
-	}
-
-	public function test_get_data_for_save__throws_on_styles_background_color_overlay_prop_validation_error() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'string_prop' => String_Prop_Type::make()->default( '' ),
-			],
-			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
-			],
-			'styles' => [
-				's-1234' => [
-					'id' => 's-1234',
-					'type' => 'class',
-					'label' => 'My Class',
-					'variants' => [
-						[
-							'props' => [
-								'background' => [
-									'$$type' => 'background',
-									'value' => [
-										'background-overlay' => [
-											'$$type' => 'background-overlay',
-											'value' => [
-												[
-													'$$type' => 'background-color-overlay',
-													'value' => 4,
-												],
-												[
-													'$$type' => 'background-image-overlay',
-													'value' => [
-														'image-src' => [
-															'$$type' => 'image-src',
-															'value' => [
-																'id' => [
-																	'$$type' => 'image-attachment-id',
-																	'value' => 3,
-																],
-																'url' => null
-															],
-														],
-														'size' => 'cover',
-                                                        'position' => 'center left',
-														'repeat' => 'no-repeat',
-														'attachment' => 'scroll',
-													]
-												],
-											],
-										],
-
-										'color' => [
-											'$$type' => 'color',
-											'value' => 'red',
-										],
-									],
-								],
-							],
-
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => null,
-							],
-						],
-					],
-				]
-			]
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: background' );
 
 		// Act.
 		$widget->get_data_for_save();

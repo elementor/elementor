@@ -3,7 +3,8 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\TemplateRenderer;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\TemplateRenderer\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\TemplateRenderer\Template_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -34,7 +35,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 				'elementor/elements/test' => __DIR__ . '/mocks/basic.html.twig'
 			],
 			'settings' => [
-				'classes' => 'class1 class2',
+				'classes' => [ 'class1', 'class2' ],
 				'title' => 'This is my title',
 			],
 		] );
@@ -59,6 +60,7 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 			],
 			'main' => 'elementor/elements/test',
 			'settings' => [
+				'classes' => null,
 				'title' => 'This is my title',
 			],
 		] );
@@ -150,6 +152,13 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 
 			protected static function define_props_schema(): array {
 				return [];
+			}
+
+			protected function define_base_styles(): array {
+				return [
+					'something' => Style_Definition::make(),
+					'something_else' => Style_Definition::make(),
+				];
 			}
 
 			public static function get_element_type(): string {

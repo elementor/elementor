@@ -1,9 +1,9 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Image;
 
+use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
-use Elementor\Modules\AtomicWidgets\TemplateRenderer\Has_Template;
 use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
