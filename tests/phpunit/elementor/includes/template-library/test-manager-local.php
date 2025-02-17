@@ -109,9 +109,6 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		);
 	}
 
-	/**
-	 *
-	 */
 	public function test_should_return_template_data_from_update_template() {
 		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
@@ -136,6 +133,18 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 		$updated_template = self::$manager->update_template( $template_data );
 
 		$this->assert_array_have_keys( $remote_remote, $updated_template );
+	}
+
+	public function test_rename_template_should_return_updated_template() {
+		$template_data = [
+			'id' => $this->factory()->get_default_post()->ID,
+			'source' => 'local',
+			'title' => 'Updated Title',
+		];
+
+		$updated_template = self::$manager->rename_template( $template_data );
+
+		$this->assertEquals( $updated_template['title'], $template_data['title'] );
 	}
 
 	/**
