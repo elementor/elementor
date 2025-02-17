@@ -279,38 +279,75 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 	public function test_export_template__folder_type() {
 		// Arrange
-		$data = [
+		$folder = [
 			'id' => 123,
 			'title' => 'Folder 1',
 			'type' => 'FOLDER',
 			'parentId' => null,
 			'templateType' => 'folder',
 		];
+ 
+		$this->cloud_library_app_mock
+			->method( 'get_resource' )
+			->willReturnCallback( function ( $args ) use ( $folder ) {
+				$data = [
+					123 => $folder,
+					101 => [
+						'id' => 101,
+						'title' => 'Header Template',
+						'type' => 'TEMPLATE',
+						'parentId' => $folder['id'],
+						'templateType' => 'container',
+						'content' => '{"content":"value"}',
+					],
+					102 => [
+						'id' => 102,
+						'title' => 'Footer Template',
+						'type' => 'TEMPLATE',
+						'parentId' => $folder['id'],
+						'templateType' => 'container',
+						'content' => '{"content":"value"}',
+					],
+					103 => [
+						'id' => 103,
+						'title' => 'Sidebar Template',
+						'type' => 'TEMPLATE',
+						'parentId' => $folder['id'],
+						'templateType' => 'container',
+						'content' => '{"content":"value"}',
+					],
+				];
 
-		$this->cloud_library_app_mock->method( 'get_resource' )->willReturn( $data );
+				return $data[ $args['id'] ] ?? [];
+			}
+		);
+
 		$this->cloud_source_mock->method( 'get_item_children' )->willReturn(
 			[
-				[
-					'template_id' => 101,
-					'title' => 'Header Template',
-					'type' => 'TEMPLATE',
-					'parentId' => $data['id'],
-					'templateType' => 'container'
+				'templates' => [
+					[
+						'template_id' => 101,
+						'title' => 'Header Template',
+						'type' => 'TEMPLATE',
+						'parentId' => $folder['id'],
+						'templateType' => 'container'
+					],
+					[
+						'template_id' => 102,
+						'title' => 'Footer Template',
+						'type' => 'TEMPLATE',
+						'parentId' => $folder['id'],
+						'templateType' => 'container'
+					],
+					[
+						'template_id' => 103,
+						'title' => 'Sidebar Template',
+						'type' => 'TEMPLATE',
+						'parentId' => $folder['id'],
+						'templateType' => 'container'
+					],
 				],
-				[
-					'template_id' => 102,
-					'title' => 'Footer Template',
-					'type' => 'TEMPLATE',
-					'parentId' => $data['id'],
-					'templateType' => 'container'
-				],
-				[
-					'template_id' => 103,
-					'title' => 'Sidebar Template',
-					'type' => 'TEMPLATE',
-					'parentId' => $data['id'],
-					'templateType' => 'container'
-				],
+				'total' => 3,
 			]
 		);
 
@@ -342,7 +379,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			->with( $this->equalTo( $zip_complete_path ) );
 
 		// Act
-		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $data['id'] ] );
+		$result = $this->manager_mock->export_template( [ 'source' => 'cloud', 'template_id' => $folder['id'] ] );
 	}
 
 	public function test_load_more_templates() {
