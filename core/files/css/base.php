@@ -491,7 +491,7 @@ abstract class Base extends Base_File {
 		}
 
 		if ( Controls_Manager::FONT === $control['type'] ) {
-			$this->fonts[] = $value;
+			$this->add_font( $value );
 		}
 
 		/** @var Base_Data_Control $control_obj */
@@ -1025,5 +1025,11 @@ abstract class Base extends Base_File {
 		$globals = $controls_stack->get_settings( '__globals__' );
 
 		return ! empty( $globals[ $control_global_key ] );
+	}
+
+	public function add_font( $font ) {
+		if ( ! in_array( $font, $this->fonts, true ) ) {
+			$this->fonts[] = $font;
+		}
 	}
 }
