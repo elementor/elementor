@@ -16,7 +16,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 	/**
 	 * @dataProvider element_data_provider
 	 */
-	public function test_render(array $element_data):void {
+	public function test_render( array $element_data ): void {
 		// Arrange.
 		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
