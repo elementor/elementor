@@ -52,11 +52,13 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			$this->set_svg_attributes( $svg, $settings );
 		}
 
-		while ( $svg->next_tag( [ 'path', 'rect', 'circle', 'g' ] ) ) {
+		while ( $svg && $svg->next_tag( [ 'path', 'rect', 'circle', 'g' ] ) ) {
 			$svg->remove_attribute( 'fill' );
 		}
 
-		$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
+		if ( $svg ) {
+			$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
+		}
 
 		// Render the SVG content
 		printf( '%s', $valid_svg ?? wp_safe_remote_get( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
