@@ -2,9 +2,9 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Button;
 
+use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -45,7 +45,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
-					Text_Control::bind_to( 'text' )
+					Textarea_Control::bind_to( 'text' )
 						->set_label( __( 'Button text', 'elementor' ) )
 						->set_placeholder( __( 'Click here', 'elementor' ) ),
 				] ),
@@ -91,6 +91,14 @@ class Atomic_Button extends Atomic_Widget_Base {
 				'unit' => 'px',
 			]),
 		]);
+		$border_radius_value = Size_Prop_Type::generate( [
+			'size' => 2,
+			'unit' => 'px',
+		] );
+		$border_width_value = Size_Prop_Type::generate( [
+			'size' => 0,
+			'unit' => 'px',
+		] );
 		$align_self_value = String_Prop_Type::generate( 'baseline' );
 		$text_align_value = String_Prop_Type::generate( 'center' );
 		$font_weight_value = String_Prop_Type::generate( '500' );
@@ -108,6 +116,8 @@ class Atomic_Button extends Atomic_Widget_Base {
 						->add_prop( 'padding', $padding_value )
 						->add_prop( 'text-align', $text_align_value )
 						->add_prop( 'align-self', $align_self_value )
+						->add_prop( 'border-radius', $border_radius_value )
+						->add_prop( 'border-width', $border_width_value )
 				),
 		];
 	}
