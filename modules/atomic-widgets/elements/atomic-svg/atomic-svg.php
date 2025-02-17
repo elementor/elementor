@@ -29,6 +29,31 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		return 'eicon-shape';
 	}
 
+	protected static function define_props_schema(): array {
+		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+			'width' => String_Prop_Type::make()
+				->default( '100%' ),
+			'height' => String_Prop_Type::make()
+				->default( '100%' ),
+			'svg' => Image_Prop_Type::make()
+				->default_url( self::get_placeholder() ),
+		];
+	}
+
+	protected function define_atomic_controls(): array {
+		$content_section = Section::make()
+			->set_label( esc_html__( 'Content', 'elementor' ) )
+			->set_items( [
+				Svg_Control::bind_to( 'svg' ),
+			] );
+
+		return [
+			$content_section,
+		];
+	}
+
 	protected function render() {
 		$settings = $this->get_atomic_settings();
 
@@ -66,18 +91,6 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg->set_attribute( 'height', $settings['height'] ?? '100%' );
 	}
 
-	protected function define_atomic_controls(): array {
-		$content_section = Section::make()
-			->set_label( esc_html__( 'Content', 'elementor' ) )
-			->set_items( [
-				Svg_Control::bind_to( 'svg' ),
-			] );
-
-		return [
-			$content_section,
-		];
-	}
-
 	protected static function get_placeholder(): string {
 		$default_svg = '<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -95,18 +108,5 @@ class Atomic_Svg extends Atomic_Widget_Base {
             </g>
         </svg>';
 		return self::SVG_ENCODING . rawurlencode( $default_svg );
-	}
-
-	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-			'width' => String_Prop_Type::make()
-				->default( '100%' ),
-			'height' => String_Prop_Type::make()
-				->default( '100%' ),
-			'svg' => Image_Prop_Type::make()
-				->default_url( self::get_placeholder() ),
-		];
 	}
 }
