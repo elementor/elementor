@@ -89,8 +89,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 			[
 				'id' => 'abcd123',
 				'elType' => 'widget',
-				'settings' => [
-				],
+				'settings' => [],
 				'widgetType' => 'a-svg',
 			]
 		];

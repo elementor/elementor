@@ -12,8 +12,8 @@
 
 {% if settings.link.href %}
 	<a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}">
+{% endif %}
 		{{ imageTag }}
+{% if settings.link.href %}
 	</a>
-{% else %}
-	{{ imageTag }}
 {% endif %}
