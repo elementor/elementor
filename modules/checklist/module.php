@@ -223,7 +223,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 			'name' => self::EXPERIMENT_ID,
 			'title' => esc_html__( 'Launchpad Checklist', 'elementor' ),
 			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
-			'release_status' => Manager::RELEASE_STATUS_ALPHA,
+			'release_status' => Manager::RELEASE_STATUS_STABLE,
 			'hidden' => true,
 			'new_site' => [
 				'default_active' => true,
