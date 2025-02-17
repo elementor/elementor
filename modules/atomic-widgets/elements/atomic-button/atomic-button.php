@@ -46,7 +46,8 @@ class Atomic_Button extends Atomic_Widget_Base {
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
 					Textarea_Control::bind_to( 'text' )
-						->set_label( __( 'Button text', 'elementor' ) ),
+						->set_label( __( 'Button text', 'elementor' ) )
+						->set_placeholder( __( 'Type your button text here', 'elementor' ) ),
 				] ),
 		];
 	}
