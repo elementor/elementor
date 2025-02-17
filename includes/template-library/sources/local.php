@@ -1654,6 +1654,7 @@ class Source_Local extends Source_Base {
 			// Show blank state.
 			add_action( 'manage_posts_extra_tablenav', [ $this, 'maybe_render_blank_state' ] );
 		}
+
 		add_action( 'elementor/document/after_save', [ $this, 'on_template_update' ], 10, 2 );
 
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );

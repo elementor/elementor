@@ -108,23 +108,23 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		// Assert
 		$this->cloud_library_app_mock
-			->method('get_resource')
-			->with([ 'id' => 1 ]);
+			->method( 'get_resource' )
+			->with( [ 'id' => 1 ] );
 
 		$this->cloud_library_app_mock
 			->expects( $this->once() )
-			->method('post_resource')
-			->with([
+			->method( 'post_resource' )
+			->with( [
 				'title' => 'ATemplate',
 				'type' => 'TEMPLATE',
 				'templateType' => 'container',
 				'parentId' => null,
 				'content' => $mock_content,
-			])
-			->willReturn($post_resource_response);;
+			] )
+			->willReturn( $post_resource_response );
 
 		// Act
-		$this->manager->save_template([
+		$this->manager->save_template( [
 			'post_id' => 1,
 			'source' => 'cloud',
 			'title' => 'ATemplate',
@@ -132,50 +132,50 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'resourceType' => 'TEMPLATE',
 			'content' => $mock_content,
 			'parentId' => null,
-		]);
+		] );
 	}
 
 	public function test_rename_template() {
 		// Arrange & Assert
 		$this->cloud_library_app_mock
 			->expects( $this->once() )
-			->method('update_resource')
-			->with([
+			->method( 'update_resource' )
+			->with( [
 				'source' => 'cloud',
 				'title' => 'Updated Template Title',
 				'id' => 1,
-			]);
+			] );
 
 		$this->cloud_library_app_mock
 			->expects( $this->once() )
-			->method('get_resource')
-			->with([ 'id' => 1 ]);
+			->method( 'get_resource' )
+			->with( [ 'id' => 1 ] );
 
 		// Act
-		$this->manager->rename_template([
+		$this->manager->rename_template( [
 			'source' => 'cloud',
 			'title' => 'Updated Template Title',
 			'id' => 1,
-		]);
+		] );
 	}
 
 	public function test_rename_template__should_throw_error_when_failed_to_update_resource() {
 		// Arrange & Assert
 		$this->cloud_library_app_mock
-			->method('update_resource')
-			->with([
+			->method( 'update_resource' )
+			->with( [
 				'source' => 'cloud',
 				'title' => 'Updated Template Title',
 				'id' => 1,
-			])
+			] )
 			->willReturn( new \WP_Error( 'update_error', 'An error has occured' ) );
 
 		// Act & Assert
-		$this->assertWPError( $this->manager->rename_template([
+		$this->assertWPError( $this->manager->rename_template( [
 			'source' => 'cloud',
 			'title' => 'Updated Template Title',
 			'id' => 1,
-		]) );
+		] ) );
 	}
 
 	public function test_get_template_data() {
@@ -198,11 +198,11 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		$this->cloud_library_app_mock
 			->method('get_resource')
-			->with([ 'id' => $template_id ])
-			->willReturn($template_data);
+			->with( [ 'id' => $template_id ] )
+			->willReturn( $template_data );
 
 		// Act
-		$result = $this->manager->get_template_data([ 'source' => 'cloud', 'template_id' => $template_id, 'editor_post_id' => 1, ]);
+		$result = $this->manager->get_template_data( [ 'source' => 'cloud', 'template_id' => $template_id ] );
 
 		// Assert
 		$this->assertArrayHasKey( 'id', $result );
@@ -217,15 +217,32 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$template_id = 1;
 
 		$this->cloud_library_app_mock
-			->method('delete_resource')
-			->with($template_id)
-			->willReturn(true);
+			->method( 'delete_resource' )
+			->with( $template_id )
+			->willReturn( true );
 
 		// Act
-		$result = $this->manager->delete_template([ 'source' => 'cloud', 'template_id' => $template_id ]);
+		$result = $this->manager->delete_template( [ 'source' => 'cloud', 'template_id' => $template_id ] );
 
 		// Assert
-		$this->assertTrue($result);
+		$this->assertTrue( $result );
+
+	}
+
+	public function test_delete_template__should_return_false_when_failed() {
+		// Arrange
+		$template_id = 'not exist';
+
+		$this->cloud_library_app_mock
+			->method( 'delete_resource' )
+			->with( $template_id )
+			->willReturn( false );
+
+		// Act
+		$result = $this->manager->delete_template( [ 'source' => 'cloud', 'template_id' => $template_id ] );
+
+		// Assert
+		$this->assertFalse( $result );
 
 	}
 

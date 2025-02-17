@@ -63,11 +63,12 @@ class Source_Cloud extends Source_Base {
 		$data['content'] = $this->replace_elements_ids( $data['content'] );
 		$data['content'] = $this->process_export_import_content( $data['content'], 'on_import' );
 
-		// WHY???
-		$post_id = $args['editor_post_id'];
-		$document = Plugin::$instance->documents->get( $post_id );
-		if ( $document ) {
-			$data['content'] = $document->get_elements_raw_data( $data['content'], true );
+		if ( ! empty( $args['editor_post_id'] ) ) {
+			$post_id = $args['editor_post_id'];
+			$document = Plugin::$instance->documents->get( $post_id );
+			if ( $document ) {
+				$data['content'] = $document->get_elements_raw_data( $data['content'], true );
+			}
 		}
 
 		if ( ! empty( $args['with_page_settings'] ) ) {
