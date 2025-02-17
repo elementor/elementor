@@ -24,6 +24,10 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$this->assertSame( ELEMENTOR_ASSETS_URL . 'images/placeholder.png', Utils::get_placeholder_image_src() );
 	}
 
+	public function test_should_return_source_of_placeholder_image_for_v4() {
+		$this->assertSame( ELEMENTOR_ASSETS_URL . 'images/a-image-placeholder.png', Utils::get_placeholder_image_src(true) );
+	}
+
 	public function test_should_return_edit_link() {
 		$post_id = $this->factory()->create_and_get_default_post()->ID;
 		$document = Plugin::$instance->documents->get( $post_id );
