@@ -5,10 +5,10 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\Link_Query;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\WpRest\Classes\WP_Post;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Div_Block extends Atomic_Element_Base {
-	use Link_Query;
 
 	public static function get_type() {
 		return 'div-block';
@@ -74,10 +73,16 @@ class Div_Block extends Atomic_Element_Base {
 						]),
 
 					Link_Control::bind_to( 'link' )
-						->set_options( $this->get_post_query() )
+						->set_endpoint( WP_Post::ENDPOINT )
+						->set_request_params( [
+							WP_Post::KEYS_FORMAT_MAP_KEY => wp_json_encode( [
+								'ID' => 'id',
+								'post_title' => 'label',
+								'post_type' => 'groupLabel',
+							] ),
+						] )
 						->set_allow_custom_values( true )
-						->set_hide_previous_element( true )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+						->set_placeholder( __( 'Paste URL or type', 'elementor' )),
 				]),
 		];
 	}
