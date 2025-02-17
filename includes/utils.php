@@ -341,7 +341,7 @@ class Utils {
 	 */
 	public static function get_placeholder_image_src( $is_new_editor = false ) {
 
-		$img_name = $is_new_editor ? 'image-placeholder.png' : 'placeholder.png';
+		$img_name = $is_new_editor ? 'a-image-placeholder.png' : 'placeholder.png';
 		$placeholder_image = ELEMENTOR_ASSETS_URL . '/images/' . $img_name;
 
 		/**
