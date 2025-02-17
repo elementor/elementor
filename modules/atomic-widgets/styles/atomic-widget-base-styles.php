@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Plugin;
 
@@ -22,7 +23,7 @@ class Atomic_Widget_Base_Styles {
 
 		$base_styles = Collection::make( $elements )
 			->merge( $widgets )
-			->filter( fn( $element ) => $element instanceof Atomic_Widget_Base || $element instanceof Atomic_Widget_Base )
+			->filter( fn( $element ) => $element instanceof Atomic_Widget_Base || $element instanceof Atomic_Element_Base )
 			->map( fn( $element ) => $element->get_base_styles() )
 			->flatten()
 			->all();
