@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
@@ -130,6 +131,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Image() );
 		$widgets_manager->register( new Atomic_Paragraph() );
 		$widgets_manager->register( new Atomic_Svg() );
+		$widgets_manager->register( new Atomic_Button() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
