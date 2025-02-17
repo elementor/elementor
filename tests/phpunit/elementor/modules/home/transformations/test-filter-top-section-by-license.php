@@ -126,7 +126,7 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'essential'
+					'pro'
 				],
 			],
 			'misc' => [
