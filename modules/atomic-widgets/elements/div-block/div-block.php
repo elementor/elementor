@@ -82,7 +82,7 @@ class Div_Block extends Atomic_Element_Base {
 							] ),
 						] )
 						->set_allow_custom_values( true )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' )),
+						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 				]),
 		];
 	}
