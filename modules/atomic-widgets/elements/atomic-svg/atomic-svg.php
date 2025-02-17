@@ -46,6 +46,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		}
 
 		$svg = new \WP_HTML_Tag_Processor( file_get_contents( $svg_url ) );
+
 		if ( $svg->next_tag( 'svg' ) ) {
 			$this->set_svg_attributes( $svg, $settings );
 		}
