@@ -334,22 +334,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-templates-empty">
-	<#
-		const activeSource = elementor.templates.getFilter( 'source' ),
-			assetsUrl = '<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL ); ?>',
-			imgSrc = `${assetsUrl}images/no-search-results${activeSource === 'cloud' ? '-cloud' : ''}.svg`;
-	#>
 	<div class="elementor-template-library-blank-icon">
-		<img src="{{ imgSrc }}" class="elementor-template-library-no-results" loading="lazy" />
+		<img src="" class="elementor-template-library-no-results" loading="lazy" />
 	</div>
 	<div class="elementor-template-library-blank-title"></div>
 	<div class="elementor-template-library-blank-message"></div>
 
-	<# if ( 'cloud' === activeSource ) { #>
-	<div id="elementor-template-library-cloud-empty__button">
-		<a class="elementor-button e-primary" href="" target="_blank">call to action</a>
-	</div>
-	<# } #>
+	<div class="elementor-template-library-cloud-empty__button"></div>
 
 	<div class="elementor-template-library-blank-footer">
 		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
