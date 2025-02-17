@@ -29,7 +29,7 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 				return true;
 			}
 
-			return ! $user_tier && $this->validate_tier( $item_tier );
+			return $this->validate_tier( $item_tier );
 		}
 
 		return false;
