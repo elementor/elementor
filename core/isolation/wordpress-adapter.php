@@ -98,4 +98,12 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	public function apply_filters( string $hook_name, $value, ...$args ) {
 		return apply_filters( $hook_name, $value, ...$args );
 	}
+
+	public function get_posts( $args ): array {
+		return get_posts( $args );
+	}
+
+	public function get_post_types( $args = [], $output = 'names', $operator = 'and' ): array {
+		return get_post_types( $args, $output, $operator );
+	}
 }

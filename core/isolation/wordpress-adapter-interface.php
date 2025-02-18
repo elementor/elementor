@@ -41,4 +41,8 @@ interface Wordpress_Adapter_Interface {
 	public function add_action( string $hook_name, callable $callback, int $priority = 10, int $accepted_args = 1 ): bool;
 
 	public function apply_filters( string $hook_name, $value, ...$args );
+
+	public function get_posts( $args );
+
+	public function get_post_types( $args = [], $output = 'names', $operator = 'and' );
 }
