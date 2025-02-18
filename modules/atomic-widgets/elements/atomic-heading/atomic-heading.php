@@ -7,7 +7,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
-use Elementor\Modules\AtomicWidgets\Link_Query;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
@@ -15,13 +14,13 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\WpRest\Classes\WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Atomic_Heading extends Atomic_Widget_Base {
-	use Link_Query;
 	use Has_Template;
 
 	public static function get_element_type(): string {
@@ -36,9 +35,19 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return 'eicon-t-letter';
 	}
 
-	protected function get_templates(): array {
+	protected static function define_props_schema(): array {
 		return [
-			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
+				->default( 'h2' ),
+
+			'title' => String_Prop_Type::make()
+				->default( __( 'Your Title Here', 'elementor' ) ),
+
+			'link' => Link_Prop_Type::make(),
 		];
 	}
 
@@ -79,26 +88,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 							],
 						]),
 					Link_Control::bind_to( 'link' )
-						->set_options( $this->get_post_query() )
-						->set_allow_custom_values( true )
 						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 				] ),
-		];
-	}
-
-	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-
-			'tag' => String_Prop_Type::make()
-				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
-				->default( 'h2' ),
-
-			'title' => String_Prop_Type::make()
-				->default( __( 'Your Title Here', 'elementor' ) ),
-
-			'link' => Link_Prop_Type::make(),
 		];
 	}
 
@@ -122,6 +113,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						->add_prop( 'line-height', $line_height_value )
 						->add_prop( 'font-weight', $font_weight_value )
 				),
+		];
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',
 		];
 	}
 }
