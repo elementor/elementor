@@ -20,7 +20,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 		$background_style = "url(\" $image_url \")";
 
-		if ( $value['repeat'] ) {
+		if ( ! empty( $value['repeat'] ) ) {
 			$background_style .= ' ' . $value['repeat'];
 		}
 
@@ -76,9 +76,8 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			return $position;
 		}
 
-		if ( empty( $position ) ) {
-			$position = '0% 0%';
-		}
+		$default_position = '0% 0%';
+		$position = $value['position'] ?? $default_position;
 
 		return $position . ' / ' . $value['size'];
 	}

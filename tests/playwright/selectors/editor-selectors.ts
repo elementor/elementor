@@ -1,5 +1,4 @@
 const EditorSelectors = {
-	addNewPreset: ( preset: string ) => `[data-preset=${ preset }]`,
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
 	widget: '[data-element_type="widget"]',
 	container: '[data-element_type="container"]',
@@ -140,26 +139,9 @@ const EditorSelectors = {
 	},
 	video: {
 		widget: '[data-widget_type="video.default"]',
-		youtube: { linkInp: '[data-setting="youtube_url"]' },
-		vimeo: { linkInp: '[data-setting="vimeo_url"]' },
-		dailymotion: { linkInp: '[data-setting="dailymotion_url"]' },
-		autoplayInp: 'input[data-setting="autoplay"]',
-		muteInp: 'input[data-setting="mute"]',
-		loopInp: 'input[data-setting="loop"]',
-		playerControlInp: 'input[data-setting="controls"]',
-		modestbrandingInp: 'input[data-setting="modestbranding"]',
-		ccLoadPolicyInp: 'input[data-setting="cc_load_policy"]',
-		privacyInp: 'input[data-setting="yt_privacy"]',
-		switch: '.elementor-switch-handle',
-		suggestedVideoSelect: '[data-setting="rel"]',
-		playOnMobileInp: 'input[data-setting="play_on_mobile"]',
-		lazyLoadInp: 'input[data-setting="lazy_load"]',
-		videoSourceSelect: '[data-setting="video_type"]',
-		showImageOverlay: '[data-setting="show_image_overlay"]',
 		get image() {
 			return `${ this.widget } .elementor-custom-embed-image-overlay`;
 		},
-		imageSizeSelect: 'image_overlay_size',
 		lightBoxControlInp: '[data-setting="lightbox"]',
 		lightBoxSetting: 'div[data-elementor-open-lightbox="yes"]',
 		lightBoxDialog: '.elementor-lightbox',

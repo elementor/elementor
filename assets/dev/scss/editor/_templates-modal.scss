@@ -178,6 +178,10 @@ $remote-templates-items-space: 30px;
 	align-items: center;
 }
 
+.elementor-template-library-filter-select-source {
+	width: 200px;
+}
+
 #elementor-template-library-filter-toolbar-remote {
 	font-size: 11px;
 }
@@ -701,7 +705,7 @@ label.elementor-template-library-order-label {
 		.select2 {
 
 			&-selection {
-				
+
 				&__e-plus-button {
 					display: none;
 				}
@@ -721,7 +725,7 @@ label.elementor-template-library-order-label {
 			}
 
 			&-container {
-				
+
 				.select2-search--inline {
 					float: none;
 				}
@@ -783,12 +787,12 @@ label.elementor-template-library-order-label {
 
 		&__option {
 			text-align: start;
-	
+
 			.main-item {
 				padding-inline-start: 25px;
 				font-size: 16px;
 			}
-			
+
 			.sub-item {
 				padding-inline-start: 50px;
 				font-size: 14px;
@@ -887,6 +891,10 @@ label.elementor-template-library-order-label {
 			min-height: 550px;
 		}
 	}
+}
+
+.elementor-template-library-cloud-empty__button {
+	margin-block-start: 45px;
 }
 
 #elementor-template-library-connect {
