@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\WpRest\Classes\WP_Post;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -17,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Div_Block extends Atomic_Element_Base {
-
 	public static function get_type() {
 		return 'div-block';
 	}
