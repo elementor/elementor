@@ -73,15 +73,6 @@ class Div_Block extends Atomic_Element_Base {
 						]),
 
 					Link_Control::bind_to( 'link' )
-						->set_endpoint( WP_Post::ENDPOINT )
-						->set_request_params( [
-							WP_Post::KEYS_FORMAT_MAP_KEY => wp_json_encode( [
-								'ID' => 'id',
-								'post_title' => 'label',
-								'post_type' => 'groupLabel',
-							] ),
-						] )
-						->set_allow_custom_values( true )
 						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 				]),
 		];
