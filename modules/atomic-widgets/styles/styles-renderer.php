@@ -13,6 +13,8 @@ class Styles_Renderer {
 	 */
 	private array $breakpoints;
 
+	private $on_prop_transform;
+
 	private string $selector_prefix;
 
 	/**
@@ -54,6 +56,12 @@ class Styles_Renderer {
 		}
 
 		return implode( '', $css_style );
+	}
+
+	public function on_prop_transform( callable $callback ): self {
+		$this->on_prop_transform = $callback;
+
+		return $this;
 	}
 
 	private function style_definition_to_css_string( array $style ): string {
@@ -126,6 +134,10 @@ class Styles_Renderer {
 		return Collection::make( Props_Resolver::for_styles()->resolve( $schema, $props ) )
 			->filter()
 			->map( function ( $value, $prop ) {
+				if ( $this->on_prop_transform ) {
+					call_user_func( $this->on_prop_transform, $prop, $value );
+				}
+
 				return $prop . ':' . $value . ';';
 			} )
 			->implode( '' );

@@ -21,18 +21,23 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return 'a-image';
 	}
 
-	protected function get_templates(): array {
-		return [
-			'elementor/elements/atomic-image' => __DIR__ . '/atomic-image.html.twig',
-		];
-	}
-
 	public function get_title() {
 		return esc_html__( 'Atomic Image', 'elementor' );
 	}
 
 	public function get_icon() {
 		return 'eicon-image';
+	}
+
+	protected static function define_props_schema(): array {
+		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
+			'image' => Image_Prop_Type::make()
+				->default_url( Placeholder_Image::get_placeholder_image() )
+				->default_size( 'full' ),
+		];
 	}
 
 	protected function define_atomic_controls(): array {
@@ -47,14 +52,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 		];
 	}
 
-	protected static function define_props_schema(): array {
+	protected function get_templates(): array {
 		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-
-			'image' => Image_Prop_Type::make()
-				->default_url( Placeholder_Image::get_placeholder_image() )
-				->default_size( 'full' ),
+			'elementor/elements/atomic-image' => __DIR__ . '/atomic-image.html.twig',
 		];
 	}
 }
