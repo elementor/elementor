@@ -1,12 +1,9 @@
+{% set tag = settings.link.href ? 'a' : 'button' %}
 {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
 {% set text = settings.text %}
+{% set linkTarget = settings.link.href and settings.link.target == '_blank' ? ' target="_blank"' : '' %}
+{% set linkAttributes = settings.link.href ? ' href="' ~ settings.link.href | e('full_url') ~ '"' ~ linkTarget : '' %}
 
-{% if settings.link.href %}
-    <a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}" class="{{ classes }}">
-        {{ text }}
-    </a>
-{% else %}
-    <button class="{{ classes }}">
-        {{ text }}
-    </button>
-{% endif %}
+<{{ tag }}{{ linkAttributes }} class="{{ classes }}">
+    {{ text }}
+</{{ tag }}>
