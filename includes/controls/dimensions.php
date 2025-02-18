@@ -122,7 +122,7 @@ class Control_Dimensions extends Control_Base_Units {
 											echo $dimension_key; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 											?> ) );
 									} else {
-										print( encodeURIComponent( placeholder ) );
+										print( placeholder ? encodeURIComponent( placeholder ) : '' );
 									} #>"
 							<# if ( -1 === _.indexOf( allowed_dimensions, '<?php
 								// PHPCS - the variable $dimension_key is a plain text.
