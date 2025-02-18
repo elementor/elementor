@@ -32,44 +32,11 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		return 'eicon-shape';
 	}
 
-	public function get_default_svg_path() {
-		return ELEMENTOR_ASSETS_URL . 'images/a-default-svg.svg';
-	}
-
-	protected function render() {
-		$settings = $this->get_atomic_settings();
-		$svg_url = isset( $settings['svg']['url'] ) ? $settings['svg']['url'] : null;
-
-		if ( ! $svg_url && isset( $settings['svg']['id'] ) ) {
-			$attachment = wp_get_attachment_image_src( $settings['svg']['id'], self::DEFAULT_SIZE );
-			$svg_url = isset( $attachment[0] ) ? $attachment[0] : null;
-		}
-
-		$svg = file_get_contents( $svg_url );
-		$svg = $svg ? new \WP_HTML_Tag_Processor( $svg ) : null;
-
-		if ( $svg && $svg->next_tag( 'svg' ) ) {
-			$this->set_svg_attributes( $svg, $settings );
-		}
-
-		while ( $svg && $svg->next_tag( [ 'path', 'rect', 'circle', 'g' ] ) ) {
-			$svg->remove_attribute( 'fill' );
-		}
-
-		if ( $svg ) {
-			$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
-		}
-
-		// Render the SVG content
-		printf( '%s', $valid_svg ?? wp_safe_remote_get( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	}
-
-	private function set_svg_attributes( \WP_HTML_Tag_Processor $svg, $settings ) {
-		$svg->set_attribute( 'fill', 'currentColor' );
-		$string_classes = implode( ' ', $settings['classes'] );
-		$svg->add_class( $string_classes ?? '' );
-		$base_styles = $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ];
-		$svg->add_class( $base_styles );
+	protected static function define_props_schema(): array {
+		return [
+			'classes' => Classes_Prop_Type::make()->default( [] ),
+			'svg' => Image_Src_Prop_Type::make()->default_url( ELEMENTOR_ASSETS_URL . 'images/a-default-svg.svg' ),
+		];
 	}
 
 	protected function define_atomic_controls(): array {
@@ -100,10 +67,43 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		];
 	}
 
-	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'svg' => Image_Src_Prop_Type::make()->default_url( ELEMENTOR_ASSETS_URL . 'images/a-default-svg.svg' ),
-		];
+	protected function render() {
+		$settings = $this->get_atomic_settings();
+		$svg_url = isset( $settings['svg']['url'] ) ? $settings['svg']['url'] : null;
+
+		if ( ! $svg_url && isset( $settings['svg']['id'] ) ) {
+			$attachment = wp_get_attachment_image_src( $settings['svg']['id'], self::DEFAULT_SIZE );
+			$svg_url = isset( $attachment[0] ) ? $attachment[0] : null;
+		}
+
+		$svg = file_get_contents( $svg_url );
+		$svg = $svg ? new \WP_HTML_Tag_Processor( $svg ) : null;
+
+		if ( $svg && $svg->next_tag( 'svg' ) ) {
+			$this->set_svg_attributes( $svg, $settings );
+		}
+
+		while ( $svg && $svg->next_tag( [ 'path', 'rect', 'circle', 'g' ] ) ) {
+			$svg->remove_attribute( 'fill' );
+		}
+
+		if ( $svg ) {
+			$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
+		}
+
+		// Render the SVG content
+		printf( '%s', $valid_svg ?? wp_safe_remote_get( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	public function get_default_svg_path() {
+		return ELEMENTOR_ASSETS_URL . 'images/a-default-svg.svg';
+	}
+
+	private function set_svg_attributes( \WP_HTML_Tag_Processor $svg, $settings ) {
+		$svg->set_attribute( 'fill', 'currentColor' );
+		$string_classes = implode( ' ', $settings['classes'] );
+		$svg->add_class( $string_classes ?? '' );
+		$base_styles = $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ];
+		$svg->add_class( $base_styles );
 	}
 }
