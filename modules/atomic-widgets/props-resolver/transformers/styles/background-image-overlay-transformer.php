@@ -18,9 +18,9 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 		$image_url = $this->get_image_url( $value['image-src'], $value['resolution'] ?? self::DEFAULT_RESOLUTION );
 
-		$background_style = "url(\"$image_url\")";
+		$background_style = "url(\" $image_url \")";
 
-		if ( ! empty( $value['repeat'] ) ) {
+		if ( $value['repeat'] ) {
 			$background_style .= ' ' . $value['repeat'];
 		}
 
