@@ -32,8 +32,17 @@ class Div_Block extends Atomic_Element_Base {
 		return 'eicon-div-block';
 	}
 
-	public function get_style_depends() {
-		return [ 'div-block' ];
+	protected static function define_props_schema(): array {
+		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
+				->default( 'div' ),
+
+			'link' => Link_Prop_Type::make(),
+		];
 	}
 
 	protected function define_atomic_controls(): array {
@@ -76,17 +85,8 @@ class Div_Block extends Atomic_Element_Base {
 		];
 	}
 
-	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-
-			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
-				->default( 'div' ),
-
-			'link' => Link_Prop_Type::make(),
-		];
+	public function get_style_depends() {
+		return [ 'div-block' ];
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
