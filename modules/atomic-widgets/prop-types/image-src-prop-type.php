@@ -21,6 +21,15 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 		];
 	}
 
+	public function default_url( string $url ): self {
+		$this->default( [
+			'id' => null,
+			'url' => Url_Prop_Type::generate( $url ),
+		] );
+
+		return $this;
+	}
+
 	protected function validate_value( $value ): bool {
 		$only_one_key = count( array_filter( $value ) ) === 1;
 
