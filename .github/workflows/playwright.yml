@@ -163,7 +163,7 @@ jobs:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
       - name: Checkout source code
-        if: ${{ needs.Playwright.result == 'failure' }}
+        if: ${{ always() }}
         uses: actions/checkout@v4
       - name: Map GitHub user to Slack
         id: map_user
