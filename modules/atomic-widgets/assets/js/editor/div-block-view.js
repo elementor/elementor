@@ -61,7 +61,6 @@ const DivBlockView = BaseElementView.extend( {
 		const changed = settings.changedAttributes();
 
 		if ( ! changed ) {
-			// If nothing change - avoid the redundant re-rendering
 			return;
 		}
 
