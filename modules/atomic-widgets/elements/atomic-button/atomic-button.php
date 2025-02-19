@@ -27,7 +27,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-text';
+		return 'eicon-button';
 	}
 
 	public function get_title() {
