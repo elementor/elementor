@@ -26,17 +26,21 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return 'a-button';
 	}
 
-	public function get_icon() {
-		return 'eicon-button';
-	}
-
 	public function get_title() {
 		return esc_html__( 'Atomic Button', 'elementor' );
 	}
 
-	protected function get_templates(): array {
+	public function get_icon() {
+		return 'eicon-text';
+	}
+
+	protected static function define_props_schema(): array {
 		return [
-			'elementor/elements/atomic-button' => __DIR__ . '/atomic-button.html.twig',
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
+			'text' => String_Prop_Type::make()
+				->default( __( 'Click here', 'elementor' ) ),
 		];
 	}
 
@@ -49,16 +53,6 @@ class Atomic_Button extends Atomic_Widget_Base {
 						->set_label( __( 'Button text', 'elementor' ) )
 						->set_placeholder( __( 'Type your button text here', 'elementor' ) ),
 				] ),
-		];
-	}
-
-	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-
-			'text' => String_Prop_Type::make()
-				->default( __( 'Click here', 'elementor' ) ),
 		];
 	}
 
@@ -119,6 +113,12 @@ class Atomic_Button extends Atomic_Widget_Base {
 						->add_prop( 'border-radius', $border_radius_value )
 						->add_prop( 'border-width', $border_width_value )
 				),
+		];
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-button' => __DIR__ . '/atomic-button.html.twig',
 		];
 	}
 }
