@@ -36,7 +36,6 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 			'bottom center',
 			'bottom left',
 			'bottom right',
-			'custom',
 		];
 	}
 }
