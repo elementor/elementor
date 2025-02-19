@@ -31,7 +31,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-text';
+		return 'eicon-button';
 	}
 
 	protected static function define_props_schema(): array {
