@@ -29,8 +29,8 @@ class Test_Has_Template extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	public function element_data_provider(): iterable {
-		yield 'Atomic Image default' => [
+	public function element_data_provider() {
+		return [ 'Atomic Image default' => [
 			[
 				'id' => 'e8e55a1',
 				'elType' => 'widget',
@@ -42,56 +42,53 @@ class Test_Has_Template extends Elementor_Test_Base {
 				],
 				'widgetType' => 'a-image',
 			],
-		];
-
-		yield 'Atomic Image linked' => [
-			[
-				'id' => 'e8e55a1',
-				'elType' => 'widget',
-				'settings' => [
-					'image' => [
-						'id' => 123,
-						'url' => 'https://example.com/image.jpg',
+		],
+			'Atomic Image linked' => [
+				[
+					'id' => 'e8e55a1',
+					'elType' => 'widget',
+					'settings' => [
+						'image' => [
+							'id' => 123,
+							'url' => 'https://example.com/image.jpg',
+						],
+						'link' => [
+							'href' => 'https://example.com',
+							'target' => '_blank',
+						],
 					],
-					'link' => [
-						'href' => 'https://example.com',
-						'target' => '_blank',
-					],
+					'widgetType' => 'a-image',
 				],
-				'widgetType' => 'a-image',
 			],
-		];
-
-		yield 'Atomic Paragraph default' => [
-			[
-				'id' => 'e8e55a1',
-				'elType' => 'widget',
-				'settings' => [],
-				'widgetType' => 'a-paragraph',
-			],
-		];
-
-		yield 'Atomic Paragraph linked' => [
-			[
-				'id' => 'e8e55a1',
-				'elType' => 'widget',
-				'settings' => [
-					'link' => [
-						'href' => 'https://example.com',
-						'target' => '_blank',
-					],
+			'Atomic Paragraph default' => [
+				[
+					'id' => 'e8e55a1',
+					'elType' => 'widget',
+					'settings' => [],
+					'widgetType' => 'a-paragraph',
 				],
-				'widgetType' => 'a-paragraph',
 			],
-		];
-
-		yield 'Atomic SVG default' => [
-			[
-				'id' => 'abcd123',
-				'elType' => 'widget',
-				'settings' => [],
-				'widgetType' => 'a-svg',
-			]
+			'Atomic Paragraph linked' => [
+				[
+					'id' => 'e8e55a1',
+					'elType' => 'widget',
+					'settings' => [
+						'link' => [
+							'href' => 'https://example.com',
+							'target' => '_blank',
+						],
+					],
+					'widgetType' => 'a-paragraph',
+				],
+			],
+			'Atomic SVG default' => [
+				[
+					'id' => 'abcd123',
+					'elType' => 'widget',
+					'settings' => [],
+					'widgetType' => 'a-svg',
+				]
+			],
 		];
 	}
 }
