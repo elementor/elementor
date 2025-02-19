@@ -32,7 +32,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-text';
+		return 'eicon-paragraph';
 	}
 
 	protected static function define_props_schema(): array {

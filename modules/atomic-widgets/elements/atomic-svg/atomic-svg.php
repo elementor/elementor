@@ -29,7 +29,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-shape';
+		return 'eicon-svg';
 	}
 
 	protected static function define_props_schema(): array {
