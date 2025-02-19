@@ -346,6 +346,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.27.6 - 2025-02-18 =
+
+* Fix: Dimension Controls displayed `undefined` as a placeholder value when empty ([#30277](https://github.com/elementor/elementor/issues/30277))
+
 = 3.27.5 - 2025-02-16 =
 
 * Security Fix: Improved code security enforcement in Dimensions control
