@@ -10,13 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Image_Position_Offset_Transformer extends Transformer_Base {
     public function transform( $value, $key ): string {
-        if ( empty( $value['position'] ) ) {
-            return '';
-        }
-
-        $x  = $value['x'] ?? '0px';
-        $y = $value['y'] ?? '0px';
-
-        return $x . ' ' . $y;
+	    return ( $value['x'] ?? '0px' ) . ' ' . ( $value['y'] ?? '0px' );
     }
 }
