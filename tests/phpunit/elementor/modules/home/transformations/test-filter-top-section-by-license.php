@@ -21,7 +21,7 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 		parent::tearDown();
 	}
 
-	public function test_transform__core_plugin() {
+	public function test__should_transform_data_for_free_license() {
 		// Arrange
 		$original_data = $this->mock_top_section_data();
 
@@ -35,7 +35,7 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 		$this->assertEquals( $transformed_data, $expected_data );
 	}
 
-	public function test_transform__pro_plugin() {
+	public function test__should_transform_data_for_pro_license() {
 		// Arrange
 		$original_data = $this->mock_top_section_data();
 
@@ -53,7 +53,7 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 		$this->assertEquals( $transformed_data, $expected_data );
 	}
 
-	public function test_transform__essential_plugin() {
+	public function test__should_transform_data_for_essential_license() {
 		// Arrange
 		$original_data = $this->mock_top_section_data();
 

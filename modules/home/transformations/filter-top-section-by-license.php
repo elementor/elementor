@@ -1,23 +1,28 @@
 <?php
+
 namespace elementor\modules\home\transformations;
 
+use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
 use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Filter_Top_Section_By_License extends Transformations_Abstract {
 	public bool $has_pro;
-
-	private const FREE = 'free';
-	private const ESSENTIAL = 'essential';
-	private const PRO = 'pro';
+	private array $supported_tiers;
 
 	public function __construct( array $args = [] ) {
 		parent::__construct( $args );
 
 		$this->has_pro = Utils::has_pro();
+		$this->supported_tiers = [
+			ConnectModule::ACCESS_TIER_FREE,
+			ConnectModule::ACCESS_TIER_ESSENTIAL,
+			ConnectModule::ACCESS_TIER_PRO_LEGACY,
+		];
 	}
 
 	private function is_valid_item( $item ) {
@@ -36,15 +41,11 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	private function validate_tier( $tier ): bool {
-		return $this->validate_pro_tier( $tier ) || $this->validate_free_tier( $tier );
-	}
+		$is_valid = $this->has_pro
+			? $tier !== ConnectModule::ACCESS_TIER_FREE
+			: $tier === ConnectModule::ACCESS_TIER_FREE;
 
-	private function validate_pro_tier( string $tier ): bool {
-		return $this->has_pro && in_array( $tier, [ self::PRO, self::ESSENTIAL ], true );
-	}
-
-	private function validate_free_tier( string $tier ): bool {
-		return ! $this->has_pro && self::FREE === $tier;
+		return $is_valid && in_array( $tier, $this->supported_tiers, true );
 	}
 
 	public function transform( array $home_screen_data ): array {

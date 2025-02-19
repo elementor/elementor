@@ -34,7 +34,7 @@ abstract class Transformations_Abstract {
 	protected function get_tier() {
 		$tier = $this->elementor_adapter->get_tier();
 
-		return apply_filters( 'elementor/admin/homescreen_promotion_tier', $tier );
+		return apply_filters( 'elementor/admin/homescreen_promotion_tier', $tier ) ?? $tier;
 	}
 
 	abstract public function transform( array $home_screen_data ): array;
