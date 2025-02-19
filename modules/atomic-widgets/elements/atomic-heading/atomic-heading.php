@@ -32,7 +32,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-t-letter';
+		return 'eicon-e-heading';
 	}
 
 	protected static function define_props_schema(): array {
