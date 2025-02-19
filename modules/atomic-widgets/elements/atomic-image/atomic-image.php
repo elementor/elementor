@@ -27,7 +27,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-image';
+		return 'eicon-e-image';
 	}
 
 	protected static function define_props_schema(): array {
