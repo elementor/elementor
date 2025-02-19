@@ -13,11 +13,11 @@ const TopSection = ( { ...props } ) => {
 	const {
 		title,
 		description,
-		button_cta_url: buttonCtaUtl,
+		button_cta_url: buttonCtaURL,
 		button_cta_title: buttonCtaTitle,
 		button_create_page_title: buttonCreatePageTitle,
 		youtube_embed_id: youtubeEmbeddedId,
-		button_watch_url: buttonWatchUrl,
+		button_watch_url: buttonWatchURL,
 		button_watch_title: buttonWatchTitle,
 	} = topData;
 
@@ -31,8 +31,8 @@ const TopSection = ( { ...props } ) => {
 					<Typography variant="body2" color="secondary">{ description }</Typography>
 				</Box>
 				<Box sx={ { display: 'flex', gap: 1 } }>
-					<Button variant="contained" size="small" href={ buttonCtaUtl } target="_blank">{ ctaButtonTitle }</Button>
-					<Button variant="outlined" color="secondary" size="small" startIcon={ <YoutubeIcon /> } href={ buttonWatchUrl } target="_blank">{ buttonWatchTitle }</Button>
+					<Button variant="contained" size="small" href={ buttonCtaURL } target="_blank">{ ctaButtonTitle }</Button>
+					<Button variant="outlined" color="secondary" size="small" startIcon={ <YoutubeIcon /> } href={ buttonWatchURL } target="_blank">{ buttonWatchTitle }</Button>
 				</Box>
 			</Stack>
 			<Box component="iframe"
