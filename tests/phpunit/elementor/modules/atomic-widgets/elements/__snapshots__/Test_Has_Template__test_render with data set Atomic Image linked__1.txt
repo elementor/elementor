@@ -4,6 +4,4 @@
 								url="https://example.com/image.jpg"
 			/>
 	</a>
-
-
 		
