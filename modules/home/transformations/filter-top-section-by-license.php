@@ -20,7 +20,6 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 		$this->has_pro = Utils::has_pro();
 		$this->supported_tiers = [
 			ConnectModule::ACCESS_TIER_FREE,
-			ConnectModule::ACCESS_TIER_ESSENTIAL,
 			ConnectModule::ACCESS_TIER_PRO_LEGACY,
 		];
 	}
@@ -30,22 +29,21 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 			$item_tier = $item['license'][0];
 			$user_tier = $this->get_tier();
 
-			if ( $user_tier && $user_tier === $item_tier ) {
-				return true;
-			}
-
-			return $this->validate_tier( $item_tier );
+			return $this->validate_tier( $item_tier, $user_tier );
 		}
 
 		return false;
 	}
 
-	private function validate_tier( $tier ): bool {
-		$is_valid = $this->has_pro
-			? ConnectModule::ACCESS_TIER_FREE !== $tier
-			: ConnectModule::ACCESS_TIER_FREE === $tier;
+	private function validate_tier( $item_tier, $user_tier ): bool {
+		if ( $user_tier === $item_tier ) {
+			return true;
+		}
 
-		return $is_valid && in_array( $tier, $this->supported_tiers, true );
+		$is_item_tier_free = ConnectModule::ACCESS_TIER_FREE === $item_tier;
+		$is_valid = $this->has_pro !== $is_item_tier_free;
+
+		return $is_valid && in_array( $item_tier, $this->supported_tiers, true );
 	}
 
 	public function transform( array $home_screen_data ): array {
@@ -53,11 +51,12 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 
 		foreach ( $home_screen_data['top_with_licences'] as $index => $item ) {
 			if ( $this->is_valid_item( $item ) ) {
-				$new_top[] = $item;
+				$new_top = $item;
+				break;
 			}
 		}
 
-		$home_screen_data['top_with_licences'] = reset( $new_top );
+		$home_screen_data['top_with_licences'] = $new_top;
 
 		return $home_screen_data;
 	}

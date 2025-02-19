@@ -14,7 +14,7 @@ const TopSection = ( { ...props } ) => {
 		title,
 		description,
 		button_cta_url: buttonCtaURL,
-		button_cta_title: buttonCtaTitle,
+		button_cta_text: buttonCtaTitle,
 		button_create_page_title: buttonCreatePageTitle,
 		youtube_embed_id: youtubeEmbeddedId,
 		button_watch_url: buttonWatchURL,
