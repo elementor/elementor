@@ -42,8 +42,8 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 
 	private function validate_tier( $tier ): bool {
 		$is_valid = $this->has_pro
-			? $tier !== ConnectModule::ACCESS_TIER_FREE
-			: $tier === ConnectModule::ACCESS_TIER_FREE;
+			? ConnectModule::ACCESS_TIER_FREE !== $tier
+			: ConnectModule::ACCESS_TIER_FREE === $tier;
 
 		return $is_valid && in_array( $tier, $this->supported_tiers, true );
 	}
