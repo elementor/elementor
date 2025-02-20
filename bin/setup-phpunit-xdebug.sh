@@ -3,7 +3,10 @@
 # Setup Xdebug on macOS
 
 if ! command -v brew &>/dev/null; then
-	echo "Homebrew not found. Installing Homebrew..."
+    echo "Homebrew not found. Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+else
+    echo "Homebrew is already installed."
 fi
 
 # Install Xdebug
@@ -27,7 +30,7 @@ fi
 
 # Configure Xdebug
 PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;")
-XDEBUG_INI="/opt/homebrew/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
+XDEBUG_INI=$(php --ini | grep -oE '/.*ext-xdebug.ini')
 
 echo " "
 echo "Configuring Xdebug at $XDEBUG_INI"
