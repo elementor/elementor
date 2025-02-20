@@ -6,6 +6,7 @@ use Spatie\Snapshots\MatchesSnapshots;
 
 class Test_Atomic_Svg extends Elementor_Test_Base {
 	use MatchesSnapshots;
+
 	const TEST_RESOURCES_DIR = __DIR__ . '/../../../resources/';
 	const MOCK_URL = [
 		'id' => 'abcd123',
@@ -38,6 +39,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			if ( $attachment_id === 123 ) {
 				return [ self::TEST_RESOURCES_DIR . 'test.svg' ];
 			}
+
 			return $image;
 		}, 10, 3 );
 
@@ -47,6 +49,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 					'body' => '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z"/></svg>',
 				];
 			}
+
 			return $preempt;
 		}, 10, 3 );
 
