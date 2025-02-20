@@ -60,9 +60,9 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	onSelectAllCheckbox() {
 		const isChecked = this.$( '#select-all:checked' ).length > 0;
 
-		this.$( '.row-checkbox' ).each(function () {
+		this.$( '.row-checkbox' ).each( function() {
 			this.checked = isChecked;
-		});
+		} );
 
 		this.onSelectRowCheckbox();
 	},
