@@ -2,12 +2,14 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
@@ -36,6 +38,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
 			'svg' => Image_Src_Prop_Type::make()->default_url( ELEMENTOR_ASSETS_URL . 'images/a-default-svg.svg' ),
+			'link' => Link_Prop_Type::make(),
 		];
 	}
 
@@ -43,7 +46,11 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
-				->set_items( [ Svg_Control::bind_to( 'svg' ) ] ),
+				->set_items( [
+					Svg_Control::bind_to( 'svg' ),
+					Link_Control::bind_to( 'link' )
+							->set_placeholder( __( 'Paste URL or type', 'elementor' ) )
+				] ),
 		];
 	}
 
@@ -88,11 +95,16 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		}
 
 		if ( $svg ) {
-			$valid_svg = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
+			$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 		}
 
-		// Render the SVG content
-		printf( '%s', $valid_svg ?? wp_safe_remote_get( $this->get_default_svg_path() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$html_to_print = $svg_html ?? wp_safe_remote_get( $this->get_default_svg_path() );
+
+		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
+			$html_to_print = sprintf( '<a href="%s" target="%s"> %s </a>', esc_url( $settings['link']['href'] ), esc_attr( $settings['link']['target'] ), $html_to_print );
+		}
+
+		echo $html_to_print;
 	}
 
 	public function get_default_svg_path() {
