@@ -77,6 +77,8 @@ export const generatePluginTests = ( testType: string ) => {
 					admin.remove();
 				}, adminBar );
 				await editor.removeClasses( 'elementor-motion-effects-element' );
+				await page.locator( '[data-widget_type="progress.default"]' ).first().scrollIntoViewIfNeeded();
+				await page.waitForTimeout( 500 );
 				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 				if ( plugin.hasInstallationPage ) {
