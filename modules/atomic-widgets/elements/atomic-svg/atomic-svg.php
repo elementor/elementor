@@ -50,7 +50,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->set_items( [
 					Svg_Control::bind_to( 'svg' ),
 					Link_Control::bind_to( 'link' )
-							->set_placeholder( __( 'Paste URL or type', 'elementor' ) )
+							->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 				] ),
 		];
 	}
@@ -95,12 +95,13 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 		}
 
-		$html_to_print = $svg_html ?? wp_safe_remote_get( self::DEFAULT_SVG_PATH );
+		$html_to_print = $svg_html ?? file_get_contents( self::DEFAULT_SVG_PATH );
 
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$html_to_print = sprintf( '<a href="%s" target="%s"> %s </a>', esc_url( $settings['link']['href'] ), esc_attr( $settings['link']['target'] ), $html_to_print );
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $html_to_print;
 	}
 
