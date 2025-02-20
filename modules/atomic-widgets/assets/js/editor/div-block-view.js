@@ -57,8 +57,22 @@ const DivBlockView = BaseElementView.extend( {
 		return width.toFixed( 1 ) + '%';
 	},
 
-	renderOnChange() {
-		BaseElementView.prototype.renderOnChange.apply( this, arguments );
+	renderOnChange( settings ) {
+		const changed = settings.changedAttributes();
+
+		if ( ! changed ) {
+			return;
+		}
+
+		BaseElementView.prototype.renderOnChange.apply( this, settings );
+
+		if ( changed.classes ) {
+			// Rebuild the whole class attribute to remove previous outdated classes
+			this.$el.attr( 'class', this.className() );
+
+			return;
+		}
+
 		this.$el.addClass( this.getClasses() );
 	},
 
