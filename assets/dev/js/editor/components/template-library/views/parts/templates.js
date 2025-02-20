@@ -29,6 +29,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
 		selectSourceFilter: '.elementor-template-library-filter-select-source',
+		addNewFolder: '#elementor-template-library-add-new-folder',
 	},
 
 	events: {
@@ -37,6 +38,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
 		'change @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'click @ui.addNewFolder': 'onCreateNewFolderClick',
 	},
 
 	comparators: {
@@ -351,6 +353,22 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.removeScrollListener = () => scrollableContainer.off( 'scroll', listener );
 	},
 
+	onCreateNewFolderClick() {
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		if ( 'cloud' !== activeSource ) {
+			return;
+		}
+
+		elementor.templates.createFolder( {
+			source: activeSource,
+		},
+		{
+			onSuccess: () => {
+				elementor.templates.showTemplates();
+			},
+		} );
+	},
 } );
 
 module.exports = TemplateLibraryCollectionView;
