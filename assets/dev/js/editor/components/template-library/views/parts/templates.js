@@ -29,6 +29,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
 		selectSourceFilter: '.elementor-template-library-filter-select-source',
+
+		rowCheckbox: '.row-checkbox',
+		actionBar: '.action-bar',
+		selectedCount: '.selected-count',
+		selectAllCheckbox: '#select-all',
 	},
 
 	events: {
@@ -37,6 +42,29 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
 		'change @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+
+		'change @ui.rowCheckbox': 'onSelectRowCheckbox',
+		'change @ui.selectAllCheckbox': 'onSelectAllCheckbox',
+	},
+
+	onSelectRowCheckbox() {
+		const selectedCount = this.$( '.row-checkbox:checked' ).length,
+			display = 0 === selectedCount
+				? 'none'
+				: 'flex';
+
+		this.ui.selectedCount.html( `${ selectedCount } Selected` );
+		this.$( this.ui.actionBar ).css( 'display', display );
+	},
+
+	onSelectAllCheckbox() {
+		const isChecked = this.$( '#select-all:checked' ).length > 0;
+
+		this.$( '.row-checkbox' ).each(function () {
+			this.checked = isChecked;
+		});
+
+		this.onSelectRowCheckbox();
 	},
 
 	comparators: {

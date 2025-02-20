@@ -123,9 +123,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<# if ( 'local' === activeSource || 'cloud' === activeSource ) { #>
+		<style>
+			.action-bar {
+				display: none;
+				background: #F4F5F8;
+				padding: 10px;
+				border-radius: 5px;
+				color: #454746;
+				margin-top: 10px;
+				gap: 20px;
+			}
+		</style>
+		<div class="action-bar" id="action-bar">
+			<span><i class="eicon-editor-close"></i></span>
+			<span class="selected-count"></span>
+			<span><i class="eicon-file-download"></i></span>
+			<span><i class="eicon-copy"></i></span>
+			<span><i class="eicon-folder-o"></i></span>
+			<span><i class="eicon-trash-o"></i></span>
+		</div>
 		<div id="elementor-template-library-order-toolbar-local">
 			<div class="elementor-template-library-local-column-1">
 				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
+				<input type="checkbox" id="select-all">
 				<label for="elementor-template-library-order-local-title" class="elementor-template-library-order-label"><?php echo esc_html__( 'Name', 'elementor' ); ?></label>
 			</div>
 			<div class="elementor-template-library-local-column-2">
@@ -189,6 +209,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		const activeSource = elementor.templates.getFilter('source');
 	#>
 	<div class="elementor-template-library-template-name elementor-template-library-local-column-1">
+		<input type="checkbox" class="row-checkbox">
 		<# if ( 'cloud' === activeSource ) {
 			const sourceIcon = 'FOLDER' === subType
 				? '<i class="eicon-folder-o" aria-hidden="true"></i>'
