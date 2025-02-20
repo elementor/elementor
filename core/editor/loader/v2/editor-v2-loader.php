@@ -6,6 +6,7 @@ use Elementor\Core\Editor\Loader\Editor_Base_Loader;
 use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Core\Utils\Collection;
 use Elementor\Utils;
+use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -131,6 +132,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 					'headers' => [
 						'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),
 					],
+				],
+				'@elementor/editor-controls' => [
+					'background_placeholder_image' => Placeholder_Image::get_background_placeholder_image(),
 				],
 			] );
 
