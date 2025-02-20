@@ -104,7 +104,6 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		echo $html_to_print;
 	}
 
-
 	private function set_svg_attributes( \WP_HTML_Tag_Processor $svg, $settings ) {
 		$svg->set_attribute( 'fill', 'currentColor' );
 		$string_classes = implode( ' ', $settings['classes'] );
