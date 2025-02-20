@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
-	const DEFAULT_RESOLUTION = 'large';
+	const DEFAULT_POSITION = '0% 0%';
 
 	public function transform( $value, $key ) {
 		if ( ! isset( $value['image'] ) ) {
@@ -46,8 +46,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 			return $value['position'];
 		}
 
-		$default_position = '0% 0%';
-		$position = $value['position'] ?? $default_position;
+		$position = $value['position'] ?? self::DEFAULT_POSITION;
 
 		return $position . ' / ' . $value['size'];
 	}
