@@ -472,6 +472,42 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													'attachment' => 'fixed',
 												]
 											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image' => [
+														'$$type' => 'image',
+														'value' => [
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => null,
+																	'url' => 'https://example.com/image.jpg',
+																],
+															],
+														]
+													],
+													'position' => [
+														'$$type' => 'background-image-position-offset',
+														'value' => [
+															'x' => [
+																'$$type' => 'size',
+																'value' => [
+																	'unit' => 'px',
+																	'size' => 40,
+																],
+															],
+															'y' => [
+																'$$type' => 'size',
+																'value' => [
+																	'unit' => 'px',
+																	'size' => 70,
+																],
+															],
+														],
+													],
+												]
+											],
 										],
 									],
 
