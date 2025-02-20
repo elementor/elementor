@@ -1,8 +1,9 @@
 			
-<a
+    <a
             href="https://example.com"
-        target="_blank"        class="a-button-base"
->
-    Click here
-</a>
+            target="_blank"
+            class="a-button-base"
+    >
+        Click here
+    </a>
 		

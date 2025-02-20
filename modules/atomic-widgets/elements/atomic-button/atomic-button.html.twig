@@ -1,14 +1,15 @@
-{% set doesHaveLink = settings.link.href %}
-{% set tag = doesHaveLink ? 'a' : 'button' %}
 {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
-{% set text = settings.text %}
 
-<{{ tag }}
-    {% if doesHaveLink %}
-        href="{{ settings.link.href | e('full_url') }}"
-        {% if '_blank' == settings.link.target %}target="_blank"{% endif %}
-    {% endif %}
-    class="{{ classes }}"
->
-    {{ text }}
-</{{ tag }}>
+{% if settings.link.href %}
+    <a
+            href="{{ settings.link.href | e('full_url') }}"
+            target="{{ settings.link.target }}"
+            class="{{ classes }}"
+    >
+        {{ settings.text }}
+    </a>
+{% else %}
+    <button class="{{ classes }}">
+        {{ settings.text }}
+    </button>
+{% endif %}

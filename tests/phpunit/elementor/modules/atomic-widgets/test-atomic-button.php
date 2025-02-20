@@ -37,18 +37,13 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 		'widgetType' => 'a-button',
 	];
 
-	protected $instance;
-
-	public function setUp(): void {
-		parent::setUp();
-
-		$this->instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK );
-	}
-
 	public function test__render_button(): void {
+		// Arrange.
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK );
+
 		// Act.
 		ob_start();
-		$this->instance->render_content();
+		$widget_instance->render_content();
 		$rendered_output = ob_get_clean();
 
 		// Assert.

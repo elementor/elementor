@@ -1,8 +1,9 @@
 			
-<a
+    <a
             href="https://example.com"
-                class="a-button-base"
->
-    Click here
-</a>
+            target="_self"
+            class="a-button-base"
+    >
+        Click here
+    </a>
 		
