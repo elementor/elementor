@@ -639,6 +639,22 @@ class Manager {
 		return $source->get_items( $args );
 	}
 
+	public function create_folder( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'title' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		return $source->save_folder( $args );
+	}
+
 	/**
 	 * Register default template sources.
 	 *
@@ -729,6 +745,7 @@ class Manager {
 			'search_templates',
 			'rename_template',
 			'load_more_templates',
+			'create_folder',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
