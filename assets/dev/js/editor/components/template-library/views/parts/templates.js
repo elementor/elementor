@@ -1,7 +1,6 @@
 const TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' );
 const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' );
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
-const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
 
