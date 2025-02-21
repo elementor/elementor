@@ -289,18 +289,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onSelectSourceFilterChange( event ) {
-		const select = event.currentTarget,
-			filterName = select.dataset.elementorFilter,
-			templatesSource = select.value;
-
-		elementor.templates.setSourceSelection( templatesSource );
-		elementor.templates.setFilter( filterName, templatesSource, true );
-
-		elementor.templates.loadTemplates( function() {
-			const templatesToShow = elementor.templates.filterTemplates();
-
-			elementor.templates.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
-		} );
+		elementor.templates.onSelectSourceFilterChange( event );
 	},
 
 	onMyFavoritesFilterChange() {

@@ -2,6 +2,8 @@
 namespace Elementor\Modules\CloudLibrary\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -14,8 +16,13 @@ class Cloud_Library extends Library {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	protected function get_slug(): string {
-		return 'cloud-library';
+	// protected function get_slug(): string {
+	// 	return 'cloud-library';
+	// }
+
+
+	protected function get_api_url(): string {
+		return 'http://localhost:3000/api/v1/cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
@@ -122,6 +129,24 @@ class Cloud_Library extends Library {
 		}
 
 		return true;
+	}
+
+	public function get_connect_url() {
+		if ( Utils::has_pro() ) {
+			return Plugin::$instance->common->get_component( 'connect' )->get_app( 'activate' )->get_admin_url( 'authorize', [
+				'utm_source' => 'template-library',
+				'utm_medium' => 'wp-dash',
+				'utm_campaign' => 'connect-and-activate-license',
+				'utm_content' => 'cloud-library',
+			] );
+		}
+
+		return Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize', [
+			'utm_source' => 'template-library',
+			'utm_medium' => 'wp-dash',
+			'utm_campaign' => 'library-connect',
+			'utm_content' => 'cloud-library',
+		] );
 	}
 
 	protected function init() {}

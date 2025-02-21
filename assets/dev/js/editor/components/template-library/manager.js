@@ -471,6 +471,11 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
+		if ( 'cloud' === args.source && ! elementor.config.library_connect.is_connected ) {
+			self.layout.showCloudConnectView();
+			return;
+		}
+
 		self.showTemplates();
 	};
 
@@ -639,6 +644,26 @@ const TemplateLibraryManager = function() {
 		self.getErrorDialog()
 			.setMessage( errorMessage )
 			.show();
+	};
+
+	this.onSelectSourceFilterChange = function( event ) {
+		const select = event.currentTarget,
+			filterName = select.dataset.elementorFilter,
+			templatesSource = select.value;
+
+		elementor.templates.setSourceSelection( templatesSource );
+		elementor.templates.setFilter( filterName, templatesSource, true );
+
+		if ( 'cloud' === templatesSource && ! elementor.config.library_connect.is_connected ) {
+			self.layout.showCloudConnectView();
+			return;
+		}
+
+		elementor.templates.loadTemplates( function() {
+			const templatesToShow = elementor.templates.filterTemplates();
+
+			elementor.templates.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
+		} );
 	};
 };
 

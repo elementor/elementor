@@ -382,3 +382,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<img id="elementor-template-library-connect__background-image-<?php Utils::print_unescaped_internal_string( $image ); ?>" class="elementor-template-library-connect__background-image" src="<?php Utils::print_unescaped_internal_string( $base_images_url . $image ); ?>.png" draggable="false" loading="lazy" />
 	<?php endforeach; ?>
 </script>
+
+<script type="text/template" id="tmpl-elementor-template-library-connect-cloud">
+	<#
+		const activeSource = elementor.templates.getFilter( 'source' );
+	#>
+	<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar" style="padding-block-end:50px;">
+		<div id="elementor-template-library-filter">
+			<select id="elementor-template-library-filter-subtype" class="elementor-template-library-filter-select-source" data-elementor-filter="source">
+				<option value="local" <# if ( activeSource === 'local' ) { #> selected <# } #>><?php echo esc_html__( 'Site Library', 'elementor' ); ?></option>
+				<option value="cloud" <# if ( activeSource === 'cloud' ) { #> selected <# } #>><?php echo esc_html__( 'Cloud Library', 'elementor' ); ?></option>
+			</select>
+		</div>
+	</div>
+	<div id="elementor-template-library-connect-logo" class="e-logo-wrapper">
+		<i class="eicon-elementor" aria-hidden="true"></i>
+	</div>
+	<div class="elementor-template-library-blank-title">
+		{{{ title }}}
+	</div>
+	<div class="elementor-template-library-blank-message">
+		{{{ message }}}
+	</div>
+		<?php
+		$url = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' )->get_connect_url();
+		?>
+	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="<?php echo esc_url( $url ); ?>">
+		{{{ button }}}
+	</a>
+	<?php
+	$base_images_url = $this->get_assets_base_url() . '/assets/images/library-connect/';
+
+	$images = [ 'left-1', 'left-2', 'right-1', 'right-2' ];
+
+	foreach ( $images as $image ) : ?>
+		<img id="elementor-template-library-connect__background-image-<?php Utils::print_unescaped_internal_string( $image ); ?>" class="elementor-template-library-connect__background-image" src="<?php Utils::print_unescaped_internal_string( $base_images_url . $image ); ?>.png" draggable="false" loading="lazy" />
+	<?php endforeach; ?>
+</script>
