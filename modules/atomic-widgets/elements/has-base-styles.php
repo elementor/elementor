@@ -18,7 +18,7 @@ trait Has_Base_Styles {
 		$style_definitions = [];
 
 		foreach ( $base_styles as $key => $style ) {
-			$id = static::get_element_type() . '-' . $key;
+			$id = $this->generate_base_style_id( $key );
 
 			$style_definitions[ $id ] = $style->build( $id );
 		}
@@ -29,11 +29,17 @@ trait Has_Base_Styles {
 	public function get_base_styles_dictionary() {
 		$result = [];
 
-		foreach ( $this->get_base_styles() as $key => $style ) {
-			$result[ $key ] = $style['id'];
+		$base_styles = array_keys( $this->define_base_styles() );
+
+		foreach ( $base_styles as $key ) {
+			$result[ $key ] = $this->generate_base_style_id( $key );
 		}
 
 		return $result;
+	}
+
+	private function generate_base_style_id( string $key ): string {
+		return static::get_element_type() . '-' . $key;
 	}
 
 	/**
