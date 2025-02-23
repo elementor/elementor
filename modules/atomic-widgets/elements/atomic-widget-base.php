@@ -35,6 +35,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $config;
 	}
 
+	public function get_categories(): array {
+		return [ 'v4-elements' ];
+	}
 	/**
 	 * TODO: Removes the wrapper div from the widget.
 	 */
