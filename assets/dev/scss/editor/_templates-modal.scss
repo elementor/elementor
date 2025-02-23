@@ -287,7 +287,10 @@ label.elementor-template-library-order-label {
 	padding: 0 5px;
 	border-radius: 2px;
 	color: var(--e-a-color-txt);
-	background-color: var(--e-a-bg-hover);
+	
+	&:hover {
+		background-color: var(--e-a-bg-hover);
+	}
 }
 
 #elementor-template-library-create-new-folder-dialog {
