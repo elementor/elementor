@@ -161,7 +161,7 @@ class Controls_Manager {
 	/**
 	 * Visual_Choice control.
 	 */
-	const VISUAL_CHOICE = 'visual-choice';
+	const VISUAL_CHOICE = 'visual_choice';
 
 	/**
 	 * WYSIWYG control.

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Includes\Controls;
+namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -17,7 +17,7 @@ use Elementor\Control_Choose;
 class Control_Visual_Choice extends Control_Choose {
 
 	public function get_type() {
-		return 'visual-choice';
+		return 'visual_choice';
 	}
 
 	public function content_template() {
