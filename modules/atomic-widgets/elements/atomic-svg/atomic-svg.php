@@ -38,7 +38,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'svg' => Image_Src_Prop_Type::make()->default_url( ELEMENTOR_ASSETS_URL . 'images/a-default-svg.svg' ),
+			'svg' => Image_Src_Prop_Type::make()->default_url( self::DEFAULT_SVG_PATH ),
 			'link' => Link_Prop_Type::make(),
 		];
 	}
