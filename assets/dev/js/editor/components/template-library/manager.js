@@ -238,6 +238,8 @@ const TemplateLibraryManager = function() {
 					elementor.templates.layout.hideLoadingView();
 
 					self.layout.updateViewCollection( templatesCollection.models );
+					self.layout.modalContent.currentView.ui.addNewFolder.remove();
+
 					isLoading = false;
 					resolve();
 				},
