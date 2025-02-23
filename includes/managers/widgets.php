@@ -63,7 +63,7 @@ class Widgets_Manager {
 			Atomic_Paragraph::class,
 			Atomic_Button::class,
 			Atomic_Svg::class,
-		]
+		],
 	];
 
 	/**
@@ -111,11 +111,6 @@ class Widgets_Manager {
 			'sidebar',
 			'read-more',
 			'rating',
-		];
-
-		$build_v4_widgets_filename = [
-			'div_block',
-			'atomic-button'
 		];
 
 		$this->_widget_types = [];
