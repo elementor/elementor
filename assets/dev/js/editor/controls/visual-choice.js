@@ -1,3 +1,4 @@
-const ControlVisualChoiceItemView = elementor.modules.controls.Choose.extend( {} );
+let ControlChooseItemView = require( 'elementor-controls/choose' ),
+	ControlVisualChoiceItemView = ControlChooseItemView.extend( {} );
 
-export default ControlVisualChoiceItemView;
+module.exports = ControlVisualChoiceItemView;

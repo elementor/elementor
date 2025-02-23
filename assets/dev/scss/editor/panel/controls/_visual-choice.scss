@@ -1,6 +1,7 @@
 @import "../../../helpers/variables.scss";
+@import "choose.scss";
 
-.elementor-control-type-visual-choice {
+.elementor-control-type-visual_choice {
 
 	& .elementor-choices {
 		width: 100%;
@@ -48,8 +49,8 @@
 
 			&.e-choose-placeholder + .elementor-choices-label,
 			&:checked + .elementor-choices-label {
-				background-color: initial;
-				border: 2px solid $e-pink-300;
+				border: 2px solid var(--e-a-bg-active-bold);
+				background-color: var(--e-a-bg-active-bold);
 				border-radius: 3px;
 				opacity: 1;
 			}
