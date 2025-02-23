@@ -741,7 +741,6 @@ class Widgets_Manager {
 	 * @param string $experiment_name
 	 * @param array  $classes
 	 * @return void
-
 	 */
 	public function register_promoted_active_widgets( string $experiment_name, array $classes ): void {
 		if ( ! Plugin::$instance->experiments->is_feature_active( $experiment_name ) || empty( $classes ) ) {
