@@ -27,17 +27,23 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return 'a-paragraph';
 	}
 
-	public function get_icon() {
-		return 'eicon-text';
-	}
-
 	public function get_title() {
 		return esc_html__( 'Atomic Paragraph', 'elementor' );
 	}
 
-	protected function get_templates(): array {
+	public function get_icon() {
+		return 'eicon-paragraph';
+	}
+
+	protected static function define_props_schema(): array {
 		return [
-			'elementor/elements/atomic-paragraph' => __DIR__ . '/atomic-paragraph.html.twig',
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
+			'paragraph' => String_Prop_Type::make()
+				->default( __( 'Type your paragraph here', 'elementor' ) ),
+
+			'link' => Link_Prop_Type::make(),
 		];
 	}
 
@@ -50,30 +56,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 						->set_label( __( 'Paragraph', 'elementor' ) )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) ),
 
-					Link_Control::bind_to( 'link' )
-						->set_endpoint( WP_Post::ENDPOINT )
-						->set_request_params( [
-							WP_Post::KEYS_FORMAT_MAP_KEY => wp_json_encode( [
-								'ID' => 'id',
-								'post_title' => 'label',
-								'post_type' => 'groupLabel',
-							] ),
-						] )
-						->set_allow_custom_values( true )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+					Link_Control::bind_to( 'link' ),
 				] ),
-		];
-	}
-
-	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-
-			'paragraph' => String_Prop_Type::make()
-				->default( __( 'Type your paragraph here', 'elementor' ) ),
-
-			'link' => Link_Prop_Type::make(),
 		];
 	}
 
@@ -95,6 +79,12 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 						->add_prop( 'font-size', $font_size_value )
 						->add_prop( 'line-height', $line_height_value )
 				),
+		];
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-paragraph' => __DIR__ . '/atomic-paragraph.html.twig',
 		];
 	}
 }

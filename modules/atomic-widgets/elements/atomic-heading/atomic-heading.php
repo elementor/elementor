@@ -32,12 +32,22 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-t-letter';
+		return 'eicon-e-heading';
 	}
 
-	protected function get_templates(): array {
+	protected static function define_props_schema(): array {
 		return [
-			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
+				->default( 'h2' ),
+
+			'title' => String_Prop_Type::make()
+				->default( __( 'Your Title Here', 'elementor' ) ),
+
+			'link' => Link_Prop_Type::make(),
 		];
 	}
 
@@ -77,25 +87,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 								'label' => 'H6',
 							],
 						]),
-					Link_Control::bind_to( 'link' )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+					Link_Control::bind_to( 'link' ),
 				] ),
-		];
-	}
-
-	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-
-			'tag' => String_Prop_Type::make()
-				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
-				->default( 'h2' ),
-
-			'title' => String_Prop_Type::make()
-				->default( __( 'Your Title Here', 'elementor' ) ),
-
-			'link' => Link_Prop_Type::make(),
 		];
 	}
 
@@ -119,6 +112,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						->add_prop( 'line-height', $line_height_value )
 						->add_prop( 'font-weight', $font_weight_value )
 				),
+		];
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',
 		];
 	}
 }

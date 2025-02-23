@@ -1,7 +1,7 @@
 @font-face {
   font-family: "eicons";
-  src: url("../fonts/eicons.eot?5.35.0");
-  src: url("../fonts/eicons.eot?5.35.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.35.0") format("woff2"), url("../fonts/eicons.woff?5.35.0") format("woff"), url("../fonts/eicons.ttf?5.35.0") format("truetype"), url("../fonts/eicons.svg?5.35.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.36.0");
+  src: url("../fonts/eicons.eot?5.36.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.36.0") format("woff2"), url("../fonts/eicons.woff?5.36.0") format("woff"), url("../fonts/eicons.ttf?5.36.0") format("truetype"), url("../fonts/eicons.svg?5.36.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -1877,6 +1877,42 @@
 
 .eicon-ehp-zigzag:before {
   content: "\e9cc";
+}
+
+.eicon-e-button:before {
+  content: "\e9ce";
+}
+
+.eicon-flexbox:before {
+  content: "\e9d0";
+}
+
+.eicon-paragraph:before {
+  content: "\e9d1";
+}
+
+.eicon-icon:before {
+  content: "\e9d2";
+}
+
+.eicon-e-image:before {
+  content: "\e9d3";
+}
+
+.eicon-video:before {
+  content: "\e9d4";
+}
+
+.eicon-svg:before {
+  content: "\e9d5";
+}
+
+.eicon-e-divider:before {
+  content: "\e9d6";
+}
+
+.eicon-e-heading:before {
+  content: "\e9d7";
 }
 
 .eicon-eye:before {

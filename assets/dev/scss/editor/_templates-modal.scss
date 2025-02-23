@@ -178,6 +178,10 @@ $remote-templates-items-space: 30px;
 	align-items: center;
 }
 
+.elementor-template-library-filter-select-source {
+	width: 200px;
+}
+
 #elementor-template-library-filter-toolbar-remote {
 	font-size: 11px;
 }
@@ -887,6 +891,10 @@ label.elementor-template-library-order-label {
 			min-height: 550px;
 		}
 	}
+}
+
+.elementor-template-library-cloud-empty__button {
+	margin-block-start: 45px;
 }
 
 #elementor-template-library-connect {
