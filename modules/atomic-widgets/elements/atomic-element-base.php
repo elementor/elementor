@@ -33,7 +33,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['base_styles'] = $this->get_base_styles();
 		$config['version'] = $this->version;
 		$config['show_in_panel'] = true;
-		$config['categories'] = [ 'layout' ];
+		$config['categories'] = [ 'v4-elements' ];
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
 
