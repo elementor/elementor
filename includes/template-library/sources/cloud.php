@@ -105,14 +105,14 @@ class Source_Cloud extends Source_Base {
 		$app = $this->get_app();
 
 		$resource_data = [
-			'title' => $folder_data['title'] ?? esc_html__('New Folder', 'elementor'),
+			'title' => $folder_data['title'] ?? esc_html__( 'New Folder', 'elementor' ),
 			'type' => self::FOLDER_RESOURCE_TYPE,
 			'parentId' => null,
 		];
 
-		$response = $app->post_resource($resource_data);
+		$response = $app->post_resource( $resource_data );
 
-		return (int)$response['id'];
+		return (int) $response['id'];
 	}
 
 	public function update_item( $template_data ) {
