@@ -20,7 +20,7 @@ trait Has_Base_Styles {
 		foreach ( $base_styles as $key => $style ) {
 			$id = static::get_element_type() . '-' . $key;
 
-			$style_definitions[ $key ] = $style->build( $id );
+			$style_definitions[ $id ] = $style->build( $id );
 		}
 
 		return $style_definitions;
