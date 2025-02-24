@@ -103,14 +103,6 @@ class Test_Controller extends Elementor_Test_Base {
 	public function test_get_items() {
 		// Arrange.
 		$this->act_as_editor();
-		$post_types = $this->is_landing_pages_experiment_active()
-			? [ Source_Local::CPT, 'post', 'page' ]
-			: [ 'post', 'page' ];
-		$posts_per_page = $this->is_landing_pages_experiment_active() ? '3' : '2';
-		$params = [
-			'posts_per_page' => $posts_per_page,
-			'post_type' => $post_types,
-		];
 
 		$older_time = time() - 20;
 
@@ -149,6 +141,11 @@ class Test_Controller extends Elementor_Test_Base {
 		}
 
 		// Act.
+		$params = [
+			'posts_per_page' => '3',
+			'post_type' => [ Source_Local::CPT, 'post', 'page' ],
+		];
+
 		$response = $this->send_request( 'GET', self::RECENTLY_EDITED_ENDPOINT, $params );
 
 		// Assert.
@@ -157,11 +154,8 @@ class Test_Controller extends Elementor_Test_Base {
 		$expected = [
 			$posts[8]->ID,
 			$posts[9]->ID,
+			$posts[11]->ID,
 		];
-
-		if ( $this->is_landing_pages_experiment_active() ) {
-			$expected[] = $posts[11]->ID;
-		}
 
 		$this->assertSameSets(
 			$expected,
@@ -169,17 +163,12 @@ class Test_Controller extends Elementor_Test_Base {
 			'Expected to get the 3 most recent posts, excluding the kit post'
 		);
 
-		if ( $this->is_landing_pages_experiment_active() ) {
-			$this->assertEquals( 'Another Post', $response->get_data()[0]['title'] );
-		}
-
-		if ( $this->is_landing_pages_experiment_active() ) {
-			$this->assertSameSetsWithIndex( [
-				'post_type' => Source_Local::CPT,
-				'doc_type' => Landing_Page::get_type(),
-				'label' => 'Landing Page',
-			], $response->get_data()[0]['type'] );
-		}
+		$this->assertEquals( 'Another Post', $response->get_data()[0]['title'] );
+		$this->assertSameSetsWithIndex( [
+			'post_type' => Source_Local::CPT,
+			'doc_type' => Landing_Page::get_type(),
+			'label' => 'Landing Page',
+		], $response->get_data()[0]['type'] );
 	}
 
 	public function test_get_items__with_exclude() {
@@ -375,9 +364,5 @@ class Test_Controller extends Elementor_Test_Base {
 		}
 
 		return rest_do_request( $request );
-	}
-
-	private function is_landing_pages_experiment_active(): bool {
-		return Plugin::instance()->experiments->is_feature_active( 'landing-pages' );
 	}
 }
