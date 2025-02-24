@@ -1,7 +1,6 @@
 const TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' );
 const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' );
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
-const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
 
@@ -289,18 +288,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onSelectSourceFilterChange( event ) {
-		const select = event.currentTarget,
-			filterName = select.dataset.elementorFilter,
-			templatesSource = select.value;
-
-		elementor.templates.setSourceSelection( templatesSource );
-		elementor.templates.setFilter( filterName, templatesSource, true );
-
-		elementor.templates.loadTemplates( function() {
-			const templatesToShow = elementor.templates.filterTemplates();
-
-			elementor.templates.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
-		} );
+		elementor.templates.onSelectSourceFilterChange( event );
 	},
 
 	onMyFavoritesFilterChange() {
