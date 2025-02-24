@@ -105,7 +105,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 		<# } else { #>
-			<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar"></div>
+			<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar">
+			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+				<div id="elementor-template-library-filter">
+					<select id="elementor-template-library-filter-subtype" class="elementor-template-library-filter-select-source" data-elementor-filter="source">
+						<option value="local" <# if ( activeSource === 'local' ) { #> selected <# } #>><?php echo esc_html__( 'Site Library', 'elementor' ); ?></option>
+						<option value="cloud" <# if ( activeSource === 'cloud' ) { #> selected <# } #>><?php echo esc_html__( 'Cloud Library', 'elementor' ); ?></option>
+					</select>
+				</div>
+			<?php endif; ?>
+			</div>
 		<# } #>
 		<div id="elementor-template-library-filter-text-wrapper">
 			<label for="elementor-template-library-filter-text" class="elementor-screen-only"><?php echo esc_html__( 'Search Templates:', 'elementor' ); ?></label>
@@ -123,12 +132,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<input type="radio" id="elementor-template-library-order-local-type" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="type" data-default-ordering-direction="asc">
 				<label for="elementor-template-library-order-local-type" class="elementor-template-library-order-label"><?php echo esc_html__( 'Type', 'elementor' ); ?></label>
 			</div>
-			<# if ( 'local' === activeSource ) { #>
 			<div class="elementor-template-library-local-column-3">
 				<input type="radio" id="elementor-template-library-order-local-author" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="author" data-default-ordering-direction="asc">
 				<label for="elementor-template-library-order-local-author" class="elementor-template-library-order-label"><?php echo esc_html__( 'Created By', 'elementor' ); ?></label>
 			</div>
-			<# } #>
 			<div class="elementor-template-library-local-column-4">
 				<input type="radio" id="elementor-template-library-order-local-date" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="date">
 				<label for="elementor-template-library-order-local-date" class="elementor-template-library-order-label"><?php echo esc_html__( 'Creation Date', 'elementor' ); ?></label>
@@ -146,6 +153,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			?>" loading="lazy" alt="<?php echo esc_attr__( 'Elementor', 'elementor' ); ?>" />
 			<div class="elementor-excerpt"><?php echo esc_html__( 'Stay tuned! More awesome templates coming real soon.', 'elementor' ); ?></div>
 		</div>
+	<# } #>
+	<# if ( 'cloud' === activeSource ) { #>
+		<div id="elementor-template-library-load-more-anchor" class="elementor-visibility-hidden"><i class="eicon-loading eicon-animation-spin"></i></div>
 	<# } #>
 </script>
 
@@ -189,9 +199,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		{{ title }}
 	</div>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-type elementor-template-library-local-column-2">{{{ elementor.translate( type ) }}}</div>
-	<# if ( 'local' === activeSource ) { #>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-author elementor-template-library-local-column-3">{{{ author }}}</div>
-	<# } #>
 	<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>
 	<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
 		<div class="elementor-template-library-template-preview elementor-button e-btn-txt">
@@ -327,10 +335,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-templates-empty">
 	<div class="elementor-template-library-blank-icon">
-		<img src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/no-search-results.svg' ); ?>" class="elementor-template-library-no-results" loading="lazy" />
+		<img src="" class="elementor-template-library-no-results" loading="lazy" />
 	</div>
 	<div class="elementor-template-library-blank-title"></div>
 	<div class="elementor-template-library-blank-message"></div>
+
+	<div class="elementor-template-library-cloud-empty__button"></div>
+
 	<div class="elementor-template-library-blank-footer">
 		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
 		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>

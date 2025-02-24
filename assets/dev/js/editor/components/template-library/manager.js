@@ -1,4 +1,5 @@
 import Component from './component';
+import LocalStorage from 'elementor-api/core/data/storages/local-storage';
 
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
@@ -6,13 +7,17 @@ const TemplateLibraryManager = function() {
 	this.modalConfig = {};
 
 	const self = this,
-		templateTypes = {};
+		templateTypes = {},
+		storage = new LocalStorage(),
+		storageSelectionKey = 'my_templates_source';
 
 	let deleteDialog,
 		errorDialog,
 		templatesCollection,
 		config = {},
-		filterTerms = {};
+		filterTerms = {},
+		isLoading = false,
+		total = 0;
 
 	const registerDefaultTemplateTypes = function() {
 		var data = {
@@ -81,6 +86,16 @@ const TemplateLibraryManager = function() {
 		};
 	};
 
+	this.isLoading = () => isLoading;
+
+	this.canLoadMore = () => {
+		if ( ! templatesCollection ) {
+			return false;
+		}
+
+		return templatesCollection.length < total;
+	};
+
 	this.init = function() {
 		registerDefaultTemplateTypes();
 
@@ -91,6 +106,14 @@ const TemplateLibraryManager = function() {
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
 		} );
+	};
+
+	this.getSourceSelection = function() {
+		return storage.getItem( storageSelectionKey );
+	};
+
+	this.setSourceSelection = function( value ) {
+		return storage.setItem( storageSelectionKey, value );
 	};
 
 	this.getTemplateTypes = function( type ) {
@@ -135,30 +158,30 @@ const TemplateLibraryManager = function() {
 		const originalTitle = templateModel.get( 'title' );
 		const dialog = this.getRenameDialog( templateModel );
 
-		dialog.onConfirm = () => {
-			if ( options.onConfirm ) {
-				options.onConfirm();
-			}
+		return new Promise( ( resolve ) => {
+			dialog.onConfirm = () => {
+				if ( options.onConfirm ) {
+					options.onConfirm();
+				}
 
-			elementorCommon.ajax.addRequest( 'rename_template', {
-				data: {
-					source: templateModel.get( 'source' ),
-					id: templateModel.get( 'template_id' ),
-					title: templateModel.get( 'title' ),
-				},
-				success: ( response ) => {
-					if ( options.onSuccess ) {
-						options.onSuccess( response );
-					}
-				},
-				error: ( error ) => {
-					this.showErrorDialog( error );
-					templateModel.set( 'title', originalTitle );
-				},
-			} );
-		};
-
-		dialog.show();
+				elementorCommon.ajax.addRequest( 'rename_template', {
+					data: {
+						source: templateModel.get( 'source' ),
+						id: templateModel.get( 'template_id' ),
+						title: templateModel.get( 'title' ),
+					},
+					success: ( response ) => {
+						resolve( response );
+					},
+					error: ( error ) => {
+						this.showErrorDialog( error );
+						templateModel.set( 'title', originalTitle );
+						resolve();
+					},
+				} );
+			};
+			dialog.show();
+		} );
 	};
 
 	this.getRenameDialog = function( templateModel ) {
@@ -200,6 +223,34 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
+	this.getFolderTemplates = ( templateId ) => {
+		return new Promise( ( resolve ) => {
+			isLoading = true;
+			const ajaxOptions = {
+				data: {
+					source: 'cloud',
+					template_id: templateId,
+				},
+				success: ( data ) => {
+					this.setFilter( 'parent', templateId );
+					templatesCollection = new TemplateLibraryCollection( data.templates );
+
+					elementor.templates.layout.hideLoadingView();
+
+					self.layout.updateViewCollection( templatesCollection.models );
+					isLoading = false;
+					resolve();
+				},
+				error: ( error ) => {
+					isLoading = false;
+					this.showErrorDialog( error );
+				},
+			};
+
+			elementorCommon.ajax.addRequest( 'get_item_children', ajaxOptions );
+		} );
+	};
+
 	this.deleteFolder = function( templateModel, options ) {
 		const ajaxOptions = {
 			data: {
@@ -232,7 +283,7 @@ const TemplateLibraryManager = function() {
 				// Translators: %1$s: Folder name, %2$s: Number of templates.
 				__( 'Are you sure you want to delete "%1$s" folder with all %2$d templates?', 'elementor' ),
 				templateModel.get( 'title' ),
-				data.length,
+				data.total,
 			),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
@@ -424,6 +475,9 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.loadTemplates = function( onUpdate ) {
+		isLoading = true;
+		total = 0;
+
 		self.layout.showLoadingView();
 
 		const query = { source: this.getFilter( 'source' ) },
@@ -434,10 +488,18 @@ const TemplateLibraryManager = function() {
 			options.refresh = true;
 		}
 
+		this.setFilter( 'parent', null, query );
+
 		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
+			const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
+
 			templatesCollection = new TemplateLibraryCollection(
-				result.data.templates,
+				templates,
 			);
+
+			if ( result.data?.templates?.total ) {
+				total = result.data?.templates?.total;
+			}
 
 			if ( result.data.config ) {
 				config = result.data.config;
@@ -448,7 +510,81 @@ const TemplateLibraryManager = function() {
 			if ( onUpdate ) {
 				onUpdate();
 			}
+		} ).finally( ( ) => {
+			isLoading = false;
 		} );
+	};
+
+	this.searchTemplates = ( data ) => {
+		return new Promise( ( resolve ) => {
+			this.setFilter( 'parent', null );
+
+			isLoading = true;
+
+			const ajaxOptions = {
+				data,
+				success: ( result ) => {
+					isLoading = false;
+
+					templatesCollection = new TemplateLibraryCollection( result.templates );
+
+					total = result.total;
+
+					self.layout.updateViewCollection( templatesCollection.models );
+
+					this.setFilter( 'text', data.search );
+
+					resolve( result );
+				},
+				error: ( error ) => {
+					isLoading = false;
+
+					this.showErrorDialog( error );
+
+					resolve();
+				},
+			};
+
+			elementorCommon.ajax.addRequest( 'search_templates', ajaxOptions );
+		} );
+	};
+
+	this.loadMore = ( {
+		onUpdate,
+		search = '',
+	} = {} ) => {
+		isLoading = true;
+
+		const source = this.getFilter( 'source' );
+
+		const parentId = this.getFilter( 'parent' );
+
+		const ajaxOptions = {
+			data: {
+				source,
+				offset: templatesCollection.length,
+				search,
+				parentId,
+			},
+			success: ( result ) => {
+				const collection = new TemplateLibraryCollection( result.templates );
+
+				templatesCollection.add( collection.models, { merge: true } );
+
+				self.layout.addTemplates( collection.models );
+
+				if ( onUpdate ) {
+					onUpdate();
+				}
+
+				isLoading = false;
+			},
+			error: () => {
+				isLoading = false;
+			},
+		};
+
+		elementorCommon.ajax.addRequest( 'load_more_templates', ajaxOptions );
 	};
 
 	this.showTemplates = function() {
@@ -464,6 +600,7 @@ const TemplateLibraryManager = function() {
 
 	this.filterTemplates = function() {
 		const activeSource = self.getFilter( 'source' );
+
 		return templatesCollection.filter( function( model ) {
 			if ( activeSource !== model.get( 'source' ) ) {
 				return false;

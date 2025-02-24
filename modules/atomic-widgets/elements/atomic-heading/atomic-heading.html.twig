@@ -1,0 +1,11 @@
+<{{ settings.tag | e('html_tag') }}
+    class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}"
+>
+    {% if settings.link.href %}
+        <a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}">
+            {{ settings.title }}
+        </a>
+    {% else %}
+        {{ settings.title }}
+    {% endif %}
+</{{ settings.tag | e('html_tag') }}>

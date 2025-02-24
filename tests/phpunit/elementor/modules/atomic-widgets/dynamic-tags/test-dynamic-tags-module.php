@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\DynamicTags\Module as V1DynamicTags;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -438,6 +439,10 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 			'string with enum' => [
 				String_Prop_Type::make()->enum( [ 'a', 'b', 'c' ] )->default( 'a' ),
 				[],
+			],
+			'url' => [
+				Url_Prop_Type::make()->default( 'http://example.com' ),
+				[ V1DynamicTags::URL_CATEGORY ],
 			],
 		];
 	}
