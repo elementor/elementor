@@ -32,7 +32,7 @@ class Editor_User_Rest_Api {
 				},
 				'args' => [
 					'introductions' => [
-						'required' => true,
+						'required' => false,
 						'type' => 'object',
 					],
 				],
@@ -53,17 +53,16 @@ class Editor_User_Rest_Api {
 
 		$sanitized_data = $this->sanitize_user_data( $data );
 
-		if ( $sanitized_data['introductions'] ) {
-			$user_introductions = User::get_introduction_meta();
-			$sanitized_data['introductions'] = array_merge( $sanitized_data['introductions'], $user_introductions );
-			update_user_meta( get_current_user_id(), User::INTRODUCTION_KEY, $sanitized_data['introductions'] );
-		}
+		$user_introductions = User::get_introduction_meta();
+		$sanitized_introductions = $sanitized_data['introductions'] ?? [];
+		$sanitized_data['introductions'] = array_merge( $sanitized_introductions, $user_introductions );
+		update_user_meta( get_current_user_id(), User::INTRODUCTION_KEY, $sanitized_data['introductions'] );
 
 		return new \WP_REST_Response( [ 'data' => $sanitized_data ] );
 	}
 
 	private function sanitize_user_data( $data ) {
-		if ( ! is_array( $data ) ) {
+		if ( ! is_array( $data ) || empty( $data ) ) {
 			return [];
 		}
 
