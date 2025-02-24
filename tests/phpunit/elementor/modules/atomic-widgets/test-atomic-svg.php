@@ -25,7 +25,6 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		'settings' => [
 			'svg' => [
 				'id' => 123,
-				'url' => ELEMENTOR_ASSETS_URL . 'images/test.svg',
 			],
 		],
 		'widgetType' => 'a-svg',
