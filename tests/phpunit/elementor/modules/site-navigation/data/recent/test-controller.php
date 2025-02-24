@@ -129,16 +129,14 @@ class Test_Controller extends Elementor_Test_Base {
 		] );
 
 		// Mock another post with info.
-		if ( $this->is_landing_pages_experiment_active() ) {
-			$posts[] = $this->factory()->post->create_and_get( [
-				'post_title' => 'Another Post',
-				'post_type' => Source_Local::CPT,
-				'meta_input' => [
-					Document::TYPE_META_KEY => Landing_Page::get_type(),
-					'_elementor_edit_mode' => 'builder',
-				],
-			] );
-		}
+		$posts[] = $this->factory()->post->create_and_get( [
+			'post_title' => 'Another Post',
+			'post_type' => Source_Local::CPT,
+			'meta_input' => [
+				Document::TYPE_META_KEY => Landing_Page::get_type(),
+				'_elementor_edit_mode' => 'builder',
+			],
+		] );
 
 		// Act.
 		$params = [
@@ -365,4 +363,5 @@ class Test_Controller extends Elementor_Test_Base {
 
 		return rest_do_request( $request );
 	}
+
 }
