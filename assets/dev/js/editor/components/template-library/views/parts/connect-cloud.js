@@ -30,9 +30,15 @@ module.exports = Marionette.ItemView.extend( {
 				elementor.config.library_connect.is_connected = false;
 			},
 		} );
+
+		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.add( 'elementor-hidden' );
 	},
 
 	onSelectSourceFilterChange( event ) {
 		elementor.templates.onSelectSourceFilterChange( event );
+	},
+
+	onDestroy() {
+		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.remove( 'elementor-hidden' );
 	},
 } );
