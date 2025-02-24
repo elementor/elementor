@@ -471,8 +471,9 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
-		if ( 'cloud' === args.source && ! elementor.config.library_connect.is_connected ) {
+		if ( this.shouldShowCloudConnectView( args.source ) ) {
 			self.layout.showCloudConnectView();
+
 			return;
 		}
 
@@ -654,8 +655,9 @@ const TemplateLibraryManager = function() {
 		elementor.templates.setSourceSelection( templatesSource );
 		elementor.templates.setFilter( filterName, templatesSource, true );
 
-		if ( 'cloud' === templatesSource && ! elementor.config.library_connect.is_connected ) {
+		if ( this.shouldShowCloudConnectView( templatesSource ) ) {
 			self.layout.showCloudConnectView();
+
 			return;
 		}
 
@@ -665,6 +667,10 @@ const TemplateLibraryManager = function() {
 			elementor.templates.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
 		} );
 	};
+
+	this.shouldShowCloudConnectView = function( source ) {
+		return 'cloud' === source && ! elementor.config.library_connect.is_connected
+	}
 };
 
 module.exports = new TemplateLibraryManager();
