@@ -71,9 +71,9 @@ class Module extends BaseModule {
 				'utm_campaign' => 'library-connect',
 				'utm_content' => 'cloud-library',
 			] ) ),
-			'library_connect_title' => 'Connect',
-			'library_connect_sub_title' => 'Sub Title',
-			'library_connect_button_text' => 'Connect',
+			'library_connect_title' => esc_html__( 'Connect', 'elementor' ),
+			'library_connect_sub_title' => esc_html__( 'Sub Title', 'elementor' ),
+			'library_connect_button_text' => esc_html__( 'Connect', 'elementor' ),
 		] );
 	}
 }
