@@ -96,6 +96,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 					Style_Variant::make()
 						->add_prop( 'width', $width )
 						->add_prop( 'height', $height )
+						->add_prop( 'overflow', 'unset')
 				),
 		];
 	}
