@@ -119,15 +119,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<div id="elementor-template-library-filter-toolbar-side-actions">
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
-				<# if ( 'cloud' === activeSource ) {
-					var isInRootFolder = elementor.templates.getFilter('parent') === null;
-
-					if ( isInRootFolder ) { #>
-						<div id="elementor-template-library-add-new-folder" class="">
-							<i class="eicon-folder" aria-hidden="true" title="Create a New Folder"></i>
-							<span class="elementor-screen-only">Create a New Folder</span>
-						</div>
-					<# } #>
+				<# if ( 'cloud' === activeSource ) { #>
+                    <div id="elementor-template-library-add-new-folder" class="">
+                        <i class="eicon-folder" aria-hidden="true" title="Create a New Folder"></i>
+                        <span class="elementor-screen-only"><?php echo esc_html__( 'Create a New Folder', 'elementor' ); ?></span>
+                    </div>
 				<# } #>
 			<?php endif; ?>
 			<div id="elementor-template-library-filter-text-wrapper">
