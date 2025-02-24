@@ -88,4 +88,58 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		// Assert
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
+
+	public function test__should_render_svg_wrapped_in_link() : void {
+		$element = [
+			'id' => 'abcd123',
+			'elType' => 'widget',
+			'settings' => [
+				'svg' => [
+					'id' => 123,
+				],
+				'link' => [
+					'href' => 'https://elementor.com',
+					'target' => '_blank',
+				]
+			],
+			'widgetType' => 'a-svg',
+		];
+
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $element );
+
+		// Act
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
+	public function test__should_not_render_svg_wrapped_in_link_if_link_object_not_well_defined() : void {
+		$element = [
+			'id' => 'abcd123',
+			'elType' => 'widget',
+			'settings' => [
+				'svg' => [
+					'id' => 123,
+				],
+				'link' => [
+					'href' => '',
+					'target' => '_blank',
+				]
+			],
+			'widgetType' => 'a-svg',
+		];
+
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $element );
+
+		// Act
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
 }
