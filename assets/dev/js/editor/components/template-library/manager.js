@@ -669,7 +669,7 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.shouldShowCloudConnectView = function( source ) {
-		return 'cloud' === source && ! elementor.config.library_connect.is_connected
+		return 'cloud' === source && ! elementor.config.library_connect.is_connected;
 	};
 };
 
