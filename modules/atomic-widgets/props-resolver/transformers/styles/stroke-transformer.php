@@ -10,6 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Stroke_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
-		return Multi_Props::generate( [ '-webkit-text-stroke' => $value['width'] . ' ' . $value['color'], 'stroke' => $value['color'], 'stroke-width' => $value['width'] ] );
+		return Multi_Props::generate( array(
+			'-webkit-text-stroke' => $value['width'] . ' ' . $value['color'],
+			'stroke' => $value['color'],
+			'stroke-width' => $value['width'],
+		) );
 	}
 }
