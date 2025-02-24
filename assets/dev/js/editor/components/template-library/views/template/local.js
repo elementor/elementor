@@ -62,18 +62,22 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		open( this.model.get( 'url' ), '_blank' );
 	},
 
-	onRenameClick() {
-		elementor.templates.renameTemplate( this.model, {
-			onConfirm: () => {
-				this.ui.toggleMoreIcon.removeClass( 'eicon-ellipsis-h' ).addClass( 'eicon-loading eicon-animation-spin' );
-			},
-			onSuccess: () => {
-				this.ui.toggleMoreIcon.addClass( 'eicon-ellipsis-h' ).removeClass( 'eicon-loading eicon-animation-spin' );
-			},
-			onError: () => {
-				this.ui.toggleMoreIcon.addClass( 'eicon-ellipsis-h' ).removeClass( 'eicon-loading eicon-animation-spin' );
-			},
-		} );
+	async onRenameClick() {
+		try {
+			await elementor.templates.renameTemplate( this.model, {
+				onConfirm: () => this.showToggleMoreLoader(),
+			} );
+		} finally {
+			this.hideToggleMoreLoader();
+		}
+	},
+
+	showToggleMoreLoader() {
+		this.ui.toggleMoreIcon.removeClass( 'eicon-ellipsis-h' ).addClass( 'eicon-loading eicon-animation-spin' );
+	},
+
+	hideToggleMoreLoader() {
+		this.ui.toggleMoreIcon.addClass( 'eicon-ellipsis-h' ).removeClass( 'eicon-loading eicon-animation-spin' );
 	},
 } );
 
