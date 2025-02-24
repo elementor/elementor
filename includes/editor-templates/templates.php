@@ -387,7 +387,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<#
 		const activeSource = elementor.templates.getFilter( 'source' );
 	#>
-	<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar" style="padding-block-end:50px;">
+	<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar" style="padding-block-end:80px;">
 		<div id="elementor-template-library-filter">
 			<select id="elementor-template-library-filter-subtype" class="elementor-template-library-filter-select-source" data-elementor-filter="source">
 				<option value="local" <# if ( activeSource === 'local' ) { #> selected <# } #>><?php echo esc_html__( 'Site Library', 'elementor' ); ?></option>
