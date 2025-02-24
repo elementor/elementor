@@ -408,20 +408,12 @@ export default class Commands extends CommandsBackwardsCompatibility {
 	applyRunAfter( instance, result ) {
 		// TODO: Temp code determine if it's a jQuery deferred object.
 		if ( result && 'object' === typeof result && result.promise && result.then && result.fail ) {
-			const handleJQueryDeferred = ( _result ) => {
-				_result.fail( ( e ) => {
-					this.catchApply( e, instance );
-					this.afterRun( instance.command, instance.args, e );
-				} );
-				_result.done( ( __result ) => {
-					this.applyRunAfterSync( instance, __result );
-				} );
+			result = new Promise( ( resolve, reject ) => {
+				result.then( resolve, reject );
+			} );
+		}
 
-				return _result;
-			};
-
-			return handleJQueryDeferred( result );
-		} else if ( result instanceof Promise ) {
+		if ( result instanceof Promise ) {
 			return this.applyRunAfterAsync( instance, result );
 		}
 
