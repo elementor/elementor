@@ -32,7 +32,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-t-letter';
+		return 'eicon-e-heading';
 	}
 
 	protected static function define_props_schema(): array {
@@ -87,8 +87,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 								'label' => 'H6',
 							],
 						]),
-					Link_Control::bind_to( 'link' )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+					Link_Control::bind_to( 'link' ),
 				] ),
 		];
 	}

@@ -386,18 +386,26 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											[
 												'$$type' => 'background-image-overlay',
 												'value' => [
-													'image-src' => [
-														'$$type' => 'image-src',
+													'image' => [
+														'$$type' => 'image',
 														'value' => [
-															'id' => [
-																'$$type' => 'image-attachment-id',
-																'value' => 3,
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => [
+																		'$$type' => 'image-attachment-id',
+																		'value' => 3,
+																	],
+																	'url' => null
+																],
 															],
-															'url' => null
-														],
+															'size' => [
+																'$$type' => 'string',
+																'value' => 'medium',
+															]
+														]
 													],
 													'position' => 'top center',
-													'resolution' => 'medium',
 													'repeat' => 'repeat-y',
 													'attachment' => 'fixed',
 												]
@@ -416,6 +424,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				],
 			],
 		];
+
+
 
 		$stylesRenderer = Styles_Renderer::make( [], '' );
 
@@ -454,17 +464,58 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											[
 												'$$type' => 'background-image-overlay',
 												'value' => [
-													'image-src' => [
-														'$$type' => 'image-src',
+													'image' => [
+														'$$type' => 'image',
 														'value' => [
-															'id' => null,
-															'url' => 'https://example.com/image.jpg',
-														],
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => null,
+																	'url' => 'https://example.com/image.jpg',
+																],
+															],
+														]
 													],
 													'size' => 'cover',
 													'position' => 'bottom right',
 													'repeat' => 'repeat',
 													'attachment' => 'fixed',
+												]
+											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image' => [
+														'$$type' => 'image',
+														'value' => [
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => null,
+																	'url' => 'https://example.com/image.jpg',
+																],
+															],
+														]
+													],
+													'position' => [
+														'$$type' => 'background-image-position-offset',
+														'value' => [
+															'x' => [
+																'$$type' => 'size',
+																'value' => [
+																	'unit' => 'px',
+																	'size' => 40,
+																],
+															],
+															'y' => [
+																'$$type' => 'size',
+																'value' => [
+																	'unit' => 'px',
+																	'size' => 70,
+																],
+															],
+														],
+													],
 												]
 											],
 										],
@@ -619,15 +670,24 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											[
 												'$$type' => 'background-image-overlay',
 												'value' => [
-													'image-src' => [
-														'$$type' => 'image-src',
+													'image' => [
+														'$$type' => 'image',
 														'value' => [
-															'id' => [
-																'$$type' => 'image-attachment-id',
-																'value' => 3,
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => [
+																		'$$type' => 'image-attachment-id',
+																		'value' => 3,
+																	],
+																	'url' => null
+																],
 															],
-															'url' => null,
-														],
+															'size' => [
+																'$$type' => 'string',
+																'value' => 'large',
+															]
+														]
 													],
 													'size' => [
 														'$$type' => 'background-image-size-scale',
@@ -643,7 +703,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 														],
 													],
 													'attachment' => 'scroll',
-													'resolution' => 'large',
 													'repeat' => 'repeat-x',
 												]
 											],
