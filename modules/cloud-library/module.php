@@ -4,6 +4,7 @@ namespace Elementor\Modules\CloudLibrary;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
+use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Plugin;
 
@@ -53,8 +54,18 @@ class Module extends BaseModule {
 			return;
 		}
 
+		/** @var ConnectModule $connect */
+		$connect = Plugin::$instance->common->get_component( 'connect' );
+
+		/** @var Library $library */
+		$library = $connect->get_app( 'library' );
+
+		if ( ! $library ) {
+			return;
+		}
+
 		Plugin::$instance->app->set_settings( 'cloud-library', [
-			'library_connect_url'  => esc_url( Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize', [
+			'library_connect_url'  => esc_url( $library->get_admin_url( 'authorize', [
 				'utm_source' => 'template-library',
 				'utm_medium' => 'wp-dash',
 				'utm_campaign' => 'library-connect',
