@@ -12,10 +12,6 @@ module.exports = Marionette.ItemView.extend( {
 		'change @ui.selectSourceFilter': 'onSelectSourceFilterChange',
 	},
 
-	templateHelpers() {
-		return this.getOption( 'texts' );
-	},
-
 	onRender() {
 		this.ui.connect.elementorConnect( {
 			success: () => {

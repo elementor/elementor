@@ -109,15 +109,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	showCloudConnectView() {
-		const args = {
-			texts: {
-				title: __( 'Connect to Cloud Library', 'elementor' ),
-				message: __( 'Access cloud library by connecting your account', 'elementor' ),
-				button: __( 'Connect & Activate', 'elementor' ),
-			},
-		};
-
-		this.modalContent.show( new TemplateLibraryCloudConnectView( args ) );
+		this.modalContent.show( new TemplateLibraryCloudConnectView() );
 	},
 
 	showSaveTemplateView( elementModel ) {
