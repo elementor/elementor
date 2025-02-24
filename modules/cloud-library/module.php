@@ -27,7 +27,7 @@ class Module extends BaseModule {
 
 			add_action( 'elementor/init', function () {
 				$this->set_cloud_library_settings();
-			}, 12 /** After the initiation of the connect kit library */ );
+			}, 12 /** After the initiation of the connect cloud library */ );
 		}
 	}
 
@@ -54,12 +54,12 @@ class Module extends BaseModule {
 		}
 
 		Plugin::$instance->app->set_settings( 'cloud-library', [
-			'library_connect_url'  => Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize', [
+			'library_connect_url'  => esc_url( Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize', [
 				'utm_source' => 'template-library',
 				'utm_medium' => 'wp-dash',
 				'utm_campaign' => 'library-connect',
 				'utm_content' => 'cloud-library',
-			] ),
+			] ) ),
 		] );
 	}
 }

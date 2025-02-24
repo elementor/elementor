@@ -2,8 +2,6 @@
 namespace Elementor\Modules\CloudLibrary\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
-use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

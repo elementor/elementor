@@ -404,7 +404,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-message">
 		{{{ message }}}
 	</div>
-	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="{{{ elementorAppConfig['cloud-library'].library_connect_url }}}">
+	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="{{{ elementorAppConfig?.['cloud-library']?.library_connect_url }}}">
 		{{{ button }}}
 	</a>
 	<?php
