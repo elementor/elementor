@@ -126,23 +126,5 @@ class Cloud_Library extends Library {
 		return true;
 	}
 
-	public function get_connect_url() {
-		if ( Utils::has_pro() ) {
-			return Plugin::$instance->common->get_component( 'connect' )->get_app( 'activate' )->get_admin_url( 'authorize', [
-				'utm_source' => 'template-library',
-				'utm_medium' => 'wp-dash',
-				'utm_campaign' => 'connect-and-activate-license',
-				'utm_content' => 'cloud-library',
-			] );
-		}
-
-		return Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize', [
-			'utm_source' => 'template-library',
-			'utm_medium' => 'wp-dash',
-			'utm_campaign' => 'library-connect',
-			'utm_content' => 'cloud-library',
-		] );
-	}
-
 	protected function init() {}
 }

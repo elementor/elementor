@@ -24,6 +24,10 @@ class Module extends BaseModule {
 
 		if ( Plugin::$instance->experiments->is_feature_active( $this->get_name() ) ) {
 			$this->register_app();
+
+			add_action( 'elementor/init', function () {
+				$this->set_cloud_library_settings();
+			}, 12 /** After the initiation of the connect kit library */ );
 		}
 	}
 
@@ -42,5 +46,20 @@ class Module extends BaseModule {
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'cloud-library', Cloud_Library::get_class_name() );
 		} );
+	}
+
+	private function set_cloud_library_settings() {
+		if ( ! Plugin::$instance->common ) {
+			return;
+		}
+
+		Plugin::$instance->app->set_settings( 'cloud-library', [
+			'library_connect_url'  => Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize', [
+				'utm_source' => 'template-library',
+				'utm_medium' => 'wp-dash',
+				'utm_campaign' => 'library-connect',
+				'utm_content' => 'cloud-library',
+			] ),
+		] );
 	}
 }

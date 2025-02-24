@@ -404,10 +404,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-blank-message">
 		{{{ message }}}
 	</div>
-		<?php
-		$url = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' )->get_connect_url();
-		?>
-	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="<?php echo esc_url( $url ); ?>">
+	<a id="elementor-template-library-connect__button" class="elementor-button e-primary" href="{{{ elementorAppConfig['cloud-library'].library_connect_url }}}">
 		{{{ button }}}
 	</a>
 	<?php
