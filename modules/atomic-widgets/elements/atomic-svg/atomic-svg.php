@@ -49,11 +49,11 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 	protected function define_base_styles(): array {
 		$width = Size_Prop_Type::generate( [
-			'size' => 50,
+			'size' => 60,
 			'unit' => 'px',
 		] );
 		$height = Size_Prop_Type::generate( [
-			'size' => 50,
+			'size' => 60,
 			'unit' => 'px',
 		] );
 
