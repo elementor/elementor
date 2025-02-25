@@ -544,6 +544,12 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
+		if ( this.shouldShowCloudConnectView( args.source ) ) {
+			self.layout.showCloudConnectView();
+
+			return;
+		}
+
 		self.showTemplates();
 	};
 
@@ -712,6 +718,31 @@ const TemplateLibraryManager = function() {
 		self.getErrorDialog()
 			.setMessage( errorMessage )
 			.show();
+	};
+
+	this.onSelectSourceFilterChange = function( event ) {
+		const select = event.currentTarget,
+			filterName = select.dataset.elementorFilter,
+			templatesSource = select.value;
+
+		self.setSourceSelection( templatesSource );
+		self.setFilter( filterName, templatesSource, true );
+
+		if ( this.shouldShowCloudConnectView( templatesSource ) ) {
+			self.layout.showCloudConnectView();
+
+			return;
+		}
+
+		self.loadTemplates( function() {
+			const templatesToShow = self.filterTemplates();
+
+			self.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
+		} );
+	};
+
+	this.shouldShowCloudConnectView = function( source ) {
+		return 'cloud' === source && ! elementor.config.library_connect.is_connected;
 	};
 };
 

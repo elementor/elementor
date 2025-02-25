@@ -389,7 +389,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 					'unit' => 's',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-heading-title' => 'transition-duration: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-heading-title a' => 'transition-duration: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
