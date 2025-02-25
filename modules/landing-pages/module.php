@@ -59,14 +59,13 @@ class Module extends BaseModule {
 			return true;
 		}
 
-		// Load this at the end, it's an expensive query.
 		if ( $this->has_landing_pages() ) {
-			add_option( 'elementor_landing_pages_activation', '1' );
+			update_option( 'elementor_landing_pages_activation', '1' );
 			return true;
-		} else {
-			add_option( 'elementor_landing_pages_activation', '0' );
-			return false;
 		}
+
+		update_option( 'elementor_landing_pages_activation', '0' );
+		return false;
 	}
 
 	/**
