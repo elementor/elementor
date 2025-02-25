@@ -159,6 +159,11 @@ class Controls_Manager {
 	const CHOOSE = 'choose';
 
 	/**
+	 * Visual_Choice control.
+	 */
+	const VISUAL_CHOICE = 'visual_choice';
+
+	/**
 	 * WYSIWYG control.
 	 */
 	const WYSIWYG = 'wysiwyg';
@@ -421,6 +426,7 @@ class Controls_Manager {
 			self::SLIDER,
 			self::DIMENSIONS,
 			self::CHOOSE,
+			self::VISUAL_CHOICE,
 			self::WYSIWYG,
 			self::CODE,
 			self::FONT,
