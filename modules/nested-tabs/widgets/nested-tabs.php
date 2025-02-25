@@ -1280,11 +1280,15 @@ class NestedTabs extends Widget_Nested_Base {
 			'class': [ 'e-n-tab-title-text' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
-			'data-binding-setting': [ 'tab_title' ],
+			'data-binding-setting': [ 'tab_title', 'element_id' ],
 			'data-binding-index': tabCount,
 			'data-binding-dynamic': 'true',
-			'data-binding-dynamic-css-id': 'element_id',
-			'data-binding-single-item-html-wrapper-tag': 'button',
+			'data-binding-attribute': JSON.stringify({
+				'element_id': {
+					attr: 'id',
+					elementType: 'button'
+				}
+			}),
 		}, null, true );
 
 		view.addRenderAttribute( 'tab-icon', {

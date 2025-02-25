@@ -757,24 +757,48 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = async ( dataBinding ) => {
-			const { bindingSetting, bindingDynamicCssId } = dataBinding.dataset,
-				changedControl = this.getChangedDynamicControlKey( settings );
-			let change = settings.changed[ bindingSetting ];
+			const { bindingSetting, bindingAttribute } = dataBinding.dataset;
+			const bindingSettings = bindingSetting.split( ' ' ); // Multiple binding settings can appear
+			let changedControlID = Object.keys( settings.changed )[ 0 ];
+			const isDynamic = '__dynamic__' === changedControlID;
 
-			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl, bindingDynamicCssId ) ) {
-				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
+			if ( isDynamic ) {
+				changedControlID = Object.keys( settings.changed[ changedControlID ] )[ 0 ];
+			}
+
+			// If no data-binding-setting or the current changed element isn't registered as a databinding setting, skip
+			if ( ! bindingSettings.length || ! bindingSettings.some( ( x ) => x === changedControlID ) ) {
+				return false;
+			}
+
+			let change;
+
+			if ( isDynamic ) {
+				const dynamicValue = await this.getDynamicValue( settings, changedControlID, bindingSetting );
 
 				if ( dynamicValue ) {
 					change = dynamicValue;
 				}
+			} else {
+				change = settings.changed[ changedControlID ];
 			}
 
-			if ( this.isCssIdControl( changedControl, bindingDynamicCssId ) ) {
-				return this.updateCssId( dataBinding, change, settings, changedControl );
+			let attributeData = {};
+
+			if ( bindingAttribute ) {
+				attributeData = JSON.parse( bindingAttribute );
 			}
+
+			const attributeChanges = attributeData[ changedControlID ];
 
 			if ( change !== undefined ) {
-				dataBinding.el.innerHTML = change;
+				// If it's an attribute change edit the html attribute, otherwise edit the inner html if
+				if ( attributeChanges !== undefined ) {
+					dataBinding.el.closest( attributeChanges.elementType ).setAttribute( attributeChanges.attr, change );
+				} else {
+					dataBinding.el.innerHTML = change;
+				}
+
 				return true;
 			}
 
