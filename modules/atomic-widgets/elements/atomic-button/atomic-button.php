@@ -100,7 +100,6 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'size' => 0,
 			'unit' => 'px',
 		] );
-		$align_self_value = String_Prop_Type::generate( 'baseline' );
 		$text_align_value = String_Prop_Type::generate( 'center' );
 		$font_weight_value = String_Prop_Type::generate( '500' );
 
@@ -116,7 +115,6 @@ class Atomic_Button extends Atomic_Widget_Base {
 						->add_prop( 'font-weight', $font_weight_value )
 						->add_prop( 'padding', $padding_value )
 						->add_prop( 'text-align', $text_align_value )
-						->add_prop( 'align-self', $align_self_value )
 						->add_prop( 'border-radius', $border_radius_value )
 						->add_prop( 'border-width', $border_width_value )
 				),
