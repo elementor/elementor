@@ -25,6 +25,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corner_Siz
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Layout_Direction_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Unit_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
@@ -52,6 +53,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Unit_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
@@ -163,6 +165,7 @@ class Module extends BaseModule {
 
 		// Other
 		$transformers->register( Dimensions_Prop_Type::get_key(), new Dimensions_Transformer() );
+		$transformers->register( Size_Unit_Prop_Type::get_key(), new Size_Unit_Transformer() );
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
