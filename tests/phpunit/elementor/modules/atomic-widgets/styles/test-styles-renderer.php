@@ -789,28 +789,28 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'border-radius' => [
 								'$$type' => 'border-radius',
 								'value' => [
-									'top-left' => [
+									'start-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'top-right' => [
+									'start-end' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'bottom-right' => null,
-									'bottom-left' => [
+									'end-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
+									'end-end' => null,
 								]
 							],
 							'border-width' => [

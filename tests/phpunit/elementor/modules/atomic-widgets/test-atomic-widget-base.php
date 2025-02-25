@@ -534,14 +534,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'border-radius' => [
 								'$$type' => 'border-radius',
 								'value' => [
-									'top-left' => [
+									'start-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'unit' => 'px',
 											'size' => 0,
 										],
 									],
-									'top-right' => [
+									'start-end' => [
 										'$$type' => 'size',
 										'value' => [
 											'unit' => 'px',
@@ -1039,21 +1039,21 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'border-radius' => [
 									'$$type' => 'border-radius',
 									'value' => [
-										'top-left' => [
+										'start-start' => [
 											'$$type' => 'size',
 											'value' => [
 												'unit' => 'px',
 												'size' => 0,
 											],
 										],
-										'top-right' => [
+										'start-end' => [
 											'$$type' => 'size',
 											'value' => [
 												'unit' => 'px',
 												'size' => 0,
 											],
 										],
-										'bottom-left' => 'not-a-size',
+										'end-start' => 'not-a-size',
 									],
 								]
 							],
