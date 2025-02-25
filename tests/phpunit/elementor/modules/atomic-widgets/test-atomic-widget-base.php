@@ -1214,7 +1214,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						[
 							'props' => [
 								'-webkit-text-stroke' => [
-									'$$type' => 'stroke',
+									'$$type' => 'text-stroke',
 									'value' => [
 										'color' => null,
 										'width' => [
