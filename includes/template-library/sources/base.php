@@ -374,6 +374,10 @@ abstract class Source_Base {
 		return [];
 	}
 
+	public function save_folder( array $folder_data = [] ) {
+		return new \WP_Error( 'template_error', 'Folders cannot be created in this source' );
+	}
+
 	/**
 	 * Send file headers.
 	 *
