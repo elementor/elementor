@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Text_Stroke_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'stroke';
+		return 'text-stroke';
 	}
 
 	protected function define_shape(): array {
