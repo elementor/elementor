@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Text_Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gap_Prop_Type;
 
@@ -113,6 +114,7 @@ class Style_Schema {
 				'ltr',
 				'rtl',
 			]),
+			'-webkit-text-stroke' => Text_Stroke_Prop_Type::make(),
 			'stroke' => Stroke_Prop_Type::make(),
 		];
 	}
