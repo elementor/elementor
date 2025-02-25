@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * This control extends the base Choose control allowing the user to choose between options represented by SVG or Image.
  *
- * @since 1.0.0
+ * @since 3.28.0
  */
 class Control_Visual_Choice extends Base_Data_Control {
 
