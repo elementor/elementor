@@ -1085,10 +1085,6 @@
 								"css_print_method": "internal"
 							},
 							"experiments": {
-								"landing-pages": {
-									"default": "active",
-									"state": "default"
-								},
 								"form-submissions": {
 									"default": "active",
 									"state": "default"
