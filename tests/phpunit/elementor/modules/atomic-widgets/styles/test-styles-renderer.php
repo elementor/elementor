@@ -9,15 +9,15 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Dimensions_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Layout_Direction_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Text_Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Text_Stroke_Prop_Type;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -748,7 +748,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			$registry->register( Layout_Direction_Prop_Type::get_key(), new Layout_Direction_Transformer() );
 			$registry->register( Border_Radius_Prop_Type::get_key(), new Corner_Sizes_Transformer( fn( $corner ) => 'border-' . $corner . '-radius' ) );
 			$registry->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
-			$registry->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
+			$registry->register( Text_Stroke_Prop_Type::get_key(), new Text_Stroke_Transformer() );
 			$registry->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 		});
 
@@ -834,7 +834,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								]
 							],
 							'-webkit-text-stroke' => [
-								'$$type' => 'stroke',
+								'$$type' => 'text-stroke',
 								'value' => [
 									'color' => [
 										'$$type' => 'color',

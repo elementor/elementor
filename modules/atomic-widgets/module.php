@@ -30,6 +30,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Tra
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Size_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Position_Offset_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Text_Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Size_Scale_Prop_Type;
@@ -54,6 +55,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Text_Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -170,6 +172,7 @@ class Module extends BaseModule {
 		$transformers->register( Border_Radius_Prop_Type::get_key(), new Corner_Sizes_Transformer( fn( $corner ) => 'border-' . $corner . '-radius' ) );
 		$transformers->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
+		$transformers->register( Text_Stroke_Prop_Type::get_key(), new Text_Stroke_Transformer() );
 		$transformers->register( Layout_Direction_Prop_Type::get_key(), new Layout_Direction_Transformer() );
 
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
