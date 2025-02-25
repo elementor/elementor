@@ -23,7 +23,7 @@ class Size_Prop_Type extends Plain_Prop_Type {
 
 	protected function sanitize_value( $value ) {
 		return Union_Prop_Type::make()
-								->add_prop_type( String_Prop_Type::make()->enum( array( 'auto' ) ) )
+								->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) )
 								->add_prop_type( Size_Unit_Prop_Type::make() );
 	}
 }
