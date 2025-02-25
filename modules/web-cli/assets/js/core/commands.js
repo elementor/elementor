@@ -413,16 +413,13 @@ export default class Commands extends CommandsBackwardsCompatibility {
 					this.catchApply( e, instance );
 					this.afterRun( instance.command, instance.args, e );
 				} );
-
 				return _result.done( ( __result ) => {
 					return this.applyRunAfterAsyncResult( instance, __result );
 				} );
 			};
 
 			return handleJQueryDeferred( result );
-		}
-
-		if ( result instanceof Promise ) {
+		} else if ( result instanceof Promise ) {
 			return this.applyRunAfterAsync( instance, result );
 		}
 
