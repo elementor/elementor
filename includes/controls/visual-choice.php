@@ -45,20 +45,6 @@ class Control_Visual_Choice extends Base_Data_Control {
 		<?php
 	}
 
-	/**
-	 * Get default settings.
-	 *
-	 * Retrieve the default settings of the control. Used to return the default settings
-	 * while initializing the control.
-	 *
-	 * @since 1.0.0
-	 * @access protected
-	 *
-	 * @return array Control default settings.
-	 * * - 'options' (array): An array of options for the control. Instead of 'icon', it uses the field 'image'.
-	 * * - 'toggle' (bool): Whether the control should toggle between options.
-	 * * - 'columns' (int): The number of columns to display the options in.
- */
 	protected function get_default_settings() {
 		return [
 			'options' => [],
