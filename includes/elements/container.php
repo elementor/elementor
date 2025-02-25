@@ -274,6 +274,11 @@ class Container extends Element_Base {
 	 */
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
+
+		if ( 'yes' === $settings['horizontal_scroll'] ) { ?>
+			<div class="e-con-horizontal-sticky"><div class="e-con-horizontal">
+		<?php }
+
 		$link = $settings['link'];
 
 		if ( ! empty( $link['url'] ) ) {
@@ -308,7 +313,11 @@ class Container extends Element_Base {
 			</div>
 		<?php } ?>
 		</<?php $this->print_html_tag(); ?>>
+
 		<?php
+		if ( 'yes' === $settings['horizontal_scroll'] ) { ?>
+			</div></div>
+		<?php }
 	}
 
 	protected function is_boxed_container( array $settings ) {
@@ -482,6 +491,17 @@ class Container extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}}' => '--min-height: {{SIZE}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->add_control(
+			'horizontal_scroll',
+			[
+				'label' => esc_html__( 'Horizontal Scroll', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'description' => sprintf(
+					esc_html__( 'Enable horizontal scrolling of container elements. The height will be defined by the height of the biggest element.', 'elementor' ),
+				),
 			]
 		);
 
@@ -903,6 +923,11 @@ class Container extends Element_Base {
 				],
 			]
 		);
+
+
+
+
+
 
 		$this->add_responsive_control(
 			'background_overlay_hover_opacity',
