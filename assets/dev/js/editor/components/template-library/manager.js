@@ -238,6 +238,8 @@ const TemplateLibraryManager = function() {
 					elementor.templates.layout.hideLoadingView();
 
 					self.layout.updateViewCollection( templatesCollection.models );
+					self.layout.modalContent.currentView.ui.addNewFolder.remove();
+
 					isLoading = false;
 					resolve();
 				},
@@ -248,6 +250,77 @@ const TemplateLibraryManager = function() {
 			};
 
 			elementorCommon.ajax.addRequest( 'get_item_children', ajaxOptions );
+		} );
+	};
+
+	this.createFolder = function( folderData, options ) {
+		if ( null !== this.getFilter( 'parent' ) ) {
+			this.showErrorDialog( __( 'You can not create a folder inside another folder.', 'elementor' ) );
+
+			return;
+		}
+
+		const dialog = this.getCreateFolderDialog( folderData );
+
+		return new Promise( ( resolve ) => {
+			dialog.onConfirm = async () => {
+				await elementorCommon.ajax.addRequest( 'create_folder', {
+					data: {
+						source: folderData.source,
+						title: folderData.title,
+					},
+					success: ( response ) => {
+						resolve( response );
+
+						options?.onSuccess();
+					},
+					error: ( error ) => {
+						this.showErrorDialog( error );
+
+						resolve();
+					},
+				} );
+			};
+
+			dialog.show();
+		} );
+	};
+
+	this.getCreateFolderDialog = function( folderData ) {
+		const paragraph = document.createElement( 'p' );
+		paragraph.className = 'elementor-create-folder-template-dialog__p';
+		paragraph.textContent = __( 'Save assets to reuse any site in your account.', 'elementor' );
+
+		const inputArea = document.createElement( 'input' );
+		inputArea.className = 'elementor-create-folder-template-dialog__input';
+		inputArea.type = 'text';
+		inputArea.value = '';
+		inputArea.placeholder = __( 'Folder Name', 'elementor' );
+		inputArea.autocomplete = 'off';
+
+		inputArea.addEventListener( 'change', ( event ) => {
+			event.preventDefault();
+
+			folderData.title = event.target.value;
+		} );
+
+		const fragment = document.createDocumentFragment();
+		fragment.appendChild( paragraph );
+		fragment.appendChild( inputArea );
+
+		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-template-library-create-new-folder-dialog',
+			headerMessage: __( 'Create New Folder', 'elementor' ),
+			message: fragment,
+			strings: {
+				confirm: __( 'Create', 'elementor' ),
+			},
+			Hide: {
+				ignore: '#elementor-template-library-modal',
+			},
+			onShow: () => {
+				inputArea.focus();
+			},
 		} );
 	};
 
@@ -471,6 +544,12 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
+		if ( this.shouldShowCloudConnectView( args.source ) ) {
+			self.layout.showCloudConnectView();
+
+			return;
+		}
+
 		self.showTemplates();
 	};
 
@@ -639,6 +718,31 @@ const TemplateLibraryManager = function() {
 		self.getErrorDialog()
 			.setMessage( errorMessage )
 			.show();
+	};
+
+	this.onSelectSourceFilterChange = function( event ) {
+		const select = event.currentTarget,
+			filterName = select.dataset.elementorFilter,
+			templatesSource = select.value;
+
+		self.setSourceSelection( templatesSource );
+		self.setFilter( filterName, templatesSource, true );
+
+		if ( this.shouldShowCloudConnectView( templatesSource ) ) {
+			self.layout.showCloudConnectView();
+
+			return;
+		}
+
+		self.loadTemplates( function() {
+			const templatesToShow = self.filterTemplates();
+
+			self.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
+		} );
+	};
+
+	this.shouldShowCloudConnectView = function( source ) {
+		return 'cloud' === source && ! elementor.config.library_connect.is_connected;
 	};
 };
 
