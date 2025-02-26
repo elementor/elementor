@@ -107,6 +107,7 @@ class Source_Cloud extends Source_Base {
 		$resource_data = [
 			'title' => $folder_data['title'] ?? esc_html__( 'New Folder', 'elementor' ),
 			'type' => self::FOLDER_RESOURCE_TYPE,
+			'templateType' => 'folder',
 			'parentId' => null,
 		];
 

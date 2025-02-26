@@ -353,7 +353,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		},
 		{
 			onSuccess: () => {
-				elementor.templates.showTemplates();
+				$e.routes.refreshContainer( 'library' );
 			},
 		} );
 	},
