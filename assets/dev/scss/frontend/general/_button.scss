@@ -25,6 +25,8 @@
 	}
 
 	&-icon {
+		display: flex;
+
 		svg {
 			width: 1em;
 			height: auto;
