@@ -90,10 +90,25 @@ class Source_Cloud extends Source_Base {
 
 		$resource_data = [
 			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
-			'type' => $template_data['resourceType'] ?? self::TEMPLATE_RESOURCE_TYPE,
+			'type' => self::TEMPLATE_RESOURCE_TYPE,
 			'templateType' => $template_data['type'],
 			'parentId' => $template_data['parentId'] ?? null,
 			'content' => wp_json_encode( $template_data['content'] ),
+		];
+
+		$response = $app->post_resource( $resource_data );
+
+		return (int) $response['id'];
+	}
+
+	public function save_folder( array $folder_data = [] ) {
+		$app = $this->get_app();
+
+		$resource_data = [
+			'title' => $folder_data['title'] ?? esc_html__( 'New Folder', 'elementor' ),
+			'type' => self::FOLDER_RESOURCE_TYPE,
+			'templateType' => 'folder',
+			'parentId' => null,
 		];
 
 		$response = $app->post_resource( $resource_data );
