@@ -6,10 +6,6 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 		return elementorFrontend.isEditMode();
 	}
 
-	isFirstContainer() {
-		return this.$element[ 0 ] === document.querySelector( '.elementor-edit-mode .e-con:first-child' );
-	}
-
 	isOverflowHidden() {
 		return 'hidden' === this.$element.css( 'overflow' );
 	}
@@ -30,24 +26,18 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 			return;
 		}
 
-		const isOverflowHidden = this.isOverflowHidden();
-
-		if ( ! isOverflowHidden && ! this.isFirstContainer() ) {
+		if ( ! this.isOverflowHidden() ) {
 			return;
 		}
 
-		const offset = isOverflowHidden ? 0 : this.getOffset(),
+		const offset = this.getOffset(),
 			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
 			insideHandleClass = 'e-handles-inside';
 
 		if ( offset < 25 ) {
 			this.$element.addClass( insideHandleClass );
 
-			if ( offset < -5 ) {
-				$handlesElement.css( 'top', -offset );
-			} else {
-				$handlesElement.css( 'top', '' );
-			}
+			$handlesElement.css( 'top', offset < -5 ? -offset : '' );
 		} else {
 			this.$element.removeClass( insideHandleClass );
 		}
@@ -57,8 +47,6 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 		if ( ! this.isActive() ) {
 			return;
 		}
-
-		this.setHandlesPosition();
 
 		this.$element.on( 'mouseenter', this.setHandlesPosition.bind( this ) );
 	}

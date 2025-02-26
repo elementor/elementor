@@ -20,6 +20,43 @@ const DivBlockView = BaseElementView.extend( {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con e-div-block${ this.getClassString() }`;
 	},
 
+	getOffset() {
+		if ( 'body' === elementor.config.document.container ) {
+			return this.$el.offset().top;
+		}
+
+		const $container = jQuery( elementor.config.document.container );
+		return this.$el.offset().top - $container.offset().top;
+	},
+
+	isOverflowHidden() {
+		return 'hidden' === this?.$el?.css( 'overflow' );
+	},
+
+	setHandlesPosition() {
+		const document = elementor.documents.getCurrent();
+
+		if ( ! document?.container?.isEditable() ) {
+			return;
+		}
+
+		if ( ! this.isOverflowHidden() ) {
+			return;
+		}
+
+		const offset = this.getOffset(),
+			$handlesElement = this.$el.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
+			insideHandleClass = 'e-handles-inside';
+
+		if ( offset < 25 ) {
+			this.$el.addClass( insideHandleClass );
+
+			$handlesElement.css( 'top', offset < -5 ? -offset : '' );
+		} else {
+			this.$el.removeClass( insideHandleClass );
+		}
+	},
+
 	// TODO: Copied from `views/column.js`.
 	ui() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
@@ -82,6 +119,8 @@ const DivBlockView = BaseElementView.extend( {
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
+			this.setHandlesPosition();
+			// this.$el.on( 'mouseenter', this.setHandlesPosition.bind( this ) );
 		} );
 	},
 
