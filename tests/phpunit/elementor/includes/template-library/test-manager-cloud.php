@@ -453,6 +453,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'title' => 'Folder 1',
 				'type' => 'FOLDER',
 				'parentId' => null,
+				'templateType' => 'folder',
 			] )
 			->willReturn( [ 'id' => 1 ] );
 
