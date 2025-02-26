@@ -275,6 +275,31 @@ label.elementor-template-library-order-label {
 	}
 }
 
+#elementor-template-library-filter-toolbar-side-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#elementor-template-library-add-new-folder {
+	cursor: pointer;
+	font-size: 20px;
+	padding: 0 5px;
+	border-radius: 2px;
+	color: var(--e-a-color-txt);
+
+	&:hover {
+		background-color: var(--e-a-bg-hover);
+	}
+}
+
+#elementor-template-library-create-new-folder-dialog {
+
+	.elementor-create-folder-template-dialog__p {
+		margin-bottom: 10px;
+	}
+}
+
 #elementor-template-library-filter-text-wrapper {
 	width: 200px;
 	position: relative;
