@@ -120,7 +120,6 @@ const DivBlockView = BaseElementView.extend( {
 		setTimeout( () => {
 			this.droppableInitialize();
 			this.setHandlesPosition();
-			// this.$el.on( 'mouseenter', this.setHandlesPosition.bind( this ) );
 		} );
 	},
 
