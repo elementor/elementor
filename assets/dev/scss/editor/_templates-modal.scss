@@ -834,6 +834,7 @@ label.elementor-template-library-order-label {
 
 			li {
 				padding: 5px 15px;
+				cursor: pointer;
 
 				.eicon-loading {
 					margin: 0px;
@@ -841,7 +842,10 @@ label.elementor-template-library-order-label {
 
 				&[data-id="0"] {
 					text-decoration: underline;
-					cursor: pointer;
+				}
+
+				&:hover {
+					background: #F4F5F8;
 				}
 			}
 		}

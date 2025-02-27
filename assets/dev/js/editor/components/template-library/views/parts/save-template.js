@@ -143,6 +143,19 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				self.$( '.cloud-folder-selection-dropdown .eicon-loading' ).hide();
 				self.$( '.cloud-folder-selection-dropdown' ).show();
 
+				if ( 0 === response.templates.length ) {
+					const li = document.createElement( 'li' );
+				
+					li.textContent = 'No folders to display';
+					li.setAttribute( 'data-id', 0 );
+					li.setAttribute( 'data-value', 'No folders to display' );
+					li.style.textDecoration = 'none';
+					ul.style.pointerEvents = 'none';
+					ul.appendChild(li);
+
+					return;
+				}
+
 				response.templates.forEach( ( template ) => {
 					const li = document.createElement( 'li' );
 				
