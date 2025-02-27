@@ -16,6 +16,10 @@ export default class SwiperHandler {
 
 		container.closest( '.elementor-widget' )?.classList.add( 'e-widget-swiper' );
 
+		if ( ! CSS.supports( 'scroll-marker-group: after' ) ) {
+			// TODO: Load Swiper if browser does not support CSS carousels.
+		}
+
 		return new Promise( ( resolve ) => {
 			// TODO: Remove in v3.29.0 [ED-16272].
 			if ( 'undefined' === typeof Swiper ) {

@@ -234,6 +234,7 @@ class Widget_Image_Gallery extends Widget_Base {
 							],
 						],
 					],
+					// TODO: Don't enqueue Swiper by default, but only dynamically if CSS carousels are not supported.
 					'scripts' => [
 						[
 							'name' => 'swiper',
