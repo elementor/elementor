@@ -40,7 +40,7 @@ TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 				icon: this.getCloudIcon(),
 				button: '<a class="elementor-button e-primary" href="" target="_blank">call to action</a>',
 			},
-		}
+		};
 	},
 
 	getDefaultIcon() {
