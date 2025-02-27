@@ -14,8 +14,8 @@ class Cloud_Library extends Library {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	protected function get_api_url(): string {
-		return 'https://cloud-library.prod.builder.elementor.red/api/v1/cloud-library';
+	protected function get_slug(): string {
+		return 'cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
