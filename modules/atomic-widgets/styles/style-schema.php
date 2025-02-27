@@ -119,7 +119,7 @@ class Style_Schema {
 	private static function get_spacing_props() {
 		return [
 			'padding' => Union_Prop_Type::make()->add_prop_type( Dimensions_Prop_Type::make() )->add_prop_type( Size_Prop_Type::make() ),
-			//TODO: change to union prop type
+			// TODO: change to union prop type
 			'margin' => Union_Prop_Type::make()->add_prop_type( Dimensions_Prop_Type::make() )->add_prop_type( Size_Prop_Type::make() ),
 		];
 	}
