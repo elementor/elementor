@@ -92,8 +92,11 @@ class Source_Cloud extends Source_Base {
 			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
 			'type' => self::TEMPLATE_RESOURCE_TYPE,
 			'templateType' => $template_data['type'],
-			'parentId' => $template_data['parentId'] ?? null,
-			'content' => wp_json_encode( $template_data['content'] ),
+			'parentId' => ! empty( $template_data['parentId'] ) ? $template_data['parentId'] : null,
+			'content' => wp_json_encode( [
+				'content' => $template_data['content'],
+				'page_settings' => $template_data['page_settings'],
+			] ),
 		];
 
 		$response = $app->post_resource( $resource_data );
@@ -251,6 +254,13 @@ class Source_Cloud extends Source_Base {
 		return [
 			'path' => $complete_path,
 			'name' => $file_data['name'],
+		];
+	}
+
+	public function get_folders() {
+		return [
+			'10' => 'Folder 1',
+			'11' => 'Folder 2',
 		];
 	}
 }

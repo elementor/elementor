@@ -276,6 +276,33 @@ class Manager {
 			return $validate_args;
 		}
 
+		if ( is_array( $args['source'] ) ) {
+			$items_saved = [];
+			foreach ( $args['source'] as $source ) {
+				$source = $this->get_source( $source );
+
+				if ( ! $source ) {
+					return new \WP_Error( 'template_error', 'Template source not found.' );
+				}
+
+				$args['content'] = json_decode( $args['content'], true );
+
+				$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
+
+				$args['page_settings'] = $page->get_data( 'settings' );
+
+				$template_id = $source->save_item( $args );
+
+				if ( is_wp_error( $template_id ) ) {
+					return $template_id;
+				}
+
+				$items_saved[] = $source->get_item( $template_id );
+			}
+
+			return $items_saved;
+		}
+
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
@@ -655,6 +682,16 @@ class Manager {
 		return $source->save_folder( $args );
 	}
 
+	public function get_folders( array $args ) {
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Folder source not found.' );
+		}
+
+		return $source->get_folders( $args );
+	}
+
 	/**
 	 * Register default template sources.
 	 *
@@ -746,6 +783,7 @@ class Manager {
 			'rename_template',
 			'load_more_templates',
 			'create_folder',
+			'get_folders',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {

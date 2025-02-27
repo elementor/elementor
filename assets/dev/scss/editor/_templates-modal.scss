@@ -768,6 +768,70 @@ label.elementor-template-library-order-label {
 				}
 			}
 		}
+
+		.source-selections {
+			display: flex;
+			flex-direction: column;
+			text-align: start;
+			border: var(--e-a-border-bold);
+			padding: 15px;
+			height: auto;
+			gap: 10px;
+
+			input[type=checkbox]:checked {
+				background: $gray;
+				top: -3px;
+    			position: relative;
+			}
+		}
+
+		.source-selections-input {
+			position: relative;
+  			display: inline-block;
+
+			.eicon-ellipsis-h {
+				background: #F4F5F8;
+				margin-inline: 5px;
+				cursor: pointer;
+			}
+
+			.eicon-info {
+				margin-inline: 5px;
+				color: #919191;
+			}
+
+			.selected-folder {
+				display: none;
+				margin-inline: 5px;
+				text-decoration: underline;
+			}
+
+			.eicon-editor-close {
+				cursor: pointer;
+			}
+		}
+
+		.cloud-folder-selection-dropdown {
+			display: none;
+			position: absolute;
+			background-color: $white;
+			min-width: 182px;
+			overflow: auto;
+			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			z-index: 1;
+
+			.eicon-loading {
+				margin: 15px;
+			}
+
+			.eicon-folder-o {
+				margin-inline-end: 10px;
+			}
+
+			li {
+				padding: 5px 15px;
+			}
+		}
 	}
 }
 
