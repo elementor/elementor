@@ -586,6 +586,11 @@ class Widget_Testimonial extends Widget_Base {
 				view.addRenderAttribute( 'testimonial_content', {
 					'data-binding-type': 'content',
 					'data-binding-setting': 'testimonial_content',
+					'data-binding-config': JSON.stringify({
+						'testimonial_content': {
+							editType: "text"
+						}
+					})
 				} );
 				view.addRenderAttribute( 'testimonial_content', 'class', 'elementor-testimonial-content' );
 

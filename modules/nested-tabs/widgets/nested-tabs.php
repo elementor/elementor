@@ -1282,12 +1282,15 @@ class NestedTabs extends Widget_Nested_Base {
 			'data-binding-repeater-name': 'tabs',
 			'data-binding-setting': [ 'tab_title', 'element_id' ],
 			'data-binding-index': tabCount,
-			'data-binding-dynamic': 'true',
-			'data-binding-attribute': JSON.stringify({
+			'data-binding-config': JSON.stringify({
 				'element_id': {
 					attr: 'id',
-					elementType: 'button'
-				}
+					elementType: 'button',
+					editType: 'attribute',
+				},
+				'tab_title': {
+					editType: 'text',
+				},
 			}),
 		}, null, true );
 
@@ -1297,6 +1300,14 @@ class NestedTabs extends Widget_Nested_Base {
 			'data-binding-repeater-name': 'tabs',
 			'data-binding-setting': [ 'tab_icon', 'tab_icon_active' ],
 			'data-binding-index': tabCount,
+			'data-binding-config': JSON.stringify({
+				'tab_icon': {
+					editType: 'text',
+				},
+				'tab_icon_active': {
+					editType: 'text',
+				},
+			}),
 		}, null, true );
 		#>
 

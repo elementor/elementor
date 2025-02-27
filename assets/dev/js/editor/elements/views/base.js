@@ -757,52 +757,42 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = async ( dataBinding ) => {
-			const { bindingSetting, bindingAttribute } = dataBinding.dataset;
+			const { bindingSetting, bindingConfig } = dataBinding.dataset;
+			// BindingSetting is kept for backward compatibility, should be removed once two versions from ED-17823 has been merged
+			// And use only the bindingConfig which contains all the needed information
 			const bindingSettings = bindingSetting.split( ' ' ); // Multiple binding settings can appear
-			let changedControlID = Object.keys( settings.changed )[ 0 ];
-			const isDynamic = '__dynamic__' === changedControlID;
+			const config = JSON.parse( bindingConfig );
+			let isEdited = false;
 
-			if ( isDynamic ) {
-				changedControlID = Object.keys( settings.changed[ changedControlID ] )[ 0 ];
-			}
+			for ( const [ key, value ] of Object.entries( settings.changed ) ) {
+				if ( '__dynamic__' === key ) {
+					for ( const [ dynamicKey, dynamicChange ] of Object.entries( value ) ) {
+						if ( ! bindingSettings.some( ( x ) => x === dynamicKey ) || _.isEmpty( dynamicChange ) ) {
+							continue;
+						}
 
-			// If no data-binding-setting or the current changed element isn't registered as a databinding setting, skip
-			if ( ! bindingSettings.length || ! bindingSettings.some( ( x ) => x === changedControlID ) ) {
-				return false;
-			}
+						const dynamicValue = await this.getDynamicValue( settings, dynamicKey, bindingSetting );
 
-			let change;
-
-			if ( isDynamic ) {
-				const dynamicValue = await this.getDynamicValue( settings, changedControlID, bindingSetting );
-
-				if ( dynamicValue ) {
-					change = dynamicValue;
-				}
-			} else {
-				change = settings.changed[ changedControlID ];
-			}
-
-			let attributeData = {};
-
-			if ( bindingAttribute ) {
-				attributeData = JSON.parse( bindingAttribute );
-			}
-
-			const attributeChanges = attributeData[ changedControlID ];
-
-			if ( change !== undefined ) {
-				// If it's an attribute change edit the html attribute, otherwise edit the inner html if
-				if ( attributeChanges !== undefined ) {
-					dataBinding.el.closest( attributeChanges.elementType ).setAttribute( attributeChanges.attr, change );
+						if ( dynamicValue !== undefined ) {
+							this.renderDataBoundChange( dynamicValue, dataBinding.el, config[ dynamicKey ] );
+							isEdited = true;
+						}
+					}
 				} else {
-					dataBinding.el.innerHTML = change;
-				}
+					if ( ! bindingSettings.some( ( x ) => x === key ) ) {
+						continue;
+					}
 
-				return true;
+					const change = settings.changed[ key ];
+
+					if ( change !== undefined ) {
+						this.renderDataBoundChange( change, dataBinding.el, config[ key ] );
+						isEdited = true;
+					}
+				}
 			}
 
-			return false;
+			return isEdited;
 		};
 
 		for ( const dataBinding of dataBindings ) {
@@ -838,21 +828,18 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
-	isCssIdControl( changedControl, bindingDynamicCssId ) {
-		return bindingDynamicCssId === changedControl;
-	},
-
-	updateCssId( dataBinding, change, settings, changedControl ) {
-		if ( ! change ) {
-			change = settings.attributes[ changedControl ];
+	renderDataBoundChange( change, element, config ) {
+		switch ( config.editType ) {
+			case 'attribute':
+				element.closest( config.elementType ).setAttribute( config.attr, change );
+				break;
+			case 'text':
+				element.innerHTML = change;
+				break;
+			// Backward compatibility should be deleted once two versions from ED-17823 has been merged
+			default:
+				element.innerHTML = change;
 		}
-
-		if ( change && change.length ) {
-			dataBinding.el.closest( dataBinding.dataset.bindingSingleItemHtmlWrapperTag ).setAttribute( 'id', change );
-			return true;
-		}
-
-		return false;
 	},
 
 	/**

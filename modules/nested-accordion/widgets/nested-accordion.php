@@ -933,11 +933,14 @@ class Nested_Accordion extends Widget_Nested_Base {
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'items',
 			'data-binding-setting': ['item_title', 'element_css_id'],
-			'data-binding-dynamic': 'true',
-			'data-binding-attribute': JSON.stringify({
+			'data-binding-config': JSON.stringify({
 				'element_css_id': {
+					editType: 'attribute',
 					attr: 'id',
 					elementType: 'details'
+				},
+				'item_title': {
+					editType: 'text'
 				}
 			}),
 		};
@@ -1013,11 +1016,14 @@ class Nested_Accordion extends Widget_Nested_Base {
 						'data-binding-type': 'repeater-item',
 						'data-binding-repeater-name': 'items',
 						'data-binding-setting': ['item_title', 'element_css_id'],
-						'data-binding-dynamic': 'true',
-						'data-binding-attribute': JSON.stringify({
+						'data-binding-config': JSON.stringify({
 							'element_css_id': {
+								editType: 'attribute',
 								attr: 'id',
 								elementType: 'details'
+							},
+							'item_title': {
+								editType: 'text'
 							}
 						}),
 					});
