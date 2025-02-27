@@ -97,6 +97,7 @@ class Source_Cloud extends Source_Base {
 				'content' => $template_data['content'],
 				'page_settings' => $template_data['page_settings'],
 			] ),
+			'hasPageSettings' => ! empty( $template_data['page_settings'] ),
 		];
 
 		$response = $app->post_resource( $resource_data );
