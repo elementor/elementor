@@ -40,6 +40,8 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
+		this.$el.removeClass( insideHandleClass );
+
 		if ( ! this.isOverflowHidden() ) {
 			return;
 		}
@@ -47,14 +49,19 @@ const DivBlockView = BaseElementView.extend( {
 		const offset = this.getOffset(),
 			$handlesElement = this.$el.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
 			insideHandleClass = 'e-handles-inside';
+		this.$el.addClass( insideHandleClass );
 
 		if ( offset < 25 ) {
-			this.$el.addClass( insideHandleClass );
-
 			$handlesElement.css( 'top', offset < -5 ? -offset : '' );
-		} else {
-			this.$el.removeClass( insideHandleClass );
 		}
+	},
+
+	events() {
+		const events = BaseElementView.prototype.events.apply( this, arguments );
+
+		events.mouseover = this.setHandlesPosition.bind( this );
+
+		return events;
 	},
 
 	// TODO: Copied from `views/column.js`.
