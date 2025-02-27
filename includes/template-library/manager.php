@@ -278,6 +278,7 @@ class Manager {
 
 		if ( is_array( $args['source'] ) ) {
 			$items_saved = [];
+			$content = $args['content'];
 			foreach ( $args['source'] as $source ) {
 				$source = $this->get_source( $source );
 
@@ -285,7 +286,7 @@ class Manager {
 					return new \WP_Error( 'template_error', 'Template source not found.' );
 				}
 
-				$args['content'] = json_decode( $args['content'], true );
+				$args['content'] = json_decode( $content, true );
 
 				$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
 
