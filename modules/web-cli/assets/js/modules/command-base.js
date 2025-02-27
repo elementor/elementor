@@ -22,7 +22,7 @@ export default class CommandBase extends CommandInfra {
 	}
 
 	onAfterApply( args = {}, result ) {
-		$e.hooks.runDataAfter( this.command, args, result );
+		return $e.hooks.runDataAfter( this.command, args, result );
 	}
 
 	onCatchApply( e ) {
