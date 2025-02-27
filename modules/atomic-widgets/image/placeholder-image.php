@@ -9,10 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Placeholder_Image {
 
 	public static function get_placeholder_image() {
-		return ELEMENTOR_ASSETS_URL . 'images/placeholder-v4.png';
+		return ELEMENTOR_ASSETS_URL . 'images/placeholder-v4.svg';
 	}
 
 	public static function get_background_placeholder_image() {
-		return ELEMENTOR_ASSETS_URL . 'images/background-placeholder.png';
+		return ELEMENTOR_ASSETS_URL . 'images/background-placeholder.svg';
 	}
 }
