@@ -13,7 +13,7 @@ class Stroke_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
 		return Multi_Props::generate( [
 			'stroke' => $value['color'],
-			'stroke-width' => $value['width'],
+			'stroke-width' => $value['stroke-width'],
 		] );
 	}
 }
