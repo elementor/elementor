@@ -35,10 +35,10 @@ class Style_Schema {
 
 	private static function get_size_props() {
 		return [
-			'width' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )-> add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'height' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )-> add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'min-width' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )-> add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'min-height' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )-> add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'width' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'height' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'min-width' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'min-height' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 			'max-width' => Size_Prop_Type::make(),
 			'max-height' => Size_Prop_Type::make(),
 			'overflow' => String_Prop_Type::make()->enum([
@@ -58,10 +58,10 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			]),
-			'top' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )-> add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'right' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )-> add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'bottom' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )-> add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'left' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )-> add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'top' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'right' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'bottom' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'left' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 			'z-index' => Number_Prop_Type::make(),
 		];
 	}
@@ -121,7 +121,7 @@ class Style_Schema {
 			'padding' => Union_Prop_Type::make()->add_prop_type( Dimensions_Prop_Type::make() )->add_prop_type( Size_Prop_Type::make() ),
 			'margin' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
-//				->add_prop_type( Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )-> add_prop_type( String_Prop_Type::make() ) ),
+//				->add_prop_type( Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( String_Prop_Type::make() ) ),
 		];
 	}
 
@@ -191,7 +191,7 @@ class Style_Schema {
 			]),
 			'flex-grow' => Number_Prop_Type::make(),
 			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )-> add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'flex-basis' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 		];
 	}
 
