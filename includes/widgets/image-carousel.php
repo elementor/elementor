@@ -103,6 +103,7 @@ class Widget_Image_Carousel extends Widget_Base {
 	 * @return array Widget script dependencies.
 	 */
 	public function get_script_depends(): array {
+		return [];
 		return [ 'swiper' ];
 	}
 
@@ -970,6 +971,7 @@ class Widget_Image_Carousel extends Widget_Base {
 					$slide_count,
 					count( $settings['carousel'] )
 				),
+				'data-index' => $slide_count,
 			] );
 
 			$slide_html = '<div ' . $this->get_render_attribute_string( $slide_setting_key ) . '>' . $link_tag . '<figure class="swiper-slide-inner">' . $image_html;
@@ -1004,6 +1006,7 @@ class Widget_Image_Carousel extends Widget_Base {
 		$this->add_render_attribute( [
 			'carousel' => [
 				'class' => 'elementor-image-carousel swiper-wrapper',
+				'class' => 'elementor-image-carousel',
 				'aria-live' => $has_autoplay_enabled ? 'off' : 'polite',
 			],
 			'carousel-wrapper' => [

@@ -26,3 +26,90 @@
 		max-width: calc(100% / var(--e-image-carousel-slides-to-show, 3));
 	}
 }
+
+@supports (scroll-snap-type: x mandatory) {
+	.elementor-image-carousel-wrapper {
+		.elementor-swiper-button {
+			display: none !important;
+		}
+	}
+
+	.elementor-image-carousel:not(.swiper-wrapper) {
+		display: grid;
+		grid-auto-columns: max-content;
+		grid-auto-flow: column;
+		gap: 4em;
+
+		scroll-behavior: smooth;
+
+		scrollbar-width: none;
+		anchor-name: --carousel;
+		container-type: inline-size scroll-state;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scroll-snap-type: x mandatory;
+
+		/* Dot Navigation */
+		scroll-marker-group: after;
+
+		/* The scroll-marker-group is actually a *sibling* */
+		&::scroll-marker-group {
+			position: absolute;
+			bottom: 0;
+			left: calc(222px + 24px + 6px);
+			z-index: 5;
+		}
+
+		&::scroll-button(*) {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			height: 48px;
+			aspect-ratio: 1;
+			background: #000;
+			color: #fff;
+			cursor: pointer;
+			border: none;
+			z-index: 5;
+
+			&:disabled {
+
+			}
+
+			&:hover {
+				background: #24890d;
+			}
+		}
+
+		&::scroll-button(left) {
+			content: "Prev";
+			left: 0;
+		}
+
+		&::scroll-button(right) {
+			content: "Next";
+		}
+
+		.swiper-slide {
+			display: block;
+			container-type: scroll-state;
+			scroll-snap-align: center;
+
+			&::scroll-marker {
+				content: '' / attr(data-index);
+				width: var(--swiper-pagination-bullet-width, var(--swiper-pagination-bullet-size, 8px));
+				height: var(--swiper-pagination-bullet-height, var(--swiper-pagination-bullet-size, 8px));
+				display: inline-block;
+				border-radius: 50%;
+				background: var(--swiper-pagination-bullet-inactive-color, #000);
+				opacity: var(--swiper-pagination-bullet-inactive-opacity, 0.2);
+				cursor: pointer;
+
+				&:target-current {
+					opacity: var(--swiper-pagination-bullet-opacity, 1);
+					background: var(--swiper-pagination-color, var(--swiper-theme-color));
+				}
+			}
+		}
+	}
+}
