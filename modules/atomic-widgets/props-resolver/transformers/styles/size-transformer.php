@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Size_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
-		return $value ?? '';
+		$size = (int) $value['size'];
+		$unit = $value['unit'];
+
+		return $size . $unit;
 	}
 }
