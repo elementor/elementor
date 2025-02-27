@@ -55,8 +55,10 @@ class Global_Classes_Sanitizer {
 		$errors = [];
 		$sanitized_items = [];
 
+		$sanitizer = Style_Parser::make( Style_Schema::get() );
+
 		foreach ( $items as $item_id => $item ) {
-			[$is_item_valid, $sanitized_item, $item_errors] = Style_Parser::make( Style_Schema::get() )->parse( $item );
+			[$is_item_valid, $sanitized_item, $item_errors] = $sanitizer->parse( $item );
 
 			if ( ! $is_item_valid ) {
 				$errors[ $item_id ] = $item_errors;

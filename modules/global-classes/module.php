@@ -38,10 +38,7 @@ class Module extends BaseModule {
 
 			( new Global_Classes_REST_API() )->register_hooks();
 			( new Global_Classes_CSS() )->register_hooks();
-
-			if ( is_admin() ) {
-				( new Import_Export() )->register_hooks();
-			}
+			( new Import_Export() )->register_hooks();
 		}
 	}
 
