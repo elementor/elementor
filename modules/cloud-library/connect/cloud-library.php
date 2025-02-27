@@ -14,8 +14,8 @@ class Cloud_Library extends Library {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	protected function get_slug(): string {
-		return 'cloud-library';
+	protected function get_api_url(): string {
+		return 'https://cloud-library.prod.builder.elementor.red/api/v1/cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
@@ -28,6 +28,7 @@ class Cloud_Library extends Library {
 			'offset' => $args['offset'] ? (int) $args['offset'] : null,
 			'search' => $args['search'],
 			'parentId' => $args['parentId'],
+			'templateType' => $args['templateType'] ?? null,
 		] );
 
 		$endpoint .= '?' . $query_string;

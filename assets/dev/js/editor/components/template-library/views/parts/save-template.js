@@ -143,20 +143,81 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				self.$( '.cloud-folder-selection-dropdown .eicon-loading' ).hide();
 				self.$( '.cloud-folder-selection-dropdown' ).show();
 
-				Object.entries( response ).forEach( ( [ key, value ] ) => {
+				response.templates.forEach( ( template ) => {
 					const li = document.createElement( 'li' );
-
-					li.textContent = value;
-					li.setAttribute( 'data-id', key );
-					li.setAttribute( 'data-value', value );
-					ul.appendChild( li );
+				
+					li.textContent = template.title;
+					li.setAttribute( 'data-id', template.template_id );
+					li.setAttribute( 'data-value', template.title );
+					ul.appendChild(li);
 				});
+
+				const totalLi = document.querySelectorAll( '.cloud-folder-selection-dropdown ul li' ).length;
+
+				if ( totalLi < response?.total ) {
+					const li = document.createElement( 'li' );
+				
+					li.textContent = 'Load More';
+					li.setAttribute( 'data-id', 0 );
+					li.setAttribute( 'data-value', 'Load More' );
+					ul.appendChild(li);
+				}
 			},
 		} );
 	},
 
 	onFoldersListClick( event ) {
 		const { id, value } = event.target.dataset;
+
+		if ( 0 == id ) {
+			const self = this;
+			
+			const li = document.querySelector('.cloud-folder-selection-dropdown ul li[data-id="0"][data-value="Load More"]');
+            if (li) li.innerHTML = '<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>';
+
+			const ul = document.querySelector( '.cloud-folder-selection-dropdown ul' );
+			const offset = document.querySelectorAll( '.cloud-folder-selection-dropdown ul li' ).length - 1;
+
+			elementorCommon.ajax.addRequest( 'get_folders', {
+				data: {
+					source: 'cloud',
+					offset,
+				},
+				success( response ) {
+					self.$( '.cloud-folder-selection-dropdown .eicon-loading' ).hide();
+					self.$( '.cloud-folder-selection-dropdown' ).show();
+
+					const li = document.querySelector('.cloud-folder-selection-dropdown ul li[data-id="0"][data-value="Load More"]');
+					if (li) li.remove();
+
+					response.templates.forEach( ( template ) => {
+						const li = document.createElement( 'li' );
+					
+						li.textContent = template.title;
+						li.setAttribute( 'data-id', template.template_id );
+						li.setAttribute( 'data-value', template.title );
+						ul.appendChild(li);
+					});
+
+					const totalLi = document.querySelectorAll( '.cloud-folder-selection-dropdown ul li' ).length;
+
+					console.log(totalLi);
+					console.log(response?.total);
+
+					if ( totalLi < response?.total ) {
+						console.log('got here');
+						const li = document.createElement( 'li' );
+					
+						li.textContent = 'Load More';
+						li.setAttribute( 'data-id', 0 );
+						li.setAttribute( 'data-value', 'Load More' );
+						ul.appendChild(li);
+					}
+				},
+			} );
+
+			return;
+		}
 
 		this.$( '.cloud-folder-selection-dropdown' ).hide();
 		this.$( '.cloud-library-form-inputs .eicon-ellipsis-h' ).hide();

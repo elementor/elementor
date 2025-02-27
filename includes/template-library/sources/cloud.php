@@ -258,10 +258,10 @@ class Source_Cloud extends Source_Base {
 		];
 	}
 
-	public function get_folders() {
-		return [
-			'10' => 'Folder 1',
-			'11' => 'Folder 2',
-		];
+	public function get_folders( array $args = [] ) {
+		return $this->get_app()->get_resources( [
+			'templateType' => 'folder',
+			'offset' => $args['offset'] ?? 0,
+		] );
 	}
 }

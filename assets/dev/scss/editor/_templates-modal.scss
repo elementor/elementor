@@ -828,8 +828,21 @@ label.elementor-template-library-order-label {
 				margin-inline-end: 10px;
 			}
 
+			ul {
+				max-height: 170px;
+			}
+
 			li {
 				padding: 5px 15px;
+
+				.eicon-loading {
+					margin: 0px;
+				}
+
+				&[data-id="0"] {
+					text-decoration: underline;
+					cursor: pointer;
+				}
 			}
 		}
 	}
