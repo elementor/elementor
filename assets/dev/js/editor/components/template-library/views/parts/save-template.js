@@ -123,8 +123,13 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	onEllipsisIconClick() {
 		const self = this;
 		const $dropdown = this.$( '.cloud-folder-selection-dropdown' );
-		$dropdown.is(':visible') ? $dropdown.hide() : $dropdown.show();
 
+		if ( $dropdown.is(':visible') ) {
+			$dropdown.hide();
+			return;
+		}
+
+		$dropdown.show();
 		this.$( '.cloud-folder-selection-dropdown .eicon-loading' ).show();
 
 		const ul = document.querySelector( '.cloud-folder-selection-dropdown ul' );
