@@ -493,6 +493,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 									'size' => 16,
 								],
 							],
+							'width' => [
+								'$$type' => 'string',
+								'value' => 'auto',
+							],
 							'padding' => [
 								'$$type' => 'dimensions',
 								'value' => [

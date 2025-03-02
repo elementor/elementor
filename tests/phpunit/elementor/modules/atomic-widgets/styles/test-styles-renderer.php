@@ -336,10 +336,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								'$$type' => 'size',
 								'value' => 14 // expected array{size: int, unit: string}
 							],
-							'font-weight' => [
-								'$$type' => 'size',
-								'value' => 'auto' // unsupported value
-							],
 						],
 						'meta' => [],
 					],
@@ -771,10 +767,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								]
 							],
 							'margin' => [
-								'$$type' => 'size',
-								'value' => 'auto',
-							],
-							'padding' => [
 								'$$type' => 'dimensions',
 								'value' => [
 									'top' => [
@@ -791,6 +783,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 											'size' => 1,
 											'unit' => 'px'
 										]
+									],
+									'right' => [
+										'$$type' => 'string',
+										'value' => 'auto'
 									],
 								]
 							],
