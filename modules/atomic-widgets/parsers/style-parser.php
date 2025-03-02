@@ -80,23 +80,23 @@ class Style_Parser {
 			}
 		}
 
-		return $result;
+		return $result->with( $validated_style );
 	}
 
 	public function validate_meta( $meta ): Parse_Result {
 		$result = Parse_Result::make();
 
 		if ( ! is_array( $meta ) ) {
-			return $result->add_error( 'meta', 'invalid' );
+			return $result->add_error( 'meta', 'invalid_type' );
 		}
 
 		if ( ! array_key_exists( 'state', $meta ) || ! in_array( $meta['state'], self::VALID_STATES, true ) ) {
-			return $result->add_error( 'state', 'missing_or_invalid' );
+			return $result->add_error( 'state', 'missing_or_invalid_value' );
 		}
 
 		// TODO: Validate breakpoint based on the existing breakpoints in the system [EDS-528]
 		if ( ! isset( $meta['breakpoint'] ) || ! is_string( $meta['breakpoint'] ) ) {
-			return $result->add_error( 'breakpoint', 'missing_or_invalid' );
+			return $result->add_error( 'breakpoint', 'missing_or_invalid_value' );
 		}
 
 		return $result;

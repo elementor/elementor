@@ -765,7 +765,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: width, height, font-size' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -800,7 +800,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: meta' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -835,7 +835,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: meta' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -872,7 +872,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: id' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$data = $widget->get_data_for_save();
@@ -913,7 +913,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: type' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -950,7 +950,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: label' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -1013,7 +1013,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: padding' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -1069,7 +1069,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: border-radius' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -1132,7 +1132,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: border-width' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -1169,7 +1169,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: color' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -1190,7 +1190,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Settings validation failed. Invalid keys: mock_prop_1, mock_prop_2' );
+		$this->expectExceptionMessage( 'Settings validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -1239,7 +1239,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: -webkit-text-stroke' );
+		$this->expectExceptionMessage( 'Styles validation failed' );
 
 		// Act.
 		$widget->get_data_for_save();

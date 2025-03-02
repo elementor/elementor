@@ -3,6 +3,7 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Parsers\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
@@ -102,18 +103,18 @@ class Global_Classes_REST_API {
 	private function put( \WP_REST_Request $request ) {
 		$items = $request->get_param( 'items' );
 
-		[$is_valid, $sanitized_items, $errors] = $this->sanitize_items( $items );
+		$parsed_items = $this->parse_items( $items );
 
-		if ( ! $is_valid ) {
+		if ( ! $parsed_items->is_valid() ) {
 			return Error_Builder::make( 'invalid_items' )
 				->set_status( 400 )
-				->set_message( 'Invalid items: ' . join( ', ', array_keys( $errors ) ) )
+				->set_message( 'Invalid items: ' . $parsed_items->to_readable_error() )
 				->build();
 		}
 
 		$order = $request->get_param( 'order' );
 
-		if ( ! $this->is_valid_order( $order, $sanitized_items ) ) {
+		if ( ! $this->is_valid_order( $order, $parsed_items->value() ) ) {
 			return Error_Builder::make( 'invalid_order' )
 				->set_status( 400 )
 				->set_message( 'Invalid order' )
@@ -121,27 +122,29 @@ class Global_Classes_REST_API {
 		}
 
 		$this->get_repository()->put(
-			$sanitized_items,
+			$parsed_items->value(),
 			$order
 		);
 
 		return Response_Builder::make()->no_content()->build();
 	}
 
-	private function sanitize_items( array $items ) {
-		$errors = [];
+	private function parse_items( array $items ) {
+		$result = Parse_Result::make();
 		$sanitized_items = [];
 
 		foreach ( $items as $item_id => $item ) {
-			[$is_item_valid, $sanitized_item, $item_errors] = Style_Parser::make( Style_Schema::get() )->parse( $item );
+			$parsed_item = Style_Parser::make( Style_Schema::get() )->parse( $item );
 
-			if ( ! $is_item_valid ) {
-				$errors[ $item_id ] = $item_errors;
+			if ( ! $parsed_item->is_valid() ) {
+				$result->merge( $parsed_item );
 				continue;
 			}
 
+			$sanitized_item = $parsed_item->value();
+
 			if ( $item_id !== $sanitized_item['id'] ) {
-				$errors[ $item_id ] = [ 'id' ];
+				$result->add_error( "$item_id.id", 'mismatching_value' );
 
 				continue;
 			}
@@ -149,9 +152,7 @@ class Global_Classes_REST_API {
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
 		}
 
-		$is_valid = count( $errors ) === 0;
-
-		return [ $is_valid, $sanitized_items, $errors ];
+		return $result->with( $sanitized_items );
 	}
 
 	private function is_valid_order( array $order, array $items ) {
