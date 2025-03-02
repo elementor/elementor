@@ -336,6 +336,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								'$$type' => 'size',
 								'value' => 14 // expected array{size: int, unit: string}
 							],
+							'font-weight' => [
+								'$$type' => 'size',
+								'value' => 'auto' // unsupported value
+							],
 						],
 						'meta' => [],
 					],
@@ -621,7 +625,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													'size' => [
 														'$$type' => 'background-image-size-scale',
 														'value'  => [
-															//Mising 'height'
+															//Missing 'height'
 															'width'  => [
 																'$$type' => 'size',
 																'value'  => [
@@ -765,6 +769,10 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 									'size' => 14,
 									'unit' => 'px'
 								]
+							],
+							'margin' => [
+								'$$type' => 'size',
+								'value' => 'auto',
 							],
 							'padding' => [
 								'$$type' => 'dimensions',

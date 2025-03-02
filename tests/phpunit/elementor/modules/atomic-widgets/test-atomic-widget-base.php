@@ -743,6 +743,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
+								'padding' => [ '$$type' => 'size', 'value' => 'auto' ],
 								'font-size' => [ '$$type' => 'string', 'value' => 'not-a-size' ],
 								'width' => [ // Missing unit
 									'$$type' => 'size',
@@ -765,7 +766,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: width, height, font-size' );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: width, height, font-size, padding' );
 
 		// Act.
 		$widget->get_data_for_save();
