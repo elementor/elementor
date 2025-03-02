@@ -87,7 +87,7 @@ trait Has_Atomic_Base {
 			$parsed_style = $style_parser->parse( $style );
 
 			if ( ! $parsed_style->is_valid() ) {
-				throw new \Exception( esc_html( 'Settings validation failed. ' . $parsed_style->to_readable_error() ) );
+				throw new \Exception( esc_html( "Style validation failed for style `$style_id`. " . $parsed_style->to_readable_error() ) );
 			}
 
 			$styles[ $style_id ] = $parsed_style->value();

@@ -32,9 +32,9 @@ class Style_Parser {
 	 * @param array $style
 	 * the style object to validate
 	 */
-	public function validate( array $style ): Result {
+	public function validate( array $style ): Parse_Result {
 		$validated_style = $style;
-		$result = Result::make();
+		$result = Parse_Result::make();
 
 		if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
 			$result->add_error( 'id', 'missing_or_invalid' );
@@ -83,8 +83,8 @@ class Style_Parser {
 		return $result;
 	}
 
-	public function validate_meta( $meta ): Result {
-		$result = Result::make();
+	public function validate_meta( $meta ): Parse_Result {
+		$result = Parse_Result::make();
 
 		if ( ! is_array( $meta ) ) {
 			return $result->add_error( 'meta', 'invalid' );
@@ -124,7 +124,7 @@ class Style_Parser {
 	 * @param array $style
 	 * the style object to parse
 	 */
-	public function parse( array $style ): Result {
+	public function parse( array $style ): Parse_Result {
 		$result = $this->validate( $style );
 		$sanitized = $this->sanitize( $result->value() );
 

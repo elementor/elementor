@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Result {
+class Parse_Result {
 	/**
 	 * @var array<array{key: string, error: string}>
 	 */
@@ -59,7 +59,7 @@ class Result {
 		return implode( ', ', $errors );
 	}
 
-	public function merge( Result $result ): self {
+	public function merge( Parse_Result $result ): self {
 		$this->errors = array_merge( $this->errors, $result->errors() );
 
 		return $this;

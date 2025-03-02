@@ -25,8 +25,8 @@ class Props_Parser {
 	 * The key of each item represents the prop name (should match the schema),
 	 * and the value is the prop value to validate
 	 */
-	public function validate( array $props ): Result {
-		$result = Result::make();
+	public function validate( array $props ): Parse_Result {
+		$result = Parse_Result::make();
 
 		$validated = [];
 
@@ -79,7 +79,7 @@ class Props_Parser {
 	 * The key of each item represents the prop name (should match the schema),
 	 * and the value is the prop value to parse
 	 */
-	public function parse( array $props ): Result {
+	public function parse( array $props ): Parse_Result {
 		$result = $this->validate( $props );
 
 		$sanitized = $this->sanitize( $result->value() );
