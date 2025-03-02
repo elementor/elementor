@@ -60,6 +60,24 @@ class Tools extends Settings_Page {
 		wp_send_json_success();
 	}
 
+	public function admin_post_elementor_site_clear_cache() {
+		check_ajax_referer( 'elementor_site_clear_cache' );
+
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_die( 'Permission denied' );
+		}
+
+		Plugin::$instance->files_manager->clear_cache();
+
+		$http_referer = wp_get_raw_referer();
+		if ( empty( $http_referer ) ) {
+			$http_referer = admin_url( 'admin.php?page=' . static::PAGE_ID );
+		}
+
+		wp_safe_redirect( $http_referer );
+		die;
+	}
+
 	/**
 	 * Recreate kit.
 	 *
@@ -194,6 +212,7 @@ class Tools extends Settings_Page {
 		}, Settings::ADMIN_MENU_PRIORITY + 20 );
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
+		add_action( 'admin_post_elementor_site_clear_cache', [ $this, 'admin_post_elementor_site_clear_cache' ] );
 		add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
 		add_action( 'wp_ajax_elementor_recreate_kit', [ $this, 'ajax_elementor_recreate_kit' ] );
 

@@ -1,7 +1,6 @@
 const TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/template/local' );
 const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/template/remote' );
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
-const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
 
@@ -29,6 +28,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
 		selectSourceFilter: '.elementor-template-library-filter-select-source',
+		addNewFolder: '#elementor-template-library-add-new-folder',
 	},
 
 	events: {
@@ -37,6 +37,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
 		'change @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'click @ui.addNewFolder': 'onCreateNewFolderClick',
 	},
 
 	comparators: {
@@ -289,18 +290,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onSelectSourceFilterChange( event ) {
-		const select = event.currentTarget,
-			filterName = select.dataset.elementorFilter,
-			templatesSource = select.value;
-
-		elementor.templates.setSourceSelection( templatesSource );
-		elementor.templates.setFilter( filterName, templatesSource, true );
-
-		elementor.templates.loadTemplates( function() {
-			const templatesToShow = elementor.templates.filterTemplates();
-
-			elementor.templates.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
-		} );
+		elementor.templates.onSelectSourceFilterChange( event );
 	},
 
 	onMyFavoritesFilterChange() {
@@ -351,6 +341,22 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.removeScrollListener = () => scrollableContainer.off( 'scroll', listener );
 	},
 
+	onCreateNewFolderClick() {
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		if ( 'cloud' !== activeSource ) {
+			return;
+		}
+
+		elementor.templates.createFolder( {
+			source: activeSource,
+		},
+		{
+			onSuccess: () => {
+				$e.routes.refreshContainer( 'library' );
+			},
+		} );
+	},
 } );
 
 module.exports = TemplateLibraryCollectionView;

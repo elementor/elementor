@@ -4,6 +4,7 @@ namespace Elementor\Modules\CloudLibrary;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
+use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Plugin;
 
@@ -24,6 +25,10 @@ class Module extends BaseModule {
 
 		if ( Plugin::$instance->experiments->is_feature_active( $this->get_name() ) ) {
 			$this->register_app();
+
+			add_action( 'elementor/init', function () {
+				$this->set_cloud_library_settings();
+			}, 12 /** After the initiation of the connect cloud library */ );
 		}
 	}
 
@@ -42,5 +47,33 @@ class Module extends BaseModule {
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'cloud-library', Cloud_Library::get_class_name() );
 		} );
+	}
+
+	private function set_cloud_library_settings() {
+		if ( ! Plugin::$instance->common ) {
+			return;
+		}
+
+		/** @var ConnectModule $connect */
+		$connect = Plugin::$instance->common->get_component( 'connect' );
+
+		/** @var Library $library */
+		$library = $connect->get_app( 'library' );
+
+		if ( ! $library ) {
+			return;
+		}
+
+		Plugin::$instance->app->set_settings( 'cloud-library', [
+			'library_connect_url'  => esc_url( $library->get_admin_url( 'authorize', [
+				'utm_source' => 'template-library',
+				'utm_medium' => 'wp-dash',
+				'utm_campaign' => 'library-connect',
+				'utm_content' => 'cloud-library',
+			] ) ),
+			'library_connect_title' => esc_html__( 'Connect', 'elementor' ),
+			'library_connect_sub_title' => esc_html__( 'Sub Title', 'elementor' ),
+			'library_connect_button_text' => esc_html__( 'Connect', 'elementor' ),
+		] );
 	}
 }

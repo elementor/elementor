@@ -286,7 +286,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'parentId' => null,
 			'templateType' => 'folder',
 		];
- 
+
 		$this->cloud_library_app_mock
 			->method( 'get_resource' )
 			->willReturnCallback( function ( $args ) use ( $folder ) {
@@ -436,5 +436,28 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 
 		$this->assertEquals( 'The required argument(s) "offset" not specified.', $result->get_error_message() );
+	}
+
+	public function test_create_folder() {
+		// Arrange
+		$folder_data = [
+			'title' => 'Folder 1',
+			'source' => 'cloud',
+		];
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'post_resource' )
+			->with( [
+				'title' => 'Folder 1',
+				'type' => 'FOLDER',
+				'parentId' => null,
+				'templateType' => 'folder',
+			] )
+			->willReturn( [ 'id' => 1 ] );
+
+		// Act
+		$this->manager->create_folder( $folder_data );
 	}
 }

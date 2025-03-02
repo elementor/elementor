@@ -49,7 +49,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 				toggleMoreIcon.removeClass( 'eicon-ellipsis-h' ).addClass( 'eicon-loading eicon-animation-spin' );
 			},
 			onSuccess() {
-				elementor.templates.showTemplates();
+				$e.routes.refreshContainer( 'library' );
 			},
 		} );
 	},
