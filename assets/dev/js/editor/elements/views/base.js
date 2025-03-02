@@ -762,37 +762,22 @@ BaseElementView = BaseContainer.extend( {
 			// And use only the bindingConfig which contains all the needed information
 			const bindingSettings = bindingSetting.split( ' ' ); // Multiple binding settings can appear
 			const config = JSON.parse( bindingConfig );
-			let isEdited = false;
+			let isChangeHandled = false;
 
-			for ( const [ key, value ] of Object.entries( settings.changed ) ) {
-				if ( '__dynamic__' === key ) {
-					for ( const [ dynamicKey, dynamicChange ] of Object.entries( value ) ) {
-						if ( ! bindingSettings.some( ( x ) => x === dynamicKey ) || _.isEmpty( dynamicChange ) ) {
-							continue;
-						}
+			for ( const currentChange of this.bindingChanges( settings.changed, bindingSettings, config ) ) {
+				const { key, value, isDynamic } = currentChange;
+				let currentValue = value;
+				if ( isDynamic ) {
+					currentValue = await this.getDynamicValue( settings, key, bindingSetting );
+				}
 
-						const dynamicValue = await this.getDynamicValue( settings, dynamicKey, bindingSetting );
-
-						if ( dynamicValue !== undefined ) {
-							this.renderDataBoundChange( dynamicValue, dataBinding.el, config[ dynamicKey ] );
-							isEdited = true;
-						}
-					}
-				} else {
-					if ( ! bindingSettings.some( ( x ) => x === key ) ) {
-						continue;
-					}
-
-					const change = settings.changed[ key ];
-
-					if ( change !== undefined ) {
-						this.renderDataBoundChange( change, dataBinding.el, config[ key ] );
-						isEdited = true;
-					}
+				if ( currentValue !== undefined ) {
+					this.renderDataBoundChange( currentValue, dataBinding.el, config[ key ] );
+					isChangeHandled = true;
 				}
 			}
 
-			return isEdited;
+			return isChangeHandled;
 		};
 
 		for ( const dataBinding of dataBindings ) {
@@ -828,10 +813,28 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
+	*bindingChanges( changed, bindingSettings, config ) {
+		for ( const [ key, value ] of Object.entries( changed ) ) {
+			if ( '__dynamic__' === key ) {
+				for ( const [ dynamicKey, dynamicValue ] of Object.entries( value ) ) {
+					if ( this.isHandledAsDatabinding( dynamicKey, bindingSettings, config ) ) {
+						yield { key: dynamicKey, value: dynamicValue, isDynamic: true };
+					}
+				}
+			} else if ( this.isHandledAsDatabinding( key, bindingSettings, config ) ) {
+				yield { key, value, isDynamic: false };
+			}
+		}
+	},
+
+	isHandledAsDatabinding( key, bindingSettings, config ) {
+		return bindingSettings.some( ( x ) => x === key ) || config[ key ] !== undefined;
+	},
+
 	renderDataBoundChange( change, element, config ) {
 		switch ( config.editType ) {
 			case 'attribute':
-				element.closest( config.elementType ).setAttribute( config.attr, change );
+				element.closest( config.selector ).setAttribute( config.attr, change );
 				break;
 			case 'text':
 				element.innerHTML = change;

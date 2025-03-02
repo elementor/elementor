@@ -1285,7 +1285,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'data-binding-config': JSON.stringify({
 				'element_id': {
 					attr: 'id',
-					elementType: 'button',
+					selector: 'button',
 					editType: 'attribute',
 				},
 				'tab_title': {

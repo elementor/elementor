@@ -937,7 +937,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 				'element_css_id': {
 					editType: 'attribute',
 					attr: 'id',
-					elementType: 'details'
+					selector: 'details'
 				},
 				'item_title': {
 					editType: 'text'
@@ -1020,7 +1020,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 							'element_css_id': {
 								editType: 'attribute',
 								attr: 'id',
-								elementType: 'details'
+								selector: 'details'
 							},
 							'item_title': {
 								editType: 'text'
