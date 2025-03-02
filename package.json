@@ -126,7 +126,7 @@
 		"@elementor/editor-app-bar": "0.26.0",
 		"@elementor/editor-canvas": "0.7.1",
 		"@elementor/editor-controls": "0.8.0",
-		"@elementor/editor-current-user": "0.0.0",
+		"@elementor/editor-current-user": "0.1.0",
 		"@elementor/editor-documents": "0.11.17",
 		"@elementor/editor-editing-panel": "1.10.0",
 		"@elementor/editor-elements": "0.5.1",
