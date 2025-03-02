@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Props_Parser {
 
 	private array $schema;
-	private array $errors_bag = [];
 
 	public function __construct( array $schema ) {
 		$this->schema = $schema;
@@ -25,14 +24,10 @@ class Props_Parser {
 	 * @param array $props
 	 * The key of each item represents the prop name (should match the schema),
 	 * and the value is the prop value to validate
-	 *
-	 * @return array{
-	 *     0: bool,
-	 *     1: array<string, mixed>,
-	 *     2: array<string>
-	 * }
 	 */
-	public function validate( array $props ): array {
+	public function validate( array $props ): Result {
+		$result = Result::make();
+
 		$validated = [];
 
 		foreach ( $this->schema as $key => $prop_type ) {
@@ -45,7 +40,7 @@ class Props_Parser {
 			$is_valid = $prop_type->validate( $value ?? $prop_type->get_default() );
 
 			if ( ! $is_valid ) {
-				$this->errors_bag[] = $key;
+				$result->add_error( $key, 'invalid' );
 
 				continue;
 			}
@@ -55,13 +50,7 @@ class Props_Parser {
 			}
 		}
 
-		$is_valid = empty( $this->errors_bag );
-
-		return [
-			$is_valid,
-			$validated,
-			$this->errors_bag,
-		];
+		return $result->with( $validated );
 	}
 
 	/**
@@ -89,20 +78,12 @@ class Props_Parser {
 	 * @param array $props
 	 * The key of each item represents the prop name (should match the schema),
 	 * and the value is the prop value to parse
-	 *
-	 * @return array{
-	 *      0: bool,
-	 *      1: array<string, mixed>,
-	 *      2: array<string>
-	 *  }
 	 */
-	public function parse( array $props ): array {
-		[ $is_valid, $validated, $errors_bag  ] = $this->validate( $props );
+	public function parse( array $props ): Result {
+		$result = $this->validate( $props );
 
-		return [
-			$is_valid,
-			$this->sanitize( $validated ),
-			$errors_bag,
-		];
+		$sanitized = $this->sanitize( $result->value() );
+
+		return $result->with( $sanitized );
 	}
 }
