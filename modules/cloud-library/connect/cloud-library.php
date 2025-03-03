@@ -111,7 +111,7 @@ class Cloud_Library extends Library {
 	}
 
 	public function update_resource( array $template_data ) {
-		$endpoint = 'resources/' . $template_data['template_id'];
+		$endpoint = 'resources/' . $template_data['id'];
 
 		$request = $this->http_request( 'PATCH', $endpoint, [ 'body' => $template_data ], [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
