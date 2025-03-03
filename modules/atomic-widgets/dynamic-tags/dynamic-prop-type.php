@@ -61,7 +61,9 @@ class Dynamic_Prop_Type extends Plain_Prop_Type {
 	protected function sanitize_value( $value ): array {
 		$tag = Dynamic_Tags_Module::instance()->registry->get_tag( $value['name'] );
 
-		$sanitized = Props_Parser::make( $tag['props_schema'] )->sanitize( $value['settings'] );
+		$sanitized = Props_Parser::make( $tag['props_schema'] )
+			->sanitize( $value['settings'] )
+			->unwrap();
 
 		return [
 			'name' => $value['name'],

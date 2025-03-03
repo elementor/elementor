@@ -108,13 +108,13 @@ class Global_Classes_REST_API {
 		if ( ! $parsed_items->is_valid() ) {
 			return Error_Builder::make( 'invalid_items' )
 				->set_status( 400 )
-				->set_message( 'Invalid items: ' . $parsed_items->to_readable_error() )
+				->set_message( 'Invalid items: ' . $parsed_items->errors()->to_string() )
 				->build();
 		}
 
 		$order = $request->get_param( 'order' );
 
-		if ( ! $this->is_valid_order( $order, $parsed_items->value() ) ) {
+		if ( ! $this->is_valid_order( $order, $parsed_items->unwrap() ) ) {
 			return Error_Builder::make( 'invalid_order' )
 				->set_status( 400 )
 				->set_message( 'Invalid order' )
@@ -122,7 +122,7 @@ class Global_Classes_REST_API {
 		}
 
 		$this->get_repository()->put(
-			$parsed_items->value(),
+			$parsed_items->unwrap(),
 			$order
 		);
 
@@ -137,14 +137,14 @@ class Global_Classes_REST_API {
 			$parsed_item = Style_Parser::make( Style_Schema::get() )->parse( $item );
 
 			if ( ! $parsed_item->is_valid() ) {
-				$result->merge( $parsed_item );
+				$result->errors()->merge( $parsed_item->errors() );
 				continue;
 			}
 
-			$sanitized_item = $parsed_item->value();
+			$sanitized_item = $parsed_item->unwrap();
 
 			if ( $item_id !== $sanitized_item['id'] ) {
-				$result->add_error( "$item_id.id", 'mismatching_value' );
+				$result->errors()->add( "$item_id.id", 'mismatching_value' );
 
 				continue;
 			}
@@ -152,7 +152,7 @@ class Global_Classes_REST_API {
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
 		}
 
-		return $result->with( $sanitized_items );
+		return $result->wrap( $sanitized_items );
 	}
 
 	private function is_valid_order( array $order, array $items ) {

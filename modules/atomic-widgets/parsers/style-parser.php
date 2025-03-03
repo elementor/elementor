@@ -32,71 +32,77 @@ class Style_Parser {
 	 * @param array $style
 	 * the style object to validate
 	 */
-	public function validate( array $style ): Parse_Result {
+	private function validate( array $style ): Parse_Result {
 		$validated_style = $style;
 		$result = Parse_Result::make();
 
 		if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) ) {
-			$result->add_error( 'id', 'missing_or_invalid' );
+			$result->errors()->add( 'id', 'missing_or_invalid' );
 		}
 
 		if ( ! isset( $style['type'] ) || ! in_array( $style['type'], self::VALID_TYPES, true ) ) {
-			$result->add_error( 'type', 'missing_or_invalid' );
+			$result->errors()->add( 'type', 'missing_or_invalid' );
 		}
 
 		if ( ! isset( $style['label'] ) || ! is_string( $style['label'] ) ) {
-			$result->add_error( 'label', 'missing_or_invalid' );
+			$result->errors()->add( 'label', 'missing_or_invalid' );
 		}
 
 		if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
-			$result->add_error( 'variants', 'missing_or_invalid' );
+			$result->errors()->add( 'variants', 'missing_or_invalid' );
 
 			unset( $validated_style['variants'] );
 
-			return $result->with( $validated_style );
+			return $result->wrap( $validated_style );
 		}
 
 		$props_parser = Props_Parser::make( $this->schema );
 
 		foreach ( $style['variants'] as $variant_index => $variant ) {
 			if ( ! isset( $variant['meta'] ) ) {
-				$result->add_error( 'meta', 'missing' );
+				$result->errors()->add( 'meta', 'missing' );
 
 				continue;
 			}
 
-			$meta_validation = $this->validate_meta( $variant['meta'] );
+			$meta_result = $this->validate_meta( $variant['meta'] );
 
-			$result->merge( $meta_validation );
+			$result->errors()->merge( $meta_result->errors() );
 
-			if ( $meta_validation->is_valid() ) {
-				$variant_validation = $props_parser->validate( $variant['props'] );
+			if ( $meta_result->is_valid() ) {
+				$variant_result = $props_parser->validate( $variant['props'] );
 
-				$result->merge( $variant_validation );
+				$result->errors()->merge( $variant_result->errors() );
 
-				$validated_style['variants'][ $variant_index ]['props'] = $variant_validation->value();
+				$validated_style['variants'][ $variant_index ]['props'] = $variant_result->unwrap();
 			} else {
 				unset( $validated_style['variants'][ $variant_index ] );
 			}
 		}
 
-		return $result->with( $validated_style );
+		return $result->wrap( $validated_style );
 	}
 
-	public function validate_meta( $meta ): Parse_Result {
+	private function validate_meta( $meta ): Parse_Result {
 		$result = Parse_Result::make();
 
 		if ( ! is_array( $meta ) ) {
-			return $result->add_error( 'meta', 'invalid_type' );
+			$result->errors()->add( 'meta', 'invalid_type' );
+
+			return $result;
 		}
 
 		if ( ! array_key_exists( 'state', $meta ) || ! in_array( $meta['state'], self::VALID_STATES, true ) ) {
-			return $result->add_error( 'state', 'missing_or_invalid_value' );
+			$result->errors()->add( 'state', 'missing_or_invalid_value' );
+
+			return $result;
 		}
 
 		// TODO: Validate breakpoint based on the existing breakpoints in the system [EDS-528]
 		if ( ! isset( $meta['breakpoint'] ) || ! is_string( $meta['breakpoint'] ) ) {
-			return $result->add_error( 'breakpoint', 'missing_or_invalid_value' );
+			$result->errors()->add( 'breakpoint', 'missing_or_invalid_value' );
+
+			return $result;
 		}
 
 		return $result;
@@ -105,19 +111,17 @@ class Style_Parser {
 	/**
 	 * @param array $style
 	 * the style object to sanitize
-	 *
-	 * @return array<string, mixed>
 	 */
-	public function sanitize( array $style ): array {
+	private function sanitize( array $style ): Parse_Result {
 		$props_parser = Props_Parser::make( $this->schema );
 
 		if ( ! empty( $style['variants'] ) ) {
 			foreach ( $style['variants'] as $variant_index => $variant ) {
-				$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] );
+				$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] )->unwrap();
 			}
 		}
 
-		return $style;
+		return Parse_Result::make()->wrap( $style );
 	}
 
 	/**
@@ -125,9 +129,12 @@ class Style_Parser {
 	 * the style object to parse
 	 */
 	public function parse( array $style ): Parse_Result {
-		$result = $this->validate( $style );
-		$sanitized = $this->sanitize( $result->value() );
+		$validate_result = $this->validate( $style );
 
-		return $result->with( $sanitized );
+		$sanitize_result = $this->sanitize( $validate_result->unwrap() );
+
+		$sanitize_result->errors()->merge( $validate_result->errors() );
+
+		return $sanitize_result;
 	}
 }

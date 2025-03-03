@@ -7,10 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Parse_Result {
-	/**
-	 * @var array<array{key: string, error: string}>
-	 */
-	private array $errors = [];
+	private Parse_Errors $errors;
 
 	private $value;
 
@@ -18,50 +15,25 @@ class Parse_Result {
 		return new static();
 	}
 
-	public function value() {
-		return $this->value;
+	public function __construct() {
+		$this->errors = Parse_Errors::make();
 	}
 
-	public function with( $value ): self {
+	public function wrap( $value ): self {
 		$this->value = $value;
 
 		return $this;
 	}
 
+	public function unwrap() {
+		return $this->value;
+	}
+
 	public function is_valid(): bool {
-		return empty( $this->errors );
+		return $this->errors->empty();
 	}
 
-	public function errors() {
+	public function errors(): Parse_Errors {
 		return $this->errors;
-	}
-
-	public function add_error( string $key, string $error ): self {
-		$this->errors[] = [
-			'key' => $key,
-			'error' => $error,
-		];
-
-		return $this;
-	}
-
-	public function get_errors() {
-		return $this->errors;
-	}
-
-	public function to_readable_error(): string {
-		$errors = [];
-
-		foreach ( $this->errors as $error ) {
-			$errors[] = $error['key'] . ': ' . $error['error'];
-		}
-
-		return implode( ', ', $errors );
-	}
-
-	public function merge( Parse_Result $result ): self {
-		$this->errors = array_merge( $this->errors, $result->errors() );
-
-		return $this;
 	}
 }

@@ -84,13 +84,13 @@ trait Has_Atomic_Base {
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 
 		foreach ( $styles as $style_id => $style ) {
-			$parsed_style = $style_parser->parse( $style );
+			$result = $style_parser->parse( $style );
 
-			if ( ! $parsed_style->is_valid() ) {
-				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. " . $parsed_style->to_readable_error() ) );
+			if ( ! $result->is_valid() ) {
+				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. " . $result->errors()->to_string() ) );
 			}
 
-			$styles[ $style_id ] = $parsed_style->value();
+			$styles[ $style_id ] = $result->unwrap();
 		}
 
 		return $styles;
@@ -100,13 +100,13 @@ trait Has_Atomic_Base {
 		$schema = static::get_props_schema();
 		$props_parser = Props_Parser::make( $schema );
 
-		$parsed_settings = $props_parser->parse( $settings );
+		$result = $props_parser->parse( $settings );
 
-		if ( ! $parsed_settings->is_valid() ) {
-			throw new \Exception( esc_html( 'Settings validation failed. ' . $parsed_settings->to_readable_error() ) );
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
 		}
 
-		return $parsed_settings->value();
+		return $result->unwrap();
 	}
 
 	public function get_atomic_controls() {

@@ -40,7 +40,7 @@ class Props_Parser {
 			$is_valid = $prop_type->validate( $value ?? $prop_type->get_default() );
 
 			if ( ! $is_valid ) {
-				$result->add_error( $key, 'invalid_value' );
+				$result->errors()->add( $key, 'invalid_value' );
 
 				continue;
 			}
@@ -50,17 +50,15 @@ class Props_Parser {
 			}
 		}
 
-		return $result->with( $validated );
+		return $result->wrap( $validated );
 	}
 
 	/**
 	 * @param array $props
 	 * The key of each item represents the prop name (should match the schema),
 	 * and the value is the prop value to sanitize
-	 *
-	 * @return array<string, mixed>
 	 */
-	public function sanitize( array $props ): array {
+	public function sanitize( array $props ): Parse_Result {
 		$sanitized = [];
 
 		foreach ( $this->schema as $key => $prop_type ) {
@@ -71,7 +69,7 @@ class Props_Parser {
 			$sanitized[ $key ] = $prop_type->sanitize( $props[ $key ] );
 		}
 
-		return $sanitized;
+		return Parse_Result::make()->wrap( $sanitized );
 	}
 
 	/**
@@ -80,10 +78,12 @@ class Props_Parser {
 	 * and the value is the prop value to parse
 	 */
 	public function parse( array $props ): Parse_Result {
-		$result = $this->validate( $props );
+		$validate_result = $this->validate( $props );
 
-		$sanitized = $this->sanitize( $result->value() );
+		$sanitize_result = $this->sanitize( $validate_result->unwrap() );
 
-		return $result->with( $sanitized );
+		$sanitize_result->errors()->merge( $validate_result->errors() );
+
+		return $sanitize_result;
 	}
 }
