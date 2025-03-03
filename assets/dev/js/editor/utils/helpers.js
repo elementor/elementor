@@ -740,11 +740,7 @@ module.exports = {
 	 * @return {HTMLAnchorElement | null} An anchor element with an 'href' attribute, or null if none are found.
 	 */
 	getAnchorWithHrefInElement( element ) {
-		if ( ! element ) {
-			return null;
-		}
-
-		return element.querySelector( 'a[href]' );
+		return element?.querySelector( 'a[href]' ) || null;
 	},
 
 	/**
@@ -754,10 +750,6 @@ module.exports = {
 	 * @return {HTMLAnchorElement | null} The closest anchor element with an 'href' attribute, or null if none is found.
 	 */
 	getClosestAnchorWithHref( element ) {
-		if ( ! element ) {
-			return null;
-		}
-
-		return element.closest( 'a[href]' );
+		return element?.closest( 'a[href]' ) || null;
 	},
 };
