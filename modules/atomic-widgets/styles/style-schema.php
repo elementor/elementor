@@ -96,7 +96,7 @@ class Style_Schema {
 				'end',
 				'justify',
 			]),
-			'font-style' => String_Prop_Type::make()->enum([
+			'line-decoration' => String_Prop_Type::make()->enum([
 				'normal',
 				'italic',
 				'oblique',
@@ -112,6 +112,10 @@ class Style_Schema {
 			'direction' => String_Prop_Type::make()->enum([
 				'ltr',
 				'rtl',
+			]),
+			'font-style' => String_Prop_Type::make()->enum([
+				'normal',
+				'italic',
 			]),
 			'-webkit-text-stroke' => Stroke_Prop_Type::make(),
 		];
