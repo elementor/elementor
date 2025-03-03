@@ -184,37 +184,37 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onFoldersListClick( event ) {
-        const { id, value } = event.target.dataset;
-
-        if ( this.clickedOnLoadMore( id ) ) {
-            this.loadMoreFolders();
-
-            return;
-        }
-
-        this.ui.foldersDropdown.hide();
-        this.ui.ellipsisIcon.hide();
-        this.ui.selectedFolderText.html( value );
-        this.ui.selectedFolder.show();
-        this.ui.hiddenInputSelectedFolder.val( id );
-    },
-
+		const { id, value } = event.target.dataset;
+		
+		if ( this.clickedOnLoadMore( id ) ) {
+			this.loadMoreFolders();
+			
+			return;
+		}
+		
+		this.ui.foldersDropdown.hide();
+		this.ui.ellipsisIcon.hide();
+		this.ui.selectedFolderText.html( value );
+		this.ui.selectedFolder.show();
+		this.ui.hiddenInputSelectedFolder.val( id );
+	},
+	
 	clickedOnLoadMore( templateId ) {
-        return 0 === +templateId;
-    },
+		return 0 === +templateId;
+	},
 
 	onRemoveFolderSelectionClick() {
-        this.ui.selectedFolderText.html( '' );
-        this.ui.selectedFolder.hide();
-        this.ui.ellipsisIcon.show();
-        this.ui.hiddenInputSelectedFolder.val( '' );
-    },
+		this.ui.selectedFolderText.html( '' );
+		this.ui.selectedFolder.hide();
+		this.ui.ellipsisIcon.show();
+		this.ui.hiddenInputSelectedFolder.val( '' );
+	},
 
 	loadMoreFolders() {
 		this.removeLoadMoreItem();
 		this.addSpinner();
-        this.fetchFolders();
-    },
+		this.fetchFolders();
+	},
 
 	shouldaddLoadMoreItemItem( response ) {
 		return this.folderCollectionView.collection.length < response?.total;
