@@ -1,4 +1,4 @@
-import { convertSizeToFrString, getAnchorWithHrefInElement } from 'elementor-editor-utils/helpers';
+import { convertSizeToFrString, getAnchorWithHrefInElement, getClosestAnchorWithHref } from 'elementor-editor-utils/helpers';
 
 describe( 'convertSizeToFrString', () => {
 	test( 'Size 1 to 1fr', () => {
@@ -39,6 +39,43 @@ describe( 'getAnchorWithHrefInElement', () => {
 
 		const parentElement = document.getElementById( 'empty-container' );
 		const anchorElement = getAnchorWithHrefInElement( parentElement );
+
+		expect( anchorElement ).toBeNull();
+	} );
+} );
+
+describe( 'getClosestAnchorWithHref', () => {
+	beforeEach( () => {
+		document.body.innerHTML = '';
+	} );
+
+	test( 'should return the closest a element with an href attribute when it exists', () => {
+		document.body.innerHTML = `
+            <a href="#" id="anchor-element">
+                <div id="test-container">
+                	<div id="nested-element"></div>
+				</div>
+            </a>
+        `;
+
+		const nestedElement = document.getElementById( 'nested-element' );
+		const anchorElement = getClosestAnchorWithHref( nestedElement );
+
+		expect( anchorElement ).not.toBeNull();
+		expect( anchorElement.id ).toBe( 'anchor-element' );
+	} );
+
+	test( 'should return null when no parent a element with href is found', () => {
+		document.body.innerHTML = `
+            <div id="no-anchor">
+                <span>Some text</span>
+				<a href="#">Not part of the tree</a>
+                <div id="nested-no-anchor"></div>
+            </div>
+        `;
+
+		const nestedElement = document.getElementById( 'nested-no-anchor' );
+		const anchorElement = getClosestAnchorWithHref( nestedElement );
 
 		expect( anchorElement ).toBeNull();
 	} );

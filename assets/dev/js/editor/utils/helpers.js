@@ -747,4 +747,17 @@ module.exports = {
 		return element.querySelector( 'a[href]' );
 	},
 
+	/**
+	 * Checks if the given element is inside an anchor (link) element that has an 'href' attribute.
+	 *
+	 * @param {HTMLElement} element - The element to check.
+	 * @return {HTMLAnchorElement | null} The closest anchor element with an 'href' attribute, or null if none is found.
+	 */
+	getClosestAnchorWithHref( element ) {
+		if ( ! element ) {
+			return null;
+		}
+
+		return element.closest( 'a[href]' );
+	},
 };
