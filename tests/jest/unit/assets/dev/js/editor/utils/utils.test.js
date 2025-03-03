@@ -1,4 +1,4 @@
-import { convertSizeToFrString } from 'elementor-editor-utils/helpers';
+import { convertSizeToFrString, getAnchorWithHrefInElement } from 'elementor-editor-utils/helpers';
 
 describe( 'convertSizeToFrString', () => {
 	test( 'Size 1 to 1fr', () => {
@@ -11,5 +11,35 @@ describe( 'convertSizeToFrString', () => {
 
 	test( 'Return original value if not a number was passed', () => {
 		expect( convertSizeToFrString( '3' ) ).toBe( '3' );
+	} );
+} );
+
+describe( 'getAnchorWithHrefInElement', () => {
+	beforeEach( () => {
+		document.body.innerHTML = '';
+	} );
+
+	test( 'should return a element which has href when it exists', () => {
+		document.body.innerHTML = `
+            <div id="test-container">
+                <a>Link 1</a>
+                <a href="#">Link 2</a>
+            </div>
+        `;
+
+		const parentElement = document.getElementById( 'test-container' );
+		const anchorElement = getAnchorWithHrefInElement( parentElement );
+
+		expect( anchorElement ).not.toBeNull();
+		expect( anchorElement.textContent ).toBe( 'Link 2' );
+	} );
+
+	test( 'should return null when no a element with href is not found', () => {
+		document.body.innerHTML = `<div id="empty-container"></div>`;
+
+		const parentElement = document.getElementById( 'empty-container' );
+		const anchorElement = getAnchorWithHrefInElement( parentElement );
+
+		expect( anchorElement ).toBeNull();
 	} );
 } );
