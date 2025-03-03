@@ -789,11 +789,11 @@ label.elementor-template-library-order-label {
 				margin-inline-end: 10px;
 			}
 
-			ul {
+			.folder-list {
 				max-height: 170px;
 			}
 
-			li {
+			.folder-item {
 				padding: 5px 15px;
 				cursor: pointer;
 
@@ -818,6 +818,11 @@ label.elementor-template-library-order-label {
 					pointer-events: none;
 				}
 			}
+		}
+
+		#elementor-template-library-save-template-name {
+			border-block-start: none;
+			border-inline: none;
 		}
 	}
 }

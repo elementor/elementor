@@ -1,6 +1,7 @@
 module.exports = Marionette.ItemView.extend( {
     tagName: 'li',
     template: _.template( '<%= title %>' ),
+    className: 'folder-item',
 
     attributes() {
         const data = this.model.toJSON();

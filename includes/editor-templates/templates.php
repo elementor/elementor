@@ -307,7 +307,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</button>
 		<?php else : ?>
 		<div class="cloud-library-form-inputs">
-			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
+			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Give your template a name', 'elementor' ); ?>" required>
 			<div class="source-selections">
 				<div class="source-selections-input">
 					<input type="checkbox" id="cloud" name="cloud" value="cloud" checked>
