@@ -2,8 +2,6 @@ const TemplateLibraryTemplateModel = require( 'elementor-templates/models/templa
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 const FolderCollectionView = require('./folders/folders-list')
 
-import Select2 from 'elementor-editor-utils/select2.js';
-
 const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-save-template',
 
@@ -12,7 +10,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	ui: {
 		form: '#elementor-template-library-save-template-form',
 		submitButton: '#elementor-template-library-save-template-submit',
-		selectDropdown: '#elementor-template-library-save-template-source',
 		ellipsisIcon: '.cloud-library-form-inputs .eicon-ellipsis-h',
 		foldersList: '.cloud-folder-selection-dropdown ul',
 		foldersDropdown: '.cloud-folder-selection-dropdown',
@@ -61,68 +58,29 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
-		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
-			formData.source = []
-
-			if ( formData.cloud ) {
-				formData.source.push( 'cloud' );
-				delete formData.cloud;
-			}
-
-			if ( formData.local ) {
-				formData.source.push( 'local' );
-				delete formData.local;
-			}
+		if ( this.isCloudOrSiteLibraryCheckboxChecked( formData ) ) {
+			this.addSourceSelections( formData );
 		}
 
 		elementor.templates.saveTemplate( saveType, formData );
 	},
 
-	onRender() {
-		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
-			this.activateSelect2();
+	isCloudOrSiteLibraryCheckboxChecked( formData ) {
+		return formData.cloud || formData.local;
+	},
+
+	addSourceSelections( formData ) {
+		formData.source = [];
+	
+		if ( formData.cloud ) {
+			formData.source.push( 'cloud' );
+			delete formData.cloud;
 		}
-	},
-
-	activateSelect2() {
-		if ( ! this.select2Instance && this.$( this.ui.selectDropdown ).length ) {
-			const $dropdown = this.$( this.ui.selectDropdown ),
-				select2Options = {
-					placeholder: __( 'Where do you want to save your template?', 'elementor' ),
-					dropdownParent: this.$el,
-					closeOnSelect: false,
-					templateResult: this.templateResult.bind( this ),
-					templateSelection: this.formatSelected.bind( this ),
-				};
-
-			this.select2Instance = new Select2( {
-				$element: $dropdown,
-				options: select2Options,
-			} );
-
-			this.handlePlaceHolder( $dropdown );
+	
+		if ( formData.local ) {
+			formData.source.push( 'local' );
+			delete formData.local;
 		}
-	},
-
-	// https://github.com/select2/select2/issues/3292
-	handlePlaceHolder( $dropdown ) {
-		const $searchField = $dropdown.siblings( '.select2' ).find( '.select2-search__field' );
-
-		if ( $searchField.length && 0 === $searchField.width() ) {
-			$searchField.css( 'width', '100%' );
-		}
-	},
-
-	templateResult( option ) {
-		const className = ! option.id || 'local' === option.id || 'cloud' === option.id
-			? 'main-item'
-			: 'sub-item';
-
-		return jQuery( `<span class="${ className }">${ option.text }</span>` );
-	},
-
-	formatSelected( option ) {
-		return option.text;
 	},
 
 	onEllipsisIconClick() {	
@@ -228,10 +186,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	removeLoadMoreItem() {
-		const loadMoreItem = this.folderCollectionView.collection.findWhere( { template_id: 0 } );
+		const loadMore = this.folderCollectionView.collection.findWhere( { template_id: 0 } );
 
-		if ( loadMoreItem ) {
-			this.folderCollectionView.collection.remove( loadMoreItem );
+		if ( loadMore ) {
+			this.folderCollectionView.collection.remove( loadMore );
 		}
 	},
 } );
