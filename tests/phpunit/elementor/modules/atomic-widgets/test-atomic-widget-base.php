@@ -534,14 +534,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'border-radius' => [
 								'$$type' => 'border-radius',
 								'value' => [
-									'top-left' => [
+									'start-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'unit' => 'px',
 											'size' => 0,
 										],
 									],
-									'top-right' => [
+									'start-end' => [
 										'$$type' => 'size',
 										'value' => [
 											'unit' => 'px',
@@ -569,7 +569,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 									],
 								],
 							],
-							'-webkit-text-stroke' => [
+							'stroke' => [
 								'$$type' => 'stroke',
 								'value' => [
 									'color' => [
@@ -1039,21 +1039,21 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 								'border-radius' => [
 									'$$type' => 'border-radius',
 									'value' => [
-										'top-left' => [
+										'start-start' => [
 											'$$type' => 'size',
 											'value' => [
 												'unit' => 'px',
 												'size' => 0,
 											],
 										],
-										'top-right' => [
+										'start-end' => [
 											'$$type' => 'size',
 											'value' => [
 												'unit' => 'px',
 												'size' => 0,
 											],
 										],
-										'bottom-left' => 'not-a-size',
+										'end-start' => 'not-a-size',
 									],
 								]
 							],
@@ -1213,7 +1213,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'variants' => [
 						[
 							'props' => [
-								'-webkit-text-stroke' => [
+								'stroke' => [
 									'$$type' => 'stroke',
 									'value' => [
 										'color' => null,
@@ -1239,7 +1239,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: -webkit-text-stroke' );
+		$this->expectExceptionMessage( 'Styles validation failed. Invalid keys: stroke' );
 
 		// Act.
 		$widget->get_data_for_save();
