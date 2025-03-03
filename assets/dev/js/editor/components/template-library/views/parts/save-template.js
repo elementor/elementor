@@ -25,6 +25,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.ellipsisIcon': 'onEllipsisIconClick',
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
+		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
 	},
 
 	getSaveType() {
@@ -80,6 +81,12 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( formData.local ) {
 			formData.source.push( 'local' );
 			delete formData.local;
+		}
+	},
+
+	onSelectedFolderTextClick() {
+		if ( ! this.ui.foldersDropdown.is( ':visible' ) ) {
+			this.ui.foldersDropdown.show();
 		}
 	},
 
@@ -187,6 +194,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.selectedFolder.hide();
 		this.ui.ellipsisIcon.show();
 		this.ui.hiddenInputSelectedFolder.val( '' );
+		this.ui.foldersDropdown.hide();
 	},
 
 	async loadMoreFolders() {
