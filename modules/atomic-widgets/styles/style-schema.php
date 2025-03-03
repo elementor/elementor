@@ -33,23 +33,20 @@ class Style_Schema {
 		);
 	}
 
-	public static function get_size_prop( $should_allow_auto = false ) {
-		if ( $should_allow_auto ) {
-			return Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) );
-		}
-		return Size_Prop_Type::make();
+	public static function get_extended_size_prop() {
+		return Union_Prop_Type::make()
+			->add_prop_type( Size_Prop_Type::make() )
+			->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) );
 	}
 
 	private static function get_size_props() {
 		return [
-			'width' => self::get_size_prop( true ),
-			'height' => self::get_size_prop( true ),
-			'min-width' => self::get_size_prop( true ),
-			'min-height' => self::get_size_prop( true ),
-			'max-width' => self::get_size_prop(),
-			'max-height' => self::get_size_prop(),
+			'width' => self::get_extended_size_prop(),
+			'height' => self::get_extended_size_prop(),
+			'min-width' => self::get_extended_size_prop(),
+			'min-height' => self::get_extended_size_prop(),
+			'max-width' => Size_Prop_Type::make(),
+			'max-height' => Size_Prop_Type::make(),
 			'overflow' => String_Prop_Type::make()->enum([
 				'visible',
 				'hidden',
@@ -67,10 +64,10 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			]),
-			'top' => self::get_size_prop( true ),
-			'right' => self::get_size_prop( true ),
-			'bottom' => self::get_size_prop( true ),
-			'left' => self::get_size_prop( true ),
+			'top' => self::get_extended_size_prop(),
+			'right' => self::get_extended_size_prop(),
+			'bottom' => self::get_extended_size_prop(),
+			'left' => self::get_extended_size_prop(),
 			'z-index' => Number_Prop_Type::make(),
 		];
 	}
@@ -93,11 +90,11 @@ class Style_Schema {
 				'bolder',
 				'lighter',
 			]),
-			'font-size' => self::get_size_prop(),
+			'font-size' => Size_Prop_Type::make(),
 			'color' => Color_Prop_Type::make(),
-			'letter-spacing' => self::get_size_prop(),
-			'word-spacing' => self::get_size_prop(),
-			'line-height' => self::get_size_prop(),
+			'letter-spacing' => Size_Prop_Type::make(),
+			'word-spacing' => Size_Prop_Type::make(),
+			'line-height' => Size_Prop_Type::make(),
 			'text-align' => String_Prop_Type::make()->enum([
 				'start',
 				'center',
@@ -127,7 +124,7 @@ class Style_Schema {
 
 	private static function get_spacing_props() {
 		return [
-			'padding' => self::get_size_prop(),
+			'padding' => Size_Prop_Type::make(),
 			'margin' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
 				->add_prop_type( Size_Prop_Type::make() )
@@ -142,7 +139,7 @@ class Style_Schema {
 			)->add_prop_type(
 				Border_Radius_Prop_Type::make()
 			),
-			'border-width' => self::get_size_prop( true ),
+			'border-width' => self::get_extended_size_prop(),
 			'border-color' => Color_Prop_Type::make(),
 			'border-style' => String_Prop_Type::make()->enum([
 				'none',
@@ -201,7 +198,7 @@ class Style_Schema {
 			]),
 			'flex-grow' => Number_Prop_Type::make(),
 			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => self::get_size_prop( true ),
+			'flex-basis' => Size_Prop_Type::make(),
 		];
 	}
 
