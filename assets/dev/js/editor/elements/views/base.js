@@ -764,15 +764,11 @@ BaseElementView = BaseContainer.extend( {
 			const config = JSON.parse( bindingConfig );
 			let isChangeHandled = false;
 
-			for ( const currentChange of this.bindingChanges( settings.changed, bindingSettings, config ) ) {
-				const { key, value, isDynamic } = currentChange;
-				let currentValue = value;
-				if ( isDynamic ) {
-					currentValue = await this.getDynamicValue( settings, key, bindingSetting );
-				}
+			for await ( const currentChange of this.bindingChangesGenerator( settings, bindingSettings, config ) ) {
+				const { key, value } = currentChange;
 
-				if ( currentValue !== undefined ) {
-					this.renderDataBoundChange( currentValue, dataBinding.el, config[ key ] );
+				if ( 'string' === typeof value ) {
+					this.renderDataBoundChange( value, dataBinding.el, config[ key ] );
 					isChangeHandled = true;
 				}
 			}
@@ -813,16 +809,22 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
-	*bindingChanges( changed, bindingSettings, config ) {
-		for ( const [ key, value ] of Object.entries( changed ) ) {
-			if ( '__dynamic__' === key ) {
-				for ( const [ dynamicKey, dynamicValue ] of Object.entries( value ) ) {
-					if ( this.isHandledAsDatabinding( dynamicKey, bindingSettings, config ) ) {
-						yield { key: dynamicKey, value: dynamicValue, isDynamic: true };
-					}
+	async *bindingChangesGenerator( settings, bindingSettings, config ) {
+		for ( const [ key, value ] of Object.entries( settings.changed ) ) {
+			if ( '__dynamic__' !== key && ! this.isHandledAsDatabinding( key, bindingSettings, config ) ) {
+				continue;
+			}
+
+			if ( '__dynamic__' !== key ) {
+				yield { key, value };
+				continue;
+			}
+
+			for ( const dynamicKey of Object.keys( value ) ) {
+				if ( this.isHandledAsDatabinding( dynamicKey, bindingSettings, config ) ) {
+					const actual = await this.getDynamicValue( settings, dynamicKey, dynamicKey );
+					yield { key: dynamicKey, value: actual };
 				}
-			} else if ( this.isHandledAsDatabinding( key, bindingSettings, config ) ) {
-				yield { key, value, isDynamic: false };
 			}
 		}
 	},
@@ -832,7 +834,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	renderDataBoundChange( change, element, config ) {
-		switch ( config.editType ) {
+		switch ( config?.editType ) {
 			case 'attribute':
 				element.closest( config.selector ).setAttribute( config.attr, change );
 				break;

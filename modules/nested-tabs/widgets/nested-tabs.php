@@ -1298,16 +1298,7 @@ class NestedTabs extends Widget_Nested_Base {
 			'class': [ 'e-n-tab-icon' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
-			'data-binding-setting': [ 'tab_icon', 'tab_icon_active' ],
 			'data-binding-index': tabCount,
-			'data-binding-config': JSON.stringify({
-				'tab_icon': {
-					editType: 'text',
-				},
-				'tab_icon_active': {
-					editType: 'text',
-				},
-			}),
 		}, null, true );
 		#>
 
