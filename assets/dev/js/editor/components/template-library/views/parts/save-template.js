@@ -141,7 +141,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				success: ( response ) => {
 					this.folderCollectionView.collection.add( response?.templates );
 	
-					if ( this.shouldaddLoadMoreItemItem( response ) ) {
+					if ( this.shouldaddLoadMoreItem( response ) ) {
 						this.addLoadMoreItem();
 					}
 
@@ -200,7 +200,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
-	shouldaddLoadMoreItemItem( response ) {
+	shouldaddLoadMoreItem( response ) {
 		return this.folderCollectionView.collection.length < response?.total;
 	},
 
