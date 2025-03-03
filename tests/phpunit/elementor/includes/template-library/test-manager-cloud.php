@@ -460,4 +460,63 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		// Act
 		$this->manager->create_folder( $folder_data );
 	}
+
+	public function test_get_folders() {
+		// Arrange
+		$args = [
+			'templateType' => 'folder',
+			'offset' => 0,
+		];
+
+		$this->cloud_library_app_mock
+			->method( 'get_resources' )
+			->willReturn( [] );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'get_resources' )
+			->with( $args );
+
+		// Act
+		$this->manager->get_folders( [ 'source' => 'cloud', 'offset' => 0 ] );
+	}
+
+	public function test_get_folders_fails_without_offset() {
+		// Arrange
+		$args = [
+			'templateType' => 'folder',
+		];
+
+		// Act
+		$result = $this->manager->get_folders( [ 'source' => 'cloud' ] );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->never() )
+			->method( 'get_resources' );
+
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "offset" not specified.', $result->get_error_message() );
+	}
+
+	public function test_get_folders_fails_without_source() {
+		// Arrange
+		$args = [
+			'templateType' => 'folder',
+		];
+
+		// Act
+		$result = $this->manager->get_folders( [ 'offset' => 0 ] );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->never() )
+			->method( 'get_resources' );
+
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
+	}
 }

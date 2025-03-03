@@ -672,6 +672,12 @@ class Manager {
 	}
 
 	public function get_folders( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'offset' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
