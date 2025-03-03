@@ -797,6 +797,10 @@ label.elementor-template-library-order-label {
 				padding: 5px 15px;
 				cursor: pointer;
 
+				&[data-id="0"] .eicon-folder-o {
+					display: none;
+				}
+
 				.eicon-loading {
 					margin: 0px;
 				}

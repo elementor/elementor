@@ -1,6 +1,6 @@
 module.exports = Marionette.ItemView.extend( {
     tagName: 'li',
-    template: _.template( '<%= title %>' ),
+    template: _.template( '<i class="eicon-folder-o" aria-hidden="true"></i><%= title %>' ),
     className: 'folder-item',
 
     attributes() {
