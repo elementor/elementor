@@ -50,6 +50,10 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 
 			container.model.destroy();
 			container.panel.refresh();
+
+			if ( elementor.selection.has( container ) ) {
+				$e.run( 'document/elements/deselect', { container } );
+			}
 		} );
 
 		if ( 1 === containers.length ) {

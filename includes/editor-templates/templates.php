@@ -359,9 +359,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-templates-empty">
-	<div class="elementor-template-library-blank-icon">
-		<img src="" class="elementor-template-library-no-results" loading="lazy" />
-	</div>
+	<div class="elementor-template-library-blank-icon"></div>
 	<div class="elementor-template-library-blank-title"></div>
 	<div class="elementor-template-library-blank-message"></div>
 
