@@ -14,7 +14,7 @@ module.exports = Marionette.View.extend( {
     render() {
         const data = this.model.toJSON();
 
-        this.$el.html(this.template(data));
+        this.$el.html( this.template( data ) );
 
         return this;
     }
