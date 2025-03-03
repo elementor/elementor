@@ -1,13 +1,13 @@
 module.exports = Marionette.ItemView.extend( {
     tagName: 'li',
-    template: _.template('<%= title %>'),
+    template: _.template( '<%= title %>' ),
 
     attributes() {
         const data = this.model.toJSON();
-        
+
         return {
             'data-id': data.template_id,
-            'data-value': data.title
+            'data-value': data.title,
         };
     },
 
@@ -15,5 +15,5 @@ module.exports = Marionette.ItemView.extend( {
         this.$el.html( this.template( this.model.toJSON() ) );
 
         return this;
-    }
+    },
 } );

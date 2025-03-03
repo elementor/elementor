@@ -1,6 +1,6 @@
 const TemplateLibraryTemplateModel = require( 'elementor-templates/models/template' );
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
-const FolderCollectionView = require('./folders/folders-list')
+const FolderCollectionView = require( './folders/folders-list' );
 
 const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-save-template',
@@ -71,19 +71,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	addSourceSelections( formData ) {
 		formData.source = [];
-	
+
 		if ( formData.cloud ) {
 			formData.source.push( 'cloud' );
 			delete formData.cloud;
 		}
-	
+
 		if ( formData.local ) {
 			formData.source.push( 'local' );
 			delete formData.local;
 		}
 	},
 
-	async onEllipsisIconClick() {	
+	async onEllipsisIconClick() {
 		if ( this.ui.foldersDropdown.is( ':visible' ) ) {
 			this.ui.foldersDropdown.hide();
 
@@ -140,7 +140,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				},
 				success: ( response ) => {
 					this.folderCollectionView.collection.add( response?.templates );
-	
+
 					if ( this.shouldaddLoadMoreItem( response ) ) {
 						this.addLoadMoreItem();
 					}
@@ -160,16 +160,16 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	onFoldersListClick( event ) {
 		const { id, value } = event.target.dataset;
-		
+
 		if ( this.clickedOnLoadMore( id ) ) {
 			this.loadMoreFolders();
-			
+
 			return;
 		}
-		
+
 		this.handleFolderSelected( id, value );
 	},
-	
+
 	clickedOnLoadMore( templateId ) {
 		return 0 === +templateId;
 	},
