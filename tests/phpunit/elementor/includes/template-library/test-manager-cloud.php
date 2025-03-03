@@ -104,7 +104,8 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			"templateType" => "",
 		];
 
-		$mock_content = json_encode( ['content' => 'mock_content', 'page_settings' => ''] );
+		$mock_content = [ 'content' => 'mock_content' ];
+		$mock_post_resource_content = wp_json_encode( [ 'content' => $mock_content, 'page_settings' => [] ] );
 
 		// Assert
 		$this->cloud_library_app_mock
@@ -119,7 +120,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'type' => 'TEMPLATE',
 				'templateType' => 'container',
 				'parentId' => null,
-				'content' => $mock_content,
+				'content' => $mock_post_resource_content,
 				'hasPageSettings' => false,
 			] )
 			->willReturn( $post_resource_response );
@@ -131,7 +132,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'title' => 'ATemplate',
 			'type' => 'container',
 			'resourceType' => 'TEMPLATE',
-			'content' => $mock_content,
+			'content' => wp_json_encode( $mock_content ),
 			'parentId' => null,
 		] );
 	}
