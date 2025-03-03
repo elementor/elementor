@@ -117,7 +117,7 @@ class Style_Schema {
 				'normal',
 				'italic',
 			]),
-			'-webkit-text-stroke' => Stroke_Prop_Type::make(),
+			'stroke' => Stroke_Prop_Type::make(),
 		];
 	}
 
