@@ -83,7 +83,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
-	onEllipsisIconClick() {	
+	async onEllipsisIconClick() {	
 		if ( this.ui.foldersDropdown.is( ':visible' ) ) {
 			this.ui.foldersDropdown.hide();
 
@@ -98,9 +98,18 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			} );
 
 			this.addSpinner();
-			this.ui.foldersListContainer.html( this.folderCollectionView.render()?.el );
-			this.fetchFolders();
+			this.renderFolderDropdown();
+
+			try {
+				await this.fetchFolders();
+			} finally {
+				this.removeSpinner();
+			}
 		}
+	},
+
+	renderFolderDropdown() {
+		this.ui.foldersListContainer.html( this.folderCollectionView.render()?.el );
 	},
 
 	addSpinner() {
@@ -121,24 +130,32 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	fetchFolders() {
-		const self = this,
-			offset = self.folderCollectionView.collection.length - 1;
+		return new Promise( ( resolve ) => {
+			const offset = this.folderCollectionView.collection.length - 1;
 
-		elementorCommon.ajax.addRequest( 'get_folders', {
-			data: {
-				source: 'cloud',
-				offset,
-			},
-			success( response ) {
-				self.removeSpinner();
+			const ajaxOptions = {
+				data: {
+					source: 'cloud',
+					offset,
+				},
+				success: ( response ) => {
+					this.folderCollectionView.collection.add( response?.templates );
+	
+					if ( this.shouldaddLoadMoreItemItem( response ) ) {
+						this.addLoadMoreItem();
+					}
 
-				self.folderCollectionView.collection.add( response?.templates );
+					resolve( response );
+				},
+				error: ( error ) => {
+					elementor.templates.showErrorDialog( error );
 
-				if ( self.shouldaddLoadMoreItemItem( response ) ) {
-					self.addLoadMoreItem();
-				}
-			}
-		});
+					resolve();
+				},
+			};
+
+			elementorCommon.ajax.addRequest( 'get_folders', ajaxOptions );
+		} );
 	},
 
 	onFoldersListClick( event ) {
@@ -150,15 +167,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			return;
 		}
 		
+		this.handleFolderSelected( id, value );
+	},
+	
+	clickedOnLoadMore( templateId ) {
+		return 0 === +templateId;
+	},
+
+	handleFolderSelected( id, value ) {
 		this.ui.foldersDropdown.hide();
 		this.ui.ellipsisIcon.hide();
 		this.ui.selectedFolderText.html( value );
 		this.ui.selectedFolder.show();
 		this.ui.hiddenInputSelectedFolder.val( id );
-	},
-	
-	clickedOnLoadMore( templateId ) {
-		return 0 === +templateId;
 	},
 
 	onRemoveFolderSelectionClick() {
@@ -168,10 +189,15 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.hiddenInputSelectedFolder.val( '' );
 	},
 
-	loadMoreFolders() {
+	async loadMoreFolders() {
 		this.removeLoadMoreItem();
 		this.addSpinner();
-		this.fetchFolders();
+
+		try {
+			await this.fetchFolders();
+		} finally {
+			this.removeSpinner();
+		}
 	},
 
 	shouldaddLoadMoreItemItem( response ) {
