@@ -2,7 +2,7 @@ module.exports = Marionette.View.extend( {
     tagName: 'li',
     template: _.template('<%= title %>'),
 
-	attributes() {
+    attributes() {
         const data = this.model.toJSON();
         
         return {
