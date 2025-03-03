@@ -313,12 +313,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<input type="checkbox" id="cloud" name="cloud" value="cloud" checked>
 					<label for="cloud"> Cloud Library</label> <i class="eicon-info" aria-hidden="true"></i> /  <i class="eicon-ellipsis-h"></i>
 					<div class="cloud-folder-selection-dropdown">
-						<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
-						<ul>
-							<!-- Will be filled with JS -->
-						</ul>
+						<div class="cloud-folder-selection-dropdown-list"></div>
 					</div>
-					<span class="selected-folder"><i class="eicon-editor-close" aria-hidden="true"></i></span>
+					<span class="selected-folder">
+						<span class="selected-folder-text"></span>
+						<i class="eicon-editor-close" aria-hidden="true"></i>
+					</span>
 				</div>				
 				<div class="source-selections-input">
 					<input type="checkbox" id="local" name="local" value="local">

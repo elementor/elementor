@@ -1,8 +1,10 @@
-var TemplateLibrarySaveTemplateView;
+const TemplateLibraryTemplateModel = require( 'elementor-templates/models/template' );
+const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
+const FolderCollectionView = require('./folders/folders-list')
 
 import Select2 from 'elementor-editor-utils/select2.js';
 
-TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
+const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-save-template',
 
 	template: '#tmpl-elementor-template-library-save-template',
@@ -11,15 +13,18 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		form: '#elementor-template-library-save-template-form',
 		submitButton: '#elementor-template-library-save-template-submit',
 		selectDropdown: '#elementor-template-library-save-template-source',
-
 		ellipsisIcon: '.cloud-library-form-inputs .eicon-ellipsis-h',
 		foldersList: '.cloud-folder-selection-dropdown ul',
+		foldersDropdown: '.cloud-folder-selection-dropdown',
+		foldersListContainer: '.cloud-folder-selection-dropdown-list',
 		removeFolderSelection: '.source-selections .selected-folder i',
+		selectedFolder: '.selected-folder',
+		selectedFolderText: '.selected-folder-text',
+		hiddenInputSelectedFolder: '#parentId',
 	},
 
 	events: {
 		'submit @ui.form': 'onFormSubmit',
-
 		'click @ui.ellipsisIcon': 'onEllipsisIconClick',
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
@@ -120,143 +125,114 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		return option.text;
 	},
 
-	onEllipsisIconClick() {
-		const self = this;
-		const $dropdown = this.$( '.cloud-folder-selection-dropdown' );
+	onEllipsisIconClick() {	
+		if ( this.ui.foldersDropdown.is( ':visible' ) ) {
+			this.ui.foldersDropdown.hide();
 
-		if ( $dropdown.is(':visible') ) {
-			$dropdown.hide();
 			return;
 		}
 
-		$dropdown.show();
-		this.$( '.cloud-folder-selection-dropdown .eicon-loading' ).show();
+		this.ui.foldersDropdown.show();
 
-		const ul = document.querySelector( '.cloud-folder-selection-dropdown ul' );
-		ul.innerHTML = '';
+		if ( ! this.folderCollectionView ) {
+			this.folderCollectionView = new FolderCollectionView( {
+				collection: new TemplateLibraryCollection(),
+			} );
+
+			this.addSpinner();
+			this.ui.foldersListContainer.html( this.folderCollectionView.render()?.el );
+			this.fetchFolders();
+		}
+	},
+
+	addSpinner() {
+		const spinner = new TemplateLibraryTemplateModel( {
+			template_id: 0,
+			title: '<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>',
+		} );
+
+		this.folderCollectionView.collection.add( spinner );
+	},
+
+	removeSpinner() {
+		const spinner = this.folderCollectionView.collection.findWhere( { template_id: 0 } );
+
+		if ( spinner ) {
+			this.folderCollectionView.collection.remove( spinner );
+		}
+	},
+
+	fetchFolders() {
+		const self = this,
+			offset = self.folderCollectionView.collection.length - 1;
 
 		elementorCommon.ajax.addRequest( 'get_folders', {
 			data: {
 				source: 'cloud',
+				offset,
 			},
 			success( response ) {
-				self.$( '.cloud-folder-selection-dropdown .eicon-loading' ).hide();
-				self.$( '.cloud-folder-selection-dropdown' ).show();
+				self.removeSpinner();
 
-				if ( 0 === response.templates.length ) {
-					const li = document.createElement( 'li' );
-				
-					li.textContent = 'No folders to display';
-					li.setAttribute( 'data-id', 0 );
-					li.setAttribute( 'data-value', 'No folders to display' );
-					li.style.textDecoration = 'none';
-					ul.style.pointerEvents = 'none';
-					ul.appendChild(li);
+				self.folderCollectionView.collection.add( response?.templates );
 
-					return;
+				if ( self.shouldaddLoadMoreItemItem( response ) ) {
+					self.addLoadMoreItem();
 				}
-
-				response.templates.forEach( ( template ) => {
-					const li = document.createElement( 'li' );
-				
-					li.textContent = template.title;
-					li.setAttribute( 'data-id', template.template_id );
-					li.setAttribute( 'data-value', template.title );
-					ul.appendChild(li);
-				});
-
-				const totalLi = document.querySelectorAll( '.cloud-folder-selection-dropdown ul li' ).length;
-
-				if ( totalLi < response?.total ) {
-					const li = document.createElement( 'li' );
-				
-					li.textContent = 'Load More';
-					li.setAttribute( 'data-id', 0 );
-					li.setAttribute( 'data-value', 'Load More' );
-					ul.appendChild(li);
-				}
-			},
-		} );
+			}
+		});
 	},
 
 	onFoldersListClick( event ) {
-		const { id, value } = event.target.dataset;
+        const { id, value } = event.target.dataset;
 
-		if ( 0 == id ) {
-			const self = this;
-			
-			const li = document.querySelector('.cloud-folder-selection-dropdown ul li[data-id="0"][data-value="Load More"]');
-            if (li) li.innerHTML = '<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>';
+        if ( this.clickedOnLoadMore( id ) ) {
+            this.loadMoreFolders();
 
-			const ul = document.querySelector( '.cloud-folder-selection-dropdown ul' );
-			const offset = document.querySelectorAll( '.cloud-folder-selection-dropdown ul li' ).length - 1;
+            return;
+        }
 
-			elementorCommon.ajax.addRequest( 'get_folders', {
-				data: {
-					source: 'cloud',
-					offset,
-				},
-				success( response ) {
-					self.$( '.cloud-folder-selection-dropdown .eicon-loading' ).hide();
-					self.$( '.cloud-folder-selection-dropdown' ).show();
+        this.ui.foldersDropdown.hide();
+        this.ui.ellipsisIcon.hide();
+        this.ui.selectedFolderText.html( value );
+        this.ui.selectedFolder.show();
+        this.ui.hiddenInputSelectedFolder.val( id );
+    },
 
-					const li = document.querySelector('.cloud-folder-selection-dropdown ul li[data-id="0"][data-value="Load More"]');
-					if (li) li.remove();
-
-					response.templates.forEach( ( template ) => {
-						const li = document.createElement( 'li' );
-					
-						li.textContent = template.title;
-						li.setAttribute( 'data-id', template.template_id );
-						li.setAttribute( 'data-value', template.title );
-						ul.appendChild(li);
-					});
-
-					const totalLi = document.querySelectorAll( '.cloud-folder-selection-dropdown ul li' ).length;
-
-					console.log(totalLi);
-					console.log(response?.total);
-
-					if ( totalLi < response?.total ) {
-						console.log('got here');
-						const li = document.createElement( 'li' );
-					
-						li.textContent = 'Load More';
-						li.setAttribute( 'data-id', 0 );
-						li.setAttribute( 'data-value', 'Load More' );
-						ul.appendChild(li);
-					}
-				},
-			} );
-
-			return;
-		}
-
-		this.$( '.cloud-folder-selection-dropdown' ).hide();
-		this.$( '.cloud-library-form-inputs .eicon-ellipsis-h' ).hide();
-
-		const selectedFolder = document.querySelector( '.selected-folder' );
-		if ( selectedFolder ) {
-			selectedFolder.insertBefore( document.createTextNode( value ), selectedFolder.querySelector( 'i' ) );
-		}
-
-		this.$( '.selected-folder' ).show();
-		this.$( '#parentId' ).val( id );
-	},
+	clickedOnLoadMore( templateId ) {
+        return 0 === +templateId;
+    },
 
 	onRemoveFolderSelectionClick() {
-		const selectedFolder = document.querySelector( '.selected-folder' );
-		if ( selectedFolder ) {
-			const firstChild = selectedFolder.firstChild;
+        this.ui.selectedFolderText.html( '' );
+        this.ui.selectedFolder.hide();
+        this.ui.ellipsisIcon.show();
+        this.ui.hiddenInputSelectedFolder.val( '' );
+    },
 
-			if ( firstChild.nodeType === Node.TEXT_NODE ) {
-				selectedFolder.removeChild( firstChild );
-			}
+	loadMoreFolders() {
+		this.removeLoadMoreItem();
+		this.addSpinner();
+        this.fetchFolders();
+    },
+
+	shouldaddLoadMoreItemItem( response ) {
+		return this.folderCollectionView.collection.length < response?.total;
+	},
+
+	addLoadMoreItem() {
+		this.folderCollectionView.collection.add( {
+			template_id: 0,
+			title: 'Load More',
+		} );
+	},
+
+	removeLoadMoreItem() {
+		const loadMoreItem = this.folderCollectionView.collection.findWhere( { template_id: 0 } );
+
+		if ( loadMoreItem ) {
+			this.folderCollectionView.collection.remove( loadMoreItem );
 		}
-
-		this.$( '.selected-folder' ).hide();
-		this.ui.ellipsisIcon.show();
-		this.$( '#parentId' ).val( '' );
 	},
 } );
 
