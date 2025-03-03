@@ -126,7 +126,7 @@ const DivBlockView = BaseElementView.extend( {
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
-			// elementorModules.frontend.handlers.Base.setHandlesPosition.apply( this );
+			this.setHandlesPosition.apply( this );
 		} );
 	},
 
