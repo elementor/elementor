@@ -104,7 +104,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			"templateType" => "",
 		];
 
-		$mock_content = json_encode( ['content' => 'mock_content'] );
+		$mock_content = json_encode( ['content' => 'mock_content', 'page_settings' => ''] );
 
 		// Assert
 		$this->cloud_library_app_mock
@@ -120,6 +120,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'templateType' => 'container',
 				'parentId' => null,
 				'content' => $mock_content,
+				'hasPageSettings' => false,
 			] )
 			->willReturn( $post_resource_response );
 
