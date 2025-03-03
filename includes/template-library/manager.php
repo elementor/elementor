@@ -276,41 +276,29 @@ class Manager {
 			return $validate_args;
 		}
 
+		$content = $args['content'];
+
 		if ( is_array( $args['source'] ) ) {
 			$items_saved = [];
-			$content = $args['content'];
+
 			foreach ( $args['source'] as $source ) {
-				$source = $this->get_source( $source );
-
-				if ( ! $source ) {
-					return new \WP_Error( 'template_error', 'Template source not found.' );
-				}
-
-				$args['content'] = json_decode( $content, true );
-
-				$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
-
-				$args['page_settings'] = $page->get_data( 'settings' );
-
-				$template_id = $source->save_item( $args );
-
-				if ( is_wp_error( $template_id ) ) {
-					return $template_id;
-				}
-
-				$items_saved[] = $source->get_item( $template_id );
+				$items_saved[] = $this->save_template_item( $source, $args, $content );
 			}
 
 			return $items_saved;
 		}
 
-		$source = $this->get_source( $args['source'] );
+		return $this->save_template_item( $args['source'], $args, $content );
+	}
+
+	private function save_template_item( $source, $args, $content ) {
+		$source = $this->get_source( $source );
 
 		if ( ! $source ) {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$args['content'] = json_decode( $args['content'], true );
+		$args['content'] = json_decode( $content, true );
 
 		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
 
