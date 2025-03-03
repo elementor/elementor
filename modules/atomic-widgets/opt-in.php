@@ -57,7 +57,7 @@ class Opt_In {
 	}
 
 	private function add_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'elementor_atomic_widgets_opt_in', fn() => $this->ajax_set_v4_features_state() );
-		$ajax->register_ajax_action( 'elementor_atomic_widgets_opt_out', fn() => $this->ajax_set_v4_features_state( false ) );
+		$ajax->register_ajax_action( 'atomic_widgets_opt_in', fn() => $this->ajax_set_v4_features_state() );
+		$ajax->register_ajax_action( 'atomic_widgets_opt_out', fn() => $this->ajax_set_v4_features_state( false ) );
 	}
 }
