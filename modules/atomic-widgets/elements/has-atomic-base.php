@@ -84,13 +84,13 @@ trait Has_Atomic_Base {
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 
 		foreach ( $styles as $style_id => $style ) {
-			[ $is_valid, $sanitized_style, $errors ] = $style_parser->parse( $style );
+			$result = $style_parser->parse( $style );
 
-			if ( ! $is_valid ) {
-				throw new \Exception( esc_html( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) ) );
+			if ( ! $result->is_valid() ) {
+				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. " . $result->errors()->to_string() ) );
 			}
 
-			$styles[ $style_id ] = $sanitized_style;
+			$styles[ $style_id ] = $result->unwrap();
 		}
 
 		return $styles;
@@ -100,13 +100,13 @@ trait Has_Atomic_Base {
 		$schema = static::get_props_schema();
 		$props_parser = Props_Parser::make( $schema );
 
-		[ $is_valid, $parsed, $errors ] = $props_parser->parse( $settings );
+		$result = $props_parser->parse( $settings );
 
-		if ( ! $is_valid ) {
-			throw new \Exception( esc_html( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) ) );
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
 		}
 
-		return $parsed;
+		return $result->unwrap();
 	}
 
 	public function get_atomic_controls() {

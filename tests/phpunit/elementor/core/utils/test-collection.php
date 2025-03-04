@@ -153,6 +153,17 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertEqualSets( [ 'a' => [ '1', '2' ], 'b' => [ '4', '5' ], 'c' => [ '6' ] ], $result->all() );
 	}
 
+	public function test_reverse() {
+		// Arrange
+		$collection = new Collection( [ 1, 2, 3, 4 ] );
+
+		// Act
+		$result = $collection->reverse();
+
+		// Assert
+		$this->assertEquals( [ 4, 3, 2, 1 ], $result->all() );
+	}
+
 	public function test_implode() {
 		// Arrange
 		$collection = new Collection( [ '1', '2', '3' ] );
