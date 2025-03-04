@@ -17,10 +17,14 @@ class Global_Classes_Parser {
 
 		if ( ! isset( $data['items'] ) ) {
 			$result->errors()->add( 'items', 'missing' );
+
+			return $result;
 		}
 
 		if ( ! isset( $data['order'] ) ) {
 			$result->errors()->add( 'order', 'missing' );
+
+			return $result;
 		}
 
 		$items = $data['items'];
@@ -28,22 +32,30 @@ class Global_Classes_Parser {
 
 		if ( ! is_array( $items ) ) {
 			$result->errors()->add( 'items', 'invalid' );
+
+			return $result;
 		}
 
 		if ( ! is_array( $order ) ) {
 			$result->errors()->add( 'order', 'invalid' );
+
+			return $result;
 		}
 
 		$items_result = $this->parse_items( $items );
 
 		if ( ! $items_result->is_valid() ) {
 			$result->errors()->merge( $items_result->errors(), 'items' );
+
+			return $result;
 		}
 
 		$order_result = $this->parse_order( $order, $items_result->unwrap() );
 
 		if ( ! $order_result->is_valid() ) {
 			$result->errors()->merge( $order_result->errors(), 'order' );
+
+			return $result;
 		}
 
 		return $result->wrap( [
