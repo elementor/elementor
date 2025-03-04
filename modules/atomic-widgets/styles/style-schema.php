@@ -113,7 +113,7 @@ class Style_Schema {
 				'ltr',
 				'rtl',
 			]),
-			'-webkit-text-stroke' => Stroke_Prop_Type::make(),
+			'stroke' => Stroke_Prop_Type::make(),
 		];
 	}
 
