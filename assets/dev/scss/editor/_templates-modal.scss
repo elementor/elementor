@@ -748,7 +748,7 @@ label.elementor-template-library-order-label {
   			display: inline-block;
 
 			.eicon-ellipsis-h {
-				background: #F4F5F8;
+				background: var(--e-a-border-color);
 				margin-inline: 5px;
 				cursor: pointer;
 			}
@@ -776,7 +776,7 @@ label.elementor-template-library-order-label {
 		.cloud-folder-selection-dropdown {
 			display: none;
 			position: absolute;
-			background-color: $white;
+			background-color: var(--e-a-bg-default);
 			min-width: 182px;
 			overflow: auto;
 			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -811,7 +811,7 @@ label.elementor-template-library-order-label {
 				}
 
 				&:hover {
-					background: #F4F5F8;
+					background: var(--e-a-border-color);
 				}
 
 				&.no-results {
