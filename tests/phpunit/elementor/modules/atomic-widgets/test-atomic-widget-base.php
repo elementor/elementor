@@ -733,6 +733,49 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_data_for_save();
 	}
 
+	public function test_get_data_for_save__throws_on_styles_variant_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'label' => 'Test',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+						[
+							'props' => [
+								'padding' => [
+									'$$type' => 'size',
+									'value' => 'not-a-size',
+								],
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => 'hover',
+							],
+						],
+					],
+				]
+			]
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. variants[1].padding: invalid_value' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
 	public function test_get_data_for_save__throws_on_settings_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [

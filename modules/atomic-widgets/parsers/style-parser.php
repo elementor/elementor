@@ -67,12 +67,12 @@ class Style_Parser {
 
 			$meta_result = $this->validate_meta( $variant['meta'] );
 
-			$result->errors()->merge( $meta_result->errors() );
+			$result->errors()->merge( $meta_result->errors(), 'meta' );
 
 			if ( $meta_result->is_valid() ) {
 				$variant_result = $props_parser->validate( $variant['props'] );
 
-				$result->errors()->merge( $variant_result->errors() );
+				$result->errors()->merge( $variant_result->errors(), "variants[$variant_index]" );
 
 				$validated_style['variants'][ $variant_index ]['props'] = $variant_result->unwrap();
 			} else {
@@ -93,14 +93,14 @@ class Style_Parser {
 		}
 
 		if ( ! array_key_exists( 'state', $meta ) || ! in_array( $meta['state'], self::VALID_STATES, true ) ) {
-			$result->errors()->add( 'meta.state', 'missing_or_invalid_value' );
+			$result->errors()->add( 'state', 'missing_or_invalid_value' );
 
 			return $result;
 		}
 
 		// TODO: Validate breakpoint based on the existing breakpoints in the system [EDS-528]
 		if ( ! isset( $meta['breakpoint'] ) || ! is_string( $meta['breakpoint'] ) ) {
-			$result->errors()->add( 'meta.breakpoint', 'missing_or_invalid_value' );
+			$result->errors()->add( 'breakpoint', 'missing_or_invalid_value' );
 
 			return $result;
 		}

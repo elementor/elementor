@@ -7,6 +7,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
+use Elementor\Modules\GlobalClasses\ImportExport\Import_Export;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,6 +38,7 @@ class Module extends BaseModule {
 
 			( new Global_Classes_REST_API() )->register_hooks();
 			( new Global_Classes_CSS() )->register_hooks();
+			( new Import_Export() )->register_hooks();
 		}
 	}
 
