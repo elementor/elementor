@@ -466,6 +466,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 	public function test_get_folders() {
 		// Arrange
 		$args = [
+			'source' => 'cloud',
 			'templateType' => 'folder',
 			'offset' => 0,
 		];

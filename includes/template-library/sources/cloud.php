@@ -257,11 +257,4 @@ class Source_Cloud extends Source_Base {
 			'name' => $file_data['name'],
 		];
 	}
-
-	public function get_folders( array $args = [] ) {
-		return $this->get_app()->get_resources( [
-			'templateType' => 'folder',
-			'offset' => $args['offset'] ?? 0,
-		] );
-	}
 }

@@ -684,7 +684,9 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Folder source not found.' );
 		}
 
-		return $source->get_folders( $args );
+		$args['templateType'] = 'folder';
+
+		return $source->get_items( $args );
 	}
 
 	/**
