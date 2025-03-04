@@ -96,13 +96,12 @@ class Style_Schema {
 				'end',
 				'justify',
 			]),
-			'line-decoration' => String_Prop_Type::make()->enum([
+			'text-decoration' => String_Prop_Type::make()->enum([
 				'normal',
 				'italic',
 				'oblique',
 			]),
 			// TODO: validate text-decoration in more specific way [EDS-524]
-			'text-decoration' => String_Prop_Type::make(),
 			'text-transform' => String_Prop_Type::make()->enum([
 				'none',
 				'capitalize',
