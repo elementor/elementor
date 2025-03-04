@@ -597,6 +597,8 @@ const TemplateLibraryManager = function() {
 				templates,
 			);
 
+			console.log('!_COLLECTION_!', templatesCollection, result)
+
 			if ( result.data?.templates?.total ) {
 				total = result.data?.templates?.total;
 			}
@@ -659,6 +661,12 @@ const TemplateLibraryManager = function() {
 
 		const parentId = this.getFilter( 'parent' );
 
+		console.log('!_MORE_!', {
+			source,
+			offset: templatesCollection.length,
+			search,
+			parentId,
+		})
 		const ajaxOptions = {
 			data: {
 				source,
@@ -693,6 +701,8 @@ const TemplateLibraryManager = function() {
 
 		self.loadTemplates( function() {
 			var templatesToShow = self.filterTemplates();
+
+			console.log("!_TEMPLATES_!", templatesToShow);
 
 			self.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
 		} );

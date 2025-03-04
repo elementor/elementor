@@ -2,20 +2,27 @@
 namespace Elementor\Modules\CloudLibrary\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Modules\CloudLibrary\Render_Mode_Preview;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Cloud_Library extends Library {
-	const API_URL = 'https://my.elementor.com/api/v1';
+//	const API_URL = 'https://my.elementor.com/api/v1';
+	const API_URL = 'http://localhost:3000/api/v1';
 
 	public function get_title(): string {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	protected function get_slug(): string {
-		return 'cloud-library';
+//	protected function get_slug(): string {
+//		return 'cloud-library';
+//	}
+
+	protected function get_api_url()
+	{
+		return 'http://localhost:3000/api/v1/cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
@@ -58,8 +65,19 @@ class Cloud_Library extends Library {
 	}
 
 	protected function prepare_template( array $template_data ): array {
+		$template_id = $template_data['id'];
+
+		$query_args = [
+			'preview' => true,
+			'render_mode_nonce' => wp_create_nonce( 'render_mode_' . $template_id ),
+			'template_id' => $template_id,
+			'render_mode' => Render_Mode_Preview::MODE,
+		];
+
+		$preview_url = set_url_scheme( add_query_arg( $query_args, site_url() ) );
+
 		return [
-			'template_id' => $template_data['id'],
+			'template_id' => $template_id,
 			'source' => 'cloud',
 			'type' => $template_data['templateType'],
 			'subType' => $template_data['type'],
@@ -69,6 +87,7 @@ class Cloud_Library extends Library {
 			'export_link' => $this->get_export_link( $template_data['id'] ),
 			'hasPageSettings' => $template_data['hasPageSettings'],
 			'parentId' => $template_data['parentId'],
+			'preview_url' => $preview_url,
 		];
 	}
 
