@@ -6,8 +6,13 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -85,10 +90,6 @@ class Div_Block extends Atomic_Element_Base {
 		];
 	}
 
-	public function get_style_depends() {
-		return [ 'div-block' ];
-	}
-
 	protected function _get_default_child_type( array $element_data ) {
 		if ( 'div-block' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( 'div-block' );
@@ -109,7 +110,7 @@ class Div_Block extends Atomic_Element_Base {
 		$attributes = [
 			'class' => [
 				'e-con',
-				'e-div-block',
+				'div-block-base',
 				...( $settings['classes'] ?? [] ),
 			],
 		];
@@ -147,5 +148,28 @@ class Div_Block extends Atomic_Element_Base {
 		$settings = $this->get_atomic_settings();
 
 		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? 'div' );
+	}
+
+	protected function define_base_styles(): array {
+		$display_value = String_Prop_Type::generate( 'block' );
+		$padding_value = Dimensions_Prop_Type::generate( [
+			'top' => Size_Prop_Type::generate( [
+				'size' => 10,
+				'unit' => 'px',
+			]),
+			'bottom' => Size_Prop_Type::generate( [
+				'size' => 10,
+				'unit' => 'px',
+			]),
+		]);
+
+		return [
+			'base' => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'display', $display_value )
+						->add_prop( 'padding', $padding_value )
+				),
+		];
 	}
 }
