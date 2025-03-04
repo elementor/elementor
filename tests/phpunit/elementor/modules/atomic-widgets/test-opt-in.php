@@ -25,7 +25,7 @@ class Test_Opt_In extends Elementor_Test_Base {
 		( new Opt_In )->ajax_set_v4_features_state();
 
 		// Assert.
-		foreach ( Opt_In::OPT_IN_FEATURES as $feature ) {
+		foreach (Opt_In::OPT_IN_FEATURES as $feature ) {
 			$feature_key = Plugin::$instance->experiments->get_feature_option_key( $feature );
 			$feature_state = get_option( $feature_key );
 			$this->assertEquals( $feature_state, Plugin::$instance->experiments::STATE_ACTIVE );
@@ -40,7 +40,7 @@ class Test_Opt_In extends Elementor_Test_Base {
 		( new Opt_In )->ajax_set_v4_features_state( false );
 
 		// Assert.
-		foreach ( Opt_In::OPT_IN_FEATURES as $feature ) {
+		foreach (Opt_In::OPT_IN_FEATURES as $feature ) {
 			$feature_key = Plugin::$instance->experiments->get_feature_option_key( $feature );
 			$feature_state = get_option( $feature_key );
 

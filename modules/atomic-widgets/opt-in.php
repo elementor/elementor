@@ -11,7 +11,7 @@ use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
 
 class Opt_In {
-	const EXPERIMENT_NAME = 'atomic_widgets_opt_in';
+	const EXPERIMENT_NAME = 'editor_v4';
 
 	const OPT_IN_FEATURES = [
 		self::EXPERIMENT_NAME,
@@ -31,8 +31,8 @@ class Opt_In {
 	private function register_feature() {
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Atomic Widgets Opt-In', 'elementor' ),
-			'description' => esc_html__( 'Enable atomic widgets opt-in.', 'elementor' ),
+			'title' => esc_html__( 'Editor V4', 'elementor' ),
+			'description' => esc_html__( 'Enable Editor V4.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
@@ -57,7 +57,7 @@ class Opt_In {
 	}
 
 	private function add_ajax_actions( Ajax $ajax ) {
-		$ajax->register_ajax_action( 'atomic_widgets_opt_in', fn() => $this->ajax_set_v4_features_state() );
-		$ajax->register_ajax_action( 'atomic_widgets_opt_out', fn() => $this->ajax_set_v4_features_state( false ) );
+		$ajax->register_ajax_action( 'editor_v4_opt_in', fn() => $this->ajax_set_v4_features_state() );
+		$ajax->register_ajax_action( 'editor_v4_opt_out', fn() => $this->ajax_set_v4_features_state( false ) );
 	}
 }
