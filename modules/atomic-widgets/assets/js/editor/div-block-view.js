@@ -20,50 +20,6 @@ const DivBlockView = BaseElementView.extend( {
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con e-div-block${ this.getClassString() }`;
 	},
 
-	getOffset() {
-		if ( 'body' === elementor.config.document.container ) {
-			return this.$el.offset().top;
-		}
-
-		const $container = jQuery( elementor.config.document.container );
-		return this.$el.offset().top - $container.offset().top;
-	},
-
-	isOverflowHidden() {
-		return 'hidden' === this?.$el?.css( 'overflow' );
-	},
-
-	setHandlesPosition() {
-		const document = elementor.documents.getCurrent();
-
-		if ( ! document?.container?.isEditable() ) {
-			return;
-		}
-
-		this.$el.removeClass( insideHandleClass );
-
-		if ( ! this.isOverflowHidden() ) {
-			return;
-		}
-
-		const offset = this.getOffset(),
-			$handlesElement = this.$el.find( '> .elementor-element-overlay > .elementor-editor-section-settings' ),
-			insideHandleClass = 'e-handles-inside';
-		this.$el.addClass( insideHandleClass );
-
-		if ( offset < 25 ) {
-			$handlesElement.css( 'top', offset < -5 ? -offset : '' );
-		}
-	},
-
-	events() {
-		const events = BaseElementView.prototype.events.apply( this, arguments );
-
-		events.mouseover = this.setHandlesPosition.bind( this );
-
-		return events;
-	},
-
 	// TODO: Copied from `views/column.js`.
 	ui() {
 		var ui = BaseElementView.prototype.ui.apply( this, arguments );
@@ -126,7 +82,6 @@ const DivBlockView = BaseElementView.extend( {
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
-			this.setHandlesPosition.apply( this );
 		} );
 	},
 
