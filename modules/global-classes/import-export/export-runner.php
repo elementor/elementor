@@ -4,7 +4,7 @@ namespace Elementor\Modules\GlobalClasses\ImportExport;
 
 use Elementor\App\Modules\ImportExport\Runners\Export\Export_Runner_Base;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\Global_Classes_Sanitizer;
+use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,12 +36,19 @@ class Export_Runner extends Export_Runner_Base {
 
 		$global_classes = Global_Classes_Repository::make()->all()->get();
 
-		$sanitized_global_classes = Global_Classes_Sanitizer::make()->sanitize( $global_classes );
+		$global_classes_result = Global_Classes_Parser::make()->parse( $global_classes );
+
+		if ( ! $global_classes_result->is_valid() ) {
+			return [
+				'manifest' => [],
+				'files' => [],
+			];
+		}
 
 		return [
 			'files' => [
 				'path' => Import_Export::FILE_NAME,
-				'data' => $sanitized_global_classes,
+				'data' => $global_classes_result->unwrap(),
 			],
 		];
 	}

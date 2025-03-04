@@ -354,6 +354,14 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return new static( array_diff( $this->all(), $filter ) );
 	}
 
+	public function diff_assoc( $filter ) {
+		if ( $filter instanceof self ) {
+			$filter = $filter->all();
+		}
+
+		return new static( array_diff_assoc( $this->all(), $filter ) );
+	}
+
 	/**
 	 * Make sure all the values inside the array are uniques.
 	 *

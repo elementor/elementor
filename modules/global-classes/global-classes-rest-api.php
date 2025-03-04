@@ -92,34 +92,34 @@ class Global_Classes_REST_API {
 	}
 
 	private function put( \WP_REST_Request $request ) {
-		$sanitizer = Global_Classes_Sanitizer::make();
+		$sanitizer = Global_Classes_Parser::make();
 
-		[$is_valid, $sanitized_items, $errors] = $sanitizer->sanitize_items(
+		$items_result = $sanitizer->parse_items(
 			$request->get_param( 'items' )
 		);
 
-		if ( ! $parsed_items->is_valid() ) {
+		if ( ! $items_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_items' )
 				->set_status( 400 )
-				->set_message( 'Invalid items: ' . $parsed_items->errors()->to_string() )
+				->set_message( 'Invalid items: ' . $items_result->errors()->to_string() )
 				->build();
 		}
 
-		[$is_order_valid, $sanitized_order] = $sanitizer->sanitize_order(
+		$order_result = $sanitizer->parse_order(
 			$request->get_param( 'order' ),
-			$sanitized_items
+			$items_result->unwrap()
 		);
 
-		if ( ! $is_order_valid ) {
+		if ( ! $order_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_order' )
 				->set_status( 400 )
-				->set_message( 'Invalid order' )
+				->set_message( 'Invalid order: ' . $order_result->errors()->to_string() )
 				->build();
 		}
 
 		$this->get_repository()->put(
-			$sanitized_items,
-			$sanitized_order
+			$items_result->unwrap(),
+			$order_result->unwrap(),
 		);
 
 		return Response_Builder::make()->no_content()->build();
