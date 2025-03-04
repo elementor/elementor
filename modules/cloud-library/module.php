@@ -70,6 +70,7 @@ class Module extends BaseModule {
 				'utm_medium' => 'wp-dash',
 				'utm_campaign' => 'library-connect',
 				'utm_content' => 'cloud-library',
+				'source' => 'cloud-library', // For custom copy.
 			] ) ),
 			'library_connect_title' => esc_html__( 'Connect', 'elementor' ),
 			'library_connect_sub_title' => esc_html__( 'Sub Title', 'elementor' ),
