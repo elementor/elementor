@@ -3,6 +3,7 @@ namespace Elementor\Modules\CloudLibrary;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
+use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
@@ -13,6 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
+
+	/**
+	 * @var callable
+	 */
+	protected $print_callback;
 
 	public function get_name(): string {
 		return 'cloud-library';
@@ -29,6 +35,8 @@ class Module extends BaseModule {
 			add_action( 'elementor/init', function () {
 				$this->set_cloud_library_settings();
 			}, 12 /** After the initiation of the connect cloud library */ );
+
+
 		}
 	}
 
@@ -47,6 +55,19 @@ class Module extends BaseModule {
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'cloud-library', Cloud_Library::get_class_name() );
 		} );
+
+		add_action( 'elementor/frontend/render_mode/register', [ $this, 'register_render_mode' ] );
+
+		Plugin::$instance->documents
+			->register_document_type( Documents\Cloud_Template_Preview::TYPE, Documents\Cloud_Template_Preview::get_class_full_name() );
+	}
+	/**
+	 * @param Render_Mode_Manager $manager
+	 *
+	 * @throws \Exception
+	 */
+	public function register_render_mode( Render_Mode_Manager $manager ) {
+		$manager->register_render_mode( Render_Mode_Preview::class );
 	}
 
 	private function set_cloud_library_settings() {
@@ -76,5 +97,22 @@ class Module extends BaseModule {
 			'library_connect_sub_title' => esc_html__( 'Sub Title', 'elementor' ),
 			'library_connect_button_text' => esc_html__( 'Connect', 'elementor' ),
 		] );
+	}
+
+	public function print_content() {
+		if ( ! $this->print_callback ) {
+			$this->print_callback = [ $this, 'print_callback' ];
+		}
+
+		call_user_func( $this->print_callback );
+	}
+
+	private function print_callback() {
+		$doc = Plugin::$instance->documents->get_current();
+
+		setup_postdata( $doc->get_main_post() );
+		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true );
+
+		wp_reset_postdata();
 	}
 }
