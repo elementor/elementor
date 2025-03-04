@@ -731,4 +731,25 @@ module.exports = {
 			return '';
 		}
 	},
+
+	/**
+	 * Retrieves an anchor (link) element that is a direct or nested child of the given element,
+	 * and has an 'href' attribute.
+	 *
+	 * @param {HTMLElement} element - The parent element to search within.
+	 * @return {HTMLAnchorElement | null} An anchor element with an 'href' attribute, or null if none are found.
+	 */
+	getAnchorWithHrefInElement( element ) {
+		return element?.querySelector( 'a[href]' ) || null;
+	},
+
+	/**
+	 * Checks if the given element is inside an anchor (link) element that has an 'href' attribute.
+	 *
+	 * @param {HTMLElement} element - The element to check.
+	 * @return {HTMLAnchorElement | null} The closest anchor element with an 'href' attribute, or null if none is found.
+	 */
+	getClosestAnchorWithHref( element ) {
+		return element?.closest( 'a[href]' ) || null;
+	},
 };
