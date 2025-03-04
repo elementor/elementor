@@ -123,7 +123,7 @@ class Module extends BaseModule {
 		$doc = Plugin::$instance->documents->get_current();
 
 		setup_postdata( $doc->get_main_post() );
-		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc, true );
+		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true );
 
 		wp_reset_postdata();
 	}
