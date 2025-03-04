@@ -146,7 +146,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		// Assert
 		$css = $post->get_content();
 
-		$this->assertEquals( '.elementor .g-4-124{color:blue;}@media(max-width:767px){.elementor .g-4-123{color:pink;}}', $css );
+		$this->assertEquals( '@media(max-width:767px){.elementor .g-4-123{color:pink;}}.elementor .g-4-124{color:blue;}', $css );
 	}
 
 	public function test_it__does_not_parse_global_classes_to_kit_css_if_no_classes() {
@@ -223,7 +223,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		$post_css->get_content();
 
 		// Assert.
-		$this->assertSame( [ 'Inter', 'Poppins' ], $post_css->get_fonts() );
+		$this->assertSame( [ 'Poppins', 'Inter' ], $post_css->get_fonts() );
 	}
 
 	private function assert_kit_css_contains( string $substring, bool $contains = true ) {
