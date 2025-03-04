@@ -30,7 +30,7 @@ class Parse_Result {
 	}
 
 	public function is_valid(): bool {
-		return $this->errors->empty();
+		return $this->errors->is_empty();
 	}
 
 	public function errors(): Parse_Errors {
