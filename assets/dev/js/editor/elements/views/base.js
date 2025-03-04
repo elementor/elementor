@@ -757,28 +757,23 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = async ( dataBinding ) => {
-			const { bindingSetting, bindingDynamicCssId } = dataBinding.dataset,
-				changedControl = this.getChangedDynamicControlKey( settings );
-			let change = settings.changed[ bindingSetting ];
+			const { bindingSetting, bindingConfig } = dataBinding.dataset;
+			// BindingSetting is kept for backward compatibility, should be removed once two versions from ED-17823 has been merged
+			// And use only the bindingConfig which contains all the needed information
+			const bindingSettings = bindingSetting.split( ' ' ); // Multiple binding settings can appear
+			const config = JSON.parse( bindingConfig );
+			let isChangeHandled = false;
 
-			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl, bindingDynamicCssId ) ) {
-				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
+			for await ( const currentChange of this.bindingChangesGenerator( settings, bindingSettings, config ) ) {
+				const { key, value } = currentChange;
 
-				if ( dynamicValue ) {
-					change = dynamicValue;
+				if ( 'string' === typeof value ) {
+					this.renderDataBoundChange( value, dataBinding.el, config[ key ] );
+					isChangeHandled = true;
 				}
 			}
 
-			if ( this.isCssIdControl( changedControl, bindingDynamicCssId ) ) {
-				return this.updateCssId( dataBinding, change, settings, changedControl );
-			}
-
-			if ( change !== undefined ) {
-				dataBinding.el.innerHTML = change;
-				return true;
-			}
-
-			return false;
+			return isChangeHandled;
 		};
 
 		for ( const dataBinding of dataBindings ) {
@@ -814,21 +809,42 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
-	isCssIdControl( changedControl, bindingDynamicCssId ) {
-		return bindingDynamicCssId === changedControl;
+	async *bindingChangesGenerator( settings, bindingSettings, config ) {
+		for ( const [ key, value ] of Object.entries( settings.changed ) ) {
+			if ( '__dynamic__' !== key && ! this.isHandledAsDatabinding( key, bindingSettings, config ) ) {
+				continue;
+			}
+
+			if ( '__dynamic__' !== key ) {
+				yield { key, value };
+				continue;
+			}
+
+			for ( const dynamicKey of Object.keys( value ) ) {
+				if ( this.isHandledAsDatabinding( dynamicKey, bindingSettings, config ) ) {
+					const actual = await this.getDynamicValue( settings, dynamicKey, dynamicKey );
+					yield { key: dynamicKey, value: actual };
+				}
+			}
+		}
 	},
 
-	updateCssId( dataBinding, change, settings, changedControl ) {
-		if ( ! change ) {
-			change = settings.attributes[ changedControl ];
-		}
+	isHandledAsDatabinding( key, bindingSettings, config ) {
+		return bindingSettings.some( ( x ) => x === key ) || config[ key ] !== undefined;
+	},
 
-		if ( change && change.length ) {
-			dataBinding.el.closest( dataBinding.dataset.bindingSingleItemHtmlWrapperTag ).setAttribute( 'id', change );
-			return true;
+	renderDataBoundChange( change, element, config ) {
+		switch ( config?.editType ) {
+			case 'attribute':
+				element.closest( config.selector ).setAttribute( config.attr, change );
+				break;
+			case 'text':
+				element.innerHTML = change;
+				break;
+			// Backward compatibility should be deleted once two versions from ED-17823 has been merged
+			default:
+				element.innerHTML = change;
 		}
-
-		return false;
 	},
 
 	/**
