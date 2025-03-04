@@ -167,6 +167,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return $result;
 	}
 
+	public function reverse() {
+		return new static( array_reverse( $this->items ) );
+	}
+
 	/**
 	 * @param callable $callback
 	 *
