@@ -146,7 +146,7 @@ class Render_Mode_Preview extends Render_Mode_Base {
 			'page_settings' => $page_settings,
 		] );
 
-//		Plugin::$instance->documents->switch_to_document( $document );
+		Plugin::$instance->documents->switch_to_document( $document );
 
 		return $document;
 	}

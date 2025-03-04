@@ -24,7 +24,7 @@ class Cloud_Template_Preview extends Document {
 		$properties =  parent::get_properties();
 
 		$properties['admin_tab_group'] = '';
-		$properties['has_elements'] = false;
+		$properties['has_elements'] = true;
 		$properties['is_editable'] = true;
 		$properties['show_in_library'] = false;
 		$properties['show_on_admin_bar'] = false;
