@@ -98,10 +98,10 @@ class Global_Classes_REST_API {
 			$request->get_param( 'items' )
 		);
 
-		if ( ! $is_valid ) {
+		if ( ! $parsed_items->is_valid() ) {
 			return Error_Builder::make( 'invalid_items' )
 				->set_status( 400 )
-				->set_message( 'Invalid items: ' . join( ', ', array_keys( $errors ) ) )
+				->set_message( 'Invalid items: ' . $parsed_items->errors()->to_string() )
 				->build();
 		}
 
