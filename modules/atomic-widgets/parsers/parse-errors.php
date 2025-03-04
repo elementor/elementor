@@ -26,7 +26,7 @@ class Parse_Errors {
 		return $this;
 	}
 
-	public function empty(): bool {
+	public function is_empty(): bool {
 		return empty( $this->errors );
 	}
 
