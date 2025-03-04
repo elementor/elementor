@@ -124,7 +124,9 @@ class Style_Schema {
 
 	private static function get_spacing_props() {
 		return [
-			'padding' => Size_Prop_Type::make(),
+			'padding' => Union_Prop_Type::make()
+				->add_prop_type( Dimensions_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make() ),
 			'margin' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
 				->add_prop_type( Size_Prop_Type::make() )
@@ -134,12 +136,12 @@ class Style_Schema {
 
 	private static function get_border_props() {
 		return [
-			'border-radius' => Union_Prop_Type::make()->add_prop_type(
-				Size_Prop_Type::make()
-			)->add_prop_type(
-				Border_Radius_Prop_Type::make()
-			),
-			'border-width' => self::get_extended_size_prop(),
+			'border-radius' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Border_Radius_Prop_Type::make() ),
+			'border-width' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Border_Width_Prop_Type::make() ),
 			'border-color' => Color_Prop_Type::make(),
 			'border-style' => String_Prop_Type::make()->enum([
 				'none',
