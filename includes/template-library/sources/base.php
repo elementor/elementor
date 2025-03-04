@@ -378,10 +378,6 @@ abstract class Source_Base {
 		return new \WP_Error( 'template_error', 'Folders cannot be created in this source' );
 	}
 
-	public function get_folders( array $args = [] ) {
-		return new \WP_Error( 'template_error', 'This source does not support folders' );
-	}
-
 	/**
 	 * Send file headers.
 	 *
