@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Color_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
-		$color = $value;
+		$color = $value['color'];
 		return "linear-gradient($color, $color)";
 	}
 }
