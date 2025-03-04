@@ -813,15 +813,15 @@ label.elementor-template-library-order-label {
 				&:hover {
 					background: var(--e-a-border-color);
 				}
+			}
 
-				&.no-results {
-					text-align: center;
-					font-size: 11px;
-					width: 70%;
-					margin: 0 auto;
-					padding-block: 20px;
-					pointer-events: none;
-				}
+			.no-results {
+				text-align: center;
+				font-size: 11px;
+				width: 75%;
+				margin: 0 auto;
+				padding-block: 20px;
+				pointer-events: none;
 			}
 		}
 
