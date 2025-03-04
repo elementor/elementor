@@ -14,6 +14,10 @@ describe( `$e.run( 'preview/drop' )`, () => {
 			},
 		};
 
+		global.$e.modules.editor = {
+			CommandContainerBase: ( await import( 'elementor-editor/command-bases/command-container-base' ) ).default,
+		};
+
 		const MockBackbone = {
 			Model: class {
 				extend() {
