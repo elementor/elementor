@@ -486,11 +486,6 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 	}
 
 	public function test_get_folders_fails_without_offset() {
-		// Arrange
-		$args = [
-			'templateType' => 'folder',
-		];
-
 		// Act
 		$result = $this->manager->get_folders( [ 'source' => 'cloud' ] );
 
@@ -505,11 +500,6 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 	}
 
 	public function test_get_folders_fails_without_source() {
-		// Arrange
-		$args = [
-			'templateType' => 'folder',
-		];
-
 		// Act
 		$result = $this->manager->get_folders( [ 'offset' => 0 ] );
 
