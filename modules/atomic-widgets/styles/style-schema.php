@@ -13,7 +13,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Gap_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -34,12 +33,18 @@ class Style_Schema {
 		);
 	}
 
+	public static function get_extended_size_prop() {
+		return Union_Prop_Type::make()
+			->add_prop_type( Size_Prop_Type::make() )
+			->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) );
+	}
+
 	private static function get_size_props() {
 		return [
-			'width' => Size_Prop_Type::make(),
-			'height' => Size_Prop_Type::make(),
-			'min-width' => Size_Prop_Type::make(),
-			'min-height' => Size_Prop_Type::make(),
+			'width' => self::get_extended_size_prop(),
+			'height' => self::get_extended_size_prop(),
+			'min-width' => self::get_extended_size_prop(),
+			'min-height' => self::get_extended_size_prop(),
 			'max-width' => Size_Prop_Type::make(),
 			'max-height' => Size_Prop_Type::make(),
 			'overflow' => String_Prop_Type::make()->enum([
@@ -59,10 +64,10 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			]),
-			'top' => Size_Prop_Type::make(),
-			'right' => Size_Prop_Type::make(),
-			'bottom' => Size_Prop_Type::make(),
-			'left' => Size_Prop_Type::make(),
+			'top' => self::get_extended_size_prop(),
+			'right' => self::get_extended_size_prop(),
+			'bottom' => self::get_extended_size_prop(),
+			'left' => self::get_extended_size_prop(),
 			'z-index' => Number_Prop_Type::make(),
 		];
 	}
@@ -119,19 +124,24 @@ class Style_Schema {
 
 	private static function get_spacing_props() {
 		return [
-			'padding' => Union_Prop_Type::make()->add_prop_type( Dimensions_Prop_Type::make() )->add_prop_type( Size_Prop_Type::make() ),
-			'margin' => Union_Prop_Type::make()->add_prop_type( Dimensions_Prop_Type::make() )->add_prop_type( Size_Prop_Type::make() ),
+			'padding' => Union_Prop_Type::make()
+				->add_prop_type( Dimensions_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make() ),
+			'margin' => Union_Prop_Type::make()
+				->add_prop_type( Dimensions_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 		];
 	}
 
 	private static function get_border_props() {
 		return [
-			'border-radius' => Union_Prop_Type::make()->add_prop_type(
-				Size_Prop_Type::make()
-			)->add_prop_type(
-				Border_Radius_Prop_Type::make()
-			),
-			'border-width' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( Border_Width_Prop_Type::make() ),
+			'border-radius' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Border_Radius_Prop_Type::make() ),
+			'border-width' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Border_Width_Prop_Type::make() ),
 			'border-color' => Color_Prop_Type::make(),
 			'border-style' => String_Prop_Type::make()->enum([
 				'none',
