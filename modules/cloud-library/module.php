@@ -122,12 +122,9 @@ class Module extends BaseModule {
 	private function print_callback() {
 		$doc = Plugin::$instance->documents->get_current();
 
-//		setup_postdata( $doc->get_main_post() );
-//
-//		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc, true );
+		setup_postdata( $doc->get_main_post() );
+		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc, true );
 
-		the_post();
-		the_content();
-//		wp_reset_postdata();
+		wp_reset_postdata();
 	}
 }
