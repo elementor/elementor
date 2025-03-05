@@ -9,20 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Cloud_Library extends Library {
-//	const API_URL = 'https://my.elementor.com/api/v1';
-	const API_URL = 'http://localhost:3000/api/v1';
+	const API_URL = 'https://my.elementor.com/api/v1';
 
 	public function get_title(): string {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-//	protected function get_slug(): string {
-//		return 'cloud-library';
-//	}
-
-	protected function get_api_url()
-	{
-		return 'http://localhost:3000/api/v1/cloud-library';
+	protected function get_slug(): string {
+		return 'cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
