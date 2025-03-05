@@ -6,7 +6,7 @@ on:
       - '**/*.js'
       - 'package.json'
       - 'package-lock.json'
-#      - '.github/workflows/js-qunit.yml'
+      - '.github/workflows/js-qunit.yml'
 
   merge_group:
 
