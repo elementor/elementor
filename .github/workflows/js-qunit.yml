@@ -50,7 +50,15 @@ jobs:
           cache: npm
       - name: Install Dependencies
         run: npm ci
-      - name: "Build Scripts"
+
+      - name: Cache Scripts
+        uses: actions/cache@v4
+        with:
+          path: ./assets/js
+          key: ${{ runner.os }}-webpack-production-${{ hashFiles('./**/*.js') }}
+
+      - name: Build Scripts
         run: npx grunt webpack:production
-      - name: "Run Qunit"
+
+      - name: Run Qunit
         run: npx grunt karma:unit
