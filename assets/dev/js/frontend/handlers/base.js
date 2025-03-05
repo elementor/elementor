@@ -11,6 +11,8 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	isEdit: null,
 
+	sectionInsideHandleClass: 'elementor-section--handles-inside',
+
 	__construct( settings ) {
 		if ( ! this.isActive( settings ) ) {
 			return;
@@ -49,7 +51,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		if ( 'elementor-section--handles-inside' === insideHandleClass && elementor.settings.page.model.attributes.scroll_snap ) {
+		if ( this.sectionInsideHandleClass === insideHandleClass && elementor.settings.page.model.attributes.scroll_snap ) {
 			this.$element.addClass( insideHandleClass );
 			return;
 		}
