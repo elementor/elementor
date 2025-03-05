@@ -20,11 +20,6 @@ module.exports = function( config ) {
 		basePath: './',
 		frameworks: [ 'qunit' ],
 		files: [
-			{
-				pattern: 'assets/js/**/*.js.map',
-				included: false,
-			},
-
 			// Base Libraries.
 			'tests/qunit/vendor/wp-includes/jquery.js',
 			'tests/qunit/vendor/wp-includes/underscore.min.js',
@@ -37,7 +32,7 @@ module.exports = function( config ) {
 
 			// Dev tools.
 			'tests/qunit/setup/dev-tools.js',
-			'assets/js/dev-tools.js',
+			'assets/js/dev-tools.min.js',
 
 			// Elementor Common.
 			'tests/qunit/setup/elementor-common.js',
@@ -118,6 +113,7 @@ module.exports = function( config ) {
 		// Client configuration
 		client: {
 			clearContext: true,
+			captureConsole: ! process.env.CI,
 			qunit: {
 				elementorVersion: packageJson.version,
 				isDebug,
