@@ -276,29 +276,26 @@ class Manager {
 			return $validate_args;
 		}
 
-		$content = $args['content'];
+		$sources = (array) $args['source']; // BC
+		$results = [];
 
-		if ( is_array( $args['source'] ) ) {
-			$items_saved = [];
-
-			foreach ( $args['source'] as $source ) {
-				$items_saved[] = $this->save_template_item( $source, $args, $content );
-			}
-
-			return $items_saved;
+		foreach ( $sources as $source ) {
+			$args_copy = $args;
+			$args_copy['source'] = $source;
+			$results[] = $this->save_template_item( $args_copy );
 		}
 
-		return $this->save_template_item( $args['source'], $args, $content );
+		return 1 === count( $results ) ? $results[0] : $results;
 	}
 
-	private function save_template_item( $source, $args, $content ) {
-		$source = $this->get_source( $source );
+	private function save_template_item( array $args ) {
+		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$args['content'] = json_decode( $content, true );
+		$args['content'] = json_decode( $args['content'], true );
 
 		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
 
