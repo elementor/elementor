@@ -95,28 +95,22 @@ class Global_Classes_Parser {
 	public function parse_order( array $order, array $items ): Parse_Result {
 		$result = Parse_Result::make();
 
-		$order = Collection::make( $order )->filter( fn( $item ) => is_string( $item ) );
+		$items = Collection::make( $items );
 
-		$existing_ids = array_keys( $items );
+		$order = Collection::make( $order )
+			->filter( fn( $item ) => is_string( $item ) )
+			->unique();
+
+		$existing_ids = $items->keys();
 
 		$excess_ids = $order->diff( $existing_ids );
-		$missing_ids = Collection::make( $existing_ids )->diff( $order );
+		$missing_ids = $existing_ids->diff( $order );
 
-		$unique_ids = $order->unique();
-		$duplicate_ids = $order->diff_assoc( $unique_ids );
+		$excess_ids->each( fn( $id ) => $result->errors()->add( $id, 'excess' ) );
+		$missing_ids->each( fn( $id ) => $result->errors()->add( $id, 'missing' ) );
 
-		if ( ! $excess_ids->is_empty() ) {
-			$excess_ids->each( fn( $id ) => $result->errors()->add( $id, 'excess' ) );
-		}
-
-		if ( ! $missing_ids->is_empty() ) {
-			$missing_ids->each( fn( $id ) => $result->errors()->add( $id, 'missing' ) );
-		}
-
-		if ( ! $duplicate_ids->is_empty() ) {
-			$duplicate_ids->each( fn( $id ) => $result->errors()->add( $id, 'duplicated' ) );
-		}
-
-		return $result->wrap( $order->all() );
+		return $result->is_valid()
+			? $result->wrap( $order->values() )
+			: $result;
 	}
 }

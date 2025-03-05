@@ -92,9 +92,9 @@ class Global_Classes_REST_API {
 	}
 
 	private function put( \WP_REST_Request $request ) {
-		$sanitizer = Global_Classes_Parser::make();
+		$parser = Global_Classes_Parser::make();
 
-		$items_result = $sanitizer->parse_items(
+		$items_result = $parser->parse_items(
 			$request->get_param( 'items' )
 		);
 
@@ -105,7 +105,7 @@ class Global_Classes_REST_API {
 				->build();
 		}
 
-		$order_result = $sanitizer->parse_order(
+		$order_result = $parser->parse_order(
 			$request->get_param( 'order' ),
 			$items_result->unwrap()
 		);
