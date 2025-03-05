@@ -118,6 +118,7 @@ module.exports = function( config ) {
 		// Client configuration
 		client: {
 			clearContext: true,
+			captureConsole: ! process.env.CI,
 			qunit: {
 				elementorVersion: packageJson.version,
 				isDebug,
