@@ -2,11 +2,9 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest;
 
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Core\Utils\Collection;
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\WpRest\Classes\WP_Post;
-use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Isolation\Wordpress_Adapter;
+use Elementor\Modules\WpRest\Classes\Elementor_Post_Query;
+use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Isolation\Wordpress_Mock;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,23 +13,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Elementor_Post_Query extends Elementor_Test_Base {
 	const URL = '/elementor/v1/post';
 
-	private ?Wordpress_Adapter_Interface $wordpress_adapter;
+	private ?Wordpress_Mock $wordpress_mock;
 
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->act_as_admin();
-		$this->wordpress_adapter = new Wordpress_Adapter();
+		$this->wordpress_mock = new Wordpress_Mock();
 
 		add_action( 'rest_api_init', function () {
-			( new WP_Post( $this->wordpress_adapter ) )->register( true );
+			( new Elementor_Post_Query() )->register( true );
 		} );
 		do_action( 'rest_api_init' );
+
 	}
 
 	public function tearDown(): void {
+		$this->wordpress_mock->clean();
+		$this->wordpress_mock = null;
+
 		add_action( 'rest_api_init', function () {
-			( new WP_Post() )->register( true );
+			( new Elementor_Post_Query() )->register( true );
 		} );
 		do_action( 'rest_api_init' );
 		parent::tearDown();
@@ -43,10 +45,10 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 	public function test_post_query_results( $params, $expected ) {
 		// Arrange
 		$request = new \WP_REST_Request( 'GET', self::URL );
-		$request->set_param( WP_Post::EXCLUDED_POST_TYPES_KEY, $params[ WP_Post::EXCLUDED_POST_TYPES_KEY ] );
-		$request->set_param( WP_Post::TERM_KEY, $params[ WP_Post::TERM_KEY ] );
-		$request->set_param( WP_Post::KEYS_FORMAT_MAP_KEY, $params[ WP_Post::KEYS_FORMAT_MAP_KEY ] );
-		$request->set_header( WP_Post::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
+		$request->set_param( Elementor_Post_Query::EXCLUDED_POST_TYPE_KEYS, $params[ Elementor_Post_Query::EXCLUDED_POST_TYPE_KEYS ] );
+		$request->set_param( Elementor_Post_Query::SEARCH_TERM_KEY, $params[ Elementor_Post_Query::SEARCH_TERM_KEY ] );
+		$request->set_param( Elementor_Post_Query::POST_KEYS_CONVERSION_MAP, $params[ Elementor_Post_Query::POST_KEYS_CONVERSION_MAP ] );
+		$request->set_header( Elementor_Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
@@ -63,9 +65,9 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 		return [
 			[
 				'params' => [
-					WP_Post::EXCLUDED_POST_TYPES_KEY => wp_json_encode( [ 'page' ] ),
-					WP_Post::TERM_KEY => 'Us',
-					WP_Post::KEYS_FORMAT_MAP_KEY => wp_json_encode( [
+					Elementor_Post_Query::EXCLUDED_POST_TYPE_KEYS => wp_json_encode( [ 'page' ] ),
+					Elementor_Post_Query::SEARCH_TERM_KEY => 'Us',
+					Elementor_Post_Query::POST_KEYS_CONVERSION_MAP => wp_json_encode( [
 						'ID' => 'id',
 						'post_title' => 'label',
 						'post_type' => 'groupLabel',
@@ -86,9 +88,9 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 			],
 			[
 				'params' => [
-					WP_Post::EXCLUDED_POST_TYPES_KEY => wp_json_encode( [] ),
-					WP_Post::TERM_KEY => '10',
-					WP_Post::KEYS_FORMAT_MAP_KEY => wp_json_encode( [
+					Elementor_Post_Query::EXCLUDED_POST_TYPE_KEYS => wp_json_encode( [] ),
+					Elementor_Post_Query::SEARCH_TERM_KEY => '10',
+					Elementor_Post_Query::POST_KEYS_CONVERSION_MAP => wp_json_encode( [
 						'ID' => 'id',
 						'post_title' => 'label',
 					] ),
@@ -146,9 +148,9 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 			],
 			[
 				'params' => [
-					WP_Post::EXCLUDED_POST_TYPES_KEY => wp_json_encode( [ 'product', 'post' ] ),
-					WP_Post::TERM_KEY => 'a ',
-					WP_Post::KEYS_FORMAT_MAP_KEY => wp_json_encode( [
+					Elementor_Post_Query::EXCLUDED_POST_TYPE_KEYS => wp_json_encode( [ 'product', 'post' ] ),
+					Elementor_Post_Query::SEARCH_TERM_KEY => 'a ',
+					Elementor_Post_Query::POST_KEYS_CONVERSION_MAP => wp_json_encode( [
 						'ID' => 'id',
 						'post_title' => 'label',
 					] ),
