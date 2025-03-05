@@ -87,6 +87,8 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		( new Opt_In() )->init();
+
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
 
