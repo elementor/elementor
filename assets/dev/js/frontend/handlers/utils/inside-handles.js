@@ -1,4 +1,8 @@
 export default class InsideHandles extends elementorModules.frontend.handlers.Base {
+	isActive() {
+		return elementorFrontend.isEditMode();
+	}
+
 	isOverflowHidden() {
 		return 'hidden' === this.$element.css( 'overflow' );
 	}

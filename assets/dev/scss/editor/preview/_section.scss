@@ -83,7 +83,7 @@
 // Top Section / Container (Handles inside)
 .e-handles-inside,
 .elementor-section--handles-inside,
-.elementor-edit-mode [data-element_type]:first-child {
+.elementor-edit-mode [data-element_type]:first-child:not( header ~ main *) {
 
 	> .elementor-element-overlay > .elementor-editor-element-settings {
 		transform: translateX(-50%);

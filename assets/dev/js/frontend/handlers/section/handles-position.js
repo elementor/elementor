@@ -1,10 +1,6 @@
 import InsideHandles from '../utils/inside-handles';
 
 export default class HandlesPosition extends InsideHandles {
-	isActive() {
-		return elementorFrontend.isEditMode();
-	}
-
 	onInit() {
 		this.insideHandleClass = 'elementor-section--handles-inside';
 
