@@ -20,11 +20,6 @@ module.exports = function( config ) {
 		basePath: './',
 		frameworks: [ 'qunit' ],
 		files: [
-			{
-				pattern: 'assets/js/**/*.js.map',
-				included: false,
-			},
-
 			// Base Libraries.
 			'tests/qunit/vendor/wp-includes/jquery.js',
 			'tests/qunit/vendor/wp-includes/underscore.min.js',
