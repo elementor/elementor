@@ -2,6 +2,24 @@ var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/templ
 	TemplateLibraryTemplateCloudView;
 
 TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
+	className() {
+		const view = elementor.templates.getViewSelection(),
+			subType = 'FOLDER' === this.model.get( 'subType' ) ? 'folder' : 'template';
+
+		let classes = TemplateLibraryTemplateLocalView.prototype.className.apply( this, arguments );
+
+		classes += ' elementor-template-library-template-view-' + view;
+		classes += ' elementor-template-library-template-type-' + subType;
+
+		return classes;
+	},
+
+	events() {
+		return _.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
+			click: 'viewFolder',
+		} );
+	},
+
 	onPreviewButtonClick() {
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
 			$e.route( 'library/view-folder', { model: this.model } );
@@ -9,6 +27,12 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		}
 
 		TemplateLibraryTemplateLocalView.prototype.onPreviewButtonClick.apply( this, arguments );
+	},
+
+	viewFolder() {
+		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
+			$e.route( 'library/view-folder', { model: this.model } );
+		}
 	},
 
 	onDeleteButtonClick() {
