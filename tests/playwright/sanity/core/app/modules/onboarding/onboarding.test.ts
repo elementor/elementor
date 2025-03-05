@@ -155,24 +155,6 @@ test.describe( 'On boarding @onBoarding', async () => {
 } );
 
 test.describe( 'Onboarding @onBoarding', async () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			e_onboarding: 'active',
-		} );
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			e_onboarding: 'inactive',
-		} );
-	} );
-
 	const chooseFeaturesUrl = '/wp-admin/admin.php?page=elementor-app#onboarding/chooseFeatures';
 
 	test( 'Onboarding Choose Features page', async ( { page } ) => {

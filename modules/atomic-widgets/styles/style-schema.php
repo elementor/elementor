@@ -91,9 +91,9 @@ class Style_Schema {
 			'word-spacing' => Size_Prop_Type::make(),
 			'line-height' => Size_Prop_Type::make(),
 			'text-align' => String_Prop_Type::make()->enum([
-				'left',
+				'start',
 				'center',
-				'right',
+				'end',
 				'justify',
 			]),
 			'font-style' => String_Prop_Type::make()->enum([
@@ -113,7 +113,7 @@ class Style_Schema {
 				'ltr',
 				'rtl',
 			]),
-			'-webkit-text-stroke' => Stroke_Prop_Type::make(),
+			'stroke' => Stroke_Prop_Type::make(),
 		];
 	}
 

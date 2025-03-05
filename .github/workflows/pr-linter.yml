@@ -22,13 +22,22 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     steps:
       - uses: actions/checkout@v4
+
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+
+      - name: Cache Node Modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-pr-name-linter-12
+
       - name: Install Dependencies
         if: ${{ github.event.pull_request.title != null }}
-        run: npm install --no-package-lock --no-save @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
+        run: npm install -g @commitlint/config-conventional@12.1.1 @commitlint/cli@12.1.1
+
       - name: Run PR name linter
         if: ${{ github.event.pull_request.title != null }}
         env:

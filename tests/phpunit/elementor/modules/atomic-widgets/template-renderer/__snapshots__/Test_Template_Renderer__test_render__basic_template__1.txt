@@ -1,0 +1,8 @@
+			<div
+    class="class1 class2 test-widget-something test-widget-something_else"
+>
+    <h1>This is my title</h1>
+    <p>widget id: 1, widget type: test-widget</p>
+    
+</div>
+		

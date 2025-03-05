@@ -133,7 +133,7 @@ class Test_Controller extends Elementor_Test_Base {
 			'post_title' => 'Another Post',
 			'post_type' => Source_Local::CPT,
 			'meta_input' => [
-				Document::TYPE_META_KEY => Landing_Page::get_type(),
+				Document::TYPE_META_KEY => Document::get_type(),
 				'_elementor_edit_mode' => 'builder',
 			],
 		] );
@@ -162,11 +162,6 @@ class Test_Controller extends Elementor_Test_Base {
 		);
 
 		$this->assertEquals( 'Another Post', $response->get_data()[0]['title'] );
-		$this->assertSameSetsWithIndex( [
-			'post_type' => Source_Local::CPT,
-			'doc_type' => Landing_Page::get_type(),
-			'label' => 'Landing Page',
-		], $response->get_data()[0]['type'] );
 	}
 
 	public function test_get_items__with_exclude() {

@@ -100,7 +100,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		);
 	}
 
-
 	public function test_should_return_wp_error_arguments_not_specified_from_update_template() {
 		$this->assertWPError(
 			self::$manager->update_template( [ 'post_id' => $this->fake_post_id ] ), 'arguments_not_specified'
@@ -215,7 +214,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_get_templates_ff() {
+	public function test_get_templates() {
 		// Arrange
 		$admin = $this->act_as_admin();
 
@@ -297,7 +296,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$this->assertCount( 2, $templates );
 	}
 
-	public function test_get_templates__from_cloud() {
+	public function test_get_templates__only_cloud() {
 		// Arrange
 		$admin = $this->act_as_admin();
 
@@ -414,18 +413,19 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			];
 		}, 10, 3 );
 	}
+
 	private function create_cloud_mock_templates() {
 		$templates = [
 			[
 				"id" => 1,
 				"createdAt" => "2025-01-21T10:45:32.541Z",
 				"updatedAt" => "2025-01-21T10:45:32.541Z",
+				"parentId" => null,
 				"authorId" => "123",
+				"authorEmail" => "mock@email.com",
 				"title" => "AFolder",
 				"type" => "FOLDER",
 				"templateType" => "",
-				"fileId" => "uuid1",
-				"parentId" => null,
 			],
 			[
 				"id" => 2,
@@ -433,10 +433,10 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				"updatedAt" => "2025-01-21T10:45:32.541Z",
 				"parentId" => null,
 				"authorId" => "123",
+				"authorEmail" => "mock@email.com",
 				"title" => "ATemplate",
 				"type" => "TEMPLATE",
 				"templateType" => "",
-				"fileId" => "uuid2",
 			],
 		];
 

@@ -33,6 +33,8 @@ class Module extends Module_Base {
 			return;
 		}
 
+		$this->register_pages_panel_experiment();
+
 		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
 				$env['@elementor/editor-site-navigation'] = [
@@ -54,8 +56,15 @@ class Module extends Module_Base {
 		return 'site-navigation';
 	}
 
-	public static function get_experimental_data(): array {
-		return [
+	/**
+	 * Register Experiment
+	 *
+	 * @since 3.16.0
+	 *
+	 * @return void
+	 */
+	private function register_pages_panel_experiment() {
+		Plugin::$instance->experiments->add_feature( [
 			'name' => self::PAGES_PANEL_EXPERIMENT_NAME,
 			'title' => esc_html__( 'Pages Panel', 'elementor' ),
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
@@ -64,7 +73,7 @@ class Module extends Module_Base {
 			'dependencies' => [
 				'editor_v2',
 			],
-		];
+		] );
 	}
 
 	private function register_rest_fields() {

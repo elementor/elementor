@@ -1,10 +1,12 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -30,8 +32,17 @@ class Div_Block extends Atomic_Element_Base {
 		return 'eicon-div-block';
 	}
 
-	public function get_style_depends() {
-		return [ 'div-block' ];
+	protected static function define_props_schema(): array {
+		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
+				->default( 'div' ),
+
+			'link' => Link_Prop_Type::make(),
+		];
 	}
 
 	protected function define_atomic_controls(): array {
@@ -67,19 +78,15 @@ class Div_Block extends Atomic_Element_Base {
 								'label' => 'Footer',
 							],
 						]),
+
+					Link_Control::bind_to( 'link' )
+						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 				]),
 		];
 	}
 
-	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-
-			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
-				->default( 'div' ),
-		];
+	public function get_style_depends() {
+		return [ 'div-block' ];
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
@@ -99,12 +106,19 @@ class Div_Block extends Atomic_Element_Base {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 
-		$this->add_render_attribute( '_wrapper', [
+		$attributes = [
 			'class' => [
+				'e-con',
 				'e-div-block',
-				$settings['classes'] ?? '',
+				...( $settings['classes'] ?? [] ),
 			],
-		] );
+		];
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$attributes = array_merge( $attributes, $settings['link'] );
+		}
+
+		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 
 	public function before_render() {
@@ -125,7 +139,13 @@ class Div_Block extends Atomic_Element_Base {
 	 * @return void
 	 */
 	protected function print_html_tag() {
-		$html_tag = $this->get_atomic_settings()['tag'] ?? 'div';
+		$html_tag = $this->get_html_tag();
 		Utils::print_validated_html_tag( $html_tag );
+	}
+
+	protected function get_html_tag(): string {
+		$settings = $this->get_atomic_settings();
+
+		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? 'div' );
 	}
 }

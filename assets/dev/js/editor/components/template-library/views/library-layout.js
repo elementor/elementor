@@ -6,8 +6,8 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibrarySaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
 	TemplateLibraryConnectView = require( 'elementor-templates/views/parts/connect' ),
-	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' ),
-	TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
+	TemplateLibraryCloudConnectView = require( 'elementor-templates/views/parts/connect-cloud' ),
+	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 	getModalOptions() {
@@ -19,6 +19,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 				onOutsideClick: allowClosingModal,
 				onBackgroundClick: allowClosingModal,
 				onEscKeyPress: allowClosingModal,
+				ignore: '.dialog-widget-content',
 			},
 		};
 	},
@@ -83,6 +84,14 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		} ) );
 	},
 
+	updateViewCollection( models ) {
+		this.modalContent.currentView.collection.reset( models );
+	},
+
+	addTemplates( models ) {
+		this.modalContent.currentView.collection.add( models, { merge: true } );
+	},
+
 	showImportView() {
 		const headerView = this.getHeaderView();
 
@@ -97,6 +106,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.getHeaderView().menuArea.reset();
 
 		this.modalContent.show( new TemplateLibraryConnectView( args ) );
+	},
+
+	showCloudConnectView() {
+		this.modalContent.show( new TemplateLibraryCloudConnectView() );
 	},
 
 	showSaveTemplateView( elementModel ) {
@@ -121,27 +134,15 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
 	},
 
-	showFolderView( elementModel ) {
-		elementor.templates.layout.showLoadingView();
+	async showFolderView( elementModel ) {
+		try {
+			elementor.templates.layout.showLoadingView();
 
-		const templateId = elementModel.model.get( 'template_id' );
+			const templateId = elementModel.model.get( 'template_id' );
 
-		const ajaxOptions = {
-			data: {
-				source: 'cloud',
-				template_id: templateId,
-			},
-			success: ( data ) => {
-				const templatesCollection = new TemplateLibraryCollection( data );
-
-				elementor.templates.layout.hideLoadingView();
-
-				this.modalContent.show( new TemplateLibraryCollectionView( {
-					collection: templatesCollection,
-				} ) );
-			},
-		};
-
-		elementorCommon.ajax.addRequest( 'get_item_children', ajaxOptions );
+			await elementor.templates.getFolderTemplates( templateId );
+		} finally {
+			elementor.templates.layout.hideLoadingView();
+		}
 	},
 } );

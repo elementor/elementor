@@ -284,21 +284,6 @@
 			},
 			"name": "showinfo"
 		},
-		"modestbranding": {
-			"type": "switcher",
-			"tab": "content",
-			"section": "section_video",
-			"label": "Modest Branding",
-			"condition": {
-				"video_type": [
-					"youtube"
-				],
-				"controls": "yes"
-			},
-			"frontend_available": true,
-			"name": "modestbranding",
-			"default": ""
-		},
 		"cc_load_policy": {
 			"type": "switcher",
 			"tab": "content",

@@ -41,6 +41,8 @@ jobs:
         shardTotal: [ 10 ]
         include:
         - shardIndex: "elements-regression"
+        - shardIndex: "plugin_tester_section"
+        - shardIndex: "plugin_tester_container"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -80,12 +82,35 @@ jobs:
       - name: Install playwright/test
         run: |
           npx playwright install chromium
+      - name: Get skipped tests from JSON
+        id: read_skipped_tests
+        uses: elementor/elementor-tests-configuration/.github/actions/skip-tests@main
+        with:
+            file_path: "skipped_tests.json"
       - name: Run Playwright tests
-        if: ${{ matrix.shardIndex != 'elements-regression' }}
-        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        if: ${{
+          matrix.shardIndex != 'elements-regression' &&
+          matrix.shardIndex != 'plugin_tester_container' &&
+          matrix.shardIndex != 'plugin_tester_section'
+          }}
+        run: |
+          SKIP_DEFAULT="@plugin_tester_container|@plugin_tester_section"
+          if [ -n "${{ steps.read_skipped_tests.outputs.skip_pattern }}" ]; then
+            ALL_SKIP_PATTERN="$SKIP_DEFAULT|${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+          else
+            ALL_SKIP_PATTERN="$SKIP_DEFAULT"
+          fi
+          echo "Using grep invert pattern: $ALL_SKIP_PATTERN"
+          npm run test:playwright -- --grep-invert="$ALL_SKIP_PATTERN" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run Playwright Plugin Container tests
+        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        run: npm run test:playwright -- --grep="@plugin_tester_container" --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+      - name: Run Playwright Plugin Container tests
+        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        run: npm run test:playwright -- --grep="@plugin_tester_section" --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression
+        run: npm run test:playwright:elements-regression --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -153,6 +178,12 @@ jobs:
       - name: Checkout source code
         if: ${{ needs.Playwright.result == 'failure' }}
         uses: actions/checkout@v4
+      - name: Map GitHub user to Slack
+        if: ${{ needs.Playwright.result == 'failure' }}
+        id: map_user
+        uses: elementor/elementor-tests-configuration/.github/actions/map-github-to-slack@main
+        with:
+          github_user: ${{ github.actor }}
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
         uses: ./.github/workflows/post-to-slack
@@ -177,7 +208,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Github User : ${{ github.actor }}"
+                    "text": "Github User : <${{ steps.map_user.outputs.slack_user }}>"
                   }
                 }
               ]

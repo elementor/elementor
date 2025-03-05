@@ -85,6 +85,7 @@ class Elementor_Post_Meta {
 		register_meta( 'post', '_elementor_page_settings', [
 			'single' => true,
 			'object_subtype' => $post_type,
+			'type' => 'object',
 			'show_in_rest' => [
 				'schema' => [
 					'title' => 'Elementor page settings',

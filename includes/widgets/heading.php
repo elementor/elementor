@@ -371,10 +371,10 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		$this->add_control(
 			'title_hover_color',
 			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'label' => esc_html__( 'Link Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-heading-title:hover' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-heading-title a:hover, {{WRAPPER}} .elementor-heading-title a:focus' => 'color: {{VALUE}};',
 				],
 			]
 		);
@@ -389,7 +389,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 					'unit' => 's',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-heading-title' => 'transition-duration: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-heading-title a' => 'transition-duration: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

@@ -1,7 +1,6 @@
 import EditorSelectors from '../../selectors/editor-selectors';
 import { expect, type Frame, Locator, type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
-import path from 'path';
 import { LinkOptions } from '../../types/types';
 
 export default class Content {
@@ -101,16 +100,14 @@ export default class Content {
 	 * @param {string}  args.selector    - Image selector.
 	 * @param {string}  args.imageTitle  - Image title.
 	 * @param {boolean} args.isPublished - If true, the image is published.
-	 * @param {boolean} args.isVideo     - If true, the widget is a video, otherwise an image.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean, isVideo: boolean } ): Promise<void> {
+	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean } ): Promise<void> {
 		const image = args.isPublished
 			? this.page.locator( args.selector )
 			: await this.editor.getPreviewFrame().waitForSelector( args.selector );
-		const attribute = args.isVideo ? 'style' : 'src';
-		const src = await image.getAttribute( attribute );
+		const src = await image.getAttribute( 'src' );
 		expect( src.includes( args.imageTitle ) ).toEqual( true );
 	}
 
@@ -135,34 +132,6 @@ export default class Content {
 		const response = this.page.waitForResponse( regex );
 		await this.page.getByRole( 'button', { name: 'Apply' } ).click();
 		await response;
-	}
-
-	/**
-	 * Upload SVG icon.
-	 *
-	 * @param {Object} options        - SVG options.
-	 * @param {string} options.icon   - SVG icon.
-	 * @param {string} options.widget - The widget to which to upload the SVG.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async uploadSVG( options? : { icon?: string, widget?: string} ): Promise<void> {
-		const _icon = options?.icon === undefined ? 'test-svg-wide' : options.icon;
-		if ( 'text-path' === options?.widget ) {
-			await this.page.locator( EditorSelectors.plusIcon ).click();
-		} else {
-			await this.editor.openPanelTab( 'content' );
-			const mediaUploadControl = this.page.locator( EditorSelectors.media.preview ).first();
-			await mediaUploadControl.hover();
-			await mediaUploadControl.waitFor();
-			await this.page.getByText( 'Upload SVG' ).first().click();
-		}
-		const regex = new RegExp( _icon );
-		const response = this.page.waitForResponse( regex );
-		await this.page.setInputFiles( EditorSelectors.media.imageInp, path.resolve( __dirname, `../../resources/${ _icon }.svg` ) );
-		await response;
-		await this.page.getByRole( 'button', { name: 'Insert Media' } )
-			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
 
 	/**

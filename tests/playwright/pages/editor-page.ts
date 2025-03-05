@@ -6,10 +6,11 @@ import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
+import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, ContainerType, ContainerPreset } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
+
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
@@ -61,7 +62,10 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Upload SVG in the Media Library. Expects media library to be open.
+	 * Upload SVG in the Media Library. Can be used on both Media Control and Icons Control.
+	 *
+	 * Please note that this method expects media library to be open as different controls
+	 * have different ways to open the media library.
 	 *
 	 * @param {string} svgFileName - Optional. SVG file name, without extension.
 	 *
@@ -266,6 +270,21 @@ export default class EditorPage extends BasePage {
 
 		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + '.elementor-element-editable' );
 		return this.getPreviewFrame().locator( '.elementor-element-' + elementId );
+	}
+
+	/**
+	 * Add new container preset.
+	 *
+	 * @param {ContainerType}   element - Element type. Available values: 'flex', 'grid'.
+	 * @param {ContainerPreset} preset  - Container preset.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async addNewContainerPreset( element: ContainerType, preset: ContainerPreset ): Promise<void> {
+		const frame = this.getPreviewFrame();
+		await frame.locator( '.elementor-add-section-button' ).click();
+		await frame.locator( `.${ element }-preset-button` ).click();
+		await frame.locator( `[data-preset=${ preset }]` ).click();
 	}
 
 	/**
@@ -481,9 +500,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ): Promise<void> {
-		const control = `.elementor-control-${ controlId } select`;
-		await this.page.locator( control ).waitFor( { state: 'attached' } );
-		await this.page.selectOption( control, value );
+		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
 	}
 
 	/**
@@ -565,6 +582,30 @@ export default class EditorPage extends BasePage {
 
 		if ( currentState !== Boolean( value ) ) {
 			await controlLabel.click();
+		}
+	}
+
+	/**
+	 * Set gap control value.
+	 *
+	 * @param {string}     controlId - The control to set the value to.
+	 * @param {GapControl} value     - The value to set. Either a string or an object with column, row and unit values.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setGapControlValue( controlId: string, value: GapControl ): Promise<void> {
+		const control = this.page.locator( `.elementor-control-${ controlId }` );
+
+		if ( 'string' === typeof value ) {
+			await control.locator( '.elementor-control-gap >> nth=0' ).locator( 'input' ).fill( value );
+		} else if ( 'object' === typeof value ) {
+			await control.locator( '.elementor-link-gaps' ).click();
+			await control.locator( '.elementor-control-gap input[data-setting="column"]' ).fill( value.column );
+			await control.locator( '.elementor-control-gap input[data-setting="row"]' ).fill( value.row );
+			if ( value.unit ) {
+				await control.locator( '.e-units-switcher' ).click();
+				await control.locator( `[data-choose="${ value.unit }"]` ).click();
+			}
 		}
 	}
 

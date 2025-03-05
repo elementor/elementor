@@ -35,7 +35,7 @@ test.describe( 'Atomic Widgets', () => {
 	atomicWidgets.forEach( ( widget ) => {
 		test.describe( widget.name, () => {
 			test( 'Widget is displayed in panel', async () => {
-				const layout = editor.page.locator( '#elementor-panel-category-general' );
+				const layout = editor.page.locator( '#elementor-panel-category-v4-elements' );
 				await layout.isVisible();
 				const container = layout.locator( '.title', { hasText: widget.title } );
 				await expect( container ).toBeVisible();
