@@ -2,7 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest;
 
-use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks\PostQueryDataMock as Post_Query_Data_Mock;
+use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks\Post_Query_Data_Mock;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\WpRest\Classes\Post_Query;
 
