@@ -19,8 +19,6 @@ class Test_Post_Query extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->act_as_admin();
-		$this->wordpress_mock = new Post_Query_Data_Mock();
-
 	}
 
 	public function tearDown(): void {
@@ -45,6 +43,9 @@ class Test_Post_Query extends Elementor_Test_Base {
 		$response = rest_get_server()->dispatch( $request );
 		$posts = $response->get_data()['data']['value'];
 
+		var_dump( 'exp', $expected );
+		var_dump( 'posts', $posts );
+
 		// Assert
 		$this->assertEqualSets( $expected, $posts );
 	}
@@ -53,6 +54,8 @@ class Test_Post_Query extends Elementor_Test_Base {
 	 * Data Providers
 	 */
 	public function data_provider_post_query_results() {
+		$this->wordpress_mock = new Post_Query_Data_Mock();
+
 		return $this->wordpress_mock->get_test_data_based_on_index();
 	}
 }
