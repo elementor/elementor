@@ -1,4 +1,18 @@
-export default class InsideHandles extends elementorModules.frontend.handlers.Base {
+export default class HandlesPosition extends elementorModules.frontend.handlers.Base {
+	onInit() {
+		if ( ! this.isActive() ) {
+			return;
+		}
+
+		this.insideHandleClass = this.isElementTypeSection() ? 'elementor-section--handles-inside' : 'e-handles-inside';
+
+		this.$element.on( 'mouseenter', this.setHandlesPosition.bind( this ) );
+	}
+
+	isElementTypeSection() {
+		return 'section' === this.getElementType();
+	}
+
 	isActive() {
 		return elementorFrontend.isEditMode();
 	}
@@ -16,15 +30,16 @@ export default class InsideHandles extends elementorModules.frontend.handlers.Ba
 		return this.$element.offset().top - $container.offset().top;
 	}
 
-	setHandlesPosition( insideHandleClass ) {
+	setHandlesPosition() {
 		const document = elementor.documents.getCurrent();
 
 		if ( ! document || ! document.container.isEditable() ) {
 			return;
 		}
 
-		if ( this.sectionInsideHandleClass === insideHandleClass && elementor.settings.page.model.attributes.scroll_snap ) {
-			this.$element.addClass( insideHandleClass );
+		if ( this.isElementTypeSection() && elementor.settings.page.model.attributes.scroll_snap ) {
+			this.$element.addClass( this.insideHandleClass );
+
 			return;
 		}
 
@@ -35,12 +50,12 @@ export default class InsideHandles extends elementorModules.frontend.handlers.Ba
 		const offset = this.getOffset(),
 			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' );
 
-		this.$element.addClass( insideHandleClass );
+		this.$element.addClass( this.insideHandleClass );
 
 		if ( offset < 25 ) {
 			$handlesElement.css( 'top', offset < -5 ? -offset : '' );
 		} else {
-			this.$element.removeClass( insideHandleClass );
+			this.$element.removeClass( this.insideHandleClass );
 		}
 	}
 }
