@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Post_Query_Data_Mock extends Elementor_Test_Base {
+class PostQueryDataMock extends Elementor_Test_Base {
 	private array $post_types;
 	private array $posts;
 
