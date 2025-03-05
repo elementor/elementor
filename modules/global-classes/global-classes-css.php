@@ -29,6 +29,7 @@ class Global_Classes_CSS {
 
 		$sorted_items = $global_classes
 			->get_order()
+			->reverse()
 			->map(
 				fn( $id ) => $global_classes->get_items()->get( $id )
 			);
