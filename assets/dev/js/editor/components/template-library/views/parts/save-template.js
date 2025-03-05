@@ -207,7 +207,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	addLoadMoreItem() {
 		this.folderCollectionView.collection.add( {
 			template_id: 0,
-			title: 'Load More',
+			title: __( 'Load More', 'elementor' ),
 		} );
 	},
 
