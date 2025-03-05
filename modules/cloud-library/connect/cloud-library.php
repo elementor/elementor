@@ -65,19 +65,8 @@ class Cloud_Library extends Library {
 	}
 
 	protected function prepare_template( array $template_data ): array {
-		$template_id = $template_data['id'];
-
-		$query_args = [
-			'preview' => true,
-			'render_mode_nonce' => wp_create_nonce( 'render_mode_' . $template_id ),
-			'template_id' => $template_id,
-			'render_mode' => Render_Mode_Preview::MODE,
-		];
-
-		$preview_url = set_url_scheme( add_query_arg( $query_args, site_url() ) );
-
 		return [
-			'template_id' => $template_id,
+			'template_id' => $template_data['id'],
 			'source' => 'cloud',
 			'type' => $template_data['templateType'],
 			'subType' => $template_data['type'],
@@ -87,8 +76,25 @@ class Cloud_Library extends Library {
 			'export_link' => $this->get_export_link( $template_data['id'] ),
 			'hasPageSettings' => $template_data['hasPageSettings'],
 			'parentId' => $template_data['parentId'],
-			'preview_url' => $preview_url,
+			'preview_url' => $template_data['previewUrl'],
+			'generate_preview_url' => $this->generate_preview_url( $template_data ),
 		];
+	}
+
+	private function generate_preview_url( $template_data): ?string {
+		if ( ! empty( $template_data['previewUrl'] ) ) {
+			return null;
+		}
+
+		$template_id = $template_data['id'];
+
+		$query_args = [
+			'render_mode_nonce' => wp_create_nonce( 'render_mode_' . $template_id ),
+			'template_id' => $template_id,
+			'render_mode' => Render_Mode_Preview::MODE,
+		];
+
+		return set_url_scheme( add_query_arg( $query_args, site_url() ) );
 	}
 
 	private function get_export_link( $template_id ) {
@@ -144,6 +150,51 @@ class Cloud_Library extends Library {
 
 		return true;
 	}
+
+	public function update_resource_preview( $template_id, $file_data ) {
+		$endpoint = 'resources/' . $template_id . '/preview';
+
+		$boundary = wp_generate_password( 24, false );
+
+		$headers = [
+			'Content-Type' => 'multipart/form-data; boundary=' . $boundary,
+		];
+
+		$body = $this->generate_multipart_payload( $file_data, $boundary, $template_id . '_preview.png' );
+
+		$response = $this->http_request( 'PATCH', $endpoint, [
+			'headers' => $headers,
+			'body' => $body,
+		], [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+
+		if ( is_wp_error( $response ) || empty( $response['preview_url'] ) ) {
+			return null;
+		}
+
+		return $response['preview_url'];
+	}
+
+	/**
+	 * @param $file_data
+	 * @param $boundary
+	 * @param $file_name
+	 * @return string
+	 */
+	private function generate_multipart_payload( $file_data, $boundary, $file_name ): string {
+		$payload = '';
+
+		// Append the file
+		$payload .= "--{$boundary}\r\n";
+		$payload .= 'Content-Disposition: form-data; name="file"; filename="' . esc_attr( $file_name ) . "\"\r\n";
+		$payload .= "Content-Type: image/png\r\n\r\n";
+		$payload .= $file_data . "\r\n";
+		$payload .= "--{$boundary}--\r\n";
+
+		return $payload;
+	}
+
 
 	protected function init() {}
 }
