@@ -2,9 +2,9 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest;
 
+use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks\Post_Query_Data_Mock;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\WpRest\Classes\Post_Query;
-use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks\WordpressMock;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,18 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Post_Query extends Elementor_Test_Base {
 	const URL = '/elementor/v1/post';
 
-	private ?WordpressMock $wordpress_mock;
+	private ?Post_Query_Data_Mock $wordpress_mock;
 
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->act_as_admin();
-		$this->wordpress_mock = new WordpressMock();
-
-		add_action( 'rest_api_init', function () {
-			( new Post_Query() )->register( true );
-		} );
-		do_action( 'rest_api_init' );
+		$this->wordpress_mock = new Post_Query_Data_Mock();
 
 	}
 
@@ -32,10 +27,6 @@ class Test_Post_Query extends Elementor_Test_Base {
 		$this->wordpress_mock->clean();
 		$this->wordpress_mock = null;
 
-		add_action( 'rest_api_init', function () {
-			( new Post_Query() )->register( true );
-		} );
-		do_action( 'rest_api_init' );
 		parent::tearDown();
 	}
 
@@ -54,8 +45,6 @@ class Test_Post_Query extends Elementor_Test_Base {
 		$response = rest_get_server()->dispatch( $request );
 		$posts = $response->get_data()['data']['value'];
 
-		var_dump( 'exp', $expected );
-		var_dump( 'act', $posts );
 		// Assert
 		$this->assertEqualSets( $expected, $posts );
 	}
@@ -64,130 +53,6 @@ class Test_Post_Query extends Elementor_Test_Base {
 	 * Data Providers
 	 */
 	public function data_provider_post_query_results() {
-		return [
-			[
-				'params' => [
-					Post_Query::EXCLUDED_POST_TYPE_KEYS => wp_json_encode( [ 'page' ] ),
-					Post_Query::SEARCH_TERM_KEY => 'Us',
-					Post_Query::POST_KEYS_CONVERSION_MAP => wp_json_encode( [
-						'ID' => 'id',
-						'post_title' => 'label',
-						'post_type' => 'groupLabel',
-					] ),
-				],
-				'expected' => [
-					[
-						'id' => 1004,
-						'label' => 'About Us',
-						'groupLabel' => 'page',
-					],
-					[
-						'id' => 1005,
-						'label' => 'Contact Us',
-						'groupLabel' => 'page',
-					],
-				],
-			],
-			[
-				'params' => [
-					Post_Query::EXCLUDED_POST_TYPE_KEYS => wp_json_encode( [] ),
-					Post_Query::SEARCH_TERM_KEY => '10',
-					Post_Query::POST_KEYS_CONVERSION_MAP => wp_json_encode( [
-						'ID' => 'id',
-						'post_title' => 'label',
-					] ),
-				],
-				'expected' => [
-					[
-						'label' => 'Hello World',
-						'id' => '1001',
-					],
-					[
-						'label' => 'My Blogging Journey',
-						'id' => '1002',
-					],
-					[
-						'label' => 'Breaking News: Tech Trends',
-						'id' => '1003',
-					],
-					[
-						'label' => 'About Us',
-						'id' => '1004',
-					],
-					[
-						'label' => 'Contact Us',
-						'id' => '1005',
-					],
-					[
-						'label' => 'Privacy Policy',
-						'id' => '1006',
-					],
-					[
-						'label' => 'Super Phone X',
-						'id' => '1007',
-					],
-					[
-						'label' => 'Gaming Laptop Pro',
-						'id' => '1008',
-					],
-					[
-						'label' => 'Smartwatch 2025',
-						'id' => '1009',
-					],
-					[
-						'label' => 'Epic Movie: Rise of AI',
-						'id' => '1010',
-					],
-					[
-						'label' => 'Horror Night',
-						'id' => '1011',
-					],
-					[
-						'label' => 'Comedy Gold',
-						'id' => '1012',
-					],
-				],
-			],
-			[
-				'params' => [
-					Post_Query::EXCLUDED_POST_TYPE_KEYS => wp_json_encode( [ 'product', 'post' ] ),
-					Post_Query::SEARCH_TERM_KEY => 'a ',
-					Post_Query::POST_KEYS_CONVERSION_MAP => wp_json_encode( [
-						'ID' => 'id',
-						'post_title' => 'label',
-					] ),
-				],
-				'expected' => [
-					[
-						'label' => 'Breaking News: Tech Trends',
-						'id' => '1003',
-					],
-					[
-						'label' => 'About Us',
-						'id' => '1004',
-					],
-					[
-						'label' => 'Contact Us',
-						'id' => '1005',
-					],
-					[
-						'label' => 'Privacy Policy',
-						'id' => '1006',
-					],
-					[
-						'label' => 'Gaming Laptop Pro',
-						'id' => '1008',
-					],
-					[
-						'label' => 'Smartwatch 2025',
-						'id' => '1009',
-					],
-					[
-						'label' => 'Epic Movie: Rise of AI',
-						'id' => '1010',
-					],
-				],
-			],
-		];
+		return $this->wordpress_mock->get_test_data_based_on_index();
 	}
 }
