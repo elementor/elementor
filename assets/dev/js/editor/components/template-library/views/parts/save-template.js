@@ -59,29 +59,21 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
-		if ( this.isCloudOrSiteLibraryCheckboxChecked( formData ) ) {
-			this.addSourceSelections( formData );
-		}
+		this.updateSourceSelections( formData );
 
 		elementor.templates.saveTemplate( saveType, formData );
 	},
 
-	isCloudOrSiteLibraryCheckboxChecked( formData ) {
-		return formData.cloud || formData.local;
-	},
+	updateSourceSelections( formData ) {
+		const selectedSources = [ 'cloud', 'local' ].filter( ( type ) => formData[ type ] );
 
-	addSourceSelections( formData ) {
-		formData.source = [];
-
-		if ( formData.cloud ) {
-			formData.source.push( 'cloud' );
-			delete formData.cloud;
+		if ( ! selectedSources.length ) {
+			return;
 		}
 
-		if ( formData.local ) {
-			formData.source.push( 'local' );
-			delete formData.local;
-		}
+		formData.source = selectedSources;
+
+		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );		
 	},
 
 	onSelectedFolderTextClick() {
