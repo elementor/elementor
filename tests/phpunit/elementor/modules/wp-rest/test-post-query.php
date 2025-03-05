@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Elementor_Post_Query extends Elementor_Test_Base {
+class Test_Post_Query extends Elementor_Test_Base {
 	const URL = '/elementor/v1/post';
 
 	private ?WordpressMock $wordpress_mock;
@@ -54,6 +54,8 @@ class Test_Elementor_Post_Query extends Elementor_Test_Base {
 		$response = rest_get_server()->dispatch( $request );
 		$posts = $response->get_data()['data']['value'];
 
+		var_dump( 'exp', $expected );
+		var_dump( 'act', $posts );
 		// Assert
 		$this->assertEqualSets( $expected, $posts );
 	}
