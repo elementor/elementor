@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Div_Block extends Atomic_Element_Base {
+	const BASE_STYLE_KEY = 'base';
+
 	public static function get_type() {
 		return 'div-block';
 	}
@@ -106,11 +108,12 @@ class Div_Block extends Atomic_Element_Base {
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
+		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 
 		$attributes = [
 			'class' => [
 				'e-con',
-				'div-block-base',
+				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
 		];
@@ -164,7 +167,7 @@ class Div_Block extends Atomic_Element_Base {
 		]);
 
 		return [
-			'base' => Style_Definition::make()
+			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', $display_value )
