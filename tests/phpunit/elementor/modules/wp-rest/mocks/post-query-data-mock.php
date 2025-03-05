@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Post_Query_Data_Mock extends Elementor_Test_Base {
-	private array $post_types;
-	private array $posts;
+	public array $post_types;
+	public array $posts;
 
 	public function __construct() {
 		$this->register_post_types();

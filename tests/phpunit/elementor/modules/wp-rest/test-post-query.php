@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Post_Query extends Elementor_Test_Base {
 	const URL = '/elementor/v1/post';
 
-	private ?Post_Query_Data_Mock $wordpress_mock;
+	private ?Post_Query_Data_Mock $data_mock;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -22,8 +22,8 @@ class Test_Post_Query extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
-		$this->wordpress_mock->clean();
-		$this->wordpress_mock = null;
+		$this->data_mock->clean();
+		$this->data_mock = null;
 
 		parent::tearDown();
 	}
@@ -54,8 +54,132 @@ class Test_Post_Query extends Elementor_Test_Base {
 	 * Data Providers
 	 */
 	public function data_provider_post_query_results() {
-		$this->wordpress_mock = new Post_Query_Data_Mock();
+		$this->data_mock = new Post_Query_Data_Mock();
 
-		return $this->wordpress_mock->get_test_data_based_on_index();
+		return [
+			[
+				'params' => Post_Query::build_query_params( [
+					Post_Query::EXCLUDED_POST_TYPE_KEYS => [ 'page' ],
+					Post_Query::SEARCH_TERM_KEY => 'Us',
+					Post_Query::POST_KEYS_CONVERSION_MAP => [
+						'ID' => 'id',
+						'post_title' => 'label',
+						'post_type' => 'groupLabel',
+					],
+				] ),
+				'expected' => [
+					[
+						'id' => $this->data_mock[3]->ID,
+						'label' => $this->data_mock[3]->post_title,
+						'groupLabel' => $this->data_mock[3]->post_type,
+					],
+					[
+						'id' => $this->data_mock[4]->ID,
+						'label' => $this->data_mock[4]->post_title,
+						'groupLabel' => $this->data_mock[4]->post_type,
+					],
+				],
+			],
+			[
+				'params' => Post_Query::build_query_params( [
+					Post_Query::EXCLUDED_POST_TYPE_KEYS => [],
+					Post_Query::SEARCH_TERM_KEY => '10',
+					Post_Query::POST_KEYS_CONVERSION_MAP => [
+						'ID' => 'id',
+						'post_title' => 'label',
+					],
+				] ),
+				'expected' => [
+					[
+						'label' => $this->data_mock[0]->post_title,
+						'id' => $this->data_mock[0]->ID,
+					],
+					[
+						'label' => $this->data_mock[1]->post_title,
+						'id' => $this->data_mock[1]->ID,
+					],
+					[
+						'label' => $this->data_mock[2]->post_title,
+						'id' => $this->data_mock[2]->ID,
+					],
+					[
+						'label' => $this->data_mock[3]->post_title,
+						'id' => $this->data_mock[3]->ID,
+					],
+					[
+						'label' => $this->data_mock[4]->post_title,
+						'id' => $this->data_mock[4]->ID,
+					],
+					[
+						'label' => $this->data_mock[5]->post_title,
+						'id' => $this->data_mock[5]->ID,
+					],
+					[
+						'label' => $this->data_mock[6]->post_title,
+						'id' => $this->data_mock[6]->ID,
+					],
+					[
+						'label' => $this->data_mock[7]->post_title,
+						'id' => $this->data_mock[7]->ID,
+					],
+					[
+						'label' => $this->data_mock[8]->post_title,
+						'id' => $this->data_mock[8]->ID,
+					],
+					[
+						'label' => $this->data_mock[9]->post_title,
+						'id' => $this->data_mock[9]->ID,
+					],
+					[
+						'label' => $this->data_mock[10]->post_title,
+						'id' => $this->data_mock[10]->ID,
+					],
+					[
+						'label' => $this->data_mock[11]->post_title,
+						'id' => $this->data_mock[11]->ID,
+					],
+				],
+			],
+			[
+				'params' => Post_Query::build_query_params( [
+					Post_Query::EXCLUDED_POST_TYPE_KEYS => [ 'product', 'post' ],
+					Post_Query::SEARCH_TERM_KEY => 'a ',
+					Post_Query::POST_KEYS_CONVERSION_MAP => [
+						'ID' => 'id',
+						'post_title' => 'label',
+					],
+				] ),
+				'expected' => [
+					[
+						'label' => $this->data_mock[2]->post_title,
+						'id' => $this->data_mock[2]->ID,
+					],
+					[
+						'label' => $this->data_mock[3]->post_title,
+						'id' => $this->data_mock[3]->ID,
+					],
+					[
+						'label' => $this->data_mock[4]->post_title,
+						'id' => $this->data_mock[4]->ID,
+					],
+					[
+						'label' => $this->data_mock[5]->post_title,
+						'id' => $this->data_mock[5]->ID,
+					],
+					[
+						'label' => $this->data_mock[7]->post_title,
+						'id' => $this->data_mock[7]->ID,
+					],
+					[
+						'label' => $this->data_mock[8]->post_title,
+						'id' => $this->data_mock[8]->ID,
+					],
+					[
+						'label' => $this->data_mock[9]->post_title,
+						'id' => $this->data_mock[9]->ID,
+					],
+				],
+			],
+		];
 	}
 }
