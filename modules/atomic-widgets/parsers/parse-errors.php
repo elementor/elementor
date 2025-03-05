@@ -44,8 +44,12 @@ class Parse_Errors {
 		return implode( ', ', $errors );
 	}
 
-	public function merge( Parse_Errors $errors ): self {
-		$this->errors = array_merge( $this->errors, $errors->all() );
+	public function merge( Parse_Errors $errors, ?string $prefix = null ): self {
+		foreach ( $errors->all() as $error ) {
+			$new_key = $prefix ? "{$prefix}.{$error['key']}" : $error['key'];
+
+			$this->add( $new_key, $error['error'] );
+		}
 
 		return $this;
 	}

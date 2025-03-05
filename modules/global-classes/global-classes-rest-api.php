@@ -2,10 +2,6 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Parsers\Parse_Result;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
 
@@ -52,29 +48,25 @@ class Global_Classes_REST_API {
 					'items' => [
 						'required' => true,
 						'type' => 'object',
-						'additionalProperties' => false,
-						'patternProperties' => [
-							'^g-[a-z0-9]+$' => [
-								'type' => 'object',
-								'properties' => [
-									'id' => [
-										'type' => 'string',
-										'pattern' => '^g-[a-z0-9]+$',
-										'required' => true,
-									],
-									'variants' => [
-										'type' => 'array',
-										'required' => true,
-									],
-									'type' => [
-										'type' => 'string',
-										'enum' => [ 'class' ],
-										'required' => true,
-									],
-									'label' => [
-										'type' => 'string',
-										'required' => true,
-									],
+						'additionalProperties' => [
+							'type' => 'object',
+							'properties' => [
+								'id' => [
+									'type' => 'string',
+									'required' => true,
+								],
+								'variants' => [
+									'type' => 'array',
+									'required' => true,
+								],
+								'type' => [
+									'type' => 'string',
+									'enum' => [ 'class' ],
+									'required' => true,
+								],
+								'label' => [
+									'type' => 'string',
+									'required' => true,
 								],
 							],
 						],
@@ -84,7 +76,6 @@ class Global_Classes_REST_API {
 						'type' => 'array',
 						'items' => [
 							'type' => 'string',
-							'pattern' => '^g-[a-z0-9]+$',
 						],
 					],
 				],
@@ -101,73 +92,37 @@ class Global_Classes_REST_API {
 	}
 
 	private function put( \WP_REST_Request $request ) {
-		$items = $request->get_param( 'items' );
+		$parser = Global_Classes_Parser::make();
 
-		$parsed_items = $this->parse_items( $items );
+		$items_result = $parser->parse_items(
+			$request->get_param( 'items' )
+		);
 
-		if ( ! $parsed_items->is_valid() ) {
+		if ( ! $items_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_items' )
 				->set_status( 400 )
-				->set_message( 'Invalid items: ' . $parsed_items->errors()->to_string() )
+				->set_message( 'Invalid items: ' . $items_result->errors()->to_string() )
 				->build();
 		}
 
-		$order = $request->get_param( 'order' );
+		$order_result = $parser->parse_order(
+			$request->get_param( 'order' ),
+			$items_result->unwrap()
+		);
 
-		if ( ! $this->is_valid_order( $order, $parsed_items->unwrap() ) ) {
+		if ( ! $order_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_order' )
 				->set_status( 400 )
-				->set_message( 'Invalid order' )
+				->set_message( 'Invalid order: ' . $order_result->errors()->to_string() )
 				->build();
 		}
 
 		$this->get_repository()->put(
-			$parsed_items->unwrap(),
-			$order
+			$items_result->unwrap(),
+			$order_result->unwrap(),
 		);
 
 		return Response_Builder::make()->no_content()->build();
-	}
-
-	private function parse_items( array $items ) {
-		$result = Parse_Result::make();
-		$sanitized_items = [];
-
-		foreach ( $items as $item_id => $item ) {
-			$parsed_item = Style_Parser::make( Style_Schema::get() )->parse( $item );
-
-			if ( ! $parsed_item->is_valid() ) {
-				$result->errors()->merge( $parsed_item->errors() );
-				continue;
-			}
-
-			$sanitized_item = $parsed_item->unwrap();
-
-			if ( $item_id !== $sanitized_item['id'] ) {
-				$result->errors()->add( "$item_id.id", 'mismatching_value' );
-
-				continue;
-			}
-
-			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
-		}
-
-		return $result->wrap( $sanitized_items );
-	}
-
-	private function is_valid_order( array $order, array $items ) {
-		$existing_ids = array_keys( $items );
-
-		$excess_ids = Collection::make( $order )->diff( $existing_ids );
-		$missing_ids = Collection::make( $existing_ids )->diff( $order );
-
-		$has_duplications = Collection::make( $order )->unique()->all() !== $order;
-
-		return (
-			$excess_ids->is_empty() &&
-			$missing_ids->is_empty() &&
-			! $has_duplications
-		);
 	}
 
 	private function route_wrapper( callable $cb ) {

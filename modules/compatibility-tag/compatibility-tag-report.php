@@ -127,7 +127,7 @@ class Compatibility_Tag_Report extends Base {
 
 		return Plugin::$instance->wp
 			->get_plugins()
-			->only( $compatibility_status->keys() )
+			->only( $compatibility_status->keys()->all() )
 			->merge_recursive( $compatibility_status );
 	}
 

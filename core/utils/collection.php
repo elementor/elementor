@@ -403,11 +403,8 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		} );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function keys() {
-		return array_keys( $this->items );
+		return new static( array_keys( $this->items ) );
 	}
 
 	/**
