@@ -3,10 +3,10 @@ name: Qunit
 on:
   pull_request:
     paths:
-      - '**/*.+(js|ts|json|jsx|tsx)'
+#      - '**/*.js'
       - 'package.json'
       - 'package-lock.json'
-      - '.github/**/*.yml'
+#      - '.github/**/*.yml'
 
   merge_group:
 
