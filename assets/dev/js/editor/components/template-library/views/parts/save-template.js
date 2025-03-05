@@ -73,7 +73,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		formData.source = selectedSources;
 
-		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );	
+		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
 
 	onSelectedFolderTextClick() {
