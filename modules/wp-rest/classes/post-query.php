@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Elementor_Post_Query {
+class Post_Query {
 	const MAX_ALLOWED_COUNT = 100;
 	const NAMESPACE = 'elementor/v1';
 	const ENDPOINT = 'post';
@@ -76,7 +76,7 @@ class Elementor_Post_Query {
 	 * @return string Modified search query.
 	 */
 	private function customize_search( string $search_term, \WP_Query $wp_query ) {
-		$term = $wp_query->get( self::SEARCH_TERM_KEY ) ?? '';
+		$term = $wp_query->get( 'search_term' ) ?? '';
 		$is_custom_search = $wp_query->get( 'custom_search' ) ?? false;
 
 		if ( $is_custom_search && ! empty( $term ) ) {
@@ -143,7 +143,7 @@ class Elementor_Post_Query {
 			'numberposts' => $max_count,
 			'suppress_filters' => false,
 			'custom_search' => true,
-			self::SEARCH_TERM_KEY => $term,
+			'search_term' => $term,
 		] ) );
 
 		$this->remove_filter_to_customize_query();

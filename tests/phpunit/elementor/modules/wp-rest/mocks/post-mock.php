@@ -2,11 +2,13 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks;
 
+use ElementorEditorTesting\Elementor_Test_Base;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Post_Mock {
+class Post_Mock extends Elementor_Test_Base {
 	public int $ID;
 	public string $post_title;
 	public string $description;
@@ -26,7 +28,7 @@ class Post_Mock {
 	}
 
 	private function insert() {
-		$post_id = wp_insert_post( [
+		$post_id = $this->factory()->create_and_get_custom_post( [
 			'post_title' => $this->post_title,
 			'ID' => $this->ID,
 			'post_content' => $this->description,

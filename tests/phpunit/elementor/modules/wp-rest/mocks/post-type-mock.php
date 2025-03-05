@@ -15,7 +15,7 @@ class Post_Type_Mock {
 		$this->name = $name;
 		$this->label = $label;
 
-		$this->register();
+//		$this->register();
 	}
 
 	private function register() {
@@ -26,6 +26,6 @@ class Post_Type_Mock {
 	}
 
 	public function unregister() {
-		unregister_post_type( $this->name );
+//		unregister_post_type( $this->name );
 	}
 }
