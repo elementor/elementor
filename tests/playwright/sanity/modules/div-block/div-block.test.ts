@@ -89,4 +89,35 @@ test.describe( 'Div Block tests @div-block', () => {
 
 		await expect( divBlockLocator ).toHaveCSS( 'background-color', /[rgba\(141, 16, 16, 0.5\)|\#8d101080]/ );
 	} );
+
+	test( 'Div block handles-position test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Div block as first container', async () => {
+			// Arrange.
+			const firstDivBlockId = await editor.addElement( { elType: 'div-block' }, 'document' );
+			const secondContainerId = await editor.addElement( { elType: 'container' }, 'document' );
+
+			const firstDivBlock = editor.getPreviewFrame().locator( `[data-id="${ firstDivBlockId }"]` );
+			const secondContainer = editor.getPreviewFrame().locator( `[data-id="${ secondContainerId }"]` );
+
+			const firstDivBlockHandles = firstDivBlock.locator( '.elementor-editor-element-settings' );
+			const secondContainerHandles = secondContainer.locator( '.elementor-editor-element-settings' );
+
+			// Act.
+			await firstDivBlock.hover();
+			await firstDivBlockHandles.waitFor();
+
+			// Assert.
+			await expect( firstDivBlockHandles ).toHaveScreenshot( 'flipped-handles.png' );
+
+			// Act.
+			await secondContainerHandles.hover();
+			await secondContainerHandles.waitFor();
+
+			// Assert.
+			await expect( secondContainerHandles ).toHaveScreenshot( 'normal-handles.png' );
+		} );
+	} );
 } );
