@@ -4,7 +4,7 @@ import containerHandlers from './handlers/container/container';
 import columnHandlers from './handlers/column';
 
 // Section handlers.
-import HandlesPosition from './handlers/section/handles-position';
+import HandlesPosition from './handlers/handles-position';
 import StretchedSection from './handlers/section/stretched-section';
 import Shapes from './handlers/section/shapes';
 
