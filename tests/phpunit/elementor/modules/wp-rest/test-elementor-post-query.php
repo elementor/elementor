@@ -4,7 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\WpRest\Classes\Elementor_Post_Query;
-use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks\Wordpress_Mock;
+use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks\WordpressMock;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,13 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Elementor_Post_Query extends Elementor_Test_Base {
 	const URL = '/elementor/v1/post';
 
-	private ?Wordpress_Mock $wordpress_mock;
+	private ?WordpressMock $wordpress_mock;
 
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->act_as_admin();
-		$this->wordpress_mock = new Wordpress_Mock();
+		$this->wordpress_mock = new WordpressMock();
 
 		add_action( 'rest_api_init', function () {
 			( new Elementor_Post_Query() )->register( true );

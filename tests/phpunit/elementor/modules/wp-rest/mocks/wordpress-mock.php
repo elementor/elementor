@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Wordpress_Mock {
+class WordpressMock {
 	private array $post_types;
 	private array $posts;
 
