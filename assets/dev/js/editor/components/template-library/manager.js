@@ -9,7 +9,9 @@ const TemplateLibraryManager = function() {
 	const self = this,
 		templateTypes = {},
 		storage = new LocalStorage(),
-		storageSelectionKey = 'my_templates_source';
+		storageKeyPrefix = 'my_templates_',
+		sourceKey = 'source',
+		viewKey = 'view';
 
 	let deleteDialog,
 		errorDialog,
@@ -109,11 +111,19 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.getSourceSelection = function() {
-		return storage.getItem( storageSelectionKey );
+		return storage.getItem( storageKeyPrefix + sourceKey );
 	};
 
 	this.setSourceSelection = function( value ) {
-		return storage.setItem( storageSelectionKey, value );
+		return storage.setItem( storageKeyPrefix + sourceKey, value );
+	};
+
+	this.getViewSelection = function() {
+		return storage.getItem( storageKeyPrefix + viewKey );
+	};
+
+	this.setViewSelection = function( value ) {
+		return storage.setItem( storageKeyPrefix + viewKey, value );
 	};
 
 	this.getTemplateTypes = function( type ) {
@@ -739,6 +749,13 @@ const TemplateLibraryManager = function() {
 
 			self.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
 		} );
+	};
+
+	this.onSelectViewChange = function( selectedView ) {
+		self.setViewSelection( selectedView );
+		self.setFilter( viewKey, selectedView, true );
+
+		self.layout.showTemplatesView( new TemplateLibraryCollection( self.filterTemplates() ) );
 	};
 
 	this.shouldShowCloudConnectView = function( source ) {

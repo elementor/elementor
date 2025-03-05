@@ -20,7 +20,7 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultTabs() {
-		const tabs = {
+		return {
 			'templates/blocks': {
 				title: __( 'Blocks', 'elementor' ),
 				getFilter: () => ( {
@@ -40,11 +40,10 @@ export default class Component extends ComponentModalBase {
 				title: __( 'My Templates', 'elementor' ),
 				getFilter: () => ( {
 					source: elementor.templates.getSourceSelection() ?? 'local',
+					view: elementor.templates.getViewSelection() ?? 'list',
 				} ),
 			},
 		};
-
-		return tabs;
 	}
 
 	defaultRoutes() {

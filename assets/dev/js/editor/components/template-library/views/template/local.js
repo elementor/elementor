@@ -10,7 +10,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			morePopup: '.elementor-template-library-template-more',
 			toggleMore: '.elementor-template-library-template-more-toggle',
 			toggleMoreIcon: '.elementor-template-library-template-more-toggle i',
-			titleCell: '.elementor-template-library-template-name',
+			titleCell: '.elementor-template-library-template-name span',
 			resourceIcon: '.elementor-template-library-template-name i',
 		} );
 	},
@@ -28,17 +28,9 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onTitleChange() {
-		const isCloudSource = 'cloud' === this.model.get( 'source' );
 		const title = _.escape( this.model.get( 'title' ) );
 
-		let content = title;
-
-		if ( isCloudSource ) {
-			const resourceIcon = this.ui.resourceIcon[ 0 ]?.outerHTML;
-			content = resourceIcon + title;
-		}
-
-		this.ui.titleCell.html( content );
+		this.ui.titleCell.html( title );
 	},
 
 	onDeleteButtonClick() {
@@ -54,7 +46,9 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		} );
 	},
 
-	onToggleMoreClick() {
+	onToggleMoreClick( event ) {
+		event.stopPropagation();
+
 		this.ui.morePopup.show();
 	},
 
