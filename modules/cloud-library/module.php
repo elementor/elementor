@@ -83,7 +83,7 @@ class Module extends BaseModule {
 		$ajax_manager->register_ajax_action( 'screenshot_cloud_save', [ $this, 'ajax_save' ] );
 	}
 
-	private function ajax_save( $data ) {
+	public function ajax_save( $data ) {
 		if ( empty( $data['screenshot'] ) || empty( $data['template_id'] ) ) {
 			return false;
 		}
