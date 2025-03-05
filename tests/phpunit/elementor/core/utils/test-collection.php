@@ -61,7 +61,7 @@ class Test_Collection extends Elementor_Test_Base {
 		$result = $collection->keys();
 
 		// Assert
-		$this->assertEqualSets( [ 'a', 'b' ], $result );
+		$this->assertEqualSets( [ 'a', 'b' ], $result->all() );
 	}
 
 	public function test_except() {
@@ -511,6 +511,17 @@ class Test_Collection extends Elementor_Test_Base {
 		$this->assertTrue( $result1 );
 		$this->assertTrue( $result2 );
 		$this->assertFalse( $result3 );
+	}
+
+	public function test_diff() {
+		// Arrange.
+		$collection = Collection::make( [ 1, 2, 3, 4 ] );
+
+		// Act.
+		$result = $collection->diff( [ 2, 3 ] );
+
+		// Assert.
+		$this->assertSame( [ 1, 4 ], $result->values() );
 	}
 
 	public function test_some() {
