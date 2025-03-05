@@ -1,16 +1,12 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Isolation;
-
-use Elementor\Core\Isolation\Wordpress_Adapter as Core_Adapter;
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Core\Utils\Collection;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Wordpress_Mock extends Core_Adapter implements Wordpress_Adapter_Interface {
+class Wordpress_Mock {
 	private array $post_types;
 	private array $posts;
 

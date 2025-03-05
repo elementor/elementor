@@ -4,7 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\WpRest\Classes\Elementor_Post_Query;
-use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Isolation\Wordpress_Mock;
+use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks\Wordpress_Mock;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
