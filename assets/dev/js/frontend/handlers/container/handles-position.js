@@ -1,7 +1,6 @@
-/**
- * TODO: Try to merge with `section/handles-position.js` and create a generic solution using `.elementor-element`.
- */
-export default class HandlesPosition extends elementorModules.frontend.handlers.Base {
+import InsideHandles from '../utils/inside-handles';
+
+export default class HandlesPosition extends InsideHandles {
 	isActive() {
 		return elementorFrontend.isEditMode();
 	}

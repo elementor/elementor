@@ -1,4 +1,6 @@
-export default class HandlesPosition extends elementorModules.frontend.handlers.Base {
+import InsideHandles from '../utils/inside-handles';
+
+export default class HandlesPosition extends InsideHandles {
 	isActive() {
 		return elementorFrontend.isEditMode();
 	}
