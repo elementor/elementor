@@ -200,7 +200,7 @@ class Style_Schema {
 			]),
 			'flex-grow' => Number_Prop_Type::make(),
 			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => Size_Prop_Type::make(),
+			'flex-basis' => self::get_extended_size_prop(),
 		];
 	}
 
