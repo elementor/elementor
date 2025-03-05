@@ -1,6 +1,7 @@
 import globalHandler from './handlers/global';
 import backgroundHandlers from './handlers/background';
 import containerHandlers from './handlers/container/container';
+import horizontalScrollHandler from './handlers/container/horizontal-scroll';
 import columnHandlers from './handlers/column';
 
 // Section handlers.
@@ -50,6 +51,7 @@ module.exports = function( $ ) {
 		];
 
 		this.elementsHandlers.container = [ ...backgroundHandlers ];
+		this.elementsHandlers.container.push( horizontalScrollHandler );
 
 		// Add editor-only handlers.
 		if ( elementorFrontend.isEditMode() ) {

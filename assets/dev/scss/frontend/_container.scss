@@ -287,6 +287,31 @@
 			--kit-widget-spacing: 0px;
 		}
 	}
+
+	&-horizontal {
+		position: sticky;
+		top: 0;
+		overflow-y: hidden;
+		overflow-x: hidden;
+
+		&-sticky {
+			height: var(--horizontal-scroll-height, initial);
+		}
+
+		& > .e-con {
+			--flex-direction: row;
+			flex-grow: 1;
+			width: 800vw;
+			max-width: 800vw;
+
+			& > .elementor-element,
+			& > .e-con-inner > .elementor-element {
+				width: max(max-content, var(--width));
+				max-width: var(--width);
+				flex-grow: 1;
+			}
+		}
+	}
 }
 
 @media (max-width: $editor-screen-sm-max) {
