@@ -13,6 +13,12 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 		return 'section' === this.getElementType();
 	}
 
+	isFirstElement() {
+		const selector = this.isElementTypeSection() ? '.elementor-top-section' : '.e-con:first-child';
+
+		return this.$element[ 0 ] === document.querySelector( `.elementor-edit-mode ${ selector }` );
+	}
+
 	isActive() {
 		return elementorFrontend.isEditMode();
 	}
@@ -43,7 +49,7 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 			return;
 		}
 
-		if ( ! this.isOverflowHidden() ) {
+		if ( ! this.isOverflowHidden() && ! this.isFirstElement() ) {
 			return;
 		}
 
