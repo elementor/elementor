@@ -307,7 +307,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_order', $response->get_data()['code'] );
 	}
 
-	public function test_put__fails_when_order_has_duplications() {
+	public function test_put__skips_order_duplications() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -326,8 +326,17 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert.
-		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'invalid_order', $response->get_data()['code'] );
+		$classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
+
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertNull( $response->get_data() );
+
+		$this->assertSame( [
+			'items' => [
+				'g-1' => $class,
+			],
+			'order' => [ 'g-1' ],
+		], $classes );
 	}
 
 	public function test_put__fails_when_items_has_item_with_wrong_id() {
