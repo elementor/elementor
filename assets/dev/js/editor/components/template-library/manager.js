@@ -50,6 +50,7 @@ const TemplateLibraryManager = function() {
 			page: __( 'Page', 'elementor' ),
 			section: __( 'Section', 'elementor' ),
 			container: __( 'Container', 'elementor' ),
+			folder: __( 'Folder', 'elementor' ),
 			[ elementor.config.document.type ]: elementor.config.document.panel.title,
 		};
 
