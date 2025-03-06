@@ -98,13 +98,6 @@ const sass = {
 				dest: 'assets/css/templates',
 				ext: '.css',
 			},
-			{
-				expand: true,
-				cwd: 'assets/dev/scss/frontend',
-				src: 'div-block.scss',
-				dest: 'assets/css',
-				ext: '.css',
-			},
 		]
 	}
 };
