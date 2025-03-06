@@ -13,6 +13,10 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 		return 'section' === this.getElementType();
 	}
 
+	isSectionScrollSnagged() {
+		return elementor.settings.page.model.attributes.scroll_snap;
+	}
+
 	isFirstElement() {
 		const selector = this.isElementTypeSection() ? '.elementor-top-section' : '.e-con:first-child';
 
@@ -43,7 +47,7 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 			return;
 		}
 
-		if ( this.isElementTypeSection() && elementor.settings.page.model.attributes.scroll_snap ) {
+		if ( this.isElementTypeSection() && this.isSectionScrollSnagged() ) {
 			this.$element.addClass( this.insideHandleClass );
 
 			return;
