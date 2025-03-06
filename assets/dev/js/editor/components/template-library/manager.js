@@ -405,7 +405,7 @@ const TemplateLibraryManager = function() {
 		var templateType = templateTypes[ type ];
 
 		_.extend( data, {
-			source: 'local',
+			source: data.source ?? 'local',
 			type,
 		} );
 

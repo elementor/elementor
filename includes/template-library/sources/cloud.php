@@ -92,8 +92,12 @@ class Source_Cloud extends Source_Base {
 			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
 			'type' => self::TEMPLATE_RESOURCE_TYPE,
 			'templateType' => $template_data['type'],
-			'parentId' => $template_data['parentId'] ?? null,
-			'content' => wp_json_encode( $template_data['content'] ),
+			'parentId' => ! empty( $template_data['parentId'] ) ? (int) $template_data['parentId'] : null,
+			'content' => wp_json_encode( [
+				'content' => $template_data['content'],
+				'page_settings' => $template_data['page_settings'],
+			] ),
+			'hasPageSettings' => ! empty( $template_data['page_settings'] ),
 		];
 
 		$response = $app->post_resource( $resource_data );
