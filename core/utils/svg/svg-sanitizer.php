@@ -465,7 +465,7 @@ class Svg_Sanitizer {
 			'y2',
 			'ychannelselector',
 			'z',
-			'zoomandpan'
+			'zoomandpan',
 		];
 
 		/**
