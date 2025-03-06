@@ -276,6 +276,19 @@ class Manager {
 			return $validate_args;
 		}
 
+		$sources = (array) $args['source']; // BC
+		$results = [];
+
+		foreach ( $sources as $source ) {
+			$args_copy = $args;
+			$args_copy['source'] = $source;
+			$results[] = $this->save_template_item( $args_copy );
+		}
+
+		return 1 === count( $results ) ? $results[0] : $results;
+	}
+
+	private function save_template_item( array $args ) {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
@@ -655,6 +668,24 @@ class Manager {
 		return $source->save_folder( $args );
 	}
 
+	public function get_folders( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'offset' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Folder source not found.' );
+		}
+
+		$args['templateType'] = 'folder';
+
+		return $source->get_items( $args );
+	}
+
 	/**
 	 * Register default template sources.
 	 *
@@ -746,6 +777,7 @@ class Manager {
 			'rename_template',
 			'load_more_templates',
 			'create_folder',
+			'get_folders',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
