@@ -1,3 +1,3 @@
 export default [
-	() => import( /* webpackChunkName: 'column-frontend-handlers' */ './background-slideshow' ),
+	() => import( /* webpackChunkName: 'shared-frontend-handlers' */ './background-slideshow' ),
 ];
