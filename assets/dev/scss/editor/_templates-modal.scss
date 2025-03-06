@@ -81,6 +81,12 @@ $remote-templates-items-space: 30px;
 
 #elementor-template-library-templates {
 
+	#elementor-template-library-templates-container {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start; // For blocks layout
+	}
+
 	&[data-template-source="local"],
 	&[data-template-source="cloud"] {
 
@@ -206,7 +212,7 @@ $remote-templates-items-space: 30px;
 
 		#elementor-template-library-templates-container {
 			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+			grid-template-columns: repeat(auto-fill, 208px);
 			grid-gap: 20px;
 			padding: 20px 0;
 
@@ -224,12 +230,16 @@ $remote-templates-items-space: 30px;
 				display: flex;
 				position: relative;
 				flex-direction: column;
-				height: 100%;
-				padding: 9px;
+				height: 158px;
+				padding: 8px;
 				border: var(--e-a-border);
 				border-radius: 3px;
 
 				&:hover {
+					.elementor-template-library-template-preview {
+						display: flex;
+					}
+
 					.elementor-template-library-card-footer {
 
 						.elementor-template-library-template-name {
@@ -242,10 +252,29 @@ $remote-templates-items-space: 30px;
 					}
 				}
 
-				img {
-					height: 190px;
-					width: 100%;
-					object-fit: cover;
+				.elementor-template-library-template-thumbnail {
+					width: 190px;
+					height: 100px;
+					position: relative;
+					border-radius: 3px;
+					margin-bottom: 4px;
+					overflow: hidden;
+
+					img {
+						object-fit: cover;
+						width: 100%;
+						height: 100%;
+					}
+				}
+
+				.elementor-template-library-template-preview {
+					display: none;
+					justify-content: center;
+					align-items: center;
+					position: absolute;
+					inset: 0;
+					background-color: rgba(0,0,0,.5);
+					cursor: pointer;
 				}
 
 				.elementor-template-library-template-name {
@@ -259,18 +288,24 @@ $remote-templates-items-space: 30px;
 					display: flex;
 					position: relative;
 					justify-content: space-between;
-					align-items: end;
+					align-items: center;
 					font-size: 11px;
-					height: 40px;
+					min-height: 38px;
 
 					.elementor-template-library-template-card-footer-overlay {
 						display: none;
 						width: 90%;
-						margin-top: 10px;
-						gap: 10px;
+						gap: 8px;
+						height: 38px;
+						padding: 4px 0;
 
 						.elementor-template-library-template-insert {
 							display: flex;
+
+							i {
+								display: flex;
+								align-items: center;
+							}
 						}
 
 						.elementor-template-library-template-card-footer-overlay-info {
@@ -291,12 +326,12 @@ $remote-templates-items-space: 30px;
 					align-items: center;
 					justify-content: start;
 					height: 56px;
-					padding: 10px;
+					padding: 13px 10px;
 					cursor: pointer;
 
 					.elementor-template-library-template-type-icon {
-						font-size: 30px;
-						margin-inline-end: 10px;
+						font-size: 25px;
+						margin-inline-end: 8px;
 					}
 
 					.elementor-template-library-template-more-toggle {
