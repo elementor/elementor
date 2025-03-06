@@ -1,30 +1,16 @@
+const insideHandleClass = 'e-handles-inside';
+
 export default class HandlesPosition extends elementorModules.frontend.handlers.Base {
 	onInit() {
-		if ( ! this.isActive() ) {
-			return;
-		}
-
-		this.insideHandleClass = this.isElementTypeSection() ? 'elementor-section--handles-inside' : 'e-handles-inside';
-
 		this.$element.on( 'mouseenter', this.setHandlesPosition.bind( this ) );
 	}
 
-	isElementTypeSection() {
-		return 'section' === this.getElementType();
-	}
-
-	isSectionScrollSnagged() {
+	isSectionScrollSnapEnabled() {
 		return elementor.settings.page.model.attributes.scroll_snap;
 	}
 
 	isFirstElement() {
-		const selector = this.isElementTypeSection() ? '.elementor-top-section' : '.e-con:first-child';
-
-		return this.$element[ 0 ] === document.querySelector( `.elementor-edit-mode ${ selector }` );
-	}
-
-	isActive() {
-		return elementorFrontend.isEditMode();
+		return this.$element[ 0 ] === document.querySelector( '.elementor-section-wrap > .elementor-element:first-child' );
 	}
 
 	isOverflowHidden() {
@@ -47,25 +33,27 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 			return;
 		}
 
-		if ( this.isElementTypeSection() && this.isSectionScrollSnagged() ) {
-			this.$element.addClass( this.insideHandleClass );
+		if ( this.isSectionScrollSnapEnabled() ) {
+			this.$element.addClass( insideHandleClass );
 
 			return;
 		}
 
 		if ( ! this.isOverflowHidden() && ! this.isFirstElement() ) {
+			this.$element.removeClass( insideHandleClass );
+
 			return;
 		}
 
 		const offset = this.getOffset(),
 			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' );
 
-		this.$element.addClass( this.insideHandleClass );
-
 		if ( offset < 25 ) {
+			this.$element.addClass( insideHandleClass );
+
 			$handlesElement.css( 'top', offset < -5 ? -offset : '' );
 		} else {
-			this.$element.removeClass( this.insideHandleClass );
+			this.$element.removeClass( insideHandleClass );
 		}
 	}
 }

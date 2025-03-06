@@ -11,8 +11,6 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	isEdit: null,
 
-	sectionInsideHandleClass: 'elementor-section--handles-inside',
-
 	__construct( settings ) {
 		if ( ! this.isActive( settings ) ) {
 			return;
