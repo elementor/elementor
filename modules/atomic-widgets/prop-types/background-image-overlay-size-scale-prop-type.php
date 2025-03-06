@@ -17,8 +17,8 @@ class Background_Image_Overlay_Size_Scale_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'width' => Style_Schema::get_extended_size_prop(),
-			'height' => Style_Schema::get_extended_size_prop(),
+			'width' => Size_Prop_Type::make()->add_extended_values( [ 'auto' ] ),
+			'height' => Size_Prop_Type::make()->add_extended_values( [ 'auto' ] ),
 		];
 	}
 }
