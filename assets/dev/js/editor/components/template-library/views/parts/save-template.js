@@ -2,6 +2,8 @@ const TemplateLibraryTemplateModel = require( 'elementor-templates/models/templa
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 const FolderCollectionView = require( './folders/folders-list' );
 
+const ACTION_ITEM = 0;
+
 const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-save-template',
 
@@ -113,7 +115,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	addSpinner() {
 		const spinner = new TemplateLibraryTemplateModel( {
-			template_id: 0,
+			template_id: ACTION_ITEM,
 			title: '<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>',
 		} );
 
@@ -121,7 +123,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	removeSpinner() {
-		const spinner = this.folderCollectionView.collection.findWhere( { template_id: 0 } );
+		const spinner = this.folderCollectionView.collection.findWhere( { template_id: ACTION_ITEM } );
 
 		if ( spinner ) {
 			this.folderCollectionView.collection.remove( spinner );
@@ -170,10 +172,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	clickedOnLoadMore( templateId ) {
-		return 0 === +templateId;
+		return ACTION_ITEM === +templateId;
 	},
 
 	handleFolderSelected( id, value ) {
+		this.highlightSelectedFolder( id );
 		this.ui.foldersDropdown.hide();
 		this.ui.ellipsisIcon.hide();
 		this.ui.selectedFolderText.html( value );
@@ -181,7 +184,17 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.hiddenInputSelectedFolder.val( id );
 	},
 
+	highlightSelectedFolder( id ) {
+		this.clearSelectedFolder();
+		this.$( `.folder-list li[data-id="${ id }"]` ).addClass( 'selected' );
+	},
+
+	clearSelectedFolder() {
+		this.$( '.folder-list li.selected' ).removeClass( 'selected' );
+	},
+
 	onRemoveFolderSelectionClick() {
+		this.clearSelectedFolder();
 		this.ui.selectedFolderText.html( '' );
 		this.ui.selectedFolder.hide();
 		this.ui.ellipsisIcon.show();
@@ -206,13 +219,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	addLoadMoreItem() {
 		this.folderCollectionView.collection.add( {
-			template_id: 0,
+			template_id: ACTION_ITEM,
 			title: __( 'Load More', 'elementor' ),
 		} );
 	},
 
 	removeLoadMoreItem() {
-		const loadMore = this.folderCollectionView.collection.findWhere( { template_id: 0 } );
+		const loadMore = this.folderCollectionView.collection.findWhere( { template_id: ACTION_ITEM } );
 
 		if ( loadMore ) {
 			this.folderCollectionView.collection.remove( loadMore );

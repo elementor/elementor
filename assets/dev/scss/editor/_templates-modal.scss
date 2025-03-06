@@ -810,7 +810,8 @@ label.elementor-template-library-order-label {
 					text-decoration: underline;
 				}
 
-				&:hover {
+				&:hover,
+				&.selected {
 					background: var(--e-a-border-color);
 				}
 			}
