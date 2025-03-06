@@ -300,7 +300,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<# } else { #>
 			<div class="elementor-template-library-template-thumbnail">
-				<img src="<?php echo esc_html( Utils::get_placeholder_image_src() ) ?>"/>
+				<img src="<?php echo esc_html( Utils::get_placeholder_image_src() ); ?>"/>
 				<div class="elementor-template-library-template-preview">
 					<i class="eicon-preview-medium" aria-hidden="true"></i>
 				</div>
