@@ -23,6 +23,7 @@ class Select_Control extends Atomic_Control_Base {
 	public function get_props(): array {
 		return [
 			'options' => $this->options,
+			'conditions' => $this->get_conditions(),
 		];
 	}
 }
