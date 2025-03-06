@@ -2,7 +2,7 @@ const TemplateLibraryTemplateModel = require( 'elementor-templates/models/templa
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 const FolderCollectionView = require( './folders/folders-list' );
 
-const ACTION_ITEM = 0;
+const LOAD_MORE_ID = 0;
 
 const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-save-template',
@@ -115,7 +115,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	addSpinner() {
 		const spinner = new TemplateLibraryTemplateModel( {
-			template_id: ACTION_ITEM,
+			template_id: LOAD_MORE_ID,
 			title: '<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>',
 		} );
 
@@ -123,7 +123,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	removeSpinner() {
-		const spinner = this.folderCollectionView.collection.findWhere( { template_id: ACTION_ITEM } );
+		const spinner = this.folderCollectionView.collection.findWhere( { template_id: LOAD_MORE_ID } );
 
 		if ( spinner ) {
 			this.folderCollectionView.collection.remove( spinner );
@@ -172,7 +172,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	clickedOnLoadMore( templateId ) {
-		return ACTION_ITEM === +templateId;
+		return LOAD_MORE_ID === +templateId;
 	},
 
 	handleFolderSelected( id, value ) {
@@ -219,13 +219,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	addLoadMoreItem() {
 		this.folderCollectionView.collection.add( {
-			template_id: ACTION_ITEM,
+			template_id: LOAD_MORE_ID,
 			title: __( 'Load More', 'elementor' ),
 		} );
 	},
 
 	removeLoadMoreItem() {
-		const loadMore = this.folderCollectionView.collection.findWhere( { template_id: ACTION_ITEM } );
+		const loadMore = this.folderCollectionView.collection.findWhere( { template_id: LOAD_MORE_ID } );
 
 		if ( loadMore ) {
 			this.folderCollectionView.collection.remove( loadMore );
