@@ -300,7 +300,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<# } else { #>
 			<div class="elementor-template-library-template-thumbnail">
-				<img src="<?php echo Utils::get_placeholder_image_src(); ?>"/>
+				<img src="<?php echo esc_html( Utils::get_placeholder_image_src() ) ?>"/>
 				<div class="elementor-template-library-template-preview">
 					<i class="eicon-preview-medium" aria-hidden="true"></i>
 				</div>
@@ -315,7 +315,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 					</button>
 					<div class="elementor-template-library-template-card-footer-overlay-info">
-						<div class="elementor-template-library-template-meta">Very long long author name</div>
+						<div class="elementor-template-library-template-meta">{{{ author }}}</div>
 						<div class="elementor-template-library-template-meta">{{{ human_date }}}</div>
 					</div>
 				</div>
