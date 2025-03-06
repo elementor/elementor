@@ -128,7 +128,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		if ( $env_config ) {
 			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [
 				'@elementor/http' => [
-					'base_url' => get_site_url(),
+					'site_url' => get_site_url(),
 					'rest_url' => rest_url(),
 					'headers' => [
 						'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),
