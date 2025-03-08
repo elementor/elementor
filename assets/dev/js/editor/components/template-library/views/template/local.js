@@ -7,6 +7,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		return _.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
 			deleteButton: '.elementor-template-library-template-delete',
 			renameButton: '.elementor-template-library-template-rename',
+			moveButton: '.elementor-template-library-template-move',
 			morePopup: '.elementor-template-library-template-more',
 			toggleMore: '.elementor-template-library-template-more-toggle',
 			toggleMoreIcon: '.elementor-template-library-template-more-toggle i',
@@ -20,6 +21,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			'click @ui.deleteButton': 'onDeleteButtonClick',
 			'click @ui.toggleMore': 'onToggleMoreClick',
 			'click @ui.renameButton': 'onRenameClick',
+			'click @ui.moveButton': 'onMoveClick',
 		} );
 	},
 
@@ -70,6 +72,13 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		} finally {
 			this.hideToggleMoreLoader();
 		}
+	},
+
+	onMoveClick() {
+		$e.route( 'library/save-template', {
+			model: this.model,
+			action: 'move',
+		} );
 	},
 
 	showToggleMoreLoader() {

@@ -24,6 +24,9 @@ const TemplateLibraryManager = function() {
 			saveDialog: {
 				description: __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 			},
+			moveDialog: {
+				description: __( 'do we need sub line here?', 'elementor' ),
+			},
 			ajaxParams: {
 				success( successData ) {
 					$e.route( 'library/templates/my-templates', {
@@ -58,6 +61,10 @@ const TemplateLibraryManager = function() {
 				saveDialog: {
 					/* Translators: %s: Template type. */
 					title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
+				},
+				moveDialog: {
+					/* Translators: %s: Template type. */
+					title: sprintf( __( 'Move Your %s', 'elementor' ), title ),
 				},
 			} );
 

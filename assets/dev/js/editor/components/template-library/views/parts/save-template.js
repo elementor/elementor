@@ -20,6 +20,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		selectedFolder: '.selected-folder',
 		selectedFolderText: '.selected-folder-text',
 		hiddenInputSelectedFolder: '#parentId',
+		templateNameInput: '#elementor-template-library-save-template-name',
+		localInput: '.source-selections-input.local',
+		cloudInput: '.source-selections-input.cloud',
 	},
 
 	events: {
@@ -28,6 +31,27 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
+	},
+
+	initialize() {
+		console.log( this.model );
+	},
+
+	onRender() {
+		if ( 'move' === this.getOption( 'action' ) ) {
+			this.ui.templateNameInput.val( this.model.get( 'title' ) );
+
+			const currentSource = this.model.get( 'source' );
+
+			if ( 'local' === currentSource ) {
+				this.ui.localInput.addClass( 'disabled' );
+			}
+
+			if ( 'cloud' === currentSource ) {
+				// this.ui.cloudInput.addClass( 'disabled' );
+				// Disable a folder
+			}
+		}
 	},
 
 	getSaveType() {
@@ -40,6 +64,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			type = 'page';
 		}
 
+		if ( 'move' === this.getOption( 'action' ) ) {
+			type = this.model.get( 'type' );			
+		}
+
 		return type;
 	},
 
@@ -47,7 +75,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		var saveType = this.getSaveType(),
 			templateType = elementor.templates.getTemplateTypes( saveType );
 
-		return templateType.saveDialog;
+		return templateType[ this.getTemplateHelperKey() ];
+	},
+
+	getTemplateHelperKey() {
+		return 'move' === this.getOption( 'action' )
+			? 'moveDialog'
+			: 'saveDialog';
 	},
 
 	onFormSubmit( event ) {
@@ -58,6 +92,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			JSONParams = { remove: [ 'default' ] };
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
+
+		formData.save_action = this.getOption( 'action' ) ?? 'save';
+		formData.from_source = elementor.templates.getFilter( 'source' );
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
