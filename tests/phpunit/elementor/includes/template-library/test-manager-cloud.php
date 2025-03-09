@@ -134,7 +134,6 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'resourceType' => 'TEMPLATE',
 			'content' => wp_json_encode( $mock_content ),
 			'parentId' => null,
-			'save_context' => 'save',
 		] );
 	}
 

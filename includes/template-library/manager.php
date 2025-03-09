@@ -337,7 +337,8 @@ class Manager {
 	}
 
 	private function is_moving_to_same_source( $args, $source ) {
-		return 'move' === $args['save_context'] &&
+		return ! empty( $args['save_context'] ) &&
+			'move' === $args['save_context'] &&
 			$source === $args['from_source'] &&
 			$source === $args['source'];
 	}
