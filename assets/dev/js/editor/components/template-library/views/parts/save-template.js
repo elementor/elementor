@@ -34,6 +34,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onRender() {
+		if ( 'save' === this.getOption( 'context' ) ) {
+			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
+		}
+
 		if ( 'move' === this.getOption( 'context' ) ) {
 			this.handleMoveContextUiState();
 		}

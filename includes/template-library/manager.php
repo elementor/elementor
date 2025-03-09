@@ -339,11 +339,15 @@ class Manager {
 	}
 
 	private function format_args_for_save_context( $args ) {
-		if ( ! empty( $args['save_context'] ) && 'move' === $args['save_context'] ) {
+		if ( $this->is_moving_template( $args ) ) {
 			return $this->format_args_for_move_template( $args );
 		}
 
-		return $this->format_args_for_new_template_save( $args );
+		return $this->format_args_for_new_template( $args );
+	}
+
+	private function is_moving_template( $args ) {
+		return ! empty( $args['save_context'] ) && 'move' === $args['save_context'];
 	}
 
 	private function format_args_for_move_template( $args ) {
@@ -391,7 +395,7 @@ class Manager {
 		return $args;
 	}
 
-	private function format_args_for_new_template_save( $args ) {
+	private function format_args_for_new_template( $args ) {
 		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
 		$args['page_settings'] = $page->get_data( 'settings' );
 
