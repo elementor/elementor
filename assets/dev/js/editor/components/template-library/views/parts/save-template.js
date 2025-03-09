@@ -113,18 +113,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
-		const saveContext = this.getOption( 'context' ) ?? 'save';
-
-		formData.save_context = saveContext;
-
-		if ( 'move' === saveContext ) {
-			formData.from_source = elementor.templates.getFilter( 'source' );
-			formData.from_template_id = this.model.get( 'template_id' );
-		}
-
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
 		this.updateSourceSelections( formData );
+
+		this.updateSaveContext( formData );
 
 		elementor.templates.saveTemplate( saveType, formData );
 	},
@@ -141,9 +134,33 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
 
+	updateSaveContext( formData ) {
+		const saveContext = this.getOption( 'context' ) ?? 'save';
+
+		formData.save_context = saveContext;
+
+		if ( 'move' === saveContext ) {
+			formData.from_source = elementor.templates.getFilter( 'source' );
+			formData.from_template_id = this.model.get( 'template_id' );
+
+			this.updateSourceState( formData );
+		}
+	},
+
+	updateSourceState( formData ) {
+		if ( ! formData.source.length ) {
+			return;
+		}
+
+		const lastSource = formData.source.at( -1 );
+		elementor.templates.setSourceSelection( lastSource );
+		elementor.templates.setFilter( 'source', lastSource, true );
+	},
+
 	onSelectedFolderTextClick() {
 		if ( ! this.folderCollectionView ) {
 			this.onEllipsisIconClick();
+
 			return;
 		}
 
