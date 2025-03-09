@@ -33,39 +33,45 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
 	},
 
-	initialize() {
-		console.log( this.model );
+	onRender() {
+		if ( 'move' === this.getOption( 'context' ) ) {
+			this.handleMoveContextUiState();
+		}
 	},
 
-	onRender() {
-		if ( 'move' === this.getOption( 'action' ) ) {
-			this.ui.templateNameInput.val( this.model.get( 'title' ) );
+	handleMoveContextUiState() {
+		this.ui.templateNameInput.val( this.model.get( 'title' ) );
 
-			const currentSource = this.model.get( 'source' );
+		const fromSource = this.model.get( 'source' );
 
-			if ( 'local' === currentSource ) {
-				this.ui.localInput.addClass( 'disabled' );
-			}
+		if ( 'local' === fromSource ) {
+			this.ui.localInput.addClass( 'disabled' );
+		}
 
-			if ( 'cloud' === currentSource ) {
-				if ( Number.isInteger( this.model.get( 'parentId' ) ) ) {
-					elementor.templates.layout.showLoadingView();
+		if ( 'cloud' === fromSource ) {
+			this.handleCloudSourceInputState( fromSource );
+		}
+	},
 
-					elementor.templates.requestTemplateContent( currentSource, this.model.get( 'parentId' ), {
-						success: ( data ) => {
-							elementor.templates.layout.hideLoadingView();
-							this.handleFolderSelected( data?.id, data?.title );
-							this.$( '#cloud' ).prop( 'checked', true );
-						},
-						error: ( data ) => {
-							elementor.templates.showErrorDialog( data );
-						},
-						complete: () => {
-							elementor.templates.layout.hideLoadingView();
-						},
-					} );
-				}
-			}
+	handleCloudSourceInputState( fromSource ) {
+		if ( Number.isInteger( this.model.get( 'parentId' ) ) ) {
+			elementor.templates.layout.showLoadingView();
+
+			elementor.templates.requestTemplateContent( fromSource, this.model.get( 'parentId' ), {
+				success: ( data ) => {
+					elementor.templates.layout.hideLoadingView();
+					this.handleFolderSelected( data?.id, data?.title );
+					this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
+				},
+				error: ( data ) => {
+					elementor.templates.showErrorDialog( data );
+				},
+				complete: () => {
+					elementor.templates.layout.hideLoadingView();
+				},
+			} );
+		} else {
+			this.$( '.source-selections-input #local' ).prop( 'checked', true );
 		}
 	},
 
@@ -79,7 +85,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			type = 'page';
 		}
 
-		if ( 'move' === this.getOption( 'action' ) ) {
+		if ( 'move' === this.getOption( 'context' ) ) {
 			type = this.model.get( 'type' );			
 		}
 
@@ -87,16 +93,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	templateHelpers() {
-		var saveType = this.getSaveType(),
-			templateType = elementor.templates.getTemplateTypes( saveType );
+		const saveType = this.getSaveType(),
+			templateType = elementor.templates.getTemplateTypes( saveType ),
+			saveContext = this.getOption( 'context' );
 
-		return templateType[ this.getTemplateHelperKey() ];
-	},
-
-	getTemplateHelperKey() {
-		return 'move' === this.getOption( 'action' )
-			? 'moveDialog'
-			: 'saveDialog';
+		return templateType[ `${ saveContext }Dialog` ];
 	},
 
 	onFormSubmit( event ) {
@@ -108,7 +109,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
-		const saveAction = this.getOption( 'action' ) ?? 'save';
+		const saveAction = this.getOption( 'context' ) ?? 'save';
 
 		formData.save_action = saveAction;
 

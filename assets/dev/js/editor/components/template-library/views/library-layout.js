@@ -112,10 +112,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.modalContent.show( new TemplateLibraryCloudConnectView() );
 	},
 
-	showSaveTemplateView( elementModel, action = 'save' ) {
+	showSaveTemplateView( elementModel, context = 'save' ) {
 		this.getHeaderView().menuArea.reset();
 
-		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel, action } ) );
+		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel, context } ) );
 	},
 
 	showPreviewView( templateModel ) {

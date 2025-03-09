@@ -53,7 +53,7 @@ export default class Component extends ComponentModalBase {
 				this.manager.layout.showImportView();
 			},
 			'save-template': ( args ) => {
-				this.manager.layout.showSaveTemplateView( args.model, args.action ?? 'save' );
+				this.manager.layout.showSaveTemplateView( args.model, args.context ?? 'save' );
 			},
 			preview: ( args ) => {
 				this.manager.layout.showPreviewView( args.model );

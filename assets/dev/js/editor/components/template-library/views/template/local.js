@@ -77,7 +77,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	onMoveClick() {
 		$e.route( 'library/save-template', {
 			model: this.model,
-			action: 'move',
+			context: 'move',
 		} );
 	},
 
