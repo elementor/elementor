@@ -295,56 +295,11 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		if ( 'move' === $args['save_context'] ) {
-
-			if ( 'cloud' === $args['source'] && 'cloud' === $args['from_source'] ) {
-				$source = $this->get_source( $args['from_source'] );
-
-				if ( ! $source ) {
-					return new \WP_Error( 'template_error', 'Template source not found.' );
-				}
-
-				return $source->update_item( $args );
-			}
-
-			if ( 'local' === $args['from_source'] ) {
-
-				$document = Plugin::$instance->documents->get( $args['from_template_id'] );
-
-				if ( ! $document ) {
-					return new \WP_Error( 'template_error', 'Document not found.' );
-				}
-
-				$args['content'] = $document->get_elements_data();
-
-				$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['from_template_id'] );
-				$args['page_settings'] = $page->get_data( 'settings' );
-			}
-
-			if ( 'cloud' === $args['from_source'] ) {
-
-				$from_source = $this->get_source( $args['from_source'] );
-
-				if ( ! $from_source ) {
-					return new \WP_Error( 'template_error', 'Template source not found.' );
-				}
-
-				$data = $from_source->get_item( $args['from_template_id'] );
-
-				if ( is_wp_error( $data ) || empty( $data['content'] ) ) {
-					return $data;
-				}
-
-				$decoded_data = json_decode( $data['content'], true );
-				$args['content'] = $decoded_data['content'];
-				$args['page_settings'] = $decoded_data['page_settings'];
-			}
-		} else {
-			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
-			$args['page_settings'] = $page->get_data( 'settings' );
-
-			$args['content'] = json_decode( $args['content'], true );
+		if ( $this->is_moving_from_cloud_to_cloud( $args ) ) {
+			return $this->move_template_in_cloud( $args );
 		}
+
+		$args = $this->format_args_for_save_context( $args );
 
 		$template_id = $source->save_item( $args );
 
@@ -353,6 +308,78 @@ class Manager {
 		}
 
 		return $source->get_item( $template_id );
+	}
+
+	private function is_moving_from_cloud_to_cloud( $args ) {
+		return ! empty( $args['save_context'] ) &&
+			'move' === $args['save_context'] &&
+			! empty( $args['from_source'] ) &&
+			'cloud' === $args['from_source'] &&
+			'cloud' === $args['source'];
+	}
+
+	private function move_template_in_cloud( $args ) {
+		$source = $this->get_source( $args['from_source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		return $source->update_item( $args );
+	}
+
+	private function format_args_for_save_context( $args ) {
+		if ( ! empty( $args['save_context'] ) && 'move' === $args['save_context'] ) {
+			return $this->format_args_for_move_template( $args );
+		}
+
+		return $this->format_args_for_new_template_save( $args );
+	}
+
+	private function format_args_for_move_template( $args ) {
+		if ( 'local' === $args['from_source'] ) {
+
+			$document = Plugin::$instance->documents->get( $args['from_template_id'] );
+
+			if ( ! $document ) {
+				return new \WP_Error( 'template_error', 'Document not found.' );
+			}
+
+			$args['content'] = $document->get_elements_data();
+
+			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['from_template_id'] );
+			$args['page_settings'] = $page->get_data( 'settings' );
+		}
+
+		if ( 'cloud' === $args['from_source'] ) {
+
+			$from_source = $this->get_source( $args['from_source'] );
+
+			if ( ! $from_source ) {
+				return new \WP_Error( 'template_error', 'Template source not found.' );
+			}
+
+			$data = $from_source->get_item( $args['from_template_id'] );
+
+			if ( is_wp_error( $data ) || empty( $data['content'] ) ) {
+				return $data;
+			}
+
+			$decoded_data = json_decode( $data['content'], true );
+			$args['content'] = $decoded_data['content'];
+			$args['page_settings'] = $decoded_data['page_settings'];
+		}
+
+		return $args;
+	}
+
+	private function format_args_for_new_template_save( $args ) {
+		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
+		$args['page_settings'] = $page->get_data( 'settings' );
+
+		$args['content'] = json_decode( $args['content'], true );
+
+		return $args;
 	}
 
 	/**
