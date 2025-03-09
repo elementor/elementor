@@ -109,11 +109,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
-		const saveAction = this.getOption( 'context' ) ?? 'save';
+		const saveContext = this.getOption( 'context' ) ?? 'save';
 
-		formData.save_action = saveAction;
+		formData.save_context = saveContext;
 
-		if ( 'move' === saveAction ) {
+		if ( 'move' === saveContext ) {
 			formData.from_source = elementor.templates.getFilter( 'source' );
 			formData.from_template_id = this.model.get( 'template_id' );
 		}

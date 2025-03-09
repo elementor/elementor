@@ -25,7 +25,7 @@ const TemplateLibraryManager = function() {
 				description: __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 			},
 			moveDialog: {
-				description: __( 'do we need sub line here?', 'elementor' ),
+				description: '',
 			},
 			ajaxParams: {
 				success( successData ) {

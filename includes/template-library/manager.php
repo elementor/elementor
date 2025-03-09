@@ -295,7 +295,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		if ( 'move' === $args['save_action'] ) {
+		if ( 'move' === $args['save_context'] ) {
 
 			if ( 'cloud' === $args['source'] && 'cloud' === $args['from_source'] ) {
 				$source = $this->get_source( $args['from_source'] );
