@@ -295,7 +295,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		if ( ! empty( $args['save_context'] ) ) {
+		if ( $this->is_moving_template( $args ) ) {
 			$validate_args = $this->ensure_args( [ 'from_source', 'from_template_id' ], $args );
 
 			if ( is_wp_error( $validate_args ) ) {
