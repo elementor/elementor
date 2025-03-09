@@ -372,16 +372,21 @@ class Manager {
 	}
 
 	private function format_args_for_move_template_from_cloud_to_local( $args ) {
-		$document = Plugin::$instance->documents->get( $args['from_template_id'] );
+		$from_source = $this->get_source( $args['from_source'] );
 
-		if ( ! $document ) {
-			return new \WP_Error( 'template_error', 'Document not found.' );
+		if ( ! $from_source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$args['content'] = $document->get_elements_data();
+		$data = $from_source->get_item( $args['from_template_id'] );
 
-		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['from_template_id'] );
-		$args['page_settings'] = $page->get_data( 'settings' );
+		if ( is_wp_error( $data ) || empty( $data['content'] ) ) {
+			return $data;
+		}
+
+		$decoded_data = json_decode( $data['content'], true );
+		$args['content'] = $decoded_data['content'];
+		$args['page_settings'] = $decoded_data['page_settings'];
 
 		return $args;
 	}
