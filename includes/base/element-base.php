@@ -149,7 +149,7 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		foreach ( $this->get_global_scripts() as $script ) {
-			//wp_enqueue_script( $script );
+			wp_enqueue_script( $script );
 		}
 	}
 
