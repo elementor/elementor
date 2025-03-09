@@ -93,8 +93,14 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
-		formData.save_action = this.getOption( 'action' ) ?? 'save';
-		formData.from_source = elementor.templates.getFilter( 'source' );
+		const saveAction = this.getOption( 'action' ) ?? 'save';
+
+		formData.save_action = saveAction;
+
+		if ( 'move' === saveAction ) {
+			formData.from_source = elementor.templates.getFilter( 'source' );
+			formData.from_template_id = this.model.get( 'template_id' );
+		}
 
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 

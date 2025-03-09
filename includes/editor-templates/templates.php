@@ -234,10 +234,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<div class="elementor-template-library-template-more">
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
-				<div class="elementor-template-library-template-move">
-					<i class="eicon-pencil" aria-hidden="true"></i>
-					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
-				</div>
+				<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
+					<div class="elementor-template-library-template-move">
+						<i class="eicon-pencil" aria-hidden="true"></i>
+						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+					</div>
+				<# } #>
 			<?php endif; ?>
 			<div class="elementor-template-library-template-export">
 				<a href="{{ export_link }}">

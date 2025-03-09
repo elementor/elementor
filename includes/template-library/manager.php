@@ -295,11 +295,46 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$args['content'] = json_decode( $args['content'], true );
+		if ( 'move' === $args['save_action'] ) {
 
-		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
+			if ( 'local' === $args['from_source'] ) {
 
-		$args['page_settings'] = $page->get_data( 'settings' );
+				$document = Plugin::$instance->documents->get( $args['from_template_id'] );
+
+				if ( ! $document ) {
+					return new \WP_Error( 'template_error', 'Document not found.' );
+				}
+
+				$args['content'] = $document->get_elements_data();
+
+				$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['from_template_id'] );
+				$args['page_settings'] = $page->get_data( 'settings' );
+			}
+
+			if ( 'cloud' === $args['from_source'] ) {
+
+				$from_source = $this->get_source( $args['from_source'] );
+
+				if ( ! $from_source ) {
+					return new \WP_Error( 'template_error', 'Template source not found.' );
+				}
+
+				$data = $from_source->get_item( $args['from_template_id'] );
+
+				if ( is_wp_error( $data ) || empty( $data['content'] ) ) {
+					return $data;
+				}
+
+				$decoded_data = json_decode( $data['content'], true );
+				$args['content'] = $decoded_data['content'];
+				$args['page_settings'] = $decoded_data['page_settings'];
+			}
+		} else {
+			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
+			$args['page_settings'] = $page->get_data( 'settings' );
+
+			$args['content'] = json_decode( $args['content'], true );
+		}
 
 		$template_id = $source->save_item( $args );
 
