@@ -514,7 +514,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
 	}
 
-	public function test_move_template_from_cloud_to_cloud() {
+	public function test_move_template() {
 		// Arrange
 		$mock_content = [ 'content' => 'mock_content' ];
 
@@ -541,5 +541,51 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'from_source' => 'cloud',
 			'from_template_id' => 1,
 		] );
+	}
+
+	public function test_move_template_fails_without_from_source() {
+		// Arrange
+		$mock_content = [ 'content' => 'mock_content' ];
+
+		// Act
+		$result = $this->manager->save_template( [
+			'post_id' => 1,
+			'source' => 'cloud',
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => wp_json_encode( $mock_content ),
+			'parentId' => 2,
+			'save_context' => 'move',
+			'from_template_id' => 1,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_move_template_fails_without_from_template_id() {
+		// Arrange
+		$mock_content = [ 'content' => 'mock_content' ];
+
+		// Act
+		$result = $this->manager->save_template( [
+			'post_id' => 1,
+			'source' => 'cloud',
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => wp_json_encode( $mock_content ),
+			'parentId' => 2,
+			'save_context' => 'move',
+			'from_source' => 'cloud',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
 	}
 }
