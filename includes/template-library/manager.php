@@ -319,7 +319,21 @@ class Manager {
 			return $template_id;
 		}
 
+		if ( $this->is_moving_template( $args ) ) {
+			$this->delete_original_template( $args );
+		}
+
 		return $source->get_item( $template_id );
+	}
+
+	private function delete_original_template( $args ) {
+		$from_source = $this->get_source( $args['from_source'] );
+
+		if ( ! $from_source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		$from_source->delete_template( $args['from_template_id'] );
 	}
 
 	private function is_moving_to_same_source( $args, $source ) {
