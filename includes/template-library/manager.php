@@ -349,6 +349,8 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
+		$args['parentid'] = ! empty( $args['parentId'] ) ? (int) $args['parentId'] : null;
+
 		return $source->update_item( $args );
 	}
 
