@@ -513,4 +513,33 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
 	}
+
+	public function test_move_template_from_cloud_to_cloud() {
+		// Arrange
+		$mock_content = [ 'content' => 'mock_content' ];
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'update_resource' )
+			->with( [
+				'source' => 'cloud',
+				'id' => 1,
+				'parentId' => 2,
+			] );
+
+		// Act
+		$this->manager->save_template( [
+			'post_id' => 1,
+			'source' => 'cloud',
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => wp_json_encode( $mock_content ),
+			'parentId' => 2,
+			'save_context' => 'move',
+			'from_source' => 'cloud',
+			'from_template_id' => 1,
+		] );
+	}
 }

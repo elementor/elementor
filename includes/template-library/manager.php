@@ -349,9 +349,13 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		$args['parentid'] = ! empty( $args['parentId'] ) ? (int) $args['parentId'] : null;
+		$move_args = [
+			'id' => $args['from_template_id'],
+			'source' => $args['source'],
+			'parentId' => ! empty( $args['parentId'] ) ? (int) $args['parentId'] : null,
+		];
 
-		return $source->update_item( $args );
+		return $source->update_item( $move_args );
 	}
 
 	private function format_args_for_save_context( $args ) {
