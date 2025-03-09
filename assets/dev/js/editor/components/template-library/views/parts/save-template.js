@@ -48,8 +48,23 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			}
 
 			if ( 'cloud' === currentSource ) {
-				// this.ui.cloudInput.addClass( 'disabled' );
-				// Disable a folder
+				if ( Number.isInteger( this.model.get( 'parentId' ) ) ) {
+					elementor.templates.layout.showLoadingView();
+
+					elementor.templates.requestTemplateContent( currentSource, this.model.get( 'parentId' ), {
+						success: ( data ) => {
+							elementor.templates.layout.hideLoadingView();
+							this.handleFolderSelected( data?.id, data?.title );
+							this.$( '#cloud' ).prop( 'checked', true );
+						},
+						error: ( data ) => {
+							elementor.templates.showErrorDialog( data );
+						},
+						complete: () => {
+							elementor.templates.layout.hideLoadingView();
+						},
+					} );
+				}
 			}
 		}
 	},
@@ -122,6 +137,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onSelectedFolderTextClick() {
+		if ( ! this.folderCollectionView ) {
+			this.onEllipsisIconClick();
+			return;
+		}
+
 		if ( ! this.ui.foldersDropdown.is( ':visible' ) ) {
 			this.ui.foldersDropdown.show();
 		}
@@ -188,6 +208,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 					if ( this.shouldAddLoadMoreItem( response ) ) {
 						this.addLoadMoreItem();
 					}
+
+					this.highlightSelectedFolder( this.ui.hiddenInputSelectedFolder.val() );
 
 					resolve( response );
 				},

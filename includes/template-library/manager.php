@@ -297,6 +297,16 @@ class Manager {
 
 		if ( 'move' === $args['save_action'] ) {
 
+			if ( 'cloud' === $args['source'] && 'cloud' === $args['from_source'] ) {
+				$source = $this->get_source( $args['from_source'] );
+
+				if ( ! $source ) {
+					return new \WP_Error( 'template_error', 'Template source not found.' );
+				}
+
+				return $source->update_item( $args );
+			}
+
 			if ( 'local' === $args['from_source'] ) {
 
 				$document = Plugin::$instance->documents->get( $args['from_template_id'] );
