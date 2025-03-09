@@ -109,6 +109,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				$.post( ajaxurl, {
 					action: 'elementor_set_admin_notice_viewed',
 					notice_id: $wrapperElm.data( 'notice_id' ),
+					_wpnonce: $wrapperElm.data( 'nonce' ),
 				} );
 
 				$wrapperElm.fadeTo( 100, 0, function() {
