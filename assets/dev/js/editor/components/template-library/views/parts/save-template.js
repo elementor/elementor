@@ -90,7 +90,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		let type;
 
 		if ( 'move' === this.getOption( 'context' ) ) {
-			type = this.model.get( 'type' );		
+			type = this.model.get( 'type' );
 		} else if ( this.model ) {
 			type = this.model.get( 'elType' );
 		} else if ( elementor.config.document.library && elementor.config.document.library.save_as_same_type ) {
