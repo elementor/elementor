@@ -49,6 +49,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		const fromSource = this.model.get( 'source' );
 
 		if ( 'local' === fromSource ) {
+			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 			this.ui.localInput.addClass( 'disabled' );
 		}
 
@@ -81,16 +82,15 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	getSaveType() {
 		let type;
-		if ( this.model ) {
+
+		if ( 'move' === this.getOption( 'context' ) ) {
+			type = this.model.get( 'type' );		
+		} else if ( this.model ) {
 			type = this.model.get( 'elType' );
 		} else if ( elementor.config.document.library && elementor.config.document.library.save_as_same_type ) {
 			type = elementor.config.document.type;
 		} else {
 			type = 'page';
-		}
-
-		if ( 'move' === this.getOption( 'context' ) ) {
-			type = this.model.get( 'type' );			
 		}
 
 		return type;
