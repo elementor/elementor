@@ -121,9 +121,7 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	public function get_global_scripts() {
-		return [
-			'elementor-frontend',
-		];
+		return [ 'elementor-frontend' ];
 	}
 
 	/**
