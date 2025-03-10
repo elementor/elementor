@@ -4,14 +4,16 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest;
 
 use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks\Post_Query_Data_Mock;
 use Elementor\Modules\WpRest\Classes\Post_Query;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Post_Query extends Post_Query_Data_Mock {
-	const URL = '/elementor/v1/post';
+class Test_Post_Query extends Elementor_Test_Base {
+	use Post_Query_Data_Mock;
 
+	const URL = '/elementor/v1/post';
 
 	public function setUp(): void {
 		parent::setUp();

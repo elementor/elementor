@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Post_Query_Data_Mock extends Elementor_Test_Base {
+trait Post_Query_Data_Mock {
 	protected array $post_types;
 	protected array $posts;
 
