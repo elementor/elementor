@@ -72,7 +72,7 @@ class Post_Query_Data_Mock extends Elementor_Test_Base {
 		return get_post( $post_id );
 	}
 
-	public function get_test_data_based_on_index() {
+	public function get_data_based_on_index() {
 		return [
 			[
 				'params' => Post_Query::build_query_params( [

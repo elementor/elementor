@@ -43,6 +43,7 @@ class Test_Post_Query extends Elementor_Test_Base {
 		$response = rest_get_server()->dispatch( $request );
 		$posts = $response->get_data()['data']['value'];
 
+		echo '1111222233334444';
 		var_dump( 'exp', $expected );
 		var_dump( 'posts', $posts );
 
@@ -55,6 +56,7 @@ class Test_Post_Query extends Elementor_Test_Base {
 	 */
 	public function data_provider_post_query_results() {
 		$this->data_mock = new Post_Query_Data_Mock();
+		echo '123321123';
 
 		return [
 			[
