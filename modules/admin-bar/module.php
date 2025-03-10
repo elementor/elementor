@@ -145,7 +145,7 @@ class Module extends BaseApp {
 
 			$admin_bar_config['elementor_edit_page']['children'][] = [
 				'id' => 'elementor_site_clear_cache',
-				'title' => esc_html__( 'Clear Cache', 'elementor' ),
+				'title' => esc_html__( 'Clear Files & Data', 'elementor' ),
 				'sub_title' => esc_html__( 'Site', 'elementor' ),
 				'href' => $clear_cache_url,
 			];
