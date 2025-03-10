@@ -10,15 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Post_Query_Data_Mock extends Elementor_Test_Base {
-	public array $post_types;
-	public array $posts;
+	protected array $post_types;
+	protected array $posts;
 
 	public function __construct() {
 		$this->register_post_types();
 		$this->create_posts();
 	}
 
-	public function clean() {
+	protected function clean() {
 		foreach ( $this->posts as $post ) {
 			wp_delete_post( $post->ID, true );
 		}
@@ -72,7 +72,7 @@ class Post_Query_Data_Mock extends Elementor_Test_Base {
 		return get_post( $post_id );
 	}
 
-	public function get_data_based_on_index() {
+	protected function get_data_testing_data() {
 		return [
 			[
 				'params' => Post_Query::build_query_params( [
