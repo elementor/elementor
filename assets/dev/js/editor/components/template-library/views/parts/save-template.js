@@ -240,6 +240,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	onFoldersListClick( event ) {
 		const { id, value } = event.target.dataset;
 
+		if ( ! id || ! value ) {
+			return;
+		}
+
 		if ( this.clickedOnLoadMore( id ) ) {
 			this.loadMoreFolders();
 
