@@ -351,6 +351,7 @@ class Manager {
 		}
 
 		$move_args = [
+			'title' => $args['title'],
 			'id' => $args['from_template_id'],
 			'source' => $args['source'],
 			'parentId' => ! empty( $args['parentId'] ) ? (int) $args['parentId'] : null,

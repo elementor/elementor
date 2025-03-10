@@ -292,7 +292,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			await this.fetchFolders();
 		} finally {
 			this.removeSpinner();
-			this.this.disableSelectedFolder();
+			this.disableSelectedFolder();
 		}
 	},
 
