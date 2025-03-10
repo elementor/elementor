@@ -1,5 +1,7 @@
 const TemplateLibraryTemplateView = require( 'elementor-templates/views/template/base' );
 
+import { SAVE_CONTEXTS } from './../../constants';
+
 const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-local',
 
@@ -77,7 +79,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	onMoveClick() {
 		$e.route( 'library/save-template', {
 			model: this.model,
-			context: 'move',
+			context: SAVE_CONTEXTS.MOVE,
 		} );
 	},
 
