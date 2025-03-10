@@ -56,36 +56,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 
 		if ( 'cloud' === fromSource ) {
-			this.handleCloudSourceInputState( fromSource );
+			this.$( '.source-selections-input #local' ).prop( 'checked', true );
 		}
-	},
-
-	handleCloudSourceInputState( fromSource ) {
-		if ( Number.isInteger( this.model.get( 'parentId' ) ) ) {
-			this.getAndSetSelectedFolder( fromSource );
-
-			return;
-		}
-
-		this.$( '.source-selections-input #local' ).prop( 'checked', true );
-	},
-
-	getAndSetSelectedFolder( fromSource ) {
-		elementor.templates.layout.showLoadingView();
-
-		elementor.templates.requestTemplateContent( fromSource, this.model.get( 'parentId' ), {
-			success: ( data ) => {
-				elementor.templates.layout.hideLoadingView();
-				this.handleFolderSelected( data?.id, data?.title );
-				this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
-			},
-			error: ( data ) => {
-				elementor.templates.showErrorDialog( data );
-			},
-			complete: () => {
-				elementor.templates.layout.hideLoadingView();
-			},
-		} );
 	},
 
 	getSaveType() {
@@ -198,6 +170,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				await this.fetchFolders();
 			} finally {
 				this.removeSpinner();
+				this.disableSelectedFolder();
 			}
 		}
 	},
@@ -239,8 +212,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 						this.addLoadMoreItem();
 					}
 
-					this.highlightSelectedFolder( this.ui.hiddenInputSelectedFolder.val() );
-
 					resolve( response );
 				},
 				error: ( error ) => {
@@ -252,6 +223,18 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 			elementorCommon.ajax.addRequest( 'get_folders', ajaxOptions );
 		} );
+	},
+
+	disableSelectedFolder() {
+		if ( ! SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
+			return;
+		}
+
+		if ( ! Number.isInteger( this.model.get( 'parentId' ) ) ) {
+			return;
+		}
+
+		this.$( `.folder-list li[data-id="${ this.model.get( 'parentId' ) }"]` ).addClass( 'disabled' );
 	},
 
 	onFoldersListClick( event ) {
@@ -305,6 +288,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			await this.fetchFolders();
 		} finally {
 			this.removeSpinner();
+			this.this.disableSelectedFolder();
 		}
 	},
 

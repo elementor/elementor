@@ -814,6 +814,11 @@ label.elementor-template-library-order-label {
 				&.selected {
 					background: var(--e-a-border-color);
 				}
+
+				&.disabled {
+					pointer-events: none;
+					opacity: 0.3;
+				}
 			}
 
 			.no-results {
