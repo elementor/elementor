@@ -19,7 +19,7 @@ class Dimensions_Prop_Type extends Object_Prop_Type {
 		return [
 			'top' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ->enum( [ 'auto' ] ) ),
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 			'right' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
