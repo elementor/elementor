@@ -72,7 +72,7 @@ trait Post_Query_Data_Mock {
 		return get_post( $post_id );
 	}
 
-	protected function get_data_testing_data() {
+	protected function data_provider_post_query() {
 		return [
 			[
 				'params' => array_merge( Post_Query::build_query_params( [

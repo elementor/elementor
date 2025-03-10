@@ -50,13 +50,4 @@ class Test_Post_Query extends Elementor_Test_Base {
 		// Assert
 		$this->assertEqualSets( $expected, $posts );
 	}
-
-	/**
-	 * Data Providers
-	 */
-	public function data_provider_post_query() {
-		echo '123321123';
-
-		return $this->get_data_testing_data();
-	}
 }
