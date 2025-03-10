@@ -29,9 +29,11 @@ class Test_Post_Query extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @dataProvider data_provider_post_query_results
+	 * @dataProvider data_provider_post_query
 	 */
 	public function test_post_query_results( $params, $expected ) {
+		echo '1111222233334444';
+		var_dump( $params );
 		// Arrange
 		$request = new \WP_REST_Request( 'GET', self::URL );
 		$request->set_param( Post_Query::EXCLUDED_POST_TYPE_KEYS, $params[ Post_Query::EXCLUDED_POST_TYPE_KEYS ] );
@@ -43,7 +45,6 @@ class Test_Post_Query extends Elementor_Test_Base {
 		$response = rest_get_server()->dispatch( $request );
 		$posts = $response->get_data()['data']['value'];
 
-		echo '1111222233334444';
 		var_dump( 'exp', $expected );
 		var_dump( 'posts', $posts );
 
@@ -54,7 +55,7 @@ class Test_Post_Query extends Elementor_Test_Base {
 	/**
 	 * Data Providers
 	 */
-	public function data_provider_post_query_results() {
+	public function data_provider_post_query() {
 		$this->data_mock = new Post_Query_Data_Mock();
 		echo '123321123';
 
