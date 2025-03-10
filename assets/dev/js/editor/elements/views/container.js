@@ -33,7 +33,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	filterSettings( newItem ) {
-		if ( 'container' !== newItem?.elType ) {
+		if ( 'container' !== newItem?.elType || 'div-block' !== newItem?.elType ) {
 			return;
 		}
 
@@ -339,7 +339,7 @@ const ContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		return [ 'widget', 'container' ].includes( elementView.model.get( 'elType' ) );
+		return [ 'widget', 'container', 'div-block' ].includes( elementView.model.get( 'elType' ) );
 	},
 
 	/**
