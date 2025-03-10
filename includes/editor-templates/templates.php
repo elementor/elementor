@@ -208,9 +208,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<#
 		const activeSource = elementor.templates.getFilter('source');
 		const view = elementor.templates.getFilter('view') ?? 'list';
-		console.log(activeSource);
-		console.log(view);
-		// todo: check it
 
 		if ( ( 'cloud' === activeSource && view === 'list' ) || 'local' === activeSource ) {
 	#>
@@ -411,7 +408,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
 					</span>
-				</div>				
+				</div>
 				<div class="source-selections-input">
 					<input type="checkbox" id="local" name="local" value="local">
 					<label for="local"> Site Library</label><br>
@@ -442,7 +439,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-template-library-blank-message"><?php echo esc_html__( 'Drag & drop your .JSON or .zip template file', 'elementor' ); ?></div>
 		<div id="elementor-template-library-import-form-or"><?php echo esc_html__( 'or', 'elementor' ); ?></div>
 		<label for="elementor-template-library-import-form-input" id="elementor-template-library-import-form-label" class="elementor-button e-primary"><?php echo esc_html__( 'Select File', 'elementor' ); ?></label>
-		<input id="elementor-template-library-import-form-input" type="file" name="file" accept=".json,.zip" required/>
+		<input id="elementor-template-library-import-form-input" type="file" name="file" accept=".json" multiple required/>
 		<div class="elementor-template-library-blank-footer">
 			<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
 			<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>

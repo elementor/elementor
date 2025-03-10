@@ -30,7 +30,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	onTitleChange() {
 		const title = _.escape( this.model.get( 'title' ) );
 
-		this.ui.titleCell.html( title );
+		this.ui.titleCell.text( title );
 	},
 
 	onDeleteButtonClick() {
