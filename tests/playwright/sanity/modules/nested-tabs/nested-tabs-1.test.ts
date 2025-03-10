@@ -3,18 +3,15 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
 import { testIconCount } from './tests/icons';
-import { clickTab, setup, setTabItemColor, selectDropdownContainer } from './helper';
-import ImageCarousel from '../../../pages/widgets/image-carousel';
+import { clickTabByPosition, setupExperiments, setTabItemColor, selectDropdownContainer, locators, templatePath } from './helper';
 import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	const templatePath = `../templates/nested-tabs-with-icons.json`;
-
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await setup( wpAdmin );
+		await setupExperiments( wpAdmin );
 
 		await page.close();
 	} );
@@ -29,21 +26,19 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	} );
 
 	test( 'General test', async ( { page, apiRequests }, testInfo ) => {
-		const imageCarousel = new ImageCarousel( page, testInfo );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
+		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
 		// Tests.
 		await testIconCount( editor );
 		await testTitlesWithHTML( page, editor );
-		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( editor, imageCarousel );
+		await testCarouselIsVisibleWhenUsingDirectionRightOrLeft( editor );
 		await testTabIsVisibleInAccordionView( page, editor );
 	} );
 
@@ -55,7 +50,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Add widgets.
 		await editor.addWidget( 'nested-tabs', container );
-		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
+		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
 		// Act.
 		await editor.openSection( 'section_tabs_responsive' );
@@ -78,7 +73,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		await editor.loadTemplate( templatePath );
-
 		await editor.closeNavigatorIfOpen();
 
 		// Act.
@@ -96,28 +90,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		expect.soft( activeTabUpdatedSpanCount ).toBe( 2 );
 	} );
 
-	test( 'Check if the icons are visible on mobile display on the front end', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const editor = await wpAdmin.openNewPage();
-
-		await editor.loadTemplate( templatePath );
-
-		// Act.
-		// Open front end.
-		await editor.publishAndViewPage();
-		await page.waitForSelector( '.elementor-widget-n-tabs' );
-
-		// Assert
-		await page.setViewportSize( viewportSize.mobile );
-		await expect.soft( page.locator( '.e-n-tab-title[aria-selected="true"] .e-n-tab-icon' ) ).toBeVisible();
-		await page.setViewportSize( viewportSize.desktop );
-	} );
-
 	test( 'Check Gap between tabs and Space between tabs controls in mobile view', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -129,11 +104,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.openSection( 'section_tabs_responsive' );
 		await editor.setSelectControlValue( 'breakpoint_selector', 'mobile' );
 		await editor.openPanelTab( 'style' );
-
-		// Change responsive view to mobile
 		await editor.changeResponsiveView( 'mobile' );
-
-		// Set controls values.
 		await editor.setSliderControlValue( 'tabs_title_spacing_mobile', '50' );
 		await editor.setSliderControlValue( 'tabs_title_space_between_mobile', '25' );
 
@@ -148,7 +119,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'Check that the hover affects non-active tab only', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -169,7 +139,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Verify that the activate tab doesn't take on the hover color.
 		await activeTab.hover();
 		await expect.soft( activeTab ).not.toHaveCSS( 'color', rgbColor );
-		// Verify that the non active tab does take on the hover color.
+		// Verify that the non-active tab does take on the hover color.
 		await notActiveTab.hover();
 		await expect.soft( notActiveTab ).toHaveCSS( 'color', rgbColor );
 	} );
@@ -179,7 +149,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		await editor.loadTemplate( templatePath );
-
 		await editor.closeNavigatorIfOpen();
 
 		// Act.
@@ -194,7 +163,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			nonActiveTabTitle = editor.getPreviewFrame().locator( '.e-n-tab-title[aria-selected="false"] > .e-n-tab-title-text' ).first();
 
 		// Assert.
-		// Check color differences in non active tab.
+		// Check color differences in non-active tab.
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"] > .e-n-tab-icon' );
 		await nonActiveTabIcon.hover();
 		await expect.soft( nonActiveTabIcon ).toHaveCSS( 'color', redColor );
@@ -204,7 +173,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 const testTitlesWithHTML = async ( page: Page, editor: EditorPage ) => {
 	// Act.
-	await clickTab( editor.getPreviewFrame(), 2 );
+	await clickTabByPosition( editor.getPreviewFrame(), 2 );
 	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child' ).click();
 	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child .elementor-control-tab_title input' ).fill( '<div style="display: flex; flex-direction: column;"><strong class="test-class">Tab 3</strong><div> has<br />html <br />elements</div></div>' );
 
@@ -217,19 +186,20 @@ const testTitlesWithHTML = async ( page: Page, editor: EditorPage ) => {
 	await page.locator( '.elementor-control-tabs .elementor-repeater-fields:last-child .elementor-control-tab_title input' ).fill( 'Tab #3' );
 };
 
-const testCarouselIsVisibleWhenUsingDirectionRightOrLeft = async ( editor: EditorPage, imageCarousel: ImageCarousel ) => {
+const testCarouselIsVisibleWhenUsingDirectionRightOrLeft = async ( editor: EditorPage ) => {
 	// Act.
 	const contentContainerId = await selectDropdownContainer( editor, '', 0 ),
 		activeContentContainer = editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
 		carouselId = await editor.addWidget( 'image-carousel', contentContainerId );
 
 	// Add images.
-	await imageCarousel.addImageGallery();
+	await editor.openPanelTab( 'content' );
+	await editor.addImagesToGalleryControl();
 	await editor.openSection( 'section_additional_options' );
 	await editor.setSwitcherControlValue( 'autoplay', false );
 
 	// Set direction right.
-	await clickTab( editor.getPreviewFrame(), 0 );
+	await clickTabByPosition( editor.getPreviewFrame(), 0 );
 	await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-right' );
 	await editor.togglePreviewMode();
 
@@ -242,7 +212,7 @@ const testCarouselIsVisibleWhenUsingDirectionRightOrLeft = async ( editor: Edito
 	// Restore original view.
 	await editor.togglePreviewMode();
 	await editor.removeElement( carouselId );
-	await clickTab( editor.getPreviewFrame(), 0 );
+	await clickTabByPosition( editor.getPreviewFrame(), 0 );
 	await editor.setChooseControlValue( 'tabs_direction', 'eicon-h-align-right' );
 };
 
@@ -265,16 +235,16 @@ const testTabIsVisibleInAccordionView = async ( page: Page, editor: EditorPage )
 
 	await expect.soft( tabContainer1 ).toHaveCSS( 'display', 'flex' );
 	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, 1 );
+	await clickTabByPosition( page, 1 );
 	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
 	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, 2 );
+	await clickTabByPosition( page, 2 );
 	await expect.soft( tabContainer3 ).toHaveClass( /e-active/ );
 	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, 1 );
+	await clickTabByPosition( page, 1 );
 	await expect.soft( tabContainer2 ).toHaveClass( /e-active/ );
 	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
-	await clickTab( page, 0 );
+	await clickTabByPosition( page, 0 );
 	await expect.soft( tabContainer1 ).toHaveClass( /e-active/ );
 	expect.soft( await editor.isItemInViewport( activeTabTitleSelector ) ).toBeTruthy();
 };

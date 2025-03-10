@@ -24,7 +24,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 		$experiments_manager->add_feature( $test_experiment );
 
 		// Act
-		$wp_cli->activate( array( $experiment ), array() );
+		$wp_cli->activate( [ $experiment ], [] );
 		$is_option_active = $experiments_manager->is_feature_active( $experiment );
 
 		// Assert
@@ -49,7 +49,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 		$experiments_manager->add_feature( $test_experiment2 );
 
 		// Act
-		$wp_cli->activate( array( $experiment1 . ',' . $experiment2 ), array() );
+		$wp_cli->activate( [ $experiment1 . ',' . $experiment2 ], [] );
 		$is_option1_active = $experiments_manager->is_feature_active( $experiment1 );
 		$is_option2_active = $experiments_manager->is_feature_active( $experiment2 );
 
@@ -70,7 +70,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 		$experiments_manager->add_feature( $test_experiment );
 
 		// Act
-		$wp_cli->deactivate( array( $experiment ), array() );
+		$wp_cli->deactivate( [ $experiment ], [] );
 		$is_option_active = $experiments_manager->is_feature_active( $experiment );
 
 		// Assert
@@ -95,7 +95,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 		$experiments_manager->add_feature( $test_experiment2 );
 
 		// Act
-		$wp_cli->deactivate( array( $experiment1 . ',' . $experiment2 ), array() );
+		$wp_cli->deactivate( [ $experiment1 . ',' . $experiment2 ], [] );
 		$is_option1_active = $experiments_manager->is_feature_active( $experiment1 );
 		$is_option2_active = $experiments_manager->is_feature_active( $experiment2 );
 

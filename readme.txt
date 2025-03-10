@@ -1,8 +1,8 @@
-=== Elementor Website Builder - More than Just a Page Builder ===
+=== Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.3
-Tested up to: 6.6
+Requires at least: 6.5
+Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 3.12.1
 License: GPLv3
@@ -14,31 +14,33 @@ The Elementor Website Builder has it all: drag and drop page builder, pixel perf
 
 https://www.youtube.com/watch?v=le72grP_Q6k
 
-= THE #1 NO CODE DRAG & DROP WORDPRESS WEBSITE BUILDER POWERING OVER 16M WEBSITES WORLDWIDE, NOW WITH AI. =
+= THE #1 NO CODE DRAG & DROP WORDPRESS WEBSITE BUILDER POWERING OVER 18M WEBSITES WORLDWIDE, NOW WITH AI. =
 
 Elementor, the leading WordPress website creation platform, empowers you to build professional, pixel-perfect websites seamlessly.
 
-Revolutionize the way you build websites with [Elementor AI](https://go.elementor.com/wp-repo-description-tab-elementor-ai/), a native AI integration. Create complete sections, original text, code, and images instantly, or reference another website to recreate its layout in your website.
-
 Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/).
 
-= 🌟 Create Professional Stunning Websites =
+Need fast and secure cloud hosting for your Elementor site? Try out **[Elementor Hosting](https://elemn.to/repo-hosting)** Powered by Google Cloud & Cloudflare. 4.9/5 TrustPilot score.
+
+### 🌟 Create Professional Stunning Websites
+
 - **[Intuitive Drag & Drop Builder](https://go.elementor.com/feature-page-editor/)**: Build any website with our no-code, drag-and-drop Editor. Achieve design precision with full control over layout and style.
 - **[Pixel-Perfect Design Tools](https://go.elementor.com/wp-repo-description-tab-pro-features-feature-page/)**: Upload SVGs, apply masks, gradients, box shadows, headline effects, shape dividers, and use built-in CSS controls for advanced customization.
-- **[Template Library](https://go.elementor.com/wp-repo-description-tab-library-full-website-kit/)**: Apply complete website kits for instant setups, or choose from a vast library of single pages, blocks, and pop-up templates. Create and export your own templates for reuse.
-- **[Advanced Widgets](https://go.elementor.com/feature-page-editor/)**: Access over 40 FREE widgets, including heading, image, text editor, video, button, gallery, carousels, and more. Customize and style widgets to fit your design needs perfectly.
-- **[AI Capabilities](https://go.elementor.com/wp-repo-description-tab-elementor-ai/)**: Revolutionize your design and content creation process with native AI integration. Instantly create sections, text, code, and images, or reference layouts from other websites.
+- **[Template Library](https://go.elementor.com/wp-repo-description-tab-library-full-website-kit/)**: Apply complete website kits for instant setups, or choose from a vast library of single pages, blocks, and pop-up templates.
+- **[Advanced Widgets](https://go.elementor.com/feature-page-editor/)**: Access over 40 FREE widgets, including heading, image, text editor, video, button, gallery, carousels, and more.
+- **[AI Capabilities](https://go.elementor.com/wp-repo-description-tab-elementor-ai/)**: Revolutionize your design and content creation process with native AI integration. Instantly create sections, text, code, and images.
 
 = 🗝️ Key features: =
+
 - **[Design System](https://go.elementor.com/feature-page-global-settings/)**: Use Elementor's Design System for consistent colors, typography, and design elements, ensuring a cohesive, professional look.
-- **[Responsive Design](https://go.elementor.com/feature-page-responsive-design/)**: Optimize your design for any device with custom breakpoints and device-specific adjustments. Ensure a seamless experience for desktop, tablet, and mobile users.
+- **[Responsive Design](https://go.elementor.com/feature-page-responsive-design/)**: Optimize your design for every device with custom breakpoints, ensuring a seamless desktop, tablet, and mobile experience.
 - **Mask Shapes**: Turning any element, like an image or video, into whatever shape you desire to create standout designs.
 - **CSS Transform**: Use CSS Transform to rotate, scale, and skew elements, adding dynamic styling to your site.
 - **Entrance Animations**: Add entrance animations to elements to create engaging and interactive user experiences.
 - **[Revision History](https://elementor.com/features/#SaveBackup)**: Elementor's Revision History feature enables users to track and revert to previous versions of their designs, providing peace of mind and flexibility during the creative process.
 - **[Developer-Friendly](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/)**: Equipped with extensive documentation, API, developer tools, and custom code areas, Elementor offers a conducive environment for developers to extend its capabilities and create custom solutions.
 - **Floating Buttons**: Enhance user interaction with customizable, floating action buttons that stay in view as users scroll.
-- **[Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/) [Pro]**: Elementor's robust Theme Builder empowers you to design every part of your website, including headers, footers, single post layouts, and archive pages, providing complete control over the site's appearance.
+- **[Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/) [Pro]**: Design every part of your site—headers, footers, posts, and archives—for complete control over appearance.
 - **[Popup Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-popup-builder/) [Pro]**: Create eye-catching popups with Elementor's Popup Builder, equipped with advanced targeting and triggering options to optimize user engagement and conversions.
 - **[Forms](https://go.elementor.com/wp-repo-description-tab-pro-features-professional-form-builder-and-submission-log/) [Pro]**: Design and integrate custom forms, utilizing advanced features and integrations to capture and manage submissions effectively.
 - **[WooCommerce Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-woocommerce-builder/) [Pro]**: Integrate Elementor with WooCommerce to design custom product pages, shop layouts, archives, carts, checkout pages, my account, and more, enhancing your store's visual appeal and functionality.
@@ -50,6 +52,7 @@ Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-descri
 - **Custom Fonts & Icons [Pro]**: Upload and use custom fonts and icons to match your brand's identity.
 
 = 😍 Elementor FREE widgets =
+
 Unlock the potential of Elementor with our comprehensive suite of free widgets and tools, designed to empower your website creation process and elevate your design capabilities:
 
 - **Heading**. Add eye-catching headlines.
@@ -85,7 +88,8 @@ Unlock the potential of Elementor with our comprehensive suite of free widgets a
 - **Text Path**. Attach your text to a path.
 - **And counting...**
 
-= 🚀 Enhance Your Website =
+### 🚀 Enhance Your Website
+
 **[High-Performing Websites](https://go.elementor.com/wp-repo-description-tab-performance-performance-page/)**: Website performance impacts your visitor’s experience and search result ranking. Elementor, in partnership with Google Chrome, continuously enhances performance without compromising design.
 
 **Key features include:**
@@ -98,9 +102,8 @@ Unlock the potential of Elementor with our comprehensive suite of free widgets a
 - **Optimized Front-End Asset Loading**: Efficient loading of assets like JavaScript and CSS to minimize render-blocking.
 - **Element Caching**: Cache frequently accessed design elements to reduce server response time and enhance overall performance.
 
-***Looking to boost sites performance?** Meet the [Image Optimizer plugin](https://go.elementor.com/wp-repo-description-tab-elementor-io/) by Elementor: an easy-to-use WordPress plugin that effortlessly reduces image sizes without sacrificing quality. Compatible with popular formats like JPEG, PNG, WebP, and GIF, it ensures a visually stunning, high-speed website – [download now](https://wordpress.org/plugins/image-optimization/)!*
+### 🔥 Elementor Pro Features
 
-= 🔥 Elementor Pro Features =
 Create unparalleled websites while saving time, money and resources with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-elementor-pro/)’s full website builder. Get access to 100+ professional widgets, features, and tools.
 
 **Pro Design Widgets:**
@@ -140,6 +143,7 @@ Create unparalleled websites while saving time, money and resources with [Elemen
 1. **Off Canvas**: Create off-canvas areas that slide in to show extra info or menus without cluttering the main layout.
 
 **Pro Theme Widgets:**
+
 Build and customize all the key parts of your website including headers, footers, 404 page, global archives, and more
 
 1. **Post Title**: Customize the title of individual blog posts or pages.
@@ -159,6 +163,7 @@ Build and customize all the key parts of your website including headers, footers
 1. **Loop Grid**: Design and customize grid layouts for blog post archives or product listings.
 
 **Pro WooCommerce Widgets:**
+
 Design and customize a complete online shopping experience across your entire website.
 
 1. **Product**: Display individual products with customizable layouts and styles.
@@ -187,9 +192,10 @@ Design and customize a complete online shopping experience across your entire we
 1. **Purchase Summary**: Display a summary of purchases during the checkout process.
 1. **WooCommerce Notices**: Customize the appearance and functionality of WooCommerce notices, such as order confirmation messages.
 
-Build professional websites with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-elementor-pro/)!
+Build professional websites with **[Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-elementor-pro/)**!
 
 = 🔒 SECURITY AND COMPLIANCE =
+
 Elementor places a paramount focus on security, evident through our acquisition of industry certifications such as ISO/IEC 27001, ISO/IEC 27017, ISO/IEC 27018, ISO/IEC 27701, and SOC 2 Type II. These certifications underscore our commitment to implementing robust security measures, and highlight our dedication to adhering to recognized industry standards.
 
 We encourage ethical security research through our [Bug Bounty program](https://go.elementor.com/wp-repo-description-tab-bug-crowd-bug-bounty-program/). We collaborate with leading bug bounty services to provide opportunities for researchers to report vulnerabilities in our services. Our bounty programs include a triage team available 24/7/365.
@@ -197,20 +203,47 @@ We encourage ethical security research through our [Bug Bounty program](https://
 For more information: [Trust Center](https://go.elementor.com/trust-center/).
 
 = ♿ Accessibility Best Practices =
+
 Elementor offers accessibility tools and enhancements to help you provide a better experience for all users. Including HTML 5 semantic, full keyboard navigation menu, ongoing improvement of features, widget, and more.
 
 = 🌐 Translated to 63+ languages, includes RTL support =
-Elementor supports multiple languages, typographies, and RTL, with editor translations in [over 63 languages](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate/). It’s also compatible with WPML, Polylang, TranslatePress, Weglot, and more. To contribute, add a new language via translate.wordpress.org. See our guide on [how to translate and localize the plugin](https://go.elementor.com/wp-repo-description-tab-help-center-translate/).
+
+Elementor supports multiple languages, typographies, and RTL, with editor translations in [over 63 languages](https://go.elementor.com/wp-repo-description-tab-wordpress-plugin-translate/).
+
+It’s also compatible with WPML, Polylang, TranslatePress, Weglot, and more. To contribute, add a new language via translate.wordpress.org. See our guide on [how to translate and localize the plugin](https://go.elementor.com/wp-repo-description-tab-help-center-translate/).
 
 = ⏩ Use of 3rd Party Services =
+
 To improve the user experience, Elementor may use the following 3rd party services if the required feature is enabled:
 
 - Google Fonts – are loaded to add additional fonts to your website. Google’s [TOS](https://policies.google.com/terms) and [Privacy Policy](https://policies.google.com/privacy)
 - Some Elementor features require loading assets from Elementor.com. These assets are not used for tracking unless explicitly mentioned, requiring your approval and manual opt-in. Learn more in our [TOS](https://go.elementor.com/wp-repo-description-tab-elementor-plugin-terms/) and [Privacy Policy](https://go.elementor.com/wp-repo-description-tab-elementor-plugin-privacy/).
 
+= 📧 Related Products by Elementor =
+
+**[Image Optimizer](https://go.elementor.com/wp-repo-description-tab-elementor-io/)**: Superior image compression for faster, high-quality website performance.
+
+**[Site Mailer](https://go.elementor.com/wp-repo-description-tab-elementor-sm/)**: Reliable email management without SMTP plugins, keeping your communications streamlined and efficient.
+
+= 📣 See What Our Users Have to Say =
+
+> “Elementor is hands down the best page builder out there” – ★★★★★ *[Graphicvision1](https://wordpress.org/support/topic/elementor-is-hands-down-the-best-page-builder-out-there/)*
+
+> “An incredibly user-friendly plugin” – ★★★★★ *[Hyeyoga](https://wordpress.org/support/topic/a-wonderful-experience/)*
+
+> “Easily, my most used WP plugin” – ★★★★★ *[Xander Venske](https://wordpress.org/support/topic/easily-my-most-used-wp-plugin/)*
+
+> “I upgraded to the Pro version and just love this plugin!” – ★★★★★ *[Andybarn56](https://wordpress.org/support/topic/love-elementor-17/)*
+
+> “Excellent product with great tech support” – ★★★★★ *[Martywilsonnj](https://wordpress.org/support/topic/excellent-product-with-great-tech-support/)*
+
+*[More testimonials](https://wordpress.org/support/plugin/elementor/reviews/?filter=5)*
+
 = 🌍 Join a Global Community =
+
 Join a global community that helps each other achieve their goals.
 
+- [Discord Community](https://elemn.to/discord) – Topic and language-specific channels, plus Ella, an amazing AI helper, ready to assist you.
 - [Facebook Community](https://go.elementor.com/wp-repo-description-tab-facebook-group/) - Over 150K+ members, offering support, advice, feedback, and tutorials.
 - [GitHub Community](https://go.elementor.com/wp-repo-description-tab-github-repo/) - Get information about releases, request features, or report a bug.
 - [Elementor Addons, Themes, and Kits](https://go.elementor.com/wp-repo-description-tab-addons-dozens-of-elementor-addons/) Themes and Kits – created specifically for Elementor.
@@ -223,7 +256,7 @@ Join a global community that helps each other achieve their goals.
 
 = Minimum Requirements =
 
-* WordPress 6.3 or greater
+* WordPress 6.5 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
@@ -315,40 +348,113 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.23.3 - 2024-07-25 =
+= 3.27.6 - 2025-02-18 =
 
-* Fix: UI fixes to improve user experience
+* Fix: Dimension Controls displayed `undefined` as a placeholder value when empty ([#30277](https://github.com/elementor/elementor/issues/30277))
 
-= 3.23.2 - 2024-07-23 =
-* Security Fix: Improved code security enforcement in link URL
-* Fix: Facebook Messenger username is not working on mobile devices in Floating Buttons ([#28103](https://github.com/elementor/elementor/issues/28103))
-* Fix: RTL issues with Floating Buttons templates
-* Fix: WordPress 6.6 does not support certain features
+= 3.27.5 - 2025-02-16 =
 
-= 3.23.1 - 2024-07-15 =
-* Fix: Slow loading of WordPress admin and Elementor screens due to AI health check
+* Security Fix: Improved code security enforcement in Dimensions control
 
-= 3.23.0 - 2024-07-15 =
+= 3.27.4 - 2025-02-13 =
 
-* New: Elevate engagement with Floating Buttons - Convert visitors into leads, making it easier than ever to start a conversation on any platform
-* New: Introducing Link In Bio - allowing you to create a digital business card and share it easily
-* New: Generate Featured Image with AI
-* New: Generate texts using AI within WordPress
-* Tweak: Added support for the `overscroll-behavior` CSS property to improve scrolling experience
-* Tweak: Activated Editor Top Bar feature by default for new sites
-* Tweak: Activated Element Caching feature for new sites and promoted to Beta status
-* Tweak: Promotes "Lazy Load Backgrounds Images" feature to Stable status
-* Tweak: Hide "Default Device View" from User Preferences when the Editor Top Bar is active
-* Tweak: Increased the height of the Globals popover to improve usability
-* Tweak: Improved Image style presets and added two additional ones in AI Images
-* Tweak: Added Excerpt generation option with AI in the editor
-* Fix: Performance issues causing lag and slowness while editing Nested Elements ([#24076](https://github.com/elementor/elementor/issues/24076))
-* Fix: Video autoplay issues in various scenarios (props [@JxxIT](https://github.com/JxxIT), [#24324](https://github.com/elementor/elementor/issues/24324), [#14437](https://github.com/elementor/elementor/issues/14437), [#7964](https://github.com/elementor/elementor/issues/7964))
-* Fix: Writing permissions issues related to WordPress root directory ([#21036](https://github.com/elementor/elementor/issues/21036), [#17255](https://github.com/elementor/elementor/issues/17255))
-* Fix: Restored deprecated Google fonts that were deprecated in the previous update ([#27701](https://github.com/elementor/elementor/issues/27701))
-* Fix: Vimeo link structure with privacy hash is not working correctly with dynamic link action using the lightbox
-* Fix: Validate prompt and canvas changes to allow generation in AI image edit generative fill
-* Fix: Elementor Core versions are being incorrectly added to Elementor Pro versions' history
-* Fix: AI Connect not launching when the user doesn't have prior connect data
+* Fix: Preventing page saving in Gutenberg with ACF and active Elementor post settings ([#30160](https://github.com/elementor/elementor/issues/30160))
+
+= 3.27.3 - 2025-02-03 =
+
+* Tweak: Added support for Early Access fonts when using Load Google Fonts Locally experiment
+* Tweak: Updated minified `flatpickr` CSS file to v4.6.13
+* Fix: Kits could not be imported due to compatibility issue
+
+= 3.27.2 - 2025-01-27 =
+
+* Fix: Kits could not be imported due to a compatibility issue
+
+= 3.27.1 - 2025-01-23 =
+
+* Fix: Document is not being saved due to compatibility conflicts with third-party plugins ([#29970](https://github.com/elementor/elementor/issues/29970), [#29991](https://github.com/elementor/elementor/issues/29991))
+
+= 3.27.0 - 2025-01-20 =
+
+* New: Introducing local loading of Google Fonts to improve performance and enhance user privacy ([#4544](https://github.com/elementor/elementor/issues/4544), [#19966](https://github.com/elementor/elementor/issues/19966), [#23932](https://github.com/elementor/elementor/issues/23932), [#21716](https://github.com/elementor/elementor/issues/21716))
+* New: Introducing advanced layout customization for Grid Container with column and row span controls for precise grid-based designs ([#25256](https://github.com/elementor/elementor/issues/25256))
+* New: Added the option to animate with AI motion effects for creating AI-generated animations
+* Tweak: Add 'YouTube shorts' support in the video widget ([#24220](https://github.com/elementor/elementor/issues/24220), [#20330](https://github.com/elementor/elementor/issues/20330))
+* Tweak: Added Safari browser compatibility for the 'Fit to Size' option in the Icon Widget ([#27679](https://github.com/elementor/elementor/issues/27679))
+* Tweak: Moved style loading to the head instead of the footer to improve CLS
+* Tweak: Enabled conditional loading of `Swiper.js` based on widget dependencies to reduce unnecessary assets and improve page load times
+* Tweak: Removed the `elementor-widget-container` div from the Spacer Widget as part of the Optimized Markup experiment to improve HTML structure
+* Tweak: Improved keyboard accessibility for the nested container presets area
+* Tweak: Added accessible and descriptive names to the icon link in the Icon Box widget
+* Tweak: Optimize background video CSS by merging `elementor-html5-video` and `elementor-background-video-hosted` into a single class
+* Tweak: Added the ability to disable the Element Cache
+* Tweak: Removed animation class when no animations are set in Icon and Icon Widget widgets
+* Tweak: Added support for captions on YouTube videos
+* Tweak: Removed the limitation restricting heading hover color styling to links only
+* Tweak: Removed `aspect-ratio` workaround for unsupported Safari browsers
+* Fix: Switching between images in a lightbox on responsive mode displayed a tall blue rectangle ([#12830](https://github.com/elementor/elementor/issues/12830))
+* Fix: Image editing tools with AI are not working when launched in WooCommerce
+* Fix: Improved HTML markup validity by removing the `type` attribute from `<script>` tags
+
+= 3.26.5 - 2025-01-15 =
+
+* Fix: Background Slideshow option not working for columns
+
+= 3.26.4 - 2025-01-07 =
+
+* Fix: Responsive Visibility "Hide On Mobile Portrait" option not working for hidden Sections and Containers on older sites
+* Fix: Editor fails to load when clicking on "Jumpstart your web-creation" links in Elementor Home after importing a kit
+
+= 3.26.3 - 2024-12-22 =
+
+* Tweak: Registered `swiper.js` script to ensure Swiper is properly declared and loaded ([#29612](https://github.com/elementor/elementor/issues/29612), [#29616](https://github.com/elementor/elementor/issues/29616))
+
+= 3.26.2 - 2024-12-19 =
+
+* Fix: Reverted Activated "Element Caching" feature for existing sites ([#27502](https://github.com/elementor/elementor/issues/29613))
+* Fix: Compatibility issue with third-party plugin with `data-settings` attribute missing when Optimized Markup experiment is activated
+
+= 3.26.1 - 2024-12-19
+
+* Tweak: Return a specific error to users when images provider is not working in Elementor AI
+* Fix: Typo in `Isolation Manager`
+
+= 3.26.0 - 2024-12-16 =
+
+* New: Unify product images seamlessly with AI
+* Tweak: Added "Space Between Dots" control to Image Carousel widget ([#2526](https://github.com/elementor/elementor/issues/2526), [#3277](https://github.com/elementor/elementor/issues/3277), [#21697](https://github.com/elementor/elementor/issues/21697))
+* Tweak: Added paragraph spacing control in Text Editor widget ([#25431](https://github.com/elementor/elementor/issues/25431), [#20144](https://github.com/elementor/elementor/issues/20144))
+* Tweak: Added hover and transition color controls for a link in Heading widget ([#12877](https://github.com/elementor/elementor/issues/12877))
+* Tweak: Updated Image Spacing control to support only PX units in Image Carousel widget ([#21827](https://github.com/elementor/elementor/issues/21827))
+* Tweak: Created CSS variables for Row and Column gaps value in Container ([#24178](https://github.com/elementor/elementor/issues/24178))
+* Tweak: Added the ability to set `aria-label` in Image Carousel widget ([#28355](https://github.com/elementor/elementor/issues/28355))
+* Tweak: Replaced the Wrap Align Content select control with a choose control in Container ([#22640](https://github.com/elementor/elementor/issues/22640))
+* Tweak: Implemented accessibility improvements for pagination bullets in Image Carousel widget ([#28674](https://github.com/elementor/elementor/issues/28674))
+* Tweak: Replaced hidden `elementor-screen-only` div with `aria-label` attributes
+* Tweak: Improved behavior and messaging for the warning displayed when navigating between documents
+* Tweak: Load Nested Elements styles only when they are in use
+* Tweak: Added support for rendering Gutenberg blocks on the frontend
+* Tweak: Removed `elementor-widget-container` div from Elementor widgets as part of the Optimized Markup experiment
+* Tweak: Updated CSS to utilize `inset` CSS logical property in various locations
+* Tweak: Updated minimum required Safari version to 15.5
+* Tweak: Transition Duration controls are displayed only when a background color is set
+* Tweak: Transition Duration controls are displayed only when a border is set
+* Tweak: Improved keyboard accessibility for the section and container presets area
+* Tweak: Merged "Upgrade Swiper Library" feature to version
+* Tweak: Merged "Optimized Control Loading" feature to version
+* Tweak: Activated "Element Caching" feature for existing sites
+* Tweak: Promoted "Nested Elements" feature to Stable status
+* Tweak: Removed `elementor/core/schemes`
+* Fix: Container Gap values not transferring correctly between sites when using Cross-site Copy and Paste ([#24111](https://github.com/elementor/elementor/issues/24111), [#28343](https://github.com/elementor/elementor/issues/28343))
+* Fix: Removed anchor scroll warnings from the console ([#29199](https://github.com/elementor/elementor/issues/29199), [#29350](https://github.com/elementor/elementor/issues/29350))
+* Fix: Frontend template rendering is broken with fatal error ([#29582](https://github.com/elementor/elementor/issues/29582), [#29579](https://github.com/elementor/elementor/issues/29579))
+* Fix: PHP error log appearing due to the Usage Data Sharing cron job (([#29153](https://github.com/elementor/elementor/issues/29153))
+* Fix: Deprecated `print_emoji_styles` warning in Theme Builder screen ([#27502](https://github.com/elementor/elementor/issues/27502))
+* Fix: Display Condition feature is available without an active Elementor license in Floating Elements
+* Fix: "Generate with Elementor AI" button is missing in the Media Library list mode
+* Fix: Resized file size exceeding the maximum limit does not display an error in AI Image
+* Fix: Images from URL incorrectly open the Generate modal
+* Fix: Dropdown area is not opening correctly in certain scenarios in Menu widget
+* Fix: Swiper styling missing from Lightbox inside Gallery widgets
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

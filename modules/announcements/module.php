@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Announcements;
 
 use Elementor\Core\Base\App as BaseApp;
+use Elementor\Modules\Ai\Preferences;
 use Elementor\Modules\Announcements\Classes\Announcement;
 use Elementor\Settings as ElementorSettings;
 
@@ -65,7 +66,7 @@ class Module extends BaseApp {
 
 		foreach ( $active_announcements as $announcement ) {
 			$additional_settings[] = $announcement->get_prepared_data();
-			//@TODO - replace with ajax request from the front after actually triggered
+			// @TODO - replace with ajax request from the front after actually triggered
 			$announcement->after_triggered();
 		}
 
@@ -92,36 +93,42 @@ class Module extends BaseApp {
 	 * @return array[]
 	 */
 	private function get_raw_announcements(): array {
-		$raw_announcements = [
-			[
-				'title' => __( 'Discover your new superpowers ', 'elementor' ),
-				'description' => __( '<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>', 'elementor' ),
-				'media' => [
-					'type' => 'image',
-					'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
-				],
-				'cta' => [
-					[
-						'label' => __( 'Let\'s do it', 'elementor' ),
-						'variant' => 'primary',
-						'target' => '_top',
-						'url' => '#welcome-ai',
-					],
-					[
-						'label' => __( 'Skip', 'elementor' ),
-						'variant' => 'secondary',
-					],
-				],
-				'triggers' => [
-					[
-						'action' => 'aiStared',
-					],
-				],
-			],
-		];
+		$raw_announcements = [];
+
+		if ( Preferences::is_ai_enabled( get_current_user_id() ) ) {
+			$raw_announcements[] = $this->get_ai_announcement_data();
+		}
 
 		// DO NOT USE THIS FILTER
 		return apply_filters( 'elementor/announcements/raw_announcements', $raw_announcements );
+	}
+
+	private function get_ai_announcement_data(): array {
+		return [
+			'title' => __( 'Discover your new superpowers ', 'elementor' ),
+			'description' => __( '<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>', 'elementor' ),
+			'media' => [
+				'type' => 'image',
+				'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
+			],
+			'cta' => [
+				[
+					'label' => __( 'Let\'s do it', 'elementor' ),
+					'variant' => 'primary',
+					'target' => '_top',
+					'url' => '#welcome-ai',
+				],
+				[
+					'label' => __( 'Skip', 'elementor' ),
+					'variant' => 'secondary',
+				],
+			],
+			'triggers' => [
+				[
+					'action' => 'aiStarted',
+				],
+			],
+		];
 	}
 
 	/**

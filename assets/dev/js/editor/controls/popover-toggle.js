@@ -125,7 +125,7 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		} );
 
 		$typographyPreview
-			.html( globalData.title )
+			.html( _.escape( globalData.title ) )
 			.css( this.buildPreviewItemCSS( globalData.value ) );
 
 		return $typographyPreview;

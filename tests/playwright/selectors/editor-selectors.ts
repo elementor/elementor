@@ -1,5 +1,4 @@
 const EditorSelectors = {
-	addNewPreset: ( preset: string ) => `[data-preset=${ preset }]`,
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
 	widget: '[data-element_type="widget"]',
 	container: '[data-element_type="container"]',
@@ -7,6 +6,9 @@ const EditorSelectors = {
 	plusIcon: '.eicon-plus-circle',
 	siteTitle: '.site-title >> nth=0',
 	pageTitle: '.entry-title >> nth=0',
+	pageHeader: '.page-header',
+	toast: '#elementor-toast',
+	addNewSection: '#elementor-add-new-section',
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
@@ -25,9 +27,19 @@ const EditorSelectors = {
 		},
 		siteSettings: {
 			wrapper: '#elementor-panel-page-menu',
+			saveButton: '//button[text()="Save Changes"]',
+			layout: {
+				breakpoints: {
+					removeBreakpointButton: '#elementor-kit-panel-content .select2-selection__choice__remove',
+				},
+			},
 		},
 		userPreferences: {
 			wrapper: '#elementor-panel-editorPreferences-settings-controls',
+		},
+		footerTools: {
+			wrapper: '#elementor-panel-footer',
+			updateButton: '#elementor-panel-saver-button-publish-label',
 		},
 		navigator: {
 			wrapper: '#elementor-navigator',
@@ -35,7 +47,12 @@ const EditorSelectors = {
 			closeButton: '#elementor-navigator__close',
 			footerButton: '#elementor-panel-footer-navigator i',
 		},
+		promotionCard: '[data-testid="e-promotion-card"]',
 	},
+	refreshPopup: {
+		reloadButton: '#elementor-save-kit-refresh-page .dialog-button.dialog-ok.dialog-alert-ok',
+	},
+
 	media: {
 		preview: '.elementor-control-media__preview',
 		imageByTitle: ( imageTitle: string ) => `[aria-label="${ imageTitle }"]`,
@@ -63,8 +80,8 @@ const EditorSelectors = {
 	},
 	image: {
 		widget: '[data-widget_type="image.default"]',
-		linkSelect: 'select[data-setting="link_to"]',
-		imageSizeSelect: 'select[data-setting="image_size"]',
+		linkSelect: 'link_to',
+		imageSizeSelect: 'image_size',
 		widthInp: 'input[data-setting="width"]',
 		heightInp: 'input[data-setting="height"]',
 		get image() {
@@ -83,7 +100,7 @@ const EditorSelectors = {
 	},
 	imageBox: {
 		widget: '[data-widget_type="image-box.default"]',
-		imageSizeSelect: 'select[data-setting="thumbnail_size"]',
+		imageSizeSelect: 'thumbnail_size',
 		get link() {
 			return `${ this.widget } a`;
 		},
@@ -91,12 +108,14 @@ const EditorSelectors = {
 			return `${ this.widget } img`;
 		},
 	},
+	galleryControl: {
+		addGalleryBtn: 'button.elementor-control-gallery-add',
+	},
 	imageCarousel: {
 		widget: '[data-widget_type="image-carousel.default"]',
 		get link() {
 			return `${ this.widget } a`;
 		},
-		addGalleryBtn: 'button.elementor-control-gallery-add',
 		navigationSelect: '.elementor-control-navigation select',
 		autoplaySelect: 'input[data-setting="autoplay"]',
 		autoplaySpeedLabel: 'Autoplay Speed',
@@ -120,30 +139,15 @@ const EditorSelectors = {
 	},
 	video: {
 		widget: '[data-widget_type="video.default"]',
-		youtube: { linkInp: '[data-setting="youtube_url"]' },
-		vimeo: { linkInp: '[data-setting="vimeo_url"]' },
-		dailymotion: { linkInp: '[data-setting="dailymotion_url"]' },
-		autoplayInp: 'input[data-setting="autoplay"]',
-		muteInp: 'input[data-setting="mute"]',
-		loopInp: 'input[data-setting="loop"]',
-		playerControlInp: 'input[data-setting="controls"]',
-		modestbrandingInp: 'input[data-setting="modestbranding"]',
-		privacyInp: 'input[data-setting="yt_privacy"]',
-		switch: '.elementor-switch-handle',
-		suggestedVideoSelect: '[data-setting="rel"]',
-		playOnMobileInp: 'input[data-setting="play_on_mobile"]',
-		lazyLoadInp: 'input[data-setting="lazy_load"]',
-		videoSourceSelect: '[data-setting="video_type"]',
-		showImageOverlay: '[data-setting="show_image_overlay"]',
 		get image() {
 			return `${ this.widget } .elementor-custom-embed-image-overlay`;
 		},
-		imageSizeSelect: '[data-setting="image_overlay_size"]',
 		lightBoxControlInp: '[data-setting="lightbox"]',
 		lightBoxSetting: 'div[data-elementor-open-lightbox="yes"]',
 		lightBoxDialog: '.elementor-lightbox',
 		iframe: 'iframe[class*="elementor-video"]',
 		playIcon: '[aria-label="Play"]',
+		videoWrapper: '.elementor-video-wrapper',
 	},
 	socialIcons: {
 		widget: '[data-widget_type="social-icons.default"]',
@@ -161,7 +165,6 @@ const EditorSelectors = {
 	googleMaps: {
 		iframe: 'iframe[src*="https://maps.google.com/maps"]',
 		showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
-		location: '[data-setting="address"]',
 	},
 	soundCloud: {
 		iframe: 'iframe[src*="https://w.soundcloud.com/"]',
@@ -195,10 +198,42 @@ const EditorSelectors = {
 			editButton: 'button[aria-label="Edit result"]',
 		},
 	},
+	floatingElements: {
+		floatingButtons: {
+			controls: {
+				advanced: {
+					sections: [
+						'.elementor-control-advanced_layout_section',
+						'.elementor-control-advanced_responsive_section',
+						'.elementor-control-advanced_custom_controls_section',
+						'.elementor-control-section_custom_css_pro',
+						'.elementor-control-section_custom_attributes_pro',
+					],
+				},
+			},
+		},
+	},
 	contextMenu: {
 		menu: '.elementor-context-menu',
 		saveAsGlobal: '.elementor-context-menu-list__item.elementor-context-menu-list__item-save.elementor-context-menu-list__item--disabled',
 		notes: '.elementor-context-menu-list__item.elementor-context-menu-list__item-open_notes.elementor-context-menu-list__item--disabled',
+	},
+	dialog: {
+		lightBox: '.elementor-lightbox',
+	},
+	onboarding: {
+		upgradeButton: '.e-onboarding__button-action',
+		skipButton: '.e-onboarding__button-skip',
+		screenTitle: '.e-onboarding__page-content-section-title',
+		removeLogoButton: '.e-onboarding__logo-remove',
+		progressBar: {
+			skippedItem: '.e-onboarding__progress-bar-item--skipped',
+			completedItem: '.e-onboarding__progress-bar-item--completed',
+		},
+		features: {
+			essential: '#essential',
+			advanced: '#advanced',
+		},
 	},
 };
 

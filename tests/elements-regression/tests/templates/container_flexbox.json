@@ -1,0 +1,70 @@
+{
+    "content": [
+        {
+            "id": "261e98fa",
+            "settings": {
+                "presetTitle": "Container",
+                "presetIcon": "eicon-container",
+                "boxed_width": {
+                    "unit": "px",
+                    "size": 716,
+                    "sizes": []
+                },
+                "min_height": {
+                    "unit": "px",
+                    "size": 194,
+                    "sizes": []
+                },
+                "flex_direction": "row",
+                "flex_justify_content": "space-between",
+                "flex_align_items": "center",
+                "flex_gap": {
+                    "column": "16",
+                    "row": "16",
+                    "isLinked": true,
+                    "unit": "px",
+                    "size": 16
+                },
+                "flex_wrap": "nowrap"
+            },
+            "elements": [
+                {
+                    "id": "71b815a8",
+                    "settings": {
+                        "title": "Add Your Heading Text Here"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                },
+                {
+                    "id": "4cd63de6",
+                    "settings": {
+                        "text": "Click here"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "button",
+                    "elType": "widget"
+                },
+                {
+                    "id": "135fc3db",
+                    "settings": {
+                        "title": "Add Your Heading Text Here"
+                    },
+                    "elements": [],
+                    "isInner": false,
+                    "widgetType": "heading",
+                    "elType": "widget"
+                }
+            ],
+            "isInner": false,
+            "elType": "container"
+        }
+    ],
+    "page_settings": [],
+    "version": "0.4",
+    "title": "container_flex",
+    "type": "page"
+}

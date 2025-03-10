@@ -20,7 +20,7 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultTabs() {
-		return {
+		const tabs = {
 			'templates/blocks': {
 				title: __( 'Blocks', 'elementor' ),
 				getFilter: () => ( {
@@ -38,15 +38,17 @@ export default class Component extends ComponentModalBase {
 			},
 			'templates/my-templates': {
 				title: __( 'My Templates', 'elementor' ),
-				filter: {
-					source: 'local',
-				},
+				getFilter: () => ( {
+					source: elementor.templates.getSourceSelection() ?? 'local',
+				} ),
 			},
 		};
+
+		return tabs;
 	}
 
 	defaultRoutes() {
-		return {
+		const defaultRoutes = {
 			import: () => {
 				this.manager.layout.showImportView();
 			},
@@ -66,6 +68,14 @@ export default class Component extends ComponentModalBase {
 				this.manager.layout.showConnectView( args );
 			},
 		};
+
+		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
+			defaultRoutes[ 'view-folder' ] = ( args ) => {
+				this.manager.layout.showFolderView( args );
+			};
+		}
+
+		return defaultRoutes;
 	}
 
 	defaultCommands() {
@@ -96,8 +106,8 @@ export default class Component extends ComponentModalBase {
 	}
 
 	renderTab( tab ) {
-		const currentTab = this.tabs[ tab ],
-			filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
+		const currentTab = this.tabs[ tab ];
+		const filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
 
 		this.manager.setScreen( filter );
 	}

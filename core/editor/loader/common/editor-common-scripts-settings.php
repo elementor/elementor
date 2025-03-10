@@ -115,7 +115,7 @@ class Editor_Common_Scripts_Settings {
 			$client_env['promotionWidgets'] = Api::get_promotion_widgets();
 		}
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'container_grid' ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 			$client_env['elementsPresets'] = Plugin::$instance->editor->get_elements_presets();
 		}
 

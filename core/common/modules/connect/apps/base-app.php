@@ -11,7 +11,7 @@ use Elementor\Tracker;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Base_App {
@@ -88,7 +88,7 @@ abstract class Base_App {
 			$url = $this->get_admin_url( 'disconnect' );
 			$attr = '';
 
-			echo sprintf(
+			printf(
 				'%s <a %s href="%s">%s</a>',
 				// PHPCS - the variable $title is already escaped above.
 				$title, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -171,7 +171,6 @@ abstract class Base_App {
 
 	public function action_reset() {
 		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( static::OPTION_CONNECT_SITE_KEY );
 			delete_option( 'elementor_remote_info_library' );
 		}
 
@@ -494,6 +493,10 @@ abstract class Base_App {
 			return new \WP_Error( 422, 'Wrong Server Response' );
 		}
 
+		if ( 201 === $response_code ) {
+			return $body;
+		}
+
 		if ( 200 !== $response_code ) {
 			// In case $as_array = true.
 			$body = (object) $body;
@@ -585,6 +588,16 @@ abstract class Base_App {
 				'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
 			] );
 
+		$utm_campaign = get_transient( 'elementor_core_campaign' );
+
+		if ( ! empty( $utm_campaign ) ) {
+			foreach ( [ 'source', 'medium', 'campaign' ] as $key ) {
+				if ( ! empty( $utm_campaign[ $key ] ) ) {
+					$query_params->offsetSet( 'utm_' . $key, $utm_campaign[ $key ] );
+				}
+			}
+		}
+
 		return add_query_arg( $query_params->all(), $this->get_remote_site_url() );
 	}
 
@@ -658,6 +671,10 @@ abstract class Base_App {
 			if ( opener && opener !== window ) {
 				opener.jQuery( 'body' ).trigger(
 					'elementor/connect/success/<?php echo esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here. ?>',
+					<?php echo wp_json_encode( $data ); ?>
+				);
+
+				opener.dispatchEvent( new CustomEvent( 'elementor/connect/success' ),
 					<?php echo wp_json_encode( $data ); ?>
 				);
 
@@ -770,7 +787,6 @@ abstract class Base_App {
 			// PHPCS - the values of $item['label'], $color, $status are plain strings.
 			printf( '%s: <strong style="color:%s">%s</strong><br>', $item['label'], $color, $status ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
-
 	}
 
 	private function get_generated_urls( $endpoint ) {

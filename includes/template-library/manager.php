@@ -3,6 +3,10 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Api;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\TemplateLibrary\Data\Controller;
 use Elementor\TemplateLibrary\Classes\Import_Images;
@@ -47,6 +51,16 @@ class Manager {
 	private $_import_images = null; // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
 
 	/**
+	 * @var Wordpress_Adapter_Interface
+	 */
+	protected $wordpress_adapter = null;
+
+	/**
+	 * @var Elementor_Adapter_Interface
+	 */
+	protected $elementor_adapter = null;
+
+	/**
 	 * Template library manager constructor.
 	 *
 	 * Initializing the template library manager by registering default template
@@ -88,6 +102,14 @@ class Manager {
 		}
 
 		return $this->_import_images;
+	}
+
+	public function set_wordpress_adapter( Wordpress_Adapter_Interface $wordpress_adapter ) {
+		$this->wordpress_adapter = $wordpress_adapter;
+	}
+
+	public function set_elementor_adapter( Elementor_Adapter_Interface $elementor_adapter ): void {
+		$this->elementor_adapter = $elementor_adapter;
 	}
 
 	/**
@@ -187,7 +209,7 @@ class Manager {
 	 * Retrieve all the templates from all the registered sources.
 	 *
 	 * @param array $filter_sources
-	 * @param bool $force_update
+	 * @param bool  $force_update
 	 * @return array
 	 */
 	public function get_templates( array $filter_sources = [], bool $force_update = false ): array {
@@ -254,6 +276,19 @@ class Manager {
 			return $validate_args;
 		}
 
+		$sources = (array) $args['source']; // BC
+		$results = [];
+
+		foreach ( $sources as $source ) {
+			$args_copy = $args;
+			$args_copy['source'] = $source;
+			$results[] = $this->save_template_item( $args_copy );
+		}
+
+		return 1 === count( $results ) ? $results[0] : $results;
+	}
+
+	private function save_template_item( array $args ) {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
@@ -312,6 +347,28 @@ class Manager {
 		return $source->get_item( $template_data['id'] );
 	}
 
+	public function rename_template( array $template_data ) {
+		$validate_args = $this->ensure_args( [ 'source', 'title', 'id' ], $template_data );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $template_data['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		$update = $source->update_item( $template_data );
+
+		if ( is_wp_error( $update ) ) {
+			return $update;
+		}
+
+		return $source->get_item( $template_data['id'] );
+	}
+
 	/**
 	 * Update templates.
 	 *
@@ -353,6 +410,13 @@ class Manager {
 
 		if ( is_wp_error( $validate_args ) ) {
 			return $validate_args;
+		}
+
+		if ( ! $this->is_allowed_to_read_template( $args ) ) {
+			return new \WP_Error(
+				'template_error',
+				esc_html__( 'You do not have permission to access this template.', 'elementor' )
+			);
 		}
 
 		if ( isset( $args['edit_mode'] ) ) {
@@ -423,21 +487,6 @@ class Manager {
 			return $validate_args;
 		}
 
-		$post_id = intval( $args['template_id'] );
-		$post_status = get_post_status( $post_id );
-
-		if ( get_post_type( $post_id ) !== Source_Local::CPT ) {
-			return new \WP_Error( 'template_error', esc_html__( 'Invalid template type or template does not exist.', 'elementor' ) );
-		}
-
-		if ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) ) {
-			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template.', 'elementor' ) );
-		}
-
-		if ( 'publish' !== $post_status && ! current_user_can( 'edit_post', $post_id ) ) {
-			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to export this template.', 'elementor' ) );
-		}
-
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
@@ -454,7 +503,7 @@ class Manager {
 	public function direct_import_template() {
 		/** @var Source_Local $source */
 		$source = $this->get_source( 'local' );
-		$file = Utils::get_super_global_value( $_FILES, 'file' );
+		$file = Utils::get_super_global_value( $_FILES, 'file' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		return $source->import_template( $file['name'], $file['tmp_name'] );
 	}
 
@@ -555,6 +604,88 @@ class Manager {
 		return $import_data['content'];
 	}
 
+	public function get_item_children( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'template_id' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		return $source->get_item_children( $args );
+	}
+
+	public function search_templates( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'search' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		return $source->search_templates( $args );
+	}
+
+	public function load_more_templates( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'offset' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		return $source->get_items( $args );
+	}
+
+	public function create_folder( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'title' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		return $source->save_folder( $args );
+	}
+
+	public function get_folders( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'offset' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Folder source not found.' );
+		}
+
+		$args['templateType'] = 'folder';
+
+		return $source->get_items( $args );
+	}
+
 	/**
 	 * Register default template sources.
 	 *
@@ -569,6 +700,10 @@ class Manager {
 			'local',
 			'remote',
 		];
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
+			$sources[] = 'cloud';
+		}
 
 		foreach ( $sources as $source_filename ) {
 			$class_name = ucwords( $source_filename );
@@ -588,10 +723,10 @@ class Manager {
 	 *
 	 * @param string $ajax_request Ajax request.
 	 *
-	 * @param array $data
+	 * @param array  $data
 	 *
 	 * @return mixed
-	 * @throws \Exception
+	 * @throws \Exception If the user has no permission or the post is not found.
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
@@ -611,10 +746,10 @@ class Manager {
 		$result = call_user_func( [ $this, $ajax_request ], $data );
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
-		return $result;
+		return $result; // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 	}
 
 	/**
@@ -637,6 +772,12 @@ class Manager {
 			'import_template',
 			'mark_template_as_favorite',
 			'import_from_json',
+			'get_item_children',
+			'search_templates',
+			'rename_template',
+			'load_more_templates',
+			'create_folder',
+			'get_folders',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
@@ -668,6 +809,10 @@ class Manager {
 			'export_template',
 			'direct_import_template',
 		];
+
+		if ( 'direct_import_template' === $action && ! User::is_current_user_can_upload_json() ) {
+			return;
+		}
 
 		if ( in_array( $action, $whitelist_methods, true ) ) {
 			$result = $this->$action( $_REQUEST ); // phpcs:ignore -- Nonce already verified.
@@ -730,6 +875,44 @@ class Manager {
 
 		if ( $not_specified_args ) {
 			return new \WP_Error( 'arguments_not_specified', sprintf( 'The required argument(s) "%s" not specified.', implode( ', ', $not_specified_args ) ) );
+		}
+
+		return true;
+	}
+
+	private function is_allowed_to_read_template( array $args ): bool {
+		if ( 'remote' === $args['source'] || 'cloud' === $args['source'] ) {
+			return true;
+		}
+
+		if ( null === $this->wordpress_adapter ) {
+			$this->set_wordpress_adapter( new WordPress_Adapter() );
+		}
+
+		if ( ! $this->should_check_permissions( $args ) ) {
+			return true;
+		}
+
+		$post_id = intval( $args['template_id'] );
+		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
+		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status );
+
+		$can_read_template = $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
+
+		return apply_filters( 'elementor/template-library/is_allowed_to_read_template', $can_read_template, $args );
+	}
+
+	private function should_check_permissions( array $args ): bool {
+		if ( null === $this->elementor_adapter ) {
+			$this->set_elementor_adapter( new Elementor_Adapter() );
+		}
+
+		// TODO: Remove $isWidgetTemplate in 3.28.0 as there is a Pro dependency
+		$check_permissions = isset( $args['check_permissions'] ) && false === $args['check_permissions'];
+		$is_widget_template = 'widget' === $this->elementor_adapter->get_template_type( $args['template_id'] );
+
+		if ( $check_permissions || $is_widget_template ) {
+			return false;
 		}
 
 		return true;

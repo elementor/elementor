@@ -29,8 +29,8 @@ class AddSectionView extends BaseAddSectionView {
 		this.destroy();
 	}
 
-	onContainerPresetSelected( e ) {
-		super.onContainerPresetSelected( e );
+	onFlexPresetSelected( e ) {
+		super.onFlexPresetSelected( e );
 
 		this.destroy();
 	}

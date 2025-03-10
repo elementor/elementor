@@ -17,12 +17,14 @@ use Elementor\Plugin;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class NestedTabs extends Widget_Nested_Base {
 
 	private $tab_item_settings = [];
+	private $optimized_markup = null;
+	private $widget_container_selector = '';
 
 	public function get_name() {
 		return 'nested-tabs';
@@ -38,6 +40,18 @@ class NestedTabs extends Widget_Nested_Base {
 
 	public function get_keywords() {
 		return [ 'nested', 'tabs', 'accordion', 'toggle' ];
+	}
+
+	public function get_style_depends(): array {
+		return [ 'widget-nested-tabs' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	public function show_in_panel(): bool {
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
 	}
 
 	protected function tab_content_container( int $index ) {
@@ -75,14 +89,19 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function register_controls() {
+		if ( null === $this->optimized_markup ) {
+			$this->optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_inner_wrapper();
+			$this->widget_container_selector = $this->optimized_markup ? '' : ' > .elementor-widget-container';
+		}
+
 		$start = is_rtl() ? 'right' : 'left';
 		$end = is_rtl() ? 'left' : 'right';
 		$start_logical = is_rtl() ? 'end' : 'start';
 		$end_logical = is_rtl() ? 'start' : 'end';
-		$heading_selector_non_touch_device = '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="false"] > .e-n-tabs-heading';
-		$heading_selector_touch_device = '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs[data-touch-mode="true"] > .e-n-tabs-heading';
-		$heading_selector = '{{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading';
-		$content_selector = ':where( {{WRAPPER}}.elementor-widget-n-tabs > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content ) > .e-con';
+		$heading_selector_non_touch_device = "{{WRAPPER}}.elementor-widget-n-tabs{$this->widget_container_selector} > .e-n-tabs[data-touch-mode='false'] > .e-n-tabs-heading";
+		$heading_selector_touch_device = "{{WRAPPER}}.elementor-widget-n-tabs{$this->widget_container_selector} > .e-n-tabs[data-touch-mode='true'] > .e-n-tabs-heading";
+		$heading_selector = "{{WRAPPER}}.elementor-widget-n-tabs{$this->widget_container_selector} > .e-n-tabs > .e-n-tabs-heading";
+		$content_selector = ":where( {{WRAPPER}}.elementor-widget-n-tabs{$this->widget_container_selector} > .e-n-tabs > .e-n-tabs-content ) > .e-con";
 
 		$this->start_controls_section( 'section_tabs', [
 			'label' => esc_html__( 'Tabs', 'elementor' ),
@@ -160,7 +179,7 @@ class NestedTabs extends Widget_Nested_Base {
 				],
 			],
 			'title_field' => '{{{ tab_title }}}',
-			'button_text' => 'Add Tab',
+			'button_text' => esc_html__( 'Add Tab', 'elementor' ),
 		] );
 
 		$styling_block_start = '--n-tabs-direction: column; --n-tabs-heading-direction: row; --n-tabs-heading-width: initial; --n-tabs-title-flex-basis: content; --n-tabs-title-flex-shrink: 0;';
@@ -481,7 +500,7 @@ class NestedTabs extends Widget_Nested_Base {
 				'name' => 'tabs_title_background_color',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => '{{WRAPPER}} > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected="false"]:not( :hover )',
+				'selector' => "{{WRAPPER}}{$this->widget_container_selector} > .e-n-tabs > .e-n-tabs-heading > .e-n-tab-title[aria-selected='false']:not( :hover )",
 				'fields_options' => [
 					'color' => [
 						'label' => esc_html__( 'Background Color', 'elementor' ),
@@ -513,7 +532,6 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tabs_title_box_shadow',
-				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"false\"]:not( :hover )",
 			]
@@ -572,7 +590,6 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tabs_title_box_shadow_hover',
-				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'separator' => 'after',
 				'selector' => "{$heading_selector_non_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 			]
@@ -657,7 +674,6 @@ class NestedTabs extends Widget_Nested_Base {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tabs_title_box_shadow_active',
-				'label' => esc_html__( 'Shadow', 'elementor' ),
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"true\"], {$heading_selector_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
 			]
 		);
@@ -738,11 +754,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_shadow',
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"false\"]:not( :hover )",
-				'fields_options' => [
-					'text_shadow_type' => [
-						'label' => esc_html__( 'Shadow', 'elementor' ),
-					],
-				],
 			]
 		);
 
@@ -751,11 +762,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_stroke',
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"false\"]:not( :hover ) :is( span, a, i )",
-				'fields_options' => [
-					'text_stroke_type' => [
-						'label' => esc_html__( 'Stroke', 'elementor' ),
-					],
-				],
 			]
 		);
 
@@ -784,12 +790,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_shadow_hover',
 				'selector' => "{$heading_selector_non_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
-				'fields_options' => [
-					'text_shadow_type' => [
-						'label' => esc_html__( 'Shadow', 'elementor' ),
-					],
-				],
-
 			]
 		);
 
@@ -798,11 +798,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_stroke_hover',
 				'selector' => "{$heading_selector_non_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover :is( span, a, i )",
-				'fields_options' => [
-					'text_stroke_type' => [
-						'label' => esc_html__( 'Stroke', 'elementor' ),
-					],
-				],
 			]
 		);
 
@@ -831,11 +826,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_shadow_active',
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"true\"], {$heading_selector_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover",
-				'fields_options' => [
-					'text_shadow_type' => [
-						'label' => esc_html__( 'Shadow', 'elementor' ),
-					],
-				],
 			]
 		);
 
@@ -844,11 +834,6 @@ class NestedTabs extends Widget_Nested_Base {
 			[
 				'name' => 'title_text_stroke_active',
 				'selector' => "{$heading_selector} > .e-n-tab-title[aria-selected=\"true\"] :is( span, a, i ), {$heading_selector_touch_device} > .e-n-tab-title[aria-selected=\"false\"]:hover :is( span, a, i )",
-				'fields_options' => [
-					'text_stroke_type' => [
-						'label' => esc_html__( 'Stroke', 'elementor' ),
-					],
-				],
 			]
 		);
 
@@ -1223,15 +1208,11 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function get_initial_config(): array {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
-			return array_merge( parent::get_initial_config(), [
-				'support_improved_repeaters' => true,
-				'target_container' => [ '.e-n-tabs-heading' ],
-				'node' => 'button',
-			] );
-		}
-
-		return parent::get_initial_config();
+		return array_merge( parent::get_initial_config(), [
+			'support_improved_repeaters' => true,
+			'target_container' => [ '.e-n-tabs-heading' ],
+			'node' => 'button',
+		] );
 	}
 
 	protected function content_template_single_repeater_item() {
@@ -1299,16 +1280,24 @@ class NestedTabs extends Widget_Nested_Base {
 			'class': [ 'e-n-tab-title-text' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
-			'data-binding-setting': [ 'tab_title' ],
+			'data-binding-setting': [ 'tab_title', 'element_id' ],
 			'data-binding-index': tabCount,
-			'data-binding-dynamic': 'true',
+			'data-binding-config': JSON.stringify({
+				'element_id': {
+					attr: 'id',
+					selector: 'button',
+					editType: 'attribute',
+				},
+				'tab_title': {
+					editType: 'text',
+				},
+			}),
 		}, null, true );
 
 		view.addRenderAttribute( 'tab-icon', {
 			'class': [ 'e-n-tab-icon' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
-			'data-binding-setting': [ 'tab_icon', 'tab_icon_active' ],
 			'data-binding-index': tabCount,
 		}, null, true );
 		#>

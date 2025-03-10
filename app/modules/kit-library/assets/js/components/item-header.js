@@ -26,7 +26,7 @@ import './item-header.scss';
  * @return {Object} result
  */
 function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, onClick } ) {
-	const [ type, { subscriptionPlan } ] = useKitCallToAction( model.accessTier );
+	const { type, subscriptionPlan } = useKitCallToAction( model.accessTier );
 	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, model.id, model.title );
 	const { settings } = useSettingsContext();
 

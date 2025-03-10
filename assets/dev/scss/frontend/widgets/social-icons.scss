@@ -9,7 +9,8 @@ $icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
 .elementor-widget-social-icons {
 /*TODO: This Grid-0 needs to be removed after PRO is Updated */
 	&.elementor-grid-0, &.elementor-grid-tablet-0, &.elementor-grid-mobile-0 {
-		.elementor-widget-container {
+		.elementor-widget-container,
+		&:not(:has(.elementor-widget-container)) {
 			line-height: 1;
 			font-size: 0;
 		}

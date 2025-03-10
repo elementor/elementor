@@ -18,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Elementor usage module handler class is responsible for registering and
  * managing Elementor usage data.
- *
  */
 class Module extends BaseModule {
 	const GENERAL_TAB = 'general';
@@ -85,7 +84,7 @@ class Module extends BaseModule {
 	 *
 	 * Retrieve formatted usage, for frontend.
 	 *
-	 * @param String format
+	 * @param String $format Optional. Default is 'html'.
 	 *
 	 * @return array
 	 */
@@ -275,7 +274,7 @@ class Module extends BaseModule {
 			delete_option( self::OPTION_NAME );
 		}
 
-		$post_types = get_post_types( array( 'public' => true ) );
+		$post_types = get_post_types( [ 'public' => true ] );
 
 		$query = new \WP_Query( [
 			'no_found_rows' => true,
@@ -362,7 +361,7 @@ class Module extends BaseModule {
 			if ( $value !== $control_config['default'] ) {
 				$this->increase_controls_count( $element_ref, $tab, $section, $control, 1 );
 
-				$changed_controls_count++;
+				++$changed_controls_count;
 			}
 		}
 
@@ -579,7 +578,7 @@ class Module extends BaseModule {
 				] );
 
 				return;
-			};
+			}
 		}
 	}
 

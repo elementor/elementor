@@ -9,8 +9,8 @@ class Performance {
 
 	private static $is_frontend = null;
 
-	public static function set_use_style_controls( bool $bool ): void {
-		static::$use_style_controls = $bool;
+	public static function set_use_style_controls( bool $is_use ): void {
+		static::$use_style_controls = $is_use;
 	}
 
 	public static function is_use_style_controls(): bool {
@@ -26,9 +26,5 @@ class Performance {
 		}
 
 		return static::$is_frontend;
-	}
-
-	public static function is_optimized_control_loading_feature_enabled(): bool {
-		return Plugin::$instance->experiments->is_feature_active( 'e_optimized_control_loading' );
 	}
 }

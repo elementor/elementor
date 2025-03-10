@@ -21,6 +21,7 @@ class Test_Controller extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->manager = Manager::instance();
+		$this->manager->kill_server();
 	}
 
 	public function tearDown(): void {

@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Modules\DynamicTags\Module as TagsModule;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -93,25 +94,21 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
-	 * Register video widget controls.
+	 * Get style dependencies.
 	 *
-	 * Adds different input fields to allow the user to change and customize the widget settings.
+	 * Retrieve the list of style dependencies the widget requires.
 	 *
-	 * @since 3.19.0
-	 * @access protected
+	 * @since 3.24.0
+	 * @access public
 	 *
-	 * @return array Widget promotion data.
+	 * @return array Widget style dependencies.
 	 */
-	protected function get_upsale_data() {
-		return [
-			'condition' => ! Utils::has_pro(),
-			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
-			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
-			'title' => esc_html__( "Grab your visitors' attention", 'elementor' ),
-			'description' => esc_html__( 'Get the Video Playlist widget and grow your toolbox with Elementor Pro.', 'elementor' ),
-			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-video-widget/' ),
-			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
-		];
+	public function get_style_depends(): array {
+		return [ 'widget-video' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**
@@ -414,9 +411,9 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'modestbranding',
+			'cc_load_policy',
 			[
-				'label' => esc_html__( 'Modest Branding', 'elementor' ),
+				'label' => esc_html__( 'Captions', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
 				'condition' => [
 					'video_type' => [ 'youtube' ],
@@ -607,6 +604,16 @@ class Widget_Video extends Widget_Base {
 				],
 			]
 		);
+
+		if ( ! Utils::has_pro() ) {
+			$this->add_control(
+				Utils::VIDEO_PLAYLIST . '_promotion',
+				[
+					'label' => esc_html__( 'Video Playlist widget', 'elementor' ),
+					'type' => Promotion_Control::TYPE,
+				]
+			);
+		}
 
 		$this->end_controls_section();
 
@@ -939,7 +946,7 @@ class Widget_Video extends Widget_Base {
 					'unit' => '%',
 				],
 				// 'selectors' => [
-				// 	'(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
+				// '(desktop+)#elementor-lightbox-{{ID}} .elementor-video-container' => 'width: {{SIZE}}{{UNIT}};',
 				// ],
 				'condition' => [
 					'lightbox_video_width!' => '',
@@ -960,7 +967,7 @@ class Widget_Video extends Widget_Base {
 					'top' => esc_html__( 'Top', 'elementor' ),
 				],
 				// 'selectors' => [
-				// 	'#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
+				// '#elementor-lightbox-{{ID}} .elementor-video-container' => '{{VALUE}}; transform: translateX(-50%);',
 				// ],
 				'selectors_dictionary' => [
 					'top' => 'top: 60px',
@@ -1071,7 +1078,7 @@ class Widget_Video extends Widget_Base {
 							'entranceAnimation' => $settings['lightbox_content_animation'],
 							'entranceAnimation_tablet' => $settings['lightbox_content_animation_tablet'],
 							'entranceAnimation_mobile' => $settings['lightbox_content_animation_mobile'],
-							'videoAspectRatio' => $settings['aspect_ratio'],
+							'videoAspectRatio' => $settings['aspect_ratio'] ?? '169',
 						],
 					];
 
@@ -1116,7 +1123,6 @@ class Widget_Video extends Widget_Base {
 							}
 							Icons_Manager::render_icon( $settings['play_icon'], [ 'aria-hidden' => 'true' ] );
 							?>
-							<span class="elementor-screen-only"><?php $this->print_a11y_text( $settings['image_overlay'] ); ?></span>
 						</div>
 					<?php endif; ?>
 				</div>
@@ -1176,7 +1182,7 @@ class Widget_Video extends Widget_Base {
 				'controls',
 				'mute',
 				'rel',
-				'modestbranding',
+				'cc_load_policy',
 			];
 
 			if ( $settings['loop'] ) {
@@ -1315,7 +1321,6 @@ class Widget_Video extends Widget_Base {
 	}
 
 	/**
-	 * @param bool $from_media
 	 *
 	 * @return string
 	 * @since 2.1.0

@@ -31,6 +31,7 @@ module.exports = {
 			'e-components': path.resolve( __dirname, '../packages/elementor-ui/components' ),
 			'e-utils': path.resolve( __dirname, '../packages/elementor-ui/components/utils' ),
 			'elementor-frontend-utils': path.resolve( __dirname, '../assets/dev/js/frontend/utils' ),
+			'elementor-modules': path.resolve( __dirname, '../modules' ),
 		},
 	},
 };

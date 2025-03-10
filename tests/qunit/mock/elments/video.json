@@ -284,11 +284,11 @@
 			},
 			"name": "showinfo"
 		},
-		"modestbranding": {
+		"cc_load_policy": {
 			"type": "switcher",
 			"tab": "content",
 			"section": "section_video",
-			"label": "Modest Branding",
+			"label": "Captions",
 			"condition": {
 				"video_type": [
 					"youtube"
@@ -296,7 +296,7 @@
 				"controls": "yes"
 			},
 			"frontend_available": true,
-			"name": "modestbranding",
+			"name": "cc_load_policy",
 			"default": ""
 		},
 		"logo": {

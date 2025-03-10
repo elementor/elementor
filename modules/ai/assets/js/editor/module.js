@@ -7,6 +7,7 @@ import { AiGetStartedConnect } from './ai-get-started-connect';
 import { getUiConfig } from './utils/editor-integration';
 import { getRemoteFrontendConfig } from './api';
 import { getUniqueId } from './context/requests-ids';
+import ApplyAiTitlesNavigatorBehavior from './integration/navigator/apply-ai-titles-to-navigator-behaviour';
 
 setTimeout( async () => {
 	if ( '1' !== window.ElementorAiConfig?.is_get_started ) {
@@ -42,8 +43,12 @@ setTimeout( async () => {
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
+		elementor.hooks.addFilter( 'navigator/layout/behaviors', this.registerNavigatorBehavior.bind( this ) );
+
 		window.addEventListener( 'hashchange', function( e ) {
 			if ( e.newURL.includes( 'welcome-ai' ) ) {
+				const source = e.newURL.includes( 'welcome-ai-whats-new' ) ? 'whats-new' : 'connect';
+				const returnTo = e.newURL.includes( 'return-to' ) ? e.newURL.split( 'return-to-' )[ 1 ] : '';
 				window.location.hash = '';
 
 				setTimeout( () => {
@@ -59,11 +64,21 @@ export default class Module extends elementorModules.editor.utils.Module {
 								onClose={ () => {
 									unmount();
 									rootElement.remove();
-								} } />
+								} }
+								newHashOnConnect={ returnTo }
+								source={ source }
+							/>
 						</LayoutAppWrapper>, rootElement );
 				}, 1000 );
 			}
 		} );
+	}
+
+	registerNavigatorBehavior( behaviors ) {
+		behaviors.ai = {
+			behaviorClass: ApplyAiTitlesNavigatorBehavior,
+		};
+		return behaviors;
 	}
 	registerControlBehavior( behaviors, view ) {
 		const aiOptions = view.options.model.get( 'ai' );
@@ -159,6 +174,44 @@ export default class Module extends elementorModules.editor.utils.Module {
 					defaultValue: view.options.model.get( 'default' ),
 				},
 				context: this.getContextData( view, controlType ),
+			};
+		}
+
+		if ( [ 'animation', 'hover_animation' ].includes( aiOptions.type ) ) {
+			const widgetType = view.options.container.model.get( 'widgetType' ) ?? 'container';
+
+			const getControlValue = () => Object.values( elementor?.widgetsCache?.[ widgetType ]?.controls ?? [] )
+				.filter( ( control ) => 'hover_animation' === aiOptions.type
+					? '_tab_positioning_hover' === control.inner_tab
+					: 'section_effects' === control.section )
+				.map( ( control ) => ( { [ control.name ]: view.options.container.settings.get( control.name ) } ) )
+				.reduce( ( acc, control ) => ( { ...acc, ...control } ), {} );
+
+			const setControlValue = ( settings ) => {
+				$e.run( 'document/elements/settings', {
+					container: view.container,
+					settings,
+					options: {
+						external: true,
+					},
+				} );
+			};
+
+			behaviors = {
+				ai: {
+					behaviorClass: AiBehavior,
+					type: aiOptions.type,
+					getControlValue,
+					buttonLabel: __( 'Animate with AI', 'elementor' ),
+					setControlValue,
+					isLabelBlock: true,
+					additionalOptions: {
+						animationType: aiOptions.type,
+						widgetType,
+						buttonBorder: true,
+					},
+					context: this.getContextData( view, controlType ),
+				},
 			};
 		}
 

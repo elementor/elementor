@@ -26,3 +26,10 @@ To run the tests, run the following command:
 This command runs the "default" test package.
 If you want to run a different package: `npm run test:playwright -- --grep="@nested-tabs"` or
 `TEST_SUITE=@nested-tabs npm run test:playwright`
+
+## Troubleshooting Guide
+Problem: When running any test locally when we update config to a local site from localhost8888.
+
+‘Error: Failed to fetch Nonce. Base URL: http://local-dev.local/, Storage State: /Users/user/Local Sites/local-dev/app/public/wp-content/plugins/elementor/test-results/.storageState-0.json’
+
+Solution: If you were authenticated on localhost and then changed the base URL, the existing storageState will be used inside parallelTest, which can cause issues. Deleting the test-results/.storageState-{id}.json file should help resolve this.

@@ -47,7 +47,7 @@ class Plugins_Manager {
 		}
 
 		foreach ( $plugins as $plugin ) {
-			if ( in_array( $plugin, $already_installed_plugins->keys(), true ) ) {
+			if ( in_array( $plugin, $already_installed_plugins->keys()->all(), true ) ) {
 				$succeeded[] = $plugin;
 				continue;
 			}
@@ -57,7 +57,7 @@ class Plugins_Manager {
 			$api = Plugin::$instance->wp->plugins_api('plugin_information',
 				[
 					'slug' => $slug,
-					'fields' => array(
+					'fields' => [
 						'short_description' => false,
 						'sections' => false,
 						'requires' => false,
@@ -70,7 +70,7 @@ class Plugins_Manager {
 						'compatibility' => false,
 						'homepage' => false,
 						'donate_link' => false,
-					),
+					],
 				]
 			);
 

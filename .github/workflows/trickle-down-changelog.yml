@@ -1,0 +1,18 @@
+name: Trickle Down Changelog
+
+on:
+  push:
+    paths:
+      - "changelog.txt"
+
+jobs:
+  trickle-down-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run action
+        uses: elementor/elementor-editor-github-actions/actions/trickle-down-changelog@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+

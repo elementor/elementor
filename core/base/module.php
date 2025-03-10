@@ -2,6 +2,7 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -76,7 +77,7 @@ abstract class Module extends Base_Object {
 	 * @access public
 	 * @static
 	 *
-	 * @return Module An instance of the class.
+	 * @return $this An instance of the class.
 	 */
 	public static function instance() {
 		$class_name = static::class_name();
@@ -223,7 +224,7 @@ abstract class Module extends Base_Object {
 		static $is_test_mode = null;
 
 		if ( null === $is_test_mode ) {
-			$is_test_mode = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS;
+			$is_test_mode = Utils::is_script_debug() || Utils::is_elementor_tests();
 		}
 
 		if ( ! $relative_url ) {
@@ -268,7 +269,7 @@ abstract class Module extends Base_Object {
 	 * @param string $file_name
 	 * @param string $relative_url         Optional. Default is null.
 	 * @param string $add_min_suffix       Optional. Default is 'default'.
-	 * @param bool   $add_direction_suffix Optional. Default is `false`
+	 * @param bool   $add_direction_suffix Optional. Default is `false`.
 	 *
 	 * @return string
 	 */
@@ -284,6 +285,25 @@ abstract class Module extends Base_Object {
 		}
 
 		return $this->get_assets_url( $file_name, 'css', $relative_url, $add_min_suffix );
+	}
+
+	/**
+	 * Get Frontend File URL
+	 *
+	 * Returns the URL for the CSS file to be loaded in the front end. If requested via the second parameter, a custom
+	 * file is generated based on a passed template file name. Otherwise, the URL for the default CSS file is returned.
+	 *
+	 * @since 3.24.0
+	 *
+	 * @access public
+	 *
+	 * @param string $file_name
+	 * @param boolean $has_custom_breakpoints
+	 *
+	 * @return string frontend file URL
+	 */
+	public function get_frontend_file_url( $file_name, $has_custom_breakpoints ) {
+		return Plugin::$instance->frontend->get_frontend_file_url( $file_name, $has_custom_breakpoints );
 	}
 
 	/**

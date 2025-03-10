@@ -60,6 +60,24 @@ class Tools extends Settings_Page {
 		wp_send_json_success();
 	}
 
+	public function admin_post_elementor_site_clear_cache() {
+		check_ajax_referer( 'elementor_site_clear_cache' );
+
+		if ( ! current_user_can( static::CAPABILITY ) ) {
+			wp_die( 'Permission denied' );
+		}
+
+		Plugin::$instance->files_manager->clear_cache();
+
+		$http_referer = wp_get_raw_referer();
+		if ( empty( $http_referer ) ) {
+			$http_referer = admin_url( 'admin.php?page=' . static::PAGE_ID );
+		}
+
+		wp_safe_redirect( $http_referer );
+		die;
+	}
+
 	/**
 	 * Recreate kit.
 	 *
@@ -194,6 +212,7 @@ class Tools extends Settings_Page {
 		}, Settings::ADMIN_MENU_PRIORITY + 20 );
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
+		add_action( 'admin_post_elementor_site_clear_cache', [ $this, 'admin_post_elementor_site_clear_cache' ] );
 		add_action( 'wp_ajax_elementor_replace_url', [ $this, 'ajax_elementor_replace_url' ] );
 		add_action( 'wp_ajax_elementor_recreate_kit', [ $this, 'ajax_elementor_recreate_kit' ] );
 
@@ -292,11 +311,11 @@ class Tools extends Settings_Page {
 					'tools' => [
 						'fields' => [
 							'clear_cache' => [
-								'label' => esc_html__( 'Regenerate CSS & Data', 'elementor' ),
+								'label' => esc_html__( 'Elementor Cache', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Regenerate Files & Data', 'elementor' ) ),
-									'desc' => esc_html__( 'Styles set in Elementor are saved in CSS files in the uploads folder and in the site’s database. Recreate those files and settings, according to the most recent settings.', 'elementor' ),
+									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Clear Files & Data', 'elementor' ) ),
+									'desc' => esc_html__( "Clear outdated CSS files and cached data in the database (rendered HTML, JS/CSS assets, etc.). We'll regenerate those files the next time someone visits any page on your website.", 'elementor' ),
 								],
 							],
 							'reset_api_data' => [
@@ -317,7 +336,7 @@ class Tools extends Settings_Page {
 					'replace_url' => [
 						'callback' => function() {
 							echo '<h2>' . esc_html__( 'Replace URL', 'elementor' ) . '</h2>';
-							echo sprintf(
+							printf(
 								'<p><strong>%1$s</strong> %2$s</p>',
 								esc_html__( 'Important:', 'elementor' ),
 								sprintf(

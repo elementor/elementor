@@ -18,10 +18,7 @@
 
 	&__background {
 		position: fixed;
-		top: 0;
-		bottom: 0;
-		@include start(0);
-		@include end(0);
+		inset: 0;
 		z-index: $eps-zindex-modal-backdrop;
 	}
 

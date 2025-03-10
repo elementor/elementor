@@ -109,6 +109,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				$.post( ajaxurl, {
 					action: 'elementor_set_admin_notice_viewed',
 					notice_id: $wrapperElm.data( 'notice_id' ),
+					_wpnonce: $wrapperElm.data( 'nonce' ),
 				} );
 
 				$wrapperElm.fadeTo( 100, 0, function() {
@@ -130,6 +131,15 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 					data: {
 						source: 'io-esetting-addons-install',
+					},
+				} );
+			} );
+
+			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="site_mailer_promotion"] a.e-button--cta' ).on( 'click', function() {
+				const isWcNotice = $( this ).closest( '.e-notice' ).hasClass( 'sm-notice-wc' );
+				elementorCommon.ajax.addRequest( 'elementor_core_site_mailer_campaign', {
+					data: {
+						source: isWcNotice ? 'sm-core-woo-install' : 'sm-core-form-install',
 					},
 				} );
 			} );

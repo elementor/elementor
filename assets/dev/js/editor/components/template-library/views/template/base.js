@@ -1,11 +1,10 @@
-var TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' ),
-	TemplateLibraryTemplateView;
+const TemplateLibraryInsertTemplateBehavior = require( 'elementor-templates/behaviors/insert-template' );
 const { isTierAtLeast, TIERS } = require( 'elementor-utils/tiers' );
 
-TemplateLibraryTemplateView = Marionette.ItemView.extend( {
+const TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 	className() {
-		var classes = 'elementor-template-library-template',
-			source = this.model.get( 'source' );
+		let classes = 'elementor-template-library-template';
+		const source = this.model.get( 'source' );
 
 		classes += ' elementor-template-library-template-' + source;
 
@@ -17,7 +16,7 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend( {
 			classes += ' elementor-template-library-pro-template';
 		}
 
-		return classes;
+		return elementor.hooks.applyFilters( 'elementor/editor/template-library/template/classes', classes, this );
 	},
 
 	attributes() {

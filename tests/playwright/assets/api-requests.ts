@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { type APIRequestContext } from '@playwright/test';
-import { Image, Post, WpPage } from '../types/types';
+
+import { Image, Post, WpPage, User } from '../types/types';
 
 export default class ApiRequests {
 	private readonly nonce: string;
@@ -81,13 +82,13 @@ export default class ApiRequests {
 		await Promise.all( requests );
 	}
 
-	public async cleanUpTestPages( request: APIRequestContext ) {
+	public async cleanUpTestPages( request: APIRequestContext, shouldDeleteAllPages = false ) {
 		const pagesPublished = await this.getPages( request ),
 			pagesDraft = await this.getPages( request, 'draft' ),
 			pages = [ ...pagesPublished, ...pagesDraft ];
 
 		const pageIds = pages
-			.filter( ( page: WpPage ) => page.title.rendered.includes( 'Playwright Test Page' ) )
+			.filter( ( page: WpPage ) => shouldDeleteAllPages || page.title.rendered.includes( 'Playwright Test Page' ) )
 			.map( ( page: WpPage ) => page.id );
 
 		for ( const id of pageIds ) {
@@ -154,6 +155,40 @@ export default class ApiRequests {
 		return await this.get( request, 'themes', status );
 	}
 
+	public async customGet( request: APIRequestContext, restRoute: string, multipart? ) {
+		const response = await request.get( `${ this.baseUrl }/${ restRoute }`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			multipart,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to get from ${ restRoute }: ${ response.status() }.
+				${ this.baseUrl }
+			` );
+		}
+
+		return await response.json();
+	}
+
+	public async customPut( request: APIRequestContext, restRoute: string, data ) {
+		const response = await request.put( `${ this.baseUrl }/${ restRoute }`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			data,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to put to ${ restRoute }: ${ response.status() }.
+				${ await response.text() }
+			` );
+		}
+	}
+
 	private async get( request: APIRequestContext, entity: string, status: string = 'publish' ) {
 		const response = await request.get( `${ this.baseUrl }/index.php`, {
 			params: {
@@ -183,9 +218,33 @@ export default class ApiRequests {
 		await this._delete( request, 'pages', pageId );
 	}
 
+	public async deleteUser( request: APIRequestContext, userId: string ) {
+		const response = await request.delete( `${ this.baseUrl }/index.php`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			params: {
+				rest_route: `/wp/v2/users/${ userId }`,
+				force: true,
+				reassign: '-1',
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+			Failed to delete a user with id: ${ userId }: ${ response.status() }.
+			${ await response.text() }
+		` );
+		}
+
+		return await response.json();
+	}
+
 	private async _delete( request: APIRequestContext, entity: string, id: string ) {
 		const response = await request.delete( `${ this.baseUrl }/index.php`, {
-			params: { rest_route: `/wp/v2/${ entity }/${ id }` },
+			params: {
+				rest_route: `/wp/v2/${ entity }/${ id }`,
+			},
 			headers: {
 				'X-WP-Nonce': this.nonce,
 			},
@@ -199,5 +258,37 @@ export default class ApiRequests {
 		}
 
 		return response;
+	}
+
+	public async createNewUser( request: APIRequestContext, user: User ) {
+		const username = `${ user.username }${ Math.floor( Math.random() * 1000 ) }`,
+			email = user.email || username + '@example.com',
+			password = user.password || 'password',
+			roles = user.roles;
+
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+
+			params: { rest_route: '/wp/v2/users' },
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			multipart: {
+				username,
+				email,
+				password,
+				roles: [ ...roles ],
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+			Failed to create new user: ${ response.status() }.
+			${ await response.text() }
+		` );
+		}
+
+		const { id } = await response.json();
+
+		return { id, username, password };
 	}
 }

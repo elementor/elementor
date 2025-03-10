@@ -2,6 +2,12 @@
 // Tabs
 //
 
+.elementor-tab-title {
+	a {
+		color: inherit;
+	}
+}
+
 .elementor-widget-tabs {
 
 	&.elementor-tabs-view-vertical {

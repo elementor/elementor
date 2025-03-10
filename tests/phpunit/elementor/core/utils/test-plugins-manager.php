@@ -261,7 +261,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 			'plugin_information',
 			[
 				'slug' => $slug,
-				'fields' => array(
+				'fields' => [
 					'short_description' => false,
 					'sections' => false,
 					'requires' => false,
@@ -274,7 +274,7 @@ class Test_Plugins_Manager extends Elementor_Test_Base {
 					'compatibility' => false,
 					'homepage' => false,
 					'donate_link' => false,
-				),
+				],
 			]
 		];
 	}

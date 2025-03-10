@@ -250,8 +250,11 @@ class Source_Local extends Source_Base {
 			'exclude_from_search' => true,
 			'capability_type' => 'post',
 			'hierarchical' => false,
-			'supports' => [ 'title', 'thumbnail', 'author', 'elementor' ],
+			'supports' => [ 'title', 'thumbnail', 'author', 'elementor', 'custom-fields' ],
+			'show_in_rest' => true,
 		];
+
+		$this->avoid_rest_access_for_non_admins();
 
 		/**
 		 * Register template library post type args.
@@ -587,7 +590,7 @@ class Source_Local extends Source_Base {
 		);
 	}
 
-	// For testing purposes only, in order to be able to mock the `WP_CLI` constant.
+	/** For testing purposes only, in order to be able to mock the `WP_CLI` constant. */
 	protected function is_wp_cli() {
 		return Utils::is_wp_cli();
 	}
@@ -615,9 +618,17 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', esc_html__( 'Template not exist.', 'elementor' ) );
 		}
 
-		$document->save( [
-			'elements' => $new_data['content'],
-		] );
+		$save_data = [];
+
+		if ( isset( $new_data['title'] ) ) {
+			$save_data['post_title'] = $new_data['title'];
+		}
+
+		if ( isset( $new_data['content'] ) ) {
+			$save_data['elements'] = $new_data['content'];
+		}
+
+		$document->save( $save_data );
 
 		/**
 		 * After template library update.
@@ -767,6 +778,12 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error WordPress error if template export failed.
 	 */
 	public function export_template( $template_id ) {
+		$permissions_error = $this->validate_template_export_permissions( $template_id );
+
+		if ( is_wp_error( $permissions_error ) ) {
+			return $permissions_error;
+		}
+
 		$file_data = $this->prepare_template_export( $template_id );
 
 		if ( is_wp_error( $file_data ) ) {
@@ -775,16 +792,27 @@ class Source_Local extends Source_Base {
 
 		$this->send_file_headers( $file_data['name'], strlen( $file_data['content'] ) );
 
-		// Clear buffering just in case.
-		@ob_end_clean();
-
-		flush();
-
-		// Output file contents.
-		// PHPCS - Export widget json
-		echo $file_data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$this->serve_file( $file_data['content'] );
 
 		die;
+	}
+
+	private function validate_template_export_permissions( $template_id ) {
+		$post_id = intval( $template_id );
+		if ( get_post_type( $post_id ) !== self::CPT ) {
+			return new \WP_Error( 'template_error', esc_html__( 'Invalid template type or template does not exist.', 'elementor' ) );
+		}
+
+		$post_status = get_post_status( $post_id );
+		if ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) ) {
+			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template.', 'elementor' ) );
+		}
+
+		if ( 'publish' !== $post_status && ! current_user_can( 'edit_post', $post_id ) ) {
+			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to export this template.', 'elementor' ) );
+		}
+
+		return null;
 	}
 
 	/**
@@ -854,11 +882,9 @@ class Source_Local extends Source_Base {
 			unlink( $file['path'] );
 		}
 
-		$this->send_file_headers( $zip_archive_filename, filesize( $zip_complete_path ) );
+		$this->send_file_headers( $zip_archive_filename, $this->filesize( $zip_complete_path ) );
 
-		@ob_end_flush();
-
-		@readfile( $zip_complete_path );
+		$this->serve_zip( $zip_complete_path );
 
 		unlink( $zip_complete_path );
 
@@ -873,8 +899,8 @@ class Source_Local extends Source_Base {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param string $name - The file name
-	 * @param string $path - The file path
+	 * @param string $name - The file name.
+	 * @param string $path - The file path.
 	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
 	public function import_template( $name, $path ) {
@@ -1011,7 +1037,7 @@ class Source_Local extends Source_Base {
 	/**
 	 * Is template library supports export.
 	 *
-	 * whether the template library supports export.
+	 * Whether the template library supports export.
 	 *
 	 * Template saved by the user locally on his site, support export by default
 	 * but this can be changed using a filter.
@@ -1272,7 +1298,7 @@ class Source_Local extends Source_Base {
 	 * @access public
 	 *
 	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
-	 * @param array $args
+	 * @param array  $args
 	 */
 	public function maybe_render_blank_state( $which, array $args = [] ) {
 		global $post_type;
@@ -1355,9 +1381,9 @@ class Source_Local extends Source_Base {
 	 * @since 3.1.0
 	 * @access public
 	 *
-	 * @param string $current_type_label The Entity title
-	 * @param string $href The URL for the 'Add New' button
-	 * @param string $description The sub title describing the Entity (Post Type, Taxonomy, etc.)
+	 * @param string $current_type_label The Entity title.
+	 * @param string $href The URL for the 'Add New' button.
+	 * @param string $description The sub title describing the Entity (Post Type, Taxonomy, etc.).
 	 */
 	public function print_blank_state_template( $current_type_label, $href, $description ) {
 		?>
@@ -1395,7 +1421,7 @@ class Source_Local extends Source_Base {
 		}
 
 		$all_items = get_taxonomy( self::TAXONOMY_CATEGORY_SLUG )->labels->all_items;
-		$dropdown_options = array(
+		$dropdown_options = [
 			'show_option_all' => $all_items,
 			'show_option_none' => $all_items,
 			'hide_empty' => 0,
@@ -1407,7 +1433,7 @@ class Source_Local extends Source_Base {
 			'name' => self::TAXONOMY_CATEGORY_SLUG,
 			//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is not required to retrieve the value.
 			'selected' => Utils::get_super_global_value( $_GET, self::TAXONOMY_CATEGORY_SLUG ) ?? '',
-		);
+		];
 
 		printf(
 			'<label class="screen-reader-text" for="%1$s">%2$s</label>',
@@ -1507,26 +1533,6 @@ class Source_Local extends Source_Base {
 			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
 			'content' => wp_json_encode( $export_data ),
 		];
-	}
-
-	/**
-	 * Send file headers.
-	 *
-	 * Set the file header when export template data to a file.
-	 *
-	 * @since 1.6.0
-	 * @access private
-	 *
-	 * @param string $file_name File name.
-	 * @param int    $file_size File size.
-	 */
-	private function send_file_headers( $file_name, $file_size ) {
-		header( 'Content-Type: application/octet-stream' );
-		header( 'Content-Disposition: attachment; filename=' . $file_name );
-		header( 'Expires: 0' );
-		header( 'Cache-Control: must-revalidate' );
-		header( 'Pragma: public' );
-		header( 'Content-Length: ' . $file_size );
 	}
 
 	/**
@@ -1649,6 +1655,8 @@ class Source_Local extends Source_Base {
 			add_action( 'manage_posts_extra_tablenav', [ $this, 'maybe_render_blank_state' ] );
 		}
 
+		add_action( 'elementor/document/after_save', [ $this, 'on_template_update' ], 10, 2 );
+
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 
 		// Remove elementor library templates from WP Sitemap
@@ -1658,6 +1666,15 @@ class Source_Local extends Source_Base {
 				return $this->remove_elementor_cpt_from_sitemap( $post_types );
 			}
 		);
+	}
+
+	public function on_template_update( \Elementor\Core\Base\Document $document, array $data ) {
+		if ( ! empty( $data['post_title'] ) ) {
+			wp_update_post( [
+				'ID' => $document->get_main_id(),
+				'post_title' => $data['post_title'],
+			] );
+		}
 	}
 
 	/**
@@ -1744,6 +1761,18 @@ class Source_Local extends Source_Base {
 		unset( $post_types[ self::CPT ] );
 
 		return $post_types;
+	}
+
+	private function avoid_rest_access_for_non_admins(): void {
+		add_filter( 'rest_pre_dispatch', function ( $value, \WP_REST_Server $server, \WP_REST_Request $request ) {
+			if ( strpos( $request->get_route(), self::CPT ) !== false ) {
+				if ( ! current_user_can( 'manage_options' ) ) {
+					return new \WP_Error( 'rest_forbidden', esc_html__( 'Sorry, you are not allowed to do that.', 'elementor' ), [ 'status' => rest_authorization_required_code() ] );
+				}
+			}
+
+			return $value;
+		}, 10, 3 );
 	}
 
 	/**

@@ -52,7 +52,7 @@ const sass = {
 			{
 				expand: true,
 				cwd: 'modules/styleguide/assets/scss',
-				src: '*.scss',
+				src: 'editor.scss',
 				dest: 'assets/css/modules/styleguide',
 				ext: '.css',
 			},
@@ -86,9 +86,16 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'assets/dev/scss/admin',
-				src: 'wc-product-editor.scss',
-				dest: 'assets/css',
+				cwd: 'assets/dev/scss/frontend/conditionals/with-breakpoints',
+				src: '*.scss',
+				dest: 'assets/css/conditionals',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend/conditionals/with-breakpoints',
+				src: '*.scss',
+				dest: 'assets/css/templates',
 				ext: '.css',
 			},
 		]

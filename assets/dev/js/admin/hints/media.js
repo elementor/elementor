@@ -24,9 +24,8 @@
 				<% } %>
 				</div>
 			</div>
-			<button class="elementor-control-notice-dismiss" data-event="<%= dismissible %>">
+			<button class="elementor-control-notice-dismiss" data-event="<%= dismissible %>" aria-label="<%= dismiss %>">
 				<i class="eicon eicon-close" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><%= dismiss %></span>
 			</button>
 		</div>
 	</div>`,

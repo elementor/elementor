@@ -105,10 +105,6 @@ module.exports = function( grunt ) {
 				src: [
 					'frontend.scss',
 					'frontend-rtl.scss',
-					'frontend-lite.scss',
-					'frontend-lite-rtl.scss',
-					'frontend-legacy.scss',
-					'frontend-legacy-rtl.scss',
 					...responsiveWidgetsList,
 				],
 				dest: 'assets/css/templates',

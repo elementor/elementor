@@ -19,24 +19,19 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'floating-buttons';
-	const FLOATING_BARS_EXPERIMENT_NAME = 'floating-bars';
-
-	const ROUTER_VERSION = '1.0.0';
+	const FLOATING_ELEMENTS_TYPE_META_KEY = '_elementor_floating_elements_type';
 	const ROUTER_OPTION_KEY = 'elementor_floating_buttons_router_version';
-
 	const META_CLICK_TRACKING = '_elementor_click_tracking';
-
 	const CLICK_TRACKING_NONCE = 'elementor-conversion-center-click';
-
 	const FLOATING_BUTTONS_DOCUMENT_TYPE = 'floating-buttons';
 	const CPT_FLOATING_BUTTONS = 'e-floating-buttons';
 	const ADMIN_PAGE_SLUG_CONTACT = 'edit.php?post_type=e-floating-buttons';
+	const WIDGET_HAS_CUSTOM_BREAKPOINTS = true;
 
 	private $has_contact_pages = null;
 	private $trashed_contact_pages;
@@ -45,20 +40,22 @@ class Module extends BaseModule {
 		return Plugin::$instance->experiments->is_feature_active( 'container' );
 	}
 
+	public static function get_floating_elements_types() {
+		return [
+			'floating-buttons' => esc_html__( 'Floating Buttons', 'elementor' ),
+			'floating-bars' => esc_html__( 'Floating Bars', 'elementor' ),
+		];
+	}
+
 	public function get_name(): string {
-		return static::EXPERIMENT_NAME;
+		return 'floating-buttons';
 	}
 
 	public function get_widgets(): array {
-		if ( Plugin::$instance->experiments->is_feature_active( static::FLOATING_BARS_EXPERIMENT_NAME ) ) {
-			return [
-				'Contact_Buttons',
-				'Floating_Bars_Var_1',
-			];
-		}
 
 		return [
 			'Contact_Buttons',
+			'Floating_Bars_Var_1',
 		];
 	}
 
@@ -70,25 +67,10 @@ class Module extends BaseModule {
 		} else {
 			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
 		};
-
 	}
 
 	public function __construct() {
 		parent::__construct();
-
-		Plugin::$instance->experiments->add_feature(
-			[
-				'name' => static::FLOATING_BARS_EXPERIMENT_NAME,
-				'title' => esc_html__( 'Floating Bars', 'elementor' ),
-				'description' => esc_html__( 'Boost visitor engagement with Floating Bars.', 'elementor' ),
-				Manager::TYPE_HIDDEN => true,
-				'release_status' => Manager::RELEASE_STATUS_DEV,
-				'default' => Manager::STATE_INACTIVE,
-				'dependencies' => [
-					'container',
-				],
-			]
-		);
 
 		if ( Floating_Buttons::is_creating_floating_buttons_page() || Floating_Buttons::is_editing_existing_floating_buttons_page() ) {
 			Controls_Manager::add_tab(
@@ -104,19 +86,24 @@ class Module extends BaseModule {
 
 		$this->register_contact_pages_cpt();
 
-		if ( ! ElementorUtils::has_pro() ) {
-			add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-				$documents_manager->register_document_type(
-					static::FLOATING_BUTTONS_DOCUMENT_TYPE,
-					Floating_Buttons::get_class_full_name()
-				);
-			} );
-		}
+		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
+			$documents_manager->register_document_type(
+				static::FLOATING_BUTTONS_DOCUMENT_TYPE,
+				Floating_Buttons::get_class_full_name()
+			);
+		} );
 
-		add_action( 'save_post_' . static::CPT_FLOATING_BUTTONS, [ $this, 'flush_permalinks_on_save' ] );
+		add_action( 'current_screen', function() {
+			$screen = get_current_screen();
+			if ( $screen && 'edit-e-floating-buttons' === $screen->id ) {
+				$this->flush_permalinks_on_elementor_version_change();
+			}
+		});
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
+
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_styles' ] );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Hover_Animation_Floating_Buttons() );
@@ -126,7 +113,14 @@ class Module extends BaseModule {
 			if ( Floating_Buttons::is_creating_floating_buttons_page() || Floating_Buttons::is_editing_existing_floating_buttons_page() ) {
 				return false;
 			}
+
 			return $common_controls;
+		} );
+
+		add_filter( 'elementor/settings/controls/checkbox_list_cpt/post_type_objects', function ( $post_types ) {
+			unset( $post_types[ static::CPT_FLOATING_BUTTONS ] );
+
+			return $post_types;
 		} );
 
 		add_filter(
@@ -185,6 +179,7 @@ class Module extends BaseModule {
 					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
 					check_admin_referer( 'remove_from_entire_site_' . $post );
 					delete_post_meta( $post, '_elementor_conditions' );
+
 					wp_redirect( $menu_args['menu_slug'] );
 					exit;
 				case 'set_as_entire_site':
@@ -196,8 +191,12 @@ class Module extends BaseModule {
 						'posts_per_page' => -1,
 						'post_status' => 'publish',
 						'fields' => 'ids',
-						'meta_key' => '_elementor_conditions',
-						'meta_compare' => 'EXISTS',
+						'no_found_rows' => true,
+						'update_post_term_cache' => false,
+						'update_post_meta_cache' => false,
+						'meta_query' => Floating_Buttons::get_meta_query_for_floating_buttons(
+							Floating_Buttons::get_floating_element_type( $post )
+						),
 					] );
 
 					foreach ( $posts as $post_id ) {
@@ -239,6 +238,13 @@ class Module extends BaseModule {
 		}, 100 );
 	}
 
+	public function is_preview_for_document( $post_id ) {
+		$preview_id = ElementorUtils::get_super_global_value( $_GET, 'preview_id' );
+		$preview = ElementorUtils::get_super_global_value( $_GET, 'preview' );
+
+		return 'true' === $preview && (int) $post_id === (int) $preview_id;
+	}
+
 	public function handle_click_tracking() {
 		$data = filter_input_array( INPUT_POST, [
 			'clicks' => [
@@ -263,10 +269,18 @@ class Module extends BaseModule {
 				$starting_clicks = (int) get_post_meta( $post_id, static::META_CLICK_TRACKING, true );
 				$posts_to_update[ $post_id ] = $starting_clicks ? $starting_clicks : 0;
 			}
-			$posts_to_update[ $post_id ] ++;
+			$posts_to_update[ $post_id ]++;
 		}
 
 		foreach ( $posts_to_update as $post_id => $clicks ) {
+			if ( self::CPT_FLOATING_BUTTONS !== get_post_type( $post_id ) ) {
+				continue;
+			}
+
+			if ( 'publish' !== get_post_status( $post_id ) ) {
+				continue;
+			}
+
 			update_post_meta( $post_id, static::META_CLICK_TRACKING, $clicks );
 		}
 
@@ -299,14 +313,10 @@ class Module extends BaseModule {
 		}
 	}
 
-	public function flush_permalinks_on_save() {
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			return;
-		}
-
-		if ( get_option( static::ROUTER_OPTION_KEY ) !== static::ROUTER_VERSION ) {
+	public function flush_permalinks_on_elementor_version_change() {
+		if ( get_option( static::ROUTER_OPTION_KEY ) !== ELEMENTOR_VERSION ) {
 			flush_rewrite_rules();
-			update_option( static::ROUTER_OPTION_KEY, static::ROUTER_VERSION );
+			update_option( static::ROUTER_OPTION_KEY, ELEMENTOR_VERSION );
 		}
 	}
 
@@ -360,9 +370,9 @@ class Module extends BaseModule {
 			<?php
 			/** @var Source_Local $source_local */
 			$source_local->print_blank_state_template(
-				esc_html__( 'Floating Button', 'elementor' ),
+				esc_html__( 'Floating Element', 'elementor' ),
 				$this->get_add_new_contact_page_url(),
-				nl2br( esc_html__( 'Add a Floating button so your users can easily get in touch!', 'elementor' ) )
+				nl2br( esc_html__( 'Add a Floating element so your users can easily get in touch!', 'elementor' ) )
 			);
 
 			if ( ! empty( $trashed_posts ) ) : ?>
@@ -413,8 +423,10 @@ class Module extends BaseModule {
 			'labels' => $labels,
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
-			'capability_type' => 'page',
+			'show_in_nav_menus' => false,
+			'capability_type' => 'post',
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
+			'show_in_rest' => true,
 			'supports' => [
 				'title',
 				'editor',
@@ -458,7 +470,6 @@ class Module extends BaseModule {
 		] );
 
 		return $posts_query->post_count > 0;
-
 	}
 
 	private function get_contact_menu_args(): array {
@@ -519,15 +530,62 @@ class Module extends BaseModule {
 
 		foreach ( $query->posts as $post_id ) {
 			$conditions = get_post_meta( $post_id, '_elementor_conditions', true );
+
 			if ( ! $conditions ) {
 				continue;
 			}
-			if ( in_array( 'include/general', $conditions ) ) {
+
+			if (
+				in_array( 'include/general', $conditions ) &&
+				! $this->is_preview_for_document( $post_id ) &&
+				get_the_ID() !== $post_id
+			) {
 				$document = Plugin::$instance->documents->get( $post_id );
 				$document->print_content();
-				break;
 			}
 		}
 	}
 
+	/**
+	 * Register styles.
+	 *
+	 * At build time, Elementor compiles `/modules/floating-buttons/assets/scss/widgets/*.scss`
+	 * to `/assets/css/widget-*.min.css`.
+	 *
+	 * @return void
+	 */
+	public function register_styles() {
+		$direction_suffix = is_rtl() ? '-rtl' : '';
+		$widget_styles = $this->get_widgets_style_list();
+		$has_custom_breakpoints = Plugin::$instance->breakpoints->has_custom_breakpoints();
+
+		foreach ( $widget_styles as $widget_style_name => $widget_has_responsive_style ) {
+			$should_load_responsive_css = $widget_has_responsive_style ? $has_custom_breakpoints : false;
+
+			wp_register_style(
+				$widget_style_name,
+				$this->get_frontend_file_url( "{$widget_style_name}{$direction_suffix}.min.css", $should_load_responsive_css ),
+				[ 'elementor-frontend', 'elementor-icons' ],
+				$should_load_responsive_css ? null : ELEMENTOR_VERSION
+			);
+		}
+	}
+
+	private function get_widgets_style_list(): array {
+		return [
+			'widget-floating-buttons' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS, // TODO: Remove in v3.27.0 [ED-15717]
+			'widget-floating-bars-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-floating-bars-var-2' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-floating-bars-var-3' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-base' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-1' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-3' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-4' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-6' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-7' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-8' => ! self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-9' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+			'widget-contact-buttons-var-10' => self::WIDGET_HAS_CUSTOM_BREAKPOINTS,
+		];
+	}
 }

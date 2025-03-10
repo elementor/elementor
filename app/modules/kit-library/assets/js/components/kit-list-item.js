@@ -5,14 +5,13 @@ import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-act
 import useAddKitPromotionUTM from '../hooks/use-add-kit-promotion-utm';
 import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button } from '@elementor/app-ui';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
-import { useSettingsContext } from '../context/settings-context';
+import { __ } from '@wordpress/i18n';
 import './kit-list-item.scss';
 
 const KitListItem = ( props ) => {
-	const [ type, { subscriptionPlan, badgeLabel } ] = useKitCallToAction( props.model.accessTier );
-	const { settings } = useSettingsContext();
+	const { type, subscriptionPlan } = useKitCallToAction( props.model.accessTier );
 	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, props.model.id, props.model.title );
-	const ctaText = settings.is_pro ? 'Upgrade' : `Go ${ subscriptionPlan?.label || '' }`;
+	const ctaText = __( 'Upgrade', 'elementor' );
 	const showPromotion = TYPE_PROMOTION === type;
 
 	const eventTracking = ( command ) => {
@@ -50,15 +49,12 @@ const KitListItem = ( props ) => {
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
 					{
-						showPromotion && (
-							<Badge
-								variant="sm"
-								className="e-kit-library__kit-item-subscription-plan-badge"
-								style={ { '--e-a-color-brand': subscriptionPlan.color } }
-							>
-								{ badgeLabel }
-							</Badge>
-						)
+						<Badge
+							variant="sm"
+							className={ `e-kit-library__kit-item-subscription-plan-badge ${ subscriptionPlan.isPromoted ? 'promoted' : '' }` }
+						>
+							{ subscriptionPlan.label }
+						</Badge>
 					}
 					<CardOverlay>
 						<Grid container direction="column" className="e-kit-library__kit-item-overlay">

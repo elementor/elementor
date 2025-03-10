@@ -1,0 +1,9 @@
+<p class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}">
+    {% if settings.link.href %}
+        <a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}">
+            {{ settings.paragraph }}
+        </a>
+    {% else %}
+        {{ settings.paragraph }}
+    {% endif %}
+</p>

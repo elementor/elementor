@@ -2,6 +2,12 @@
 // Accordion
 //
 
+.elementor-tab-title {
+	a {
+		color: inherit;
+	}
+}
+
 .elementor-accordion {
 	text-align: start;
 

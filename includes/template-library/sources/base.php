@@ -365,4 +365,53 @@ abstract class Source_Base {
 
 		return $element_data;
 	}
+
+	public function get_item_children( array $args = [] ) {
+		return [];
+	}
+
+	public function search_templates( array $args = [] ) {
+		return [];
+	}
+
+	public function save_folder( array $folder_data = [] ) {
+		return new \WP_Error( 'template_error', 'Folders cannot be created in this source' );
+	}
+
+	/**
+	 * Send file headers.
+	 *
+	 * Set the file header when export template data to a file.
+	 *
+	 * @since 1.6.0
+	 * @access protected
+	 *
+	 * @param string $file_name File name.
+	 * @param int    $file_size File size.
+	 */
+	protected function send_file_headers( $file_name, $file_size ) {
+		header( 'Content-Type: application/octet-stream' );
+		header( 'Content-Disposition: attachment; filename=' . $file_name );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate' );
+		header( 'Pragma: public' );
+		header( 'Content-Length: ' . $file_size );
+	}
+
+	protected function filesize( $path ) {
+		return filesize( $path );
+	}
+
+	protected function serve_zip( $zip_complete_path ): void {
+		@ob_end_flush();
+		@readfile( $zip_complete_path );
+	}
+
+	protected function serve_file( string $file_content ): void {
+		@ob_end_clean();
+		flush();
+
+		// PHPCS - Export widget json
+		echo $file_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
 }

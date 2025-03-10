@@ -1,16 +1,14 @@
 const arrowIconClass = 'eicon-chevron-' + ( elementorCommon.config.isRTL ? 'right' : 'left' );
 
 const buttonBack = `
-<button id="elementor-panel-header-kit-back" class="elementor-header-button">
+<button id="elementor-panel-header-kit-back" class="elementor-header-button" aria-label="{{ Back }}">
 	<i class="elementor-icon ${ arrowIconClass } tooltip-target" aria-hidden="true" data-tooltip="{{ Back }}"></i>
-	<span class="elementor-screen-only">{{ Back }}</span>
 </button>
 `;
 
 const buttonClose = `
-<button id="elementor-panel-header-kit-close" class="elementor-header-button">
+<button id="elementor-panel-header-kit-close" class="elementor-header-button" aria-label="{{ Close }}">
 	<i class="elementor-icon eicon-close tooltip-target" aria-hidden="true" data-tooltip="{{ Close }}"></i>
-	<span class="elementor-screen-only">{{ Close }}</span>
 </button>
 `;
 

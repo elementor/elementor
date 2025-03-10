@@ -16,6 +16,16 @@ class FloatingBarsLibraryModule extends elementorModules.editor.utils.Module {
 			advancedTab.style.display = 'none';
 		}
 	}
+
+	onElementorInit() {
+		const urlParams = new URLSearchParams( window.location.search );
+
+		if ( 'floating-bars' === urlParams.get( 'floating_element' ) ) {
+			elementor.hooks.addFilter( 'elementor/editor/template-library/template/classes', ( classes ) => {
+				return classes.replace( 'elementor-template-library-template-floating_button', 'elementor-template-library-template-floating_bar' );
+			}, 10, 1 );
+		}
+	}
 }
 
 export default FloatingBarsLibraryModule;

@@ -11,7 +11,7 @@ use Elementor\Utils;
 use Plugin_Upgrader;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -113,7 +113,7 @@ class Module extends BaseModule {
 				'downloadPro' => '?utm_source=onboarding-wizard&utm_campaign=my-account-subscriptions&utm_medium=wp-dash&utm_content=import-pro-plugin&utm_term=' . self::VERSION,
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
-			'experiment' => Plugin::$instance->experiments->is_feature_active( 'e_onboarding' ),
+			'experiment' => true,
 		] );
 	}
 
@@ -257,7 +257,7 @@ class Module extends BaseModule {
 	private function maybe_upload_logo_image() {
 		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' );
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
@@ -342,7 +342,7 @@ class Module extends BaseModule {
 
 		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? [];
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
@@ -412,9 +412,8 @@ class Module extends BaseModule {
 	 * Maybe Handle Ajax
 	 *
 	 * This method checks if there are any AJAX actions being
-	 * @since 3.6.0
 	 *
-	 * @return array|null
+	 * @since 3.6.0
 	 */
 	private function maybe_handle_ajax() {
 		$result = [];

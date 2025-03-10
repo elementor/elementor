@@ -29,7 +29,7 @@ class Images_Manager {
 	 * @access public
 	 */
 	public function get_images_details() {
-		if ( ! current_user_can( Editor::EDITING_CAPABILITY ) ) {
+		if ( ! current_user_can( 'publish_posts' ) ) {
 			wp_send_json_error( 'Permission denied' );
 		}
 
@@ -122,13 +122,12 @@ class Images_Manager {
 	 *
 	 * Used to retrieve an array of image attributes to be used for displaying an image in Elementor's Light Box module.
 	 *
-	 * @param int $id       The ID of the image
+	 * @param int $id       The ID of the image.
 	 *
 	 * @return array An array of image attributes including `title` and `description`.
 	 * @since 2.9.0
 	 * @access public
 	 */
-
 	public function get_lightbox_image_attributes( $id ) {
 		$attributes = [];
 		$kit = Plugin::$instance->kits_manager->get_active_kit();

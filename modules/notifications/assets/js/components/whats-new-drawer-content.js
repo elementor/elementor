@@ -3,7 +3,7 @@ import { getNotifications } from '../api';
 import { Box, LinearProgress } from '@elementor/ui';
 import { WhatsNewItem } from './whats-new-item';
 
-export const WhatsNewDrawerContent = () => {
+export const WhatsNewDrawerContent = ( { setIsOpen } ) => {
 	const { isPending, error, data: items } = useQuery( {
 		queryKey: [ 'e-notifications' ],
 		queryFn: getNotifications,
@@ -35,8 +35,13 @@ export const WhatsNewDrawerContent = () => {
 					item={ item }
 					itemIndex={ itemIndex }
 					itemsLength={ items.length }
+					setIsOpen={ setIsOpen }
 				/>
 			);
 		} )
 	);
+};
+
+WhatsNewDrawerContent.propTypes = {
+	setIsOpen: PropTypes.func.isRequired,
 };

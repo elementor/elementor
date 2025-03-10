@@ -43,6 +43,15 @@ class Compatibility {
 		}
 
 		add_action( 'elementor/maintenance_mode/mode_changed', [ __CLASS__, 'clear_3rd_party_cache' ] );
+
+		// Enable floating buttons and link in bio experiment for all.
+		// TODO Remove in version 3.26.
+		add_filter( 'pre_option_elementor_experiment-floating-buttons', [ __CLASS__, 'return_active' ] );
+		add_filter( 'pre_option_elementor_experiment-link-in-bio', [ __CLASS__, 'return_active' ] );
+	}
+
+	public static function return_active() {
+		return 'active';
 	}
 
 	public static function clear_3rd_party_cache() {
@@ -56,7 +65,7 @@ class Compatibility {
 			$GLOBALS['wp_fastest_cache']->deleteCache();
 		}
 
-		// WP Super Cache
+		// WP Super Cache.
 		if ( function_exists( 'wp_cache_clean_cache' ) ) {
 			global $file_prefix;
 			wp_cache_clean_cache( $file_prefix, true );
@@ -79,18 +88,18 @@ class Compatibility {
 			return;
 		}
 
-		// Introduced in WP 5.0
+		// Introduced in WP 5.0.
 		if ( function_exists( 'use_block_editor_for_post' ) && ! use_block_editor_for_post( $typenow ) ) {
 			return;
 		}
 
-		// Deprecated/removed in Gutenberg plugin v5.3.0
+		// Deprecated/removed in Gutenberg plugin v5.3.0.
 		if ( function_exists( 'gutenberg_can_edit_post_type' ) && ! gutenberg_can_edit_post_type( $typenow ) ) {
 			return;
 		}
 
 		?>
-		<script type="text/javascript">
+		<script>
 			document.addEventListener( 'DOMContentLoaded', function() {
 				var dropdown = document.querySelector( '#split-page-title-action .dropdown' );
 
@@ -205,7 +214,7 @@ class Compatibility {
 			} );
 		}
 
-		// Fix Preview URL for https://github.com/wpmudev/domain-mapping plugin
+		// Fix Preview URL for https://github.com/wpmudev/domain-mapping plugin.
 		if ( class_exists( 'domain_map' ) ) {
 			add_filter( 'elementor/document/urls/preview', function( $preview_url ) {
 				if ( wp_parse_url( $preview_url, PHP_URL_HOST ) !== Utils::get_super_global_value( $_SERVER, 'HTTP_HOST' ) ) {
@@ -219,7 +228,7 @@ class Compatibility {
 			} );
 		}
 
-		// Gutenberg
+		// Gutenberg.
 		if ( function_exists( 'gutenberg_init' ) ) {
 			add_action( 'admin_print_scripts-edit.php', [ __CLASS__, 'add_new_button_to_gutenberg' ], 11 );
 		}
@@ -241,7 +250,7 @@ class Compatibility {
 	 * @static
 	 */
 	private static function polylang_compatibility() {
-		// Copy elementor data while polylang creates a translation copy
+		// Copy elementor data while polylang creates a translation copy.
 		add_filter( 'pll_copy_post_metas', [ __CLASS__, 'save_polylang_meta' ], 10, 4 );
 	}
 

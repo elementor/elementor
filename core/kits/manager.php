@@ -7,7 +7,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Core\Files\CSS\Post_Preview as Post_Preview;
+use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
@@ -72,7 +72,7 @@ class Manager {
 	 * Returns an empty kit for situation when there is no kit in the site.
 	 *
 	 * @return Kit
-	 * @throws \Exception
+	 * @throws \Exception If the kit instance cannot be created.
 	 */
 	private function get_empty_kit_instance() {
 		return new Kit( [
@@ -277,7 +277,7 @@ class Manager {
 
 		if ( $is_kit_preview ) {
 			$kit = Plugin::$instance->documents->get_doc_or_auto_save( $active_kit->get_main_id(), get_current_user_id() );
-		} elseif ( 'publish' === $active_kit->get_main_post()->post_status ) {
+		} elseif ( null !== $active_kit->get_main_post() && 'publish' === $active_kit->get_main_post()->post_status ) {
 			$kit = $active_kit;
 		}
 
@@ -300,7 +300,7 @@ class Manager {
 	 *
 	 * Convert a given scheme value to its corresponding default global value
 	 *
-	 * @param string $type 'color'/'typography'
+	 * @param string $type 'color'/'typography'.
 	 * @param $value
 	 * @return mixed
 	 */
@@ -335,7 +335,7 @@ class Manager {
 	 */
 	public function convert_scheme_to_global( $scheme ) {
 		if ( isset( $scheme['type'] ) && isset( $scheme['value'] ) ) {
-			//_deprecated_argument( $args['scheme'], '3.0.0', 'Schemes are now deprecated - use $args[\'global\'] instead.' );
+			// _deprecated_argument( $args['scheme'], '3.0.0', 'Schemes are now deprecated - use $args[\'global\'] instead.' );
 			return $this->map_scheme_to_global( $scheme['type'], $scheme['value'] );
 		}
 
@@ -374,8 +374,8 @@ class Manager {
 	/**
 	 * Send a confirm message before move a kit to trash, or if delete permanently not for trash.
 	 *
-	 * @param       $post_id
-	 * @param false $is_permanently_delete
+	 * @param $post_id
+	 * @param bool    $is_permanently_delete
 	 */
 	private function before_delete_kit( $post_id, $is_permanently_delete = false ) {
 		if ( $this->should_skip_trash_kit_confirmation ) {

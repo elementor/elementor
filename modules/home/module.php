@@ -4,6 +4,7 @@ namespace Elementor\Modules\Home;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Settings;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -22,8 +23,6 @@ class Module extends BaseApp {
 
 	public function __construct() {
 		parent::__construct();
-
-		$this->register_layout_experiment();
 
 		if ( ! $this->is_experiment_active() ) {
 			return;
@@ -85,18 +84,30 @@ class Module extends BaseApp {
 		return $edit_link;
 	}
 
-	private function register_layout_experiment(): void {
-		Plugin::$instance->experiments->add_feature( [
+	public static function get_experimental_data(): array {
+		return [
 			'name' => static::PAGE_ID,
 			'title' => esc_html__( 'Elementor Home Screen', 'elementor' ),
 			'description' => esc_html__( 'Default Elementor menu page.', 'elementor' ),
 			'hidden' => true,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
 			'default' => Experiments_Manager::STATE_ACTIVE,
-		] );
+		];
 	}
 
 	private function get_app_js_config(): array {
-		return API::get_home_screen_items();
+		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
+		$api = new API( $editor_assets_api );
+
+		return $api->get_home_screen_items();
+	}
+
+	private function get_api_config(): array {
+		return [
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/home-screen/v1/home-screen.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_home_screen_data',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'home-screen',
+		];
 	}
 
 	public static function get_elementor_settings_page_id(): string {

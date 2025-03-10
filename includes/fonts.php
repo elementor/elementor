@@ -1861,13 +1861,13 @@ class Fonts {
 		} );
 	}
 
-	public static function is_google_fonts_enabled() : bool {
+	public static function is_google_fonts_enabled(): bool {
 		if ( null === static::$is_google_fonts_enabled ) {
 			$default_value = '1';
 
 			// TODO: For future use, using for new installs.
-			//$is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
-			//$default_value = $is_new_site ? '0' : '1';
+			// $is_new_site = Upgrade_Manager::install_compare( '3.10.0', '>=' );
+			// $default_value = $is_new_site ? '0' : '1';.
 
 			$option = get_option( 'elementor_google_font', $default_value );
 

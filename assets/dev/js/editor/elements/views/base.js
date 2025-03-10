@@ -322,13 +322,10 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		jQuery.each( editButtons, ( toolName, tool ) => {
-			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title } ),
-				$icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } ),
-				$a11y = jQuery( '<span>', { class: 'elementor-screen-only' } );
+			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title, 'aria-label': tool.title } );
+			const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
 
-			$a11y.text( tool.title );
-
-			$item.append( $icon, $a11y );
+			$item.append( $icon );
 
 			$overlayList.append( $item );
 		} );
@@ -657,11 +654,11 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( changedSettings, dataBinding, changedControl ) {
+	isAtomicDynamic( changedSettings, dataBinding, changedControl, bindingDynamicCssId ) {
 		return '__dynamic__' in changedSettings &&
 			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
-			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
+			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
+			this.isCssIdControl( changedControl, bindingDynamicCssId ) );
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
@@ -760,24 +757,23 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = async ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset,
-				changedControl = this.getChangedDynamicControlKey( settings );
-			let change = settings.changed[ bindingSetting ];
+			const { bindingSetting, bindingConfig } = dataBinding.dataset;
+			// BindingSetting is kept for backward compatibility, should be removed once two versions from ED-17823 has been merged
+			// And use only the bindingConfig which contains all the needed information
+			const bindingSettings = bindingSetting.split( ' ' ); // Multiple binding settings can appear
+			const config = JSON.parse( bindingConfig );
+			let isChangeHandled = false;
 
-			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl ) ) {
-				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
+			for await ( const currentChange of this.bindingChangesGenerator( settings, bindingSettings, config ) ) {
+				const { key, value } = currentChange;
 
-				if ( dynamicValue ) {
-					change = dynamicValue;
+				if ( 'string' === typeof value ) {
+					this.renderDataBoundChange( value, dataBinding.el, config[ key ] );
+					isChangeHandled = true;
 				}
 			}
 
-			if ( change !== undefined ) {
-				dataBinding.el.innerHTML = change;
-				return true;
-			}
-
-			return false;
+			return isChangeHandled;
 		};
 
 		for ( const dataBinding of dataBindings ) {
@@ -811,6 +807,44 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return changed;
+	},
+
+	async *bindingChangesGenerator( settings, bindingSettings, config ) {
+		for ( const [ key, value ] of Object.entries( settings.changed ) ) {
+			if ( '__dynamic__' !== key && ! this.isHandledAsDatabinding( key, bindingSettings, config ) ) {
+				continue;
+			}
+
+			if ( '__dynamic__' !== key ) {
+				yield { key, value };
+				continue;
+			}
+
+			for ( const dynamicKey of Object.keys( value ) ) {
+				if ( this.isHandledAsDatabinding( dynamicKey, bindingSettings, config ) ) {
+					const actual = await this.getDynamicValue( settings, dynamicKey, dynamicKey );
+					yield { key: dynamicKey, value: actual };
+				}
+			}
+		}
+	},
+
+	isHandledAsDatabinding( key, bindingSettings, config ) {
+		return bindingSettings.some( ( x ) => x === key ) || config[ key ] !== undefined;
+	},
+
+	renderDataBoundChange( change, element, config ) {
+		switch ( config?.editType ) {
+			case 'attribute':
+				element.closest( config.selector ).setAttribute( config.attr, change );
+				break;
+			case 'text':
+				element.innerHTML = change;
+				break;
+			// Backward compatibility should be deleted once two versions from ED-17823 has been merged
+			default:
+				element.innerHTML = change;
+		}
 	},
 
 	/**
@@ -924,6 +958,8 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderedEvent = new CustomEvent( event, { detail: { elementView: this } } );
 		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
+
+		window.top.dispatchEvent( renderedEvent );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -1049,6 +1085,10 @@ BaseElementView = BaseContainer.extend( {
 		return helper;
 	},
 
+	getDraggableElement() {
+		return this.$el;
+	},
+
 	/**
 	 * Initialize the Droppable instance.
 	 */
@@ -1062,7 +1102,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		this.$el.html5Draggable( {
+		this.getDraggableElement().html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 

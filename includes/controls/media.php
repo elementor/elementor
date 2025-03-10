@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
@@ -61,7 +60,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $settings Control settings
+	 * @param array $settings Control settings.
 	 *
 	 * @return array Control settings.
 	 */
@@ -90,7 +89,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @since 3.4.6
 	 * @deprecated 3.5.0
 	 *
-	 * @param $mimes
+	 * @param mixed $mimes
 	 * @return mixed
 	 */
 	public function support_svg_and_json_import( $mimes ) {
@@ -111,7 +110,7 @@ class Control_Media extends Control_Base_Multiple {
 	public function enqueue() {
 		global $wp_version;
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 		wp_enqueue_media();
 
 		wp_enqueue_style(
@@ -249,7 +248,9 @@ class Control_Media extends Control_Base_Multiple {
 						</div>
 					</div>
 
-					<?php /* ?>
+					<?php
+					/*
+					?>
 					<div class="elementor-control-media__warnings" role="alert" style="display: none;">
 						<?php
 						Hints::get_notice_template( [
@@ -259,7 +260,8 @@ class Control_Media extends Control_Base_Multiple {
 						] );
 						?>
 					</div>
-					<?php */ ?>
+					<?php
+					*/ ?>
 
 					<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
 					<div class="elementor-control-media__promotions" role="alert" style="display: none;">
@@ -319,6 +321,8 @@ class Control_Media extends Control_Base_Multiple {
 						</select>
 					</div>
 				</div>
+
+				<div class="elementor-control-field-description"><?php echo esc_html__( 'Image size settings don’t apply to Dynamic Images.', 'elementor' ); ?></div>
 			</div>
 			<# } #>
 
@@ -327,7 +331,7 @@ class Control_Media extends Control_Base_Multiple {
 		<?php
 	}
 
-	private function get_image_sizes() : array {
+	private function get_image_sizes(): array {
 		$wp_image_sizes = Group_Control_Image_Size::get_all_image_sizes();
 
 		$image_sizes = [];
@@ -428,6 +432,10 @@ class Control_Media extends Control_Base_Multiple {
 
 		$alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
 		if ( ! $alt ) {
+			if ( Utils::has_invalid_post_permissions( $attachment ) ) {
+				return '';
+			}
+
 			$alt = $attachment->post_excerpt;
 			if ( ! $alt ) {
 				$alt = $attachment->post_title;

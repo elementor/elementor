@@ -18,6 +18,21 @@
 			display: none;
 		}
 
+		&-grid {
+			flex-wrap: wrap;
+			gap: 20px;
+
+			.e-con-select-preset__list {
+
+				.e-con-preset {
+
+					rect {
+						fill: transparent;
+					}
+				}
+			}
+		}
+
 		&__title {
 			font-family: var(--e-a-font-family);
 			font-size: 15px;
@@ -36,6 +51,14 @@
 			.e-con-preset {
 				cursor: pointer;
 				flex-basis: 90px;
+				padding: unset;
+				margin: unset;
+				border: unset;
+				border-radius: unset;
+				outline: unset;
+				box-shadow: unset;
+				text-shadow: unset;
+				background-color: unset;
 
 				svg {
 					width: 100%;
@@ -57,7 +80,18 @@
 					transition: .3s all;
 				}
 
-				&:hover {
+				&:hover,
+				&:focus {
+					border: unset;
+					border-radius: unset;
+					box-shadow: unset;
+					text-shadow: unset;
+					background-color: transparent;
+
+					path {
+						stroke: var(--e-a-color-white);
+					}
+
 					rect {
 						fill: var(--e-a-color-txt);
 					}
@@ -104,9 +138,12 @@
 				svg {
 					margin-block-end: 10px;
 					width: 85px;
+				}
 
-					&:hover {
+				&:hover,
+				&:focus {
 
+					svg {
 						rect {
 							fill: var(--e-a-color-txt);
 						}
@@ -120,36 +157,6 @@
 				&__subtitle {
 					font-size: 14px;
 					font-weight: 500;
-				}
-			}
-		}
-	}
-
-	&-select-preset-grid {
-
-		&__title {
-			font-size: 15px;
-			font-weight: 400;
-		}
-
-		&__list {
-			display: flex;
-			justify-content: center;
-			flex-wrap: wrap;
-			gap: 20px;
-
-			svg {
-				cursor: pointer;
-
-				&:hover {
-
-					rect {
-						fill: var(--e-a-color-txt);
-					}
-
-					path {
-						stroke: var(--e-a-color-white);
-					}
 				}
 			}
 		}

@@ -33,6 +33,10 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	filterSettings( newItem ) {
+		if ( 'container' !== newItem?.elType ) {
+			return;
+		}
+
 		const parentContainer = this;
 
 		if ( parentContainer.isBoxedWidth() ) {

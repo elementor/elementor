@@ -3,7 +3,7 @@ namespace Elementor\Modules\Notifications;
 
 class Options {
 
-	public static function has_unread_notifications() : bool {
+	public static function has_unread_notifications(): bool {
 		$current_user = wp_get_current_user();
 
 		if ( ! $current_user ) {
@@ -40,7 +40,7 @@ class Options {
 		return $notifications_dismissed;
 	}
 
-	public static function mark_notification_read( $notifications ) : bool {
+	public static function mark_notification_read( $notifications ): bool {
 		$current_user = wp_get_current_user();
 
 		if ( ! $current_user ) {

@@ -143,8 +143,13 @@ export default class AiBehavior extends Marionette.Behavior {
 		const isPromotion = ! this.config.is_get_started;
 		const buttonLabel = this.getAiButtonLabel();
 
+		let buttonClass = 'e-ai-button';
+		if ( this.getOption( 'additionalOptions' ).buttonBorder ) {
+			buttonClass += ' e-ai-border-button';
+		}
+
 		const $button = jQuery( '<button>', {
-			class: 'e-ai-button',
+			class: buttonClass,
 		} );
 
 		if ( ! isPromotion ) {

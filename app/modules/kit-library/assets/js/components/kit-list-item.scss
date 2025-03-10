@@ -55,6 +55,12 @@ $root: e-kit-library__kit-item;
 	}
 
 	&-subscription-plan-badge {
+		--e-a-color-brand: #467FF7;
+
+		&.promoted {
+			--e-a-color-brand: #92003B;
+		}
+
 		position: absolute;
 		top: 0;
 		@include end(0);

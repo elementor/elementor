@@ -32,22 +32,12 @@ if ( ! $has_pro ) {
 ?>
 <script type="text/template" id="tmpl-elementor-navigator">
 	<div id="elementor-navigator__header">
-		<button id="elementor-navigator__toggle-all" data-elementor-action="expand">
+		<button id="elementor-navigator__toggle-all" data-elementor-action="expand" aria-label="<?php echo esc_attr__( 'Expand all elements', 'elementor' ); ?>">
 			<i class="eicon-expand" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php esc_html__( 'Expand all elements', 'elementor' ); ?></span>
 		</button>
-		<h2 id="elementor-navigator__header__title"><?php
-			echo $is_app_bar_active
-				? esc_html__( 'Structure', 'elementor' )
-				: esc_html__( 'Navigator', 'elementor' );
-		?></h2>
-		<button id="elementor-navigator__close">
+		<h2 id="elementor-navigator__header__title"><?php echo $is_app_bar_active ? esc_html__( 'Structure', 'elementor' ) : esc_html__( 'Navigator', 'elementor' ); ?></h2>
+		<button id="elementor-navigator__close" aria-label="<?php echo $is_app_bar_active ? esc_attr__( 'Close structure', 'elementor' ) : esc_attr__( 'Close navigator', 'elementor' ); ?>">
 			<i class="eicon-close" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php
-				echo $is_app_bar_active
-					? esc_html__( 'Close structure', 'elementor' )
-					: esc_html__( 'Close navigator', 'elementor' );
-			?></span>
 		</button>
 	</div>
 	<div id="elementor-navigator__elements"

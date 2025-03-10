@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useSettingsContext } from '../context/settings-context';
 import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
+import { PromotionChipText, TierToKeyMap } from '../models/taxonomy-transformer';
 
 export const TYPE_CONNECT = 'connect';
 export const TYPE_PROMOTION = 'promotion';
@@ -11,6 +12,7 @@ export default function useKitCallToAction( kitAccessTier ) {
 
 	// BC: When user has old Pro version which doesn't override the `free` access_tier.
 	let userAccessTier = settings.access_tier;
+	const tierKey = TierToKeyMap[ kitAccessTier ];
 	const hasActiveProLicense = settings.is_pro && settings.is_library_connected;
 	const shouldFallbackToLegacy = hasActiveProLicense && userAccessTier === TIERS.free;
 
@@ -23,10 +25,8 @@ export default function useKitCallToAction( kitAccessTier ) {
 	// SubscriptionPlan can be null when the context is not filled (can be happened when using back button in the browser.)
 	const subscriptionPlan = useMemo( () => settings.subscription_plans?.[ kitAccessTier ], [ settings, kitAccessTier ] );
 
-	// Free user should see a generic "Pro" badge.
-	const badgeLabel = userAccessTier === TIERS.free
-		? settings.subscription_plans?.essential.label
-		: subscriptionPlan?.label;
+	subscriptionPlan.label = PromotionChipText[ tierKey ];
+	subscriptionPlan.isPromoted = TIERS.free !== kitAccessTier;
 
 	const type = useMemo( () => {
 		// The user can apply this kit (the user access level is equal or greater then the kit access level).
@@ -46,5 +46,5 @@ export default function useKitCallToAction( kitAccessTier ) {
 		return TYPE_APPLY;
 	}, [ settings, kitAccessTier ] );
 
-	return [ type, { subscriptionPlan, badgeLabel } ];
+	return { type, subscriptionPlan };
 }

@@ -7,6 +7,7 @@ import EvolveIcon from '../../../../icons/evolve-icon';
 import EnlargerIcon from '../../../../icons/enlarger-icon';
 import RemoveBackgroundIcon from '../../../../icons/remove-bg';
 import ReplaceBackgroundIcon from '../../../../icons/replace-bg';
+import Cleanup from '../../../../icons/cleanup-icon';
 import { LOCATIONS } from '../../constants';
 import { useLocation } from '../../context/location-context';
 
@@ -77,6 +78,11 @@ const ImageToolsPanel = () => {
 			label: __( 'Replace Background', 'elementor' ),
 			Icon: ReplaceBackgroundIcon,
 			onClick: () => navigate( LOCATIONS.REPLACE_BACKGROUND ),
+		},
+		{
+			label: __( 'Cleanup', 'elementor' ),
+			Icon: Cleanup,
+			onClick: () => navigate( LOCATIONS.CLEANUP ),
 		},
 	];
 	return (

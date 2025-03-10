@@ -30,8 +30,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiment();
-
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/v2/styles', fn( $styles ) => $this->add_styles( $styles ) );
@@ -42,8 +40,8 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function register_experiment() {
-		Plugin::$instance->experiments->add_feature( [
+	public static function get_experimental_data(): array {
+		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Editor Top Bar', 'elementor' ),
 			'description' => sprintf(
@@ -51,13 +49,9 @@ class Module extends BaseModule {
 				esc_html__( 'Get a sneak peek of the new Editor powered by React. The beautiful design and experimental layout of the Top bar are just some of the exciting tools on their way.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.23.0',
-			],
-		] );
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
+		];
 	}
 
 	private function add_packages( $packages ) {

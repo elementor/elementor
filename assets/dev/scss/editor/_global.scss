@@ -3,10 +3,7 @@
 
 #elementor-loading {
 	position: fixed;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
+	inset: 0;
 	background: var(--e-a-bg-default);
 	z-index: $editor-layer;
 }
@@ -18,10 +15,7 @@
 	align-items: center;
 	justify-content: center;
 	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+	inset: 0;
 	background-color: var(--e-a-bg-default);
 
 	i {

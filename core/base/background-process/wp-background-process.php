@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * https://github.com/A5hleyRich/wp-background-processing GPL v2.0
+ * Link https://github.com/A5hleyRich/wp-background-processing GPL v2.0.
  *
  * WP Background Process
  *
@@ -66,8 +66,8 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		$this->cron_hook_identifier     = $this->identifier . '_cron';
 		$this->cron_interval_identifier = $this->identifier . '_cron_interval';
 
-		add_action( $this->cron_hook_identifier, array( $this, 'handle_cron_healthcheck' ) );
-		add_filter( 'cron_schedules', array( $this, 'schedule_cron_healthcheck' ) );
+		add_action( $this->cron_hook_identifier, [ $this, 'handle_cron_healthcheck' ] );
+		add_filter( 'cron_schedules', [ $this, 'schedule_cron_healthcheck' ] );
 	}
 
 	/**
@@ -152,7 +152,7 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * @return string
 	 */
 	protected function generate_key( $length = 64 ) {
-		$unique  = md5( microtime() . rand() );
+		$unique  = md5( microtime() . wp_rand() );
 		$prepend = $this->identifier . '_batch_';
 
 		return substr( $prepend . $unique, 0, $length );
@@ -432,14 +432,14 @@ abstract class WP_Background_Process extends WP_Async_Request {
 		}
 
 		// Adds every 5 minutes to the existing schedules.
-		$schedules[ $this->identifier . '_cron_interval' ] = array(
+		$schedules[ $this->identifier . '_cron_interval' ] = [
 			'interval' => MINUTE_IN_SECONDS * $interval,
 			'display' => sprintf(
 				/* translators: %d: Interval in minutes. */
 				esc_html__( 'Every %d minutes', 'elementor' ),
 				$interval,
 			),
-		);
+		];
 
 		return $schedules;
 	}
@@ -491,7 +491,6 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * Cancel Process
 	 *
 	 * Stop processing queue items, clear cronjob and delete batch.
-	 *
 	 */
 	public function cancel_process() {
 		if ( ! $this->is_queue_empty() ) {
@@ -501,7 +500,6 @@ abstract class WP_Background_Process extends WP_Async_Request {
 
 			wp_clear_scheduled_hook( $this->cron_hook_identifier );
 		}
-
 	}
 
 	/**
@@ -517,5 +515,4 @@ abstract class WP_Background_Process extends WP_Async_Request {
 	 * @return mixed
 	 */
 	abstract protected function task( $item );
-
 }

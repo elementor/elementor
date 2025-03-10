@@ -40,6 +40,12 @@ const addEventListener = ( eventName, containerId, Component ) => {
 	} );
 };
 
+const addEditorPostIdRequestConstant = () => {
+	if ( ! elementorCommon?.ajax?.requestConstants?.editor_post_id ) {
+		elementorCommon?.ajax?.addRequestConstant( 'editor_post_id', window.document.querySelector( '#post_ID' )?.value );
+	}
+};
+
 ( function() {
 	if ( isMediaLibrary() ) {
 		window.EDITOR_SESSION_ID = getUniqueId( 'wp-media-lib-session' );
@@ -68,6 +74,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai-insert-media';
 				compatMeta.insertAdjacentElement( 'beforeend', container );
+				addEditorPostIdRequestConstant();
 
 				window.dispatchEvent( new CustomEvent( 'renderInsertMediaEvent' ) );
 				return content.innerHTML;
@@ -90,6 +97,7 @@ const addEventListener = ( eventName, containerId, Component ) => {
 				const container = document.createElement( 'div' );
 				container.id = 'e-image-ai-attachment-details';
 				details.appendChild( container );
+				addEditorPostIdRequestConstant();
 
 				window.dispatchEvent( new CustomEvent( 'renderAttachmentsDetailsEvent' ) );
 				return content.innerHTML;

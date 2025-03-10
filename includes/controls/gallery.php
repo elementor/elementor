@@ -41,7 +41,7 @@ class Control_Gallery extends Base_Data_Control {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $settings Control settings
+	 * @param array $settings Control settings.
 	 *
 	 * @return array Control settings.
 	 */
@@ -81,9 +81,8 @@ class Control_Gallery extends Base_Data_Control {
 				<div class="elementor-control-media__content elementor-control-tag-area">
 					<div class="elementor-control-gallery-status elementor-control-dynamic-switcher-wrapper">
 						<span class="elementor-control-gallery-status-title"></span>
-						<button class="elementor-control-gallery-clear elementor-control-unit-1 tooltip-target" data-tooltip="<?php echo esc_attr__( 'Clear gallery', 'elementor' ); ?>">
+						<button class="elementor-control-gallery-clear elementor-control-unit-1 tooltip-target" data-tooltip="<?php echo esc_attr__( 'Clear gallery', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Clear gallery', 'elementor' ); ?>">
 							<i class="eicon-trash-o" aria-hidden="true"></i>
-							<span class="elementor-screen-only"><?php echo esc_html__( 'Clear gallery', 'elementor' ); ?></span>
 						</button>
 					</div>
 					<div class="elementor-control-gallery-content">
@@ -92,14 +91,15 @@ class Control_Gallery extends Base_Data_Control {
 							<span><i class="eicon-pencil" aria-hidden="true"></i></span>
 							<span class="elementor-screen-only"><?php echo esc_html__( 'Edit gallery', 'elementor' ); ?></span>
 						</div>
-						<button class="elementor-button elementor-control-gallery-add tooltip-target" data-tooltip="<?php echo esc_attr__( 'Add Images', 'elementor' ); ?>">
+						<button class="elementor-button elementor-control-gallery-add tooltip-target" data-tooltip="<?php echo esc_attr__( 'Add Images', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Add Images', 'elementor' ); ?>">
 							<i class="eicon-plus-circle" aria-hidden="true"></i>
-							<span class="elementor-screen-only"><?php echo esc_html__( 'Add Images', 'elementor' ); ?></span>
 						</button>
 					</div>
 				</div>
 
-				<?php /* ?>
+				<?php
+				/*
+				?>
 				<div class="elementor-control-media__warnings" role="alert" style="display: none;">
 					<?php
 					Hints::get_notice_template( [
@@ -109,7 +109,8 @@ class Control_Gallery extends Base_Data_Control {
 					] );
 					?>
 				</div>
-				<?php */ ?>
+				<?php
+				*/ ?>
 
 				<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
 				<div class="elementor-control-media__promotions" role="alert" style="display: none;">

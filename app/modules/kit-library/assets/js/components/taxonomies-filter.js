@@ -1,5 +1,6 @@
 import TaxonomiesFilterList from './taxonomies-filter-list';
-import Taxonomy, { taxonomyType } from '../models/taxonomy';
+import Taxonomy from '../models/taxonomy';
+import { getTaxonomyFilterItems } from '../models/taxonomy-transformer';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './tags-filter.scss';
@@ -7,18 +8,7 @@ import './tags-filter.scss';
 const { useMemo } = React;
 
 export default function TaxonomiesFilter( props ) {
-	const taxonomiesByType = useMemo( () => {
-			if ( ! props.taxonomies ) {
-				return [];
-			}
-
-			return taxonomyType
-				.map( ( tagType ) => ( {
-					...tagType,
-					data: props.taxonomies.filter( ( item ) => item.type === tagType.key ),
-				} ) )
-				.filter( ( { data } ) => data.length > 0 );
-		}, [ props.taxonomies ] ),
+	const taxonomiesByType = useMemo( () => getTaxonomyFilterItems( props.taxonomies ), [ props.taxonomies ] ),
 		eventTracking = ( command, search, section, eventType = 'click' ) => appsEventTrackingDispatch(
 			command,
 			{

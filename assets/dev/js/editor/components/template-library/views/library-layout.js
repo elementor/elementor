@@ -6,6 +6,7 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibrarySaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
 	TemplateLibraryConnectView = require( 'elementor-templates/views/parts/connect' ),
+	TemplateLibraryCloudConnectView = require( 'elementor-templates/views/parts/connect-cloud' ),
 	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
@@ -18,6 +19,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 				onOutsideClick: allowClosingModal,
 				onBackgroundClick: allowClosingModal,
 				onEscKeyPress: allowClosingModal,
+				ignore: '.dialog-widget-content',
 			},
 		};
 	},
@@ -82,6 +84,14 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		} ) );
 	},
 
+	updateViewCollection( models ) {
+		this.modalContent.currentView.collection.reset( models );
+	},
+
+	addTemplates( models ) {
+		this.modalContent.currentView.collection.add( models, { merge: true } );
+	},
+
 	showImportView() {
 		const headerView = this.getHeaderView();
 
@@ -96,6 +106,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.getHeaderView().menuArea.reset();
 
 		this.modalContent.show( new TemplateLibraryConnectView( args ) );
+	},
+
+	showCloudConnectView() {
+		this.modalContent.show( new TemplateLibraryCloudConnectView() );
 	},
 
 	showSaveTemplateView( elementModel ) {
@@ -118,5 +132,17 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		} ) );
 
 		headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
+	},
+
+	async showFolderView( elementModel ) {
+		try {
+			elementor.templates.layout.showLoadingView();
+
+			const templateId = elementModel.model.get( 'template_id' );
+
+			await elementor.templates.getFolderTemplates( templateId );
+		} finally {
+			elementor.templates.layout.hideLoadingView();
+		}
 	},
 } );

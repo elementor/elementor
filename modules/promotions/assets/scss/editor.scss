@@ -42,12 +42,16 @@
 	}
 }
 
-.e-control-motion-effects-promotion {
+.e-control-motion-effects-promotion, .e-control-promotion {
 	&__wrapper {
 		&:hover {
 			.eicon-lock {
 				color: var(--e-a-color-accent)
 			}
+		}
+
+		.elementor-control-title {
+			margin-inline-end: 0;
 		}
 
 		.select-promotion {
@@ -75,7 +79,6 @@
 		align-items: center;
 	}
 }
-
 
 .e-link-promotion {
 	font-family: 'Roboto', sans-serif;

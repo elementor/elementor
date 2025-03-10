@@ -101,7 +101,7 @@ class Group_Control_Grid_Container extends Group_Control_Base {
 			],
 			'separator' => 'before',
 			'selectors' => [
-				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}};--row-gap: {{ROW}}{{UNIT}};--column-gap: {{COLUMN}}{{UNIT}};',
 			],
 			'responsive' => true,
 			'validators' => [

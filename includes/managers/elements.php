@@ -35,7 +35,7 @@ class Elements_Manager {
 	 *
 	 * @access private
 	 *
-	 * @var
+	 * @var $categories
 	 */
 	private $categories;
 
@@ -276,6 +276,10 @@ class Elements_Manager {
 	 */
 	private function init_categories() {
 		$this->categories = [
+			'v4-elements' => [
+				'title' => esc_html__( 'V4 Elements', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
 			'layout' => [
 				'title' => esc_html__( 'Layout', 'elementor' ),
 				'hideIfEmpty' => true,
@@ -289,6 +293,10 @@ class Elements_Manager {
 				'promotion' => [
 					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
 				],
+			],
+			'helloplus' => [
+				'title' => esc_html__( 'Hello+', 'elementor' ),
+				'hideIfEmpty' => true,
 			],
 			'general' => [
 				'title' => esc_html__( 'General', 'elementor' ),
@@ -344,6 +352,12 @@ class Elements_Manager {
 			'icon' => 'eicon-wordpress',
 			'active' => false,
 		];
+	}
+
+	public function enqueue_elements_styles() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->enqueue_styles();
+		}
 	}
 
 	/**

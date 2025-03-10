@@ -4,7 +4,7 @@ namespace Elementor\Core\Upgrade;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Upgrade_Utils {
@@ -12,9 +12,9 @@ class Upgrade_Utils {
 	/**
 	 *  _update_widget_settings
 	 *
-	 * @param string $widget_id  widget type id
-	 * @param Updater $updater   updater instance
-	 * @param array $changes     array containing updating control_ids, callback and other data needed by the callback
+	 * @param string $widget_id  widget type id.
+	 * @param Updater $updater   updater instance.
+	 * @param array $changes     array containing updating control_ids, callback and other data needed by the callback.
 	 *
 	 * @return bool
 	 */
@@ -22,9 +22,9 @@ class Upgrade_Utils {
 		global $wpdb;
 
 		$post_ids = $updater->query_col(
-			'SELECT `post_id` 
-					FROM `' . $wpdb->postmeta . '` 
-					WHERE `meta_key` = "_elementor_data" 
+			'SELECT `post_id`
+					FROM `' . $wpdb->postmeta . '`
+					WHERE `meta_key` = "_elementor_data"
 					AND `meta_value` LIKE \'%"widgetType":"' . $widget_id . '"%\';'
 		);
 
@@ -70,7 +70,7 @@ class Upgrade_Utils {
 
 				update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 			}
-		} // End foreach().
+		}
 
 		return $updater->should_run_again( $post_ids );
 	}

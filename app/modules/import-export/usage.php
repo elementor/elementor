@@ -5,7 +5,7 @@ namespace Elementor\App\Modules\ImportExport;
 use Elementor\App\Modules\ImportExport\Processes\Revert;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Usage {
