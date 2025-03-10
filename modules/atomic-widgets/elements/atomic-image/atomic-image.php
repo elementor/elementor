@@ -50,7 +50,6 @@ class Atomic_Image extends Atomic_Widget_Base {
 				Image_Control::bind_to( 'image' ),
 
 				Link_Control::bind_to( 'link' )
-					->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 			] );
 
 		return [

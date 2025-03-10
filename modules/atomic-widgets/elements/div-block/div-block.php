@@ -87,7 +87,7 @@ class Div_Block extends Atomic_Element_Base {
 						]),
 
 					Link_Control::bind_to( 'link' )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+
 				]),
 		];
 	}

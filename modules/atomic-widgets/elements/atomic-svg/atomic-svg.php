@@ -28,7 +28,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic SVG', 'elementor' );
+		return esc_html__( 'SVG', 'elementor' );
 	}
 
 	public function get_icon() {
@@ -50,7 +50,6 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->set_items( [
 					Svg_Control::bind_to( 'svg' ),
 					Link_Control::bind_to( 'link' )
-							->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
 				] ),
 		];
 	}

@@ -60,7 +60,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'widgetType' => 'a-image',
 				],
 			],
-			'Atomic Paragraph default' => [
+			'Atomic default' => [
 				[
 					'id' => 'e8e55a1',
 					'elType' => 'widget',
@@ -68,7 +68,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'widgetType' => 'a-paragraph',
 				],
 			],
-			'Atomic Paragraph linked' => [
+			'Atomic linked' => [
 				[
 					'id' => 'e8e55a1',
 					'elType' => 'widget',
@@ -81,7 +81,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'widgetType' => 'a-paragraph',
 				],
 			],
-			'Atomic SVG default' => [
+			'SVG default' => [
 				[
 					'id' => 'abcd123',
 					'elType' => 'widget',

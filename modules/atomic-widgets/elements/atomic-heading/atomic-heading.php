@@ -28,7 +28,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Heading', 'elementor' );
+		return esc_html__( 'Heading', 'elementor' );
 	}
 
 	public function get_icon() {

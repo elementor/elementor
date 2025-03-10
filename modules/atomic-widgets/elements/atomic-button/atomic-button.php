@@ -30,7 +30,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Button', 'elementor' );
+		return esc_html__( 'Atomic', 'elementor' );
 	}
 
 	public function get_icon() {
