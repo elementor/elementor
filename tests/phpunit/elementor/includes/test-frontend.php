@@ -10,6 +10,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Frontend extends Elementor_Test_Base {
+
+	public function setUp(): void {
+		parent::setUp();
+
+		global $wp_scripts, $wp_styles;
+
+		$wp_scripts = new \WP_Scripts();
+		$wp_styles = new \WP_Styles();
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+
+		global $wp_scripts, $wp_styles;
+
+		$wp_scripts = new \WP_Scripts();
+		$wp_styles = new \WP_Styles();
+	}
+
 	public function test_get_builder_content__should_switch_back_to_to_the_last_document() {
 		$main_document = $this->factory()->documents->create_and_get();
 		$sub_document = $this->factory()->documents->create_and_get();
@@ -117,5 +136,36 @@ class Test_Frontend extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertContains( 'https://fonts.googleapis.com/earlyaccess/opensanshebrew.css', $font_urls );
+	}
+
+	public function test_widget_with_global_scripts() {
+		// Arrange
+		$frontend = new Frontend();
+		$frontend->register_scripts();
+
+		$widget_with_global_scripts = $this->elementor()->widgets_manager->get_widget_types( 'text-editor' );
+
+		// Act
+		$widget_with_global_scripts->enqueue_scripts();
+
+		// Assert
+		$this->assertTrue( wp_script_is( 'elementor-frontend' ) );
+		$this->assertTrue( wp_script_is( 'elementor-frontend-modules' ) );
+		$this->assertTrue( wp_script_is( 'jquery' ) );
+	}
+
+	public function test_widget_without_global_scripts() {
+		// Arrange
+		$frontend = new Frontend();
+		$frontend->register_scripts();
+
+		// Act
+		$widget_without_global_scripts = $this->elementor()->widgets_manager->get_widget_types( 'a-heading' );
+		$widget_without_global_scripts->enqueue_scripts();
+
+		// Assert
+		$this->assertFalse( wp_script_is( 'elementor-frontend' ) );
+		$this->assertFalse( wp_script_is( 'elementor-frontend-modules' ) );
+		$this->assertFalse( wp_script_is( 'jquery' ) );
 	}
 }
