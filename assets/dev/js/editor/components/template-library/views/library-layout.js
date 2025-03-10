@@ -9,6 +9,8 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryCloudConnectView = require( 'elementor-templates/views/parts/connect-cloud' ),
 	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
+import { SAVE_CONTEXTS } from './../constants';
+
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 	getModalOptions() {
 		const allowClosingModal = window?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
@@ -112,7 +114,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.modalContent.show( new TemplateLibraryCloudConnectView() );
 	},
 
-	showSaveTemplateView( elementModel, context = 'save' ) {
+	showSaveTemplateView( elementModel, context = SAVE_CONTEXTS.SAVE ) {
 		this.getHeaderView().menuArea.reset();
 
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel, context } ) );

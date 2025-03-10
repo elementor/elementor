@@ -4,6 +4,8 @@ const FolderCollectionView = require( './folders/folders-list' );
 
 const LOAD_MORE_ID = 0;
 
+import { SAVE_CONTEXTS } from './../../constants';
+
 const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-save-template',
 
@@ -34,11 +36,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onRender() {
-		if ( 'save' === this.getOption( 'context' ) ) {
+		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ) {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 		}
 
-		if ( 'move' === this.getOption( 'context' ) ) {
+		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
 			this.handleMoveContextUiState();
 		}
 	},
@@ -89,7 +91,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	getSaveType() {
 		let type;
 
-		if ( 'move' === this.getOption( 'context' ) ) {
+		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
 			type = this.model.get( 'type' );
 		} else if ( this.model ) {
 			type = this.model.get( 'elType' );
@@ -141,11 +143,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	updateSaveContext( formData ) {
-		const saveContext = this.getOption( 'context' ) ?? 'save';
+		const saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE;
 
 		formData.save_context = saveContext;
 
-		if ( 'move' === saveContext ) {
+		if ( SAVE_CONTEXTS.MOVE === saveContext ) {
 			formData.from_source = elementor.templates.getFilter( 'source' );
 			formData.from_template_id = this.model.get( 'template_id' );
 
