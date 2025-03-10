@@ -138,7 +138,7 @@ class Test_Frontend extends Elementor_Test_Base {
 		$this->assertContains( 'https://fonts.googleapis.com/earlyaccess/opensanshebrew.css', $font_urls );
 	}
 
-	public function test_enqueue_widget_with_global_scripts() {
+	public function test_widget_with_global_scripts() {
 		// Arrange
 		$frontend = new Frontend();
 		$frontend->register_scripts();
