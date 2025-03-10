@@ -326,6 +326,9 @@ class Container extends Element_Base {
 		if ( 'container' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( 'container' );
 		}
+		if ( 'div-block' === $element_data['elType'] ) {
+			return Plugin::$instance->elements_manager->get_element_types( 'div-block' );
+		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
