@@ -75,15 +75,14 @@ class Post_Query_Data_Mock extends Elementor_Test_Base {
 	protected function get_data_testing_data() {
 		return [
 			[
-				'params' => Post_Query::build_query_params( [
+				'params' => array_merge( Post_Query::build_query_params( [
 					Post_Query::EXCLUDED_POST_TYPE_KEYS => [ 'page' ],
-					Post_Query::SEARCH_TERM_KEY => 'Us',
 					Post_Query::POST_KEYS_CONVERSION_MAP => [
 						'ID' => 'id',
 						'post_title' => 'label',
 						'post_type' => 'groupLabel',
 					],
-				] ),
+				] ), [ Post_Query::SEARCH_TERM_KEY => 'Us' ] ),
 				'expected' => [
 					[
 						'id' => $this->posts[3]->ID,
@@ -98,14 +97,13 @@ class Post_Query_Data_Mock extends Elementor_Test_Base {
 				],
 			],
 			[
-				'params' => Post_Query::build_query_params( [
+				'params' => array_merge( Post_Query::build_query_params( [
 					Post_Query::EXCLUDED_POST_TYPE_KEYS => [],
-					Post_Query::SEARCH_TERM_KEY => '10',
 					Post_Query::POST_KEYS_CONVERSION_MAP => [
 						'ID' => 'id',
 						'post_title' => 'label',
 					],
-				] ),
+				] ), [ Post_Query::SEARCH_TERM_KEY => '10' ] ),
 				'expected' => [
 					[
 						'label' => $this->posts[0]->post_title,
@@ -158,14 +156,13 @@ class Post_Query_Data_Mock extends Elementor_Test_Base {
 				],
 			],
 			[
-				'params' => Post_Query::build_query_params( [
+				'params' => array_merge( Post_Query::build_query_params( [
 					Post_Query::EXCLUDED_POST_TYPE_KEYS => [ 'product', 'post' ],
-					Post_Query::SEARCH_TERM_KEY => 'a ',
 					Post_Query::POST_KEYS_CONVERSION_MAP => [
 						'ID' => 'id',
 						'post_title' => 'label',
 					],
-				] ),
+				] ), [ Post_Query::SEARCH_TERM_KEY => 'a ' ] ),
 				'expected' => [
 					[
 						'label' => $this->posts[2]->post_title,
