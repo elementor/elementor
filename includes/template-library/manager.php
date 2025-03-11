@@ -278,11 +278,20 @@ class Manager {
 
 		$sources = (array) $args['source']; // BC
 		$results = [];
+		$should_delete_template = false;
 
 		foreach ( $sources as $source ) {
 			$args_copy = $args;
 			$args_copy['source'] = $source;
 			$results[] = $this->save_template_item( $args_copy );
+
+			if ( ! $this->is_moving_to_same_source( $args_copy ) ) {
+				$should_delete_template = true;
+			}
+		}
+
+		if ( $should_delete_template ) {
+			$this->delete_original_template( $args );
 		}
 
 		return 1 === count( $results ) ? $results[0] : $results;
@@ -303,12 +312,8 @@ class Manager {
 			}
 		}
 
-		if ( $this->is_moving_to_same_source( $args, 'cloud' ) ) {
-			return $this->move_template_in_cloud( $args );
-		}
-
-		if ( $this->is_moving_to_same_source( $args, 'local' ) ) {
-			return new \WP_Error( 'template_error', 'Cannot move template to the same source.' );
+		if ( $this->is_moving_to_same_source( $args ) ) {
+			return $source->move_template_to_folder( $args );
 		}
 
 		$args = $this->format_args_for_save_context( $args );
@@ -317,10 +322,6 @@ class Manager {
 
 		if ( is_wp_error( $template_id ) ) {
 			return $template_id;
-		}
-
-		if ( $this->is_moving_template( $args ) ) {
-			$this->delete_original_template( $args );
 		}
 
 		return $source->get_item( $template_id );
@@ -336,28 +337,11 @@ class Manager {
 		$from_source->delete_template( $args['from_template_id'] );
 	}
 
-	private function is_moving_to_same_source( $args, $source ) {
-		return ! empty( $args['save_context'] ) &&
-			'move' === $args['save_context'] &&
-			$source === $args['from_source'] &&
-			$source === $args['source'];
-	}
-
-	private function move_template_in_cloud( $args ) {
-		$source = $this->get_source( $args['from_source'] );
-
-		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
-		}
-
-		$move_args = [
-			'title' => $args['title'],
-			'id' => $args['from_template_id'],
-			'source' => $args['source'],
-			'parentId' => ! empty( $args['parentId'] ) ? (int) $args['parentId'] : null,
-		];
-
-		return $source->update_item( $move_args );
+	private function is_moving_to_same_source( $args ) {
+		return $this->is_moving_template( $args ) &&
+			! empty( $args['from_source'] ) &&
+			! empty( $args['source'] ) &&
+			$args['source'] === $args['from_source'];
 	}
 
 	private function format_args_for_save_context( $args ) {
