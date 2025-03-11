@@ -30,7 +30,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 	}
 
 	public function element_data_provider() {
-		return [ 'Atomic Image default' => [
+		return [ 'Image default' => [
 			[
 				'id' => 'e8e55a1',
 				'elType' => 'widget',
@@ -43,7 +43,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 				'widgetType' => 'a-image',
 			],
 		],
-			'Atomic Image linked' => [
+			'Image linked' => [
 				[
 					'id' => 'e8e55a1',
 					'elType' => 'widget',
@@ -60,7 +60,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'widgetType' => 'a-image',
 				],
 			],
-			'Atomic Paragraph default' => [
+			'Paragraph default' => [
 				[
 					'id' => 'e8e55a1',
 					'elType' => 'widget',
@@ -68,7 +68,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'widgetType' => 'a-paragraph',
 				],
 			],
-			'Atomic Paragraph linked' => [
+			'Paragraph linked' => [
 				[
 					'id' => 'e8e55a1',
 					'elType' => 'widget',
@@ -81,7 +81,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'widgetType' => 'a-paragraph',
 				],
 			],
-			'Atomic SVG default' => [
+			'SVG default' => [
 				[
 					'id' => 'abcd123',
 					'elType' => 'widget',
