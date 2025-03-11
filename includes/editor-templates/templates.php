@@ -329,6 +329,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span class="elementor-screen-only"><?php echo esc_html__( 'More actions', 'elementor' ); ?></span>
 				</div>
 				<div class="elementor-template-library-template-more" style="display: none;">
+					<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+						<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
+							<div class="elementor-template-library-template-move">
+								<i class="eicon-folder" aria-hidden="true"></i>
+								<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+							</div>
+						<# } #>
+					<?php endif; ?>
 					<div class="elementor-template-library-template-export">
 						<a href="{{ export_link }}">
 							<i class="eicon-sign-out" aria-hidden="true"></i>
