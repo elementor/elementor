@@ -36,7 +36,7 @@ class Render_Mode_Preview extends Render_Mode_Base {
 	}
 
 	public function filter_template() {
-		return ELEMENTOR_PATH . 'modules/cloud-library/templates/canvas.php';
+		return ELEMENTOR_PATH . 'modules/page-templates/templates/canvas.php';
 	}
 
 	public function enqueue_scripts() {

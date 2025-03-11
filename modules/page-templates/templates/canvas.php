@@ -36,7 +36,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 */
 	do_action( 'elementor/page_templates/canvas/before_content' );
 
-	\Elementor\Plugin::$instance->modules_manager->get_modules( 'page-templates' )->print_content();
+	$module = 'page-templates';
+
+	$current_render_mode = \Elementor\Plugin::$instance->frontend->render_mode_manager->get_current();
+
+	if ( ! $current_render_mode instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
+		$module = 'cloud-library';
+	}
+
+	\Elementor\Plugin::$instance->modules_manager->get_modules( $module )->print_content();
 
 	/**
 	 * After canvas page template content.
