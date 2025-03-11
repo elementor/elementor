@@ -96,6 +96,10 @@ class Div_Block extends Atomic_Element_Base {
 		if ( 'div-block' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( 'div-block' );
 		}
+		if ( 'container' === $element_data['elType'] ) {
+			return Plugin::$instance->elements_manager->get_element_types( 'container' );
+		}
+
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
