@@ -4,6 +4,8 @@ const FolderCollectionView = require( './folders/folders-list' );
 
 const LOAD_MORE_ID = 0;
 
+import { SAVE_CONTEXTS } from './../../constants';
+
 const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	id: 'elementor-template-library-save-template',
 
@@ -20,6 +22,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		selectedFolder: '.selected-folder',
 		selectedFolderText: '.selected-folder-text',
 		hiddenInputSelectedFolder: '#parentId',
+		templateNameInput: '#elementor-template-library-save-template-name',
+		localInput: '.source-selections-input.local',
+		cloudInput: '.source-selections-input.cloud',
 	},
 
 	events: {
@@ -30,9 +35,37 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
 	},
 
+	onRender() {
+		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ) {
+			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
+		}
+
+		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
+			this.handleMoveContextUiState();
+		}
+	},
+
+	handleMoveContextUiState() {
+		this.ui.templateNameInput.val( this.model.get( 'title' ) );
+
+		const fromSource = this.model.get( 'source' );
+
+		if ( 'local' === fromSource ) {
+			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
+			this.ui.localInput.addClass( 'disabled' );
+		}
+
+		if ( 'cloud' === fromSource ) {
+			this.$( '.source-selections-input #local' ).prop( 'checked', true );
+		}
+	},
+
 	getSaveType() {
 		let type;
-		if ( this.model ) {
+
+		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
+			type = this.model.get( 'type' );
+		} else if ( this.model ) {
 			type = this.model.get( 'elType' );
 		} else if ( elementor.config.document.library && elementor.config.document.library.save_as_same_type ) {
 			type = elementor.config.document.type;
@@ -44,10 +77,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	templateHelpers() {
-		var saveType = this.getSaveType(),
-			templateType = elementor.templates.getTemplateTypes( saveType );
+		const saveType = this.getSaveType(),
+			templateType = elementor.templates.getTemplateTypes( saveType ),
+			saveContext = this.getOption( 'context' );
 
-		return templateType.saveDialog;
+		return templateType[ `${ saveContext }Dialog` ];
 	},
 
 	onFormSubmit( event ) {
@@ -62,6 +96,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.submitButton.addClass( 'elementor-button-state' );
 
 		this.updateSourceSelections( formData );
+
+		this.updateSaveContext( formData );
 
 		elementor.templates.saveTemplate( saveType, formData );
 	},
@@ -78,7 +114,36 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
 
+	updateSaveContext( formData ) {
+		const saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE;
+
+		formData.save_context = saveContext;
+
+		if ( SAVE_CONTEXTS.MOVE === saveContext ) {
+			formData.from_source = elementor.templates.getFilter( 'source' );
+			formData.from_template_id = this.model.get( 'template_id' );
+
+			this.updateSourceState( formData );
+		}
+	},
+
+	updateSourceState( formData ) {
+		if ( ! formData.source.length ) {
+			return;
+		}
+
+		const lastSource = formData.source.at( -1 );
+		elementor.templates.setSourceSelection( lastSource );
+		elementor.templates.setFilter( 'source', lastSource, true );
+	},
+
 	onSelectedFolderTextClick() {
+		if ( ! this.folderCollectionView ) {
+			this.onEllipsisIconClick();
+
+			return;
+		}
+
 		if ( ! this.ui.foldersDropdown.is( ':visible' ) ) {
 			this.ui.foldersDropdown.show();
 		}
@@ -105,6 +170,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				await this.fetchFolders();
 			} finally {
 				this.removeSpinner();
+				this.disableSelectedFolder();
 			}
 		}
 	},
@@ -159,8 +225,24 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		} );
 	},
 
+	disableSelectedFolder() {
+		if ( ! SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
+			return;
+		}
+
+		if ( ! Number.isInteger( this.model.get( 'parentId' ) ) ) {
+			return;
+		}
+
+		this.$( `.folder-list li[data-id="${ this.model.get( 'parentId' ) }"]` ).addClass( 'disabled' );
+	},
+
 	onFoldersListClick( event ) {
 		const { id, value } = event.target.dataset;
+
+		if ( ! id || ! value ) {
+			return;
+		}
 
 		if ( this.clickedOnLoadMore( id ) ) {
 			this.loadMoreFolders();
@@ -210,6 +292,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			await this.fetchFolders();
 		} finally {
 			this.removeSpinner();
+			this.disableSelectedFolder();
 		}
 	},
 
