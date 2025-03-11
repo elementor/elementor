@@ -525,6 +525,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'source' => 'cloud',
 				'id' => 1,
 				'parentId' => 2,
+				'title' => 'ATemplate',
 			] );
 
 		// Act
