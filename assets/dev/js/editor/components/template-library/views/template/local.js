@@ -35,6 +35,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	onDeleteButtonClick( event ) {
 		event.stopPropagation();
+
 		var toggleMoreIcon = this.ui.toggleMoreIcon;
 
 		elementor.templates.deleteTemplate( this.model, {
@@ -59,6 +60,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	async onRenameClick( event ) {
 		event.stopPropagation();
+
 		try {
 			await elementor.templates.renameTemplate( this.model, {
 				onConfirm: () => this.showToggleMoreLoader(),
