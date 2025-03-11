@@ -85,11 +85,11 @@
 			// Use the Container's `min-height` or default to 100px.
 			min-height: var( --min-height, 100px );
 		}
-	}
 
-	&:not(.e-grid).div-block-base {
-		.elementor-empty-view {
-			min-height: inherit;
+		&.div-block-base {
+			.elementor-empty-view {
+				min-height: inherit;
+			}
 		}
 	}
 
