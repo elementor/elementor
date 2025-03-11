@@ -60,7 +60,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'widgetType' => 'a-image',
 				],
 			],
-			'Atomic default' => [
+			'Paragraph default' => [
 				[
 					'id' => 'e8e55a1',
 					'elType' => 'widget',
@@ -68,7 +68,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'widgetType' => 'a-paragraph',
 				],
 			],
-			'Atomic linked' => [
+			'Paragraph linked' => [
 				[
 					'id' => 'e8e55a1',
 					'elType' => 'widget',
