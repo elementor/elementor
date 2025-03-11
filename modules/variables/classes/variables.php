@@ -12,41 +12,70 @@ class Variables {
 	const FILTER_NAME = 'elementor/atomic-global-variables/css/variables';
 
 	private $global_variables = [
-		'e-atomic-variable-gc-a01' => [
-			'value' => '#fff',
-			'name' => 'white',
+		'e-gc-001' => [
+			'value' => '#ffffff',
+			'label' => 'Main: white',
 		],
-		'e-atomic-variable-gc-a02' => [
-			'value' => '#000',
-			'name' => 'black',
+		'e-gc-002' => [
+			'value' => '#000000',
+			'label' => 'Main: black',
 		],
-		'e-atomic-variable-gc-a03' => [
-			'value' => '#f00',
-			'name' => 'red',
+		'e-gc-003' => [
+			'value' => '#404040',
+			'label' => 'Main: text',
 		],
-		'e-atomic-variable-gc-a04' => [
-			'value' => '#0f0',
-			'name' => 'green',
+		'e-gc-004' => [
+			'value' => '#00000033',
+			'label' => 'Main: overlay',
 		],
-		'e-gv-0001' => [
-			'value' => '#F0ABFC',
-			'name' => 'Norma-l',
+
+		'e-gc-a01' => [
+			'value' => '#123524',
+			'label' => 'Green: primary',
 		],
-		'e-gv-0002' => [
-			'value' => '#E315F5',
-			'name' => '1234567890',
+		'e-gc-a02' => [
+			'value' => '#3E7B27',
+			'label' => 'Green: secondary',
 		],
-		'e-gv-0003' => [
-			'value' => '#D004D4',
-			'name' => 'muchlongerfocuswithoutspaces',
+		'e-gc-a03' => [
+			'value' => '#85A947',
+			'label' => 'Green: light',
 		],
-		'e-gv-0004' => [
-			'value' => '#E2E0E2',
-			'name' => 'longer text which is much longer',
+		'e-gc-a04' => [
+			'value' => '#85A947',
+			'label' => 'Green: background',
 		],
-		'e-gv-0005' => [
-			'value' => '#a4b4c4',
-			'name' => 'longer text which is much longer-r',
+		'e-gc-b01' => [
+			'value' => '#213555',
+			'label' => 'Navy: primary',
+		],
+		'e-gc-b02' => [
+			'value' => '#3E5879',
+			'label' => 'Navy: secondary',
+		],
+		'e-gc-b03' => [
+			'value' => '#D8C4B6',
+			'label' => 'Navy: light',
+		],
+		'e-gc-b04' => [
+			'value' => '#F5EFE7',
+			'label' => 'Navy: background',
+		],
+		'e-gc-c01' => [
+			'value' => '#3B1E54',
+			'label' => 'Violet: primary',
+		],
+		'e-gc-c02' => [
+			'value' => '#9B7EBD',
+			'label' => 'Violet: secondary',
+		],
+		'e-gc-c03' => [
+			'value' => '#D4BEE4',
+			'label' => 'Violet: light',
+		],
+		'e-gc-c04' => [
+			'value' => '#EEEEEE',
+			'label' => 'Violet: background',
 		],
 	];
 
