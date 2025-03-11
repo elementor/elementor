@@ -757,17 +757,7 @@ label.elementor-template-library-order-label {
 		box-shadow: 1px 3px 11px rgba(0,0,0,0.3);
 		top: 100%;
 		@include end(0);
-		transform: translateX(getValueByDirection(65%, -65%)) translateY(-7px);
 		z-index: 1;
-
-		&:before {
-			content: '';
-			position: absolute;
-			border: solid transparent;
-			border-width: 8px 4px;
-			border-block-end-color: var(--e-a-bg-default);
-			transform: translateY(-100%);
-		}
 
 		> div {
 			padding: 10px 20px;

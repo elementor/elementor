@@ -42,7 +42,8 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		}
 	},
 
-	onDeleteButtonClick() {
+	onDeleteButtonClick( event ) {
+		event.stopPropagation();
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
 			this.handleDeleteFolderClick();
 			return;
