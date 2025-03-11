@@ -19,7 +19,7 @@ class Edge_Sizes_Transformer extends Transformer_Base {
 
 	public function transform( $value, $key ) {
 		$edges = Collection::make( $value )
-			->only( [ 'top', 'right', 'bottom', 'left' ] )
+			->only( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ] )
 			->filter()
 			->map_with_keys( fn( $edge, $edge_key ) => [ call_user_func( $this->key_generator, $edge_key ) => $edge ] )
 			->all();

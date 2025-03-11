@@ -59,10 +59,10 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			]),
-			'top' => Size_Prop_Type::make(),
-			'right' => Size_Prop_Type::make(),
-			'bottom' => Size_Prop_Type::make(),
-			'left' => Size_Prop_Type::make(),
+			'inset-block-start' => Size_Prop_Type::make(),
+			'inset-inline-end' => Size_Prop_Type::make(),
+			'inset-block-end' => Size_Prop_Type::make(),
+			'inset-inline-start' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make(),
 		];
 	}

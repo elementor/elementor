@@ -769,15 +769,15 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'padding' => [
 								'$$type' => 'dimensions',
 								'value' => [
-									'top' => [
+									'block-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'bottom' => null,
-									'left' => [
+									'block-end' => null,
+									'inline-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
@@ -816,15 +816,15 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'border-width' => [
 								'$$type' => 'border-width',
 								'value' => [
-									'top' => [
+									'block-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'bottom' => null,
-									'left' => [
+									'block-end' => null,
+									'inline-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,

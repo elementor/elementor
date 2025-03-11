@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Dimensions_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
 		$dimensions = Collection::make( $value )
-			->only( [ 'top', 'right', 'bottom', 'left' ] )
+			->only( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ] )
 			->filter()
 			->map_with_keys( fn( $dimension, $side ) => [ $key . '-' . $side => $dimension ] )
 			->all();
