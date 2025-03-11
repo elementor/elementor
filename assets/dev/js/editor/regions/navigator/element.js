@@ -2,6 +2,8 @@ import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 
 export default class extends Marionette.CompositeView {
+
+	elementType = this.model.get('elType');
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
 	}
@@ -62,8 +64,10 @@ export default class extends Marionette.CompositeView {
 
 		let classes = 'elementor-navigator__element';
 
-		if ( elType ) {
+		if ( [ 'section', 'column', 'widget' ].includes( elType ) ) {
 			classes += ' elementor-navigator__element-' + elType;
+		} else {
+			classes += ' elementor-navigator__element-nestable';
 		}
 
 		if ( this.hasChildren() ) {
@@ -244,12 +248,20 @@ export default class extends Marionette.CompositeView {
 			return;
 		}
 
+		const elType = this.model.get( 'elType' );
+		let connectClass;
+		if ( [ 'section', 'column', 'widget' ].includes( elType ) ) {
+			connectClass = '.elementor-navigator__element-' + elType;
+		} else {
+			connectClass = '.elementor-navigator__element-nestable';
+		}
+
 		this.ui.elements.sortable( {
 			items: '> .elementor-navigator__element',
 			placeholder: 'ui-sortable-placeholder',
 			axis: 'y',
 			forcePlaceholderSize: true,
-			connectWith: '.elementor-navigator__element-' + this.model.get( 'elType' ) + ' > .elementor-navigator__elements',
+			connectWith: connectClass + ' > .elementor-navigator__elements',
 			cancel: '[contenteditable="true"], [data-locked="true"]',
 		} );
 	}
