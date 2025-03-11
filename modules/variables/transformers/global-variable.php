@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicGlobalVariables\Transformers;
+namespace Elementor\Modules\Variables\Transformers;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 

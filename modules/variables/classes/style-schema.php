@@ -1,9 +1,9 @@
 <?php
 
-namespace Elementor\Modules\AtomicGlobalVariables\Classes;
+namespace Elementor\Modules\Variables\Classes;
 
-use Elementor\Modules\AtomicGlobalVariables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\AtomicGlobalVariables\Transformers\Global_Variable as Global_Variable_Transformer;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\Transformers\Global_Variable as Global_Variable_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;

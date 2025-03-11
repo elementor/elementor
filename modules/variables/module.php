@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicGlobalVariables;
+namespace Elementor\Modules\Variables;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
