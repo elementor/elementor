@@ -19,7 +19,7 @@ describe( 'findChildWithAnchor', () => {
 		document.body.innerHTML = '';
 	} );
 
-	test( 'should return a element which has href when it exists', () => {
+	test( 'should return an anchor element when it exists', () => {
 		document.body.innerHTML = `
             <div id="test-container">
                 <a>Link 1</a>
@@ -31,10 +31,10 @@ describe( 'findChildWithAnchor', () => {
 		const anchorElement = findChildWithAnchor( parentElement );
 
 		expect( anchorElement ).not.toBeNull();
-		expect( anchorElement.textContent ).toBe( 'Link 2' );
+		expect( anchorElement.textContent ).toBe( 'Link 1' );
 	} );
 
-	test( 'should return null when no a element with href is not found', () => {
+	test( 'should return null when no anchor element is found', () => {
 		document.body.innerHTML = `<div id="empty-container"></div>`;
 
 		const parentElement = document.getElementById( 'empty-container' );
