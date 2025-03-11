@@ -76,7 +76,7 @@ class Cloud_Library extends Library {
 	}
 
 	private function generate_preview_url( $template_data): ?string {
-		if ( ! empty( $template_data['previewUrl'] ) ) {
+		if ( ! empty( $template_data['previewUrl'] ) || 'FOLDER' === $template_data['type'] ) {
 			return null;
 		}
 

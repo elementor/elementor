@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\CloudLibrary;
 
-use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
@@ -122,7 +121,10 @@ class Render_Mode_Preview extends Render_Mode_Base {
 
 
 	private function create_document() {
-		Plugin::$instance->init_common();
+		if ( ! Plugin::$instance->common ) {
+			Plugin::$instance->init_common();
+		}
+
 		/** @var Cloud_Library $cloud_library_app */
 		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
 

@@ -585,8 +585,6 @@ const TemplateLibraryManager = function() {
 				templates,
 			);
 
-			console.log('!_COLLECTION_!', templatesCollection, result)
-
 			if ( result.data?.templates?.total ) {
 				total = result.data?.templates?.total;
 			}
