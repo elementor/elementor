@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicGlobalVariables\PropTypes;
+namespace Elementor\Modules\Variables\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
 

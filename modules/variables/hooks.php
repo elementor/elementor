@@ -1,10 +1,10 @@
 <?php
 
-namespace Elementor\Modules\AtomicGlobalVariables;
+namespace Elementor\Modules\Variables;
 
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Modules\AtomicGlobalVariables\Classes\CSS as Global_Variables_CSS;
-use Elementor\Modules\AtomicGlobalVariables\Classes\Style_Schema;
+use Elementor\Modules\Variables\Classes\CSS as Global_Variables_CSS;
+use Elementor\Modules\Variables\Classes\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

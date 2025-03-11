@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicGlobalVariables\Classes;
+namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 

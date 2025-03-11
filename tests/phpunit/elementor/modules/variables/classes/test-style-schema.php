@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicGlobalVariables\Classes;
+namespace Elementor\Modules\Variables\Classes;
 
-use Elementor\Modules\AtomicGlobalVariables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
@@ -16,7 +16,7 @@ use \PHPUnit\Framework\TestCase;
 
 /**
  * @gorup Elementor\Modules
- * @group Elementor\Modules\AtomicGlobalVariables
+ * @group Elementor\Modules\Variables
  */
 class Test_Style_Schema extends TestCase {
 	private function style_schema() {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Elementor\Modules\AtomicGlobalVariables;
+namespace Elementor\Modules\Variables;
 
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Modules\AtomicGlobalVariables\Classes\Variables;
+use Elementor\Modules\Variables\Classes\Variables;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
