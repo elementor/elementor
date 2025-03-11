@@ -38,9 +38,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	$module = 'page-templates';
 
-	$current_render_mode = \Elementor\Plugin::$instance->frontend->render_mode_manager->get_current();
+	$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
 
-	if ( ! $current_render_mode instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
+	if ( null !== $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
 		$module = 'cloud-library';
 	}
 
