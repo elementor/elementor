@@ -2,7 +2,6 @@
 namespace Elementor\Modules\CloudLibrary\Documents;
 
 use Elementor\Core\Base\Document;
-use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
