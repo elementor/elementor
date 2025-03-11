@@ -29,6 +29,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	modelEvents: {
 		'change:title': 'onTitleChange',
+		'change:preview_url': 'onPreviewUrlChange',
 	},
 
 	onTitleChange() {
@@ -40,6 +41,20 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	onDeleteButtonClick( event ) {
 		event.stopPropagation();
 
+		this.ui.titleCell.html( content );
+	},
+
+	onPreviewUrlChange() {
+		const isCloudSource = 'cloud' === this.model.get( 'source' );
+
+		if ( ! isCloudSource ) {
+			return;
+		}
+
+
+	},
+
+	onDeleteButtonClick() {
 		var toggleMoreIcon = this.ui.toggleMoreIcon;
 
 		elementor.templates.deleteTemplate( this.model, {
