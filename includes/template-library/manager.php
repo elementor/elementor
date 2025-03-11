@@ -328,6 +328,12 @@ class Manager {
 	}
 
 	private function delete_original_template( $args ) {
+		$validate_args = $this->ensure_args( [ 'from_source', 'from_template_id' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
 		$from_source = $this->get_source( $args['from_source'] );
 
 		if ( ! $from_source ) {
