@@ -14,9 +14,16 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		return classes;
 	},
 
+	ui() {
+		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
+			toggleMore: '.elementor-template-library-template-more-toggle',
+		} );
+	},
+
 	events() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
 			click: 'viewFolder',
+			'click @ui.toggleMore': 'onToggleMoreClick',
 		} );
 	},
 
