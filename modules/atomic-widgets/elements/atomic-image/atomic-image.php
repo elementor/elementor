@@ -48,8 +48,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
 				Image_Control::bind_to( 'image' ),
-
-				Link_Control::bind_to( 'link' )
+				Link_Control::bind_to( 'link' ),
 			] );
 
 		return [
