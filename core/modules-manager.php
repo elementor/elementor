@@ -124,6 +124,7 @@ class Modules_Manager {
 			'content-sanitizer',
 			'editor-events',
 			'atomic-widgets',
+			'variables',
 			'global-classes',
 			'wc-product-editor',
 			'checklist',
