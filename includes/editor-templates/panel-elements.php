@@ -58,6 +58,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon" aria-hidden="true"></i>
 		</span>
 		<span class="elementor-panel-heading-title">{{{ title }}}</span>
+    <# if ( 'V4 Elements' === title ) { #>
+    <div class="v4-chip elementor-control-type-switcher" id="v4Chip" data-promotion="v4option">Alpha and Icon
+      <div class="e-promotion-react-wrapper">empty wrapper</div>
+    </div>
+
+    <# } #>
+
 		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">

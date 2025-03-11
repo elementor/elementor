@@ -60,6 +60,13 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	},
 
 	onTitleClick() {
+		if ( this.$el.find( '#v4Chip' ) ) {
+			console.log( 'yes v4' );
+			console.log( this.$el.find( '#v4Chip' ) );
+			// Possibly we can initiate the V4 promotion from here.
+			// Or alternatively we can try to mimic this behavior in the promotions module.
+		}
+
 		this.toggle();
 
 		elementor.editorEvents.dispatchEvent(

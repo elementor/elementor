@@ -5,6 +5,7 @@ export default class Widgets extends FavoriteType {
 	constructor() {
 		super();
 
+		// Maybe we need to use this filter for the promotions as well.
 		elementor.hooks.addFilter( 'panel/category/behaviors', this.addCategoryBehavior.bind( this ) );
 		elementor.hooks.addFilter( 'panel/element/contextMenuGroups', this.addContextMenuGroups.bind( this ) );
 	}
