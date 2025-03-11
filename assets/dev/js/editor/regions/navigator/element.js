@@ -2,8 +2,6 @@ import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 
 export default class extends Marionette.CompositeView {
-
-
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
 	}
@@ -42,7 +40,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	getEmptyView() {
-		if ( this.isRoot() ) {
+		if ( this.isNavigatorParentContainer() ) {
 			return RootEmpty;
 		}
 
@@ -64,7 +62,7 @@ export default class extends Marionette.CompositeView {
 
 		let classes = 'elementor-navigator__element';
 
-		if ( ! this.isRoot() ) {
+		if ( ! this.isNavigatorParentContainer() ) {
 			classes += ' ' + this.getSortableClassName();
 		}
 
@@ -77,11 +75,13 @@ export default class extends Marionette.CompositeView {
 
 	getSortableClassName() {
 		const elType = this.model.get( 'elType' );
-		if ( [ 'section', 'column', 'widget' ].includes( elType ) ) {
+		// Excluded nestable elements (section, column) should have their own unique class,
+		// so that they won't be connected with new nestable elements (container, div-block).
+		if ( this.isExcludedNestableElement() ) {
 			return 'elementor-navigator__element-' + elType;
 		}
 
-		return 'elementor-navigator__element-nestable';
+		return 'elementor-navigator__element-new-nestable';
 	}
 
 	attributes() {
@@ -94,7 +94,7 @@ export default class extends Marionette.CompositeView {
 	templateHelpers() {
 		const helpers = {};
 
-		if ( ! this.isRoot() ) {
+		if ( ! this.isNavigatorParentContainer() ) {
 			helpers.title = this.model.getTitle();
 
 			helpers.icon = 'section' === this.model.get( 'elType' ) ? '' : this.model.getIcon();
@@ -116,11 +116,11 @@ export default class extends Marionette.CompositeView {
 		return this.getOption( 'indent' ) || 0;
 	}
 
-	isNestableElement() {
-		return ! [ 'section', 'column', 'widget' ].includes( this.model.get( 'elType' ) );
+	isExcludedNestableElement() {
+		return [ 'section', 'column' ].includes( this.model.get( 'elType' ) );
 	}
 
-	isRoot() {
+	isNavigatorParentContainer() {
 		return ! this.model.get( 'elType' );
 	}
 
@@ -129,7 +129,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	toggleList( state, callback ) {
-		if ( ! this.hasChildren() || this.isRoot() ) {
+		if ( ! this.hasChildren() || this.isNavigatorParentContainer() ) {
 			return;
 		}
 
@@ -257,8 +257,7 @@ export default class extends Marionette.CompositeView {
 	/*
 	* This will initialize all the sortables https://jqueryui.com/sortable/
 	* each component in the navigator is a sortable.
-	* We connect the sortables of the same type (section, column, widget) and the
-	* nestable ones so items can be moved between them using the 'connectWith' parameter.
+	* We connect the sortables of the same type so items can be moved between them using the 'connectWith' parameter.
 	 */
 	activateSortable() {
 		if ( ! elementor.userCan( 'design' ) ) {
@@ -333,7 +332,7 @@ export default class extends Marionette.CompositeView {
 	onRender() {
 		this.activateSortable();
 
-		if ( this.isRoot() ) {
+		if ( this.isNavigatorParentContainer() ) {
 			return;
 		}
 
