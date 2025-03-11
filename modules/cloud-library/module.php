@@ -29,7 +29,21 @@ class Module extends BaseModule {
 			add_action( 'elementor/init', function () {
 				$this->set_cloud_library_settings();
 			}, 12 /** After the initiation of the connect cloud library */ );
+
+			add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
+				return $this->localize_settings( $settings );
+			}, 11 /** After Elementor Core */ );
 		}
+	}
+
+	public function localize_settings( $settings ) {
+		if ( ! isset( $settings['i18n'] ) ) {
+			return $settings;
+		}
+
+		$settings['i18n']['folder'] = 'Folder';
+
+		return $settings;
 	}
 
 	private function register_experiment() {

@@ -257,4 +257,15 @@ class Source_Cloud extends Source_Base {
 			'name' => $file_data['name'],
 		];
 	}
+
+	public function move_template_to_folder( array $args = [] ) {
+		$move_args = [
+			'title' => $args['title'],
+			'id' => $args['from_template_id'],
+			'source' => $args['source'],
+			'parentId' => ! empty( $args['parentId'] ) ? (int) $args['parentId'] : null,
+		];
+
+		return $this->update_item( $move_args );
+	}
 }
