@@ -125,19 +125,33 @@ class Render_Mode_Manager {
 			array_key_exists( $key, $this->render_modes )
 		) {
 			$this->set_current( new $this->render_modes[ $key ]( $post_id ) );
-		} else if (
-			$template_id &&
-			$key &&
-			array_key_exists( $key, $this->render_modes ) &&
-			$key === Render_Mode_Preview::MODE
-			&& wp_verify_nonce( $nonce, self::get_nonce_action( $template_id ) )
-		) {
+		} else if ( $this->is_preview_mode($template_id, $key, $nonce) ) {
 			$this->set_current( new $this->render_modes[ $key ]( $template_id ) );
 		} else {
 			$this->set_current( new Render_Mode_Normal( $post_id ) );
 		}
 
 		return $this;
+	}
+
+	private function is_preview_mode($template_id, $render_mode, $nonce) {
+		if ( empty($template_id) ) {
+			return false;
+		}
+
+		if ( $render_mode !== Render_Mode_Preview::MODE ) {
+			return false;
+		}
+
+		if ( !array_key_exists( $render_mode, $this->render_modes ) ) {
+			return false;
+		}
+
+		if ( ! wp_verify_nonce( $nonce, self::get_nonce_action( $template_id ) ) ) {
+			wp_die( esc_html__( 'Not Authorized', 'elementor' ), esc_html__( 'Error', 'elementor' ), 403 );
+		}
+
+		return true;
 	}
 
 	/**
