@@ -1,4 +1,4 @@
-import { convertSizeToFrString, getAnchorWithHrefInElement, getClosestAnchorWithHref } from 'elementor-editor-utils/helpers';
+import { convertSizeToFrString, findChildWithAnchor, findParentWithAnchor } from 'elementor-editor-utils/helpers';
 
 describe( 'convertSizeToFrString', () => {
 	test( 'Size 1 to 1fr', () => {
@@ -14,7 +14,7 @@ describe( 'convertSizeToFrString', () => {
 	} );
 } );
 
-describe( 'getAnchorWithHrefInElement', () => {
+describe( 'findChildWithAnchor', () => {
 	beforeEach( () => {
 		document.body.innerHTML = '';
 	} );
@@ -28,7 +28,7 @@ describe( 'getAnchorWithHrefInElement', () => {
         `;
 
 		const parentElement = document.getElementById( 'test-container' );
-		const anchorElement = getAnchorWithHrefInElement( parentElement );
+		const anchorElement = findChildWithAnchor( parentElement );
 
 		expect( anchorElement ).not.toBeNull();
 		expect( anchorElement.textContent ).toBe( 'Link 2' );
@@ -38,13 +38,13 @@ describe( 'getAnchorWithHrefInElement', () => {
 		document.body.innerHTML = `<div id="empty-container"></div>`;
 
 		const parentElement = document.getElementById( 'empty-container' );
-		const anchorElement = getAnchorWithHrefInElement( parentElement );
+		const anchorElement = findChildWithAnchor( parentElement );
 
 		expect( anchorElement ).toBeNull();
 	} );
 } );
 
-describe( 'getClosestAnchorWithHref', () => {
+describe( 'findParentWithAnchor', () => {
 	beforeEach( () => {
 		document.body.innerHTML = '';
 	} );
@@ -59,7 +59,7 @@ describe( 'getClosestAnchorWithHref', () => {
         `;
 
 		const nestedElement = document.getElementById( 'nested-element' );
-		const anchorElement = getClosestAnchorWithHref( nestedElement );
+		const anchorElement = findParentWithAnchor( nestedElement );
 
 		expect( anchorElement ).not.toBeNull();
 		expect( anchorElement.id ).toBe( 'anchor-element' );
@@ -75,7 +75,7 @@ describe( 'getClosestAnchorWithHref', () => {
         `;
 
 		const nestedElement = document.getElementById( 'nested-no-anchor' );
-		const anchorElement = getClosestAnchorWithHref( nestedElement );
+		const anchorElement = findParentWithAnchor( nestedElement );
 
 		expect( anchorElement ).toBeNull();
 	} );
