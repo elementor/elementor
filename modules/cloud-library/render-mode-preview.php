@@ -6,7 +6,6 @@ use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
 use Elementor\Plugin;
 use Elementor\Utils;
-use ElementorPro\Modules\Screenshots\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -41,11 +40,11 @@ class Render_Mode_Preview extends Render_Mode_Base {
 	}
 
 	public function enqueue_scripts() {
-		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() && ELEMENTOR_PRO_TESTS ) ? '' : '.min';
+		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() && ELEMENTOR_TESTS ) ? '' : '.min';
 
 		wp_enqueue_script(
 			'dom-to-image',
-			ELEMENTOR_PRO_ASSETS_URL . "/lib/dom-to-image/js/dom-to-image{$suffix}.js",
+			ELEMENTOR_ASSETS_URL . "/lib/dom-to-image/js/dom-to-image{$suffix}.js",
 			[],
 			'2.6.0',
 			true
@@ -53,7 +52,7 @@ class Render_Mode_Preview extends Render_Mode_Base {
 
 		wp_enqueue_script(
 			'html2canvas',
-			ELEMENTOR_PRO_ASSETS_URL . "/lib/html2canvas/js/html2canvas{$suffix}.js",
+			ELEMENTOR_ASSETS_URL . "/lib/html2canvas/js/html2canvas{$suffix}.js",
 			[],
 			'1.0.0-rc.5',
 			true
@@ -61,15 +60,14 @@ class Render_Mode_Preview extends Render_Mode_Base {
 
 		wp_enqueue_script(
 			'elementor-screenshot',
-			ELEMENTOR_PRO_ASSETS_URL . "/js/screenshot{$suffix}.js",
+			ELEMENTOR_ASSETS_URL . "/js/screenshot{$suffix}.js",
 			[ 'dom-to-image', 'html2canvas' ],
-			ELEMENTOR_PRO_VERSION,
+			ELEMENTOR_VERSION,
 			true
 		);
 
 		$config = [
 			'selector' => '.elementor-' . $this->document->get_main_id(),
-			'nonce' => wp_create_nonce( Module::SCREENSHOT_PROXY_NONCE_ACTION ),
 			'home_url' => home_url(),
 			'post_id' => $this->document->get_main_id(),
 			'template_id' => $this->template_id,

@@ -141,6 +141,7 @@ const entry = {
 	'e-react-promotions': path.resolve( __dirname, '../modules/promotions/assets/js/react/index.js' ),
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
+	'screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
 };
 
 const frontendEntries = {
