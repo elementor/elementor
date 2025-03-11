@@ -1,5 +1,11 @@
+import { createRoot } from 'react-dom/client';
+
 var PanelElementsElementsCollection = require( '../collections/elements' ),
 	PanelElementsCategoryView;
+
+function HelloWorld() {
+	return 'Hello world';
+}
 
 PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-panel-elements-category',
@@ -9,10 +15,12 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	ui: {
 		title: '.elementor-panel-category-title',
 		items: '.elementor-panel-category-items',
+		v4Chip: '#v4Chip',
 	},
 
 	events: {
 		'click @ui.title': 'onTitleClick',
+		'click @ui.v4Chip': 'onV4ChipClick',
 	},
 
 	id() {
@@ -60,7 +68,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	},
 
 	onTitleClick() {
-		if ( this.$el.find( '#v4Chip' ) ) {
+		if ( this.$el.find( '#v4Chip' ).length !== 0 ) {
 			console.log( 'yes v4' );
 			console.log( this.$el.find( '#v4Chip' ) );
 			// Possibly we can initiate the V4 promotion from here.
@@ -96,6 +104,17 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 			$items[ slideFn ]( 300, updateScrollbar );
 		} else {
 			$items[ visibilityFn ]( 0, updateScrollbar );
+		}
+	},
+
+	onV4ChipClick() {
+		console.log( 'v4Chip clicked' );
+
+		const wrapper = document.querySelector( '.e-promotion-react-wrapper' );
+
+		if ( wrapper ) {
+			const root = createRoot( wrapper );
+			root.render( <HelloWorld /> );
 		}
 	},
 } );
