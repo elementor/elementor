@@ -378,6 +378,10 @@ abstract class Source_Base {
 		return new \WP_Error( 'template_error', 'Folders cannot be created in this source' );
 	}
 
+	public function move_template_to_folder( array $folder_data = [] ) {
+		return new \WP_Error( 'template_error', 'Templates cannot be moved in this source' );
+	}
+
 	/**
 	 * Send file headers.
 	 *

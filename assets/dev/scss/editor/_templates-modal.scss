@@ -1019,6 +1019,11 @@ label.elementor-template-library-order-label {
 				&.selected {
 					background: var(--e-a-border-color);
 				}
+
+				&.disabled {
+					pointer-events: none;
+					opacity: 0.3;
+				}
 			}
 
 			.no-results {
@@ -1035,6 +1040,11 @@ label.elementor-template-library-order-label {
 			border-block-start: none;
 			border-inline: none;
 		}
+
+		.source-selections-input.disabled {
+			pointer-events: none;
+			opacity: 0.3;
+		} 
 	}
 }
 
