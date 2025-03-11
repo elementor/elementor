@@ -207,7 +207,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
 	<#
 		const activeSource = elementor.templates.getFilter('source');
-		const view = elementor.templates.getFilter('view') ?? 'list';
+		const view = elementor.templates.getFilter('view') ?? elementor.templates.getViewSelection() ?? 'list';
 
 		if ( ( 'cloud' === activeSource && view === 'list' ) || 'local' === activeSource ) {
 	#>
