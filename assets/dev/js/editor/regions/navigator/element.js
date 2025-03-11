@@ -40,7 +40,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	getEmptyView() {
-		if ( this.isNavigatorParentContainer() ) {
+		if ( this.isNavigatorContainer() ) {
 			return RootEmpty;
 		}
 
@@ -58,11 +58,9 @@ export default class extends Marionette.CompositeView {
 	}
 
 	className() {
-		const elType = this.model.get( 'elType' );
-
 		let classes = 'elementor-navigator__element';
 
-		if ( ! this.isNavigatorParentContainer() ) {
+		if ( ! this.isNavigatorContainer() ) {
 			classes += ' ' + this.getSortableClassName();
 		}
 
@@ -94,7 +92,7 @@ export default class extends Marionette.CompositeView {
 	templateHelpers() {
 		const helpers = {};
 
-		if ( ! this.isNavigatorParentContainer() ) {
+		if ( ! this.isNavigatorContainer() ) {
 			helpers.title = this.model.getTitle();
 
 			helpers.icon = 'section' === this.model.get( 'elType' ) ? '' : this.model.getIcon();
@@ -120,7 +118,7 @@ export default class extends Marionette.CompositeView {
 		return [ 'section', 'column' ].includes( this.model.get( 'elType' ) );
 	}
 
-	isNavigatorParentContainer() {
+	isNavigatorContainer() {
 		return ! this.model.get( 'elType' );
 	}
 
@@ -129,7 +127,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	toggleList( state, callback ) {
-		if ( ! this.hasChildren() || this.isNavigatorParentContainer() ) {
+		if ( ! this.hasChildren() || this.isNavigatorContainer() ) {
 			return;
 		}
 
@@ -332,7 +330,7 @@ export default class extends Marionette.CompositeView {
 	onRender() {
 		this.activateSortable();
 
-		if ( this.isNavigatorParentContainer() ) {
+		if ( this.isNavigatorContainer() ) {
 			return;
 		}
 
