@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client';
+import App from '../../../../../../../../../modules/promotions/assets/js/react/app';
 
 var PanelElementsElementsCollection = require( '../collections/elements' ),
 	PanelElementsCategoryView;
@@ -110,12 +111,41 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	onV4ChipClick() {
 		console.log( 'v4Chip clicked' );
 
-		const wrapper = document.querySelector( '.e-promotion-react-wrapper' );
+		// Const wrapper = document.querySelector( '.e-promotion-react-wrapper' );
+		//
+		// if ( wrapper ) {
+		// 	const root = createRoot( wrapper );
+		// 	root.render( <HelloWorld /> );
+		// }
 
-		if ( wrapper ) {
-			const root = createRoot( wrapper );
-			root.render( <HelloWorld /> );
+		const rootElement = document.querySelector( '.e-promotion-react-wrapper' );
+
+		if ( ! rootElement ) {
+			return;
 		}
+
+		this.promotionInfoTip = createRoot( rootElement );
+
+		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
+			isRTL = elementorCommon.config.isRTL;
+
+		this.promotionInfoTip.render(
+			<App
+				colorScheme={ colorScheme }
+				isRTL={ isRTL }
+				promotionsData={ elementorPromotionsData.animated_headline } // This is a placeholder for the actual data.
+				onClose={ () => this.unmount() }
+			/>,
+		);
+	},
+
+	unmount() {
+		if ( this.promotionInfoTip ) {
+			// This.detachEditorEventListeners();
+			this.promotionInfoTip.unmount();
+		}
+
+		this.promotionInfoTip = null;
 	},
 } );
 
