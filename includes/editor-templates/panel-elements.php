@@ -59,12 +59,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</span>
 		<span class="elementor-panel-heading-title">{{{ title }}}</span>
     <# if ( 'V4 Elements' === title ) { #>
-    <div class="v4-chip elementor-control-type-switcher" id="v4Chip" data-promotion="v4option">Alpha and Icon
-      <div class="e-promotion-react-wrapper">empty wrapper</div>
-    </div>
-
+      <span class="elementor-panel-category-chip">Alpha
+        <!-- We will need to provide v4Chip content in this PR, and update the 'data-promotion'.-->
+        <span class="e-promotion-react-wrapper" data-promotion="animated_headline"></span>
+      </span>
     <# } #>
-
 		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">

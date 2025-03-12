@@ -1,27 +1,27 @@
-import { createRoot } from 'react-dom/client';
-import App from '../../../../../../../../../modules/promotions/assets/js/react/app';
+import { AppManager } from 'elementor-modules/promotions/assets/js/react/app-manager';
 
 var PanelElementsElementsCollection = require( '../collections/elements' ),
 	PanelElementsCategoryView;
-
-function HelloWorld() {
-	return 'Hello world';
-}
 
 PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-panel-elements-category',
 
 	className: 'elementor-panel-category',
 
+	chipSelectors: {
+		wrapperElement: '.elementor-panel-category-title',
+		reactAnchor: '.e-promotion-react-wrapper',
+	},
+
 	ui: {
 		title: '.elementor-panel-category-title',
 		items: '.elementor-panel-category-items',
-		v4Chip: '#v4Chip',
+		chip: '.elementor-panel-category-chip',
 	},
 
 	events: {
 		'click @ui.title': 'onTitleClick',
-		'click @ui.v4Chip': 'onV4ChipClick',
+		'click @ui.chip': 'onChipClick',
 	},
 
 	id() {
@@ -33,14 +33,12 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	childViewContainer: '.elementor-panel-category-items',
 
 	initialize() {
+		this.AppManager = new AppManager();
+
 		let items = this.model.get( 'items' ) || [];
 
-		switch ( this.model.get( 'sort' ) ) {
-			case 'a-z':
-				items = items.sort(
-					( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ) ? 1 : -1,
-				);
-				break;
+		if ( 'a-z' === this.model.get( 'sort' ) ) {
+			items = items.sort( ( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ? 1 : -1 ) );
 		}
 
 		this.collection = new PanelElementsElementsCollection( items );
@@ -69,13 +67,6 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	},
 
 	onTitleClick() {
-		if ( this.$el.find( '#v4Chip' ).length !== 0 ) {
-			console.log( 'yes v4' );
-			console.log( this.$el.find( '#v4Chip' ) );
-			// Possibly we can initiate the V4 promotion from here.
-			// Or alternatively we can try to mimic this behavior in the promotions module.
-		}
-
 		this.toggle();
 
 		elementor.editorEvents.dispatchEvent(
@@ -108,44 +99,9 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onV4ChipClick() {
-		console.log( 'v4Chip clicked' );
-
-		// Const wrapper = document.querySelector( '.e-promotion-react-wrapper' );
-		//
-		// if ( wrapper ) {
-		// 	const root = createRoot( wrapper );
-		// 	root.render( <HelloWorld /> );
-		// }
-
-		const rootElement = document.querySelector( '.e-promotion-react-wrapper' );
-
-		if ( ! rootElement ) {
-			return;
-		}
-
-		this.promotionInfoTip = createRoot( rootElement );
-
-		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto',
-			isRTL = elementorCommon.config.isRTL;
-
-		this.promotionInfoTip.render(
-			<App
-				colorScheme={ colorScheme }
-				isRTL={ isRTL }
-				promotionsData={ elementorPromotionsData.animated_headline } // This is a placeholder for the actual data.
-				onClose={ () => this.unmount() }
-			/>,
-		);
-	},
-
-	unmount() {
-		if ( this.promotionInfoTip ) {
-			// This.detachEditorEventListeners();
-			this.promotionInfoTip.unmount();
-		}
-
-		this.promotionInfoTip = null;
+	onChipClick( event ) {
+		event.stopPropagation();
+		this.AppManager.mount( event.target, this.chipSelectors );
 	},
 } );
 
