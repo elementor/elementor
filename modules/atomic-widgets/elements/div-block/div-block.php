@@ -92,10 +92,6 @@ class Div_Block extends Atomic_Element_Base {
 		];
 	}
 
-	public function get_style_depends() {
-		return [ 'div-block' ];
-	}
-
 	protected function _get_default_child_type( array $element_data ) {
 		if ( 'container' === $element_data['elType'] || 'e-div-block' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
