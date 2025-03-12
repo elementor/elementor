@@ -26,10 +26,12 @@ const TemplateLibraryManager = function() {
 			saveDialog: {
 				description: __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			moveDialog: {
 				description: '',
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			ajaxParams: {
 				success( successData ) {
