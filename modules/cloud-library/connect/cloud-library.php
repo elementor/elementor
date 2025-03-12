@@ -70,8 +70,8 @@ class Cloud_Library extends Library {
 			'export_link' => $this->get_export_link( $template_data['id'] ),
 			'hasPageSettings' => $template_data['hasPageSettings'],
 			'parentId' => $template_data['parentId'],
-			'preview_url' => $template_data['previewUrl'],
-			'generate_preview_url' => $this->generate_preview_url( $template_data ),
+			'preview_url' => esc_url( $template_data['previewUrl'] ),
+			'generate_preview_url' => esc_url( $this->generate_preview_url( $template_data ) ),
 		];
 	}
 
