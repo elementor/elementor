@@ -35,6 +35,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			get( target, prop ) {
 				if ( [ 'add', 'remove' ].includes( prop ) ) {
 					return ( ...args ) => {
+						if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
+							return;
+						}
+
 						const result = target[ prop ]( ...args );
 
 						target.updateType();
