@@ -72,8 +72,12 @@ class Module extends BaseModule {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_action( 'elementor/frontend/render_mode/register', [ $this, 'register_render_mode' ] );
 
-		Plugin::$instance->documents
-			->register_document_type( Documents\Cloud_Template_Preview::TYPE, Documents\Cloud_Template_Preview::get_class_full_name() );
+		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
+	$documents_manager->register_document_type(
+		Documents\Cloud_Template_Preview::TYPE,
+		Documents\Cloud_Template_Preview::get_class_full_name()
+	);
+} );
 	}
 
 	/**
