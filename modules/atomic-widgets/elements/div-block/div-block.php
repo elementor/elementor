@@ -156,11 +156,11 @@ class Div_Block extends Atomic_Element_Base {
 	protected function define_base_styles(): array {
 		$display_value = String_Prop_Type::generate( 'block' );
 		$padding_value = Dimensions_Prop_Type::generate( [
-			'top' => Size_Prop_Type::generate( [
+			'block-start' => Size_Prop_Type::generate( [
 				'size' => 10,
 				'unit' => 'px',
 			]),
-			'bottom' => Size_Prop_Type::generate( [
+			'block-end' => Size_Prop_Type::generate( [
 				'size' => 10,
 				'unit' => 'px',
 			]),

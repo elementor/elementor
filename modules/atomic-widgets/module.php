@@ -163,7 +163,7 @@ class Module extends BaseModule {
 		// Other
 		$transformers->register(
 			Dimensions_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'top', 'right', 'bottom', 'left' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
@@ -175,7 +175,7 @@ class Module extends BaseModule {
 		);
 		$transformers->register(
 			Border_Width_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'top', 'right', 'bottom', 'left' ], fn( $_, $key ) => "border-{$key}-width" )
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $_, $key ) => "border-{$key}-width" )
 		);
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register(
