@@ -6,6 +6,7 @@ use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
@@ -156,7 +157,7 @@ trait Has_Atomic_Base {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
 
-		return Props_Resolver::for_settings()->resolve( $schema, $props );
+		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
 	}
 
 	public static function get_props_schema(): array {

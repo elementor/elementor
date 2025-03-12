@@ -534,8 +534,13 @@ class Source_Local extends Source_Base {
 			$template_data['content'] = $this->replace_elements_ids( $template_data['content'] );
 		}
 
+		$elements = apply_filters(
+			'elementor/template_library/sources/local/save_item/elements',
+			$template_data['content']
+		);
+
 		$document->save( [
-			'elements' => $template_data['content'],
+			'elements' => $elements,
 			'settings' => $template_data['page_settings'],
 		] );
 
@@ -1521,8 +1526,13 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'empty_template', 'The template is empty' );
 		}
 
+		$elements = apply_filters(
+			'elementor/template_library/sources/local/prepare_template_export/elements',
+			$template_data['content']
+		);
+
 		$export_data = [
-			'content' => $template_data['content'],
+			'content' => $elements,
 			'page_settings' => $template_data['settings'],
 			'version' => DB::DB_VERSION,
 			'title' => $document->get_main_post()->post_title,

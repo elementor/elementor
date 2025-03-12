@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Transformers_Registry extends Collection {
+	private ?Transformer_Base $fallback = null;
+
 	public function register( string $key, Transformer_Base $transformer ): self {
 		if ( isset( $this->items[ $key ] ) ) {
 			Utils::safe_throw( "{$key} transformer is already registered." );
@@ -20,5 +22,15 @@ class Transformers_Registry extends Collection {
 		$this->items[ $key ] = $transformer;
 
 		return $this;
+	}
+
+	public function register_fallback( Transformer_Base $transformer ): self {
+		$this->fallback = $transformer;
+
+		return $this;
+	}
+
+	public function get( $key, $fallback = null ) {
+		return parent::get( $key, $fallback ) ?? $this->fallback;
 	}
 }

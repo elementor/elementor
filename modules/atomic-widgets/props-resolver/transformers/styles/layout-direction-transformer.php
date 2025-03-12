@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Multi_Props;
 
@@ -11,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Layout_Direction_Transformer extends Transformer_Base {
-	public function transform( $value, $key ): array {
+	public function transform( $value, Props_Resolver_Context $context ): array {
 		$gap = Collection::make( $value )
 			->only( [ 'row', 'column' ] )
 			->filter()

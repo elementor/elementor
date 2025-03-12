@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Multi_Props;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +18,7 @@ class Edge_Sizes_Transformer extends Transformer_Base {
 		$this->key_generator = $key_generator;
 	}
 
-	public function transform( $value, $key ) {
+	public function transform( $value, Props_Resolver_Context $context ) {
 		$edges = Collection::make( $value )
 			->only( [ 'top', 'right', 'bottom', 'left' ] )
 			->filter()

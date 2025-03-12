@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corner_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Dimensions_Transformer;
@@ -709,7 +709,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 	public function test_render__style_with_position_transformers() {
 		// Arrange.
 		add_action('elementor/atomic-widgets/styles/transformers/register', function( $registry ) {
-			$registry->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
+			$registry->register( String_Prop_Type::get_key(), new Plain_Transformer() );
 		} );
 
 		$styles = [
@@ -749,7 +749,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			$registry->register( Border_Radius_Prop_Type::get_key(), new Corner_Sizes_Transformer( fn( $corner ) => 'border-' . $corner . '-radius' ) );
 			$registry->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
 			$registry->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
-			$registry->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
+			$registry->register( Color_Prop_Type::get_key(), new Plain_Transformer() );
 		});
 
 		$styles = [
