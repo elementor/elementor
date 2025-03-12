@@ -35,10 +35,6 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			get( target, prop ) {
 				if ( [ 'add', 'remove' ].includes( prop ) ) {
 					return ( ...args ) => {
-						if ( 'edit' !== elementor.channels.dataEditMode.request( 'activeMode' ) ) {
-							return;
-						}
-
 						const result = target[ prop ]( ...args );
 
 						target.updateType();
@@ -84,6 +80,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * @param {boolean}               append
 	 */
 	add( containers, append = false ) {
+		if ( ! this.isAllowed() ) {
+			return;
+		}
+
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
 		// If command/ctrl+click not clicked, clear selected elements.
@@ -108,6 +108,10 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	 * @param {boolean}               all
 	 */
 	remove( containers, all = false ) {
+		if ( ! this.isAllowed() ) {
+			return;
+		}
+
 		containers = Array.isArray( containers ) ? containers : [ containers ];
 
 		if ( all ) {
@@ -219,5 +223,9 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	isSameType() {
 		return ! this.getElements().length ||
 			Boolean( this.type );
+	}
+
+	isAllowed() {
+		return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
 	}
 }
