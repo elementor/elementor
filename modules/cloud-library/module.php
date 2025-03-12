@@ -3,6 +3,7 @@ namespace Elementor\Modules\CloudLibrary;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
+use Elementor\Core\Documents_Manager;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
@@ -73,10 +74,10 @@ class Module extends BaseModule {
 		add_action( 'elementor/frontend/render_mode/register', [ $this, 'register_render_mode' ] );
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-	$documents_manager->register_document_type(
+			$documents_manager->register_document_type(
 		Documents\Cloud_Template_Preview::TYPE,
-		Documents\Cloud_Template_Preview::get_class_full_name()
-	);
+			Documents\Cloud_Template_Preview::get_class_full_name()
+		);
 } );
 	}
 
@@ -157,11 +158,7 @@ class Module extends BaseModule {
 	private function print_thumbnail_preview_callback() {
 		$doc = Plugin::$instance->documents->get_current();
 
-		setup_postdata( $doc->get_main_post() );
-
 		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true );
-
-		wp_reset_postdata();
 
 		wp_delete_post( $doc->get_main_id(), true );
 	}

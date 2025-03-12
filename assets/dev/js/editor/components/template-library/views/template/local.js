@@ -15,6 +15,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			toggleMoreIcon: '.elementor-template-library-template-more-toggle i',
 			titleCell: '.elementor-template-library-template-name span',
 			resourceIcon: '.elementor-template-library-template-name i',
+			previewImg: '.elementor-template-library-template-thumbnail img',
 		} );
 	},
 
@@ -29,6 +30,19 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	modelEvents: {
 		'change:title': 'onTitleChange',
+		'change:preview_url': 'onPreviewUrlChange',
+	},
+
+	onRender() {
+		const view = elementor.templates.getViewSelection();
+
+		if ( 'FOLDER' !== this.model.get( 'subType' ) &&
+			this.model.get( 'generate_preview_url' ) &&
+			! this.model.get( 'preview_url' ) &&
+			'grid' === view
+		) {
+			this.createScreenshotIframe();
+		}
 	},
 
 	onTitleChange() {
@@ -37,9 +51,18 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		this.ui.titleCell.text( title );
 	},
 
-	onDeleteButtonClick( event ) {
-		event.stopPropagation();
+	onPreviewUrlChange() {
+		const isCloudSource = 'cloud' === this.model.get( 'source' );
 
+		if ( isCloudSource && this.model.get( 'preview_url' ) ) {
+			this.ui.previewImg.attr( 'src', this.model.get( 'preview_url' ) );
+			this.ui.previewImg.css( 'object-fit', 'contain' );
+			this.model.set( 'generate_preview_url', null );
+			this.iframe.remove();
+		}
+	},
+
+	onDeleteButtonClick() {
 		var toggleMoreIcon = this.ui.toggleMoreIcon;
 
 		elementor.templates.deleteTemplate( this.model, {
@@ -50,6 +73,19 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 				$e.routes.refreshContainer( 'library' );
 			},
 		} );
+	},
+
+	createScreenshotIframe( ) {
+		const iframe = document.createElement( 'iframe' );
+
+		iframe.src = this.model.get( 'generate_preview_url' );
+		iframe.width = '1200';
+		iframe.height = '500';
+		iframe.style = 'visibility: hidden;';
+
+		document.body.appendChild( iframe );
+
+		this.iframe = iframe;
 	},
 
 	onToggleMoreClick( event ) {
