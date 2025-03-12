@@ -262,6 +262,8 @@ class User {
 			wp_die();
 		}
 
+		check_admin_referer( 'elementor_set_admin_notice_viewed' );
+
 		self::set_user_notice( $notice_id );
 
 		if ( ! wp_doing_ajax() ) {

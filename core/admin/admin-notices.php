@@ -235,6 +235,7 @@ class Admin_Notices extends Module {
 		$options = [
 			'title' => esc_html__( 'Love using Elementor?', 'elementor' ),
 			'description' => $message,
+			'dismissible' => false,
 			'button' => [
 				'text' => esc_html__( 'Sure! I\'d love to help', 'elementor' ),
 				'url' => $optin_url,
@@ -271,6 +272,7 @@ class Admin_Notices extends Module {
 		$dismiss_url = add_query_arg( [
 			'action' => 'elementor_set_admin_notice_viewed',
 			'notice_id' => esc_attr( $notice_id ),
+			'_wpnonce' => wp_create_nonce( 'elementor_set_admin_notice_viewed' ),
 		], admin_url( 'admin-post.php' ) );
 
 		$options = [
@@ -570,10 +572,14 @@ class Admin_Notices extends Module {
 			$notice_classes[] = 'e-notice--' . $options['type'];
 		}
 
+		$wrapper_attributes = [];
+
 		if ( $options['dismissible'] ) {
 			$label = esc_html__( 'Dismiss this notice.', 'elementor' );
 			$notice_classes[] = 'e-notice--dismissible';
 			$dismiss_button = '<i class="e-notice__dismiss" role="button" aria-label="' . $label . '" tabindex="0"></i>';
+
+			$wrapper_attributes['data-nonce'] = wp_create_nonce( 'elementor_set_admin_notice_viewed' );
 		}
 
 		if ( $options['icon'] ) {
@@ -581,9 +587,7 @@ class Admin_Notices extends Module {
 			$icon = '<div class="e-notice__icon-wrapper"><i class="' . esc_attr( $options['icon'] ) . '" aria-hidden="true"></i></div>';
 		}
 
-		$wrapper_attributes = [
-			'class' => $notice_classes,
-		];
+		$wrapper_attributes['class'] = $notice_classes;
 
 		if ( $options['id'] ) {
 			$wrapper_attributes['data-notice_id'] = $options['id'];
