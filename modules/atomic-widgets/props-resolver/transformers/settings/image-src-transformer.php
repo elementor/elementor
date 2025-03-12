@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +16,7 @@ class Image_Src_Transformer extends Transformer_Base {
 	 * Currently, the dynamic tags that return images return it with id & url no matter
 	 * what, so we need to keep the same structure in the props.
 	 */
-	public function transform( $value, $key ) {
+	public function transform( $value, Props_Resolver_Context $context ) {
 		return [
 			'id' => isset( $value['id'] ) ? (int) $value['id'] : null,
 			'url' => $value['url'] ?? null,
