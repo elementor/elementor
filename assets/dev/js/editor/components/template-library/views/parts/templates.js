@@ -29,6 +29,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
 		selectSourceFilter: '.elementor-template-library-filter-select-source',
 		addNewFolder: '#elementor-template-library-add-new-folder',
+		selectGridView: '#elementor-template-library-view-grid',
+		selectListView: '#elementor-template-library-view-list',
 	},
 
 	events: {
@@ -38,6 +40,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
 		'change @ui.selectSourceFilter': 'onSelectSourceFilterChange',
 		'click @ui.addNewFolder': 'onCreateNewFolderClick',
+		'click @ui.selectGridView': 'onSelectGridViewClick',
+		'click @ui.selectListView': 'onSelectListViewClick',
 	},
 
 	comparators: {
@@ -179,6 +183,12 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
+	addViewData() {
+		const view = elementor.templates.getViewSelection();
+
+		this.$el.attr( 'data-template-view', view );
+	},
+
 	setFiltersUI() {
 		if ( ! this.select2Instance && this.$( this.ui.selectFilter ).length ) {
 			const $filters = this.$( this.ui.selectFilter ),
@@ -243,6 +253,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		if ( 'cloud' === activeSource ) {
 			this.handleLoadMore();
+
+			this.addViewData();
 		}
 	},
 
@@ -291,6 +303,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	onSelectSourceFilterChange( event ) {
 		elementor.templates.onSelectSourceFilterChange( event );
+	},
+
+	onSelectGridViewClick() {
+		elementor.templates.onSelectViewChange( 'grid' );
+	},
+
+	onSelectListViewClick() {
+		elementor.templates.onSelectViewChange( 'list' );
 	},
 
 	onMyFavoritesFilterChange() {
