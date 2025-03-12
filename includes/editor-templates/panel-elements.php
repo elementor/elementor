@@ -58,6 +58,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon" aria-hidden="true"></i>
 		</span>
 		<span class="elementor-panel-heading-title">{{{ title }}}</span>
+		<# if ( 'v4-elements' === name ) { #>
+			<span class="elementor-category-alpha-chip">Alpha Chip</span>
+		<# } #>
 		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">

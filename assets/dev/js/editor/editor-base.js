@@ -12,6 +12,7 @@ import HotkeysScreen from './components/hotkeys/hotkeys';
 import IconsManager from './components/icons-manager/icons-manager';
 import BrowserImport from './components/browser-import/manager';
 import PreviewComponent from './components/preview/component';
+import V4AlphaChipComponent from './components/v4-alpha-chip/component';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
@@ -484,6 +485,8 @@ export default class EditorBase extends Marionette.Application {
 		$e.components.register( new DocumentComponent() );
 
 		$e.components.register( new PreviewComponent() );
+
+		$e.components.register( new V4AlphaChipComponent() );
 
 		// TODO: Remove, BC Since 2.9.0.
 		elementor.saver = $e.components.get( 'document/save' );

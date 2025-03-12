@@ -9,10 +9,12 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	ui: {
 		title: '.elementor-panel-category-title',
 		items: '.elementor-panel-category-items',
+		alpha_chip: '.elementor-category-alpha-chip',
 	},
 
 	events: {
 		'click @ui.title': 'onTitleClick',
+		'click @ui.alpha_chip': 'onAlphaChipClick',
 	},
 
 	id() {
@@ -35,6 +37,10 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		}
 
 		this.collection = new PanelElementsElementsCollection( items );
+	},
+
+	onAlphaChipClick() {
+		$e.run( 'v4-alpha-chip/popup-open' );
 	},
 
 	behaviors() {
