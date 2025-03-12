@@ -39,7 +39,9 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		this.collection = new PanelElementsElementsCollection( items );
 	},
 
-	onAlphaChipClick() {
+	onAlphaChipClick( event ) {
+		event.stopPropagation();
+
 		$e.run( 'v4-alpha-chip/popup-open' );
 	},
 
