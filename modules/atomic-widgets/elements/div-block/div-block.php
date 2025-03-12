@@ -93,8 +93,8 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
-		if ( 'div-block' === $element_data['elType'] ) {
-			return Plugin::$instance->elements_manager->get_element_types( 'div-block' );
+		if ( 'container' === $element_data['elType'] || 'div-block' === $element_data['elType'] ) {
+			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
@@ -165,6 +165,10 @@ class Div_Block extends Atomic_Element_Base {
 				'unit' => 'px',
 			]),
 		]);
+		$height_value = Size_Prop_Type::generate( [
+			'size' => 100,
+			'unit' => 'px',
+		] );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
@@ -172,6 +176,7 @@ class Div_Block extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_prop( 'display', $display_value )
 						->add_prop( 'padding', $padding_value )
+						->add_prop( 'height', $height_value )
 				),
 		];
 	}
