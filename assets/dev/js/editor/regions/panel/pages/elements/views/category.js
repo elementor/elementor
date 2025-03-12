@@ -37,8 +37,12 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 		let items = this.model.get( 'items' ) || [];
 
-		if ( 'a-z' === this.model.get( 'sort' ) ) {
-			items = items.sort( ( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ? 1 : -1 ) );
+		switch ( this.model.get( 'sort' ) ) {
+			case 'a-z':
+				items = items.sort(
+					( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ) ? 1 : -1,
+				);
+				break;
 		}
 
 		this.collection = new PanelElementsElementsCollection( items );
