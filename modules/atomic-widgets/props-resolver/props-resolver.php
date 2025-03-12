@@ -134,7 +134,12 @@ class Props_Resolver {
 		}
 
 		try {
-			$transformed_value = $transformer->transform( $value['value'], $key );
+			$context = Props_Resolver_Context::make()
+				->set_key( $key )
+				->set_disabled( (bool) ( $value['disabled'] ?? false ) )
+				->set_prop_type( $prop_type );
+
+			$transformed_value = $transformer->transform( $value['value'], $context );
 
 			return $this->transform( $transformed_value, $key, $prop_type, $depth + 1 );
 		} catch ( Exception $e ) {
