@@ -104,7 +104,8 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			"templateType" => "",
 		];
 
-		$mock_content = json_encode( ['content' => 'mock_content'] );
+		$mock_content = [ 'content' => 'mock_content' ];
+		$mock_post_resource_content = wp_json_encode( [ 'content' => $mock_content, 'page_settings' => [] ] );
 
 		// Assert
 		$this->cloud_library_app_mock
@@ -119,7 +120,8 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'type' => 'TEMPLATE',
 				'templateType' => 'container',
 				'parentId' => null,
-				'content' => $mock_content,
+				'content' => $mock_post_resource_content,
+				'hasPageSettings' => false,
 			] )
 			->willReturn( $post_resource_response );
 
@@ -130,7 +132,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'title' => 'ATemplate',
 			'type' => 'container',
 			'resourceType' => 'TEMPLATE',
-			'content' => $mock_content,
+			'content' => wp_json_encode( $mock_content ),
 			'parentId' => null,
 		] );
 	}
@@ -459,5 +461,131 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		// Act
 		$this->manager->create_folder( $folder_data );
+	}
+
+	public function test_get_folders() {
+		// Arrange
+		$args = [
+			'source' => 'cloud',
+			'templateType' => 'folder',
+			'offset' => 0,
+		];
+
+		$this->cloud_library_app_mock
+			->method( 'get_resources' )
+			->willReturn( [] );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'get_resources' )
+			->with( $args );
+
+		// Act
+		$this->manager->get_folders( [ 'source' => 'cloud', 'offset' => 0 ] );
+	}
+
+	public function test_get_folders_fails_without_offset() {
+		// Act
+		$result = $this->manager->get_folders( [ 'source' => 'cloud' ] );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->never() )
+			->method( 'get_resources' );
+
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "offset" not specified.', $result->get_error_message() );
+	}
+
+	public function test_get_folders_fails_without_source() {
+		// Act
+		$result = $this->manager->get_folders( [ 'offset' => 0 ] );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->never() )
+			->method( 'get_resources' );
+
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_move_template() {
+		// Arrange
+		$mock_content = [ 'content' => 'mock_content' ];
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'update_resource' )
+			->with( [
+				'source' => 'cloud',
+				'id' => 1,
+				'parentId' => 2,
+				'title' => 'ATemplate',
+			] );
+
+		// Act
+		$this->manager->save_template( [
+			'post_id' => 1,
+			'source' => 'cloud',
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => wp_json_encode( $mock_content ),
+			'parentId' => 2,
+			'save_context' => 'move',
+			'from_source' => 'cloud',
+			'from_template_id' => 1,
+		] );
+	}
+
+	public function test_move_template_fails_without_from_source() {
+		// Arrange
+		$mock_content = [ 'content' => 'mock_content' ];
+
+		// Act
+		$result = $this->manager->save_template( [
+			'post_id' => 1,
+			'source' => 'cloud',
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => wp_json_encode( $mock_content ),
+			'parentId' => 2,
+			'save_context' => 'move',
+			'from_template_id' => 1,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_move_template_fails_without_from_template_id() {
+		// Arrange
+		$mock_content = [ 'content' => 'mock_content' ];
+
+		// Act
+		$result = $this->manager->save_template( [
+			'post_id' => 1,
+			'source' => 'cloud',
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => wp_json_encode( $mock_content ),
+			'parentId' => 2,
+			'save_context' => 'move',
+			'from_source' => 'cloud',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
 	}
 }

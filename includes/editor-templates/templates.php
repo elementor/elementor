@@ -233,6 +233,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="elementor-screen-only"><?php echo esc_html__( 'More actions', 'elementor' ); ?></span>
 		</div>
 		<div class="elementor-template-library-template-more">
+			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+				<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
+					<div class="elementor-template-library-template-move">
+						<i class="eicon-pencil" aria-hidden="true"></i>
+						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+					</div>
+				<# } #>
+			<?php endif; ?>
 			<div class="elementor-template-library-template-export">
 				<a href="{{ export_link }}">
 					<i class="eicon-sign-out" aria-hidden="true"></i>
@@ -290,7 +298,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
 	<div class="elementor-template-library-blank-icon">
-		<i class="eicon-library-upload" aria-hidden="true"></i>
+		{{{ icon }}}
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Save', 'elementor' ); ?></span>
 	</div>
 	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
@@ -307,11 +315,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</button>
 		<?php else : ?>
 		<div class="cloud-library-form-inputs">
-			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
-			<select name="source[]" id="elementor-template-library-save-template-source" multiple="multiple" required>
-				<option value="local">Site Library</option>
-				<option value="cloud">Cloud Library</option>
-			</select>
+			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Give your template a name', 'elementor' ); ?>" required>
+			<div class="source-selections">
+				<div class="source-selections-input cloud">
+					<input type="checkbox" id="cloud" name="cloud" value="cloud">
+					<label for="cloud"> Cloud Library</label> <i class="eicon-info" aria-hidden="true"></i> /  <i class="eicon-ellipsis-h"></i>
+					<div class="cloud-folder-selection-dropdown">
+						<div class="cloud-folder-selection-dropdown-list"></div>
+					</div>
+					<span class="selected-folder">
+						<span class="selected-folder-text"></span>
+						<i class="eicon-editor-close" aria-hidden="true"></i>
+					</span>
+				</div>				
+				<div class="source-selections-input local">
+					<input type="checkbox" id="local" name="local" value="local">
+					<label for="local"> Site Library</label><br>
+				</div>
+				<input type="hidden" name="parentId" id="parentId" />
+			</div>
 			<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
 				<span class="elementor-state-icon">
 					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>

@@ -28,6 +28,7 @@ class Cloud_Library extends Library {
 			'offset' => $args['offset'] ? (int) $args['offset'] : null,
 			'search' => $args['search'],
 			'parentId' => $args['parentId'],
+			'templateType' => $args['templateType'] ?? null,
 		] );
 
 		$endpoint .= '?' . $query_string;
@@ -60,13 +61,14 @@ class Cloud_Library extends Library {
 		return [
 			'template_id' => $template_data['id'],
 			'source' => 'cloud',
-			'type' => ucfirst( $template_data['templateType'] ),
+			'type' => $template_data['templateType'],
 			'subType' => $template_data['type'],
 			'title' => $template_data['title'],
 			'author' => $template_data['authorEmail'],
 			'human_date' => date_i18n( get_option( 'date_format' ), strtotime( $template_data['createdAt'] ) ),
 			'export_link' => $this->get_export_link( $template_data['id'] ),
 			'hasPageSettings' => $template_data['hasPageSettings'],
+			'parentId' => $template_data['parentId'],
 		];
 	}
 
