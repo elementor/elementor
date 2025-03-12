@@ -134,8 +134,8 @@ class Render_Mode_Manager {
 		return $this;
 	}
 
-	private function is_preview_mode($template_id, $render_mode, $nonce) {
-		if ( empty($template_id) ) {
+	private function is_preview_mode( $template_id, $render_mode, $nonce ) {
+		if ( empty( $template_id ) ) {
 			return false;
 		}
 
