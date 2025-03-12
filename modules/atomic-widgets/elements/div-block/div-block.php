@@ -165,6 +165,10 @@ class Div_Block extends Atomic_Element_Base {
 				'unit' => 'px',
 			]),
 		]);
+		$height_value = Size_Prop_Type::generate( [
+			'size' => 100,
+			'unit' => 'px',
+		] );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
@@ -172,6 +176,7 @@ class Div_Block extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_prop( 'display', $display_value )
 						->add_prop( 'padding', $padding_value )
+						->add_prop( 'height', $height_value )
 				),
 		];
 	}
