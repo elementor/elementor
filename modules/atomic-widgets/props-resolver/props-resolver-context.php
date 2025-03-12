@@ -11,9 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Props_Resolver_Context {
 	private ?string $key = null;
 
+	private ?Transformable_Prop_Type $prop_type;
+
 	private bool $disabled = false;
 
-	private Transformable_Prop_Type $prop_type;
 
 	public static function make(): self {
 		return new static();
@@ -37,7 +38,7 @@ class Props_Resolver_Context {
 		return $this;
 	}
 
-	public function get_key(): string {
+	public function get_key(): ?string {
 		return $this->key;
 	}
 
@@ -45,7 +46,7 @@ class Props_Resolver_Context {
 		return $this->disabled;
 	}
 
-	public function get_prop_type(): Transformable_Prop_Type {
+	public function get_prop_type(): ?Transformable_Prop_Type {
 		return $this->prop_type;
 	}
 }
