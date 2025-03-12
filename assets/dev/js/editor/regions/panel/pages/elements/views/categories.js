@@ -11,7 +11,6 @@ PanelElementsCategoriesView = Marionette.CompositeView.extend( {
 	id: 'elementor-panel-elements-categories',
 
 	initialize() {
-		// Here we listen to panel changes.
 		this.listenTo( elementor.channels.panelElements, 'filter:change', this.onPanelElementsFilterChange );
 	},
 
