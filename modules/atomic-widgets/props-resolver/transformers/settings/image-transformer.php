@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Image_Transformer extends Transformer_Base {
-	public function transform( $value, $key ) {
+	public function transform( $value, Props_Resolver_Context $context ) {
 		if ( ! empty( $value['src']['id'] ) ) {
 			$image_src = wp_get_attachment_image_src(
 				(int) $value['src']['id'],
