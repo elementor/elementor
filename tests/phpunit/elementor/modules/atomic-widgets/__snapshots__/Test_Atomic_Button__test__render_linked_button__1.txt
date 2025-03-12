@@ -1,9 +1,8 @@
-			
+
     <a
             href="https://example.com"
             target="_blank"
-            class="a-button-base"
+            class="e-button-base"
     >
         Click here
     </a>
-		

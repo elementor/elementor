@@ -16,7 +16,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'url' => ELEMENTOR_ASSETS_PATH . '/images/a-default-svg.svg',
 			],
 		],
-		'widgetType' => 'a-svg',
+		'widgetType' => 'e-svg',
 	];
 
 	const MOCK_ID = [
@@ -27,7 +27,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'id' => 123,
 			],
 		],
-		'widgetType' => 'a-svg',
+		'widgetType' => 'e-svg',
 	];
 
 	protected $instance;
@@ -102,7 +102,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 					'target' => '_blank',
 				]
 			],
-			'widgetType' => 'a-svg',
+			'widgetType' => 'e-svg',
 		];
 
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $element );
@@ -129,7 +129,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 					'target' => '_blank',
 				]
 			],
-			'widgetType' => 'a-svg',
+			'widgetType' => 'e-svg',
 		];
 
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $element );

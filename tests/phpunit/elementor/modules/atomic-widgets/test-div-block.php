@@ -9,28 +9,28 @@ class Test_Div_Block extends Elementor_Test_Base {
 
 	const MOCK = [
 		'id' => 'e8e55a1',
-		'elType' => 'div-block',
+		'elType' => 'e-div-block',
 		'settings' => [],
-		'widgetType' => 'div-block',
+		'widgetType' => 'e-div-block',
 	];
 
 	const MOCK_LINK = [
 		'id' => 'e8e55a1',
-		'elType' => 'div-block',
+		'elType' => 'e-div-block',
 		'settings' => [
 			'link' => [
 				'href' => 'https://example.com',
 				'target' => '_blank',
 			],
 		],
-		'widgetType' => 'div-block',
+		'widgetType' => 'e-div-block',
 	];
 
 	const MOCK_CHILD = [
 		'id' => 'e8e55a1',
 		'elType' => 'widget',
 		'settings' => [],
-		'widgetType' => 'a-paragraph',
+		'widgetType' => 'e-paragraph',
 	];
 
 	protected $instance;

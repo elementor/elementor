@@ -50,9 +50,9 @@ module.exports = {
 				container: null,
 				'div-block': null,
 			},
-			'div-block': {
+			'e-div-block': {
 				widget: null,
-				'div-block': null,
+				'e-div-block': null,
 				container: null,
 			},
 		},
