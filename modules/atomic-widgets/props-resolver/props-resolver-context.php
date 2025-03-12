@@ -25,7 +25,7 @@ class Props_Resolver_Context {
 		return $this;
 	}
 
-	public function set_disable( bool $disabled ): self {
+	public function set_disabled( bool $disabled ): self {
 		$this->disabled = $disabled;
 
 		return $this;

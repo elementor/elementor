@@ -136,7 +136,7 @@ class Props_Resolver {
 		try {
 			$context = Props_Resolver_Context::make()
 				->set_key( $key )
-				->set_disable( (bool) ( $value['disabled'] ?? false ) )
+				->set_disabled( (bool) ( $value['disabled'] ?? false ) )
 				->set_prop_type( $prop_type );
 
 			$transformed_value = $transformer->transform( $value['value'], $context );
