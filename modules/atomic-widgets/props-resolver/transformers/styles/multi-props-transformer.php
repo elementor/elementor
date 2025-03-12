@@ -26,7 +26,7 @@ class Multi_Props_Transformer extends Transformer_Base {
 		$values = Collection::make( $this->keys )
 			->filter( fn ( $key ) => isset( $value[ $key ] ) )
 			->map_with_keys( function( $key ) use ( $value, $context ) {
-				$new_key   = call_user_func( $this->key_generator, $context->get_key(), $key );
+				$new_key = call_user_func( $this->key_generator, $context->get_key(), $key );
 				$new_value = $value[ $key ];
 
 				return [ $new_key => $new_value ];
