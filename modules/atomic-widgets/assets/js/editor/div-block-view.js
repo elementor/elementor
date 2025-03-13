@@ -7,9 +7,7 @@ const DivBlockView = BaseElementView.extend( {
 	emptyView: DivBlockEmptyView,
 
 	tagName() {
-		const isLink = !! this.model.getSetting( 'link' )?.value?.destination?.value;
-
-		return isLink ? 'a' : ( this.model.getSetting( 'tag' ) || 'div' );
+		return this.doesHaveLink() ? 'a' : ( this.model.getSetting( 'tag' ) || 'div' );
 	},
 
 	getChildViewContainer() {
@@ -89,16 +87,19 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	handleLink() {
-		const linkSettings = this.model.getSetting( 'link' )?.value?.destination;
-
-		if ( 'a' !== this.tagName() || ! linkSettings ) {
+		if ( ! this.doesHaveLink() ) {
 			return;
 		}
 
-		const isPostId = 'number' === linkSettings.$$type;
+		const linkSettings = this.model.getSetting( 'link' )?.value?.destination;
+		const isPostId = 'number' === linkSettingsdestination.$$type;
 		const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
 
 		this.$el.attr( 'href', hrefPrefix + linkSettings.value );
+	},
+
+	doesHaveLink() {
+		return !! this.model.getSetting( 'link' )?.value?.destination?.value;
 	},
 
 	droppableInitialize() {
