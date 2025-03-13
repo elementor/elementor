@@ -383,6 +383,14 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @param int $template_id
+	 * @return \Elementor\Core\Base\Document|\WP_Error
+	 */
+	public function create_document_for_preview( int $template_id ) {
+		return new \WP_Error( 'template_error', 'Can not generate preview for this source' );
+	}
+
+	/**
 	 * Send file headers.
 	 *
 	 * Set the file header when export template data to a file.

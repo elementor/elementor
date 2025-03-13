@@ -2,6 +2,7 @@
 namespace Elementor\Modules\CloudLibrary\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\CloudLibrary\Render_Mode_Preview;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,7 +53,10 @@ class Cloud_Library extends Library {
 		];
 	}
 
-	public function get_resource( array $args ): array {
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function get_resource( array $args ) {
 		return $this->http_request( 'GET', 'resources/' . $args['id'], $args, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
@@ -70,13 +74,16 @@ class Cloud_Library extends Library {
 			'export_link' => $this->get_export_link( $template_data['id'] ),
 			'hasPageSettings' => $template_data['hasPageSettings'],
 			'parentId' => $template_data['parentId'],
-			'preview_url' => esc_url( $template_data['previewUrl'] ),
-			'generate_preview_url' => esc_url( $this->generate_preview_url( $template_data ) ),
+			'preview_url' => esc_url_raw( $template_data['previewUrl'] ?? '' ),
+			'generate_preview_url' => esc_url_raw( $this->generate_preview_url( $template_data ) ?? '' ),
 		];
 	}
 
 	private function generate_preview_url( $template_data): ?string {
-		if ( ! empty( $template_data['previewUrl'] ) || 'FOLDER' === $template_data['type'] || empty(  $template_data['id'] ) ) {
+		if ( ! empty( $template_data['previewUrl'] ) ||
+			'FOLDER' === $template_data['type'] ||
+			empty(  $template_data['id'] )
+		) {
 			return null;
 		}
 
@@ -164,7 +171,9 @@ class Cloud_Library extends Library {
 		] );
 
 		if ( is_wp_error( $response ) || empty( $response['preview_url'] ) ) {
-			return null;
+			$error_message = esc_html__( 'Failed to generate preview.', 'elementor' );
+
+			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		return $response['preview_url'];

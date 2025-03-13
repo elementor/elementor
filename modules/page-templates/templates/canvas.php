@@ -36,13 +36,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 */
 	do_action( 'elementor/page_templates/canvas/before_content' );
 
-	$module = 'page-templates';
-
 	$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
 
-	if ( null !== $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
-		$module = 'cloud-library';
-	}
+	$module = apply_filters( 'elementor/render_mode/module', 'page-templates', $render_mode_manager );
 
 	\Elementor\Plugin::$instance->modules_manager->get_modules( $module )->print_content();
 
