@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Plugin;
 
@@ -65,7 +65,7 @@ class Dynamic_Tags_Module {
 		return $settings;
 	}
 
-	private function register_transformers( Transformers_Registry $transformers, Props_Resolver $props_resolver ) {
+	private function register_transformers( Transformers_Registry $transformers, Render_Props_Resolver $props_resolver ) {
 		$transformers->register(
 			Dynamic_Prop_Type::get_key(),
 			new Dynamic_Transformer(
