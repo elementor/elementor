@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Base;
 
 use Elementor\Modules\WpRest\Classes\Post_Query;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-trait Post_Query_Data_Mock {
-	protected array $post_types;
-	protected array $posts;
+class Post_Query_Base extends Elementor_Test_Base {
+	protected array $post_types = [];
+	protected array $posts = [];
 
 	protected function clean() {
 		foreach ( $this->posts as $post ) {
@@ -68,6 +68,8 @@ trait Post_Query_Data_Mock {
 	}
 
 	public function data_provider_post_query() {
+		do_action( 'rest_api_init' );
+		$this->act_as_admin();
 		$this->register_post_types();
 		$this->create_posts();
 
