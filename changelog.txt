@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.27.7 - 2025-03-13 =
+
+* Security Fix: Improved code security enforcement in Admin Notices
+
 = 3.27.6 - 2025-02-18 =
 
 * Fix: Dimension Controls displayed `undefined` as a placeholder value when empty ([#30277](https://github.com/elementor/elementor/issues/30277))
