@@ -2,7 +2,9 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -16,6 +18,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Styles_Renderer extends Elementor_Test_Base {
 	use MatchesSnapshots;
+
+	public function tear_down() {
+		parent::tear_down();
+
+		Props_Resolver::reset();
+	}
 
 	public function test_render__basic_style() {
 		// Arrange.
@@ -275,7 +283,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
-	public function test_render__style_with_non_existing_transformers() {
+	public function test_render__style_prop_with_mismatching_prop_type() {
 		// Arrange.
 		$styles = [
 			[
@@ -285,7 +293,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 					[
 						'props' => [
 							'text-decoration' => [
-								'$$type' => 'text-decoration', // non-existing transformer
+								'$$type' => 'mismatching-prop-type',
 								'value' => 'underline'
 							],
 						],
@@ -858,7 +866,13 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 	public function test_render__style_with_thrown_exceptions_in_transformer() {
 		// Arrange.
 		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
-			$registry->register( 'faulty', $this->make_mock_faulty_transformer() );
+			$faulty_transformer = new class() extends Transformer_Base {
+				public function transform( $value, $key ): string {
+					throw new \Exception( 'Faulty transformer' );
+				}
+			};
+
+			$registry->register( Number_Prop_Type::get_key(), $faulty_transformer );
 		});
 
 		$styles = [
@@ -868,10 +882,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'z-index' => [
-								'$$type' => 'faulty',
-								'value' => true // no matter what the value here is really...
-							],
+							'z-index' => Number_Prop_Type::generate( 1 ),
 						],
 						'meta' => [],
 					],
@@ -966,14 +977,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $css );
-	}
-
-	private function make_mock_faulty_transformer() {
-		return new class() extends Transformer_Base {
-			public function transform( $value, $key ): string {
-				throw new \Exception( 'Faulty transformer' );
-			}
-		};
 	}
 
 	private function mock_images() {

@@ -1,2 +1,0 @@
-.elementor .test-widget-default-1{color:red;}.elementor .test-style{font-size:14px;color:blue;}
-.elementor .test-style{font-size:14px;color:blue;}

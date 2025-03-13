@@ -5,6 +5,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -56,7 +57,7 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 				'base' => Style_Definition::make()
 					->add_variant(
 						Style_Variant::make()
-							->add_prop( 'color', String_Prop_Type::generate( 'red' ) )
+							->add_prop( 'color', Color_Prop_Type::generate( 'red' ) )
 							->add_prop( 'font-family', String_Prop_Type::generate( 'Poppins' ) )
 					)
 			]
@@ -85,7 +86,7 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 				'base' => Style_Definition::make()
 					->add_variant(
 						Style_Variant::make()
-							->add_prop( 'color', String_Prop_Type::generate( 'red' ) )
+							->add_prop( 'color', Color_Prop_Type::generate( 'red' ) )
 							->add_prop( 'font-family', String_Prop_Type::generate( 'Poppins' ) )
 					)
 					->add_variant( Style_Variant::make()
