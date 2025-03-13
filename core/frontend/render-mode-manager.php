@@ -112,7 +112,6 @@ class Render_Mode_Manager {
 			$key = $_GET[ self::QUERY_STRING_PARAM_NAME ]; // phpcs:ignore -- Nonce will be checked next line.
 		}
 
-
 		if ( isset( $_GET[ self::QUERY_STRING_TEMPLATE_ID ] ) ) {
 			$template_id = $_GET[ self::QUERY_STRING_TEMPLATE_ID ]; // phpcs:ignore -- Nonce will be checked next line.
 		}
@@ -125,7 +124,7 @@ class Render_Mode_Manager {
 			array_key_exists( $key, $this->render_modes )
 		) {
 			$this->set_current( new $this->render_modes[ $key ]( $post_id ) );
-		} else if ( $this->is_preview_mode($template_id, $key, $nonce) ) {
+		} else if ( $this->is_preview_mode( $template_id, $key, $nonce ) ) {
 			$this->set_current( new $this->render_modes[ $key ]( $template_id ) );
 		} else {
 			$this->set_current( new Render_Mode_Normal( $post_id ) );
@@ -139,11 +138,11 @@ class Render_Mode_Manager {
 			return false;
 		}
 
-		if ( $render_mode !== Render_Mode_Preview::MODE ) {
+		if (  Render_Mode_Preview::MODE !== $render_mode ) {
 			return false;
 		}
 
-		if ( !array_key_exists( $render_mode, $this->render_modes ) ) {
+		if ( ! array_key_exists( $render_mode, $this->render_modes ) ) {
 			return false;
 		}
 

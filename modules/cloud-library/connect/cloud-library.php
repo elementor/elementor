@@ -79,10 +79,10 @@ class Cloud_Library extends Library {
 		];
 	}
 
-	private function generate_preview_url( $template_data): ?string {
+	private function generate_preview_url( $template_data ): ?string {
 		if ( ! empty( $template_data['previewUrl'] ) ||
 			'FOLDER' === $template_data['type'] ||
-			empty(  $template_data['id'] )
+			empty( $template_data['id'] )
 		) {
 			return null;
 		}
@@ -164,11 +164,10 @@ class Cloud_Library extends Library {
 		$body = $this->generate_multipart_payload( $file_data, $boundary, $template_id . '_preview.png' );
 
 		$response = $this->http_request( 'PATCH', $endpoint, [
-			'headers' => $headers,
-			'body' => $body,
-		], [
-			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
-		] );
+				'headers' => $headers,
+				'body' => $body,
+			], [ 'return_type' => static::HTTP_RETURN_TYPE_ARRAY ]
+		);
 
 		if ( is_wp_error( $response ) || empty( $response['preview_url'] ) ) {
 			$error_message = esc_html__( 'Failed to generate preview.', 'elementor' );

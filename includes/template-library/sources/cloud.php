@@ -300,7 +300,7 @@ class Source_Cloud extends Source_Base {
 	 * @return Document|\WP_Error
 	 * @throws \Exception
 	 */
-	public function create_document_for_preview ( int $template_id ) {
+	public function create_document_for_preview( int $template_id ) {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			return new \WP_Error( Exceptions::FORBIDDEN, esc_html__( 'You do not have permission to create preview documents.', 'elementor' ) );
 		}
@@ -310,7 +310,8 @@ class Source_Cloud extends Source_Base {
 		$template = $cloud_library_app->get_resource( [ 'id' => $template_id ] );
 
 		if ( is_wp_error( $template ) ) {
-			throw new \Exception( esc_html__( $template->get_error_message(), 'elementor' ), Exceptions::FORBIDDEN );  // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			$errorMessage = $template->get_error_message();
+			throw new \Exception( esc_html__( $errorMessage, 'elementor' ), Exceptions::FORBIDDEN );  // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$decoded_content = json_decode( $template['content'], true );
