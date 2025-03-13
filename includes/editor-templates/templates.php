@@ -393,14 +393,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
 	<div class="elementor-template-library-blank-icon">
-		{{{ icon }}}
+		<#
+			const templateIcon = typeof icon === 'undefined' ? '<i class="eicon-library-upload" aria-hidden="true"></i>' : icon;
+			print( templateIcon );
+		#>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Save', 'elementor' ); ?></span>
 	</div>
 	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
 	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
 	<form id="elementor-template-library-save-template-form">
 		<input type="hidden" name="post_id" value="<?php echo esc_attr( get_the_ID() ); ?>">
-		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+		<# if ( typeof canSaveToCloud === 'undefined' || ! canSaveToCloud ) { #>
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
 			<span class="elementor-state-icon">
@@ -408,7 +411,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 			<?php echo esc_html__( 'Save', 'elementor' ); ?>
 		</button>
-		<?php else : ?>
+		<# } else { #>
 		<div class="cloud-library-form-inputs">
 			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Give your template a name', 'elementor' ); ?>" required>
 			<div class="source-selections">
@@ -436,7 +439,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php echo esc_html__( 'Save', 'elementor' ); ?>
 			</button>
 		</div>
-		<?php endif; ?>
+		<# } #>
 	</form>
 	<div class="elementor-template-library-blank-footer">
 		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
