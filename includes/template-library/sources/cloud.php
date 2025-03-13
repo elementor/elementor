@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
+use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
 use Elementor\Plugin;
 use Elementor\DB;
 
@@ -34,7 +36,31 @@ class Source_Cloud extends Source_Base {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	public function register_data() {}
+	public function register_data() {
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+	}
+
+	/**
+	 * @param \Elementor\Core\Common\Modules\Ajax\Module $ajax_manager
+	 */
+	public function register_ajax_actions( $ajax_manager ) {
+		$ajax_manager->register_ajax_action( 'screenshot_cloud_save', [ $this, 'ajax_save' ] );
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	public function ajax_save( $data ): string {
+		if ( empty( $data['screenshot'] ) || empty( $data['template_id'] ) ) {
+			return false;
+		}
+
+		$cloud_library_app = $this->get_app();
+
+		$raw_binary = base64_decode( substr( $data['screenshot'], strlen( 'data:image/png;base64,' ) ) );
+
+		return $cloud_library_app->update_resource_preview( $data['template_id'], $raw_binary );
+	}
 
 	public function get_items( $args = [] ) {
 		return $this->get_app()->get_resources( $args );
@@ -267,5 +293,64 @@ class Source_Cloud extends Source_Base {
 		];
 
 		return $this->update_item( $move_args );
+	}
+
+	/**
+	 * @param int $template_id
+	 * @return Document|\WP_Error
+	 * @throws \Exception
+	 */
+	public function create_document_for_preview ( int $template_id ) {
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			return new \WP_Error( Exceptions::FORBIDDEN, esc_html__( 'You do not have permission to create preview documents.', 'elementor' ) );
+		}
+
+		$cloud_library_app = $this->get_app();
+
+		$template = $cloud_library_app->get_resource( [ 'id' => $template_id ] );
+
+		if ( is_wp_error( $template ) ) {
+			throw new \Exception( esc_html__( $template->get_error_message(), 'elementor' ), Exceptions::FORBIDDEN );  // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		$decoded_content = json_decode( $template['content'], true );
+
+		return $this->save_document_for_preview( [
+			'content' => $decoded_content['content'],
+			'page_settings' => $decoded_content['page_settings'],
+		] );
+	}
+
+	protected function save_document_for_preview( $template_content ) {
+		$template_data = [
+			'title' => esc_html__( '(no title)', 'elementor' ),
+			'page_settings' => $template_content['page_settings'] ?? [],
+			'status' => 'draft',
+			'type' => 'container',
+		];
+
+		$document = Plugin::$instance->documents->create(
+			Cloud_Template_Preview::TYPE,
+			[
+				'post_title' => $template_data['title'],
+				'post_status' => $template_data['status'],
+			]
+		);
+
+		if ( is_wp_error( $document ) ) {
+			wp_die();
+		}
+
+		$template_data['content'] = $this->replace_elements_ids( $template_content['content'] );
+
+		$document->save( [
+			'elements' => $template_data['content'],
+			'settings' => $template_data['page_settings'],
+		] );
+
+		do_action( 'elementor/template-library/after_save_template', $document->get_main_id(), $template_data );
+		do_action( 'elementor/template-library/after_update_template', $document->get_main_id(), $template_data );
+
+		return $document;
 	}
 }

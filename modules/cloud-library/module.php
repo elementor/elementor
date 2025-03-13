@@ -3,8 +3,8 @@ namespace Elementor\Modules\CloudLibrary;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
+use Elementor\Core\Documents_Manager;
 use Elementor\Core\Frontend\Render_Mode_Manager;
-use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
@@ -40,6 +40,14 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
 				return $this->localize_settings( $settings );
 			}, 11 /** After Elementor Core */ );
+
+			add_filter( 'elementor/render_mode/module', function( $module_name, Render_Mode_Manager $render_mode_manager ) {
+				if ( $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
+					return 'cloud-library';
+				}
+
+				return $module_name;
+			}, 12, 2 );
 		}
 	}
 
@@ -69,43 +77,14 @@ class Module extends BaseModule {
 			$connect_module->register_app( 'cloud-library', Cloud_Library::get_class_name() );
 		} );
 
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_action( 'elementor/frontend/render_mode/register', [ $this, 'register_render_mode' ] );
 
 		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-	$documents_manager->register_document_type(
+			$documents_manager->register_document_type(
 		Documents\Cloud_Template_Preview::TYPE,
-		Documents\Cloud_Template_Preview::get_class_full_name()
-	);
+			Documents\Cloud_Template_Preview::get_class_full_name()
+		);
 } );
-	}
-
-	/**
-	 * @param \Elementor\Core\Common\Modules\Ajax\Module $ajax_manager
-	 */
-	public function register_ajax_actions( $ajax_manager ) {
-		$ajax_manager->register_ajax_action( 'screenshot_cloud_save', [ $this, 'ajax_save' ] );
-	}
-
-	public function ajax_save( $data ) {
-		if ( empty( $data['screenshot'] ) || empty( $data['template_id'] ) ) {
-			return false;
-		}
-
-		/**
-		 * @var Cloud_Library $cloud_library_app
-		 */
-		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
-
-		if ( ! $cloud_library_app ) {
-			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
-
-			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-		}
-
-		$raw_binary = base64_decode( substr( $data['screenshot'], strlen( 'data:image/png;base64,' ) ) );
-
-		return $cloud_library_app->update_resource_preview( $data['template_id'], $raw_binary );
 	}
 
 	/**
@@ -157,11 +136,7 @@ class Module extends BaseModule {
 	private function print_thumbnail_preview_callback() {
 		$doc = Plugin::$instance->documents->get_current();
 
-		setup_postdata( $doc->get_main_post() );
-
 		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true );
-
-		wp_reset_postdata();
 
 		wp_delete_post( $doc->get_main_id(), true );
 	}

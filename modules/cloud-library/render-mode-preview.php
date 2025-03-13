@@ -2,8 +2,6 @@
 namespace Elementor\Modules\CloudLibrary;
 
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
-use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
-use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -54,13 +52,13 @@ class Render_Mode_Preview extends Render_Mode_Base {
 			'html2canvas',
 			ELEMENTOR_ASSETS_URL . "/lib/html2canvas/js/html2canvas{$suffix}.js",
 			[],
-			'1.0.0-rc.5',
+			'1.4.1',
 			true
 		);
 
 		wp_enqueue_script(
-			'elementor-screenshot',
-			ELEMENTOR_ASSETS_URL . "/js/screenshot{$suffix}.js",
+			'cloud-library-screenshot',
+			ELEMENTOR_ASSETS_URL . "/js/cloud-library-screenshot{$suffix}.js",
 			[ 'dom-to-image', 'html2canvas' ],
 			ELEMENTOR_VERSION,
 			true
@@ -73,79 +71,19 @@ class Render_Mode_Preview extends Render_Mode_Base {
 			'template_id' => $this->template_id,
 		];
 
-		wp_add_inline_script( 'elementor-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
+		wp_add_inline_script( 'cloud-library-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
 	}
-
-	protected function replace_elements_ids( $content ) {
-		return Plugin::$instance->db->iterate_data( $content, function( $element ) {
-			$element['id'] = Utils::generate_random_string();
-
-			return $element;
-		} );
-	}
-
-	public function save_item( $template_content ) {
-		$template_data = [
-			'title' => esc_html__( '(no title)', 'elementor' ),
-			'page_settings' => $template_content['page_settings'] ?? [],
-			'status' => 'draft',
-			'type' => 'container',
-		];
-
-		$document = Plugin::$instance->documents->create(
-			Cloud_Template_Preview::TYPE,
-			[
-				'post_title' => $template_data['title'],
-				'post_status' => $template_data['status'],
-			]
-		);
-
-		if ( is_wp_error( $document ) ) {
-			wp_die();
-		}
-
-		$template_data['content'] = $this->replace_elements_ids( $template_content['content'] );
-
-		$document->save( [
-			'elements' => $template_data['content'],
-			'settings' => $template_data['page_settings'],
-		] );
-
-		do_action( 'elementor/template-library/after_save_template', $this->post_id, $template_data );
-		do_action( 'elementor/template-library/after_update_template', $this->post_id, $template_data );
-
-		return $document;
-	}
-
 
 	private function create_document() {
 		if ( ! Plugin::$instance->common ) {
 			Plugin::$instance->init_common();
 		}
 
-		/** @var Cloud_Library $cloud_library_app */
-		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
+		$document = Plugin::$instance->templates_manager->get_source('cloud')->create_document_for_preview( $this->template_id );
 
-		if ( ! $cloud_library_app ) {
+		if ( is_wp_error( $document ) ) {
 			wp_die();
 		}
-
-		if ( ! $cloud_library_app->is_connected() ) {
-			wp_die();
-		}
-
-		$template = $cloud_library_app->get_resource( [ 'id' => $this->template_id ] );
-
-		if ( is_wp_error( $template ) || empty( $template['content'] ) ) {
-			wp_die();
-		}
-
-		$decoded_content = json_decode( $template['content'], true );
-
-		$document = $this->save_item( [
-			'content' => $decoded_content['content'],
-			'page_settings' => $decoded_content['page_settings'],
-		] );
 
 		Plugin::$instance->documents->switch_to_document( $document );
 
