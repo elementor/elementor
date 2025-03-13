@@ -23,7 +23,7 @@ class Render_Mode_Preview extends Render_Mode_Base {
 	}
 
 	public static function get_name() {
-		return Render_Mode_Preview::MODE;
+		return self::MODE;
 	}
 
 	public function prepare_render() {
@@ -38,7 +38,7 @@ class Render_Mode_Preview extends Render_Mode_Base {
 	}
 
 	public function enqueue_scripts() {
-		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() && ELEMENTOR_TESTS ) ? '' : '.min';
+		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
 
 		wp_enqueue_script(
 			'dom-to-image',

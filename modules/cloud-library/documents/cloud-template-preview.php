@@ -20,7 +20,7 @@ class Cloud_Template_Preview extends Document {
 	const TYPE = 'cloud-template-preview';
 
 	public static function get_properties() {
-		$properties =  parent::get_properties();
+		$properties = parent::get_properties();
 
 		$properties['admin_tab_group'] = '';
 		$properties['has_elements'] = true;
@@ -37,7 +37,7 @@ class Cloud_Template_Preview extends Document {
 	}
 
 	public static function get_type(): string {
-		return Cloud_Template_Preview::TYPE;
+		return self::TYPE;
 	}
 
 	public static function get_title(): string {
