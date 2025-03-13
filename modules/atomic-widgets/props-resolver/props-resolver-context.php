@@ -15,8 +15,6 @@ class Props_Resolver_Context {
 
 	private bool $disabled = false;
 
-	private Transformable_Prop_Type $prop_type;
-
 	public static function make(): self {
 		return new static();
 	}
