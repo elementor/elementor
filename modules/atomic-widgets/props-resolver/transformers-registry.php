@@ -25,6 +25,6 @@ class Transformers_Registry extends Collection {
 	}
 
 	public function get( $key, $fallback = null ) {
-		return parent::get( $key, $fallback ) ?? $this->fallback;
+		return parent::get( $key, $fallback ?? $this->fallback );
 	}
 }
