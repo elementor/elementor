@@ -33,7 +33,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	filterSettings( newItem ) {
-		if ( 'container' !== newItem?.elType ) {
+		if ( this.isNotContainerOrDivBlock( newItem.elType ) ) {
 			return;
 		}
 
@@ -339,7 +339,7 @@ const ContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		return [ 'widget', 'container' ].includes( elementView.model.get( 'elType' ) );
+		return [ 'widget', 'container', 'div-block' ].includes( elementView.model.get( 'elType' ) );
 	},
 
 	/**
@@ -648,6 +648,10 @@ const ContainerView = BaseElementView.extend( {
 		if ( $linkElement ) {
 			$linkElement.attr( 'href', href );
 		}
+	},
+
+	isNotContainerOrDivBlock( elementType ) {
+		return ! [ 'container', 'div-block' ].includes( elementType );
 	},
 } );
 
