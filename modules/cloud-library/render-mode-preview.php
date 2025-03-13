@@ -79,7 +79,7 @@ class Render_Mode_Preview extends Render_Mode_Base {
 			Plugin::$instance->init_common();
 		}
 
-		$document = Plugin::$instance->templates_manager->get_source('cloud')->create_document_for_preview( $this->template_id );
+		$document = Plugin::$instance->templates_manager->get_source( 'cloud' )->create_document_for_preview( $this->template_id );
 
 		if ( is_wp_error( $document ) ) {
 			wp_die();

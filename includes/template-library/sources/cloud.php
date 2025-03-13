@@ -310,8 +310,8 @@ class Source_Cloud extends Source_Base {
 		$template = $cloud_library_app->get_resource( [ 'id' => $template_id ] );
 
 		if ( is_wp_error( $template ) ) {
-			$errorMessage = $template->get_error_message();
-			throw new \Exception( esc_html__( $errorMessage, 'elementor' ), Exceptions::FORBIDDEN );  // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			$error_message = $template->get_error_message();
+			throw new \Exception( esc_html( $error_message ), Exceptions::FORBIDDEN );  // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$decoded_content = json_decode( $template['content'], true );

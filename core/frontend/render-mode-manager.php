@@ -138,7 +138,7 @@ class Render_Mode_Manager {
 			return false;
 		}
 
-		if (  Render_Mode_Preview::MODE !== $render_mode ) {
+		if ( Render_Mode_Preview::MODE !== $render_mode ) {
 			return false;
 		}
 

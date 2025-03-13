@@ -163,11 +163,14 @@ class Cloud_Library extends Library {
 
 		$body = $this->generate_multipart_payload( $file_data, $boundary, $template_id . '_preview.png' );
 
-		$response = $this->http_request( 'PATCH', $endpoint, [
-				'headers' => $headers,
-				'body' => $body,
-			], [ 'return_type' => static::HTTP_RETURN_TYPE_ARRAY ]
-		);
+		$payload = [
+			'headers' => $headers,
+			'body' => $body,
+		];
+
+		$response = $this->http_request( 'PATCH', $endpoint, $payload, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		]);
 
 		if ( is_wp_error( $response ) || empty( $response['preview_url'] ) ) {
 			$error_message = esc_html__( 'Failed to generate preview.', 'elementor' );
