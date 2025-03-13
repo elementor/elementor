@@ -650,7 +650,7 @@ const ContainerView = BaseElementView.extend( {
 		}
 	},
 
-	isNotContainerOrDivBlock( elementType ): boolean {
+	isNotContainerOrDivBlock( elementType ) {
 		return ! [ 'container', 'div-block' ].includes( elementType );
 	},
 } );
