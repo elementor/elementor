@@ -170,9 +170,8 @@ class Module extends BaseModule {
 			new Multi_Props_Transformer( [ 'column', 'row' ], fn( $prop_key, $key ) => "{$key}-{$prop_key}" )
 		);
 		$transformers->register(
-			
-      ::get_key(),
-			new Multi_Props_Transformer( [ 'top', 'right', 'bottom', 'left' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
+			Dimensions_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
 	}
 
