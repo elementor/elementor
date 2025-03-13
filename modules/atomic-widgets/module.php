@@ -155,27 +155,10 @@ class Module extends BaseModule {
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Plain_Transformer() );
 
-		// Other
-		$transformers->register(
-			Dimensions_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'top', 'right', 'bottom', 'left' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
-		);
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
-		$transformers->register(
-			Border_Radius_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn( $_, $key ) => "border-{$key}-radius" )
-		);
-		$transformers->register(
-			Border_Width_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'top', 'right', 'bottom', 'left' ], fn( $_, $key ) => "border-{$key}-width" )
-		);
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
-		$transformers->register(
-			Layout_Direction_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'column', 'row' ], fn( $prop_key, $key ) => "{$key}-{$prop_key}" )
-		);
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
@@ -184,6 +167,22 @@ class Module extends BaseModule {
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
+		$transformers->register(
+			Border_Radius_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn( $_, $key ) => "border-{$key}-radius" )
+		);
+		$transformers->register(
+			Border_Width_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'top', 'right', 'bottom', 'left' ], fn( $_, $key ) => "border-{$key}-width" )
+		);
+		$transformers->register(
+			Layout_Direction_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'column', 'row' ], fn( $prop_key, $key ) => "{$key}-{$prop_key}" )
+		);
+		$transformers->register(
+			Dimensions_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'top', 'right', 'bottom', 'left' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
+		);
 	}
 
 	private function register_export_transformers( Transformers_Registry $transformers ) {

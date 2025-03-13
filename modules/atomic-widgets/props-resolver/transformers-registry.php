@@ -13,12 +13,6 @@ class Transformers_Registry extends Collection {
 	private ?Transformer_Base $fallback = null;
 
 	public function register( string $key, Transformer_Base $transformer ): self {
-		if ( isset( $this->items[ $key ] ) ) {
-			Utils::safe_throw( "{$key} transformer is already registered." );
-
-			return $this;
-		}
-
 		$this->items[ $key ] = $transformer;
 
 		return $this;

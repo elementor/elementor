@@ -64,6 +64,10 @@ abstract class Props_Resolver {
 			}
 		}
 
+		if ( $value['$$type'] !== $prop_type::get_key() ) {
+			return null;
+		}
+
 		if ( $prop_type instanceof Object_Prop_Type ) {
 			if ( ! is_array( $value['value'] ) ) {
 				return null;
