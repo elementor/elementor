@@ -13,7 +13,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Gap_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -36,10 +35,18 @@ class Style_Schema {
 
 	private static function get_size_props() {
 		return [
-			'width' => Size_Prop_Type::make(),
-			'height' => Size_Prop_Type::make(),
-			'min-width' => Size_Prop_Type::make(),
-			'min-height' => Size_Prop_Type::make(),
+			'width' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'height' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'min-width' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'min-height' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 			'max-width' => Size_Prop_Type::make(),
 			'max-height' => Size_Prop_Type::make(),
 			'overflow' => String_Prop_Type::make()->enum([
@@ -59,10 +66,18 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			]),
-			'top' => Size_Prop_Type::make(),
-			'right' => Size_Prop_Type::make(),
-			'bottom' => Size_Prop_Type::make(),
-			'left' => Size_Prop_Type::make(),
+			'top' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'right' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'bottom' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'left' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 			'z-index' => Number_Prop_Type::make(),
 		];
 	}
@@ -119,19 +134,24 @@ class Style_Schema {
 
 	private static function get_spacing_props() {
 		return [
-			'padding' => Union_Prop_Type::make()->add_prop_type( Dimensions_Prop_Type::make() )->add_prop_type( Size_Prop_Type::make() ),
-			'margin' => Union_Prop_Type::make()->add_prop_type( Dimensions_Prop_Type::make() )->add_prop_type( Size_Prop_Type::make() ),
+			'padding' => Union_Prop_Type::make()
+				->add_prop_type( Dimensions_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make() ),
+			'margin' => Union_Prop_Type::make()
+				->add_prop_type( Dimensions_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 		];
 	}
 
 	private static function get_border_props() {
 		return [
-			'border-radius' => Union_Prop_Type::make()->add_prop_type(
-				Size_Prop_Type::make()
-			)->add_prop_type(
-				Border_Radius_Prop_Type::make()
-			),
-			'border-width' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( Border_Width_Prop_Type::make() ),
+			'border-radius' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Border_Radius_Prop_Type::make() ),
+			'border-width' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Border_Width_Prop_Type::make() ),
 			'border-color' => Color_Prop_Type::make(),
 			'border-style' => String_Prop_Type::make()->enum([
 				'none',
@@ -190,7 +210,9 @@ class Style_Schema {
 			]),
 			'flex-grow' => Number_Prop_Type::make(),
 			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => Size_Prop_Type::make(),
+			'flex-basis' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 		];
 	}
 

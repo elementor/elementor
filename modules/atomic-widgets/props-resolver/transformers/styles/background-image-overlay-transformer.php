@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Background_Image_Overlay_Transformer extends Transformer_Base {
 	const DEFAULT_POSITION = '0% 0%';
 
-	public function transform( $value, $key ) {
+	public function transform( $value, Props_Resolver_Context $context ) {
 		if ( ! isset( $value['image'] ) ) {
 			return '';
 		}

@@ -80,6 +80,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# if ( false === obj.editable ) { #>
 			<i class="eicon-lock"></i>
 		<# } #>
+		<# if ( obj.categories.includes( 'v4-elements' ) ) { #>
+			<i class="eicon-atomic"></i>
+		<# } #>
 		<div class="icon">
 			<i class="{{ icon }}" aria-hidden="true"></i>
 		</div>

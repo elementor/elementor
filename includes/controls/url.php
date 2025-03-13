@@ -65,7 +65,7 @@ class Control_URL extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
+			'placeholder' => esc_html__( 'Type or paste your URL', 'elementor' ),
 			'autocomplete' => true,
 			'options' => [ 'is_external', 'nofollow', 'custom_attributes' ],
 			'dynamic' => [

@@ -1,5 +1,5 @@
 <?php
-namespace elementor\core\utils;
+namespace Elementor\Core\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -9,16 +9,19 @@ use Elementor\User;
 use Elementor\Utils;
 
 class Hints {
+
 	const INFO = 'info';
 	const SUCCESS = 'success';
 	const WARNING = 'warning';
 	const DANGER = 'danger';
 
 	const DEFINED = 'defined';
+	const NOT_DEFINED = 'not_defined';
 	const DISMISSED = 'dismissed';
 	const CAPABILITY = 'capability';
 	const PLUGIN_INSTALLED = 'plugin_installed';
 	const PLUGIN_ACTIVE = 'plugin_active';
+	const NOT_HAS_OPTION = 'not_has_option';
 
 	/**
 	 * Get_notice_types
@@ -57,6 +60,12 @@ class Hints {
 				self::DISMISSED => 'image_optimizer_hint',
 				self::CAPABILITY => 'install_plugins',
 				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
+			],
+			'image-optimization-connect' => [
+				self::DISMISSED => 'image_optimizer_hint',
+				self::CAPABILITY => 'manage_options',
+				self::NOT_DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
+				self::NOT_HAS_OPTION => 'image_optimizer_access_token',
 			],
 			'image-optimization-media-modal' => [
 				self::DISMISSED => 'image-optimization-media-modal',
@@ -240,26 +249,50 @@ class Hints {
 					if ( self::is_dismissed( $value ) ) {
 						return false;
 					}
+
 					break;
+
 				case self::CAPABILITY:
 					if ( ! current_user_can( $value ) ) {
 						return false;
 					}
+
 					break;
+
 				case self::DEFINED:
 					if ( defined( $value ) ) {
 						return false;
 					}
+
 					break;
+
+				case self::NOT_DEFINED:
+					if ( ! defined( $value ) ) {
+						return false;
+					}
+
+					break;
+
 				case self::PLUGIN_INSTALLED:
 					if ( ! self::is_plugin_installed( $value ) ) {
 						return false;
 					}
+
 					break;
+
 				case self::PLUGIN_ACTIVE:
 					if ( ! self::is_plugin_active( $value ) ) {
 						return false;
 					}
+
+					break;
+
+				case self::NOT_HAS_OPTION:
+					$option = get_option( $value );
+					if ( ! empty( $option ) ) {
+						return false;
+					}
+
 					break;
 			}
 		}

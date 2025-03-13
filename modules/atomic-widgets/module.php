@@ -14,16 +14,13 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Src_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Image_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Src_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Primitive_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Edge_Sizes_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Corner_Sizes_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Dimensions_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Layout_Direction_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Multi_Props_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
@@ -42,19 +39,13 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Image_Attachment_Id_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -143,47 +134,45 @@ class Module extends BaseModule {
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
-		// Primitives
-		$transformers->register( Boolean_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( Number_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
+		$transformers->register_fallback( new Plain_Transformer() );
 
-		// Other
 		$transformers->register( Classes_Prop_Type::get_key(), new Array_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
-		$transformers->register( Image_Attachment_Id_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( Url_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
-		// Primitives
-		$transformers->register( Boolean_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( Number_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( String_Prop_Type::get_key(), new Primitive_Transformer() );
+		$transformers->register_fallback( new Plain_Transformer() );
 
-		// Other
-		$transformers->register( Dimensions_Prop_Type::get_key(), new Dimensions_Transformer() );
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
-		$transformers->register( Color_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
-		$transformers->register( Border_Radius_Prop_Type::get_key(), new Corner_Sizes_Transformer( fn( $corner ) => 'border-' . $corner . '-radius' ) );
-		$transformers->register( Border_Width_Prop_Type::get_key(), new Edge_Sizes_Transformer( fn( $edge ) => 'border-' . $edge . '-width' ) );
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
-		$transformers->register( Layout_Direction_Prop_Type::get_key(), new Layout_Direction_Transformer() );
-
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
-		$transformers->register( Image_Attachment_Id_Prop_Type::get_key(), new Primitive_Transformer() );
-		$transformers->register( Url_Prop_Type::get_key(), new Primitive_Transformer() );
 		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
 		$transformers->register( Background_Image_Overlay_Size_Scale_Prop_Type::get_key(), new Background_Image_Overlay_Size_Scale_Transformer() );
 		$transformers->register( Background_Image_Position_Offset_Prop_Type::get_key(), new Background_Image_Position_Offset_Transformer() );
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
+		$transformers->register(
+			Border_Radius_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn( $_, $key ) => "border-{$key}-radius" )
+		);
+		$transformers->register(
+			Border_Width_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'top', 'right', 'bottom', 'left' ], fn( $_, $key ) => "border-{$key}-width" )
+		);
+		$transformers->register(
+			Layout_Direction_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'column', 'row' ], fn( $prop_key, $key ) => "{$key}-{$prop_key}" )
+		);
+		$transformers->register(
+			Dimensions_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'top', 'right', 'bottom', 'left' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
+		);
 	}
 
 	/**
