@@ -7,7 +7,9 @@ const DivBlockView = BaseElementView.extend( {
 	emptyView: DivBlockEmptyView,
 
 	tagName() {
-		return this.model.getSetting( 'tag' ) || 'div';
+		const isLink = !! this.model.getSetting( 'link' )?.value?.destination?.value;
+
+		return isLink ? 'a' : ( this.model.getSetting( 'tag' ) || 'div' );
 	},
 
 	getChildViewContainer() {
@@ -78,11 +80,25 @@ const DivBlockView = BaseElementView.extend( {
 
 	onRender() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
+		this.handleLink();
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
 		} );
+	},
+
+	handleLink() {
+		const linkSettings = this.model.getSetting( 'link' )?.value?.destination;
+
+		if ( 'a' !== this.tagName() || ! linkSettings ) {
+			return;
+		}
+
+		const isPostId = 'number' === linkSettings.$$type;
+		const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
+
+		this.$el.attr( 'href', hrefPrefix + linkSettings.value );
 	},
 
 	droppableInitialize() {
