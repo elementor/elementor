@@ -66,16 +66,16 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			]),
-			'top' => Union_Prop_Type::make()
+			'inset-block-start' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'right' => Union_Prop_Type::make()
+			'inset-inline-end' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'bottom' => Union_Prop_Type::make()
+			'inset-block-end' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'left' => Union_Prop_Type::make()
+			'inset-inline-start' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 			'z-index' => Number_Prop_Type::make(),

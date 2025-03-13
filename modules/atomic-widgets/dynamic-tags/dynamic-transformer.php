@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,12 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Dynamic_Transformer extends Transformer_Base {
 	private Dynamic_Tags_Manager $dynamic_tags_manager;
 	private Dynamic_Tags_Schemas $dynamic_tags_schemas;
-	private Props_Resolver $props_resolver;
+	private Render_Props_Resolver $props_resolver;
 
 	public function __construct(
 		Dynamic_Tags_Manager $dynamic_tags_manager,
 		Dynamic_Tags_Schemas $dynamic_tags_schemas,
-		Props_Resolver $props_resolver
+		Render_Props_Resolver $props_resolver
 	) {
 		$this->dynamic_tags_manager = $dynamic_tags_manager;
 		$this->dynamic_tags_schemas = $dynamic_tags_schemas;

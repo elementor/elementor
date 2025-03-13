@@ -20,7 +20,7 @@ class Props_Resolver_Context {
 		return new static();
 	}
 
-	public function set_key( string $key ): self {
+	public function set_key( ?string $key ): self {
 		$this->key = $key;
 
 		return $this;
