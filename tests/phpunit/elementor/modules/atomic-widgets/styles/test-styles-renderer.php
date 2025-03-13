@@ -2,7 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -22,7 +22,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 	public function tear_down() {
 		parent::tear_down();
 
-		Props_Resolver::reset();
+		Render_Props_Resolver::reset();
 	}
 
 	public function test_render__basic_style() {
@@ -868,22 +868,22 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'margin' => [
 								'$$type' => 'dimensions',
 								'value' => [
-									'top' => [
+									'block-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'bottom' => null,
-									'left' => [
+									'block-end' => null,
+									'inline-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'right' => [
+									'inline-end' => [
 										'$$type' => 'string',
 										'value' => 'auto'
 									],
@@ -919,15 +919,15 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'border-width' => [
 								'$$type' => 'border-width',
 								'value' => [
-									'top' => [
+									'block-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'bottom' => null,
-									'left' => [
+									'block-end' => null,
+									'inline-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
