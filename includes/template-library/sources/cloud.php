@@ -22,7 +22,7 @@ class Source_Cloud extends Source_Base {
 		if ( ! $cloud_library_app ) {
 			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
 
-			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		return $cloud_library_app;
