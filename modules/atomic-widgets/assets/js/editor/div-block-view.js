@@ -87,19 +87,29 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	handleLink() {
-		if ( ! this.doesHaveLink() ) {
+		const href = this.getHref();
+
+		if ( ! href ) {
 			return;
 		}
 
-		const linkSettings = this.model.getSetting( 'link' )?.value?.destination;
-		const isPostId = 'number' === linkSettingsdestination.$$type;
-		const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
-
-		this.$el.attr( 'href', hrefPrefix + linkSettings.value );
+		this.$el.attr( 'href', href );
 	},
 
 	doesHaveLink() {
 		return !! this.model.getSetting( 'link' )?.value?.destination?.value;
+	},
+
+	getHref() {
+		if ( ! this.doesHaveLink() ) {
+			return;
+		}
+
+		const { $$type, value } = this.model.getSetting( 'link' ).value.destination;
+		const isPostId = 'number' === $$type;
+		const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
+
+		return hrefPrefix + value;
 	},
 
 	droppableInitialize() {
