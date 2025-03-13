@@ -45,7 +45,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( 'h2' ),
 
 			'title' => String_Prop_Type::make()
-				->default( __( 'Your Title Here', 'elementor' ) ),
+				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
 		];
