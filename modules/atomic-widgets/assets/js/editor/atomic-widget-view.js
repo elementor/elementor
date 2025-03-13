@@ -24,7 +24,7 @@ export class AtomicWidgetView extends elementor.modules.elements.views.Widget {
 	}
 
 	// Change the drag handle because the $el is not the draggable element (`display: contents`).
-	getDraggableElement() {
+	getElement() {
 		return this.$el.find( ':first-child' );
 	}
 
@@ -41,7 +41,7 @@ export class AtomicWidgetView extends elementor.modules.elements.views.Widget {
 			'data-atomic': '',
 
 			// Make the wrapper non-existent in terms of CSS to mimic the frontend DOM tree.
-			// style: 'display: contents !important;',
+			style: 'display: contents !important;',
 		};
 	}
 
