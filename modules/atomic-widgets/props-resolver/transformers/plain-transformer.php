@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Primitive_Transformer extends Transformer_Base {
+class Plain_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		return $value;
 	}
