@@ -137,7 +137,7 @@ class Module extends BaseModule {
 		$doc = Plugin::$instance->documents->get_current();
 
 		// PHPCS - should not be escaped.
-		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true );
+		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		wp_delete_post( $doc->get_main_id(), true );
 	}
