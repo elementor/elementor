@@ -983,6 +983,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		if ( options.scrollIntoView ) {
+			// here
 			elementor.helpers.scrollToView( this.$el, 200 );
 		}
 

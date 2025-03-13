@@ -557,6 +557,7 @@ module.exports = {
 		);
 	},
 
+	// here
 	scrollToView( $element, timeout, $parent ) {
 		if ( undefined === timeout ) {
 			timeout = 500;
@@ -576,6 +577,12 @@ module.exports = {
 			if ( ! $element[ 0 ].isConnected ) {
 				return;
 			}
+
+			// let element = $parent === $elementorFrontendWindow ? $element : $element[ 0 ];
+			// if ( ! element.offsetParent ) {
+			// 	element = element.children[ 0 ];
+			// }
+			//test
 
 			const parentHeight = $parent.height(),
 				parentScrollTop = $parent.scrollTop(),
