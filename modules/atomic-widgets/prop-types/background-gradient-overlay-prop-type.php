@@ -34,5 +34,3 @@ class Background_Gradient_Overlay_Prop_Type extends Object_Prop_Type {
 		];
 	}
 }
-
-
