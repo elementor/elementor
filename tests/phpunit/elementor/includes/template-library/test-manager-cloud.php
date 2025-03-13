@@ -18,8 +18,11 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 	private $manager_mock;
 
+	private $documents;
+
 	public function setUp(): void {
 		parent::setUp();
+		$this->documents = Plugin::$instance->documents;
 		$this->cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
 			->onlyMethods( [ 'get_resources', 'get_resource', 'post_resource', 'update_resource', 'delete_resource' ] )
 			->disableOriginalConstructor()
@@ -51,6 +54,11 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$reflection = new \ReflectionClass($this->cloud_source_mock);
 		$save_document_method = $reflection->getMethod('save_document_for_preview');
 		$save_document_method->setAccessible(true);
+	}
+
+	public function tearDown(): void {
+		Plugin::$instance->documents = $this->documents;
+		parent::tearDown();
 	}
 
 	public function test_should_return_cloud_source() {
