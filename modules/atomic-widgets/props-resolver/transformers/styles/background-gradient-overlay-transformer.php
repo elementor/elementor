@@ -13,13 +13,13 @@ class Background_Gradient_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): string {
 		$type = $value['type'];
 		$angle = $value['angle'];
-		$positions = $value['type'];
+		$positions = $value['positions'];
 		$stops = $value['stops'];
 
 		if ( 'radial' === $type ) {
 			return "radial-gradient(circle at $positions, $stops)";
 		}
 
-		return "linear-gradient($angle, $stops)";
+		return "linear-gradient(" . $angle . "deg, $stops)";
 	}
 }
