@@ -33,7 +33,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	filterSettings( newItem ) {
-		if ( 'container' !== newItem?.elType || 'e-div-block' !== newItem?.elType ) {
+		if ( this.isNotContainerOrDivBlock( newItem.elType ) ) {
 			return;
 		}
 
@@ -648,6 +648,10 @@ const ContainerView = BaseElementView.extend( {
 		if ( $linkElement ) {
 			$linkElement.attr( 'href', href );
 		}
+	},
+
+	isNotContainerOrDivBlock( elementType ) {
+		return ! [ 'container', 'e-div-block' ].includes( elementType );
 	},
 } );
 
