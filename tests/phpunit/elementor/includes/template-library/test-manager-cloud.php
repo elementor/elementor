@@ -593,178 +593,178 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
 	}
 
-//	public function test_create_document_for_preview_without_permission() {
-//		// Arrange
-//		$this->act_as_subscriber();
-//
-//		$cloud_source = new \Elementor\TemplateLibrary\Source_Cloud();
-//
-//		// Act
-//		$result = $cloud_source->create_document_for_preview( 1 );
-//
-//		// Assert
-//		$this->assertWPError( $result );
-//		$this->assertEquals( Exceptions::FORBIDDEN, $result->get_error_code() );
-//		$this->assertEquals( 'You do not have permission to create preview documents.', $result->get_error_message() );
-//	}
-//
-//	public function test_create_document_for_preview_with_invalid_template() {
-//		// Arrange
-//		$this->act_as_admin();
-//
-//		$cloud_source = new \Elementor\TemplateLibrary\Source_Cloud();
-//
-//		$cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
-//			->disableOriginalConstructor()
-//			->getMock();
-//
-//		$cloud_library_app_mock->method( 'get_resource' )
-//			->with( [ 'id' => 1 ] )
-//			->willReturn( new \WP_Error( 'error', 'Template not found' ) );
-//
-//		$module_mock = $this->getMockBuilder( \Elementor\Core\Common\Modules\Connect\Module::class )
-//			->onlyMethods( ['get_app'] )
-//			->getMock();
-//		$module_mock->method( 'get_app' )->willReturn( $cloud_library_app_mock );
-//		Plugin::$instance->common->add_component( 'connect', $module_mock );
-//
-//		// Assert & Act
-//		$this->expectException( \Exception::class );
-//		$this->expectExceptionMessage( 'Template not found' );
-//		$cloud_source->create_document_for_preview( 1 );
-//	}
-//
-//	public function test_create_document_for_preview_success() {
-//		// Arrange
-//		$this->act_as_admin();
-//
-//		$cloud_source = $this->getMockBuilder( '\Elementor\TemplateLibrary\Source_Cloud' )
-//			->onlyMethods( ['replace_elements_ids'] )
-//			->getMock();
-//
-//		$cloud_source->method( 'replace_elements_ids' )
-//			->willReturnCallback(function($content) {
-//				return $content;
-//			});
-//
-//		$cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
-//			->disableOriginalConstructor()
-//			->getMock();
-//
-//		$template_content = [
-//			'content' => [
-//				[
-//					'id' => 'test_id',
-//					'elType' => 'section',
-//					'elements' => []
-//				]
-//			],
-//			'page_settings' => [ 'test_settings' ]
-//		];
-//
-//		$cloud_library_app_mock->method( 'get_resource' )
-//			->with( [ 'id' => 1 ] )
-//			->willReturn( [
-//				'content' => json_encode( $template_content )
-//			] );
-//
-//		$module_mock = $this->getMockBuilder( \Elementor\Core\Common\Modules\Connect\Module::class )
-//			->onlyMethods( [ 'get_app' ] )
-//			->getMock();
-//		$module_mock->method( 'get_app' )->willReturn( $cloud_library_app_mock );
-//		Plugin::$instance->common->add_component( 'connect', $module_mock );
-//
-//		$mock_document = $this->getMockBuilder( '\Elementor\Core\Base\Document' )
-//			->disableOriginalConstructor()
-//			->getMock();
-//
-//		$mock_document->method( 'get_main_id' )->willReturn( 123 );
-//		$mock_document->expects( $this->once() )
-//			->method( 'save' )
-//			->with( [
-//				'elements' => [
-//					[
-//						'id' => 'test_id',
-//						'elType' => 'section',
-//						'elements' => []
-//					]
-//				],
-//				'settings' => [ 'test_settings' ]
-//			] );
-//
-//		$documents_mock = $this->getMockBuilder( '\Elementor\Core\Documents_Manager' )
-//			->disableOriginalConstructor()
-//			->getMock();
-//
-//		$documents_mock->method( 'create' )
-//			->with(
-//				'cloud-template-preview',
-//				[
-//					'post_title' => '(no title)',
-//					'post_status' => 'draft'
-//				]
-//			)
-//			->willReturn( $mock_document );
-//
-//		Plugin::$instance->documents = $documents_mock;
-//
-//		// Act
-//		$result = $cloud_source->create_document_for_preview(1);
-//
-//		// Assert
-//		$this->assertInstanceOf( '\Elementor\Core\Base\Document', $result );
-//	}
-//
-//	public function test_save_document_for_preview_success() {
-//		// Arrange
-//		$template_content = [
-//			'content' => [ 'test_content' ],
-//			'page_settings' => [ 'test_settings' ]
-//		];
-//
-//		$mock_document = $this->getMockBuilder( '\Elementor\Core\Base\Document' )
-//			->disableOriginalConstructor()
-//			->getMock();
-//
-//		$mock_document->method( 'get_main_id' )->willReturn( 123 );
-//		$mock_document->expects( $this->once() )
-//			->method( 'save' )
-//			->with( [
-//				'elements' => [ 'test_content' ],
-//				'settings' => [ 'test_settings' ]
-//			] );
-//
-//		$documents_mock = $this->getMockBuilder( '\Elementor\Core\Documents_Manager' )
-//			->disableOriginalConstructor()
-//			->getMock();
-//
-//		$documents_mock->method( 'create' )
-//			->with(
-//				'cloud-template-preview',
-//				[
-//					'post_title' => '(no title)',
-//					'post_status' => 'draft'
-//				]
-//			)
-//			->willReturn( $mock_document );
-//
-//		Plugin::$instance->documents = $documents_mock;
-//
-//		$cloud_source_mock = $this->getMockBuilder( '\Elementor\TemplateLibrary\Source_Cloud' )
-//			->onlyMethods( [ 'replace_elements_ids' ] )
-//			->getMock();
-//
-//		$cloud_source_mock->method( 'replace_elements_ids' )
-//			->willReturn( [ 'test_content' ] );
-//
-//		$reflection = new \ReflectionClass( $cloud_source_mock );
-//		$method = $reflection->getMethod( 'save_document_for_preview' );
-//		$method->setAccessible( true );
-//
-//		// Act
-//		$result = $method->invoke( $cloud_source_mock, $template_content );
-//
-//		// Assert
-//		$this->assertInstanceOf( '\Elementor\Core\Base\Document', $result );
-//	}
+	public function test_create_document_for_preview_without_permission() {
+		// Arrange
+		$this->act_as_subscriber();
+
+		$cloud_source = new \Elementor\TemplateLibrary\Source_Cloud();
+
+		// Act
+		$result = $cloud_source->create_document_for_preview( 1 );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEquals( Exceptions::FORBIDDEN, $result->get_error_code() );
+		$this->assertEquals( 'You do not have permission to create preview documents.', $result->get_error_message() );
+	}
+
+	public function test_create_document_for_preview_with_invalid_template() {
+		// Arrange
+		$this->act_as_admin();
+
+		$cloud_source = new \Elementor\TemplateLibrary\Source_Cloud();
+
+		$cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$cloud_library_app_mock->method( 'get_resource' )
+			->with( [ 'id' => 1 ] )
+			->willReturn( new \WP_Error( 'error', 'Template not found' ) );
+
+		$module_mock = $this->getMockBuilder( \Elementor\Core\Common\Modules\Connect\Module::class )
+			->onlyMethods( ['get_app'] )
+			->getMock();
+		$module_mock->method( 'get_app' )->willReturn( $cloud_library_app_mock );
+		Plugin::$instance->common->add_component( 'connect', $module_mock );
+
+		// Assert & Act
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Template not found' );
+		$cloud_source->create_document_for_preview( 1 );
+	}
+
+	public function test_create_document_for_preview_success() {
+		// Arrange
+		$this->act_as_admin();
+
+		$cloud_source = $this->getMockBuilder( '\Elementor\TemplateLibrary\Source_Cloud' )
+			->onlyMethods( ['replace_elements_ids'] )
+			->getMock();
+
+		$cloud_source->method( 'replace_elements_ids' )
+			->willReturnCallback(function($content) {
+				return $content;
+			});
+
+		$cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$template_content = [
+			'content' => [
+				[
+					'id' => 'test_id',
+					'elType' => 'section',
+					'elements' => []
+				]
+			],
+			'page_settings' => [ 'test_settings' ]
+		];
+
+		$cloud_library_app_mock->method( 'get_resource' )
+			->with( [ 'id' => 1 ] )
+			->willReturn( [
+				'content' => json_encode( $template_content )
+			] );
+
+		$module_mock = $this->getMockBuilder( \Elementor\Core\Common\Modules\Connect\Module::class )
+			->onlyMethods( [ 'get_app' ] )
+			->getMock();
+		$module_mock->method( 'get_app' )->willReturn( $cloud_library_app_mock );
+		Plugin::$instance->common->add_component( 'connect', $module_mock );
+
+		$mock_document = $this->getMockBuilder( '\Elementor\Core\Base\Document' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$mock_document->method( 'get_main_id' )->willReturn( 123 );
+		$mock_document->expects( $this->once() )
+			->method( 'save' )
+			->with( [
+				'elements' => [
+					[
+						'id' => 'test_id',
+						'elType' => 'section',
+						'elements' => []
+					]
+				],
+				'settings' => [ 'test_settings' ]
+			] );
+
+		$documents_mock = $this->getMockBuilder( '\Elementor\Core\Documents_Manager' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$documents_mock->method( 'create' )
+			->with(
+				'cloud-template-preview',
+				[
+					'post_title' => '(no title)',
+					'post_status' => 'draft'
+				]
+			)
+			->willReturn( $mock_document );
+
+		Plugin::$instance->documents = $documents_mock;
+
+		// Act
+		$result = $cloud_source->create_document_for_preview(1);
+
+		// Assert
+		$this->assertInstanceOf( '\Elementor\Core\Base\Document', $result );
+	}
+
+	public function test_save_document_for_preview_success() {
+		// Arrange
+		$template_content = [
+			'content' => [ 'test_content' ],
+			'page_settings' => [ 'test_settings' ]
+		];
+
+		$mock_document = $this->getMockBuilder( '\Elementor\Core\Base\Document' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$mock_document->method( 'get_main_id' )->willReturn( 123 );
+		$mock_document->expects( $this->once() )
+			->method( 'save' )
+			->with( [
+				'elements' => [ 'test_content' ],
+				'settings' => [ 'test_settings' ]
+			] );
+
+		$documents_mock = $this->getMockBuilder( '\Elementor\Core\Documents_Manager' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$documents_mock->method( 'create' )
+			->with(
+				'cloud-template-preview',
+				[
+					'post_title' => '(no title)',
+					'post_status' => 'draft'
+				]
+			)
+			->willReturn( $mock_document );
+
+		Plugin::$instance->documents = $documents_mock;
+
+		$cloud_source_mock = $this->getMockBuilder( '\Elementor\TemplateLibrary\Source_Cloud' )
+			->onlyMethods( [ 'replace_elements_ids' ] )
+			->getMock();
+
+		$cloud_source_mock->method( 'replace_elements_ids' )
+			->willReturn( [ 'test_content' ] );
+
+		$reflection = new \ReflectionClass( $cloud_source_mock );
+		$method = $reflection->getMethod( 'save_document_for_preview' );
+		$method->setAccessible( true );
+
+		// Act
+		$result = $method->invoke( $cloud_source_mock, $template_content );
+
+		// Assert
+		$this->assertInstanceOf( '\Elementor\Core\Base\Document', $result );
+	}
 }
