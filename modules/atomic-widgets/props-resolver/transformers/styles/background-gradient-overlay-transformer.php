@@ -20,6 +20,6 @@ class Background_Gradient_Overlay_Transformer extends Transformer_Base {
 			return "radial-gradient(circle at $positions, $stops)";
 		}
 
-		return "linear-gradient(" . $angle . "deg, $stops)";
+		return 'linear-gradient(' . $angle . 'deg, $stops)';
 	}
 }
