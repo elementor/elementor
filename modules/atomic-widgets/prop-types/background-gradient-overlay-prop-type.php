@@ -8,15 +8,29 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 class Background_Gradient_Overlay_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'background-gelementorV2radient-overlay';
+		return 'background-gradient-overlay';
 	}
 
 	protected function define_shape(): array {
 		return [
 			'type' => String_Prop_Type::make()->enum( [ 'linear', 'radial' ] ),
 			'angle' => Number_Prop_Type::make(),
-			'stops' => Background_Gradient_Color_Stop_Prop_Type::make(),
-			'positions' => Background_Gradient_Radial_Position_Prop_Type::make(),
+			'stops' => Gradient_Color_Stop_Prop_Type::make(),
+			'positions' => String_Prop_Type::make()->enum( self::get_position_enum_values() ),
+		];
+	}
+
+	private static function get_position_enum_values(): array {
+		return [
+			'center center',
+			'center left',
+			'center right',
+			'top center',
+			'top left',
+			'top right',
+			'bottom center',
+			'bottom left',
+			'bottom right',
 		];
 	}
 }

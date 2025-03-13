@@ -8,9 +8,9 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
-class Background_Gradient_Color_Stop_Prop_Type extends Array_Prop_Type {
+class Gradient_Color_Stop_Prop_Type extends Array_Prop_Type {
 	public static function get_key(): string {
-		return 'background-gradient-color-stops';
+		return 'gradient-color-stop';
 	}
 
 	protected function define_item_type(): Prop_Type {
