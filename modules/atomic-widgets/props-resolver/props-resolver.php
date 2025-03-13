@@ -24,11 +24,11 @@ abstract class Props_Resolver {
 		$this->transformers_registry = $transformers_registry;
 	}
 
-	protected static function instance( string $context ): self {
-		if ( ! isset( self::$instances[ $context ] ) ) {
+	protected static function instance( string $context ) {
+		if ( ! isset( static::$instances[ $context ] ) ) {
 			$instance = new static( new Transformers_Registry() );
 
-			self::$instances[ $context ] = $instance;
+			static::$instances[ $context ] = $instance;
 
 			do_action(
 				"elementor/atomic-widgets/$context/transformers/register",
@@ -37,11 +37,11 @@ abstract class Props_Resolver {
 			);
 		}
 
-		return self::$instances[ $context ];
+		return static::$instances[ $context ];
 	}
 
 	public static function reset(): void {
-		self::$instances = [];
+		static::$instances = [];
 	}
 
 	public function get_transformers_registry(): Transformers_Registry {
