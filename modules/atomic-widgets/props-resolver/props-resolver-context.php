@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Props_Resolver_Context {
 	private ?string $key = null;
+
+	private ?Transformable_Prop_Type $prop_type;
 
 	private bool $disabled = false;
 
@@ -26,7 +27,7 @@ class Props_Resolver_Context {
 		return $this;
 	}
 
-	public function set_disable( bool $disabled ): self {
+	public function set_disabled( bool $disabled ): self {
 		$this->disabled = $disabled;
 
 		return $this;
@@ -38,7 +39,7 @@ class Props_Resolver_Context {
 		return $this;
 	}
 
-	public function get_key(): string {
+	public function get_key(): ?string {
 		return $this->key;
 	}
 
@@ -46,7 +47,7 @@ class Props_Resolver_Context {
 		return $this->disabled;
 	}
 
-	public function get_prop_type(): Transformable_Prop_Type {
+	public function get_prop_type(): ?Transformable_Prop_Type {
 		return $this->prop_type;
 	}
 }
