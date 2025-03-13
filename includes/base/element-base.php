@@ -67,6 +67,18 @@ abstract class Element_Base extends Controls_Stack {
 	private $depended_scripts = [];
 
 	/**
+	 * Depended script modules.
+	 *
+	 * Holds all the element depended script modules to enqueue.
+	 *
+	 * @since 3.28.0
+	 * @access private
+	 *
+	 * @var array
+	 */
+	private $dependent_script_modules = [];
+
+	/**
 	 * Depended styles.
 	 *
 	 * Holds all the element depended styles to enqueue.
@@ -118,6 +130,20 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	public function get_script_depends() {
 		return $this->depended_scripts;
+	}
+
+	/**
+	 * Get script module dependencies.
+	 *
+	 * Retrieve the list of script module dependencies the element requires.
+	 *
+	 * @since 3.28.0
+	 * @access public
+	 *
+	 * @return array Element script modules dependencies.
+	 */
+	public function get_script_module_depends(): array {
+		return $this->dependent_script_modules;
 	}
 
 	/**

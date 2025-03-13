@@ -253,6 +253,25 @@ class Widget_Image_Gallery extends Widget_Base {
 							],
 						],
 					],
+					'script_modules' => [
+						[
+							'name' => 'elementor_utils_swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'gallery_link',
+										'operator' => '===',
+										'value' => 'file',
+									],
+									[
+										'name' => 'open_lightbox',
+										'operator' => '!==',
+										'value' => 'no',
+									],
+								],
+							],
+						],
+					],
 				],
 			]
 		);

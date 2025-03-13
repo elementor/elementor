@@ -166,6 +166,7 @@ class Frontend extends App {
 
 		add_action( 'template_redirect', [ $this, 'init_render_mode' ], -1 /* Before admin bar. */ );
 		add_action( 'template_redirect', [ $this, 'init' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_script_modules' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 5 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ], 5 );
 
@@ -346,6 +347,45 @@ class Frontend extends App {
 	 */
 	public function remove_content_filter() {
 		remove_filter( 'the_content', [ $this, 'apply_builder_in_content' ], self::THE_CONTENT_FILTER_PRIORITY );
+	}
+
+	/**
+	 * Registers script modules.
+	 *
+	 * Registers all the frontend script modules.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
+	 *
+	 * @since 3.28.0
+	 * @access public
+	 */
+	public function register_script_modules(): void {
+		/**
+		 * Before frontend register script modules.
+		 *
+		 * Fires before Elementor frontend script modules are registered.
+		 *
+		 * @since 3.28.0
+		 */
+		do_action( 'elementor/frontend/before_register_script_modules' );
+
+		wp_register_script_module(
+			'elementor_utils_swiper',
+			$this->get_js_assets_url( 'frontend-utils-swiper', 'assets/js/' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		/**
+		 * After frontend register script modules.
+		 *
+		 * Fires after Elementor frontend script modules are registered.
+		 *
+		 * @since 3.28.0
+		 */
+		do_action( 'elementor/frontend/after_register_script_modules' );
+
+		$this->enqueue_script_modules();
 	}
 
 	/**
@@ -598,6 +638,40 @@ class Frontend extends App {
 		 * @since 1.2.0
 		 */
 		do_action( 'elementor/frontend/after_register_styles' );
+	}
+
+	/**
+	 * Enqueue script modules.
+	 *
+	 * Enqueue all the frontend script modules.
+	 *
+	 * @since 3.28.0
+	 * @access public
+	 */
+	public function enqueue_script_modules(): void {
+		/**
+		 * Before frontend enqueue script modules.
+		 *
+		 * Fires before Elementor frontend script modules are enqueued.
+		 *
+		 * @since 3.28.0
+		 */
+		do_action( 'elementor/frontend/before_enqueue_script_modules' );
+
+		$is_experiment_active = Plugin::$instance->experiments->is_feature_active( 'e_load_js_modules_conditionally' );
+
+		if ( ! $is_experiment_active || Plugin::$instance->preview->is_preview_mode() ) {
+			wp_enqueue_script_module( 'elementor_utils_swiper' );
+		}
+
+		/**
+		 * After frontend enqueue script modules.
+		 *
+		 * Fires after Elementor frontend script modules are enqueued.
+		 *
+		 * @since 3.28.0
+		 */
+		do_action( 'elementor/frontend/after_enqueue_script_modules' );
 	}
 
 	/**

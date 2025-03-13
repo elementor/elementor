@@ -29,6 +29,7 @@ class Loader extends Module {
 		$assets = [
 			'styles' => $this->init_styles(),
 			'scripts' => [],
+			'script_modules' => [],
 		];
 
 		$this->assets = $assets;
@@ -100,10 +101,14 @@ class Loader extends Module {
 	}
 
 	/**
+	 * Enables the specified assets.
+	 *
 	 * @param array $assets_data {
-	 *     @type array 'styles'
-	 *     @type array 'scripts'
-	 * }
+	 *     An array of assets to be enabled. The array should include:
+	 *     - @type array 'styles'         List of style asset names to enqueue.
+	 *     - @type array 'scripts'        List of script asset names to enqueue.
+	 *     - @type array 'script_modules' List of script module names to enqueue.
+	 * } A structured array of asset data.
 	 */
 	public function enable_assets( array $assets_data ): void {
 		if ( ! $this->assets ) {
@@ -116,6 +121,8 @@ class Loader extends Module {
 
 				if ( 'scripts' === $assets_type ) {
 					wp_enqueue_script( $asset_name );
+				} else if ( 'script_modules' === $assets_type ) {
+					wp_enqueue_script_module( $asset_name );
 				} else {
 					wp_enqueue_style( $asset_name );
 				}
@@ -124,10 +131,14 @@ class Loader extends Module {
 	}
 
 	/**
+	 * Enables the specified assets.
+	 *
 	 * @param array $assets {
-	 *     @type array 'styles'
-	 *     @type array 'scripts'
-	 * }
+	 *     An array of assets to be enabled. The array should include:
+	 *     - @type array 'styles'         List of style asset names to enqueue.
+	 *     - @type array 'scripts'        List of script asset names to enqueue.
+	 *     - @type array 'script_modules' List of script module names to enqueue.
+	 * } A structured array of asset data.
 	 */
 	public function add_assets( array $assets ): void {
 		if ( ! $this->assets ) {
@@ -153,6 +164,8 @@ class Loader extends Module {
 				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
+					} else if ( 'script_modules' === $assets_type ) {
+						wp_enqueue_script_module( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					} else {
 						wp_enqueue_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 					}
@@ -168,6 +181,8 @@ class Loader extends Module {
 			foreach ( $assets_type_data as $asset_name => $asset_data ) {
 				if ( 'scripts' === $assets_type ) {
 					wp_register_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
+				} else if ( 'script_modules' === $assets_type ) {
+					wp_register_script_module( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 				} else {
 					wp_register_style( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'] );
 				}

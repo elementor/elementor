@@ -382,6 +382,14 @@ class Manager extends Base_Object {
 			'generator_tag' => true,
 			'default' => self::STATE_ACTIVE,
 		] );
+
+		// TODO: Remove this experiment in v3.32 [ED-17712].
+		$this->add_feature( [
+			'name' => 'e_load_js_modules_conditionally',
+			'title' => esc_html__( 'Load JS Module Script files conditionally', 'elementor' ),
+			'default' => self::STATE_INACTIVE,
+			static::TYPE_HIDDEN => true,
+		] );
 	}
 
 	/**
