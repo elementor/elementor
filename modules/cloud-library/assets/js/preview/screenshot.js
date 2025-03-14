@@ -314,7 +314,7 @@ class Screenshot extends elementorModules.ViewModule {
 	save( canvas ) {
 		const isTemplate = this.getSettings( 'template_id' );
 
-		const endpoint = isTemplate ? 'screenshot_save_template' : 'screenshot_save';
+		const endpoint = isTemplate ? 'save_template_screenshot' : 'screenshot_save';
 		const data = {
 			...( isTemplate ? { template_id: this.getSettings( 'template_id' ) } : { post_id: this.getSettings( 'post_id' ) } ),
 			screenshot: canvas.toDataURL( 'image/png' ),
