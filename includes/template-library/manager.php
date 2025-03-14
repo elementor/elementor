@@ -898,7 +898,7 @@ class Manager {
 			'load_more_templates',
 			'create_folder',
 			'get_folders',
-			'screenshot_save_template',
+			'save_template_screenshot',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
