@@ -14,16 +14,15 @@ $top-bar-height: 50px;
 	pointer-events: none;
 }
 
-// The width for top bar is calculated according to the width of the wordpress admin sidebar menu.
 #e-admin-top-bar-root {
 	@include end( 0 );
 	font-family: var(--e-a-font-family);
 	background: var(--e-a-bg-default);
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
 	display: none;
-	position: absolute;
-	top: 0;
-	width: calc(100% - 160px);
+	// The container (#wpcontent) has 20px padding on the left, but the topbar should stick to the edge.
+	// Use margin-inline-start to support RTL contexts.
+	margin-inline-start: -20px;
 	z-index: $first-layer;
 
 	body.folded & {
