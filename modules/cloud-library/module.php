@@ -49,7 +49,7 @@ class Module extends BaseModule {
 				}
 
 				return $module_name;
-			}, 12, 2 );
+			}, 12);
 		}
 	}
 
