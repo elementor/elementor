@@ -96,8 +96,8 @@
 
 		.eicon-atomic {
 			position: absolute;
-			top: 5px;
-			@include end(5px);
+			inset-block-start: 5px;
+			inset-inline-end: 5px;
 			color: var(--e-a-color-txt-disabled);
 		}
 
