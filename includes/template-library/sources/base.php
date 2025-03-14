@@ -397,7 +397,7 @@ abstract class Source_Base {
 	 * @throws \Exception
 	 */
 	public function save_item_preview( int $template_id, $data ) {
-		return new \WP_Error( 'template_error', 'Can save previews for this source' );
+		return new \WP_Error( 'template_error', 'Cannot save previews for this source' );
 	}
 
 	/**
