@@ -2,7 +2,11 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,11 +24,11 @@ class Render_Props_Resolver extends Props_Resolver {
 	const CONTEXT_STYLES = 'styles';
 
 	public static function for_styles(): self {
-		return self::instance( self::CONTEXT_STYLES );
+		return static::instance( self::CONTEXT_STYLES );
 	}
 
 	public static function for_settings(): self {
-		return self::instance( self::CONTEXT_SETTINGS );
+		return static::instance( self::CONTEXT_SETTINGS );
 	}
 
 	public function resolve( array $schema, array $props ): array {
