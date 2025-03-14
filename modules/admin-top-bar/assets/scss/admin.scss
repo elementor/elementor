@@ -175,22 +175,19 @@ $top-bar-height: 50px;
 	}
 }
 
-// The width for top bar is calculated according to the width of the wordpress admin sidebar menu.
-@media screen and (max-width: 960px) {
-	#e-admin-top-bar-root {
-		width: calc(100% - 36px);
-	}
-}
-
 @media screen and (max-width: 782px) {
 	#e-admin-top-bar-root {
+		margin-inline-start: -10px;
 		width: 100%;
 	}
 }
 
 @media screen and (max-width: 600px) {
 	#e-admin-top-bar-root {
+		position: absolute;
+		left: 10px;
 		top: 46px;
+		width: 100%;
 	}
 }
 
