@@ -15,7 +15,6 @@ class Props_Resolver_Context {
 
 	private bool $disabled = false;
 
-
 	public static function make(): self {
 		return new static();
 	}

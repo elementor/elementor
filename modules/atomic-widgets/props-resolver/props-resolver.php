@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Props_Resolver {
 	/**
-	 * @var array<string, Render_Props_Resolver>
+	 * @var array<string, Props_Resolver>
 	 */
 	protected static array $instances = [];
 
