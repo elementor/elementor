@@ -10,7 +10,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 		'id' => 'e8e55a1',
 		'elType' => 'widget',
 		'settings' => [],
-		'widgetType' => 'a-button',
+		'widgetType' => 'e-button',
 	];
 
 	const MOCK_LINK = [
@@ -22,7 +22,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 				'target' => '_blank',
 			],
 		],
-		'widgetType' => 'a-button',
+		'widgetType' => 'e-button',
 	];
 
 	const MOCK_LINK_TARGET_SELF = [
@@ -34,7 +34,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 				'target' => '_self',
 			],
 		],
-		'widgetType' => 'a-button',
+		'widgetType' => 'e-button',
 	];
 
 	public function test__render_button(): void {

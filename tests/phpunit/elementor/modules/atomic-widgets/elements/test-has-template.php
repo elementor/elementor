@@ -40,7 +40,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 						'url' => 'https://example.com/image.jpg',
 					],
 				],
-				'widgetType' => 'a-image',
+				'widgetType' => 'e-image',
 			],
 		],
 			'Atomic Image linked' => [
@@ -57,7 +57,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 							'target' => '_blank',
 						],
 					],
-					'widgetType' => 'a-image',
+					'widgetType' => 'e-image',
 				],
 			],
 			'Atomic Paragraph default' => [
@@ -65,7 +65,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'id' => 'e8e55a1',
 					'elType' => 'widget',
 					'settings' => [],
-					'widgetType' => 'a-paragraph',
+					'widgetType' => 'e-paragraph',
 				],
 			],
 			'Atomic Paragraph linked' => [
@@ -78,7 +78,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 							'target' => '_blank',
 						],
 					],
-					'widgetType' => 'a-paragraph',
+					'widgetType' => 'e-paragraph',
 				],
 			],
 			'Atomic SVG default' => [
@@ -86,7 +86,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'id' => 'abcd123',
 					'elType' => 'widget',
 					'settings' => [],
-					'widgetType' => 'a-svg',
+					'widgetType' => 'e-svg',
 				]
 			],
 		];

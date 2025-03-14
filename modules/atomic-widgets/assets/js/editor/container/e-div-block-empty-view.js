@@ -1,7 +1,7 @@
 import ReactUtils from 'elementor-utils/react';
 import EmptyComponent from 'elementor-elements/views/container/empty-component';
 
-export default class DivBlockEmptyView extends Marionette.ItemView {
+export default class EDivBlockEmptyView extends Marionette.ItemView {
 	template = '<div></div>';
 
 	className = 'elementor-empty-view';

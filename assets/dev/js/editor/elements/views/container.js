@@ -339,7 +339,7 @@ const ContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		return [ 'widget', 'container', 'div-block' ].includes( elementView.model.get( 'elType' ) );
+		return [ 'widget', 'container', 'e-div-block' ].includes( elementView.model.get( 'elType' ) );
 	},
 
 	/**
@@ -651,7 +651,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	isNotContainerOrDivBlock( elementType ) {
-		return ! [ 'container', 'div-block' ].includes( elementType );
+		return ! [ 'container', 'e-div-block' ].includes( elementType );
 	},
 } );
 

@@ -19,7 +19,7 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerAtomicDivBlockType() {
-		const DivBlock = require( './div-block-type' ).default;
+		const DivBlock = require( './e-div-block-type' ).default;
 
 		elementor.elementsManager.registerElementType( new DivBlock() );
 	}

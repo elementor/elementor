@@ -4,7 +4,7 @@ import widgets from '../../../enums/widgets';
 import { getElementSelector } from '../../../assets/elements-utils';
 import { expect } from '@playwright/test';
 
-test.describe( 'Div Block tests @div-block', () => {
+test.describe( 'Div Block tests @e-div-block', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -26,7 +26,7 @@ test.describe( 'Div Block tests @div-block', () => {
 	test( 'Sort items in a Div Block using DnD', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
-			divBlock = await editor.addElement( { elType: 'div-block' }, 'document' ),
+			divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' ),
 			heading = await editor.addWidget( widgets.heading, divBlock ),
 			button = await editor.addWidget( widgets.button, divBlock ),
 			image = await editor.addWidget( widgets.image, divBlock );
@@ -50,8 +50,8 @@ test.describe( 'Div Block tests @div-block', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		// Act.
 		const editor = await wpAdmin.openNewPage(),
-			parentDivBlock = await editor.addElement( { elType: 'div-block' }, 'document' ),
-			childDivBlock = await editor.addElement( { elType: 'div-block' }, parentDivBlock ),
+			parentDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' ),
+			childDivBlock = await editor.addElement( { elType: 'e-div-block' }, parentDivBlock ),
 			heading = await editor.addWidget( widgets.heading, childDivBlock ),
 			button = await editor.addWidget( widgets.button, parentDivBlock ),
 			image = await editor.addWidget( widgets.image, childDivBlock ),
@@ -75,7 +75,7 @@ test.describe( 'Div Block tests @div-block', () => {
 	test.skip( 'Div block should render styles after refresh', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
-			divBlock = await editor.addElement( { elType: 'div-block' }, 'document' );
+			divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
 		await editor.openV2PanelTab( 'style' );
 		await editor.openV2Section( 'background' );
