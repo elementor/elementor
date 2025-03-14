@@ -36,31 +36,7 @@ class Source_Cloud extends Source_Base {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	public function register_data() {
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
-	}
-
-	/**
-	 * @param \Elementor\Core\Common\Modules\Ajax\Module $ajax_manager
-	 */
-	public function register_ajax_actions( $ajax_manager ) {
-		$ajax_manager->register_ajax_action( 'screenshot_cloud_save', [ $this, 'ajax_save' ] );
-	}
-
-	/**
-	 * @throws \Exception
-	 */
-	public function ajax_save( $data ): string {
-		if ( empty( $data['screenshot'] ) || empty( $data['template_id'] ) ) {
-			return false;
-		}
-
-		$cloud_library_app = $this->get_app();
-
-		$raw_binary = base64_decode( substr( $data['screenshot'], strlen( 'data:image/png;base64,' ) ) );
-
-		return $cloud_library_app->update_resource_preview( $data['template_id'], $raw_binary );
-	}
+	public function register_data() {}
 
 	public function get_items( $args = [] ) {
 		return $this->get_app()->get_resources( $args );
@@ -293,6 +269,10 @@ class Source_Cloud extends Source_Base {
 		];
 
 		return $this->update_item( $move_args );
+	}
+
+	public function save_item_preview( $template_id, $data ) {
+		return $this->get_app()->update_resource_preview( $data['template_id'], $data );
 	}
 
 	/**
