@@ -4,6 +4,7 @@ namespace Elementor\Modules\CloudLibrary\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\CloudLibrary\Render_Mode_Preview;
+use Elementor\TemplateLibrary\Source_Cloud;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -81,7 +82,7 @@ class Cloud_Library extends Library {
 
 	private function generate_preview_url( $template_data ): ?string {
 		if ( ! empty( $template_data['previewUrl'] ) ||
-			'FOLDER' === $template_data['type'] ||
+			Source_Cloud::FOLDER_RESOURCE_TYPE === $template_data['type'] ||
 			empty( $template_data['id'] )
 		) {
 			return null;
@@ -173,7 +174,7 @@ class Cloud_Library extends Library {
 		]);
 
 		if ( is_wp_error( $response ) || empty( $response['preview_url'] ) ) {
-			$error_message = esc_html__( 'Failed to generate preview.', 'elementor' );
+			$error_message = esc_html__( 'Failed to save preview.', 'elementor' );
 
 			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}

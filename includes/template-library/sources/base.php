@@ -391,6 +391,16 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @param int $template_id
+	 * @param mixed $data
+	 * @return string|\WP_Error
+	 * @throws \Exception
+	 */
+	public function save_item_preview( int $template_id, $data) {
+		return new \WP_Error( 'template_error', 'Can save previews for this source' );
+	}
+
+	/**
 	 * Send file headers.
 	 *
 	 * Set the file header when export template data to a file.

@@ -36,13 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 */
 	do_action( 'elementor/page_templates/canvas/before_content' );
 
-	$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
-
-	$module = 'page-templates';
-
-	if ( null !== $render_mode_manager ) {
-		$module = apply_filters( 'elementor/render_mode/module', 'page-templates', $render_mode_manager );
-	}
+	$module = apply_filters( 'elementor/render_mode/module', 'page-templates', 12, 1);
 
 	\Elementor\Plugin::$instance->modules_manager->get_modules( $module )->print_content();
 
