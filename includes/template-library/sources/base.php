@@ -396,7 +396,7 @@ abstract class Source_Base {
 	 * @return string|\WP_Error
 	 * @throws \Exception
 	 */
-	public function save_item_preview( int $template_id, $data) {
+	public function save_item_preview( int $template_id, $data ) {
 		return new \WP_Error( 'template_error', 'Can save previews for this source' );
 	}
 
