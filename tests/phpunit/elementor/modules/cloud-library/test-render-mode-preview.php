@@ -117,5 +117,5 @@ class Test_Render_Mode_Preview extends Elementor_Test_Base {
 
         // Assert
         $this->assertInstanceOf( get_class( $this->document_mock ), $render_mode->get_document() );
-	}
+    }
 }
