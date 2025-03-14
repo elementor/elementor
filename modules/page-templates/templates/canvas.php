@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 */
 	do_action( 'elementor/page_templates/canvas/before_content' );
 
-	$module = apply_filters( 'elementor/render_mode/module', 'page-templates');
+	$module = apply_filters( 'elementor/render_mode/module', 'page-templates' );
 
 	\Elementor\Plugin::$instance->modules_manager->get_modules( $module )->print_content();
 
