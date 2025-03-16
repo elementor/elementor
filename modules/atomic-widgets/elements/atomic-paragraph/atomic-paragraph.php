@@ -31,7 +31,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return esc_html__( 'Atomic Paragraph', 'elementor' );
 	}
 
-	public final function get_keywords() {
+	public function get_keywords() {
 		return $this::ATOMIC_KEYWORDS;
 	}
 

@@ -26,7 +26,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return esc_html__( 'Atomic Image', 'elementor' );
 	}
 
-	public final function get_keywords() {
+	public function get_keywords() {
 		return $this::ATOMIC_KEYWORDS;
 	}
 
