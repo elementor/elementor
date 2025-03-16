@@ -7,7 +7,14 @@ const DivBlockView = BaseElementView.extend( {
 	emptyView: DivBlockEmptyView,
 
 	tagName() {
-		return this.doesHaveLink() ? 'a' : ( this.model.getSetting( 'tag' ) || 'div' );
+		if ( this.doesHaveLink() ) {
+			return 'a';
+		}
+
+		const tagControl = this.model.getSetting( 'tag' );
+		const tagControlValue = tagControl?.value || tagControl;
+
+		return tagControlValue || 'div';
 	},
 
 	getChildViewContainer() {
