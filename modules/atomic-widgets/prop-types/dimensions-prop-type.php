@@ -17,16 +17,16 @@ class Dimensions_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'top' => Union_Prop_Type::make()
+			'block-start' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'right' => Union_Prop_Type::make()
+			'inline-end' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'bottom' => Union_Prop_Type::make()
+			'block-end' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'left' => Union_Prop_Type::make()
+			'inline-start' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 		];
