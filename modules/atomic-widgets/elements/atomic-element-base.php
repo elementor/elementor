@@ -25,6 +25,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	abstract protected function define_atomic_controls(): array;
 
+	public function get_global_scripts() {
+		return [];
+	}
+
 	final public function get_initial_config() {
 		$config = parent::get_initial_config();
 
