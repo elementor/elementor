@@ -22,7 +22,7 @@ class Settings_Props_Modifier {
 		return new self( $props_resolver, $schema );
 	}
 
-	public function run( $element ) {
+	public function run( array $element ) {
 		if ( empty( $element['settings'] ) || ! is_array( $element['settings'] ) ) {
 			return $element;
 		}

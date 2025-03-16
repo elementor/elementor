@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Image_Src_Import_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		if ( empty( $value['url']['value'] ) ) {
-			return Image_Src_Prop_Type::generate( $value, $context->is_disabled() );
+			return null;
 		}
 
 		$uploaded = Plugin::$instance->templates_manager->get_import_images_instance()->import( [

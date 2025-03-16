@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Settings_Props_Modifi
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Import_Export_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,7 +37,7 @@ class Atomic_Import_Export {
 			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element );
 
 			/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
-			if ( ! $this->is_atomic( $element_instance ) ) {
+			if ( ! Utils::is_atomic( $element_instance ) ) {
 				return $element;
 			}
 
@@ -51,10 +52,5 @@ class Atomic_Import_Export {
 
 			return $element;
 		} );
-	}
-
-	private function is_atomic( $element_instance ): bool {
-		return $element_instance instanceof Atomic_Element_Base ||
-			$element_instance instanceof Atomic_Widget_Base;
 	}
 }
