@@ -1476,6 +1476,11 @@ class Source_Local extends Source_Base {
 
 		$content = $this->process_export_import_content( $content, 'on_import' );
 
+		$content = apply_filters(
+			'elementor/template_library/sources/local/import/elements',
+			$content
+		);
+
 		$page_settings = [];
 
 		if ( ! empty( $data['page_settings'] ) ) {
@@ -1526,13 +1531,13 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'empty_template', 'The template is empty' );
 		}
 
-		$elements = apply_filters(
-			'elementor/template_library/sources/local/prepare_template_export/elements',
+		$content = apply_filters(
+			'elementor/template_library/sources/local/export/elements',
 			$template_data['content']
 		);
 
 		$export_data = [
-			'content' => $elements,
+			'content' => $content,
 			'page_settings' => $template_data['settings'],
 			'version' => DB::DB_VERSION,
 			'title' => $document->get_main_post()->post_title,

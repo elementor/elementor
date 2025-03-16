@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Image_Src_Export_Transformer extends Transformer_Base {
-	public function transform( $value, Props_Resolver_Context $context ) {
+	public function transform( $value, Props_Resolver_Context $context ): ?array {
 		if ( ! empty( $value['url'] ) ) {
 			return Image_Src_Prop_Type::generate( [
 				'id'  => null,

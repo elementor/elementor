@@ -17,11 +17,11 @@ class Import_Export_Props_Resolver extends Props_Resolver {
 	const CONTEXT_IMPORT = 'import';
 	const CONTEXT_EXPORT = 'export';
 
-	public static function for_import(): self {
+	public static function for_import() {
 		return static::instance( self::CONTEXT_IMPORT );
 	}
 
-	public static function for_export(): self {
+	public static function for_export() {
 		return static::instance( self::CONTEXT_EXPORT );
 	}
 

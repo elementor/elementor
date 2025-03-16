@@ -4,9 +4,12 @@ namespace Elementor\Modules\AtomicWidgets\ImportExport;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Settings_Props_Modifier;
+use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Import_Export_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,31 +19,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Import_Export {
 	public function register_hooks() {
 		add_filter(
-			'elementor/template_library/sources/local/save_item/elements',
+			'elementor/template_library/sources/local/import/elements',
 			fn( $elements ) => $this->run( $elements, Import_Export_Props_Resolver::for_import() )
 		);
 
 		add_filter(
-			'elementor/template_library/sources/local/prepare_template_export/elements',
+			'elementor/template_library/sources/local/export/elements',
 			fn( $elements ) => $this->run( $elements, Import_Export_Props_Resolver::for_export() )
 		);
 	}
 
-	private function run( $elements, Props_Resolver $props_resolver ): array {
-		if ( empty( $elements ) ) {
+	private function run( $elements, Import_Export_Props_Resolver $props_resolver ) {
+		if ( empty( $elements ) || ! is_array( $elements ) ) {
 			return $elements;
 		}
 
 		return Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( $props_resolver ) {
-			$element_instance = $this->get_element_instance( $element );
+			$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element );
 
-			if ( ! $this->is_atomic( $element_instance ) ) {
+			/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
+			if ( ! Utils::is_atomic( $element_instance ) ) {
 				return $element;
 			}
 
-			$element = Change_Style_Ids::make()->run( $element );
-			$element = Change_Settings_Props::make( $props_resolver, $element_instance::get_props_schema() )->run( $element );
-			$element = Change_Styles_Props::make( $props_resolver, Style_Schema::get() )->run( $element );
+			$runners = [
+				Settings_Props_Modifier::make( $props_resolver, $element_instance::get_props_schema() ),
+				Styles_Props_Modifier::make( $props_resolver, Style_Schema::get() ),
+			];
+
+			foreach ( $runners as $runner ) {
+				$element = $runner->run( $element );
+			}
 
 			return $element;
 		} );

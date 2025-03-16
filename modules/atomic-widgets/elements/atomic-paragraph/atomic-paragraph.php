@@ -31,6 +31,10 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return esc_html__( 'Paragraph', 'elementor' );
 	}
 
+	public function get_keywords() {
+		return [ 'atoms', 'atomic' ];
+	}
+
 	public function get_icon() {
 		return 'eicon-paragraph';
 	}
