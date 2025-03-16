@@ -31,6 +31,10 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		return esc_html__( 'SVG', 'elementor' );
 	}
 
+	public function get_keywords() {
+		return [ 'atoms', 'atomic' ];
+	}
+
 	public function get_icon() {
 		return 'eicon-svg';
 	}
