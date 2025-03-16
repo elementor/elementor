@@ -2,12 +2,12 @@
 // Reset Panel
 //
 
-:where(h1, h2, h3, h4, h5, h6):not(:is(.MuiDrawer-root *)) {
+:is(h1, h2, h3, h4, h5, h6):not(:is(.MuiDrawer-root *)) {
 	font-size: 100%;
 	font-weight: normal;
 }
 
-:where(abbr,acronym):not(:is(.MuiDrawer-root *)) {
+:is(abbr,acronym):not(:is(.MuiDrawer-root *)) {
 	border: 0;
 	font-variant: normal;
 }
