@@ -20,7 +20,7 @@ class Link_Control extends Atomic_Control_Base {
 
 	public static function bind_to( string $prop_name ) {
 		$instance = parent::bind_to( $prop_name );
-		$instance->set_placeholder( __( 'Paste URL or type', 'elementor' ) );
+		$instance->set_placeholder( __( 'Type or paste your URL', 'elementor' ) );
 		$instance->set_endpoint( WP_Post::NAMESPACE . '/' . WP_Post::ENDPOINT );
 		$instance->set_request_params( WP_Post::build_query_params( [
 			WP_Post::KEYS_FORMAT_MAP_KEY => [

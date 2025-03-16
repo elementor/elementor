@@ -28,7 +28,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Paragraph', 'elementor' );
+		return esc_html__( 'Paragraph', 'elementor' );
 	}
 
 	public function get_keywords() {

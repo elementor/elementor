@@ -28,7 +28,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Heading', 'elementor' );
+		return esc_html__( 'Heading', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -49,7 +49,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( 'h2' ),
 
 			'title' => String_Prop_Type::make()
-				->default( __( 'Your Title Here', 'elementor' ) ),
+				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
 		];
