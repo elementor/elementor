@@ -13,7 +13,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
-	const ATOMIC_KEYWORDS = [ 'atoms', 'atomic' ];
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );

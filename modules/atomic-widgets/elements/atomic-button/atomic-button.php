@@ -34,7 +34,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return $this::ATOMIC_KEYWORDS;
+		return [ 'atoms', 'atomic' ];
 	}
 
 	public function get_icon() {
