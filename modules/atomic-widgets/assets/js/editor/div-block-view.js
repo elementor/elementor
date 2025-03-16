@@ -7,7 +7,7 @@ const DivBlockView = BaseElementView.extend( {
 	emptyView: DivBlockEmptyView,
 
 	tagName() {
-		if ( this.doesHaveLink() ) {
+		if ( this.haveLink() ) {
 			return 'a';
 		}
 
@@ -103,12 +103,12 @@ const DivBlockView = BaseElementView.extend( {
 		this.$el.attr( 'href', href );
 	},
 
-	doesHaveLink() {
+	haveLink() {
 		return !! this.model.getSetting( 'link' )?.value?.destination?.value;
 	},
 
 	getHref() {
-		if ( ! this.doesHaveLink() ) {
+		if ( ! this.haveLink() ) {
 			return;
 		}
 
