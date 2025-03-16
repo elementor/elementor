@@ -33,6 +33,10 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return esc_html__( 'Atomic Button', 'elementor' );
 	}
 
+	public final function get_keywords() {
+		return $this::ATOMIC_KEYWORDS;
+	}
+
 	public function get_icon() {
 		return 'eicon-e-button';
 	}

@@ -31,6 +31,10 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return esc_html__( 'Atomic Heading', 'elementor' );
 	}
 
+	public final function get_keywords() {
+		return $this::ATOMIC_KEYWORDS;
+	}
+
 	public function get_icon() {
 		return 'eicon-e-heading';
 	}
