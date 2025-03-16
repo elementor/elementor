@@ -86,8 +86,8 @@ class Div_Block extends Atomic_Element_Base {
 							],
 						]),
 
-					Link_Control::bind_to( 'link' )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+					Link_Control::bind_to( 'link' ),
+
 				]),
 		];
 	}
@@ -156,15 +156,19 @@ class Div_Block extends Atomic_Element_Base {
 	protected function define_base_styles(): array {
 		$display_value = String_Prop_Type::generate( 'block' );
 		$padding_value = Dimensions_Prop_Type::generate( [
-			'top' => Size_Prop_Type::generate( [
+			'block-start' => Size_Prop_Type::generate( [
 				'size' => 10,
 				'unit' => 'px',
 			]),
-			'bottom' => Size_Prop_Type::generate( [
+			'block-end' => Size_Prop_Type::generate( [
 				'size' => 10,
 				'unit' => 'px',
 			]),
 		]);
+		$height_value = Size_Prop_Type::generate( [
+			'size' => 100,
+			'unit' => 'px',
+		] );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
@@ -172,6 +176,7 @@ class Div_Block extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_prop( 'display', $display_value )
 						->add_prop( 'padding', $padding_value )
+						->add_prop( 'height', $height_value )
 				),
 		];
 	}
