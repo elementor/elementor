@@ -618,8 +618,6 @@ class Frontend extends App {
 		 */
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
 
-		wp_enqueue_script( 'elementor-frontend' );
-
 		$this->print_config();
 
 		$this->enqueue_conditional_assets();
