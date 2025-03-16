@@ -205,7 +205,7 @@ test.describe( 'Promotion tests @promotions', () => {
 			await editor.addElement( { elType: 'container' }, 'document' );
 		}
 
-		await navigatorPanel.locator( '.elementor-navigator__element-container' ).nth( 0 ).click();
+		await navigatorPanel.locator( '.elementor-navigator__element-nestable' ).nth( 0 ).click();
 		await navigatorPanel.evaluate( ( element ) => element.style.width = '150px' );
 		await page.waitForLoadState( 'domcontentloaded' );
 
