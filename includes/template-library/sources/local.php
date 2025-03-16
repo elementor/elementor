@@ -534,8 +534,13 @@ class Source_Local extends Source_Base {
 			$template_data['content'] = $this->replace_elements_ids( $template_data['content'] );
 		}
 
+		$elements = apply_filters(
+			'elementor/template_library/sources/local/save_item/elements',
+			$template_data['content']
+		);
+
 		$document->save( [
-			'elements' => $template_data['content'],
+			'elements' => $elements,
 			'settings' => $template_data['page_settings'],
 		] );
 

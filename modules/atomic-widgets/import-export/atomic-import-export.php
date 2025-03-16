@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Settings_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Import_Export_Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Plugin;
@@ -52,5 +53,13 @@ class Atomic_Import_Export {
 
 			return $element;
 		} );
+	}
+
+	private function get_element_instance( $element ) {
+		return Plugin::$instance->elements_manager->create_element_instance( $element );
+	}
+
+	private function is_atomic( $element_instance ) {
+		return $element_instance instanceof Atomic_Element_Base || $element_instance instanceof Atomic_Widget_Base;
 	}
 }
