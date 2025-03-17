@@ -378,7 +378,7 @@ const DivBlockView = BaseElementView.extend( {
 
 	getBaseClass() {
 		return 'flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'flexbox-base' : 'div-block-base';
-	}
+	},
 } );
 
 module.exports = DivBlockView;
