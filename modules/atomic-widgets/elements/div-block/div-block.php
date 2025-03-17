@@ -164,11 +164,16 @@ class Div_Block extends Atomic_Element_Base {
 				'size' => 10,
 				'unit' => 'px',
 			]),
+			'inline-start' => Size_Prop_Type::generate( [
+				'size' => 10,
+				'unit' => 'px',
+			]),
+			'inline-end' => Size_Prop_Type::generate( [
+				'size' => 10,
+				'unit' => 'px',
+			]),
 		]);
-		$min_height = Size_Prop_Type::generate( [
-			'size' => 100,
-			'unit' => 'px',
-		] );
+		$min_height = String_Prop_Type::generate( 'min-content' );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
@@ -176,7 +181,7 @@ class Div_Block extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_prop( 'display', $display )
 						->add_prop( 'padding', $padding )
-						->add_prop( 'min-height', $min_height )
+						->add_prop( 'height', $min_height )
 				),
 		];
 	}
