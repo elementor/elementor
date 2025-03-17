@@ -107,7 +107,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$font_weight_value = String_Prop_Type::generate( '600' );
 		$margin_value = String_Prop_Type::generate( '0' );
 
-
 		return [
 			'base' => Style_Definition::make()
 				->add_variant(
