@@ -2,6 +2,9 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Flexbox;
 
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,5 +25,19 @@ class Flexbox extends Div_Block {
 
 	public function get_icon() {
 		return 'eicon-flexbox';
+	}
+
+	protected function define_base_styles(): array {
+		$display = String_Prop_Type::generate( 'flex' );
+
+		return [
+			static::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'display', $display )
+						->add_prop( 'padding', $this->get_base_padding() )
+						->add_prop( 'min-height', $this->get_base_height() )
+				),
+		];
 	}
 }

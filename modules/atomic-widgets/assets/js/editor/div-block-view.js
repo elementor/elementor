@@ -24,7 +24,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con div-block-base${ this.getClassString() }`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ this.getClassString() }`;
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -371,9 +371,14 @@ const DivBlockView = BaseElementView.extend( {
 
 	getClassString() {
 		const classes = this.getClasses();
+		const base = this.getBaseClass();
 
-		return classes.length ? [ '', ...classes ].join( ' ' ) : '';
+		return [ base, ...classes ].join( ' ' );
 	},
+
+	getBaseClass() {
+		return 'flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'flexbox-base' : 'div-block-base';
+	}
 } );
 
 module.exports = DivBlockView;
