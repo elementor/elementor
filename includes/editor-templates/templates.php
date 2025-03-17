@@ -304,8 +304,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<# } else { #>
+			<#
+				const imageSource = preview_url || '<?php echo esc_html( Utils::get_placeholder_image_src() ); ?>';
+			#>
 			<div class="elementor-template-library-template-thumbnail">
-				<img src="<?php echo esc_html( Utils::get_placeholder_image_src() ); ?>"/>
+				<img src="{{{ imageSource }}}"/>
 				<div class="elementor-template-library-template-preview">
 					<i class="eicon-preview-medium" aria-hidden="true"></i>
 				</div>
@@ -425,7 +428,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
 					</span>
-				</div>				
+				</div>
 				<div class="source-selections-input local">
 					<input type="checkbox" id="local" name="local" value="local">
 					<label for="local"> Site Library</label><br>
