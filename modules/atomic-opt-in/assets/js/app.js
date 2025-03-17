@@ -80,10 +80,6 @@ const BoxItem = styled( Typography )( ( { theme } ) => ( {
 	marginInlineStart: theme.spacing( 4 ),
 } ) );
 
-App.propTypes = {
-	isRTL: PropTypes.bool,
-};
-
 const App = ( props ) => {
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
@@ -94,6 +90,10 @@ const App = ( props ) => {
 			</LocalizationProvider>
 		</DirectionProvider>
 	);
+};
+
+App.propTypes = {
+	isRTL: PropTypes.bool,
 };
 
 const init = () => {

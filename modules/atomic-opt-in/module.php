@@ -65,7 +65,7 @@ class Module extends BaseModule {
 		return $this;
 	}
 
-	private function reguster_scripts() {
+	private function register_scripts() {
 		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_optin_scripts' ] );
 	}
 
