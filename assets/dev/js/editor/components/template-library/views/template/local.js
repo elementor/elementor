@@ -37,12 +37,6 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		this.ui.titleCell.text( title );
 	},
 
-	onDeleteButtonClick( event ) {
-		event.stopPropagation();
-
-		this.ui.titleCell.html( content );
-	},
-
 	onDeleteButtonClick() {
 		var toggleMoreIcon = this.ui.toggleMoreIcon;
 
