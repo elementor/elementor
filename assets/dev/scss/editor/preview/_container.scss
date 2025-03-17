@@ -90,7 +90,6 @@
 	&.div-block-base {
 		&:has( .elementor-empty-view ) {
 			display: flex;
-			height: 100px;
 		}
 
 		.elementor-empty-view {
@@ -288,6 +287,10 @@
 			}
 		}
 	}
+}
+
+.div-block-base:has( .elementor-empty-view ) {
+	height: 100px;
 }
 
 // Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.
