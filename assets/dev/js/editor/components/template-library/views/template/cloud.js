@@ -35,7 +35,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	onRender() {
 		const previewUrl = this.model.get( 'preview_url' );
 
-		if ( this.needGeneratePreview() ) {
+		if ( this.shouldGeneratePreview() ) {
 			this.iframe = elementor.templates.layout.createScreenshotIframe( this.model.get( 'generate_preview_url' ) );
 			this.isGeneratingPreview = true;
 		}
