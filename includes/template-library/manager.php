@@ -860,7 +860,7 @@ class Manager {
 	/**
 	 * @throws \Exception
 	 */
-	public function screenshot_save_template( $data ): string {
+	public function save_template_screenshot( $data ): string {
 		$validate_args = $this->ensure_args( [ 'template_id', 'screenshot' ], $data );
 
 		if ( is_wp_error( $validate_args ) ) {
