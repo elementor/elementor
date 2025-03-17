@@ -5,6 +5,6 @@ export default class Document extends BaseElementModel {
 		const childElType = childModel.get( 'elType' );
 
 		// Valid children.
-		return [ 'section', 'container', 'div-block' ].includes( childElType );
+		return [ 'section', 'container', 'div-block', 'flexbox' ].includes( childElType );
 	}
 }

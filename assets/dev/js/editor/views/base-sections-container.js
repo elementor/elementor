@@ -16,6 +16,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 				break;
 
 			case 'div-block':
+			case 'flexbox':
 				ChildView = require( 'elementor-modules/atomic-widgets/assets/js/editor/div-block-view' );
 				break;
 		}
@@ -42,7 +43,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	getChildType() {
-		return [ 'section', 'container', 'div-block' ];
+		return [ 'section', 'container', 'div-block', 'flexbox' ];
 	},
 
 	initialize() {
