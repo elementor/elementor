@@ -2,30 +2,36 @@
 // Reset Panel
 //
 
-:is(h1, h2, h3, h4, h5, h6):not(:is(.MuiDrawer-root *)) {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	font-size: 100%;
 	font-weight: normal;
 }
 
-:is(abbr,acronym):not(:is(.MuiDrawer-root *)) {
+abbr,
+acronym {
 	border: 0;
 	font-variant: normal;
 }
 
-sup:not(:is(.MuiDrawer-root *)) {
+sup {
 	vertical-align: text-top;
 }
 
-sub:not(:is(.MuiDrawer-root *)) {
+sub {
 	vertical-align: text-bottom;
 }
 
-img:not(:is(.MuiDrawer-root *)) {
+img {
 	max-width: 100%;
 	height: auto;
 	border: 0;
 }
 
-:focus:not(:is(.MuiDrawer-root *)) {
+:focus {
 	outline: 0;
 }
