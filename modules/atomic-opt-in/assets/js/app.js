@@ -80,11 +80,15 @@ const BoxItem = styled( Typography )( ( { theme } ) => ( {
 	marginInlineStart: theme.spacing( 4 ),
 } ) );
 
+App.propTypes = {
+	isRTL: PropTypes.bool,
+};
+
 const App = ( props ) => {
 	return (
-		<DirectionProvider rtl = { props.isRTL }>
+		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
-				<ThemeProvider colorScheme = { 'light' }>
+				<ThemeProvider colorScheme={ 'light' }>
 					<OptIn />
 				</ThemeProvider>
 			</LocalizationProvider>
@@ -95,15 +99,13 @@ const App = ( props ) => {
 const init = () => {
 	const rootElement = document.querySelector( '#page-editor-v4-opt-in' );
 
-	console.log( 'immediate run' );
-
 	if ( ! rootElement ) {
 		return;
 	}
 
 	ReactUtils.render( (
 		<App
-			isRTL = { ! ! elementorCommon.config.isRTL }
+			isRTL={ !! elementorCommon.config.isRTL }
 		/>
 	), rootElement );
 };

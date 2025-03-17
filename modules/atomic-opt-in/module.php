@@ -66,7 +66,7 @@ class Module extends BaseModule {
 	}
 
 	private function reguster_scripts() {
-		add_action( "elementor_page_elementor-settings", [ $this, 'enqueue_optin_scripts' ] );
+		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_optin_scripts' ] );
 	}
 
 	public function enqueue_optin_scripts() {
