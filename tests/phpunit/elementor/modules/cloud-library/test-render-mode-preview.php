@@ -60,7 +60,7 @@ class Test_Render_Mode_Preview extends Elementor_Test_Base {
 
         Plugin::$instance->templates_manager = $this->templates_manager_mock;
         Plugin::$instance->documents = $this->documents_mock;
-	}
+    }
 
     public function tearDown(): void {
         Plugin::$instance->templates_manager = $this->templates_manager;
@@ -82,7 +82,7 @@ class Test_Render_Mode_Preview extends Elementor_Test_Base {
 
         // Assert
         $this->assertEquals( 10, has_filter('template_include', [ $render_mode, 'filter_template' ] ) );
-	}
+    }
 
     public function test_constructor() {
         // Arrange & Act
@@ -90,7 +90,7 @@ class Test_Render_Mode_Preview extends Elementor_Test_Base {
 
         // Assert
         $this->assertEquals( 123, $render_mode->get_document()->get_main_id() );
-	}
+    }
 
     public function test_create_document() {
         // Arrange
@@ -116,5 +116,5 @@ class Test_Render_Mode_Preview extends Elementor_Test_Base {
 
         // Assert
         $this->assertInstanceOf( get_class( $this->document_mock ), $render_mode->get_document() );
-	}
+    }
 }
