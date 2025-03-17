@@ -182,6 +182,7 @@ class Div_Block extends Atomic_Element_Base {
 						->add_prop( 'display', $display )
 						->add_prop( 'padding', $padding )
 						->add_prop( 'height', $min_height )
+						->add_prop( 'min-height', 'unset' )
 				),
 		];
 	}
