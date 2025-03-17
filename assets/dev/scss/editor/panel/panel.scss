@@ -16,7 +16,8 @@
 
 .elementor-panel {
 
-	// Limit the reset to the V3 panel elements.
+	// we want to get the styles only from our DS in new features related to the panels.
+	// we limit the reset only to the v3 panel to avoid unexpected overrides.
 	:where(
 		#elementor-panel-state-loading,
 		#elementor-panel-header-wrapper,
