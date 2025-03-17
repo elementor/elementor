@@ -26,6 +26,10 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return esc_html__( 'Image', 'elementor' );
 	}
 
+	public function get_keywords() {
+		return [ 'atoms', 'atomic' ];
+	}
+
 	public function get_icon() {
 		return 'eicon-e-image';
 	}

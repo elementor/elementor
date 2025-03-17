@@ -13,9 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Props_Resolver {
-	/**
-	 * @var array<string, Render_Props_Resolver>
-	 */
 	protected static array $instances = [];
 
 	protected Transformers_Registry $transformers_registry;
