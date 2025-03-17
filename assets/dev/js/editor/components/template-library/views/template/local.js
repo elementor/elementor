@@ -37,7 +37,9 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		this.ui.titleCell.text( title );
 	},
 
-	onDeleteButtonClick() {
+	onDeleteButtonClick( event ) {
+		event.stopPropagation();
+
 		var toggleMoreIcon = this.ui.toggleMoreIcon;
 
 		elementor.templates.deleteTemplate( this.model, {

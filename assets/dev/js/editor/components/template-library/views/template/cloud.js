@@ -46,11 +46,10 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	},
 
 	onPreviewUrlChange() {
-		const isCloudSource = 'cloud' === this.model.get( 'source' );
 		const previewUrl = this.model.get( 'preview_url' );
 		this.isGeneratingPreview = false;
 
-		if ( isCloudSource && previewUrl ) {
+		if ( previewUrl ) {
 			this.ui.previewImg.attr( 'src', previewUrl );
 			this.updatePreviewImgStyle();
 			this.model.set( 'generate_preview_url', null );
@@ -62,30 +61,14 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		this.ui.previewImg.css( 'object-fit', 'contain' );
 	},
 
-	needGeneratePreview() {
+	shouldGeneratePreview() {
 		const view = elementor.templates.getViewSelection();
 
-		if ( 'grid' !== view ) {
-			return false;
-		}
-
-		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			return false;
-		}
-
-		if ( this.model.get( 'preview_url' ) ) {
-			return false;
-		}
-
-		if ( ! this.model.get( 'generate_preview_url' ) ) {
-			return false;
-		}
-
-		if ( this.isGeneratingPreview ) {
-			return false;
-		}
-
-		return true;
+		return 'FOLDER' !== this.model.get( 'subType' ) &&
+			this.model.get( 'generate_preview_url' ) &&
+			! this.model.get( 'preview_url' ) &&
+			'grid' === view &&
+			! this.isGeneratingPreview;
 	},
 
 	onPreviewButtonClick() {
