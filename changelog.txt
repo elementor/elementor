@@ -1,5 +1,28 @@
 == Changelog ==
 
+= 3.28.0 - 2025-03-17 =
+
+* New: Added a Clear Files & Data button to the WordPress frontend admin bar for quick and easy cache clearing ([#21642](https://github.com/elementor/elementor/issues/21642))
+* Tweak: Added a note clarifying that the Image Resolution control doesn't support dynamic background images ([#21359](https://github.com/elementor/elementor/issues/21359), [#22055](https://github.com/elementor/elementor/issues/22055))
+* Tweak: Added hover state Box Shadow controls to Button widget ([#4859](https://github.com/elementor/elementor/issues/4859), [#30210](https://github.com/elementor/elementor/issues/30210), [#17509](https://github.com/elementor/elementor/issues/17509))
+* Tweak: Renamed "Regenerate CSS & Data" to "Elementor Cache" in Elementor Tools for better clarity
+* Tweak: Hide Landing Page feature when no landing page posts exist on the site
+* Tweak: Promoted Load Google Fonts Locally feature to Stable status and enabled it by default for all websites
+* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Accordion widget
+* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Tabs widget
+* Tweak: Removed unused deprecated methods from `elementorCommon.helpers`
+* Tweak: Optimized style loading for the Text Editor widget by applying styles at the control level ensuring Drop Cap styles load only when enabled
+* Tweak: Updated Drop Cap controls to use CSS logical properties in Text Editor widget
+* Tweak: Updated minimum required WordPress version to 6.5
+* Tweak: Removed Modest Branding control from Video widget
+* Tweak: Promoted Optimized Markup feature to Beta status
+* Tweak: Added link color controls in Text Editor widget
+* Tweak: Applied hover color on focus for keyboard users in the Heading widget
+* Fix: Button icon alignment breaks when Inline Font Icons feature is activated ([#16077](https://github.com/elementor/elementor/issues/16077), [#16511](https://github.com/elementor/elementor/issues/16511), [#17692](https://github.com/elementor/elementor/issues/17692), [#17922](https://github.com/elementor/elementor/issues/17922), [#19253](https://github.com/elementor/elementor/issues/19253), [#19370](https://github.com/elementor/elementor/issues/19370), [#21236](https://github.com/elementor/elementor/issues/21236), [#21844](https://github.com/elementor/elementor/issues/21844), [#28080](https://github.com/elementor/elementor/issues/28080))
+* Fix: Editor fails to load in some edge cases when ACF Term fields are used as Dynamic Tags ([#29160](https://github.com/elementor/elementor/issues/29160))
+* Fix: Improved sanitization of titles to ensure consistent handling for Admin users in the Heading widget
+* Fix: Hover link color transition duration is not being applied in Heading widget
+
 = 3.27.7 - 2025-03-13 =
 
 * Security Fix: Improved code security enforcement in Admin Notices
