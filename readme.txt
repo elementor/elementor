@@ -348,56 +348,27 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.27.7 - 2025-03-13 =
+= 3.28.0 - 2025-03-17 =
 
-* Security Fix: Improved code security enforcement in Admin Notices
-
-= 3.27.6 - 2025-02-18 =
-
-* Fix: Dimension Controls displayed `undefined` as a placeholder value when empty ([#30277](https://github.com/elementor/elementor/issues/30277))
-
-= 3.27.5 - 2025-02-16 =
-
-* Security Fix: Improved code security enforcement in Dimensions control
-
-= 3.27.4 - 2025-02-13 =
-
-* Fix: Preventing page saving in Gutenberg with ACF and active Elementor post settings ([#30160](https://github.com/elementor/elementor/issues/30160))
-
-= 3.27.3 - 2025-02-03 =
-
-* Tweak: Added support for Early Access fonts when using Load Google Fonts Locally experiment
-* Tweak: Updated minified `flatpickr` CSS file to v4.6.13
-* Fix: Kits could not be imported due to compatibility issue
-
-= 3.27.2 - 2025-01-27 =
-
-* Fix: Kits could not be imported due to a compatibility issue
-
-= 3.27.1 - 2025-01-23 =
-
-* Fix: Document is not being saved due to compatibility conflicts with third-party plugins ([#29970](https://github.com/elementor/elementor/issues/29970), [#29991](https://github.com/elementor/elementor/issues/29991))
-
-= 3.27.0 - 2025-01-20 =
-
-* New: Introducing local loading of Google Fonts to improve performance and enhance user privacy ([#4544](https://github.com/elementor/elementor/issues/4544), [#19966](https://github.com/elementor/elementor/issues/19966), [#23932](https://github.com/elementor/elementor/issues/23932), [#21716](https://github.com/elementor/elementor/issues/21716))
-* New: Introducing advanced layout customization for Grid Container with column and row span controls for precise grid-based designs ([#25256](https://github.com/elementor/elementor/issues/25256))
-* New: Added the option to animate with AI motion effects for creating AI-generated animations
-* Tweak: Add 'YouTube shorts' support in the video widget ([#24220](https://github.com/elementor/elementor/issues/24220), [#20330](https://github.com/elementor/elementor/issues/20330))
-* Tweak: Added Safari browser compatibility for the 'Fit to Size' option in the Icon Widget ([#27679](https://github.com/elementor/elementor/issues/27679))
-* Tweak: Moved style loading to the head instead of the footer to improve CLS
-* Tweak: Enabled conditional loading of `Swiper.js` based on widget dependencies to reduce unnecessary assets and improve page load times
-* Tweak: Removed the `elementor-widget-container` div from the Spacer Widget as part of the Optimized Markup experiment to improve HTML structure
-* Tweak: Improved keyboard accessibility for the nested container presets area
-* Tweak: Added accessible and descriptive names to the icon link in the Icon Box widget
-* Tweak: Optimize background video CSS by merging `elementor-html5-video` and `elementor-background-video-hosted` into a single class
-* Tweak: Added the ability to disable the Element Cache
-* Tweak: Removed animation class when no animations are set in Icon and Icon Widget widgets
-* Tweak: Added support for captions on YouTube videos
-* Tweak: Removed the limitation restricting heading hover color styling to links only
-* Tweak: Removed `aspect-ratio` workaround for unsupported Safari browsers
-* Fix: Switching between images in a lightbox on responsive mode displayed a tall blue rectangle ([#12830](https://github.com/elementor/elementor/issues/12830))
-* Fix: Image editing tools with AI are not working when launched in WooCommerce
-* Fix: Improved HTML markup validity by removing the `type` attribute from `<script>` tags
+* New: Added a Clear Files & Data button to the WordPress frontend admin bar for quick and easy cache clearing ([#21642](https://github.com/elementor/elementor/issues/21642))
+* Tweak: Added a note clarifying that the Image Resolution control doesn't support dynamic background images ([#21359](https://github.com/elementor/elementor/issues/21359), [#22055](https://github.com/elementor/elementor/issues/22055))
+* Tweak: Added hover state Box Shadow controls to Button widget ([#4859](https://github.com/elementor/elementor/issues/4859), [#30210](https://github.com/elementor/elementor/issues/30210), [#17509](https://github.com/elementor/elementor/issues/17509))
+* Tweak: Renamed "Regenerate CSS & Data" to "Elementor Cache" in Elementor Tools for better clarity
+* Tweak: Hide Landing Page feature when no landing page posts exist on the site
+* Tweak: Promoted Load Google Fonts Locally feature to Stable status and enabled it by default for all websites
+* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Accordion widget
+* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Tabs widget
+* Tweak: Removed unused deprecated methods from `elementorCommon.helpers`
+* Tweak: Optimized style loading for the Text Editor widget by applying styles at the control level ensuring Drop Cap styles load only when enabled
+* Tweak: Updated Drop Cap controls to use CSS logical properties in Text Editor widget
+* Tweak: Updated minimum required WordPress version to 6.5
+* Tweak: Removed Modest Branding control from Video widget
+* Tweak: Promoted Optimized Markup feature to Beta status
+* Tweak: Added link color controls in Text Editor widget
+* Tweak: Applied hover color on focus for keyboard users in the Heading widget
+* Fix: Button icon alignment breaks when Inline Font Icons feature is activated ([#16077](https://github.com/elementor/elementor/issues/16077), [#16511](https://github.com/elementor/elementor/issues/16511), [#17692](https://github.com/elementor/elementor/issues/17692), [#17922](https://github.com/elementor/elementor/issues/17922), [#19253](https://github.com/elementor/elementor/issues/19253), [#19370](https://github.com/elementor/elementor/issues/19370), [#21236](https://github.com/elementor/elementor/issues/21236), [#21844](https://github.com/elementor/elementor/issues/21844), [#28080](https://github.com/elementor/elementor/issues/28080))
+* Fix: Editor fails to load in some edge cases when ACF Term fields are used as Dynamic Tags ([#29160](https://github.com/elementor/elementor/issues/29160))
+* Fix: Improved sanitization of titles to ensure consistent handling for Admin users in the Heading widget
+* Fix: Hover link color transition duration is not being applied in Heading widget
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
