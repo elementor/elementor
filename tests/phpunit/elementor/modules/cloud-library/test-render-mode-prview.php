@@ -1,15 +1,14 @@
 <?php
 namespace Elementor\Testing\Modules\CloudLibrary;
 
-use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\CloudLibrary\Render_Mode_Preview;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Render_Mode_Preview extends Elementor_Test_Base {
-/**
-* @var \PHPUnit\Framework\MockObject\MockObject
-*/
+	/**
+	 * @var \PHPUnit\Framework\MockObject\MockObject
+	 */
 	private $document_mock;
 
 	private $source_cloud_mock;
@@ -61,7 +60,7 @@ class Test_Render_Mode_Preview extends Elementor_Test_Base {
 
 		Plugin::$instance->templates_manager = $this->templates_manager_mock;
 		Plugin::$instance->documents = $this->documents_mock;
-}
+	}
 
 	public function tearDown(): void {
 		Plugin::$instance->templates_manager = $this->templates_manager;
@@ -70,52 +69,52 @@ class Test_Render_Mode_Preview extends Elementor_Test_Base {
 	}
 
 	public function test_prepare_render() {
-			// Arrange
-			add_filter( 'show_admin_bar', function( $show ) {
-				$this->assertFalse( $show );
+		// Arrange
+		add_filter( 'show_admin_bar', function( $show ) {
+			$this->assertFalse( $show );
 			return $show;
-			});
+		});
 
-			$render_mode = new Render_Mode_Preview( 123 );
+		$render_mode = new Render_Mode_Preview( 123 );
 
-			// Act
-			$render_mode->prepare_render();
+		// Act
+		$render_mode->prepare_render();
 
-			// Assert
-			$this->assertEquals( 10, has_filter('template_include', [ $render_mode, 'filter_template' ] ) );
-		}
+		// Assert
+		$this->assertEquals( 10, has_filter('template_include', [ $render_mode, 'filter_template' ] ) );
+	}
 
 	public function test_constructor() {
-			// Arrange & Act
-			$render_mode = new Render_Mode_Preview( 123 );
+		// Arrange & Act
+		$render_mode = new Render_Mode_Preview( 123 );
 
-			// Assert
-			$this->assertEquals( 123, $render_mode->get_document()->get_main_id() );
-		}
+		// Assert
+		$this->assertEquals( 123, $render_mode->get_document()->get_main_id() );
+	}
 
 	public function test_create_document() {
-			// Arrange
-			$template_data = [
-				'content' => [ 'test_content' ],
-				'page_settings' => [ 'test_settings' ]
-			];
+		// Arrange
+		$template_data = [
+			'content' => [ 'test_content' ],
+			'page_settings' => [ 'test_settings' ]
+		];
 
-			$this->source_cloud_mock->method( 'get_resource' )
-				->with( [ 'id' => 123 ] )
-				->willReturn( [
-					'content' => json_encode( $template_data )
-				] );
+		$this->source_cloud_mock->method( 'get_resource' )
+			->with( [ 'id' => 123 ] )
+			->willReturn( [
+				'content' => json_encode( $template_data )
+			] );
 
-			$render_mode = new Render_Mode_Preview( 123 );
+		$render_mode = new Render_Mode_Preview( 123 );
 
-			$reflection = new \ReflectionClass( $render_mode );
-			$method = $reflection->getMethod( 'create_document' );
-			$method->setAccessible( true );
+		$reflection = new \ReflectionClass( $render_mode );
+		$method = $reflection->getMethod( 'create_document' );
+		$method->setAccessible( true );
 
-			// Act
-			$method->invoke( $render_mode );
+		// Act
+		$method->invoke( $render_mode );
 
-			// Assert
-			$this->assertInstanceOf( get_class( $this->document_mock ), $render_mode->get_document() );
-		}
+		// Assert
+		$this->assertInstanceOf( get_class( $this->document_mock ), $render_mode->get_document() );
+	}
 }
