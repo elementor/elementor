@@ -21,6 +21,6 @@ class Flexbox extends Div_Block {
 	}
 
 	public function get_icon() {
-		return 'eicon-div-block';
+		return 'eicon-flexbox';
 	}
 }
