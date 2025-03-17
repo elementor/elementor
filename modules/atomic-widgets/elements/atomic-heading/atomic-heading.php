@@ -115,6 +115,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						->add_prop( 'font-size', $font_size_value )
 						->add_prop( 'line-height', $line_height_value )
 						->add_prop( 'font-weight', $font_weight_value )
+						->add_prop( 'margin', 0 )
 				),
 		];
 	}
