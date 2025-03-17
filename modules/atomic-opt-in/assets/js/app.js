@@ -40,7 +40,7 @@ const OptIn = () => {
 
 	return (
 		<React.Fragment>
-			<Container maxWidth = "lg">
+			<Container maxWidth="lg">
 				<Stack direction="column-reverse">
 					<Container maxWidth="md">
 						<Stack direction="column" gap={ 2.5 }>
