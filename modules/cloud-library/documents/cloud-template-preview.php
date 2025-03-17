@@ -8,12 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor section library document.
+ * Elementor preview library document.
  *
- * Elementor section library document handler class is responsible for
- * handling a document of a section type.
- *
- * @since 2.0.0
+ * @since 3.29.0
  */
 class Cloud_Template_Preview extends Document {
 
