@@ -272,7 +272,7 @@ class Source_Cloud extends Source_Base {
 	}
 
 	public function save_item_preview( $template_id, $data ) {
-		return $this->get_app()->update_resource_preview( $data['template_id'], $data );
+		return $this->get_app()->update_resource_preview( $template_id, $data );
 	}
 
 	/**
