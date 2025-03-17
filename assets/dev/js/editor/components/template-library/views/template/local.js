@@ -15,7 +15,6 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			toggleMoreIcon: '.elementor-template-library-template-more-toggle i',
 			titleCell: '.elementor-template-library-template-name span',
 			resourceIcon: '.elementor-template-library-template-name i',
-			previewImg: '.elementor-template-library-template-thumbnail img',
 		} );
 	},
 
@@ -30,38 +29,12 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	modelEvents: {
 		'change:title': 'onTitleChange',
-		'change:preview_url': 'onPreviewUrlChange',
-	},
-
-	onRender() {
-		const view = elementor.templates.getViewSelection();
-
-		if ( 'FOLDER' !== this.model.get( 'subType' ) &&
-			this.model.get( 'generate_preview_url' ) &&
-			! this.model.get( 'preview_url' ) &&
-			'grid' === view &&
-			! this.isGeneratingPreview
-		) {
-			this.createScreenshotIframe();
-		}
 	},
 
 	onTitleChange() {
 		const title = _.escape( this.model.get( 'title' ) );
 
 		this.ui.titleCell.text( title );
-	},
-
-	onPreviewUrlChange() {
-		const isCloudSource = 'cloud' === this.model.get( 'source' );
-		this.isGeneratingPreview = false;
-
-		if ( isCloudSource && this.model.get( 'preview_url' ) ) {
-			this.ui.previewImg.attr( 'src', this.model.get( 'preview_url' ) );
-			this.ui.previewImg.css( 'object-fit', 'contain' );
-			this.model.set( 'generate_preview_url', null );
-			this.iframe.remove();
-		}
 	},
 
 	onDeleteButtonClick() {
@@ -75,20 +48,6 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 				$e.routes.refreshContainer( 'library' );
 			},
 		} );
-	},
-
-	createScreenshotIframe( ) {
-		this.isGeneratingPreview = true;
-		const iframe = document.createElement( 'iframe' );
-
-		iframe.src = this.model.get( 'generate_preview_url' );
-		iframe.width = '1200';
-		iframe.height = '500';
-		iframe.style = 'visibility: hidden;';
-
-		document.body.appendChild( iframe );
-
-		this.iframe = iframe;
 	},
 
 	onToggleMoreClick( event ) {

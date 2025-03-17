@@ -123,9 +123,10 @@ const TemplateLibraryManager = function() {
 		window.addEventListener( 'message', ( message ) => {
 			const { data } = message;
 
-			if ( ! data.name || data.name !== 'capture-cloud-template-screenshot-done' ) {
+			if ( ! data.name || data.name !== 'library/capture-screenshot-done' ) {
 				return;
 			}
+
 			const template = templatesCollection.models.find( ( templateModel ) => {
 				return templateModel.get( 'template_id' ) === parseInt( data.id );
 			} );

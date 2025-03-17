@@ -65,6 +65,7 @@ class Render_Mode_Preview extends Render_Mode_Base {
 		);
 
 		$config = [
+			'nonce' => wp_create_nonce( 'screenshot_proxy' ),
 			'selector' => '.elementor-' . $this->document->get_main_id(),
 			'home_url' => home_url(),
 			'post_id' => $this->document->get_main_id(),
