@@ -857,6 +857,20 @@ class Manager {
 
 		return $result; // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 	}
+	/**
+	 * @throws \Exception
+	 */
+	public function save_template_screenshot( $data ): string {
+		$validate_args = $this->ensure_args( [ 'template_id', 'screenshot' ], $data );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$raw_binary = base64_decode( substr( $data['screenshot'], strlen( 'data:image/png;base64,' ) ) );
+
+		return $this->get_source( 'cloud' )->save_item_preview( $data['template_id'], $raw_binary );
+	}
 
 	/**
 	 * Init ajax calls.
@@ -884,6 +898,7 @@ class Manager {
 			'load_more_templates',
 			'create_folder',
 			'get_folders',
+			'save_template_screenshot',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
