@@ -2,6 +2,9 @@
 namespace Elementor\Modules\CloudLibrary\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Core\Utils\Exceptions;
+use Elementor\Modules\CloudLibrary\Render_Mode_Preview;
+use Elementor\TemplateLibrary\Source_Cloud;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -51,7 +54,10 @@ class Cloud_Library extends Library {
 		];
 	}
 
-	public function get_resource( array $args ): array {
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function get_resource( array $args ) {
 		return $this->http_request( 'GET', 'resources/' . $args['id'], $args, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
@@ -69,7 +75,28 @@ class Cloud_Library extends Library {
 			'export_link' => $this->get_export_link( $template_data['id'] ),
 			'hasPageSettings' => $template_data['hasPageSettings'],
 			'parentId' => $template_data['parentId'],
+			'preview_url' => esc_url_raw( $template_data['previewUrl'] ?? '' ),
+			'generate_preview_url' => esc_url_raw( $this->generate_preview_url( $template_data ) ?? '' ),
 		];
+	}
+
+	private function generate_preview_url( $template_data ): ?string {
+		if ( ! empty( $template_data['previewUrl'] ) ||
+			Source_Cloud::FOLDER_RESOURCE_TYPE === $template_data['type'] ||
+			empty( $template_data['id'] )
+		) {
+			return null;
+		}
+
+		$template_id = $template_data['id'];
+
+		$query_args = [
+			'render_mode_nonce' => wp_create_nonce( 'render_mode_' . $template_id ),
+			'template_id' => $template_id,
+			'render_mode' => Render_Mode_Preview::MODE,
+		];
+
+		return set_url_scheme( add_query_arg( $query_args, site_url() ) );
 	}
 
 	private function get_export_link( $template_id ) {
@@ -125,6 +152,55 @@ class Cloud_Library extends Library {
 
 		return true;
 	}
+
+	public function update_resource_preview( $template_id, $file_data ) {
+		$endpoint = 'resources/' . $template_id . '/preview';
+
+		$boundary = wp_generate_password( 24, false );
+
+		$headers = [
+			'Content-Type' => 'multipart/form-data; boundary=' . $boundary,
+		];
+
+		$body = $this->generate_multipart_payload( $file_data, $boundary, $template_id . '_preview.png' );
+
+		$payload = [
+			'headers' => $headers,
+			'body' => $body,
+		];
+
+		$response = $this->http_request( 'PATCH', $endpoint, $payload, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		]);
+
+		if ( is_wp_error( $response ) || empty( $response['preview_url'] ) ) {
+			$error_message = esc_html__( 'Failed to save preview.', 'elementor' );
+
+			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return $response['preview_url'];
+	}
+
+	/**
+	 * @param $file_data
+	 * @param $boundary
+	 * @param $file_name
+	 * @return string
+	 */
+	private function generate_multipart_payload( $file_data, $boundary, $file_name ): string {
+		$payload = '';
+
+		// Append the file
+		$payload .= "--{$boundary}\r\n";
+		$payload .= 'Content-Disposition: form-data; name="file"; filename="' . esc_attr( $file_name ) . "\"\r\n";
+		$payload .= "Content-Type: image/png\r\n\r\n";
+		$payload .= $file_data . "\r\n";
+		$payload .= "--{$boundary}--\r\n";
+
+		return $payload;
+	}
+
 
 	protected function init() {}
 }
