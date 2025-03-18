@@ -45,6 +45,26 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		);
 	}
 
+	public function test__default_svg_structure() : void {
+		// Arrange
+		$svg_mock = [
+			'id' => 'abcd123',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Svg::get_element_type(),
+		];
+
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $svg_mock );
+
+		// Act
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
 	public function test__render_svg_from_id() : void {
 		// Arrange
 		$mock_svg = $this->get_mock_svg();
@@ -117,49 +137,6 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		];
 
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $element );
-
-		// Act
-		ob_start();
-		$this->instance->render_content();
-		$rendered_output = ob_get_clean();
-
-		// Assert
-		$this->assertMatchesSnapshot( $rendered_output );
-	}
-
-	private function get_mock_svg( $is_url = false ) {
-		return ! $is_url ? [
-			'id' => 'abcd123',
-			'elType' => 'widget',
-			'settings' => [
-				'svg' => [
-					'id' => 123,
-				],
-			],
-			'widgetType' => Atomic_Svg::get_type(),
-		] :
-			[
-				'id' => 'abcd123',
-				'elType' => 'widget',
-				'settings' => [
-					'svg' => [
-						'url' => ELEMENTOR_ASSETS_PATH . '/images/default-svg.svg',
-					],
-				],
-				'widgetType' => Atomic_Svg::get_type(),
-			];
-	}
-
-	public function test__default_svg_structure() : void {
-		// Arrange
-		$svg_mock = [
-			'id' => 'abcd123',
-			'elType' => 'widget',
-			'settings' => [],
-			'widgetType' => 'a-svg',
-		];
-
-		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $svg_mock );
 
 		// Act
 		ob_start();
