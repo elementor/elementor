@@ -29,12 +29,14 @@ class Flexbox extends Div_Block {
 
 	protected function define_base_styles(): array {
 		$display = String_Prop_Type::generate( 'flex' );
+		$flex_direction = String_Prop_Type::generate( 'row' );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', $display )
+						->add_prop( 'flex-direction', $flex_direction )
 						->add_prop( 'padding', $this->get_base_padding() )
 						->add_prop( 'min-height', $this->get_base_height() )
 				),
