@@ -100,7 +100,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		}
 
 		if ( event.shiftKey ) {
-			this.handleCmdShiftClick();
+			this.handleShiftAndClick();
 			
 			return;
 		}
@@ -110,7 +110,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		}
 	},
 
-	handleCmdShiftClick() {
+	handleShiftAndClick() {
 		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
 
 		if ( itemIsSelected ) {

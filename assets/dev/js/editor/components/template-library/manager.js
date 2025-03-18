@@ -168,8 +168,9 @@ const TemplateLibraryManager = function() {
 
 			element.classList.add( 'bulk-selected-item' );
 			this.addBulkSelectionItem( templateId );
-			this.layout.handleBulkActionBar();
 		} );
+
+		this.layout.handleBulkActionBar();
 	};
 
 	this.getSourceSelection = function() {
