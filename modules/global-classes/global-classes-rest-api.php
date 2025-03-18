@@ -34,8 +34,19 @@ class Global_Classes_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
 				'methods' => 'GET',
-				'callback' => fn() => $this->route_wrapper( fn() => $this->all() ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'context' => [
+						'type' => 'string',
+						'required' => false,
+						'default' => Global_Classes_Repository::CONTEXT_FRONTEND,
+						'enum' => [
+							Global_Classes_Repository::CONTEXT_FRONTEND,
+							Global_Classes_Repository::CONTEXT_PREVIEW,
+						],
+					],
+				],
 			],
 		] );
 
@@ -45,6 +56,15 @@ class Global_Classes_REST_API {
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
+					'context' => [
+						'type' => 'string',
+						'required' => false,
+						'default' => Global_Classes_Repository::CONTEXT_FRONTEND,
+						'enum' => [
+							Global_Classes_Repository::CONTEXT_FRONTEND,
+							Global_Classes_Repository::CONTEXT_PREVIEW,
+						],
+					],
 					'items' => [
 						'required' => true,
 						'type' => 'object',
@@ -83,8 +103,10 @@ class Global_Classes_REST_API {
 		] );
 	}
 
-	private function all() {
-		$classes = $this->get_repository()->all();
+	private function all( \WP_REST_Request $request ) {
+		$context = $request->get_param( 'context' );
+
+		$classes = $this->get_repository()->context( $context )->all();
 
 		return Response_Builder::make( (object) $classes->get_items()->all() )
 			->set_meta( [ 'order' => $classes->get_order()->all() ] )
@@ -117,7 +139,9 @@ class Global_Classes_REST_API {
 				->build();
 		}
 
-		$this->get_repository()->put(
+		$context = $request->get_param( 'context' );
+
+		$this->get_repository()->context( $context )->put(
 			$items_result->unwrap(),
 			$order_result->unwrap(),
 		);
