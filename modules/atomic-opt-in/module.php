@@ -66,25 +66,25 @@ class Module extends BaseModule {
 	}
 
 	private function register_scripts() {
-		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_optin_scripts' ] );
-		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_optin_styles' ] );
+		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_scripts' ] );
+		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_styles' ] );
 	}
 
-	public function enqueue_optin_styles() {
+	public function enqueue_styles() {
 		wp_enqueue_style(
 			$this->get_name(),
-			$this->get_css_assets_url( 'modules/atomic-opt-in/opt-in' ),
+			$this->get_css_assets_url( 'modules/editor-v4-opt-in/opt-in' ),
 			[],
 			ELEMENTOR_VERSION
 		);
 	}
 
-	public function enqueue_optin_scripts() {
+	public function enqueue_scripts() {
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
 			$this->get_name(),
-			ELEMENTOR_ASSETS_URL . 'js/atomic-opt-in' . $min_suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'js/editor-v4-opt-in' . $min_suffix . '.js',
 			[
 				'react',
 				'react-dom',

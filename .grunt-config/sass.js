@@ -60,7 +60,7 @@ const sass = {
 				expand: true,
 				cwd: 'modules/atomic-opt-in/assets/scss',
 				src: '*.scss',
-				dest: 'assets/css/modules/atomic-opt-in',
+				dest: 'assets/css/modules/editor-v4-opt-in',
 				ext: '.css',
 			},
 			{
