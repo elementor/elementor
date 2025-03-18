@@ -1,7 +1,7 @@
-import DivBlockEmptyView from './container/e-div-block-empty-view';
+import DivBlockEmptyView from './container/div-block-empty-view';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
-const EDivBlockView = BaseElementView.extend( {
+const DivBlockView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-e-div-block-content' ),
 
 	emptyView: DivBlockEmptyView,
@@ -342,4 +342,4 @@ const EDivBlockView = BaseElementView.extend( {
 	},
 } );
 
-module.exports = EDivBlockView;
+module.exports = DivBlockView;
