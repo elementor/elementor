@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import {
-	ClickAwayListener,
 	Image,
 	Chip,
 	Typography,
@@ -9,26 +8,33 @@ import {
 	Stack,
 	List,
 	ListItem,
-	Popover, Box,
+	Popover,
 } from '@elementor/ui';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const WelcomePopover = ( { doClose } ) => {
-	const [ anchorEl, setAnchorEl ] = useState( null );
+	const anchorElRef = useRef( null );
+	const [ isMounted, setIsMounted ] = useState( false );
 
 	useEffect( () => {
-		setAnchorEl( document.body );
+		anchorElRef.current = document.body;
+		setIsMounted( true );
 	}, [] );
 
 	const redirectHandler = () => {
 		window.open( ctaUrl, '_blank' );
-		return doClose();
+		doClose();
 	};
+
+	if ( ! isMounted || ! anchorElRef.current ) {
+		return null;
+	}
 
 	return (
 		<Popover
-			open={ Boolean( anchorEl ) }
+			open={ Boolean( anchorElRef.current ) }
 			onClose={ doClose }
+			anchorEl={ anchorElRef.current }
 			anchorOrigin={ { vertical: 'center', horizontal: 'center' } }
 			transformOrigin={ { vertical: 'center', horizontal: 'center' } }
 		>
