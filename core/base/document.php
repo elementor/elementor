@@ -1622,6 +1622,8 @@ abstract class Document extends Controls_Stack {
 		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function( $element_data ) {
 			$element_data['id'] = Utils::generate_random_string();
 
+			$element_data = apply_filters( 'elementor/document/element/replace_id', $element_data );
+
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			// If the widget/element does not exist, like a plugin that creates a widget but deactivated.
