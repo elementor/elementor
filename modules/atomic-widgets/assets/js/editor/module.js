@@ -6,8 +6,6 @@ class Module extends elementorModules.editor.utils.Module {
 		$e.components.register( new Component() );
 
 		this.registerAtomicWidgetTypes();
-
-		this.maybeDisplayV4WelcomePopover();
 	}
 
 	registerAtomicWidgetTypes() {
@@ -24,17 +22,6 @@ class Module extends elementorModules.editor.utils.Module {
 		const DivBlock = require( './div-block-type' ).default;
 
 		elementor.elementsManager.registerElementType( new DivBlock() );
-	}
-
-	maybeDisplayV4WelcomePopover() {
-		const urlQueryParams = new URLSearchParams( window.location.search );
-
-		if ( 'true' !== urlQueryParams.get( 'v4_opt_in_welcome' ) ) {
-			console.log( 'Not welcome' );
-			return;
-		}
-
-		console.log( 'Displaying V4 Welcome Popover' );
 	}
 }
 

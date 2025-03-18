@@ -225,6 +225,12 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_v4_opt_in_editor_welcome_popover(): void {
+		$v4_opt_in_welcome = Utils::get_super_global_value( $_GET, 'v4_opt_in_welcome' ) ?? null;
+
+		if ( ! $v4_opt_in_welcome ) {
+			return;
+		}
+
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
