@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 import {
 	ClickAwayListener,
 	Image,
-	Box,
 	Chip,
 	Typography,
 	Button,
@@ -10,7 +9,7 @@ import {
 	Stack,
 	List,
 	ListItem,
-	Popover,
+	Popover, Box,
 } from '@elementor/ui';
 import { useEffect, useState } from 'react';
 

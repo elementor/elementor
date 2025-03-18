@@ -1,13 +1,22 @@
 import ReactUtils from 'elementor-utils/react';
 import { DirectionProvider, LocalizationProvider, ThemeProvider } from '@elementor/ui';
 import WelcomePopover from './components/welcome-popover';
+import { useState } from 'react';
 
 const App = ( props ) => {
+	const [ open, setOpen ] = useState( true );
+
+	const handleClose = () => {
+		setOpen( false );
+	};
+
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ 'light' }>
-					<WelcomePopover />
+					<>
+						{ open && <WelcomePopover doClose={ handleClose } /> }
+					</>
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>
