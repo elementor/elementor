@@ -119,6 +119,24 @@ const TemplateLibraryManager = function() {
 		elementor.addBackgroundClickListener( 'libraryToggleMore', {
 			element: '.elementor-template-library-template-more',
 		} );
+
+		window.addEventListener( 'message', ( message ) => {
+			const { data } = message;
+
+			if ( ! data.name || data.name !== 'library/capture-screenshot-done' ) {
+				return;
+			}
+
+			const template = templatesCollection.models.find( ( templateModel ) => {
+				return templateModel.get( 'template_id' ) === parseInt( data.id );
+			} );
+
+			if ( ! template ) {
+				return null;
+			}
+
+			template.set( 'preview_url', data.imageUrl );
+		} );
 	};
 
 	this.getSourceSelection = function() {
