@@ -4,7 +4,7 @@ import widgets from '../../../enums/widgets';
 import { getElementSelector } from '../../../assets/elements-utils';
 import { expect } from '@playwright/test';
 
-test.describe( 'Div Block tests @e-div-block', () => {
+test.describe( 'Div Block tests @div-block', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();

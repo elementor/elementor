@@ -24,7 +24,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		}, 10, 3 );
 
 		add_filter( 'pre_http_request', function( $preempt, $args, $url ) {
-			if ( $url === self::TEST_RESOURCES_DIR . 'test.svg' || $url === ELEMENTOR_ASSETS_PATH . '/images/e-default-svg.svg' ) {
+			if ( $url === self::TEST_RESOURCES_DIR . 'test.svg' || $url === ELEMENTOR_ASSETS_PATH . '/images/default-svg.svg' ) {
 				return [
 					'body' => '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z"/></svg>',
 				];
@@ -143,7 +143,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'settings' => [
 					'svg' => [
-						'url' => ELEMENTOR_ASSETS_PATH . '/images/e-default-svg.svg',
+						'url' => ELEMENTOR_ASSETS_PATH . '/images/default-svg.svg',
 					],
 				],
 				'widgetType' => Atomic_Svg::get_type(),
