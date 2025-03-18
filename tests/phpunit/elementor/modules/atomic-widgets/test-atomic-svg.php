@@ -113,7 +113,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 					'target' => '_blank',
 				]
 			],
-			'widgetType' => 'e-svg',
+			'widgetType' => Atomic_Svg::get_type(),
 		];
 
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $element );
