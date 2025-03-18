@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Plugin;
 use Elementor\Frontend;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -160,7 +161,7 @@ class Test_Frontend extends Elementor_Test_Base {
 		$frontend->register_scripts();
 
 		// Act
-		$widget_without_global_scripts = $this->elementor()->widgets_manager->get_widget_types( 'a-heading' );
+		$widget_without_global_scripts = $this->elementor()->widgets_manager->get_widget_types( Atomic_Heading::get_element_type() );
 		$widget_without_global_scripts->enqueue_scripts();
 
 		// Assert
