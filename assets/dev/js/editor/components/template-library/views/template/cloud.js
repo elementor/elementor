@@ -114,9 +114,9 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
 
 		if ( itemIsSelected ) {
-			elementor.templates.layout.removeBulkSelectionItem( this.model.get( 'template_id' ) );
+			elementor.templates.removeBulkSelectionItem( this.model.get( 'template_id' ) );
 		} else {
-			elementor.templates.layout.addBulkSelectionItem( this.model.get( 'template_id' ) );
+			elementor.templates.addBulkSelectionItem( this.model.get( 'template_id' ) );
 		}
 
 		this.$el.toggleClass( 'bulk-selected-item' );

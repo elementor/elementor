@@ -11,7 +11,8 @@ const TemplateLibraryManager = function() {
 		storage = new LocalStorage(),
 		storageKeyPrefix = 'my_templates_',
 		sourceKey = 'source',
-		viewKey = 'view';
+		viewKey = 'view',
+		bulkSelectedItems = new Set();
 
 	let deleteDialog,
 		errorDialog,
@@ -166,7 +167,7 @@ const TemplateLibraryManager = function() {
 			const templateId = parseInt( element.getAttribute( 'data-template_id' ) );
 	
 			element.classList.add( 'bulk-selected-item' );
-			this.layout.addBulkSelectionItem( templateId );
+			this.addBulkSelectionItem( templateId );
 			this.layout.handleBulkActionBar();
 		} );
 	};
@@ -817,11 +818,27 @@ const TemplateLibraryManager = function() {
 		self.setFilter( viewKey, selectedView, true );
 
 		self.layout.showTemplatesView( new TemplateLibraryCollection( self.filterTemplates() ) );
-		self.layout.clearBulkSelectionItems();
+		self.clearBulkSelectionItems();
 	};
 
 	this.shouldShowCloudConnectView = function( source ) {
 		return 'cloud' === source && ! elementor.config.library_connect.is_connected;
+	};
+
+	this.addBulkSelectionItem = function( templateId ) {
+		bulkSelectedItems.add( parseInt( templateId ) );
+	};
+
+	this.removeBulkSelectionItem = function( templateId ) {
+		bulkSelectedItems.delete( parseInt( templateId ) );
+	};
+
+	this.clearBulkSelectionItems = function() {
+		bulkSelectedItems.clear();
+	};
+
+	this.getBulkSelectionItems = function() {
+		return bulkSelectedItems;
 	};
 };
 

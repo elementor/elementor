@@ -12,8 +12,6 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 import { SAVE_CONTEXTS } from './../constants';
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
-	bulkSelectedItems: new Set(),
-
 	getModalOptions() {
 		const allowClosingModal = window?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
 
@@ -163,24 +161,8 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		return iframe;
 	},
 
-	addBulkSelectionItem( templateId ) {
-		this.bulkSelectedItems.add( parseInt( templateId ) );
-	},
-
-	removeBulkSelectionItem( templateId ) {
-		this.bulkSelectedItems.delete( parseInt( templateId ) );
-	},
-
-	clearBulkSelectionItems() {
-		this.bulkSelectedItems.clear();
-	},
-
-	getBulkSelectionItems() {
-		return this.bulkSelectedItems;
-	},
-
 	handleBulkActionBar() {
-		const selectedCount = this.bulkSelectedItems.size;
+		const selectedCount = elementor.templates.getBulkSelectionItems().size ?? 0;
 		const display = 0 === selectedCount ? 'none' : 'flex';
 
 		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );

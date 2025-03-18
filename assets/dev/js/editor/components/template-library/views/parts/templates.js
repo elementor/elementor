@@ -55,7 +55,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	className: 'no-bulk-selections',
 
 	onClearBulkSelections() {
-		elementor.templates.layout.clearBulkSelectionItems();
+		elementor.templates.clearBulkSelectionItems();
 		elementor.templates.layout.handleBulkActionBar();
 		elementor.templates.layout.selectAllCheckboxNormal();
 		this.deselectAllBulkItems();
@@ -74,9 +74,9 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	onSelectBulkSelectionItemCheckbox( event ) {
 		if ( event?.target?.checked ) {
-			elementor.templates.layout.addBulkSelectionItem( event.target.dataset.template_id );
+			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
 		} else {
-			elementor.templates.layout.removeBulkSelectionItem( event.target.dataset.template_id );
+			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
 		}
 		
 		this.handleBulkActionBarUi();
@@ -99,9 +99,9 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			const templateId = checkbox.dataset.template_id;
 	
 			if ( isChecked ) {
-				elementor.templates.layout.addBulkSelectionItem( templateId );
+				elementor.templates.addBulkSelectionItem( templateId );
 			} else {
-				elementor.templates.layout.removeBulkSelectionItem( templateId );
+				elementor.templates.removeBulkSelectionItem( templateId );
 			}
 		} );
 	},
