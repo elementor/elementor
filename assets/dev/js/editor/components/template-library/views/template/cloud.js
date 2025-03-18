@@ -14,6 +14,16 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		return classes;
 	},
 
+	attributes() {
+		if ( 'grid' === elementor.templates.getViewSelection() ) {
+			const data = this.model.toJSON();
+
+			return {
+				'data-template_id': data.template_id,
+			};
+		}
+    },
+
 	ui() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
 			toggleMore: '.elementor-template-library-template-more-toggle',

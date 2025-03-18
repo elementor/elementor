@@ -137,6 +137,38 @@ const TemplateLibraryManager = function() {
 
 			template.set( 'preview_url', data.imageUrl );
 		} );
+
+		this.handleKeydown = ( event ) => {
+			if ( ! this.isSelectAllShortcut( event ) ) {
+				return;
+			}
+
+			event.preventDefault();
+	
+			if ( this.isCloudGridView() ) {
+				this.selectAllTemplates();
+			}
+		};
+	
+		document.addEventListener( 'keydown', this.handleKeydown );
+	};
+
+	this.isSelectAllShortcut = function( event ) {
+		return ( event.metaKey || event.ctrlKey ) && 'a' === event.key;
+	};
+
+	this.isCloudGridView = function() {
+		return 'cloud' === this.getFilter( 'source' ) && 'grid' === this.getViewSelection();
+	};
+
+	this.selectAllTemplates = function() {
+		document.querySelectorAll( '[data-template_id]' ).forEach( ( element ) => {
+			const templateId = parseInt( element.getAttribute( 'data-template_id' ) );
+	
+			element.classList.add( 'bulk-selected-item' );
+			this.layout.addBulkSelectionItem( templateId );
+			this.layout.handleBulkActionBar();
+		} );
 	};
 
 	this.getSourceSelection = function() {
