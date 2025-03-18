@@ -149,4 +149,24 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'widgetType' => Atomic_Svg::get_type(),
 			];
 	}
+
+	public function test__default_svg_structure() : void {
+		// Arrange
+		$svg_mock = [
+			'id' => 'abcd123',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => 'a-svg',
+		];
+
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $svg_mock );
+
+		// Act
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
 }
