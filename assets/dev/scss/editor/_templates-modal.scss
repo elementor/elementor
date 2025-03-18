@@ -340,6 +340,10 @@ $remote-templates-items-space: 30px;
 				}
 			}
 		}
+
+		#bulk-select-all {
+			display: none;
+		}
 	}
 
 	&.no-bulk-selections {

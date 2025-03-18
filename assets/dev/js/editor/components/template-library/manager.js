@@ -145,12 +145,12 @@ const TemplateLibraryManager = function() {
 			}
 
 			event.preventDefault();
-	
+
 			if ( this.isCloudGridView() ) {
 				this.selectAllTemplates();
 			}
 		};
-	
+
 		document.addEventListener( 'keydown', this.handleKeydown );
 	};
 
@@ -165,7 +165,7 @@ const TemplateLibraryManager = function() {
 	this.selectAllTemplates = function() {
 		document.querySelectorAll( '[data-template_id]' ).forEach( ( element ) => {
 			const templateId = parseInt( element.getAttribute( 'data-template_id' ) );
-	
+
 			element.classList.add( 'bulk-selected-item' );
 			this.addBulkSelectionItem( templateId );
 			this.layout.handleBulkActionBar();
