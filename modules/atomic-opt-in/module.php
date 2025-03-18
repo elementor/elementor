@@ -11,13 +11,13 @@ use Elementor\Utils;
 
 class Module extends BaseModule {
 	const MODULE_NAME = 'editor-v4-opt-in';
-	const EXPERIMENT_NAME = 'editor_v4';
+	const EXPERIMENT_NAME = 'editor_v4_opt_in';
 
 	public static function get_experimental_data(): array {
 		return [
 			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Editor V4', 'elementor' ),
-			'description' => esc_html__( 'Enable Editor V4.', 'elementor' ),
+			'title' => esc_html__( 'Editor V4 (Opt In)', 'elementor' ),
+			'description' => esc_html__( 'Enable Editor V4 Opt In.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
@@ -67,6 +67,16 @@ class Module extends BaseModule {
 
 	private function register_scripts() {
 		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_optin_scripts' ] );
+		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_optin_styles' ] );
+	}
+
+	public function enqueue_optin_styles() {
+		wp_enqueue_style(
+			$this->get_name(),
+			$this->get_css_assets_url( 'modules/atomic-opt-in/opt-in' ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	public function enqueue_optin_scripts() {

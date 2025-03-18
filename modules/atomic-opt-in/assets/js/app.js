@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import ReactUtils from 'elementor-utils/react';
 import {
 	DirectionProvider,
@@ -9,6 +10,8 @@ import {
 	Box,
 	Stack,
 	Typography,
+	Snackbar,
+	Alert,
 	Image,
 	Chip,
 	Link,
@@ -19,59 +22,116 @@ import { __ } from '@wordpress/i18n';
 
 const OptIn = () => {
 	const i18n = {
-		title: __( 'The road to Editor V4', 'elementor' ),
+		title: __( 'The Road to Editor V4', 'elementor' ),
 		chip: __( 'Alpha', 'elementor' ),
-		welcomeText: __( 'Welcome to Elementor v4, an evolution in web creation. Experience a more streamlined, flexible, and powerful editor with a fresh approach to structure and styling.', 'elementor' ),
+		welcomeText: __( `Welcome to a new era of web creation with Elementor. Editor V4 is faster, more flexible, and built for modern design. Here's what's inside:`, 'elementor' ),
 		advantages: [
-			__( 'A new way to build with atomic components', 'elementor' ),
-			__( 'A unified styling system for consistency', 'elementor' ),
-			__( 'More flexibility with local and global styles', 'elementor' ),
-			__( 'Enhanced class management for scalable designs', 'elementor' ),
+			__( 'Cleaner code & lighter CSS output for better performance', 'elementor' ),
+			__( 'Advanced CSS styling fo classes & states', 'elementor' ),
+			__( 'A unified Style tab for seamless design control', 'elementor' ),
+			__( 'Fully responsive customization', 'elementor' ),
 		],
-		warning: __( 'V4 is still in alpha and should not be used on live sites yet', 'elementor' ),
+		warning: __( 'Keep in mind: Editor V4 is still in alpha and should not be used on live sites yet.', 'elementor' ),
 		andMore: __( 'and much more', 'elementor' ),
 		readMore: __( 'Read here', 'elementor' ),
+		startButton: __( 'Start building in V4', 'elementor' ),
 		optInButton: __( 'Opt-in to V4', 'elementor' ),
 		optOutButton: __( 'Opt-out from V4', 'elementor' ),
+		helpImprove: __( `We'd love to hear from you.`, 'elementor' ),
+		feedback: __( 'Send us your feedback', 'elementor' ),
 		image: __( 'Editor V4', 'elementor' ),
+
+		message: {
+			success: __( '', 'elementor' ),
+			error: __( 'Something went wrong. Please try again or contact support if the issue persists.', 'elementor' ),
+		},
 	};
 
+	const [ optIn, setOptIn ] = useState( false );
+
+	const imageSrcLandscape = '';
+	const imageSrcSquare = '';
+
+	const feedbackUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
 	const readMoreUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
 
+	const maybeOptIn = () => {
+		setOptIn( true );
+	};
+
+	const maybeOptOut = () => {
+		setOptIn( false );
+	};
+
+	const maybeStart = () => {};
+
 	return (
-		<React.Fragment>
-			<Container maxWidth="lg">
-				<Stack direction="column-reverse">
-					<Container maxWidth="md">
-						<Stack direction="column" gap={ 2.5 }>
-							<Box display="flex" alignItems="center" gap={ 1 }>
-								<Typography variant="h4">{ i18n.title }</Typography>
-								<Chip size="small" color="secondary" variant="filled" label={ i18n.chip } />
-							</Box>
-							<Typography variant="body1">{ i18n.welcomeText }</Typography>
-							<Box component="ul">
-								{ i18n.advantages.map(
-									( desc, i ) => <BoxItem component="li" key={ i }>{ desc }</BoxItem>
-								) }
-								<BoxItem component="li" key="e-0">
-									{ i18n.andMore } <Link href={ readMoreUrl } target="_blank">{ i18n.readMore }</Link>
-								</BoxItem>
-							</Box>
-							<Stack direction="row" gap={ 1 }>
-								<Typography><AlertTriangleFilledIcon /> { i18n.warning }</Typography>
-							</Stack>
-							<Stack direction="column" maxWidth="xs" gap={ 1 }>
-								<Button size="large" color="primary" variant="contained" sx={ { flexGrow: 1 } }>{ i18n.optInButton }</Button>
-								<Button size="large" color="secondary" variant="outlined" sx={ { flexGrow: 1 } }>{ i18n.optOutButton }</Button>
-							</Stack>
-						</Stack>
-					</Container>
-					<Container maxWidth="md">
-						<Image alt={ i18n.image } />
-					</Container>
+		<>
+		<Container sx={ {
+			mt: 2.5,
+			display: 'flex',
+			flexBasis: '100%',
+			gap: 3,
+			flexDirection: { xs: 'column-reverse', md: 'row' }
+		} }>
+			<Stack sx={ { flex: 1, maxWidth: 'sm', gap: 2.5, mx: 'auto' } }>
+				<Stack direction="row" alignItems="center" gap={ 1 }>
+					<Typography variant="h4" width="fit-content">{ i18n.title }</Typography>
+					<Chip size="small" color="secondary" variant="filled" label={ i18n.chip } />
+				</Stack>
+
+				<Typography variant="body1">{ i18n.welcomeText }</Typography>
+
+				<Box component="ul">
+					{ i18n.advantages.map(
+						( desc, i ) => <BoxItem component="li" key={ i }>{ desc }</BoxItem>
+					) }
+					<BoxItem component="li" key="e-0">
+						{ i18n.andMore } <Link href={ readMoreUrl } target="_blank">{ i18n.readMore }</Link>
+					</BoxItem>
+				</Box>
+
+				<Stack direction="row" alignItems="self-start" gap={ 1 }>
+					<AlertTriangleFilledIcon />
+					<Typography>{ i18n.warning }</Typography>
+				</Stack>
+
+				<Stack direction="column" width="clamp(240px, max(340px, 75%), 340px)" maxWidth="100%" gap={ 1 }>
+					{ ( ! optIn ) ? ( <Button onClick={ maybeOptIn } size="large" color="primary" variant="contained" sx={ { flexGrow: 1 } }>{ i18n.optInButton }</Button> )
+						: ( <>
+								<Button onClick={ maybeStart } size="large" color="primary" variant="contained" sx={ { flexGrow: 1 } }>{ i18n.startButton }</Button>
+								<Button onClick={ maybeOptOut } size="large" color="secondary" variant="outlined" sx={ { flexGrow: 1 } }>{ i18n.optOutButton }</Button>
+					</> ) }
+				</Stack>
+
+				<Typography>{ i18n.helpImprove } <Link href={ feedbackUrl }>{ i18n.feedback }</Link></Typography>
+			</Stack>
+
+			<Stack sx={ { flex: 1, maxWidth: 'sm' } }>
+				<Image alt={ i18n.image + ' 1' } sx={ { display: { xs: 'none', md: 'block' } } } />
+				<Image alt={ i18n.image + ' 2' } sx={ { display: { xs: 'block', md: 'none' } } } />
+			</Stack>
+		</Container>
+
+		<Stack maxWidth="lg" gap={ 5 } sx={ { mx: 'auto', marginBlockStart: 3 } }>
+			<Container maxWidth="sm" sx={ { px: { sx: 3, md: 5, } } }>
+				<Stack direction="column" gap={ 2.5 }>
+
+
+
+
+
+
+
+
+
 				</Stack>
 			</Container>
-		</React.Fragment>
+			<Container maxWidth="sm" sx={ { px: 5 } }>
+
+			</Container>
+		</Stack>
+		</>
 	);
 };
 
