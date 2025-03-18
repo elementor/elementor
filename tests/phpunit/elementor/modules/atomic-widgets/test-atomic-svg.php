@@ -106,7 +106,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 					'target' => '_blank',
 				]
 			],
-			'widgetType' => 'e-svg',
+			'widgetType' => Atomic_Svg::get_element_type(),
 		];
 
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $element );
@@ -133,7 +133,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 					'target' => '_blank',
 				]
 			],
-			'widgetType' => Atomic_Svg::get_type(),
+			'widgetType' => Atomic_Svg::get_element_type(),
 		];
 
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $element );
@@ -156,7 +156,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 					'id' => 123,
 				],
 			],
-			'widgetType' => Atomic_Svg::get_type(),
+			'widgetType' => Atomic_Svg::get_element_type(),
 		] :
 			[
 				'id' => 'abcd123',
@@ -166,7 +166,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 						'url' => ELEMENTOR_ASSETS_PATH . '/images/default-svg.svg',
 					],
 				],
-				'widgetType' => Atomic_Svg::get_type(),
+				'widgetType' => Atomic_Svg::get_element_type(),
 			];
 	}
 }
