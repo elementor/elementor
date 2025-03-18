@@ -111,6 +111,7 @@ const entry = {
 	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 	'checklist': path.resolve( __dirname, '../modules/checklist/assets/js/editor.js' ),
+	'v4-opt-in-welcome': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/editor/opt-in/app.js' ),
 	'nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/editor/index.js' ),
 	'nested-tabs': path.resolve( __dirname, '../modules/nested-tabs/assets/js/editor/index.js' ),
 	'nested-accordion': path.resolve( __dirname, '../modules/nested-accordion/assets/js/editor/index.js' ),

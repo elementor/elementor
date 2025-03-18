@@ -54,6 +54,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Plugin;
+use Elementor\Utils;
 use Elementor\Widgets_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -101,6 +102,9 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+
+			add_filter( 'elementor/document/urls/edit', [ $this, 'add_v4_opt_in_welcome_parameter_to_edit_link' ] );
+			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_v4_opt_in_editor_welcome_popover' ] );
 		}
 	}
 
@@ -205,6 +209,33 @@ class Module extends BaseModule {
 			'elementor-atomic-widgets-editor',
 			$this->get_js_assets_url( 'atomic-widgets-editor' ),
 			[ 'elementor-editor' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	public function add_v4_opt_in_welcome_parameter_to_edit_link( $edit_link ) {
+		$v4_opt_in_welcome = Utils::get_super_global_value( $_GET, 'v4_opt_in_welcome' ) ?? null;
+
+		if ( $v4_opt_in_welcome ) {
+			$edit_link = add_query_arg( 'v4_opt_in_welcome', $v4_opt_in_welcome, $edit_link );
+		}
+
+		return $edit_link;
+	}
+
+	public function enqueue_v4_opt_in_editor_welcome_popover(): void {
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_enqueue_script(
+			'v4-opt-in-welcome',
+			ELEMENTOR_ASSETS_URL . 'js/v4-opt-in-welcome' . $min_suffix . '.js',
+			[
+				'react',
+				'react-dom',
+				'elementor-common',
+				'elementor-v2-ui',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
