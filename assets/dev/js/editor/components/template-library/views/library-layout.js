@@ -147,4 +147,17 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 			elementor.templates.layout.hideLoadingView();
 		}
 	},
+
+	createScreenshotIframe( previewUrl ) {
+		const iframe = document.createElement( 'iframe' );
+
+		iframe.src = previewUrl;
+		iframe.width = '1200';
+		iframe.height = '500';
+		iframe.style = 'visibility: hidden;';
+
+		document.body.appendChild( iframe );
+
+		return iframe;
+	},
 } );
