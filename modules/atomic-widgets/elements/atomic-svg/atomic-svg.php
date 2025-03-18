@@ -19,10 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Svg extends Atomic_Widget_Base {
 	const BASE_STYLE_KEY = 'base';
-	const DEFAULT_SVG = 'images/a-default-svg.svg';
+	const DEFAULT_SVG = 'images/default-svg.svg';
 
 	public static function get_element_type(): string {
-		return 'a-svg';
+		return 'e-svg';
 	}
 
 	public function get_title() {
