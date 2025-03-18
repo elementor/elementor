@@ -164,7 +164,7 @@ const TemplateLibraryManager = function() {
 
 	this.selectAllTemplates = function() {
 		document.querySelectorAll( '.elementor-template-library-template[data-template_id]' ).forEach( ( element ) => {
-			const templateId = parseInt( element.getAttribute( 'data-template_id' ) );
+			const templateId = element.getAttribute( 'data-template_id' );
 
 			element.classList.add( 'bulk-selected-item' );
 			this.addBulkSelectionItem( templateId );

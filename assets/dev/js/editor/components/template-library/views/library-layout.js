@@ -170,14 +170,18 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	selectAllCheckboxMinus() {
-		if ( 'list' === elementor.templates.getViewSelection() ) {
+		if ( this.isListView() ) {
 			this.modalContent.currentView.ui.bulkSelectAllCheckbox.addClass( 'checkbox-minus' );
 		}
 	},
 
 	selectAllCheckboxNormal() {
-		if ( 'list' === elementor.templates.getViewSelection() ) {
+		if ( this.isListView() ) {
 			this.modalContent.currentView.ui.bulkSelectAllCheckbox.removeClass( 'checkbox-minus' );
 		}
+	},
+
+	isListView() {
+		return 'list' === elementor.templates.getViewSelection();
 	},
 } );
