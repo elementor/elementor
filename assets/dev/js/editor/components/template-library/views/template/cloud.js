@@ -101,7 +101,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 
 		if ( event.shiftKey ) {
 			this.handleShiftAndClick();
-			
+
 			return;
 		}
 
