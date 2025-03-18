@@ -13,24 +13,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Styles_Ids_Modifier {
 	private Collection $old_to_new_ids;
 
-	public function __construct() {
-		$this->old_to_new_ids = Collection::make();
-	}
-
 	public static function make() {
 		return new self();
 	}
 
 	public function run( array $element ) {
-		$element = $this->replace_style_ids( $element );
-		$element = $this->replace_references( $element );
-
 		$this->old_to_new_ids = Collection::make();
+
+		$element = $this->replace_styles_ids( $element );
+		$element = $this->replace_references( $element );
 
 		return $element;
 	}
 
-	private function replace_style_ids( array $element ) {
+	private function replace_styles_ids( array $element ) {
 		if ( empty( $element['styles'] ) || empty( $element['id'] ) ) {
 			return $element;
 		}
@@ -57,7 +53,7 @@ class Styles_Ids_Modifier {
 			}
 
 			$setting['value'] = Collection::make( $setting['value'] )
-				->map( fn( $style_id ) => $this->old_to_new_ids->get( $style_id, $style_id ) )
+				->map( fn( $style_id ) => $this->old_to_new_ids->get( $style_id ) ?? $style_id )
 				->all();
 
 			return $setting;

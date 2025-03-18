@@ -30,7 +30,7 @@ class Atomic_Import_Export {
 
 		add_filter(
 			'elementor/document/element/replace_id',
-			fn( $element ) => $this->replace_id( $element )
+			fn( $element ) => $this->replace_styles_ids( $element )
 		);
 	}
 
@@ -60,7 +60,7 @@ class Atomic_Import_Export {
 		} );
 	}
 
-	private function replace_id( $element ) {
+	private function replace_styles_ids( $element ) {
 		if ( empty( $element ) || ! is_array( $element ) ) {
 			return $element;
 		}

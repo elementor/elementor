@@ -17,7 +17,13 @@ class Utils {
 
 	public static function generate_id( string $prefix = '', $existing_ids = [] ): string {
 		do {
-			$id = $prefix . wp_rand( 1000000, 9999999 );
+			$generated = substr(
+				bin2hex( random_bytes( 4 ) ),
+				0,
+				7
+			);
+
+			$id = "$prefix{$generated}";
 		} while ( in_array( $id, $existing_ids, true ) );
 
 		return $id;
