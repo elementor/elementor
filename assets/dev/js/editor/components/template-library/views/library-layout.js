@@ -12,6 +12,8 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 import { SAVE_CONTEXTS } from './../constants';
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
+	bulkSelectedItems: new Set(),
+
 	getModalOptions() {
 		const allowClosingModal = window?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
 
@@ -159,5 +161,41 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		document.body.appendChild( iframe );
 
 		return iframe;
+	},
+
+	addBulkSelectionItem( templateId ) {
+		this.bulkSelectedItems.add( parseInt( templateId ) );
+	},
+
+	removeBulkSelectionItem( templateId ) {
+		this.bulkSelectedItems.delete( parseInt( templateId ) );
+	},
+
+	clearBulkSelectionItems() {
+		this.bulkSelectedItems.clear();
+	},
+
+	getBulkSelectionItems() {
+		return this.bulkSelectedItems;
+	},
+
+	handleBulkActionBar() {
+		const selectedCount = this.bulkSelectedItems.size;
+    	const display = 0 === selectedCount ? 'none' : 'flex';
+
+		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );
+		this.modalContent.currentView.ui.bulkSelectionActionBar.css( 'display', display );
+	},
+
+	selectAllCheckboxMinus() {
+		if ( 'list' === elementor.templates.getViewSelection() ) {
+			this.modalContent.currentView.ui.bulkSelectAllCheckbox.addClass( 'checkbox-minus' );
+		}
+	},
+
+	selectAllCheckboxNormal() {
+		if ( 'list' === elementor.templates.getViewSelection() ) {
+			this.modalContent.currentView.ui.bulkSelectAllCheckbox.removeClass( 'checkbox-minus' );
+		}
 	},
 } );

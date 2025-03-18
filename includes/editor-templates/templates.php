@@ -143,9 +143,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<# if ( 'local' === activeSource || 'cloud' === activeSource ) { #>
+		<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+		<div class="bulk-selection-action-bar">
+			<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
+			<span class="selected-count"></span>
+			<span class="bulk-export"><i class="eicon-file-download"></i></span>
+			<span class="bulk-copy"><i class="eicon-copy"></i></span>
+			<span class="bulk-move"><i class="eicon-folder-o"></i></span>
+			<span class="bulk-delete"><i class="eicon-trash-o"></i></span>
+		</div>
+		<?php endif; ?>
 		<div id="elementor-template-library-order-toolbar-local">
 			<div class="elementor-template-library-local-column-1">
 				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
+				<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+				<input type="checkbox" id="bulk-select-all">
+				<?php endif; ?>
 				<label for="elementor-template-library-order-local-title" class="elementor-template-library-order-label"><?php echo esc_html__( 'Name', 'elementor' ); ?></label>
 			</div>
 			<div class="elementor-template-library-local-column-2">
@@ -212,6 +225,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		if ( ( 'cloud' === activeSource && view === 'list' ) || 'local' === activeSource ) {
 	#>
 		<div class="elementor-template-library-template-name elementor-template-library-local-column-1">
+			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+			<input type="checkbox" class="bulk-selection-item-checkbox" data-template_id="{{ template_id }}">
+			<?php endif; ?>
 			<# if ( 'cloud' === activeSource ) {
 				const sourceIcon = 'FOLDER' === subType
 					? '<i class="eicon-folder-o" aria-hidden="true"></i>'
