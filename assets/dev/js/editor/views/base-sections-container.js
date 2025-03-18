@@ -16,7 +16,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 				break;
 
 			case 'e-div-block':
-				ChildView = require( 'elementor-modules/atomic-widgets/assets/js/editor/e-div-block-view' );
+				ChildView = require( 'elementor-modules/atomic-widgets/assets/js/editor/div-block-view' );
 				break;
 		}
 
