@@ -181,7 +181,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	handleBulkActionBar() {
 		const selectedCount = this.bulkSelectedItems.size;
-    	const display = 0 === selectedCount ? 'none' : 'flex';
+		const display = 0 === selectedCount ? 'none' : 'flex';
 
 		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );
 		this.modalContent.currentView.ui.bulkSelectionActionBar.css( 'display', display );
