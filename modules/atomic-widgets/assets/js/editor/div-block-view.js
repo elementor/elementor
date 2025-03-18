@@ -2,7 +2,7 @@ import DivBlockEmptyView from './container/div-block-empty-view';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 const DivBlockView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-div-block-content' ),
+	template: Marionette.TemplateCache.get( '#tmpl-elementor-e-div-block-content' ),
 
 	emptyView: DivBlockEmptyView,
 
@@ -24,7 +24,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con div-block-base${ this.getClassString() }`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con e-div-block-base${ this.getClassString() }`;
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -137,7 +137,7 @@ const DivBlockView = BaseElementView.extend( {
 			},
 		} );
 
-		return elementor.hooks.applyFilters( 'elements/div-block/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( 'elements/e-div-block/behaviors', behaviors, this );
 	},
 
 	/**
