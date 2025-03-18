@@ -231,8 +231,8 @@ class Test_Atomic_Import_Export extends Elementor_Test_Base {
 		$style_ids = array_keys( $result['styles'] );
 
 		$this->assertCount( 2, $style_ids );
-		$this->assertMatchesRegularExpression( '/^e-modified-id-[a-z0-9]{,7}$/', $style_ids[0] );
-		$this->assertMatchesRegularExpression( '/^e-modified-id-[a-z0-9]{,7}$/', $style_ids[1] );
+		$this->assertMatchesRegularExpression( '/^e-modified-id-[a-z0-9]{7}$/', $style_ids[0] );
+		$this->assertMatchesRegularExpression( '/^e-modified-id-[a-z0-9]{7}$/', $style_ids[1] );
 
 		$this->assertEqualSets( [
 			'id' => 'modified-id',
