@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\ImportExport;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Settings_Props_Modifier;
+use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Ids_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Import_Export_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -25,6 +26,11 @@ class Atomic_Import_Export {
 		add_filter(
 			'elementor/template_library/sources/local/export/elements',
 			fn( $elements ) => $this->run( $elements, Import_Export_Props_Resolver::for_export() )
+		);
+
+		add_filter(
+			'elementor/document/element/replace_id',
+			fn( $element ) => $this->replace_styles_ids( $element )
 		);
 	}
 
@@ -52,5 +58,20 @@ class Atomic_Import_Export {
 
 			return $element;
 		} );
+	}
+
+	private function replace_styles_ids( $element ) {
+		if ( empty( $element ) || ! is_array( $element ) ) {
+			return $element;
+		}
+
+		$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element );
+
+		/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
+		if ( ! Utils::is_atomic( $element_instance ) ) {
+			return $element;
+		}
+
+		return Styles_Ids_Modifier::make()->run( $element );
 	}
 }
