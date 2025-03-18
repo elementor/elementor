@@ -357,10 +357,10 @@ $remote-templates-items-space: 30px;
 
 	.bulk-selection-action-bar {
 		display: none;
-		background: #F4F5F8;
+		background: var(--e-a-bg-active);
 		padding: 10px 25px;
 		border-radius: 5px;
-		color: #454746;
+		color: var(--e-a-bg-invert);
 		margin-top: 10px;
 		gap: 20px;
 		align-items: center;
@@ -383,7 +383,7 @@ $remote-templates-items-space: 30px;
 	}
 	
 	.bulk-selected-item {
-		background-color: $e-gray-50;
+		background: var(--e-a-bg-active);
 	}
 	
 	.elementor-template-library-local-column-1 {
