@@ -276,7 +276,7 @@ abstract class Source_Base {
 		return Plugin::$instance->db->iterate_data( $content, function( $element ) {
 			$element['id'] = Utils::generate_random_string();
 
-			return $element;
+			return apply_filters( 'elementor/document/element/replace_id', $element );
 		} );
 	}
 

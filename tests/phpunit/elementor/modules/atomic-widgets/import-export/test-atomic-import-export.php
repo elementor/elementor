@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\ImportExport;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
@@ -34,6 +35,7 @@ class Test_Atomic_Import_Export extends Elementor_Test_Base {
 
 		remove_all_filters( 'elementor/template_library/sources/local/import/elements' );
 		remove_all_filters( 'elementor/template_library/sources/local/export/elements' );
+		remove_all_filters( 'elementor/document/element/replace_id' );
 	}
 
 	public function tear_down() {
@@ -129,7 +131,6 @@ class Test_Atomic_Import_Export extends Elementor_Test_Base {
 
 		$template_manager_mock->method( 'get_import_images_instance' )->willReturn( $import_images_mock );
 
-
 		( new Atomic_Import_Export() )->register_hooks();
 
 		$image = Image_Prop_Type::generate( [
@@ -197,5 +198,58 @@ class Test_Atomic_Import_Export extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $result );
+	}
+
+	public function test_replace_ids() {
+		// Arrange.
+		( new Atomic_Import_Export() )->register_hooks();
+
+		$data = [
+			'id' => 'test-id',
+			'elType' => 'widget',
+			'widgetType' => Atomic_Heading::get_element_type(),
+			'styles' => [
+				'e-test-id-1' => [
+					'id' => 'e-test-style-1',
+				],
+				'e-test-id-2' => [
+					'id' => 'e-test-style-2',
+				],
+			],
+			'settings' => [
+				'classes' => Classes_Prop_Type::generate( [ 'e-test-id-1', 'some-other-class' ] ),
+				'title' => String_Prop_Type::generate( 'Test' ),
+			],
+		];
+
+		// Act.
+		$data['id'] = 'modified-id';
+
+		$result = apply_filters( 'elementor/document/element/replace_id', $data );
+
+		// Assert.
+		$style_ids = array_keys( $result['styles'] );
+
+		$this->assertCount( 2, $style_ids );
+		$this->assertMatchesRegularExpression( '/^e-modified-id-.+$/', $style_ids[0] );
+		$this->assertMatchesRegularExpression( '/^e-modified-id-.+$/', $style_ids[1] );
+
+		$this->assertEqualSets( [
+			'id' => 'modified-id',
+			'elType' => 'widget',
+			'widgetType' => Atomic_Heading::get_element_type(),
+			'styles' => [
+				$style_ids[0] => [
+					'id' => $style_ids[0],
+				],
+				$style_ids[1] => [
+					'id' => $style_ids[1],
+				],
+			],
+			'settings' => [
+				'classes' => Classes_Prop_Type::generate( [ $style_ids[0], 'some-other-class' ] ),
+				'title' => String_Prop_Type::generate( 'Test' ),
+			],
+		], $result );
 	}
 }

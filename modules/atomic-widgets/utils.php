@@ -14,4 +14,12 @@ class Utils {
 		return $element_instance instanceof Atomic_Element_Base ||
 			$element_instance instanceof Atomic_Widget_Base;
 	}
+
+	public static function generate_id( string $prefix = '', $existing_ids = [] ): string {
+		do {
+			$id = $prefix . wp_rand( 1000000, 9999999 );
+		} while ( in_array( $id, $existing_ids, true ) );
+
+		return $id;
+	}
 }
