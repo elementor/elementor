@@ -16,10 +16,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected $version = '0.0';
 	protected $styles = [];
 
-	public static function get_type() {
-		return self::get_element_type();
-	}
-
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
