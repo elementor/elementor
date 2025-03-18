@@ -10,8 +10,6 @@ import {
 	Box,
 	Stack,
 	Typography,
-	Snackbar,
-	Alert,
 	Image,
 	Chip,
 	Link,
@@ -66,13 +64,12 @@ const OptIn = () => {
 	const maybeStart = () => {};
 
 	return (
-		<>
 		<Container sx={ {
-			mt: 2.5,
+			marginBlockStart: 2.5,
 			display: 'flex',
 			flexBasis: '100%',
 			gap: 3,
-			flexDirection: { xs: 'column-reverse', md: 'row' }
+			flexDirection: { xs: 'column-reverse', md: 'row' },
 		} }>
 			<Stack sx={ { flex: 1, maxWidth: 'sm', gap: 2.5, mx: 'auto' } }>
 				<Stack direction="row" alignItems="center" gap={ 1 }>
@@ -107,31 +104,11 @@ const OptIn = () => {
 				<Typography>{ i18n.helpImprove } <Link href={ feedbackUrl }>{ i18n.feedback }</Link></Typography>
 			</Stack>
 
-			<Stack sx={ { flex: 1, maxWidth: 'sm' } }>
+			<Stack sx={ { flex: 1, maxWidth: 'sm', p: { xs: 0, md: 5 } } }>
 				<Image alt={ i18n.image + ' 1' } sx={ { display: { xs: 'none', md: 'block' } } } />
 				<Image alt={ i18n.image + ' 2' } sx={ { display: { xs: 'block', md: 'none' } } } />
 			</Stack>
 		</Container>
-
-		<Stack maxWidth="lg" gap={ 5 } sx={ { mx: 'auto', marginBlockStart: 3 } }>
-			<Container maxWidth="sm" sx={ { px: { sx: 3, md: 5, } } }>
-				<Stack direction="column" gap={ 2.5 }>
-
-
-
-
-
-
-
-
-
-				</Stack>
-			</Container>
-			<Container maxWidth="sm" sx={ { px: 5 } }>
-
-			</Container>
-		</Stack>
-		</>
 	);
 };
 
