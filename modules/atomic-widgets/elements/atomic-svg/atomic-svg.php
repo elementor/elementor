@@ -114,6 +114,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	private function get_svg_content( $settings ) {
+
 		if ( isset( $settings['svg']['id'] ) ) {
 			$content = Utils::file_get_contents(
 				get_attached_file( $settings['svg']['id'] )
