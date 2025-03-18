@@ -26,11 +26,15 @@ class Atomic_Button extends Atomic_Widget_Base {
 	use Has_Template;
 
 	public static function get_element_type(): string {
-		return 'a-button';
+		return 'e-button';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Button', 'elementor' );
+		return esc_html__( 'Button', 'elementor' );
+	}
+
+	public function get_keywords() {
+		return [ 'atoms', 'atomic' ];
 	}
 
 	public function get_icon() {
@@ -75,19 +79,19 @@ class Atomic_Button extends Atomic_Widget_Base {
 		] );
 		$display_value = String_Prop_Type::generate( 'inline-block' );
 		$padding_value = Dimensions_Prop_Type::generate( [
-			'top' => Size_Prop_Type::generate( [
+			'block-start' => Size_Prop_Type::generate( [
 				'size' => 12,
 				'unit' => 'px',
 			]),
-			'right' => Size_Prop_Type::generate( [
+			'inline-end' => Size_Prop_Type::generate( [
 				'size' => 24,
 				'unit' => 'px',
 			]),
-			'bottom' => Size_Prop_Type::generate( [
+			'block-end' => Size_Prop_Type::generate( [
 				'size' => 12,
 				'unit' => 'px',
 			]),
-			'left' => Size_Prop_Type::generate( [
+			'inline-start' => Size_Prop_Type::generate( [
 				'size' => 24,
 				'unit' => 'px',
 			]),

@@ -2,6 +2,75 @@ var TemplateLibraryTemplateLocalView = require( 'elementor-templates/views/templ
 	TemplateLibraryTemplateCloudView;
 
 TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
+	className() {
+		const view = elementor.templates.getViewSelection(),
+			subType = 'FOLDER' === this.model.get( 'subType' ) ? 'folder' : 'template';
+
+		let classes = TemplateLibraryTemplateLocalView.prototype.className.apply( this, arguments );
+
+		classes += ' elementor-template-library-template-view-' + view;
+		classes += ' elementor-template-library-template-type-' + subType;
+
+		return classes;
+	},
+
+	ui() {
+		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
+			toggleMore: '.elementor-template-library-template-more-toggle',
+			previewImg: '.elementor-template-library-template-thumbnail img',
+		} );
+	},
+
+	events() {
+		return _.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
+			click: 'viewFolder',
+			'click @ui.toggleMore': 'onToggleMoreClick',
+		} );
+	},
+
+	modelEvents: _.extend( {}, TemplateLibraryTemplateLocalView.prototype.modelEvents, {
+		'change:preview_url': 'onPreviewUrlChange',
+	} ),
+
+	onRender() {
+		const previewUrl = this.model.get( 'preview_url' );
+
+		if ( this.shouldGeneratePreview() ) {
+			this.iframe = elementor.templates.layout.createScreenshotIframe( this.model.get( 'generate_preview_url' ) );
+			this.isGeneratingPreview = true;
+		}
+
+		if ( previewUrl ) {
+			this.updatePreviewImgStyle();
+		}
+	},
+
+	onPreviewUrlChange() {
+		const previewUrl = this.model.get( 'preview_url' );
+		this.isGeneratingPreview = false;
+
+		if ( previewUrl ) {
+			this.ui.previewImg.attr( 'src', previewUrl );
+			this.updatePreviewImgStyle();
+			this.model.set( 'generate_preview_url', null );
+			this.iframe.remove();
+		}
+	},
+
+	updatePreviewImgStyle() {
+		this.ui.previewImg.css( 'object-fit', 'contain' );
+	},
+
+	shouldGeneratePreview() {
+		const view = elementor.templates.getViewSelection();
+
+		return 'FOLDER' !== this.model.get( 'subType' ) &&
+			this.model.get( 'generate_preview_url' ) &&
+			! this.model.get( 'preview_url' ) &&
+			'grid' === view &&
+			! this.isGeneratingPreview;
+	},
+
 	onPreviewButtonClick() {
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
 			$e.route( 'library/view-folder', { model: this.model } );
@@ -11,7 +80,14 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		TemplateLibraryTemplateLocalView.prototype.onPreviewButtonClick.apply( this, arguments );
 	},
 
-	onDeleteButtonClick() {
+	viewFolder() {
+		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
+			$e.route( 'library/view-folder', { model: this.model } );
+		}
+	},
+
+	onDeleteButtonClick( event ) {
+		event.stopPropagation();
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
 			this.handleDeleteFolderClick();
 			return;

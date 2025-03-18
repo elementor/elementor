@@ -24,11 +24,11 @@ class Div_Block extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'div-block';
+		return 'e-div-block';
 	}
 
 	public static function get_element_type(): string {
-		return 'div-block';
+		return 'e-div-block';
 	}
 
 	public function get_title() {
@@ -86,14 +86,14 @@ class Div_Block extends Atomic_Element_Base {
 							],
 						]),
 
-					Link_Control::bind_to( 'link' )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+					Link_Control::bind_to( 'link' ),
+
 				]),
 		];
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
-		if ( 'container' === $element_data['elType'] || 'div-block' === $element_data['elType'] ) {
+		if ( 'container' === $element_data['elType'] || 'e-div-block' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 		}
 
@@ -154,18 +154,18 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display_value = String_Prop_Type::generate( 'block' );
-		$padding_value = Dimensions_Prop_Type::generate( [
-			'top' => Size_Prop_Type::generate( [
+		$display = String_Prop_Type::generate( 'block' );
+		$padding = Dimensions_Prop_Type::generate( [
+			'block-start' => Size_Prop_Type::generate( [
 				'size' => 10,
 				'unit' => 'px',
 			]),
-			'bottom' => Size_Prop_Type::generate( [
+			'block-end' => Size_Prop_Type::generate( [
 				'size' => 10,
 				'unit' => 'px',
 			]),
 		]);
-		$height_value = Size_Prop_Type::generate( [
+		$min_height = Size_Prop_Type::generate( [
 			'size' => 100,
 			'unit' => 'px',
 		] );
@@ -174,9 +174,9 @@ class Div_Block extends Atomic_Element_Base {
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'display', $display_value )
-						->add_prop( 'padding', $padding_value )
-						->add_prop( 'height', $height_value )
+						->add_prop( 'display', $display )
+						->add_prop( 'padding', $padding )
+						->add_prop( 'min-height', $min_height )
 				),
 		];
 	}
