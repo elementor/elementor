@@ -16,7 +16,7 @@ import {
 import { AlertTriangleFilledIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-export const OptIn = () => {
+export const AdminTab = () => {
 	const i18n = {
 		title: __( 'The Road to Editor V4', 'elementor' ),
 		chip: __( 'Alpha', 'elementor' ),

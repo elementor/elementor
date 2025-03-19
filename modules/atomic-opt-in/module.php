@@ -68,6 +68,7 @@ class Module extends BaseModule {
 	private function register_scripts() {
 		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_scripts' ] );
 		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_styles' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}
 
 	public function enqueue_styles() {
