@@ -13,6 +13,10 @@ class Module extends BaseModule {
 	const MODULE_NAME = 'editor-v4-opt-in';
 	const EXPERIMENT_NAME = 'editor_v4_opt_in';
 
+	public function get_name() {
+		return 'atomic-opt-in';
+	}
+
 	public static function get_experimental_data(): array {
 		return [
 			'name' => self::EXPERIMENT_NAME,
@@ -33,15 +37,11 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->register_settings_tab();
-		$this->register_scripts();
+		$this->register_assets();
+		$this->add_settings_tab();
 	}
 
-	public function get_name() {
-		return self::MODULE_NAME;
-	}
-
-	private function register_settings_tab() {
+	private function add_settings_tab() {
 		$page_id = Settings::PAGE_ID;
 
 		add_action( "elementor/admin/after_create_settings/{$page_id}", function( Settings $settings ) {
@@ -65,14 +65,14 @@ class Module extends BaseModule {
 		return $this;
 	}
 
-	private function register_scripts() {
+	private function register_assets() {
 		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_scripts' ] );
 		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_styles' ] );
 	}
 
 	public function enqueue_styles() {
 		wp_enqueue_style(
-			$this->get_name(),
+			self::MODULE_NAME,
 			$this->get_css_assets_url( 'modules/editor-v4-opt-in/opt-in' ),
 			[],
 			ELEMENTOR_VERSION
@@ -83,7 +83,7 @@ class Module extends BaseModule {
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
-			$this->get_name(),
+			self::MODULE_NAME,
 			ELEMENTOR_ASSETS_URL . 'js/editor-v4-opt-in' . $min_suffix . '.js',
 			[
 				'react',
