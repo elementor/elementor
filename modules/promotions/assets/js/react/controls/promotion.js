@@ -1,4 +1,3 @@
-import App from '../app';
 import { default as ControlBaseDataView } from 'elementor-controls/base-data';
 import { AppManager } from '../app-manager';
 export default class extends ControlBaseDataView {

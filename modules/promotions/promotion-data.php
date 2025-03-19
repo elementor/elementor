@@ -26,7 +26,7 @@ class PromotionData {
 			];
 		} else {
 			return [
-				Utils::V4_CHIP => $this->get_v4_promotion_data( $assets_data )
+				Utils::V4_CHIP => $this->get_v4_promotion_data( $assets_data ),
 			];
 		}
 	}

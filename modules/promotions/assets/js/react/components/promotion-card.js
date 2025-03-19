@@ -20,7 +20,7 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 		ctaText = promotionsData?.upgrade_text,
 		ctaUrl = promotionsData?.upgrade_url;
 
-	const isV4 = title === 'Elementor V.4';
+	const isV4 = 'Elementor V.4' === title;
 
 	const redirectHandler = () => {
 		window.open( ctaUrl, '_blank' );
@@ -55,7 +55,7 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 					<Button
 						variant="contained"
 						size="small"
-						color={ isV4 ? "primary" : "promotion" }
+						color={ isV4 ? 'primary' : 'promotion' }
 						onClick={ redirectHandler }
 						sx={ { ml: 'auto' } }
 					>{ ctaText }</Button>
