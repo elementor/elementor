@@ -10,6 +10,7 @@ import {
 	Link,
 	styled,
 	Snackbar,
+	SvgIcon,
 	Alert,
 } from '@elementor/ui';
 import { AlertTriangleFilledIcon } from '@elementor/icons';
@@ -37,7 +38,7 @@ export const OptIn = () => {
 		image: __( 'Editor V4', 'elementor' ),
 
 		message: {
-			success: __( 'Title: You’ve successfully opted in to V4!', 'elementor' ),
+			success: __( 'You’ve successfully opted in to V4!', 'elementor' ),
 			error: __( 'Something went wrong. Please try again or contact support if the issue persists.', 'elementor' ),
 		},
 	};
@@ -50,7 +51,7 @@ export const OptIn = () => {
 	const imageSrcLandscape = '';
 	const imageSrcSquare = '';
 
-	const feedbackUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
+	const feedbackUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-feedback/';
 	const readMoreUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
 
 	const maybeOptIn = () => {
@@ -109,9 +110,31 @@ export const OptIn = () => {
 				<Typography>{ i18n.helpImprove } <Link href={ feedbackUrl } target="_blank">{ i18n.feedback }</Link></Typography>
 			</Stack>
 
-			<Stack sx={ { flex: 1, maxWidth: 'sm', p: { xs: 0, md: 5 } } }>
-				<Image src={ imageSrcSquare } alt={ i18n.image } sx={ { display: { xs: 'none', md: 'block' } } } />
-				<Image src={ imageSrcLandscape } alt={ i18n.image } sx={ { display: { xs: 'block', md: 'none' } } } />
+			<Stack alignItems="flex-start" sx={ { flex: 1, px: { xs: 0, md: 5 } } }>
+				{ imageSrcSquare ? (
+					<Image src={ imageSrcSquare } alt={ i18n.image } sx={ { display: { xs: 'none', md: 'block' } } } />
+				) : (
+					<ImageSquarePlaceholder sx={ {
+						display: { xs: 'none', md: 'block' },
+						maxWidth: 'sm',
+						width: '100%',
+						maxHeight: '500px',
+						height: 'auto',
+						mx: 'auto',
+					} } />
+				) }
+
+				{ imageSrcLandscape ? (
+					<Image src={ imageSrcLandscape } alt={ i18n.image } sx={ { display: { xs: 'block', md: 'none' } } } />
+				) : (
+					<ImageLandscapePlaceholder sx={ {
+						display: { xs: 'block', md: 'none' },
+						width: '100%',
+						height: 'auto',
+						maxHeight: '260px',
+						mx: 'auto',
+					} } />
+				) }
 			</Stack>
 
 			{ successMessage && (
@@ -126,6 +149,22 @@ export const OptIn = () => {
 				</Snackbar>
 			) }
 		</Container>
+	);
+};
+
+const ImageLandscapePlaceholder = ( props ) => {
+	return (
+		<SvgIcon viewBox="0 0 600 260" { ...props }>
+			<rect x="0" y="0" width="600" height="260" fill="#d9d9d9" />
+		</SvgIcon>
+	);
+};
+
+const ImageSquarePlaceholder = ( props ) => {
+	return (
+		<SvgIcon viewBox="0 0 500 500" { ...props }>
+			<rect x="0" y="0" width="500" height="500" fill="#d9d9d9" />
+		</SvgIcon>
 	);
 };
 
