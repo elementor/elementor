@@ -24,7 +24,7 @@ export class AtomicWidgetView extends elementor.modules.elements.views.Widget {
 	}
 
 	// Change the drag handle because the $el is not the draggable element (`display: contents`).
-	getDraggableElement() {
+	getDomElement() {
 		return this.$el.find( ':first-child' );
 	}
 

@@ -2,7 +2,7 @@ import DivBlockEmptyView from './container/div-block-empty-view';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 const DivBlockView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-div-block-content' ),
+	template: Marionette.TemplateCache.get( '#tmpl-elementor-e-div-block-content' ),
 
 	emptyView: DivBlockEmptyView,
 
@@ -137,7 +137,7 @@ const DivBlockView = BaseElementView.extend( {
 			},
 		} );
 
-		return elementor.hooks.applyFilters( 'elements/div-block/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( 'elements/e-div-block/behaviors', behaviors, this );
 	},
 
 	/**
@@ -377,7 +377,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getBaseClass() {
-		return 'flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'flexbox-base' : 'div-block-base';
+		return 'flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'e-flexbox-base' : 'e-div-block-base';
 	},
 } );
 

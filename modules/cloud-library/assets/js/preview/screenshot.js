@@ -401,7 +401,7 @@ class Screenshot extends elementorModules.ViewModule {
 		const templateId = this.getSettings( 'template_id' );
 		const postId = this.getSettings( 'post_id' );
 
-		const message = templateId ? 'capture-cloud-template-screenshot-done' : 'capture-screenshot-done';
+		const message = templateId ? 'library/capture-screenshot-done' : 'capture-screenshot-done';
 
 		// Send the message to the parent window and not to the top.
 		// e.g: The `Theme builder` is loaded into an iFrame so the message of the screenshot

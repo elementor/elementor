@@ -147,4 +147,41 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 			elementor.templates.layout.hideLoadingView();
 		}
 	},
+
+	createScreenshotIframe( previewUrl ) {
+		const iframe = document.createElement( 'iframe' );
+
+		iframe.src = previewUrl;
+		iframe.width = '1200';
+		iframe.height = '500';
+		iframe.style = 'visibility: hidden;';
+
+		document.body.appendChild( iframe );
+
+		return iframe;
+	},
+
+	handleBulkActionBar() {
+		const selectedCount = elementor.templates.getBulkSelectionItems().size ?? 0;
+		const display = 0 === selectedCount ? 'none' : 'flex';
+
+		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );
+		this.modalContent.currentView.ui.bulkSelectionActionBar.css( 'display', display );
+	},
+
+	selectAllCheckboxMinus() {
+		if ( this.isListView() ) {
+			this.modalContent.currentView.ui.bulkSelectAllCheckbox.addClass( 'checkbox-minus' );
+		}
+	},
+
+	selectAllCheckboxNormal() {
+		if ( this.isListView() ) {
+			this.modalContent.currentView.ui.bulkSelectAllCheckbox.removeClass( 'checkbox-minus' );
+		}
+	},
+
+	isListView() {
+		return 'list' === elementor.templates.getViewSelection();
+	},
 } );

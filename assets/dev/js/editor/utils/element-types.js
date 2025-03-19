@@ -1,13 +1,13 @@
 const ELEMENT_TYPES = {
   SECTION: 'section',
   CONTAINER: 'container',
-  DIV_BLOCK: 'div-block',
+  DIV_BLOCK: 'e-div-block',
   FLEXBOX: 'flexbox'
 };
 
 /**
  * Returns an array of all available element types.
- * 
+ *
  * @return {string[]} Array of element type strings.
  */
 const getAllElementTypes = () => {
@@ -17,4 +17,4 @@ const getAllElementTypes = () => {
 module.exports = {
   ELEMENT_TYPES,
   getAllElementTypes
-}; 
+};
