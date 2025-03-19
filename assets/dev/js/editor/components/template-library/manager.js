@@ -493,7 +493,7 @@ const TemplateLibraryManager = function() {
 			_.extend( ajaxParams, templateType.ajaxParams );
 		}
 
-		elementorCommon.ajax.addRequest( this.getSaveAjaxAction( save_context ), ajaxParams );
+		elementorCommon.ajax.addRequest( this.getSaveAjaxAction( data.save_context ), ajaxParams );
 	};
 
 	this.getSaveAjaxAction = function( saveContext ) {

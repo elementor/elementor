@@ -1078,7 +1078,7 @@ class Manager {
 			$this->delete_original_template( $args );
 		}
 
-		return 1 === count( $results ) ? $results[0] : $results;
+		return $results;
 	}
 
 	private function bulk_move_template_items( array $args ) {

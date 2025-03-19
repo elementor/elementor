@@ -349,11 +349,11 @@ class Source_Cloud extends Source_Base {
 		return $document;
 	}
 
-	public function save_bulk_items( $data ) {
+	public function save_bulk_items( array $args = [] ) {
 		$app = $this->get_app();
 		$items = [];
 
-		foreach ( $data as $template_data ) {
+		foreach ( $args as $template_data ) {
 			$items[] = $this->format_resource_item_for_create( $template_data );
 		}
 
@@ -362,7 +362,7 @@ class Source_Cloud extends Source_Base {
 		return $response;
 	}
 
-	public function get_bulk_items( $args ) {
+	public function get_bulk_items( array $args = [] ) {
 		$app = $this->get_app();
 
 		$response = $app->get_resources_with_content( $args );
