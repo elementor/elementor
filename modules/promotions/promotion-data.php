@@ -15,13 +15,20 @@ class PromotionData {
 	public function get_promotion_data( $force_request = false ): array {
 		$assets_data = $this->transform_assets_data( $force_request );
 
-		return [
-			Utils::ANIMATED_HEADLINE => $this->get_animated_headline_data( $assets_data ),
-			Utils::VIDEO_PLAYLIST => $this->get_video_playlist_data( $assets_data ),
-			Utils::CTA => $this->get_cta_button_data( $assets_data ),
-			Utils::IMAGE_CAROUSEL => $this->get_image_carousel_data( $assets_data ),
-			Utils::TESTIMONIAL_WIDGET => $this->get_testimonial_widget_data( $assets_data ),
-		];
+		if ( ! Utils::has_pro() ) {
+			return [
+				Utils::ANIMATED_HEADLINE => $this->get_animated_headline_data( $assets_data ),
+				Utils::VIDEO_PLAYLIST => $this->get_video_playlist_data( $assets_data ),
+				Utils::CTA => $this->get_cta_button_data( $assets_data ),
+				Utils::IMAGE_CAROUSEL => $this->get_image_carousel_data( $assets_data ),
+				Utils::TESTIMONIAL_WIDGET => $this->get_testimonial_widget_data( $assets_data ),
+				Utils::V4_CHIP => $this->get_v4_promotion_data( $assets_data ),
+			];
+		} else {
+			return [
+				Utils::V4_CHIP => $this->get_v4_promotion_data( $assets_data )
+			];
+		}
 	}
 
 	private function transform_assets_data( $force_request = false ) {
@@ -118,6 +125,24 @@ class PromotionData {
 		];
 
 		return $this->filter_data( Utils::TESTIMONIAL_WIDGET, $data );
+	}
+
+	private function get_v4_promotion_data( $assets_data ) {
+		$data = [
+			'image' => esc_url( 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png' ),
+			'image_alt' => esc_attr__( 'Elementor V.4', 'elementor' ),
+			'title' => esc_html__( 'Elementor V.4', 'elementor' ),
+			'description' => [
+				esc_html__( 'Faster than ever Before', 'elementor' ),
+				esc_html__( 'Atomic components', 'elementor' ),
+				esc_html__( 'CSS empowered designs', 'elementor' ),
+				esc_html__( 'Fully responsive design', 'elementor' ),
+			],
+			'upgrade_text' => esc_html__( 'Learn more', 'elementor' ),
+			'upgrade_url' => 'https://elementor.com/help/',
+		];
+
+		return $this->filter_data( Utils::V4_CHIP, $data );
 	}
 
 	private function filter_data( $widget_name, $asset_data ): array {

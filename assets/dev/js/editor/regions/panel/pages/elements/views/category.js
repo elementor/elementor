@@ -1,3 +1,5 @@
+import { AppManager as PopupManager } from 'elementor-modules/promotions/assets/js/react/app-manager';
+
 var PanelElementsElementsCollection = require( '../collections/elements' ),
 	PanelElementsCategoryView;
 
@@ -6,13 +8,20 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	className: 'elementor-panel-category',
 
+	chipSelectors: {
+		wrapperElement: '.elementor-panel-category-title',
+		reactAnchor: '.e-promotion-react-wrapper',
+	},
+
 	ui: {
 		title: '.elementor-panel-category-title',
 		items: '.elementor-panel-category-items',
+		chip: '.elementor-panel-heading-category-chip',
 	},
 
 	events: {
 		'click @ui.title': 'onTitleClick',
+		'click @ui.chip': 'onChipClick',
 	},
 
 	id() {
@@ -24,6 +33,8 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	childViewContainer: '.elementor-panel-category-items',
 
 	initialize() {
+		this.PopupManager = new PopupManager();
+
 		let items = this.model.get( 'items' ) || [];
 
 		switch ( this.model.get( 'sort' ) ) {
@@ -90,6 +101,11 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		} else {
 			$items[ visibilityFn ]( 0, updateScrollbar );
 		}
+	},
+
+	onChipClick( event ) {
+		event.stopPropagation();
+		this.PopupManager.mount( event.target, this.chipSelectors );
 	},
 } );
 
