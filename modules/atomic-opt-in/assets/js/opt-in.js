@@ -9,6 +9,8 @@ import {
 	Chip,
 	Link,
 	styled,
+	Snackbar,
+	Alert,
 } from '@elementor/ui';
 import { AlertTriangleFilledIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
@@ -35,12 +37,15 @@ export const OptIn = () => {
 		image: __( 'Editor V4', 'elementor' ),
 
 		message: {
-			success: __( '', 'elementor' ),
+			success: __( 'Title: You’ve successfully opted in to V4!', 'elementor' ),
 			error: __( 'Something went wrong. Please try again or contact support if the issue persists.', 'elementor' ),
 		},
 	};
 
 	const [ isEnrolled, setIsEnrolled ] = useState( false );
+
+	const [ successMessage, setSuccessMessage ] = useState( '' );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const imageSrcLandscape = '';
 	const imageSrcSquare = '';
@@ -50,10 +55,12 @@ export const OptIn = () => {
 
 	const maybeOptIn = () => {
 		setIsEnrolled( true );
+		setSuccessMessage( i18n.message.success );
 	};
 
 	const maybeOptOut = () => {
 		setIsEnrolled( false );
+		setErrorMessage( i18n.message.error );
 	};
 
 	const maybeStart = () => {};
@@ -106,6 +113,18 @@ export const OptIn = () => {
 				<Image src={ imageSrcSquare } alt={ i18n.image } sx={ { display: { xs: 'none', md: 'block' } } } />
 				<Image src={ imageSrcLandscape } alt={ i18n.image } sx={ { display: { xs: 'block', md: 'none' } } } />
 			</Stack>
+
+			{ successMessage && (
+				<Snackbar open autoHideDuration={ 2000 } anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } } onClose={ () => setSuccessMessage( '' ) }>
+					<Alert severity="success" onClose={ () => setSuccessMessage( '' ) }>{ successMessage }</Alert>
+				</Snackbar>
+			) }
+
+			{ errorMessage && (
+				<Snackbar open autoHideDuration={ 4000 } anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } } onClose={ () => setErrorMessage( '' ) }>
+					<Alert severity="error" onClose={ () => setErrorMessage( '' ) }>{ errorMessage }</Alert>
+				</Snackbar>
+			) }
 		</Container>
 	);
 };
