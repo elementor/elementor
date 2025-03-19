@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Svg extends Atomic_Widget_Base {
 	const BASE_STYLE_KEY = 'base';
 	const DEFAULT_SVG = 'images/default-svg.svg';
+	const DEFAULT_SVG_PATH = ELEMENTOR_ASSETS_PATH . self::DEFAULT_SVG;
+	const DEFAULT_SVG_URL = ELEMENTOR_ASSETS_URL . self::DEFAULT_SVG;
 
 	public static function get_element_type(): string {
 		return 'e-svg';
@@ -41,7 +43,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'svg' => Image_Src_Prop_Type::make()->default_url( static::get_default_svg( 'url' ) ),
+			'svg' => Image_Src_Prop_Type::make()->default_url( static::DEFAULT_SVG_URL ),
 			'link' => Link_Prop_Type::make(),
 		];
 	}
@@ -114,7 +116,6 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	private function get_svg_content( $settings ) {
-
 		if ( isset( $settings['svg']['id'] ) ) {
 			$content = Utils::file_get_contents(
 				get_attached_file( $settings['svg']['id'] )
@@ -127,7 +128,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		if (
 			isset( $settings['svg']['url'] ) &&
-			static::get_default_svg( 'url' ) !== $settings['svg']['url']
+			static::DEFAULT_SVG_URL !== $settings['svg']['url']
 		) {
 			$content = wp_safe_remote_get(
 				$settings['svg']['url']
@@ -139,26 +140,9 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		}
 
 		$content = Utils::file_get_contents(
-			static::get_default_svg( 'path' )
+			static::DEFAULT_SVG_PATH
 		);
 
 		return $content ? $content : null;
-	}
-
-	/**
-	 * @param string $context 'url' | 'path'
-	 *
-	 * @return string
-	 */
-	private static function get_default_svg( string $context ) {
-		if ( 'path' === $context ) {
-			return ELEMENTOR_ASSETS_PATH . self::DEFAULT_SVG;
-		}
-
-		if ( 'url' === $context ) {
-			return ELEMENTOR_ASSETS_URL . self::DEFAULT_SVG;
-		}
-
-		return null;
 	}
 }
