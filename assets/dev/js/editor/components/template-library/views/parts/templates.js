@@ -457,7 +457,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		} );
 	},
 
-	onHoverBulkMove(){
+	onHoverBulkMove() {
 		if ( this.hasFolderInBulkSelection() ) {
 			this.ui.bulkMove.find( 'i' ).css( 'cursor', 'not-allowed' );
 		} else {

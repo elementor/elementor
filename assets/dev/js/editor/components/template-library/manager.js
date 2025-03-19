@@ -498,12 +498,12 @@ const TemplateLibraryManager = function() {
 
 	this.getSaveAjaxAction = function( saveContext ) {
 		const saveActions = {
-			[SAVE_CONTEXTS.SAVE]: 'save_template',
-			[SAVE_CONTEXTS.MOVE]: 'move_template',
-			[SAVE_CONTEXTS.BULK_MOVE]: 'bulk_move_templates',
+			[ SAVE_CONTEXTS.SAVE ]: 'save_template',
+			[ SAVE_CONTEXTS.MOVE ]: 'move_template',
+			[ SAVE_CONTEXTS.BULK_MOVE ]: 'bulk_move_templates',
 		};
 
-		return saveActions[saveContext] ?? 'save_template';
+		return saveActions[ saveContext ] ?? 'save_template';
 	}
 
 	this.requestTemplateContent = function( source, id, ajaxOptions ) {
