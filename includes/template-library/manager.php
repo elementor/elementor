@@ -1060,25 +1060,9 @@ class Manager {
 			return $validate_args;
 		}
 
-		$sources = (array) $args['source']; // BC
-		$results = [];
-		$should_delete_template = true;
+		$args['source'] = $args['source'][0];
 
-		foreach ( $sources as $source ) {
-			$args_copy = $args;
-			$args_copy['source'] = $source;
-			$results[] = $this->bulk_move_template_items( $args_copy );
-
-			if ( $this->is_moving_to_same_source( $args_copy ) ) {
-				$should_delete_template = false;
-			}
-		}
-
-		if ( $should_delete_template ) {
-			$this->delete_original_template( $args );
-		}
-
-		return $results;
+		return $this->bulk_move_template_items( $args );
 	}
 
 	private function bulk_move_template_items( array $args ) {
