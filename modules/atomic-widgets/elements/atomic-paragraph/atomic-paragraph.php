@@ -24,11 +24,15 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	use Has_Template;
 
 	public static function get_element_type(): string {
-		return 'a-paragraph';
+		return 'e-paragraph';
 	}
 
 	public function get_title() {
 		return esc_html__( 'Paragraph', 'elementor' );
+	}
+
+	public function get_keywords() {
+		return [ 'atoms', 'atomic' ];
 	}
 
 	public function get_icon() {

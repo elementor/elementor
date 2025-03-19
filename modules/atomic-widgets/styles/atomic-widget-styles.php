@@ -4,8 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
@@ -14,8 +13,7 @@ class Atomic_Widget_Styles {
 	}
 
 	private function parse_element_style( Post $post, Element_Base $element ) {
-		if ( ! ( $element instanceof Atomic_Widget_Base || $element instanceof Atomic_Element_Base )
-			|| Post::class !== get_class( $post ) ) {
+		if ( ! Utils::is_atomic( $element ) || Post::class !== get_class( $post ) ) {
 			return;
 		}
 
