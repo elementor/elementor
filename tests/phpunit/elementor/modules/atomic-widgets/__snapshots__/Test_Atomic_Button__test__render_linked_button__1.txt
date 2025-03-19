@@ -2,7 +2,7 @@
     <a
             href="https://example.com"
             target="_blank"
-            class="e-button-base"
+            class="a-button-base"
     >
         Click here
     </a>

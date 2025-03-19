@@ -1,23 +1,45 @@
 <?php
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class Test_Atomic_Button extends Elementor_Test_Base {
 	use MatchesSnapshots;
+	const MOCK = [
+		'id' => 'e8e55a1',
+		'elType' => 'widget',
+		'settings' => [],
+		'widgetType' => 'a-button',
+	];
+
+	const MOCK_LINK = [
+		'id' => 'e8e55a1',
+		'elType' => 'widget',
+		'settings' => [
+			'link' => [
+				'href' => 'https://example.com',
+				'target' => '_blank',
+			],
+		],
+		'widgetType' => 'a-button',
+	];
+
+	const MOCK_LINK_TARGET_SELF = [
+		'id' => 'e8e55a1',
+		'elType' => 'widget',
+		'settings' => [
+			'link' => [
+				'href' => 'https://example.com',
+				'target' => '_self',
+			],
+		],
+		'widgetType' => 'a-button',
+	];
 
 	public function test__render_button(): void {
 		// Arrange.
-		$mock = [
-			'id' => 'e8e55a1',
-			'elType' => 'widget',
-			'settings' => [],
-			'widgetType' => Atomic_Button::get_element_type(),
-		];
-
-		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK );
 
 		// Act.
 		ob_start();
@@ -30,19 +52,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 
 	public function test__render_linked_button(): void {
 		// Arrange.
-		$mock_link = [
-			'id' => 'e8e55a1',
-			'elType' => 'widget',
-			'settings' => [
-				'link' => [
-					'href' => 'https://example.com',
-					'target' => '_blank',
-				],
-			],
-			'widgetType' => Atomic_Button::get_element_type(),
-		];
-
-		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_link );
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK_LINK );
 
 		// Act.
 		ob_start();
@@ -55,19 +65,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 
 	public function test__render_linked_button_target_self(): void {
 		// Arrange.
-		$mock_link_target_self = [
-			'id' => 'e8e55a1',
-			'elType' => 'widget',
-			'settings' => [
-				'link' => [
-					'href' => 'https://example.com',
-					'target' => '_self',
-				],
-			],
-			'widgetType' => Atomic_Button::get_element_type(),
-		];
-
-		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_link_target_self );
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( self::MOCK_LINK_TARGET_SELF );
 
 		// Act.
 		ob_start();

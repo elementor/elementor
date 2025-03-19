@@ -1,5 +1,5 @@
 			
-    <button class="e-button-base">
+    <button class="a-button-base">
         Click here
     </button>
 		

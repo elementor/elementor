@@ -24,11 +24,11 @@ class Div_Block extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-div-block';
+		return 'div-block';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-div-block';
+		return 'div-block';
 	}
 
 	public function get_title() {
@@ -93,7 +93,7 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
-		if ( 'container' === $element_data['elType'] || 'e-div-block' === $element_data['elType'] ) {
+		if ( 'container' === $element_data['elType'] || 'div-block' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 		}
 
