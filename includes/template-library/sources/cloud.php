@@ -275,14 +275,12 @@ class Source_Cloud extends Source_Base {
 	}
 
 	public function move_bulk_templates_to_folder( array $args = [] ) {
-		$app = $this->get_app();
-
 		$move_args = [
 			'ids' => $args['from_template_id'],
 			'parentId' => ! empty( $args['parentId'] ) ? (int) $args['parentId'] : null,
 		];
 
-		return $app->bulk_move_templates( $move_args );
+		return $this->get_app()->bulk_move_templates( $move_args );
 	}
 
 	public function save_item_preview( $template_id, $data ) {
