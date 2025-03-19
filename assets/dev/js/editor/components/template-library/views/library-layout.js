@@ -160,4 +160,28 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		return iframe;
 	},
+
+	handleBulkActionBar() {
+		const selectedCount = elementor.templates.getBulkSelectionItems().size ?? 0;
+		const display = 0 === selectedCount ? 'none' : 'flex';
+
+		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );
+		this.modalContent.currentView.ui.bulkSelectionActionBar.css( 'display', display );
+	},
+
+	selectAllCheckboxMinus() {
+		if ( this.isListView() ) {
+			this.modalContent.currentView.ui.bulkSelectAllCheckbox.addClass( 'checkbox-minus' );
+		}
+	},
+
+	selectAllCheckboxNormal() {
+		if ( this.isListView() ) {
+			this.modalContent.currentView.ui.bulkSelectAllCheckbox.removeClass( 'checkbox-minus' );
+		}
+	},
+
+	isListView() {
+		return 'list' === elementor.templates.getViewSelection();
+	},
 } );
