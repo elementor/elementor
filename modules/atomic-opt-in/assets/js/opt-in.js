@@ -153,14 +153,14 @@ export const OptIn = () => {
 			</Stack>
 
 			{ successMessage && (
-				<Snackbar open autoHideDuration={ 2000 } anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } } onClose={ () => setSuccessMessage( '' ) }>
-					<Alert severity="success" onClose={ () => setSuccessMessage( '' ) }>{ successMessage }</Alert>
+				<Snackbar open autoHideDuration={ 2000 } anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } } onClose={ () => setSuccessMessage( '' ) }>
+					<Alert variant="filled" severity="success" onClose={ () => setSuccessMessage( '' ) }>{ successMessage }</Alert>
 				</Snackbar>
 			) }
 
 			{ errorMessage && (
-				<Snackbar open autoHideDuration={ 4000 } anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } } onClose={ () => setErrorMessage( '' ) }>
-					<Alert severity="error" onClose={ () => setErrorMessage( '' ) }>{ errorMessage }</Alert>
+				<Snackbar open autoHideDuration={ 4000 } anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } } onClose={ () => setErrorMessage( '' ) }>
+					<Alert variant="filled" severity="error" onClose={ () => setErrorMessage( '' ) }>{ errorMessage }</Alert>
 				</Snackbar>
 			) }
 		</Container>
