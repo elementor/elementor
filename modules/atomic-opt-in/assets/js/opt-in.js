@@ -8,7 +8,6 @@ import {
 	Image,
 	Chip,
 	Link,
-	styled,
 	Snackbar,
 	SvgIcon,
 	Alert,
@@ -82,14 +81,14 @@ export const OptIn = () => {
 
 				<Typography variant="body1">{ i18n.welcomeText }</Typography>
 
-				<Box component="ul">
-					{ i18n.advantages.map( ( desc, i ) => (
-						<BoxItem key={ i } component="li">{ desc }</BoxItem>
+				<ContentList>
+					{ i18n.advantages.map( ( entry, i ) => (
+						<ContentListItem key={ i }>{ entry }</ContentListItem>
 					) ) }
-					<BoxItem component="li" key="e-0">
+					<ContentListItem key="e-0">
 						{ i18n.andMore } <Link href={ readMoreUrl } target="_blank">{ i18n.readMore }</Link>
-					</BoxItem>
-				</Box>
+					</ContentListItem>
+				</ContentList>
 
 				<Stack direction="row" alignItems="self-start" gap={ 1 }>
 					<AlertTriangleFilledIcon />
@@ -110,9 +109,16 @@ export const OptIn = () => {
 				<Typography>{ i18n.helpImprove } <Link href={ feedbackUrl } target="_blank">{ i18n.feedback }</Link></Typography>
 			</Stack>
 
-			<Stack alignItems="flex-start" sx={ { flex: 1, px: { xs: 0, md: 5 } } }>
+			<Stack sx={ { flex: 1, px: { xs: 0, md: 5 } } }>
 				{ imageSrcSquare ? (
-					<Image src={ imageSrcSquare } alt={ i18n.image } sx={ { display: { xs: 'none', md: 'block' } } } />
+					<Image
+						src={ imageSrcSquare }
+						alt={ i18n.image }
+						sx={ {
+							display: { xs: 'none', md: 'block' },
+							width: '100%',
+							maxHeight: '500px',
+						} } />
 				) : (
 					<ImageSquarePlaceholder sx={ {
 						display: { xs: 'none', md: 'block' },
@@ -125,7 +131,16 @@ export const OptIn = () => {
 				) }
 
 				{ imageSrcLandscape ? (
-					<Image src={ imageSrcLandscape } alt={ i18n.image } sx={ { display: { xs: 'block', md: 'none' } } } />
+					<Image
+						src={ imageSrcLandscape }
+						alt={ i18n.image }
+						sx={ {
+							display: { xs: 'block', md: 'none' },
+							mx: 'auto',
+							width: '100%',
+							maxWidth: 'sm',
+							maxHeight: '260px',
+						} } />
 				) : (
 					<ImageLandscapePlaceholder sx={ {
 						display: { xs: 'block', md: 'none' },
@@ -152,6 +167,30 @@ export const OptIn = () => {
 	);
 };
 
+const ContentList = ( { children, ...props } ) => {
+	return (
+		<Box component="ul" { ...props }>
+			{ children }
+		</Box>
+	);
+};
+
+ContentList.propTypes = {
+	children: PropTypes.node,
+};
+
+const ContentListItem = ( { children, ...props } ) => {
+	return (
+		<Typography component="li" sx={ { listStyle: 'disc', marginInlineStart: 4 } } { ...props }>
+			{ children }
+		</Typography>
+	);
+};
+
+ContentListItem.propTypes = {
+	children: PropTypes.node,
+};
+
 const ImageLandscapePlaceholder = ( props ) => {
 	return (
 		<SvgIcon viewBox="0 0 600 260" { ...props }>
@@ -167,8 +206,3 @@ const ImageSquarePlaceholder = ( props ) => {
 		</SvgIcon>
 	);
 };
-
-const BoxItem = styled( Typography )( ( { theme } ) => ( {
-	listStyle: 'disc',
-	marginInlineStart: theme.spacing( 4 ),
-} ) );
