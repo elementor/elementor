@@ -17,7 +17,7 @@ export const OptIn = () => {
 	const i18n = {
 		title: __( 'The Road to Editor V4', 'elementor' ),
 		chip: __( 'Alpha', 'elementor' ),
-		welcomeText: __( `Welcome to a new era of web creation with Elementor. Editor V4 is faster, more flexible, and built for modern design. Here's what's inside:`, 'elementor' ),
+		welcomeText: __( "Welcome to a new era of web creation with Elementor. Editor V4 is faster, more flexible, and built for modern design. Here's what's inside:", 'elementor' ),
 		advantages: [
 			__( 'Cleaner code & lighter CSS output for better performance', 'elementor' ),
 			__( 'Advanced CSS styling fo classes & states', 'elementor' ),
@@ -30,7 +30,7 @@ export const OptIn = () => {
 		startButton: __( 'Start building in V4', 'elementor' ),
 		optInButton: __( 'Opt-in to V4', 'elementor' ),
 		optOutButton: __( 'Opt-out from V4', 'elementor' ),
-		helpImprove: __( `We'd love to hear from you.`, 'elementor' ),
+		helpImprove: __( "We'd love to hear from you.", 'elementor' ),
 		feedback: __( 'Send us your feedback', 'elementor' ),
 		image: __( 'Editor V4', 'elementor' ),
 
@@ -75,9 +75,9 @@ export const OptIn = () => {
 				<Typography variant="body1">{ i18n.welcomeText }</Typography>
 
 				<Box component="ul">
-					{ i18n.advantages.map(
-						( desc, i ) => <BoxItem component="li" key={ i }>{ desc }</BoxItem>
-					) }
+					{ i18n.advantages.map( ( desc, i ) => (
+						<BoxItem key={ i } component="li">{ desc }</BoxItem>
+					) ) }
 					<BoxItem component="li" key="e-0">
 						{ i18n.andMore } <Link href={ readMoreUrl } target="_blank">{ i18n.readMore }</Link>
 					</BoxItem>
@@ -103,8 +103,8 @@ export const OptIn = () => {
 			</Stack>
 
 			<Stack sx={ { flex: 1, maxWidth: 'sm', p: { xs: 0, md: 5 } } }>
-				<Image src={ imageSrcSquare} alt={ i18n.image } sx={ { display: { xs: 'none', md: 'block' } } } />
-				<Image src={ imageSrcLandscape} alt={ i18n.image } sx={ { display: { xs: 'block', md: 'none' } } } />
+				<Image src={ imageSrcSquare } alt={ i18n.image } sx={ { display: { xs: 'none', md: 'block' } } } />
+				<Image src={ imageSrcLandscape } alt={ i18n.image } sx={ { display: { xs: 'block', md: 'none' } } } />
 			</Stack>
 		</Container>
 	);
