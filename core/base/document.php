@@ -732,7 +732,7 @@ abstract class Document extends Controls_Stack {
 			}
 
 			if ( Plugin::$instance->experiments->is_feature_active( 'atomic_widgets' ) ) {
-				$atomic_elements = ['e-div-block', 'flexbox'];
+				$atomic_elements = [ 'e-div-block', 'flexbox' ];
 
 				foreach ( $atomic_elements as $element ) {
 					$container_config[ $element ] = Plugin::$instance->elements_manager->get_element_types( $element )->get_config();
