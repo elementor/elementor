@@ -8,7 +8,6 @@ import {
 	Image,
 	Chip,
 	Link,
-	styled,
 	Snackbar,
 	SvgIcon,
 	Alert,
@@ -82,14 +81,14 @@ export const AdminTab = () => {
 
 				<Typography variant="body1">{ i18n.welcomeText }</Typography>
 
-				<Box component="ul">
-					{ i18n.advantages.map( ( desc, i ) => (
-						<BoxItem key={ i } component="li">{ desc }</BoxItem>
+				<ContentList>
+					{ i18n.advantages.map( ( entry, i ) => (
+						<ContentListItem key={ i }>{ entry }</ContentListItem>
 					) ) }
-					<BoxItem component="li" key="e-0">
+					<ContentListItem key="e-0">
 						{ i18n.andMore } <Link href={ readMoreUrl } target="_blank">{ i18n.readMore }</Link>
-					</BoxItem>
-				</Box>
+					</ContentListItem>
+				</ContentList>
 
 				<Stack direction="row" alignItems="self-start" gap={ 1 }>
 					<AlertTriangleFilledIcon />
@@ -110,9 +109,16 @@ export const AdminTab = () => {
 				<Typography>{ i18n.helpImprove } <Link href={ feedbackUrl } target="_blank">{ i18n.feedback }</Link></Typography>
 			</Stack>
 
-			<Stack alignItems="flex-start" sx={ { flex: 1, px: { xs: 0, md: 5 } } }>
+			<Stack sx={ { flex: 1, px: { xs: 0, md: 5 } } }>
 				{ imageSrcSquare ? (
-					<Image src={ imageSrcSquare } alt={ i18n.image } sx={ { display: { xs: 'none', md: 'block' } } } />
+					<Image
+						src={ imageSrcSquare }
+						alt={ i18n.image }
+						sx={ {
+							display: { xs: 'none', md: 'block' },
+							width: '100%',
+							maxHeight: '500px',
+						} } />
 				) : (
 					<ImageSquarePlaceholder sx={ {
 						display: { xs: 'none', md: 'block' },
@@ -125,7 +131,16 @@ export const AdminTab = () => {
 				) }
 
 				{ imageSrcLandscape ? (
-					<Image src={ imageSrcLandscape } alt={ i18n.image } sx={ { display: { xs: 'block', md: 'none' } } } />
+					<Image
+						src={ imageSrcLandscape }
+						alt={ i18n.image }
+						sx={ {
+							display: { xs: 'block', md: 'none' },
+							mx: 'auto',
+							width: '100%',
+							maxWidth: 'sm',
+							maxHeight: '260px',
+						} } />
 				) : (
 					<ImageLandscapePlaceholder sx={ {
 						display: { xs: 'block', md: 'none' },
@@ -138,18 +153,42 @@ export const AdminTab = () => {
 			</Stack>
 
 			{ successMessage && (
-				<Snackbar open autoHideDuration={ 2000 } anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } } onClose={ () => setSuccessMessage( '' ) }>
-					<Alert severity="success" onClose={ () => setSuccessMessage( '' ) }>{ successMessage }</Alert>
+				<Snackbar open autoHideDuration={ 2000 } anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } } onClose={ () => setSuccessMessage( '' ) }>
+					<Alert variant="filled" severity="success" onClose={ () => setSuccessMessage( '' ) }>{ successMessage }</Alert>
 				</Snackbar>
 			) }
 
 			{ errorMessage && (
-				<Snackbar open autoHideDuration={ 4000 } anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } } onClose={ () => setErrorMessage( '' ) }>
-					<Alert severity="error" onClose={ () => setErrorMessage( '' ) }>{ errorMessage }</Alert>
+				<Snackbar open autoHideDuration={ 4000 } anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } } onClose={ () => setErrorMessage( '' ) }>
+					<Alert variant="filled" severity="error" onClose={ () => setErrorMessage( '' ) }>{ errorMessage }</Alert>
 				</Snackbar>
 			) }
 		</Container>
 	);
+};
+
+const ContentList = ( { children, ...props } ) => {
+	return (
+		<Box component="ul" { ...props }>
+			{ children }
+		</Box>
+	);
+};
+
+ContentList.propTypes = {
+	children: PropTypes.node,
+};
+
+const ContentListItem = ( { children, ...props } ) => {
+	return (
+		<Typography component="li" sx={ { listStyle: 'disc', marginInlineStart: 4 } } { ...props }>
+			{ children }
+		</Typography>
+	);
+};
+
+ContentListItem.propTypes = {
+	children: PropTypes.node,
 };
 
 const ImageLandscapePlaceholder = ( props ) => {
@@ -167,8 +206,3 @@ const ImageSquarePlaceholder = ( props ) => {
 		</SvgIcon>
 	);
 };
-
-const BoxItem = styled( Typography )( ( { theme } ) => ( {
-	listStyle: 'disc',
-	marginInlineStart: theme.spacing( 4 ),
-} ) );

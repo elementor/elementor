@@ -96,7 +96,7 @@ test.describe( 'Div Block tests @div-block', () => {
 
 		await test.step( 'Div block as first container', async () => {
 			// Arrange.
-			const firstDivBlockId = await editor.addElement( { elType: 'div-block' }, 'document' );
+			const firstDivBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 			const secondContainerId = await editor.addElement( { elType: 'container' }, 'document' );
 
 			const firstDivBlock = editor.getPreviewFrame().locator( `[data-id="${ firstDivBlockId }"]` );
