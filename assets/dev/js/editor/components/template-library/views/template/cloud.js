@@ -22,7 +22,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 				'data-template_id': data.template_id,
 			};
 		}
-    },
+	},
 
 	ui() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
