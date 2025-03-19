@@ -109,7 +109,7 @@ export default class Session {
 				case 'container':
 				case 'section':
 				case 'column':
-				case 'div-block':
+				case 'e-div-block':
 				case 'widget':
 					return this.target.view.createElementFromModel(
 						element.model,

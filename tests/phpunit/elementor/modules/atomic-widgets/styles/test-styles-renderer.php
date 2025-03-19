@@ -421,6 +421,130 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
+	public function test_render__style_with_background_gradient_transformers() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-gradient-overlay',
+												'value' => [
+													'type' => [
+														'$$type' => 'string',
+														'value' => 'linear',
+													],
+													'angle' => [
+														'$$type' => 'number',
+														'value' => 45,
+													],
+													'stops' => [
+														'$$type' => 'gradient-color-stop',
+														'value' => [
+															[
+																'$$type' => 'color-stop',
+																'value' => [
+																	'color' => [
+																		'$$type' => 'color',
+																		'value' => 'red',
+																	],
+																	'offset' => [
+																		'$$type' => 'number',
+																		'value' => 0,
+																	],
+																],
+															],
+															[
+																'$$type' => 'color-stop',
+																'value' => [
+																	'color' => [
+																		'$$type' => 'color',
+																		'value' => 'rgb(255, 0, 255, 0.3)',
+																	],
+																	'offset' => [
+																		'$$type' => 'number',
+																		'value' => 100,
+																	],
+																],
+															],
+														],
+													],
+												]
+											],
+											[
+												'$$type' => 'background-gradient-overlay',
+												'value' => [
+													'type' => [
+														'$$type' => 'string',
+														'value' => 'radial',
+													],
+													'positions' => [
+														'$$type' => 'string',
+														'value' => 'bottom center',
+													],
+													'stops' => [
+														'$$type' => 'gradient-color-stop',
+														'value' => [
+															[
+																'$$type' => 'color-stop',
+																'value' => [
+																	'color' => [
+																		'$$type' => 'color',
+																		'value' => 'rgb(90, 143,11)',
+																	],
+																	'offset' => [
+																		'$$type' => 'number',
+																		'value' => 67,
+																	],
+																],
+															],
+															[
+																'$$type' => 'color-stop',
+																'value' => [
+																	'color' => [
+																		'$$type' => 'color',
+																		'value' => 'rgb(0, 0, 0)',
+																	],
+																	'offset' => [
+																		'$$type' => 'number',
+																		'value' => 21,
+																	],
+																],
+															],
+														],
+													],
+												]
+											],
+										],
+									],
+								],
+							],
+						],
+						'meta' => [],
+					]
+				]
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
+
 	public function test_render__style_with_nested_background_image_transformers() {
 		// Arrange.
 		$styles = [
@@ -744,22 +868,22 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'margin' => [
 								'$$type' => 'dimensions',
 								'value' => [
-									'top' => [
+									'block-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'bottom' => null,
-									'left' => [
+									'block-end' => null,
+									'inline-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'right' => [
+									'inline-end' => [
 										'$$type' => 'string',
 										'value' => 'auto'
 									],
@@ -795,15 +919,15 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'border-width' => [
 								'$$type' => 'border-width',
 								'value' => [
-									'top' => [
+									'block-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
 											'unit' => 'px'
 										]
 									],
-									'bottom' => null,
-									'left' => [
+									'block-end' => null,
+									'inline-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
