@@ -1,16 +1,21 @@
 import { __ } from '@wordpress/i18n';
 import {
 	Image,
-	Chip,
 	Typography,
 	Button,
-	CloseButton,
 	Stack,
 	List,
 	ListItem,
-	Popover,
+	Popover, Box, Link, Divider,
 } from '@elementor/ui';
 import { useEffect, useRef, useState } from 'react';
+
+const listItems = [
+	__( 'A Unified Style Tab for consistent design control', 'elementor' ),
+	__( 'CSS Classes & Pseudo-Classes for advanced styling', 'elementor' ),
+	__( 'Improved Responsive Support for better adaptability', 'elementor' ),
+	__( '…and much more!', 'elementor' ),
+];
 
 const WelcomePopover = ( { doClose } ) => {
 	const anchorElRef = useRef( null );
@@ -20,11 +25,6 @@ const WelcomePopover = ( { doClose } ) => {
 		anchorElRef.current = document.body;
 		setIsMounted( true );
 	}, [] );
-
-	const redirectHandler = () => {
-		window.open( ctaUrl, '_blank' );
-		doClose();
-	};
 
 	if ( ! isMounted || ! anchorElRef.current ) {
 		return null;
@@ -37,32 +37,39 @@ const WelcomePopover = ( { doClose } ) => {
 			anchorEl={ anchorElRef.current }
 			anchorOrigin={ { vertical: 'center', horizontal: 'center' } }
 			transformOrigin={ { vertical: 'center', horizontal: 'center' } }
+			slotProps={ {
+				paper: {
+					sx: { width: 600 },
+				} } }
 		>
-			<Stack direction="row" alignItems="center" py={ 1 } px={ 2 } sx={ { width: 600 } }>
-				<Typography variant="subtitle2">Title</Typography>
-				<Chip label={ __( 'PRO', 'elementor' ) } size="small" variant="outlined" color="promotion" sx={ { ml: 1 } } />
-				<CloseButton edge="end" sx={ { ml: 'auto' } } slotProps={ {
-					icon: {
-						fontSize: 'small',
-					},
-				} } onClick={ doClose } />
-			</Stack>
 			<Image src="https://elementor.com/cdn-cgi/image/f=auto,w=1370/https://elementor.com/wp-content/uploads/2024/06/drag-and-drop.webp" alt="imgAlt" sx={ { height: 300, width: '100%', objectFit: 'cover', objectPosition: 'center' } } />
-			<Stack px={ 2 }>
-				<List sx={ { pl: 2 } }>
-					<ListItem key="1" sx={ { listStyle: 'disc', display: 'list-item', color: 'text.secondary', p: 0 } }>
-						<Typography variant="body2" color="secondary">Text</Typography>
-					</ListItem>
-				</List>
+			<Stack pt={ 3 } pb={ 1.5 } px={ 3 } gap={ 3 }>
+				<Typography variant="h6" color="text.primary">Welcome to the Future of Elementor Editor V4 is Here!</Typography>
+				<Box>
+					<Typography variant="body1" color="text.secondary">You&#39;re now using Editor V4, a new generation of Elementor that brings powerful enhancements while keeping your workflow familiar.</Typography>
+					<List sx={ { pl: 2 } }>
+						{ listItems.map( ( text, index ) => {
+							return (
+								<ListItem key={ index } sx={ { listStyle: 'disc', display: 'list-item', color: 'text.secondary', p: 0 } }>
+									<Typography variant="body1">{ text }</Typography>
+								</ListItem>
+							);
+						} ) }
+					</List>
+				</Box>
+				<Stack direction="row" alignItems="center" gap={ 1.5 }>
+					<Typography variant="body1" color="text.secondary">Need help getting started?</Typography>
+					<Link href="https://elementor.com/help/" target="_blank" color="info.main">Introduction video</Link>
+					<Link href="https://elementor.com/help/" target="_blank" color="info.main">Help center</Link>
+				</Stack>
 			</Stack>
-			<Stack pt={ 1 } pb={ 1.5 } px={ 2 }>
+			<Divider />
+			<Stack py={ 2 } px={ 3 }>
 				<Button
 					variant="contained"
-					size="small"
-					color="promotion"
-					onClick={ redirectHandler }
+					onClick={ doClose }
 					sx={ { ml: 'auto' } }
-				>CtaText</Button>
+				>Let’s Go</Button>
 			</Stack>
 		</Popover>
 	);
