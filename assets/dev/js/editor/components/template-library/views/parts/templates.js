@@ -66,7 +66,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	deselectAllBulkItems() {
-		if ( 'list' === elementor.templates.getViewSelection() ) {
+		if ( 'list' === elementor.templates.getViewSelection() || 'local' === elementor.templates.getFilter( 'source' ) ) {
 			this.ui.bulkSelectAllCheckbox.prop( 'checked', false ).trigger( 'change' );
 		} else {
 			document.querySelectorAll( '.bulk-selected-item' ).forEach( function( item ) {
