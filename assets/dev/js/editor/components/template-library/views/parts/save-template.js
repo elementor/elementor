@@ -36,15 +36,17 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onRender() {
-		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ) {
+		const context = this.getOption( 'context' );
+
+		if ( SAVE_CONTEXTS.SAVE === context ) {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 		}
 
-		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
+		if ( SAVE_CONTEXTS.MOVE === context ) {
 			this.handleMoveContextUiState();
 		}
 
-		if ( SAVE_CONTEXTS.BULK_MOVE === this.getOption( 'context' ) ) {
+		if ( SAVE_CONTEXTS.BULK_MOVE === context ) {
 			this.handleBulkMoveContextUiState();
 		}
 	},
