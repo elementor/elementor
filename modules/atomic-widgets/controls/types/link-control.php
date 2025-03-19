@@ -20,7 +20,7 @@ class Link_Control extends Atomic_Control_Base {
 
 	public static function bind_to( string $prop_name ) {
 		$instance = parent::bind_to( $prop_name );
-		$instance->set_placeholder( __( 'Paste URL or type', 'elementor' ) );
+		$instance->set_placeholder( __( 'Type or paste your URL', 'elementor' ) );
 		$instance->set_endpoint( Post_Query::NAMESPACE . '/' . Post_Query::ENDPOINT );
 		$instance->set_request_params( Post_Query::build_query_params( [
 			Post_Query::POST_KEYS_CONVERSION_MAP => [

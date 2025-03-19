@@ -9,7 +9,7 @@ test.describe( 'Atomic Widgets', () => {
 	let context: BrowserContext;
 
 	const atomicWidgets = [
-		{ name: 'a-heading', title: 'Atomic Heading' },
+		{ name: 'e-heading', title: 'Heading' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {

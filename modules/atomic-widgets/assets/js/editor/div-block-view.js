@@ -2,12 +2,19 @@ import DivBlockEmptyView from './container/div-block-empty-view';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 const DivBlockView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-div-block-content' ),
+	template: Marionette.TemplateCache.get( '#tmpl-elementor-e-div-block-content' ),
 
 	emptyView: DivBlockEmptyView,
 
 	tagName() {
-		return this.model.getSetting( 'tag' ) || 'div';
+		if ( this.haveLink() ) {
+			return 'a';
+		}
+
+		const tagControl = this.model.getSetting( 'tag' );
+		const tagControlValue = tagControl?.value || tagControl;
+
+		return tagControlValue || 'div';
 	},
 
 	getChildViewContainer() {
@@ -17,7 +24,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con div-block-base${ this.getClassString() }`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con e-div-block-base${ this.getClassString() }`;
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -78,11 +85,38 @@ const DivBlockView = BaseElementView.extend( {
 
 	onRender() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
+		this.handleLink();
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
 		} );
+	},
+
+	handleLink() {
+		const href = this.getHref();
+
+		if ( ! href ) {
+			return;
+		}
+
+		this.$el.attr( 'href', href );
+	},
+
+	haveLink() {
+		return !! this.model.getSetting( 'link' )?.value?.destination?.value;
+	},
+
+	getHref() {
+		if ( ! this.haveLink() ) {
+			return;
+		}
+
+		const { $$type, value } = this.model.getSetting( 'link' ).value.destination;
+		const isPostId = 'number' === $$type;
+		const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
+
+		return hrefPrefix + value;
 	},
 
 	droppableInitialize() {
@@ -103,7 +137,7 @@ const DivBlockView = BaseElementView.extend( {
 			},
 		} );
 
-		return elementor.hooks.applyFilters( 'elements/div-block/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( 'elements/e-div-block/behaviors', behaviors, this );
 	},
 
 	/**

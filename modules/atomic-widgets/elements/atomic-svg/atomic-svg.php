@@ -21,14 +21,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Svg extends Atomic_Widget_Base {
 	const BASE_STYLE_KEY = 'base';
 	const DEFAULT_SIZE = 'full';
-	const DEFAULT_SVG_PATH = ELEMENTOR_ASSETS_URL . 'images/a-default-svg.svg';
+	const DEFAULT_SVG_PATH = ELEMENTOR_ASSETS_URL . 'images/default-svg.svg';
 
 	public static function get_element_type(): string {
-		return 'a-svg';
+		return 'e-svg';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic SVG', 'elementor' );
+		return esc_html__( 'SVG', 'elementor' );
+	}
+
+	public function get_keywords() {
+		return [ 'atoms', 'atomic' ];
 	}
 
 	public function get_icon() {
@@ -49,8 +53,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_items( [
 					Svg_Control::bind_to( 'svg' ),
-					Link_Control::bind_to( 'link' )
-							->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+					Link_Control::bind_to( 'link' ),
 				] ),
 		];
 	}

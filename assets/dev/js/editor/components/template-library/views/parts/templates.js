@@ -29,6 +29,13 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
 		selectSourceFilter: '.elementor-template-library-filter-select-source',
 		addNewFolder: '#elementor-template-library-add-new-folder',
+		selectGridView: '#elementor-template-library-view-grid',
+		selectListView: '#elementor-template-library-view-list',
+		bulkSelectionItemCheckbox: '.bulk-selection-item-checkbox',
+		bulkSelectionActionBar: '.bulk-selection-action-bar',
+		bulkSelectedCount: '.bulk-selection-action-bar .selected-count',
+		bulkSelectAllCheckbox: '#bulk-select-all',
+		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
 	},
 
 	events: {
@@ -38,6 +45,76 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
 		'change @ui.selectSourceFilter': 'onSelectSourceFilterChange',
 		'click @ui.addNewFolder': 'onCreateNewFolderClick',
+		'click @ui.selectGridView': 'onSelectGridViewClick',
+		'click @ui.selectListView': 'onSelectListViewClick',
+		'change @ui.bulkSelectionItemCheckbox': 'onSelectBulkSelectionItemCheckbox',
+		'change @ui.bulkSelectAllCheckbox': 'onBulkSelectAllCheckbox',
+		'click @ui.clearBulkSelections': 'onClearBulkSelections',
+	},
+
+	className: 'no-bulk-selections',
+
+	onClearBulkSelections() {
+		elementor.templates.clearBulkSelectionItems();
+		elementor.templates.layout.handleBulkActionBar();
+		elementor.templates.layout.selectAllCheckboxNormal();
+		this.deselectAllBulkItems();
+	},
+
+	deselectAllBulkItems() {
+		if ( 'list' === elementor.templates.getViewSelection() ) {
+			this.ui.bulkSelectAllCheckbox.prop( 'checked', false ).trigger( 'change' );
+		} else {
+			document.querySelectorAll( '.bulk-selected-item' ).forEach( function( item ) {
+				item.classList.remove( 'bulk-selected-item' );
+			} );
+		}
+	},
+
+	onSelectBulkSelectionItemCheckbox( event ) {
+		if ( event?.target?.checked ) {
+			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
+		} else {
+			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
+		}
+
+		this.handleBulkActionBarUi();
+	},
+
+	onBulkSelectAllCheckbox() {
+		const isChecked = this.$( '#bulk-select-all:checked' ).length > 0;
+
+		if ( isChecked ) {
+			elementor.templates.layout.selectAllCheckboxNormal();
+		}
+
+		this.updateBulkSelectedItems( isChecked );
+		this.handleBulkActionBarUi();
+	},
+
+	updateBulkSelectedItems( isChecked ) {
+		document.querySelectorAll( '.bulk-selection-item-checkbox' ).forEach( function( checkbox ) {
+			checkbox.checked = isChecked;
+			const templateId = checkbox.dataset.template_id;
+
+			if ( isChecked ) {
+				elementor.templates.addBulkSelectionItem( templateId );
+			} else {
+				elementor.templates.removeBulkSelectionItem( templateId );
+			}
+		} );
+	},
+
+	handleBulkActionBarUi() {
+		if ( 0 === this.$( '.bulk-selection-item-checkbox:checked' ).length ) {
+			this.$el.addClass( 'no-bulk-selections' );
+			this.$el.removeClass( 'has-bulk-selections' );
+		} else {
+			this.$el.addClass( 'has-bulk-selections' );
+			this.$el.removeClass( 'no-bulk-selections' );
+		}
+
+		elementor.templates.layout.handleBulkActionBar();
 	},
 
 	comparators: {
@@ -179,6 +256,12 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.$el.attr( 'data-template-source', isEmpty ? 'empty' : elementor.templates.getFilter( 'source' ) );
 	},
 
+	addViewData() {
+		const view = elementor.templates.getViewSelection();
+
+		this.$el.attr( 'data-template-view', view );
+	},
+
 	setFiltersUI() {
 		if ( ! this.select2Instance && this.$( this.ui.selectFilter ).length ) {
 			const $filters = this.$( this.ui.selectFilter ),
@@ -243,6 +326,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		if ( 'cloud' === activeSource ) {
 			this.handleLoadMore();
+
+			this.addViewData();
 		}
 	},
 
@@ -293,6 +378,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		elementor.templates.onSelectSourceFilterChange( event );
 	},
 
+	onSelectGridViewClick() {
+		elementor.templates.onSelectViewChange( 'grid' );
+	},
+
+	onSelectListViewClick() {
+		elementor.templates.onSelectViewChange( 'list' );
+	},
+
 	onMyFavoritesFilterChange() {
 		elementor.templates.setFilter( 'favorite', this.ui.myFavoritesFilter[ 0 ].checked );
 	},
@@ -327,6 +420,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			}
 
 			this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+			elementor.templates.layout.selectAllCheckboxMinus();
 
 			elementor.templates.loadMore( {
 				onUpdate: () => {
