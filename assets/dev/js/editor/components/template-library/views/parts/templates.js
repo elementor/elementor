@@ -474,7 +474,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		if ( this.hasFolderInBulkSelection() ) {
 			return;
 		}
-		
+
 		$e.route( 'library/save-template', {
 			model: this.model,
 			context: SAVE_CONTEXTS.BULK_MOVE,
@@ -483,11 +483,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	hasFolderInBulkSelection() {
 		const bulkSelectedItems = elementor.templates.getBulkSelectionItems();
-	
+
 		return this.collection.some( ( model ) => {
 			const templateId = model.get( 'template_id' );
-			const type = model.get( 'type') ;
-	
+			const type = model.get( 'type' );
+
 			return bulkSelectedItems.has( templateId ) && 'folder' === type;
 		} );
 	},
