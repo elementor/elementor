@@ -153,9 +153,8 @@ const TemplateLibraryManager = function() {
 				return;
 			}
 
-			event.preventDefault();
-
 			if ( this.isCloudGridView() ) {
+				event.preventDefault();
 				this.selectAllTemplates();
 			}
 		};
