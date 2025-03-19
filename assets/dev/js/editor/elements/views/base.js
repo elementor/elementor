@@ -983,7 +983,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		if ( options.scrollIntoView ) {
-			elementor.helpers.scrollToView( this.getElement(), 200 );
+			elementor.helpers.scrollToView( this.getDomElement(), 200 );
 		}
 
 		$e.run( 'document/elements/toggle-selection', {
@@ -1085,7 +1085,7 @@ BaseElementView = BaseContainer.extend( {
 		return helper;
 	},
 
-	getElement() {
+	getDomElement() {
 		return this.$el;
 	},
 
@@ -1102,7 +1102,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		this.getElement().html5Draggable( {
+		this.getDomElement().html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 
