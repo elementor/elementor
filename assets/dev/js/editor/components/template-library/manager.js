@@ -688,6 +688,8 @@ const TemplateLibraryManager = function() {
 	this.searchTemplates = ( data ) => {
 		return new Promise( ( resolve ) => {
 			this.setFilter( 'parent', null );
+			self.clearBulkSelectionItems();
+			self.layout.handleBulkActionBar();
 
 			isLoading = true;
 
