@@ -358,6 +358,6 @@ class Source_Cloud extends Source_Base {
 	}
 
 	public function get_bulk_items( array $args = [] ) {
-		return $this->get_app()->get_resources_with_content( $args );
+		return $this->get_app()->get_bulk_resources_with_content( $args );
 	}
 }

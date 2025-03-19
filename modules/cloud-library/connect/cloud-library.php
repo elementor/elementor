@@ -220,7 +220,7 @@ class Cloud_Library extends Library {
 		return $payload;
 	}
 
-	public function get_resources_with_content( $args = [] ): array {
+	public function get_bulk_resources_with_content( $args = [] ): array {
 		$templates = [];
 
 		$endpoint = 'resources/bulk';
