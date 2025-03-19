@@ -40,7 +40,7 @@ export const OptIn = () => {
 		},
 	};
 
-	const [ optIn, setOptIn ] = useState( false );
+	const [ isEnrolled, setIsEnrolled ] = useState( false );
 
 	const imageSrcLandscape = '';
 	const imageSrcSquare = '';
@@ -49,11 +49,11 @@ export const OptIn = () => {
 	const readMoreUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
 
 	const maybeOptIn = () => {
-		setOptIn( true );
+		setIsEnrolled( true );
 	};
 
 	const maybeOptOut = () => {
-		setOptIn( false );
+		setIsEnrolled( false );
 	};
 
 	const maybeStart = () => {};
@@ -88,15 +88,18 @@ export const OptIn = () => {
 					<Typography>{ i18n.warning }</Typography>
 				</Stack>
 
-				<Stack direction="column" width="clamp(240px, max(340px, 75%), 340px)" maxWidth="100%" gap={ 1 }>
-					{ ( ! optIn ) ? ( <Button onClick={ maybeOptIn } size="large" color="primary" variant="contained" sx={ { flexGrow: 1 } }>{ i18n.optInButton }</Button> )
-						: ( <>
-								<Button onClick={ maybeStart } size="large" color="primary" variant="contained" sx={ { flexGrow: 1 } }>{ i18n.startButton }</Button>
-								<Button onClick={ maybeOptOut } size="large" color="secondary" variant="outlined" sx={ { flexGrow: 1 } }>{ i18n.optOutButton }</Button>
-					</> ) }
+				<Stack direction="column" width="clamp(240px, max(340px, 75%), 340px)" maxWidth="100%" gap={ 2 }>
+					{ ( ! isEnrolled ) ? (
+						<Button onClick={ maybeOptIn } size="large" color="primary" variant="contained" sx={ { flexGrow: 1 } }>{ i18n.optInButton }</Button>
+					) : (
+						<>
+							<Button onClick={ maybeStart } size="large" color="primary" variant="contained" sx={ { flexGrow: 1 } }>{ i18n.startButton }</Button>
+							<Button onClick={ maybeOptOut } size="large" color="secondary" variant="outlined" sx={ { flexGrow: 1 } }>{ i18n.optOutButton }</Button>
+						</>
+					) }
 				</Stack>
 
-				<Typography>{ i18n.helpImprove } <Link href={ feedbackUrl }>{ i18n.feedback }</Link></Typography>
+				<Typography>{ i18n.helpImprove } <Link href={ feedbackUrl } target="_blank">{ i18n.feedback }</Link></Typography>
 			</Stack>
 
 			<Stack sx={ { flex: 1, maxWidth: 'sm', p: { xs: 0, md: 5 } } }>
