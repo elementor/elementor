@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -246,6 +247,7 @@ class Utils {
 		$rows_affected += (int) apply_filters( 'elementor/tools/replace-urls', 0, $from, $to );
 
 		Plugin::$instance->files_manager->clear_cache();
+		Google_Font::clear_cache();
 
 		return sprintf(
 			/* translators: %d: Number of rows. */
