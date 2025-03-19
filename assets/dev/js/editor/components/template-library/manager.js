@@ -388,7 +388,7 @@ const TemplateLibraryManager = function() {
 			strings: {
 				confirm: __( 'Create', 'elementor' ),
 			},
-			Hide: {
+			hide: {
 				ignore: '#elementor-template-library-modal',
 			},
 			onShow: () => {
@@ -430,6 +430,21 @@ const TemplateLibraryManager = function() {
 				__( 'Are you sure you want to delete "%1$s" folder with all %2$d templates?', 'elementor' ),
 				templateModel.get( 'title' ),
 				data.total,
+			),
+			strings: {
+				confirm: __( 'Delete', 'elementor' ),
+			},
+		} );
+	};
+
+	this.getBulkDeleteDialog = function( ) {
+		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-template-library-bulk-delete-dialog',
+			headerMessage: __( 'Delete Selected', 'elementor' ),
+			message: sprintf(
+				// Translators: %1$s: Number of selected items.
+				__( 'Are you sure you want to delete "%1$s" selected items?', 'elementor' ),
+				bulkSelectedItems.size,
 			),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
@@ -804,6 +819,7 @@ const TemplateLibraryManager = function() {
 
 		self.setSourceSelection( templatesSource );
 		self.setFilter( filterName, templatesSource, true );
+		self.clearBulkSelectionItems();
 
 		if ( this.shouldShowCloudConnectView( templatesSource ) ) {
 			self.layout.showCloudConnectView();
@@ -844,6 +860,71 @@ const TemplateLibraryManager = function() {
 
 	this.getBulkSelectionItems = function() {
 		return bulkSelectedItems;
+	};
+
+	this.onBulkDeleteClick = function() {
+		return new Promise( ( resolve ) => {
+			const selectedItems = this.getBulkSelectionItems();
+
+			if ( ! selectedItems.size ) {
+				return;
+			}
+
+			const dialog = this.getBulkDeleteDialog();
+
+			dialog.onConfirm = () => {
+				isLoading = true;
+
+				const ajaxOptions = {
+					data: {
+						source: this.getFilter( 'source' ),
+						template_ids: Array.from( selectedItems ),
+					},
+					success: () => {
+						isLoading = false;
+
+						const modelsToRemove = templatesCollection.models.filter( ( templateModel ) => {
+							return selectedItems.has( templateModel.get( 'template_id' ) );
+						} );
+
+						templatesCollection.remove( modelsToRemove );
+
+						self.clearBulkSelectionItems();
+
+						elementor.notifications.showToast( {
+							message: `${ selectedItems.length } items deleted successfully`,
+							buttons: [
+								{
+									name: 'undo_bulk_delete',
+									text: __( 'Undo', 'elementor' ),
+									callback: () => {
+										templatesCollection.add( modelsToRemove );
+										$e.routes.refreshContainer( 'library' );
+									},
+								},
+							],
+						} );
+
+						resolve();
+					},
+					error: ( error ) => {
+						isLoading = false;
+
+						this.showErrorDialog( error );
+
+						resolve();
+					},
+				};
+
+				elementorCommon.ajax.addRequest( 'bulk_delete_items', ajaxOptions );
+			};
+
+			dialog.onCancel = () => {
+				resolve();
+			};
+
+			dialog.show();
+		} );
 	};
 };
 

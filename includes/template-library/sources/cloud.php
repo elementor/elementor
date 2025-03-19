@@ -333,4 +333,8 @@ class Source_Cloud extends Source_Base {
 
 		return $document;
 	}
+
+	public function bulk_delete_items( array $template_ids ) {
+		return $this->get_app()->bulk_delete_items( $template_ids );
+	}
 }
