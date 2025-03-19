@@ -341,6 +341,9 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onTextFilterInput() {
+		elementor.templates.clearBulkSelectionItems();
+		elementor.templates.layout.handleBulkActionBar();
+
 		const activeSource = elementor.templates.getFilter( 'source' );
 
 		if ( 'cloud' === activeSource ) {
