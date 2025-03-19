@@ -4,7 +4,10 @@ namespace Elementor\Modules\AtomicOptIn;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-
+use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Elementor_Adapter_Interface;
+use Elementor\Core\Utils\Isolation_Manager;
+use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Utils;
@@ -12,6 +15,9 @@ use Elementor\Utils;
 class Module extends BaseModule {
 	const MODULE_NAME = 'editor-v4-opt-in';
 	const EXPERIMENT_NAME = 'editor_v4_opt_in';
+	const WELCOME_POPOVER_OPTION = '_e_welcome_popover_displayed';
+
+	private Elementor_Adapter_Interface $elementor_adapter;
 
 	public static function get_experimental_data(): array {
 		return [
@@ -28,10 +34,12 @@ class Module extends BaseModule {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
-	public function __construct() {
+	public function __construct( ?Elementor_Adapter_Interface $elementor_adapter = null ) {
 		if ( ! $this->is_experiment_active() || ! is_admin() ) {
 			return;
 		}
+
+		$this->elementor_adapter = $elementor_adapter ?? Isolation_Manager::get_adapter( Elementor_Adapter::class );
 
 		$this->register_settings_tab();
 		$this->register_scripts();
@@ -65,10 +73,47 @@ class Module extends BaseModule {
 		return $this;
 	}
 
+	private function get_current_user_id(): int {
+		$current_user = wp_get_current_user();
+
+		if ( ! $current_user ) {
+			return 0;
+		}
+
+		return $current_user->ID ?? 0;
+	}
+
+	private function has_welcome_popover_been_displayed(): bool {
+		return get_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_OPTION, true ) ?? false;
+	}
+
+	private function set_welcome_popover_as_displayed(): void {
+		update_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_OPTION, true );
+	}
+
+	private function is_first_editor_visit(): int {
+		$editor_visit_count = $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
+		return 1 === $editor_visit_count;
+	}
+
 	private function register_scripts() {
 		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_scripts' ] );
 		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_styles' ] );
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_welcome_popover' ] );
+	}
+
+	public function maybe_enqueue_welcome_popover(): void {
+		if ( $this->is_first_editor_visit() ) {
+			return;
+		}
+
+		if ( $this->has_welcome_popover_been_displayed() ) {
+			return;
+		}
+
+		$this->enqueue_scripts();
+		$this->elementor_adapter->increment( Elementor_Counter::EDITOR_COUNTER_KEY );
+		$this->set_welcome_popover_as_displayed();
 	}
 
 	public function enqueue_styles() {

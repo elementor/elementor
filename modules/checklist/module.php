@@ -85,6 +85,16 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ID );
 	}
 
+	public function is_expected_editor_visit_count(): bool {
+		$editor_visit_count = $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'atomic_widgets' ) ) {
+			return 3 === $editor_visit_count;
+		}
+
+		return 2 === $editor_visit_count;
+	}
+
 	/**
 	 * Gets user's progress from db
 	 *
@@ -106,8 +116,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 
 		$progress = array_merge( $this->get_default_user_progress(), $db_progress );
 
-		$editor_visit_count = $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
-		$progress[ self::SHOULD_OPEN_IN_EDITOR ] = 2 === $editor_visit_count && ! $progress[ self::LAST_OPENED_TIMESTAMP ];
+		$progress[ self::SHOULD_OPEN_IN_EDITOR ] = $this->is_expected_editor_visit_count() && ! $progress[ self::LAST_OPENED_TIMESTAMP ];
 
 		return $progress;
 	}
