@@ -484,7 +484,11 @@ const TemplateLibraryManager = function() {
 			_.extend( ajaxParams, templateType.ajaxParams );
 		}
 
-		elementorCommon.ajax.addRequest( 'save_template', ajaxParams );
+		if ( 'move' === data.save_context ) {
+			elementorCommon.ajax.addRequest( 'move_template', ajaxParams );
+		} else {
+			elementorCommon.ajax.addRequest( 'save_template', ajaxParams );
+		}
 	};
 
 	this.requestTemplateContent = function( source, id, ajaxOptions ) {
