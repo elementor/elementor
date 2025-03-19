@@ -14,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { TextNode, ContentList, ContentListItem } from './opt-in-content';
 import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './opt-in-img-placeholders';
 import { Message } from './opt-in-message';
+import { triggerOptIn, triggerOptOut } from './opt-in-api';
 
 export const OptIn = () => {
 	const i18n = {
@@ -65,13 +66,29 @@ export const OptIn = () => {
 	const readMoreUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
 
 	const maybeOptIn = () => {
-		setIsEnrolled( true );
-		setSuccessMessage( i18n.messages.optInSuccess );
+		triggerOptIn()
+			.then( () => {
+				setIsEnrolled( true );
+				setSuccessMessage( i18n.messages.optInSuccess );
+				setTimeout( () => document.location.reload(), 2000 );
+			} )
+			.catch( () => {
+				setIsEnrolled( false );
+				setErrorMessage( i18n.messages.error );
+			} );
+
 	};
 
 	const maybeOptOut = () => {
-		setIsEnrolled( false );
-		setNotifyMessage( i18n.messages.optOut );
+		triggerOptOut()
+			.then( () => {
+				setIsEnrolled( false );
+				setNotifyMessage( i18n.messages.optOut );
+				setTimeout( () => document.location.reload(), 2000 );
+			} )
+			.catch( () => {
+				setErrorMessage( i18n.messages.error );
+			} );
 	};
 
 	const maybeStart = () => {};
