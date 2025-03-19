@@ -13,7 +13,6 @@ import {
 import { AlertTriangleFilledIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-
 export const OptIn = () => {
 	const i18n = {
 		title: __( 'The Road to Editor V4', 'elementor' ),
@@ -101,8 +100,8 @@ export const OptIn = () => {
 			</Stack>
 
 			<Stack sx={ { flex: 1, maxWidth: 'sm', p: { xs: 0, md: 5 } } }>
-				<Image alt={ i18n.image } sx={ { display: { xs: 'none', md: 'block' } } } />
-				<Image alt={ i18n.image } sx={ { display: { xs: 'block', md: 'none' } } } />
+				<Image src={ imageSrcSquare} alt={ i18n.image } sx={ { display: { xs: 'none', md: 'block' } } } />
+				<Image src={ imageSrcLandscape} alt={ i18n.image } sx={ { display: { xs: 'block', md: 'none' } } } />
 			</Stack>
 		</Container>
 	);
