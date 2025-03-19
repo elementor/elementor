@@ -17,8 +17,8 @@ class Cloud_Library extends Library {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	protected function get_slug(): string {
-		return 'cloud-library';
+	protected function get_api_url(): string {
+		return 'http://localhost:3000/api/v1/cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
@@ -64,7 +64,7 @@ class Cloud_Library extends Library {
 	}
 
 	protected function prepare_template( array $template_data ): array {
-		return [
+		$template = [
 			'template_id' => $template_data['id'],
 			'source' => 'cloud',
 			'type' => $template_data['templateType'],
@@ -78,6 +78,12 @@ class Cloud_Library extends Library {
 			'preview_url' => esc_url_raw( $template_data['previewUrl'] ?? '' ),
 			'generate_preview_url' => esc_url_raw( $this->generate_preview_url( $template_data ) ?? '' ),
 		];
+
+		if ( ! empty( $template_data['content'] ) ) {
+			$template['content'] = $template_data['content'];
+		}
+
+		return $template;
 	}
 
 	private function generate_preview_url( $template_data ): ?string {
@@ -121,6 +127,19 @@ class Cloud_Library extends Library {
 		];
 
 		return $this->http_request( 'POST', 'resources', $resource, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+	}
+
+	public function post_bulk_resources( $data ): array {
+		$resource = [
+			'headers' => [
+				'Content-Type' => 'application/json',
+			],
+			'body' => wp_json_encode( $data ),
+		];
+
+		return $this->http_request( 'POST', 'resources/bulk', $resource, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 	}
@@ -201,6 +220,49 @@ class Cloud_Library extends Library {
 		return $payload;
 	}
 
+	public function get_resources_with_content( $args = [] ): array {
+		$templates = [];
+
+		$endpoint = 'resources/bulk';
+
+		$query_string = http_build_query( [
+			'ids' => implode( ',', $args['from_template_id'] ),
+		] );
+
+		$endpoint .= '?' . $query_string;
+
+		$cloud_templates = $this->http_request( 'GET', $endpoint, $args, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+
+		if ( is_wp_error( $cloud_templates ) || ! is_array( $cloud_templates ) ) {
+			return $templates;
+		}
+
+		foreach ( $cloud_templates as $cloud_template ) {
+			$templates[] = $this->prepare_template( $cloud_template );
+		}
+
+		return $templates;
+	}
+
+	public function bulk_move_templates( array $template_data ) {
+		$endpoint = 'resources/move';
+		$args = [
+			'body'    => wp_json_encode( $template_data ),
+			'headers' => [ 'Content-Type' => 'application/json' ],
+		];
+
+		$request = $this->http_request( 'PATCH', $endpoint, $args, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+
+		if ( is_wp_error( $request ) ) {
+			return false;
+		}
+
+		return true;
+	}
 
 	protected function init() {}
 }

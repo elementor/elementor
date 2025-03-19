@@ -278,15 +278,15 @@ class Manager {
 
 		$sources = (array) $args['source']; // BC
 		$results = [];
-		$should_delete_template = false;
+		$should_delete_template = true;
 
 		foreach ( $sources as $source ) {
 			$args_copy = $args;
 			$args_copy['source'] = $source;
 			$results[] = $this->save_template_item( $args_copy );
 
-			if ( ! $this->is_moving_to_same_source( $args_copy ) ) {
-				$should_delete_template = true;
+			if ( $this->is_moving_to_same_source( $args_copy ) ) {
+				$should_delete_template = false;
 			}
 		}
 
@@ -304,7 +304,7 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		if ( $this->is_moving_template( $args ) ) {
+		if ( $this->is_move_context( $args ) ) {
 			$validate_args = $this->ensure_args( [ 'from_source', 'from_template_id' ], $args );
 
 			if ( is_wp_error( $validate_args ) ) {
@@ -313,10 +313,19 @@ class Manager {
 		}
 
 		if ( $this->is_moving_to_same_source( $args ) ) {
+
+			if ( $this->is_bulk_moving_templates( $args ) ) {
+				return $source->move_bulk_templates_to_folder( $args );
+			}
+
 			return $source->move_template_to_folder( $args );
 		}
 
 		$args = $this->format_args_for_save_context( $args );
+
+		if ( $this->is_bulk_moving_templates( $args[0] ) ) {
+			return $source->save_bulk_items( $args );
+		}
 
 		$template_id = $source->save_item( $args );
 
@@ -344,7 +353,7 @@ class Manager {
 	}
 
 	private function is_moving_to_same_source( $args ) {
-		return $this->is_moving_template( $args ) &&
+		return $this->is_move_context( $args ) &&
 			! empty( $args['from_source'] ) &&
 			! empty( $args['source'] ) &&
 			$args['source'] === $args['from_source'];
@@ -355,11 +364,23 @@ class Manager {
 			return $this->format_args_for_move_template( $args );
 		}
 
+		if ( $this->is_bulk_moving_templates( $args ) ) {
+			return $this->format_args_for_bulk_move_template( $args );
+		}
+
 		return $this->format_args_for_new_template( $args );
 	}
 
 	private function is_moving_template( $args ) {
 		return ! empty( $args['save_context'] ) && 'move' === $args['save_context'];
+	}
+
+	private function is_bulk_moving_templates( $args ) {
+		return ! empty( $args['save_context'] ) && 'bulkMove' === $args['save_context'];
+	}
+
+	private function is_move_context( $args ) {
+		return $this->is_moving_template( $args ) || $this->is_bulk_moving_templates( $args );
 	}
 
 	private function format_args_for_move_template( $args ) {
@@ -369,6 +390,16 @@ class Manager {
 
 		if ( 'cloud' === $args['from_source'] ) {
 			return $this->format_args_for_move_template_from_cloud_to_local( $args );
+		}
+	}
+
+	private function format_args_for_bulk_move_template( $args ) {
+		if ( 'local' === $args['from_source'] ) {
+			return $this->format_args_for_bulk_move_templates_from_local_to_cloud( $args );
+		}
+
+		if ( 'cloud' === $args['from_source'] ) {
+			return $this->format_args_for_bulk_move_templates_from_cloud_to_local( $args );
 		}
 	}
 
@@ -385,6 +416,59 @@ class Manager {
 		$args['page_settings'] = $page->get_data( 'settings' );
 
 		return $args;
+	}
+
+	private function format_args_for_bulk_move_templates_from_local_to_cloud( $args ) {
+		$bulk_args = [];
+
+		foreach ( $args['from_template_id'] as $from_template_id ) {
+			$document = Plugin::$instance->documents->get( $from_template_id );
+
+			if ( ! $document ) {
+				continue;
+			}
+
+			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $from_template_id );
+
+			$bulk_args[] = array_merge(
+				$args,
+				[
+					'title' => $document->get_post()->post_title,
+					'type' => $document::get_type(),
+					'content' => $document->get_elements_data(),
+					'page_settings' => $page->get_data( 'settings' ),
+				]
+			);
+		}
+
+		return $bulk_args;
+	}
+
+	private function format_args_for_bulk_move_templates_from_cloud_to_local( $args ) {
+		$from_source = $this->get_source( $args['from_source'] );
+
+		if ( ! $from_source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		$templates = $from_source->get_bulk_items( $args );
+		$bulk_args = [];
+
+		foreach ( $templates as $template ) {
+			$content = json_decode( $template['content'], true );
+
+			$bulk_args[] = array_merge(
+				$args,
+				[
+					'title' => $template['title'],
+					'type' => $template['type'],
+					'content' => $content['content'],
+					'page_settings' => $content['page_settings'],
+				]
+			);
+		}
+
+		return $bulk_args;
 	}
 
 	private function format_args_for_move_template_from_cloud_to_local( $args ) {
@@ -857,6 +941,7 @@ class Manager {
 
 		return $result; // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 	}
+
 	/**
 	 * @throws \Exception
 	 */

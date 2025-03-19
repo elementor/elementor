@@ -43,12 +43,24 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
 			this.handleMoveContextUiState();
 		}
+
+		if ( SAVE_CONTEXTS.BULK_MOVE === this.getOption( 'context' ) ) {
+			this.handleBulkMoveContextUiState();
+		}
 	},
 
 	handleMoveContextUiState() {
 		this.ui.templateNameInput.val( this.model.get( 'title' ) );
+		this.handleContextUiStateChecboxes();
+	},
 
-		const fromSource = this.model.get( 'source' );
+	handleBulkMoveContextUiState() {
+		this.ui.templateNameInput.remove();
+		this.handleContextUiStateChecboxes();
+	},
+
+	handleContextUiStateChecboxes() {
+		const fromSource = elementor.templates.getFilter( 'source' );
 
 		if ( 'local' === fromSource ) {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
@@ -119,9 +131,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		formData.save_context = saveContext;
 
-		if ( SAVE_CONTEXTS.MOVE === saveContext ) {
+		if ( [ SAVE_CONTEXTS.MOVE, SAVE_CONTEXTS.BULK_MOVE ].includes( saveContext ) ) {
 			formData.from_source = elementor.templates.getFilter( 'source' );
-			formData.from_template_id = this.model.get( 'template_id' );
+			formData.from_template_id = SAVE_CONTEXTS.MOVE === saveContext
+				? this.model.get( 'template_id' )
+				: Array.from( elementor.templates.getBulkSelectionItems() );
 
 			this.updateSourceState( formData );
 		}

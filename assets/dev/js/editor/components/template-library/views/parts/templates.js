@@ -3,6 +3,7 @@ const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/te
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
+import { SAVE_CONTEXTS } from './../../constants';
 
 const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
@@ -36,6 +37,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		bulkSelectedCount: '.bulk-selection-action-bar .selected-count',
 		bulkSelectAllCheckbox: '#bulk-select-all',
 		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
+		bulkMove: '.bulk-selection-action-bar .bulk-move',
 	},
 
 	events: {
@@ -50,6 +52,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'change @ui.bulkSelectionItemCheckbox': 'onSelectBulkSelectionItemCheckbox',
 		'change @ui.bulkSelectAllCheckbox': 'onBulkSelectAllCheckbox',
 		'click @ui.clearBulkSelections': 'onClearBulkSelections',
+		'mouseenter @ui.bulkMove': 'onHoverBulkMove',
+		'click @ui.bulkMove': 'onClickBulkMove',
 	},
 
 	className: 'no-bulk-selections',
@@ -305,6 +309,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onRender() {
+		elementor.templates.clearBulkSelectionItems();
 		const activeSource = elementor.templates.getFilter( 'source' );
 		const templateType = elementor.templates.getFilter( 'type' );
 
@@ -449,6 +454,36 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			onSuccess: () => {
 				$e.routes.refreshContainer( 'library' );
 			},
+		} );
+	},
+
+	onHoverBulkMove(){
+		if ( this.hasFolderInBulkSelection() ) {
+			this.ui.bulkMove.find( 'i' ).css( 'cursor', 'not-allowed' );
+		} else {
+			this.ui.bulkMove.find( 'i' ).css( 'cursor', 'pointer' );
+		}
+	},
+
+	onClickBulkMove() {
+		if ( this.hasFolderInBulkSelection() ) {
+			return;
+		}
+		
+		$e.route( 'library/save-template', {
+			model: this.model,
+			context: SAVE_CONTEXTS.BULK_MOVE,
+		} );
+	},
+
+	hasFolderInBulkSelection() {
+		const bulkSelectedItems = elementor.templates.getBulkSelectionItems();
+	
+		return this.collection.some( ( model ) => {
+			const templateId = model.get( 'template_id' );
+			const type = model.get( 'type') ;
+	
+			return bulkSelectedItems.has( templateId ) && 'folder' === type;
 		} );
 	},
 } );

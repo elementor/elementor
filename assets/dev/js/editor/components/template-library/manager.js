@@ -34,6 +34,11 @@ const TemplateLibraryManager = function() {
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
+			bulkMoveDialog: {
+				description: '',
+				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
 			ajaxParams: {
 				success( successData ) {
 					$e.route( 'library/templates/my-templates', {
@@ -72,6 +77,9 @@ const TemplateLibraryManager = function() {
 				moveDialog: {
 					/* Translators: %s: Template type. */
 					title: sprintf( __( 'Move Your %s', 'elementor' ), title ),
+				},
+				bulkMoveDialog: {
+					title: __( 'Move Your Templates', 'elementor' ),
 				},
 			} );
 
