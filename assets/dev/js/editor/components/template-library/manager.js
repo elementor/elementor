@@ -1,5 +1,6 @@
 import Component from './component';
 import LocalStorage from 'elementor-api/core/data/storages/local-storage';
+import { SAVE_CONTEXTS } from './constants';
 
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
@@ -492,8 +493,18 @@ const TemplateLibraryManager = function() {
 			_.extend( ajaxParams, templateType.ajaxParams );
 		}
 
-		elementorCommon.ajax.addRequest( 'save_template', ajaxParams );
+		elementorCommon.ajax.addRequest( this.getSaveAjaxAction( save_context ), ajaxParams );
 	};
+
+	this.getSaveAjaxAction = function( saveContext ) {
+		const saveActions = {
+			[SAVE_CONTEXTS.SAVE]: 'save_template',
+			[SAVE_CONTEXTS.MOVE]: 'move_template',
+			[SAVE_CONTEXTS.BULK_MOVE]: 'bulk_move_templates',
+		};
+
+		return saveActions[saveContext] ?? 'save_template';
+	}
 
 	this.requestTemplateContent = function( source, id, ajaxOptions ) {
 		var options = {

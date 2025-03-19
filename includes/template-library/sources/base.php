@@ -382,6 +382,14 @@ abstract class Source_Base {
 		return new \WP_Error( 'template_error', 'Templates cannot be moved in this source' );
 	}
 
+	public function move_bulk_templates_to_folder( array $folder_data = [] ) {
+		return new \WP_Error( 'template_error', 'Templates cannot be moved in this source' );
+	}
+
+	public function save_bulk_items( array $args = [] ) {
+		return [];
+	}
+
 	/**
 	 * @param int $template_id
 	 * @return \Elementor\Core\Base\Document|\WP_Error

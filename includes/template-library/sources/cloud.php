@@ -268,8 +268,7 @@ class Source_Cloud extends Source_Base {
 		$move_args = [
 			'title' => $args['title'],
 			'id' => $args['from_template_id'],
-			'source' => $args['source'],
-			'parentId' => ! empty( $args['parentId'] ) ? (int) $args['parentId'] : null,
+			'parentId' => ! empty( $args['parentId'] ) ? (int) $args['parentId'] : '',
 		];
 
 		return $this->update_item( $move_args );
