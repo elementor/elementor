@@ -349,24 +349,17 @@ class Source_Cloud extends Source_Base {
 		return $document;
 	}
 
-	public function save_bulk_items( array $args = [] ) {
-		$app = $this->get_app();
+	public function save_bulk_items( array $data = [] ) {
 		$items = [];
 
-		foreach ( $args as $template_data ) {
+		foreach ( $data as $template_data ) {
 			$items[] = $this->format_resource_item_for_create( $template_data );
 		}
 
-		$response = $app->post_bulk_resources( $items );
-
-		return $response;
+		return $this->get_app()->post_bulk_resources( $items );
 	}
 
 	public function get_bulk_items( array $args = [] ) {
-		$app = $this->get_app();
-
-		$response = $app->get_resources_with_content( $args );
-
-		return $response;
+		return $this->get_app()->get_resources_with_content( $args );
 	}
 }
