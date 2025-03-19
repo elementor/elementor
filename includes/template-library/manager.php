@@ -278,12 +278,53 @@ class Manager {
 
 		$sources = (array) $args['source']; // BC
 		$results = [];
-		$should_delete_template = false;
 
 		foreach ( $sources as $source ) {
 			$args_copy = $args;
 			$args_copy['source'] = $source;
 			$results[] = $this->save_template_item( $args_copy );
+		}
+
+		return 1 === count( $results ) ? $results[0] : $results;
+	}
+
+	private function save_template_item( array $args ) {
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		$args['content'] = json_decode( $args['content'], true );
+
+		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
+
+		$args['page_settings'] = $page->get_data( 'settings' );
+
+		$template_id = $source->save_item( $args );
+
+		if ( is_wp_error( $template_id ) ) {
+			return $template_id;
+		}
+
+		return $source->get_item( $template_id );
+	}
+
+	public function move_template( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'from_source', 'from_template_id' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$sources = (array) $args['source']; // BC
+		$results = [];
+		$should_delete_template = false;
+
+		foreach ( $sources as $source ) {
+			$args_copy = $args;
+			$args_copy['source'] = $source;
+			$results[] = $this->move_template_item( $args_copy );
 
 			if ( ! $this->is_moving_to_same_source( $args_copy ) ) {
 				$should_delete_template = true;
@@ -297,26 +338,30 @@ class Manager {
 		return 1 === count( $results ) ? $results[0] : $results;
 	}
 
-	private function save_template_item( array $args ) {
+	private function move_template_item( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source', 'from_source', 'from_template_id' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
-		if ( $this->is_moving_template( $args ) ) {
-			$validate_args = $this->ensure_args( [ 'from_source', 'from_template_id' ], $args );
-
-			if ( is_wp_error( $validate_args ) ) {
-				return $validate_args;
-			}
-		}
-
 		if ( $this->is_moving_to_same_source( $args ) ) {
 			return $source->move_template_to_folder( $args );
 		}
 
-		$args = $this->format_args_for_save_context( $args );
+		if ( 'local' === $args['from_source'] ) {
+			$args = $this->format_args_for_move_template_from_local_to_cloud( $args );
+		}
+
+		if ( 'cloud' === $args['from_source'] ) {
+			$args = $this->format_args_for_move_template_from_cloud_to_local( $args );
+		}
 
 		$template_id = $source->save_item( $args );
 
@@ -344,32 +389,7 @@ class Manager {
 	}
 
 	private function is_moving_to_same_source( $args ) {
-		return $this->is_moving_template( $args ) &&
-			! empty( $args['from_source'] ) &&
-			! empty( $args['source'] ) &&
-			$args['source'] === $args['from_source'];
-	}
-
-	private function format_args_for_save_context( $args ) {
-		if ( $this->is_moving_template( $args ) ) {
-			return $this->format_args_for_move_template( $args );
-		}
-
-		return $this->format_args_for_new_template( $args );
-	}
-
-	private function is_moving_template( $args ) {
-		return ! empty( $args['save_context'] ) && 'move' === $args['save_context'];
-	}
-
-	private function format_args_for_move_template( $args ) {
-		if ( 'local' === $args['from_source'] ) {
-			return $this->format_args_for_move_template_from_local_to_cloud( $args );
-		}
-
-		if ( 'cloud' === $args['from_source'] ) {
-			return $this->format_args_for_move_template_from_cloud_to_local( $args );
-		}
+		return $args['source'] === $args['from_source'];
 	}
 
 	private function format_args_for_move_template_from_local_to_cloud( $args ) {
@@ -403,15 +423,6 @@ class Manager {
 		$decoded_data = json_decode( $data['content'], true );
 		$args['content'] = $decoded_data['content'];
 		$args['page_settings'] = $decoded_data['page_settings'];
-
-		return $args;
-	}
-
-	private function format_args_for_new_template( $args ) {
-		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['post_id'] );
-		$args['page_settings'] = $page->get_data( 'settings' );
-
-		$args['content'] = json_decode( $args['content'], true );
 
 		return $args;
 	}
@@ -899,6 +910,7 @@ class Manager {
 			'create_folder',
 			'get_folders',
 			'save_template_screenshot',
+			'move_template',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
