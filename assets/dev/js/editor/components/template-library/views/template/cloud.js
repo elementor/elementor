@@ -14,6 +14,16 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		return classes;
 	},
 
+	attributes() {
+		if ( 'grid' === elementor.templates.getViewSelection() ) {
+			const data = this.model.toJSON();
+
+			return {
+				'data-template_id': data.template_id,
+			};
+		}
+	},
+
 	ui() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
 			toggleMore: '.elementor-template-library-template-more-toggle',
@@ -23,7 +33,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 
 	events() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
-			click: 'viewFolder',
+			click: 'handleItemClicked',
 			'click @ui.toggleMore': 'onToggleMoreClick',
 		} );
 	},
@@ -71,7 +81,11 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 			! this.isGeneratingPreview;
 	},
 
-	onPreviewButtonClick() {
+	onPreviewButtonClick( event ) {
+		if ( event.shiftKey ) {
+			return;
+		}
+
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
 			$e.route( 'library/view-folder', { model: this.model } );
 			return;
@@ -80,14 +94,38 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		TemplateLibraryTemplateLocalView.prototype.onPreviewButtonClick.apply( this, arguments );
 	},
 
-	viewFolder() {
+	handleItemClicked( event ) {
+		if ( 'list' === elementor.templates.getViewSelection() ) {
+			return;
+		}
+
+		if ( event.shiftKey ) {
+			this.handleShiftAndClick();
+
+			return;
+		}
+
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
 			$e.route( 'library/view-folder', { model: this.model } );
 		}
 	},
 
+	handleShiftAndClick() {
+		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
+
+		if ( itemIsSelected ) {
+			elementor.templates.removeBulkSelectionItem( this.model.get( 'template_id' ) );
+		} else {
+			elementor.templates.addBulkSelectionItem( this.model.get( 'template_id' ) );
+		}
+
+		this.$el.toggleClass( 'bulk-selected-item' );
+		elementor.templates.layout.handleBulkActionBar();
+	},
+
 	onDeleteButtonClick( event ) {
 		event.stopPropagation();
+
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
 			this.handleDeleteFolderClick();
 			return;

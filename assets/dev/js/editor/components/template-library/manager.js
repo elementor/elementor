@@ -11,7 +11,8 @@ const TemplateLibraryManager = function() {
 		storage = new LocalStorage(),
 		storageKeyPrefix = 'my_templates_',
 		sourceKey = 'source',
-		viewKey = 'view';
+		viewKey = 'view',
+		bulkSelectedItems = new Set();
 
 	let deleteDialog,
 		errorDialog,
@@ -137,6 +138,39 @@ const TemplateLibraryManager = function() {
 
 			template.set( 'preview_url', data.imageUrl );
 		} );
+
+		this.handleKeydown = ( event ) => {
+			if ( ! this.isSelectAllShortcut( event ) ) {
+				return;
+			}
+
+			event.preventDefault();
+
+			if ( this.isCloudGridView() ) {
+				this.selectAllTemplates();
+			}
+		};
+
+		document.addEventListener( 'keydown', this.handleKeydown );
+	};
+
+	this.isSelectAllShortcut = function( event ) {
+		return ( event.metaKey || event.ctrlKey ) && 'a' === event.key;
+	};
+
+	this.isCloudGridView = function() {
+		return 'cloud' === this.getFilter( 'source' ) && 'grid' === this.getViewSelection();
+	};
+
+	this.selectAllTemplates = function() {
+		document.querySelectorAll( '.elementor-template-library-template[data-template_id]' ).forEach( ( element ) => {
+			const templateId = element.getAttribute( 'data-template_id' );
+
+			element.classList.add( 'bulk-selected-item' );
+			this.addBulkSelectionItem( templateId );
+		} );
+
+		this.layout.handleBulkActionBar();
 	};
 
 	this.getSourceSelection = function() {
@@ -785,10 +819,27 @@ const TemplateLibraryManager = function() {
 		self.setFilter( viewKey, selectedView, true );
 
 		self.layout.showTemplatesView( new TemplateLibraryCollection( self.filterTemplates() ) );
+		self.clearBulkSelectionItems();
 	};
 
 	this.shouldShowCloudConnectView = function( source ) {
 		return 'cloud' === source && ! elementor.config.library_connect.is_connected;
+	};
+
+	this.addBulkSelectionItem = function( templateId ) {
+		bulkSelectedItems.add( parseInt( templateId ) );
+	};
+
+	this.removeBulkSelectionItem = function( templateId ) {
+		bulkSelectedItems.delete( parseInt( templateId ) );
+	};
+
+	this.clearBulkSelectionItems = function() {
+		bulkSelectedItems.clear();
+	};
+
+	this.getBulkSelectionItems = function() {
+		return bulkSelectedItems;
 	};
 };
 
