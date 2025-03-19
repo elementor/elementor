@@ -10,14 +10,26 @@ import {
 } from '@elementor/ui';
 import { useEffect, useRef, useState } from 'react';
 
-const listItems = [
-	__( 'A Unified Style Tab for consistent design control', 'elementor' ),
-	__( 'CSS Classes & Pseudo-Classes for advanced styling', 'elementor' ),
-	__( 'Improved Responsive Support for better adaptability', 'elementor' ),
-	__( '…and much more!', 'elementor' ),
-];
+const i18n = {
+	heading: __( 'Welcome to the Future of Elementor Editor V4 is Here!', 'elementor' ),
+	introduction: __( 'You&#39;re now using Editor V4, a new generation of Elementor that brings powerful enhancements while keeping your workflow familiar.', 'elementor' ),
+	listItems: [
+		__( 'A Unified Style Tab for consistent design control', 'elementor' ),
+		__( 'CSS Classes & Pseudo-Classes for advanced styling', 'elementor' ),
+		__( 'Improved Responsive Support for better adaptability', 'elementor' ),
+		__( '…and much more!', 'elementor' ),
+	],
+	footerText: __( 'Need help getting started?', 'elementor' ),
+	introductionVideo: __( 'Introduction video', 'elementor' ),
+	helpCenter: __( 'Help center', 'elementor' ),
+};
 
-const WelcomePopover = ( { doClose } ) => {
+const contentLinks = {
+	introduction: 'https://elementor.com/help/',
+	helpCenter: 'https://elementor.com/help/',
+};
+
+export const WelcomePopover = ( { doClose } ) => {
 	const anchorElRef = useRef( null );
 	const [ isMounted, setIsMounted ] = useState( false );
 
@@ -44,11 +56,11 @@ const WelcomePopover = ( { doClose } ) => {
 		>
 			<Image src="https://elementor.com/cdn-cgi/image/f=auto,w=1370/https://elementor.com/wp-content/uploads/2024/06/drag-and-drop.webp" alt="imgAlt" sx={ { height: 300, width: '100%', objectFit: 'cover', objectPosition: 'center' } } />
 			<Stack pt={ 3 } pb={ 1.5 } px={ 3 } gap={ 3 }>
-				<Typography variant="h6" color="text.primary">Welcome to the Future of Elementor Editor V4 is Here!</Typography>
+				<Typography variant="h6" color="text.primary">{ i18n.heading }</Typography>
 				<Box>
-					<Typography variant="body1" color="text.secondary">You&#39;re now using Editor V4, a new generation of Elementor that brings powerful enhancements while keeping your workflow familiar.</Typography>
+					<Typography variant="body1" color="text.secondary">{ i18n.introduction }</Typography>
 					<List sx={ { pl: 2 } }>
-						{ listItems.map( ( text, index ) => {
+						{ i18n.listItems.map( ( text, index ) => {
 							return (
 								<ListItem key={ index } sx={ { listStyle: 'disc', display: 'list-item', color: 'text.secondary', p: 0 } }>
 									<Typography variant="body1">{ text }</Typography>
@@ -58,9 +70,9 @@ const WelcomePopover = ( { doClose } ) => {
 					</List>
 				</Box>
 				<Stack direction="row" alignItems="center" gap={ 1.5 }>
-					<Typography variant="body1" color="text.secondary">Need help getting started?</Typography>
-					<Link href="https://elementor.com/help/" target="_blank" color="info.main">Introduction video</Link>
-					<Link href="https://elementor.com/help/" target="_blank" color="info.main">Help center</Link>
+					<Typography variant="body1" color="text.secondary">{ i18n.footerText }</Typography>
+					<Link href={ contentLinks.introduction } target="_blank" color="info.main">{ i18n.introductionVideo }</Link>
+					<Link href={ contentLinks.helpCenter } target="_blank" color="info.main">{ i18n.helpCenter }</Link>
 				</Stack>
 			</Stack>
 			<Divider />
@@ -78,5 +90,3 @@ const WelcomePopover = ( { doClose } ) => {
 WelcomePopover.propTypes = {
 	doClose: PropTypes.func,
 };
-
-export default WelcomePopover;
