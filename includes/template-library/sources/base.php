@@ -390,6 +390,10 @@ abstract class Source_Base {
 		return [];
 	}
 
+	public function get_bulk_items( array $args = [] ) {
+		return [];
+	}
+
 	/**
 	 * @param int $template_id
 	 * @return \Elementor\Core\Base\Document|\WP_Error
