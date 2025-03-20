@@ -872,6 +872,7 @@ const TemplateLibraryManager = function() {
 
 			const dialog = this.getBulkDeleteDialog();
 			const source = this.getFilter( 'source' );
+			const templateIds = Array.from( selectedItems );
 
 			dialog.onConfirm = () => {
 				isLoading = true;
@@ -879,7 +880,7 @@ const TemplateLibraryManager = function() {
 				const ajaxOptions = {
 					data: {
 						source,
-						template_ids: Array.from( selectedItems ),
+						template_ids: templateIds,
 					},
 					success: () => {
 						isLoading = false;
@@ -904,7 +905,7 @@ const TemplateLibraryManager = function() {
 						] : null;
 
 						elementor.notifications.showToast( {
-							message: `${ selectedItems.size } items deleted successfully`,
+							message: `${ templateIds.length } items deleted successfully`,
 							buttons,
 						} );
 
