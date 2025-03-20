@@ -1066,11 +1066,9 @@ class Manager {
 			return $source->move_bulk_templates_to_folder( $args );
 		}
 
-		if ( 'local' === $args['from_source'] ) {
-			$bulk_args = $this->format_args_for_bulk_move_templates_from_local_to_cloud( $args );
-		} else {
-			$bulk_args = $this->format_args_for_bulk_move_templates_from_cloud_to_local( $args );
-		}
+		$bulk_args = 'local' === $args['from_source']
+			? $this->format_args_for_bulk_move_templates_from_local_to_cloud( $args )
+			: $this->format_args_for_bulk_move_templates_from_cloud_to_local( $args );
 
 		$bulk_save = $source->save_bulk_items( $bulk_args );
 
