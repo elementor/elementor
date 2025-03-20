@@ -56,9 +56,8 @@ jobs:
 
       - name: Warm up the cache
         run: |
-          
-          curl --silent http://localhost:8889/v3-only/
-          curl --silent http://localhost:8889/mixed-template/
+          curl -o /dev/null http://localhost:8889/v3-only/
+          curl -o /dev/null http://localhost:8889/mixed-template/
 
       - name: Run Performance Check
         uses: elementor/elementor-editor-github-actions/actions/run-lighthouse-tests@main
