@@ -264,27 +264,5 @@ class Cloud_Library extends Library {
 		return true;
 	}
 
-	public function bulk_delete_items( array $template_ids ): bool {
-		$endpoint = 'resources/bulk';
-
-		$query_string = http_build_query( [
-			'ids' => implode( ',', $template_ids ),
-		] );
-
-		$endpoint .= '?' . $query_string;
-
-		$request = $this->http_request( 'DELETE', $endpoint );
-
-		if ( isset( $request->errors[204] ) && 'No Content' === $request->errors[204][0] ) {
-			return true;
-		}
-
-		if ( is_wp_error( $request ) ) {
-			return false;
-		}
-
-		return true;
-	}
-
 	protected function init() {}
 }
