@@ -402,7 +402,7 @@ abstract class Source_Base {
 
 	/**
 	 * @param int[] $template_ids
-	 * @return string|\WP_Error
+	 * @return bool|\WP_Error
 	 */
 	public function bulk_delete_items( array $template_ids ) {
 		return new \WP_Error( 'template_error', 'Bulk delete action is not supported for this source' );
