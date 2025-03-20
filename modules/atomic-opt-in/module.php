@@ -10,6 +10,7 @@ use Elementor\Core\Utils\Isolation_Manager;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Plugin;
 use Elementor\Settings;
+use Elementor\User;
 use Elementor\Utils;
 
 class Module extends BaseModule {
@@ -115,9 +116,14 @@ class Module extends BaseModule {
 	}
 
 	private function prepare_data() {
+		$create_new_post_type = User::is_current_user_can_edit_post_type( 'page' ) ? 'page' : 'post';
+
 		return [
 			'features' => [
 				'editor_v4' => $this->is_atomic_experiment_active(),
+			],
+			'urls' => [
+				'start_building' => esc_url( Plugin::$instance->documents->get_create_new_post_url( $create_new_post_type ) ),
 			],
 		];
 	}

@@ -36,7 +36,7 @@ const App = ( props ) => {
 
 App.propTypes = {
 	isRTL: PropTypes.bool.isRequired,
-	state: PropTypes.object,
+	state: PropTypes.bool,
 	contentType: PropTypes.string.isRequired,
 };
 
@@ -74,7 +74,7 @@ const init = () => {
 	ReactUtils.render( (
 		<App
 			isRTL={ !! elementorCommon.config.isRTL }
-			state={ elementorSettingsEditor4OptIn }
+			state={ elementorSettingsEditor4OptIn?.features?.editor_v4 || false }
 			contentType={ contentType }
 		/>
 	), rootElement );

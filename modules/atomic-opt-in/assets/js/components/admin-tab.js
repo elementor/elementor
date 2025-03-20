@@ -64,6 +64,7 @@ export const AdminTab = ( { state } ) => {
 
 	const feedbackUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-feedback/';
 	const readMoreUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
+	const startBuildingUrl = decodeURIComponent( elementorSettingsEditor4OptIn?.urls?.start_building ) || '#';
 
 	const maybeOptIn = () => {
 		triggerOptIn()
@@ -89,8 +90,6 @@ export const AdminTab = ( { state } ) => {
 				setErrorMessage( i18n.messages.error );
 			} );
 	};
-
-	const maybeStart = () => {};
 
 	return (
 		<Container sx={ {
@@ -138,7 +137,7 @@ export const AdminTab = ( { state } ) => {
 						</Button>
 					) : (
 						<Button
-							onClick={ maybeStart }
+							onClick={ () => window.location.href = startBuildingUrl }
 							size="large"
 							color="primary"
 							variant="contained"
@@ -223,9 +222,5 @@ export const AdminTab = ( { state } ) => {
 };
 
 AdminTab.propTypes = {
-	state: PropTypes.shape( {
-		features: PropTypes.shape( {
-			editor_v4: PropTypes.bool,
-		} ),
-	} ).isRequired,
+	state: PropTypes.bool.isRequired,
 };
