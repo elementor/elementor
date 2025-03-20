@@ -21,9 +21,27 @@ trait Post_Query_Data_Mock {
 		foreach ( $this->post_types as $post_type ) {
 			unregister_post_type( $post_type );
 		}
+		foreach ( get_posts( [
+			'post_type' => [ 'post', 'product', 'page', 'movie' ],
+			'numberposts' => -1,
+		] ) as $post ) {
+			var_dump( $post->post_title );
+		}
 
 		$this->posts = [];
 		$this->post_types = [];
+	}
+
+	protected function init() {
+		foreach ( get_posts( [
+			'post_type' => [ 'post', 'product', 'page', 'movie' ],
+			'numberposts' => -1,
+		] ) as $post ) {
+			wp_delete_post( $post->ID, true );
+		}
+
+		$this->register_post_types();
+		$this->create_posts();
 	}
 
 	private function register_post_types() {
@@ -40,6 +58,13 @@ trait Post_Query_Data_Mock {
 	}
 
 	private function create_posts() {
+		foreach ( get_posts( [
+			'post_type' => [ 'post', 'product', 'page', 'movie' ],
+			'numberposts' => -1,
+		] ) as $post ) {
+			wp_delete_post( $post->ID, true );
+		}
+
 		$this->posts = [
 			$this->insert_post( 'Hello World', 'The first post on the site.', 'publish', 'post' ),
 			$this->insert_post( 'My Blogging Journey', 'Sharing my experiences as a blogger.', 'publish', 'post' ),
@@ -57,43 +82,18 @@ trait Post_Query_Data_Mock {
 	}
 
 	private function insert_post( $post_title, $description, $status, $post_type ) {
-		$post_id = $this->factory()->create_and_get_custom_post( [
+		$post = $this->factory()->create_and_get_custom_post( [
 			'post_title' => $post_title,
 			'post_content' => $description,
 			'post_status' => $status,
 			'post_type' => $post_type,
 		] );
 
-		return get_post( $post_id );
+		return $post;
 	}
 
 	public function data_provider_post_query() {
-		$this->register_post_types();
-		$this->create_posts();
-
 		return [
-			[
-				'params' => array_merge( Post_Query::build_query_params( [
-					Post_Query::EXCLUDED_POST_TYPE_KEYS => [ 'page' ],
-					Post_Query::POST_KEYS_CONVERSION_MAP => [
-						'ID' => 'id',
-						'post_title' => 'label',
-						'post_type' => 'groupLabel',
-					],
-				] ), [ Post_Query::SEARCH_TERM_KEY => 'Us' ] ),
-				'expected' => [
-					[
-						'id' => $this->posts[3]->ID,
-						'label' => $this->posts[3]->post_title,
-						'groupLabel' => $this->posts[3]->post_type,
-					],
-					[
-						'id' => $this->posts[4]->ID,
-						'label' => $this->posts[4]->post_title,
-						'groupLabel' => $this->posts[4]->post_type,
-					],
-				],
-			],
 			[
 				'params' => array_merge( Post_Query::build_query_params( [
 					Post_Query::EXCLUDED_POST_TYPE_KEYS => [],
@@ -101,55 +101,30 @@ trait Post_Query_Data_Mock {
 						'ID' => 'id',
 						'post_title' => 'label',
 					],
-				] ), [ Post_Query::SEARCH_TERM_KEY => '10' ] ),
+				] ), [ Post_Query::SEARCH_TERM_KEY => 'Us' ] ),
 				'expected' => [
 					[
-						'label' => $this->posts[0]->post_title,
-						'id' => $this->posts[0]->ID,
-					],
-					[
-						'label' => $this->posts[1]->post_title,
-						'id' => $this->posts[1]->ID,
-					],
-					[
-						'label' => $this->posts[2]->post_title,
-						'id' => $this->posts[2]->ID,
-					],
-					[
-						'label' => $this->posts[3]->post_title,
 						'id' => $this->posts[3]->ID,
+						'label' => $this->posts[3]->post_title,
 					],
 					[
-						'label' => $this->posts[4]->post_title,
 						'id' => $this->posts[4]->ID,
+						'label' => $this->posts[4]->post_title,
 					],
-					[
-						'label' => $this->posts[5]->post_title,
-						'id' => $this->posts[5]->ID,
+				],
+			],
+			[
+				'params' => array_merge( Post_Query::build_query_params( [
+					Post_Query::EXCLUDED_POST_TYPE_KEYS => [ 'page', 'post' ],
+					Post_Query::POST_KEYS_CONVERSION_MAP => [
+						'ID' => 'post_id',
+						'post_title' => 'random_key',
 					],
+				] ), [ Post_Query::SEARCH_TERM_KEY => 'X' ] ),
+				'expected' => [
 					[
-						'label' => $this->posts[6]->post_title,
-						'id' => $this->posts[6]->ID,
-					],
-					[
-						'label' => $this->posts[7]->post_title,
-						'id' => $this->posts[7]->ID,
-					],
-					[
-						'label' => $this->posts[8]->post_title,
-						'id' => $this->posts[8]->ID,
-					],
-					[
-						'label' => $this->posts[9]->post_title,
-						'id' => $this->posts[9]->ID,
-					],
-					[
-						'label' => $this->posts[10]->post_title,
-						'id' => $this->posts[10]->ID,
-					],
-					[
-						'label' => $this->posts[11]->post_title,
-						'id' => $this->posts[11]->ID,
+						'post_id' => $this->posts[6]->ID,
+						'random_key' => $this->posts[6]->post_title,
 					],
 				],
 			],
@@ -163,8 +138,8 @@ trait Post_Query_Data_Mock {
 				] ), [ Post_Query::SEARCH_TERM_KEY => 'a ' ] ),
 				'expected' => [
 					[
-						'label' => $this->posts[2]->post_title,
-						'id' => $this->posts[2]->ID,
+						'label' => $this->posts[9]->post_title,
+						'id' => $this->posts[9]->ID,
 					],
 					[
 						'label' => $this->posts[3]->post_title,
@@ -173,22 +148,6 @@ trait Post_Query_Data_Mock {
 					[
 						'label' => $this->posts[4]->post_title,
 						'id' => $this->posts[4]->ID,
-					],
-					[
-						'label' => $this->posts[5]->post_title,
-						'id' => $this->posts[5]->ID,
-					],
-					[
-						'label' => $this->posts[7]->post_title,
-						'id' => $this->posts[7]->ID,
-					],
-					[
-						'label' => $this->posts[8]->post_title,
-						'id' => $this->posts[8]->ID,
-					],
-					[
-						'label' => $this->posts[9]->post_title,
-						'id' => $this->posts[9]->ID,
 					],
 				],
 			],

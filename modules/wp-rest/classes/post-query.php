@@ -75,7 +75,7 @@ class Post_Query {
 	 * @param \WP_Query $wp_query The WP_Query instance.
 	 * @return string Modified search query.
 	 */
-	private function customize_search( string $search_term, \WP_Query $wp_query ) {
+	public function customize_search( string $search_term, \WP_Query $wp_query ) {
 		$term = $wp_query->get( 'search_term' ) ?? '';
 		$is_custom_search = $wp_query->get( 'custom_search' ) ?? false;
 
@@ -170,14 +170,14 @@ class Post_Query {
 	 * @return void
 	 */
 	private function add_filter_to_customize_query() {
-		add_filter( 'posts_search', fn ( $search_term, $wp_query ) => $this->customize_search( $search_term, $wp_query ), 10, 2 );
+		add_filter( 'posts_search', [ $this, 'customize_search' ], 10, 2 );
 	}
 
 	/**
 	 * @return void
 	 */
 	private function remove_filter_to_customize_query() {
-		remove_filter( 'posts_search', fn ( $search_term, $wp_query ) => $this->customize_search( $search_term, $wp_query ), 10, 2 );
+		remove_filter( 'posts_search', [ $this, 'customize_search' ], 10, 2 );
 	}
 
 	/**

@@ -18,6 +18,7 @@ class Test_Post_Query extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->init();
 		$this->act_as_admin();
 	}
 
@@ -27,12 +28,13 @@ class Test_Post_Query extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	/**
-	 * @dataProvider data_provider_post_query
-	 */
-	public function test_post_query_results( $params, $expected ) {
-		echo '1111222233334444';
-		var_dump( $params );
+	public function test_post_query_results() {
+		foreach ( $this->data_provider_post_query() as $data ) {
+			$this->execute( $data['params'], $data['expected'] );
+		}
+	}
+
+	private function execute( $params, $expected ) {
 		// Arrange
 		$request = new \WP_REST_Request( 'GET', self::URL );
 		$request->set_param( Post_Query::EXCLUDED_POST_TYPE_KEYS, $params[ Post_Query::EXCLUDED_POST_TYPE_KEYS ] );
@@ -43,9 +45,6 @@ class Test_Post_Query extends Elementor_Test_Base {
 		// Act
 		$response = rest_get_server()->dispatch( $request );
 		$posts = $response->get_data()['data']['value'];
-
-		var_dump( 'exp', $expected );
-		var_dump( 'posts', $posts );
 
 		// Assert
 		$this->assertEqualSets( $expected, $posts );
