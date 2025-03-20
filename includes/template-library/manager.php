@@ -317,25 +317,15 @@ class Manager {
 			return $validate_args;
 		}
 
-		$sources = (array) $args['source']; // BC
-		$results = [];
-		$should_delete_template = true;
+		$args['source'] = $args['source'][0];
 
-		foreach ( $sources as $source ) {
-			$args_copy = $args;
-			$args_copy['source'] = $source;
-			$results[] = $this->move_template_item( $args_copy );
+		$result = $this->move_template_item( $args );
 
-			if ( $this->is_moving_to_same_source( $args_copy ) ) {
-				$should_delete_template = false;
-			}
-		}
-
-		if ( $should_delete_template ) {
+		if ( ! $this->is_moving_to_same_source( $args ) ) {
 			$this->delete_original_template( $args );
 		}
 
-		return 1 === count( $results ) ? $results[0] : $results;
+		return $result;
 	}
 
 	private function move_template_item( array $args ) {
