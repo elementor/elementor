@@ -346,12 +346,12 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( this.moreThanOneCheckboxCanBeChecked() ) {
 			return;
 		}
-		
+
 		const selectedCheckbox = event.currentTarget;
-		
+
 		this.ui.sourceSelectionCheckboxes.each( ( _, checkbox ) => {
 			const wrapper = this.$( checkbox ).closest( '.source-selections-input' );
-			
+
 			if ( checkbox !== selectedCheckbox ) {
 				if ( selectedCheckbox.checked ) {
 					wrapper.addClass( 'disabled' );
