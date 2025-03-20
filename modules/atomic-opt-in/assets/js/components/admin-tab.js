@@ -11,12 +11,18 @@ import {
 import { AlertTriangleFilledIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { TextNode, ContentList, ContentListItem } from './opt-in-content';
-import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './opt-in-img-placeholders';
-import { Message } from './opt-in-message';
-import { triggerOptIn, triggerOptOut } from './opt-in-api';
+import { TextNode, ContentList, ContentListItem } from './admin-tab-content';
+import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './admin-tab-img-placeholders';
+import { Message } from './admin-tab-message';
+import { triggerOptIn, triggerOptOut } from '../opt-in-api';
 
-export const OptIn = ( { state } ) => {
+const decodeHtmlUrl = ( html ) => {
+	const textarea = document.createElement( 'textarea' );
+	textarea.innerHTML = html;
+	return textarea.value;
+};
+// Test
+export const AdminTab = ( { state } ) => {
 	const i18n = {
 		title: __( 'The Road to Editor V4', 'elementor' ),
 		chip: __( 'Alpha', 'elementor' ),
@@ -64,6 +70,7 @@ export const OptIn = ( { state } ) => {
 
 	const feedbackUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-feedback/';
 	const readMoreUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
+	const startBuildingUrl = decodeHtmlUrl( elementorSettingsEditor4OptIn?.urls?.start_building ) || '#';
 
 	const maybeOptIn = () => {
 		triggerOptIn()
@@ -89,8 +96,6 @@ export const OptIn = ( { state } ) => {
 				setErrorMessage( i18n.messages.error );
 			} );
 	};
-
-	const maybeStart = () => {};
 
 	return (
 		<Container sx={ {
@@ -138,7 +143,7 @@ export const OptIn = ( { state } ) => {
 						</Button>
 					) : (
 						<Button
-							onClick={ maybeStart }
+							onClick={ () => window.location.href = startBuildingUrl }
 							size="large"
 							color="primary"
 							variant="contained"
@@ -222,10 +227,6 @@ export const OptIn = ( { state } ) => {
 	);
 };
 
-OptIn.propTypes = {
-	state: PropTypes.shape( {
-		features: PropTypes.shape( {
-			editor_v4: PropTypes.bool,
-		} ),
-	} ).isRequired,
+AdminTab.propTypes = {
+	state: PropTypes.bool.isRequired,
 };
