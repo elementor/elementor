@@ -16,6 +16,12 @@ import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './admin-tab-i
 import { Message } from './admin-tab-message';
 import { triggerOptIn, triggerOptOut } from '../opt-in-api';
 
+const decodeHtmlUrl = ( html ) => {
+	const textarea = document.createElement( 'textarea' );
+	textarea.innerHTML = html;
+	return textarea.value;
+};
+
 export const AdminTab = ( { state } ) => {
 	const i18n = {
 		title: __( 'The Road to Editor V4', 'elementor' ),
@@ -64,7 +70,7 @@ export const AdminTab = ( { state } ) => {
 
 	const feedbackUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-feedback/';
 	const readMoreUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
-	const startBuildingUrl = decodeURIComponent( elementorSettingsEditor4OptIn?.urls?.start_building ) || '#';
+	const startBuildingUrl = decodeHtmlUrl( elementorSettingsEditor4OptIn?.urls?.start_building ) || '#';
 
 	const maybeOptIn = () => {
 		triggerOptIn()
