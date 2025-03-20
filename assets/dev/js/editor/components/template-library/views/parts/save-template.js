@@ -34,7 +34,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
-		'change @ui.sourceSelectionCheckboxes': 'onCheckboxChange'
+		'change @ui.sourceSelectionCheckboxes': 'onCheckboxChange',
 	},
 
 	onRender() {
@@ -100,7 +100,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
-			saveType = this.getSaveType(),
 			JSONParams = { remove: [ 'default' ] };
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
@@ -109,7 +108,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		if ( ! formData?.source && this.templateHelpers()?.canSaveToCloud ) {
 			this.showEmptySourceErrorDialog();
-		
+
 			return;
 		}
 
@@ -117,7 +116,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.updateSaveContext( formData );
 
-		elementor.templates.saveTemplate( saveType, formData );
+		elementor.templates.saveTemplate( this.getSaveType(), formData );
 	},
 
 	updateSourceSelections( formData ) {
@@ -131,7 +130,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
-		
 
 	showEmptySourceErrorDialog() {
 		elementorCommon.dialogsManager.createWidget( 'alert', {
@@ -363,7 +361,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
                 }
             }
         } );
-    }
+    },
 } );
 
 module.exports = TemplateLibrarySaveTemplateView;
