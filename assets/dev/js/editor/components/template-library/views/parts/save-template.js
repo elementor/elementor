@@ -364,8 +364,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	moreThanOneCheckboxCanBeChecked() {
-		return SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) 
-			|| 'cloud' !== elementor.templates.getFilter( 'source' );
+		return SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ||
+			'cloud' !== elementor.templates.getFilter( 'source' );
 	},
 } );
 
