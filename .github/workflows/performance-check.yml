@@ -60,8 +60,8 @@ jobs:
         with:
           number-of-runs: 3
           urls: |-
-            mixed:http://localhost:8889/mixed-template/
             v3:http://localhost:8889/v3-only/
+            mixed:http://localhost:8889/mixed-template/
           categories: |-
             performance
 
