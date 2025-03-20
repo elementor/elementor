@@ -89,10 +89,10 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		$editor_visit_count = $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'atomic_widgets' ) ) {
-			return 3 === $editor_visit_count;
+			return 2 === $editor_visit_count;
 		}
 
-		return 2 === $editor_visit_count;
+		return 3 === $editor_visit_count;
 	}
 
 	/**

@@ -112,7 +112,6 @@ class Module extends BaseModule {
 		}
 
 		$this->enqueue_scripts();
-		$this->elementor_adapter->increment( Elementor_Counter::EDITOR_COUNTER_KEY );
 		$this->set_welcome_popover_as_displayed();
 	}
 
