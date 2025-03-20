@@ -135,7 +135,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		elementorCommon.dialogsManager.createWidget( 'alert', {
 			id: 'elementor-template-library-error-dialog',
 			headerMessage: __( 'An error occured.', 'elementor' ),
-			message: __( 'Please select at least one source.', 'elementor' ),
+			message: __( 'Please select at least one location.', 'elementor' ),
 		} ).show();
 	},
 

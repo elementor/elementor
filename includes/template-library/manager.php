@@ -903,7 +903,6 @@ class Manager {
 			'save_template_screenshot',
 			'move_template',
 			'bulk_move_templates',
-			'bulk_delete_items',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
