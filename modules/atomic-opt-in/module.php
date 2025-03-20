@@ -88,7 +88,7 @@ class Module extends BaseModule {
 		);
 	}
 
-	public function enqueue_scripts( $isWelcomePopover = false ) {
+	public function enqueue_scripts() {
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
@@ -111,7 +111,7 @@ class Module extends BaseModule {
 		);
 	}
 
-	private function is_atomic_experiment_active() {
+	private function is_atomic_experiment_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( 'editor_v4' );
 	}
 
