@@ -534,14 +534,13 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'update_resource' )
 			->with( [
-				'source' => 'cloud',
 				'id' => 1,
 				'parentId' => 2,
 				'title' => 'ATemplate',
 			] );
 
 		// Act
-		$this->manager->save_template( [
+		$this->manager->move_template( [
 			'post_id' => 1,
 			'source' => 'cloud',
 			'title' => 'ATemplate',
@@ -560,7 +559,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$mock_content = [ 'content' => 'mock_content' ];
 
 		// Act
-		$result = $this->manager->save_template( [
+		$result = $this->manager->move_template( [
 			'post_id' => 1,
 			'source' => 'cloud',
 			'title' => 'ATemplate',
@@ -583,7 +582,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$mock_content = [ 'content' => 'mock_content' ];
 
 		// Act
-		$result = $this->manager->save_template( [
+		$result = $this->manager->move_template( [
 			'post_id' => 1,
 			'source' => 'cloud',
 			'title' => 'ATemplate',
