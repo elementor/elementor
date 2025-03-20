@@ -146,13 +146,17 @@ class Module extends BaseModule {
 	}
 
 	public function maybe_enqueue_welcome_popover(): void {
+		if ( ! $this->is_atomic_experiment_active() ) {
+			return;
+		}
+
 		if ( $this->is_first_or_second_editor_visit() ) {
 			return;
 		}
-//
-//		if ( $this->has_welcome_popover_been_displayed() ) {
-//			return;
-//		}
+
+		if ( $this->has_welcome_popover_been_displayed() ) {
+			return;
+		}
 
 		$this->enqueue_scripts();
 		$this->set_welcome_popover_as_displayed();
