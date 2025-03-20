@@ -54,6 +54,11 @@ jobs:
           templates: |-
             templates
 
+      - name: Warm up the cache
+        run: |
+          curl http://localhost:8889/v3-only/
+          curl http://localhost:8889/mixed-template/
+
       - name: Run Performance Check
         uses: elementor/elementor-editor-github-actions/actions/run-lighthouse-tests@main
         id: run-lighthouse-tests
