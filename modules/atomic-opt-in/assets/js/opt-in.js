@@ -76,7 +76,6 @@ export const OptIn = ( { state } ) => {
 				setIsEnrolled( false );
 				setErrorMessage( i18n.messages.error );
 			} );
-
 	};
 
 	const maybeOptOut = () => {
