@@ -891,6 +891,8 @@ const TemplateLibraryManager = function() {
 
 						templatesCollection.remove( modelsToRemove );
 
+						self.layout.updateViewCollection( templatesCollection.models );
+
 						self.clearBulkSelectionItems();
 
 						const buttons = 'cloud' === source ? [
@@ -909,7 +911,7 @@ const TemplateLibraryManager = function() {
 							buttons,
 						} );
 
-						resolve( true );
+						resolve();
 					},
 					error: ( error ) => {
 						isLoading = false;
