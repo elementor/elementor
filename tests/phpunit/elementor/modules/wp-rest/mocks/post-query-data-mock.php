@@ -18,14 +18,15 @@ trait Post_Query_Data_Mock {
 			wp_delete_post( $post->ID, true );
 		}
 
-		foreach ( $this->post_types as $post_type ) {
-			unregister_post_type( $post_type );
-		}
 		foreach ( get_posts( [
 			'post_type' => [ 'post', 'product', 'page', 'movie' ],
 			'numberposts' => -1,
 		] ) as $post ) {
 			var_dump( $post->post_title );
+		}
+
+		foreach ( $this->post_types as $post_type ) {
+			unregister_post_type( $post_type );
 		}
 
 		$this->posts = [];
@@ -58,13 +59,6 @@ trait Post_Query_Data_Mock {
 	}
 
 	private function create_posts() {
-		foreach ( get_posts( [
-			'post_type' => [ 'post', 'product', 'page', 'movie' ],
-			'numberposts' => -1,
-		] ) as $post ) {
-			wp_delete_post( $post->ID, true );
-		}
-
 		$this->posts = [
 			$this->insert_post( 'Hello World', 'The first post on the site.', 'publish', 'post' ),
 			$this->insert_post( 'My Blogging Journey', 'Sharing my experiences as a blogger.', 'publish', 'post' ),

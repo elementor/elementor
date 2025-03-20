@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Post_Query {
-	const MAX_ALLOWED_COUNT = 100;
+	const MAX_RESPONSE_COUNT = 100;
 	const NAMESPACE = 'elementor/v1';
 	const ENDPOINT = 'post';
 
@@ -125,7 +125,7 @@ class Post_Query {
 		$keys_format_map = $params[ self::POST_KEYS_CONVERSION_MAP ];
 		$requested_count = $params[ self::MAX_COUNT_KEY ] ?? 0;
 		$validated_count = max( $requested_count, 1 );
-		$max_count = min( $validated_count, self::MAX_ALLOWED_COUNT );
+		$max_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
 		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
 
 		$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
@@ -210,7 +210,7 @@ class Post_Query {
 				'description' => 'Max count of returned items',
 				'type' => 'number',
 				'required' => false,
-				'default' => self::MAX_ALLOWED_COUNT,
+				'default' => self::MAX_RESPONSE_COUNT,
 			],
 		];
 	}
