@@ -210,7 +210,7 @@ class Cloud_Library extends Library {
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 
-		if ( isset( $response->errors[204] ) && 'No Content' === $response->errors[204][0] ) {
+		if ( isset( $response->errors[204] ) ) {
 			return true;
 		}
 
