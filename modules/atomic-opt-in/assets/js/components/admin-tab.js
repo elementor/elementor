@@ -15,6 +15,7 @@ import { TextNode, ContentList, ContentListItem } from './admin-tab-content';
 import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './admin-tab-img-placeholders';
 import { Message } from './admin-tab-message';
 import { triggerOptIn, triggerOptOut } from '../opt-in-api';
+import DOMPurify from 'dompurify';
 
 const decodeHtmlUrl = ( html ) => {
 	const textarea = document.createElement( 'textarea' );
