@@ -87,6 +87,8 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		$this->register_experiment();
+
 		( new Opt_In() )->init();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
@@ -109,15 +111,15 @@ class Module extends BaseModule {
 		}
 	}
 
-	public static function get_experimental_data(): array {
-		return [
+	private function register_experiment() {
+		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		];
+		] );
 	}
 
 	private function add_packages( $packages ) {
