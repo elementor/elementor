@@ -34,6 +34,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		selectListView: '#elementor-template-library-view-list',
 		bulkSelectionItemCheckbox: '.bulk-selection-item-checkbox',
 		bulkSelectionActionBar: '.bulk-selection-action-bar',
+		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete i',
 		bulkSelectedCount: '.bulk-selection-action-bar .selected-count',
 		bulkSelectAllCheckbox: '#bulk-select-all',
 		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
@@ -54,6 +55,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'click @ui.clearBulkSelections': 'onClearBulkSelections',
 		'mouseenter @ui.bulkMove': 'onHoverBulkMove',
 		'click @ui.bulkMove': 'onClickBulkMove',
+		'click @ui.bulkActionBarDelete': 'onBulkDeleteClick',
 	},
 
 	className: 'no-bulk-selections',
@@ -119,6 +121,16 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 
 		elementor.templates.layout.handleBulkActionBar();
+	},
+
+	onBulkDeleteClick() {
+		this.ui.bulkActionBarDelete.toggleClass( 'disabled' );
+
+		elementor.templates.onBulkDeleteClick()
+			.finally( () => {
+				this.ui.bulkActionBarDelete.toggleClass( 'disabled' );
+				elementor.templates.layout.handleBulkActionBar();
+			} );
 	},
 
 	comparators: {
