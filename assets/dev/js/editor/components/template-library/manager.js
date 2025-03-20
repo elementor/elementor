@@ -908,7 +908,7 @@ const TemplateLibraryManager = function() {
 							buttons,
 						} );
 
-						resolve();
+						resolve( true );
 					},
 					error: ( error ) => {
 						isLoading = false;

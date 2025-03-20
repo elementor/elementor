@@ -123,8 +123,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.ui.bulkActionBarDelete.toggleClass( 'disabled' );
 
 		elementor.templates.onBulkDeleteClick()
-			.then( () => {
-				$e.routes.refreshContainer( 'library' );
+			.then( ( shouldRefresh ) => {
+				if ( shouldRefresh ) {
+					$e.routes.refreshContainer( 'library' );
+				}
 			} )
 			.finally( () => {
 				this.ui.bulkActionBarDelete.toggleClass( 'disabled' );
