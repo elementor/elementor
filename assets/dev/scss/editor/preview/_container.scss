@@ -87,7 +87,7 @@
 		}
 	}
 
-	&.div-block-base {
+	&.e-div-block-base {
 		&:has( .elementor-empty-view ) {
 			display: flex;
 		}
@@ -289,7 +289,7 @@
 	}
 }
 
-.div-block-base:has( .elementor-empty-view ) {
+.e-div-block-base:has( .elementor-empty-view ) {
 	height: 100px;
 }
 
