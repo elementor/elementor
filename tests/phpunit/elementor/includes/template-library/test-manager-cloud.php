@@ -783,4 +783,43 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'from_template_id' => [ 1, 2 ],
 		] );
 	}
+
+	public function test_bulk_move_templates_fails_without_source() {
+		// Act
+		$result = $this->manager->bulk_move_templates( [
+			'from_source' => 'cloud',
+			'from_template_id' => [ 1, 2 ],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_bulk_move_templates_fails_without_from_source() {
+		// Act
+		$result =$this->manager->bulk_move_templates( [
+			'source' => [ 'cloud' ],
+			'from_template_id' => [ 1, 2 ],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_bulk_move_templates_fails_without_from_template_id() {
+		// Act
+		$result = $this->manager->bulk_move_templates( [
+			'source' => [ 'cloud' ],
+			'from_source' => 'cloud',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
+	}
 }
