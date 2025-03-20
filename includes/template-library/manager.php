@@ -1095,8 +1095,8 @@ class Manager {
 
 		if ( ! empty( $bulk_save ) ) {
 			$this->bulk_delete_items( [
-				'template_ids' => $args['from_template_id'],
-				'source' => $args['from_source'],
+				'template_ids' => $args[0]['from_template_id'],
+				'source' => $args[0]['from_source'],
 			] );
 		}
 
