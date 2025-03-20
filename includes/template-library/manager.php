@@ -1067,19 +1067,17 @@ class Manager {
 		}
 
 		if ( 'local' === $args['from_source'] ) {
-			$args = $this->format_args_for_bulk_move_templates_from_local_to_cloud( $args );
+			$bulk_args = $this->format_args_for_bulk_move_templates_from_local_to_cloud( $args );
+		} else {
+			$bulk_args = $this->format_args_for_bulk_move_templates_from_cloud_to_local( $args );
 		}
 
-		if ( 'cloud' === $args['from_source'] ) {
-			$args = $this->format_args_for_bulk_move_templates_from_cloud_to_local( $args );
-		}
-
-		$bulk_save = $source->save_bulk_items( $args );
+		$bulk_save = $source->save_bulk_items( $bulk_args );
 
 		if ( ! empty( $bulk_save ) ) {
 			$this->bulk_delete_items( [
-				'template_ids' => $args[0]['from_template_id'],
-				'source' => $args[0]['from_source'],
+				'template_ids' => $args['from_template_id'],
+				'source' => $args['from_source'],
 			] );
 		}
 
