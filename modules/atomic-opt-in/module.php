@@ -38,10 +38,6 @@ class Module extends BaseModule {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
-	private function is_atomic_experiment_active() {
-		return Plugin::$instance->experiments->is_feature_active( 'editor_v4' );
-	}
-
 	public function __construct( ?Elementor_Adapter_Interface $elementor_adapter = null ) {
 		if ( ! $this->is_experiment_active() || ! is_admin() ) {
 			return;
@@ -82,42 +78,6 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_welcome_popover' ] );
 	}
 
-	private function get_current_user_id(): int {
-		$current_user = wp_get_current_user();
-
-		if ( ! $current_user ) {
-			return 0;
-		}
-
-		return $current_user->ID ?? 0;
-	}
-
-	private function has_welcome_popover_been_displayed(): bool {
-		return get_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_OPTION, true ) ?? false;
-	}
-
-	private function set_welcome_popover_as_displayed(): void {
-		update_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_OPTION, true );
-	}
-
-	private function is_first_or_second_editor_visit(): int {
-		$editor_visit_count = $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
-		return $editor_visit_count < 3;
-	}
-
-	public function maybe_enqueue_welcome_popover(): void {
-		if ( $this->is_first_or_second_editor_visit() ) {
-			return;
-		}
-
-		if ( $this->has_welcome_popover_been_displayed() ) {
-			return;
-		}
-
-		$this->enqueue_scripts( true );
-		$this->set_welcome_popover_as_displayed();
-	}
-
 	public function enqueue_styles() {
 		wp_enqueue_style(
 			self::MODULE_NAME,
@@ -154,11 +114,51 @@ class Module extends BaseModule {
 		);
 	}
 
+	private function is_atomic_experiment_active() {
+		return Plugin::$instance->experiments->is_feature_active( 'editor_v4' );
+	}
+
 	private function prepare_data() {
 		return [
 			'features' => [
 				'editor_v4' => $this->is_atomic_experiment_active(),
 			],
 		];
+	}
+
+	private function get_current_user_id(): int {
+		$current_user = wp_get_current_user();
+
+		if ( ! $current_user ) {
+			return 0;
+		}
+
+		return $current_user->ID ?? 0;
+	}
+
+	private function has_welcome_popover_been_displayed(): bool {
+		return get_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_OPTION, true ) ?? false;
+	}
+
+	private function set_welcome_popover_as_displayed(): void {
+		update_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_OPTION, true );
+	}
+
+	private function is_first_or_second_editor_visit(): int {
+		$editor_visit_count = $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
+		return $editor_visit_count < 3;
+	}
+
+	public function maybe_enqueue_welcome_popover(): void {
+		if ( $this->is_first_or_second_editor_visit() ) {
+			return;
+		}
+
+		if ( $this->has_welcome_popover_been_displayed() ) {
+			return;
+		}
+
+		$this->enqueue_scripts( true );
+		$this->set_welcome_popover_as_displayed();
 	}
 }
