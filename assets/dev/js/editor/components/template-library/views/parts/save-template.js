@@ -346,22 +346,22 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) || 'cloud' !== elementor.templates.getFilter( 'source' ) ) {
 			return;
 		}
-
-        const selectedCheckbox = event.currentTarget;
-
-        this.ui.sourceSelectionCheckboxes.each( ( _, checkbox ) => {
-            const wrapper = this.$( checkbox ).closest( '.source-selections-input' );
-
-            if ( checkbox !== selectedCheckbox ) {
-                if ( selectedCheckbox.checked ) {
-                    wrapper.addClass( 'disabled' );
-                    checkbox.checked = false;
-                } else {
-                    wrapper.removeClass( 'disabled' );
-                }
-            }
-        } );
-    },
+		
+		const selectedCheckbox = event.currentTarget;
+		
+		this.ui.sourceSelectionCheckboxes.each( ( _, checkbox ) => {
+			const wrapper = this.$( checkbox ).closest( '.source-selections-input' );
+			
+			if ( checkbox !== selectedCheckbox ) {
+				if ( selectedCheckbox.checked ) {
+					wrapper.addClass( 'disabled' );
+					checkbox.checked = false;
+				} else {
+					wrapper.removeClass( 'disabled' );
+				}
+			}
+		} );
+	},
 } );
 
 module.exports = TemplateLibrarySaveTemplateView;
