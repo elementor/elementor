@@ -24,7 +24,14 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		parent::setUp();
 		$this->documents = Plugin::$instance->documents;
 		$this->cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
-			->onlyMethods( [ 'get_resources', 'get_resource', 'post_resource', 'update_resource', 'delete_resource', 'bulk_delete_items' ] )
+			->onlyMethods( [
+				'get_resources',
+				'get_resource',
+				'post_resource',
+				'update_resource',
+				'delete_resource',
+				'bulk_delete_items',
+			] )
 			->disableOriginalConstructor()
 			->getMock();
 
