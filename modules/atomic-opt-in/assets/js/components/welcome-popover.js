@@ -25,8 +25,8 @@ const i18n = {
 };
 
 const contentLinks = {
-	introduction: 'https://elementor.com/help/',
-	helpCenter: 'https://elementor.com/help/',
+	introduction: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
+	helpCenter: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
 };
 
 export const WelcomePopover = ( { doClose } ) => {
@@ -54,7 +54,7 @@ export const WelcomePopover = ( { doClose } ) => {
 					sx: { width: 600 },
 				} } }
 		>
-			<Image src="https://elementor.com/cdn-cgi/image/f=auto,w=1370/https://elementor.com/wp-content/uploads/2024/06/drag-and-drop.webp" alt="imgAlt" sx={ { height: 300, width: '100%', objectFit: 'cover', objectPosition: 'center' } } />
+			<Box sx={ { aspectRatio: '2', backgroundColor: 'primary.light' } } />
 			<Stack pt={ 3 } pb={ 1.5 } px={ 3 } gap={ 3 }>
 				<Typography variant="h6" color="text.primary">{ i18n.heading }</Typography>
 				<Box>

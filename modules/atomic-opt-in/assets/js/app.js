@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactUtils from 'elementor-utils/react';
 
 import {
@@ -11,13 +11,23 @@ import { AdminTab } from './components/admin-tab';
 import { WelcomePopover } from './components/welcome-popover';
 
 const App = ( props ) => {
+	const [ isWelcomeVisible, setIsWelcomeVisible ] = useState( true );
+
+	const handleClose = () => {
+		setIsWelcomeVisible( false );
+	};
+
 	const isAdminTab = 'adminTab' === props.contentType;
 
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ 'light' }>
-					{ isAdminTab ? <AdminTab state={ props?.state } /> : <WelcomePopover /> }
+					{
+						isAdminTab
+							? <AdminTab state={ props?.state } />
+							: isWelcomeVisible && <WelcomePopover doClose={ handleClose } />
+					}
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>

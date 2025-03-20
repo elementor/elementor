@@ -15,7 +15,7 @@ use Elementor\Utils;
 class Module extends BaseModule {
 	const MODULE_NAME = 'editor-v4-opt-in';
 	const EXPERIMENT_NAME = 'editor_v4_opt_in';
-	const WELCOME_POPOVER_OPTION = '_e_welcome_popover_displayed';
+	const WELCOME_POPOVER_DISPLAYED_OPTION = '_e_welcome_popover_displayed';
 
 	private Elementor_Adapter_Interface $elementor_adapter;
 
@@ -103,10 +103,6 @@ class Module extends BaseModule {
 			true
 		);
 
-		if ( $isWelcomePopover ) {
-			return;
-		}
-
 		wp_localize_script(
 			self::MODULE_NAME,
 			'elementorSettingsEditor4OptIn',
@@ -137,11 +133,11 @@ class Module extends BaseModule {
 	}
 
 	private function has_welcome_popover_been_displayed(): bool {
-		return get_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_OPTION, true ) ?? false;
+		return get_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_DISPLAYED_OPTION, true ) ?? false;
 	}
 
 	private function set_welcome_popover_as_displayed(): void {
-		update_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_OPTION, true );
+		update_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_DISPLAYED_OPTION, true );
 	}
 
 	private function is_first_or_second_editor_visit(): int {
@@ -153,12 +149,12 @@ class Module extends BaseModule {
 		if ( $this->is_first_or_second_editor_visit() ) {
 			return;
 		}
+//
+//		if ( $this->has_welcome_popover_been_displayed() ) {
+//			return;
+//		}
 
-		if ( $this->has_welcome_popover_been_displayed() ) {
-			return;
-		}
-
-		$this->enqueue_scripts( true );
+		$this->enqueue_scripts();
 		$this->set_welcome_popover_as_displayed();
 	}
 }
