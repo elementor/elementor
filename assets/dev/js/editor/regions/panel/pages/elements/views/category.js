@@ -31,8 +31,6 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	childViewContainer: '.elementor-panel-category-items',
 
 	initialize() {
-		this.PopupManager = new PopupManager();
-
 		let items = this.model.get( 'items' ) || [];
 
 		switch ( this.model.get( 'sort' ) ) {
