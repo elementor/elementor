@@ -103,12 +103,11 @@ class Module extends BaseModule {
 	}
 
 	private function prepare_data() {
+		$is_editor_v4_enabled = Plugin::$instance->experiments->is_feature_active( 'editor_v4' );
+
 		return [
 			'features' => [
-				'editor_v4' => Plugin::$instance->experiments
-					->is_feature_active( 'editor_v4' ),
-				'atomic_widgets' => Plugin::$instance->experiments
-					->is_feature_active( 'atomic_widgets' ),
+				'editor_v4' => $is_editor_v4_enabled,
 			],
 		];
 	}
