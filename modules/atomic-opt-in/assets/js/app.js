@@ -14,7 +14,7 @@ const App = ( props ) => {
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ 'light' }>
-					<OptIn />
+					<OptIn state={ props?.state } />
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>
@@ -23,6 +23,7 @@ const App = ( props ) => {
 
 App.propTypes = {
 	isRTL: PropTypes.bool,
+	state: PropTypes.object,
 };
 
 const init = () => {
@@ -35,6 +36,7 @@ const init = () => {
 	ReactUtils.render( (
 		<App
 			isRTL={ !! elementorCommon.config.isRTL }
+			state={ elementorSettingsEditor4OptIn }
 		/>
 	), rootElement );
 };

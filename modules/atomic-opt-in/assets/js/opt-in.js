@@ -16,7 +16,7 @@ import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './opt-in-img-
 import { Message } from './opt-in-message';
 import { triggerOptIn, triggerOptOut } from './opt-in-api';
 
-export const OptIn = () => {
+export const OptIn = ( props ) => {
 	const i18n = {
 		title: __( 'The Road to Editor V4', 'elementor' ),
 		chip: __( 'Alpha', 'elementor' ),
@@ -53,7 +53,7 @@ export const OptIn = () => {
 		},
 	};
 
-	const [ isEnrolled, setIsEnrolled ] = useState( false );
+	const [ isEnrolled, setIsEnrolled ] = useState( !! props?.state?.features?.editor_v4 );
 
 	const [ successMessage, setSuccessMessage ] = useState( '' );
 	const [ notifyMessage, setNotifyMessage ] = useState( '' );
