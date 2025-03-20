@@ -48,11 +48,11 @@ module.exports = {
 			container: {
 				widget: null,
 				container: null,
-				'e-div-block': null,
+				'div-block': null,
 			},
-			'e-div-block': {
+			'div-block': {
 				widget: null,
-				'e-div-block': null,
+				'div-block': null,
 				container: null,
 			},
 		},

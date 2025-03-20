@@ -14,7 +14,7 @@ describe( 'Regenerate local style IDs', () => {
 
 		global.elementor = {
 			widgetsCache: {
-				'e-heading': {
+				'a-heading': {
 					atomic_props_schema: {
 						classes: {
 							kind: 'plain',
@@ -23,7 +23,7 @@ describe( 'Regenerate local style IDs', () => {
 						},
 					},
 				},
-				'e-div-block': {
+				'div-block': {
 					atomic_props_schema: {
 						classes: {
 							kind: 'plain',
@@ -83,8 +83,8 @@ describe( 'Regenerate local style IDs', () => {
 		};
 
 		const container = createContainer( {
-			widgetType: 'e-div-block',
-			elType: 'e-div-block',
+			widgetType: 'div-block',
+			elType: 'div-block',
 			id: 'widget1',
 			styles: initialContainerStyle,
 			settings: {
@@ -93,7 +93,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const styledElement = createContainer( {
-			widgetType: 'e-heading',
+			widgetType: 'a-heading',
 			elType: 'widget',
 			id: 'widget2',
 			styles: initialStyle,
@@ -104,7 +104,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const nestedStyledElement = createContainer( {
-			widgetType: 'e-heading',
+			widgetType: 'a-heading',
 			elType: 'widget',
 			id: 'widget3',
 			styles: initialNestedStyle,
@@ -114,7 +114,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const duplicatedStyledElement = createContainer( {
-			widgetType: 'e-heading',
+			widgetType: 'a-heading',
 			elType: 'widget',
 			id: 'widget4',
 			styles: initialStyle,
@@ -125,7 +125,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const duplicatedNestedStyledElement = createContainer( {
-			widgetType: 'e-heading',
+			widgetType: 'a-heading',
 			elType: 'widget',
 			id: 'widget5',
 			styles: initialNestedStyle,
@@ -180,8 +180,8 @@ describe( 'Regenerate local style IDs', () => {
 	it( 'should not do anything if no styled elements are duplicated on create', async () => {
 		// Arrange
 		const container = createContainer( {
-			widgetType: 'e-div-block',
-			elType: 'e-div-block',
+			widgetType: 'div-block',
+			elType: 'div-block',
 			id: '123',
 			styles: {},
 			settings: {
@@ -193,7 +193,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const nonStyledElement = createContainer( {
-			widgetType: 'e-heading',
+			widgetType: 'a-heading',
 			elType: 'widget',
 			id: '456',
 			styles: {},
@@ -206,7 +206,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const duplicatedNonStyledElement = createContainer( {
-			widgetType: 'e-heading',
+			widgetType: 'a-heading',
 			elType: 'widget',
 			id: '567',
 			styles: {},

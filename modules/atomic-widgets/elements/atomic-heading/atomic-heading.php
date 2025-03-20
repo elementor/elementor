@@ -24,7 +24,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	use Has_Template;
 
 	public static function get_element_type(): string {
-		return 'e-heading';
+		return 'a-heading';
 	}
 
 	public function get_title() {
