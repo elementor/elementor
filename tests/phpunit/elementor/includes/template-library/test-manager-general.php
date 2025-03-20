@@ -53,7 +53,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			->willReturn( [] );
 
 		$sourceCloudMock = $this->getMockBuilder( 'Elementor\TemplateLibrary\Source_Cloud' )
-			->onlyMethods(['get_app', 'get_items', 'get_id'])
+			->onlyMethods( [ 'get_app', 'get_items', 'get_id', 'bulk_delete_items' ] )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -447,5 +447,72 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 
 		$this->sourceCloudMock->method( 'get_items' )->willReturn( $response );
 		$this->sourceCloudMock->method( 'get_id' )->willReturn( 'cloud' );
+	}
+
+	public function test_should_return_wp_error_arguments_not_specified_from_bulk_delete_templates() {
+		$this->assertWPError( self::$manager->bulk_delete_templates( [] ), 'arguments_not_specified' );
+	}
+
+	public function test_should_return_wp_error_template_error_from_bulk_delete_templates() {
+		$this->assertWPError(
+			self::$manager->bulk_delete_templates(
+				[
+					'source' => 'invalid source',
+					'template_ids' => [ 1, 2, 3 ],
+				]
+			), 'template_error'
+		);
+	}
+
+	public function test_should_return_true_from_bulk_delete_templates() {
+		// Arrange
+		$template_ids = [ 1, 2, 3 ];
+
+		$this->sourceCloudMock
+			->method( 'bulk_delete_items' )
+			->with( $template_ids )
+			->willReturn( true );
+
+		// Act
+		$result = self::$manager->bulk_delete_templates( [
+			'source' => 'cloud',
+			'template_ids' => $template_ids,
+		] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_should_return_wp_error_when_template_ids_is_empty() {
+		$this->assertWPError(
+			self::$manager->bulk_delete_templates(
+				[
+					'source' => 'cloud',
+					'template_ids' => [],
+				]
+			), 'arguments_not_specified'
+		);
+	}
+
+	public function test_should_return_wp_error_when_source_is_incorrect() {
+		$this->assertWPError(
+			self::$manager->bulk_delete_templates(
+				[
+					'source' => 'test',
+					'template_ids' => [ 1 ],
+				]
+			), 'template_error'
+		);
+	}
+
+	public function test_should_return_wp_error_when_template_ids_is_not_array() {
+		$this->assertWPError(
+			self::$manager->bulk_delete_templates(
+				[
+					'source' => 'cloud',
+					'template_ids' => 'not_an_array',
+				]
+			), 'arguments_not_specified'
+		);
 	}
 }
