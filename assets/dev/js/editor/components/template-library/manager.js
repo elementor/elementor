@@ -922,7 +922,7 @@ const TemplateLibraryManager = function() {
 					},
 				};
 
-				elementorCommon.ajax.addRequest( 'bulk_delete_items', ajaxOptions );
+				elementorCommon.ajax.addRequest( 'bulk_delete_templates', ajaxOptions );
 			};
 
 			dialog.onCancel = () => {

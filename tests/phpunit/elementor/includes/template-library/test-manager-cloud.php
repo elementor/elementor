@@ -30,7 +30,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'post_resource',
 				'update_resource',
 				'delete_resource',
-				'bulk_delete_items',
+				'bulk_delete_resources',
 			] )
 			->disableOriginalConstructor()
 			->getMock();
@@ -760,33 +760,33 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->assertInstanceOf( '\Elementor\Core\Base\Document', $result );
 	}
 
-	public function test_bulk_delete_items() {
+	public function test_bulk_delete_templates() {
 		// Arrange
 		$template_ids = [ 1, 2, 3 ];
 
 		$this->cloud_library_app_mock
-			->method( 'bulk_delete_items' )
+			->method( 'bulk_delete_resources' )
 			->with( $template_ids )
 			->willReturn( true );
 
 		// Act
-		$result = $this->manager->bulk_delete_items( [ 'source' => 'cloud', 'template_ids' => $template_ids ] );
+		$result = $this->manager->bulk_delete_templates( [ 'source' => 'cloud', 'template_ids' => $template_ids ] );
 
 		// Assert
 		$this->assertTrue( $result );
 	}
 
-	public function test_bulk_delete_items__should_return_false_when_failed() {
+	public function test_bulk_delete_templates__should_return_false_when_failed() {
 		// Arrange
 		$template_ids = [ 1, 2, 3 ];
 
 		$this->cloud_library_app_mock
-			->method( 'bulk_delete_items' )
+			->method( 'bulk_delete_resources' )
 			->with( $template_ids )
 			->willReturn( new \WP_Error( 'bulk_delete_error', 'Failed to delete items' ) );
 
 		// Act
-		$result = $this->manager->bulk_delete_items( [ 'source' => 'cloud', 'template_ids' => $template_ids ] );
+		$result = $this->manager->bulk_delete_templates( [ 'source' => 'cloud', 'template_ids' => $template_ids ] );
 
 		// Assert
 		$this->assertWPError( $result );

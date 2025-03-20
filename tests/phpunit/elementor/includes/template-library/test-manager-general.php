@@ -449,13 +449,13 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$this->sourceCloudMock->method( 'get_id' )->willReturn( 'cloud' );
 	}
 
-	public function test_should_return_wp_error_arguments_not_specified_from_bulk_delete_items() {
-		$this->assertWPError( self::$manager->bulk_delete_items( [] ), 'arguments_not_specified' );
+	public function test_should_return_wp_error_arguments_not_specified_from_bulk_delete_templates() {
+		$this->assertWPError( self::$manager->bulk_delete_templates( [] ), 'arguments_not_specified' );
 	}
 
-	public function test_should_return_wp_error_template_error_from_bulk_delete_items() {
+	public function test_should_return_wp_error_template_error_from_bulk_delete_templates() {
 		$this->assertWPError(
-			self::$manager->bulk_delete_items(
+			self::$manager->bulk_delete_templates(
 				[
 					'source' => 'invalid source',
 					'template_ids' => [ 1, 2, 3 ],
@@ -464,7 +464,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_should_return_true_from_bulk_delete_items() {
+	public function test_should_return_true_from_bulk_delete_templates() {
 		// Arrange
 		$template_ids = [ 1, 2, 3 ];
 
@@ -474,7 +474,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			->willReturn( true );
 
 		// Act
-		$result = self::$manager->bulk_delete_items( [
+		$result = self::$manager->bulk_delete_templates( [
 			'source' => 'cloud',
 			'template_ids' => $template_ids,
 		] );
@@ -485,7 +485,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 
 	public function test_should_return_wp_error_when_template_ids_is_empty() {
 		$this->assertWPError(
-			self::$manager->bulk_delete_items(
+			self::$manager->bulk_delete_templates(
 				[
 					'source' => 'cloud',
 					'template_ids' => [],
@@ -496,7 +496,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 
 	public function test_should_return_wp_error_when_source_is_incorrect() {
 		$this->assertWPError(
-			self::$manager->bulk_delete_items(
+			self::$manager->bulk_delete_templates(
 				[
 					'source' => 'test',
 					'template_ids' => [ 1 ],
@@ -507,7 +507,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 
 	public function test_should_return_wp_error_when_template_ids_is_not_array() {
 		$this->assertWPError(
-			self::$manager->bulk_delete_items(
+			self::$manager->bulk_delete_templates(
 				[
 					'source' => 'cloud',
 					'template_ids' => 'not_an_array',

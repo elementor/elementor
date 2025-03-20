@@ -883,7 +883,7 @@ class Manager {
 		return $this->get_source( 'cloud' )->save_item_preview( $data['template_id'], $raw_binary );
 	}
 
-	public function bulk_delete_items( $data ) {
+	public function bulk_delete_templates( $data ) {
 		$validate_args = $this->ensure_args( [ 'template_ids', 'source' ], $data );
 
 		if ( is_wp_error( $validate_args ) ) {
@@ -931,7 +931,7 @@ class Manager {
 			'get_folders',
 			'save_template_screenshot',
 			'move_template',
-			'bulk_delete_items',
+			'bulk_delete_templates',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
