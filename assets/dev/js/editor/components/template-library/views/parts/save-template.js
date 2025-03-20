@@ -34,7 +34,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
-		'change @ui.sourceSelectionCheckboxes': 'onCheckboxChange',
+		'change @ui.sourceSelectionCheckboxes': 'maybeAllowOnlyOneCheckboxToBeChecked',
 	},
 
 	onRender() {
@@ -342,8 +342,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
-	onCheckboxChange( event ) {
-		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) || 'cloud' !== elementor.templates.getFilter( 'source' ) ) {
+	maybeAllowOnlyOneCheckboxToBeChecked( event ) {
+		if ( this.moreThanOneCheckboxCanBeChecked() ) {
 			return;
 		}
 		
@@ -361,6 +361,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				}
 			}
 		} );
+	},
+
+	moreThanOneCheckboxCanBeChecked() {
+		return SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) 
+			|| 'cloud' !== elementor.templates.getFilter( 'source' );
 	},
 } );
 
