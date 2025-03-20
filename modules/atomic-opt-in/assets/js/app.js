@@ -11,13 +11,13 @@ import { AdminTab } from './components/admin-tab';
 import { WelcomePopover } from './components/welcome-popover';
 
 const App = ( props ) => {
-	const ComponentToRender = 'adminTab' === props.contentType ? AdminTab : WelcomePopover;
+	const isAdminTab = 'adminTab' === props.contentType;
 
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ 'light' }>
-					<ComponentToRender />
+					{ isAdminTab ? <AdminTab state={ props?.state } /> : <WelcomePopover /> }
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>
@@ -25,8 +25,9 @@ const App = ( props ) => {
 };
 
 App.propTypes = {
-	isRTL: PropTypes.bool,
-	contentType: PropTypes.string,
+	isRTL: PropTypes.bool.isRequired,
+	state: PropTypes.object,
+	contentType: PropTypes.string.isRequired,
 };
 
 const getRootElement = () => {
@@ -63,6 +64,7 @@ const init = () => {
 	ReactUtils.render( (
 		<App
 			isRTL={ !! elementorCommon.config.isRTL }
+			state={ elementorSettingsEditor4OptIn }
 			contentType={ contentType }
 		/>
 	), rootElement );

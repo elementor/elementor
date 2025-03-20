@@ -19,6 +19,10 @@ class Module extends BaseModule {
 
 	private Elementor_Adapter_Interface $elementor_adapter;
 
+	public function get_name() {
+		return 'atomic-opt-in';
+	}
+
 	public static function get_experimental_data(): array {
 		return [
 			'name' => self::EXPERIMENT_NAME,
@@ -34,22 +38,21 @@ class Module extends BaseModule {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
+	private function is_atomic_experiment_active() {
+		return Plugin::$instance->experiments->is_feature_active( 'editor_v4' );
+	}
+
 	public function __construct( ?Elementor_Adapter_Interface $elementor_adapter = null ) {
 		if ( ! $this->is_experiment_active() || ! is_admin() ) {
 			return;
 		}
 
+		$this->register_assets();
+		$this->add_settings_tab();
 		$this->elementor_adapter = $elementor_adapter ?? Isolation_Manager::get_adapter( Elementor_Adapter::class );
-
-		$this->register_settings_tab();
-		$this->register_scripts();
 	}
 
-	public function get_name() {
-		return self::MODULE_NAME;
-	}
-
-	private function register_settings_tab() {
+	private function add_settings_tab() {
 		$page_id = Settings::PAGE_ID;
 
 		add_action( "elementor/admin/after_create_settings/{$page_id}", function( Settings $settings ) {
@@ -73,6 +76,12 @@ class Module extends BaseModule {
 		return $this;
 	}
 
+	private function register_assets() {
+		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_scripts' ] );
+		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_styles' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_welcome_popover' ] );
+	}
+
 	private function get_current_user_id(): int {
 		$current_user = wp_get_current_user();
 
@@ -91,19 +100,13 @@ class Module extends BaseModule {
 		update_user_meta( $this->get_current_user_id(), self::WELCOME_POPOVER_OPTION, true );
 	}
 
-	private function is_first_editor_visit(): int {
+	private function is_first_or_second_editor_visit(): int {
 		$editor_visit_count = $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
-		return 1 === $editor_visit_count;
-	}
-
-	private function register_scripts() {
-		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_scripts' ] );
-		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_styles' ] );
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_welcome_popover' ] );
+		return $editor_visit_count < 3;
 	}
 
 	public function maybe_enqueue_welcome_popover(): void {
-		if ( $this->is_first_editor_visit() ) {
+		if ( $this->is_first_or_second_editor_visit() ) {
 			return;
 		}
 
@@ -111,24 +114,24 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->enqueue_scripts();
+		$this->enqueue_scripts( true );
 		$this->set_welcome_popover_as_displayed();
 	}
 
 	public function enqueue_styles() {
 		wp_enqueue_style(
-			$this->get_name(),
+			self::MODULE_NAME,
 			$this->get_css_assets_url( 'modules/editor-v4-opt-in/opt-in' ),
 			[],
 			ELEMENTOR_VERSION
 		);
 	}
 
-	public function enqueue_scripts() {
+	public function enqueue_scripts( $isWelcomePopover = false ) {
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
-			$this->get_name(),
+			self::MODULE_NAME,
 			ELEMENTOR_ASSETS_URL . 'js/editor-v4-opt-in' . $min_suffix . '.js',
 			[
 				'react',
@@ -139,5 +142,23 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		if ( $isWelcomePopover ) {
+			return;
+		}
+
+		wp_localize_script(
+			self::MODULE_NAME,
+			'elementorSettingsEditor4OptIn',
+			$this->prepare_data()
+		);
+	}
+
+	private function prepare_data() {
+		return [
+			'features' => [
+				'editor_v4' => $this->is_atomic_experiment_active(),
+			],
+		];
 	}
 }
