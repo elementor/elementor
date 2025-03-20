@@ -1091,7 +1091,16 @@ class Manager {
 			$args = $this->format_args_for_bulk_move_templates_from_cloud_to_local( $args );
 		}
 
-		return $source->save_bulk_items( $args );
+		$bulk_save = $source->save_bulk_items( $args );
+
+		if ( ! empty( $bulk_save ) ) {
+			$this->bulk_delete_items( [
+				'template_ids' => $args['from_template_id'],
+				'source' => $args['from_source'],
+			] );
+		}
+
+		return $bulk_save;
 	}
 
 	private function format_args_for_bulk_move_templates_from_local_to_cloud( $args ) {
