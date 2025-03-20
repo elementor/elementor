@@ -1,0 +1,93 @@
+name: Performance Check
+
+on:
+  pull_request:
+  merge_group:
+
+jobs:
+  build-plugin:
+    name: Build plugin
+    uses: ./.github/workflows/build.yml
+
+  compare-v4-to-v3:
+    name: Compare V4 to V3
+    runs-on: ubuntu-latest
+    needs: [build-plugin]
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./elementor
+
+      - name: Setup wp-env
+        uses: elementor/elementor-editor-github-actions/actions/setup-wp-env@main
+        with:
+          php: 7.4
+          active-theme: 'hello-elementor'
+          plugins: |-
+            ./elementor
+          themes: |-
+            https://downloads.wordpress.org/theme/hello-elementor.zip
+          mappings: |-
+            templates:./tests/lighthouse/compare-templates
+
+      - name: Setup Elementor ENV
+        uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@main
+        with:
+          env: 'testing'
+          enable-svg-upload: true
+          experiments: |-
+            e_optimized_markup:true
+            editor_v2:true
+            atomic_widgets:true
+            global_classes:true
+          templates: |-
+            templates
+
+      - name: Run Performance Check
+        uses: elementor/elementor-editor-github-actions/actions/run-lighthouse-tests@main
+        id: run-lighthouse-tests
+        with:
+          number-of-runs: 3
+          urls: |-
+            mixed:http://localhost:8889/mixed-template/
+            v3:http://localhost:8889/v3-only/
+          categories: |-
+            performance
+
+      - name: Check if score meets the threshold
+        uses: actions/github-script@v7
+        env:
+          V3_SCORE: ${{ steps.run-lighthouse-tests.outputs.v3-performance-median-score }}
+          MIXED_SCORE: ${{ steps.run-lighthouse-tests.outputs.mixed-performance-median-score }}
+          THRESHOLD: 0.85
+        with:
+          script: |
+            const { V3_SCORE, MIXED_SCORE, THRESHOLD } = process.env;
+            
+            if ( MIXED_SCORE < V3_SCORE ) {
+                core.setFailed( `The performance score of the mixed page (v3 and v4 elements) is ${MIXED_SCORE}, which is below the performance score of the V3 page ${V3_SCORE}.` );
+            }
+            
+            if ( MIXED_SCORE < THRESHOLD ) {
+                core.setFailed( `The performance score of the mixed page (v3 and v4 elements) is ${MIXED_SCORE}, which is below the threshold of ${THRESHOLD}.` );
+            }
+
+      - name: Upload reports
+        if: steps.run-lighthouse-tests.outputs.reports-path
+        uses: actions/upload-artifact@v4
+        with:
+          name: compare-v4-to-v3
+          path: ${{ steps.run-lighthouse-tests.outputs.reports-path }}
+          retention-days: 1
+
