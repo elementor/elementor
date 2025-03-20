@@ -871,13 +871,14 @@ const TemplateLibraryManager = function() {
 			}
 
 			const dialog = this.getBulkDeleteDialog();
+			const source = this.getFilter( 'source' );
 
 			dialog.onConfirm = () => {
 				isLoading = true;
 
 				const ajaxOptions = {
 					data: {
-						source: this.getFilter( 'source' ),
+						source,
 						template_ids: Array.from( selectedItems ),
 					},
 					success: () => {
@@ -891,18 +892,20 @@ const TemplateLibraryManager = function() {
 
 						self.clearBulkSelectionItems();
 
+						const buttons = 'cloud' === source ? [
+							{
+								name: 'undo_bulk_delete',
+								text: __( 'Undo', 'elementor' ),
+								callback: () => {
+									templatesCollection.add( modelsToRemove );
+									$e.routes.refreshContainer( 'library' );
+								},
+							},
+						] : null;
+
 						elementor.notifications.showToast( {
 							message: `${ selectedItems.length } items deleted successfully`,
-							buttons: [
-								{
-									name: 'undo_bulk_delete',
-									text: __( 'Undo', 'elementor' ),
-									callback: () => {
-										templatesCollection.add( modelsToRemove );
-										$e.routes.refreshContainer( 'library' );
-									},
-								},
-							],
+							buttons,
 						} );
 
 						resolve();
