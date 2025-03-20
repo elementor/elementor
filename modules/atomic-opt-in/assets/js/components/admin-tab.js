@@ -11,13 +11,12 @@ import {
 import { AlertTriangleFilledIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { TextNode, ContentList, ContentListItem } from './opt-in-content';
-import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './opt-in-img-placeholders';
-import { Message } from './opt-in-message';
-import { triggerOptIn, triggerOptOut } from './opt-in-api';
+import { TextNode, ContentList, ContentListItem } from './admin-tab-content';
+import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './admin-tab-img-placeholders';
+import { Message } from './admin-tab-message';
+import { triggerOptIn, triggerOptOut } from '../opt-in-api';
 
-export const OptIn = ( { state } ) => {
-export const AdminTab = () => {
+export const AdminTab = ( { state } ) => {
 	const i18n = {
 		title: __( 'The Road to Editor V4', 'elementor' ),
 		chip: __( 'Alpha', 'elementor' ),
@@ -223,7 +222,7 @@ export const AdminTab = () => {
 	);
 };
 
-OptIn.propTypes = {
+AdminTab.propTypes = {
 	state: PropTypes.shape( {
 		features: PropTypes.shape( {
 			editor_v4: PropTypes.bool,
