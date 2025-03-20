@@ -542,7 +542,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		// Act
 		$this->manager->move_template( [
 			'post_id' => 1,
-			'source' => 'cloud',
+			'source' => [ 'cloud' ],
 			'title' => 'ATemplate',
 			'type' => 'container',
 			'resourceType' => 'TEMPLATE',
@@ -560,7 +560,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		// Act
 		$result = $this->manager->move_template( [
 			'post_id' => 1,
-			'source' => 'cloud',
+			'source' => [ 'cloud' ],
 			'title' => 'ATemplate',
 			'type' => 'container',
 			'resourceType' => 'TEMPLATE',
@@ -582,7 +582,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		// Act
 		$result = $this->manager->move_template( [
 			'post_id' => 1,
-			'source' => 'cloud',
+			'source' => [ 'cloud' ],
 			'title' => 'ATemplate',
 			'type' => 'container',
 			'resourceType' => 'TEMPLATE',
