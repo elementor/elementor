@@ -56,8 +56,9 @@ jobs:
 
       - name: Warm up the cache
         run: |
-          curl http://localhost:8889/v3-only/
-          curl http://localhost:8889/mixed-template/
+          
+          curl --silent http://localhost:8889/v3-only/
+          curl --silent http://localhost:8889/mixed-template/
 
       - name: Run Performance Check
         uses: elementor/elementor-editor-github-actions/actions/run-lighthouse-tests@main
@@ -95,4 +96,5 @@ jobs:
           name: compare-v4-to-v3
           path: ${{ steps.run-lighthouse-tests.outputs.reports-path }}
           retention-days: 1
+          include-hidden-files: true
 
