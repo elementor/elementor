@@ -896,6 +896,10 @@ class Manager {
 			return new \WP_Error( 'template_error', 'Template source not found.' );
 		}
 
+		if ( empty( $data['template_ids'] ) || ! is_array( $data['template_ids'] ) ) {
+			return new \WP_Error( 'template_error', 'Template IDs are missing.' );
+		}
+
 		return $source->bulk_delete_items( $data['template_ids'] );
 	}
 

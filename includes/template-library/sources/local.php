@@ -773,7 +773,7 @@ class Source_Local extends Source_Base {
 		}
 
 		foreach ( $template_ids as $template_id ) {
-			wp_trash_post( $template_id );
+			wp_delete_post( $template_id, true );
 		}
 
 		return true;

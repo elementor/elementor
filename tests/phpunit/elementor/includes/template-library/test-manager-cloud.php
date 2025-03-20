@@ -24,7 +24,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		parent::setUp();
 		$this->documents = Plugin::$instance->documents;
 		$this->cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
-			->onlyMethods( [ 'get_resources', 'get_resource', 'post_resource', 'update_resource', 'delete_resource' ] )
+			->onlyMethods( [ 'get_resources', 'get_resource', 'post_resource', 'update_resource', 'delete_resource', 'bulk_delete_items' ] )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -39,7 +39,16 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->manager = Plugin::$instance->templates_manager;
 
 		$this->cloud_source_mock = $this->getMockBuilder( \Elementor\TemplateLibrary\Source_Cloud::class )
-			->onlyMethods( [ 'send_file_headers', 'serve_file', 'get_item_children', 'handle_zip_file', 'filesize', 'serve_zip', 'replace_elements_ids' ] )
+			->onlyMethods( [
+				'send_file_headers',
+				'serve_file',
+				'get_item_children',
+				'handle_zip_file',
+				'filesize',
+				'serve_zip',
+				'replace_elements_ids',
+				'bulk_delete_items',
+			] )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -742,5 +751,37 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertInstanceOf( '\Elementor\Core\Base\Document', $result );
+	}
+
+	public function test_bulk_delete_items() {
+		// Arrange
+		$template_ids = [ 1, 2, 3 ];
+
+		$this->cloud_library_app_mock
+			->method( 'bulk_delete_items' )
+			->with( $template_ids )
+			->willReturn( true );
+
+		// Act
+		$result = $this->manager->bulk_delete_items( [ 'source' => 'cloud', 'template_ids' => $template_ids ] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_bulk_delete_items__should_return_false_when_failed() {
+		// Arrange
+		$template_ids = [ 1, 2, 3 ];
+
+		$this->cloud_library_app_mock
+			->method( 'bulk_delete_items' )
+			->with( $template_ids )
+			->willReturn( new \WP_Error( 'bulk_delete_error', 'Failed to delete items' ) );
+
+		// Act
+		$result = $this->manager->bulk_delete_items( [ 'source' => 'cloud', 'template_ids' => $template_ids ] );
+
+		// Assert
+		$this->assertWPError( $result );
 	}
 }
