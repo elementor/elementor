@@ -503,7 +503,7 @@ const TemplateLibraryManager = function() {
 		};
 
 		return saveActions[ saveContext ] ?? 'save_template';
-	}
+	};
 
 	this.requestTemplateContent = function( source, id, ajaxOptions ) {
 		var options = {
