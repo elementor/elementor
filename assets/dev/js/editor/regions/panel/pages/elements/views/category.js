@@ -1,5 +1,3 @@
-import { AppManager as PopupManager } from 'elementor-modules/promotions/assets/js/react/app-manager';
-
 var PanelElementsElementsCollection = require( '../collections/elements' ),
 	PanelElementsCategoryView;
 
@@ -105,7 +103,12 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	onChipClick( event ) {
 		event.stopPropagation();
-		this.PopupManager.mount( event.target, this.chipSelectors );
+
+		import( 'elementor-modules/promotions/assets/js/react/app-manager' )
+			.then( ( module ) => {
+				const PopupManager = new module.AppManager();
+				PopupManager.mount( event.target, this.chipSelectors );
+			} );
 	},
 } );
 
