@@ -25,6 +25,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		templateNameInput: '#elementor-template-library-save-template-name',
 		localInput: '.source-selections-input.local',
 		cloudInput: '.source-selections-input.cloud',
+		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
 	},
 
 	events: {
@@ -33,6 +34,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
+		'change @ui.sourceSelectionCheckboxes': 'onCheckboxChange'
 	},
 
 	onRender() {
@@ -67,10 +69,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( 'local' === fromSource ) {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 			this.ui.localInput.addClass( 'disabled' );
-		}
-
-		if ( 'cloud' === fromSource ) {
-			this.$( '.source-selections-input #local' ).prop( 'checked', true );
 		}
 	},
 
@@ -107,9 +105,15 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
-		this.ui.submitButton.addClass( 'elementor-button-state' );
-
 		this.updateSourceSelections( formData );
+
+		if ( ! formData?.source && this.templateHelpers()?.canSaveToCloud ) {
+			this.showEmptySourceErrorDialog();
+		
+			return;
+		}
+
+		this.ui.submitButton.addClass( 'elementor-button-state' );
 
 		this.updateSaveContext( formData );
 
@@ -126,6 +130,15 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		formData.source = selectedSources;
 
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
+	},
+		
+
+	showEmptySourceErrorDialog() {
+		elementorCommon.dialogsManager.createWidget( 'alert', {
+			id: 'elementor-template-library-error-dialog',
+			headerMessage: __( 'An error occured.', 'elementor' ),
+			message: __( 'Please select at least one source.', 'elementor' ),
+		} ).show();
 	},
 
 	updateSaveContext( formData ) {
@@ -330,6 +343,27 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			this.folderCollectionView.collection.remove( loadMore );
 		}
 	},
+
+	onCheckboxChange( event ) {
+		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) || 'cloud' !== elementor.templates.getFilter( 'source' ) ) {
+			return;
+		}
+
+        const selectedCheckbox = event.currentTarget;
+
+        this.ui.sourceSelectionCheckboxes.each( ( _, checkbox ) => {
+            const wrapper = this.$( checkbox ).closest( '.source-selections-input' );
+
+            if ( checkbox !== selectedCheckbox ) {
+                if ( selectedCheckbox.checked ) {
+                    wrapper.addClass( 'disabled' );
+                    checkbox.checked = false;
+                } else {
+                    wrapper.removeClass( 'disabled' );
+                }
+            }
+        } );
+    }
 } );
 
 module.exports = TemplateLibrarySaveTemplateView;
