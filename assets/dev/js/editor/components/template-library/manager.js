@@ -904,7 +904,7 @@ const TemplateLibraryManager = function() {
 						] : null;
 
 						elementor.notifications.showToast( {
-							message: `${ selectedItems.length } items deleted successfully`,
+							message: `${ selectedItems.size } items deleted successfully`,
 							buttons,
 						} );
 
