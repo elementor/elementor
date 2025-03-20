@@ -20,8 +20,10 @@ class Module extends elementorModules.editor.utils.Module {
 
 	registerAtomicDivBlockType() {
 		const DivBlock = require( './div-block-type' ).default;
+		const FlexBox = require( './flexbox-type' ).default;
 
 		elementor.elementsManager.registerElementType( new DivBlock() );
+		elementor.elementsManager.registerElementType( new FlexBox() );
 	}
 }
 
