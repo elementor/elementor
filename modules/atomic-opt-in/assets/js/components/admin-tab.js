@@ -70,7 +70,7 @@ export const AdminTab = ( { state } ) => {
 
 	const feedbackUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-feedback/';
 	const readMoreUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
-	const startBuildingUrl = decodeHtmlUrl( elementorSettingsEditor4OptIn?.urls?.start_building ) || '#';
+	const startBuildingUrl = DOMPurify.sanitize( decodeHtmlUrl( elementorSettingsEditor4OptIn?.urls?.start_building ) ) || '#';
 
 	const maybeOptIn = () => {
 		triggerOptIn()
