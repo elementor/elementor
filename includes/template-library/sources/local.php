@@ -1799,6 +1799,21 @@ class Source_Local extends Source_Base {
 		}, 10, 3 );
 	}
 
+	public function save_bulk_items( array $args = [] ) {
+		$items = [];
+
+		foreach ( $args as $item ) {
+			$items[] = $this->save_item( [
+				'content' => $item['content'],
+				'title' => $item['title'],
+				'type' => $item['type'],
+				'page_settings' => $item['page_settings'],
+			] );
+		}
+
+		return $items;
+	}
+
 	/**
 	 * Template library local source constructor.
 	 *

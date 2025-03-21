@@ -25,6 +25,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		templateNameInput: '#elementor-template-library-save-template-name',
 		localInput: '.source-selections-input.local',
 		cloudInput: '.source-selections-input.cloud',
+		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
 	},
 
 	events: {
@@ -33,30 +34,41 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
+		'change @ui.sourceSelectionCheckboxes': 'maybeAllowOnlyOneCheckboxToBeChecked',
 	},
 
 	onRender() {
-		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ) {
+		const context = this.getOption( 'context' );
+
+		if ( SAVE_CONTEXTS.SAVE === context ) {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 		}
 
-		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
+		if ( SAVE_CONTEXTS.MOVE === context ) {
 			this.handleMoveContextUiState();
+		}
+
+		if ( SAVE_CONTEXTS.BULK_MOVE === context ) {
+			this.handleBulkMoveContextUiState();
 		}
 	},
 
 	handleMoveContextUiState() {
 		this.ui.templateNameInput.val( this.model.get( 'title' ) );
+		this.handleContextUiStateChecboxes();
+	},
 
-		const fromSource = this.model.get( 'source' );
+	handleBulkMoveContextUiState() {
+		this.ui.templateNameInput.remove();
+		this.handleContextUiStateChecboxes();
+	},
+
+	handleContextUiStateChecboxes() {
+		const fromSource = elementor.templates.getFilter( 'source' );
 
 		if ( 'local' === fromSource ) {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 			this.ui.localInput.addClass( 'disabled' );
-		}
-
-		if ( 'cloud' === fromSource ) {
-			this.$( '.source-selections-input #local' ).prop( 'checked', true );
 		}
 	},
 
@@ -88,18 +100,23 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
-			saveType = this.getSaveType(),
 			JSONParams = { remove: [ 'default' ] };
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
-		this.ui.submitButton.addClass( 'elementor-button-state' );
-
 		this.updateSourceSelections( formData );
+
+		if ( ! formData?.source && this.templateHelpers()?.canSaveToCloud ) {
+			this.showEmptySourceErrorDialog();
+
+			return;
+		}
+
+		this.ui.submitButton.addClass( 'elementor-button-state' );
 
 		this.updateSaveContext( formData );
 
-		elementor.templates.saveTemplate( saveType, formData );
+		elementor.templates.saveTemplate( this.getSaveType(), formData );
 	},
 
 	updateSourceSelections( formData ) {
@@ -114,14 +131,24 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
 
+	showEmptySourceErrorDialog() {
+		elementorCommon.dialogsManager.createWidget( 'alert', {
+			id: 'elementor-template-library-error-dialog',
+			headerMessage: __( 'An error occured.', 'elementor' ),
+			message: __( 'Please select at least one location.', 'elementor' ),
+		} ).show();
+	},
+
 	updateSaveContext( formData ) {
 		const saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE;
 
 		formData.save_context = saveContext;
 
-		if ( SAVE_CONTEXTS.MOVE === saveContext ) {
+		if ( [ SAVE_CONTEXTS.MOVE, SAVE_CONTEXTS.BULK_MOVE ].includes( saveContext ) ) {
 			formData.from_source = elementor.templates.getFilter( 'source' );
-			formData.from_template_id = this.model.get( 'template_id' );
+			formData.from_template_id = SAVE_CONTEXTS.MOVE === saveContext
+				? this.model.get( 'template_id' )
+				: Array.from( elementor.templates.getBulkSelectionItems() );
 
 			this.updateSourceState( formData );
 		}
@@ -313,6 +340,32 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( loadMore ) {
 			this.folderCollectionView.collection.remove( loadMore );
 		}
+	},
+
+	maybeAllowOnlyOneCheckboxToBeChecked( event ) {
+		if ( this.moreThanOneCheckboxCanBeChecked() ) {
+			return;
+		}
+
+		const selectedCheckbox = event.currentTarget;
+
+		this.ui.sourceSelectionCheckboxes.each( ( _, checkbox ) => {
+			const wrapper = this.$( checkbox ).closest( '.source-selections-input' );
+
+			if ( checkbox !== selectedCheckbox ) {
+				if ( selectedCheckbox.checked ) {
+					wrapper.addClass( 'disabled' );
+					checkbox.checked = false;
+				} else {
+					wrapper.removeClass( 'disabled' );
+				}
+			}
+		} );
+	},
+
+	moreThanOneCheckboxCanBeChecked() {
+		return SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ||
+			'cloud' !== elementor.templates.getFilter( 'source' );
 	},
 } );
 
