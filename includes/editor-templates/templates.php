@@ -267,6 +267,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<i class="eicon-pencil" aria-hidden="true"></i>
 						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
 					</div>
+					<div class="elementor-template-library-template-copy">
+						<i class="eicon-pencil" aria-hidden="true"></i>
+						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
+					</div>
 				<# } #>
 			<?php endif; ?>
 			<div class="elementor-template-library-template-export">

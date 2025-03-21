@@ -43,6 +43,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
 			this.handleMoveContextUiState();
 		}
+
+		if ( SAVE_CONTEXTS.COPY === this.getOption( 'context' ) ) {
+			this.handleCopyContextUiState();
+		}
 	},
 
 	handleMoveContextUiState() {
@@ -60,10 +64,25 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
+	handleCopyContextUiState() {
+		this.ui.templateNameInput.val( this.model.get( 'title' ) );
+
+		const fromSource = this.model.get( 'source' );
+
+		if ( 'local' === fromSource ) {
+			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
+			this.ui.localInput.addClass( 'disabled' );
+		}
+
+		if ( 'cloud' === fromSource ) {
+			this.$( '.source-selections-input #local' ).prop( 'checked', true );
+		}
+	},
+
 	getSaveType() {
 		let type;
 
-		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
+		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) || SAVE_CONTEXTS.COPY === this.getOption( 'context' ) ) {
 			type = this.model.get( 'type' );
 		} else if ( this.model ) {
 			type = this.model.get( 'elType' );
@@ -119,22 +138,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		formData.save_context = saveContext;
 
-		if ( SAVE_CONTEXTS.MOVE === saveContext ) {
+		if ( SAVE_CONTEXTS.MOVE === saveContext || SAVE_CONTEXTS.COPY === saveContext ) {
 			formData.from_source = elementor.templates.getFilter( 'source' );
 			formData.from_template_id = this.model.get( 'template_id' );
-
-			this.updateSourceState( formData );
 		}
-	},
-
-	updateSourceState( formData ) {
-		if ( ! formData.source.length ) {
-			return;
-		}
-
-		const lastSource = formData.source.at( -1 );
-		elementor.templates.setSourceSelection( lastSource );
-		elementor.templates.setFilter( 'source', lastSource, true );
 	},
 
 	onSelectedFolderTextClick() {

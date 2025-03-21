@@ -1,6 +1,8 @@
 import Component from './component';
 import LocalStorage from 'elementor-api/core/data/storages/local-storage';
 
+import { SAVE_CONTEXTS } from './constants';
+
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
 const TemplateLibraryManager = function() {
@@ -30,6 +32,11 @@ const TemplateLibraryManager = function() {
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			moveDialog: {
+				description: '',
+				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
+			copyDialog: {
 				description: '',
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
@@ -72,6 +79,10 @@ const TemplateLibraryManager = function() {
 				moveDialog: {
 					/* Translators: %s: Template type. */
 					title: sprintf( __( 'Move Your %s', 'elementor' ), title ),
+				},
+				copyDialog: {
+					/* Translators: %s: Template type. */
+					title: sprintf( __( 'Copy Your %s', 'elementor' ), title ),
 				},
 			} );
 
@@ -484,10 +495,15 @@ const TemplateLibraryManager = function() {
 			_.extend( ajaxParams, templateType.ajaxParams );
 		}
 
-		if ( 'move' === data.save_context ) {
-			elementorCommon.ajax.addRequest( 'move_template', ajaxParams );
-		} else {
-			elementorCommon.ajax.addRequest( 'save_template', ajaxParams );
+		switch ( data.save_context ) {
+			case SAVE_CONTEXTS.MOVE:
+				elementorCommon.ajax.addRequest( 'move_template', ajaxParams );
+				break;
+			case SAVE_CONTEXTS.COPY:
+				elementorCommon.ajax.addRequest( 'copy_template', ajaxParams );
+				break;
+			default:
+				elementorCommon.ajax.addRequest( 'save_template', ajaxParams );
 		}
 	};
 
