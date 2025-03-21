@@ -112,7 +112,7 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 		// Assert
 		$post_css->get_content();
 
-		$this->assertSame( [ 'Poppins', 'Inter' ], $post_css->get_fonts() );
+		$this->assertSame( [ 'Poppins', 'Inter' ], $post_css->get_meta( 'fonts' ) );
 	}
 
 	/**

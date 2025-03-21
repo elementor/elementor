@@ -75,7 +75,7 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		], [] );
 
 		// Assert.
-		$saved_global_classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY );
+		$saved_global_classes = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 
 		$this->assertSame( [], $result );
 		$this->assertSame( [], $saved_global_classes );
