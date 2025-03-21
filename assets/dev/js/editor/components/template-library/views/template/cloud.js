@@ -20,6 +20,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 
 			return {
 				'data-template_id': data.template_id,
+				'data-type': data.type,
 			};
 		}
 	},
