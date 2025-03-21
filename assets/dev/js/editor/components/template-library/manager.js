@@ -1,5 +1,6 @@
 import Component from './component';
 import LocalStorage from 'elementor-api/core/data/storages/local-storage';
+import { SAVE_CONTEXTS } from './constants';
 
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
@@ -30,6 +31,11 @@ const TemplateLibraryManager = function() {
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			moveDialog: {
+				description: '',
+				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
+			bulkMoveDialog: {
 				description: '',
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
@@ -72,6 +78,9 @@ const TemplateLibraryManager = function() {
 				moveDialog: {
 					/* Translators: %s: Template type. */
 					title: sprintf( __( 'Move Your %s', 'elementor' ), title ),
+				},
+				bulkMoveDialog: {
+					title: __( 'Move Your Templates', 'elementor' ),
 				},
 			} );
 
@@ -144,9 +153,8 @@ const TemplateLibraryManager = function() {
 				return;
 			}
 
-			event.preventDefault();
-
 			if ( this.isCloudGridView() ) {
+				event.preventDefault();
 				this.selectAllTemplates();
 			}
 		};
@@ -499,11 +507,17 @@ const TemplateLibraryManager = function() {
 			_.extend( ajaxParams, templateType.ajaxParams );
 		}
 
-		if ( 'move' === data.save_context ) {
-			elementorCommon.ajax.addRequest( 'move_template', ajaxParams );
-		} else {
-			elementorCommon.ajax.addRequest( 'save_template', ajaxParams );
-		}
+		elementorCommon.ajax.addRequest( this.getSaveAjaxAction( data.save_context ), ajaxParams );
+	};
+
+	this.getSaveAjaxAction = function( saveContext ) {
+		const saveActions = {
+			[ SAVE_CONTEXTS.SAVE ]: 'save_template',
+			[ SAVE_CONTEXTS.MOVE ]: 'move_template',
+			[ SAVE_CONTEXTS.BULK_MOVE ]: 'bulk_move_templates',
+		};
+
+		return saveActions[ saveContext ] ?? 'save_template';
 	};
 
 	this.requestTemplateContent = function( source, id, ajaxOptions ) {
