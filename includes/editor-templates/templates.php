@@ -226,7 +226,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	#>
 		<div class="elementor-template-library-template-name elementor-template-library-local-column-1">
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
-			<input type="checkbox" class="bulk-selection-item-checkbox" data-template_id="{{ template_id }}">
+			<input type="checkbox" class="bulk-selection-item-checkbox" data-template_id="{{ template_id }}" data-type="{{ type }}">
 			<?php endif; ?>
 			<# if ( 'cloud' === activeSource ) {
 				const sourceIcon = 'FOLDER' === subType
