@@ -8,7 +8,8 @@
 		display: inline-block; //For alignment image with link - Changed to 'inline-block' instead of 'block' to handle with this issue https://github.com/elementor/elementor/issues/5897
 
 		img[src$=".svg"] {
-			width: 48px; //Fix SVG image src, issue: https://github.com/elementor/elementor/issues/5987
+			width: auto; // for IE support
+			width: fit-content; // made image size fit widget container
 		}
 	}
 
