@@ -33,7 +33,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		];
 	}
 
-	public static function add_common_controls(): array	{
+	public static function add_common_controls(): array {
 		return [
 			Text_Control::bind_to( 'css-id' )
 				->set_label( __( 'CSS ID', 'elementor' ) ),

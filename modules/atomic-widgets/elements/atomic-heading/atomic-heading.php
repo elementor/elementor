@@ -61,13 +61,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	protected function define_atomic_controls(): array {
 		$atomic_controls = [
 			Section::make()
-				->set_label( __('Content', 'elementor') )
+				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
 					Textarea_Control::bind_to( 'title' )
 						->set_label( __( 'Title', 'elementor' ) )
-						->set_placeholder( __('Type your title here', 'elementor' ) ),
+						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
 					Select_Control::bind_to( 'tag' )
-						->set_label( esc_html__('Tag', 'elementor' ) )
+						->set_label( esc_html__( 'Tag', 'elementor' ) )
 						->set_options( [
 							[
 								'value' => 'h1',
@@ -96,9 +96,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						] ),
 					Link_Control::bind_to( 'link' ),
 				]),
-			];
+		];
 
-		return array_merge( $atomic_controls , self::add_common_controls() );
+		return array_merge( $atomic_controls, self::add_common_controls() );
 	}
 
 	protected function define_base_styles(): array {
