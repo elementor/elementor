@@ -51,7 +51,7 @@ class Atomic_Divider extends Atomic_Widget_Base {
 	protected function define_atomic_controls(): array {
 		$atomic_controls = [
 			Section::make()
-				->set_label( __( 'Content', 'elementor' ) )
+				->set_label( __( 'Content', 'elementor' ) ),
 		];
 
 		return array_merge( $atomic_controls, self::add_common_controls() );
