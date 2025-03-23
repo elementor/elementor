@@ -24,7 +24,16 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		parent::setUp();
 		$this->documents = Plugin::$instance->documents;
 		$this->cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
-			->onlyMethods( [ 'get_resources', 'get_resource', 'post_resource', 'update_resource', 'delete_resource' ] )
+			->onlyMethods( [
+				'get_resources',
+				'get_resource',
+				'post_resource',
+				'update_resource',
+				'delete_resource',
+				'bulk_delete_resources',
+				'get_bulk_resources_with_content',
+				'bulk_move_templates',
+			] )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -39,7 +48,16 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->manager = Plugin::$instance->templates_manager;
 
 		$this->cloud_source_mock = $this->getMockBuilder( \Elementor\TemplateLibrary\Source_Cloud::class )
-			->onlyMethods( [ 'send_file_headers', 'serve_file', 'get_item_children', 'handle_zip_file', 'filesize', 'serve_zip', 'replace_elements_ids' ] )
+			->onlyMethods( [
+				'send_file_headers',
+				'serve_file',
+				'get_item_children',
+				'handle_zip_file',
+				'filesize',
+				'serve_zip',
+				'replace_elements_ids',
+				'bulk_delete_items',
+			] )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -542,13 +560,12 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		// Act
 		$this->manager->move_template( [
 			'post_id' => 1,
-			'source' => 'cloud',
+			'source' => [ 'cloud' ],
 			'title' => 'ATemplate',
 			'type' => 'container',
 			'resourceType' => 'TEMPLATE',
 			'content' => wp_json_encode( $mock_content ),
 			'parentId' => 2,
-			'save_context' => 'move',
 			'from_source' => 'cloud',
 			'from_template_id' => 1,
 		] );
@@ -561,13 +578,12 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		// Act
 		$result = $this->manager->move_template( [
 			'post_id' => 1,
-			'source' => 'cloud',
+			'source' => [ 'cloud' ],
 			'title' => 'ATemplate',
 			'type' => 'container',
 			'resourceType' => 'TEMPLATE',
 			'content' => wp_json_encode( $mock_content ),
 			'parentId' => 2,
-			'save_context' => 'move',
 			'from_template_id' => 1,
 		] );
 
@@ -584,13 +600,12 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		// Act
 		$result = $this->manager->move_template( [
 			'post_id' => 1,
-			'source' => 'cloud',
+			'source' => [ 'cloud' ],
 			'title' => 'ATemplate',
 			'type' => 'container',
 			'resourceType' => 'TEMPLATE',
 			'content' => wp_json_encode( $mock_content ),
 			'parentId' => 2,
-			'save_context' => 'move',
 			'from_source' => 'cloud',
 		] );
 
@@ -742,5 +757,119 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertInstanceOf( '\Elementor\Core\Base\Document', $result );
+	}
+
+	public function test_bulk_delete_templates() {
+		// Arrange
+		$template_ids = [ 1, 2, 3 ];
+
+		$this->cloud_library_app_mock
+			->method( 'bulk_delete_resources' )
+			->with( $template_ids )
+			->willReturn( true );
+
+		// Act
+		$result = $this->manager->bulk_delete_templates( [ 'source' => 'cloud', 'template_ids' => $template_ids ] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_bulk_delete_templates__should_return_false_when_failed() {
+		// Arrange
+		$template_ids = [ 1, 2, 3 ];
+
+		$this->cloud_library_app_mock
+			->method( 'bulk_delete_resources' )
+			->with( $template_ids )
+			->willReturn( new \WP_Error( 'bulk_delete_error', 'Failed to delete items' ) );
+
+		// Act
+		$result = $this->manager->bulk_delete_templates( [ 'source' => 'cloud', 'template_ids' => $template_ids ] );
+
+		// Assert
+		$this->assertWPError( $result );
+	}
+
+	public function test_bulk_move_templates() {
+		// Arrange
+		$this->cloud_library_app_mock
+			->method( 'get_bulk_resources_with_content' )
+			->with( [
+				'from_template_id' => [ 1, 2 ],
+			] )
+			->willReturn( [
+				[
+					'template_id' => 1,
+					'source' => 'cloud',
+					'type' => 'TEMPLATE',
+					'subType' => 'container',
+					'title' => 'template 1',
+					'content' => wp_json_encode( [ 'content' => 'mock_content' ] ),
+				],
+				[
+					'template_id' => 2,
+					'source' => 'cloud',
+					'type' => 'TEMPLATE',
+					'subType' => 'page',
+					'title' => 'template 2',
+					'content' => wp_json_encode( [ 'content' => 'mock_content_2' ] ),
+				]
+			] );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'bulk_move_templates' )
+			->with( [
+				'ids' => [ 1, 2 ],
+				'parentId' => null,
+			] );
+
+		// Act
+		$this->manager->bulk_move_templates( [
+			'source' => [ 'cloud' ],
+			'from_source' => 'cloud',
+			'from_template_id' => [ 1, 2 ],
+		] );
+	}
+
+	public function test_bulk_move_templates_fails_without_source() {
+		// Act
+		$result = $this->manager->bulk_move_templates( [
+			'from_source' => 'cloud',
+			'from_template_id' => [ 1, 2 ],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_bulk_move_templates_fails_without_from_source() {
+		// Act
+		$result =$this->manager->bulk_move_templates( [
+			'source' => [ 'cloud' ],
+			'from_template_id' => [ 1, 2 ],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_bulk_move_templates_fails_without_from_template_id() {
+		// Act
+		$result = $this->manager->bulk_move_templates( [
+			'source' => [ 'cloud' ],
+			'from_source' => 'cloud',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
 	}
 }
