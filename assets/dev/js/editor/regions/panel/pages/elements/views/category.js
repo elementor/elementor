@@ -101,13 +101,9 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	onChipClick( event ) {
 		event.stopPropagation();
+		$e.run('promotions/alphachip', { event, selectors: this.chipSelectors });
+	}
 
-		import( 'elementor-modules/promotions/assets/js/react/app-manager' )
-			.then( ( module ) => {
-				const PopupManager = new module.AppManager();
-				PopupManager.mount( event.target, this.chipSelectors );
-			} );
-	},
-} );
+});
 
 module.exports = PanelElementsCategoryView;
