@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 3.28.1 - 2025-03-23 =
+
+* Fix: Font URL is not updating after domain change when "Load Google Fonts Locally" feature is activated
+
 = 3.28.0 - 2025-03-17 =
 
 * New: Added a Clear Files & Data button to the WordPress frontend admin bar for quick and easy cache clearing ([#21642](https://github.com/elementor/elementor/issues/21642))
