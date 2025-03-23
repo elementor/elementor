@@ -1,4 +1,4 @@
-import { AppManager } from "../react/app-manager";
+import { AppManager } from '../react/app-manager';
 
 export default class Component extends $e.modules.ComponentBase {
 	getNamespace() {
@@ -9,8 +9,8 @@ export default class Component extends $e.modules.ComponentBase {
 		return {
 			alphachip: ( args ) => {
 				const PopupManager = new AppManager();
-				PopupManager.mount(args.event.target, args.selectors );
+				PopupManager.mount( args.event.target, args.selectors );
 			},
-		}
+		};
 	}
 }
