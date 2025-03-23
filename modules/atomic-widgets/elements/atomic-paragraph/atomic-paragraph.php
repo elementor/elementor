@@ -84,7 +84,6 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 						->add_prop( 'font-size', $font_size_value )
 						->add_prop( 'line-height', $line_height_value )
 						->add_prop( 'margin', $margin_value )
-
 				),
 		];
 	}
