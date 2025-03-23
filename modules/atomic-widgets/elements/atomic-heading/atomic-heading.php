@@ -41,14 +41,14 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	protected static function define_props_schema(): array {
 		$props = [
 			'classes' => Classes_Prop_Type::make()
-				->default([]),
+				->default( [] ),
 
 			'tag' => String_Prop_Type::make()
-				->enum(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
-				->default('h2'),
+				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
+				->default( 'h2' ),
 
 			'title' => String_Prop_Type::make()
-				->default(__('This is a title', 'elementor')),
+				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
 
