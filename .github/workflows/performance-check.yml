@@ -83,19 +83,12 @@ jobs:
             const mixedScore = parseFloat( process.env.MIXED_SCORE );
             const threshold = parseFloat( process.env.PERFORMANCE_SCORE_THRESHOLD );
             
-            let error = null;
-            
             if ( mixedScore < v3Score ) {
-              error = `The performance score of the mixed page (v3 and v4 elements) is ${mixedScore}, which is below the performance score of the v3 page ${v3Score}.`;
+              core.setFailed( `The performance score of the mixed page (v3 and v4 elements) is ${mixedScore}, which is below the performance score of the V3 page ${v3Score}.` );
             }
             
             if ( mixedScore < threshold ) {
-              error = `The performance score of the mixed page (v3 and v4 elements) is ${mixedScore}, which is below the threshold of ${threshold}.`;
-            }
-            
-            if ( error ) {
-              core.error( error );
-              core.setFailed( error );
+              core.setFailed( `The performance score of the mixed page (v3 and v4 elements) is ${mixedScore}, which is below the threshold of ${threshold}.` );
             }
 
       - name: Upload reports
