@@ -607,21 +607,6 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'title_color',
-			[
-				'label' => esc_html__( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-title' => 'color: {{VALUE}};',
-				],
-				'global' => [
-					'default' => Global_Colors::COLOR_PRIMARY,
-				],
-			]
-		);
-
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
@@ -649,27 +634,79 @@ class Widget_Icon_Box extends Widget_Base {
 			]
 		);
 
+		$this->start_controls_tabs( 'icon_box_title_colors' );
+
+		$this->start_controls_tab(
+			'icon_box_title_colors_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'title_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-title' => 'color: {{VALUE}};',
+				],
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'icon_box_title_colors_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'hover_title_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-title:hover, {{WRAPPER}} .elementor-icon-box-title:focus' => 'color: {{VALUE}};',
+				],
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_title_color_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 's',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-title' => 'transition-duration: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 		$this->add_control(
 			'heading_description',
 			[
 				'label' => esc_html__( 'Description', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'description_color',
-			[
-				'label' => esc_html__( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-description' => 'color: {{VALUE}};',
-				],
-				'global' => [
-					'default' => Global_Colors::COLOR_TEXT,
-				],
 			]
 		);
 
@@ -689,6 +726,21 @@ class Widget_Icon_Box extends Widget_Base {
 			[
 				'name' => 'description_shadow',
 				'selector' => '{{WRAPPER}} .elementor-icon-box-description',
+			]
+		);
+
+		$this->add_control(
+			'description_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-description' => 'color: {{VALUE}};',
+				],
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
+				],
 			]
 		);
 
