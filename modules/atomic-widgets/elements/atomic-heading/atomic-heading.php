@@ -55,50 +55,50 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'css-id' => String_Prop_Type::make(),
 		];
 
-		return array_merge( $props , self::add_common_props() );
+		return array_merge( $props, self::add_common_props() );
 	}
 
-		protected function define_atomic_controls(): array {
-			$atomic_controls = [
-				Section::make()
-					->set_label(__('Content', 'elementor'))
-					->set_items([
-						Textarea_Control::bind_to('title')
-							->set_label(__('Title', 'elementor'))
-							->set_placeholder(__('Type your title here', 'elementor')),
-						Select_Control::bind_to('tag')
-							->set_label(esc_html__('Tag', 'elementor'))
-							->set_options([
-								[
-									'value' => 'h1',
-									'label' => 'H1',
-								],
-								[
-									'value' => 'h2',
-									'label' => 'H2',
-								],
-								[
-									'value' => 'h3',
-									'label' => 'H3',
-								],
-								[
-									'value' => 'h4',
-									'label' => 'H4',
-								],
-								[
-									'value' => 'h5',
-									'label' => 'H5',
-								],
-								[
-									'value' => 'h6',
-									'label' => 'H6',
-								],
-							]),
-						Link_Control::bind_to('link'),
-					]),
+	protected function define_atomic_controls(): array {
+		$atomic_controls = [
+			Section::make()
+				->set_label( __('Content', 'elementor') )
+				->set_items( [
+					Textarea_Control::bind_to( 'title' )
+						->set_label( __( 'Title', 'elementor' ) )
+						->set_placeholder( __('Type your title here', 'elementor' ) ),
+					Select_Control::bind_to( 'tag' )
+						->set_label( esc_html__('Tag', 'elementor' ) )
+						->set_options( [
+							[
+								'value' => 'h1',
+								'label' => 'H1',
+							],
+							[
+								'value' => 'h2',
+								'label' => 'H2',
+							],
+							[
+								'value' => 'h3',
+								'label' => 'H3',
+							],
+							[
+								'value' => 'h4',
+								'label' => 'H4',
+							],
+							[
+								'value' => 'h5',
+								'label' => 'H5',
+							],
+							[
+								'value' => 'h6',
+								'label' => 'H6',
+							],
+						] ),
+					Link_Control::bind_to( 'link' ),
+				]),
 			];
 
-			return array_merge( $atomic_controls , self::add_common_controls() );
+		return array_merge( $atomic_controls , self::add_common_controls() );
 	}
 
 	protected function define_base_styles(): array {

@@ -27,18 +27,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return [ 'Atoms', 'Atomic' ];
 	}
 
-	public static function add_common_props(): array
-	{
+	public static function add_common_props(): array {
 		return [
 			'css-id' => String_Prop_Type::make(),
 		];
 	}
 
-	public static function add_common_controls(): array
-	{
+	public static function add_common_controls(): array	{
 		return [
 			Text_Control::bind_to( 'css-id' )
-				->set_label( __('CSS ID', 'elementor' ) ),
+				->set_label( __( 'CSS ID', 'elementor' ) ),
 		];
 	}
 
