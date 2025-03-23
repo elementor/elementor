@@ -1,9 +1,11 @@
-<{{ settings.tag | e('html_tag') }} id="{{ settings.css_id  }}" class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}">
-{% if settings.link.href %}
-	<a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}">
+<{{ settings.tag | e('html_tag') }}
+	{% if settings['css-id'] is not empty %} id="{{ settings['css-id'] }}"{% endif %}
+	class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}">
+	{% if settings.link.href %}
+		<a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}">
+			{{ settings.title }}
+		</a>
+	{% else %}
 		{{ settings.title }}
-	</a>
-{% else %}
-	{{ settings.title }}
-{% endif %}
+	{% endif %}
 </{{ settings.tag | e('html_tag') }}>

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 
+use Elementor\Core\Utils\Static_Collection;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
@@ -15,7 +16,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\WpRest\Classes\WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -41,66 +41,66 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+		$props = [
 			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
+				->default([]),
 
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
-				->default( 'h2' ),
+				->enum(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
+				->default('h2'),
 
 			'title' => String_Prop_Type::make()
-				->default( __( 'This is a title', 'elementor' ) ),
+				->default(__('This is a title', 'elementor')),
 
 			'link' => Link_Prop_Type::make(),
 
-			'css_id' => String_Prop_Type::make(),
-
+			'css-id' => String_Prop_Type::make(),
 		];
+
+		return array_merge( $props , self::add_common_props() );
 	}
 
-	protected function define_atomic_controls(): array {
-		return [
-			Section::make()
-				->set_label( __( 'Content', 'elementor' ) )
-				->set_items( [
-					Textarea_Control::bind_to( 'title' )
-						->set_label( __( 'Title', 'elementor' ) )
-						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
-					Select_Control::bind_to( 'tag' )
-						->set_label( esc_html__( 'Tag', 'elementor' ) )
-						->set_options( [
-							[
-								'value' => 'h1',
-								'label' => 'H1',
-							],
-							[
-								'value' => 'h2',
-								'label' => 'H2',
-							],
-							[
-								'value' => 'h3',
-								'label' => 'H3',
-							],
-							[
-								'value' => 'h4',
-								'label' => 'H4',
-							],
-							[
-								'value' => 'h5',
-								'label' => 'H5',
-							],
-							[
-								'value' => 'h6',
-								'label' => 'H6',
-							],
-						]),
-					Link_Control::bind_to( 'link' ),
-					Text_Control::bind_to( 'css_id' )
-						->set_label( __( 'CSS ID', 'elementor' ) ),
+		protected function define_atomic_controls(): array {
+			$atomic_controls = [
+				Section::make()
+					->set_label(__('Content', 'elementor'))
+					->set_items([
+						Textarea_Control::bind_to('title')
+							->set_label(__('Title', 'elementor'))
+							->set_placeholder(__('Type your title here', 'elementor')),
+						Select_Control::bind_to('tag')
+							->set_label(esc_html__('Tag', 'elementor'))
+							->set_options([
+								[
+									'value' => 'h1',
+									'label' => 'H1',
+								],
+								[
+									'value' => 'h2',
+									'label' => 'H2',
+								],
+								[
+									'value' => 'h3',
+									'label' => 'H3',
+								],
+								[
+									'value' => 'h4',
+									'label' => 'H4',
+								],
+								[
+									'value' => 'h5',
+									'label' => 'H5',
+								],
+								[
+									'value' => 'h6',
+									'label' => 'H6',
+								],
+							]),
+						Link_Control::bind_to('link'),
+					]),
+			];
 
-				] ),
-		];
+			return array_merge( $atomic_controls , self::add_common_controls() );
 	}
 
 	protected function define_base_styles(): array {
