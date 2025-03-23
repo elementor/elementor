@@ -79,9 +79,9 @@ jobs:
           MIXED_SCORE: ${{ steps.run-lighthouse-tests.outputs.mixed-performance-median-score }}
         with:
           script: |
-            const v3Score = parseFloat( V3_SCORE );
-            const mixedScore = parseFloat( MIXED_SCORE );
-            const threshold = parseFloat( PERFORMANCE_SCORE_THRESHOLD );
+            const v3Score = parseFloat( process.env.V3_SCORE );
+            const mixedScore = parseFloat( process.env.MIXED_SCORE );
+            const threshold = parseFloat( process.env.PERFORMANCE_SCORE_THRESHOLD );
             
             if ( mixedScore < v3Score ) {
                core.setFailed( `The performance score of the mixed page (v3 and v4 elements) is ${mixedScore}, which is below the performance score of the V3 page ${v3Score}.` );
