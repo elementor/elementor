@@ -1180,8 +1180,6 @@ class Manager {
 			? $this->format_args_for_bulk_action_from_local( $args )
 			: $this->format_args_for_bulk_action_from_cloud( $args );
 
-		$bulk_save = $source->save_bulk_items( $bulk_args );
-
-		return $bulk_save;
+		return $source->save_bulk_items( $bulk_args );
 	}
 }
