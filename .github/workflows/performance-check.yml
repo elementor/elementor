@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-plugin]
     env:
-      PERFORMANCE_SCORE_THRESHOLD: 0.85
+      PERFORMANCE_SCORE_THRESHOLD: 0.9
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
 
       - name: Run Performance Check
         uses: elementor/elementor-editor-github-actions/actions/run-lighthouse-tests@main
-        id: run-lighthouse-tests
+        id: run-performance-check
         with:
           number-of-runs: 3
           urls: |-
@@ -75,8 +75,8 @@ jobs:
       - name: Check if score meets the threshold
         uses: actions/github-script@v7
         env:
-          V3_SCORE: ${{ steps.run-lighthouse-tests.outputs.v3-performance-median-score }}
-          MIXED_SCORE: ${{ steps.run-lighthouse-tests.outputs.mixed-performance-median-score }}
+          V3_SCORE: ${{ steps.run-performance-check.outputs.v3-performance-median-score }}
+          MIXED_SCORE: ${{ steps.run-performance-check.outputs.mixed-performance-median-score }}
         with:
           script: |
             const v3Score = parseFloat( process.env.V3_SCORE );
@@ -93,22 +93,23 @@ jobs:
 
       - name: Upload reports
         id: upload-reports
-        if: steps.run-lighthouse-tests.outputs.reports-path
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: compare-v4-to-v3
-          path: ${{ steps.run-lighthouse-tests.outputs.reports-path }}
+          path: ${{ steps.run-performance-check.outputs.reports-path }}
           retention-days: 1
 
       - name: Send Slack notification
         uses: slackapi/slack-github-action@v2.0.0
+        if: failure()
         env:
           RUN_ID: ${{ github.run_id }}
-          ARTIFACT_ID: ${{ needs.upload-reports.outputs.artifact_id }}
-          V3_SCORE: ${{ steps.run-lighthouse-tests.outputs.v3-performance-median-score }}
-          MIXED_SCORE: ${{ steps.run-lighthouse-tests.outputs.mixed-performance-median-score }}
+          ARTIFACT_ID: ${{ steps.upload-reports.outputs.artifact_id }}
+          V3_SCORE: ${{ steps.run-performance-check.outputs.v3-performance-median-score }}
+          MIXED_SCORE: ${{ steps.run-performance-check.outputs.mixed-performance-median-score }}
         with:
-          webhook: ${{ secrets.SLACK_COMPARE_PERFORMACE_WEBHOOK_URL }}
+          webhook: ${{ secrets.SLACK_COMPARE_PERFORMANCE_WEBHOOK_URL }}
           webhook-type: webhook-trigger
           payload: |
             run_id: ${{ env.RUN_ID }}
