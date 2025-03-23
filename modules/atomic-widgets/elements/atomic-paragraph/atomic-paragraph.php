@@ -75,7 +75,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		$line_height_value = String_Prop_Type::generate( '1.5' );
 		$margin_value = Size_Prop_Type::generate( [
 			'unit' => 'px',
-			'size' => 0
+			'size' => 0 ,
 		] );
 
 		return [
