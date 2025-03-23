@@ -150,60 +150,75 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 	}
 
 	public function test_get_raw_classes() {
-		// Arrange
+		// Arrange.
 		$reporter = new Global_Classes_Reporter();
 
-		// Act
+		// Act.
 		$raw_classes = $reporter->get_raw_classes();
 
-		// Assert
+		// Assert.
 		$this->assertMatchesSnapshot( $raw_classes['value'] );
 	}
 
 	public function test_get_classes() {
-		// Arrange
+		// Arrange.
 		$reporter = new Global_Classes_Reporter();
 
-		// Act
+		// Act.
 		$classes = $reporter->get_classes();
 
-		// Assert
+		// Assert.
 		$this->assertMatchesSnapshot( $classes['value'] );
 	}
 
-	public function test_inherited_post_not_counted() {
-		// Arrange
-		$parent_post = $this->factory()->post->create_and_get([
+	public function test_no_applied_classes_stats_when_empty() {
+		// Arrange.
+		$post = $this->factory()->post->create_and_get([
 			'post_type' => 'page',
 			'post_status' => 'publish',
 		]);
 
-		$inherited_post = $this->factory()->post->create_and_get([
-			'post_type' => 'page',
-			'post_status' => 'inherit',
-			'post_parent' => $parent_post->ID,
-		]);
+		update_post_meta( $post->ID, '_elementor_edit_mode', 'builder' );
 
-		// Add Elementor data to both posts
-		update_post_meta( $parent_post->ID, '_elementor_edit_mode', 'builder' );
-		update_post_meta( $parent_post->ID, '_elementor_data', wp_json_encode( $this->mock_elementor_data ) );
+		$elementor_data = [
+			[
+				'id' => 'abc123',
+				'elType' => 'section',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'def456',
+						'elType' => 'column',
+						'settings' => [],
+						'elements' => [
+							[
+								'id' => 'ghi789',
+								'elType' => 'widget',
+								'widgetType' => 'heading',
+								'settings' => []
+							]
+						]
+					]
+				]
+			]
+		];
 
-		update_post_meta( $inherited_post->ID, '_elementor_edit_mode', 'builder' );
-		update_post_meta( $inherited_post->ID, '_elementor_data', wp_json_encode( $this->mock_elementor_data ) );
+		update_post_meta( $post->ID, '_elementor_data', wp_json_encode( $elementor_data ) );
 
-		// Act
+		add_filter( 'posts_pre_query', function( $posts, $query ) use ( $post ) {
+			if ( isset( $query->query_vars['meta_key'] ) && $query->query_vars['meta_key'] === '_elementor_edit_mode' ) {
+				return [ $post ];
+			}
+			return $posts;
+		}, 10, 2 );
+
+		// Act.
 		$reporter = new Global_Classes_Reporter();
 		$usage_data = $reporter->get_classes_usage();
 
-		// Assert - should only count the parent post's usage
-		$this->assertEquals( 2, $usage_data['count']['value'], 'Should have 2 global classes' );
-		$this->assertEquals( 4, $usage_data['applied_classes']['value'], 'Should have 4 applied classes (from parent post only)' );
-
-		$expected_element_types = [
-			'section' => 1,
-			'column' => 1,
-			'heading' => 2,
-		];
-		$this->assertEquals( $expected_element_types, $usage_data['applied_classes_element_types']['value'], 'Element types should match parent post only' );
+		// Assert.
+		$this->assertEquals( 2, $usage_data['count']['value'] );
+		$this->assertArrayNotHasKey( 'applied_classes', $usage_data );
+		$this->assertArrayNotHasKey( 'applied_classes_element_types', $usage_data );
 	}
 }

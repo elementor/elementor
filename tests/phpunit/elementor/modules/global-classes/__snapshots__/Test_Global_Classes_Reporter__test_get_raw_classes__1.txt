@@ -1,5 +1,5 @@
 
-	Count: 2
+	Classes Count: 2
 	Applied Classes: 4
 	Applied Classes Per Element Type: heading: 2
 column: 1

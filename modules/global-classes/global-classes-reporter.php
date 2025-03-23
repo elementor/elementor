@@ -59,11 +59,15 @@ class Global_Classes_Reporter extends Base_Reporter {
 		$usage = [];
 
 		$usage['count'] = [
-			'name' => 'Count',
+			'name' => 'Classes Count',
 			'value' => self::get_classes_count(),
 		];
 
 		$applied_classes_data = self::get_applied_classes_data();
+
+		if ( ! $applied_classes_data['count'] ) {
+			return $usage;
+		}
 
 		$usage['applied_classes'] = [
 			'name' => 'Applied Classes',
@@ -74,8 +78,6 @@ class Global_Classes_Reporter extends Base_Reporter {
 			'name' => 'Applied Classes Per Element Type',
 			'value' => $applied_classes_data['element_types'],
 		];
-
-		$usage = apply_filters( 'elementor/system-info/usage/classes', $usage );
 
 		return $usage;
 	}
@@ -166,7 +168,7 @@ class Global_Classes_Reporter extends Base_Reporter {
 	private static function get_elementor_posts() {
 		$args = wp_parse_args( [
 			'post_type' => 'any',
-			'post_status' => [ 'publish', 'draft' ],
+			'post_status' => [ 'publish' ],
 			'posts_per_page' => '-1',
 			'meta_key' => '_elementor_edit_mode',
 			'meta_value' => 'builder',
