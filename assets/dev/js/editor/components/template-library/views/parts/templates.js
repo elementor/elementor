@@ -39,6 +39,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		bulkSelectAllCheckbox: '#bulk-select-all',
 		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
 		bulkMove: '.bulk-selection-action-bar .bulk-move',
+		bulkCopy: '.bulk-selection-action-bar .bulk-copy',
 	},
 
 	events: {
@@ -53,9 +54,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'change @ui.bulkSelectionItemCheckbox': 'onSelectBulkSelectionItemCheckbox',
 		'change @ui.bulkSelectAllCheckbox': 'onBulkSelectAllCheckbox',
 		'click @ui.clearBulkSelections': 'onClearBulkSelections',
-		'mouseenter @ui.bulkMove': 'onHoverBulkMove',
+		'mouseenter @ui.bulkMove': 'onHoverBulkAction',
+		'mouseenter @ui.bulkCopy': 'onHoverBulkAction',
 		'click @ui.bulkMove': 'onClickBulkMove',
 		'click @ui.bulkActionBarDelete': 'onBulkDeleteClick',
+		'click @ui.bulkCopy': 'onClickBulkCopy',
 	},
 
 	className: 'no-bulk-selections',
@@ -474,11 +477,13 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		} );
 	},
 
-	onHoverBulkMove() {
+	onHoverBulkAction() {
 		if ( this.hasFolderInBulkSelection() ) {
 			this.ui.bulkMove.find( 'i' ).css( 'cursor', 'not-allowed' );
+			this.ui.bulkCopy.find( 'i' ).css( 'cursor', 'not-allowed' );
 		} else {
 			this.ui.bulkMove.find( 'i' ).css( 'cursor', 'pointer' );
+			this.ui.bulkCopy.find( 'i' ).css( 'cursor', 'pointer' );
 		}
 	},
 
@@ -501,6 +506,17 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			const type = model.get( 'type' );
 
 			return bulkSelectedItems.has( templateId ) && 'folder' === type;
+		} );
+	},
+
+	onClickBulkCopy() {
+		if ( this.hasFolderInBulkSelection() ) {
+			return;
+		}
+
+		$e.route( 'library/save-template', {
+			model: this.model,
+			context: SAVE_CONTEXTS.BULK_COPY,
 		} );
 	},
 } );
