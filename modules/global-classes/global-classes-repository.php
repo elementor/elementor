@@ -31,9 +31,10 @@ class Global_Classes_Repository {
 		$meta_key = $this->get_meta_key();
 		$all = $this->get_kit()->get_json_meta( $meta_key );
 
-		$is_preview_empty = static::META_KEY_PREVIEW === $meta_key && empty( $all );
+		$is_preview = static::META_KEY_PREVIEW === $meta_key;
+		$is_empty = empty( $all );
 
-		if ( $is_preview_empty ) {
+		if ( $is_preview && $is_empty ) {
 			$all = $this->get_kit()->get_json_meta( static::META_KEY_FRONTEND );
 		}
 

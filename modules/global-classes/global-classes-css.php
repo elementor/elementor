@@ -18,7 +18,7 @@ class Global_Classes_CSS {
 
 		add_action(
 			'elementor/core/files/clear_cache',
-			fn() => $this->clear_css_cache()
+			fn() => $this->clear_css_cache( Global_Classes_Repository::CONTEXT_FRONTEND )
 		);
 
 		add_action(
@@ -45,21 +45,21 @@ class Global_Classes_CSS {
 	}
 
 	private function on_post_delete( $post_id ) {
-		$post_id = (int) $post_id;
-		$active_kit_id = (int) Plugin::$instance->kits_manager->get_active_id();
-
-		if ( $post_id !== $active_kit_id ) {
+		if ( ! Plugin::$instance->kits_manager->is_kit( $post_id ) ) {
 			return;
 		}
 
-		$this->clear_css_cache();
+		$this->clear_css_cache(
+			Global_Classes_Repository::CONTEXT_FRONTEND,
+			$post_id
+		);
 	}
 
-	private function clear_css_cache( string $context = Global_Classes_Repository::CONTEXT_FRONTEND ): void {
-		( new Global_Classes_CSS_Preview() )->delete();
+	private function clear_css_cache( string $context, $kit_id = null ): void {
+		( new Global_Classes_CSS_Preview( $kit_id ) )->delete();
 
 		if ( Global_Classes_Repository::CONTEXT_FRONTEND === $context ) {
-			( new Global_Classes_CSS_File() )->delete();
+			( new Global_Classes_CSS_File( $kit_id ) )->delete();
 		}
 	}
 }

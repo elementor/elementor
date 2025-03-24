@@ -307,7 +307,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$post_css->get_content();
 
 		// Assert.
-		$this->assertSame( [ 'Poppins', 'Roboto' ], $post_css->get_meta( 'fonts' ) );
+		$this->assertSame( [ 'Poppins', 'Roboto' ], $post_css->get_fonts() );
 	}
 
 	private function make_mock_post() {

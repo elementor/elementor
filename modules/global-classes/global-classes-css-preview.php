@@ -27,4 +27,8 @@ class Global_Classes_CSS_Preview extends Global_Classes_CSS_File {
 	protected function get_file_handle_id() {
 		return 'elementor-global-classes-preview-' . $this->get_post_id();
 	}
+
+	protected function render_css() {
+		$this->render( Global_Classes_Repository::CONTEXT_PREVIEW );
+	}
 }
