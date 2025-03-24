@@ -116,6 +116,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.updateSaveContext( formData );
 
+		this.updateToastConfig( formData );
+
 		elementor.templates.saveTemplate( this.getSaveType(), formData );
 	},
 
@@ -154,14 +156,54 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
-	updateSourceState( formData ) {
+	updateToastConfig( formData ) {
 		if ( ! formData.source.length ) {
 			return;
 		}
 
 		const lastSource = formData.source.at( -1 );
-		elementor.templates.setSourceSelection( lastSource );
-		elementor.templates.setFilter( 'source', lastSource, true );
+		const saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE;
+		
+		elementor.templates.setToastConfig( {
+			show: true,
+			options: {
+				message: this.getToastMessage( lastSource, saveContext ),
+				buttons: this.getToastButtons( lastSource ),
+			}
+		} );
+	},
+
+	getToastMessage( lastSource, saveContext ) {
+		switch ( `${ lastSource }_${ saveContext }` ) {
+			case `local_${ SAVE_CONTEXTS.SAVE }`:
+				return __( 'Template saved to Site Library.', 'elementor' );
+			case `cloud_${ SAVE_CONTEXTS.SAVE }`:
+				return __( 'Template saved to Cloud Library.', 'elementor' );
+			case `local_${ SAVE_CONTEXTS.MOVE }`:
+				return __( 'Template moved to Site Library.', 'elementor' );
+			case `cloud_${ SAVE_CONTEXTS.MOVE }`:
+				return __( 'Template moved to Cloud Library.', 'elementor' );
+			case `local_${ SAVE_CONTEXTS.COPY }`:
+				return __( 'Template copied to Site Library.', 'elementor' );
+			case `cloud_${ SAVE_CONTEXTS.COPY }`:
+				return __( 'Template copied to Cloud Library.', 'elementor' );
+			default:
+				return __( 'Template saved.', 'elementor' );
+		}
+	},
+
+	getToastButtons( lastSource ) {
+		return [
+			{
+				name: 'template_after_save',
+				text: __( 'View', 'elementor' ),
+				callback: () => {
+					elementor.templates.setSourceSelection( lastSource );
+					elementor.templates.setFilter( 'source', lastSource, true );
+					$e.routes.refreshContainer( 'library' );
+				},
+			},
+		];
 	},
 
 	onSelectedFolderTextClick() {

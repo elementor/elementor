@@ -21,7 +21,8 @@ const TemplateLibraryManager = function() {
 		config = {},
 		filterTerms = {},
 		isLoading = false,
-		total = 0;
+		total = 0,
+		toastConfig = { show: false, options: {} };
 
 	const registerDefaultTemplateTypes = function() {
 		var data = {
@@ -63,6 +64,7 @@ const TemplateLibraryManager = function() {
 				},
 				error( errorData ) {
 					self.showErrorDialog( errorData );
+					self.clearToastConfig();
 				},
 			},
 		};
@@ -789,6 +791,35 @@ const TemplateLibraryManager = function() {
 			var templatesToShow = self.filterTemplates();
 
 			self.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
+
+			self.handleToast();
+		} );
+	};
+
+	this.handleToast = function() {
+		const toastConfig = this.getToastConfig();
+
+		if ( ! toastConfig?.show ) {
+			return;
+		}
+
+		elementor.notifications.showToast( toastConfig?.options );
+
+		this.clearToastConfig();
+	};
+
+	this.setToastConfig = function( config ) {
+		toastConfig = config;
+	};
+
+	this.getToastConfig = function() {
+		return toastConfig;
+	};
+
+	this.clearToastConfig = function() {
+		this.setToastConfig( {
+			show: false,
+			options: {},
 		} );
 	};
 
