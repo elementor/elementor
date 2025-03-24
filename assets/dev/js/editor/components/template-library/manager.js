@@ -807,8 +807,6 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.handleToast = function() {
-		const toastConfig = this.getToastConfig();
-
 		if ( ! toastConfig?.show ) {
 			return;
 		}
@@ -818,12 +816,8 @@ const TemplateLibraryManager = function() {
 		this.clearToastConfig();
 	};
 
-	this.setToastConfig = function( config ) {
-		toastConfig = config;
-	};
-
-	this.getToastConfig = function() {
-		return toastConfig;
+	this.setToastConfig = function( newConfig ) {
+		toastConfig = newConfig;
 	};
 
 	this.clearToastConfig = function() {

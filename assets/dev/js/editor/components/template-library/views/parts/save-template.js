@@ -172,7 +172,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			options: {
 				message: toastMessage,
 				buttons: this.getToastButtons( lastSource, formData?.parentId?.trim() ),
-			}
+			},
 		} );
 	},
 
@@ -180,16 +180,16 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		const key = `${ lastSource }_${ saveContext }`;
 
 		const actions = {
-			[`local_${ SAVE_CONTEXTS.SAVE }`]: __( 'Template saved to your Site Templates.', 'elementor' ),
-			[`cloud_${ SAVE_CONTEXTS.SAVE }`]: __( 'Template saved to your Cloud Templates.', 'elementor' ),
-			[`local_${ SAVE_CONTEXTS.MOVE }`]: this.getFormattedToastMessage( 'moved to your Site Templates', formData.title ),
-			[`cloud_${ SAVE_CONTEXTS.MOVE }`]: this.getFormattedToastMessage( 'moved to your Cloud Templates', formData.title ),
-			[`local_${ SAVE_CONTEXTS.COPY }`]: this.getFormattedToastMessage( 'copied to your Site Templates', formData.title ),
-			[`cloud_${ SAVE_CONTEXTS.COPY }`]: this.getFormattedToastMessage( 'copied to your Cloud Templates', formData.title ),
-			[`local_${ SAVE_CONTEXTS.BULK_MOVE }`]: this.getFormattedToastMessage( 'moved to your Site Templates', null, formData.from_template_id?.length ),
-			[`cloud_${ SAVE_CONTEXTS.BULK_MOVE }`]: this.getFormattedToastMessage( 'moved to your Cloud Templates', null, formData.from_template_id?.length ),
-			[`local_${ SAVE_CONTEXTS.BULK_COPY }`]: this.getFormattedToastMessage( 'copied to your Site Templates', null, formData.from_template_id?.length ),
-			[`cloud_${ SAVE_CONTEXTS.BULK_COPY }`]: this.getFormattedToastMessage( 'copied to your Cloud Templates', null, formData.from_template_id?.length ),
+			[ `local_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Site Templates.', 'elementor' ),
+			[ `cloud_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Cloud Templates.', 'elementor' ),
+			[ `local_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Site Templates', formData.title ),
+			[ `cloud_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Cloud Templates', formData.title ),
+			[ `local_${ SAVE_CONTEXTS.COPY }` ]: this.getFormattedToastMessage( 'copied to your Site Templates', formData.title ),
+			[ `cloud_${ SAVE_CONTEXTS.COPY }` ]: this.getFormattedToastMessage( 'copied to your Cloud Templates', formData.title ),
+			[ `local_${ SAVE_CONTEXTS.BULK_MOVE }` ]: this.getFormattedToastMessage( 'moved to your Site Templates', null, formData.from_template_id?.length ),
+			[ `cloud_${ SAVE_CONTEXTS.BULK_MOVE }` ]: this.getFormattedToastMessage( 'moved to your Cloud Templates', null, formData.from_template_id?.length ),
+			[ `local_${ SAVE_CONTEXTS.BULK_COPY }` ]: this.getFormattedToastMessage( 'copied to your Site Templates', null, formData.from_template_id?.length ),
+			[ `cloud_${ SAVE_CONTEXTS.BULK_COPY }` ]: this.getFormattedToastMessage( 'copied to your Cloud Templates', null, formData.from_template_id?.length ),
 		};
 
 		return actions[ key ] ?? false;
