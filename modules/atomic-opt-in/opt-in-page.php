@@ -15,6 +15,10 @@ class OptInPage extends Module {
 	}
 
 	public function init() {
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		$this->register_assets();
 		$this->add_settings_tab();
 	}

@@ -19,10 +19,6 @@ class Module extends BaseModule {
 	}
 
 	public function __construct( ?Elementor_Adapter_Interface $elementor_adapter = null ) {
-		if ( ! is_admin() ) {
-			return;
-		}
-
 		( new OptInPage( $this ) )->init();
 
     	if ( ! $this->is_atomic_experiment_active() ) {
