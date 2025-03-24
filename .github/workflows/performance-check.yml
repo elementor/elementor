@@ -5,14 +5,14 @@ on:
   merge_group:
 
 jobs:
-  build-plugin:
-    name: Build plugin
-    uses: ./.github/workflows/build.yml
+#  build-plugin:
+#    name: Build plugin
+#    uses: ./.github/workflows/build.yml
 
   compare-v4-to-v3:
     name: Compare V4 to V3
     runs-on: ubuntu-latest
-    needs: [build-plugin]
+#    needs: [build-plugin]
     env:
       PERFORMANCE_SCORE_THRESHOLD: 0.9
     steps:
