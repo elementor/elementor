@@ -162,7 +162,7 @@ class Global_Classes_Reporter extends Base_Reporter {
 	 * @return string Element type
 	 */
 	private static function get_element_type( $element ) {
-		return $element['elType'] === 'widget' ? $element['widgetType'] : $element['elType'];
+		return 'widget' === $element['elType'] ? $element['widgetType'] : $element['elType'];
 	}
 
 	private static function get_elementor_posts() {
