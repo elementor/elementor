@@ -58,11 +58,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon" aria-hidden="true"></i>
 		</span>
 		<span class="elementor-panel-heading-title">{{{ title }}}</span>
-		<# if ( 'v4-elements' === name ) { #>
-			<span class="elementor-panel-heading-category-chip"><?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
-				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
-			</span>
-		<# } #>
+		<?php do_action('elementor/editor/templates/panel/category', ); ?>
+<!--		<# if ( 'v4-elements' === name ) { #>-->
+<!--			<span class="elementor-panel-heading-category-chip">--><?php //echo esc_html__( 'Alpha', 'elementor' ); ?><!--<i class="eicon-info"></i>-->
+<!--				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>-->
+<!--			</span>-->
+<!--		<# } #>-->
 		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">

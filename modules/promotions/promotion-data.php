@@ -130,16 +130,13 @@ class PromotionData {
 	private function get_v4_promotion_data( $assets_data ) {
 		$data = [
 			'image' => esc_url( 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png' ),
-			'image_alt' => esc_attr__( 'Elementor V.4', 'elementor' ),
-			'title' => esc_html__( 'Elementor V.4', 'elementor' ),
+			'image_alt' => esc_attr__( 'Elementor V4', 'elementor' ),
+			'title' => esc_html__( 'Elementor V4', 'elementor' ),
 			'description' => [
-				esc_html__( 'Faster than ever Before', 'elementor' ),
-				esc_html__( 'Atomic components', 'elementor' ),
-				esc_html__( 'CSS empowered designs', 'elementor' ),
-				esc_html__( 'Fully responsive design', 'elementor' ),
+				esc_html__( 'You’ve got powerful new tools with Editor V4. But, keep in mind that this is an early release, so don’t use it on live sites yet.', 'elementor' ),
 			],
 			'upgrade_text' => esc_html__( 'Learn more', 'elementor' ),
-			'upgrade_url' => 'https://elementor.com/help/',
+			'upgrade_url' => 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
 		];
 
 		return $this->filter_data( Utils::V4_CHIP, $data );

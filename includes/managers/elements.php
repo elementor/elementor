@@ -279,6 +279,12 @@ class Elements_Manager {
 			'v4-elements' => [
 				'title' => esc_html__( 'V4 Elements', 'elementor' ),
 				'hideIfEmpty' => true,
+				'promotion'=> [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
+					'icon' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
+					'label' => esc_url( 'alpha' ),
+
+				]
 			],
 			'layout' => [
 				'title' => esc_html__( 'Layout', 'elementor' ),
@@ -292,6 +298,8 @@ class Elements_Manager {
 				'title' => esc_html__( 'Pro', 'elementor' ),
 				'promotion' => [
 					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
+					'icon' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
+					'label' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
 				],
 			],
 			'helloplus' => [

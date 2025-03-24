@@ -101,8 +101,8 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	onChipClick( event ) {
 		event.stopPropagation();
-		// $e.run('promotions/alphachip', { event, selectors: this.chipSelectors });
-		$e.run('document/atomic-widgets/alphachip', { event, selectors: this.chipSelectors });
+		$e.run( 'promotions/alphachip', { event, selectors: this.chipSelectors } );
+		// $e.run( 'document/atomic-widgets/alphachip', { event, selectors: this.chipSelectors } );
 	}
 
 });

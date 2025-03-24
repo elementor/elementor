@@ -10,12 +10,12 @@ export default class Component extends $e.modules.ComponentBase {
 		return this.importHooks( hooks );
 	}
 
-	defaultCommands() {
-		return {
-			alphachip: ( args ) => {
-				const PopupManager = new AppManager();
-				PopupManager.mount( args.event.target, args.selectors );
-			},
-		};
-	}
+	// defaultCommands() {
+	// 	return {
+	// 		alphachip: ( args ) => {
+	// 			const PopupManager = new AppManager();
+	// 			PopupManager.mount( args.event.target, args.selectors );
+	// 		},
+	// 	};
+	// }
 }

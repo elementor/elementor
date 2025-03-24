@@ -3,7 +3,7 @@ import Component from './component';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		// $e.components.register( new Component() );
+		$e.components.register( new Component() );
 
 		if ( ! elementor.config?.promotionWidgets || ! elementor.config.promotionWidgets.length ) {
 			return;
