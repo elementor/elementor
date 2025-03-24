@@ -173,8 +173,8 @@ class Container extends Element_Base {
 				<video class="elementor-background-video-hosted" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
-		<div class="elementor-shape elementor-shape-top"></div>
-		<div class="elementor-shape elementor-shape-bottom"></div>
+		<div class="elementor-shape elementor-shape-top" aria-hidden="true"></div>
+		<div class="elementor-shape elementor-shape-bottom" aria-hidden="true"></div>
 		<# if ( 'boxed' === settings.content_width ) { #>
 			</div>
 		<# } #>
@@ -241,7 +241,7 @@ class Container extends Element_Base {
 			return;
 		}
 		?>
-		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php
+		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" aria-hidden="true" data-negative="<?php
 			Utils::print_unescaped_internal_string( $negative ? 'true' : 'false' );
 		?>">
 			<?php
