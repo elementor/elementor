@@ -8,8 +8,8 @@ export default class Component extends $e.modules.ComponentBase {
 	defaultCommands() {
 		return {
 			alphachip: ( args ) => {
-				const PopupManager = new AppManager();
-				PopupManager.mount( args.event.target, args.selectors );
+				// const PopupManager = new AppManager();
+				// PopupManager.mount( args.event.target, args.selectors );
 			},
 		};
 	}
