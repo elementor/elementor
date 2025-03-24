@@ -29,9 +29,7 @@ const useImageActions = () => {
 			! elementorCommon.config.filesUpload.unfilteredFiles
 		) {
 			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => {} ).show();
-			return false;
 		}
-		return true;
 	};
 
 	const upload = ( imageToUpload, prompt ) => {
