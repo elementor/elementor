@@ -58,7 +58,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon" aria-hidden="true"></i>
 		</span>
 		<span class="elementor-panel-heading-title">{{{ title }}}</span>
-		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
+		<# if ( 'undefined' !== typeof promotion && promotion?.popup ) { #>
+		<span class="elementor-panel-heading-category-chip">
+			<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
+<!--		<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>-->
+		</span>
+		<# } #>
+		<# if ( 'undefined' !== typeof promotion && promotion?.url ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">
 					<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
