@@ -973,6 +973,10 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			] )
 			->willReturn( $saved_template_data );
 
+		$this->cloud_library_app_mock
+			->method( 'post_resource' )
+			->willReturn( $saved_template_data );
+
 		// Assert
 		$this->cloud_library_app_mock
 			->expects( $this->once() )
@@ -984,7 +988,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'templateType' => 'container',
 				'content' => wp_json_encode( $mock_content ),
 				'hasPageSettings' => false,
-			] )->willReturn( $saved_template_data );
+			] );
 
 		// Act
 		$this->manager->copy_template( [
