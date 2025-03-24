@@ -1028,16 +1028,8 @@ abstract class Base extends Base_File {
 	}
 
 	public function add_font( $font ) {
-		$meta = $this->get_meta();
-		$fonts = $meta['fonts'] ?? [];
-
-		if ( in_array( $font, $fonts, true ) ) {
-			return;
+		if ( ! in_array( $font, $this->fonts, true ) ) {
+			$this->fonts[] = $font;
 		}
-
-		$fonts[] = $font;
-		$meta['fonts'] = $fonts;
-
-		$this->update_meta( $meta );
 	}
 }
