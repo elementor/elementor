@@ -100,7 +100,7 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 		// Setup global classes
 		Plugin::$instance->kits_manager->create_new_kit( 'kit' );
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( Global_Classes_Repository::META_KEY, $this->mock_global_classes );
+		$kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
 
 		// Create a post with Elementor data
 		$post = $this->factory()->post->create_and_get([
@@ -126,7 +126,7 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 	public function tearDown(): void {
 		parent::tearDown();
 
-		Plugin::$instance->kits_manager->get_active_kit()->delete_meta( Global_Classes_Repository::META_KEY );
+		Plugin::$instance->kits_manager->get_active_kit()->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		remove_all_filters( 'posts_pre_query' );
 	}
 
