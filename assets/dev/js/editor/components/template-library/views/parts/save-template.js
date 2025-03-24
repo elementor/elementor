@@ -167,11 +167,20 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			return;
 		}
 
+		const toastButtons = formData.source?.length > 1
+			? null
+			: this.getToastButtons( lastSource, formData?.parentId?.trim() );
+
 		elementor.templates.setToastConfig( {
 			show: true,
 			options: {
 				message: toastMessage,
-				buttons: this.getToastButtons( lastSource, formData?.parentId?.trim() ),
+				buttons: toastButtons,
+				position: {
+					my: 'right bottom',
+					at: 'right-10 bottom-10',
+					of: '#elementor-template-library-modal .dialog-lightbox-widget-content',
+				},
 			},
 		} );
 	},
@@ -179,9 +188,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	getToastMessage( lastSource, saveContext, formData ) {
 		const key = `${ lastSource }_${ saveContext }`;
 
+		if ( formData.source?.length > 1 ) {
+			return __( 'Template saved to your Site and Cloud Library.', 'elementor' );
+		}
+
 		const actions = {
-			[ `local_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Site Templates.', 'elementor' ),
-			[ `cloud_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Cloud Templates.', 'elementor' ),
+			[ `local_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Site Library.', 'elementor' ),
+			[ `cloud_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Cloud Library.', 'elementor' ),
 			[ `local_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Site Templates', formData.title ),
 			[ `cloud_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Cloud Templates', formData.title ),
 			[ `local_${ SAVE_CONTEXTS.COPY }` ]: this.getFormattedToastMessage( 'copied to your Site Templates', formData.title ),
