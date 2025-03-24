@@ -90,7 +90,15 @@ class Source_Cloud extends Source_Base {
 	public function save_item( $template_data ): int {
 		$app = $this->get_app();
 
-		$resource_data = [
+		$resource_data = $this->format_resource_item_for_create( $template_data );
+
+		$response = $app->post_resource( $resource_data );
+
+		return (int) $response['id'];
+	}
+
+	private function format_resource_item_for_create( $template_data ) {
+		return [
 			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
 			'type' => self::TEMPLATE_RESOURCE_TYPE,
 			'templateType' => $template_data['type'],
@@ -101,10 +109,6 @@ class Source_Cloud extends Source_Base {
 			] ),
 			'hasPageSettings' => ! empty( $template_data['page_settings'] ),
 		];
-
-		$response = $app->post_resource( $resource_data );
-
-		return (int) $response['id'];
 	}
 
 	public function save_folder( array $folder_data = [] ) {
@@ -270,6 +274,15 @@ class Source_Cloud extends Source_Base {
 		return $this->update_item( $move_args );
 	}
 
+	public function move_bulk_templates_to_folder( array $args = [] ) {
+		$move_args = [
+			'ids' => $args['from_template_id'],
+			'parentId' => ! empty( $args['parentId'] ) ? (int) $args['parentId'] : null,
+		];
+
+		return $this->get_app()->bulk_move_templates( $move_args );
+	}
+
 	public function save_item_preview( $template_id, $data ) {
 		return $this->get_app()->update_resource_preview( $template_id, $data );
 	}
@@ -332,5 +345,23 @@ class Source_Cloud extends Source_Base {
 		do_action( 'elementor/template-library/after_update_template', $document->get_main_id(), $template_data );
 
 		return $document;
+	}
+
+	public function bulk_delete_items( array $template_ids ) {
+		return $this->get_app()->bulk_delete_resources( $template_ids );
+	}
+
+	public function save_bulk_items( array $data = [] ) {
+		$items = [];
+
+		foreach ( $data as $template_data ) {
+			$items[] = $this->format_resource_item_for_create( $template_data );
+		}
+
+		return $this->get_app()->post_bulk_resources( $items );
+	}
+
+	public function get_bulk_items( array $args = [] ) {
+		return $this->get_app()->get_bulk_resources_with_content( $args );
 	}
 }

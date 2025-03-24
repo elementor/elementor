@@ -765,6 +765,20 @@ class Source_Local extends Source_Base {
 		return wp_delete_post( $template_id, true );
 	}
 
+	public function bulk_delete_items( array $template_ids ) {
+		foreach ( $template_ids as $template_id ) {
+			if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
+				return new \WP_Error( 'template_error', esc_html__( 'Access denied.', 'elementor' ) );
+			}
+		}
+
+		foreach ( $template_ids as $template_id ) {
+			wp_delete_post( $template_id, true );
+		}
+
+		return true;
+	}
+
 	/**
 	 * Export local template.
 	 *
@@ -1783,6 +1797,21 @@ class Source_Local extends Source_Base {
 
 			return $value;
 		}, 10, 3 );
+	}
+
+	public function save_bulk_items( array $args = [] ) {
+		$items = [];
+
+		foreach ( $args as $item ) {
+			$items[] = $this->save_item( [
+				'content' => $item['content'],
+				'title' => $item['title'],
+				'type' => $item['type'],
+				'page_settings' => $item['page_settings'],
+			] );
+		}
+
+		return $items;
 	}
 
 	/**
