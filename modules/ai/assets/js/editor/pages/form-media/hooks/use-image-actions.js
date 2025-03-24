@@ -25,16 +25,14 @@ const useImageActions = () => {
 			return true;
 		}
 		const imageExtension = new URL( imageUrl ).pathname.split( '.' ).pop();
-		if (
-			! window._wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions.split( ',' ).includes(
-				imageExtension,
-			) &&
-			! elementorCommon.config.filesUpload.unfilteredFiles
-		) {
+		const isUploadAllowed = window._wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions.split( ',' ).includes(
+			imageExtension,
+		) || elementorCommon.config.filesUpload.unfilteredFiles;
+
+		if ( ! isUploadAllowed ) {
 			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => {} ).show();
-			return false;
 		}
-		return true;
+		return isUploadAllowed;
 	};
 
 	const upload = ( imageToUpload, prompt ) => {
