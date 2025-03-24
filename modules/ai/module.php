@@ -1327,7 +1327,7 @@ class Module extends BaseModule {
 			return new \WP_Error( 'upload_error', $attachment_id->get_error_message() );
 		}
 
-		if (! empty( $attachment_id['error'] ) ) {
+		if ( ! empty( $attachment_id['error'] ) ) {
 			return new \WP_Error( 'upload_error', $attachment_id['error'] );
 		}
 
