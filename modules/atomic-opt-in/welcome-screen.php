@@ -2,15 +2,17 @@
 
 namespace Elementor\Modules\AtomicOptIn;
 
+use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
+use Elementor\Core\Utils\Isolation_Manager;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Utils;
 
 class WelcomeScreen {
 	private Elementor_Adapter_Interface $elementor_adapter;
 
-	public function __construct( Elementor_Adapter_Interface $elementor_adapter ) {
-		$this->elementor_adapter = $elementor_adapter;
+	public function __construct() {
+		$this->elementor_adapter = Isolation_Manager::get_adapter( Elementor_Adapter::class );
 	}
 
 	public function init() {
@@ -31,6 +33,10 @@ class WelcomeScreen {
 	}
 
 	private function is_first_or_second_editor_visit(): bool {
+		if ( ! $this->elementor_adapter ) {
+			return false;
+		}
+
 		$editor_visit_count = $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 		return $editor_visit_count < 3;
 	}
@@ -44,21 +50,21 @@ class WelcomeScreen {
 	}
 
 	private function enqueue_scripts() {
-	  $min_suffix = Utils::is_script_debug() ? '' : '.min';
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
-	  wp_enqueue_script(
-		  Module::MODULE_NAME . '-welcome',
-		  ELEMENTOR_ASSETS_URL . 'js/editor-v4-welcome-opt-in' . $min_suffix . '.js',
-		  [
-			  'react',
-			  'react-dom',
-			  'elementor-common',
-			  'elementor-v2-ui',
-		  ],
-		  ELEMENTOR_VERSION,
-		  true
-	  );
-  }
+		wp_enqueue_script(
+			Module::MODULE_NAME . '-welcome',
+			ELEMENTOR_ASSETS_URL . 'js/editor-v4-welcome-opt-in' . $min_suffix . '.js',
+			[
+				'react',
+				'react-dom',
+				'elementor-common',
+				'elementor-v2-ui',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
 
 
 	private function get_current_user_id(): int {
