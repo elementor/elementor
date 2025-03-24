@@ -100,8 +100,8 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	},
 
 	onChipClick( event ) {
-		console.log( 'dgdg' );
-	}
+		console.log( 'onChipClick fired' );
+	},
 } );
 
 module.exports = PanelElementsCategoryView;
