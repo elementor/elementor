@@ -607,7 +607,7 @@ class Widget_Social_Icons extends Widget_Base {
 		$migration_allowed = Icons_Manager::is_migration_allowed();
 
 		?>
-		<div class="elementor-social-icons-wrapper elementor-grid">
+		<div class="elementor-social-icons-wrapper elementor-grid" role="list">
 			<?php
 			foreach ( $settings['social_icon_list'] as $index => $item ) {
 				$migrated = isset( $item['__fa4_migrated']['social_icon'] );
@@ -647,7 +647,7 @@ class Widget_Social_Icons extends Widget_Base {
 				$this->add_link_attributes( $link_key, $item['link'] );
 
 				?>
-				<span class="elementor-grid-item">
+				<span class="elementor-grid-item" role="listitem">
 					<a <?php $this->print_render_attribute_string( $link_key ); ?>>
 						<span class="elementor-screen-only"><?php echo esc_html( ucwords( $social ) ); ?></span>
 						<?php
@@ -674,13 +674,13 @@ class Widget_Social_Icons extends Widget_Base {
 	protected function content_template() {
 		?>
 		<# var iconsHTML = {}; #>
-		<div class="elementor-social-icons-wrapper elementor-grid">
+		<div class="elementor-social-icons-wrapper elementor-grid" role="list">
 			<# _.each( settings.social_icon_list, function( item, index ) {
 				var link = item.link ? item.link.url : '',
 					migrated = elementor.helpers.isIconMigrated( item, 'social_icon' );
 					social = elementor.helpers.getSocialNetworkNameFromIcon( item.social_icon, item.social, false, migrated );
 				#>
-				<span class="elementor-grid-item">
+				<span class="elementor-grid-item" role="listitem">
 					<a class="elementor-icon elementor-social-icon elementor-social-icon-{{ social }} elementor-animation-{{ settings.hover_animation }} elementor-repeater-item-{{item._id}}" href="{{ elementor.helpers.sanitizeUrl( link ) }}">
 						<span class="elementor-screen-only">{{{ social }}}</span>
 						<#
