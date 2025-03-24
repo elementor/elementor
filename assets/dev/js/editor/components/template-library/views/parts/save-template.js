@@ -205,7 +205,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		return sprintf( __( '%1$s %2$s.', 'elementor' ), title ? `"${ title }"` : __( 'Template', 'elementor' ), action );
 	},
 
-
 	getToastButtons( lastSource, parentId ) {
 		const parsedParentId = parseInt( parentId, 10 ) || null;
 
