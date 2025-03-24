@@ -20,8 +20,8 @@ const useImageActions = () => {
 	const { setControlValue, saveAndClose } = useGlobalActions();
 	const { attachmentData, isUploading, uploadError, upload: uploadImage, resetUpload } = useImageUpload();
 
-	const upload = ( imageToUpload, prompt ) => {
-		const imageExtension = new URL( imageToUpload.image_url ).pathname.split( '.' ).pop();
+	const ensureSVGUploading = ( imageUrl ) => {
+		const imageExtension = new URL( imageUrl ).pathname.split( '.' ).pop();
 		if (
 			! window._wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions.split( ',' ).includes(
 				imageExtension,
@@ -29,8 +29,13 @@ const useImageActions = () => {
 			! elementorCommon.config.filesUpload.unfilteredFiles
 		) {
 			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => {} ).show();
-			return;
+			return false;
 		}
+		return true;
+	};
+
+	const upload = ( imageToUpload, prompt ) => {
+		ensureSVGUploading( imageToUpload.image_url );
 
 		return uploadImage( {
 			image: normalizeImageData( imageToUpload ),
@@ -50,7 +55,7 @@ const useImageActions = () => {
 
 		const result = await upload( imageToUpload, prompt );
 
-		return result.image;
+		return result?.image;
 	};
 
 	const edit = async ( imageToUpload, prompt ) => {
