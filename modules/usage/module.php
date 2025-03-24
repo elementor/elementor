@@ -124,7 +124,7 @@ class Module extends BaseModule {
 					$widget_title = $element_type;
 				}
 
-				$widget_title = apply_filters( 'elementor/usage/element_title/'. $element_type, $widget_title );
+				$widget_title = apply_filters( 'elementor/usage/element_title/' . $element_type, $widget_title );
 
 				$elements[ $widget_title ] = $data['count'];
 			}
