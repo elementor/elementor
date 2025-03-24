@@ -119,8 +119,6 @@ export const OptIn = ( { state } ) => {
 			} );
 	};
 
-	const maybeStart = () => {};
-
 	const isEnrolled = !! state?.features?.editor_v4;
 
 	return (
