@@ -12,7 +12,7 @@ on:
       - 'bin/**'
       - '.gitignore'
       - 'docs/**'
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   build-plugin:
