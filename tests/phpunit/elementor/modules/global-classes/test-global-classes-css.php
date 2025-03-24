@@ -266,7 +266,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		$css_file->get_content();
 
 		// Assert.
-		$this->assertSame( [ 'Poppins', 'Inter' ], $css_file->get_fonts() );
+		$this->assertSame( [ 'Poppins', 'Inter' ], $css_file->get_meta( 'fonts' ) );
 	}
 
 	public function test__deletes_only_preview_css_file_on_draft_update() {

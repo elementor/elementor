@@ -12,10 +12,10 @@ class Global_Classes_CSS_File extends Post_CSS {
 
 	const META_KEY = '_elementor_css__global_classes';
 
-	public function __construct( $kit_id = null ) {
-		$kit_id = $kit_id ?? Plugin::$instance->kits_manager->get_active_id();
+	public function __construct() {
+		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 
-		parent::__construct( $kit_id );
+		parent::__construct( $active_kit_id );
 	}
 
 	public function get_name() {
@@ -34,7 +34,11 @@ class Global_Classes_CSS_File extends Post_CSS {
 		return '';
 	}
 
-	protected function render( $context ) {
+	protected function render_css() {
+		$context = is_preview()
+			? Global_Classes_Repository::CONTEXT_PREVIEW
+			: Global_Classes_Repository::CONTEXT_FRONTEND;
+
 		$global_classes = Global_Classes_Repository::make()
 			->context( $context )
 			->all();
@@ -61,9 +65,5 @@ class Global_Classes_CSS_File extends Post_CSS {
 		} )->render( $sorted_items->all() );
 
 		$this->get_stylesheet()->add_raw_css( $css );
-	}
-
-	protected function render_css() {
-		$this->render( Global_Classes_Repository::CONTEXT_FRONTEND );
 	}
 }
