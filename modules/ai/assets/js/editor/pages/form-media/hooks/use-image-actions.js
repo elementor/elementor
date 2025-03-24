@@ -29,11 +29,15 @@ const useImageActions = () => {
 			! elementorCommon.config.filesUpload.unfilteredFiles
 		) {
 			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => {} ).show();
+			return false;
 		}
+		return true;
 	};
 
 	const upload = ( imageToUpload, prompt ) => {
-		ensureSVGUploading( imageToUpload.image_url );
+		if ( ! ensureSVGUploading( imageToUpload.image_url ) ) {
+			return Promise.reject( new Error( 'SVG Uploading is not allowed' ) );
+		}
 
 		return uploadImage( {
 			image: normalizeImageData( imageToUpload ),
