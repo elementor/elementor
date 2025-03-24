@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	Container,
 	Button,
@@ -15,6 +15,16 @@ import { TextNode, ContentList, ContentListItem } from './opt-in-content';
 import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './opt-in-img-placeholders';
 import { Message } from './opt-in-message';
 import { triggerOptIn, triggerOptOut } from './opt-in-api';
+import DOMPurify from 'dompurify';
+
+const decodeHtmlUrl = ( html ) => {
+	const textarea = document.createElement( 'textarea' );
+	textarea.innerHTML = html;
+	return textarea.value;
+};
+
+const OPT_IN_MSG = 'e-editor-v4-opt-in-message';
+const OPT_OUT_MSG = 'e-editor-v4-opt-out-message';
 
 const i18n = {
 	title: __( 'The Road to Editor V4', 'elementor' ),
@@ -56,6 +66,7 @@ const i18n = {
 const optInLinks = {
 	feedbackUrl: 'https://go.elementor.com/wp-dash-opt-in-v4-feedback/',
 	readMoreUrl: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
+	startBuildingUrl: DOMPurify.sanitize( decodeHtmlUrl( elementorSettingsEditor4OptIn?.urls?.start_building ) ) || '#',
 };
 
 const optInImages = {
@@ -64,17 +75,33 @@ const optInImages = {
 };
 
 export const OptIn = ( { state } ) => {
-	const [ isEnrolled, setIsEnrolled ] = useState( !! state?.features?.editor_v4 );
-
 	const [ successMessage, setSuccessMessage ] = useState( '' );
 	const [ notifyMessage, setNotifyMessage ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
+	useEffect( () => {
+		const optInMessage = sessionStorage.getItem( OPT_IN_MSG );
+		if ( optInMessage ) {
+			setTimeout( () => {
+				setSuccessMessage( optInMessage );
+			}, 100 );
+			sessionStorage.removeItem( OPT_IN_MSG );
+		}
+
+		const optOutMessage = sessionStorage.getItem( OPT_OUT_MSG );
+		if ( optOutMessage ) {
+			setTimeout( () => {
+				setNotifyMessage( optOutMessage );
+			}, 100 );
+			sessionStorage.removeItem( OPT_OUT_MSG );
+		}
+	}, [] );
+
 	const maybeOptIn = () => {
 		triggerOptIn()
 			.then( () => {
-				setIsEnrolled( true );
-				setSuccessMessage( i18n.messages.optInSuccess );
+				sessionStorage.setItem( OPT_IN_MSG, i18n.messages.optInSuccess );
+				window.location.reload();
 			} )
 			.catch( () => {
 				setErrorMessage( i18n.messages.error );
@@ -84,15 +111,15 @@ export const OptIn = ( { state } ) => {
 	const maybeOptOut = () => {
 		triggerOptOut()
 			.then( () => {
-				setIsEnrolled( false );
-				setNotifyMessage( i18n.messages.optOut );
+				sessionStorage.setItem( OPT_OUT_MSG, i18n.messages.optOut );
+				window.location.reload();
 			} )
 			.catch( () => {
 				setErrorMessage( i18n.messages.error );
 			} );
 	};
 
-	const maybeStart = () => {};
+	const isEnrolled = !! state?.features?.editor_v4;
 
 	return (
 		<Container sx={ {
@@ -140,7 +167,7 @@ export const OptIn = ( { state } ) => {
 						</Button>
 					) : (
 						<Button
-							onClick={ maybeStart }
+							onClick={ () => window.location.href = optInLinks.startBuildingUrl }
 							size="large"
 							color="primary"
 							variant="contained"

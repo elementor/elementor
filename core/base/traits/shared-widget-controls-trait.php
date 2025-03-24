@@ -247,6 +247,7 @@ trait Shared_Widget_Controls_Trait {
 		?>
 		<div
 			class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>"
+			aria-hidden="true"
 			data-negative="<?php
 			echo esc_attr( $shape_divider['negative'] ? 'true' : 'false' );
 			?>"
