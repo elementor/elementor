@@ -953,4 +953,80 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
 	}
+
+	public function test_copy_template() {
+		// Arrange
+		$mock_content = [ 'content' => 'mock_content', 'page_settings' => [] ];
+		$saved_template_data = [
+			'id' => 1,
+			'parentId' => 2,
+			'type' => 'TEMPLATE',
+			'subType' => 'container',
+			'title' => 'template 1',
+			'content' => wp_json_encode( $mock_content ),
+		];
+
+		$this->cloud_library_app_mock
+			->method( 'get_resource' )
+			->with( [
+				'id' => 1,
+			] )
+			->willReturn( $saved_template_data );
+
+		$this->cloud_library_app_mock
+			->method( 'post_resource' )
+			->willReturn( $saved_template_data );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'post_resource' )
+			->with( [
+				'parentId' => 2,
+				'title' => 'ATemplate',
+				'type' => 'TEMPLATE',
+				'templateType' => 'container',
+				'content' => wp_json_encode( $mock_content ),
+				'hasPageSettings' => false,
+			] );
+
+		// Act
+		$this->manager->copy_template( [
+			'post_id' => 1,
+			'source' => [ 'cloud' ],
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => wp_json_encode( $mock_content ),
+			'parentId' => 2,
+			'from_source' => 'cloud',
+			'from_template_id' => 1,
+		] );
+	}
+
+	public function test_copy_templates_fails_without_from_source() {
+		// Act
+		$result =$this->manager->copy_template( [
+			'source' => [ 'cloud' ],
+			'from_template_id' => [ 1, 2 ],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_copy_templates_fails_without_from_template_id() {
+		// Act
+		$result = $this->manager->copy_template( [
+			'source' => [ 'cloud' ],
+			'from_source' => 'cloud',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
+	}
 }
