@@ -441,8 +441,12 @@ class Widget_Icon_Box extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover, {{WRAPPER}}.elementor-view-default .elementor-icon:hover' => 'fill: {{VALUE}}; color: {{VALUE}}; border-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked:has(:hover) .elementor-icon,
+					 {{WRAPPER}}.elementor-view-stacked:has(:focus) .elementor-icon' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed:has(:hover) .elementor-icon,
+					 {{WRAPPER}}.elementor-view-default:has(:hover) .elementor-icon,
+					 {{WRAPPER}}.elementor-view-framed:has(:focus) .elementor-icon,
+					 {{WRAPPER}}.elementor-view-default:has(:focus) .elementor-icon' => 'fill: {{VALUE}}; color: {{VALUE}}; border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -457,8 +461,25 @@ class Widget_Icon_Box extends Widget_Base {
 					'view!' => 'default',
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-view-framed .elementor-icon:hover' => 'background-color: {{VALUE}};',
-					'{{WRAPPER}}.elementor-view-stacked .elementor-icon:hover' => 'fill: {{VALUE}}; color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-framed:has(:hover) .elementor-icon,
+					 {{WRAPPER}}.elementor-view-framed:has(:focus) .elementor-icon' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}}.elementor-view-stacked:has(:hover) .elementor-icon,
+					 {{WRAPPER}}.elementor-view-stacked:has(:focus) .elementor-icon' => 'fill: {{VALUE}}; color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_icon_colors_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 's',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon' => 'transition-duration: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -674,7 +695,8 @@ class Widget_Icon_Box extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-title:hover, {{WRAPPER}} .elementor-icon-box-title:focus' => 'color: {{VALUE}};',
+					'{{WRAPPER}}:has(:hover) .elementor-icon-box-title,
+					 {{WRAPPER}}:has(:focus) .elementor-icon-box-title' => 'color: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,

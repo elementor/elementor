@@ -595,7 +595,8 @@ class Widget_Image_Box extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-title:hover, {{WRAPPER}} .elementor-image-box-title:focus' => 'color: {{VALUE}};',
+					'{{WRAPPER}}:has(:hover) .elementor-image-box-title,
+					 {{WRAPPER}}:has(:focus) .elementor-image-box-title' => 'color: {{VALUE}};',
 				],
 				'global' => [
 					'default' => Global_Colors::COLOR_PRIMARY,
