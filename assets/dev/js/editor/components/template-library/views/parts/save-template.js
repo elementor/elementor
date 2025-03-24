@@ -44,20 +44,16 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 		}
 
-		if ( SAVE_CONTEXTS.MOVE === context ) {
-			this.handleMoveContextUiState();
+		if ( SAVE_CONTEXTS.MOVE === context || SAVE_CONTEXTS.COPY === context ) {
+			this.handleSingleActionContextUiState();
 		}
 
 		if ( SAVE_CONTEXTS.BULK_MOVE === context || SAVE_CONTEXTS.BULK_COPY === context ) {
 			this.handleBulkActionContextUiState();
 		}
-
-		if ( SAVE_CONTEXTS.COPY === this.getOption( 'context' ) ) {
-			this.handleCopyContextUiState();
-		}
 	},
 
-	handleMoveContextUiState() {
+	handleSingleActionContextUiState() {
 		this.ui.templateNameInput.val( this.model.get( 'title' ) );
 		this.handleContextUiStateChecboxes();
 	},
@@ -69,17 +65,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	handleContextUiStateChecboxes() {
 		const fromSource = elementor.templates.getFilter( 'source' );
-
-		if ( 'local' === fromSource ) {
-			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
-			this.ui.localInput.addClass( 'disabled' );
-		}
-	},
-
-	handleCopyContextUiState() {
-		this.ui.templateNameInput.val( this.model.get( 'title' ) );
-
-		const fromSource = this.model.get( 'source' );
 
 		if ( 'local' === fromSource ) {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
