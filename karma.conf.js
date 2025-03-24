@@ -41,6 +41,7 @@ module.exports = function( config ) {
 			'assets/js/common-modules.min.js',
 			'assets/js/web-cli.min.js',
 			'assets/js/common.min.js',
+			'assets/js/e-react-promotions.min.js',
 
 			// Editor Fixtures.
 			'tests/qunit/index.html',
