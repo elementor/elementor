@@ -264,8 +264,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 				<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
 					<div class="elementor-template-library-template-move">
-						<i class="eicon-pencil" aria-hidden="true"></i>
+						<i class="eicon-folder" aria-hidden="true"></i>
 						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+					</div>
+					<div class="elementor-template-library-template-copy">
+						<i class="eicon-copy" aria-hidden="true"></i>
+						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
 					</div>
 				<# } #>
 			<?php endif; ?>
@@ -352,6 +356,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="elementor-template-library-template-move">
 							<i class="eicon-folder" aria-hidden="true"></i>
 							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+						</div>
+						<div class="elementor-template-library-template-copy">
+							<i class="eicon-copy" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
 						</div>
 					<?php endif; ?>
 					<div class="elementor-template-library-template-export">
