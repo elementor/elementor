@@ -21,6 +21,9 @@ const useImageActions = () => {
 	const { attachmentData, isUploading, uploadError, upload: uploadImage, resetUpload } = useImageUpload();
 
 	const ensureSVGUploading = ( imageUrl ) => {
+		if ( ! imageUrl ) {
+			return true;
+		}
 		const imageExtension = new URL( imageUrl ).pathname.split( '.' ).pop();
 		if (
 			! window._wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions.split( ',' ).includes(
