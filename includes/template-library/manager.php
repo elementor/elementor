@@ -894,6 +894,26 @@ class Manager {
 		return $source->bulk_delete_items( $data['template_ids'] );
 	}
 
+	public function bulk_undo_delete_items( $data ) {
+		$validate_args = $this->ensure_args( [ 'template_ids', 'source' ], $data );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $data['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Template source not found.' );
+		}
+
+		if ( empty( $data['template_ids'] ) || ! is_array( $data['template_ids'] ) ) {
+			return new \WP_Error( 'template_error', 'Template IDs are missing.' );
+		}
+
+		return $source->bulk_undo_delete_items( $data['template_ids'] );
+	}
+
 	/**
 	 * Init ajax calls.
 	 *
@@ -925,6 +945,7 @@ class Manager {
 			'bulk_move_templates',
 			'bulk_delete_templates',
 			'bulk_copy_templates',
+			'bulk_undo_delete_items',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
