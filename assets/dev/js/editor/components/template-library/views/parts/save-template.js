@@ -85,10 +85,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 			this.ui.localInput.addClass( 'disabled' );
 		}
-
-		if ( 'cloud' === fromSource ) {
-			this.$( '.source-selections-input #local' ).prop( 'checked', true );
-		}
 	},
 
 	getSaveType() {
