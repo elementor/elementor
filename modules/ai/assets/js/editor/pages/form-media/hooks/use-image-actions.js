@@ -1,6 +1,7 @@
 import { useEditImage } from '../context/edit-image-context';
 import useImageUpload from './use-image-upload';
 import { useGlobalActions } from '../context/global-actions-context';
+import FilesUploadHandler from 'elementor-editor/utils/files-upload-handler';
 
 const normalizeImageData = ( imageToUpload ) => {
 	if ( ! imageToUpload?.imageUrl ) {
@@ -20,6 +21,17 @@ const useImageActions = () => {
 	const { attachmentData, isUploading, uploadError, upload: uploadImage, resetUpload } = useImageUpload();
 
 	const upload = ( imageToUpload, prompt ) => {
+		const imageExtension = new URL( imageToUpload.image_url ).pathname.split( '.' ).pop();
+		if (
+			! window._wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions.split( ',' ).includes(
+				imageExtension,
+			) &&
+			! elementorCommon.config.filesUpload.unfilteredFiles
+		) {
+			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => {} ).show();
+			return;
+		}
+
 		return uploadImage( {
 			image: normalizeImageData( imageToUpload ),
 			prompt: prompt || imageToUpload.prompt,
