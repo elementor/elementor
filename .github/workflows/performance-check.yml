@@ -106,7 +106,7 @@ jobs:
         if: failure()
         env:
           RUN_ID: ${{ github.run_id }}
-          ARTIFACT_ID: ${{ steps.upload-reports.outputs.artifact_id }}
+          ARTIFACT_ID: ${{ steps.upload-reports.outputs.artifact-id }}
           V3_SCORE: ${{ steps.run-performance-check.outputs.v3-performance-median-score }}
           MIXED_SCORE: ${{ steps.run-performance-check.outputs.mixed-performance-median-score }}
         with:
