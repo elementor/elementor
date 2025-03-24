@@ -16,6 +16,7 @@ jobs:
     env:
       PERFORMANCE_SCORE_THRESHOLD: 0.9
     steps:
+
       - name: Checkout source code
         uses: actions/checkout@v4
 
