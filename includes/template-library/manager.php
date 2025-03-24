@@ -400,6 +400,16 @@ class Manager {
 	}
 
 	private function format_args_for_single_action_from_local_to_cloud( $args ) {
+		if ( ! $this->is_allowed_to_read_template( [
+			'source' => $args['from_source'],
+			'template_id' => $args['from_template_id'],
+		] ) ) {
+			return new \WP_Error(
+				'template_error',
+				esc_html__( 'You do not have permission to access this template.', 'elementor' )
+			);
+		}
+
 		$document = Plugin::$instance->documents->get( $args['from_template_id'] );
 
 		if ( ! $document ) {
@@ -1126,6 +1136,13 @@ class Manager {
 		$bulk_args = [];
 
 		foreach ( $args['from_template_id'] as $from_template_id ) {
+			if ( ! $this->is_allowed_to_read_template( [
+				'source' => $args['from_source'],
+				'template_id' => $from_template_id,
+			] ) ) {
+				continue;
+			}
+
 			$document = Plugin::$instance->documents->get( $from_template_id );
 
 			if ( ! $document ) {
