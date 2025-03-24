@@ -168,22 +168,13 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected function get_base_padding(): array {
-		return Dimensions_Prop_Type::generate( [
-			'block-start' => Size_Prop_Type::generate( [
-				'size' => 10,
-				'unit' => 'px',
-			]),
-			'block-end' => Size_Prop_Type::generate( [
-				'size' => 10,
-				'unit' => 'px',
-			]),
-		]);
+		return Size_Prop_Type::generate( [
+			'size' => 10,
+			'unit' => 'px',
+		] );
 	}
 
 	protected function get_base_height(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 100,
-			'unit' => 'px',
-		] );
+		return String_Prop_Type::generate( 'min-content' );
 	}
 }

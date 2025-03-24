@@ -15,16 +15,16 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 	public function setUp() : void {
 		parent::setUp();
 
-		add_filter( 'wp_get_attachment_image_src', function( $image, $attachment_id, $size ) {
+		add_filter( 'get_attached_file', function( $path, $attachment_id ) {
 			if ( $attachment_id === 123 ) {
-				return [ self::TEST_RESOURCES_DIR . 'test.svg' ];
+				return self::TEST_RESOURCES_DIR . 'test.svg';
 			}
 
-			return $image;
-		}, 10, 3 );
+			return $path;
+		}, 10, 2 );
 
 		add_filter( 'pre_http_request', function( $preempt, $args, $url ) {
-			if ( $url === self::TEST_RESOURCES_DIR . 'test.svg' || $url === ELEMENTOR_ASSETS_PATH . '/images/default-svg.svg' ) {
+			if ( $url === self::TEST_RESOURCES_DIR . 'test.svg' ) {
 				return [
 					'body' => '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z"/></svg>',
 				];
@@ -163,7 +163,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'settings' => [
 					'svg' => [
-						'url' => ELEMENTOR_ASSETS_PATH . '/images/default-svg.svg',
+						'url' => self::TEST_RESOURCES_DIR . 'test.svg',
 					],
 				],
 				'widgetType' => Atomic_Svg::get_element_type(),

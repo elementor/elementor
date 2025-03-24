@@ -88,7 +88,12 @@
 	}
 
 	&.e-div-block-base, &.e-flexbox-base {
+		&:has( .elementor-empty-view ) {
+			display: flex;
+		}
+
 		.elementor-empty-view {
+			height: auto;
 			min-height: unset;
 		}
 	}
@@ -282,6 +287,11 @@
 			}
 		}
 	}
+}
+
+.e-div-block-base:has( .elementor-empty-view ),
+.e-flexbox-base:has( .elementor-empty-view ) {
+	height: 100px;
 }
 
 // Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.

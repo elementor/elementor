@@ -1,5 +1,6 @@
 import Component from './component';
 import LocalStorage from 'elementor-api/core/data/storages/local-storage';
+import { SAVE_CONTEXTS } from './constants';
 
 const TemplateLibraryCollection = require( 'elementor-templates/collections/templates' );
 
@@ -30,6 +31,16 @@ const TemplateLibraryManager = function() {
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			moveDialog: {
+				description: '',
+				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
+			bulkMoveDialog: {
+				description: '',
+				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
+			bulkCopyDialog: {
 				description: '',
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
@@ -72,6 +83,12 @@ const TemplateLibraryManager = function() {
 				moveDialog: {
 					/* Translators: %s: Template type. */
 					title: sprintf( __( 'Move Your %s', 'elementor' ), title ),
+				},
+				bulkMoveDialog: {
+					title: __( 'Move Your Templates', 'elementor' ),
+				},
+				bulkCopyDialog: {
+					title: __( 'Copy Your Templates', 'elementor' ),
 				},
 			} );
 
@@ -144,9 +161,8 @@ const TemplateLibraryManager = function() {
 				return;
 			}
 
-			event.preventDefault();
-
 			if ( this.isCloudGridView() ) {
+				event.preventDefault();
 				this.selectAllTemplates();
 			}
 		};
@@ -388,7 +404,7 @@ const TemplateLibraryManager = function() {
 			strings: {
 				confirm: __( 'Create', 'elementor' ),
 			},
-			Hide: {
+			hide: {
 				ignore: '#elementor-template-library-modal',
 			},
 			onShow: () => {
@@ -430,6 +446,21 @@ const TemplateLibraryManager = function() {
 				__( 'Are you sure you want to delete "%1$s" folder with all %2$d templates?', 'elementor' ),
 				templateModel.get( 'title' ),
 				data.total,
+			),
+			strings: {
+				confirm: __( 'Delete', 'elementor' ),
+			},
+		} );
+	};
+
+	this.getBulkDeleteDialog = function( ) {
+		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+			id: 'elementor-template-library-bulk-delete-dialog',
+			headerMessage: __( 'Delete Selected', 'elementor' ),
+			message: sprintf(
+				// Translators: %1$s: Number of selected items.
+				__( 'Are you sure you want to delete "%1$s" selected items?', 'elementor' ),
+				bulkSelectedItems.size,
 			),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
@@ -484,7 +515,18 @@ const TemplateLibraryManager = function() {
 			_.extend( ajaxParams, templateType.ajaxParams );
 		}
 
-		elementorCommon.ajax.addRequest( 'save_template', ajaxParams );
+		elementorCommon.ajax.addRequest( this.getSaveAjaxAction( data.save_context ), ajaxParams );
+	};
+
+	this.getSaveAjaxAction = function( saveContext ) {
+		const saveActions = {
+			[ SAVE_CONTEXTS.SAVE ]: 'save_template',
+			[ SAVE_CONTEXTS.MOVE ]: 'move_template',
+			[ SAVE_CONTEXTS.BULK_MOVE ]: 'bulk_move_templates',
+			[ SAVE_CONTEXTS.BULK_COPY ]: 'bulk_copy_templates',
+		};
+
+		return saveActions[ saveContext ] ?? 'save_template';
 	};
 
 	this.requestTemplateContent = function( source, id, ajaxOptions ) {
@@ -800,6 +842,7 @@ const TemplateLibraryManager = function() {
 
 		self.setSourceSelection( templatesSource );
 		self.setFilter( filterName, templatesSource, true );
+		self.clearBulkSelectionItems();
 
 		if ( this.shouldShowCloudConnectView( templatesSource ) ) {
 			self.layout.showCloudConnectView();
@@ -840,6 +883,77 @@ const TemplateLibraryManager = function() {
 
 	this.getBulkSelectionItems = function() {
 		return bulkSelectedItems;
+	};
+
+	this.onBulkDeleteClick = function() {
+		return new Promise( ( resolve ) => {
+			const selectedItems = this.getBulkSelectionItems();
+
+			if ( ! selectedItems.size ) {
+				return;
+			}
+
+			const dialog = this.getBulkDeleteDialog();
+			const source = this.getFilter( 'source' );
+			const templateIds = Array.from( selectedItems );
+
+			dialog.onConfirm = () => {
+				isLoading = true;
+
+				const ajaxOptions = {
+					data: {
+						source,
+						template_ids: templateIds,
+					},
+					success: () => {
+						isLoading = false;
+
+						const modelsToRemove = templatesCollection.models.filter( ( templateModel ) => {
+							return selectedItems.has( templateModel.get( 'template_id' ) );
+						} );
+
+						templatesCollection.remove( modelsToRemove );
+
+						self.layout.updateViewCollection( templatesCollection.models );
+
+						self.clearBulkSelectionItems();
+
+						const buttons = 'cloud' === source ? [
+							{
+								name: 'undo_bulk_delete',
+								text: __( 'Undo', 'elementor' ),
+								callback: () => {
+									templatesCollection.add( modelsToRemove );
+									$e.routes.refreshContainer( 'library' );
+								},
+							},
+						] : null;
+
+						elementor.notifications.showToast( {
+							message: `${ templateIds.length } items deleted successfully`,
+							buttons,
+						} );
+
+						resolve();
+					},
+					error: ( error ) => {
+						isLoading = false;
+
+						this.showErrorDialog( error );
+
+						resolve();
+					},
+				};
+
+				elementorCommon.ajax.addRequest( 'bulk_delete_templates', ajaxOptions );
+			};
+
+			dialog.onCancel = () => {
+				resolve();
+			};
+
+			dialog.show();
+		} );
 	};
 };
 
