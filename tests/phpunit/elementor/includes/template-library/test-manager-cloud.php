@@ -33,6 +33,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'bulk_delete_resources',
 				'get_bulk_resources_with_content',
 				'bulk_move_templates',
+				'post_bulk_resources',
 			] )
 			->disableOriginalConstructor()
 			->getMock();
@@ -863,6 +864,86 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 	public function test_bulk_move_templates_fails_without_from_template_id() {
 		// Act
 		$result = $this->manager->bulk_move_templates( [
+			'source' => [ 'cloud' ],
+			'from_source' => 'cloud',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
+	}
+
+	public function test_bulk_copy_templates() {
+		// Arrange
+		$this->cloud_library_app_mock
+			->method( 'get_bulk_resources_with_content' )
+			->with( [
+				'from_template_id' => [ 1, 2 ],
+				'source' => 'cloud',
+        		'from_source' => 'cloud',
+			] )
+			->willReturn( [
+				[
+					'template_id' => 1,
+					'source' => 'cloud',
+					'type' => 'TEMPLATE',
+					'subType' => 'container',
+					'title' => 'template 1',
+					'content' => wp_json_encode( [ 'content' => 'mock_content', 'page_settings' => [] ] ),
+				],
+				[
+					'template_id' => 2,
+					'source' => 'cloud',
+					'type' => 'TEMPLATE',
+					'subType' => 'page',
+					'title' => 'template 2',
+					'content' => wp_json_encode( [ 'content' => 'mock_content_2', 'page_settings' => [] ] ),
+				]
+			] );
+
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'post_bulk_resources' );
+
+		// Act
+		$this->manager->bulk_copy_templates( [
+			'source' => [ 'cloud' ],
+			'from_source' => 'cloud',
+			'from_template_id' => [ 1, 2 ],
+		] );
+	}
+
+	public function test_bulk_copy_templates_fails_without_source() {
+		// Act
+		$result = $this->manager->bulk_copy_templates( [
+			'from_source' => 'cloud',
+			'from_template_id' => [ 1, 2 ],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_bulk_copy_templates_fails_without_from_source() {
+		// Act
+		$result =$this->manager->bulk_copy_templates( [
+			'source' => [ 'cloud' ],
+			'from_template_id' => [ 1, 2 ],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "from_source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_bulk_copy_templates_fails_without_from_template_id() {
+		// Act
+		$result = $this->manager->bulk_copy_templates( [
 			'source' => [ 'cloud' ],
 			'from_source' => 'cloud',
 		] );
