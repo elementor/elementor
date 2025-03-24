@@ -11,29 +11,13 @@ use Elementor\Utils;
 
 class Module extends BaseModule {
 	const MODULE_NAME = 'editor-v4-opt-in';
-	const EXPERIMENT_NAME = 'editor_v4_opt_in';
 
 	public function get_name() {
 		return 'atomic-opt-in';
 	}
 
-	public static function get_experimental_data(): array {
-		return [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Editor V4 (Opt In)', 'elementor' ),
-			'description' => esc_html__( 'Enable Editor V4 Opt In.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		];
-	}
-
-	private function is_experiment_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
-	}
-
 	public function __construct() {
-		if ( ! $this->is_experiment_active() || ! is_admin() ) {
+		if ( ! is_admin() ) {
 			return;
 		}
 
@@ -66,8 +50,10 @@ class Module extends BaseModule {
 	}
 
 	private function register_assets() {
-		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_scripts' ] );
-		add_action( 'elementor_page_elementor-settings', [ $this, 'enqueue_styles' ] );
+		$page_id = Settings::PAGE_ID;
+
+		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'enqueue_scripts' ] );
+		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'enqueue_styles' ] );
 	}
 
 	public function enqueue_styles() {
