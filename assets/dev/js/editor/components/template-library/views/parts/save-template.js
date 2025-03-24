@@ -155,53 +155,84 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	updateToastConfig( formData ) {
-		if ( ! formData.source.length ) {
+		if ( ! formData.source?.length ) {
 			return;
 		}
 
-		const lastSource = formData.source.at( -1 );
-		const saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE;
-		
+		const lastSource = formData.source.at( -1 ),
+			saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE,
+			toastMessage = this.getToastMessage( lastSource, saveContext, formData );
+
+		if ( ! toastMessage ) {
+			return;
+		}
+
 		elementor.templates.setToastConfig( {
 			show: true,
 			options: {
-				message: this.getToastMessage( lastSource, saveContext ),
-				buttons: this.getToastButtons( lastSource ),
+				message: toastMessage,
+				buttons: this.getToastButtons( lastSource, formData?.parentId?.trim() ),
 			}
 		} );
 	},
 
-	getToastMessage( lastSource, saveContext ) {
-		switch ( `${ lastSource }_${ saveContext }` ) {
-			case `local_${ SAVE_CONTEXTS.SAVE }`:
-				return __( 'Template saved to Site Library.', 'elementor' );
-			case `cloud_${ SAVE_CONTEXTS.SAVE }`:
-				return __( 'Template saved to Cloud Library.', 'elementor' );
-			case `local_${ SAVE_CONTEXTS.MOVE }`:
-				return __( 'Template moved to Site Library.', 'elementor' );
-			case `cloud_${ SAVE_CONTEXTS.MOVE }`:
-				return __( 'Template moved to Cloud Library.', 'elementor' );
-			case `local_${ SAVE_CONTEXTS.COPY }`:
-				return __( 'Template copied to Site Library.', 'elementor' );
-			case `cloud_${ SAVE_CONTEXTS.COPY }`:
-				return __( 'Template copied to Cloud Library.', 'elementor' );
-			default:
-				return __( 'Template saved.', 'elementor' );
-		}
+	getToastMessage( lastSource, saveContext, formData ) {
+		const key = `${ lastSource }_${ saveContext }`;
+
+		const actions = {
+			[`local_${ SAVE_CONTEXTS.SAVE }`]: __( 'Template saved to your Site Templates.', 'elementor' ),
+			[`cloud_${ SAVE_CONTEXTS.SAVE }`]: __( 'Template saved to your Cloud Templates.', 'elementor' ),
+			[`local_${ SAVE_CONTEXTS.MOVE }`]: this.getFormattedToastMessage( 'moved to your Site Templates', formData.title ),
+			[`cloud_${ SAVE_CONTEXTS.MOVE }`]: this.getFormattedToastMessage( 'moved to your Cloud Templates', formData.title ),
+			[`local_${ SAVE_CONTEXTS.COPY }`]: this.getFormattedToastMessage( 'copied to your Site Templates', formData.title ),
+			[`cloud_${ SAVE_CONTEXTS.COPY }`]: this.getFormattedToastMessage( 'copied to your Cloud Templates', formData.title ),
+			[`local_${ SAVE_CONTEXTS.BULK_MOVE }`]: this.getFormattedToastMessage( 'moved to your Site Templates', null, formData.from_template_id?.length ),
+			[`cloud_${ SAVE_CONTEXTS.BULK_MOVE }`]: this.getFormattedToastMessage( 'moved to your Cloud Templates', null, formData.from_template_id?.length ),
+			[`local_${ SAVE_CONTEXTS.BULK_COPY }`]: this.getFormattedToastMessage( 'copied to your Site Templates', null, formData.from_template_id?.length ),
+			[`cloud_${ SAVE_CONTEXTS.BULK_COPY }`]: this.getFormattedToastMessage( 'copied to your Cloud Templates', null, formData.from_template_id?.length ),
+		};
+
+		return actions[ key ] ?? false;
 	},
 
-	getToastButtons( lastSource ) {
+	getFormattedToastMessage( action, title, count ) {
+		if ( count !== undefined ) {
+			/* Translators: 1: Number of templates, 2: Action performed (e.g., "moved", "copied"). */
+			return sprintf( __( '%1$d Template(s) %2$s.', 'elementor' ), count, action );
+		}
+
+		/* Translators: 1: Template title or "Template" fallback, 2: Action performed. */
+		return sprintf( __( '%1$s %2$s.', 'elementor' ), title ? `"${ title }"` : __( 'Template', 'elementor' ), action );
+	},
+
+
+	getToastButtons( lastSource, parentId ) {
+		const parsedParentId = parseInt( parentId, 10 ) || null;
+
 		return [
 			{
 				name: 'template_after_save',
 				text: __( 'View', 'elementor' ),
-				callback: () => {
-					elementor.templates.setSourceSelection( lastSource );
-					elementor.templates.setFilter( 'source', lastSource, true );
-					$e.routes.refreshContainer( 'library' );
-				},
+				callback: () => this.navigateToSavedSource( lastSource, parsedParentId ),
 			},
 		];
+	},
+
+	navigateToSavedSource( lastSource, parentId ) {
+		elementor.templates.setSourceSelection( lastSource );
+		elementor.templates.setFilter( 'source', lastSource, true );
+
+		if ( parentId ) {
+			elementor.templates.setFilter( 'parent', parentId );
+
+			const model = new TemplateLibraryTemplateModel( { template_id: parentId } );
+
+			$e.route( 'library/view-folder', { model } );
+
+			return;
+		}
+
+		$e.routes.refreshContainer( 'library' );
 	},
 
 	onSelectedFolderTextClick() {
@@ -297,7 +328,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			return;
 		}
 
-		if ( ! Number.isInteger( this.model.get( 'parentId' ) ) ) {
+		if ( ! this.model || ! Number.isInteger( this.model.get( 'parentId' ) ) ) {
 			return;
 		}
 
