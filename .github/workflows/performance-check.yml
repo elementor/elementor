@@ -103,17 +103,12 @@ jobs:
 
       - name: Send Slack notification
         uses: slackapi/slack-github-action@v2.0.0
-        env:
-          RUN_ID: ${{ github.run_id }}
-          ARTIFACT_ID: ${{ steps.upload-reports.outputs.artifact-id }}
-          V3_SCORE: ${{ steps.run-performance-check.outputs.v3-performance-median-score }}
-          MIXED_SCORE: ${{ steps.run-performance-check.outputs.mixed-performance-median-score }}
         with:
           webhook: ${{ secrets.SLACK_COMPARE_PERFORMANCE_WEBHOOK_URL }}
           webhook-type: webhook-trigger
-          payload: |
-            run_id: ${{ env.RUN_ID }}
-            artifact_id: ${{ env.ARTIFACT_ID }}
-            v3_score: ${{ env.V3_SCORE }}
-            mixed_score: ${{ env.MIXED_SCORE }}
-            threshold: ${{ env.PERFORMANCE_SCORE_THRESHOLD }}
+#          payload: |
+#            run_id: ${{ env.RUN_ID }}
+#            artifact_id: ${{ env.ARTIFACT_ID }}
+#            v3_score: ${{ env.V3_SCORE }}
+#            mixed_score: ${{ env.MIXED_SCORE }}
+#            threshold: ${{ env.PERFORMANCE_SCORE_THRESHOLD }}
