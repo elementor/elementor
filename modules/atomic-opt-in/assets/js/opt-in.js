@@ -16,64 +16,67 @@ import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './opt-in-img-
 import { Message } from './opt-in-message';
 import { triggerOptIn, triggerOptOut } from './opt-in-api';
 
+const i18n = {
+	title: __( 'The Road to Editor V4', 'elementor' ),
+	chip: __( 'Alpha', 'elementor' ),
+
+	welcomeText: __( 'Welcome to Editor V4, a new era of web creation with Elementor. Experience a more streamlined, flexible & powerful Editor with a fresh approach to structure & styling.', 'elementor' ),
+
+	mvpIsHere: __( 'The MVP is already here & it includes:', 'elementor' ),
+	advantages: [
+		__( 'Unparalleled performance - Cleaner code & a lighter CSS output.', 'elementor' ),
+		__( 'Professional design capabilities - CSS & Pseudo Classes.', 'elementor' ),
+		__( 'Unified Style tab - Consistent styling for all Editor V4 elements.', 'elementor' ),
+		__( 'Fully responsive design - Customize any style property per screen.', 'elementor' ),
+	],
+	andMore: __( '& much more coming soon!', 'elementor' ),
+	readMore: __( 'Read more here', 'elementor' ),
+
+	warning: __( 'Keep in mind: Editor V4 is still in alpha and should not be used on live sites yet.', 'elementor' ),
+
+	helpImprove: __( 'Please help up improve', 'elementor' ),
+	feedback: __( 'Leave a feedback', 'elementor' ),
+	tellUsWhy: __( 'Tell us why', 'elementor' ),
+
+	image: __( 'Editor V4', 'elementor' ),
+
+	buttons: {
+		startBuilding: __( 'Start building in V4', 'elementor' ),
+		optIn: __( 'Opt-in to V4', 'elementor' ),
+		optOut: __( 'Opt-out from V4', 'elementor' ),
+	},
+
+	messages: {
+		optInSuccess: __( 'Welcome aboard! You’re ready to start using the newest version of the editor.', 'elementor' ),
+		optOut: __( 'You’ve deactivated the new Editor. Have feedback?', 'elementor' ),
+		error: __( 'Something went wrong. Please try again or contact support if the issue persists.', 'elementor' ),
+	},
+};
+
+const optInLinks = {
+	feedbackUrl: 'https://go.elementor.com/wp-dash-opt-in-v4-feedback/',
+	readMoreUrl: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
+};
+
+const optInImages = {
+	squareSrc: '',
+	landscapeSrc: '',
+};
+
 export const OptIn = ( { state } ) => {
-	const i18n = {
-		title: __( 'The Road to Editor V4', 'elementor' ),
-		chip: __( 'Alpha', 'elementor' ),
-
-		welcomeText: __( 'Welcome to Editor V4, a new era of web creation with Elementor. Experience a more streamlined, flexible & powerful Editor with a fresh approach to structure & styling.', 'elementor' ),
-
-		mvpIsHere: __( 'The MVP is already here & it includes:', 'elementor' ),
-		advantages: [
-			__( 'Unparalleled performance - Cleaner code & a lighter CSS output.', 'elementor' ),
-			__( 'Professional design capabilities - CSS & Pseudo Classes.', 'elementor' ),
-			__( 'Unified Style tab - Consistent styling for all Editor V4 elements.', 'elementor' ),
-			__( 'Fully responsive design - Customize any style property per screen.', 'elementor' ),
-		],
-		andMore: __( '& much more coming soon!', 'elementor' ),
-		readMore: __( 'Read more here', 'elementor' ),
-
-		warning: __( 'Keep in mind: Editor V4 is still in alpha and should not be used on live sites yet.', 'elementor' ),
-
-		helpImprove: __( "We'd love to hear from you.", 'elementor' ),
-		feedback: __( 'Send us your feedback', 'elementor' ),
-
-		image: __( 'Editor V4', 'elementor' ),
-
-		buttons: {
-			startBuilding: __( 'Start building in V4', 'elementor' ),
-			optIn: __( 'Opt-in to V4', 'elementor' ),
-			optOut: __( 'Opt-out from V4', 'elementor' ),
-		},
-
-		messages: {
-			optInSuccess: __( 'You’ve successfully opted in to V4!', 'elementor' ),
-			optOut: __( 'You’ve opted out...', 'elementor' ),
-			error: __( 'Something went wrong. Please try again or contact support if the issue persists.', 'elementor' ),
-		},
-	};
-
 	const [ isEnrolled, setIsEnrolled ] = useState( !! state?.features?.editor_v4 );
 
 	const [ successMessage, setSuccessMessage ] = useState( '' );
 	const [ notifyMessage, setNotifyMessage ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
-	const imageSrcLandscape = '';
-	const imageSrcSquare = '';
-
-	const feedbackUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-feedback/';
-	const readMoreUrl = 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/';
-
 	const maybeOptIn = () => {
 		triggerOptIn()
 			.then( () => {
 				setIsEnrolled( true );
 				setSuccessMessage( i18n.messages.optInSuccess );
-				setTimeout( () => document.location.reload(), 2000 );
 			} )
 			.catch( () => {
-				setIsEnrolled( false );
 				setErrorMessage( i18n.messages.error );
 			} );
 	};
@@ -83,7 +86,6 @@ export const OptIn = ( { state } ) => {
 			.then( () => {
 				setIsEnrolled( false );
 				setNotifyMessage( i18n.messages.optOut );
-				setTimeout( () => document.location.reload(), 2000 );
 			} )
 			.catch( () => {
 				setErrorMessage( i18n.messages.error );
@@ -115,7 +117,7 @@ export const OptIn = ( { state } ) => {
 							<ContentListItem key={ i }>{ entry }</ContentListItem>
 						) ) }
 						<ContentListItem key="e-0">
-							{ i18n.andMore } <Link color="text.primary" href={ readMoreUrl } target="_blank">{ i18n.readMore }</Link>
+							{ i18n.andMore } <Link color="text.primary" href={ optInLinks.readMoreUrl } target="_blank">{ i18n.readMore }</Link>
 						</ContentListItem>
 					</ContentList>
 				</Box>
@@ -161,13 +163,13 @@ export const OptIn = ( { state } ) => {
 					</Button>
 				</Stack>
 
-				<TextNode>{ i18n.helpImprove } <Link href={ feedbackUrl } target="_blank">{ i18n.feedback }</Link></TextNode>
+				<TextNode>{ i18n.helpImprove } <Link underline="hover" href={ optInLinks.feedbackUrl } target="_blank">{ i18n.feedback }</Link></TextNode>
 			</Stack>
 
-			<Stack sx={ { flex: 1, px: { xs: 0, md: 5 } } }>
-				{ imageSrcSquare ? (
+			<Stack sx={ { flex: 1, px: 0 } }>
+				{ optInImages.squareSrc ? (
 					<Image
-						src={ imageSrcSquare }
+						src={ optInImages.squareSrc }
 						alt={ i18n.image }
 						sx={ {
 							display: { xs: 'none', md: 'block' },
@@ -185,9 +187,9 @@ export const OptIn = ( { state } ) => {
 					} } />
 				) }
 
-				{ imageSrcLandscape ? (
+				{ optInImages.landscapeSrc ? (
 					<Image
-						src={ imageSrcLandscape }
+						src={ optInImages.landscapeSrc }
 						alt={ i18n.image }
 						sx={ {
 							display: { xs: 'block', md: 'none' },
@@ -212,7 +214,10 @@ export const OptIn = ( { state } ) => {
 			) }
 
 			{ notifyMessage && (
-				<Message onClose={ () => setNotifyMessage( '' ) }>{ notifyMessage }</Message>
+				<Message onClose={ () => setNotifyMessage( '' ) }>
+					{ notifyMessage }
+					<Link href={ optInLinks.feedbackUrl } target="_blank" color="inherit" sx={ { cursor: 'pointer' } }>{ i18n.tellUsWhy }</Link>
+				</Message>
 			) }
 
 			{ errorMessage && (

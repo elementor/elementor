@@ -73,6 +73,10 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'unit' => 'rem',
 		] );
 		$line_height_value = String_Prop_Type::generate( '1.5' );
+		$margin_value = Size_Prop_Type::generate( [
+			'unit' => 'px',
+			'size' => 0 ,
+		] );
 
 		return [
 			'base' => Style_Definition::make()
@@ -82,6 +86,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 						->add_prop( 'font-family', $font_family_value )
 						->add_prop( 'font-size', $font_size_value )
 						->add_prop( 'line-height', $line_height_value )
+						->add_prop( 'margin', $margin_value )
 				),
 		];
 	}
