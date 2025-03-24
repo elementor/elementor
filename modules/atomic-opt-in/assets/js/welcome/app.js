@@ -7,8 +7,7 @@ import {
 	ThemeProvider,
 } from '@elementor/ui';
 
-import { AdminTab } from './components/admin-tab';
-import { WelcomePopover } from './components/welcome-popover';
+import { WelcomePopover } from './welcome-popover';
 
 const App = ( props ) => {
 	const [ isWelcomeVisible, setIsWelcomeVisible ] = useState( true );
@@ -17,16 +16,12 @@ const App = ( props ) => {
 		setIsWelcomeVisible( false );
 	};
 
-	const isAdminTab = 'adminTab' === props.contentType;
-
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ 'light' }>
 					{
-						isAdminTab
-							? <AdminTab state={ props?.state } />
-							: isWelcomeVisible && <WelcomePopover doClose={ handleClose } />
+						isWelcomeVisible && <WelcomePopover doClose={ handleClose } />
 					}
 				</ThemeProvider>
 			</LocalizationProvider>
@@ -36,21 +31,9 @@ const App = ( props ) => {
 
 App.propTypes = {
 	isRTL: PropTypes.bool.isRequired,
-	state: PropTypes.bool,
-	contentType: PropTypes.string.isRequired,
 };
 
 const getRootElement = () => {
-	const v4AdminTab = document.querySelector( '#page-editor-v4-opt-in' );
-
-	if ( v4AdminTab ) {
-		return { rootElement: v4AdminTab, contentType: 'adminTab' };
-	}
-
-	if ( ! document.body.classList.contains( 'elementor-editor-active' ) ) {
-		return null;
-	}
-
 	let popoverRoot = document.querySelector( '#e-v4-opt-in-welcome' );
 
 	if ( ! popoverRoot ) {
@@ -59,25 +42,19 @@ const getRootElement = () => {
 		document.body.appendChild( popoverRoot );
 	}
 
-	return { rootElement: popoverRoot, contentType: 'popover' };
+	return popoverRoot;
 };
 
 const init = () => {
-	const rootData = getRootElement();
-
-	if ( ! rootData ) {
-		return;
+	if ( ! document.body.classList.contains( 'elementor-editor-active' ) ) {
+		return null;
 	}
-
-	const { rootElement, contentType } = rootData;
 
 	ReactUtils.render( (
 		<App
 			isRTL={ !! elementorCommon.config.isRTL }
-			state={ elementorSettingsEditor4OptIn?.features?.editor_v4 || false }
-			contentType={ contentType }
 		/>
-	), rootElement );
+	), getRootElement() );
 };
 
 init();

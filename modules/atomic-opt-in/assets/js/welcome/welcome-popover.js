@@ -21,6 +21,7 @@ const i18n = {
 	footerText: __( 'Need help getting started?', 'elementor' ),
 	introductionVideo: __( 'Introduction video', 'elementor' ),
 	helpCenter: __( 'Help center', 'elementor' ),
+	closeButton: __( 'Let\'s Go', 'elementor' ),
 };
 
 const contentLinks = {
@@ -80,7 +81,7 @@ export const WelcomePopover = ( { doClose } ) => {
 					variant="contained"
 					onClick={ doClose }
 					sx={ { ml: 'auto' } }
-				>Let’s Go</Button>
+				>{ i18n.closeButton }</Button>
 			</Stack>
 		</Popover>
 	);
