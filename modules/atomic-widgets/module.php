@@ -7,6 +7,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -87,6 +88,8 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		$this->register_feature();
+
 		( new Opt_In() )->init();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
@@ -110,15 +113,15 @@ class Module extends BaseModule {
 		}
 	}
 
-	public static function get_experimental_data(): array {
-		return [
+	private function register_feature() {
+		Plugin::$instance->experiments->add_feature([
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		];
+		]);
 	}
 
 	private function add_packages( $packages ) {
@@ -145,6 +148,7 @@ class Module extends BaseModule {
 
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
+		$elements_manager->register_element_type( new Flexbox() );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {

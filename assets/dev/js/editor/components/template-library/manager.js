@@ -40,6 +40,11 @@ const TemplateLibraryManager = function() {
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
+			bulkCopyDialog: {
+				description: '',
+				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
 			ajaxParams: {
 				success( successData ) {
 					$e.route( 'library/templates/my-templates', {
@@ -81,6 +86,9 @@ const TemplateLibraryManager = function() {
 				},
 				bulkMoveDialog: {
 					title: __( 'Move Your Templates', 'elementor' ),
+				},
+				bulkCopyDialog: {
+					title: __( 'Copy Your Templates', 'elementor' ),
 				},
 			} );
 
@@ -515,6 +523,7 @@ const TemplateLibraryManager = function() {
 			[ SAVE_CONTEXTS.SAVE ]: 'save_template',
 			[ SAVE_CONTEXTS.MOVE ]: 'move_template',
 			[ SAVE_CONTEXTS.BULK_MOVE ]: 'bulk_move_templates',
+			[ SAVE_CONTEXTS.BULK_COPY ]: 'bulk_copy_templates',
 		};
 
 		return saveActions[ saveContext ] ?? 'save_template';

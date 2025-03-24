@@ -48,8 +48,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			this.handleMoveContextUiState();
 		}
 
-		if ( SAVE_CONTEXTS.BULK_MOVE === context ) {
-			this.handleBulkMoveContextUiState();
+		if ( SAVE_CONTEXTS.BULK_MOVE === context || SAVE_CONTEXTS.BULK_COPY === context ) {
+			this.handleBulkActionContextUiState();
 		}
 	},
 
@@ -58,7 +58,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.handleContextUiStateChecboxes();
 	},
 
-	handleBulkMoveContextUiState() {
+	handleBulkActionContextUiState() {
 		this.ui.templateNameInput.remove();
 		this.handleContextUiStateChecboxes();
 	},
@@ -144,7 +144,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		formData.save_context = saveContext;
 
-		if ( [ SAVE_CONTEXTS.MOVE, SAVE_CONTEXTS.BULK_MOVE ].includes( saveContext ) ) {
+		if ( [ SAVE_CONTEXTS.MOVE, SAVE_CONTEXTS.BULK_MOVE, SAVE_CONTEXTS.BULK_COPY ].includes( saveContext ) ) {
 			formData.from_source = elementor.templates.getFilter( 'source' );
 			formData.from_template_id = SAVE_CONTEXTS.MOVE === saveContext
 				? this.model.get( 'template_id' )
