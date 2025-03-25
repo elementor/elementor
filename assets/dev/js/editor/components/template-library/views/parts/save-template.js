@@ -193,8 +193,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 
 		const actions = {
-			[ `local_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Site Library.', 'elementor' ),
-			[ `cloud_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Cloud Library.', 'elementor' ),
+			[ `local_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Site Templates.', 'elementor' ),
+			[ `cloud_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Cloud Templates.', 'elementor' ),
 			[ `local_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Site Templates', formData.title ),
 			[ `cloud_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Cloud Templates', formData.title ),
 			[ `local_${ SAVE_CONTEXTS.COPY }` ]: this.getFormattedToastMessage( 'copied to your Site Templates', formData.title ),
