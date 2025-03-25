@@ -189,7 +189,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		const key = `${ lastSource }_${ saveContext }`;
 
 		if ( formData.source?.length > 1 ) {
-			return __( 'Template saved to your Site and Cloud Library.', 'elementor' );
+			return __( 'Template saved to your Site and Cloud Templates.', 'elementor' );
 		}
 
 		const actions = {
