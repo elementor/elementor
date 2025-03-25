@@ -1,7 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import {
 	Button,
-	Checkbox, Chip, Dialog,
+	Checkbox,
+	Chip,
+	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
