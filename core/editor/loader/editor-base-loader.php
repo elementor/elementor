@@ -164,7 +164,8 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 				'pickr',
 				'react',
 				'react-dom',
-				'elementor-v2-ui',
+				// We could load the v2 ui by default, but this will slow down older websites.
+//				'elementor-v2-ui',
 			],
 			ELEMENTOR_VERSION,
 			true
