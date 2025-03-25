@@ -240,6 +240,29 @@ class Cloud_Library extends Library {
 		return true;
 	}
 
+	public function bulk_undo_delete_resources( $template_ids ) {
+		$endpoint = 'resources/bulk-delete/undo';
+
+		$body = wp_json_encode( [ 'ids' => $template_ids ] );
+
+		$request = [
+			'headers' => [
+				'Content-Type' => 'application/json',
+			],
+			'body' => $body,
+		];
+
+		$response = $this->http_request( 'POST', $endpoint, $request, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		return true;
+	}
+
 	public function get_bulk_resources_with_content( $args = [] ): array {
 		$templates = [];
 
