@@ -227,14 +227,45 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	order( by, reverseOrder ) {
-		var comparator = this.comparators[ by ] || by;
+		var sortBy = this.comparators[ by ] || by;
+	
+		var comparator = ( a, b ) => {
+			const typeA = a.get( 'type' );
+			const typeB = b.get( 'type' );
+	
+			const isFolderA = typeA === 'folder';
+			const isFolderB = typeB === 'folder';
+	
+			// Ensure folders always come first (or last if reverseOrder is true)
+			if ( isFolderA !== isFolderB ) {
+				return reverseOrder ? ( isFolderA ? 1 : -1 ) : ( isFolderA ? -1 : 1 );
+			}
+	
+			// Fallback to sorting by 'by'
+			var valueA = typeof sortBy === 'function' ? sortBy( a ) : a.get( sortBy );
+			var valueB = typeof sortBy === 'function' ? sortBy( b ) : b.get( sortBy );
+	
+			// Normalize string values for comparison
+			if ( typeof valueA === 'string' ) {
+				valueA = valueA.toLowerCase();
+			}
 
-		if ( reverseOrder ) {
-			comparator = this.reverseOrder( comparator );
-		}
+			if ( typeof valueB === 'string' ) {
+				valueB = valueB.toLowerCase();
+			}
+	
+			if ( valueA < valueB ) {
+				return reverseOrder ? 1 : -1;
+			}
 
+			if ( valueA > valueB ) {
+				return reverseOrder ? -1 : 1;
+			}
+
+			return 0;
+		};
+	
 		this.collection.comparator = comparator;
-
 		this.collection.sort();
 	},
 
