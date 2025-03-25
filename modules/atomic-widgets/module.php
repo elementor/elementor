@@ -109,6 +109,7 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 		}
 	}
 
@@ -220,5 +221,14 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+	}
+
+	private function render_panel_category_chip() {
+		?><# if ( 'V4 Elements' === title ) { #>
+			<span class="elementor-panel-heading-category-chip">
+				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
+				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
+			</span>
+		<# } #><?php
 	}
 }
