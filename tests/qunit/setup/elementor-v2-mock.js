@@ -1,8 +1,16 @@
 window.elementorV2 = {
-  ui: {
-    DirectionProvider: function(props) { return props.children || null; },
-    Infotip: function(props) { return props.children || null; },
-    LocalizationProvider: function(props) { return props.children || null; },
-    ThemeProvider: function(props) { return props.children || null; },
-  }
+	ui: {
+		DirectionProvider( props ) {
+			return props.children || null;
+		},
+		Infotip( props ) {
+			return props.children || null;
+		},
+		LocalizationProvider( props ) {
+			return props.children || null;
+		},
+		ThemeProvider( props ) {
+			return props.children || null;
+		},
+	},
 };
