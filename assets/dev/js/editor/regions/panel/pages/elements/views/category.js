@@ -102,7 +102,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	onChipClick( event ) {
 		event.stopPropagation();
 		$e.run( 'promotions/alphachip', { event, selectors: this.chipSelectors } );
-	}
-});
+	},
+} );
 
 module.exports = PanelElementsCategoryView;
