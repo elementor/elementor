@@ -40,6 +40,17 @@ export const IMAGE_PROMPT_CATEGORIES = {
 			photorealistic: __( 'Photorealistic', 'elementor' ),
 		},
 	},
+	vector: {
+		label: __( 'Vector', 'elementor' ),
+		subCategories: {
+			'': __( 'None', 'elementor' ),
+			'typographic-logo': __( 'Typographic Logo', 'elementor' ),
+			'shape-logo': __( 'Shape Logo', 'elementor' ),
+			'handwritten-logo': __( 'Handwritten Logo', 'elementor' ),
+			'line-art-logo': __( 'Line Art Logo', 'elementor' ),
+			'old-school-logo': __( 'Old School Logo', 'elementor' ),
+		},
+	},
 	background: {
 		label: __( 'Background', 'elementor' ),
 		subCategories: {
