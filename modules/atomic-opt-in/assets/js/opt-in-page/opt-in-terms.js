@@ -80,11 +80,7 @@ export const Terms = ( { onClose, onSubmit, isEnrolled } ) => {
 						<ContentListItem variant="body2">
 							<>
 								{ ! isEnrolled && (
-									<TextNode
-										variant="subtitle2"
-										component="span"
-										sx={ { mr: 0.5 } }
-									>
+									<TextNode variant="subtitle2" component="span" >
 										{ i18n.notes.alphaText }
 									</TextNode>
 								) }
