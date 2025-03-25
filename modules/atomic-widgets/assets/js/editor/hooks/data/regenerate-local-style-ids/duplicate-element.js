@@ -1,8 +1,8 @@
 import { regenerateLocalStyleIds } from '../../../utils/regenerate-local-style-ids';
 
-export class CreateElementHook extends $e.modules.hookData.After {
+export class DuplicateElementHook extends $e.modules.hookData.After {
 	getCommand() {
-		return 'document/elements/create';
+		return 'document/elements/duplicate';
 	}
 
 	getId() {
@@ -15,4 +15,3 @@ export class CreateElementHook extends $e.modules.hookData.After {
 		containers.forEach( regenerateLocalStyleIds );
 	}
 }
-export default CreateElementHook;
