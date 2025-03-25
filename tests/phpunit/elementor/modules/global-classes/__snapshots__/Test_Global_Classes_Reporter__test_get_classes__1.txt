@@ -1,3 +1,2 @@
-<tr><td>Classes Count</td><td>2</td></tr><tr><td>Applied Classes</td><td>4</td></tr><tr><td>Applied Classes Per Element Type</td><td>heading: 2
-column: 1
-section: 1</td></tr>
+<tr><td>Classes Count</td><td>2</td></tr><tr><td>Applied Classes</td><td>4</td></tr><tr><td>Applied Classes Per Element Type</td><td>e-heading: 2
+e-div-block: 2</td></tr>

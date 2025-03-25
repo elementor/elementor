@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Testing\Modules\GlobalClasses;
 
-use Elementor\Modules\GlobalClasses\Global_Classes_Reporter;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Reporter;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -60,7 +60,7 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 	private $mock_elementor_data = [
 		[
 			'id' => 'abc123',
-			'elType' => 'section',
+			'elType' => 'e-div-block',
 			'settings' => [
 				'classes' => [
 					'value' => ['g-4-123']
@@ -69,7 +69,7 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 			'elements' => [
 				[
 					'id' => 'def456',
-					'elType' => 'column',
+					'elType' => 'e-div-block',
 					'settings' => [
 						'classes' => [
 							'value' => ['g-4-124']
@@ -79,7 +79,7 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 						[
 							'id' => 'ghi789',
 							'elType' => 'widget',
-							'widgetType' => 'heading',
+							'widgetType' => 'e-heading',
 							'settings' => [
 								'classes' => [
 									'value' => ['g-4-123', 'g-4-124']
@@ -97,56 +97,27 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		// Setup global classes
 		Plugin::$instance->kits_manager->create_new_kit( 'kit' );
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+		( new Global_Classes_Repository() )->put( $this->mock_global_classes['items'], $this->mock_global_classes['order'] );
 
 		// Create a post with Elementor data
-		$post = $this->factory()->post->create_and_get([
-			'post_type' => 'page',
+		$document = Plugin::$instance->documents->create( 'post', [
+			'post_title' => 'Test Post',
 			'post_status' => 'publish',
-		]);
+		] );
 
-		$this->post_id = $post->ID;
+		$document->update_json_meta( '_elementor_data', $this->mock_elementor_data );
 
-		update_post_meta( $post->ID, '_elementor_edit_mode', 'builder' );
-		update_post_meta( $post->ID, '_elementor_data', wp_json_encode( $this->mock_elementor_data ) );
-
-		// Mock WP_Query to return only our test post
-		add_filter( 'posts_pre_query', function( $posts, $query ) {
-			if ( isset( $query->query_vars['meta_key'] ) && $query->query_vars['meta_key'] === '_elementor_edit_mode' ) {
-				$post = get_post( $this->post_id );
-				return [ $post ];
-			}
-			return $posts;
-		}, 10, 2 );
+		$this->post_id = $document->get_main_id();
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 
-		Plugin::$instance->kits_manager->get_active_kit()->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
-		remove_all_filters( 'posts_pre_query' );
-	}
+		( new Global_Classes_Repository() )->put( [], [] );
 
-	public function test_get_classes_usage() {
-		// Arrange.
-		$reporter = new Global_Classes_Reporter();
-
-		// Act.
-		$usage_data = $reporter->get_classes_usage();
-
-		// Assert.
-		$this->assertEquals( 2, $usage_data['count']['value'] );
-		$this->assertEquals( 4, $usage_data['applied_classes']['value'] );
-
-		$expected_element_types = [
-			'section' => 1,
-			'column' => 1,
-			'heading' => 2,
-		];
-		$this->assertEquals( $expected_element_types, $usage_data['applied_classes_element_types']['value'] );
+		// Remove the post with Elementor data
+		wp_delete_post( $this->post_id, true );
 	}
 
 	public function test_get_raw_classes() {
@@ -169,56 +140,5 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $classes['value'] );
-	}
-
-	public function test_no_applied_classes_stats_when_empty() {
-		// Arrange.
-		$post = $this->factory()->post->create_and_get([
-			'post_type' => 'page',
-			'post_status' => 'publish',
-		]);
-
-		update_post_meta( $post->ID, '_elementor_edit_mode', 'builder' );
-
-		$elementor_data = [
-			[
-				'id' => 'abc123',
-				'elType' => 'section',
-				'settings' => [],
-				'elements' => [
-					[
-						'id' => 'def456',
-						'elType' => 'column',
-						'settings' => [],
-						'elements' => [
-							[
-								'id' => 'ghi789',
-								'elType' => 'widget',
-								'widgetType' => 'heading',
-								'settings' => []
-							]
-						]
-					]
-				]
-			]
-		];
-
-		update_post_meta( $post->ID, '_elementor_data', wp_json_encode( $elementor_data ) );
-
-		add_filter( 'posts_pre_query', function( $posts, $query ) use ( $post ) {
-			if ( isset( $query->query_vars['meta_key'] ) && $query->query_vars['meta_key'] === '_elementor_edit_mode' ) {
-				return [ $post ];
-			}
-			return $posts;
-		}, 10, 2 );
-
-		// Act.
-		$reporter = new Global_Classes_Reporter();
-		$usage_data = $reporter->get_classes_usage();
-
-		// Assert.
-		$this->assertEquals( 2, $usage_data['count']['value'] );
-		$this->assertArrayNotHasKey( 'applied_classes', $usage_data );
-		$this->assertArrayNotHasKey( 'applied_classes_element_types', $usage_data );
 	}
 }

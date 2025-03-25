@@ -33,7 +33,7 @@ class Module extends BaseModule {
 
 		// TODO: When the `Atomic_Widgets` feature is not hidden, add it as a dependency
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
-			add_action( 'admin_init', fn() => $this->register_system_info_reporters(), 60 );
+			add_action( 'admin_init', fn() => $this->register_system_info_reporters() );
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
 			( new Global_Classes_REST_API() )->register_hooks();
@@ -54,7 +54,7 @@ class Module extends BaseModule {
 	}
 
 	public function register_system_info_reporters() {
-		System_Info::add_report( 'classes', [
+		System_Info::add_report( 'global_classes', [
 			'file_name' => __DIR__ . '/global-classes-reporter.php',
 			'class_name' => __NAMESPACE__ . '\Global_Classes_Reporter',
 		] );
