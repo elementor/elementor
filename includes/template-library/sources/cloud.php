@@ -351,6 +351,11 @@ class Source_Cloud extends Source_Base {
 		return $this->get_app()->bulk_delete_resources( $template_ids );
 	}
 
+
+	public function bulk_undo_delete_items( array $template_ids ) {
+		return $this->get_app()->bulk_undo_delete_resources( $template_ids );
+	}
+
 	public function save_bulk_items( array $data = [] ) {
 		$items = [];
 
