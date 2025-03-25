@@ -1,17 +1,24 @@
-import App from './app';
 import { createRoot } from 'react-dom/client';
 
 export class AppManager {
+	static instance;
+
 	constructor() {
+		if ( AppManager.instance ) {
+			return AppManager.instance;
+		}
+
 		this.promotionInfoTip = null;
 		this.onRoute = () => {};
+
+		AppManager.instance = this;
 	}
 
 	getPromotionData( promotionType ) {
 		return elementorPromotionsData[ promotionType ] || {};
 	}
 
-	mount( targetNode, selectors ) {
+	async mount( targetNode, selectors ) {
 		if ( this.promotionInfoTip ) {
 			return;
 		}
@@ -22,6 +29,8 @@ export class AppManager {
 		if ( ! rootElement ) {
 			return;
 		}
+
+		const { default: App } = await import( './app' );
 
 		this.attachEditorEventListeners();
 
@@ -64,4 +73,8 @@ export class AppManager {
 	detachEditorEventListeners() {
 		$e.routes.off( 'run:after', this.onRoute );
 	}
+}
+
+if ( window.elementorV2 ) {
+	window.AppManagerInstance = new AppManager();
 }

@@ -27,8 +27,8 @@ export default class extends ControlBaseDataView {
 		return elementorPromotionsData[ promotionType ] || {};
 	}
 
-	onClickControlSwitcher( event ) {
+	async onClickControlSwitcher( event ) {
 		event.stopPropagation();
-		this.AppManager.mount( event.target, this.selectors );
+		await this.AppManager.mount( event.target, this.selectors );
 	}
 }

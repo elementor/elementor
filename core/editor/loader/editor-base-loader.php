@@ -39,10 +39,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_script(
 			'elementor-editor-modules',
 			"{$assets_url}js/editor-modules{$min_suffix}.js",
-			[
-				'elementor-common-modules',
-				'elementor-v2-ui',
-			],
+			[ 'elementor-common-modules' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -167,6 +164,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 				'pickr',
 				'react',
 				'react-dom',
+				'elementor-v2-ui',
 			],
 			ELEMENTOR_VERSION,
 			true
