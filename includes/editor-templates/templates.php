@@ -229,7 +229,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<input type="checkbox" class="bulk-selection-item-checkbox" data-template_id="{{ template_id }}" data-type="{{ type }}">
 			<?php endif; ?>
 			<# if ( 'cloud' === activeSource ) {
-				const sourceIcon = typeof subType !== 'undefined' && 'FOLDER' === subType
+				const sourceIcon = 'FOLDER' === subType
 					? '<i class="eicon-folder-o" aria-hidden="true"></i>'
 					: '<i class="eicon-global-colors" aria-hidden="true"></i>';
 
@@ -292,7 +292,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<# } else {
-		if ( typeof subType !== 'undefined' && 'FOLDER' === subType ) {
+		if ( 'FOLDER' === subType ) {
 	#>
 		<div class="elementor-template-library-template-type-icon">
 			<i class="eicon-folder-o" aria-hidden="true"></i>

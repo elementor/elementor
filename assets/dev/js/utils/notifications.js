@@ -73,8 +73,6 @@ module.exports = elementorModules.Module.extend( {
 
 		if ( ! this.isPositionValid( options?.position ) ) {
 			this.positionToWindow();
-		} else {
-			toast.setSettings( 'position', options.position );
 		}
 
 		if ( options.buttons ) {
