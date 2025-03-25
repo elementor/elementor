@@ -199,6 +199,17 @@
 		font-weight: bold;
 	}
 
+	&-category-chip {
+		margin-inline-start: auto;
+		background-color: var(--e-a-bg-chip);
+		border-radius: 100px;
+		padding: 5px 8px;
+
+		i {
+			margin-inline-start: 4px;
+		}
+	}
+
 	&-promotion {
 		margin-inline-start: auto;
 
