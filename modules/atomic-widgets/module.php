@@ -102,6 +102,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+			add_filter( 'elementor/usage/element_title', fn( $type, $title ) => $this->get_element_usage_name( $type, $title ), 10, 2 );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
@@ -206,6 +207,18 @@ class Module extends BaseModule {
 
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
 	}
+
+	private function get_element_usage_name( $type, $title ) {
+		$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
+		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
+
+		if( Utils::is_atomic( $element_instance ) || Utils::is_atomic( $widget_instance ) ) {
+			return $type;
+		}
+
+		return $title;
+	}
+
 
 	/**
 	 * Enqueue the module scripts.

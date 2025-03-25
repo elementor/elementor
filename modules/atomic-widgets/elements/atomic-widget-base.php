@@ -17,8 +17,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
-		add_filter( 'elementor/usage/element_title/' . static::get_element_type(), fn() => static::get_element_type() );
-
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
 	}
