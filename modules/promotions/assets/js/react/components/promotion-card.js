@@ -41,7 +41,7 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 				</Stack>
 				<Image src={ imgSrc } alt={ imgAlt } sx={ { height: 150, width: '100%' } } />
 				<Stack px={ 2 }>
-					{description.length === 1 ? <Typography variant="body2" color="secondary" sx={ { pt: 1.5, pb: 1 } }>{ description[ 0 ] }</Typography> : <List sx={ { pl: 2 } }>
+					{ 1 === description.length ? <Typography variant="body2" color="secondary" sx={ { pt: 1.5, pb: 1 } }>{ description[ 0 ] }</Typography> : <List sx={ { pl: 2 } }>
 						{ description.map( ( text, index ) => {
 							return (
 								<ListItem key={ index } sx={ { listStyle: 'disc', display: 'list-item', color: 'text.secondary', p: 0 } }>
@@ -49,7 +49,7 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 								</ListItem>
 							);
 						} ) }
-					</List>}
+					</List> }
 
 				</Stack>
 				<Stack pt={ 1 } pb={ 1.5 } px={ 2 }>
