@@ -21,8 +21,8 @@ class Url_Prop_Type extends Plain_Prop_Type {
 			return true;
 		}
 
-		// Allow domain names without scheme (e.g., google.com, google)
-		if ( preg_match( '/^([a-zA-Z0-9-]+)(\.[a-zA-Z]{2,})?(\/[\w\-\/#]*)?$/', $url ) ) {
+		// Allow domains, single-word domains, paths, fragments, and "#"
+		if ( preg_match( '/^(#|[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})?(\/[\w\-\/#]*)?)$/', $url ) ) {
 			return true;
 		}
 
