@@ -279,9 +279,6 @@ class Elements_Manager {
 			'v4-elements' => [
 				'title' => esc_html__( 'V4 Elements', 'elementor' ),
 				'hideIfEmpty' => true,
-				'promotion' => [
-					'popup' => true,
-				],
 			],
 			'layout' => [
 				'title' => esc_html__( 'Layout', 'elementor' ),

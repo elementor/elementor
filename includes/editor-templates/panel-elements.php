@@ -59,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</span>
 		<span class="elementor-panel-heading-title">{{{ title }}}</span>
 		<?php do_action( 'elementor/editor/templates/panel/category' ); ?>
-		<# if ( 'undefined' !== typeof promotion && promotion?.url ) { #>
+		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">
 					<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
