@@ -58,6 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon" aria-hidden="true"></i>
 		</span>
 		<span class="elementor-panel-heading-title">{{{ title }}}</span>
+		<?php do_action( 'elementor/editor/templates/panel/category' ); ?>
 		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">
