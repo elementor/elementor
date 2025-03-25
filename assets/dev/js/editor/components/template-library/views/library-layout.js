@@ -21,7 +21,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 				onOutsideClick: allowClosingModal,
 				onBackgroundClick: allowClosingModal,
 				onEscKeyPress: allowClosingModal,
-				ignore: '.dialog-widget-content',
+				ignore: '.dialog-widget-content, .dialog-buttons-undo_bulk_delete',
 			},
 		};
 	},
