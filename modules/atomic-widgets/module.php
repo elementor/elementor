@@ -213,7 +213,7 @@ class Module extends BaseModule {
 		$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
 
-		if( Utils::is_atomic( $element_instance ) || Utils::is_atomic( $widget_instance ) ) {
+		if ( Utils::is_atomic( $element_instance ) || Utils::is_atomic( $widget_instance ) ) {
 			return $type;
 		}
 
