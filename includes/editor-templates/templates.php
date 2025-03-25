@@ -153,6 +153,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="bulk-delete"><i class="eicon-trash-o"></i></span>
 		</div>
 		<?php endif; ?>
+		<#
+		const view = elementor.templates.getFilter('view') ?? elementor.templates.getViewSelection() ?? 'list';
+		if ( 'list' === view ) { #>
 		<div id="elementor-template-library-order-toolbar-local">
 			<div class="elementor-template-library-local-column-1">
 				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
@@ -177,6 +180,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="elementor-template-library-order-label"><?php echo esc_html__( 'Actions', 'elementor' ); ?></div>
 			</div>
 		</div>
+		<# } #>
+		<# if ( 'grid' === view ) { #>
+			<div id="elementor-template-library-order-toolbar-local">
+				<div class="elementor-template-library-local-column-1">
+					<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
+					<label for="elementor-template-library-order-local-title" class="elementor-template-library-order-label"><?php echo esc_html__( 'Name', 'elementor' ); ?></label>
+				</div>
+				<div class="elementor-template-library-local-column-2">
+					<input type="radio" id="elementor-template-library-order-local-type" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="type" data-default-ordering-direction="asc">
+					<label for="elementor-template-library-order-local-type" class="elementor-template-library-order-label"><?php echo esc_html__( 'Type', 'elementor' ); ?></label>
+				</div>
+				<div class="elementor-template-library-local-column-3">
+					<input type="radio" id="elementor-template-library-order-local-date" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="date">
+					<label for="elementor-template-library-order-local-date" class="elementor-template-library-order-label"><?php echo esc_html__( 'Date', 'elementor' ); ?></label>
+				</div>
+			</div>
+		<# } #>
 	<# } #>
 	<div id="elementor-template-library-templates-container"></div>
 	<# if ( isRemote ) { #>

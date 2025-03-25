@@ -107,6 +107,21 @@ $remote-templates-items-space: 30px;
 		}
 	}
 
+	&[data-template-source="cloud"][data-template-view="grid"] {
+
+		#elementor-template-library-templates-container {
+			border-block-start: none;
+		}
+
+		#elementor-template-library-order-toolbar-local {
+			padding: 0;
+
+			div {
+				max-width: fit-content;
+			}
+		}
+	}
+
 	&[data-template-source="remote"] {
 
 		#elementor-template-library-templates-container {
