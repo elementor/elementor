@@ -1,7 +1,7 @@
 import { createContainer, addChildToContainer, setGlobalContainers } from '../../utils/container';
 
 describe( 'Regenerate local style IDs', () => {
-	let createHook;
+	let duplicateHook;
 
 	let uniqueId = 0;
 
@@ -47,9 +47,9 @@ describe( 'Regenerate local style IDs', () => {
 			},
 		};
 
-		const CreateElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/regenerate-local-style-ids/create-element' ) ).default;
+		const DuplicateElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/regenerate-local-style-ids/duplicate-element' ) ).default;
 
-		createHook = new CreateElementHook();
+		duplicateHook = new DuplicateElementHook();
 	} );
 
 	afterAll( async () => {
@@ -143,7 +143,7 @@ describe( 'Regenerate local style IDs', () => {
 		const setSettingsCommand = jest.spyOn( global.$e, 'internal' );
 
 		// Act
-		createHook.apply( {}, [ duplicatedStyledElement ] );
+		duplicateHook.apply( {}, [ duplicatedStyledElement ] );
 
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( initialContainerStyle );
@@ -225,7 +225,7 @@ describe( 'Regenerate local style IDs', () => {
 		const setSettingsCommand = jest.spyOn( global.$e, 'internal' );
 
 		// Act
-		createHook.apply( {}, [ duplicatedNonStyledElement ] );
+		duplicateHook.apply( {}, [ duplicatedNonStyledElement ] );
 
 		// Assert
 		expect( setSettingsCommand ).not.toBeCalled();
