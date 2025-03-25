@@ -44,8 +44,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 		}
 
-		if ( SAVE_CONTEXTS.MOVE === context ) {
-			this.handleMoveContextUiState();
+		if ( SAVE_CONTEXTS.MOVE === context || SAVE_CONTEXTS.COPY === context ) {
+			this.handleSingleActionContextUiState();
 		}
 
 		if ( SAVE_CONTEXTS.BULK_MOVE === context || SAVE_CONTEXTS.BULK_COPY === context ) {
@@ -53,7 +53,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
-	handleMoveContextUiState() {
+	handleSingleActionContextUiState() {
 		this.ui.templateNameInput.val( this.model.get( 'title' ) );
 		this.handleContextUiStateChecboxes();
 	},
@@ -75,7 +75,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	getSaveType() {
 		let type;
 
-		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
+		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) || SAVE_CONTEXTS.COPY === this.getOption( 'context' ) ) {
 			type = this.model.get( 'type' );
 		} else if ( this.model ) {
 			type = this.model.get( 'elType' );
@@ -116,6 +116,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.updateSaveContext( formData );
 
+		this.updateToastConfig( formData );
+
 		elementor.templates.saveTemplate( this.getSaveType(), formData );
 	},
 
@@ -144,24 +146,105 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		formData.save_context = saveContext;
 
-		if ( [ SAVE_CONTEXTS.MOVE, SAVE_CONTEXTS.BULK_MOVE, SAVE_CONTEXTS.BULK_COPY ].includes( saveContext ) ) {
+		if ( [ SAVE_CONTEXTS.MOVE, SAVE_CONTEXTS.BULK_MOVE, SAVE_CONTEXTS.COPY, SAVE_CONTEXTS.BULK_COPY ].includes( saveContext ) ) {
 			formData.from_source = elementor.templates.getFilter( 'source' );
-			formData.from_template_id = SAVE_CONTEXTS.MOVE === saveContext
+			formData.from_template_id = [ SAVE_CONTEXTS.MOVE, SAVE_CONTEXTS.COPY ].includes( saveContext )
 				? this.model.get( 'template_id' )
 				: Array.from( elementor.templates.getBulkSelectionItems() );
-
-			this.updateSourceState( formData );
 		}
 	},
 
-	updateSourceState( formData ) {
-		if ( ! formData.source.length ) {
+	updateToastConfig( formData ) {
+		if ( ! formData.source?.length ) {
 			return;
 		}
 
-		const lastSource = formData.source.at( -1 );
+		const lastSource = formData.source.at( -1 ),
+			saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE,
+			toastMessage = this.getToastMessage( lastSource, saveContext, formData );
+
+		if ( ! toastMessage ) {
+			return;
+		}
+
+		const toastButtons = formData.source?.length > 1
+			? null
+			: this.getToastButtons( lastSource, formData?.parentId?.trim() );
+
+		elementor.templates.setToastConfig( {
+			show: true,
+			options: {
+				message: toastMessage,
+				buttons: toastButtons,
+				position: {
+					my: 'right bottom',
+					at: 'right-10 bottom-10',
+					of: '#elementor-template-library-modal .dialog-lightbox-widget-content',
+				},
+			},
+		} );
+	},
+
+	getToastMessage( lastSource, saveContext, formData ) {
+		const key = `${ lastSource }_${ saveContext }`;
+
+		if ( formData.source?.length > 1 ) {
+			return __( 'Template saved to your Site and Cloud Templates.', 'elementor' );
+		}
+
+		const actions = {
+			[ `local_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Site Templates.', 'elementor' ),
+			[ `cloud_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Cloud Templates.', 'elementor' ),
+			[ `local_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Site Templates', formData.title ),
+			[ `cloud_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Cloud Templates', formData.title ),
+			[ `local_${ SAVE_CONTEXTS.COPY }` ]: this.getFormattedToastMessage( 'copied to your Site Templates', formData.title ),
+			[ `cloud_${ SAVE_CONTEXTS.COPY }` ]: this.getFormattedToastMessage( 'copied to your Cloud Templates', formData.title ),
+			[ `local_${ SAVE_CONTEXTS.BULK_MOVE }` ]: this.getFormattedToastMessage( 'moved to your Site Templates', null, formData.from_template_id?.length ),
+			[ `cloud_${ SAVE_CONTEXTS.BULK_MOVE }` ]: this.getFormattedToastMessage( 'moved to your Cloud Templates', null, formData.from_template_id?.length ),
+			[ `local_${ SAVE_CONTEXTS.BULK_COPY }` ]: this.getFormattedToastMessage( 'copied to your Site Templates', null, formData.from_template_id?.length ),
+			[ `cloud_${ SAVE_CONTEXTS.BULK_COPY }` ]: this.getFormattedToastMessage( 'copied to your Cloud Templates', null, formData.from_template_id?.length ),
+		};
+
+		return actions[ key ] ?? false;
+	},
+
+	getFormattedToastMessage( action, title, count ) {
+		if ( count !== undefined ) {
+			/* Translators: 1: Number of templates, 2: Action performed (e.g., "moved", "copied"). */
+			return sprintf( __( '%1$d Template(s) %2$s.', 'elementor' ), count, action );
+		}
+
+		/* Translators: 1: Template title or "Template" fallback, 2: Action performed. */
+		return sprintf( __( '%1$s %2$s.', 'elementor' ), title ? `"${ title }"` : __( 'Template', 'elementor' ), action );
+	},
+
+	getToastButtons( lastSource, parentId ) {
+		const parsedParentId = parseInt( parentId, 10 ) || null;
+
+		return [
+			{
+				name: 'template_after_save',
+				text: __( 'View', 'elementor' ),
+				callback: () => this.navigateToSavedSource( lastSource, parsedParentId ),
+			},
+		];
+	},
+
+	navigateToSavedSource( lastSource, parentId ) {
 		elementor.templates.setSourceSelection( lastSource );
 		elementor.templates.setFilter( 'source', lastSource, true );
+
+		if ( parentId ) {
+			elementor.templates.setFilter( 'parent', parentId );
+
+			const model = new TemplateLibraryTemplateModel( { template_id: parentId } );
+
+			$e.route( 'library/view-folder', { model } );
+
+			return;
+		}
+
+		$e.routes.refreshContainer( 'library' );
 	},
 
 	onSelectedFolderTextClick() {
@@ -257,7 +340,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			return;
 		}
 
-		if ( ! Number.isInteger( this.model.get( 'parentId' ) ) ) {
+		if ( ! this.model || ! Number.isInteger( this.model.get( 'parentId' ) ) ) {
 			return;
 		}
 
