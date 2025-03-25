@@ -37,22 +37,14 @@ describe( 'useImageActions', () => {
 		jest.clearAllMocks();
 
 		useEditImage.mockImplementation( () => ( {
-			editImage: {},
 			setEditImage: jest.fn(),
 		} ) );
 
 		useImageUpload.mockImplementation( () => ( {
-			attachmentData: {},
-			isUploading: false,
-			uploadError: null,
 			upload: jest.fn().mockResolvedValue( { image: { url: 'test-url' } } ),
-			resetUpload: jest.fn(),
 		} ) );
 
-		useGlobalActions.mockImplementation( () => ( {
-			setControlValue: jest.fn(),
-			saveAndClose: jest.fn(),
-		} ) );
+		useGlobalActions.mockImplementation( () => ( {} ) );
 	} );
 
 	afterEach( () => {
