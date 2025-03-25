@@ -219,8 +219,6 @@ class Module extends BaseModule {
 
 		return $title;
 	}
-
-
 	/**
 	 * Enqueue the module scripts.
 	 *
