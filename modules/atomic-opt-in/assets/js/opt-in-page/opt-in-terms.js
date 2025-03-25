@@ -1,10 +1,21 @@
 import { __ } from '@wordpress/i18n';
-import { Button, Checkbox, Divider, Stack } from '@elementor/ui';
-import React, { useEffect, useRef, useState } from 'react';
-import { OptInPopover } from './opt-in-popover';
+import {
+	Button,
+	Checkbox, Chip, Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Stack,
+} from '@elementor/ui';
+import React, { useState } from 'react';
 import { ContentList, ContentListItem, TextNode } from './opt-in-content';
+import DialogHeaderGroup from '@elementor/ui/DialogHeaderGroup';
+import DialogHeader from '@elementor/ui/DialogHeader';
 
 const i18n = {
+	header: __( 'Editor V4', 'elementor' ),
+	chip: __( 'Alpha', 'elementor' ),
+
 	titleText: {
 		optIn: __( 'You are about to enable Editor V4 features!', 'elementor' ),
 		optOut: __( 'You’re deactivating Editor V4', 'elementor' ),
@@ -23,7 +34,6 @@ const i18n = {
 		optIn: [
 			__( 'and development is still in progress. Do not use it on live sites - use a staging or development environment instead.', 'elementor' ),
 			__( 'When you activate Editor V4, you’ll also be activating Containers, the Top Bar, and Nested Elements. You can turn them back off by going to WP Admin > Elementor > Settings > Features.', 'elementor' ),
-			__( 'Nami', 'elementor' ),
 		],
 		optOut: [
 			__( 'By deactivating, you’ll lose all Editor V4 features, and any content you created with V4-specific features will no longer be available or appear on your site.', 'elementor' ),
@@ -38,19 +48,8 @@ const i18n = {
 	cancelButton: __( 'Cancel', 'elementor' ),
 };
 
-export const Terms = ( { onClose, onSubmit, isEnrolled } ) => {
-	const anchorElRef = useRef( null );
-	const [ isMounted, setIsMounted ] = useState( false );
+export const Terms = ( { onClose, onSubmit, isEnrolled, ...props } ) => {
 	const [ checked, setChecked ] = useState( false );
-
-	useEffect( () => {
-		anchorElRef.current = document.body;
-		setIsMounted( true );
-	}, [] );
-
-	if ( ! isMounted || ! anchorElRef.current ) {
-		return null;
-	}
 
 	const handleCheckboxChange = () => {
 		setChecked( ( prev ) => ! prev );
@@ -65,63 +64,67 @@ export const Terms = ( { onClose, onSubmit, isEnrolled } ) => {
 	const currentState = isEnrolled ? 'optOut' : 'optIn';
 
 	return (
-		<OptInPopover
+		<Dialog
+			{ ...props }
+			open
 			onClose={ onClose }
-			anchorEl={ anchorElRef.current }
 		>
-			<Stack gap={ 2.5 } px={ 3 } >
-				<Stack gap={ 1 }>
-					<TextNode align="center" variant="h6" >{ i18n.titleText[ currentState ] }</TextNode>
-					<TextNode align="center" variant="body2">{ i18n.introText[ currentState ] }</TextNode>
-				</Stack>
-				<Stack gap={ 1.5 } >
-					<TextNode variant="body2" >{ i18n.notesHeader[ currentState ] }</TextNode>
-					<ContentList >
-						<ContentListItem variant="body2">
-							<>
-								{ ! isEnrolled && (
-									<TextNode variant="subtitle2" component="span" >
-										{ i18n.notes.alphaText }
-									</TextNode>
-								) }
-								{ i18n.notes[ currentState ][ 0 ] }
-							</>
-						</ContentListItem>
-						{ i18n.notes[ currentState ].slice( 1 ).map( ( entry, index ) => (
-							<ContentListItem key={ index } variant="body2">
-								{ entry }
+			<DialogHeader>
+				<DialogHeaderGroup>
+					<DialogTitle>{ i18n.header }</DialogTitle>
+
+					<Chip label={ i18n.chip } color="secondary" variant="filled" size="small" />
+				</DialogHeaderGroup>
+			</DialogHeader>
+
+			<DialogContent dividers>
+				<Stack gap={ 2.5 } >
+					<Stack gap={ 1 }>
+						<TextNode align="center" variant="h6" >{ i18n.titleText[ currentState ] }</TextNode>
+						<TextNode align="center" variant="body2">{ i18n.introText[ currentState ] }</TextNode>
+					</Stack>
+					<Stack gap={ 1 } >
+						<TextNode variant="body2" >{ i18n.notesHeader[ currentState ] }</TextNode>
+						<ContentList>
+							<ContentListItem variant="body2">
+								<>
+									{ ! isEnrolled && (
+										<TextNode variant="subtitle2" component="span">
+											{ i18n.notes.alphaText }
+										</TextNode>
+									) }
+									{ i18n.notes[ currentState ][ 0 ] }
+								</>
 							</ContentListItem>
-						) ) }
-					</ContentList>
+							{ i18n.notes[ currentState ].slice( 1 ).map( ( entry, index ) => (
+								<ContentListItem key={ index } variant="body2">
+									{ entry }
+								</ContentListItem>
+							) ) }
+						</ContentList>
+					</Stack>
+					<Stack direction="row" alignItems="center" >
+						<Checkbox
+							checked={ !! checked }
+							onClick={ handleCheckboxChange }
+							color="secondary"
+							size="small">
+						</Checkbox>
+						<TextNode variant="body2">{ i18n.checkboxText }</TextNode>
+					</Stack>
 				</Stack>
-				<Stack direction="row" alignItems="center" >
-					<Checkbox
-						checked={ !! checked }
-						onClick={ handleCheckboxChange }
-						color="secondary"
-						size="small" >
-					</Checkbox>
-					<TextNode variant="body2">{ i18n.checkboxText }</TextNode>
-				</Stack>
-			</Stack>
 
-			<Divider />
+			</DialogContent>
 
-			<Stack direction="row-reverse" gap={ 1 } px={ 3 } >
-				<Button
-					disabled={ ! checked }
-					variant="contained"
-					onClick={ handleSubmit }
-				>
+			<DialogActions>
+				<Button variant="text" color="secondary" onClick={ onClose }>
+					{ i18n.cancelButton }
+				</Button>
+				<Button disabled={ ! checked } variant="contained" onClick={ handleSubmit }>
 					{ i18n.activateButton[ currentState ] }
 				</Button>
-				<Button
-					variant="text"
-					color="secondary"
-					onClick={ onClose }
-				>{ i18n.cancelButton }</Button>
-			</Stack>
-		</OptInPopover>
+			</DialogActions>
+		</Dialog>
 	);
 };
 
