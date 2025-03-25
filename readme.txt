@@ -1,7 +1,7 @@
 === Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.5
+Requires at least: 6.3
 Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 3.12.1
@@ -14,13 +14,11 @@ The Elementor Website Builder has it all: drag and drop page builder, pixel perf
 
 https://www.youtube.com/watch?v=le72grP_Q6k
 
-= THE #1 NO CODE DRAG & DROP WORDPRESS WEBSITE BUILDER POWERING OVER 18M WEBSITES WORLDWIDE, NOW WITH AI. =
+= THE #1 NO CODE DRAG & DROP WORDPRESS WEBSITE BUILDER POWERING OVER 17M WEBSITES WORLDWIDE, NOW WITH AI. =
 
 Elementor, the leading WordPress website creation platform, empowers you to build professional, pixel-perfect websites seamlessly.
 
 Unlock all features with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/).
-
-Need fast and secure cloud hosting for your Elementor site? Try out **[Elementor Hosting](https://elemn.to/repo-hosting)** Powered by Google Cloud & Cloudflare. 4.9/5 TrustPilot score.
 
 ### 🌟 Create Professional Stunning Websites
 
@@ -256,7 +254,7 @@ Join a global community that helps each other achieve their goals.
 
 = Minimum Requirements =
 
-* WordPress 6.5 or greater
+* WordPress 6.3 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
@@ -306,11 +304,11 @@ It works with almost all the plugins. If you experience an incompatibility issue
 
 No! Elementor provides you with all the widgets and features that you need to build a professional website without using code.
 
-**Do I need to know how to design?**
+**Do i need to know how to design?**
 
 No, you can choose between professionally designed kits and templates that fit toevery industry and have all you need to create your own professional website.
 
-**Will Elementor slow down my website?**
+**Will elementor slow down my website?**
 
 As Elementor prioritizes speed and performance, you enjoy better and faster performance with each new version of Elementor. When testing the same page layout on older versions you can see a significant performance improvement, from a score of 82 in Google PageSpeed Insight in version 3.1, to a score of 95 i in version 3.5.
 
