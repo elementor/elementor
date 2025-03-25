@@ -227,24 +227,28 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	order( by, reverseOrder ) {
-		var sortBy = this.comparators[ by ] || by;
-	
-		var comparator = ( a, b ) => {
+		const sortBy = this.comparators[ by ] || by;
+
+		const comparator = ( a, b ) => {
 			const typeA = a.get( 'type' );
 			const typeB = b.get( 'type' );
-	
-			const isFolderA = typeA === 'folder';
-			const isFolderB = typeB === 'folder';
-	
+
+			const isFolderA = 'folder' === typeA;
+			const isFolderB = 'folder' === typeB;
+
 			// Ensure folders always come first (or last if reverseOrder is true)
 			if ( isFolderA !== isFolderB ) {
-				return reverseOrder ? ( isFolderA ? 1 : -1 ) : ( isFolderA ? -1 : 1 );
+				if ( reverseOrder ) {
+					return isFolderA ? 1 : -1;
+				}
+
+				return isFolderA ? -1 : 1;
 			}
-	
+
 			// Fallback to sorting by 'by'
-			var valueA = typeof sortBy === 'function' ? sortBy( a ) : a.get( sortBy );
-			var valueB = typeof sortBy === 'function' ? sortBy( b ) : b.get( sortBy );
-	
+			let valueA = 'function' === typeof sortBy ? sortBy( a ) : a.get( sortBy );
+			let valueB = 'function' === typeof sortBy ? sortBy( b ) : b.get( sortBy );
+
 			// Normalize string values for comparison
 			if ( typeof valueA === 'string' ) {
 				valueA = valueA.toLowerCase();
@@ -253,7 +257,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			if ( typeof valueB === 'string' ) {
 				valueB = valueB.toLowerCase();
 			}
-	
+
 			if ( valueA < valueB ) {
 				return reverseOrder ? 1 : -1;
 			}
@@ -264,7 +268,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 			return 0;
 		};
-	
+
 		this.collection.comparator = comparator;
 		this.collection.sort();
 	},
