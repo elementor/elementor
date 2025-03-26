@@ -1,4 +1,5 @@
 import {
+	Box,
 	DirectionProvider,
 	Infotip,
 	LocalizationProvider,
@@ -26,7 +27,7 @@ const App = ( props ) => {
 								},
 							],
 						} }
-					/>
+					><span /></Infotip>
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>

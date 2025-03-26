@@ -99,6 +99,8 @@ class Module extends Base_Module {
 				'react',
 				'react-dom',
 				'backbone-marionette',
+				'elementor-editor-modules',
+				'elementor-v2-ui',
 			],
 			ELEMENTOR_VERSION,
 			true
