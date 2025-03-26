@@ -13,7 +13,8 @@ const TemplateLibraryManager = function() {
 		storageKeyPrefix = 'my_templates_',
 		sourceKey = 'source',
 		viewKey = 'view',
-		bulkSelectedItems = new Set();
+		bulkSelectedItems = new Set(),
+		lastDeletedItems = new Set();
 
 	let deleteDialog,
 		errorDialog,
@@ -21,7 +22,8 @@ const TemplateLibraryManager = function() {
 		config = {},
 		filterTerms = {},
 		isLoading = false,
-		total = 0;
+		total = 0,
+		toastConfig = { show: false, options: {} };
 
 	const registerDefaultTemplateTypes = function() {
 		var data = {
@@ -68,6 +70,7 @@ const TemplateLibraryManager = function() {
 				},
 				error( errorData ) {
 					self.showErrorDialog( errorData );
+					self.clearToastConfig();
 				},
 			},
 		};
@@ -166,13 +169,13 @@ const TemplateLibraryManager = function() {
 		} );
 
 		this.handleKeydown = ( event ) => {
-			if ( ! this.isSelectAllShortcut( event ) ) {
-				return;
-			}
-
-			if ( this.isCloudGridView() ) {
+			if ( this.isSelectAllShortcut( event ) && this.isCloudGridView() ) {
 				event.preventDefault();
 				this.selectAllTemplates();
+			}
+
+			if ( this.isUndoShortCut( event ) && lastDeletedItems.size ) {
+				this.restoreRemovedItems();
 			}
 		};
 
@@ -183,8 +186,24 @@ const TemplateLibraryManager = function() {
 		return ( event.metaKey || event.ctrlKey ) && 'a' === event.key;
 	};
 
+	this.isUndoShortCut = function( event ) {
+		return ( event.metaKey || event.ctrlKey ) && 'z' === event.key;
+	};
+
 	this.isCloudGridView = function() {
 		return 'cloud' === this.getFilter( 'source' ) && 'grid' === this.getViewSelection();
+	};
+
+	this.clearLastRemovedItems = function() {
+		lastDeletedItems.clear();
+	};
+
+	this.addLastRemovedItems = function( ids ) {
+		if ( ! Array.isArray( ids ) && ! ids.length ) {
+			return;
+		}
+
+		ids.forEach( ( id ) => lastDeletedItems.add( id ) );
 	};
 
 	this.selectAllTemplates = function() {
@@ -196,6 +215,10 @@ const TemplateLibraryManager = function() {
 		} );
 
 		this.layout.handleBulkActionBar();
+	};
+
+	this.restoreRemovedItems = function() {
+		this.onUndoDelete();
 	};
 
 	this.getSourceSelection = function() {
@@ -227,6 +250,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.deleteTemplate = function( templateModel, options ) {
+		this.clearLastRemovedItems();
+
 		var dialog = self.getDeleteDialog();
 
 		dialog.onConfirm = function() {
@@ -234,13 +259,20 @@ const TemplateLibraryManager = function() {
 				options.onConfirm();
 			}
 
+			const templateId = templateModel.get( 'template_id' );
+			const source = templateModel.get( 'source' );
+
 			elementorCommon.ajax.addRequest( 'delete_template', {
 				data: {
-					source: templateModel.get( 'source' ),
-					template_id: templateModel.get( 'template_id' ),
+					source,
+					template_id: templateId,
 				},
 				success( response ) {
 					templatesCollection.remove( templateModel, { silent: true } );
+
+					if ( 'cloud' === source ) {
+						self.addLastRemovedItems( [ templateId ] );
+					}
 
 					if ( options.onSuccess ) {
 						options.onSuccess( response );
@@ -254,6 +286,9 @@ const TemplateLibraryManager = function() {
 
 	this.renameTemplate = ( templateModel, options ) => {
 		const originalTitle = templateModel.get( 'title' );
+
+		this.clearLastRemovedItems();
+
 		const dialog = this.getRenameDialog( templateModel );
 
 		return new Promise( ( resolve ) => {
@@ -322,6 +357,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.getFolderTemplates = ( templateId ) => {
+		this.clearLastRemovedItems();
+
 		return new Promise( ( resolve ) => {
 			isLoading = true;
 			const ajaxOptions = {
@@ -352,6 +389,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.createFolder = function( folderData, options ) {
+		this.clearLastRemovedItems();
+
 		if ( null !== this.getFilter( 'parent' ) ) {
 			this.showErrorDialog( __( 'You can not create a folder inside another folder.', 'elementor' ) );
 
@@ -423,6 +462,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.deleteFolder = function( templateModel, options ) {
+		this.clearLastRemovedItems();
+
 		const ajaxOptions = {
 			data: {
 				source: 'cloud',
@@ -478,12 +519,15 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.sendDeleteRequest = function( templateModel, options ) {
+		const templateId = templateModel.get( 'template_id' );
+
 		elementorCommon.ajax.addRequest( 'delete_template', {
 			data: {
 				source: templateModel.get( 'source' ),
-				template_id: templateModel.get( 'template_id' ),
+				template_id: templateId,
 			},
 			success: ( response ) => {
+				self.addLastRemovedItems( [ templateId ] );
 				templatesCollection.remove( templateModel, { silent: true } );
 				options.onSuccess?.( response );
 			},
@@ -496,6 +540,8 @@ const TemplateLibraryManager = function() {
 	 * @deprecated since 2.8.0, use `$e.run( 'library/insert-template' )` instead.
 	 */
 	this.importTemplate = function( model, args = {} ) {
+		this.clearLastRemovedItems();
+
 		elementorDevTools.deprecation.deprecated( 'importTemplate', '2.8.0',
 			"$e.run( 'library/insert-template' )" );
 
@@ -505,6 +551,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.saveTemplate = function( type, data ) {
+		this.clearLastRemovedItems();
+
 		var templateType = templateTypes[ type ];
 
 		_.extend( data, {
@@ -528,6 +576,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.getSaveAjaxAction = function( saveContext ) {
+		this.clearLastRemovedItems();
+
 		const saveActions = {
 			[ SAVE_CONTEXTS.SAVE ]: 'save_template',
 			[ SAVE_CONTEXTS.MOVE ]: 'move_template',
@@ -540,6 +590,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.requestTemplateContent = function( source, id, ajaxOptions ) {
+		this.clearLastRemovedItems();
+
 		var options = {
 			unique_id: id,
 			data: {
@@ -558,6 +610,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.markAsFavorite = function( templateModel, favorite ) {
+		this.clearLastRemovedItems();
+
 		var options = {
 			data: {
 				source: templateModel.get( 'source' ),
@@ -647,6 +701,7 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.setFilter = function( name, value, silent ) {
+		this.clearLastRemovedItems();
 		elementor.channels.templates.reply( 'filter:' + name, value );
 
 		if ( ! silent ) {
@@ -663,6 +718,7 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.setScreen = function( args ) {
+		this.clearLastRemovedItems();
 		elementor.channels.templates.stopReplying();
 
 		self.setFilter( 'source', args.source, true );
@@ -679,6 +735,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.loadTemplates = function( onUpdate ) {
+		this.clearLastRemovedItems();
+
 		isLoading = true;
 		total = 0;
 
@@ -720,6 +778,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.searchTemplates = ( data ) => {
+		this.clearLastRemovedItems();
+
 		return new Promise( ( resolve ) => {
 			this.setFilter( 'parent', null );
 
@@ -758,6 +818,8 @@ const TemplateLibraryManager = function() {
 		search = '',
 	} = {} ) => {
 		isLoading = true;
+
+		this.clearLastRemovedItems();
 
 		const source = this.getFilter( 'source' );
 
@@ -799,6 +861,29 @@ const TemplateLibraryManager = function() {
 			var templatesToShow = self.filterTemplates();
 
 			self.layout.showTemplatesView( new TemplateLibraryCollection( templatesToShow ) );
+
+			self.handleToast();
+		} );
+	};
+
+	this.handleToast = function() {
+		if ( ! toastConfig?.show ) {
+			return;
+		}
+
+		elementor.notifications.showToast( toastConfig?.options );
+
+		this.clearToastConfig();
+	};
+
+	this.setToastConfig = function( newConfig ) {
+		toastConfig = newConfig;
+	};
+
+	this.clearToastConfig = function() {
+		this.setToastConfig( {
+			show: false,
+			options: {},
 		} );
 	};
 
@@ -896,6 +981,8 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.onBulkDeleteClick = function() {
+		this.clearLastRemovedItems();
+
 		return new Promise( ( resolve ) => {
 			const selectedItems = this.getBulkSelectionItems();
 
@@ -904,7 +991,9 @@ const TemplateLibraryManager = function() {
 			}
 
 			const dialog = this.getBulkDeleteDialog();
+
 			const source = this.getFilter( 'source' );
+
 			const templateIds = Array.from( selectedItems );
 
 			dialog.onConfirm = () => {
@@ -922,9 +1011,13 @@ const TemplateLibraryManager = function() {
 							return selectedItems.has( templateModel.get( 'template_id' ) );
 						} );
 
+						if ( 'cloud' === source ) {
+							self.addLastRemovedItems( templateIds );
+						}
+
 						templatesCollection.remove( modelsToRemove );
 
-						self.layout.updateViewCollection( templatesCollection.models );
+						self.layout.updateViewCollection( self.filterTemplates() );
 
 						self.clearBulkSelectionItems();
 
@@ -933,8 +1026,7 @@ const TemplateLibraryManager = function() {
 								name: 'undo_bulk_delete',
 								text: __( 'Undo', 'elementor' ),
 								callback: () => {
-									templatesCollection.add( modelsToRemove );
-									$e.routes.refreshContainer( 'library' );
+									this.onUndoDelete();
 								},
 							},
 						] : null;
@@ -963,6 +1055,47 @@ const TemplateLibraryManager = function() {
 			};
 
 			dialog.show();
+		} );
+	};
+
+	this.onUndoDelete = function() {
+		return new Promise( ( resolve ) => {
+			isLoading = true;
+
+			if ( ! lastDeletedItems.size ) {
+				return resolve();
+			}
+
+			const source = this.getFilter( 'source' );
+
+			const templateIds = Array.from( lastDeletedItems );
+
+			const ajaxOptions = {
+				data: {
+					source,
+					template_ids: templateIds,
+				},
+				success: () => {
+					isLoading = false;
+
+					$e.routes.refreshContainer( 'library' );
+
+					this.clearLastRemovedItems();
+
+					resolve();
+				},
+				error: ( error ) => {
+					isLoading = false;
+
+					this.clearLastRemovedItems();
+
+					this.showErrorDialog( error );
+
+					resolve();
+				},
+			};
+
+			elementorCommon.ajax.addRequest( 'bulk_undo_delete_items', ajaxOptions );
 		} );
 	};
 };

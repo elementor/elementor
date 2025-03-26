@@ -421,6 +421,14 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @param int[] $template_ids
+	 * @return bool|\WP_Error
+	 */
+	public function bulk_undo_delete_items( array $template_ids ) {
+		return new \WP_Error( 'template_error', 'Undo delete action is not supported for this source' );
+	}
+
+	/**
 	 * Send file headers.
 	 *
 	 * Set the file header when export template data to a file.
