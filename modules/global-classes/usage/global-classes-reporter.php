@@ -17,7 +17,7 @@ class Global_Classes_Reporter extends Base_Reporter {
 
 	public function get_fields() {
 		return [
-			'classes' => '',
+			'global_classes' => '',
 		];
 	}
 

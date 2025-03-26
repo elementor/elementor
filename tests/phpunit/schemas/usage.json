@@ -652,6 +652,7 @@
 				"library-details",
 				"elements"
 			],
+
 			"properties": {
 				"posts": {
 					"$id": "#/usages/posts",
@@ -1294,6 +1295,37 @@
 					"type": "array",
 					"items": {
 						"type": "string"
+					},
+					"additionalProperties": false
+				},
+				"global_classes": {
+					"$id": "#/usages/global_classes",
+					"title": "Elementor Global Classes usage",
+					"type": "object",
+					"properties": {
+						"count": {
+							"$id": "#/usages/global_classes/count",
+							"title": "Global Classes count",
+							"type": "integer"
+						},
+						"applied_classes": {
+							"$id": "#/usages/global_classes/applied_classes",
+							"title": "Applied Global Classes",
+							"type": "integer"
+						},
+						"applied_classes_per_element_types": {
+							"$id": "#/usages/global_classes/applied_classes_per_element_types",
+							"title": "Applied Global Classes per Element Types",
+							"type": "object",
+							"patternProperties": {
+								"([^\\s]+)": {
+									"$id": "#/usages/global_classes/applied_classes_per_element_types/$element_type",
+									"title": "Applied Global Classes per Element Type",
+									"type": "integer"
+								}
+							},
+							"additionalProperties": false
+						}
 					},
 					"additionalProperties": false
 				}
