@@ -47,9 +47,9 @@ describe( 'Regenerate local style IDs', () => {
 			},
 		};
 
-		const { DuplicateElementHook } = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/regenerate-local-style-ids/duplicate-element' ) );
+		const { DuplicateElement } = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/regenerate-local-style-ids/duplicate-element' ) );
 
-		duplicateHook = new DuplicateElementHook();
+		duplicateHook = new DuplicateElement();
 	} );
 
 	afterAll( async () => {
