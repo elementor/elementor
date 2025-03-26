@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Applied_Global_Classes_Usage {
+	const META_KEY_ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
+
 	private $total_count = 0;
 	private $count_per_type = [];
 
@@ -47,17 +49,10 @@ class Applied_Global_Classes_Usage {
 		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $global_class_ids ) {
 			$element_type = $this->get_element_type( $element_data );
 
-			$widget = Plugin::$instance->widgets_manager->get_widget_types( $element_type );
-			$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
+			$element_instance = $this->get_element_instance( $element_type );
 
-			$element_instance = $widget ?? $element;
-
-			if ( ! $element_instance ) {
-				return;
-			}
-
-			if ( ! $element_instance instanceof Atomic_Element_Base &&
-				! $element_instance instanceof Atomic_Widget_Base ) {
+			/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
+			if ( ! $this->is_atomic_element( $element_instance ) ) {
 				return;
 			}
 
@@ -67,20 +62,20 @@ class Applied_Global_Classes_Usage {
 				return;
 			}
 
-			$prev_count = $this->count_per_type[ $element_type ] ?? 0;
-
 			$this->total_count += $classes_count;
-			$this->count_per_type[ $element_type ] = $prev_count + $classes_count;
+
+			$this->count_per_type[ $element_type ] ??= 0;
+			$this->count_per_type[ $element_type ] += $classes_count;
 		});
 	}
 
 	private function get_classes_count_for_element( $atomic_props_schema, $atomic_element_data, $global_class_ids ) {
 		return Collection::make( $atomic_props_schema )->reduce( function( $carry, $prop, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
-			if ( 'plain' === $prop::KIND && 'classes' === $prop->get_key() ) {
-				if ( isset( $atomic_element_data['settings'][ $prop_name ] ) ) {
-					$carry += count( array_intersect( $atomic_element_data['settings'][ $prop_name ]['value'], $global_class_ids ) );
-				}
+			if ( ! $this->is_classes_prop( $prop ) ) {
+				return $carry;
 			}
+
+			$carry += $this->get_global_classes_count( $atomic_element_data, $global_class_ids, $prop_name );
 
 			return $carry;
 		}, 0 );
@@ -90,12 +85,40 @@ class Applied_Global_Classes_Usage {
 		return 'widget' === $element['elType'] ? $element['widgetType'] : $element['elType'];
 	}
 
+	private function get_element_instance( $element_type ) {
+		$widget = Plugin::$instance->widgets_manager->get_widget_types( $element_type );
+		$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
+
+		return $widget ?? $element;
+	}
+
+	private function is_atomic_element( $element_instance ) {
+		if ( ! $element_instance ) {
+			return false;
+		}
+
+		return $element_instance instanceof Atomic_Element_Base ||
+			$element_instance instanceof Atomic_Widget_Base;
+	}
+
+	private function is_classes_prop( $prop ) {
+		return 'plain' === $prop::KIND && 'classes' === $prop->get_key();
+	}
+
+	private function get_global_classes_count( $element_data, $global_class_ids, $classes_prop ) {
+		if ( ! isset( $element_data['settings'][ $classes_prop ] ) ) {
+			return 0;
+		}
+
+		return count( array_intersect( $element_data['settings'][ $classes_prop ]['value'], $global_class_ids ) );
+	}
+
 	private function get_elementor_posts() {
 		$args = wp_parse_args( [
 			'post_type' => 'any',
 			'post_status' => [ 'publish' ],
 			'posts_per_page' => '-1',
-			'meta_key' => '_elementor_edit_mode',
+			'meta_key' => self::META_KEY_ELEMENTOR_EDIT_MODE,
 			'meta_value' => 'builder',
 		] );
 
