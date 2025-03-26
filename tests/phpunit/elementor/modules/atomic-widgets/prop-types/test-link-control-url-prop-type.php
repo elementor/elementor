@@ -35,7 +35,7 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 		return [
 			[ "#" ],
 			[ "#some-id" ],
-			[ "url" => "google.com" ],
+			[ "google.com" ],
 			[ "google" ],
 			[ "google.com/about-us/#section1" ],
 			[ "http://example.com" ],
