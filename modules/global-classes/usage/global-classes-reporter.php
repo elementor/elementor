@@ -29,9 +29,7 @@ class Global_Classes_Reporter extends Base_Reporter {
 		foreach ( $data as $value ) {
 			$text_value = is_array( $value['value'] )
 				? Collection::make( $value['value'] )
-					->map( function ( $value, $key ) {
-						return $key . ': ' . $value;
-					} )
+					->map( fn ( $value, $key ) => $key . ': ' . $value )
 					->implode( PHP_EOL )
 				: $value['value'];
 
@@ -51,9 +49,7 @@ class Global_Classes_Reporter extends Base_Reporter {
 		foreach ( $data as $value ) {
 			$text_value = is_array( $value['value'] )
 				? Collection::make( $value['value'] )
-					->map( function ( $value, $key ) {
-						return $key . ': ' . $value;
-					} )
+					->map( fn ( $value, $key ) => $key . ': ' . $value )
 					->implode( PHP_EOL )
 				: $value['value'];
 
