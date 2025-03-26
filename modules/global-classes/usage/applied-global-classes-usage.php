@@ -47,6 +47,10 @@ class Applied_Global_Classes_Usage {
 		Plugin::$instance->db->iterate_data( $elements_data, function( $element ) use ( $global_class_ids ) {
 			$classes_count = $this->get_element_classes_count( $element );
 
+			if ( 0 === $classes_count ) {
+				return;
+			}
+
 			$element_type = $this->get_element_type( $element );
 			$element_types_count = $this->element_types[ $element_type ] ?? 0;
 
