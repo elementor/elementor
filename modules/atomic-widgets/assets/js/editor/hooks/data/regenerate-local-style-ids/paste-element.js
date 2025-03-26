@@ -1,12 +1,12 @@
 import { regenerateLocalStyleIds } from '../../../utils/regenerate-local-style-ids';
 
-export class CreateElementHook extends $e.modules.hookData.After {
+export class PasteElement extends $e.modules.hookData.After {
 	getCommand() {
-		return 'document/elements/create';
+		return 'document/elements/paste';
 	}
 
 	getId() {
-		return 'regenerate-local-style-ids--document/elements/duplicate';
+		return 'regenerate-local-style-ids--document/elements/paste';
 	}
 
 	apply( args, result ) {
@@ -15,4 +15,3 @@ export class CreateElementHook extends $e.modules.hookData.After {
 		containers.forEach( regenerateLocalStyleIds );
 	}
 }
-export default CreateElementHook;
