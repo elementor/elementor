@@ -16,8 +16,23 @@ class Link_Control_Url_Prop_Type extends Plain_Prop_Type {
 	public static function validate_url( $value ): bool {
 		$url = trim( $value );
 
-		// Single regex to handle full URLs, domains, IPs, paths, and fragments
-		if ( preg_match( '/^(https?:\/\/[a-zA-Z0-9\-\.]+(\.[a-zA-Z]{2,})?|#([\w\-]*)?|([a-zA-Z0-9-]+(\.[a-zA-Z]{2,})?|(\d{1,3}\.){3}\d{1,3}|[a-fA-F0-9:]+)?(\/[\w\-\/]*)?(#[\w\-]*)?)$/', $url ) ) {
+		// Allow full URLs with scheme (http, https)
+		if ( filter_var( $url, FILTER_VALIDATE_URL ) !== false ) {
+			return $url;
+		}
+
+		// Allow fragments (e.g., "#", "#my-div")
+		if ( preg_match( '/^#([\w\-]*)?$/', $url ) ) {
+			return $url;
+		}
+
+		// Allow domain names without scheme (e.g., google.com, google)
+		if ( preg_match( '/^([a-zA-Z0-9-]+)(\.[a-zA-Z]{2,})?(\/[\w\-\/]*)?(#[\w\-]*)?$/', $url ) ) {
+			return $url;
+		}
+
+		// Allow valid IP addresses (IPv4 & IPv6)
+		if ( filter_var( $url, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6 ) ) {
 			return $url;
 		}
 
