@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Size_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		$size = (int) $value['size'];
+		$size = (float) $value['size'];
 		$unit = $value['unit'];
 
 		return $size . $unit;
