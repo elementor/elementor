@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Global_Classes\Usage;
 
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
@@ -36,22 +37,36 @@ class Applied_Global_Classes_Usage {
 
 		foreach ( $elementor_posts as $post ) {
 			$document = Plugin::$instance->documents->get( $post->ID );
-			$element_data = $document->get_json_meta( '_elementor_data' );
-			$raw_data = $document->get_elements_raw_data( $element_data );
+			$elements_data = $document->get_json_meta( '_elementor_data' );
 
-			$this->process_elements_data( $raw_data, $global_class_ids );
+			$this->process_elements_data( $elements_data, $global_class_ids );
 		}
 	}
 
 	private function process_elements_data( $elements_data, $global_class_ids ) {
-		Plugin::$instance->db->iterate_data( $elements_data, function( $element ) use ( $global_class_ids ) {
-			$classes_count = $this->get_element_classes_count( $element );
+		Plugin::$instance->db->iterate_data( $elements_data, function($element_data ) use ( $global_class_ids ) {
+			$element_type = $this->get_element_type( $element_data );
+
+			$widget = Plugin::$instance->widgets_manager->get_widget_types( $element_type );
+			$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
+
+			$element_instance = $widget ?? $element;
+
+			if ( ! $element_instance ) {
+				return;
+			}
+
+			if ( ! $element_instance instanceof Atomic_Element_Base &&
+				! $element_instance instanceof Atomic_Widget_Base ) {
+				return;
+			}
+
+			$classes_count = $this->get_element_classes_count( $element_instance->get_props_schema(), $element_data, $global_class_ids );
 
 			if ( 0 === $classes_count ) {
 				return;
 			}
 
-			$element_type = $this->get_element_type( $element );
 			$element_types_count = $this->element_types[ $element_type ] ?? 0;
 
 			$this->count += $classes_count;
@@ -59,36 +74,16 @@ class Applied_Global_Classes_Usage {
 		});
 	}
 
-	private function get_element_classes_count( $element_data ) {
-		$element_type = $this->get_element_type( $element_data );
-
-		$widget = Plugin::$instance->widgets_manager->get_widget_types( $element_type );
-		$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
-
-		$element_instance = $widget ?? $element;
-
-		if ( ! $element_instance ) {
-			return 0;
-		}
-
-		if ( ! $element_instance instanceof Atomic_Element_Base &&
-			! $element_instance instanceof Atomic_Widget_Base ) {
-			return 0;
-		}
-
-		$props_schema = $element_instance->get_props_schema();
-
-		$classes = 0;
-
-		foreach ( $props_schema as $prop_name => $prop ) {
+	private function get_element_classes_count( $atomic_props_schema, $atomic_element_data, $global_class_ids ) {
+		return Collection::make( $atomic_props_schema )->reduce( function( $carry, $prop, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
 			if ( 'plain' === $prop::KIND && 'classes' === $prop->get_key() ) {
-				if ( isset( $element_data['settings'][ $prop_name ] ) ) {
-					$classes += count( $element_data['settings'][ $prop_name ]['value'] );
+				if ( isset( $atomic_element_data['settings'][ $prop_name ] ) ) {
+					$carry += count( array_intersect( $atomic_element_data['settings'][ $prop_name ]['value'], $global_class_ids ) );
 				}
 			}
-		}
 
-		return $classes;
+			return $carry;
+		}, 0 );
 	}
 
 	private function get_element_type( $element ) {

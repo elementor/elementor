@@ -63,7 +63,7 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 			'elType' => 'e-div-block',
 			'settings' => [
 				'classes' => [
-					'value' => ['g-4-123']
+					'value' => ['g-4-123', 'e-4-124']
 				]
 			],
 			'elements' => [
@@ -72,7 +72,7 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 					'elType' => 'e-div-block',
 					'settings' => [
 						'classes' => [
-							'value' => ['g-4-124']
+							'value' => ['g-4-124', 'e-4-1222']
 						]
 					],
 					'elements' => [

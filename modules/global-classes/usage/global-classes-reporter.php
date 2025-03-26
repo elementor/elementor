@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Modules\GlobalClasses\Usage;
 
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Global_Classes\Usage\Applied_Global_Classes_Usage;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\System_Info\Reporters\Base as Base_Reporter;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -27,11 +27,11 @@ class Global_Classes_Reporter extends Base_Reporter {
 		$data = $this->get_classes_usage();
 
 		foreach ( $data as $value ) {
-			$value_text = is_array( $value['value'] ) ? implode( PHP_EOL, array_map( function ( $value, $key ) {
+			$text_value = is_array( $value[ 'value' ] ) ? Collection::make( $value['value'] )->map( function ( $value, $key ) {
 				return $key . ': ' . $value;
-			}, $value['value'], array_keys( $value['value'] ) ) ) : $value['value'];
+			} )->implode(PHP_EOL ) : $value['value'];
 
-			$usage_data .= '<tr><td>' . $value['name'] . '</td><td>' . $value_text . '</td></tr>';
+			$usage_data .= '<tr><td>' . $value['name'] . '</td><td>' . $text_value . '</td></tr>';
 		}
 
 		return [
@@ -45,11 +45,11 @@ class Global_Classes_Reporter extends Base_Reporter {
 		$data = $this->get_classes_usage();
 
 		foreach ( $data as $value ) {
-			$value_text = is_array( $value['value'] ) ? implode( PHP_EOL, array_map( function ( $value, $key ) {
+			$text_value = is_array( $value[ 'value' ] ) ? Collection::make( $value['value'] )->map( function ( $value, $key ) {
 				return $key . ': ' . $value;
-			}, $value['value'], array_keys( $value['value'] ) ) ) : $value['value'];
+			} )->implode(PHP_EOL ) : $value['value'];
 
-			$usage_data .= "\t" . $value['name'] . ': ' . $value_text . PHP_EOL;
+			$usage_data .= "\t" . $value['name'] . ': ' . $text_value . PHP_EOL;
 		}
 
 		return [
