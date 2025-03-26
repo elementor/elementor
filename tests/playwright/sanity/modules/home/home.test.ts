@@ -24,8 +24,9 @@ test.describe( 'Home screen tests', () => {
 			page.waitForEvent( 'popup' ),
 		] );
 
-		await newPage.waitForURL( /wp-admin\/post\.php\?post=\d+&action=elementor/ );
+		await newPage.locator( 'body.elementor-editor-active' ).waitFor( { timeout: 60000 } );
 
 		await expect( newPage.locator( 'body' ) ).toHaveClass( /.*elementor-editor-active.*/ );
+		await expect( newPage ).toHaveURL( /wp-admin\/post\.php\?post=\d+&action=elementor/ );
 	} );
 } );
