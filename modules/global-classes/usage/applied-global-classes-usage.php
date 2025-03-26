@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Applied_Global_Classes_Usage {
-	private $count = 0;
-	private $element_types = [];
+	private $total_count = 0;
+	private $count_per_type = [];
 
 	/**
 	 * Get data about how global classes are applied across Elementor elements.
@@ -27,8 +27,8 @@ class Applied_Global_Classes_Usage {
 		$this->process_posts_data( $elementor_posts );
 
 		return [
-			'count' => $this->count,
-			'element_types' => $this->element_types,
+			'total_count' => $this->total_count,
+			'count_per_type' => $this->count_per_type,
 		];
 	}
 
@@ -44,7 +44,7 @@ class Applied_Global_Classes_Usage {
 	}
 
 	private function process_elements_data( $elements_data, $global_class_ids ) {
-		Plugin::$instance->db->iterate_data( $elements_data, function($element_data ) use ( $global_class_ids ) {
+		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $global_class_ids ) {
 			$element_type = $this->get_element_type( $element_data );
 
 			$widget = Plugin::$instance->widgets_manager->get_widget_types( $element_type );
@@ -61,20 +61,20 @@ class Applied_Global_Classes_Usage {
 				return;
 			}
 
-			$classes_count = $this->get_element_classes_count( $element_instance->get_props_schema(), $element_data, $global_class_ids );
+			$classes_count = $this->get_classes_count_for_element( $element_instance->get_props_schema(), $element_data, $global_class_ids );
 
 			if ( 0 === $classes_count ) {
 				return;
 			}
 
-			$element_types_count = $this->element_types[ $element_type ] ?? 0;
+			$prev_count = $this->count_per_type[ $element_type ] ?? 0;
 
-			$this->count += $classes_count;
-			$this->element_types[ $element_type ] = $element_types_count + $classes_count;
+			$this->total_count += $classes_count;
+			$this->count_per_type[ $element_type ] = $prev_count + $classes_count;
 		});
 	}
 
-	private function get_element_classes_count( $atomic_props_schema, $atomic_element_data, $global_class_ids ) {
+	private function get_classes_count_for_element( $atomic_props_schema, $atomic_element_data, $global_class_ids ) {
 		return Collection::make( $atomic_props_schema )->reduce( function( $carry, $prop, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
 			if ( 'plain' === $prop::KIND && 'classes' === $prop->get_key() ) {
 				if ( isset( $atomic_element_data['settings'][ $prop_name ] ) ) {
