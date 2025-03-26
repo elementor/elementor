@@ -31,8 +31,7 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 		$this->assertFalse( $result );
 	}
 
-	public function valid_urls_provider()
-	{
+	public function valid_urls_provider() {
 		return [
 			[ "#" ],
 			[ "#some-id" ],
@@ -46,8 +45,7 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 		];
 	}
 
-	public function invalid_urls_provider()
-	{
+	public function invalid_urls_provider() {
 		return [
 			[ "example.com/?id=1<script>alert(1)</script>" ], // XSS injection
 			[ "' OR 1=1 --" ], // SQL injection
