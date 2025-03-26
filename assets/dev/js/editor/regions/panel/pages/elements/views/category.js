@@ -6,13 +6,20 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	className: 'elementor-panel-category',
 
+	chipSelectors: {
+		wrapperElement: '.elementor-panel-category-title',
+		reactAnchor: '.e-promotion-react-wrapper',
+	},
+
 	ui: {
 		title: '.elementor-panel-category-title',
 		items: '.elementor-panel-category-items',
+		chip: '.elementor-panel-heading-category-chip',
 	},
 
 	events: {
 		'click @ui.title': 'onTitleClick',
+		'click @ui.chip': 'onChipClick',
 	},
 
 	id() {
@@ -90,6 +97,11 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		} else {
 			$items[ visibilityFn ]( 0, updateScrollbar );
 		}
+	},
+
+	onChipClick( event ) {
+		event.stopPropagation();
+		$e.run( 'promotions/alphachip', { event, selectors: this.chipSelectors } );
 	},
 } );
 
