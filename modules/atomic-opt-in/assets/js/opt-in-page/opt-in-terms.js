@@ -114,7 +114,7 @@ export const Terms = ( { onClose, onSubmit, isEnrolled, ...props } ) => {
 
 			<DialogActions>
 				<Button variant="text" color="secondary" onClick={ onClose }>
-					{ i18n.cancelButton }
+					{ i18n[ currentState ].cancelButton }
 				</Button>
 				<Button
 					disabled={ ! checked }
