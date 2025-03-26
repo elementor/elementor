@@ -1,5 +1,4 @@
 import {
-	Box,
 	DirectionProvider,
 	Infotip,
 	LocalizationProvider,
