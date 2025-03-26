@@ -2,7 +2,9 @@ import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 
 const NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
+
 export default class extends Marionette.CompositeView {
+
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
 	}
