@@ -21,7 +21,7 @@ class Global_Classes_Reporter extends Base_Reporter {
 		];
 	}
 
-	public function get_classes(): array {
+	public function get_global_classes(): array {
 		$usage_data = '';
 
 		$data = $this->get_classes_usage();
@@ -43,7 +43,7 @@ class Global_Classes_Reporter extends Base_Reporter {
 		];
 	}
 
-	public function get_raw_classes(): array {
+	public function get_raw_global_classes(): array {
 		$usage_data = PHP_EOL;
 
 		$data = $this->get_classes_usage();

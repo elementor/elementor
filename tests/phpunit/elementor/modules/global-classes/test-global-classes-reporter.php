@@ -125,7 +125,7 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 		$reporter = new Global_Classes_Reporter();
 
 		// Act.
-		$raw_classes = $reporter->get_raw_classes();
+		$raw_classes = $reporter->get_raw_global_classes();
 
 		// Assert.
 		$this->assertMatchesSnapshot( $raw_classes['value'] );
@@ -136,7 +136,7 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 		$reporter = new Global_Classes_Reporter();
 
 		// Act.
-		$classes = $reporter->get_classes();
+		$classes = $reporter->get_global_classes();
 
 		// Assert.
 		$this->assertMatchesSnapshot( $classes['value'] );
