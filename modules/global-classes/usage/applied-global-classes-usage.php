@@ -39,7 +39,7 @@ class Applied_Global_Classes_Usage {
 			$element_data = $document->get_json_meta( '_elementor_data' );
 			$raw_data = $document->get_elements_raw_data( $element_data );
 
-			self::process_elements_data( $raw_data, $global_class_ids );
+			$this->process_elements_data( $raw_data, $global_class_ids );
 		}
 	}
 
@@ -61,7 +61,7 @@ class Applied_Global_Classes_Usage {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $element_type );
 		$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
 
-		$element_instance = $widget ?: $element;
+		$element_instance = $widget ?? $element;
 
 		if ( ! $element_instance ) {
 			return 0;
