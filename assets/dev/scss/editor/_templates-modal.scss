@@ -18,6 +18,13 @@ $remote-templates-items-space: 30px;
 	.dialog-message {
 		overflow-y: scroll;
 	}
+
+	.e-back-to-editor {
+		color: var(--e-a-color-txt);
+		text-decoration: underline;
+		font-size: 17px;
+		cursor: pointer;
+	}
 }
 
 #elementor-template-library-header-menu {
