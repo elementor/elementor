@@ -1,6 +1,6 @@
 import { regenerateLocalStyleIds } from '../../../utils/regenerate-local-style-ids';
 
-export class DuplicateElementHook extends $e.modules.hookData.After {
+export class DuplicateElement extends $e.modules.hookData.After {
 	getCommand() {
 		return 'document/elements/duplicate';
 	}

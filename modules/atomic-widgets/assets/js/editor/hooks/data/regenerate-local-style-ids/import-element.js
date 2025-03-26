@@ -1,6 +1,6 @@
 import { regenerateLocalStyleIds } from '../../../utils/regenerate-local-style-ids';
 
-export class ImportElementHook extends $e.modules.hookData.After {
+export class ImportElement extends $e.modules.hookData.After {
 	getCommand() {
 		return 'document/elements/import';
 	}
