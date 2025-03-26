@@ -96,7 +96,6 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	onChipClick( event ) {
 		event.stopPropagation();
-		// $e.run( 'promotions/alphachip', { event, selectors: { wrapperElement: '.elementor-panel-category-title', reactAnchor: '.e-promotion-react-wrapper' } } );
 
 		document.dispatchEvent( new CustomEvent( 'alphachip:open', {
 			detail: { target: this.$el },
