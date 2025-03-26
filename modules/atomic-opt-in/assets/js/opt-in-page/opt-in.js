@@ -16,6 +16,7 @@ import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './opt-in-img-
 import { Message } from './opt-in-message';
 import { triggerOptIn, triggerOptOut } from './opt-in-api';
 import DOMPurify from 'dompurify';
+import { Terms } from './opt-in-terms';
 
 const decodeHtmlUrl = ( html ) => {
 	const textarea = document.createElement( 'textarea' );
@@ -75,6 +76,7 @@ const optInImages = {
 };
 
 export const OptIn = ( { state } ) => {
+	const [ showTerms, setShowTerms ] = useState( false );
 	const [ successMessage, setSuccessMessage ] = useState( '' );
 	const [ notifyMessage, setNotifyMessage ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
@@ -119,6 +121,10 @@ export const OptIn = ( { state } ) => {
 			} );
 	};
 
+	const handlePopoverClose = () => {
+		setShowTerms( false );
+	};
+
 	const isEnrolled = !! state?.features?.editor_v4;
 
 	return (
@@ -157,7 +163,9 @@ export const OptIn = ( { state } ) => {
 				<Stack direction="column" width="clamp(240px, max(340px, 75%), 340px)" maxWidth="100%" gap={ 2 }>
 					{ ( ! isEnrolled ) ? (
 						<Button
-							onClick={ maybeOptIn }
+							onClick={ () => {
+								setShowTerms( true );
+							} }
 							size="large"
 							color="primary"
 							variant="contained"
@@ -177,7 +185,9 @@ export const OptIn = ( { state } ) => {
 						</Button>
 					) }
 					<Button
-						onClick={ maybeOptOut }
+						onClick={ () => {
+							setShowTerms( true );
+						} }
 						size="large"
 						color="secondary"
 						variant="outlined"
@@ -235,6 +245,10 @@ export const OptIn = ( { state } ) => {
 					} } />
 				) }
 			</Stack>
+
+			{ showTerms && (
+				<Terms onClose={ handlePopoverClose } onSubmit={ isEnrolled ? maybeOptOut : maybeOptIn } isEnrolled={ isEnrolled } />
+			) }
 
 			{ successMessage && (
 				<Message severity="success" onClose={ () => setSuccessMessage( '' ) }>{ successMessage }</Message>
