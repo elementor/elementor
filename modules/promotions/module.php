@@ -118,9 +118,11 @@ class Module extends Base_Module {
 			return;
 		}
 
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
 		wp_enqueue_script(
 			'editor-v4-opt-in-alphachip',
-			ELEMENTOR_ASSETS_URL . 'js/editor-v4-opt-in-alphachip.js',
+			ELEMENTOR_ASSETS_URL . 'js/editor-v4-opt-in-alphachip' . $min_suffix . '.js',
 			[
 				'react',
 				'react-dom',
