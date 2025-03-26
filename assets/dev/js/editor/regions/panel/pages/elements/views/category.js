@@ -6,11 +6,6 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	className: 'elementor-panel-category',
 
-	chipSelectors: {
-		wrapperElement: '.elementor-panel-category-title',
-		reactAnchor: '.e-promotion-react-wrapper',
-	},
-
 	ui: {
 		title: '.elementor-panel-category-title',
 		items: '.elementor-panel-category-items',
@@ -101,7 +96,11 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	onChipClick( event ) {
 		event.stopPropagation();
-		$e.run( 'promotions/alphachip', { event, selectors: this.chipSelectors } );
+		// $e.run( 'promotions/alphachip', { event, selectors: { wrapperElement: '.elementor-panel-category-title', reactAnchor: '.e-promotion-react-wrapper' } } );
+
+		document.dispatchEvent( new CustomEvent( 'alphachip:open', {
+			detail: { target: this.$el },
+		} ) );
 	},
 } );
 
