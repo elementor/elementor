@@ -22,7 +22,9 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
-	/** @dataProvider invalid_urls_provider */
+	/**
+	 * @dataProvider invalid_urls_provider
+	 */
 	public function test_validate__fail_when_value_is_not_a_allowed_url( $url ) {
 		// Act.
 		$result = Link_Control_Url_Prop_Type::validate_url( $url );
@@ -46,10 +48,14 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 	}
 
 	public function invalid_urls_provider() {
+		$xss_injected_url = "example.com/?id=1<script>alert(1)</script>";
+		$sql_injected_url = "' OR 1=1 --";
+		$js_injected_url = "<script>alert('hacked')</script>";
+
 		return [
-			[ "example.com/?id=1<script>alert(1)</script>" ], // XSS injection
-			[ "' OR 1=1 --" ], // SQL injection
-			[ "<script>alert('hacked')</script>" ], // JavaScript injection
+			[ $xss_injected_url ],
+			[ $sql_injected_url ],
+			[ $js_injected_url ],
 			[ "http://" ],
 			[ "http:///example.com" ],
 		];
