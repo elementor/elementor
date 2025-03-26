@@ -8,6 +8,16 @@ const TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 		message: '.elementor-template-library-blank-message',
 		icon: '.elementor-template-library-blank-icon',
 		button: '.elementor-template-library-cloud-empty__button',
+		backToEditor: '.e-back-to-editor',
+	},
+
+	events: {
+		'click @ui.backToEditor': 'closeLibrary',
+	},
+
+	closeLibrary( event ) {
+		event.preventDefault();
+		$e.run( 'library/close' );
 	},
 
 	modesStrings() {
@@ -38,6 +48,12 @@ const TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 				icon: this.getCloudIcon(),
 				button: '<a class="elementor-button e-primary" href="" target="_blank">call to action</a>',
 			},
+			cloudFolderEmpty: {
+				title: __( 'Nothing to see here… yet', 'elementor' ),
+				message: __( 'Once you add or move templates into this folder, you’ll have quick access to all', 'elementor' ) + '<br>' + __( 'them—right where you need them.', 'elementor' ),
+				icon: this.getEmptyFolderIcon(),
+				button: `<a class="e-back-to-editor">${ __( 'Back to editor', 'elementor' ) }</a>`,
+			},
 		};
 	},
 
@@ -51,6 +67,13 @@ const TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 		</svg>`;
 	},
 
+	getEmptyFolderIcon() {
+		return `<svg width="105" height="105" viewBox="0 0 105 105" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M60.8252 13.5791V30.9124C60.8252 32.0617 61.2817 33.1639 62.0944 33.9766C62.9071 34.7892 64.0093 35.2458 65.1585 35.2458H82.4919M60.8252 13.5791H30.4919C28.1933 13.5791 25.9889 14.4922 24.3636 16.1175C22.7383 17.7428 21.8252 19.9472 21.8252 22.2458V82.9124C21.8252 85.211 22.7383 87.4154 24.3636 89.0407C25.9889 90.666 28.1933 91.5791 30.4919 91.5791H73.8252C76.1237 91.5791 78.3281 90.666 79.9535 89.0407C81.5788 87.4154 82.4919 85.211 82.4919 82.9124V35.2458M60.8252 13.5791L82.4919 35.2458" stroke="#525962" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+			<path d="M52.1581 48.3633V68.039M42.3203 58.2011H61.996" stroke="#525962" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>`;
+	},
+
 	getCurrentMode() {
 		if ( elementor.templates.getFilter( 'text' ) ) {
 			return 'noResults';
@@ -61,7 +84,9 @@ const TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 		}
 
 		if ( 'cloud' === elementor.templates.getFilter( 'source' ) ) {
-			return 'cloudEmpty';
+			return null !== elementor.templates.getFilter( 'parent' )
+				? 'cloudFolderEmpty'
+				: 'cloudEmpty';
 		}
 
 		return 'empty';
