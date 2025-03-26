@@ -2,21 +2,21 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Control_Url_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Url_Prop_Type extends Elementor_Test_Base {
+class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 
 	/**
 	 *	@dataProvider valid_urls_provider
 	 */
 	public function test_validate( $url ) {
 		// Act.
-		$result = Url_Prop_Type::validate_url( $url );
+		$result = Link_Control_Url_Prop_Type::validate_url( $url );
 
 		// Assert.
 		$this->assertTrue( $result );
@@ -25,7 +25,7 @@ class Test_Url_Prop_Type extends Elementor_Test_Base {
 	/** @dataProvider invalid_urls_provider */
 	public function test_validate__fail_when_value_is_not_a_allowed_url( $url ) {
 		// Act.
-		$result = Url_Prop_Type::validate_url( $url );
+		$result = Link_Control_Url_Prop_Type::validate_url( $url );
 
 		// Assert.
 		$this->assertFalse( $result );
@@ -34,6 +34,8 @@ class Test_Url_Prop_Type extends Elementor_Test_Base {
 	public function valid_urls_provider()
 	{
 		return [
+			[ "#" ],
+			[ "#some-id" ],
 			[ "url" => "google.com" ],
 			[ "google" ],
 			[ "google.com/about-us/#section1" ],
@@ -52,7 +54,6 @@ class Test_Url_Prop_Type extends Elementor_Test_Base {
 			[ "<script>alert('hacked')</script>" ], // JavaScript injection
 			[ "http://" ],
 			[ "http:///example.com" ],
-			[ "256.256.256.256" ],
 		];
 	}
 }
