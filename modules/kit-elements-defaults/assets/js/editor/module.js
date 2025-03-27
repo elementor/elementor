@@ -30,6 +30,11 @@ export default class Module extends elementorModules.editor.utils.Module {
 						return group;
 					}
 
+					const widgetType = view.options?.model.get( 'widgetType' );
+					if ( widgetType && widgetType.startsWith( 'e-' ) ) {
+						return group;
+					}
+
 					group.actions = [
 						...group.actions,
 						{
