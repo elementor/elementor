@@ -1314,7 +1314,7 @@ class Module extends BaseModule {
 		$uploads_manager = new \Elementor\Core\Files\Uploads_Manager();
 		if ( $uploads_manager::are_unfiltered_uploads_enabled() ) {
 			Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
-
+			add_filter( 'wp_handle_sideload_prefilter', [ Plugin::$instance->uploads_manager, 'handle_elementor_upload' ] );
 			add_filter( 'image_sideload_extensions', function( $extensions ) {
 				$extensions[] = 'svg';
 				return $extensions;
