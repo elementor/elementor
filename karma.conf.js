@@ -61,7 +61,7 @@ module.exports = function( config ) {
 			'assets/dev/js/editor/utils/jquery-serialize-object.js',
 			'assets/dev/js/editor/utils/jquery-html5-dnd.js',
 			'assets/lib/jquery-hover-intent/jquery-hover-intent.min.js',
-			'tests/qunit/setup/elementor-v2-mock.js',
+			// 'tests/qunit/setup/elementor-v2-mock.js',
 
 			// Editor.
 			'assets/js/editor-modules.min.js',
