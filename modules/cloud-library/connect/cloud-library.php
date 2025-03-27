@@ -316,6 +316,5 @@ class Cloud_Library extends Library {
 		] );
 	}
 
-
 	protected function init() {}
 }
