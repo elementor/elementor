@@ -307,5 +307,15 @@ class Cloud_Library extends Library {
 		return true;
 	}
 
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function get_quota() {
+		return $this->http_request( 'GET', 'quota', [], [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+	}
+
+
 	protected function init() {}
 }
