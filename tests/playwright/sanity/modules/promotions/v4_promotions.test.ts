@@ -15,14 +15,6 @@ test.describe( 'V4 modal promotion test @promotions', () => {
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
-	} );
-
 	test( 'V4 chip & modal visible', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			promotionsHelper = new PromotionsHelper( page, testInfo );
