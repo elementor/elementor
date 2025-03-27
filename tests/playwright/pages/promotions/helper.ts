@@ -32,13 +32,4 @@ export default class promotionsHelper extends Content {
 		await modalContainer.getByRole( 'button', { name: 'close' } ).click();
 		await expect.soft( modalContainer ).toBeHidden();
 	}
-
-	async v4PromotionModalVisibilityTest(): Promise<void> {
-		await this.page.locator( `.elementor-panel-heading-category-chip` ).click( { force: true } );
-		const modalContainer = this.page.locator( EditorSelectors.panels.promotionCard );
-		await expect.soft( modalContainer ).toBeVisible();
-		await expect( modalContainer.getByText( 'Elementor V4' ) ).toBeVisible();
-		await modalContainer.getByRole( 'button', { name: 'close' } ).click();
-		await expect.soft( modalContainer ).toBeHidden();
-	}
 }
