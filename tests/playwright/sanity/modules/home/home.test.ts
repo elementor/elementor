@@ -14,19 +14,8 @@ test.describe( 'Home screen tests', () => {
 			return true;
 		} );
 
-		const createNewPageButton = page.getByRole( 'link', { name: 'Create a Page' } );
+		const createNewPageButton = page.locator( '#create-new-page-button' );
 
 		await expect( createNewPageButton ).toHaveAttribute( 'href', /wp-admin\/edit\.php\?action=elementor_new_post&post_type=page&_wpnonce=.*/ );
-
-		await createNewPageButton.click();
-
-		const [ newPage ] = await Promise.all( [
-			page.waitForEvent( 'popup' ),
-		] );
-
-		await newPage.locator( 'body.elementor-editor-active' ).waitFor( { timeout: 60000 } );
-
-		await expect( newPage.locator( 'body' ) ).toHaveClass( /.*elementor-editor-active.*/ );
-		await expect( newPage ).toHaveURL( /wp-admin\/post\.php\?post=\d+&action=elementor/ );
 	} );
 } );

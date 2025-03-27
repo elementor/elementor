@@ -30,7 +30,7 @@ const TopSection = ( { ...props } ) => {
 					<Typography variant="body2" color="secondary">{ description }</Typography>
 				</Box>
 				<Box sx={ { display: 'flex', gap: 1 } }>
-					<Button variant="contained" size="small" href={ buttonCtaUrl } target="_blank">{ ctaButtonTitle }</Button>
+					<Button id="create-new-page-button" variant="contained" size="small" href={ buttonCtaUrl } target="_blank">{ ctaButtonTitle }</Button>
 					<Button variant="outlined" color="secondary" size="small" startIcon={ <YoutubeIcon /> } href={ buttonWatchURL } target="_blank">{ buttonWatchTitle }</Button>
 				</Box>
 			</Stack>
