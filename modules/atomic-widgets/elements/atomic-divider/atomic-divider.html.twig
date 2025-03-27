@@ -1,0 +1,4 @@
+<hr
+	{% if settings['css-id'] is not empty %} id="{{ settings['css-id'] }}"{% endif %}
+	class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}">
+</hr>

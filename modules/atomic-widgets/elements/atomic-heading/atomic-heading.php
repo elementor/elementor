@@ -14,7 +14,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\WpRest\Classes\WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,7 +39,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
@@ -52,11 +51,15 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
+
+			'css-id' => String_Prop_Type::make(),
 		];
+
+		return array_merge( $props, self::add_common_props() );
 	}
 
 	protected function define_atomic_controls(): array {
-		return [
+		$atomic_controls = [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
@@ -90,10 +93,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 								'value' => 'h6',
 								'label' => 'H6',
 							],
-						]),
+						] ),
 					Link_Control::bind_to( 'link' ),
-				] ),
+				]),
 		];
+
+		return array_merge( $atomic_controls, self::add_common_controls() );
 	}
 
 	protected function define_base_styles(): array {
