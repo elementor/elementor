@@ -30,7 +30,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 						return group;
 					}
 
-					const widgetType = view.options?.model.get( 'widgetType' );
+					const isAtomicWidget = view?.options?.model?.get( 'widgetType' )?.startsWith( 'e-' );
 					if ( widgetType && widgetType.startsWith( 'e-' ) ) {
 						return group;
 					}
