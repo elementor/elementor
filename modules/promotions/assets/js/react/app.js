@@ -26,7 +26,7 @@ const App = ( props ) => {
 								},
 							],
 						} }
-					/>
+					><span /></Infotip>
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>
