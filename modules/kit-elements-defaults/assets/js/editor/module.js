@@ -31,7 +31,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 					}
 
 					const isAtomicWidget = view?.options?.model?.get( 'widgetType' )?.startsWith( 'e-' );
-					if ( widgetType && widgetType.startsWith( 'e-' ) ) {
+					if ( isAtomicWidget ) {
 						return group;
 					}
 
