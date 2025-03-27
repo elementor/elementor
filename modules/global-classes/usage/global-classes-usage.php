@@ -19,7 +19,7 @@ class Global_Classes_Usage {
 
 		$applied_global_classes_usage = ( new Applied_Global_Classes_Usage() )->get();
 
-		if ( $applied_global_classes_usage ) {
+		if ( ! empty( $applied_global_classes_usage ) ) {
 			$params['usages']['global_classes']['applied_classes_per_element_type'] = $applied_global_classes_usage;
 		}
 
