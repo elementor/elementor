@@ -59,6 +59,7 @@ class Module extends Base_Module {
 		} );
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 	}
 
 	private function handle_external_redirects() {
@@ -98,6 +99,8 @@ class Module extends Base_Module {
 				'react',
 				'react-dom',
 				'backbone-marionette',
+				'elementor-editor-modules',
+				'elementor-v2-ui',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -109,6 +112,27 @@ class Module extends Base_Module {
 			'e-react-promotions',
 			'elementorPromotionsData',
 			$this->get_app_js_config()
+		);
+	}
+
+	public function enqueue_editor_v4_alphachip(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_enqueue_script(
+			'editor-v4-opt-in-alphachip',
+			ELEMENTOR_ASSETS_URL . 'js/editor-v4-opt-in-alphachip' . $min_suffix . '.js',
+			[
+				'react',
+				'react-dom',
+				'elementor-common',
+				'elementor-v2-ui',
+			],
+			ELEMENTOR_VERSION,
+			true
 		);
 	}
 
