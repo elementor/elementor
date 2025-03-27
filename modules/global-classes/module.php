@@ -6,8 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\GlobalClasses\ImportExport\Import_Export;
-use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Reporter;
-use Elementor\Modules\System_Info\Module as System_Info;
+use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Usage;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,9 +33,9 @@ class Module extends BaseModule {
 
 		// TODO: When the `Atomic_Widgets` feature is not hidden, add it as a dependency
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
-			add_action( 'elementor/system_info/get_allowed_reports', fn() => $this->register_system_info_reporters() );
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
+			( new Global_Classes_Usage() )->register_hooks();
 			( new Global_Classes_REST_API() )->register_hooks();
 			( new Global_Classes_CSS() )->register_hooks();
 			( new Import_Export() )->register_hooks();
@@ -52,13 +51,6 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		];
-	}
-
-	private function register_system_info_reporters() {
-		System_Info::add_report( 'global_classes', [
-			'file_name' => __DIR__ . '/usage/global-classes-reporter.php',
-			'class_name' => Global_Classes_Reporter::class,
-		] );
 	}
 
 	private function add_packages( $packages ) {

@@ -1,35 +1,32 @@
 <?php
+
 namespace Elementor\Testing\Modules\GlobalClasses;
 
+
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Reporter;
+use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Usage;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
-use Spatie\Snapshots\MatchesSnapshots;
 
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
-
-class Test_Global_Classes_Reporter extends Elementor_Test_Base {
-	use MatchesSnapshots;
+class Test_Global_Classes_Usage extends Elementor_Test_Base {
+	private $post_id;
 
 	private $mock_global_classes = [
 		'items' => [
 			'g-4-123' => [
+				'type' => 'class',
 				'id' => 'g-4-123',
-				'label' => 'test-class-1',
+				'label' => 'pinky',
 				'variants' => [
 					[
 						'meta' => [
-							'breakpoint' => 'desktop',
+							'breakpoint' => 'mobile',
 							'state' => null,
 						],
 						'props' => [
 							'color' => [
 								'$$type' => 'color',
-								'value' => 'red',
+								'value' => 'pink',
 							],
 						],
 					],
@@ -37,7 +34,8 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 			],
 			'g-4-124' => [
 				'id' => 'g-4-124',
-				'label' => 'test-class-2',
+				'type' => 'class',
+				'label' => 'bluey',
 				'variants' => [
 					[
 						'meta' => [
@@ -48,13 +46,13 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 							'color' => [
 								'$$type' => 'color',
 								'value' => 'blue',
-							],
+							]
 						],
 					],
 				],
 			],
 		],
-		'order' => [ 'g-4-123', 'g-4-124' ],
+		'order' => ['g-4-124', 'g-4-123'],
 	];
 
 	private $mock_elementor_data = [
@@ -72,35 +70,41 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 					'elType' => 'e-div-block',
 					'settings' => [
 						'classes' => [
-							'value' => ['g-4-124', 'e-4-1222']
+							'value' => ['g-4-124', 'g-4-123', 'e-4-1222']
 						]
 					],
 					'elements' => [
 						[
 							'id' => 'ghi789',
-							'elType' => 'widget',
-							'widgetType' => 'e-heading',
+							'elType' => 'e-heading',
 							'settings' => [
 								'classes' => [
-									'value' => ['g-4-123', 'g-4-124']
+									'value' => ['g-4-123', 'e-4-1222']
 								]
-							]
+							],
+						],
+						[
+							'id' => 'jkl101',
+							'elType' => 'widget',
+							'widgetType' => 'heading',
+							'settings' => [],
 						]
-					]
-				]
-			]
-		]
+					],
+				],
+			],
+		],
 	];
 
-	private $post_id;
-
-	public function setUp(): void {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 
 		Plugin::$instance->kits_manager->create_new_kit( 'kit' );
-		( new Global_Classes_Repository() )->put( $this->mock_global_classes['items'], $this->mock_global_classes['order'] );
 
-		// Create a post with Elementor data
+		Global_Classes_Repository::make()->put(
+			$this->mock_global_classes['items'],
+			$this->mock_global_classes['order'],
+		);
+
 		$document = Plugin::$instance->documents->create( 'post', [
 			'post_title' => 'Test Post',
 			'post_status' => 'publish',
@@ -109,36 +113,35 @@ class Test_Global_Classes_Reporter extends Elementor_Test_Base {
 		$document->update_json_meta( '_elementor_data', $this->mock_elementor_data );
 
 		$this->post_id = $document->get_main_id();
+
+		remove_all_filters( 'elementor/tracker/send_tracking_data_params' );
 	}
 
-	public function tearDown(): void {
-		parent::tearDown();
-
+	public function tear_down() {
 		( new Global_Classes_Repository() )->put( [], [] );
 
-		// Remove the post with Elementor data
 		wp_delete_post( $this->post_id, true );
+
+		parent::tear_down();
 	}
 
-	public function test_get_raw_classes() {
-		// Arrange.
-		$reporter = new Global_Classes_Reporter();
+	public function test_global_classes_usage() {
+		$global_classes_usage = new Global_Classes_Usage();
+		$global_classes_usage->register_hooks();
 
-		// Act.
-		$raw_classes = $reporter->get_raw_global_classes();
+		$params = [];
 
-		// Assert.
-		$this->assertMatchesSnapshot( $raw_classes['value'] );
+		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
+
+		$this->assertEquals( 2, $params['usages']['global_classes']['total_count'] );
+		$this->assertEquals(
+			[
+				'e-div-block' => 3,
+				'e-heading' => 1,
+			],
+			$params['usages']['global_classes']['applied_classes_per_element_type'],
+		);
 	}
 
-	public function test_get_classes() {
-		// Arrange.
-		$reporter = new Global_Classes_Reporter();
 
-		// Act.
-		$classes = $reporter->get_global_classes();
-
-		// Assert.
-		$this->assertMatchesSnapshot( $classes['value'] );
-	}
 }

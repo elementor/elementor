@@ -1,5 +1,0 @@
-
-	Classes Count: 2
-	Applied Classes: 4
-	Applied Classes Per Element Type: e-heading: 2
-e-div-block: 2
