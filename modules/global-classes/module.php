@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const NAME = 'global_classes';
+	const NAME = 'e_classes';
 
 	// TODO: Add global classes package
 	const PACKAGES = [
@@ -32,7 +32,7 @@ class Module extends BaseModule {
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( self::NAME );
 		$is_atomic_widgets_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 
-		// TODO: When the `Atomic_Widgets` feature is not hidden, add it as a dependency
+		// TODO: When the `e_atomic_elements` feature is not hidden, add it as a dependency
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
