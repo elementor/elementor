@@ -1311,7 +1311,21 @@ class Module extends BaseModule {
 			throw new \Exception( 'Not Allowed to Upload images' );
 		}
 
+		$uploads_manager = new \Elementor\Core\Files\Uploads_Manager();
+		if ( $uploads_manager::are_unfiltered_uploads_enabled() ) {
+			Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+			add_filter( 'wp_handle_sideload_prefilter', [ Plugin::$instance->uploads_manager, 'handle_elementor_upload' ] );
+			add_filter( 'image_sideload_extensions', function( $extensions ) {
+				$extensions[] = 'svg';
+				return $extensions;
+			});
+		}
+
 		$attachment_id = media_sideload_image( $image_url, $parent_post_id, $image_title, 'id' );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			return new \WP_Error( 'upload_error', $attachment_id->get_error_message() );
+		}
 
 		if ( ! empty( $attachment_id['error'] ) ) {
 			return new \WP_Error( 'upload_error', $attachment_id['error'] );
