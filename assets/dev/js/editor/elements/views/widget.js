@@ -37,8 +37,11 @@ const WidgetView = BaseWidget.extend( {
 	},
 
 	getContextMenuGroups() {
-		var groups = BaseWidget.prototype.getContextMenuGroups.apply( this, arguments ),
-			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+		const groups = BaseWidget.prototype.getContextMenuGroups.apply( this, arguments );
+		const transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+		const isNotGlobalWidget = 'global' !== this.options.model.get( 'widgetType' );
+		const isSingleWidget = ! elementor.selection.isMultiple();
+		const isNotAtomicWidget = ! this.options.model.get( 'widgetType' ).startsWith( 'e-' );
 
 		groups.splice( transferGroupIndex + 1, 0, {
 			name: 'save',
@@ -46,10 +49,9 @@ const WidgetView = BaseWidget.extend( {
 				{
 					name: 'save',
 					title: __( 'Save as a global', 'elementor' ),
-					shortcut: jQuery( '<i>', { class: 'eicon-pro-icon' } ),
-					promotionURL: 'https://go.elementor.com/go-pro-global-widget-context-menu/',
-					isEnabled: () => 'global' !== this.options.model.get( 'widgetType' ) &&
-						! elementor.selection.isMultiple(),
+					shortcut: isNotAtomicWidget ? jQuery( '<i>', { class: 'eicon-pro-icon' } ) : null,
+					promotionURL: isNotAtomicWidget ? 'https://go.elementor.com/go-pro-global-widget-context-menu/' : null,
+					isEnabled: () => isNotGlobalWidget && isSingleWidget && isNotAtomicWidget,
 				},
 			],
 		} );
