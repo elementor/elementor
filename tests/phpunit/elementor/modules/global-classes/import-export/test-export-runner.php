@@ -76,7 +76,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 							'padding' => [
 								'$$type' => 'size',
 								'value' => [
-									'size' => (float) 10,
+									'size' => 10,
 									'unit' => 'px',
 								],
 							],
