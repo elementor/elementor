@@ -20,43 +20,39 @@ class Applied_Global_Classes_Usage {
 	 * @return array<string, int> Statistics about applied global classes per element type
 	 */
 	public function get() {
-		return $this->get_posts_data( $this->get_elementor_posts() );
-	}
-
-	private function get_posts_data( $elementor_posts ) {
+		$total_count_per_type = [];
+		$elementor_posts = $this->get_elementor_posts();
 		$global_class_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
-		$count_per_type = [];
 
 		foreach ( $elementor_posts as $post ) {
 			$document = Plugin::$instance->documents->get( $post->ID );
 			$elements_data = $document->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
 
-			$post_count_per_type = $this->get_elements_data( $elements_data, $global_class_ids );
+			$count_per_type = $this->get_classes_count_per_element_type( $elements_data, $global_class_ids );
 
-			$count_per_type = Collection::make( $post_count_per_type )->reduce( function( $carry, $count, $element_type ) {
+			$total_count_per_type = Collection::make( $count_per_type )->reduce( function( $carry, $count, $element_type ) {
 				$carry[ $element_type ] ??= 0;
 				$carry[ $element_type ] += $count;
 
 				return $carry;
-			}, $count_per_type );
+			}, $total_count_per_type );
 		}
 
-		return $count_per_type;
+		return $total_count_per_type;
 	}
 
-	private function get_elements_data( $elements_data, $global_class_ids ) {
+	private function get_classes_count_per_element_type( $elements_data, $global_class_ids ) {
 		$count_per_type = [];
 
 		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $global_class_ids, &$total_count, &$count_per_type ) {
 			$element_type = $this->get_element_type( $element_data );
-
 			$element_instance = $this->get_element_instance( $element_type );
 
-			/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
 			if ( ! $this->is_atomic_element( $element_instance ) ) {
 				return;
 			}
 
+			/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
 			$classes_count = $this->get_classes_count_for_element( $element_instance->get_props_schema(), $element_data, $global_class_ids );
 
 			if ( 0 !== $classes_count ) {
@@ -74,7 +70,7 @@ class Applied_Global_Classes_Usage {
 				return $carry;
 			}
 
-			$carry += $this->get_global_classes_count( $atomic_element_data, $global_class_ids, $prop_name );
+			$carry += $this->get_global_classes_count( $atomic_element_data['settings'][$prop_name]['value'] ?? [], $global_class_ids );
 
 			return $carry;
 		}, 0 );
@@ -96,20 +92,18 @@ class Applied_Global_Classes_Usage {
 			return false;
 		}
 
-		return $element_instance instanceof Atomic_Element_Base ||
-			$element_instance instanceof Atomic_Widget_Base;
+		return (
+			$element_instance instanceof Atomic_Element_Base ||
+			$element_instance instanceof Atomic_Widget_Base
+		);
 	}
 
 	private function is_classes_prop( $prop ) {
 		return 'plain' === $prop::KIND && 'classes' === $prop->get_key();
 	}
 
-	private function get_global_classes_count( $element_data, $global_class_ids, $classes_prop ) {
-		if ( ! isset( $element_data['settings'][ $classes_prop ] ) ) {
-			return 0;
-		}
-
-		return count( array_intersect( $element_data['settings'][ $classes_prop ]['value'], $global_class_ids ) );
+	private function get_global_classes_count( $prop, $global_class_ids ) {
+		return count( array_intersect( $prop, $global_class_ids ) );
 	}
 
 	private function get_elementor_posts() {

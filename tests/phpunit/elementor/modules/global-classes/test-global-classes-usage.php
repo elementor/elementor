@@ -9,7 +9,7 @@ use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Global_Classes_Usage extends Elementor_Test_Base {
-	private $post_id;
+	private $post_ids = [];
 
 	private $mock_global_classes = [
 		'items' => [
@@ -84,6 +84,12 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 							],
 						],
 						[
+							'id' => 'jkl10122',
+							'elType' => 'widget',
+							'widgetType' => 'e-heading',
+							'settings' => [],
+						],
+						[
 							'id' => 'jkl101',
 							'elType' => 'widget',
 							'widgetType' => 'heading',
@@ -95,8 +101,48 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 		],
 	];
 
-	public function set_up() {
-		parent::set_up();
+	private $mock_elementor_data_2 = [
+		[
+			'id' => 'abc1234',
+			'elType' => 'e-div-block',
+			'settings' => [
+				'classes' => [
+					'value' => ['g-4-123', 'e-4-124']
+				]
+			],
+			'elements' => [
+				[
+					'id' => 'def4564',
+					'elType' => 'e-div-block',
+					'settings' => [
+						'classes' => [
+							'value' => ['g-4-124', 'e-4-1222']
+						]
+					],
+					'elements' => [
+						[
+							'id' => 'ghi7894',
+							'elType' => 'e-button',
+							'settings' => [
+								'classes' => [
+									'value' => ['g-4-123', 'e-4-1222']
+								]
+							],
+						],
+						[
+							'id' => 'jkl1014',
+							'elType' => 'widget',
+							'widgetType' => 'heading',
+							'settings' => [],
+						]
+					],
+				],
+			],
+		],
+	];
+
+	public function setUp(): void {
+		parent::setUp();
 
 		Plugin::$instance->kits_manager->create_new_kit( 'kit' );
 
@@ -105,34 +151,34 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 			$this->mock_global_classes['order'],
 		);
 
-		$document = Plugin::$instance->documents->create( 'post', [
-			'post_title' => 'Test Post',
-			'post_status' => 'publish',
-		] );
-
-		$document->update_json_meta( '_elementor_data', $this->mock_elementor_data );
-
-		$this->post_id = $document->get_main_id();
-
 		remove_all_filters( 'elementor/tracker/send_tracking_data_params' );
 	}
 
 	public function tear_down() {
 		( new Global_Classes_Repository() )->put( [], [] );
 
-		wp_delete_post( $this->post_id, true );
+
+		foreach ( $this->post_ids as $post_id ) {
+			wp_delete_post( $post_id, true );
+		}
+
+		$this->post_ids = [];
 
 		parent::tear_down();
 	}
 
 	public function test_global_classes_usage() {
+		// Arrange.
 		$global_classes_usage = new Global_Classes_Usage();
 		$global_classes_usage->register_hooks();
+		$this->make_mock_post_with_elements( $this->mock_elementor_data );
 
+		// Act.
 		$params = [];
 
 		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
 
+		// Assert.
 		$this->assertEquals( 2, $params['usages']['global_classes']['total_count'] );
 		$this->assertEquals(
 			[
@@ -143,5 +189,72 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_global_classes_usage_with_multiple_posts() {
+		// Arrange.
+		$global_classes_usage = new Global_Classes_Usage();
+		$global_classes_usage->register_hooks();
 
+		$this->make_mock_post_with_elements( $this->mock_elementor_data );
+		$this->make_mock_post_with_elements( $this->mock_elementor_data_2 );
+
+		// Act.
+		$params = [];
+
+		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
+
+		// Assert.
+		$this->assertEquals( 2, $params['usages']['global_classes']['total_count'] );
+		$this->assertEquals(
+			[
+				'e-div-block' => 5,
+				'e-heading' => 1,
+				'e-button' => 1,
+			],
+			$params['usages']['global_classes']['applied_classes_per_element_type'],
+		);
+	}
+
+	public function test_global_classes_usage_with_no_classes_exist() {
+		// Arrange.
+		Global_Classes_Repository::make()->put( [], [] );
+		$global_classes_usage = new Global_Classes_Usage();
+		$global_classes_usage->register_hooks();
+
+		// Act.
+		$params = [];
+
+		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
+
+		// Assert.
+		$this->assertEquals( 0, $params['usages']['global_classes']['total_count'] );
+		$this->assertArrayNotHasKey( 'applied_classes_per_element_type', $params['usages']['global_classes'] );
+	}
+
+	public function test_global_classes_usage_with_no_applied_classes() {
+		// Arrange.
+		$global_classes_usage = new Global_Classes_Usage();
+		$global_classes_usage->register_hooks();
+
+		// Act.
+		$params = [];
+
+		$params = apply_filters('elementor/tracker/send_tracking_data_params', $params);
+
+		// Assert.
+		$this->assertEquals(2, $params['usages']['global_classes']['total_count']);
+		$this->assertArrayNotHasKey('applied_classes_per_element_type', $params['usages']['global_classes']);
+	}
+
+	private function make_mock_post_with_elements( $elements_data ) {
+		$document = Plugin::$instance->documents->create( 'post', [
+			'post_title' => 'Test Post',
+			'post_status' => 'publish',
+		] );
+
+		$document->update_json_meta( '_elementor_data', $elements_data );
+
+		$this->post_ids[] = $document->get_main_id();
+
+		return $document->get_main_id();
+	}
 }
