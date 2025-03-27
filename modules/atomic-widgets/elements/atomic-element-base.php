@@ -42,7 +42,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['controls'] = [];
 		$config['keywords'] = $this->get_keywords();
 
-
 		return $config;
 	}
 
