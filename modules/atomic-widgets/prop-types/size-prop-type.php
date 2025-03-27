@@ -29,7 +29,8 @@ class Size_Prop_Type extends Plain_Prop_Type {
 
 	protected function sanitize_value( $value ) {
 		return [
-			'size' => (int) $value['size'],
+			// The + operator cast the $value['size'] to numeric (either int or float - depends on the value)
+			'size' => +$value['size'],
 			'unit' => sanitize_text_field( $value['unit'] ),
 		];
 	}
