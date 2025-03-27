@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicOptIn;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\AtomicWidgets\Opt_In as AtomicWidgetsOptIn;
+use Elementor\Modules\AtomicWidgets\Opt_In as Atomic_Widgets_Opt_In;
 use Elementor\Plugin;
 
 class Module extends BaseModule {
@@ -25,6 +25,6 @@ class Module extends BaseModule {
 	}
 
 	public function is_atomic_experiment_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( AtomicWidgetsOptIn::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Opt_In::EXPERIMENT_NAME );
 	}
 }
