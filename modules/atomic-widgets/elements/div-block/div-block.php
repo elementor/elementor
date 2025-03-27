@@ -35,6 +35,10 @@ class Div_Block extends Atomic_Element_Base {
 		return esc_html__( 'Div Block', 'elementor' );
 	}
 
+	public function get_keywords() {
+		return [ 'ato'];
+	}
+
 	public function get_icon() {
 		return 'eicon-div-block';
 	}

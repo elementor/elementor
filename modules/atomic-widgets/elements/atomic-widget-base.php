@@ -22,7 +22,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'Atoms', 'Atomic' ];
+		return [ 'ato'];;
 	}
 
 	abstract protected function define_atomic_controls(): array;
