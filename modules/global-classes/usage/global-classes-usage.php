@@ -24,4 +24,5 @@ class Global_Classes_Usage {
 		}
 
 		return $params;
-	}}
+	}
+}
