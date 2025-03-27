@@ -2,7 +2,6 @@
 namespace Elementor\Modules\Library;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\Library\Documents;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,6 +41,10 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
+		add_action( 'elementor/documents/register', [ $this, 'register_documents' ] );
+	}
+
+	public function register_documents() {
 		Plugin::$instance->documents
 			->register_document_type( 'not-supported', Documents\Not_Supported::get_class_full_name() )
 			->register_document_type( 'page', Documents\Page::get_class_full_name() )
@@ -49,10 +52,16 @@ class Module extends BaseModule {
 
 		$experiments_manager = Plugin::$instance->experiments;
 
-		// Register `Container` document type only if the experiment is active.
 		if ( $experiments_manager->is_feature_active( 'container' ) ) {
 			Plugin::$instance->documents
 				->register_document_type( 'container', Documents\Container::get_class_full_name() );
+		}
+
+		if ( $experiments_manager->is_feature_active( 'atomic_widgets' ) ) {
+			Plugin::$instance->documents
+				->register_document_type( 'e-div-block', Documents\Div_Block::get_class_full_name() );
+			Plugin::$instance->documents
+				->register_document_type( 'flexbox', Documents\Flexbox::get_class_full_name() );
 		}
 	}
 }
