@@ -62,8 +62,8 @@ jobs:
           experiments: |-
             e_optimized_markup:true
             editor_v2:true
-            atomic_widgets:true
-            global_classes:true
+            e_atomic_elements:true
+            e_classes:true
           templates: |-
             templates
 

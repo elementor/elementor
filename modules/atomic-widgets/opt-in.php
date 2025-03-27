@@ -11,7 +11,7 @@ use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
 
 class Opt_In {
-	const EXPERIMENT_NAME = 'editor_v4';
+	const EXPERIMENT_NAME = 'e_opt_in_v4';
 
 	const OPT_OUT_FEATURES = [
 		self::EXPERIMENT_NAME,
