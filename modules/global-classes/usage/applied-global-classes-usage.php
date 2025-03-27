@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Global_Classes\Usage;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
@@ -13,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Applied_Global_Classes_Usage {
-	const META_KEY_ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
-
 	/**
 	 * Get data about how global classes are applied across Elementor elements.
 	 *
@@ -30,7 +29,7 @@ class Applied_Global_Classes_Usage {
 
 		foreach ( $elementor_posts as $post ) {
 			$document = Plugin::$instance->documents->get( $post->ID );
-			$elements_data = $document->get_json_meta( '_elementor_data' );
+			$elements_data = $document->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
 
 			$post_count_per_type = $this->get_elements_data( $elements_data, $global_class_ids );
 
@@ -118,7 +117,7 @@ class Applied_Global_Classes_Usage {
 			'post_type' => 'any',
 			'post_status' => [ 'publish' ],
 			'posts_per_page' => '-1',
-			'meta_key' => self::META_KEY_ELEMENTOR_EDIT_MODE,
+			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
 			'meta_value' => 'builder',
 		] );
 
