@@ -2,8 +2,7 @@ import { FormLabel, InputAdornment, Popover, styled, Typography } from '@element
 import PropTypes from 'prop-types';
 import TextField from '@elementor/ui/TextField';
 import { useEffect, useRef, useState } from 'react';
-
-const { ColorPicker, ColorIndicator } = wp?.components ?? {};
+import { HexColorPicker } from 'react-colorful';
 
 const ColorInput = ( { label, color, onChange, disabled } ) => {
 	const [ isOpened, setIsOpened ] = useState( false );
@@ -29,20 +28,16 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 		}
 	}, [ isOpened ] );
 
-	useEffect( () => {
-		if ( anchorEl.current && isOpened ) {
-			const timeout = setTimeout( () => {
-				const irrelevantComponents = document.querySelector( '.el-ai-custom-color-picker>.components-color-picker > *:not(.react-colorful)' );
-				irrelevantComponents?.remove();
-			}, 10 );
-
-			return () => clearTimeout( timeout );
-		}
-	}, [ isOpened ] );
-
 	const handleClick = () => setIsOpened( true );
 	const handleClose = () => {
 		setIsOpened( false );
+	};
+
+	const handleKeyDown = ( event ) => {
+		if ( 'Enter' === event.key || ' ' === event.key ) {
+			event.preventDefault();
+			handleClick();
+		}
 	};
 
 	const handleTextFieldChange = ( event ) => {
@@ -50,8 +45,7 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 	};
 
 	const handleColorPickerChange = ( colorValue ) => {
-		// Extract the hex value from the color object
-		onChange( colorValue.hex );
+		onChange( colorValue );
 	};
 
 	const id = isOpened ? 'simple-popover' : undefined;
@@ -62,20 +56,22 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 			style={ { display: 'flex', alignItems: 'center', ...( disabled ? { pointerEvents: 'none', opacity: 0.5 } : {} ) } }
 		>
 			<FormLabel sx={ { whiteSpace: 'nowrap', flex: 4 } }>{ label }</FormLabel>
-			<ColorIndicator
-				colorValue={ color }
+			<button
+				type="button"
 				onClick={ handleClick }
+				onKeyDown={ handleKeyDown }
 				style={ {
 					cursor: 'pointer',
 					borderRadius: '4px',
 					marginRight: '8px',
 					marginLeft: '8px',
-					borderColor: 'rgb(12, 13, 14)',
 					background: color,
 					width: '100%',
 					height: 'auto',
 					aspectRatio: '1 / 1',
 					flex: 1.1,
+					padding: 0,
+					appearance: 'none',
 				} }
 				aria-describedby={ id }
 				ref={ anchorEl }
@@ -109,13 +105,12 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 				onClose={ handleClose }
 				open={ isOpened }
 				anchorEl={ anchorEl.current }
-				style={ { zIndex } }
+				style={ { zIndex, overflow: 'hidden' } }
 			>
-				<div className="el-ai-custom-color-picker">
-					<ColorPicker
+				<div className="el-ai-custom-color-picker" style={ { height: 'min-content', overflow: 'hidden' } }>
+					<HexColorPicker
 						color={ color }
-						onChangeComplete={ handleColorPickerChange }
-						disableAlpha={ true }
+						onChange={ handleColorPickerChange }
 					/>
 				</div>
 			</Popover>

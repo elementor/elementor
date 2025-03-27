@@ -8,6 +8,7 @@ import EnlargerIcon from '../../../../icons/enlarger-icon';
 import RemoveBackgroundIcon from '../../../../icons/remove-bg';
 import ReplaceBackgroundIcon from '../../../../icons/replace-bg';
 import Cleanup from '../../../../icons/cleanup-icon';
+import IsolateObjectIcon from '../../../../icons/isolate-object-icon';
 import { LOCATIONS } from '../../constants';
 import { useLocation } from '../../context/location-context';
 
@@ -83,6 +84,11 @@ const ImageToolsPanel = () => {
 			label: __( 'Cleanup', 'elementor' ),
 			Icon: Cleanup,
 			onClick: () => navigate( LOCATIONS.CLEANUP ),
+		},
+		{
+			label: __( 'Isolate object', 'elementor' ),
+			Icon: IsolateObjectIcon,
+			onClick: () => navigate( LOCATIONS.ISOLATE_OBJECT ),
 		},
 	];
 	return (
