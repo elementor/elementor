@@ -24,6 +24,10 @@ class PromotionData {
 				Utils::TESTIMONIAL_WIDGET => $this->get_testimonial_widget_data( $assets_data ),
 				Utils::V4_CHIP => $this->get_v4_promotion_data( $assets_data ),
 			];
+		} else {
+			return [
+				Utils::V4_CHIP => $this->get_v4_promotion_data( $assets_data ),
+			];
 		}
 	}
 
