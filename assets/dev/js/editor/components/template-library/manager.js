@@ -967,7 +967,7 @@ const TemplateLibraryManager = function() {
 			return false;
 		}
 
-		return ! elementor.config.library_connect.is_connected ||
+		return elementor.config.library_connect.is_connected ||
 			! elementor.helpers.hasPro() ||
 			! this.userHasCloudLibraryQuota();
 	};
