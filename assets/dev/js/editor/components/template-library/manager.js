@@ -725,9 +725,7 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
-		const shouldShow = this.shouldShowCloudStateView( args.source );
-
-		if ( shouldShow ) {
+		if ( this.shouldShowCloudStateView( args.source ) ) {
 			self.layout.showCloudConnectView();
 			return;
 		}
@@ -940,9 +938,7 @@ const TemplateLibraryManager = function() {
 		self.setFilter( filterName, templatesSource, true );
 		self.clearBulkSelectionItems();
 
-		const shouldShow = this.shouldShowCloudStateView( templatesSource );
-
-		if ( shouldShow ) {
+		if ( this.shouldShowCloudStateView( templatesSource ) ) {
 			self.layout.showCloudConnectView();
 			return;
 		}
@@ -967,14 +963,16 @@ const TemplateLibraryManager = function() {
 			return false;
 		}
 
-		return elementor.config.library_connect.is_connected &&
-			( ! elementor.helpers.hasPro() ||
-			! this.userHasCloudLibraryQuota() );
+		if ( ! elementor.config.library_connect.is_connected ) {
+			return true;
+		}
+
+		return ! elementor.helpers.hasPro() || ! this.hasCloudLibraryQuota();
 	};
 
-	this.userHasCloudLibraryQuota = function() {
+	this.hasCloudLibraryQuota = function() {
 		return undefined !== elementorAppConfig[ 'cloud-library' ].quota && 
-			0 <= elementorAppConfig[ 'cloud-library' ].quota?.threshold;
+			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold;
 	};
 
 	this.addBulkSelectionItem = function( templateId ) {
