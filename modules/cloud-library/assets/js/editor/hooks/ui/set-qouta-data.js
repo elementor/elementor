@@ -8,11 +8,11 @@ export class SetQuotaData extends $e.modules.hookUI.Before {
 	}
 
     getConditions() {
-		return undefined === elementorAppConfig['cloud-library'].quota;
+		return undefined === elementorAppConfig[ 'cloud-library' ].quota;
 	}
 
 	apply() {
-		elementorCommon.ajax.addRequest( 'get_quota', {
+        elementorCommon.ajax.addRequest( 'get_quota', {
             data: { source: 'cloud' },
             success: ( response ) => {
                 elementorAppConfig['cloud-library'].quota = response;
@@ -21,7 +21,7 @@ export class SetQuotaData extends $e.modules.hookUI.Before {
                 delete elementorAppConfig['cloud-library'].quota;
             },
         } );
-	}
+    }
 }
 
 export default SetQuotaData;

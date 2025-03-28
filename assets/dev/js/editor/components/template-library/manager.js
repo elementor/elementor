@@ -966,17 +966,15 @@ const TemplateLibraryManager = function() {
 		if ( 'cloud' !== source ) {
 			return false;
 		}
-	
+
 		const hasQuota = this.userHasCloudLibraryQuota();
 
-		console.log( hasQuota );
-	
 		return ! elementor.config.library_connect.is_connected || ! elementor.helpers.hasPro() || ! hasQuota;
 	};
 
 	this.userHasCloudLibraryQuota = function() {
-		return undefined !== elementorAppConfig['cloud-library'].quota && 
-			0 < elementorAppConfig['cloud-library'].quota?.threshold;
+		return undefined !== elementorAppConfig[ 'cloud-library' ].quota && 
+			0 <= elementorAppConfig[ 'cloud-library' ].quota?.threshold;
 	};
 
 	this.addBulkSelectionItem = function( templateId ) {
