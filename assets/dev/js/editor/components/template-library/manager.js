@@ -726,7 +726,8 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'subtype', args.subtype, true );
 
 		if ( this.shouldShowCloudStateView( args.source ) ) {
-			self.layout.showCloudConnectView();
+			self.layout.showCloudStateView();
+
 			return;
 		}
 
@@ -939,7 +940,8 @@ const TemplateLibraryManager = function() {
 		self.clearBulkSelectionItems();
 
 		if ( this.shouldShowCloudStateView( templatesSource ) ) {
-			self.layout.showCloudConnectView();
+			self.layout.showCloudStateView();
+
 			return;
 		}
 
@@ -971,7 +973,7 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.hasCloudLibraryQuota = function() {
-		return undefined !== elementorAppConfig[ 'cloud-library' ].quota && 
+		return undefined !== elementorAppConfig[ 'cloud-library' ].quota &&
 			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold;
 	};
 
