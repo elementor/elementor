@@ -27,7 +27,7 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-    	return ! Utils::has_pro();
+		return ! Utils::has_pro();
 	}
 
 	public function get_name() {
