@@ -38,7 +38,7 @@ const WidgetView = BaseWidget.extend( {
 
 	getContextMenuGroups() {
 		const groups = BaseWidget.prototype.getContextMenuGroups.apply( this, arguments );
-		const isAtomicWidget = this.options.model.get( 'widgetType' ).startsWith( 'e-' );
+		const isAtomicWidget = 'AtomicWidgetView' === this.constructor.name;
 
 		if ( isAtomicWidget ) {
 			return groups;
