@@ -24,7 +24,7 @@ module.exports = Marionette.ItemView.extend( {
 				title: elementorAppConfig?.[ 'cloud-library' ]?.library_connect_title,
 				message: elementorAppConfig?.[ 'cloud-library' ]?.library_connect_sub_title,
 				icon: defaultIcon,
-				button: `<a class="elementor-button e-primary" href="${ elementorAppConfig?.['cloud-library']?.library_connect_url }" target="_blank">${ elementorAppConfig?.['cloud-library']?.library_connect_button_text }</a>`,
+				button: `<a class="elementor-button e-primary" href="${ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }" target="_blank">${ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_button_text }</a>`,
 			},
 			connectedNoQuota: {
 				title: __( 'It’s time to level up', 'elementor' ),
