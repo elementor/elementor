@@ -141,6 +141,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
+		$raw_data['isAtomic'] = true;
 
 		return $raw_data;
 	}

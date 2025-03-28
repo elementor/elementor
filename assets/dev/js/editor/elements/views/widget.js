@@ -38,7 +38,7 @@ const WidgetView = BaseWidget.extend( {
 
 	getContextMenuGroups() {
 		const groups = BaseWidget.prototype.getContextMenuGroups.apply( this, arguments );
-		const isAtomicWidget = 'AtomicWidgetView' === this.constructor.name;
+		const isAtomicWidget = !! this.options?.model?.get( 'isAtomic' );
 
 		if ( isAtomicWidget ) {
 			return groups;
