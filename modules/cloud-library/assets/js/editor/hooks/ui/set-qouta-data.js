@@ -7,15 +7,19 @@ export class SetQuotaData extends $e.modules.hookUI.Before {
 		return 'cloud-library-set-quota-data';
 	}
 
+    getConditions() {
+		return undefined === elementorAppConfig['cloud-library'].quota;
+	}
+
 	apply() {
 		elementorCommon.ajax.addRequest( 'get_quota', {
             data: { source: 'cloud' },
             success: ( response ) => {
-                console.log( response );
+                elementorAppConfig['cloud-library'].quota = response;
             },
-            error: ( error ) => {
-                console.log( error );
-            }
+            error: () => {
+                delete elementorAppConfig['cloud-library'].quota;
+            },
         } );
 	}
 }

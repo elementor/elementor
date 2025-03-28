@@ -931,7 +931,7 @@ const TemplateLibraryManager = function() {
 			.show();
 	};
 
-	this.onSelectSourceFilterChange = async function( event ) {
+	this.onSelectSourceFilterChange = function( event ) {
 		const select = event.currentTarget,
 			filterName = select.dataset.elementorFilter,
 			templatesSource = select.value;
@@ -940,7 +940,7 @@ const TemplateLibraryManager = function() {
 		self.setFilter( filterName, templatesSource, true );
 		self.clearBulkSelectionItems();
 
-		const shouldShow = await this.shouldShowCloudStateView( templatesSource );
+		const shouldShow = this.shouldShowCloudStateView( templatesSource );
 
 		if ( shouldShow ) {
 			self.layout.showCloudConnectView();
@@ -962,28 +962,21 @@ const TemplateLibraryManager = function() {
 		self.clearBulkSelectionItems();
 	};
 
-	this.shouldShowCloudStateView = async function( source ) {
+	this.shouldShowCloudStateView = function( source ) {
 		if ( 'cloud' !== source ) {
 			return false;
 		}
 	
-		const hasQuota = await this.userHasQuota( source );
+		const hasQuota = this.userHasCloudLibraryQuota();
+
+		console.log( hasQuota );
 	
 		return ! elementor.config.library_connect.is_connected || ! elementor.helpers.hasPro() || ! hasQuota;
 	};
 
-	this.userHasQuota = function( source ) {
-		return new Promise( ( resolve ) => {
-			elementorCommon.ajax.addRequest( 'get_quota', {
-				data: { source },
-				success: ( response ) => {
-					resolve( true );
-				},
-				error: ( error ) => {
-					resolve( false );
-				}
-			} );
-		} );
+	this.userHasCloudLibraryQuota = function() {
+		return undefined !== elementorAppConfig['cloud-library'].quota && 
+			0 > elementorAppConfig['cloud-library'].quota?.threshold;
 	};
 
 	this.addBulkSelectionItem = function( templateId ) {

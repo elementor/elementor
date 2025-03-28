@@ -20,7 +20,7 @@ export default class Component extends ComponentBase {
 		this.manager.setPage( 'elements', null, args ).showView( tab );
 	}
 
-	async activateTab( tab ) {
+	activateTab( tab ) {
 		super.activateTab( tab );
 
 		elementor.editorEvents.dispatchEvent(
