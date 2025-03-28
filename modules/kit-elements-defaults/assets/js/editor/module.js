@@ -30,6 +30,11 @@ export default class Module extends elementorModules.editor.utils.Module {
 						return group;
 					}
 
+					const isAtomicWidget = view?.options?.model?.get( 'widgetType' )?.startsWith( 'e-' );
+					if ( isAtomicWidget ) {
+						return group;
+					}
+
 					group.actions = [
 						...group.actions,
 						{
