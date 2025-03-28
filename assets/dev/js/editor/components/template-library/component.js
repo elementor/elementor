@@ -105,14 +105,14 @@ export default class Component extends ComponentModalBase {
 		this.maybeOpenLibrary();
 	}
 
-	async renderTab( tab ) {
+	renderTab( tab ) {
 		const currentTab = this.tabs[ tab ];
 		const filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
 
-		await this.manager.setScreen( filter );
+		this.manager.setScreen( filter );
 	}
 
-	async activateTab( tab ) {
+	activateTab( tab ) {
 		$e.routes.saveState( 'library' );
 
 		super.activateTab( tab );

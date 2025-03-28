@@ -717,7 +717,7 @@ const TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setScreen = async function( args ) {
+	this.setScreen = function( args ) {
 		this.clearLastRemovedItems();
 		elementor.channels.templates.stopReplying();
 
@@ -725,7 +725,7 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
-		const shouldShow = await this.shouldShowCloudStateView( args.source );
+		const shouldShow = this.shouldShowCloudStateView( args.source );
 
 		if ( shouldShow ) {
 			self.layout.showCloudConnectView();
@@ -976,7 +976,7 @@ const TemplateLibraryManager = function() {
 
 	this.userHasCloudLibraryQuota = function() {
 		return undefined !== elementorAppConfig['cloud-library'].quota && 
-			0 > elementorAppConfig['cloud-library'].quota?.threshold;
+			0 < elementorAppConfig['cloud-library'].quota?.threshold;
 	};
 
 	this.addBulkSelectionItem = function( templateId ) {
