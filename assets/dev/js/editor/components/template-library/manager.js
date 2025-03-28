@@ -717,7 +717,7 @@ const TemplateLibraryManager = function() {
 		return filterTerms;
 	};
 
-	this.setScreen = function( args ) {
+	this.setScreen = async function( args ) {
 		this.clearLastRemovedItems();
 		elementor.channels.templates.stopReplying();
 
@@ -725,9 +725,10 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
-		if ( this.shouldShowCloudConnectView( args.source ) ) {
-			self.layout.showCloudConnectView();
+		const shouldShow = await this.shouldShowCloudStateView( args.source );
 
+		if ( shouldShow ) {
+			self.layout.showCloudConnectView();
 			return;
 		}
 
@@ -930,7 +931,7 @@ const TemplateLibraryManager = function() {
 			.show();
 	};
 
-	this.onSelectSourceFilterChange = function( event ) {
+	this.onSelectSourceFilterChange = async function( event ) {
 		const select = event.currentTarget,
 			filterName = select.dataset.elementorFilter,
 			templatesSource = select.value;
@@ -939,9 +940,10 @@ const TemplateLibraryManager = function() {
 		self.setFilter( filterName, templatesSource, true );
 		self.clearBulkSelectionItems();
 
-		if ( this.shouldShowCloudConnectView( templatesSource ) ) {
-			self.layout.showCloudConnectView();
+		const shouldShow = await this.shouldShowCloudStateView( templatesSource );
 
+		if ( shouldShow ) {
+			self.layout.showCloudConnectView();
 			return;
 		}
 
@@ -960,8 +962,28 @@ const TemplateLibraryManager = function() {
 		self.clearBulkSelectionItems();
 	};
 
-	this.shouldShowCloudConnectView = function( source ) {
-		return 'cloud' === source && ! elementor.config.library_connect.is_connected;
+	this.shouldShowCloudStateView = async function( source ) {
+		if ( 'cloud' !== source ) {
+			return false;
+		}
+	
+		const hasQuota = await this.userHasQuota( source );
+	
+		return ! elementor.config.library_connect.is_connected || ! elementor.helpers.hasPro() || ! hasQuota;
+	};
+
+	this.userHasQuota = function( source ) {
+		return new Promise( ( resolve ) => {
+			elementorCommon.ajax.addRequest( 'get_quota', {
+				data: { source },
+				success: ( response ) => {
+					resolve( true );
+				},
+				error: ( error ) => {
+					resolve( false );
+				}
+			} );
+		} );
 	};
 
 	this.addBulkSelectionItem = function( templateId ) {

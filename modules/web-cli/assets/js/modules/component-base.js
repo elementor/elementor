@@ -375,10 +375,10 @@ export default class ComponentBase extends Module {
 		return this.getNamespace() + '/' + tab;
 	}
 
-	renderTab( tab ) {} // eslint-disable-line
+	async renderTab( tab ) {} // eslint-disable-line
 
-	activateTab( tab, args ) {
-		this.renderTab( tab, args );
+	async activateTab( tab, args ) {
+		await this.renderTab( tab, args );
 
 		jQuery( this.getTabsWrapperSelector() + ' .elementor-component-tab' )
 			.off( 'click' )
