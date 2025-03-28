@@ -37,8 +37,14 @@ const WidgetView = BaseWidget.extend( {
 	},
 
 	getContextMenuGroups() {
-		var groups = BaseWidget.prototype.getContextMenuGroups.apply( this, arguments ),
-			transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+		const groups = BaseWidget.prototype.getContextMenuGroups.apply( this, arguments );
+		const isAtomicWidget = !! this.options?.model?.get( 'atomic' );
+
+		if ( isAtomicWidget ) {
+			return groups;
+		}
+
+		const transferGroupIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
 
 		groups.splice( transferGroupIndex + 1, 0, {
 			name: 'save',
