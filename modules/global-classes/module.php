@@ -4,10 +4,9 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Files\CSS\Post;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
-use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Modules\GlobalClasses\ImportExport\Import_Export;
+use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Usage;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,6 +35,7 @@ class Module extends BaseModule {
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
+			( new Global_Classes_Usage() )->register_hooks();
 			( new Global_Classes_REST_API() )->register_hooks();
 			( new Global_Classes_CSS() )->register_hooks();
 			( new Import_Export() )->register_hooks();
