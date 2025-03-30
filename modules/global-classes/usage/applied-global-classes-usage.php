@@ -70,7 +70,7 @@ class Applied_Global_Classes_Usage {
 				return $carry;
 			}
 
-			$carry += $this->get_global_classes_count( $atomic_element_data['settings'][$prop_name]['value'] ?? [], $global_class_ids );
+			$carry += $this->get_global_classes_count( $atomic_element_data['settings'][ $prop_name ]['value'] ?? [], $global_class_ids );
 
 			return $carry;
 		}, 0 );

@@ -178,8 +178,8 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 		$this->assertSame( 2, $params['usages']['global_classes']['total_count'] );
 		$this->assertSame(
 			[
-				'e-div-block' => 3,
 				'e-heading' => 1,
+				'e-div-block' => 3,
 			],
 			$params['usages']['global_classes']['applied_classes_per_element_type'],
 		);
@@ -238,7 +238,7 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 	}
 
 	private function make_mock_post_with_elements( $elements_data ) {
-		$document = Plugin::$instance->documents->create( 'post', [
+		$document = $this->factory()->documents->create_and_get( [
 			'post_title' => 'Test Post',
 			'post_status' => 'publish',
 		] );
