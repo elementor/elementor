@@ -1,4 +1,3 @@
-// Mock the dependencies first
 jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-image-prompt', () => {
 	return jest.fn();
 } );
@@ -7,7 +6,6 @@ jest.mock( 'elementor/modules/ai/assets/js/editor/api', () => ( {
 	getImageToImageIsolateObjects: jest.fn(),
 } ) );
 
-// Import the modules after mocking
 const useIsolateObject = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/views/isolate-objects/hooks/use-isolate-objects' ).default;
 const useImagePrompt = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-image-prompt' );
 const { getImageToImageIsolateObjects } = require( 'elementor/modules/ai/assets/js/editor/api' );
@@ -53,12 +51,10 @@ describe( 'useIsolateObject', () => {
 	} );
 
 	it( 'should maintain previous results when provided as initial value', () => {
-		// Arrange
 		const previousResults = {
 			result: [ { url: 'previous-result.jpg' } ],
 		};
 
-		// Override the mock to return different data based on initialValue
 		useImagePrompt.mockImplementation( ( fetchAction, initialValue ) => {
 			return {
 				send: mockSendFn,
@@ -68,10 +64,8 @@ describe( 'useIsolateObject', () => {
 			};
 		} );
 
-		// Act - Call the hook with initial value
 		const { data } = useIsolateObject( previousResults );
 
-		// Assert - Verify the data reflects the initial value
 		expect( data ).toEqual( previousResults );
 	} );
 } );

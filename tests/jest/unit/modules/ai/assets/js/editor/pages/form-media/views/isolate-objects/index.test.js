@@ -1,4 +1,3 @@
-// Mock all modules first
 jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-image-size', () => () => ( { width: 300, height: 200 } ) );
 jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/views/isolate-objects/hooks/use-isolate-objects' );
 jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/context/location-context' );
@@ -27,7 +26,6 @@ jest.mock( 'react', () => {
 	};
 } );
 
-// Import required components for testing
 const { Box } = require( '@elementor/ui' );
 const ImagesDisplay = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/components/images-display' ).default;
 
