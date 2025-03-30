@@ -1408,7 +1408,7 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_product_image_unification( $data ): array {
-		if ( ! empty($data['payload']['postId'])) {
+		if ( ! empty( $data['payload']['postId'] ) ) {
 			$data['editor_post_id'] = $data['payload']['postId'];
 		}
 		$this->verify_upload_permissions( $data );
