@@ -23,6 +23,10 @@ class Flexbox extends Div_Block {
 		return esc_html__( 'Flexbox', 'elementor' );
 	}
 
+	public function get_keywords() {
+		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+	}
+
 	public function get_icon() {
 		return 'eicon-flexbox';
 	}
