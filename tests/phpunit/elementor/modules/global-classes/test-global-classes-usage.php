@@ -2,7 +2,6 @@
 
 namespace Elementor\Testing\Modules\GlobalClasses;
 
-
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Usage;
 use Elementor\Plugin;
@@ -157,7 +156,6 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 	public function tear_down() {
 		( new Global_Classes_Repository() )->put( [], [] );
 
-
 		foreach ( $this->post_ids as $post_id ) {
 			wp_delete_post( $post_id, true );
 		}
@@ -174,13 +172,11 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 		$this->make_mock_post_with_elements( $this->mock_elementor_data );
 
 		// Act.
-		$params = [];
-
-		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
+		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', [] );
 
 		// Assert.
-		$this->assertEquals( 2, $params['usages']['global_classes']['total_count'] );
-		$this->assertEquals(
+		$this->assertSame( 2, $params['usages']['global_classes']['total_count'] );
+		$this->assertSame(
 			[
 				'e-div-block' => 3,
 				'e-heading' => 1,
@@ -198,9 +194,7 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 		$this->make_mock_post_with_elements( $this->mock_elementor_data_2 );
 
 		// Act.
-		$params = [];
-
-		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
+		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', [] );
 
 		// Assert.
 		$this->assertEquals( 2, $params['usages']['global_classes']['total_count'] );
@@ -221,9 +215,7 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 		$global_classes_usage->register_hooks();
 
 		// Act.
-		$params = [];
-
-		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
+		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', [] );
 
 		// Assert.
 		$this->assertEquals( 0, $params['usages']['global_classes']['total_count'] );

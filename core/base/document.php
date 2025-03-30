@@ -1108,7 +1108,7 @@ abstract class Document extends Controls_Stack {
 	 * @return array
 	 */
 	public function get_elements_data( $status = self::STATUS_PUBLISH ) {
-		$elements = $this->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+		$elements = $this->get_json_meta( self::ELEMENTOR_DATA_META_KEY );
 
 		if ( self::STATUS_DRAFT === $status ) {
 			$autosave = $this->get_newer_autosave();
@@ -1116,7 +1116,7 @@ abstract class Document extends Controls_Stack {
 			if ( is_object( $autosave ) ) {
 				$autosave_elements = Plugin::$instance->documents
 					->get( $autosave->get_post()->ID )
-					->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+					->get_json_meta( self::ELEMENTOR_DATA_META_KEY );
 			}
 		}
 
@@ -1355,7 +1355,7 @@ abstract class Document extends Controls_Stack {
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
 		// Don't use `update_post_meta` that can't handle `revision` post type
-		$is_meta_updated = update_metadata( 'post', $this->post->ID, Document::ELEMENTOR_DATA_META_KEY, $json_value );
+		$is_meta_updated = update_metadata( 'post', $this->post->ID, self::ELEMENTOR_DATA_META_KEY, $json_value );
 
 		/**
 		 * Before saving data.
