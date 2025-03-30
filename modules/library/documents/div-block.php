@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor Dib_Block library document.
+ * Elementor Div_Block library document.
  *
  * Elementor dib block library document handler class is responsible for
  * handling a document of a div block type.
