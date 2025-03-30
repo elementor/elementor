@@ -1,4 +1,4 @@
-import { Box, Button, Typography, SvgIcon, styled } from '@elementor/ui';
+import { Box, Button, Typography, SvgIcon, styled, Chip as ChipBase } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import ExpandIcon from '../../../../icons/expand-icon';
@@ -46,6 +46,18 @@ const ToolsTeaserContainer = styled( Box )( ( { theme } ) => ( {
 	padding: theme.spacing( 4, 0, 1 ),
 } ) );
 
+// Create a styled Chip component with default styles
+const StyledChip = styled( ChipBase )( () => ( {
+	position: 'absolute',
+	top: 8,
+	right: 8,
+	'& .MuiChip-label': {
+		fontSize: '0.75rem',
+		fontWeight: 'normal',
+		lineHeight: 1.2,
+	},
+} ) );
+
 const ImageToolsPanel = () => {
 	const { navigate } = useLocation();
 
@@ -88,13 +100,19 @@ const ImageToolsPanel = () => {
 		{
 			label: __( 'Isolate object', 'elementor' ),
 			Icon: IsolateObjectIcon,
+			ChipParam: <StyledChip
+				label="New"
+				color="info"
+				variant="standard"
+				size="tiny"
+			/>,
 			onClick: () => navigate( LOCATIONS.ISOLATE_OBJECT ),
 		},
 	];
 	return (
 		<ImageToolsContainer>
 			<Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={ 1 } justifyContent="center">
-				{ tools.map( ( { label, Icon, onClick } ) => (
+				{ tools.map( ( { label, Icon, ChipParam, onClick } ) => (
 					<Button
 						onClick={ onClick }
 						key={ label }
@@ -108,6 +126,7 @@ const ImageToolsPanel = () => {
 							borderRadius: '4px',
 						} }
 					>
+						{ ChipParam }
 						<Box
 							display="flex"
 							justifyContent="center"

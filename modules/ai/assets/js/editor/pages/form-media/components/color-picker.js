@@ -70,8 +70,6 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 					height: 'auto',
 					aspectRatio: '1 / 1',
 					flex: 1.1,
-					padding: 0,
-					appearance: 'none',
 					border: 'none',
 				} }
 				aria-describedby={ id }
