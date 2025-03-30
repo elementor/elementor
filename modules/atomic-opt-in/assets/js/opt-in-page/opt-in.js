@@ -264,7 +264,7 @@ export const OptIn = ( { state } ) => {
 
 			{ notifyMessage && (
 				<Message
-					onClose={ () => setNotifyMessage('') }
+					onClose={ () => setNotifyMessage( '' ) }
 					action={
 						<Link
 							href={ optInLinks.feedbackUrl }
