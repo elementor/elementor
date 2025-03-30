@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Elementor Div_Block library document.
  *
- * Elementor dib block library document handler class is responsible for
+ * Elementor div block library document handler class is responsible for
  * handling a document of a div block type.
  *
  * @since 3.29.0
