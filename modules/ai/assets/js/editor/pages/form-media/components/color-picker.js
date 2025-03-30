@@ -68,7 +68,7 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 					background: color,
 					width: '100%',
 					height: 'auto',
-					borderColor: 'rgb(12, 13, 14)',
+					borderColor: 'rgba(0, 0, 0, 0.23)',
 					borderWidth: '1px',
 					borderStyle: 'solid',
 					aspectRatio: '1 / 1',
@@ -96,7 +96,7 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 				onChange={ handleTextFieldChange }
 				sx={ {
 					flex: 3,
-					height: '39px',
+					height: '40px',
 				} }
 			/>
 			<Popover
