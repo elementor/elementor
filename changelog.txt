@@ -1,5 +1,12 @@
 == Changelog ==
 
+= 3.28.2 - 2025-03-30 =
+
+* New: Generate logo with AI
+* Tweak: Adjusted supported attributes and elements in SVG files ([#29340](https://github.com/elementor/elementor/issues/29340), [#30132](https://github.com/elementor/elementor/issues/30132))
+* Fix: "Create a page" button is not working in Elementor Home
+* Fix: Icons in Button widgets are not vertically aligned when changing the text line-height ([#30606](https://github.com/elementor/elementor/issues/30606))
+
 = 3.28.1 - 2025-03-23 =
 
 * Fix: Font URL is not updating after domain change when "Load Google Fonts Locally" feature is activated
