@@ -26,10 +26,6 @@ class Module extends Base_Module {
 
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
-	public static function is_active() {
-		return ! Utils::has_pro();
-	}
-
 	public function get_name() {
 		return 'promotions';
 	}
@@ -41,13 +37,15 @@ class Module extends Base_Module {
 			$this->handle_external_redirects();
 		} );
 
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+		if ( ! Utils::has_pro() ) {
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_menu_items( $admin_menu );
 		}, static::ADMIN_MENU_PRIORITY );
+		}
 
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+		if ( ! Utils::has_pro() ) { add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_promotion_menu_item( $admin_menu );
-		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY );
+		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY ); }
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
