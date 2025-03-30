@@ -80,7 +80,7 @@ const TemplateLibraryManager = function() {
 			section: __( 'Section', 'elementor' ),
 			container: __( 'Container', 'elementor' ),
 			'e-div-block': __( 'Div Block', 'elementor' ),
-			flexbox: __( 'Flexbox', 'elementor' ),
+			'e-flexbox': __( 'Flexbox', 'elementor' ),
 
 			[ elementor.config.document.type ]: elementor.config.document.panel.title,
 		};
