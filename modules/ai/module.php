@@ -82,7 +82,7 @@ class Module extends BaseModule {
 				'ai_toggle_favorite_history_item' => [ $this, 'ajax_ai_toggle_favorite_history_item' ],
 				'ai_get_product_image_unification' => [ $this, 'ajax_ai_get_product_image_unification' ],
 				'ai_get_animation' => [ $this, 'ajax_ai_get_animation' ],
-				'ai_get_image_to_image_isolate_objects' => [ $this, 'ajax_ai_get_image_to_image_isolate_objects' ],
+				'ai_get_image_to_image_isolate_objects' => [ $this, 'ajax_ai_get_product_image_unification' ],
 			];
 
 			foreach ( $handlers as $tag => $callback ) {
@@ -1001,39 +1001,6 @@ class Module extends BaseModule {
 		];
 	}
 
-	public function ajax_ai_get_image_to_image_isolate_objects( $data ) {
-		$this->verify_upload_permissions( $data );
-
-		$app = $this->get_ai_app();
-
-		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
-			throw new \Exception( 'Missing Image' );
-		}
-
-		if ( empty( $data['payload']['settings'] ) ) {
-			throw new \Exception( 'Missing settings' );
-		}
-
-		if ( ! $app->is_connected() ) {
-			throw new \Exception( 'not_connected' );
-		}
-
-		$context = $this->get_request_context( $data );
-		$request_ids = $this->get_request_ids( $data['payload'] );
-		$result = $app->get_image_to_image_isolate_objects( [
-			'attachment_id' => $data['payload']['image']['id'],
-			'promptSettings' => $data['payload']['settings'],
-		], $context, $request_ids );
-
-		$this->throw_on_error( $result );
-
-		return [
-			'images' => $result['images'],
-			'response_id' => $result['responseId'],
-			'usage' => $result['usage'],
-		];
-	}
-
 	public function ajax_ai_get_image_to_image_mask( $data ) {
 		$this->verify_upload_permissions( $data );
 
@@ -1049,10 +1016,6 @@ class Module extends BaseModule {
 
 		if ( empty( $data['payload']['settings'] ) ) {
 			throw new \Exception( 'Missing prompt settings' );
-		}
-
-		if ( ! $app->is_connected() ) {
-			throw new \Exception( 'not_connected' );
 		}
 
 		if ( empty( $data['payload']['mask'] ) ) {
@@ -1445,7 +1408,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_product_image_unification( $data ): array {
-		$data['editor_post_id'] = $data['payload']['postId'];
+		if ( ! empty($data['payload']['postId'])) {
+			$data['editor_post_id'] = $data['payload']['postId'];
+		}
 		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();

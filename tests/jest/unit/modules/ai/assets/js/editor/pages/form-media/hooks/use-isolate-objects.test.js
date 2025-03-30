@@ -16,6 +16,7 @@ describe( 'useIsolateObject', () => {
 	const sampleSettings = { aspectRatio: '1:1', backgroundColor: '#ffffff' };
 
 	beforeEach( () => {
+		// Arrange
 		jest.clearAllMocks();
 
 		useImagePrompt.mockImplementation( () => {
@@ -32,25 +33,23 @@ describe( 'useIsolateObject', () => {
 		} );
 	} );
 
-	it( 'should provide a send function to isolate objects in an image', () => {
-		const { send } = useIsolateObject();
-
-		expect( typeof send ).toBe( 'function' );
-	} );
-
 	it( 'should pass the image and background color settings when isolating objects', async () => {
+		// Arrange
 		const { send } = useIsolateObject();
 		const payload = {
 			image: sampleImage,
 			settings: sampleSettings,
 		};
 
+		// Act
 		await send( payload );
 
+		// Assert
 		expect( mockSendFn ).toHaveBeenCalledWith( payload );
 	} );
 
 	it( 'should maintain previous results when provided as initial value', () => {
+		// Arrange
 		const previousResults = {
 			result: [ { url: 'previous-result.jpg' } ],
 		};
@@ -64,8 +63,10 @@ describe( 'useIsolateObject', () => {
 			};
 		} );
 
+		// Act
 		const { data } = useIsolateObject( previousResults );
 
+		// Assert
 		expect( data ).toEqual( previousResults );
 	} );
 } );

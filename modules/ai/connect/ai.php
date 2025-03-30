@@ -552,37 +552,6 @@ class Ai extends Library {
 		return $result;
 	}
 
-	public function get_image_to_image_isolate_objects( $image_data, $context, $request_ids ) {
-		$image_file = get_attached_file( $image_data['attachment_id'] );
-
-		if ( ! $image_file ) {
-			throw new \Exception( 'Image file not found' );
-		}
-
-		$final_path = $this->resizeImageIfNeeded( $image_file );
-
-		$result = $this->ai_request(
-			'POST',
-			'image/image-to-image/unify-product-images',
-			[
-				'aspectRatio' => $image_data['promptSettings']['aspectRatio'],
-				'backgroundColor' => $image_data['promptSettings']['backgroundColor'],
-				'context' => wp_json_encode( $context ),
-				'ids' => $request_ids,
-				'api_version' => ELEMENTOR_VERSION,
-				'site_lang' => get_bloginfo( 'language' ),
-			],
-			$final_path,
-			'image'
-		);
-
-		if ( $image_file !== $final_path ) {
-			unlink( $final_path );
-		}
-
-		return $result;
-	}
-
 	/**
 	 * Get Image To Image Remove Text get_image_to_image_remove_text
 	 *

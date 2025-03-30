@@ -54,7 +54,6 @@ const StyledChip = styled( ChipBase )( () => ( {
 	'& .MuiChip-label': {
 		fontSize: '0.75rem',
 		fontWeight: 'normal',
-		lineHeight: 1.2,
 	},
 } ) );
 

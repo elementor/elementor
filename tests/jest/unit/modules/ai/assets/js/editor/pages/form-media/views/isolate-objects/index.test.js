@@ -63,6 +63,7 @@ describe( 'IsolateObject Component - Functional Tests', () => {
 	};
 
 	beforeEach( () => {
+		// Arrange
 		jest.clearAllMocks();
 		jest.resetModules();
 
@@ -105,16 +106,16 @@ describe( 'IsolateObject Component - Functional Tests', () => {
 	} );
 
 	it( 'should handle form submission correctly', () => {
+		// Arrange
 		const isolateObject = IsolateObject();
-
 		const mockEvent = { preventDefault: mockPreventDefault };
 
+		// Act
 		isolateObject.props.children[ 0 ].props.children[ 3 ].props.onSubmit( mockEvent );
 
+		// Assert
 		expect( mockPreventDefault ).toHaveBeenCalled();
-
 		expect( mockSetGenerate ).toHaveBeenCalled();
-
 		expect( mockSubmitFn ).toHaveBeenCalledWith( {
 			image: testImage,
 			settings: {
@@ -125,6 +126,7 @@ describe( 'IsolateObject Component - Functional Tests', () => {
 	} );
 
 	it( 'should display results when data is successfully loaded', () => {
+		// Arrange
 		const successfulResponse = {
 			result: [ { url: 'generated-image.jpg', id: 'gen1' } ],
 		};
@@ -136,16 +138,14 @@ describe( 'IsolateObject Component - Functional Tests', () => {
 			error: null,
 		} ) );
 
+		// Act
 		const component = IsolateObject();
-
 		const viewContent = component.props.children[ 1 ];
-
 		const renderedContent = viewContent.props.children;
 
+		// Assert
 		expect( renderedContent.type ).toBe( Box );
-
 		const imagesDisplay = renderedContent.props.children;
-
 		expect( imagesDisplay.type ).toBe( ImagesDisplay );
 		expect( imagesDisplay.props.images ).toBe( successfulResponse.result );
 		expect( imagesDisplay.props.transparentContainer ).toBe( true );
