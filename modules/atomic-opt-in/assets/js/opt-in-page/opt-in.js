@@ -78,23 +78,20 @@ const optInImages = {
 
 export const OptIn = ( { state } ) => {
 	const [ showTerms, setShowTerms ] = useState( false );
-	const [ successMessage, setSuccessMessage ] = useState( '' );
-	const [ notifyMessage, setNotifyMessage ] = useState( '' );
+	const [ optInMessage, setoptInMessage ] = useState( '' );
+	const [ optOutMessage, setoptOutMessage ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	useEffect( () => {
-		const optInMessage = sessionStorage.getItem( OPT_IN_MSG );
 		if ( optInMessage ) {
 			setTimeout( () => {
-				setSuccessMessage( optInMessage );
+				setoptInMessage( sessionStorage.getItem( OPT_IN_MSG ) );
 			}, 100 );
 			sessionStorage.removeItem( OPT_IN_MSG );
 		}
-
-		const optOutMessage = sessionStorage.getItem( OPT_OUT_MSG );
 		if ( optOutMessage ) {
 			setTimeout( () => {
-				setNotifyMessage( optOutMessage );
+				setoptOutMessage( sessionStorage.getItem( OPT_OUT_MSG ) );
 			}, 100 );
 			sessionStorage.removeItem( OPT_OUT_MSG );
 		}
@@ -258,11 +255,11 @@ export const OptIn = ( { state } ) => {
 				<Terms onClose={ handlePopoverClose } onSubmit={ isEnrolled ? maybeOptOut : maybeOptIn } isEnrolled={ isEnrolled } />
 			) }
 
-			{ successMessage && (
+			{ optInMessage && (
 				<Message onClose={ () => setSuccessMessage( '' ) } >{ successMessage }</Message>
 			) }
 
-			{ notifyMessage && (
+			{ optOutMessage && (
 				<Message
 					onClose={ () => setNotifyMessage( '' ) }
 					action={
