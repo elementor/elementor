@@ -33,7 +33,7 @@ class Flexbox extends Library_Document {
 	 *
 	 * @return string Document name.
 	 */
-	public function get_name() {
+    public function get_name() {
         return 'e-flexbox';
     }
 
