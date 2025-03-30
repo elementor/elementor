@@ -72,6 +72,7 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 					flex: 1.1,
 					padding: 0,
 					appearance: 'none',
+					border: 'none',
 				} }
 				aria-describedby={ id }
 				ref={ anchorEl }
@@ -83,6 +84,9 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 				InputProps={ {
 					autoComplete: 'off',
 					color: 'secondary',
+					sx: {
+						height: '100%',
+					},
 					startAdornment: (
 						<InputAdornment position="start" >
 							<Typography variant="body1" color="secondary">#</Typography>
@@ -90,7 +94,10 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 					),
 				} }
 				onChange={ handleTextFieldChange }
-				sx={ { flex: 3 } }
+				sx={ {
+					flex: 3,
+					height: '39px',
+				} }
 			/>
 			<Popover
 				id={ id }
