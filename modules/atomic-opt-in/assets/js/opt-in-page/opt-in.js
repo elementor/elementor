@@ -78,20 +78,24 @@ const optInImages = {
 
 export const OptIn = ( { state } ) => {
 	const [ showTerms, setShowTerms ] = useState( false );
-	const [ optInMessage, setoptInMessage ] = useState( '' );
-	const [ optOutMessage, setoptOutMessage ] = useState( '' );
+	const [ optInMessage, setOptInMessage ] = useState( '' );
+	const [ optOutMessage, setOptOutMessage ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	useEffect( () => {
-		if ( optInMessage ) {
+		const optInMsg = sessionStorage.getItem( OPT_IN_MSG );
+		const optOutMsg = sessionStorage.getItem( OPT_OUT_MSG );
+
+		if ( optInMsg ) {
 			setTimeout( () => {
-				setoptInMessage( sessionStorage.getItem( OPT_IN_MSG ) );
+				setOptInMessage( optInMsg );
 			}, 100 );
 			sessionStorage.removeItem( OPT_IN_MSG );
 		}
-		if ( optOutMessage ) {
+
+		if ( optOutMsg ) {
 			setTimeout( () => {
-				setoptOutMessage( sessionStorage.getItem( OPT_OUT_MSG ) );
+				setOptOutMessage( optOutMsg );
 			}, 100 );
 			sessionStorage.removeItem( OPT_OUT_MSG );
 		}
@@ -256,12 +260,12 @@ export const OptIn = ( { state } ) => {
 			) }
 
 			{ optInMessage && (
-				<Message onClose={ () => setSuccessMessage( '' ) } >{ successMessage }</Message>
+				<Message onClose={ () => setOptInMessage( '' ) } >{ optInMessage }</Message>
 			) }
 
 			{ optOutMessage && (
 				<Message
-					onClose={ () => setNotifyMessage( '' ) }
+					onClose={ () => setOptOutMessage( '' ) }
 					action={
 						<Link
 							href={ optInLinks.feedbackUrl }
@@ -273,10 +277,9 @@ export const OptIn = ( { state } ) => {
 						</Link>
 					}
 				>
-					{ notifyMessage }
+					{ optOutMessage }
 				</Message>
-			)
-}
+			) }
 
 			{ errorMessage && (
 				<Message severity="error" onClose={ () => setErrorMessage( '' ) }>{ errorMessage }</Message>
