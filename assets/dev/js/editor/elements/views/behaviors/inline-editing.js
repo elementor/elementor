@@ -203,6 +203,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		// Is it repeater?
 		if ( 3 === parts.length ) {
+			container = container.repeaters[ parts[ 0 ] ];
 			container = container.children[ parts[ 1 ] ];
 			key = parts[ 2 ];
 		}
