@@ -29,7 +29,7 @@ describe( 'useIsolateObject', () => {
 			};
 		} );
 
-		getImageToImageIsolateObjects.mockImplementation( ( payload ) => {
+		getImageToImageIsolateObjects.mockImplementation( ( ) => {
 			return Promise.resolve( { result: [ { url: 'processed-image.jpg' } ] } );
 		} );
 	} );
