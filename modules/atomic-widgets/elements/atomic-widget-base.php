@@ -21,10 +21,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$this->styles = $data['styles'] ?? [];
 	}
 
-	public function get_keywords() {
-		return [ 'Atoms', 'Atomic' ];
-	}
-
 	abstract protected function define_atomic_controls(): array;
 
 	public function get_global_scripts() {

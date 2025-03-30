@@ -19,6 +19,7 @@ use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -732,7 +733,7 @@ abstract class Document extends Controls_Stack {
 					Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config();
 			}
 
-			if ( Plugin::$instance->experiments->is_feature_active( 'atomic_widgets' ) ) {
+			if ( Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ) ) {
 				// Order reflects the order in the editor.
 				$atomic_elements = [ 'flexbox', 'e-div-block' ];
 
