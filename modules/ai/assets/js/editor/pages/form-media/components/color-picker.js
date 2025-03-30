@@ -68,9 +68,11 @@ const ColorInput = ( { label, color, onChange, disabled } ) => {
 					background: color,
 					width: '100%',
 					height: 'auto',
+					borderColor: 'rgb(12, 13, 14)',
+					borderWidth: '1px',
+					borderStyle: 'solid',
 					aspectRatio: '1 / 1',
 					flex: 1.1,
-					border: 'none',
 				} }
 				aria-describedby={ id }
 				ref={ anchorEl }
