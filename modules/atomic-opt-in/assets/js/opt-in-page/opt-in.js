@@ -33,7 +33,7 @@ const i18n = {
 
 	welcomeText: __( 'Welcome to a new era of web creation with Editor V4. It’s faster, more flexible, and built with a fresh approach to structure & styling.', 'elementor' ),
 
-	mvpIsHere: __( 'Here’s what’s inside the alpha version:', 'elementor' ),
+	advantagesHeader: __( 'Here’s what’s inside the alpha version:', 'elementor' ),
 	advantages: [
 		__( 'Unparalleled performance - Cleaner code & a lighter CSS footprint.', 'elementor' ),
 		__( 'Professional tools at your fingertips - classes and states.', 'elementor' ),
@@ -46,14 +46,14 @@ const i18n = {
 	warningHeader: __( 'Keep in mind:', 'elementor' ),
 	warning: __( 'Editor V4 is still in alpha and should not be used on live sites yet. ', 'elementor' ),
 
-	helpImprove: __( 'We’d love your feedback!', 'elementor' ),
-	feedback: __( 'Head over to Github', 'elementor' ),
+	feedback: __( 'We’d love your feedback!', 'elementor' ),
+	overToGithub: __( 'Head over to Github', 'elementor' ),
 	tellUsWhy: __( 'Tell us why', 'elementor' ),
 
 	image: __( 'Editor V4', 'elementor' ),
 
 	buttons: {
-		startBuilding: __( 'Try out the new experience', 'elementor' ),
+		tryOut: __( 'Try out the new experience', 'elementor' ),
 		optIn: __( 'Activate the new experience', 'elementor' ),
 		optOut: __( 'Deactivate V4', 'elementor' ),
 	},
@@ -68,7 +68,7 @@ const i18n = {
 const optInLinks = {
 	feedbackUrl: 'https://go.elementor.com/wp-dash-opt-in-v4-feedback/',
 	readMoreUrl: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
-	startBuildingUrl: DOMPurify.sanitize( decodeHtmlUrl( elementorSettingsEditor4OptIn?.urls?.start_building ) ) || '#',
+	tryOutUrl: DOMPurify.sanitize( decodeHtmlUrl( elementorSettingsEditor4OptIn?.urls?.start_building ) ) || '#',
 };
 
 const optInImages = {
@@ -145,7 +145,7 @@ export const OptIn = ( { state } ) => {
 				<Stack direction="column" gap={ 1.5 }>
 					<Box>
 						<TextNode>{ i18n.welcomeText }</TextNode>
-						<TextNode>{ i18n.mvpIsHere }</TextNode>
+						<TextNode>{ i18n.advantagesHeader }</TextNode>
 					</Box>
 
 					<Box>
@@ -183,13 +183,13 @@ export const OptIn = ( { state } ) => {
 						</Button>
 					) : (
 						<Button
-							onClick={ () => window.location.href = optInLinks.startBuildingUrl }
+							onClick={ () => window.location.href = optInLinks.tryOutUrl }
 							size="large"
 							color="primary"
 							variant="contained"
 							sx={ { flexGrow: 1 } }
 						>
-							{ i18n.buttons.startBuilding }
+							{ i18n.buttons.tryOut }
 						</Button>
 					) }
 					<Button
@@ -208,7 +208,7 @@ export const OptIn = ( { state } ) => {
 					</Button>
 				</Stack>
 
-				<TextNode>{ i18n.helpImprove } <Link underline="hover" href={ optInLinks.feedbackUrl } target="_blank">{ i18n.feedback }</Link></TextNode>
+				<TextNode>{ i18n.feedback } <Link underline="hover" href={ optInLinks.feedbackUrl } target="_blank">{ i18n.overToGithub }</Link></TextNode>
 			</Stack>
 
 			<Stack sx={ { flex: 1, px: 0, maxWidth: { xl: '507px', md: '507px', sm: '600px' }, mx: 'auto' } }>
