@@ -11,7 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Color_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		$color = $value;
+		$color = $value['color'] ?? '';
+
+		if ( ! $color ) {
+			return null;
+		}
+
 		return "linear-gradient($color, $color)";
 	}
 }
