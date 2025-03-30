@@ -10,22 +10,19 @@ import {
 import { useEffect, useRef, useState } from 'react';
 
 const i18n = {
-	heading: __( 'Welcome to the Future of Elementor Editor V4 is Here!', 'elementor' ),
-	introduction: __( 'You\'re now using Editor V4, a new generation of Elementor that brings powerful enhancements while keeping your workflow familiar.', 'elementor' ),
+	heading: __( 'Say hello to a new experience!', 'elementor' ),
+	introduction: __( 'You\'re now using Editor V4, a new generation of the web creation.', 'elementor' ),
 	listItems: [
-		__( 'A Unified Style Tab for consistent design control', 'elementor' ),
-		__( 'CSS Classes & Pseudo-Classes for advanced styling', 'elementor' ),
-		__( 'Improved Responsive Support for better adaptability', 'elementor' ),
-		__( '…and much more!', 'elementor' ),
+		__( 'Try out the new Editor V4 elements such as Div, SVG and Paragraph.', 'elementor' ),
+		__( 'Set up a new Class and apply it site-wide for perfect consistency.', 'elementor' ),
+		__( 'Customize any style element per screen size by switching between responsive views.', 'elementor' ),
 	],
 	footerText: __( 'Need help getting started?', 'elementor' ),
-	introductionVideo: __( 'Introduction video', 'elementor' ),
-	helpCenter: __( 'Help center', 'elementor' ),
+	helpCenter: __( 'Learn more', 'elementor' ),
 	closeButton: __( 'Let\'s Go', 'elementor' ),
 };
 
 const contentLinks = {
-	introduction: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
 	helpCenter: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
 };
 
@@ -54,7 +51,12 @@ export const WelcomePopover = ( { doClose } ) => {
 					sx: { width: 600 },
 				} } }
 		>
-			<Box sx={ { aspectRatio: '2', backgroundColor: 'primary.light' } } />
+			<Box sx={ {
+				aspectRatio: '2',
+				backgroundImage: 'url(https://assets.elementor.com/v4-promotion/v1/images/v4_opt_in.png)',
+				backgroundSize: 'cover',
+				backgroundPosition: 'center',
+			} } />
 			<Stack pt={ 3 } pb={ 1.5 } px={ 3 } gap={ 3 }>
 				<Typography variant="h6" color="text.primary">{ i18n.heading }</Typography>
 				<Box>
@@ -71,8 +73,7 @@ export const WelcomePopover = ( { doClose } ) => {
 				</Box>
 				<Stack direction="row" alignItems="center" gap={ 1.5 }>
 					<Typography variant="body1" color="text.secondary">{ i18n.footerText }</Typography>
-					<Link href={ contentLinks.introduction } target="_blank" variant="body1" color="info.main">{ i18n.introductionVideo }</Link>
-					<Link href={ contentLinks.helpCenter } target="_blank" variant="body1" color="info.main">{ i18n.helpCenter }</Link>
+					<Link href={ contentLinks.helpCenter } target="_blank" variant="body1" color="info.main" sx={ { textDecoration: 'none' } }>{ i18n.helpCenter }</Link>
 				</Stack>
 			</Stack>
 			<Divider />

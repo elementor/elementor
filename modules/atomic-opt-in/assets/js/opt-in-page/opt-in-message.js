@@ -1,7 +1,7 @@
 import { Snackbar, SnackbarContent, Stack, Alert, IconButton } from '@elementor/ui';
 import { CircleCheckFilledIcon, XIcon } from '@elementor/icons';
 
-export const Message = ( { children, severity = 'message', onClose } ) => {
+export const Message = ( { action, children, severity = 'message', onClose } ) => {
 	return (
 		<Snackbar
 			open
@@ -18,21 +18,29 @@ export const Message = ( { children, severity = 'message', onClose } ) => {
 					{ children }
 				</Alert>
 			) : (
-				<SnackbarContent message={
-					<Stack direction="row" alignItems="center" gap={ 1.25 }>
-						<CircleCheckFilledIcon />
-						{ children }
-						<IconButton color="inherit" onClick={ onClose }>
-							<XIcon fontSize="small" />
-						</IconButton>
-					</Stack>
-				} />
+				<SnackbarContent
+					action={
+						<Stack direction="row" spacing={ 1 } alignItems="center">
+							{ action }
+							<IconButton color="inherit" size="small" onClick={ onClose }>
+								<XIcon fontSize="small" />
+							</IconButton>
+						</Stack>
+					}
+					message={
+						<Stack direction="row" gap={ 1.5 } alignItems="center">
+							<CircleCheckFilledIcon />
+							{ children }
+						</Stack>
+					}
+				/>
 			) }
 		</Snackbar>
 	);
 };
 
 Message.propTypes = {
+	action: PropTypes.node,
 	children: PropTypes.node,
 	severity: PropTypes.oneOf( [ 'message', 'success', 'warning', 'error' ] ),
 	onClose: PropTypes.func,
