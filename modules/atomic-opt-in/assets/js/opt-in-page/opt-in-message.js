@@ -1,16 +1,6 @@
 import { Snackbar, SnackbarContent, Stack, Alert, IconButton } from '@elementor/ui';
 import { CircleCheckFilledIcon, XIcon } from '@elementor/icons';
 
-const john = {
-	age: 25,
-	name: 'John',
-	deparment: 'finance',
-};
-
-const { name, age, ...obj } = john;
-
-console.log( obj );
-
 export const Message = ( { action, children, severity = 'message', onClose } ) => {
 	return (
 		<Snackbar
