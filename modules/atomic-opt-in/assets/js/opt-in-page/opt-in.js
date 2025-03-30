@@ -136,7 +136,7 @@ export const OptIn = ( { state } ) => {
 			gap: 3,
 			flexDirection: { xs: 'column-reverse', md: 'row' },
 		} }>
-			<Stack sx={ { flex: 1, maxWidth: { xl: '507px', md: '507px', sm: '600px' }, gap: 2.5, mx: 'auto' } }>
+			<Stack sx={ { flex: 1, maxWidth: { md: '507px', sm: '600px' }, gap: 2.5, mx: 'auto' } }>
 				<Stack direction="row" alignItems="center" gap={ 1 }>
 					<TextNode variant="h4" width="fit-content">{ i18n.title }</TextNode>
 					<Chip size="small" color="secondary" variant="filled" label={ i18n.chip } />
@@ -211,7 +211,7 @@ export const OptIn = ( { state } ) => {
 				<TextNode>{ i18n.feedback } <Link underline="hover" href={ optInLinks.feedbackUrl } target="_blank">{ i18n.overToGithub }</Link></TextNode>
 			</Stack>
 
-			<Stack sx={ { flex: 1, px: 0, maxWidth: { xl: '507px', md: '507px', sm: '600px' }, mx: 'auto' } }>
+			<Stack sx={ { flex: 1, px: 0, maxWidth: { md: '507px', sm: '600px' }, mx: 'auto' } }>
 				{ optInImages.squareSrc ? (
 					<Image
 						src={ optInImages.squareSrc }
