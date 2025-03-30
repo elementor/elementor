@@ -123,6 +123,36 @@ const DivBlockView = BaseElementView.extend( {
 		this.$el.html5Droppable( this.getDroppableOptions() );
 	},
 
+	/**
+	 * Add a `Save as Template` button to the context menu.
+	 *
+	 * @return {Object} groups
+	 */
+	getContextMenuGroups() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+			transferGroupClipboardIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+
+		groups.splice( transferGroupClipboardIndex + 1, 0, {
+			name: 'save',
+			actions: [
+				{
+					name: 'save',
+					title: __( 'Save as Template', 'elementor' ),
+					callback: this.saveAsTemplate.bind( this ),
+					isEnabled: () => ! this.getContainer().isLocked(),
+				},
+			],
+		} );
+
+		return groups;
+	},
+
+	saveAsTemplate() {
+		$e.route( 'library/save-template', {
+			model: this.model,
+		} );
+	},
+
 	isDroppingAllowed() {
 		return true;
 	},
