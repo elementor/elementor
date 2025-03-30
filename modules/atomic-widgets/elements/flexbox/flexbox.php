@@ -24,7 +24,7 @@ class Flexbox extends Div_Block {
 	}
 
 	public function get_keywords() {
-		return [ 'ato' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic' ];
 	}
 
 	public function get_icon() {
