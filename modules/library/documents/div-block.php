@@ -55,7 +55,7 @@ class Div_Block extends Library_Document {
 	/**
 	 * Get Type
 	 *
-	 * Return the dib block document type.
+	 * Return the div block document type.
 	 *
 	 * @return string
 	 */
