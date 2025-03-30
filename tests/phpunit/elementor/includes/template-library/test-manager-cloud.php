@@ -34,6 +34,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'get_bulk_resources_with_content',
 				'bulk_move_templates',
 				'post_bulk_resources',
+				'get_quota',
 			] )
 			->disableOriginalConstructor()
 			->getMock();
@@ -1028,5 +1029,27 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 
 		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
+	}
+
+	public function test_get_quota() {
+		// Assert
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'get_quota' );
+
+		// Act
+		$this->manager->get_quota( [
+			'source' => 'cloud',
+		] );
+	}
+
+	public function test_get_quota_fails_without_source() {
+		// Act
+		$result = $this->manager->get_quota( [] );
+
+		// Assert
+		$this->assertWPError( $result );
+
+		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
 	}
 }
