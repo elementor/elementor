@@ -36,7 +36,7 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato' ];
 	}
 
 	public function get_icon() {
