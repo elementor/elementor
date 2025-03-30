@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Elementor Dib_Block library document.
+ * Elementor Flexbox library document.
  *
- * Elementor dib block library document handler class is responsible for
+ * Elementor flexbox library document handler class is responsible for
  * handling a document of a flexbox type.
  *
  * @since 3.29.0
@@ -55,7 +55,7 @@ class Flexbox extends Library_Document {
 	/**
 	 * Get Type
 	 *
-	 * Return the dib block document type.
+	 * Return the flexbox document type.
 	 *
 	 * @return string
 	 */
