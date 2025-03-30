@@ -48,6 +48,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				fileData,
 			},
 			success: ( successData ) => {
+				elementor.templates.clearLastRemovedItems();
 				elementor.templates.getTemplatesCollection().add( successData );
 
 				$e.route( 'library/templates/my-templates' );

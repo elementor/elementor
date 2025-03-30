@@ -19,11 +19,15 @@ class Atomic_Image extends Atomic_Widget_Base {
 	use Has_Template;
 
 	public static function get_element_type(): string {
-		return 'a-image';
+		return 'e-image';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Image', 'elementor' );
+		return esc_html__( 'Image', 'elementor' );
+	}
+
+	public function get_keywords() {
+		return [ 'ato', 'atom', 'atoms', 'atomic' ];
 	}
 
 	public function get_icon() {
@@ -48,9 +52,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
 				Image_Control::bind_to( 'image' ),
-
-				Link_Control::bind_to( 'link' )
-					->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+				Link_Control::bind_to( 'link' ),
 			] );
 
 		return [

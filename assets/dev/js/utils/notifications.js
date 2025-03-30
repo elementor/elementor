@@ -71,8 +71,14 @@ module.exports = elementorModules.Module.extend( {
 
 		toast.getElements( 'buttonsWrapper' ).empty();
 
-		if ( ! this.isPositionValid( options?.position ) ) {
+		const isPositionValid = this.isPositionValid( options?.position );
+
+		if ( ! isPositionValid ) {
 			this.positionToWindow();
+		}
+
+		if ( options?.position && isPositionValid ) {
+			toast.setSettings( 'position', options.position );
 		}
 
 		if ( options.buttons ) {

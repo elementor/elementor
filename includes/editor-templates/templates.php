@@ -117,12 +117,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		<# } #>
 
-		<div id="elementor-template-library-filter-toolbar-side-actions">
+		<div class="elementor-template-library-filter-toolbar-side-actions">
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 				<# if ( 'cloud' === activeSource ) { #>
-					<div id="elementor-template-library-add-new-folder" class="">
+					<div id="elementor-template-library-add-new-folder" class="elementor-template-library-action-item">
 						<i class="eicon-folder" aria-hidden="true" title="Create a New Folder"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Create a New Folder', 'elementor' ); ?></span>
+					</div>
+					<span class="divider"></span>
+					<div id="elementor-template-library-view-grid" class="elementor-template-library-action-item">
+						<i class="eicon-container-grid" aria-hidden="true" title="Grid view"></i>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'Grid view', 'elementor' ); ?></span>
+					</div>
+					<div id="elementor-template-library-view-list" class="elementor-template-library-action-item">
+						<i class="eicon-editor-list-ul" aria-hidden="true" title="List view"></i>
+						<span class="elementor-screen-only"><?php echo esc_html__( 'List view', 'elementor' ); ?></span>
 					</div>
 				<# } #>
 			<?php endif; ?>
@@ -134,9 +143,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<# if ( 'local' === activeSource || 'cloud' === activeSource ) { #>
+		<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+		<div class="bulk-selection-action-bar">
+			<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
+			<span class="selected-count"></span>
+			<span class="bulk-export"><i class="eicon-file-download"></i></span>
+			<span class="bulk-copy"><i class="eicon-copy"></i></span>
+			<span class="bulk-move"><i class="eicon-folder-o"></i></span>
+			<span class="bulk-delete"><i class="eicon-trash-o"></i></span>
+		</div>
+		<?php endif; ?>
 		<div id="elementor-template-library-order-toolbar-local">
 			<div class="elementor-template-library-local-column-1">
 				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
+				<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+				<input type="checkbox" id="bulk-select-all">
+				<?php endif; ?>
 				<label for="elementor-template-library-order-local-title" class="elementor-template-library-order-label"><?php echo esc_html__( 'Name', 'elementor' ); ?></label>
 			</div>
 			<div class="elementor-template-library-local-column-2">
@@ -198,21 +220,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-template-local">
 	<#
 		const activeSource = elementor.templates.getFilter('source');
-	#>
-	<div class="elementor-template-library-template-name elementor-template-library-local-column-1">
-		<# if ( 'cloud' === activeSource ) {
-			const sourceIcon = 'FOLDER' === subType
-				? '<i class="eicon-folder-o" aria-hidden="true"></i>'
-				: '<i class="eicon-global-colors" aria-hidden="true"></i>';
+		const view = elementor.templates.getFilter('view') ?? elementor.templates.getViewSelection() ?? 'list';
 
-				print( sourceIcon );
-		} #>
-		{{ title }}
-	</div>
-	<div class="elementor-template-library-template-meta elementor-template-library-template-type elementor-template-library-local-column-2">{{{ elementor.translate( type ) }}}</div>
-	<div class="elementor-template-library-template-meta elementor-template-library-template-author elementor-template-library-local-column-3">{{{ author }}}</div>
-	<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>
-	<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
+		if ( ( 'cloud' === activeSource && view === 'list' ) || 'local' === activeSource ) {
+	#>
+		<div class="elementor-template-library-template-name elementor-template-library-local-column-1">
+			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+			<input type="checkbox" class="bulk-selection-item-checkbox" data-template_id="{{ template_id }}" data-type="{{ type }}">
+			<?php endif; ?>
+			<# if ( 'cloud' === activeSource ) {
+				const sourceIcon = typeof subType !== 'undefined' && 'FOLDER' === subType
+					? '<i class="eicon-folder-o" aria-hidden="true"></i>'
+					: '<i class="eicon-global-colors" aria-hidden="true"></i>';
+
+					print( sourceIcon );
+			} #>
+			<span>{{ title }}</span>
+		</div>
+		<div class="elementor-template-library-template-meta elementor-template-library-template-type elementor-template-library-local-column-2">{{{ elementor.translate( type ) }}}</div>
+		<div class="elementor-template-library-template-meta elementor-template-library-template-author elementor-template-library-local-column-3">{{{ author }}}</div>
+		<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>
+		<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
 		<div class="elementor-template-library-template-preview elementor-button e-btn-txt">
 		<#
 			const actionText = typeof subType === 'undefined' || 'FOLDER' !== subType
@@ -236,8 +264,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 				<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
 					<div class="elementor-template-library-template-move">
-						<i class="eicon-pencil" aria-hidden="true"></i>
+						<i class="eicon-folder" aria-hidden="true"></i>
 						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+					</div>
+					<div class="elementor-template-library-template-copy">
+						<i class="eicon-copy" aria-hidden="true"></i>
+						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
 					</div>
 				<# } #>
 			<?php endif; ?>
@@ -259,6 +291,96 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 	</div>
+	<# } else {
+		if ( typeof subType !== 'undefined' && 'FOLDER' === subType ) {
+	#>
+		<div class="elementor-template-library-template-type-icon">
+			<i class="eicon-folder-o" aria-hidden="true"></i>
+			<span class="elementor-screen-only"><?php echo esc_html__( 'Folder', 'elementor' ); ?></span>
+		</div>
+		<div class="elementor-template-library-template-name">
+			<span>{{ title }}</span>
+		</div>
+		<div class="elementor-template-library-template-more-toggle">
+			<i class="eicon-ellipsis-v" aria-hidden="true"></i>
+			<span class="elementor-screen-only"><?php echo esc_html__( 'More actions', 'elementor' ); ?></span>
+		</div>
+		<div class="elementor-template-library-template-more" style="display: none;">
+			<div class="elementor-template-library-template-export">
+				<a href="{{ export_link }}">
+					<i class="eicon-sign-out" aria-hidden="true"></i>
+					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Export', 'elementor' ); ?></span>
+				</a>
+			</div>
+			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+				<div class="elementor-template-library-template-rename">
+					<i class="eicon-pencil" aria-hidden="true"></i>
+					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Rename', 'elementor' ); ?></span>
+				</div>
+			<?php endif; ?>
+			<div class="elementor-template-library-template-delete">
+				<i class="eicon-trash-o" aria-hidden="true"></i>
+				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
+			</div>
+		</div>
+		<# } else { #>
+			<#
+				const imageSource = preview_url || '<?php echo esc_html( Utils::get_placeholder_image_src() ); ?>';
+			#>
+			<div class="elementor-template-library-template-thumbnail">
+				<img src="{{{ imageSource }}}"/>
+				<div class="elementor-template-library-template-preview">
+					<i class="eicon-preview-medium" aria-hidden="true"></i>
+				</div>
+			</div>
+			<div class="elementor-template-library-card-footer">
+				<div class="elementor-template-library-template-name">
+					<span>{{ title }}</span>
+				</div>
+				<div class="elementor-template-library-template-card-footer-overlay">
+					<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
+						<i class="eicon-file-download" aria-hidden="true"></i>
+						<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
+					</button>
+					<div class="elementor-template-library-template-card-footer-overlay-info">
+						<div class="elementor-template-library-template-meta">{{{ author }}}</div>
+						<div class="elementor-template-library-template-meta">{{{ human_date }}}</div>
+					</div>
+				</div>
+				<div class="elementor-template-library-template-more-toggle">
+					<i class="eicon-ellipsis-v" aria-hidden="true"></i>
+					<span class="elementor-screen-only"><?php echo esc_html__( 'More actions', 'elementor' ); ?></span>
+				</div>
+				<div class="elementor-template-library-template-more" style="display: none;">
+					<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+						<div class="elementor-template-library-template-move">
+							<i class="eicon-folder" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+						</div>
+						<div class="elementor-template-library-template-copy">
+							<i class="eicon-copy" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
+						</div>
+					<?php endif; ?>
+					<div class="elementor-template-library-template-export">
+						<a href="{{ export_link }}">
+							<i class="eicon-sign-out" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Export', 'elementor' ); ?></span>
+						</a>
+					</div>
+					<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+						<div class="elementor-template-library-template-rename">
+							<i class="eicon-pencil" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Rename', 'elementor' ); ?></span>
+						</div>
+					<?php endif; ?>
+					<div class="elementor-template-library-template-delete">
+						<i class="eicon-trash-o" aria-hidden="true"></i>
+						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
+					</div>
+				</div>
+			</div>
+	<# } } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-button">
@@ -298,14 +420,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-save-template">
 	<div class="elementor-template-library-blank-icon">
-		{{{ icon }}}
+		<#
+			const templateIcon = typeof icon === 'undefined' ? '<i class="eicon-library-upload" aria-hidden="true"></i>' : icon;
+			print( templateIcon );
+		#>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Save', 'elementor' ); ?></span>
 	</div>
 	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
 	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
 	<form id="elementor-template-library-save-template-form">
 		<input type="hidden" name="post_id" value="<?php echo esc_attr( get_the_ID() ); ?>">
-		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+		<# if ( typeof canSaveToCloud === 'undefined' || ! canSaveToCloud ) { #>
 		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
 		<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
 			<span class="elementor-state-icon">
@@ -313,7 +438,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 			<?php echo esc_html__( 'Save', 'elementor' ); ?>
 		</button>
-		<?php else : ?>
+		<# } else { #>
 		<div class="cloud-library-form-inputs">
 			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Give your template a name', 'elementor' ); ?>" required>
 			<div class="source-selections">
@@ -327,7 +452,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
 					</span>
-				</div>				
+				</div>
 				<div class="source-selections-input local">
 					<input type="checkbox" id="local" name="local" value="local">
 					<label for="local"> Site Library</label><br>
@@ -341,7 +466,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php echo esc_html__( 'Save', 'elementor' ); ?>
 			</button>
 		</div>
-		<?php endif; ?>
+		<# } #>
 	</form>
 	<div class="elementor-template-library-blank-footer">
 		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>

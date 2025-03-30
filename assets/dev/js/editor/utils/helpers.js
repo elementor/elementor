@@ -48,10 +48,20 @@ module.exports = {
 			container: {
 				widget: null,
 				container: null,
+				'e-div-block': null,
+				flexbox: null,
 			},
-			'div-block': {
+			'e-div-block': {
 				widget: null,
-				'div-block': null,
+				'e-div-block': null,
+				container: null,
+				flexbox: null,
+			},
+			flexbox: {
+				widget: null,
+				'e-div-block': null,
+				container: null,
+				flexbox: null,
 			},
 		},
 	},
@@ -733,23 +743,18 @@ module.exports = {
 	},
 
 	/**
-	 * Retrieves an anchor (link) element that is a direct or nested child of the given element,
-	 * and has an 'href' attribute.
-	 *
-	 * @param {HTMLElement} element - The parent element to search within.
-	 * @return {HTMLAnchorElement | null} An anchor element with an 'href' attribute, or null if none are found.
+	 * @param {HTMLElement} element - The referenced element whose children are searched.
+	 * @return {HTMLAnchorElement | null} The closest anchor child element, or null if none is found.
 	 */
-	getAnchorWithHrefInElement( element ) {
-		return element?.querySelector( 'a[href]' ) || null;
+	findChildWithAnchor( element ) {
+		return element?.querySelector( 'a' ) || null;
 	},
 
 	/**
-	 * Checks if the given element is inside an anchor (link) element that has an 'href' attribute.
-	 *
-	 * @param {HTMLElement} element - The element to check.
-	 * @return {HTMLAnchorElement | null} The closest anchor element with an 'href' attribute, or null if none is found.
+	 * @param {HTMLElement} element - The referenced element whose parents are searched.
+	 * @return {HTMLAnchorElement | null} The closest anchor parent element, or null if none is found.
 	 */
-	getClosestAnchorWithHref( element ) {
-		return element?.closest( 'a[href]' ) || null;
+	findParentWithAnchor( element ) {
+		return element?.closest( 'a' ) || null;
 	},
 };

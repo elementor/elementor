@@ -13,7 +13,7 @@ class Background_Color_Overlay_Prop_Type extends Object_Prop_Type {
 		return 'background-color-overlay';
 	}
 
-	public function define_shape(): array {
+	protected function define_shape(): array {
 		return [
 			'color' => Color_Prop_Type::make(),
 		];

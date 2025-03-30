@@ -7,9 +7,10 @@ test.describe( 'Atomic Widgets', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
+	const experimentName = 'e_atomic_elements';
 
 	const atomicWidgets = [
-		{ name: 'a-heading', title: 'Atomic Heading' },
+		{ name: 'e-heading', title: 'Heading' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -20,7 +21,7 @@ test.describe( 'Atomic Widgets', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
-			atomic_widgets: 'active',
+			[ experimentName ]: 'active',
 		} );
 
 		editor = await wpAdmin.openNewPage();

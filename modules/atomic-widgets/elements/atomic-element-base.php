@@ -25,6 +25,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	abstract protected function define_atomic_controls(): array;
 
+	public function get_global_scripts() {
+		return [];
+	}
+
 	final public function get_initial_config() {
 		$config = parent::get_initial_config();
 
@@ -36,6 +40,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['categories'] = [ 'v4-elements' ];
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
+		$config['keywords'] = $this->get_keywords();
 
 		return $config;
 	}
@@ -44,4 +49,18 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 * @return array<string, Prop_Type>
 	 */
 	abstract protected static function define_props_schema(): array;
+
+	/**
+	 * Get Element keywords.
+	 *
+	 * Retrieve the element keywords.
+	 *
+	 * @since 3.29
+	 * @access public
+	 *
+	 * @return array Element keywords.
+	 */
+	public function get_keywords() {
+		return [];
+	}
 }
