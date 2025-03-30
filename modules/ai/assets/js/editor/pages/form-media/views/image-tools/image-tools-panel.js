@@ -11,6 +11,7 @@ import Cleanup from '../../../../icons/cleanup-icon';
 import IsolateObjectIcon from '../../../../icons/isolate-object-icon';
 import { LOCATIONS } from '../../constants';
 import { useLocation } from '../../context/location-context';
+import useIntroduction from '../../../../hooks/use-introduction';
 
 const TeaserDrawing = () => (
 	<SvgIcon viewBox="0 0 184 80" sx={ { width: 184, height: 80 } }>
@@ -46,7 +47,6 @@ const ToolsTeaserContainer = styled( Box )( ( { theme } ) => ( {
 	padding: theme.spacing( 4, 0, 1 ),
 } ) );
 
-// Create a styled Chip component with default styles
 const StyledChip = styled( ChipBase )( () => ( {
 	position: 'absolute',
 	top: 8,
@@ -60,6 +60,7 @@ const StyledChip = styled( ChipBase )( () => ( {
 
 const ImageToolsPanel = () => {
 	const { navigate } = useLocation();
+	const { isViewed: isIsolateViewed, markAsViewed: markIsolateAsViewed } = useIntroduction( 'e-ai-image-isolate-tool' );
 
 	const tools = [
 		{
@@ -100,13 +101,16 @@ const ImageToolsPanel = () => {
 		{
 			label: __( 'Isolate object', 'elementor' ),
 			Icon: IsolateObjectIcon,
-			ChipParam: <StyledChip
+			ChipParam: ! isIsolateViewed ? <StyledChip
 				label="New"
 				color="info"
 				variant="standard"
 				size="tiny"
-			/>,
-			onClick: () => navigate( LOCATIONS.ISOLATE_OBJECT ),
+			/> : null,
+			onClick: () => {
+				markIsolateAsViewed();
+				navigate( LOCATIONS.ISOLATE_OBJECT );
+			},
 		},
 	];
 	return (
