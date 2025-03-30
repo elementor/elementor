@@ -24,15 +24,19 @@ class Div_Block extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'div-block';
+		return 'e-div-block';
 	}
 
 	public static function get_element_type(): string {
-		return 'div-block';
+		return 'e-div-block';
 	}
 
 	public function get_title() {
 		return esc_html__( 'Div Block', 'elementor' );
+	}
+
+	public function get_keywords() {
+		return [ 'ato' ];
 	}
 
 	public function get_icon() {
@@ -93,7 +97,7 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
-		if ( 'container' === $element_data['elType'] || 'div-block' === $element_data['elType'] ) {
+		if ( 'container' === $element_data['elType'] || 'e-div-block' === $element_data['elType'] ) {
 			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 		}
 
@@ -155,29 +159,26 @@ class Div_Block extends Atomic_Element_Base {
 
 	protected function define_base_styles(): array {
 		$display = String_Prop_Type::generate( 'block' );
-		$padding = Dimensions_Prop_Type::generate( [
-			'block-start' => Size_Prop_Type::generate( [
-				'size' => 10,
-				'unit' => 'px',
-			]),
-			'block-end' => Size_Prop_Type::generate( [
-				'size' => 10,
-				'unit' => 'px',
-			]),
-		]);
-		$min_height = Size_Prop_Type::generate( [
-			'size' => 100,
-			'unit' => 'px',
-		] );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', $display )
-						->add_prop( 'padding', $padding )
-						->add_prop( 'min-height', $min_height )
+						->add_prop( 'padding', $this->get_base_padding() )
+						->add_prop( 'min-height', $this->get_base_height() )
 				),
 		];
+	}
+
+	protected function get_base_padding(): array {
+		return Size_Prop_Type::generate( [
+			'size' => 10,
+			'unit' => 'px',
+		] );
+	}
+
+	protected function get_base_height(): array {
+		return String_Prop_Type::generate( 'min-content' );
 	}
 }

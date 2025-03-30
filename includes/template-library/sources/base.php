@@ -276,7 +276,7 @@ abstract class Source_Base {
 		return Plugin::$instance->db->iterate_data( $content, function( $element ) {
 			$element['id'] = Utils::generate_random_string();
 
-			return $element;
+			return apply_filters( 'elementor/document/element/replace_id', $element );
 		} );
 	}
 
@@ -380,6 +380,59 @@ abstract class Source_Base {
 
 	public function move_template_to_folder( array $folder_data = [] ) {
 		return new \WP_Error( 'template_error', 'Templates cannot be moved in this source' );
+	}
+
+	public function move_bulk_templates_to_folder( array $folder_data = [] ) {
+		return new \WP_Error( 'template_error', 'Templates cannot be moved in this source' );
+	}
+
+	public function save_bulk_items( array $args = [] ) {
+		return [];
+	}
+
+	public function get_bulk_items( array $args = [] ) {
+		return [];
+	}
+
+	/**
+	 * @param int $template_id
+	 * @return \Elementor\Core\Base\Document|\WP_Error
+	 */
+	public function create_document_for_preview( int $template_id ) {
+		return new \WP_Error( 'template_error', 'Can not generate preview for this source' );
+	}
+
+	/**
+	 * @param int $template_id
+	 * @param mixed $data
+	 * @return string|\WP_Error
+	 * @throws \Exception
+	 */
+	public function save_item_preview( int $template_id, $data ) {
+		return new \WP_Error( 'template_error', 'Cannot save previews for this source' );
+	}
+
+	/**
+	 * @param int[] $template_ids
+	 * @return bool|\WP_Error
+	 */
+	public function bulk_delete_items( array $template_ids ) {
+		return new \WP_Error( 'template_error', 'Bulk delete action is not supported for this source' );
+	}
+
+	/**
+	 * @param int[] $template_ids
+	 * @return bool|\WP_Error
+	 */
+	public function bulk_undo_delete_items( array $template_ids ) {
+		return new \WP_Error( 'template_error', 'Undo delete action is not supported for this source' );
+	}
+
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function get_quota() {
+		return new \WP_Error( 'template_error', 'This source does not support quotas' );
 	}
 
 	/**

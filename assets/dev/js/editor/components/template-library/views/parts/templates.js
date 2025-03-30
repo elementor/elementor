@@ -3,6 +3,7 @@ const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/te
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
+import { SAVE_CONTEXTS } from './../../constants';
 
 const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
@@ -31,6 +32,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		addNewFolder: '#elementor-template-library-add-new-folder',
 		selectGridView: '#elementor-template-library-view-grid',
 		selectListView: '#elementor-template-library-view-list',
+		bulkSelectionItemCheckbox: '.bulk-selection-item-checkbox',
+		bulkSelectionActionBar: '.bulk-selection-action-bar',
+		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete i',
+		bulkSelectedCount: '.bulk-selection-action-bar .selected-count',
+		bulkSelectAllCheckbox: '#bulk-select-all',
+		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
+		bulkMove: '.bulk-selection-action-bar .bulk-move',
+		bulkCopy: '.bulk-selection-action-bar .bulk-copy',
 	},
 
 	events: {
@@ -42,6 +51,89 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'click @ui.addNewFolder': 'onCreateNewFolderClick',
 		'click @ui.selectGridView': 'onSelectGridViewClick',
 		'click @ui.selectListView': 'onSelectListViewClick',
+		'change @ui.bulkSelectionItemCheckbox': 'onSelectBulkSelectionItemCheckbox',
+		'change @ui.bulkSelectAllCheckbox': 'onBulkSelectAllCheckbox',
+		'click @ui.clearBulkSelections': 'onClearBulkSelections',
+		'mouseenter @ui.bulkMove': 'onHoverBulkAction',
+		'mouseenter @ui.bulkCopy': 'onHoverBulkAction',
+		'click @ui.bulkMove': 'onClickBulkMove',
+		'click @ui.bulkActionBarDelete': 'onBulkDeleteClick',
+		'click @ui.bulkCopy': 'onClickBulkCopy',
+	},
+
+	className: 'no-bulk-selections',
+
+	onClearBulkSelections() {
+		elementor.templates.clearBulkSelectionItems();
+		elementor.templates.layout.handleBulkActionBar();
+		elementor.templates.layout.selectAllCheckboxNormal();
+		this.deselectAllBulkItems();
+	},
+
+	deselectAllBulkItems() {
+		if ( 'list' === elementor.templates.getViewSelection() || 'local' === elementor.templates.getFilter( 'source' ) ) {
+			this.ui.bulkSelectAllCheckbox.prop( 'checked', false ).trigger( 'change' );
+		} else {
+			document.querySelectorAll( '.bulk-selected-item' ).forEach( function( item ) {
+				item.classList.remove( 'bulk-selected-item' );
+			} );
+		}
+	},
+
+	onSelectBulkSelectionItemCheckbox( event ) {
+		if ( event?.target?.checked ) {
+			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
+		} else {
+			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
+		}
+
+		this.handleBulkActionBarUi();
+	},
+
+	onBulkSelectAllCheckbox() {
+		const isChecked = this.$( '#bulk-select-all:checked' ).length > 0;
+
+		if ( isChecked ) {
+			elementor.templates.layout.selectAllCheckboxNormal();
+		}
+
+		this.updateBulkSelectedItems( isChecked );
+		this.handleBulkActionBarUi();
+	},
+
+	updateBulkSelectedItems( isChecked ) {
+		document.querySelectorAll( '.bulk-selection-item-checkbox' ).forEach( function( checkbox ) {
+			checkbox.checked = isChecked;
+			const templateId = checkbox.dataset.template_id;
+
+			if ( isChecked ) {
+				elementor.templates.addBulkSelectionItem( templateId );
+			} else {
+				elementor.templates.removeBulkSelectionItem( templateId );
+			}
+		} );
+	},
+
+	handleBulkActionBarUi() {
+		if ( 0 === this.$( '.bulk-selection-item-checkbox:checked' ).length ) {
+			this.$el.addClass( 'no-bulk-selections' );
+			this.$el.removeClass( 'has-bulk-selections' );
+		} else {
+			this.$el.addClass( 'has-bulk-selections' );
+			this.$el.removeClass( 'no-bulk-selections' );
+		}
+
+		elementor.templates.layout.handleBulkActionBar();
+	},
+
+	onBulkDeleteClick() {
+		this.ui.bulkActionBarDelete.toggleClass( 'disabled' );
+
+		elementor.templates.onBulkDeleteClick()
+			.finally( () => {
+				this.ui.bulkActionBarDelete.toggleClass( 'disabled' );
+				elementor.templates.layout.handleBulkActionBar();
+			} );
 	},
 
 	comparators: {
@@ -232,6 +324,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onRender() {
+		elementor.templates.clearBulkSelectionItems();
 		const activeSource = elementor.templates.getFilter( 'source' );
 		const templateType = elementor.templates.getFilter( 'type' );
 
@@ -264,6 +357,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	onTextFilterInput() {
 		const activeSource = elementor.templates.getFilter( 'source' );
+
+		if ( [ 'cloud', 'local' ].includes( activeSource ) ) {
+			elementor.templates.clearBulkSelectionItems();
+			elementor.templates.layout.handleBulkActionBar();
+		}
 
 		if ( 'cloud' === activeSource ) {
 			this.debouncedSearchTemplates( activeSource );
@@ -347,6 +445,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			}
 
 			this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+			elementor.templates.layout.selectAllCheckboxMinus();
 
 			elementor.templates.loadMore( {
 				onUpdate: () => {
@@ -375,6 +474,49 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			onSuccess: () => {
 				$e.routes.refreshContainer( 'library' );
 			},
+		} );
+	},
+
+	onHoverBulkAction() {
+		if ( this.hasFolderInBulkSelection() ) {
+			this.ui.bulkMove.find( 'i' ).css( 'cursor', 'not-allowed' );
+			this.ui.bulkCopy.find( 'i' ).css( 'cursor', 'not-allowed' );
+		} else {
+			this.ui.bulkMove.find( 'i' ).css( 'cursor', 'pointer' );
+			this.ui.bulkCopy.find( 'i' ).css( 'cursor', 'pointer' );
+		}
+	},
+
+	onClickBulkMove() {
+		if ( this.hasFolderInBulkSelection() ) {
+			return;
+		}
+
+		$e.route( 'library/save-template', {
+			model: this.model,
+			context: SAVE_CONTEXTS.BULK_MOVE,
+		} );
+	},
+
+	hasFolderInBulkSelection() {
+		const bulkSelectedItems = elementor.templates.getBulkSelectionItems();
+
+		return this.collection.some( ( model ) => {
+			const templateId = model.get( 'template_id' );
+			const type = model.get( 'type' );
+
+			return bulkSelectedItems.has( templateId ) && 'folder' === type;
+		} );
+	},
+
+	onClickBulkCopy() {
+		if ( this.hasFolderInBulkSelection() ) {
+			return;
+		}
+
+		$e.route( 'library/save-template', {
+			model: this.model,
+			context: SAVE_CONTEXTS.BULK_COPY,
 		} );
 	},
 } );

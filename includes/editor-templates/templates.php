@@ -143,9 +143,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<# if ( 'local' === activeSource || 'cloud' === activeSource ) { #>
+		<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+		<div class="bulk-selection-action-bar">
+			<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
+			<span class="selected-count"></span>
+			<span class="bulk-export"><i class="eicon-file-download"></i></span>
+			<span class="bulk-copy"><i class="eicon-copy"></i></span>
+			<span class="bulk-move"><i class="eicon-folder-o"></i></span>
+			<span class="bulk-delete"><i class="eicon-trash-o"></i></span>
+		</div>
+		<?php endif; ?>
 		<div id="elementor-template-library-order-toolbar-local">
 			<div class="elementor-template-library-local-column-1">
 				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
+				<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+				<input type="checkbox" id="bulk-select-all">
+				<?php endif; ?>
 				<label for="elementor-template-library-order-local-title" class="elementor-template-library-order-label"><?php echo esc_html__( 'Name', 'elementor' ); ?></label>
 			</div>
 			<div class="elementor-template-library-local-column-2">
@@ -212,8 +225,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		if ( ( 'cloud' === activeSource && view === 'list' ) || 'local' === activeSource ) {
 	#>
 		<div class="elementor-template-library-template-name elementor-template-library-local-column-1">
+			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+			<input type="checkbox" class="bulk-selection-item-checkbox" data-template_id="{{ template_id }}" data-type="{{ type }}">
+			<?php endif; ?>
 			<# if ( 'cloud' === activeSource ) {
-				const sourceIcon = 'FOLDER' === subType
+				const sourceIcon = typeof subType !== 'undefined' && 'FOLDER' === subType
 					? '<i class="eicon-folder-o" aria-hidden="true"></i>'
 					: '<i class="eicon-global-colors" aria-hidden="true"></i>';
 
@@ -248,8 +264,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 				<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
 					<div class="elementor-template-library-template-move">
-						<i class="eicon-pencil" aria-hidden="true"></i>
+						<i class="eicon-folder" aria-hidden="true"></i>
 						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+					</div>
+					<div class="elementor-template-library-template-copy">
+						<i class="eicon-copy" aria-hidden="true"></i>
+						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
 					</div>
 				<# } #>
 			<?php endif; ?>
@@ -272,7 +292,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<# } else {
-		if ( 'FOLDER' === subType ) {
+		if ( typeof subType !== 'undefined' && 'FOLDER' === subType ) {
 	#>
 		<div class="elementor-template-library-template-type-icon">
 			<i class="eicon-folder-o" aria-hidden="true"></i>
@@ -304,8 +324,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<# } else { #>
+			<#
+				const imageSource = preview_url || '<?php echo esc_html( Utils::get_placeholder_image_src() ); ?>';
+			#>
 			<div class="elementor-template-library-template-thumbnail">
-				<img src="<?php echo esc_html( Utils::get_placeholder_image_src() ); ?>"/>
+				<img src="{{{ imageSource }}}"/>
 				<div class="elementor-template-library-template-preview">
 					<i class="eicon-preview-medium" aria-hidden="true"></i>
 				</div>
@@ -333,6 +356,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="elementor-template-library-template-move">
 							<i class="eicon-folder" aria-hidden="true"></i>
 							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+						</div>
+						<div class="elementor-template-library-template-copy">
+							<i class="eicon-copy" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
 						</div>
 					<?php endif; ?>
 					<div class="elementor-template-library-template-export">
@@ -425,7 +452,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
 					</span>
-				</div>				
+				</div>
 				<div class="source-selections-input local">
 					<input type="checkbox" id="local" name="local" value="local">
 					<label for="local"> Site Library</label><br>

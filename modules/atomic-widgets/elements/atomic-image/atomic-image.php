@@ -19,7 +19,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 	use Has_Template;
 
 	public static function get_element_type(): string {
-		return 'a-image';
+		return 'e-image';
 	}
 
 	public function get_title() {
@@ -27,7 +27,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'atoms', 'atomic' ];
+		return [ 'ato' ];
 	}
 
 	public function get_icon() {

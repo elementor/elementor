@@ -25,6 +25,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		templateNameInput: '#elementor-template-library-save-template-name',
 		localInput: '.source-selections-input.local',
 		cloudInput: '.source-selections-input.cloud',
+		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
 	},
 
 	events: {
@@ -33,37 +34,48 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
+		'change @ui.sourceSelectionCheckboxes': 'maybeAllowOnlyOneCheckboxToBeChecked',
 	},
 
 	onRender() {
-		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ) {
+		const context = this.getOption( 'context' );
+
+		if ( SAVE_CONTEXTS.SAVE === context ) {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 		}
 
-		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
-			this.handleMoveContextUiState();
+		if ( SAVE_CONTEXTS.MOVE === context || SAVE_CONTEXTS.COPY === context ) {
+			this.handleSingleActionContextUiState();
+		}
+
+		if ( SAVE_CONTEXTS.BULK_MOVE === context || SAVE_CONTEXTS.BULK_COPY === context ) {
+			this.handleBulkActionContextUiState();
 		}
 	},
 
-	handleMoveContextUiState() {
+	handleSingleActionContextUiState() {
 		this.ui.templateNameInput.val( this.model.get( 'title' ) );
+		this.handleContextUiStateChecboxes();
+	},
 
-		const fromSource = this.model.get( 'source' );
+	handleBulkActionContextUiState() {
+		this.ui.templateNameInput.remove();
+		this.handleContextUiStateChecboxes();
+	},
+
+	handleContextUiStateChecboxes() {
+		const fromSource = elementor.templates.getFilter( 'source' );
 
 		if ( 'local' === fromSource ) {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 			this.ui.localInput.addClass( 'disabled' );
-		}
-
-		if ( 'cloud' === fromSource ) {
-			this.$( '.source-selections-input #local' ).prop( 'checked', true );
 		}
 	},
 
 	getSaveType() {
 		let type;
 
-		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) ) {
+		if ( SAVE_CONTEXTS.MOVE === this.getOption( 'context' ) || SAVE_CONTEXTS.COPY === this.getOption( 'context' ) ) {
 			type = this.model.get( 'type' );
 		} else if ( this.model ) {
 			type = this.model.get( 'elType' );
@@ -88,18 +100,25 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
-			saveType = this.getSaveType(),
 			JSONParams = { remove: [ 'default' ] };
 
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
-		this.ui.submitButton.addClass( 'elementor-button-state' );
-
 		this.updateSourceSelections( formData );
+
+		if ( ! formData?.source && this.templateHelpers()?.canSaveToCloud ) {
+			this.showEmptySourceErrorDialog();
+
+			return;
+		}
+
+		this.ui.submitButton.addClass( 'elementor-button-state' );
 
 		this.updateSaveContext( formData );
 
-		elementor.templates.saveTemplate( saveType, formData );
+		this.updateToastConfig( formData );
+
+		elementor.templates.saveTemplate( this.getSaveType(), formData );
 	},
 
 	updateSourceSelections( formData ) {
@@ -114,27 +133,118 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
 
+	showEmptySourceErrorDialog() {
+		elementorCommon.dialogsManager.createWidget( 'alert', {
+			id: 'elementor-template-library-error-dialog',
+			headerMessage: __( 'An error occured.', 'elementor' ),
+			message: __( 'Please select at least one location.', 'elementor' ),
+		} ).show();
+	},
+
 	updateSaveContext( formData ) {
 		const saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE;
 
 		formData.save_context = saveContext;
 
-		if ( SAVE_CONTEXTS.MOVE === saveContext ) {
+		if ( [ SAVE_CONTEXTS.MOVE, SAVE_CONTEXTS.BULK_MOVE, SAVE_CONTEXTS.COPY, SAVE_CONTEXTS.BULK_COPY ].includes( saveContext ) ) {
 			formData.from_source = elementor.templates.getFilter( 'source' );
-			formData.from_template_id = this.model.get( 'template_id' );
-
-			this.updateSourceState( formData );
+			formData.from_template_id = [ SAVE_CONTEXTS.MOVE, SAVE_CONTEXTS.COPY ].includes( saveContext )
+				? this.model.get( 'template_id' )
+				: Array.from( elementor.templates.getBulkSelectionItems() );
 		}
 	},
 
-	updateSourceState( formData ) {
-		if ( ! formData.source.length ) {
+	updateToastConfig( formData ) {
+		if ( ! formData.source?.length ) {
 			return;
 		}
 
-		const lastSource = formData.source.at( -1 );
+		const lastSource = formData.source.at( -1 ),
+			saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE,
+			toastMessage = this.getToastMessage( lastSource, saveContext, formData );
+
+		if ( ! toastMessage ) {
+			return;
+		}
+
+		const toastButtons = formData.source?.length > 1
+			? null
+			: this.getToastButtons( lastSource, formData?.parentId?.trim() );
+
+		elementor.templates.setToastConfig( {
+			show: true,
+			options: {
+				message: toastMessage,
+				buttons: toastButtons,
+				position: {
+					my: 'right bottom',
+					at: 'right-10 bottom-10',
+					of: '#elementor-template-library-modal .dialog-lightbox-widget-content',
+				},
+			},
+		} );
+	},
+
+	getToastMessage( lastSource, saveContext, formData ) {
+		const key = `${ lastSource }_${ saveContext }`;
+
+		if ( formData.source?.length > 1 ) {
+			return __( 'Template saved to your Site and Cloud Templates.', 'elementor' );
+		}
+
+		const actions = {
+			[ `local_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Site Templates.', 'elementor' ),
+			[ `cloud_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Cloud Templates.', 'elementor' ),
+			[ `local_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Site Templates', formData.title ),
+			[ `cloud_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Cloud Templates', formData.title ),
+			[ `local_${ SAVE_CONTEXTS.COPY }` ]: this.getFormattedToastMessage( 'copied to your Site Templates', formData.title ),
+			[ `cloud_${ SAVE_CONTEXTS.COPY }` ]: this.getFormattedToastMessage( 'copied to your Cloud Templates', formData.title ),
+			[ `local_${ SAVE_CONTEXTS.BULK_MOVE }` ]: this.getFormattedToastMessage( 'moved to your Site Templates', null, formData.from_template_id?.length ),
+			[ `cloud_${ SAVE_CONTEXTS.BULK_MOVE }` ]: this.getFormattedToastMessage( 'moved to your Cloud Templates', null, formData.from_template_id?.length ),
+			[ `local_${ SAVE_CONTEXTS.BULK_COPY }` ]: this.getFormattedToastMessage( 'copied to your Site Templates', null, formData.from_template_id?.length ),
+			[ `cloud_${ SAVE_CONTEXTS.BULK_COPY }` ]: this.getFormattedToastMessage( 'copied to your Cloud Templates', null, formData.from_template_id?.length ),
+		};
+
+		return actions[ key ] ?? false;
+	},
+
+	getFormattedToastMessage( action, title, count ) {
+		if ( count !== undefined ) {
+			/* Translators: 1: Number of templates, 2: Action performed (e.g., "moved", "copied"). */
+			return sprintf( __( '%1$d Template(s) %2$s.', 'elementor' ), count, action );
+		}
+
+		/* Translators: 1: Template title or "Template" fallback, 2: Action performed. */
+		return sprintf( __( '%1$s %2$s.', 'elementor' ), title ? `"${ title }"` : __( 'Template', 'elementor' ), action );
+	},
+
+	getToastButtons( lastSource, parentId ) {
+		const parsedParentId = parseInt( parentId, 10 ) || null;
+
+		return [
+			{
+				name: 'template_after_save',
+				text: __( 'View', 'elementor' ),
+				callback: () => this.navigateToSavedSource( lastSource, parsedParentId ),
+			},
+		];
+	},
+
+	navigateToSavedSource( lastSource, parentId ) {
 		elementor.templates.setSourceSelection( lastSource );
 		elementor.templates.setFilter( 'source', lastSource, true );
+
+		if ( parentId ) {
+			elementor.templates.setFilter( 'parent', parentId );
+
+			const model = new TemplateLibraryTemplateModel( { template_id: parentId } );
+
+			$e.route( 'library/view-folder', { model } );
+
+			return;
+		}
+
+		$e.routes.refreshContainer( 'library' );
 	},
 
 	onSelectedFolderTextClick() {
@@ -230,7 +340,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			return;
 		}
 
-		if ( ! Number.isInteger( this.model.get( 'parentId' ) ) ) {
+		if ( ! this.model || ! Number.isInteger( this.model.get( 'parentId' ) ) ) {
 			return;
 		}
 
@@ -313,6 +423,32 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( loadMore ) {
 			this.folderCollectionView.collection.remove( loadMore );
 		}
+	},
+
+	maybeAllowOnlyOneCheckboxToBeChecked( event ) {
+		if ( this.moreThanOneCheckboxCanBeChecked() ) {
+			return;
+		}
+
+		const selectedCheckbox = event.currentTarget;
+
+		this.ui.sourceSelectionCheckboxes.each( ( _, checkbox ) => {
+			const wrapper = this.$( checkbox ).closest( '.source-selections-input' );
+
+			if ( checkbox !== selectedCheckbox ) {
+				if ( selectedCheckbox.checked ) {
+					wrapper.addClass( 'disabled' );
+					checkbox.checked = false;
+				} else {
+					wrapper.removeClass( 'disabled' );
+				}
+			}
+		} );
+	},
+
+	moreThanOneCheckboxCanBeChecked() {
+		return SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ||
+			'cloud' !== elementor.templates.getFilter( 'source' );
 	},
 } );
 

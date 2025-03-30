@@ -19,6 +19,7 @@ use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -731,9 +732,13 @@ abstract class Document extends Controls_Stack {
 					Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config();
 			}
 
-			if ( Plugin::$instance->experiments->is_feature_active( 'atomic_widgets' ) ) {
-				$container_config['div-block'] =
-					Plugin::$instance->elements_manager->get_element_types( 'div-block' )->get_config();
+			if ( Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ) ) {
+				// Order reflects the order in the editor.
+				$atomic_elements = [ 'flexbox', 'e-div-block' ];
+
+				foreach ( $atomic_elements as $element ) {
+					$container_config[ $element ] = Plugin::$instance->elements_manager->get_element_types( $element )->get_config();
+				}
 			}
 
 			$config['elements'] = $this->get_elements_raw_data( null, true );
@@ -1621,6 +1626,8 @@ abstract class Document extends Controls_Stack {
 	public function get_export_data() {
 		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function( $element_data ) {
 			$element_data['id'] = Utils::generate_random_string();
+
+			$element_data = apply_filters( 'elementor/document/element/replace_id', $element_data );
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 

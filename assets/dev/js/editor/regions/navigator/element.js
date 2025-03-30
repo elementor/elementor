@@ -1,6 +1,8 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 
+const NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
+
 export default class extends Marionette.CompositeView {
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
@@ -59,9 +61,13 @@ export default class extends Marionette.CompositeView {
 
 	className() {
 		let classes = 'elementor-navigator__element';
+		const elType = this.model.get( 'elType' );
 
 		if ( ! this.isNavigatorContainer() ) {
-			classes += ' ' + this.getSortableClassName();
+			classes += ' elementor-navigator__element-' + elType;
+			if ( ! this.isExcludedNestableElement() ) {
+				classes += ' ' + NEW_NESTABLE_CLASS;
+			}
 		}
 
 		if ( this.hasChildren() ) {
@@ -79,7 +85,7 @@ export default class extends Marionette.CompositeView {
 			return 'elementor-navigator__element-' + elType;
 		}
 
-		return 'elementor-navigator__element-new-nestable';
+		return NEW_NESTABLE_CLASS;
 	}
 
 	attributes() {

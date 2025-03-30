@@ -21,7 +21,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 				onOutsideClick: allowClosingModal,
 				onBackgroundClick: allowClosingModal,
 				onEscKeyPress: allowClosingModal,
-				ignore: '.dialog-widget-content',
+				ignore: '.dialog-widget-content, .dialog-buttons-undo_bulk_delete, .dialog-buttons-template_after_save',
 			},
 		};
 	},
@@ -146,5 +146,42 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		} finally {
 			elementor.templates.layout.hideLoadingView();
 		}
+	},
+
+	createScreenshotIframe( previewUrl ) {
+		const iframe = document.createElement( 'iframe' );
+
+		iframe.src = previewUrl;
+		iframe.width = '1200';
+		iframe.height = '500';
+		iframe.style = 'visibility: hidden;';
+
+		document.body.appendChild( iframe );
+
+		return iframe;
+	},
+
+	handleBulkActionBar() {
+		const selectedCount = elementor.templates.getBulkSelectionItems().size ?? 0;
+		const display = 0 === selectedCount ? 'none' : 'flex';
+
+		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );
+		this.modalContent.currentView.ui.bulkSelectionActionBar.css( 'display', display );
+	},
+
+	selectAllCheckboxMinus() {
+		if ( this.isListView() ) {
+			this.modalContent.currentView.ui.bulkSelectAllCheckbox.addClass( 'checkbox-minus' );
+		}
+	},
+
+	selectAllCheckboxNormal() {
+		if ( this.isListView() ) {
+			this.modalContent.currentView.ui.bulkSelectAllCheckbox.removeClass( 'checkbox-minus' );
+		}
+	},
+
+	isListView() {
+		return 'list' === elementor.templates.getViewSelection();
 	},
 } );
