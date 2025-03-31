@@ -62,7 +62,7 @@ class Module extends BaseModule {
 			Plugin::$instance->documents
 				->register_document_type( 'e-div-block', Documents\Div_Block::get_class_full_name() );
 			Plugin::$instance->documents
-				->register_document_type( 'flexbox', Documents\Flexbox::get_class_full_name() );
+				->register_document_type( 'e-flexbox', Documents\Flexbox::get_class_full_name() );
 		}
 	}
 }
