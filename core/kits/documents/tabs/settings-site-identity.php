@@ -104,6 +104,11 @@ class Settings_Site_Identity extends Tab_Base {
 					'100'
 				),
 				'export' => false,
+				'ai' => [
+					'active' => true,
+					'type' => 'media',
+					'category' => 'vector',
+				],
 			]
 		);
 

@@ -7,6 +7,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -66,7 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'atomic_widgets';
+	const EXPERIMENT_NAME = 'e_atomic_elements';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -87,6 +88,8 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		$this->register_feature();
+
 		( new Opt_In() )->init();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
@@ -99,6 +102,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+			add_filter( 'elementor/usage/elements/element_title', fn( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
@@ -106,18 +110,19 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 		}
 	}
 
-	public static function get_experimental_data(): array {
-		return [
+	private function register_feature() {
+		Plugin::$instance->experiments->add_feature([
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		];
+		]);
 	}
 
 	private function add_packages( $packages ) {
@@ -144,6 +149,7 @@ class Module extends BaseModule {
 
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
+		$elements_manager->register_element_type( new Flexbox() );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
@@ -203,6 +209,16 @@ class Module extends BaseModule {
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
 	}
 
+	private function get_element_usage_name( $title, $type ) {
+		$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
+		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
+
+		if ( Utils::is_atomic( $element_instance ) || Utils::is_atomic( $widget_instance ) ) {
+			return $type;
+		}
+
+		return $title;
+	}
 	/**
 	 * Enqueue the module scripts.
 	 *
@@ -216,5 +232,14 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+	}
+
+	private function render_panel_category_chip() {
+		?><# if ( 'V4 Elements' === title ) { #>
+			<span class="elementor-panel-heading-category-chip">
+				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
+				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
+			</span>
+		<# } #><?php
 	}
 }

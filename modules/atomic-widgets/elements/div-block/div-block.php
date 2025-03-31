@@ -35,6 +35,10 @@ class Div_Block extends Atomic_Element_Base {
 		return esc_html__( 'Div Block', 'elementor' );
 	}
 
+	public function get_keywords() {
+		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+	}
+
 	public function get_icon() {
 		return 'eicon-div-block';
 	}
@@ -155,20 +159,26 @@ class Div_Block extends Atomic_Element_Base {
 
 	protected function define_base_styles(): array {
 		$display = String_Prop_Type::generate( 'block' );
-		$padding = Size_Prop_Type::generate( [
-			'size' => 10,
-			'unit' => 'px',
-		] );
-		$min_height = String_Prop_Type::generate( 'min-content' );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', $display )
-						->add_prop( 'padding', $padding )
-						->add_prop( 'min-height', $min_height )
+						->add_prop( 'padding', $this->get_base_padding() )
+						->add_prop( 'min-height', $this->get_base_height() )
 				),
 		];
+	}
+
+	protected function get_base_padding(): array {
+		return Size_Prop_Type::generate( [
+			'size' => 10,
+			'unit' => 'px',
+		] );
+	}
+
+	protected function get_base_height(): array {
+		return String_Prop_Type::generate( 'min-content' );
 	}
 }

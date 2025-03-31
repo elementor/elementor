@@ -24,7 +24,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con e-div-block-base${ this.getClassString() }`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ this.getClassString() }`;
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -121,6 +121,36 @@ const DivBlockView = BaseElementView.extend( {
 
 	droppableInitialize() {
 		this.$el.html5Droppable( this.getDroppableOptions() );
+	},
+
+	/**
+	 * Add a `Save as Template` button to the context menu.
+	 *
+	 * @return {Object} groups
+	 */
+	getContextMenuGroups() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+			transferGroupClipboardIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+
+		groups.splice( transferGroupClipboardIndex + 1, 0, {
+			name: 'save',
+			actions: [
+				{
+					name: 'save',
+					title: __( 'Save as Template', 'elementor' ),
+					callback: this.saveAsTemplate.bind( this ),
+					isEnabled: () => ! this.getContainer().isLocked(),
+				},
+			],
+		} );
+
+		return groups;
+	},
+
+	saveAsTemplate() {
+		$e.route( 'library/save-template', {
+			model: this.model,
+		} );
 	},
 
 	isDroppingAllowed() {
@@ -371,8 +401,13 @@ const DivBlockView = BaseElementView.extend( {
 
 	getClassString() {
 		const classes = this.getClasses();
+		const base = this.getBaseClass();
 
-		return classes.length ? [ '', ...classes ].join( ' ' ) : '';
+		return [ base, ...classes ].join( ' ' );
+	},
+
+	getBaseClass() {
+		return 'flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'flexbox-base' : 'e-div-block-base';
 	},
 } );
 

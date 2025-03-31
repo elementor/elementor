@@ -382,6 +382,18 @@ abstract class Source_Base {
 		return new \WP_Error( 'template_error', 'Templates cannot be moved in this source' );
 	}
 
+	public function move_bulk_templates_to_folder( array $folder_data = [] ) {
+		return new \WP_Error( 'template_error', 'Templates cannot be moved in this source' );
+	}
+
+	public function save_bulk_items( array $args = [] ) {
+		return [];
+	}
+
+	public function get_bulk_items( array $args = [] ) {
+		return [];
+	}
+
 	/**
 	 * @param int $template_id
 	 * @return \Elementor\Core\Base\Document|\WP_Error
@@ -398,6 +410,29 @@ abstract class Source_Base {
 	 */
 	public function save_item_preview( int $template_id, $data ) {
 		return new \WP_Error( 'template_error', 'Cannot save previews for this source' );
+	}
+
+	/**
+	 * @param int[] $template_ids
+	 * @return bool|\WP_Error
+	 */
+	public function bulk_delete_items( array $template_ids ) {
+		return new \WP_Error( 'template_error', 'Bulk delete action is not supported for this source' );
+	}
+
+	/**
+	 * @param int[] $template_ids
+	 * @return bool|\WP_Error
+	 */
+	public function bulk_undo_delete_items( array $template_ids ) {
+		return new \WP_Error( 'template_error', 'Undo delete action is not supported for this source' );
+	}
+
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function get_quota() {
+		return new \WP_Error( 'template_error', 'This source does not support quotas' );
 	}
 
 	/**

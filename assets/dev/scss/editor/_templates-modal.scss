@@ -18,6 +18,13 @@ $remote-templates-items-space: 30px;
 	.dialog-message {
 		overflow-y: scroll;
 	}
+
+	.e-back-to-editor {
+		color: var(--e-a-color-txt);
+		text-decoration: underline;
+		font-size: 17px;
+		cursor: pointer;
+	}
 }
 
 #elementor-template-library-header-menu {
@@ -352,7 +359,7 @@ $remote-templates-items-space: 30px;
 		}
 
 		.elementor-template-library-template-name:hover {
-	
+
 			.bulk-selection-item-checkbox {
 				visibility: visible;
 			}
@@ -368,28 +375,33 @@ $remote-templates-items-space: 30px;
 		margin-top: 10px;
 		gap: 20px;
 		align-items: center;
-	
+
 		i {
 			cursor: pointer;
 			font-size: 15px;
+
+			&.disabled {
+				pointer-events: none;
+				opacity: 0.3;
+			}
 		}
-	
+
 		.eicon-editor-close {
 			font-size: 20px;
 		}
 	}
-	
+
 	#elementor-template-library-order-toolbar-local:hover {
 
 		#bulk-select-all {
 			visibility: visible;
 		}
 	}
-	
+
 	.bulk-selected-item {
 		background: var(--e-a-bg-active);
 	}
-	
+
 	.elementor-template-library-local-column-1 {
 		display: flex;
 		align-items: center;
