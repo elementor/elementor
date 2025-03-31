@@ -68,7 +68,7 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 			$e.run( 'document/elements/deselect', { container } );
 		}
 
-		container.model.get( 'elements' ).forEach( ( childModel ) => {
+		container?.model.get( 'elements' ).forEach( ( childModel ) => {
 			this.deselectRecursive( childModel.get( 'id' ) );
 		} );
 	}
