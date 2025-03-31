@@ -26,6 +26,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		localInput: '.source-selections-input.local',
 		cloudInput: '.source-selections-input.cloud',
 		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
+		upgradeBadge: '.source-selections-input.cloud .upgrade-badge',
+		infoIcon: '.source-selections-input.cloud .eicon-info',
 	},
 
 	events: {
@@ -35,12 +37,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
 		'change @ui.sourceSelectionCheckboxes': 'maybeAllowOnlyOneCheckboxToBeChecked',
+		'click @ui.infoIcon': 'showInfoTip',
 	},
 
 	onRender() {
 		const context = this.getOption( 'context' );
 
-		if ( SAVE_CONTEXTS.SAVE === context ) {
+		if ( SAVE_CONTEXTS.SAVE === context && elementor.templates.hasCloudLibraryQuota() ) {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 		}
 
@@ -50,6 +53,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		if ( SAVE_CONTEXTS.BULK_MOVE === context || SAVE_CONTEXTS.BULK_COPY === context ) {
 			this.handleBulkActionContextUiState();
+		}
+
+		if ( ! elementor.templates.hasCloudLibraryQuota() ) {
+			this.handleCloudLibraryPromo();
 		}
 	},
 
@@ -70,6 +77,20 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 			this.ui.localInput.addClass( 'disabled' );
 		}
+	},
+
+	handleCloudLibraryPromo() {
+		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ) {
+			this.$( '.source-selections-input #local' ).prop( 'checked', true );
+		} else {
+			this.$( '.source-selections-input #local, .source-selections-input.local label' ).css( 'pointer-events', 'none' );
+		}
+
+		this.$( '.source-selections-input #cloud' ).prop( 'checked', false );
+		this.$( '.source-selections-input #cloud, .source-selections-input.cloud label' ).css( 'pointer-events', 'none' );
+
+		this.ui.ellipsisIcon.css( 'pointer-events', 'none' );
+		this.ui.upgradeBadge.css( 'display', 'inline' );
 	},
 
 	getSaveType() {
@@ -449,6 +470,44 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	moreThanOneCheckboxCanBeChecked() {
 		return SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ||
 			'cloud' !== elementor.templates.getFilter( 'source' );
+	},
+
+	showInfoTip() {
+		if ( this.dialog ) {
+			this.dialog.hide();
+		}
+
+		const inlineStartKey = elementorCommon.config.isRTL ? 'left' : 'right';
+
+		this.dialog = elementor.dialogsManager.createWidget( 'buttons', {
+			id: 'elementor-library--infotip__dialog',
+			effects: {
+				show: 'show',
+				hide: 'hide',
+			},
+			position: {
+				of: this.ui.infoIcon,
+				at: `${ inlineStartKey }+90 top-60`,
+			},
+			targetElement: this.el,
+		} )
+		.setMessage( __(
+			'With Cloud Templates, you can reuse saved assets across all the websites you’re working on.',
+			'elementor',
+		) )
+		.addButton( {
+			name: 'learn_more',
+			text: __(
+				'Learn more',
+				'elementor',
+			),
+			classes: '',
+			callback: () => open( '', '_blank' ),
+		} )
+		.show();
+
+		this.dialog.getElements( 'header' ).remove();
+		this.dialog.show();
 	},
 } );
 
