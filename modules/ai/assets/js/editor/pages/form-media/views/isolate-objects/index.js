@@ -36,8 +36,8 @@ const IsolateObject = () => {
 		send( {
 			image: editImage,
 			settings: {
-				aspectRatio: generatedAspectRatio,
-				backgroundColor: generatedBgColor,
+				[ IMAGE_RATIO ]: generatedAspectRatio,
+				[ IMAGE_BACKGROUND_COLOR ]: generatedBgColor,
 			},
 		} );
 	};
