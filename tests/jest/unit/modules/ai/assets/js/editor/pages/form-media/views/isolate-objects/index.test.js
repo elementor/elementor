@@ -9,7 +9,15 @@ jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-ima
 	edit: jest.fn(),
 	isLoading: false,
 } ) );
-jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-prompt-settings' );
+
+jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-prompt-settings', () => {
+	return {
+		__esModule: true,
+		default: jest.fn(),
+		IMAGE_RATIO: 'image-ratio',
+		IMAGE_BACKGROUND_COLOR: 'image-background-color',
+	};
+} );
 
 jest.mock( 'react', () => {
 	const originalReact = jest.requireActual( 'react' );
@@ -42,6 +50,8 @@ const { useEditImage } = require( 'elementor/modules/ai/assets/js/editor/pages/f
 const { useRequestIds } = require( 'elementor/modules/ai/assets/js/editor/context/requests-ids' );
 const { useLocation } = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/context/location-context' );
 const usePromptSettings = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-prompt-settings' ).default;
+// Import the constants after mocking
+const { IMAGE_RATIO, IMAGE_BACKGROUND_COLOR } = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-prompt-settings' );
 const IsolateObject = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/views/isolate-objects/index' ).default;
 
 describe( 'IsolateObject Component - Functional Tests', () => {
@@ -58,8 +68,8 @@ describe( 'IsolateObject Component - Functional Tests', () => {
 	};
 
 	const testSettings = {
-		'image-ratio': '1:1',
-		'image-background-color': '#ffffff',
+		[ IMAGE_RATIO ]: '1:1',
+		[ IMAGE_BACKGROUND_COLOR ]: '#ffffff',
 	};
 
 	beforeEach( () => {
@@ -119,8 +129,8 @@ describe( 'IsolateObject Component - Functional Tests', () => {
 		expect( mockSubmitFn ).toHaveBeenCalledWith( {
 			image: testImage,
 			settings: {
-				aspectRatio: '1:1',
-				backgroundColor: '#ffffff',
+				[ IMAGE_RATIO ]: '1:1',
+				[ IMAGE_BACKGROUND_COLOR ]: '#ffffff',
 			},
 		} );
 	} );
