@@ -522,8 +522,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			),
 			classes: '',
 			callback: () => open( '', '_blank' ),
-		} )
-		.show();
+		} );
 
 		this.dialog.getElements( 'header' ).remove();
 		this.dialog.show();
