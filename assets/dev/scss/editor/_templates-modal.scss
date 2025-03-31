@@ -1040,6 +1040,7 @@ label.elementor-template-library-order-label {
 			.eicon-info {
 				margin-inline: 5px;
 				color: #919191;
+				cursor: pointer;
 			}
 
 			.selected-folder {
@@ -1054,6 +1055,21 @@ label.elementor-template-library-order-label {
 
 			.eicon-editor-close {
 				cursor: pointer;
+			}
+
+			.upgrade-badge {
+				display: none;
+				border: 1px solid #93003F80;
+				padding: 3px 5px;
+				border-radius: 100px;
+
+				a {
+					color: $e-rose-800;
+
+					i {
+						margin-inline-end: 5px;
+					}
+				}
 			}
 		}
 
@@ -1281,4 +1297,48 @@ label.elementor-template-library-order-label {
 
 #elementor-template-library-error-info {
 	margin-block-start: 10px;
+}
+
+#elementor-library--infotip__dialog {
+	position: absolute;
+	width: 400px;
+	z-index: $lightbox-layer;
+	background-color: var(--e-a-bg-default);
+	box-shadow: var(--e-a-popover-shadow);
+	border-radius: var(--e-a-border-radius);
+
+	&:after {
+		content: '';
+		position: absolute;
+		top: 100%;
+		@include end(90%);
+		transform: scaleX(0.7);
+		border: 10px solid transparent;
+		border-top-color: var(--e-a-bg-default);
+	}
+
+	&__title {
+		font-size: 14px;
+	}
+
+	.dialog {
+
+		&-message {
+			padding: 20px 20px 0px 20px;
+		}
+
+		&-buttons-wrapper {
+			padding: 0 20px 10px;
+			float: inline-end;
+		}
+
+		&-button {
+			padding: 7px 25px;
+			font-size: 13px;
+			background: none;
+			color: #C00BB9;
+			border: none;
+			font-weight: 500;
+		}
+	}
 }
