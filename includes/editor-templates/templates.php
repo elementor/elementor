@@ -452,6 +452,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
 					</span>
+					<span class="upgrade-badge">
+						<a href="" target="_blank">
+						<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+					</span>
+				</a>
+			</span>
 				</div>
 				<div class="source-selections-input local">
 					<input type="checkbox" id="local" name="local" value="local">
