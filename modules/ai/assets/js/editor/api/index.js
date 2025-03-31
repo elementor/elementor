@@ -61,6 +61,8 @@ export const getImageToImageUpscale = ( payload ) => request( 'ai_get_image_to_i
 
 export const getImageToImageRemoveBackground = ( payload ) => request( 'ai_get_image_to_image_remove_background', { payload } );
 
+export const getImageToImageIsolateObjects = ( payload ) => request( 'ai_get_image_to_image_isolate_objects', { payload } );
+
 export const getImageToImageReplaceBackground = ( payload ) => request( 'ai_get_image_to_image_replace_background', { payload } );
 
 export const getImageToImageRemoveText = ( image ) => request( 'ai_get_image_to_image_remove_text', { image } );
