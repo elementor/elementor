@@ -41,7 +41,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onRender() {
-		if ( undefined === elementorAppConfig[ 'cloud-library' ].quota ) {
+		if ( undefined === elementorAppConfig[ 'cloud-library' ].quota && this.templateHelpers()?.canSaveToCloud ) {
+			elementor.templates.layout.showLoadingView();
+
 			elementorCommon.ajax.addRequest( 'get_quota', {
 				data: {
 					source: 'cloud',
@@ -49,10 +51,12 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				success: ( data ) => {
 					elementorAppConfig[ 'cloud-library' ].quota = data;
 					this.handleOnRender();
+					elementor.templates.layout.hideLoadingView();
 				},
 				error: () => {
 					delete elementorAppConfig[ 'cloud-library' ].quota;
 					this.handleOnRender();
+					elementor.templates.layout.hideLoadingView();
 				},
 			} );
 		} else {
