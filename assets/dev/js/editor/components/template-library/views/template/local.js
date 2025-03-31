@@ -1,5 +1,7 @@
 const TemplateLibraryTemplateView = require( 'elementor-templates/views/template/base' );
 
+import { SAVE_CONTEXTS } from './../../constants';
+
 const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-local',
 
@@ -7,10 +9,12 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		return _.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
 			deleteButton: '.elementor-template-library-template-delete',
 			renameButton: '.elementor-template-library-template-rename',
+			moveButton: '.elementor-template-library-template-move',
+			copyButton: '.elementor-template-library-template-copy',
 			morePopup: '.elementor-template-library-template-more',
 			toggleMore: '.elementor-template-library-template-more-toggle',
 			toggleMoreIcon: '.elementor-template-library-template-more-toggle i',
-			titleCell: '.elementor-template-library-template-name',
+			titleCell: '.elementor-template-library-template-name span',
 			resourceIcon: '.elementor-template-library-template-name i',
 		} );
 	},
@@ -20,6 +24,8 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			'click @ui.deleteButton': 'onDeleteButtonClick',
 			'click @ui.toggleMore': 'onToggleMoreClick',
 			'click @ui.renameButton': 'onRenameClick',
+			'click @ui.moveButton': 'onMoveClick',
+			'click @ui.copyButton': 'onCopyClick',
 		} );
 	},
 
@@ -28,20 +34,14 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onTitleChange() {
-		const isCloudSource = 'cloud' === this.model.get( 'source' );
 		const title = _.escape( this.model.get( 'title' ) );
 
-		let content = title;
-
-		if ( isCloudSource ) {
-			const resourceIcon = this.ui.resourceIcon[ 0 ]?.outerHTML;
-			content = resourceIcon + title;
-		}
-
-		this.ui.titleCell.html( content );
+		this.ui.titleCell.text( title );
 	},
 
-	onDeleteButtonClick() {
+	onDeleteButtonClick( event ) {
+		event.stopPropagation();
+
 		var toggleMoreIcon = this.ui.toggleMoreIcon;
 
 		elementor.templates.deleteTemplate( this.model, {
@@ -54,7 +54,9 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		} );
 	},
 
-	onToggleMoreClick() {
+	onToggleMoreClick( event ) {
+		event.stopPropagation();
+
 		this.ui.morePopup.show();
 	},
 
@@ -62,7 +64,9 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		open( this.model.get( 'url' ), '_blank' );
 	},
 
-	async onRenameClick() {
+	async onRenameClick( event ) {
+		event.stopPropagation();
+
 		try {
 			await elementor.templates.renameTemplate( this.model, {
 				onConfirm: () => this.showToggleMoreLoader(),
@@ -70,6 +74,20 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		} finally {
 			this.hideToggleMoreLoader();
 		}
+	},
+
+	onMoveClick() {
+		$e.route( 'library/save-template', {
+			model: this.model,
+			context: SAVE_CONTEXTS.MOVE,
+		} );
+	},
+
+	onCopyClick() {
+		$e.route( 'library/save-template', {
+			model: this.model,
+			context: SAVE_CONTEXTS.COPY,
+		} );
 	},
 
 	showToggleMoreLoader() {

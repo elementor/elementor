@@ -24,11 +24,15 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	use Has_Template;
 
 	public static function get_element_type(): string {
-		return 'a-paragraph';
+		return 'e-paragraph';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Paragraph', 'elementor' );
+		return esc_html__( 'Paragraph', 'elementor' );
+	}
+
+	public function get_keywords() {
+		return [ 'ato', 'atom', 'atoms', 'atomic' ];
 	}
 
 	public function get_icon() {
@@ -69,6 +73,10 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'unit' => 'rem',
 		] );
 		$line_height_value = String_Prop_Type::generate( '1.5' );
+		$margin_value = Size_Prop_Type::generate( [
+			'unit' => 'px',
+			'size' => 0 ,
+		] );
 
 		return [
 			'base' => Style_Definition::make()
@@ -78,6 +86,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 						->add_prop( 'font-family', $font_family_value )
 						->add_prop( 'font-size', $font_size_value )
 						->add_prop( 'line-height', $line_height_value )
+						->add_prop( 'margin', $margin_value )
 				),
 		];
 	}

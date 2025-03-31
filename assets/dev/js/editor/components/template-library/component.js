@@ -1,6 +1,7 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import * as commands from './commands/';
 import * as commandsData from './commands-data/';
+import { SAVE_CONTEXTS } from './constants';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -20,7 +21,7 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultTabs() {
-		const tabs = {
+		return {
 			'templates/blocks': {
 				title: __( 'Blocks', 'elementor' ),
 				getFilter: () => ( {
@@ -40,11 +41,10 @@ export default class Component extends ComponentModalBase {
 				title: __( 'My Templates', 'elementor' ),
 				getFilter: () => ( {
 					source: elementor.templates.getSourceSelection() ?? 'local',
+					view: elementor.templates.getViewSelection() ?? 'list',
 				} ),
 			},
 		};
-
-		return tabs;
 	}
 
 	defaultRoutes() {
@@ -53,7 +53,7 @@ export default class Component extends ComponentModalBase {
 				this.manager.layout.showImportView();
 			},
 			'save-template': ( args ) => {
-				this.manager.layout.showSaveTemplateView( args.model );
+				this.manager.layout.showSaveTemplateView( args.model, args.context ?? SAVE_CONTEXTS.SAVE );
 			},
 			preview: ( args ) => {
 				this.manager.layout.showPreviewView( args.model );

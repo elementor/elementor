@@ -9,6 +9,8 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryCloudConnectView = require( 'elementor-templates/views/parts/connect-cloud' ),
 	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
 
+import { SAVE_CONTEXTS } from './../constants';
+
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 	getModalOptions() {
 		const allowClosingModal = window?.elementor?.config?.document?.panel?.allow_closing_remote_library ?? true;
@@ -19,7 +21,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 				onOutsideClick: allowClosingModal,
 				onBackgroundClick: allowClosingModal,
 				onEscKeyPress: allowClosingModal,
-				ignore: '.dialog-widget-content',
+				ignore: '.dialog-widget-content, .dialog-buttons-undo_bulk_delete, .dialog-buttons-template_after_save',
 			},
 		};
 	},
@@ -112,10 +114,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.modalContent.show( new TemplateLibraryCloudConnectView() );
 	},
 
-	showSaveTemplateView( elementModel ) {
+	showSaveTemplateView( elementModel, context = SAVE_CONTEXTS.SAVE ) {
 		this.getHeaderView().menuArea.reset();
 
-		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel } ) );
+		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel, context } ) );
 	},
 
 	showPreviewView( templateModel ) {
@@ -144,5 +146,42 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		} finally {
 			elementor.templates.layout.hideLoadingView();
 		}
+	},
+
+	createScreenshotIframe( previewUrl ) {
+		const iframe = document.createElement( 'iframe' );
+
+		iframe.src = previewUrl;
+		iframe.width = '1200';
+		iframe.height = '500';
+		iframe.style = 'visibility: hidden;';
+
+		document.body.appendChild( iframe );
+
+		return iframe;
+	},
+
+	handleBulkActionBar() {
+		const selectedCount = elementor.templates.getBulkSelectionItems().size ?? 0;
+		const display = 0 === selectedCount ? 'none' : 'flex';
+
+		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );
+		this.modalContent.currentView.ui.bulkSelectionActionBar.css( 'display', display );
+	},
+
+	selectAllCheckboxMinus() {
+		if ( this.isListView() ) {
+			this.modalContent.currentView.ui.bulkSelectAllCheckbox.addClass( 'checkbox-minus' );
+		}
+	},
+
+	selectAllCheckboxNormal() {
+		if ( this.isListView() ) {
+			this.modalContent.currentView.ui.bulkSelectAllCheckbox.removeClass( 'checkbox-minus' );
+		}
+	},
+
+	isListView() {
+		return 'list' === elementor.templates.getViewSelection();
 	},
 } );

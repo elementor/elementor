@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\TemplateLibrary;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
+use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
 use Elementor\Plugin;
 use Elementor\DB;
 
@@ -88,17 +90,25 @@ class Source_Cloud extends Source_Base {
 	public function save_item( $template_data ): int {
 		$app = $this->get_app();
 
-		$resource_data = [
-			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
-			'type' => self::TEMPLATE_RESOURCE_TYPE,
-			'templateType' => $template_data['type'],
-			'parentId' => $template_data['parentId'] ?? null,
-			'content' => wp_json_encode( $template_data['content'] ),
-		];
+		$resource_data = $this->format_resource_item_for_create( $template_data );
 
 		$response = $app->post_resource( $resource_data );
 
 		return (int) $response['id'];
+	}
+
+	private function format_resource_item_for_create( $template_data ) {
+		return [
+			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
+			'type' => self::TEMPLATE_RESOURCE_TYPE,
+			'templateType' => $template_data['type'],
+			'parentId' => ! empty( $template_data['parentId'] ) ? (int) $template_data['parentId'] : null,
+			'content' => wp_json_encode( [
+				'content' => $template_data['content'],
+				'page_settings' => $template_data['page_settings'],
+			] ),
+			'hasPageSettings' => ! empty( $template_data['page_settings'] ),
+		];
 	}
 
 	public function save_folder( array $folder_data = [] ) {
@@ -252,5 +262,115 @@ class Source_Cloud extends Source_Base {
 			'path' => $complete_path,
 			'name' => $file_data['name'],
 		];
+	}
+
+	public function move_template_to_folder( array $args = [] ) {
+		$move_args = [
+			'title' => $args['title'],
+			'id' => $args['from_template_id'],
+			'parentId' => ! empty( $args['parentId'] ) ? (int) $args['parentId'] : '',
+		];
+
+		return $this->update_item( $move_args );
+	}
+
+	public function move_bulk_templates_to_folder( array $args = [] ) {
+		$move_args = [
+			'ids' => $args['from_template_id'],
+			'parentId' => ! empty( $args['parentId'] ) ? (int) $args['parentId'] : null,
+		];
+
+		return $this->get_app()->bulk_move_templates( $move_args );
+	}
+
+	public function save_item_preview( $template_id, $data ) {
+		return $this->get_app()->update_resource_preview( $template_id, $data );
+	}
+
+	/**
+	 * @param int $template_id
+	 * @return Document|\WP_Error
+	 * @throws \Exception
+	 */
+	public function create_document_for_preview( int $template_id ) {
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			return new \WP_Error( Exceptions::FORBIDDEN, esc_html__( 'You do not have permission to create preview documents.', 'elementor' ) );
+		}
+
+		$cloud_library_app = $this->get_app();
+
+		$template = $cloud_library_app->get_resource( [ 'id' => $template_id ] );
+
+		if ( is_wp_error( $template ) ) {
+			$error_message = $template->get_error_message();
+			throw new \Exception( esc_html( $error_message ), Exceptions::FORBIDDEN );  // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		$decoded_content = json_decode( $template['content'], true );
+
+		return $this->save_document_for_preview( [
+			'content' => $decoded_content['content'],
+			'page_settings' => $decoded_content['page_settings'],
+		] );
+	}
+
+	protected function save_document_for_preview( $template_content ) {
+		$template_data = [
+			'title' => esc_html__( '(no title)', 'elementor' ),
+			'page_settings' => $template_content['page_settings'] ?? [],
+			'status' => 'draft',
+			'type' => 'container',
+		];
+
+		$document = Plugin::$instance->documents->create(
+			Cloud_Template_Preview::TYPE,
+			[
+				'post_title' => $template_data['title'],
+				'post_status' => $template_data['status'],
+			]
+		);
+
+		if ( is_wp_error( $document ) ) {
+			wp_die();
+		}
+
+		$template_data['content'] = $this->replace_elements_ids( $template_content['content'] );
+
+		$document->save( [
+			'elements' => $template_data['content'],
+			'settings' => $template_data['page_settings'],
+		] );
+
+		do_action( 'elementor/template-library/after_save_template', $document->get_main_id(), $template_data );
+		do_action( 'elementor/template-library/after_update_template', $document->get_main_id(), $template_data );
+
+		return $document;
+	}
+
+	public function bulk_delete_items( array $template_ids ) {
+		return $this->get_app()->bulk_delete_resources( $template_ids );
+	}
+
+
+	public function bulk_undo_delete_items( array $template_ids ) {
+		return $this->get_app()->bulk_undo_delete_resources( $template_ids );
+	}
+
+	public function save_bulk_items( array $data = [] ) {
+		$items = [];
+
+		foreach ( $data as $template_data ) {
+			$items[] = $this->format_resource_item_for_create( $template_data );
+		}
+
+		return $this->get_app()->post_bulk_resources( $items );
+	}
+
+	public function get_bulk_items( array $args = [] ) {
+		return $this->get_app()->get_bulk_resources_with_content( $args );
+	}
+
+	public function get_quota() {
+		return $this->get_app()->get_quota();
 	}
 }

@@ -66,6 +66,8 @@ class Module extends Base_Module {
 		wp_localize_script( static::ASSETS_HANDLE, 'elementorStyleguideConfig', [
 			'activeKitId' => $kit_id,
 		] );
+
+		wp_set_script_translations( static::ASSETS_HANDLE, 'elementor' );
 	}
 
 	public function enqueue_app_initiator( $is_preview = false ) {
@@ -86,6 +88,8 @@ class Module extends Base_Module {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( static::ASSETS_HANDLE . '-app-initiator', 'elementor' );
 	}
 
 	public function enqueue_styles() {

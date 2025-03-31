@@ -64,6 +64,7 @@ class Ajax {
 			'notice_data' => [
 				'notice_id' => $notice_id,
 				'is_viewed' => User::is_user_notice_viewed( $notice_id ),
+				'nonce' => wp_create_nonce( 'elementor_set_admin_notice_viewed' ),
 			],
 			'promotion_data' => [
 				'manager_permissions' => [
