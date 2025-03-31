@@ -201,11 +201,17 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 		const parts = key.split( '.' );
 
+		const isRepeaterKey = 3 === parts.length;
 		// Is it repeater?
-		if ( 3 === parts.length ) {
-			container = container.repeaters[ parts[ 0 ] ];
-			container = container.children[ parts[ 1 ] ];
-			key = parts[ 2 ];
+		if ( isRepeaterKey ) {
+			const repaterId = parts[ 0 ];
+			const repeater = container.repeaters[ repaterId ];
+
+			const repeaterChildIndex = parts[ 1 ];
+			container = repeater.children[ repeaterChildIndex ];
+
+			const fieldToUpdate = parts[ 2 ];
+			key = fieldToUpdate;
 		}
 
 		$e.run( 'document/elements/settings', {
