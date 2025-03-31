@@ -407,7 +407,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getBaseClass() {
-		return 'flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'flexbox-base' : 'e-div-block-base';
+		return 'e-flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'e-flexbox-base' : 'e-div-block-base';
 	},
 } );
 
