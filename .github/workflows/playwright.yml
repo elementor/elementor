@@ -82,11 +82,6 @@ jobs:
       - name: Install playwright/test
         run: |
           npx playwright install chromium
-      - name: Get skipped tests from JSON
-        id: read_skipped_tests
-        uses: elementor/elementor-tests-configuration/.github/actions/skip-tests@main
-        with:
-            file_path: "skipped_tests.json"
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression' &&
@@ -94,23 +89,16 @@ jobs:
           matrix.shardIndex != 'plugin_tester_section'
           }}
         run: |
-          SKIP_DEFAULT="@plugin_tester_container|@plugin_tester_section"
-          if [ -n "${{ steps.read_skipped_tests.outputs.skip_pattern }}" ]; then
-            ALL_SKIP_PATTERN="$SKIP_DEFAULT|${{ steps.read_skipped_tests.outputs.skip_pattern }}"
-          else
-            ALL_SKIP_PATTERN="$SKIP_DEFAULT"
-          fi
-          echo "Using grep invert pattern: $ALL_SKIP_PATTERN"
-          npm run test:playwright -- --grep-invert="$ALL_SKIP_PATTERN" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_container" --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+        run: npm run test:playwright -- --grep="@plugin_tester_container"
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_section" --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+        run: npm run test:playwright -- --grep="@plugin_tester_section"
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+        run: npm run test:playwright:elements-regression
       - uses: actions/upload-artifact@v4
         if: always()
         with:
