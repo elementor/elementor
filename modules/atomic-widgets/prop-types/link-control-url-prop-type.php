@@ -16,6 +16,8 @@ class Link_Control_Url_Prop_Type extends Plain_Prop_Type {
 	public static function validate_url( $value ): bool {
 		$url = trim( $value );
 
+		$url = filter_var( $url, FILTER_SANITIZE_URL );
+
 		if ( self::is_valid_url( $url ) ) {
 			return true;
 		}
