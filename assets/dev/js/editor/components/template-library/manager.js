@@ -79,6 +79,9 @@ const TemplateLibraryManager = function() {
 			page: __( 'Page', 'elementor' ),
 			section: __( 'Section', 'elementor' ),
 			container: __( 'Container', 'elementor' ),
+			'e-div-block': __( 'Div Block', 'elementor' ),
+			flexbox: __( 'Flexbox', 'elementor' ),
+
 			[ elementor.config.document.type ]: elementor.config.document.panel.title,
 		};
 
@@ -198,6 +201,14 @@ const TemplateLibraryManager = function() {
 		lastDeletedItems.clear();
 	};
 
+	this.addLastRemovedItems = function( ids ) {
+		if ( ! Array.isArray( ids ) && ! ids.length ) {
+			return;
+		}
+
+		ids.forEach( ( id ) => lastDeletedItems.add( id ) );
+	};
+
 	this.selectAllTemplates = function() {
 		document.querySelectorAll( '.elementor-template-library-template[data-template_id]' ).forEach( ( element ) => {
 			const templateId = element.getAttribute( 'data-template_id' );
@@ -263,7 +274,7 @@ const TemplateLibraryManager = function() {
 					templatesCollection.remove( templateModel, { silent: true } );
 
 					if ( 'cloud' === source ) {
-						lastDeletedItems.add( templateId );
+						self.addLastRemovedItems( [ templateId ] );
 					}
 
 					if ( options.onSuccess ) {
@@ -519,7 +530,7 @@ const TemplateLibraryManager = function() {
 				template_id: templateId,
 			},
 			success: ( response ) => {
-				lastDeletedItems.add( templateId );
+				self.addLastRemovedItems( [ templateId ] );
 				templatesCollection.remove( templateModel, { silent: true } );
 				options.onSuccess?.( response );
 			},
@@ -1004,7 +1015,7 @@ const TemplateLibraryManager = function() {
 						} );
 
 						if ( 'cloud' === source ) {
-							lastDeletedItems.add( ...selectedItems );
+							self.addLastRemovedItems( templateIds );
 						}
 
 						templatesCollection.remove( modelsToRemove );

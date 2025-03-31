@@ -429,6 +429,13 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @return array|\WP_Error
+	 */
+	public function get_quota() {
+		return new \WP_Error( 'template_error', 'This source does not support quotas' );
+	}
+
+	/**
 	 * Send file headers.
 	 *
 	 * Set the file header when export template data to a file.
