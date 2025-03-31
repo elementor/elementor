@@ -50,7 +50,6 @@ const { useEditImage } = require( 'elementor/modules/ai/assets/js/editor/pages/f
 const { useRequestIds } = require( 'elementor/modules/ai/assets/js/editor/context/requests-ids' );
 const { useLocation } = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/context/location-context' );
 const usePromptSettings = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-prompt-settings' ).default;
-// Import the constants after mocking
 const { IMAGE_RATIO, IMAGE_BACKGROUND_COLOR } = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-prompt-settings' );
 const IsolateObject = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/views/isolate-objects/index' ).default;
 
