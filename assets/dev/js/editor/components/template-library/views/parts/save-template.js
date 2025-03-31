@@ -489,7 +489,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				of: this.ui.infoIcon,
 				at: `${ inlineStartKey }+90 top-60`,
 			},
-			targetElement: this.el,
 		} )
 		.setMessage( __(
 			'With Cloud Templates, you can reuse saved assets across all the websites you’re working on.',
