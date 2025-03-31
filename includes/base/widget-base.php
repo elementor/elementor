@@ -852,7 +852,7 @@ abstract class Widget_Base extends Element_Base {
 	 *
 	 * @return string The repeater setting key (e.g. `tabs.3.tab_title`).
 	 */
-	public function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {
+	protected function get_repeater_setting_key( $setting_key, $repeater_key, $repeater_item_index ) {
 		return implode( '.', [ $repeater_key, $repeater_item_index, $setting_key ] );
 	}
 
@@ -878,7 +878,7 @@ abstract class Widget_Base extends Element_Base {
 	 * @param string $toolbar Optional. Toolbar type. Accepted values are `advanced`, `basic` or `none`. Default is
 	 *                        `basic`.
 	 */
-	public function add_inline_editing_attributes( $key, $toolbar = 'basic' ) {
+	protected function add_inline_editing_attributes( $key, $toolbar = 'basic' ) {
 		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
 			return;
 		}
