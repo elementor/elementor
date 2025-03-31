@@ -202,10 +202,10 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		const parts = key.split( '.' );
 
 		const isRepeaterKey = 3 === parts.length;
-		// Is it repeater?
+
 		if ( isRepeaterKey ) {
-			const repaterId = parts[ 0 ];
-			const repeater = container.repeaters[ repaterId ];
+			const repeaterId = parts[ 0 ];
+			const repeater = container.repeaters[ repeaterId ];
 
 			const repeaterChildIndex = parts[ 1 ];
 			container = repeater.children[ repeaterChildIndex ];
