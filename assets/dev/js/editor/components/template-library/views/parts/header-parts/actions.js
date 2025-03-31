@@ -20,7 +20,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onRender() {
-		const currentTab = $e.components.get( 'library' ).currentTab;
+		const currentTab = $e.components.get( 'library' ).currentTab ?? '';
 
 		this.ui.import.toggleClass( 'elementor-hidden', 'templates/my-templates' !== currentTab );
 	},
