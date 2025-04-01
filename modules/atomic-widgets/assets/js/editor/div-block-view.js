@@ -81,6 +81,15 @@ const DivBlockView = BaseElementView.extend( {
 		}
 
 		this.$el.addClass( this.getClasses() );
+		if ( changed?.tag !== undefined && this._parent ) {
+			this.rerenderEntireView();
+		}
+	},
+
+	rerenderEntireView() {
+		const parent = this._parent;
+		this._parent.removeChildView( this );
+		parent.addChild( this.model, DivBlockView, this._index );
 	},
 
 	onRender() {
