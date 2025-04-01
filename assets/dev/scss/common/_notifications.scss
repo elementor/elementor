@@ -5,7 +5,7 @@
 	border-radius: 5px;
 	color: var(--e-a-dark-color-txt);
 	background-color: rgba(0, 0, 0, .8);
-	z-index: $lightbox-layer;
+	z-index: $super-layer;
 
 	&.dialog-position-window {
 		position: fixed;

@@ -6,11 +6,16 @@ const { useGlobalActions } = require( 'elementor/modules/ai/assets/js/editor/pag
 jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/context/edit-image-context' );
 jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-image-upload' );
 jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/context/global-actions-context' );
-jest.mock( 'elementor-editor/utils/files-upload-handler', () => ( {
-	getUnfilteredFilesNotEnabledDialog: jest.fn().mockReturnValue( {
-		show: jest.fn(),
-	} ),
-} ) );
+jest.mock( 'elementor-editor/utils/files-upload-handler', () => {
+	return {
+		getUnfilteredFilesNotEnabledDialog: jest.fn().mockReturnValue( {
+			getElements: jest.fn().mockReturnValue( {
+				css: jest.fn(),
+			} ),
+			show: jest.fn(),
+		} ),
+	};
+} );
 
 describe( 'useImageActions', () => {
 	beforeEach( () => {

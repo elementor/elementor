@@ -30,8 +30,11 @@ const useImageActions = () => {
 		) || elementorCommon.config.filesUpload.unfilteredFiles;
 
 		if ( ! isUploadAllowed ) {
-			FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => {} ).show();
+			const dialog = FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => {} );
+			dialog.getElements( 'widget' ).css( 'z-index', '170001' );
+			dialog.show();
 		}
+
 		return isUploadAllowed;
 	};
 
