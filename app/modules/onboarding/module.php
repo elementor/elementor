@@ -318,7 +318,7 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		switch_theme( 'hello-elementor' );
+		switch_theme( 'hello-biz' );
 
 		return [
 			'status' => 'success',
