@@ -82,9 +82,13 @@ const DivBlockView = BaseElementView.extend( {
 
 		this.$el.addClass( this.getClasses() );
 
-		if ( changed?.tag && this._parent && this.tagName() !== this.el.tagName ) {
+		if ( this.isTagChanged( changed ) ) {
 			this.rerenderEntireView();
 		}
+	},
+
+	isTagChanged( changed ) {
+		return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName;
 	},
 
 	rerenderEntireView() {
