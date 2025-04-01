@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 
 	/**
-	 *	@dataProvider valid_urls_provider
+	 *	@dataProvider urls_provider
 	 */
 	public function test_validate( $url ) {
 		// Act.
@@ -22,18 +22,11 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
-	/**
-	 * @dataProvider invalid_urls_provider
-	 */
-	public function test_validate__fail_when_value_is_not_a_allowed_url( $url ) {
-		// Act.
-		$result = Link_Control_Url_Prop_Type::validate_url( $url );
+	public function urls_provider(): array {
+		$xss_injected_url = "example.com/?id=1<script>alert(1)</script>";
+		$sql_injected_url = "' OR 1=1 --";
+		$js_injected_url = "<script>alert('hacked')</script>";
 
-		// Assert.
-		$this->assertFalse( $result );
-	}
-
-	public function valid_urls_provider() {
 		return [
 			[ "#" ],
 			[ "#some-id" ],
@@ -44,15 +37,6 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 			[ "https://example.com" ],
 			[ "192.168.1.1" ],
 			[ "2001:db8::ff00:42:8329" ],
-		];
-	}
-
-	public function invalid_urls_provider() {
-		$xss_injected_url = "example.com/?id=1<script>alert(1)</script>";
-		$sql_injected_url = "' OR 1=1 --";
-		$js_injected_url = "<script>alert('hacked')</script>";
-
-		return [
 			[ $xss_injected_url ],
 			[ $sql_injected_url ],
 			[ $js_injected_url ],
@@ -60,4 +44,5 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 			[ "http:///example.com" ],
 		];
 	}
+
 }
