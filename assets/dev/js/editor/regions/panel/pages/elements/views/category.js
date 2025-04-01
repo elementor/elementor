@@ -96,7 +96,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	onChipClick( event ) {
 		event.stopPropagation();
-		
+
 		document.dispatchEvent( new CustomEvent( 'alphachip:open', {
 			detail: { target: this.$el },
 		} ) );
