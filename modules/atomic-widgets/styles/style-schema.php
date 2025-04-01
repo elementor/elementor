@@ -234,15 +234,12 @@ class Style_Schema {
 			]),
 			'align-content' => String_Prop_Type::make()->enum([
 				'normal',
-				'stretch',
 				'center',
 				'start',
 				'end',
-				'flex-start',
-				'flex-end',
-				'self-start',
-				'self-end',
-				'anchor-center',
+				'space-between',
+				'space-around',
+				'space-evenly',
 			]),
 			'align-items' => String_Prop_Type::make()->enum([
 				'center',
