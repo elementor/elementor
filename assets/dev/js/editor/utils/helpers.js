@@ -746,15 +746,19 @@ module.exports = {
 	 * @param {HTMLElement} element - The referenced element whose children are searched.
 	 * @return {HTMLAnchorElement | null} The closest anchor child element, or null if none is found.
 	 */
-	findChildWithAnchor( element ) {
-		return element?.querySelector( 'a' ) || null;
+	getDescendantAnchor( element ) {
+		return [ ...element.querySelectorAll( '*.elementor-element' ) ].some( ( el ) => el.querySelector( 'a' ) ) || null;
 	},
 
 	/**
 	 * @param {HTMLElement} element - The referenced element whose parents are searched.
 	 * @return {HTMLAnchorElement | null} The closest anchor parent element, or null if none is found.
 	 */
-	findParentWithAnchor( element ) {
+	getAncestorAnchor( element ) {
+		if ( 'A' === element.tagName ) {
+			return false;
+		}
+
 		return element?.closest( 'a' ) || null;
 	},
 };
