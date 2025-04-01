@@ -1,4 +1,4 @@
-import { convertSizeToFrString, findChildWithAnchor, findParentWithAnchor } from 'elementor-editor-utils/helpers';
+import { convertSizeToFrString, getDescendantAnchor, getAncestorAnchor } from 'elementor-editor-utils/helpers';
 
 describe( 'convertSizeToFrString', () => {
 	test( 'Size 1 to 1fr', () => {
@@ -14,7 +14,7 @@ describe( 'convertSizeToFrString', () => {
 	} );
 } );
 
-describe( 'findChildWithAnchor', () => {
+describe( 'getDescendantAnchor', () => {
 	beforeEach( () => {
 		document.body.innerHTML = '';
 	} );
@@ -28,7 +28,7 @@ describe( 'findChildWithAnchor', () => {
         `;
 
 		const parentElement = document.getElementById( 'test-container' );
-		const anchorElement = findChildWithAnchor( parentElement );
+		const anchorElement = getDescendantAnchor( parentElement );
 
 		expect( anchorElement ).not.toBeNull();
 		expect( anchorElement.textContent ).toBe( 'Link 1' );
@@ -38,13 +38,13 @@ describe( 'findChildWithAnchor', () => {
 		document.body.innerHTML = `<div id="empty-container"></div>`;
 
 		const parentElement = document.getElementById( 'empty-container' );
-		const anchorElement = findChildWithAnchor( parentElement );
+		const anchorElement = getDescendantAnchor( parentElement );
 
 		expect( anchorElement ).toBeNull();
 	} );
 } );
 
-describe( 'findParentWithAnchor', () => {
+describe( 'getAncestorAnchor', () => {
 	beforeEach( () => {
 		document.body.innerHTML = '';
 	} );
@@ -59,7 +59,7 @@ describe( 'findParentWithAnchor', () => {
         `;
 
 		const nestedElement = document.getElementById( 'nested-element' );
-		const anchorElement = findParentWithAnchor( nestedElement );
+		const anchorElement = getAncestorAnchor( nestedElement );
 
 		expect( anchorElement ).not.toBeNull();
 		expect( anchorElement.id ).toBe( 'anchor-element' );
@@ -75,7 +75,7 @@ describe( 'findParentWithAnchor', () => {
         `;
 
 		const nestedElement = document.getElementById( 'nested-no-anchor' );
-		const anchorElement = findParentWithAnchor( nestedElement );
+		const anchorElement = getAncestorAnchor( nestedElement );
 
 		expect( anchorElement ).toBeNull();
 	} );
