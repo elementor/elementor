@@ -28,7 +28,7 @@ const OPT_IN_MSG = 'e-editor-v4-opt-in-message';
 const OPT_OUT_MSG = 'e-editor-v4-opt-out-message';
 
 const i18n = {
-	title: __( 'The Road to Editor V4', 'elementor' ),
+	title: __( 'The road to Editor V4', 'elementor' ),
 	chip: __( 'Alpha', 'elementor' ),
 
 	welcomeText: __( 'Welcome to a new era of web creation with Editor V4. It’s faster, more flexible, and built with a fresh approach to structure & styling.', 'elementor' ),
@@ -44,7 +44,7 @@ const i18n = {
 	readMore: __( 'Learn more', 'elementor' ),
 
 	warningHeader: __( 'Keep in mind:', 'elementor' ),
-	warning: __( 'Editor V4 is still in alpha and should not be used on live sites yet. ', 'elementor' ),
+	warning: __( 'Editor V4 is still in alpha and should not be used on live sites yet.', 'elementor' ),
 
 	feedback: __( 'We’d love your feedback!', 'elementor' ),
 	overToGithub: __( 'Head over to Github', 'elementor' ),
@@ -59,7 +59,7 @@ const i18n = {
 	},
 
 	messages: {
-		optInSuccess: __( 'Welcome! You’ve got the newest version of the editor. ', 'elementor' ),
+		optInSuccess: __( 'Welcome! You’ve got the newest version of the editor.', 'elementor' ),
 		optOut: __( 'You’ve deactivated the new Editor. Have feedback?', 'elementor' ),
 		error: __( 'Ouch, there was a glitch. Try activating V4 again soon.', 'elementor' ),
 	},
