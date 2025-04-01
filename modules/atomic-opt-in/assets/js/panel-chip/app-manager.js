@@ -38,7 +38,6 @@ export class AppManager {
 
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
 		const isRTL = elementorCommon.config.isRTL;
-		// const promotionType = rootElement.getAttribute( 'data-promotion' )?.replace( '_promotion', '' );
 
 		this.promotionInfoTip.render(
 			<App

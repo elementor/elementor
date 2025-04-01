@@ -20,8 +20,6 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 		ctaText = promotionsData?.upgrade_text,
 		ctaUrl = promotionsData?.upgrade_url;
 
-	const isV4 = 'Elementor V4' === title;
-
 	const redirectHandler = () => {
 		window.open( ctaUrl, '_blank' );
 		return doClose();
@@ -32,7 +30,6 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 			<Box sx={ { width: 296 } } data-testid="e-promotion-card">
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>
-					{ ! isV4 ? <Chip label={ __( 'PRO', 'elementor' ) } size="small" variant="outlined" color="promotion" sx={ { ml: 1 } } /> : null }
 					<CloseButton edge="end" sx={ { ml: 'auto' } } slotProps={ {
 						icon: {
 							fontSize: 'small',
@@ -50,13 +47,12 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 							);
 						} ) }
 					</List> }
-
 				</Stack>
 				<Stack pt={ 1 } pb={ 1.5 } px={ 2 }>
 					<Button
 						variant="contained"
 						size="small"
-						color={ isV4 ? 'primary' : 'promotion' }
+						color="primary"
 						onClick={ redirectHandler }
 						sx={ { ml: 'auto' } }
 					>{ ctaText }</Button>

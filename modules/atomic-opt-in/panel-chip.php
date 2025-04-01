@@ -12,12 +12,7 @@ class PanelChip extends Module {
 	}
 
 	public function init() {
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_welcome_popover' ] );
-	}
-
-	public function maybe_enqueue_welcome_popover(): void {
-
-		$this->enqueue_scripts();
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}
 
 	public function enqueue_scripts() {
@@ -37,5 +32,4 @@ class PanelChip extends Module {
 			true
 		);
 	}
-
 }

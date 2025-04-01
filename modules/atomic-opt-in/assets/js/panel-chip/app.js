@@ -7,7 +7,6 @@ import {
 import PromotionCard from './components/promotion-card';
 
 const App = ( props ) => {
-	console.log('trigger app')
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
