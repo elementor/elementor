@@ -1,9 +1,7 @@
-import { __ } from '@wordpress/i18n';
 import {
 	ClickAwayListener,
 	Image,
 	Box,
-	Chip,
 	Typography,
 	Button,
 	CloseButton,
@@ -11,8 +9,20 @@ import {
 	List,
 	ListItem,
 } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
-const PromotionCard = ( { doClose, promotionsData } ) => {
+const promotionsData = {
+	image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png',
+	image_alt: __( 'Elementor V4', 'elementor' ),
+	title: __( 'Elementor V4', 'elementor' ),
+	description: [
+		__( 'You’ve got powerful new tools with Editor V4. But, keep in mind that this is an early release, so don’t use it on live sites yet.', 'elementor' ),
+	],
+	upgrade_text: __( 'Learn more', 'elementor' ),
+	upgrade_url: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
+}
+
+const PromotionCard = ( { doClose } ) => {
 	const title = promotionsData?.title,
 		description = promotionsData?.description,
 		imgSrc = promotionsData?.image,
@@ -64,7 +74,6 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 
 PromotionCard.propTypes = {
 	doClose: PropTypes.func,
-	promotionsData: PropTypes.object,
 };
 
 export default PromotionCard;

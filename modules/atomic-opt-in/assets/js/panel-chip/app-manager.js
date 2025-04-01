@@ -13,7 +13,7 @@ export class AppManager {
 			image_alt: __('Elementor V4', 'elementor'),
 			title: __('Elementor V4', 'elementor'),
 			description: [
-				__('You’ve got powerful new tools with Editor V4. But, keep in mind that this is an early release, so don’t use it on live sites yet.', 'elementor')
+				__('You’ve got powerful new tools with Editor V4. But, keep in mind that this is an early release, so don’t use it on live sites yet.', 'elementor'),
 			],
 			upgrade_text: __('Learn more', 'elementor'),
 			upgrade_url: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
@@ -43,7 +43,7 @@ export class AppManager {
 			<App
 				colorScheme={ colorScheme }
 				isRTL={ isRTL }
-				promotionsData={ this.getPromotionData() }
+				// promotionsData={ this.getPromotionData() }
 				onClose={ () => this.unmount() }
 			/>,
 		);
