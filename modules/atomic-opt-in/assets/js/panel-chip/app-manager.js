@@ -7,19 +7,6 @@ export class AppManager {
 		this.onRoute = () => {};
 	}
 
-	getPromotionData() {
-		return {
-			image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png',
-			image_alt: __('Elementor V4', 'elementor'),
-			title: __('Elementor V4', 'elementor'),
-			description: [
-				__('You’ve got powerful new tools with Editor V4. But, keep in mind that this is an early release, so don’t use it on live sites yet.', 'elementor'),
-			],
-			upgrade_text: __('Learn more', 'elementor'),
-			upgrade_url: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
-		};
-	}
-
 	mount( targetNode, selectors ) {
 		if ( this.promotionInfoTip ) {
 			return;
@@ -43,7 +30,6 @@ export class AppManager {
 			<App
 				colorScheme={ colorScheme }
 				isRTL={ isRTL }
-				// promotionsData={ this.getPromotionData() }
 				onClose={ () => this.unmount() }
 			/>,
 		);
