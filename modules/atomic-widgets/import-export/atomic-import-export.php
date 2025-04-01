@@ -24,6 +24,11 @@ class Atomic_Import_Export {
 		);
 
 		add_filter(
+			'elementor/template_library/sources/cloud/import/elements',
+			fn( $elements ) => $this->run( $elements, Import_Export_Props_Resolver::for_import() )
+		);
+
+		add_filter(
 			'elementor/template_library/sources/local/export/elements',
 			fn( $elements ) => $this->run( $elements, Import_Export_Props_Resolver::for_export() )
 		);

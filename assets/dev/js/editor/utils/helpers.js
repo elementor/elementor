@@ -49,19 +49,19 @@ module.exports = {
 				widget: null,
 				container: null,
 				'e-div-block': null,
-				flexbox: null,
+				'e-flexbox': null,
 			},
 			'e-div-block': {
 				widget: null,
 				'e-div-block': null,
 				container: null,
-				flexbox: null,
+				'e-flexbox': null,
 			},
-			flexbox: {
+			'e-flexbox': {
 				widget: null,
 				'e-div-block': null,
 				container: null,
-				flexbox: null,
+				'e-flexbox': null,
 			},
 		},
 	},
