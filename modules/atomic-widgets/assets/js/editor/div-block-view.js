@@ -81,6 +81,16 @@ const DivBlockView = BaseElementView.extend( {
 		}
 
 		this.$el.addClass( this.getClasses() );
+
+		if ( changed?.tag && this._parent && this.tagName() !== this.el.tagName ) {
+			this.rerenderEntireView();
+		}
+	},
+
+	rerenderEntireView() {
+		const parent = this._parent;
+		this._parent.removeChildView( this );
+		parent.addChild( this.model, DivBlockView, this._index );
 	},
 
 	onRender() {
@@ -407,7 +417,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getBaseClass() {
-		return 'flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'flexbox-base' : 'e-div-block-base';
+		return 'e-flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'e-flexbox-base' : 'e-div-block-base';
 	},
 } );
 
