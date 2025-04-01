@@ -459,7 +459,7 @@ abstract class Source_Base {
 		$content = $this->process_export_import_content( $content, 'on_import' );
 
 		$content = apply_filters(
-			'elementor/template_library/sources/{$source}/import/elements',
+			"elementor/template_library/sources/{$this->get_id()}/import/elements",
 			$content
 		);
 
