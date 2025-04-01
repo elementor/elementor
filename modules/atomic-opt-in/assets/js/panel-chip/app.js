@@ -4,7 +4,8 @@ import {
 	LocalizationProvider,
 	ThemeProvider,
 } from '@elementor/ui';
-import PromotionCard from './components/promotion-card';
+import PropTypes from 'prop-types';
+import PopoverCard from './components/popover-card';
 
 const App = ( props ) => {
 	return (
@@ -12,7 +13,7 @@ const App = ( props ) => {
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ props.colorScheme }>
 					<Infotip
-						content={ <PromotionCard doClose={ props.onClose } promotionsData={ props.promotionsData } /> }
+						content={ <PopoverCard doClose={ props.onClose } /> }
 						placement="right"
 						arrow={ true }
 						open={ true }
@@ -36,7 +37,6 @@ const App = ( props ) => {
 App.propTypes = {
 	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
 	isRTL: PropTypes.bool,
-	promotionsData: PropTypes.object,
 	onClose: PropTypes.func.isRequired,
 };
 

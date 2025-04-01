@@ -3,12 +3,12 @@ import { createRoot } from 'react-dom/client';
 
 export class AppManager {
 	constructor() {
-		this.promotionInfoTip = null;
+		this.popover = null;
 		this.onRoute = () => {};
 	}
 
 	mount( targetNode, selectors ) {
-		if ( this.promotionInfoTip ) {
+		if ( this.popover ) {
 			return;
 		}
 
@@ -21,12 +21,12 @@ export class AppManager {
 
 		this.attachEditorEventListeners();
 
-		this.promotionInfoTip = createRoot( rootElement );
+		this.popover = createRoot( rootElement );
 
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
 		const isRTL = elementorCommon.config.isRTL;
 
-		this.promotionInfoTip.render(
+		this.popover.render(
 			<App
 				colorScheme={ colorScheme }
 				isRTL={ isRTL }
@@ -36,12 +36,12 @@ export class AppManager {
 	}
 
 	unmount() {
-		if ( this.promotionInfoTip ) {
+		if ( this.popover ) {
 			this.detachEditorEventListeners();
-			this.promotionInfoTip.unmount();
+			this.popover.unmount();
 		}
 
-		this.promotionInfoTip = null;
+		this.popover = null;
 	}
 
 	attachEditorEventListeners() {

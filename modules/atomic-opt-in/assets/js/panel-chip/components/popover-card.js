@@ -10,8 +10,9 @@ import {
 	ListItem,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 
-const promotionsData = {
+const popoverData = {
 	image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png',
 	image_alt: __( 'Elementor V4', 'elementor' ),
 	title: __( 'Elementor V4', 'elementor' ),
@@ -22,13 +23,13 @@ const promotionsData = {
 	upgrade_url: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
 };
 
-const PromotionCard = ( { doClose } ) => {
-	const title = promotionsData?.title,
-		description = promotionsData?.description,
-		imgSrc = promotionsData?.image,
-		imgAlt = promotionsData?.image_alt,
-		ctaText = promotionsData?.upgrade_text,
-		ctaUrl = promotionsData?.upgrade_url;
+const PopoverCard = ( { doClose } ) => {
+	const title = popoverData?.title,
+		description = popoverData?.description,
+		imgSrc = popoverData?.image,
+		imgAlt = popoverData?.image_alt,
+		ctaText = popoverData?.upgrade_text,
+		ctaUrl = popoverData?.upgrade_url;
 
 	const redirectHandler = () => {
 		window.open( ctaUrl, '_blank' );
@@ -37,7 +38,7 @@ const PromotionCard = ( { doClose } ) => {
 
 	return (
 		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ doClose }>
-			<Box sx={ { width: 296 } } data-testid="e-promotion-card">
+			<Box sx={ { width: 296 } } data-testid="e-popover-card">
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>
 					<CloseButton edge="end" sx={ { ml: 'auto' } } slotProps={ {
@@ -72,8 +73,8 @@ const PromotionCard = ( { doClose } ) => {
 	);
 };
 
-PromotionCard.propTypes = {
+PopoverCard.propTypes = {
 	doClose: PropTypes.func,
 };
 
-export default PromotionCard;
+export default PopoverCard;

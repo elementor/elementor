@@ -29,7 +29,7 @@ test.describe( 'V4 modal promotion test @promotions', () => {
 		await wpAdmin.openNewPage();
 		await page.locator( `.elementor-panel-heading-category-chip` ).click( { force: true } );
 
-		const modalContainer = page.locator( EditorSelectors.panels.promotionCard );
+		const modalContainer = page.locator( EditorSelectors.panels.popoverCard );
 		await expect.soft( modalContainer ).toBeVisible();
 		await expect( modalContainer.getByText( 'Elementor V4' ) ).toBeVisible();
 		await modalContainer.getByRole( 'button', { name: 'close' } ).click();
