@@ -19,6 +19,12 @@ module.exports = Marionette.ItemView.extend( {
 		$e.route( 'library/import' );
 	},
 
+	onRender() {
+		const currentTab = $e.components.get( 'library' ).currentTab ?? '';
+
+		this.ui.import.toggleClass( 'elementor-hidden', 'templates/my-templates' !== currentTab );
+	},
+
 	onSyncClick() {
 		var self = this;
 
