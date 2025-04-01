@@ -1,0 +1,41 @@
+<?php
+
+namespace Elementor\Modules\AtomicOptIn;
+
+use Elementor\Utils;
+
+class PanelChip extends Module {
+	private Module $module;
+
+	public function __construct( Module $module ) {
+		$this->module = $module;
+	}
+
+	public function init() {
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_welcome_popover' ] );
+	}
+
+	public function maybe_enqueue_welcome_popover(): void {
+
+		$this->enqueue_scripts();
+	}
+
+	public function enqueue_scripts() {
+
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_enqueue_script(
+			'editor-v4-opt-in-alphachip',
+			ELEMENTOR_ASSETS_URL . 'js/editor-v4-opt-in-alphachip' . $min_suffix . '.js',
+			[
+				'react',
+				'react-dom',
+				'elementor-common',
+				'elementor-v2-ui',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+}
