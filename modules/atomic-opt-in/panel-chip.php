@@ -16,7 +16,6 @@ class PanelChip extends Module {
 	}
 
 	public function enqueue_scripts() {
-
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
