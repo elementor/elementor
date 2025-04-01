@@ -11,6 +11,7 @@ export const LOCATIONS = {
 	REMOVE_TEXT: 'remove-text',
 	CLEANUP: 'cleanup',
 	PRODUCT_IMAGE_UNIFICATION: 'product-image-unification',
+	ISOLATE_OBJECT: 'isolate-objects',
 };
 
 export const IMAGE_PROMPT_SETTINGS = {

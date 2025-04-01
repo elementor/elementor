@@ -82,6 +82,7 @@ class Module extends BaseModule {
 				'ai_toggle_favorite_history_item' => [ $this, 'ajax_ai_toggle_favorite_history_item' ],
 				'ai_get_product_image_unification' => [ $this, 'ajax_ai_get_product_image_unification' ],
 				'ai_get_animation' => [ $this, 'ajax_ai_get_animation' ],
+				'ai_get_image_to_image_isolate_objects' => [ $this, 'ajax_ai_get_product_image_unification' ],
 			];
 
 			foreach ( $handlers as $tag => $callback ) {
@@ -1017,10 +1018,6 @@ class Module extends BaseModule {
 			throw new \Exception( 'Missing prompt settings' );
 		}
 
-		if ( ! $app->is_connected() ) {
-			throw new \Exception( 'not_connected' );
-		}
-
 		if ( empty( $data['payload']['mask'] ) ) {
 			throw new \Exception( 'Missing Mask' );
 		}
@@ -1411,7 +1408,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_product_image_unification( $data ): array {
-		$data['editor_post_id'] = $data['payload']['postId'];
+		if ( ! empty( $data['payload']['postId'] ) ) {
+			$data['editor_post_id'] = $data['payload']['postId'];
+		}
 		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();

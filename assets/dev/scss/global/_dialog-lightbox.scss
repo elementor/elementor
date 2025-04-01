@@ -9,7 +9,7 @@
 	bottom: 0;
 	left: 0;
 	background-color: rgba(0, 0, 0, 0.8);
-	z-index: $lightbox-layer;
+	z-index: 9999;
 	user-select: none;
 }
 

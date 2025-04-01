@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Flexbox extends Div_Block {
 	public static function get_type() {
-		return 'flexbox';
+		return 'e-flexbox';
 	}
 
 	public static function get_element_type(): string {
-		return 'flexbox';
+		return 'e-flexbox';
 	}
 
 	public function get_title() {
