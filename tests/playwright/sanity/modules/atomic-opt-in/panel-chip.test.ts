@@ -1,7 +1,7 @@
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import EditorSelectors from "../../../selectors/editor-selectors";
-import { expect } from "@playwright/test";
+import EditorSelectors from '../../../selectors/editor-selectors';
+import { expect } from '@playwright/test';
 
 
 test.describe( 'V4 modal promotion test @promotions', () => {
