@@ -109,6 +109,8 @@ export default class Component extends ComponentModalBase {
 		const currentTab = this.tabs[ tab ];
 		const filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
 
+		this.currentTab = tab;
+
 		this.manager.setScreen( filter );
 	}
 
