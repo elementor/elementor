@@ -26,6 +26,7 @@ export class LinkInLinkPaste extends Dependency {
 		const hasParentWithAnchor = targetElements.some( ( target ) =>
 			elementor.helpers.findParentWithAnchor( target.view.el ),
 		);
+
 		return ! hasParentWithAnchor;
 	}
 }
