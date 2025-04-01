@@ -29,7 +29,7 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
