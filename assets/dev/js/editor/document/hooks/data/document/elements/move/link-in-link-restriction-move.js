@@ -2,7 +2,7 @@ import Dependency from 'elementor-api/modules/hooks/data/dependency';
 
 export class LinkInLinkMove extends Dependency {
 	getCommand() {
-		return 'document/elements/paste';
+		return 'document/elements/move';
 	}
 
 	getId() {
