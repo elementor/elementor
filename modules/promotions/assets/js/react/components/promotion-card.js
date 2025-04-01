@@ -13,7 +13,6 @@ import {
 } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
-
 const PromotionCard = ( { doClose, promotionsData } ) => {
 	const title = promotionsData?.title,
 		description = promotionsData?.description,
