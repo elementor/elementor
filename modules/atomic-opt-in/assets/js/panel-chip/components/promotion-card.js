@@ -20,7 +20,7 @@ const promotionsData = {
 	],
 	upgrade_text: __( 'Learn more', 'elementor' ),
 	upgrade_url: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
-}
+};
 
 const PromotionCard = ( { doClose } ) => {
 	const title = promotionsData?.title,
