@@ -36,6 +36,8 @@ class Module extends BaseModule {
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
+
+		( new Hooks() )->register();
 	}
 
 	private function is_experiment_active(): bool {
