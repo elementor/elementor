@@ -150,6 +150,7 @@ ElementModel = BaseElementModel.extend( {
 
 	getTitle() {
 		let title = elementor.hooks.applyFilters( 'elementor/editor/element/title', this.getSetting( '_title' ) || this.getSetting( 'presetTitle' ), this );
+
 		const custom = this.get( 'custom' );
 
 		if ( ! title && ( custom?.isPreset ?? false ) ) {

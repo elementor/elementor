@@ -516,9 +516,4 @@ export default class extends Marionette.CompositeView {
 			editor.render();
 		} );
 	}
-
-	isAtomicWidget() {
-		const elementType = 'widget' === this.model.get( 'elType' ) ? this.model.get( 'widgetType' ) : this.model.get( 'elType' );
-		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
-	}
 }
