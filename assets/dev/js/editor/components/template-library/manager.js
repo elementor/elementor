@@ -359,21 +359,28 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.getFolderTemplates = ( templateId ) => {
+	this.getFolderTemplates = ( parentElement ) => {
 		this.clearLastRemovedItems();
+
+		const parentId = parentElement.model.get( 'template_id' );
+		const parentTitle = parentElement.model.get( 'title' );
 
 		return new Promise( ( resolve ) => {
 			isLoading = true;
 			const ajaxOptions = {
 				data: {
 					source: 'cloud',
-					template_id: templateId,
+					template_id: parentId,
 				},
 				success: ( data ) => {
-					this.setFilter( 'parent', templateId );
+					this.setFilter( 'parent_id', parentId );
+					this.setFilter( 'parent_title', parentTitle );
+
 					templatesCollection = new TemplateLibraryCollection( data.templates );
 
 					elementor.templates.layout.hideLoadingView();
+
+					self.layout.showNavigationContainer();
 
 					self.layout.updateViewCollection( templatesCollection.models );
 					self.layout.modalContent.currentView.ui.addNewFolder.remove();
@@ -394,7 +401,7 @@ const TemplateLibraryManager = function() {
 	this.createFolder = function( folderData, options ) {
 		this.clearLastRemovedItems();
 
-		if ( null !== this.getFilter( 'parent' ) ) {
+		if ( null !== this.getFilter( 'parent_id' ) ) {
 			this.showErrorDialog( __( 'You can not create a folder inside another folder.', 'elementor' ) );
 
 			return;
@@ -753,7 +760,8 @@ const TemplateLibraryManager = function() {
 			options.refresh = true;
 		}
 
-		this.setFilter( 'parent', null, query );
+		this.setFilter( 'parent_id', null, query );
+		this.setFilter( 'parent_title', null );
 
 		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
 			const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
@@ -784,7 +792,8 @@ const TemplateLibraryManager = function() {
 		this.clearLastRemovedItems();
 
 		return new Promise( ( resolve ) => {
-			this.setFilter( 'parent', null );
+			this.setFilter( 'parent_id', null );
+			this.setFilter( 'parent_title', null );
 
 			isLoading = true;
 
@@ -826,7 +835,7 @@ const TemplateLibraryManager = function() {
 
 		const source = this.getFilter( 'source' );
 
-		const parentId = this.getFilter( 'parent' );
+		const parentId = this.getFilter( 'parent_id' );
 
 		const ajaxOptions = {
 			data: {

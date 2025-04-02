@@ -7,7 +7,8 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
 	TemplateLibraryConnectView = require( 'elementor-templates/views/parts/connect' ),
 	TemplateLibraryCloudStateView = require( 'elementor-templates/views/parts/cloud-states' ),
-	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
+	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' ),
+	TemplateLibraryNavigationContainerView = require( 'elementor-templates/views/parts/navigation-container' );
 
 import { SAVE_CONTEXTS } from './../constants';
 
@@ -90,6 +91,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.modalContent.currentView.collection.reset( models );
 	},
 
+	showNavigationContainer() {
+		this.modalContent.currentView.ui.navigationContainer.html( ( new TemplateLibraryNavigationContainerView() ).render()?.el );
+	},
+
 	addTemplates( models ) {
 		this.modalContent.currentView.collection.add( models, { merge: true } );
 	},
@@ -140,9 +145,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		try {
 			elementor.templates.layout.showLoadingView();
 
-			const templateId = elementModel.model.get( 'template_id' );
-
-			await elementor.templates.getFolderTemplates( templateId );
+			await elementor.templates.getFolderTemplates( elementModel );
 		} finally {
 			elementor.templates.layout.hideLoadingView();
 		}

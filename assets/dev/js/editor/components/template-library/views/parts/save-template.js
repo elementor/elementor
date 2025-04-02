@@ -280,7 +280,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		elementor.templates.setFilter( 'source', lastSource, true );
 
 		if ( parentId ) {
-			elementor.templates.setFilter( 'parent', parentId );
+			elementor.templates.setFilter( 'parent_id', parentId );
 
 			const model = new TemplateLibraryTemplateModel( { template_id: parentId } );
 
@@ -514,19 +514,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				at: `${ inlineStartKey }+90 top-60`,
 			},
 		} )
-		.setMessage( __(
-			'With Cloud Templates, you can reuse saved assets across all the websites you’re working on.',
-			'elementor',
-		) )
-		.addButton( {
-			name: 'learn_more',
-			text: __(
-				'Learn more',
+			.setMessage( __(
+				'With Cloud Templates, you can reuse saved assets across all the websites you’re working on.',
 				'elementor',
-			),
-			classes: '',
-			callback: () => open( '', '_blank' ),
-		} );
+			) )
+			.addButton( {
+				name: 'learn_more',
+				text: __(
+					'Learn more',
+					'elementor',
+				),
+				classes: '',
+				callback: () => open( '', '_blank' ),
+			} );
 
 		this.dialog.getElements( 'header' ).remove();
 		this.dialog.show();

@@ -40,6 +40,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
 		bulkMove: '.bulk-selection-action-bar .bulk-move',
 		bulkCopy: '.bulk-selection-action-bar .bulk-copy',
+		navigationContainer: '#elementor-template-library-navigation-container',
 	},
 
 	events: {
