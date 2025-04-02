@@ -578,7 +578,7 @@ export default class EditorBase extends Marionette.Application {
 	initPreviewView( document ) {
 		elementor.trigger( 'document:before:preview', document );
 
-		this.previewView = this.createPreviewView( document.$element[ 0 ],elementor.elementsModel );
+		this.previewView = this.createPreviewView( document.$element[ 0 ], elementor.elementsModel );
 
 		this.renderPreview( this.previewView );
 	}
