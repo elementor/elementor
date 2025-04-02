@@ -110,8 +110,7 @@ class Global_Classes_Repository {
 
 			/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
 			return $this->delete_classes_from_element( $element_instance->get_props_schema(), $element_data, $deleted_class_ids );
-			
-		});
+		} );
 	}
 
 	private function get_deleted_class_ids( $current_value, $updated_value ) {
@@ -141,8 +140,8 @@ class Global_Classes_Repository {
 			$current_classes = $element_data['settings'][ $prop->get_key() ]['value'];
 
 			$filtered_classes = array_filter(
-				$current_classes, 
-				fn($class) => ! in_array( $class, $class_ids, true )
+				$current_classes,
+				fn( $class ) => ! in_array( $class, $class_ids, true )
 			);
 
 			$element_data['settings'][ $prop->get_key() ]['value'] = array_values( $filtered_classes );
@@ -151,5 +150,4 @@ class Global_Classes_Repository {
 
 		return $element_data;
 	}
-
 }
