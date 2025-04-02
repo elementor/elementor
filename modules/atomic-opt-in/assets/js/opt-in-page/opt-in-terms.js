@@ -36,8 +36,8 @@ const i18n = {
 
 	optOut: {
 		titleText: __( 'You’re deactivating Editor V4', 'elementor' ),
-		introText: __( 'We hope you enjoyed testing and building with these new features. ', 'elementor' ),
-		notesHeader: __( ' Keep in mind:', 'elementor' ),
+		introText: __( 'We hope you enjoyed testing and building with these new features.', 'elementor' ),
+		notesHeader: __( 'Keep in mind:', 'elementor' ),
 		notes: {
 			details: [
 				__( 'By deactivating, you’ll lose all Editor V4 features, and any content you created with V4-specific features will no longer be available or appear on your site.', 'elementor' ),
