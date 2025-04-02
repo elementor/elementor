@@ -7,6 +7,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Utils\Elements_Classes;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,10 +46,10 @@ class Applied_Global_Classes_Usage {
 		$count_per_type = [];
 
 		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $global_class_ids, &$total_count, &$count_per_type ) {
-			$element_type = $this->get_element_type( $element_data );
-			$element_instance = $this->get_element_instance( $element_type );
+			$element_type = Elements_Classes::get_element_type( $element_data );
+			$element_instance = Elements_Classes::get_element_instance( $element_type );
 
-			if ( ! $this->is_atomic_element( $element_instance ) ) {
+			if ( ! Elements_Classes::is_atomic_element( $element_instance ) ) {
 				return;
 			}
 
@@ -66,7 +67,7 @@ class Applied_Global_Classes_Usage {
 
 	private function get_classes_count_for_element( $atomic_props_schema, $atomic_element_data, $global_class_ids ) {
 		return Collection::make( $atomic_props_schema )->reduce( function( $carry, $prop, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
-			if ( ! $this->is_classes_prop( $prop ) ) {
+			if ( ! Elements_Classes::is_classes_prop( $prop ) ) {
 				return $carry;
 			}
 
@@ -74,32 +75,6 @@ class Applied_Global_Classes_Usage {
 
 			return $carry;
 		}, 0 );
-	}
-
-	private function get_element_type( $element ) {
-		return 'widget' === $element['elType'] ? $element['widgetType'] : $element['elType'];
-	}
-
-	private function get_element_instance( $element_type ) {
-		$widget = Plugin::$instance->widgets_manager->get_widget_types( $element_type );
-		$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
-
-		return $widget ?? $element;
-	}
-
-	private function is_atomic_element( $element_instance ) {
-		if ( ! $element_instance ) {
-			return false;
-		}
-
-		return (
-			$element_instance instanceof Atomic_Element_Base ||
-			$element_instance instanceof Atomic_Widget_Base
-		);
-	}
-
-	private function is_classes_prop( $prop ) {
-		return 'plain' === $prop::KIND && 'classes' === $prop->get_key();
 	}
 
 	private function get_global_classes_count( $prop, $global_class_ids ) {
