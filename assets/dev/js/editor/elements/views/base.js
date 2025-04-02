@@ -79,6 +79,7 @@ BaseElementView = BaseContainer.extend( {
 	events() {
 		return {
 			mousedown: 'onMouseDown',
+			click: 'handleAnchorClick',
 			'click @ui.editButton': 'onEditButtonClick',
 			'click @ui.duplicateButton': 'onDuplicateButtonClick',
 			'click @ui.addButton': 'onAddButtonClick',
@@ -322,7 +323,11 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		jQuery.each( editButtons, ( toolName, tool ) => {
-			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title, 'aria-label': tool.title } );
+			const $item = jQuery( '<li>', {
+				class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`,
+				title: tool.title,
+				'aria-label': tool.title,
+			} );
 			const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
 
 			$item.append( $icon );
@@ -354,7 +359,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	toggleVisibilityClass() {
-		this.$el.toggleClass( 'elementor-edit-hidden', ! ! this.model.get( 'hidden' ) );
+		this.$el.toggleClass( 'elementor-edit-hidden', !! this.model.get( 'hidden' ) );
 	},
 
 	addElementFromPanel( options ) {
@@ -658,7 +663,7 @@ BaseElementView = BaseContainer.extend( {
 		return '__dynamic__' in changedSettings &&
 			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
-			this.isCssIdControl( changedControl, bindingDynamicCssId ) );
+				this.isCssIdControl( changedControl, bindingDynamicCssId ) );
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
@@ -809,7 +814,7 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
-	async *bindingChangesGenerator( settings, bindingSettings, config ) {
+	async * bindingChangesGenerator( settings, bindingSettings, config ) {
 		for ( const [ key, value ] of Object.entries( settings.changed ) ) {
 			if ( '__dynamic__' !== key && ! this.isHandledAsDatabinding( key, bindingSettings, config ) ) {
 				continue;
@@ -1014,8 +1019,15 @@ BaseElementView = BaseContainer.extend( {
 
 	onRemoveButtonClick( event ) {
 		event.stopPropagation();
+		this.handleAnchorClick( event );
 
 		$e.run( 'document/elements/delete', { container: this.getContainer() } );
+	},
+
+	handleAnchorClick( event ) {
+		if ( elementor.helpers.isElementAtomic( this.getContainer().id ) ) {
+			event.preventDefault();
+		}
 	},
 
 	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`
