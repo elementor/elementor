@@ -369,4 +369,80 @@ class Source_Cloud extends Source_Base {
 	public function get_bulk_items( array $args = [] ) {
 		return $this->get_app()->get_bulk_resources_with_content( $args );
 	}
+
+	public function get_quota() {
+		return $this->get_app()->get_quota();
+	}
+
+	public function import_template( $name, $path ) {
+		if ( empty( $path ) ) {
+			return new \WP_Error( 'file_error', 'Please upload a file to import' );
+		}
+
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+
+		$items = [];
+
+		$quota = $this->get_quota();
+
+		if ( is_wp_error( $quota ) ) {
+			return $quota;
+		}
+
+		if ( $quota['currentUsage'] >= $quota['threshold'] ) {
+			return new \WP_Error( 'quota_error', 'The upload failed because you’ve saved the maximum templates already.' );
+		}
+
+		if ( 'zip' === pathinfo( $name, PATHINFO_EXTENSION ) ) {
+			$extracted_files = Plugin::$instance->uploads_manager->extract_and_validate_zip( $path, [ 'json' ] );
+
+			if ( is_wp_error( $extracted_files ) ) {
+				Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+
+				return $extracted_files;
+			}
+
+			$items_to_save = [];
+
+			foreach ( $extracted_files['files'] as $file_path ) {
+				$prepared = $this->prepare_import_template_data( $file_path );
+
+				if ( is_wp_error( $prepared ) ) {
+					Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+
+					return $prepared;
+				}
+
+				$items_to_save[] = $this->format_resource_item_for_create( $prepared );
+			}
+
+			if ( $quota['currentUsage'] + count( $items_to_save ) > $quota['threshold'] ) {
+				return new \WP_Error( 'quota_error', 'The upload failed because it will pass the maximum templates you can save.' );
+			}
+
+			$items = $this->get_app()->post_bulk_resources( $items_to_save );
+
+			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
+		} else {
+			$prepared = $this->prepare_import_template_data( $path );
+
+			if ( is_wp_error( $prepared ) ) {
+				return $prepared;
+			}
+
+			if ( $quota['currentUsage'] + 1 > $quota['threshold'] ) {
+				return new \WP_Error( 'quota_error', 'The upload failed because it will pass the maximum templates you can save.' );
+			}
+
+			$item = $this->get_app()->post_resource( $this->format_resource_item_for_create( $prepared ) );
+
+			if ( is_wp_error( $item ) ) {
+				return $item;
+			}
+
+			$items[] = $item;
+		}
+
+		return $items;
+	}
 }
