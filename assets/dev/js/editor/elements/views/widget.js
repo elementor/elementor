@@ -129,11 +129,9 @@ const WidgetView = BaseWidget.extend( {
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
-				// Since 'outerHeight' will not handle hidden elements, and mark them as empty (e.g. nested tabs).
-				const $widgetContainer = self.getWidgetContainer( self.$el ),
-					shouldHandleEmptyWidget = $widgetContainer.is( ':visible' ) && ! $widgetContainer.outerHeight();
+				const $widgetContainer = self.getWidgetContainer( self.$el );
 
-				if ( shouldHandleEmptyWidget ) {
+				if ( self.shouldGetEmptyView( $widgetContainer ) ) {
 					self.handleEmptyWidget();
 				}
 			}, 200 );
@@ -143,6 +141,10 @@ const WidgetView = BaseWidget.extend( {
 
 	getWidgetContainer( $element ) {
 		return $element.children( '.elementor-widget-container' ).length ? $element.children( '.elementor-widget-container' ) : $element;
+	},
+
+	shouldGetEmptyView( $widgetContainer ) {
+		return $widgetContainer.is( ':visible' ) && ! $widgetContainer.outerHeight();
 	},
 
 	onClickEdit( event ) {
