@@ -33,8 +33,13 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['base_styles'] = $this->get_base_styles();
+		$config['base_styles_dictionary'] = $this->get_base_styles_dictionary();
 		$config['atomic_props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
+
+		// TODO: Use the methods directly when the `Has_Template` trait will be used in all widgets.
+		$config['twig_main_template'] = method_exists( $this, 'get_main_template' ) ? $this->get_main_template() : null;
+		$config['twig_templates'] = method_exists( $this, 'get_templates_contents' ) ? $this->get_templates_contents() : null;
 
 		return $config;
 	}
