@@ -5,6 +5,7 @@ export class AppManager {
 	constructor() {
 		this.popover = null;
 		this.onRoute = () => {};
+		this.unbindIframeEvents = () => {};
 	}
 
 	mount( targetNode, selectors ) {
@@ -39,12 +40,30 @@ export class AppManager {
 		if ( this.popover ) {
 			this.detachEditorEventListeners();
 			this.popover.unmount();
+			this.unbindIframeEvents();
 		}
 
 		this.popover = null;
 	}
 
-	attachEditorEventListeners() {
+	setupIframeEventListeners() {
+		const previewIframe = document.getElementById( 'elementor-preview-iframe' );
+
+		if ( previewIframe ) {
+			const iframeDocument = previewIframe.contentWindow.document;
+			const handleClick = () => this.unmount();
+
+			iframeDocument.addEventListener( 'click', handleClick );
+			iframeDocument.addEventListener( 'keydown', handleClick );
+
+			this.unbindIframeEvents = () => {
+				iframeDocument.removeEventListener( 'click', handleClick );
+				iframeDocument.removeEventListener( 'keydown', handleClick );
+			};
+		}
+	}
+
+	setupRouteListener() {
 		this.onRoute = ( component, route ) => {
 			if ( route !== 'panel/elements/categories' && route !== 'panel/editor/content' ) {
 				return;
@@ -53,6 +72,11 @@ export class AppManager {
 		};
 
 		$e.routes.on( 'run:after', this.onRoute );
+	}
+
+	attachEditorEventListeners() {
+		this.setupIframeEventListeners();
+		this.setupRouteListener();
 	}
 
 	detachEditorEventListeners() {
