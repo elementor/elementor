@@ -348,6 +348,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.28.3 - 2025-04-01 =
+
+* Tweak: Added Isolate object tool to Elementor AI image editing capabilities
+* Fix: Third dropdown in template display conditions not working in Theme Builder ([#30729](https://github.com/elementor/elementor/issues/30729), [#30732](https://github.com/elementor/elementor/issues/30732))
+
 = 3.28.2 - 2025-03-30 =
 
 * New: Generate logo with AI
