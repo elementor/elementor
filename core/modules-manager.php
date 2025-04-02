@@ -126,6 +126,7 @@ class Modules_Manager {
 			'atomic-widgets',
 			'variables',
 			'global-classes',
+			'variables',
 			'wc-product-editor',
 			'checklist',
 			'cloud-library',

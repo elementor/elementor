@@ -13,8 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const MODULE_NAME = 'atomic-global-variables';
-	const EXPERIMENT_NAME = 'atomic_global_variables';
+	const MODULE_NAME = 'e-variables';
+	const EXPERIMENT_NAME = 'e_variables';
 
 	public function get_name() {
 		return self::MODULE_NAME;
