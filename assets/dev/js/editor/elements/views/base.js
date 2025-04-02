@@ -79,6 +79,7 @@ BaseElementView = BaseContainer.extend( {
 	events() {
 		return {
 			mousedown: 'onMouseDown',
+			click: 'handleAnchorClick',
 			'click @ui.editButton': 'onEditButtonClick',
 			'click @ui.duplicateButton': 'onDuplicateButtonClick',
 			'click @ui.addButton': 'onAddButtonClick',
@@ -1014,8 +1015,15 @@ BaseElementView = BaseContainer.extend( {
 
 	onRemoveButtonClick( event ) {
 		event.stopPropagation();
+		this.handleAnchorClick( event );
 
 		$e.run( 'document/elements/delete', { container: this.getContainer() } );
+	},
+
+	handleAnchorClick( event ) {
+		if ( elementor.helpers.isElementAtomic( this.getContainer().id ) ) {
+			event.preventDefault();
+		}
 	},
 
 	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`

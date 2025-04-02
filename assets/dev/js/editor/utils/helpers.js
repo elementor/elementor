@@ -757,4 +757,18 @@ module.exports = {
 	findParentWithAnchor( element ) {
 		return element?.closest( 'a' ) || null;
 	},
+
+	getAtomicElementTypes() {
+		const { elements } = elementor.config;
+
+		return Object.keys( elements )
+			.filter( ( elementKey ) => Object.keys( elements[ elementKey ] )
+				.some( ( key ) => key.includes( 'atom' ) ) )
+	},
+
+	isElementAtomic( elementId ) {
+		const { type: elType = null } = elementor.getContainer( elementId ) || {};
+
+		return this.getAtomicElementTypes().includes( elType );
+	}
 };

@@ -1374,12 +1374,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onBackgroundClick( event ) {
-		const elementId = this.getElementIdFromEvent( event );
-
-		if ( this.isElementAtomic( elementId ) ) {
-			event.preventDefault();
-		}
-
 		jQuery.each( this.backgroundClickListeners, ( index, config ) => {
 			let $clickedTarget = jQuery( event.target );
 			// If it's a label that associated with an input
@@ -1686,31 +1680,5 @@ export default class EditorBase extends Marionette.Application {
 			type = state ? 'text/css' : 'elementor/disabled-css';
 
 		$files.attr( { type } );
-	}
-
-	isElementAtomic( elementId ) {
-		const elType = this.getElementType( elementId );
-
-		return this.getAtomicElementTypes().includes( elType );
-	}
-
-	getElementType( elementId ) {
-		return this.getContainer( elementId )?.type || null;
-	}
-
-	getElementIdFromEvent( event ) {
-		if ( ! event?.target ) {
-			return null;
-		}
-
-		return event?.target.closest( '.elementor-element[data-id]' )?.getAttribute( 'data-id' ) || null;
-	}
-
-	getAtomicElementTypes() {
-		const { elements } = this.config;
-
-		return Object.keys( elements )
-			.filter( ( elementKey ) => Object.keys( elements[ elementKey ] )
-				.some( ( key ) => key.includes( 'atom' ) ) )
 	}
 }
