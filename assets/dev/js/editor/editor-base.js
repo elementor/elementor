@@ -220,7 +220,7 @@ export default class EditorBase extends Marionette.Application {
 		elements: {
 			types: {
 				Base: ElementBase,
-				...elementTypes,
+				... elementTypes,
 			},
 			models: {
 				/**
@@ -578,7 +578,7 @@ export default class EditorBase extends Marionette.Application {
 	initPreviewView( document ) {
 		elementor.trigger( 'document:before:preview', document );
 
-		this.previewView = this.createPreviewView( document.$element[ 0 ], elementor.elementsModel );
+		this.previewView = this.createPreviewView( document.$element[ 0 ],elementor.elementsModel );
 
 		this.renderPreview( this.previewView );
 	}
@@ -877,7 +877,7 @@ export default class EditorBase extends Marionette.Application {
 		);
 
 		// Cannot use arrow function here since it use `this.contains`.
-		this.$previewContents.on( 'click', function ( event ) {
+		this.$previewContents.on( 'click', function( event ) {
 			const $target = jQuery( event.target ),
 				isClickInsideElementor = !! $target.closest( '.elementor-edit-area, .pen-menu' ).length,
 				isTargetInsideDocument = this.contains( $target[ 0 ] );
@@ -1263,7 +1263,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.changeDeviceMode( 'desktop' );
 
-		_.defer( function () {
+		_.defer( function() {
 			elementorFrontend.elements.window.jQuery.holdReady( false );
 		} );
 
