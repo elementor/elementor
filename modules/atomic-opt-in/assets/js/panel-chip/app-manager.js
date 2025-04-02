@@ -74,7 +74,6 @@ export class AppManager {
 		$e.routes.on( 'run:after', this.onRoute );
 	}
 
-	
 	attachEditorEventListeners() {
 		this.setupIframeEventListeners();
 		this.setupRouteListener();
