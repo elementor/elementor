@@ -326,7 +326,7 @@ BaseElementView = BaseContainer.extend( {
 			const $item = jQuery( '<li>', {
 				class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`,
 				title: tool.title,
-				'aria-label': tool.title
+				'aria-label': tool.title,
 			} );
 			const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
 
@@ -577,7 +577,7 @@ BaseElementView = BaseContainer.extend( {
 	runReadyTrigger() {
 		const self = this;
 
-		_.defer( function () {
+		_.defer( function() {
 			elementorFrontend.elementsHandler.runReadyTrigger( self.el );
 
 			if ( ! elementorFrontend.isEditMode() ) {
@@ -585,7 +585,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			// In edit mode - handle an external elements that loaded by another elements like shortcode etc.
-			self.$el.find( '.elementor-element.elementor-' + self.model.get( 'elType' ) + ':not(.elementor-element-edit-mode)' ).each( function () {
+			self.$el.find( '.elementor-element.elementor-' + self.model.get( 'elType' ) + ':not(.elementor-element-edit-mode)' ).each( function() {
 				elementorFrontend.elementsHandler.runReadyTrigger( this );
 			} );
 		} );
@@ -932,9 +932,9 @@ BaseElementView = BaseContainer.extend( {
 
 			// Since this.ui.tools does not exist while testing.
 			if ( this.ui.tools ) {
-				this.ui.tools.hoverIntent( function () {
+				this.ui.tools.hoverIntent( function() {
 					editButton.addClass( 'elementor-active' );
-				}, function () {
+				}, function() {
 					editButton.removeClass( 'elementor-active' );
 				}, { timeout: 500 } );
 			}
