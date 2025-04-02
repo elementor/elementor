@@ -233,7 +233,6 @@ class Style_Schema {
 				'stretch',
 			]),
 			'align-content' => String_Prop_Type::make()->enum([
-				'normal',
 				'center',
 				'start',
 				'end',
