@@ -1,4 +1,4 @@
-name: Playwright
+name: Playwright for V4
 
 on:
   push:
