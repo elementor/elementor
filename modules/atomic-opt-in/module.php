@@ -28,6 +28,8 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		( new PanelChip() )->init();
+
 		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			return;
 		}
