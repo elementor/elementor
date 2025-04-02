@@ -323,7 +323,11 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		jQuery.each( editButtons, ( toolName, tool ) => {
-			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title, 'aria-label': tool.title } );
+			const $item = jQuery( '<li>', {
+				class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`,
+				title: tool.title,
+				'aria-label': tool.title
+			} );
 			const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
 
 			$item.append( $icon );
@@ -355,7 +359,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	toggleVisibilityClass() {
-		this.$el.toggleClass( 'elementor-edit-hidden', ! ! this.model.get( 'hidden' ) );
+		this.$el.toggleClass( 'elementor-edit-hidden', !! this.model.get( 'hidden' ) );
 	},
 
 	addElementFromPanel( options ) {
@@ -573,7 +577,7 @@ BaseElementView = BaseContainer.extend( {
 	runReadyTrigger() {
 		const self = this;
 
-		_.defer( function() {
+		_.defer( function () {
 			elementorFrontend.elementsHandler.runReadyTrigger( self.el );
 
 			if ( ! elementorFrontend.isEditMode() ) {
@@ -581,7 +585,7 @@ BaseElementView = BaseContainer.extend( {
 			}
 
 			// In edit mode - handle an external elements that loaded by another elements like shortcode etc.
-			self.$el.find( '.elementor-element.elementor-' + self.model.get( 'elType' ) + ':not(.elementor-element-edit-mode)' ).each( function() {
+			self.$el.find( '.elementor-element.elementor-' + self.model.get( 'elType' ) + ':not(.elementor-element-edit-mode)' ).each( function () {
 				elementorFrontend.elementsHandler.runReadyTrigger( this );
 			} );
 		} );
@@ -659,7 +663,7 @@ BaseElementView = BaseContainer.extend( {
 		return '__dynamic__' in changedSettings &&
 			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
-			this.isCssIdControl( changedControl, bindingDynamicCssId ) );
+				this.isCssIdControl( changedControl, bindingDynamicCssId ) );
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
@@ -810,7 +814,7 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
-	async *bindingChangesGenerator( settings, bindingSettings, config ) {
+	async * bindingChangesGenerator( settings, bindingSettings, config ) {
 		for ( const [ key, value ] of Object.entries( settings.changed ) ) {
 			if ( '__dynamic__' !== key && ! this.isHandledAsDatabinding( key, bindingSettings, config ) ) {
 				continue;
@@ -928,9 +932,9 @@ BaseElementView = BaseContainer.extend( {
 
 			// Since this.ui.tools does not exist while testing.
 			if ( this.ui.tools ) {
-				this.ui.tools.hoverIntent( function() {
+				this.ui.tools.hoverIntent( function () {
 					editButton.addClass( 'elementor-active' );
-				}, function() {
+				}, function () {
 					editButton.removeClass( 'elementor-active' );
 				}, { timeout: 500 } );
 			}

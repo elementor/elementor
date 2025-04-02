@@ -283,7 +283,7 @@ module.exports = {
 
 		const enqueueOptions = {};
 
-		let	fontUrl;
+		let fontUrl;
 
 		switch ( fontType ) {
 			case 'googlefonts':
@@ -477,7 +477,7 @@ module.exports = {
 
 		var re = new RegExp( Object.keys( replaces ).join( '|' ), 'gi' );
 
-		return string.replace( re, function( matched ) {
+		return string.replace( re, function ( matched ) {
 			return replaces[ matched ];
 		} );
 	},
@@ -516,7 +516,7 @@ module.exports = {
 	},
 
 	disableElementEvents( $element ) {
-		$element.each( function() {
+		$element.each( function () {
 			const currentPointerEvents = this.style.pointerEvents;
 
 			if ( 'none' === currentPointerEvents ) {
@@ -530,7 +530,7 @@ module.exports = {
 	},
 
 	enableElementEvents( $element ) {
-		$element.each( function() {
+		$element.each( function () {
 			const $this = jQuery( this ),
 				backupPointerEvents = $this.data( 'backup-pointer-events' );
 
@@ -579,7 +579,7 @@ module.exports = {
 			$scrolled = elementor.$previewContents.find( 'html, body' );
 		}
 
-		setTimeout( function() {
+		setTimeout( function () {
 			// Sometimes element removed during the timeout.
 			if ( ! $element[ 0 ].isConnected ) {
 				return;
