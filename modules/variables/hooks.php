@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Variables;
 
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Modules\Variables\Classes\CSS as Global_Variables_CSS;
 use Elementor\Modules\Variables\Classes\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
