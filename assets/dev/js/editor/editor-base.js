@@ -1374,6 +1374,8 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onBackgroundClick( event ) {
+		event.preventDefault();
+
 		jQuery.each( this.backgroundClickListeners, ( index, config ) => {
 			let $clickedTarget = jQuery( event.target );
 			// If it's a label that associated with an input
