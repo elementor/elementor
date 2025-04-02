@@ -4,13 +4,7 @@ namespace Elementor\Modules\AtomicOptIn;
 
 use Elementor\Utils;
 
-class PanelChip extends Module {
-	private Module $module;
-
-	public function __construct( Module $module ) {
-		$this->module = $module;
-	}
-
+class PanelChip {
 	public function init() {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}

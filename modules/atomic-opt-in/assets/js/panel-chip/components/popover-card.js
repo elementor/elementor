@@ -10,7 +10,6 @@ import {
 	ListItem,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import PropTypes from 'prop-types';
 
 const popoverData = {
 	image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png',

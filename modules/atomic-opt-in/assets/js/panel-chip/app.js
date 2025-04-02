@@ -4,7 +4,6 @@ import {
 	LocalizationProvider,
 	ThemeProvider,
 } from '@elementor/ui';
-import PropTypes from 'prop-types';
 import PopoverCard from './components/popover-card';
 
 const App = ( props ) => {
