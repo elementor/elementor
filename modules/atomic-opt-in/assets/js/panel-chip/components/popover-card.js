@@ -1,9 +1,7 @@
-import { __ } from '@wordpress/i18n';
 import {
 	ClickAwayListener,
 	Image,
 	Box,
-	Chip,
 	Typography,
 	Button,
 	CloseButton,
@@ -11,14 +9,26 @@ import {
 	List,
 	ListItem,
 } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
-const PromotionCard = ( { doClose, promotionsData } ) => {
-	const title = promotionsData?.title,
-		description = promotionsData?.description,
-		imgSrc = promotionsData?.image,
-		imgAlt = promotionsData?.image_alt,
-		ctaText = promotionsData?.upgrade_text,
-		ctaUrl = promotionsData?.upgrade_url;
+const popoverData = {
+	image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png',
+	image_alt: __( 'Elementor V4', 'elementor' ),
+	title: __( 'Elementor V4', 'elementor' ),
+	description: [
+		__( 'You’ve got powerful new tools with Editor V4. But, keep in mind that this is an early release, so don’t use it on live sites yet.', 'elementor' ),
+	],
+	upgrade_text: __( 'Learn more', 'elementor' ),
+	upgrade_url: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
+};
+
+const PopoverCard = ( { doClose } ) => {
+	const title = popoverData?.title,
+		description = popoverData?.description,
+		imgSrc = popoverData?.image,
+		imgAlt = popoverData?.image_alt,
+		ctaText = popoverData?.upgrade_text,
+		ctaUrl = popoverData?.upgrade_url;
 
 	const redirectHandler = () => {
 		window.open( ctaUrl, '_blank' );
@@ -27,10 +37,9 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 
 	return (
 		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ doClose }>
-			<Box sx={ { width: 296 } } data-testid="e-promotion-card">
+			<Box sx={ { width: 296 } } data-testid="e-popover-card">
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>
-					<Chip label={ __( 'PRO', 'elementor' ) } size="small" variant="outlined" color="promotion" sx={ { ml: 1 } } />
 					<CloseButton edge="end" sx={ { ml: 'auto' } } slotProps={ {
 						icon: {
 							fontSize: 'small',
@@ -48,13 +57,12 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 							);
 						} ) }
 					</List> }
-
 				</Stack>
 				<Stack pt={ 1 } pb={ 1.5 } px={ 2 }>
 					<Button
 						variant="contained"
 						size="small"
-						color="promotion"
+						color="primary"
 						onClick={ redirectHandler }
 						sx={ { ml: 'auto' } }
 					>{ ctaText }</Button>
@@ -64,9 +72,8 @@ const PromotionCard = ( { doClose, promotionsData } ) => {
 	);
 };
 
-PromotionCard.propTypes = {
+PopoverCard.propTypes = {
 	doClose: PropTypes.func,
-	promotionsData: PropTypes.object,
 };
 
-export default PromotionCard;
+export default PopoverCard;
