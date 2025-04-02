@@ -248,13 +248,10 @@ export default class extends Marionette.CompositeView {
 			settingsModel.unset( '_title', { silent: true } );
 		}
 
-		if ( this.isAtomicWidget() ) {
-			this.model.get( 'editorData' ).title = {
-				$$type: 'string',
-				value: newTitle,
-			};
-		} else {
-			settingsModel.set( '_title', newTitle );
+		const setTitleCb = elementor.hooks.applyFilters( 'elementor/editor/element/title/set', () => settingsModel.set( '_title', newTitle ), this.model );
+
+		if ( setTitleCb ) {
+			setTitleCb( newTitle );
 		}
 
 		// TODO: Remove - After merge pull request #13605.

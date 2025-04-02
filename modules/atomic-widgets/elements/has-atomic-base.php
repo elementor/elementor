@@ -97,8 +97,8 @@ trait Has_Atomic_Base {
 		return $styles;
 	}
 
-	private function parse_atomic_settings( array $settings, array $schema ): array {
-		$props_parser = Props_Parser::make( $schema );
+	private function parse_atomic_settings( array $settings ): array {
+		$props_parser = Props_Parser::make( static::get_props_schema() );
 
 		$result = $props_parser->parse( $settings );
 
@@ -131,9 +131,9 @@ trait Has_Atomic_Base {
 		$data = parent::get_data_for_save();
 
 		$data['version'] = $this->version;
-		$data['settings'] = $this->parse_atomic_settings( $data['settings'], static::get_props_schema() );
+		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
-		$data['editorData'] = $this->parse_atomic_settings( $this->editor_data, Editor_Settings_Schema::get() );
+		$data['editorData'] = $this->parse_editor_data( $data['editorData'] );
 
 		return $data;
 	}
@@ -159,6 +159,16 @@ trait Has_Atomic_Base {
 		$props = $this->get_settings();
 
 		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+	}
+
+	private function parse_editor_data( array $data ): array {
+		$editor_data = [];
+
+		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
+			$editor_data['title'] = sanitize_text_field( $data['title'] );
+		}
+
+		return $editor_data;
 	}
 
 	public static function get_props_schema(): array {

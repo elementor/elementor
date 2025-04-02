@@ -13,7 +13,6 @@ ElementModel = BaseElementModel.extend( {
 		isInner: false,
 		isLocked: false,
 		settings: {},
-		editorData: {},
 		defaultEditSettings: {
 			defaultEditRoute: 'content',
 		},
@@ -150,8 +149,7 @@ ElementModel = BaseElementModel.extend( {
 	},
 
 	getTitle() {
-		const editorDataTitle = this.get( 'editorData' )?.title?.value ?? null;
-		let title = editorDataTitle || this.getSetting( '_title' ) || this.getSetting( 'presetTitle' );
+		let title = elementor.hooks.applyFilters( 'elementor/editor/element/title', this.getSetting( '_title' ) || this.getSetting( 'presetTitle' ), this );
 		const custom = this.get( 'custom' );
 
 		if ( ! title && ( custom?.isPreset ?? false ) ) {
