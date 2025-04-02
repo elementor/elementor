@@ -35,7 +35,7 @@ jobs:
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
-    #needs: [build-plugin]
+    needs: [build-plugin]
     if: ${{ ( github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff ) && github.event.inputs.tag == '' }}
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
