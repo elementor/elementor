@@ -1471,45 +1471,17 @@ class Source_Local extends Source_Base {
 	 *                             `WP_Error`.
 	 */
 	private function import_single_template( $file_path ) {
-		$data = json_decode( Utils::file_get_contents( $file_path ), true );
+		$data = $this->prepare_import_template_data( $file_path );
 
 		if ( empty( $data ) ) {
 			return new \WP_Error( 'file_error', 'Invalid File' );
 		}
 
-		$content = $data['content'];
-
-		if ( ! is_array( $content ) ) {
-			return new \WP_Error( 'file_error', 'Invalid Content In File' );
-		}
-
-		$content = $this->process_export_import_content( $content, 'on_import' );
-
-		$content = apply_filters(
-			'elementor/template_library/sources/local/import/elements',
-			$content
-		);
-
-		$page_settings = [];
-
-		if ( ! empty( $data['page_settings'] ) ) {
-			$page = new Model( [
-				'id' => 0,
-				'settings' => $data['page_settings'],
-			] );
-
-			$page_settings_data = $this->process_element_export_import_content( $page, 'on_import' );
-
-			if ( ! empty( $page_settings_data['settings'] ) ) {
-				$page_settings = $page_settings_data['settings'];
-			}
-		}
-
 		$template_id = $this->save_item( [
-			'content' => $content,
+			'content' => $data['content'],
 			'title' => $data['title'],
 			'type' => $data['type'],
-			'page_settings' => $page_settings,
+			'page_settings' => $data['page_settings'],
 		] );
 
 		if ( is_wp_error( $template_id ) ) {

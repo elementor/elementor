@@ -4,7 +4,7 @@ import { default as View } from './div-block-view';
 
 export default class AtomicContainer extends elementor.modules.elements.types.Base {
 	getType() {
-		return 'flexbox';
+		return 'e-flexbox';
 	}
 
 	getView() {

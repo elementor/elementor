@@ -32,6 +32,7 @@ import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/modul
 import FloatingButtonsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-buttons/editor/module';
 import FloatingBarsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-bars/editor/module';
 import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/editor/module';
+import CloudLibraryModule from 'elementor/modules/cloud-library/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
@@ -477,6 +478,10 @@ export default class EditorBase extends Marionette.Application {
 		this.modules.elementsColorPicker = new ElementsColorPicker();
 
 		this.modules.promotionModule = new PromotionModule();
+
+		if ( elementorCommon.config.experimentalFeatures[ 'cloud-library' ] ) {
+			this.modules.cloudLibraryModule = new CloudLibraryModule();
+		}
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );

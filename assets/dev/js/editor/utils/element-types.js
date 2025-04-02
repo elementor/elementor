@@ -2,7 +2,7 @@ const ELEMENT_TYPES = {
 	SECTION: 'section',
 	CONTAINER: 'container',
 	DIV_BLOCK: 'e-div-block',
-	FLEXBOX: 'flexbox',
+	FLEXBOX: 'e-flexbox',
 };
 
 /**

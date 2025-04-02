@@ -105,8 +105,6 @@ class Utils {
 
 	const IMAGE_CAROUSEL = 'image_carousel';
 
-	const V4_CHIP = 'v4_chip';
-
 	/**
 	 * Whether WordPress CLI mode is enabled or not.
 	 *

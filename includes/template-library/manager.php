@@ -670,10 +670,9 @@ class Manager {
 			return $upload_result;
 		}
 
-		/** @var Source_Local $source_local */
-		$source_local = $this->get_source( 'local' );
+		$source = $this->get_source( $data['source'] ?? 'local' );
 
-		$import_result = $source_local->import_template( $upload_result['name'], $upload_result['tmp_name'] );
+		$import_result = $source->import_template( $upload_result['name'], $upload_result['tmp_name'] );
 
 		// Remove the temporary directory generated for the stream-uploaded file.
 		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
@@ -974,6 +973,7 @@ class Manager {
 			'bulk_delete_templates',
 			'bulk_copy_templates',
 			'bulk_undo_delete_items',
+			'get_quota',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
@@ -1237,5 +1237,21 @@ class Manager {
 			: $this->format_args_for_bulk_action_from_cloud( $args );
 
 		return $source->save_bulk_items( $bulk_args );
+	}
+
+	public function get_quota( array $args ) {
+		$validate_args = $this->ensure_args( [ 'source' ], $args );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		$source = $this->get_source( $args['source'] );
+
+		if ( ! $source ) {
+			return new \WP_Error( 'template_error', 'Source not found.' );
+		}
+
+		return $source->get_quota();
 	}
 }
