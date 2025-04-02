@@ -248,7 +248,14 @@ export default class extends Marionette.CompositeView {
 			settingsModel.unset( '_title', { silent: true } );
 		}
 
-		settingsModel.set( '_title', newTitle );
+		if ( this.isAtomicWidget() ) {
+			this.model.get( 'editorData' ).title = {
+				$$type: 'string',
+				value: newTitle,
+			};
+		} else {
+			settingsModel.set( '_title', newTitle );
+		}
 
 		// TODO: Remove - After merge pull request #13605.
 		$e.internal( 'document/save/set-is-modified', {
@@ -511,5 +518,10 @@ export default class extends Marionette.CompositeView {
 
 			editor.render();
 		} );
+	}
+
+	isAtomicWidget() {
+		const elementType = 'widget' === this.model.get( 'elType' ) ? this.model.get( 'widgetType' ) : this.model.get( 'elType' );
+		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
 	}
 }

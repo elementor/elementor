@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,12 +16,14 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
+	protected $editor_data = [];
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
+		$this->editor_data = $data['editorData'] ?? [];
 	}
 
 	abstract protected function define_atomic_controls(): array;
