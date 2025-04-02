@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
@@ -119,42 +120,46 @@ class Test_Style_Schema extends TestCase {
 	}
 
 	private function stub_background_prop_type() {
-		return new class() extends Object_Prop_Type {
-			public static function get_key(): string {
-				return 'background';
+		$bg_prop_type = Background_Prop_Type::make();
+
+		$shape = $bg_prop_type->get_shape();
+
+		$shape['color'] = Union_Prop_Type::make()
+			->add_prop_type( Color_Prop_Type::make() )
+			->add_prop_type( Color_Variable_Prop_Type::make() );
+
+		$overlay_item = $shape['background-overlay']->get_item_type();
+
+		foreach ( $overlay_item->get_prop_types() as $prop_type ) {
+			if ( 'background-color-overlay' === $prop_type->get_key() ) {
+				$bg_color_shape = $prop_type->get_shape();
+
+				$bg_color_shape['color'] = Union_Prop_Type::make()
+					->add_prop_type( Color_Prop_Type::make() )
+					->add_prop_type( Color_Variable_Prop_Type::make() );
+
+				$prop_type->set_shape( $bg_color_shape );
 			}
 
-			protected function define_shape(): array {
-				return [
-					'color' => Union_Prop_Type::make()
-						->add_prop_type( Color_Prop_Type::make() )
-						->add_prop_type( Color_Variable_Prop_Type::make() ),
+			if ( 'background-gradient-overlay' === $prop_type->get_key() ) {
+				$bg_gradient_shape = $prop_type->get_shape();
 
-					'background-overlay' => new class() extends Array_Prop_Type {
-						public static function get_key(): string {
-							return 'background-overlay';
-						}
+				$gradient_stop_shape = $bg_gradient_shape['stops']->get_item_type()
+					->get_shape();
 
-						public function define_item_type(): Prop_Type {
-							return Union_Prop_Type::make()
-								->add_prop_type( Background_Image_Overlay_Prop_Type::make() )
-								->add_prop_type( new class() extends Object_Prop_Type {
-									public static function get_key(): string {
-										return 'background-color-overlay';
-									}
+				$gradient_stop_shape['color'] = Union_Prop_Type::make()
+					->add_prop_type( Color_Prop_Type::make() )
+					->add_prop_type( Color_Variable_Prop_Type::make() );
 
-									public function define_shape(): array {
-										return [
-											'color' => Union_Prop_Type::make()
-												->add_prop_type( Color_Prop_Type::make() )
-												->add_prop_type( Color_Variable_Prop_Type::make() ),
-										];
-									}
-								} );
-						}
-					},
-				];
+				$bg_gradient_shape['stops']->get_item_type()
+					->set_shape( $gradient_stop_shape );
+
+				$prop_type->set_shape( $bg_gradient_shape );
 			}
-		};
+		}
+
+		$shape['background-overlay']->set_item_type($overlay_item);
+
+		return $bg_prop_type->set_shape( $shape );
 	}
 }
