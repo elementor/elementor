@@ -170,17 +170,25 @@ class Post_Query {
 	 * @return void
 	 */
 	private function add_filter_to_customize_query() {
-		add_filter( 'posts_search', [ $this, 'customize_search' ], 10, 2 );
+		$priority = 10;
+		$accepted_args = 2;
+
+		add_filter( 'posts_search', [ $this, 'customize_search' ], $priority, $accepted_args );
 	}
 
 	/**
 	 * @return void
 	 */
 	private function remove_filter_to_customize_query() {
-		remove_filter( 'posts_search', [ $this, 'customize_search' ], 10, 2 );
+		$priority = 10;
+		$accepted_args = 2;
+
+		remove_filter( 'posts_search', [ $this, 'customize_search' ], $priority, $accepted_args );
 	}
 
 	/**
+	 * Arguments for registering an endpoint.
+	 *
 	 * @return array
 	 */
 	private function get_args() {
