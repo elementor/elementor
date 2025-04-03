@@ -15,8 +15,6 @@ class Global_Classes_Repository {
 	const CONTEXT_FRONTEND = 'frontend';
 	const CONTEXT_PREVIEW = 'preview';
 
-	const MAX_ITEMS = 50;
-
 	private string $context = self::CONTEXT_FRONTEND;
 
 	public static function make(): Global_Classes_Repository {
@@ -54,12 +52,6 @@ class Global_Classes_Repository {
 		// `update_metadata` fails for identical data, so we skip it.
 		if ( $current_value === $updated_value ) {
 			return;
-		}
-
-		$items_count = count( $updated_value['items'] );
-
-		if ( $items_count > static::MAX_ITEMS ) {
-			throw new \Exception( 'Global classes limit exceeded' );
 		}
 
 		$meta_key = $this->get_meta_key();
