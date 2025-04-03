@@ -41,6 +41,13 @@ trait Has_Template {
 		}
 	}
 
+	protected function get_templates_contents() {
+		return array_map(
+			fn ( $path ) => Utils::file_get_contents( $path ),
+			$this->get_templates()
+		);
+	}
+
 	protected function get_main_template() {
 		$templates = $this->get_templates();
 
