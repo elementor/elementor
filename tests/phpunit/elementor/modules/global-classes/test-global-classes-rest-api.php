@@ -395,6 +395,30 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_order', $response->get_data()['code'] );
 	}
 
+	public function test_put_fails_when_max_items_limit_reached() {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Act.
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+
+		$items = [];
+		for ( $i = 0; $i < 51; $i++ ) {
+			$items[ "g-$i" ] = $this->create_global_class( "g-$i" );
+		}
+
+		$request->set_body_params( [
+			'items' => $items,
+			'order' => array_keys( $items ),
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'global_classes_limit_exceeded', $response->get_data()['code'] );
+	}
+
 	public function test_put__fails_when_order_is_missing_ids() {
 		// Arrange.
 		$this->act_as_admin();
