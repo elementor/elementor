@@ -1,8 +1,6 @@
 name: Build
 
 on:
-  pull_request:
-
   workflow_dispatch:
     paths-ignore:
       - '**.md'
