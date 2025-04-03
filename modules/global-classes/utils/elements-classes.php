@@ -16,7 +16,7 @@ class Elements_Classes {
 
 		while ( true ) {
 			$args = wp_parse_args( [
-				'post_type' => array( 'elementor_library', 'post', 'page' ),
+				'post_type' => array( Source_Local::CPT, 'post', 'page' ),
 				'post_status' => [ 'publish' ],
 				'posts_per_page' => $batch_size,
 				'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
@@ -36,9 +36,10 @@ class Elements_Classes {
 				$elements_data = $document->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
 
 				$callback( $document, $elements_data );
+
+				$processed_posts++;
 			}
 
-			$processed_posts += $batch_size;
 		}
 	}
 
