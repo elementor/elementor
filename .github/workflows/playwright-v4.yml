@@ -104,7 +104,7 @@ jobs:
         if: ${{ needs.Playwright.result == 'failure' }}
         uses: actions/checkout@v4
       - name: Send slack message
-        if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
+        if: ${{ needs.Playwright.result == 'failure'}}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}

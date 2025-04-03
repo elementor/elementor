@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 
 test( 'Failing test @v4-tests', async ( { page } ) => {
 	await page.goto( 'https://example.com' );
