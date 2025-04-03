@@ -3,7 +3,7 @@ const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/te
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
-import { SAVE_CONTEXTS } from './../../constants';
+import { SAVE_CONTEXTS, QUOTA_WARNINGS } from './../../constants';
 
 const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
@@ -40,6 +40,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
 		bulkMove: '.bulk-selection-action-bar .bulk-move',
 		bulkCopy: '.bulk-selection-action-bar .bulk-copy',
+		quota: '.quota-progress-container .quota-progress-bar',
+		quotaFill: '.quota-progress-container  .quota-progress-bar .quota-progress-bar-fill',
+		quotaValue: '.quota-progress-container .quota-progress-bar-value',
+		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
 	},
 
 	events: {
@@ -62,6 +66,55 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	className: 'no-bulk-selections',
+
+	resetQuotaBarStyles() {
+		this.ui.quota.removeClass( [
+			'quota-progress-bar-normal',
+			'quota-progress-bar-warning',
+			'quota-progress-bar-alert',
+		] );
+		this.ui.quotaFill.removeClass( [
+			'quota-progress-bar-fill-normal',
+			'quota-progress-bar-fill-warning',
+			'quota-progress-bar-fill-alert',
+		] );
+	},
+
+	setQuotaBarStyles( variant ) {
+		this.ui.quota.addClass( `quota-progress-bar-${ variant }` );
+		this.ui.quotaFill.addClass( `quota-progress-bar-fill-${ variant }` );
+	},
+
+	handleQuotaWarning( variant, quotaUsage ) {
+		const message = QUOTA_WARNINGS[ variant ];
+
+		this.ui.quotaWarning.text( sprintf( message, quotaUsage ) );
+		this.ui.quotaWarning.show();
+	},
+
+	handleQuotaBar() {
+		const quota = elementorAppConfig?.[ 'cloud-library' ]?.quota;
+
+		const value = quota ? Math.round( ( quota.currentUsage / quota.threshold ) * 100 ) : 0;
+
+		this.ui.quotaFill.css( 'width', `${ value }%` );
+
+		this.ui.quotaValue.text( `${ value }/100` );
+
+		this.ui.quotaWarning.hide();
+
+		this.resetQuotaBarStyles();
+
+		if ( value < 80 ) {
+			this.setQuotaBarStyles( 'normal' );
+		} else if ( value < 100 ) {
+			this.handleQuotaWarning( 'warning', value );
+			this.setQuotaBarStyles( 'warning' );
+		} else {
+			this.handleQuotaWarning( 'alert', value );
+			this.setQuotaBarStyles( 'alert' );
+		}
+	},
 
 	onClearBulkSelections() {
 		elementor.templates.clearBulkSelectionItems();
@@ -184,7 +237,20 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	initialize() {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.listenTo( elementor.channels.templates, 'quota:update', this.handleQuotaUpdate.bind( this ) );
+		this.handleQuotaBar = this.handleQuotaBar.bind( this );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
+	},
+
+	handleQuotaUpdate() {
+		const activeSource = elementor.templates.getFilter( 'source' ) ?? 'local';
+		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', 'remote' === activeSource, activeSource );
+		if ( ! isRemote && 'cloud' === activeSource ) {
+			$e.components.get( 'cloud-library' ).utils.setQuotaConfig()
+				.then( () => {
+					this.handleQuotaBar();
+				} );
+		}
 	},
 
 	filter( childModel ) {
@@ -335,6 +401,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	onRenderCollection() {
 		this.addSourceData();
+		this.handleQuotaBar();
 
 		this.toggleFilterClass();
 

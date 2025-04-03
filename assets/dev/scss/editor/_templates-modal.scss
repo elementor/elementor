@@ -94,6 +94,88 @@ $remote-templates-items-space: 30px;
 		align-items: flex-start; // For blocks layout
 	}
 
+	&[data-template-source="local"] {
+		.toolbar-container {
+			.quota-progress-container {
+				display: none;
+			}
+		}
+	}
+
+	&[data-template-source="cloud"] {
+		.toolbar-container {
+			&:has(.bulk-selection-action-bar:not([style*="display: block"])) {
+				justify-content: flex-end;
+			}
+
+			.quota-progress-container {
+				display: flex;
+				align-items: baseline;
+			}
+
+			.quota-progress-info {
+				align-items: center;
+
+				i {
+					font-size: 14px;
+					margin-left: 5px;
+				}
+			}
+
+			.progress-bar-container {
+				width: 250px;
+				margin: 5px 10px 0 10px;
+				align-self: center;
+				text-align: start;
+
+				.quota-warning {
+					font-size: 10px;
+					display: none;
+				}
+			}
+
+			.quota-progress-bar {
+				height: 4px;
+				background-color: var(--e-a-color-primary-bold);
+				position: relative;
+				display: flex;
+				align-items: center;
+				padding: 0;
+
+
+				&-fill {
+					height: 100%;
+					transition: width 0.3s ease;
+
+					&-normal {
+						background-color: $e-pink-800;
+					}
+
+					&-warning {
+						background-color: $e-warning;
+					}
+
+					&-alert {
+						background-color: $e-accent;
+					}
+				}
+
+				&-normal {
+					background-color: $e-pink-300;
+				}
+
+				&-warning {
+					background-color: lighten($e-warning, 30%);
+				}
+			}
+
+			&-value {
+				font-size: 12px;
+				color: #555;
+			}
+		}
+	}
+
 	&[data-template-source="local"],
 	&[data-template-source="cloud"] {
 
@@ -111,6 +193,14 @@ $remote-templates-items-space: 30px;
 					color: var(--e-a-color-txt-active);
 				}
 			}
+		}
+
+		.toolbar-container {
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+			gap: 2%;
+			margin-top: 10px;
 		}
 	}
 
@@ -372,9 +462,9 @@ $remote-templates-items-space: 30px;
 		padding: 10px 25px;
 		border-radius: 5px;
 		color: var(--e-a-bg-invert);
-		margin-top: 10px;
 		gap: 20px;
 		align-items: center;
+		flex: 1;
 
 		i {
 			cursor: pointer;
