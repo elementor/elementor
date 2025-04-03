@@ -31,12 +31,18 @@ class Module extends BaseModule {
 		];
 	}
 
+	private function hooks() {
+		return new Hooks( new Wordpress_Adapter() );
+	}
+
 	public function __construct() {
 		parent::__construct();
 
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
+
+		$this->hooks()->register_styles_transformers();
 
 		( new Hooks( new Wordpress_Adapter() ) )->register();
 		( new Cache( new Wordpress_Adapter() ) )->clear_if_expired();

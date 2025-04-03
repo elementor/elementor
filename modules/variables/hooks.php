@@ -5,9 +5,10 @@ namespace Elementor\Modules\Variables;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Modules\Variables\Classes\CSS as Global_Variables_CSS;
 use Elementor\Modules\Variables\Classes\Style_Schema;
+use Elementor\Modules\Variables\Classes\Style_Transformers;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 class Hooks {
@@ -17,13 +18,17 @@ class Hooks {
 		$this->wp_adapter = $wp_adapter;
 	}
 
+	public function register_styles_transformers() {
+		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
+			( new Style_Transformers() )->append_to( $registry );
+		} );
+
+		return $this;
+	}
+
 	public function register() {
 		$this->wp_adapter->add_action( 'elementor/css-file/post/parse', function ( $post ) {
 			$this->inject_global_variables_css( $post );
-		} );
-
-		$this->wp_adapter->add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $transformers ) {
-			$this->register_style_transformers( $transformers );
 		} );
 
 		$this->wp_adapter->add_filter( 'elementor/atomic-widgets/styles/schema', function ( $schema ) {
@@ -31,10 +36,6 @@ class Hooks {
 		} );
 
 		return $this;
-	}
-
-	private function register_style_transformers( $transformers ) {
-		( new Style_Schema() )->append_to( $transformers );
 	}
 
 	private function augment_style_schema( array $schema ): array {
