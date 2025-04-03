@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
-use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
@@ -13,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Color_Variable as Color_Variable_Prop_Type;
 use \PHPUnit\Framework\TestCase;
 
 /**
@@ -82,7 +82,7 @@ class Test_Style_Schema extends TestCase {
 	public function test_augment__will_convert_item_of_array_prop_type() {
 		// Arrange.
 		$style_def = [
-			'color-gradient' => $this->stub_array_prop_type()
+			'array' => $this->stub_array_prop_type()
 				->set_item_type( Color_Prop_Type::make() ),
 		];
 
@@ -91,12 +91,34 @@ class Test_Style_Schema extends TestCase {
 
 		// Assert.
 		$expected = [
-			'color-gradient' => $this->stub_array_prop_type()
+			'array' => $this->stub_array_prop_type()
 				->set_item_type(
 					Union_Prop_Type::make()
 						->add_prop_type( Color_Variable_Prop_Type::make() )
 						->add_prop_type( Color_Prop_Type::make() )
-				)
+				),
+		];
+
+		$this->assertSchemaIsEqual( $expected, $schema );
+	}
+
+	public function test_augment__will_update_the_union_prop_type() {
+		// Arrange.
+		$style_def = [
+			'union' => Union_Prop_Type::make()
+				->add_prop_type( Color_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make() ),
+		];
+
+		// Act.
+		$schema = $this->style_schema()->augment( $style_def );
+
+		// Assert.
+		$expected = [
+			'union' => Union_Prop_Type::make()
+				->add_prop_type( Color_Variable_Prop_Type::make() )
+				->add_prop_type( Color_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make() ),
 		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
