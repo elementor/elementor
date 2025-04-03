@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Style_Transformers {
-	public function append_to( Transformers_Registry $registry ) {
-		$registry->register( Color_Variable_Prop_Type::get_key(), new Global_Variable_Transformer() );
+	public function append_to( Transformers_Registry $transformers_registry ) {
+		$transformers_registry->register( Color_Variable_Prop_Type::get_key(), new Global_Variable_Transformer() );
 
 		return $this;
 	}
