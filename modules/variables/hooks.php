@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\Variables;
 
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Modules\Variables\Classes\CSS as Global_Variables_CSS;
+use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +15,14 @@ class Hooks {
 	public function register_styles_transformers() {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			( new Style_Transformers() )->append_to( $registry );
+		} );
+
+		return $this;
+	}
+
+	public function filter_for_style_schema() {
+		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
+			return ( new Style_Schema() )->augment( $schema );
 		} );
 
 		return $this;
