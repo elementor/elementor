@@ -74,15 +74,9 @@ const WidgetView = BaseWidget.extend( {
 	},
 
 	handleEmptyWidget() {
-		this.$el.addClass( 'elementor-widget-empty' );
-
-		const icon = `<i class="elementor-widget-empty-icon ${ this.getEditModel().getIcon() }"></i>`;
-
-		if ( this.$el.is( this.getDomElement() ) ) {
-			this.$el.append( icon );
-		} else {
-			this.$el.html( icon );
-		}
+		this.$el
+			.addClass( 'elementor-widget-empty' )
+			.append( '<i class="elementor-widget-empty-icon ' + this.getEditModel().getIcon() + '"></i>' );
 	},
 
 	getTemplateType() {
@@ -135,7 +129,7 @@ const WidgetView = BaseWidget.extend( {
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
-				const $widgetContainer = self.$el.children( '.elementor-widget-container' ).length ? self.$el.children( '.elementor-widget-container' ) : self.getDomElement();
+				const $widgetContainer = self.$el.children( '.elementor-widget-container' ).length ? self.$el.children( '.elementor-widget-container' ) : self.$el;
 
 				if ( self.shouldGetEmptyView( $widgetContainer ) ) {
 					self.handleEmptyWidget();
@@ -146,7 +140,10 @@ const WidgetView = BaseWidget.extend( {
 	},
 
 	shouldGetEmptyView( $widgetContainer ) {
-		return $widgetContainer.is( ':visible' ) && ! $widgetContainer.outerHeight();
+		const hasZeroHeight = $widgetContainer.is( ':visible' ) && ! $widgetContainer.outerHeight();
+		const isEmpty = 0 === $widgetContainer.children().length;
+
+		return hasZeroHeight || isEmpty;
 	},
 
 	onClickEdit( event ) {
