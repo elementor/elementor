@@ -82,11 +82,19 @@ jobs:
       - name: Install playwright/test
         run: |
           npx playwright install chromium
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
       - name: Get skipped tests from JSON
         id: read_skipped_tests
         uses: elementor/elementor-tests-configuration/.github/actions/skip-tests@main
         with:
-            file_path: "skipped_tests.json"
+          file_path: "skipped_tests.json"
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression' &&
@@ -184,6 +192,8 @@ jobs:
         uses: elementor/elementor-tests-configuration/.github/actions/map-github-to-slack@main
         with:
           github_user: ${{ github.actor }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
         uses: ./.github/workflows/post-to-slack
