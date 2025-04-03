@@ -232,6 +232,14 @@ class Style_Schema {
 				'space-evenly',
 				'stretch',
 			]),
+			'align-content' => String_Prop_Type::make()->enum([
+				'center',
+				'start',
+				'end',
+				'space-between',
+				'space-around',
+				'space-evenly',
+			]),
 			'align-items' => String_Prop_Type::make()->enum([
 				'normal',
 				'stretch',

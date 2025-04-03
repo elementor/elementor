@@ -281,7 +281,7 @@ $remote-templates-items-space: 30px;
 					position: absolute;
 					inset: 0;
 					background-color: rgba(0,0,0,.5);
-					cursor: pointer;
+					cursor: default;
 				}
 
 				.elementor-template-library-template-name {
@@ -1302,7 +1302,7 @@ label.elementor-template-library-order-label {
 #elementor-library--infotip__dialog {
 	position: absolute;
 	width: 400px;
-	z-index: $lightbox-layer;
+	z-index: $super-layer;
 	background-color: var(--e-a-bg-default);
 	box-shadow: var(--e-a-popover-shadow);
 	border-radius: var(--e-a-border-radius);

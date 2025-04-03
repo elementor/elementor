@@ -7,7 +7,7 @@ use Elementor\Settings;
 use Elementor\User;
 use Elementor\Utils;
 
-class OptInPage extends Module {
+class OptInPage {
 	private Module $module;
 
 	public function __construct( Module $module ) {
@@ -33,7 +33,7 @@ class OptInPage extends Module {
 	public function enqueue_styles() {
 		wp_enqueue_style(
 			Module::MODULE_NAME,
-			$this->get_css_assets_url( 'modules/editor-v4-opt-in/opt-in' ),
+			$this->module->get_opt_in_css_assets_url( 'modules/editor-v4-opt-in/opt-in' ),
 			[],
 			ELEMENTOR_VERSION
 		);
