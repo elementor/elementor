@@ -277,7 +277,6 @@ class Style_Schema {
 	private static function get_transform_props() {
 		return [
 			'transform' => Transform_Prop_Type::make(),
-//			'transform-x' => Size_Prop_Type::make(),
 		];
 	}
 }
