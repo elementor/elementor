@@ -420,7 +420,7 @@ class Source_Cloud extends Source_Base {
 				$items_to_save[] = $this->format_resource_item_for_create( $prepared );
 			}
 
-			if ( ! $this->validate_quota( $items_to_save) ) {
+			if ( ! $this->validate_quota( $items_to_save ) ) {
 				return new \WP_Error( 'quota_error', 'The upload failed because it will pass the maximum templates you can save.' );
 			}
 
