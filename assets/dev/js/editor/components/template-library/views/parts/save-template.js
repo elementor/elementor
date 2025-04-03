@@ -286,6 +286,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 			$e.route( 'library/view-folder', { model } );
 
+			elementor.templates.layout.showTemplatesView( new TemplateLibraryCollection( elementor.templates.filterTemplates() ) );
+
 			return;
 		}
 
