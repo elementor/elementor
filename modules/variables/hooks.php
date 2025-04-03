@@ -26,21 +26,20 @@ class Hooks {
 		return $this;
 	}
 
-	public function filter_for_style_schema() {
-		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
-			return ( new Style_Schema() )->augment( $schema );
+	public function register() {
+		$this->wp_adapter->add_action( 'elementor/css-file/post/parse', function ( $post ) {
+			$this->inject_global_variables_css( $post );
+		} );
+
+		$this->wp_adapter->add_filter( 'elementor/atomic-widgets/styles/schema', function ( $schema ) {
+			return $this->augment_style_schema( $schema );
 		} );
 
 		return $this;
 	}
 
-	public function register() {
-		$this->wp_adapter->add_action( 'elementor/css-file/post/parse', function ( $post ) {
-			$this->inject_global_variables_css( $post );
-		} );
-	}
-
 	private function augment_style_schema( array $schema ): array {
+		return ( new Style_Schema() )->augment( $schema );
 	}
 
 	private function inject_global_variables_css( $post ): void {

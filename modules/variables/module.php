@@ -42,11 +42,9 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->hooks()
-			->register_styles_transformers()
-			->filter_for_style_schema()
-			->register();
+		$this->hooks()->register_styles_transformers();
 
+		( new Hooks( new Wordpress_Adapter() ) )->register();
 		( new Cache( new Wordpress_Adapter() ) )->clear_if_expired();
 	}
 
