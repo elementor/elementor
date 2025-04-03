@@ -91,8 +91,6 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 			$e.route( 'library/view-folder', { model: this.model } );
 			return;
 		}
-
-		TemplateLibraryTemplateLocalView.prototype.onPreviewButtonClick.apply( this, arguments );
 	},
 
 	handleItemClicked( event ) {
