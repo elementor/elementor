@@ -44,6 +44,7 @@ class Module extends BaseModule {
 
 		$this->hooks()
 			->register_styles_transformers()
+			->filter_for_style_schema()
 			->register();
 
 		( new Cache( new Wordpress_Adapter() ) )->clear_if_expired();
