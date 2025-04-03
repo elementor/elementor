@@ -1,0 +1,25 @@
+module.exports = Marionette.ItemView.extend( {
+	template: '#tmpl-elementor-template-library-navigation-container',
+
+	className: 'elementor-template-library-navigation-container',
+
+	ui: {
+		title: '.elementor-template-library-current-folder-title',
+		backButton: '.elementor-template-library-navigation-back-button',
+	},
+
+	events: {
+		'click @ui.backButton': 'onBackButtonClick',
+	},
+
+	onRender() {
+		this.ui.title.text( elementor.templates.getFilter( 'parent_title' ) );
+	},
+
+	onBackButtonClick() {
+		elementor.templates.setFilter( 'parent_id', null );
+		elementor.templates.setFilter( 'parent_title', null );
+
+		$e.route( 'library/templates/my-templates' );
+	},
+} );
