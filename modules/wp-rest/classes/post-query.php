@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\WpRest\Classes;
 
-use Elementor\Core\Isolation\Wordpress_Adapter;
-use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 
@@ -11,29 +9,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class WP_Post {
-	const MAX_COUNT = 100;
+class Post_Query {
+	const MAX_RESPONSE_COUNT = 100;
 	const NAMESPACE = 'elementor/v1';
 	const ENDPOINT = 'post';
 
-	const EXCLUDED_POST_TYPES_KEY = 'excluded_post_types';
-	const TERM_KEY = 'term';
-	const KEYS_FORMAT_MAP_KEY = 'keys_format_map';
+	const EXCLUDED_POST_TYPE_KEYS = 'excluded_post_types';
+	const SEARCH_TERM_KEY = 'term';
+	const POST_KEYS_CONVERSION_MAP = 'post_keys_conversion_map';
 	const MAX_COUNT_KEY = 'max_count';
 	const NONCE_KEY = 'x_wp_nonce';
 
-	private ?Wordpress_Adapter_Interface $wp_adapter = null;
-
-	public function __construct( ?Wordpress_Adapter_Interface $wp_adapter = null ) {
-		$this->wp_adapter = $wp_adapter ?? new Wordpress_Adapter();
-	}
+	const FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ];
 
 	public function register( bool $override_existing_endpoints = false ): void {
 		register_rest_route( self::NAMESPACE, self::ENDPOINT, [
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'permission_callback' => fn ( \WP_REST_Request $request ) => $this->validate_access_permission( $request ),
-				'args' => $this->get_args(),
+				'args' => $this->get_endpoint_registration_args(),
 				'sanitize_callback' => 'esc_attr',
 				'callback' => fn ( \WP_REST_Request $request ) => $this->route_wrapper( fn() => $this->get_posts( $request ) ),
 			],
@@ -41,18 +35,16 @@ class WP_Post {
 	}
 
 	/**
-	 * Builds the query parameters for the REST request.
-	 *
 	 * @param $args array{
 	 *     excluded_post_types: array,
-	 *     keys_format_map: array,
+	 *     post_keys_conversion_map: array,
 	 *     max_count: int,
 	 * } The query parameters
 	 * @return array The query parameters.
 	 */
 	public static function build_query_params( array $args ): array {
-		$allowed_keys = [ self::EXCLUDED_POST_TYPES_KEY, self::KEYS_FORMAT_MAP_KEY, self::MAX_COUNT_KEY ];
-		$keys_to_encode = [ self::EXCLUDED_POST_TYPES_KEY, self::KEYS_FORMAT_MAP_KEY ];
+		$allowed_keys = [ self::EXCLUDED_POST_TYPE_KEYS, self::POST_KEYS_CONVERSION_MAP, self::MAX_COUNT_KEY ];
+		$keys_to_encode = [ self::EXCLUDED_POST_TYPE_KEYS, self::POST_KEYS_CONVERSION_MAP ];
 
 		$params = [];
 
@@ -79,13 +71,11 @@ class WP_Post {
 	}
 
 	/**
-	 * Alters the SQL search query to filter by post title or ID.
-	 *
 	 * @param string $search_term The original search query.
 	 * @param \WP_Query $wp_query The WP_Query instance.
 	 * @return string Modified search query.
 	 */
-	private function customize_search( string $search_term, \WP_Query $wp_query ) {
+	public function customize_search( string $search_term, \WP_Query $wp_query ) {
 		$term = $wp_query->get( 'search_term' ) ?? '';
 		$is_custom_search = $wp_query->get( 'custom_search' ) ?? false;
 
@@ -99,8 +89,6 @@ class WP_Post {
 	}
 
 	/**
-	 * Wraps the route callback with try/catch to handle exceptions.
-	 *
 	 * @param callable $cb The route callback.
 	 * @return \WP_REST_Response | \WP_Error
 	 */
@@ -117,14 +105,12 @@ class WP_Post {
 	}
 
 	/**
-	 * Fetches posts based on the search term, formats them based on the keys format map, and returns them.
-	 *
 	 * @param \WP_REST_Request $request
 	 * @return \WP_REST_Response
 	 */
 	private function get_posts( \WP_REST_Request $request ) {
 		$params = $request->get_params();
-		$term = $params[ self::TERM_KEY ];
+		$term = trim( $params[ self::SEARCH_TERM_KEY ] ?? '' );
 
 		if ( empty( $term ) ) {
 			return new \WP_REST_Response( [
@@ -135,12 +121,12 @@ class WP_Post {
 			], 200 );
 		}
 
-		$excluded_types = $params[ self::EXCLUDED_POST_TYPES_KEY ];
-		$keys_format_map = $params[ self::KEYS_FORMAT_MAP_KEY ];
+		$excluded_types = array_merge( self::FORBIDDEN_POST_TYPES, $params[ self::EXCLUDED_POST_TYPE_KEYS ] ?? [] );
+		$keys_format_map = $params[ self::POST_KEYS_CONVERSION_MAP ];
 		$requested_count = $params[ self::MAX_COUNT_KEY ] ?? 0;
 		$validated_count = max( $requested_count, 1 );
-		$max_count = min( $validated_count, self::MAX_COUNT );
-		$post_types = new Collection( $this->wp_adapter->get_post_types( [ 'public' => true ], 'object' ) );
+		$max_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
+		$post_types = new Collection( get_post_types( [ 'public' => true ], 'object' ) );
 
 		$post_types = $post_types->filter( function ( $post_type ) use ( $excluded_types ) {
 			return ! in_array( $post_type->name, $excluded_types, true );
@@ -152,7 +138,7 @@ class WP_Post {
 
 		$this->add_filter_to_customize_query();
 
-		$posts = new Collection( $this->wp_adapter->get_posts( [
+		$posts = new Collection( get_posts( [
 			'post_type' => $post_type_slugs->all(),
 			'numberposts' => $max_count,
 			'suppress_filters' => false,
@@ -181,45 +167,45 @@ class WP_Post {
 	}
 
 	/**
-	 * Hooks into the flow of wordpress's get_post querying.
-	 *
 	 * @return void
 	 */
 	private function add_filter_to_customize_query() {
-		add_filter( 'posts_search', fn ( $search_term, $wp_query ) => $this->customize_search( $search_term, $wp_query ), 10, 2 );
+		$priority = 10;
+		$accepted_args = 2;
+
+		add_filter( 'posts_search', [ $this, 'customize_search' ], $priority, $accepted_args );
 	}
 
 	/**
-	 * Hooks out of the flow of wordpress's get_post querying.
-	 *
 	 * @return void
 	 */
 	private function remove_filter_to_customize_query() {
-		remove_filter( 'posts_search', fn ( $search_term, $wp_query ) => $this->customize_search( $search_term, $wp_query ), 10, 2 );
+		$priority = 10;
+		$accepted_args = 2;
+
+		remove_filter( 'posts_search', [ $this, 'customize_search' ], $priority, $accepted_args );
 	}
 
 	/**
-	 * Arguments for registering an endpoint.
-	 *
 	 * @return array
 	 */
-	private function get_args() {
+	private function get_endpoint_registration_args() {
 		return [
-			self::EXCLUDED_POST_TYPES_KEY => [
+			self::EXCLUDED_POST_TYPE_KEYS => [
 				'description' => 'Post type to exclude',
 				'type' => [ 'array', 'string' ],
 				'required' => false,
-				'default' => [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment' ],
+				'default' => self::FORBIDDEN_POST_TYPES,
 				'sanitize_callback' => fn ( ...$args ) => $this->sanitize_string_array( ...$args ),
 			],
-			self::TERM_KEY => [
+			self::SEARCH_TERM_KEY => [
 				'description' => 'Posts to search',
 				'type' => 'string',
 				'required' => false,
 				'default' => '',
 				'sanitize_callback' => 'sanitize_text_field',
 			],
-			self::KEYS_FORMAT_MAP_KEY => [
+			self::POST_KEYS_CONVERSION_MAP => [
 				'description' => 'Specify keys to extract and convert, i.e. ["key_1" => "new_key_1"].',
 				'type' => [ 'array', 'string' ],
 				'required' => false,
@@ -230,16 +216,12 @@ class WP_Post {
 				'description' => 'Max count of returned items',
 				'type' => 'number',
 				'required' => false,
-				'default' => self::MAX_COUNT,
+				'default' => self::MAX_RESPONSE_COUNT,
 			],
 		];
 	}
 
 	/**
-	 * Sanitizes an array of strings.
-	 * Ensures the input is an array, converts it if necessary,
-	 * and applies `sanitize_text_field` to each element.
-	 *
 	 * @param Array<string>|string $input The input data, expected to be an array or JSON-encoded string.
 	 * @return array The sanitized array of strings.
 	 */
@@ -256,8 +238,6 @@ class WP_Post {
 	}
 
 	/**
-	 * Replaces array keys based on a dictionary mapping.
-	 *
 	 * @param array $item The input array with original keys.
 	 * @param array $dictionary An associative array mapping old keys to new keys.
 	 * @return array The array with translated keys.
