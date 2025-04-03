@@ -16,13 +16,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # Using PHP 7.4 to make sure it'll bundle the polyfills for PHP >= 8.0
-    - name: Setup PHP 7.4
-      id: setup-php
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '7.4'
-
     - shell: bash
       run: |
             if [ "${{ inputs.PACKAGE_VERSION }}" == "" ] || [ "${{ inputs.PACKAGE_VERSION }}" == "undefined" ];
