@@ -91,7 +91,7 @@ jobs:
 
       - name: Get skipped tests from JSON
         id: read_skipped_tests
-        uses: ./elementor-tests-configuration/.github/actions/skip-tests@main
+        uses: elementor/elementor-tests-configuration/.github/actions/skip-tests@main
         with:
           file_path: "skipped_tests.json"
         env:
