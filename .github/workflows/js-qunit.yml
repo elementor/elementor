@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: Qunit - File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -36,7 +36,7 @@ jobs:
             .github/**/*.yml
 
   q-unit:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: [ 'file-diff' ]
     if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
     name: Qunit - Test
