@@ -27,7 +27,7 @@ class Post_Query {
 			[
 				'methods' => \WP_REST_Server::READABLE,
 				'permission_callback' => fn ( \WP_REST_Request $request ) => $this->validate_access_permission( $request ),
-				'args' => $this->get_args(),
+				'args' => $this->get_endpoint_registration_args(),
 				'sanitize_callback' => 'esc_attr',
 				'callback' => fn ( \WP_REST_Request $request ) => $this->route_wrapper( fn() => $this->get_posts( $request ) ),
 			],
@@ -187,11 +187,9 @@ class Post_Query {
 	}
 
 	/**
-	 * Arguments for registering an endpoint.
-	 *
 	 * @return array
 	 */
-	private function get_args() {
+	private function get_endpoint_registration_args() {
 		return [
 			self::EXCLUDED_POST_TYPE_KEYS => [
 				'description' => 'Post type to exclude',
