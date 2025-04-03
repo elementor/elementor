@@ -755,10 +755,8 @@ module.exports = {
 	 * @return {HTMLAnchorElement | null} The closest anchor parent element, or null if none is found.
 	 */
 	getAncestorAnchor( element ) {
-		if ( 'A' === element.tagName ) {
-			return false;
-		}
+		const closestAnchor = element?.closest( 'a' );
 
-		return element?.closest( 'a' ) || null;
+		return closestAnchor?.getAttribute( 'data-id' ) !== element.dataset.id ? closestAnchor : null;
 	},
 };
