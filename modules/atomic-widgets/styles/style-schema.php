@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,6 +31,7 @@ class Style_Schema {
 			self::get_effects_props(),
 			self::get_layout_props(),
 			self::get_alignment_props(),
+			self::get_transform_props(),
 		);
 	}
 
@@ -269,6 +271,13 @@ class Style_Schema {
 				'stretch',
 			]),
 			'order' => Number_Prop_Type::make(),
+		];
+	}
+
+	private static function get_transform_props() {
+		return [
+			'transform' => Transform_Prop_Type::make(),
+//			'transform-x' => Size_Prop_Type::make(),
 		];
 	}
 }
