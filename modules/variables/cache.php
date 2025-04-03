@@ -8,7 +8,7 @@ use Elementor\Modules\Variables\Classes\Variables;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 class Cache {
