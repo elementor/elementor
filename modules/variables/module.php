@@ -31,6 +31,10 @@ class Module extends BaseModule {
 		];
 	}
 
+	private function hooks() {
+		return new Hooks( new Wordpress_Adapter() );
+	}
+
 	public function __construct() {
 		parent::__construct();
 
@@ -38,7 +42,10 @@ class Module extends BaseModule {
 			return;
 		}
 
-		( new Hooks( new Wordpress_Adapter() ) )->register();
+		$this->hooks()
+			->register_styles_transformers()
+			->register();
+
 		( new Cache( new Wordpress_Adapter() ) )->clear_if_expired();
 	}
 
