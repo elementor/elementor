@@ -27,7 +27,13 @@ class Module extends BaseModule {
 		];
 	}
 
+	public function get_opt_in_css_assets_url( string $path ) {
+		return $this->get_css_assets_url( $path );
+	}
+
 	public function __construct() {
+		( new PanelChip() )->init();
+
 		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			return;
 		}
