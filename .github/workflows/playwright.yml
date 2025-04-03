@@ -88,9 +88,10 @@ jobs:
         with:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+
       - name: Get skipped tests from JSON
         id: read_skipped_tests
-        uses: elementor/elementor-tests-configuration/.github/actions/skip-tests@main
+        uses: ./elementor-tests-configuration/.github/actions/skip-tests@main
         with:
           file_path: "skipped_tests.json"
         env:
