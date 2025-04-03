@@ -2,7 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest;
 
-use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks\Post_Query_Data_Mock;
+use Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Providers\Post_Query as Post_Query_Data_Provider;
 use Elementor\Modules\WpRest\Classes\Post_Query;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Post_Query extends Elementor_Test_Base {
-	use Post_Query_Data_Mock;
+	use Post_Query_Data_Provider;
 
 	const URL = '/elementor/v1/post';
 

@@ -1,26 +1,28 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Mocks;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\WpRest\Providers;
 
-use Elementor\Modules\WpRest\Classes\Post_Query;
-use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\WpRest\Classes\Post_Query as Post_Query_Class;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-trait Post_Query_Data_Mock {
+trait Post_Query {
+	const FORCE_DELETE = true;
+	const ALL_POSTS = -1;
+
 	protected array $post_types;
 	protected array $posts;
 
 	protected function clean() {
 		foreach ( $this->posts as $post ) {
-			wp_delete_post( $post->ID, true );
+			wp_delete_post( $post->ID, self::FORCE_DELETE );
 		}
 
 		foreach ( get_posts( [
 			'post_type' => [ 'post', 'product', 'page', 'movie' ],
-			'numberposts' => -1,
+			'numberposts' => self::ALL_POSTS,
 		] ) as $post ) {
 			var_dump( $post->post_title );
 		}
@@ -36,9 +38,9 @@ trait Post_Query_Data_Mock {
 	protected function init() {
 		foreach ( get_posts( [
 			'post_type' => [ 'post', 'product', 'page', 'movie' ],
-			'numberposts' => -1,
+			'numberposts' => self::ALL_POSTS,
 		] ) as $post ) {
-			wp_delete_post( $post->ID, true );
+			wp_delete_post( $post->ID, self::FORCE_DELETE );
 		}
 
 		$this->register_post_types();
@@ -89,13 +91,13 @@ trait Post_Query_Data_Mock {
 	public function data_provider_post_query() {
 		return [
 			[
-				'params' => array_merge( Post_Query::build_query_params( [
-					Post_Query::EXCLUDED_POST_TYPE_KEYS => [],
-					Post_Query::POST_KEYS_CONVERSION_MAP => [
+				'params' => array_merge( Post_Query_Class::build_query_params( [
+					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [],
+					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
 						'ID' => 'id',
 						'post_title' => 'label',
 					],
-				] ), [ Post_Query::SEARCH_TERM_KEY => 'Us' ] ),
+				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'Us' ] ),
 				'expected' => [
 					[
 						'id' => $this->posts[3]->ID,
@@ -108,13 +110,13 @@ trait Post_Query_Data_Mock {
 				],
 			],
 			[
-				'params' => array_merge( Post_Query::build_query_params( [
-					Post_Query::EXCLUDED_POST_TYPE_KEYS => [ 'page', 'post' ],
-					Post_Query::POST_KEYS_CONVERSION_MAP => [
+				'params' => array_merge( Post_Query_Class::build_query_params( [
+					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [ 'page', 'post' ],
+					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
 						'ID' => 'post_id',
 						'post_title' => 'random_key',
 					],
-				] ), [ Post_Query::SEARCH_TERM_KEY => 'X' ] ),
+				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'X' ] ),
 				'expected' => [
 					[
 						'post_id' => $this->posts[6]->ID,
@@ -123,13 +125,13 @@ trait Post_Query_Data_Mock {
 				],
 			],
 			[
-				'params' => array_merge( Post_Query::build_query_params( [
-					Post_Query::EXCLUDED_POST_TYPE_KEYS => [ 'product', 'post' ],
-					Post_Query::POST_KEYS_CONVERSION_MAP => [
+				'params' => array_merge( Post_Query_Class::build_query_params( [
+					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [ 'product', 'post' ],
+					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
 						'ID' => 'id',
 						'post_title' => 'label',
 					],
-				] ), [ Post_Query::SEARCH_TERM_KEY => 'a ' ] ),
+				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'a ' ] ),
 				'expected' => [
 					[
 						'label' => $this->posts[9]->post_title,
