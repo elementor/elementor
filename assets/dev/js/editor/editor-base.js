@@ -788,7 +788,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getBreakpointResizeOptions( currentBreakpoint ) {
-		const previewHeight = elementor.$previewWrapper.height() - 80, // 80 = responsive bar height + ui-resizable-handle
+		const previewHeight = elementor.$previewWrapper.height(),
 			specialBreakpointsHeights = {
 				mobile: {
 					minHeight: 480,
