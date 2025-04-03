@@ -5,7 +5,6 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Editor\Editor_Settings_Schema;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -133,7 +132,7 @@ trait Has_Atomic_Base {
 		$data['version'] = $this->version;
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
-		$data['editorData'] = $this->parse_editor_data( $data['editorData'] );
+		$data['editor_settings'] = $this->parse_editor_data( $data['editor_settings'] );
 
 		return $data;
 	}
@@ -142,7 +141,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
-		$raw_data['editorData'] = $this->editor_data;
+		$raw_data['editor_settings'] = $this->editor_data;
 
 		return $raw_data;
 	}

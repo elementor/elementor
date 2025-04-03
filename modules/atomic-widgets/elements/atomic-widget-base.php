@@ -20,7 +20,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
-		$this->editor_data = $data['editorData'] ?? [];
+		$this->editor_data = $data['editor_settings'] ?? [];
 	}
 
 	abstract protected function define_atomic_controls(): array;
