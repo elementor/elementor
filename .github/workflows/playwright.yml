@@ -166,6 +166,12 @@ jobs:
       - name: Checkout source code
         if: ${{ needs.Playwright.result == 'failure' }}
         uses: actions/checkout@v4
+      - name: Map GitHub user to Slack
+        if: ${{ needs.Playwright.result == 'failure' }}
+        id: map_user
+        uses: elementor/elementor-tests-configuration/.github/actions/map-github-to-slack@main
+        with:
+          github_user: ${{ github.actor }}
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
         uses: ./.github/workflows/post-to-slack
@@ -190,7 +196,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Github User : <${{ github.actor }}>"
+                    "text": "Github User : <${{ steps.map_user.outputs.slack_user }}>"
                   }
                 }
               ]
