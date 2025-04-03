@@ -30,6 +30,10 @@ class Module extends BaseModule {
 		];
 	}
 
+	private function hooks() {
+		return new Hooks();
+	}
+
 	public function __construct() {
 		parent::__construct();
 
@@ -37,7 +41,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		( new Hooks() )->register();
+		$this->hooks()->register_styles_transformers();
 	}
 
 	private function is_experiment_active(): bool {
