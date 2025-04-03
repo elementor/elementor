@@ -16,14 +16,14 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
-	protected $editor_data = [];
+	protected $editor_settings = [];
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
-		$this->editor_data = $data['editor_settings'] ?? [];
+		$this->editor_settings = $data['editor_settings'] ?? [];
 	}
 
 	abstract protected function define_atomic_controls(): array;
