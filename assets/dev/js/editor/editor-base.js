@@ -578,7 +578,7 @@ export default class EditorBase extends Marionette.Application {
 	initPreviewView( document ) {
 		elementor.trigger( 'document:before:preview', document );
 
-		this.previewView = this.createPreviewView( document.$element[ 0 ],	elementor.elementsModel );
+		this.previewView = this.createPreviewView( document.$element[ 0 ], elementor.elementsModel );
 
 		this.renderPreview( this.previewView );
 	}
@@ -788,7 +788,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getBreakpointResizeOptions( currentBreakpoint ) {
-		const previewHeight = elementor.$previewWrapper.height() - 80, // 80 = responsive bar height + ui-resizable-handle
+		const previewHeight = elementor.$previewWrapper.height(),
 			specialBreakpointsHeights = {
 				mobile: {
 					minHeight: 480,

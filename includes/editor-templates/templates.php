@@ -259,7 +259,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-template-library-template-meta elementor-template-library-template-author elementor-template-library-local-column-3">{{{ author }}}</div>
 		<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>
 		<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
-		<div class="elementor-template-library-template-preview elementor-button e-btn-txt">
+		<#
+			const previewClass = typeof subType !== 'undefined' && 'FOLDER' !== subType
+				? 'elementor-hidden'
+				: '';
+		#>
+		<div class="elementor-template-library-template-preview elementor-button e-btn-txt {{{previewClass}}}">
 		<#
 			const actionText = typeof subType === 'undefined' || 'FOLDER' !== subType
 				? '<?php echo esc_html__( 'Preview', 'elementor' ); ?>'
@@ -347,9 +352,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			#>
 			<div class="elementor-template-library-template-thumbnail">
 				<img src="{{{ imageSource }}}"/>
-				<div class="elementor-template-library-template-preview">
-					<i class="eicon-preview-medium" aria-hidden="true"></i>
-				</div>
+				<div class="elementor-template-library-template-preview"></div>
 			</div>
 			<div class="elementor-template-library-card-footer">
 				<div class="elementor-template-library-template-name">
