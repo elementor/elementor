@@ -135,8 +135,9 @@ export default class Module extends elementorModules.editor.utils.Module {
 		const mediaControl = [ 'media' ];
 		if ( mediaControl.includes( aiOptions.type ) ) {
 			const mediaTypes = view.options.model.get( 'media_types' );
+			const type = view.options.model.get( 'type' );
 
-			if ( mediaTypes.length && mediaTypes.includes( 'image' ) ) {
+			if ( mediaTypes.length && mediaTypes.includes( 'image' ) && ! type.includes( 'media-preview' ) ) {
 				behaviors.ai = {
 					behaviorClass: AiBehavior,
 					type: aiOptions.type,
