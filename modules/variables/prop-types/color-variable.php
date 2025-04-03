@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Color_Variable_Prop_Type extends Plain_Prop_Type {
+class Color_Variable extends Plain_Prop_Type {
 	public static function get_key(): string {
 		return 'global-color-variable';
 	}
