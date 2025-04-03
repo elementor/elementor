@@ -581,6 +581,18 @@ const TemplateLibraryManager = function() {
 			_.extend( ajaxParams, templateType.ajaxParams );
 		}
 
+		const ajaxParamsSuccess = ajaxParams.success;
+
+		_.extend( ajaxParams, {
+			success: ( ...args ) => {
+				if ( ajaxParamsSuccess ) {
+					ajaxParamsSuccess( ...args );
+				}
+
+				this.triggerQuotaUpdate();
+			},
+		} );
+
 		elementorCommon.ajax.addRequest( this.getSaveAjaxAction( data.save_context ), ajaxParams );
 	};
 
