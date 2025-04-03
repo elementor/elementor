@@ -9,20 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Post_Query {
-	const FORCE_DELETE = true;
-	const ALL_POSTS = -1;
+	private $force_delete = true;
+	private $all_posts = -1;
 
 	protected array $post_types;
 	protected array $posts;
 
 	protected function clean() {
 		foreach ( $this->posts as $post ) {
-			wp_delete_post( $post->ID, self::FORCE_DELETE );
+			wp_delete_post( $post->ID, $this->force_delete );
 		}
 
 		foreach ( get_posts( [
 			'post_type' => [ 'post', 'product', 'page', 'movie' ],
-			'numberposts' => self::ALL_POSTS,
+			'numberposts' => $this->all_posts,
 		] ) as $post ) {
 			var_dump( $post->post_title );
 		}
@@ -38,9 +38,9 @@ trait Post_Query {
 	protected function init() {
 		foreach ( get_posts( [
 			'post_type' => [ 'post', 'product', 'page', 'movie' ],
-			'numberposts' => self::ALL_POSTS,
+			'numberposts' => $this->all_posts,
 		] ) as $post ) {
-			wp_delete_post( $post->ID, self::FORCE_DELETE );
+			wp_delete_post( $post->ID, $this->force_delete );
 		}
 
 		$this->register_post_types();
