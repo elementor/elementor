@@ -7,7 +7,7 @@ use Elementor\Core\Files\CSS\Post;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 class CSS {

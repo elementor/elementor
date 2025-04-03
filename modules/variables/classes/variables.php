@@ -5,7 +5,7 @@ namespace Elementor\Modules\Variables\Classes;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 class Variables {
