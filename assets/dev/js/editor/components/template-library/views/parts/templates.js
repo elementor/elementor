@@ -99,7 +99,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.ui.quotaFill.css( 'width', `${ value }%` );
 
-		this.ui.quotaValue.text( `${ value }/100` );
+		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold }` );
 
 		this.ui.quotaWarning.hide();
 
@@ -244,8 +244,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	handleQuotaUpdate() {
 		const activeSource = elementor.templates.getFilter( 'source' ) ?? 'local';
-		const isRemote = elementor.hooks.applyFilters( 'templates/source/is-remote', 'remote' === activeSource, activeSource );
-		if ( ! isRemote && 'cloud' === activeSource ) {
+
+		if ( 'cloud' === activeSource ) {
 			$e.components.get( 'cloud-library' ).utils.setQuotaConfig()
 				.then( () => {
 					this.handleQuotaBar();

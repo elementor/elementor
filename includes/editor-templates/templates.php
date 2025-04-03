@@ -158,7 +158,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<# if ( 'cloud' === activeSource ) { #>
 				<div class="quota-progress-container">
 					<span class="quota-progress-info">
-						Usage
+						<?php echo esc_html__( 'Usage', 'elementor' ); ?>
 						<i class="eicon-info-circle-o tooltip-target" aria-hidden="true" data-tooltip="Back"></i>
 					</span>
 					<div class="progress-bar-container">

@@ -1141,10 +1141,10 @@ class Manager {
 			? $this->format_args_for_bulk_action_from_local( $args )
 			: $this->format_args_for_bulk_action_from_cloud( $args );
 
-		if ( 'local' === $args['from_source'] ) {
-			$quota = $source->get_quota();
+		if ( $source->supports_quota() ) {
+			$is_quota_valid  = $source->validate_quota( $bulk_args );
 
-			if ( $quota['currentUsage'] + count( $bulk_args ) > $quota['threshold'] ) {
+			if (! $is_quota_valid  ) {
 				return new \WP_Error( 'quota_error', 'The moving failed because it will pass the maximum templates you can save.' );
 			}
 		}
@@ -1244,10 +1244,10 @@ class Manager {
 			? $this->format_args_for_bulk_action_from_local( $args )
 			: $this->format_args_for_bulk_action_from_cloud( $args );
 
-		if ( 'local' === $args['from_source'] ) {
-			$quota = $source->get_quota();
+		if ( $source->supports_quota() ) {
+			$is_quota_valid  = $source->validate_quota( $bulk_args );
 
-			if ( $quota['currentUsage'] + count( $bulk_args ) > $quota['threshold'] ) {
+			if (! $is_quota_valid  ) {
 				return new \WP_Error( 'quota_error', 'The copying failed because it will pass the maximum templates you can save.' );
 			}
 		}

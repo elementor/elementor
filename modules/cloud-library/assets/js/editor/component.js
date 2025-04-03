@@ -11,13 +11,10 @@ export default class Component extends $e.modules.ComponentBase {
 				data: {
 					source: 'cloud',
 				},
+
 				success: ( data ) => {
-					const fakeQuota = {
-						threshold: 1500,
-						currentUsage: Math.floor(Math.random() * 501) + 1000,
-					}
-					elementorAppConfig[ 'cloud-library' ].quota = fakeQuota;
-					resolve( fakeQuota );
+					elementorAppConfig[ 'cloud-library' ].quota = data;
+					resolve( data );
 				},
 				error: ( error ) => {
 					delete elementorAppConfig[ 'cloud-library' ].quota;

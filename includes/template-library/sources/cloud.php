@@ -38,6 +38,10 @@ class Source_Cloud extends Source_Base {
 
 	public function register_data() {}
 
+	public function supports_quota(): bool {
+		return true;
+	}
+
 	public function get_items( $args = [] ) {
 		return $this->get_app()->get_resources( $args );
 	}
@@ -416,7 +420,7 @@ class Source_Cloud extends Source_Base {
 				$items_to_save[] = $this->format_resource_item_for_create( $prepared );
 			}
 
-			if ( $quota['currentUsage'] + count( $items_to_save ) > $quota['threshold'] ) {
+			if ( ! $this->validate_quota( $items_to_save) ) {
 				return new \WP_Error( 'quota_error', 'The upload failed because it will pass the maximum templates you can save.' );
 			}
 
@@ -430,7 +434,7 @@ class Source_Cloud extends Source_Base {
 				return $prepared;
 			}
 
-			if ( $quota['currentUsage'] + 1 > $quota['threshold'] ) {
+			if ( ! $this->validate_quota( [ $prepared ] ) ) {
 				return new \WP_Error( 'quota_error', 'The upload failed because it will pass the maximum templates you can save.' );
 			}
 
@@ -444,5 +448,11 @@ class Source_Cloud extends Source_Base {
 		}
 
 		return $items;
+	}
+
+	public function validate_quota( $items ) {
+		$quota = $this->get_quota();
+
+		return $quota['currentUsage'] + count( $items ) <= $quota['threshold'];
 	}
 }
