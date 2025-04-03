@@ -74,9 +74,15 @@ const WidgetView = BaseWidget.extend( {
 	},
 
 	handleEmptyWidget() {
-		this.$el
-			.addClass( 'elementor-widget-empty' )
-			.append( '<i class="elementor-widget-empty-icon ' + this.getEditModel().getIcon() + '"></i>' );
+		this.$el.addClass( 'elementor-widget-empty' );
+
+		const icon = `<i class="elementor-widget-empty-icon ${ this.getEditModel().getIcon() }"></i>`;
+
+		if ( this.$el.is( this.getDomElement() ) ) {
+			this.$el.append( icon );
+		} else {
+			this.$el.html( icon );
+		}
 	},
 
 	getTemplateType() {
@@ -129,7 +135,7 @@ const WidgetView = BaseWidget.extend( {
 		// TODO: Find a better way to detect if all the images have been loaded
 		self.$el.imagesLoaded().always( function() {
 			setTimeout( function() {
-				const $widgetContainer = self.getWidgetContainer( self.$el );
+				const $widgetContainer = self.$el.children( '.elementor-widget-container' ).length ? self.$el.children( '.elementor-widget-container' ) : self.getDomElement();
 
 				if ( self.shouldGetEmptyView( $widgetContainer ) ) {
 					self.handleEmptyWidget();
@@ -137,10 +143,6 @@ const WidgetView = BaseWidget.extend( {
 			}, 200 );
 			// Is element empty?
 		} );
-	},
-
-	getWidgetContainer( $element ) {
-		return $element.children( '.elementor-widget-container' ).length ? $element.children( '.elementor-widget-container' ) : $element;
 	},
 
 	shouldGetEmptyView( $widgetContainer ) {
