@@ -3,7 +3,7 @@ const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/te
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
-import { SAVE_CONTEXTS, QUOTA_WARNINGS } from './../../constants';
+import { SAVE_CONTEXTS, QUOTA_WARNINGS, QUOTA_BAR_STATES } from './../../constants';
 
 const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
@@ -88,8 +88,19 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	handleQuotaWarning( variant, quotaUsage ) {
 		const message = QUOTA_WARNINGS[ variant ];
 
+		console.log(variant, message)
+		if ( ! message ) {
+			return;
+		}
+
+		console.log('!_SHOW_TEXT_!')
 		this.ui.quotaWarning.text( sprintf( message, quotaUsage ) );
 		this.ui.quotaWarning.show();
+	},
+
+	hideWarning(){
+		console.log('!)HIDE_!')
+		this.ui.quotaWarning.hide();
 	},
 
 	handleQuotaBar() {
@@ -101,18 +112,24 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold }` );
 
-		this.ui.quotaWarning.hide();
+		this.hideWarning();
 
 		this.resetQuotaBarStyles();
 
+		const quotaState = this.resolveQuotaState( value );
+
+		this.handleQuotaWarning( quotaState, value );
+
+		this.setQuotaBarStyles( quotaState );
+	},
+
+	resolveQuotaState( value ) {
 		if ( value < 80 ) {
-			this.setQuotaBarStyles( 'normal' );
+			return QUOTA_BAR_STATES.NORMAL;
 		} else if ( value < 100 ) {
-			this.handleQuotaWarning( 'warning', value );
-			this.setQuotaBarStyles( 'warning' );
+			return QUOTA_BAR_STATES.WARNING;
 		} else {
-			this.handleQuotaWarning( 'alert', value );
-			this.setQuotaBarStyles( 'alert' );
+			return QUOTA_BAR_STATES.ALERT;
 		}
 	},
 
@@ -239,6 +256,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 		this.listenTo( elementor.channels.templates, 'quota:update', this.handleQuotaUpdate.bind( this ) );
 		this.handleQuotaBar = this.handleQuotaBar.bind( this );
+		this.hideWarning = this.hideWarning.bind( this );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
 

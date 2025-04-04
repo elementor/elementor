@@ -12,3 +12,9 @@ export const QUOTA_WARNINGS = Object.freeze( {
 	/* Translators: 1: Quota usage percentage */
 	alert: __( 'You\'ve reached %1$d1%% of the space available in your plan. Upgrade to save more templates', 'elementor' ),
 } );
+
+export const QUOTA_BAR_STATES = Object.freeze( {
+	NORMAL: 'normal',
+	WARNING: 'warning',
+	ALERT: 'alert',
+} );
