@@ -143,16 +143,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<# if ( 'local' === activeSource || 'cloud' === activeSource ) { #>
-		<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
-		<div class="bulk-selection-action-bar">
-			<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
-			<span class="selected-count"></span>
-			<span class="bulk-export"><i class="eicon-file-download"></i></span>
-			<span class="bulk-copy"><i class="eicon-copy"></i></span>
-			<span class="bulk-move"><i class="eicon-folder-o"></i></span>
-			<span class="bulk-delete"><i class="eicon-trash-o"></i></span>
+		<div class="toolbar-container">
+			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+				<div class="bulk-selection-action-bar">
+					<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
+					<span class="selected-count"></span>
+					<span class="bulk-export"><i class="eicon-file-download"></i></span>
+					<span class="bulk-copy"><i class="eicon-copy"></i></span>
+					<span class="bulk-move"><i class="eicon-folder-o"></i></span>
+					<span class="bulk-delete"><i class="eicon-trash-o"></i></span>
+				</div>
+			<?php endif; ?>
+
+			<# if ( 'cloud' === activeSource ) { #>
+				<div class="quota-progress-container">
+					<span class="quota-progress-info">
+						<?php echo esc_html__( 'Usage', 'elementor' ); ?>
+						<i class="eicon-info-circle-o tooltip-target" aria-hidden="true" data-tooltip="Back"></i>
+					</span>
+					<div class="progress-bar-container">
+						<div class="quota-progress-bar quota-progress-bar-normal">
+							<div class="quota-progress-bar-fill"></div>
+						</div>
+						<span class="quota-warning"></span>
+					</div>
+					<div class="quota-progress-bar-value"></div>
+				</div>
+			<# } #>
 		</div>
-		<?php endif; ?>
 		<div id="elementor-template-library-order-toolbar-local">
 			<div class="elementor-template-library-local-column-1">
 				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
