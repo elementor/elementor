@@ -982,7 +982,7 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.hasCloudLibraryQuota = function() {
-		return 'undefined' !== typeof elementorAppConfig[ 'cloud-library' ].quota &&
+		return 'undefined' !== typeof elementorAppConfig[ 'cloud-library' ]?.quota &&
 			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold;
 	};
 
