@@ -978,12 +978,13 @@ const TemplateLibraryManager = function() {
 			return true;
 		}
 
-		return ! elementor.helpers.hasPro() || ! this.hasCloudLibraryQuota();
+		return ! this.hasCloudLibraryQuota();
 	};
 
 	this.hasCloudLibraryQuota = function() {
 		return 'undefined' !== typeof elementorAppConfig[ 'cloud-library' ]?.quota &&
-			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold;
+			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold &&
+			elementor.helpers.hasPro();
 	};
 
 	this.addBulkSelectionItem = function( templateId ) {
