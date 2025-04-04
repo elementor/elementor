@@ -50,7 +50,7 @@
 		"@babel/preset-env": "^7.26.0",
 		"@babel/preset-react": "^7.26.3",
 		"@babel/preset-typescript": "^7.26.0",
-		"@babel/runtime-corejs3": "^7.26.0",
+		"@babel/runtime-corejs3": "^7.26.10",
 		"@elementor/eslint-plugin-editor": "^0.4.0",
 		"@elementor/externalize-wordpress-assets-webpack-plugin": "0.3.4",
 		"@elementor/extract-i18n-wordpress-expressions-webpack-plugin": "0.3.5",
