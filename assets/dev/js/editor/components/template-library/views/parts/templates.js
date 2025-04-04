@@ -88,19 +88,12 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	handleQuotaWarning( variant, quotaUsage ) {
 		const message = QUOTA_WARNINGS[ variant ];
 
-		console.log(variant, message)
 		if ( ! message ) {
 			return;
 		}
 
-		console.log('!_SHOW_TEXT_!')
 		this.ui.quotaWarning.text( sprintf( message, quotaUsage ) );
 		this.ui.quotaWarning.show();
-	},
-
-	hideWarning(){
-		console.log('!)HIDE_!')
-		this.ui.quotaWarning.hide();
 	},
 
 	handleQuotaBar() {
@@ -112,7 +105,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold }` );
 
-		this.hideWarning();
+		this.ui.quotaWarning.hide();
 
 		this.resetQuotaBarStyles();
 
@@ -256,7 +249,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
 		this.listenTo( elementor.channels.templates, 'quota:update', this.handleQuotaUpdate.bind( this ) );
 		this.handleQuotaBar = this.handleQuotaBar.bind( this );
-		this.hideWarning = this.hideWarning.bind( this );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
 
