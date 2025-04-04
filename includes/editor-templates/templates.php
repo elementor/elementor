@@ -285,7 +285,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<div class="elementor-template-library-template-more">
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
-				<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
+				<# if ( ( typeof subType === 'undefined' || 'FOLDER' !== subType ) && elementor.templates.hasCloudLibraryQuota() ) { #>
 					<div class="elementor-template-library-template-move">
 						<i class="eicon-folder" aria-hidden="true"></i>
 						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
