@@ -89,13 +89,13 @@ jobs:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
 
-#      # Step 2: Checkout the elementor-tests-configuration repo
-#      - name: Checkout elementor-tests-configuration repo
-#        uses: actions/checkout@v4
-#        with:
-#          repository: elementor/elementor-tests-configuration
-#          token: ${{ steps.generate-token.outputs.token }}
-#
+      # Step 2: Checkout the elementor-tests-configuration repo
+      - name: Checkout elementor-tests-configuration repo
+        uses: actions/checkout@v4
+        with:
+          repository: elementor/elementor-tests-configuration
+          token: ${{ steps.generate-token.outputs.token }}
+
       # Step 3: Run the skip-tests action (using the token to access the action)
       - name: Get skipped tests from JSON
         id: read_skipped_tests
