@@ -121,9 +121,9 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			return QUOTA_BAR_STATES.NORMAL;
 		} else if ( value < 100 ) {
 			return QUOTA_BAR_STATES.WARNING;
-		} else {
-			return QUOTA_BAR_STATES.ALERT;
 		}
+
+		return QUOTA_BAR_STATES.ALERT;
 	},
 
 	onClearBulkSelections() {
