@@ -1,6 +1,6 @@
 export class SetQuotaData extends $e.modules.hookUI.Before {
 	getCommand() {
-		return 'library/open';
+		return 'editor/documents/attach-preview';
 	}
 
 	getId() {
