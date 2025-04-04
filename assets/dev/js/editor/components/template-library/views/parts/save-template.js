@@ -41,7 +41,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onRender() {
-		if ( undefined === elementorAppConfig[ 'cloud-library' ].quota && this.templateHelpers()?.canSaveToCloud ) {
+		if ( 'undefined' === typeof elementorAppConfig[ 'cloud-library' ]?.quota && this.templateHelpers()?.canSaveToCloud ) {
 			elementor.templates.layout.showLoadingView();
 
 			$e.components.get( 'cloud-library' ).utils.setQuotaConfig()
