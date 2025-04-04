@@ -64,6 +64,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'replace_elements_ids',
 				'bulk_delete_items',
 				'prepare_import_template_data',
+				'validate_quota',
 			] )
 			->disableOriginalConstructor()
 			->getMock();
@@ -917,6 +918,10 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				]
 			] );
 
+		$this->cloud_source_mock
+			->method( 'validate_quota' )
+			->willReturn( true );
+
 		// Assert
 		$this->cloud_library_app_mock
 			->expects( $this->once() )
@@ -1125,6 +1130,10 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			] );
 
 		$this->cloud_source_mock
+			->method( 'validate_quota' )
+			->willReturn( true );
+
+		$this->cloud_source_mock
 			->method( 'prepare_import_template_data' )
 			->with( $mock_file_path )
 			->willReturn( $template_data );
@@ -1174,6 +1183,10 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'currentUsage' => 0,
 				'threshold' => 100
 			] );
+
+		$this->cloud_source_mock
+			->method( 'validate_quota' )
+			->willReturn( true );
 
 		$this->cloud_source_mock
 			->method( 'prepare_import_template_data' )
