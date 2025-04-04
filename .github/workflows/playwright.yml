@@ -96,14 +96,14 @@ jobs:
 #          repository: elementor/elementor-tests-configuration
 #          token: ${{ steps.generate-token.outputs.token }}
 #
-#      # Step 3: Run the skip-tests action (using the token to access the action)
-#      - name: Get skipped tests from JSON
-#        id: read_skipped_tests
-#        uses: elementor/elementor-tests-configuration/.github/actions/skip-tests@main
-#        with:
-#          file_path: "skipped_tests.json"
-#        env:
-#          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      # Step 3: Run the skip-tests action (using the token to access the action)
+      - name: Get skipped tests from JSON
+        id: read_skipped_tests
+        uses: elementor/elementor-tests-configuration/.github/actions/skip-tests@main
+        with:
+          file_path: "skipped_tests.json"
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression' &&
