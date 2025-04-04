@@ -44,21 +44,17 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( undefined === elementorAppConfig[ 'cloud-library' ].quota && this.templateHelpers()?.canSaveToCloud ) {
 			elementor.templates.layout.showLoadingView();
 
-			elementorCommon.ajax.addRequest( 'get_quota', {
-				data: {
-					source: 'cloud',
-				},
-				success: ( data ) => {
+			$e.components.get( 'cloud-library' ).utils.setQuotaConfig()
+				.then( ( data ) => {
 					elementorAppConfig[ 'cloud-library' ].quota = data;
-					this.handleOnRender();
-					elementor.templates.layout.hideLoadingView();
-				},
-				error: () => {
+				} )
+				.catch( () => {
 					delete elementorAppConfig[ 'cloud-library' ].quota;
+				} )
+				.finally( () => {
 					this.handleOnRender();
 					elementor.templates.layout.hideLoadingView();
-				},
-			} );
+				} );
 		} else {
 			this.handleOnRender();
 		}
