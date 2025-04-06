@@ -6,6 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Plugin;
 
 class Elements_Classes {
