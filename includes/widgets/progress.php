@@ -149,6 +149,20 @@ class Widget_Progress extends Widget_Base {
 		);
 
 		$this->add_control(
+			'title_display',
+			[
+				'label' => esc_html__( 'Display Title', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
+				'default' => 'yes',
+				'condition' => [
+					'title!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
 			'progress_type',
 			[
 				'label' => esc_html__( 'Type', 'elementor' ),
@@ -180,6 +194,7 @@ class Widget_Progress extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -206,6 +221,7 @@ class Widget_Progress extends Widget_Base {
 				'placeholder' => esc_html__( 'e.g. Web Designer', 'elementor' ),
 				'default' => esc_html__( 'Web Designer', 'elementor' ),
 				'label_block' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -377,17 +393,26 @@ class Widget_Progress extends Widget_Base {
 		}
 
 		if ( ! Utils::is_empty( $settings['title'] ) ) {
-			$this->add_render_attribute(
-				'title',
-				[
-					'class' => 'elementor-title',
-					'id' => $progressbar_id,
-				]
-			);
 
-			$this->add_inline_editing_attributes( 'title' );
+			if ( 'yes' === $settings['title_display'] ) {
 
-			$this->add_render_attribute( 'wrapper', 'aria-labelledby', $progressbar_id );
+				$this->add_render_attribute(
+					'title',
+					[
+						'class' => 'elementor-title',
+						'id' => $progressbar_id,
+					]
+				);
+
+				$this->add_inline_editing_attributes( 'title' );
+
+				$this->add_render_attribute( 'wrapper', 'aria-labelledby', $progressbar_id );
+
+			} else {
+
+				$this->add_render_attribute( 'wrapper', 'aria-label', $settings['title'] );
+
+			}
 		}
 
 		$this->add_render_attribute(
@@ -421,7 +446,7 @@ class Widget_Progress extends Widget_Base {
 
 		$this->add_inline_editing_attributes( 'inner_text' );
 
-		if ( ! Utils::is_empty( $settings['title'] ) ) { ?>
+		if ( ! Utils::is_empty( $settings['title'] ) && 'yes' === $settings['title_display'] ) { ?>
 			<<?php Utils::print_validated_html_tag( $settings['title_tag'] ); ?> <?php $this->print_render_attribute_string( 'title' ); ?>>
 				<?php echo wp_kses_post( $settings['title'] ); ?>
 			</<?php Utils::print_validated_html_tag( $settings['title_tag'] ); ?>>
@@ -462,17 +487,26 @@ class Widget_Progress extends Widget_Base {
 		}
 
 		if ( settings.title ) {
-			view.addRenderAttribute(
-				'title',
-				{
-					'class': 'elementor-title',
-					'id': progressbar_id,
-				}
-			);
 
-			view.addInlineEditingAttributes( 'title' );
+			if ( 'yes' === settings.title_display ) {
 
-			view.addRenderAttribute( 'wrapper', 'aria-labelledby', progressbar_id );
+				view.addRenderAttribute(
+					'title',
+					{
+						'class': 'elementor-title',
+						'id': progressbar_id,
+					}
+				);
+
+				view.addInlineEditingAttributes( 'title' );
+
+				view.addRenderAttribute( 'progressWrapper', 'aria-labelledby', progressbar_id );
+
+			} else {
+
+				view.addRenderAttribute( 'progressWrapper', 'aria-label', settings.title );
+
+			}
 		}
 
 		view.addRenderAttribute(
@@ -494,7 +528,7 @@ class Widget_Progress extends Widget_Base {
 
 		view.addInlineEditingAttributes( 'inner_text' );
 		#>
-		<# if ( settings.title ) { #>
+		<# if ( settings.title && 'yes' === settings.title_display  ) { #>
 			<{{ title_tag }} {{{ view.getRenderAttributeString( 'title' ) }}}>{{ settings.title }}</{{ title_tag }}>
 		<# } #>
 		<div {{{ view.getRenderAttributeString( 'progressWrapper' ) }}}>
