@@ -168,7 +168,7 @@ export const OptIn = ( { state } ) => {
 					</Box>
 
 					<Box>
-						<TextNode variant="subtitle1" sx={ { mb: 1.5 }}>{ i18n.advantagesHeader }</TextNode>
+						<TextNode variant="subtitle1" sx={ { mb: 1.5 } }>{ i18n.advantagesHeader }</TextNode>
 						<MainContentList>
 							{ i18n.advantages.map( ( entry, i ) => (
 								<MainContentListItem key={ i }>{ entry }</MainContentListItem>
