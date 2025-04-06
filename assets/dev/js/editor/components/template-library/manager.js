@@ -273,7 +273,7 @@ const TemplateLibraryManager = function() {
 					template_id: templateId,
 				},
 				success( response ) {
-					templatesCollection.remove( templateModel, { silent: true } );
+					templatesCollection.remove( templateModel );
 
 					if ( 'cloud' === source ) {
 						self.addLastRemovedItems( [ templateId ] );
@@ -282,6 +282,8 @@ const TemplateLibraryManager = function() {
 					if ( options.onSuccess ) {
 						options.onSuccess( response );
 					}
+
+					self.layout.updateViewCollection( templatesCollection.models );
 
 					self.triggerQuotaUpdate();
 				},
