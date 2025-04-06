@@ -443,6 +443,14 @@ abstract class Source_Base {
 		return new \WP_Error( 'template_error', 'This source does not support import' );
 	}
 
+	public function supports_quota(): bool {
+		return false;
+	}
+
+	public function validate_quota( array $items ) {
+		return new \WP_Error( 'quota_error', 'This source does not support quota validation' );
+	}
+
 	public function prepare_import_template_data( $file_path ) {
 		$data = json_decode( Utils::file_get_contents( $file_path ), true );
 
