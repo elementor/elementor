@@ -33,7 +33,6 @@ jest.mock( 'react-markdown', () => {
 	};
 } );
 
-// Mock AiBehavior to avoid dependency issues
 jest.mock( 'elementor/modules/ai/assets/js/editor/ai-behavior', () => {
 	return class MockAiBehavior {};
 } );
