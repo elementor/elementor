@@ -494,6 +494,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		];
 
+		$widget_editor_settings = [
+			'title' => 'My Custom Title',
+		];
+
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'string_prop' => String_Prop_Type::make()->default( '' ),
@@ -509,9 +513,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'not_in_schema' => [ '$$type' => 'string', 'value' => 'not-in-schema' ],
 				'not_a_prop_type' => [ '$$type' => 'string', 'value' => 'not-a-prop-type' ],
 			],
-			'editor_settings' => [
-				'title' => 'My Custom Title',
-			],
+			'editor_settings' => $widget_editor_settings,
 			'styles' => $widget_styles
 		] );
 
@@ -524,6 +526,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
 			'boolean_prop' => [ '$$type' => 'boolean', 'value' => true ],
 		], $data_for_save['settings'] );
+
+		$this->assertSame( $widget_editor_settings, $data_for_save['editor_settings'] );
 
 		$this->assertSame( $widget_styles, $data_for_save['styles'] );
 	}
@@ -554,12 +558,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 	public function test_get_data_for_save__sanitize_editor_settings() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'string_prop' => String_Prop_Type::make()->default( '' ),
-			],
-			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
-			],
 			'editor_settings' => [
 				'title' => '<b>invalid HTML string</b>',
 			],
@@ -574,15 +572,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $data_for_save['editor_settings'] );
 	}
 
-	public function test_get_data_for_save__sanitize_editor_settings_on_validation_error() {
+	public function test_get_data_for_save__removes_editor_settings_on_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
-			'props_schema' => [
-				'string_prop' => String_Prop_Type::make()->default( '' ),
-			],
-			'settings' => [
-				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
-			],
 			'editor_settings' => [
 				'title' => 6639,
 			],
