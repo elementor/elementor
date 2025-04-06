@@ -23,24 +23,27 @@ class Global_Classes_Cleanup {
 		);
 	}
 
-	public function on_classes_update( $new_value, $prev_value ) {
+	private function on_classes_update( $new_value, $prev_value ) {
+		$deleted_classes_ids = $this->get_deleted_classes_ids( $new_value, $prev_value );
 
-		$deleted_class_ids = $this->get_deleted_class_ids( $new_value, $prev_value );
-
-		if ( ! empty( $deleted_class_ids ) ) {
-			Elements_Classes::iterate_data( fn( $document, $elements_data ) => $this->handle_deleted_classes( $document, $elements_data, $deleted_class_ids ) );
+		if ( ! empty( $deleted_classes_ids ) ) {
+			Plugin::$instance->db->iterate_elementor_documents( 
+                fn( $document, $elements_data ) => $this->unapply_deleted_classes( $document, $elements_data, $deleted_classes_ids ) 
+            );
 		}
-
 	}
 
-	private function handle_deleted_classes( $document, $elements_data, $deleted_class_ids ) {
-        $elements_data = $this->unapply_deleted_classes( $elements_data, $deleted_class_ids );
+    private function get_deleted_classes_ids( $new_value, $prev_value ) {
+		$prev_ids = array_keys( $prev_value['items'] );
+        $new_ids = array_keys( $new_value['items'] );
 
-        $document->update_meta( Document::ELEMENTOR_DATA_META_KEY, $elements_data );
-    }
+        return array_values(
+            array_diff( $prev_ids, $new_ids )
+        );
+	}
 
-	private function unapply_deleted_classes( $elements_data, $deleted_class_ids ) {
-		return Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $deleted_class_ids ) {
+	private function unapply_deleted_classes( $document, $elements_data, $deleted_classes_ids ) {
+		$elements_data =  Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $deleted_classes_ids ) {
 			$element_type = Elements_Classes::get_element_type( $element_data );
 			$element_instance = Elements_Classes::get_element_instance( $element_type );
 
@@ -49,43 +52,27 @@ class Global_Classes_Cleanup {
 			}
 
 			/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
-			return $this->delete_classes_from_element( $element_instance->get_props_schema(), $element_data, $deleted_class_ids );
+			return $this->unapply_classes_from_element( $element_instance->get_props_schema(), $element_data, $deleted_classes_ids );
 		} );
+
+        $document->update_json_meta( Document::ELEMENTOR_DATA_META_KEY, $elements_data );
 	}
 
-	private function get_deleted_class_ids( $updated_value, $current_value ) {
-		$deleted_class_ids = [];
-
-		foreach ( $current_value['items'] as $class_id => $class_data ) {
-			if ( ! isset( $updated_value['items'][ $class_id ] ) ) {
-				$deleted_class_ids[] = $class_id;
-			}
-		}
-
-		return $deleted_class_ids;
-	}
-
-	private function delete_classes_from_element( $atomic_props_schema, $atomic_element_data, $class_ids ) {
-		$element_data = $atomic_element_data;
-
-		foreach ( $atomic_props_schema as $prop ) {
+	private function unapply_classes_from_element( $props_schema, $element_data, $deleted_classes_ids ) {
+		foreach ( $props_schema as $prop ) {
 			if ( ! Elements_Classes::is_classes_prop( $prop ) ) {
 				continue;
 			}
 
-			if ( ! isset( $element_data['settings'][ $prop->get_key() ] ) ) {
+			$current_classes = $element_data['settings'][ $prop->get_key() ] ?? null;
+			
+			if ( ! $current_classes ) {
 				continue;
 			}
-
-			$current_classes = $element_data['settings'][ $prop->get_key() ]['value'];
-
-			$filtered_classes = array_filter(
-				$current_classes,
-				fn( $class ) => ! in_array( $class, $class_ids, true )
-			);
-
-			$element_data['settings'][ $prop->get_key() ]['value'] = array_values( $filtered_classes );
-
+			
+			$element_data['settings'][ $prop->get_key() ]['value'] = Collection::make( $current_classes['value'] )
+				->filter( fn( $class ) => ! in_array( $class, $deleted_classes_ids, true ) )
+				->values();
 		}
 
 		return $element_data;
