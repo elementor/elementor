@@ -4,6 +4,8 @@ namespace Elementor\Modules\EditorEvents;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
+use Elementor\Core\Common\Modules\Connect\Apps\Library;
+
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Utils;
 use Elementor\Plugin;
@@ -34,7 +36,7 @@ class Module extends BaseModule {
 			'user_agent' => esc_html( Utils::get_super_global_value( $_SERVER, 'HTTP_USER_AGENT' ) ),
 			'site_language' => get_locale(),
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
-			'subscription_id' => null,
+			'subscription_id' => self::get_subscription_id(),
 			'token' => defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ? ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN : '',
 		];
 
@@ -50,5 +52,28 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		];
+	}
+
+	public static function get_subscription_id() {
+		if (!Utils::has_pro()) {
+			var_dump('im in first if');
+			return null;
+		}
+
+		$license_data = get_option('_elementor_pro_license_v2_data');
+		var_dump($license_data);
+		if ($license_data && isset($license_data['value'])) {
+			var_dump('im in secibd if');
+			$license_info = json_decode($license_data['value'], true);
+			if (isset($license_info['subscription_id'])) {
+				var_dump('im in third if');
+				$subscription_id = $license_info['subscription_id'];
+				return $subscription_id;
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
 	}
 }
