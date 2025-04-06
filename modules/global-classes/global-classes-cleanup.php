@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Global_Classes_Cleanup {
 
-    public function register_hooks() {
+	public function register_hooks() {
 		add_action(
 			'elementor/global_classes/update',
 			fn( $context, $new_value, $prev_value ) => $this->on_classes_update( $new_value, $prev_value ),
-            10,
-            3
+			10,
+			3
 		);
 	}
 
@@ -27,23 +27,23 @@ class Global_Classes_Cleanup {
 		$deleted_classes_ids = $this->get_deleted_classes_ids( $new_value, $prev_value );
 
 		if ( ! empty( $deleted_classes_ids ) ) {
-			Plugin::$instance->db->iterate_elementor_documents( 
-                fn( $document, $elements_data ) => $this->unapply_deleted_classes( $document, $elements_data, $deleted_classes_ids ) 
-            );
+			Plugin::$instance->db->iterate_elementor_documents(
+				fn( $document, $elements_data ) => $this->unapply_deleted_classes( $document, $elements_data, $deleted_classes_ids )
+			);
 		}
 	}
 
-    private function get_deleted_classes_ids( $new_value, $prev_value ) {
+	private function get_deleted_classes_ids( $new_value, $prev_value ) {
 		$prev_ids = array_keys( $prev_value['items'] );
-        $new_ids = array_keys( $new_value['items'] );
+		$new_ids = array_keys( $new_value['items'] );
 
-        return array_values(
-            array_diff( $prev_ids, $new_ids )
-        );
+		return array_values(
+			array_diff( $prev_ids, $new_ids )
+		);
 	}
 
 	private function unapply_deleted_classes( $document, $elements_data, $deleted_classes_ids ) {
-		$elements_data =  Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $deleted_classes_ids ) {
+		$elements_data = Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $deleted_classes_ids ) {
 			$element_type = Elements_Classes::get_element_type( $element_data );
 			$element_instance = Elements_Classes::get_element_instance( $element_type );
 
@@ -55,7 +55,7 @@ class Global_Classes_Cleanup {
 			return $this->unapply_classes_from_element( $element_instance->get_props_schema(), $element_data, $deleted_classes_ids );
 		} );
 
-        $document->update_json_meta( Document::ELEMENTOR_DATA_META_KEY, $elements_data );
+		$document->update_json_meta( Document::ELEMENTOR_DATA_META_KEY, $elements_data );
 	}
 
 	private function unapply_classes_from_element( $props_schema, $element_data, $deleted_classes_ids ) {
@@ -65,11 +65,11 @@ class Global_Classes_Cleanup {
 			}
 
 			$current_classes = $element_data['settings'][ $prop->get_key() ] ?? null;
-			
+
 			if ( ! $current_classes ) {
 				continue;
 			}
-			
+
 			$element_data['settings'][ $prop->get_key() ]['value'] = Collection::make( $current_classes['value'] )
 				->filter( fn( $class ) => ! in_array( $class, $deleted_classes_ids, true ) )
 				->values();
