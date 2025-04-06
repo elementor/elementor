@@ -29,12 +29,13 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return [];
 	}
 
-	final public function get_initial_config() {
+	public function get_initial_config() {
 		$config = parent::get_initial_config();
 
 		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['base_styles'] = $this->get_base_styles();
+		$config['base_styles_dictionary'] = $this->get_base_styles_dictionary();
 		$config['atomic_props_schema'] = static::get_props_schema();
 		$config['version'] = $this->version;
 
