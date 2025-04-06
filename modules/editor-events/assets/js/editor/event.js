@@ -2,7 +2,7 @@ export default class Event {
 	appType = 'Editor';
 
 	constructor( data ) {
-		this.user_id = elementorCommon.config.library_connect?.user_id;
+		this.user_id = elementorCommon.config.library_connect?.user_id||null;
 		this.subscription_id = elementor.config.editor_events?.subscription_id;
 		this.url = elementor.config.editor_events?.site_url;
 		this.WpVersion = elementor.config.editor_events?.wp_version;

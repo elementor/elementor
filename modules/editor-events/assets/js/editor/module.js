@@ -16,10 +16,10 @@ export default class extends elementorModules.Module {
 
 				if (currentId !== userId) {
 					console.log("Aliasing:", currentId, "→", userId);
-					mixpanel.alias(userId, currentId);
+					// mixpanel.alias(userId, currentId);
 				}
-
-				console.log('passed check');
+				//
+				// console.log('passed check');
 				// const currentId = mixpanel.get_distinct_id();
 				//
 				// 	// If the current ID is different from user ID, use alias first then identify
@@ -27,13 +27,17 @@ export default class extends elementorModules.Module {
 					// mixpanel.alias( userId, currentId );
 
 					// 		// Then identify as the user
-				console.log('Identifying as:', userId);
+				// mixpanel.reset();
+
+				console.log('Identifying as:', currentId,userId );
+
+				// mixpanel.register_once({ distinct_id: userId })
 
 				mixpanel.identify( userId );
 
-					// mixpanel.register( {
-					// 	'User ID': userId,
-					// } );
+				mixpanel.register( {
+						'appType': 'Editor',
+					} );
 
 					//maybe use set_once, since then if profile already exists and can be rewritten, it won;t be called
 				// Verify the identification worked
@@ -42,7 +46,7 @@ export default class extends elementorModules.Module {
 				console.log('Setting People properties');
 
 
-				mixpanel.people.set( {
+				mixpanel.people.set_once( userId, {
 						// $distinct_id: userId,
 						// $user_id: userId,
 						$name: elementorCommon.config.library_connect?.user_name || 'Unknown',
@@ -61,10 +65,9 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		// const eventData = new Event( data );
 		const eventData = {
-			user_id: elementorCommon.config.library_connect?.user_id,
-			subscription_id: elementor.config.editor_events?.subscription_id,
+			user_id: elementorCommon.config.library_connect?.user_id || null,
+			subscription_id: elementor.config.editor_events?.subscription_id || null,
 			url: elementor.config.editor_events?.site_url,
 			wp_version: elementor.config.editor_events?.wp_version,
 			client_id: elementor.config.editor_events?.site_key,
@@ -76,7 +79,7 @@ export default class extends elementorModules.Module {
 		mixpanel.track(
 			name,{
 				...eventData,
-				// $distinct_id: distinct_id,
+				data
 			}
 
 		);
