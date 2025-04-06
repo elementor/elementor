@@ -173,7 +173,7 @@ export const OptIn = ( { state } ) => {
 							{ i18n.advantages.map( ( entry, i ) => (
 								<MainContentListItem key={ i }>{ entry }</MainContentListItem>
 							) ) }
-							<MainContentListItem key="e-0">
+							<MainContentListItem key={ i18n.advantages.length }>
 								{ i18n.andMore } <Link color="text.primary" href={ optInLinks.readMoreUrl } target="_blank">{ i18n.readMore }</Link>
 							</MainContentListItem>
 						</MainContentList>
