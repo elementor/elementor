@@ -149,7 +149,9 @@ ElementModel = BaseElementModel.extend( {
 	},
 
 	getTitle() {
-		let title = this.getSetting( '_title' ) || this.getSetting( 'presetTitle' );
+		const editorSettings = this.get( 'editor_settings' );
+		let title = editorSettings?.title || this.getSetting( '_title' ) || this.getSetting( 'presetTitle' );
+
 		const custom = this.get( 'custom' );
 
 		if ( ! title && ( custom?.isPreset ?? false ) ) {
