@@ -149,6 +149,20 @@ class Widget_Progress extends Widget_Base {
 		);
 
 		$this->add_control(
+			'title_display',
+			[
+				'label' => esc_html__( 'Display Title', 'elementor' ),
+				'type' => Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Show', 'elementor' ),
+				'label_off' => esc_html__( 'Hide', 'elementor' ),
+				'default' => 'yes',
+				'condition' => [
+					'title!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
 			'progress_type',
 			[
 				'label' => esc_html__( 'Type', 'elementor' ),
@@ -180,6 +194,7 @@ class Widget_Progress extends Widget_Base {
 				'dynamic' => [
 					'active' => true,
 				],
+				'separator' => 'before',
 			]
 		);
 
@@ -206,6 +221,7 @@ class Widget_Progress extends Widget_Base {
 				'placeholder' => esc_html__( 'e.g. Web Designer', 'elementor' ),
 				'default' => esc_html__( 'Web Designer', 'elementor' ),
 				'label_block' => true,
+				'separator' => 'before',
 			]
 		);
 
@@ -388,6 +404,10 @@ class Widget_Progress extends Widget_Base {
 			$this->add_inline_editing_attributes( 'title' );
 
 			$this->add_render_attribute( 'wrapper', 'aria-labelledby', $progressbar_id );
+
+			if ( 'yes' !== $settings['title_display'] ) {
+				$this->add_render_attribute( 'title', 'class', 'elementor-screen-only' );
+			}
 		}
 
 		$this->add_render_attribute(
@@ -473,6 +493,10 @@ class Widget_Progress extends Widget_Base {
 			view.addInlineEditingAttributes( 'title' );
 
 			view.addRenderAttribute( 'wrapper', 'aria-labelledby', progressbar_id );
+
+			if ( 'yes' !== settings.title_display ) {
+				view.addRenderAttribute( 'title', 'class', 'elementor-screen-only' );
+			}
 		}
 
 		view.addRenderAttribute(
