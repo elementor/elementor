@@ -66,6 +66,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				} );
 
 				$e.route( 'library/templates/my-templates' );
+				elementor.templates.triggerQuotaUpdate();
 			},
 			error: ( errorData ) => {
 				elementor.templates.showErrorDialog( errorData );

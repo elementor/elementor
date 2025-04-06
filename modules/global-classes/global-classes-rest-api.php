@@ -13,6 +13,8 @@ class Global_Classes_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'global-classes';
 
+	const MAX_ITEMS = 50;
+
 	private $repository = null;
 
 	public function register_hooks() {
@@ -116,6 +118,18 @@ class Global_Classes_REST_API {
 		$items_result = $parser->parse_items(
 			$request->get_param( 'items' )
 		);
+
+		$items_count = count( $items_result->unwrap() );
+
+		if ( $items_count >= static::MAX_ITEMS ) {
+			return Error_Builder::make( 'global_classes_limit_exceeded' )
+				->set_status( 400 )
+				->set_message( sprintf(
+					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
+					static::MAX_ITEMS
+				) )
+				->build();
+		}
 
 		if ( ! $items_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_items' )
