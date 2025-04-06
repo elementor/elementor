@@ -249,7 +249,8 @@ export default class extends Marionette.CompositeView {
 		}
 
 		if ( this.isAtomicWidget() ) {
-			this.model.set( 'editor_settings', { ...this.model.get( 'editor_settings' ), title: newTitle } );
+			const prevEditorSettings = this.model.get( 'editor_settings' );
+			this.model.set( 'editor_settings', { ...prevEditorSettings, title: newTitle } );
 		} else {
 			settingsModel.set( '_title', newTitle );
 		}
