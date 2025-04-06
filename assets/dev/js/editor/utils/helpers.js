@@ -283,7 +283,7 @@ module.exports = {
 
 		const enqueueOptions = {};
 
-		let	fontUrl;
+		let fontUrl;
 
 		switch ( fontType ) {
 			case 'googlefonts':
@@ -758,5 +758,19 @@ module.exports = {
 		const closestAnchor = element?.closest( 'a' );
 
 		return closestAnchor?.getAttribute( 'data-id' ) !== element.dataset.id ? closestAnchor : null;
+	},
+
+	getAtomicElementTypes() {
+		const { elements } = elementor.config;
+
+		return Object.keys( elements )
+			.filter( ( elementKey ) => Object.keys( elements[ elementKey ] )
+				.some( ( key ) => key.includes( 'atom' ) ) );
+	},
+
+	isElementAtomic( elementId ) {
+		const { type: elType = null } = elementor.getContainer( elementId ) || {};
+
+		return this.getAtomicElementTypes().includes( elType );
 	},
 };

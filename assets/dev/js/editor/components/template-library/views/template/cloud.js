@@ -89,10 +89,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
 			$e.route( 'library/view-folder', { model: this.model } );
-			return;
 		}
-
-		TemplateLibraryTemplateLocalView.prototype.onPreviewButtonClick.apply( this, arguments );
 	},
 
 	handleItemClicked( event ) {
