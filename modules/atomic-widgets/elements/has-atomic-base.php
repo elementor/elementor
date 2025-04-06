@@ -97,7 +97,8 @@ trait Has_Atomic_Base {
 	}
 
 	private function parse_atomic_settings( array $settings ): array {
-		$props_parser = Props_Parser::make( static::get_props_schema() );
+		$schema = static::get_props_schema();
+		$props_parser = Props_Parser::make( $schema );
 
 		$result = $props_parser->parse( $settings );
 

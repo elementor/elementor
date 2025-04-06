@@ -254,7 +254,7 @@ export default class extends Marionette.CompositeView {
 			settingsModel.set( '_title', newTitle );
 		}
 
-		// TODO: Remove - After merge pull request #13605.
+		// TODO: Remove - After merge pull request #13605.has
 		$e.internal( 'document/save/set-is-modified', {
 			status: true,
 		} );
@@ -519,7 +519,7 @@ export default class extends Marionette.CompositeView {
 
 	isAtomicWidget() {
 		const elementType = 'widget' === this.model.get( 'elType' ) ? this.model.get( 'widgetType' ) : this.model.get( 'elType' );
-		
+
 		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
 	}
 }
