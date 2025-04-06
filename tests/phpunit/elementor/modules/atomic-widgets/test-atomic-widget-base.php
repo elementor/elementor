@@ -509,6 +509,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'not_in_schema' => [ '$$type' => 'string', 'value' => 'not-in-schema' ],
 				'not_a_prop_type' => [ '$$type' => 'string', 'value' => 'not-a-prop-type' ],
 			],
+			'editor_settings' => [
+				'title' => 'My Custom Title',
+			],
 			'styles' => $widget_styles
 		] );
 
@@ -546,6 +549,50 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'string_prop' => [ '$$type' => 'string', 'value' => 'invalid HTML string' ],
 			'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
 		], $data_for_save['settings'] );
+	}
+
+	public function test_get_data_for_save__sanitize_editor_settings() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+			],
+			'editor_settings' => [
+				'title' => '<b>invalid HTML string</b>',
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'title' => 'invalid HTML string',
+		], $data_for_save['editor_settings'] );
+	}
+
+	public function test_get_data_for_save__sanitize_editor_settings_on_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [
+				'string_prop' => [ '$$type' => 'string', 'value' => 'valid-string' ],
+			],
+			'editor_settings' => [
+				'title' => 6639,
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [], $data_for_save['editor_settings'] );
 	}
 
 	public function test_get_data_for_save__throws_on_styles_meta_state_validation_error() {
@@ -811,6 +858,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
 					'styles' => $options['styles'] ?? [],
+					'editor_settings' => $options['editor_settings'] ?? [],
 					'elType' => 'widget',
 					'widgetType' => 'test-widget',
 				], [] );

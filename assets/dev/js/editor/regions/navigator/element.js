@@ -250,12 +250,13 @@ export default class extends Marionette.CompositeView {
 
 		if ( this.isAtomicWidget() ) {
 			const prevEditorSettings = this.model.get( 'editor_settings' );
+
 			this.model.set( 'editor_settings', { ...prevEditorSettings, title: newTitle } );
 		} else {
 			settingsModel.set( '_title', newTitle );
 		}
 
-		// TODO: Remove - After merge pull request #13605.has
+		// TODO: Remove - After merge pull request #13605.
 		$e.internal( 'document/save/set-is-modified', {
 			status: true,
 		} );
