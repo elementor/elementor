@@ -35,7 +35,7 @@ ContentListItem.propTypes = {
 	children: PropTypes.node,
 };
 
-export const MainContentList = ( { children, ...props } ) => {
+export const AdvantagesList = ( { children, ...props } ) => {
 	return (
 		<Box
 			component="ul"
@@ -52,11 +52,11 @@ export const MainContentList = ( { children, ...props } ) => {
 	);
 };
 
-MainContentList.propTypes = {
+AdvantagesList.propTypes = {
 	children: PropTypes.node,
 };
 
-export const MainContentListItem = ( { children, ...props } ) => {
+export const AdvantagesListItem = ( { children, ...props } ) => {
 	return (
 		<TextNode
 			component="li"
@@ -75,6 +75,6 @@ export const MainContentListItem = ( { children, ...props } ) => {
 	);
 };
 
-MainContentListItem.propTypes = {
+AdvantagesListItem.propTypes = {
 	children: PropTypes.node,
 };

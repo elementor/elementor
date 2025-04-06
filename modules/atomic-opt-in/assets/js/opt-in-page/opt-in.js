@@ -11,7 +11,7 @@ import {
 import { AlertTriangleIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { TextNode, MainContentList, MainContentListItem } from './opt-in-content';
+import { TextNode, AdvantagesList, AdvantagesListItem } from './opt-in-content';
 import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './opt-in-img-placeholders';
 import { Message } from './opt-in-message';
 import { triggerOptIn, triggerOptOut } from './opt-in-api';
@@ -169,14 +169,14 @@ export const OptIn = ( { state } ) => {
 
 					<Box>
 						<TextNode variant="subtitle1" sx={ { mb: 1.5 } }>{ i18n.advantagesHeader }</TextNode>
-						<MainContentList>
+						<AdvantagesList>
 							{ i18n.advantages.map( ( entry, i ) => (
-								<MainContentListItem key={ i }>{ entry }</MainContentListItem>
+								<AdvantagesListItem key={ i }>{ entry }</AdvantagesListItem>
 							) ) }
-							<MainContentListItem key={ i18n.advantages.length }>
+							<AdvantagesListItem key={ i18n.advantages.length }>
 								{ i18n.andMore } <Link color="text.primary" href={ optInLinks.readMoreUrl } target="_blank">{ i18n.readMore }</Link>
-							</MainContentListItem>
-						</MainContentList>
+							</AdvantagesListItem>
+						</AdvantagesList>
 					</Box>
 				</Stack>
 
