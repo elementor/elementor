@@ -124,7 +124,7 @@
 	"dependencies": {
 		"@elementor/editor": "0.18.4",
 		"@elementor/editor-app-bar": "0.28.2",
-		"@elementor/editor-canvas": "0.15.1",
+		"@elementor/editor-canvas": "0.15.2",
 		"@elementor/editor-controls": "0.19.1",
 		"@elementor/editor-current-user": "0.3.0",
 		"@elementor/editor-documents": "0.12.1",
@@ -148,7 +148,7 @@
 		"@elementor/schema": "0.1.2",
 		"@elementor/session": "0.1.0",
 		"@elementor/store": "0.9.0",
-		"@elementor/twing": "0.0.1",
+		"@elementor/twing": "0.0.2",
 		"@elementor/ui": "1.32.1",
 		"@elementor/utils": "0.4.0",
 		"@elementor/wp-media": "0.6.0",

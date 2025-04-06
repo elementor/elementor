@@ -13,6 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @mixin Has_Atomic_Base
  */
 trait Has_Template {
+
+	public function get_initial_config() {
+		$config = parent::get_initial_config();
+
+		$config['twig_main_template'] = $this->get_main_template();
+		$config['twig_templates'] = $this->get_templates_contents();
+
+		return $config;
+	}
+
 	protected function render() {
 		try {
 			$renderer = Template_Renderer::instance();
