@@ -102,10 +102,9 @@ export const Terms = ( { onClose, onSubmit, isEnrolled, ...props } ) => {
 							) ) }
 						</ContentList>
 					</Stack>
-					<Stack direction="row" alignItems="center">
+					<Stack direction="row" alignItems="center" onClick={ handleCheckboxChange } sx={ { cursor: 'pointer' } }>
 						<Checkbox
 							checked={ !! checked }
-							onClick={ handleCheckboxChange }
 							color="secondary"
 							size="small"
 						/>
