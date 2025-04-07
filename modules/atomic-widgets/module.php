@@ -67,7 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'atomic_widgets';
+	const EXPERIMENT_NAME = 'e_atomic_elements';
 
 	const PACKAGES = [
 		'editor-canvas',
