@@ -107,12 +107,24 @@ export default class ElementRegressionHelper {
 		} else {
 			page = this.editor.getPreviewFrame();
 			await this.setResponsiveMode( args.device );
+
 			await this.page.evaluate( () => {
-				const iframe = document.getElementById( 'elementor-preview-iframe' );
-				iframe.style.height = '3000px';
+				const iframe = document.getElementById( 'elementor-preview-iframe' ) as HTMLIFrameElement;
+				if ( iframe && iframe.contentWindow && iframe.contentDocument ) {
+					const container = iframe.contentDocument.querySelector( EditorSelectors.container );
+					if ( container ) {
+						const containerHeight = container.scrollHeight;
+						iframe.style.height = containerHeight + 'px';
+					}
+				}
 			} );
-			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
-				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
+
+			await expect.soft(
+				page.locator( EditorSelectors.container + ' >> nth=0' ),
+			).toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, {
+				maxDiffPixels: 200,
+				timeout: 10000,
+			} );
 		}
 	}
 }
