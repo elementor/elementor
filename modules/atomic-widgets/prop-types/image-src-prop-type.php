@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Plugin;
+use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -34,5 +35,19 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 		$only_one_key = count( array_filter( $value ) ) === 1;
 
 		return $only_one_key && parent::validate_value( $value );
+	}
+
+	public function sanitize_value( $value ) {
+		if ( ! Plugin::$instance->wp->wp_attachment_is_image( $value['id'] && ! $value['url']['$value'] ) ) {
+			return [
+				'id' => null,
+				'url' => [
+					'$$type' => 'url',
+					'value' => Placeholder_Image::get_placeholder_image()
+				],
+			];
+		};
+		
+		return $value;
 	}
 }
