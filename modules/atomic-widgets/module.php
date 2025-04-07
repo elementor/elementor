@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
@@ -145,6 +146,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Paragraph() );
 		$widgets_manager->register( new Atomic_Svg() );
 		$widgets_manager->register( new Atomic_Button() );
+		$widgets_manager->register( new Atomic_Divider() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {

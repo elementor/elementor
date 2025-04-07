@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,6 +23,19 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
 		$this->editor_settings = $data['editor_settings'] ?? [];
+	}
+
+	public static function add_common_props(): array {
+		return [
+			'css-id' => String_Prop_Type::make(),
+		];
+	}
+
+	public static function add_common_controls(): array {
+		return [
+			Text_Control::bind_to( 'css-id' )
+				->set_label( __( 'CSS ID', 'elementor' ) ),
+		];
 	}
 
 	abstract protected function define_atomic_controls(): array;
