@@ -306,7 +306,6 @@ class DB {
 
 				$processed_posts++;
 			}
-
 		}
 	}
 
