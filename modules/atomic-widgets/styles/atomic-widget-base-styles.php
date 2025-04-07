@@ -13,6 +13,12 @@ class Atomic_Widget_Base_Styles {
 	}
 
 	private function inject_elements_base_styles( Post_CSS $post ) {
+		$flag = true;
+
+		if ( ! $flag ) {
+			return;
+		}
+		
 		if ( ! Plugin::$instance->kits_manager->is_kit( $post->get_post_id() ) ) {
 			return;
 		}
