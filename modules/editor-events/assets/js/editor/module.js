@@ -28,7 +28,7 @@ export default class extends elementorModules.Module {
 					// 		// Then identify as the user
 				// mixpanel.reset();
 
-				console.log('Identifying as:', currentId,userId );
+				// console.log('Identifying as:', currentId,userId );
 
 				mixpanel.identify( userId );
 
