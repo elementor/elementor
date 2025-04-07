@@ -13,7 +13,7 @@ class Atomic_Widget_Styles {
 	}
 
 	private function parse_element_style( Post_CSS $post, Element_Base $element ) {
-		if ( ! Utils::is_atomic( $element ) || $post instanceof Post_CSS ) {
+		if ( ! Utils::is_atomic( $element ) || ! $post instanceof Post_CSS ) {
 			return;
 		}
 
