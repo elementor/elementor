@@ -88,6 +88,14 @@ $remote-templates-items-space: 30px;
 
 #elementor-template-library-templates {
 
+	.toolbar-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 2%;
+		margin-top: 10px;
+	}
+
 	#elementor-template-library-templates-container {
 		display: flex;
 		flex-wrap: wrap;
@@ -102,7 +110,8 @@ $remote-templates-items-space: 30px;
 		}
 	}
 
-	&[data-template-source="cloud"] {
+	&[data-template-source="cloud"],
+	&[data-template-source="empty"] {
 		.toolbar-container {
 			&:has(.bulk-selection-action-bar:not([style*="display: block"])) {
 				justify-content: flex-end;
@@ -123,7 +132,7 @@ $remote-templates-items-space: 30px;
 			}
 
 			.progress-bar-container {
-				width: 250px;
+				width: 200px;
 				margin: 5px 10px 0 10px;
 				align-self: center;
 				text-align: start;
@@ -190,14 +199,6 @@ $remote-templates-items-space: 30px;
 					color: var(--e-a-color-txt-active);
 				}
 			}
-		}
-
-		.toolbar-container {
-			display: flex;
-			justify-content: space-between;
-			align-items: baseline;
-			gap: 2%;
-			margin-top: 10px;
 		}
 	}
 
