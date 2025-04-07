@@ -38,7 +38,11 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 	}
 
 	public function sanitize_value( $value ) {
-		if ( ! Plugin::$instance->wp->wp_attachment_is_image( $value['id'] && ! $value['url']['$value'] ) ) {
+		$url = $value['url']['value'];
+		$attachment_id = $value['id']['value'];
+		$is_attachment_id_valid = Plugin::$instance->wp->wp_attachment_is_image( $attachment_id );
+
+		if ( ! $is_attachment_id_valid && ! $url ) {
 			return [
 				'id' => null,
 				'url' => [
