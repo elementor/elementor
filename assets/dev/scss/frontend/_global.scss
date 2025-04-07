@@ -291,7 +291,8 @@
 	}
 }
 
-.e-heading-base a, .e-paragraph-base a {
+.elementor-widget-e-heading .e-heading-base a,
+.elementor-widget-e-paragraph .e-paragraph-base a {
 	color: unset;
 	font-family: unset;
 	font-size: unset;
