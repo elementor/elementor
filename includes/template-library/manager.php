@@ -973,7 +973,7 @@ class Manager {
 			'bulk_delete_templates',
 			'bulk_copy_templates',
 			'bulk_undo_delete_items',
-			'get_templates_quota',
+			'get_quota',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
@@ -1263,7 +1263,7 @@ class Manager {
 		return $source->save_bulk_items( $bulk_args );
 	}
 
-	public function get_templates_quota( array $args ) {
+	public function get_quota( array $args ) {
 		$validate_args = $this->ensure_args( [ 'source' ], $args );
 
 		if ( is_wp_error( $validate_args ) ) {
