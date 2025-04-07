@@ -96,7 +96,7 @@ class Library extends Common_App {
 	public function extract_user_id() {
 		$token = $this->get( 'access_token' );
 
-		if ( !is_string( $token ) || empty( $token ) ) {
+		if ( ! is_string( $token ) || empty( $token ) ) {
 			return false;
 		}
 
@@ -107,22 +107,22 @@ class Library extends Common_App {
 		}
 
 		try {
-			$payload_encoded = $parts[ 1 ];
+			$payload_encoded = $parts[1];
 
 			$payload_encoded = str_pad( $payload_encoded, strlen( $payload_encoded ) + ( 4 - strlen( $payload_encoded ) % 4 ) % 4, '=' );
 
-			$payload_json = base64_decode( strtr ( $payload_encoded, '-_', '+/' ), true );
+			$payload_json = base64_decode( strtr( $payload_encoded, '-_', '+/' ), true );
 
 			$payload = json_decode( $payload_json, true );
 
-			if ( $payload === null ) {
+			if ( null === $payload ) {
 				return false;
 			}
 
 			return $payload['sub'];
 
 		} catch ( Exception $e ) {
-			error_log( 'JWT Decoding Error: ' . $e -> getMessage() );
+			error_log( 'JWT Decoding Error: ' .$e -> getMessage() );
 			return false;
 		}
 	}

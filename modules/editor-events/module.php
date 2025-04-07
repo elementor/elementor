@@ -59,12 +59,12 @@ class Module extends BaseModule {
 		}
 
 		$license_data = get_option( '_elementor_pro_license_v2_data' );
-		if ( $license_data && isset( $license_data[ 'value' ] ) ) {
-			$license_info = json_decode( $license_data[ 'value' ], true );
+		if ( $license_data && isset( $license_data['value'] ) ) {
+			$license_info = json_decode( $license_data['value'], true );
 
-			if ( isset( $license_info[ 'subscription_id' ] ) ) {
+			if ( isset( $license_info['subscription_id'] ) ) {
 
-				$subscription_id = $license_info[ 'subscription_id' ];
+				$subscription_id = $license_info['subscription_id'];
 
 				return $subscription_id;
 			} else {
