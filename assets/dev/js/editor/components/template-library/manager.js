@@ -67,6 +67,8 @@ const TemplateLibraryManager = function() {
 							}
 						},
 					} );
+
+					self.triggerQuotaUpdate();
 				},
 				error( errorData ) {
 					self.showErrorDialog( errorData );
@@ -271,7 +273,7 @@ const TemplateLibraryManager = function() {
 					template_id: templateId,
 				},
 				success( response ) {
-					templatesCollection.remove( templateModel, { silent: true } );
+					templatesCollection.remove( templateModel );
 
 					if ( 'cloud' === source ) {
 						self.addLastRemovedItems( [ templateId ] );
@@ -280,6 +282,10 @@ const TemplateLibraryManager = function() {
 					if ( options.onSuccess ) {
 						options.onSuccess( response );
 					}
+
+					self.layout.updateViewCollection( templatesCollection.models );
+
+					self.triggerQuotaUpdate();
 				},
 			} );
 		};
@@ -538,6 +544,8 @@ const TemplateLibraryManager = function() {
 				self.addLastRemovedItems( [ templateId ] );
 				templatesCollection.remove( templateModel, { silent: true } );
 				options.onSuccess?.( response );
+
+				this.triggerQuotaUpdate();
 			},
 		} );
 	};
@@ -979,12 +987,13 @@ const TemplateLibraryManager = function() {
 			return true;
 		}
 
-		return ! elementor.helpers.hasPro() || ! this.hasCloudLibraryQuota();
+		return ! this.hasCloudLibraryQuota();
 	};
 
 	this.hasCloudLibraryQuota = function() {
-		return undefined !== elementorAppConfig[ 'cloud-library' ].quota &&
-			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold;
+		return 'undefined' !== typeof elementorAppConfig[ 'cloud-library' ]?.quota &&
+			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold &&
+			elementor.helpers.hasPro();
 	};
 
 	this.addBulkSelectionItem = function( templateId ) {
@@ -1059,6 +1068,8 @@ const TemplateLibraryManager = function() {
 							buttons,
 						} );
 
+						this.triggerQuotaUpdate();
+
 						resolve();
 					},
 					error: ( error ) => {
@@ -1105,6 +1116,8 @@ const TemplateLibraryManager = function() {
 
 					this.clearLastRemovedItems();
 
+					this.triggerQuotaUpdate();
+
 					resolve();
 				},
 				error: ( error ) => {
@@ -1120,6 +1133,10 @@ const TemplateLibraryManager = function() {
 
 			elementorCommon.ajax.addRequest( 'bulk_undo_delete_items', ajaxOptions );
 		} );
+	};
+
+	this.triggerQuotaUpdate = function() {
+		elementor.channels.templates.trigger( 'quota:update' );
 	};
 };
 
