@@ -64,7 +64,7 @@ class Library extends Common_App {
 
 		/** @var ConnectModule $connect */
 		$connect = Plugin::$instance->common->get_component( 'connect' );
-		$user_id = $this->extract_user_id();
+		$user_id = $this->get_user_id();
 
 		return array_replace_recursive( $settings, [
 			'library_connect' => [
@@ -93,11 +93,11 @@ class Library extends Common_App {
 		$ajax_manager->register_ajax_action( 'library_connect_popup_seen', [ $this, 'library_connect_popup_seen' ] );
 	}
 
-	public function extract_user_id() {
+	private function get_user_id() {
 		$token = $this->get( 'access_token' );
 
-		if ( ! is_string( $token ) || empty( $token ) ) {
-			return false;
+		if ( ! is_string( $token ) ) {
+			return null;
 		}
 
 		$parts = explode( '.', $token );
@@ -120,7 +120,6 @@ class Library extends Common_App {
 			}
 
 			return $payload['sub'];
-
 		} catch ( Exception $e ) {
 			error_log( 'JWT Decoding Error: ' . $e->getMessage() );
 			return false;

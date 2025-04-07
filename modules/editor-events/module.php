@@ -52,14 +52,14 @@ class Module extends BaseModule {
 		];
 	}
 
-	public static function get_subscription_id() {
+	private static function get_subscription_id() {
 		if ( ! Utils::has_pro() ) {
 
 			return null;
 		}
 
 		$license_data = get_option( '_elementor_pro_license_v2_data' );
-		if ( $license_data && isset( $license_data['value'] ) ) {
+		if ( isset( $license_data['value'] ) ) {
 			$license_info = json_decode( $license_data['value'], true );
 
 			if ( isset( $license_info['subscription_id'] ) ) {
@@ -67,11 +67,9 @@ class Module extends BaseModule {
 				$subscription_id = $license_info['subscription_id'];
 
 				return $subscription_id;
-			} else {
-				return null;
 			}
-		} else {
-			return null;
 		}
+
+		return null;
 	}
 }
