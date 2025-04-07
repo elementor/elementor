@@ -66,11 +66,10 @@ class Module extends BaseModule {
 	private function register_experiment() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => $this->get_name(),
-			'title' => esc_html__( 'Cloud Library', 'elementor' ),
-			'description' => esc_html__( 'Enable Cloud Library.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_DEV,
-			'default' => ExperimentsManager::STATE_INACTIVE,
-			'hidden' => true,
+			'title' => esc_html__( 'Cloud Templates', 'elementor' ),
+			'description' => esc_html__( 'Enable Cloud Templates.', 'elementor' ),
+			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
+			'default' => ExperimentsManager::STATE_ACTIVE,
 		] );
 	}
 
