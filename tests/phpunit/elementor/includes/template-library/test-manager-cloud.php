@@ -1050,21 +1050,21 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
 	}
 
-	public function test_get_quota() {
+	public function test_get_templates_quota() {
 		// Assert
 		$this->cloud_library_app_mock
 			->expects( $this->once() )
 			->method( 'get_quota' );
 
 		// Act
-		$this->manager->get_quota( [
+		$this->manager->get_templates_quota( [
 			'source' => 'cloud',
 		] );
 	}
 
-	public function test_get_quota_fails_without_source() {
+	public function test_get_templates_quota_fails_without_source() {
 		// Act
-		$result = $this->manager->get_quota( [] );
+		$result = $this->manager->get_templates_quota( [] );
 
 		// Assert
 		$this->assertWPError( $result );
