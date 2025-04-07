@@ -110,7 +110,6 @@ export default class ElementRegressionHelper {
 			await this.page.evaluate( () => {
 				const wrapper = document.getElementById( 'elementor-preview-responsive-wrapper' );
 				wrapper.style.overflow = 'visible';
-				wrapper.style.maxHeight = 'none';
 			} );
 			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
