@@ -8,10 +8,10 @@ import {
 	Chip,
 	Link,
 } from '@elementor/ui';
-import { AlertTriangleFilledIcon } from '@elementor/icons';
+import { AlertTriangleIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { TextNode, ContentList, ContentListItem } from './opt-in-content';
+import { TextNode, AdvantagesList, AdvantagesListItem } from './opt-in-content';
 import { ImageSquarePlaceholder, ImageLandscapePlaceholder } from './opt-in-img-placeholders';
 import { Message } from './opt-in-message';
 import { triggerOptIn, triggerOptOut } from './opt-in-api';
@@ -43,7 +43,6 @@ const i18n = {
 	andMore: __( 'And much more!', 'elementor' ),
 	readMore: __( 'Learn more', 'elementor' ),
 
-	warningHeader: __( 'Keep in mind:', 'elementor' ),
 	warning: __( 'Editor V4 is still in alpha and should not be used on live sites yet.', 'elementor' ),
 
 	feedback: __( 'We’d love your feedback!', 'elementor' ),
@@ -72,8 +71,28 @@ const optInLinks = {
 };
 
 const optInImages = {
-	squareSrc: 'https://assets.elementor.com/v4-promotion/v1/images/v4_opt_in_500.png',
-	landscapeSrc: 'https://assets.elementor.com/v4-promotion/v1/images/v4_opt_in_260.png',
+	square: {
+		src: 'https://assets.elementor.com/v4-promotion/v1/images/v4_opt_in_500.png',
+		sx: {
+			width: '100%',
+			maxHeight: '507px',
+			maxWidth: 'sm',
+			height: 'auto',
+			mx: 'auto',
+			borderRadius: 2,
+		},
+	},
+	landscape: {
+		src: 'https://assets.elementor.com/v4-promotion/v1/images/v4_opt_in_260.png',
+		sx: {
+			width: '100%',
+			height: 'auto',
+			maxHeight: '260px',
+			mx: 'auto',
+			maxWidth: 'sm',
+			borderRadius: 2,
+		},
+	},
 };
 
 export const OptIn = ( { state } ) => {
@@ -143,28 +162,27 @@ export const OptIn = ( { state } ) => {
 					<Chip size="small" color="secondary" variant="filled" label={ i18n.chip } />
 				</Stack>
 
-				<Stack direction="column" gap={ 1.5 }>
+				<Stack direction="column" gap={ 3 }>
 					<Box>
 						<TextNode>{ i18n.welcomeText }</TextNode>
-						<TextNode>{ i18n.advantagesHeader }</TextNode>
 					</Box>
 
 					<Box>
-						<ContentList>
+						<TextNode variant="subtitle1" sx={ { mb: 1.5 } }>{ i18n.advantagesHeader }</TextNode>
+						<AdvantagesList>
 							{ i18n.advantages.map( ( entry, i ) => (
-								<ContentListItem key={ i }>{ entry }</ContentListItem>
+								<AdvantagesListItem key={ i }>{ entry }</AdvantagesListItem>
 							) ) }
-							<ContentListItem key="e-0">
+							<AdvantagesListItem key={ i18n.advantages.length }>
 								{ i18n.andMore } <Link color="text.primary" href={ optInLinks.readMoreUrl } target="_blank">{ i18n.readMore }</Link>
-							</ContentListItem>
-						</ContentList>
+							</AdvantagesListItem>
+						</AdvantagesList>
 					</Box>
 				</Stack>
 
-				<Stack direction="row" alignItems="self-start" gap={ 1 }>
-					<AlertTriangleFilledIcon color="action" />
+				<Stack direction="row" alignItems="self-start" gap={ 0.5 } sx={ { mb: 2.5 } }>
+					<AlertTriangleIcon color="action" />
 					<Box>
-						<TextNode>{ i18n.warningHeader }</TextNode>
 						<TextNode>{ i18n.warning }</TextNode>
 					</Box>
 				</Stack>
@@ -213,44 +231,33 @@ export const OptIn = ( { state } ) => {
 			</Stack>
 
 			<Stack sx={ { flex: 1, px: 0, maxWidth: { md: '507px', sm: '600px' }, mx: 'auto' } }>
-				{ optInImages.squareSrc ? (
+				{ optInImages.square.src ? (
 					<Image
-						src={ optInImages.squareSrc }
+						src={ optInImages.square.src }
 						alt={ i18n.image }
 						sx={ {
+							...optInImages.square.sx,
 							display: { xs: 'none', md: 'block' },
-							width: '100%',
-							maxHeight: '507px',
 						} } />
 				) : (
 					<ImageSquarePlaceholder sx={ {
+						...optInImages.square.sx,
 						display: { xs: 'none', md: 'block' },
-						maxWidth: 'sm',
-						width: '100%',
-						maxHeight: '507px',
-						height: 'auto',
-						mx: 'auto',
 					} } />
 				) }
 
-				{ optInImages.landscapeSrc ? (
+				{ optInImages.landscape.src ? (
 					<Image
-						src={ optInImages.landscapeSrc }
+						src={ optInImages.landscape.src }
 						alt={ i18n.image }
 						sx={ {
+							...optInImages.landscape.sx,
 							display: { xs: 'block', md: 'none' },
-							mx: 'auto',
-							width: '100%',
-							maxWidth: 'sm',
-							maxHeight: '260px',
 						} } />
 				) : (
 					<ImageLandscapePlaceholder sx={ {
+						...optInImages.landscape.sx,
 						display: { xs: 'block', md: 'none' },
-						width: '100%',
-						height: 'auto',
-						maxHeight: '260px',
-						mx: 'auto',
 					} } />
 				) }
 			</Stack>
