@@ -58,6 +58,10 @@ class Module extends Base_Module {
 			}
 		} );
 
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Controls\Promotion_Control() );
 		} );
