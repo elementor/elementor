@@ -15,11 +15,32 @@ class AlphaChipApp {
 				return;
 			}
 
+			this.injectStylesOnce();
+
 			this.appManager.mount( chipElement, {
 				wrapperElement: '.elementor-panel-category-title',
 				reactAnchor: '.e-promotion-react-wrapper',
 			} );
 		} );
+	}
+
+	injectStylesOnce() {
+		const existing = document.getElementById( 'popover-chip-tooltip-style' );
+
+		if ( existing ) {
+			return;
+		}
+
+		const style = document.createElement( 'style' );
+
+		style.id = 'popover-chip-tooltip-style';
+		style.innerHTML = `
+				.e-popover-infotip .MuiTooltip-tooltip {
+					border-radius: 12px;
+				}
+			`;
+
+		document.head.appendChild( style );
 	}
 }
 
