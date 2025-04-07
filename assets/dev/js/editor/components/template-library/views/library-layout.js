@@ -89,9 +89,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	updateViewCollection( models ) {
 		this.modalContent.currentView.collection.reset( models );
-	},
-
-	showNavigationContainer() {
 		this.modalContent.currentView.ui.navigationContainer.html( ( new TemplateLibraryNavigationContainerView() ).render()?.el );
 	},
 

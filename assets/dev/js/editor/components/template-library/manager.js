@@ -974,7 +974,7 @@ const TemplateLibraryManager = function() {
 		self.setViewSelection( selectedView );
 		self.setFilter( viewKey, selectedView, true );
 
-		self.layout.showTemplatesView( new TemplateLibraryCollection( self.filterTemplates() ) );
+		self.layout.updateViewCollection( self.filterTemplates() );
 		self.clearBulkSelectionItems();
 	};
 
