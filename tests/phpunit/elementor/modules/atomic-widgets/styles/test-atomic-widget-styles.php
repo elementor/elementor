@@ -92,61 +92,65 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
 	}
 
-//	public function test_parse_atomic_widget_styles__append_css_to_preview_post() {
-//		// Arrange.
-//		( new Atomic_Widget_Styles() )->register_hooks();
-//		$post = $this->make_mock_preview_post();
-//		$element_1 = $this->make_mock_widget([
-//			'controls' => [],
-//			'props_schema' => [],
-//			'settings' => [],
-//			'styles' => [
-//				[
-//					'id' => 'test-style',
-//					'type' => 'class',
-//					'variants' => [
-//						[
-//							'props' => [
-//								'color' => 'red',
-//								'font-size' => '16px',
-//							],
-//							'meta' => [
-//								'state' => 'hover',
-//							],
-//						],
-//					],
-//				],
-//			],
-//		]);
-//		$element_2 = $this->make_mock_widget([
-//			'controls' => [],
-//			'props_schema' => [],
-//			'settings' => [],
-//			'styles' => [
-//				[
-//					'id' => 'test-style',
-//					'type' => 'class',
-//					'variants' => [
-//						[
-//							'props' => [
-//								'color' => 'blue',
-//								'font-size' => '18px',
-//							],
-//							'meta' => [
-//								'state' => 'active',
-//							],
-//						],
-//					],
-//				],
-//			],
-//		]);
-//
-//		do_action( 'elementor/element/parse_css', $post, $element_1 );
-//		do_action( 'elementor/element/parse_css', $post, $element_2 );
-//
-//		// Assert.
-//		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
-//	}
+	public function test_parse_atomic_widget_styles__append_css_to_preview_post() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+
+		$post = $this->make_mock_preview_post();
+
+		$element_1 = $this->make_mock_widget([
+			'controls' => [],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				[
+					'id' => 'test-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'red',
+								'font-size' => '16px',
+							],
+							'meta' => [
+								'state' => 'hover',
+							],
+						],
+					],
+				],
+			],
+		]);
+
+		$element_2 = $this->make_mock_widget([
+			'controls' => [],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				[
+					'id' => 'test-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'blue',
+								'font-size' => '18px',
+							],
+							'meta' => [
+								'state' => 'active',
+							],
+						],
+					],
+				],
+			],
+		]);
+
+		// Act.
+		do_action( 'elementor/element/parse_css', $post, $element_1 );
+		do_action( 'elementor/element/parse_css', $post, $element_2 );
+
+		// Assert.
+		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
+	}
 
 	public function test_parse_atomic_widget_styles__append_css_of_styles_with_breakpoints() {
 		// Arrange.
