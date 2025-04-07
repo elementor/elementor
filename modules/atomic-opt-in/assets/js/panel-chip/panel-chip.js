@@ -36,7 +36,7 @@ class AlphaChipApp {
 		style.id = 'popover-chip-tooltip-style';
 		style.innerHTML = `
 				.e-popover-infotip .MuiTooltip-tooltip {
-					border-radius: 12px;
+					border-radius: 8px;
 				}
 			`;
 
