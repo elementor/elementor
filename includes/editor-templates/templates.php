@@ -153,7 +153,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span class="bulk-delete"><i class="eicon-trash-o"></i></span>
 				</div>
 			<?php endif; ?>
-            <div id="elementor-template-library-navigation-container"></div>
+			<div id="elementor-template-library-navigation-container"></div>
 
 			<# if ( 'cloud' === activeSource ) { #>
 				<div class="quota-progress-container">
