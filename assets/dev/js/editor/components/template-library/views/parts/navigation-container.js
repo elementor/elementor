@@ -12,6 +12,16 @@ module.exports = Marionette.ItemView.extend( {
 		'click @ui.backButton': 'onBackButtonClick',
 	},
 
+	initialize() {
+		this.shouldRender = elementor.templates.getFilter( 'parent_id' ) !== null;
+	},
+
+	onBeforeRender() {
+		if ( ! this.shouldRender ) {
+			return false;
+		}
+	},
+
 	onRender() {
 		this.ui.title.text( elementor.templates.getFilter( 'parent_title' ) );
 	},
