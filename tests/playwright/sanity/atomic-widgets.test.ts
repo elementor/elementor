@@ -50,6 +50,21 @@ test.describe( 'Atomic Widgets', () => {
 		} );
 	} );
 
+	test( 'Check if the empty placeholder is displayed inside the Heading atom', async ( { page } ) => {
+		await editor.addWidget( 'e-heading' );
+		const titleControl = page.getByPlaceholder( 'Type your title here' );
+		await titleControl.fill( '' );
+		await editor.page.waitForLoadState( 'domcontentloaded' );
+		await page.waitForTimeout( 500 );
+		await editor.getPreviewFrame().locator( '.elementor-widget .elementor-widget-empty-icon' ).waitFor();
+
+		const emptyViewPlaceholder = editor.getPreviewFrame().locator( '.elementor-widget-e-heading .elementor-widget-empty-icon' );
+
+		// Assert.
+		expect( await emptyViewPlaceholder.count() ).toBe( 1 );
+		await expect( emptyViewPlaceholder ).toHaveCSS( 'background-color', 'red' );
+	} );
+
 	test.skip( 'Widgets are displayed in front end', async () => {
 		await editor.publishAndViewPage();
 		await editor.page.setViewportSize( { width: 1920, height: 1080 } );
