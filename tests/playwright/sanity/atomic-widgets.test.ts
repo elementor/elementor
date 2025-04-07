@@ -52,13 +52,11 @@ test.describe( 'Atomic Widgets', () => {
 
 	test( 'Check if the empty placeholder is displayed inside the Heading atom', async ( { page } ) => {
 		await editor.addWidget( 'e-heading' );
-		const titleControl = page.getByPlaceholder( 'Type your title here' );
-		await titleControl.fill( '' );
-		await editor.page.waitForLoadState( 'domcontentloaded' );
+		await page.fill( 'textarea[placeholder="Type your title here"]', '' );
 		await page.waitForTimeout( 500 );
-		await editor.getPreviewFrame().locator( '.elementor-widget .elementor-widget-empty-icon' ).waitFor();
 
-		const emptyViewPlaceholder = editor.getPreviewFrame().locator( '.elementor-widget-e-heading .elementor-widget-empty-icon' );
+		const emptyViewPlaceholder = editor.getPreviewFrame().locator( '.elementor-widget .elementor-widget-empty-icon' );
+		await emptyViewPlaceholder.waitFor();
 
 		// Assert.
 		expect( await emptyViewPlaceholder.count() ).toBe( 1 );
