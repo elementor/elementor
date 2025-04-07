@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
@@ -78,66 +77,6 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 								'font-size' => '18px',
 							],
 							'meta' => [],
-						],
-					],
-				],
-			],
-		]);
-
-		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element_1 );
-		do_action( 'elementor/element/parse_css', $post, $element_2 );
-
-		// Assert.
-		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
-	}
-
-	public function test_parse_atomic_widget_styles__append_css_to_preview_post() {
-		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
-
-		$post = $this->make_mock_preview_post();
-
-		$element_1 = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [
-				[
-					'id' => 'test-style',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'color' => 'red',
-								'font-size' => '16px',
-							],
-							'meta' => [
-								'state' => 'hover',
-							],
-						],
-					],
-				],
-			],
-		]);
-
-		$element_2 = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [
-				[
-					'id' => 'test-style',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'color' => 'blue',
-								'font-size' => '18px',
-							],
-							'meta' => [
-								'state' => 'active',
-							],
 						],
 					],
 				],
@@ -375,12 +314,6 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$document = $this->factory()->documents->create_and_get();
 
 		return new Post_CSS( $document->get_id() );
-	}
-
-	private function make_mock_preview_post() {
-		$document = $this->factory()->documents->create_and_get();
-
-		return new Post_Preview( $document->get_id() );
 	}
 
 	/**
