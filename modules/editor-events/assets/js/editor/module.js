@@ -1,23 +1,22 @@
 import eventsConfig from './events-config';
 import mixpanel from 'mixpanel-browser';
-import Event from './event';
 
 export default class extends elementorModules.Module {
 	onInit() {
 		this.config = eventsConfig;
 
 		if ( elementor.config.editor_events?.can_send_events ) {
-			mixpanel.init( elementor.config.editor_events?.token, { persistence: 'localStorage', debug: true  } );
+			mixpanel.init( elementor.config.editor_events?.token, { persistence: 'localStorage' } );
 
 			const userId = elementorCommon.config.library_connect?.user_id;
 
 			if ( userId ) {
-				const currentId = mixpanel.get_distinct_id();
-
-				if (currentId !== userId) {
-					console.log("Aliasing:", currentId, "→", userId);
-					// mixpanel.alias(userId, currentId);
-				}
+				// const currentId = mixpanel.get_distinct_id();
+				//
+				// if (currentId !== userId) {
+				// 	console.log("Aliasing:", currentId, "→", userId);
+				// 	mixpanel.alias(userId, currentId);
+				// }
 				//
 				// console.log('passed check');
 				// const currentId = mixpanel.get_distinct_id();
@@ -31,32 +30,23 @@ export default class extends elementorModules.Module {
 
 				console.log('Identifying as:', currentId,userId );
 
-				// mixpanel.register_once({ distinct_id: userId })
-
 				mixpanel.identify( userId );
 
+				//register_once?
 				mixpanel.register( {
 						'appType': 'Editor',
 					} );
 
-					//maybe use set_once, since then if profile already exists and can be rewritten, it won;t be called
-				// Verify the identification worked
 				const newId = mixpanel.get_distinct_id();
 				console.log('New distinct ID after identify:', newId);
 				console.log('Setting People properties');
 
-
 				mixpanel.people.set_once( userId, {
-						// $distinct_id: userId,
-						// $user_id: userId,
-						$name: elementorCommon.config.library_connect?.user_name || 'Unknown',
-						$email: elementorCommon.config.library_connect?.user_email || 'Unknown',
+						$name: 'Unknown',
 						$last_login: new Date().toISOString()
 					} );
 				}
 			}
-
-
 	}
 
 
@@ -65,6 +55,7 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
+		// move to register
 		const eventData = {
 			user_id: elementorCommon.config.library_connect?.user_id || null,
 			subscription_id: elementor.config.editor_events?.subscription_id || null,
@@ -81,7 +72,6 @@ export default class extends elementorModules.Module {
 				...eventData,
 				data
 			}
-
 		);
 	}
 }

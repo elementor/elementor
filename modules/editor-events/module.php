@@ -4,8 +4,6 @@ namespace Elementor\Modules\EditorEvents;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
-use Elementor\Core\Common\Modules\Connect\Apps\Library;
-
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Utils;
 use Elementor\Plugin;
@@ -55,19 +53,19 @@ class Module extends BaseModule {
 	}
 
 	public static function get_subscription_id() {
-		if (!Utils::has_pro()) {
-			var_dump('im in first if');
+		if ( ! Utils::has_pro() ) {
+
 			return null;
 		}
 
-		$license_data = get_option('_elementor_pro_license_v2_data');
-		var_dump($license_data);
-		if ($license_data && isset($license_data['value'])) {
-			var_dump('im in secibd if');
-			$license_info = json_decode($license_data['value'], true);
-			if (isset($license_info['subscription_id'])) {
-				var_dump('im in third if');
-				$subscription_id = $license_info['subscription_id'];
+		$license_data = get_option( '_elementor_pro_license_v2_data' );
+		if ( $license_data && isset( $license_data[ 'value' ] ) ) {
+			$license_info = json_decode( $license_data[ 'value' ], true );
+
+			if ( isset( $license_info[ 'subscription_id' ] ) ) {
+
+				$subscription_id = $license_info[ 'subscription_id' ];
+
 				return $subscription_id;
 			} else {
 				return null;
