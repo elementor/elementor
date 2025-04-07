@@ -25,8 +25,7 @@ class Style_Schema {
 
 	private function update( $node ) {
 		if ( $node instanceof Color_Prop_Type ) {
-			return Union_Prop_Type::create_from( $node )
-				->add_prop_type( Color_Variable_Prop_Type::make() );
+			return $this->update_color( $node );
 		}
 
 		if ( $node instanceof Union_Prop_Type ) {
@@ -42,6 +41,11 @@ class Style_Schema {
 		}
 
 		return $node;
+	}
+
+	private function update_color( Color_Prop_Type $node ) {
+		return Union_Prop_Type::create_from( $node )
+			->add_prop_type( Color_Variable_Prop_Type::make() );
 	}
 
 	private function update_array( Array_Prop_Type $node ) {
