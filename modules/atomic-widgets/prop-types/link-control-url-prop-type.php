@@ -13,12 +13,8 @@ class Link_Control_Url_Prop_Type extends Plain_Prop_Type {
 		return 'url';
 	}
 
-	public static function validate_url( $value ): bool {
-		return true;
-	}
-
 	protected function validate_value( $value ): bool {
-		return self::validate_url( $value );
+		return true;
 	}
 
 	protected function sanitize_value( $value ) {

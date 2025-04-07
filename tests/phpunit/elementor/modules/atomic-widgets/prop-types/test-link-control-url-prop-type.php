@@ -15,8 +15,11 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 	 *	@dataProvider urls_provider
 	 */
 	public function test_validate( $url ) {
+		// Arrange.
+		$prop_type = new Link_Control_Url_Prop_Type();
+
 		// Act.
-		$result = Link_Control_Url_Prop_Type::validate_url( $url );
+		$result = $prop_type->validate( [ '$$type' => 'url', 'value' => $url ] );
 
 		// Assert.
 		$this->assertTrue( $result );
