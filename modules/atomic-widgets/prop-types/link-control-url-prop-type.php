@@ -24,6 +24,6 @@ class Link_Control_Url_Prop_Type extends Plain_Prop_Type {
 	protected function sanitize_value( $value ) {
 		$url = trim( $value );
 
-		return filter_var( $url, FILTER_SANITIZE_URL );
+		return htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
 	}
 }
