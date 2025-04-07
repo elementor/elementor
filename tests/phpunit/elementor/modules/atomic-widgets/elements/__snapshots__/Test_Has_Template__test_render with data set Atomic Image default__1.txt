@@ -1,5 +1,0 @@
-			<img class=""
-						id="123"
-								url="https://example.com/image.jpg"
-			/>
-		
