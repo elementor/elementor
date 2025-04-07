@@ -111,7 +111,7 @@ export default class ElementRegressionHelper {
 			await this.page.evaluate( () => {
 				const iframe = document.getElementById( 'elementor-preview-iframe' ) as HTMLIFrameElement;
 				if ( iframe && iframe.contentWindow && iframe.contentDocument ) {
-					const container = iframe.contentDocument.querySelector( EditorSelectors.container );
+					const container = iframe.contentDocument.querySelector( '[data-element_type="container"]' );
 					if ( container ) {
 						const containerHeight = container.scrollHeight;
 						iframe.style.height = containerHeight + 'px';
