@@ -143,16 +143,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 	<# if ( 'local' === activeSource || 'cloud' === activeSource ) { #>
-		<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
-		<div class="bulk-selection-action-bar">
-			<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
-			<span class="selected-count"></span>
-			<span class="bulk-export"><i class="eicon-file-download"></i></span>
-			<span class="bulk-copy"><i class="eicon-copy"></i></span>
-			<span class="bulk-move"><i class="eicon-folder-o"></i></span>
-			<span class="bulk-delete"><i class="eicon-trash-o"></i></span>
+		<div class="toolbar-container">
+			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
+				<div class="bulk-selection-action-bar">
+					<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
+					<span class="selected-count"></span>
+					<span class="bulk-export"><i class="eicon-file-download"></i></span>
+					<span class="bulk-copy"><i class="eicon-copy"></i></span>
+					<span class="bulk-move"><i class="eicon-folder-o"></i></span>
+					<span class="bulk-delete"><i class="eicon-trash-o"></i></span>
+				</div>
+			<?php endif; ?>
+
+			<# if ( 'cloud' === activeSource ) { #>
+				<div class="quota-progress-container">
+					<span class="quota-progress-info">
+						<?php echo esc_html__( 'Usage', 'elementor' ); ?>
+						<i class="eicon-info-circle-o tooltip-target" aria-hidden="true" data-tooltip="Back"></i>
+					</span>
+					<div class="progress-bar-container">
+						<div class="quota-progress-bar quota-progress-bar-normal">
+							<div class="quota-progress-bar-fill"></div>
+						</div>
+						<span class="quota-warning"></span>
+					</div>
+					<div class="quota-progress-bar-value"></div>
+				</div>
+			<# } #>
 		</div>
-		<?php endif; ?>
 		<div id="elementor-template-library-order-toolbar-local">
 			<div class="elementor-template-library-local-column-1">
 				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
@@ -241,7 +259,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-template-library-template-meta elementor-template-library-template-author elementor-template-library-local-column-3">{{{ author }}}</div>
 		<div class="elementor-template-library-template-meta elementor-template-library-template-date elementor-template-library-local-column-4">{{{ human_date }}}</div>
 		<div class="elementor-template-library-template-controls elementor-template-library-local-column-5">
-		<div class="elementor-template-library-template-preview elementor-button e-btn-txt">
+		<#
+			const previewClass = typeof subType !== 'undefined' && 'FOLDER' !== subType
+				? 'elementor-hidden'
+				: '';
+		#>
+		<div class="elementor-template-library-template-preview elementor-button e-btn-txt {{{previewClass}}}">
 		<#
 			const actionText = typeof subType === 'undefined' || 'FOLDER' !== subType
 				? '<?php echo esc_html__( 'Preview', 'elementor' ); ?>'
@@ -262,7 +285,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<div class="elementor-template-library-template-more">
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
-				<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
+				<# if ( ( typeof subType === 'undefined' || 'FOLDER' !== subType ) && elementor.templates.hasCloudLibraryQuota() ) { #>
 					<div class="elementor-template-library-template-move">
 						<i class="eicon-folder" aria-hidden="true"></i>
 						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
@@ -329,9 +352,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			#>
 			<div class="elementor-template-library-template-thumbnail">
 				<img src="{{{ imageSource }}}"/>
-				<div class="elementor-template-library-template-preview">
-					<i class="eicon-preview-medium" aria-hidden="true"></i>
-				</div>
+				<div class="elementor-template-library-template-preview"></div>
 			</div>
 			<div class="elementor-template-library-card-footer">
 				<div class="elementor-template-library-template-name">
