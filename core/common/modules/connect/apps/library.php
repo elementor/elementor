@@ -122,7 +122,7 @@ class Library extends Common_App {
 			return $payload['sub'];
 
 		} catch ( Exception $e ) {
-			error_log( 'JWT Decoding Error: ' .$e -> getMessage() );
+			error_log( 'JWT Decoding Error: ' . $e->getMessage() );
 			return false;
 		}
 	}
