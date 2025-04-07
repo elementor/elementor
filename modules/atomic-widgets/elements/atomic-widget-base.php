@@ -13,12 +13,14 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
+	protected $editor_settings = [];
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
+		$this->editor_settings = $data['editor_settings'] ?? [];
 	}
 
 	abstract protected function define_atomic_controls(): array;
