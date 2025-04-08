@@ -494,6 +494,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		];
 
+		$widget_editor_settings = [
+			'title' => 'My Custom Title',
+		];
+
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
 				'string_prop' => String_Prop_Type::make()->default( '' ),
@@ -509,6 +513,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				'not_in_schema' => [ '$$type' => 'string', 'value' => 'not-in-schema' ],
 				'not_a_prop_type' => [ '$$type' => 'string', 'value' => 'not-a-prop-type' ],
 			],
+			'editor_settings' => $widget_editor_settings,
 			'styles' => $widget_styles
 		] );
 
@@ -521,6 +526,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
 			'boolean_prop' => [ '$$type' => 'boolean', 'value' => true ],
 		], $data_for_save['settings'] );
+
+		$this->assertSame( $widget_editor_settings, $data_for_save['editor_settings'] );
 
 		$this->assertSame( $widget_styles, $data_for_save['styles'] );
 	}
@@ -546,6 +553,38 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'string_prop' => [ '$$type' => 'string', 'value' => 'invalid HTML string' ],
 			'number_prop' => [ '$$type' => 'number', 'value' => 123 ],
 		], $data_for_save['settings'] );
+	}
+
+	public function test_get_data_for_save__sanitize_editor_settings() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'title' => '<b>invalid HTML string</b>',
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'title' => 'invalid HTML string',
+		], $data_for_save['editor_settings'] );
+	}
+
+	public function test_get_data_for_save__removes_editor_settings_on_validation_error() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'title' => 6639,
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [], $data_for_save['editor_settings'] );
 	}
 
 	public function test_get_data_for_save__throws_on_styles_meta_state_validation_error() {
@@ -811,6 +850,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
 					'styles' => $options['styles'] ?? [],
+					'editor_settings' => $options['editor_settings'] ?? [],
 					'elType' => 'widget',
 					'widgetType' => 'test-widget',
 				], [] );
