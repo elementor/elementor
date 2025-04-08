@@ -148,8 +148,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="bulk-selection-action-bar">
 					<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
 					<span class="selected-count"></span>
-					<span class="bulk-copy"><i class="eicon-copy"></i></span>
-					<span class="bulk-move"><i class="eicon-folder-o"></i></span>
+					<# if ( elementor.templates.hasCloudLibraryQuota() ) { #>
+						<span class="bulk-copy"><i class="eicon-copy"></i></span>
+						<span class="bulk-move"><i class="eicon-folder-o"></i></span>
+					<# } #>
 					<span class="bulk-delete"><i class="eicon-trash-o"></i></span>
 				</div>
 			<?php endif; ?>
