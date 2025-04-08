@@ -5,7 +5,7 @@ import {
 	Stack,
 	List,
 	ListItem,
-	Popover, Box, Link, Divider,
+	Box, Link, Divider, Dialog,
 } from '@elementor/ui';
 import { useEffect, useRef, useState } from 'react';
 
@@ -40,16 +40,15 @@ export const WelcomePopover = ( { doClose } ) => {
 	}
 
 	return (
-		<Popover
+		<Dialog
 			open={ Boolean( anchorElRef.current ) }
 			onClose={ doClose }
 			anchorEl={ anchorElRef.current }
 			anchorOrigin={ { vertical: 'center', horizontal: 'center' } }
 			transformOrigin={ { vertical: 'center', horizontal: 'center' } }
-			slotProps={ {
-				paper: {
-					sx: { width: 600 },
-				} } }
+			PaperProps={ {
+				sx: { width: 600, borderRadius: '8px' },
+			} }
 		>
 			<Box sx={ {
 				aspectRatio: '2',
@@ -84,7 +83,7 @@ export const WelcomePopover = ( { doClose } ) => {
 					sx={ { ml: 'auto' } }
 				>{ i18n.closeButton }</Button>
 			</Stack>
-		</Popover>
+		</Dialog>
 	);
 };
 
