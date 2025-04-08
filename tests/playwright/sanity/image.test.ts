@@ -25,7 +25,7 @@ test( 'Image widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	}
 
 	await page.click( '.button.media-button' );
-	await page.waitForLoadState( 'networkidle' );
+	await page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.action } );
 	const img = await editor.getPreviewFrame().waitForSelector( 'img' );
 	const src = await img.getAttribute( 'src' );
 	expect( src ).toContain( '.jpeg' );
