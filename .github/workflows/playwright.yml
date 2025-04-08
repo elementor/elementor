@@ -198,7 +198,7 @@ jobs:
         if: ${{ needs.Playwright.result == 'failure' }}
         uses: actions/checkout@v4
       - name: Map GitHub user to Slack
-        if: ${{ needs.Playwright.result == 'failure' }}
+        #if: ${{ needs.Playwright.result == 'failure' }}
         id: map_user
         uses: elementor/elementor-tests-configuration/.github/actions/map-github-to-slack@main
         with:
@@ -206,7 +206,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Send slack message
-        if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
+        #if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
