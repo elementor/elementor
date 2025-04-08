@@ -7,7 +7,7 @@ export default class Component extends $e.modules.ComponentBase {
 
 	setQuotaConfig() {
 		return new Promise( ( resolve, reject ) => {
-			elementorCommon.ajax.addRequest( 'get_quota', {
+			elementorCommon.ajax.addRequest( 'get_templates_quota', {
 				data: {
 					source: 'cloud',
 				},
