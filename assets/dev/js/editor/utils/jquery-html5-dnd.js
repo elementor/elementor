@@ -178,8 +178,8 @@
 
 		var setSide = function( event ) {
 			const isAtom = currentElement.hasAttribute( 'data-atomic' );
-			const placeholderInsertionTarget = isAtom ? currentElement.firstElementChild : currentElement;
-			const $element = $( placeholderInsertionTarget );
+			const placeholderTarget = isAtom ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement;
+			const $element = $( placeholderTarget );
 			const elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight();
 			const elementWidth = $element.outerWidth();
 
@@ -197,7 +197,7 @@
 				return;
 			}
 
-			const elementPosition = placeholderInsertionTarget.getBoundingClientRect();
+			const elementPosition = placeholderTarget.getBoundingClientRect();
 			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
 
@@ -238,11 +238,16 @@
 				return;
 			}
 
-			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 			const isAtom = currentElement?.hasAttribute( 'data-atomic' );
-			const placeholderInsertionTarget = isAtom ? currentElement.firstElementChild : currentElement;
+			const placeholderTarget = isAtom ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : $currentElement;
 
-			elementsCache.$placeholder[ insertMethod ]( placeholderInsertionTarget );
+			if ( isAtom ) {
+				const insertMethod = 'top' === currentSide ? 'insertBefore' : 'insertAfter';
+				elementsCache.$placeholder[ insertMethod ]( placeholderTarget );
+			} else {
+				const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+				elementsCache.$placeholder[ insertMethod ]( placeholderTarget );
+			}
 		};
 
 		var isDroppingAllowed = function( event ) {
@@ -408,7 +413,7 @@
 		var attachEvents = function() {
 			elementsCache.$element
 				.on( 'dragenter', settings.items, onDragEnter )
-				.on( 'dragover', settings.items, onDragOver )
+				.on( 'dragover', settings.items, onDragEnter )
 				.on( 'drop', settings.items, onDrop )
 				.on( 'dragleave drop', settings.items, onDragLeave );
 		};
