@@ -7,6 +7,7 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	FormControlLabel,
 	Stack,
 } from '@elementor/ui';
 import React, { useState } from 'react';
@@ -102,14 +103,17 @@ export const Terms = ( { onClose, onSubmit, isEnrolled, ...props } ) => {
 							) ) }
 						</ContentList>
 					</Stack>
-					<Stack direction="row" alignItems="center" onClick={ handleCheckboxChange } sx={ { cursor: 'pointer' } }>
-						<Checkbox
-							checked={ !! checked }
-							color="secondary"
-							size="small"
-						/>
-						<TextNode variant="body2">{ i18n.checkboxText }</TextNode>
-					</Stack>
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={ !! checked }
+								onChange={ handleCheckboxChange }
+								color="secondary"
+								size="small"
+							/>
+						}
+						label={ i18n.checkboxText }
+					/>
 				</Stack>
 			</DialogContent>
 
