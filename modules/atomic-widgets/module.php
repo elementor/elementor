@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
@@ -105,6 +106,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/usage/elements/element_title', fn( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
+			add_action( 'elementor/frontend/after_register_scripts', fn() => $this->register_frontend_scripts() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
@@ -241,5 +243,32 @@ class Module extends BaseModule {
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
 		<# } #><?php
+	}
+
+	private function register_frontend_scripts() {
+		$assets_config_provider = ( new Assets_Config_Provider() )
+			->set_path_resolver( function( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
+		$assets_config_provider->load( 'frontend-handlers' );
+
+		$package = $assets_config_provider->get( 'frontend-handlers' );
+
+		wp_register_script(
+			$package['handle'],
+			$this->get_js_assets_url( 'packages/frontend-handlers/frontend-handlers' ),
+			$package['deps'],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'elementor-js-handler-example',
+			$this->get_js_assets_url( 'js-handler-example' ),
+			[ 'elementor-v2-frontend-handlers' ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 }
