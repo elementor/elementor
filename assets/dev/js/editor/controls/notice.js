@@ -5,26 +5,61 @@ module.exports = ControlBaseView.extend( {
 	ui() {
 		const ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
-		ui.button = '.elementor-control-notice-dismiss';
+		ui.action1 = '.e-btn-1';
+		ui.action2 = '.e-btn-2';
+		ui.dismissButton = '.elementor-control-notice-dismiss';
 
 		return ui;
 	},
 
 	events: {
-		'click @ui.button.e-btn-1': 'onButton1Click',
-		'click @ui.button.e-btn-2': 'onButton2Click',
-		'click @ui.button.elementor-control-notice-dismiss': 'onDismissButtonClick',
+		'click @ui.action1': 'onButton1Click',
+		'click @ui.action2': 'onButton2Click',
+		'click @ui.dismissButton': 'onDismissButtonClick',
+	},
+
+	maybeHandleLinkEvent( eventName ) {
+		if ( ! eventName || ! eventName.startsWith( 'openLink#' ) ) {
+			return;
+		}
+
+		let linkOptions;
+		try {
+			linkOptions = atob( eventName.split( '#', 2 )[ 1 ] );
+		} catch ( e ) {
+			return;
+		}
+
+		if ( ! linkOptions ) {
+			return;
+		}
+
+		try {
+			const options = JSON.parse( linkOptions );
+			if ( ! options ) {
+				return;
+			}
+
+			const uri = options.url.replaceAll( '&amp;', '&' );
+			if ( '_blank' === options.target ) {
+				window.open( uri, '_blank' );
+			} else {
+				window.location.href = uri;
+			}
+		} catch ( e ) {
+
+		}
 	},
 
 	onButton1Click() {
-		const eventName = this.model.get( 'event' );
-
+		const eventName = this.model.get( 'button_event' );
+		this.maybeHandleLinkEvent( eventName );
 		elementor.channels.editor.trigger( eventName, this );
 	},
 
 	onButton2Click() {
-		const eventName = this.model.get( 'event' );
-
+		const eventName = this.model.get( 'button_event' );
+		this.maybeHandleLinkEvent( eventName );
 		elementor.channels.editor.trigger( eventName, this );
 	},
 
