@@ -466,7 +466,7 @@ $remote-templates-items-space: 30px;
 
 		i {
 			cursor: pointer;
-			font-size: 15px;
+			font-size: 18px;
 
 			&.disabled {
 				pointer-events: none;
@@ -941,6 +941,10 @@ label.elementor-template-library-order-label {
 				color: var(--e-a-color-danger);
 			}
 		}
+
+		i {
+			font-size: 16px;
+		}
 	}
 
 	.elementor-template-library-template-more-toggle {
@@ -1043,6 +1047,10 @@ label.elementor-template-library-order-label {
 	font-size: 64px;
 	margin-block-start: 45px;
 	line-height: 1;
+
+	i {
+		font-size: 105px;
+	}
 
 	img {
 		width: 70px;
