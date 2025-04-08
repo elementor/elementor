@@ -413,7 +413,7 @@
 		var attachEvents = function() {
 			elementsCache.$element
 				.on( 'dragenter', settings.items, onDragEnter )
-				.on( 'dragover', settings.items, onDragEnter )
+				.on( 'dragover', settings.items, onDragOver )
 				.on( 'drop', settings.items, onDrop )
 				.on( 'dragleave drop', settings.items, onDragLeave );
 		};
