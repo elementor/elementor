@@ -43,11 +43,9 @@ export const WelcomePopover = ( { doClose } ) => {
 		<Dialog
 			open={ Boolean( anchorElRef.current ) }
 			onClose={ doClose }
-			anchorEl={ anchorElRef.current }
-			anchorOrigin={ { vertical: 'center', horizontal: 'center' } }
-			transformOrigin={ { vertical: 'center', horizontal: 'center' } }
+			maxWidth="sm"
 			PaperProps={ {
-				sx: { width: 600, borderRadius: '8px' },
+				sx: { borderRadius: '8px' },
 			} }
 		>
 			<Box sx={ {

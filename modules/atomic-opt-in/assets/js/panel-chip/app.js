@@ -13,7 +13,6 @@ const App = ( props ) => {
 				<ThemeProvider colorScheme={ props.colorScheme } palette="unstable">
 					<Infotip
 						content={ <PopoverCard doClose={ props.onClose } /> }
-						className="e-popover-infotip"
 						placement="right"
 						arrow={ true }
 						open={ true }
