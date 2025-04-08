@@ -64,10 +64,12 @@ class Library extends Common_App {
 
 		/** @var ConnectModule $connect */
 		$connect = Plugin::$instance->common->get_component( 'connect' );
+		$user_id = $this->get_user_id();
 
 		return array_replace_recursive( $settings, [
 			'library_connect' => [
 				'is_connected' => $is_connected,
+				'user_id' => $user_id,
 				'subscription_plans' => $connect->get_subscription_plans( 'template-library' ),
 				// TODO: Remove `base_access_level`.
 				'base_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
@@ -89,6 +91,39 @@ class Library extends Common_App {
 	 */
 	public function register_ajax_actions( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'library_connect_popup_seen', [ $this, 'library_connect_popup_seen' ] );
+	}
+
+	private function get_user_id() {
+		$token = $this->get( 'access_token' );
+
+		if ( ! is_string( $token ) ) {
+			return null;
+		}
+
+		$parts = explode( '.', $token );
+
+		if ( count( $parts ) !== 3 ) {
+			return null;
+		}
+
+		try {
+			$payload_encoded = $parts[1];
+
+			$payload_encoded = str_pad( $payload_encoded, strlen( $payload_encoded ) + ( 4 - strlen( $payload_encoded ) % 4 ) % 4, '=' );
+
+			$payload_json = base64_decode( strtr( $payload_encoded, '-_', '+/' ), true );
+
+			$payload = json_decode( $payload_json, true );
+
+			if ( ! isset( $payload['sub'] ) ) {
+				return null;
+			}
+
+			return $payload['sub'];
+		} catch ( Exception $e ) {
+			error_log( 'JWT Decoding Error: ' . $e->getMessage() );
+			return null;
+		}
 	}
 
 	/**
