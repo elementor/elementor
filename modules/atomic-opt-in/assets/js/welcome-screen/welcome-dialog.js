@@ -76,7 +76,7 @@ export const WelcomeDialog = ( { doClose } ) => {
 					variant="contained"
 					color="accent"
 					onClick={ doClose }
-					sx={ { ml: 'auto' } }
+					sx={ { ml: 'auto', borderRadius: '4px' } }
 				>{ i18n.closeButton }</Button>
 			</Stack>
 		</Dialog>

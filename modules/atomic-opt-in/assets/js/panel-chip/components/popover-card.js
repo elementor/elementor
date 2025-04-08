@@ -64,7 +64,7 @@ const PopoverCard = ( { doClose } ) => {
 						size="small"
 						color="accent"
 						onClick={ redirectHandler }
-						sx={ { ml: 'auto' } }
+						sx={ { ml: 'auto', borderRadius: '4px' } }
 					>{ ctaText }</Button>
 				</Stack>
 			</Box>
