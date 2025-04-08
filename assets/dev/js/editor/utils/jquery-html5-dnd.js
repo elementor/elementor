@@ -229,6 +229,7 @@
 			// Fix placeholder placement for Flex Container with `flex-direction: row`.
 			const isRowContainer = $currentElement.parents( '.e-con--row' ).length,
 				isInnerContainer = $currentElement.hasClass( 'e-con-inner' );
+
 			if ( isRowContainer && ! isFirstInsert ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before',
 					$rowTargetElement = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
@@ -237,12 +238,10 @@
 			}
 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+			const isAtom = currentElement?.hasAttribute( 'data-atomic' );
+			const insertionTarget = isAtom ? currentElement.firstElementChild : currentElement;
 
-			if ( currentElement?.hasAttribute( 'data-atomic' ) ) {
-				elementsCache.$placeholder[ insertMethod ]( currentElement.firstElementChild );
-			} else {
-				elementsCache.$placeholder[ insertMethod ]( currentElement );
-			}
+			elementsCache.$placeholder[ insertMethod ]( insertionTarget );
 		};
 
 		var isDroppingAllowed = function( event ) {
