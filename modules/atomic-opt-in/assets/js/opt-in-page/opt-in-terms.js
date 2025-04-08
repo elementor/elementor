@@ -8,7 +8,7 @@ import {
 	DialogContent,
 	DialogTitle,
 	FormControlLabel,
-	Stack,
+	Stack, Typography,
 } from '@elementor/ui';
 import React, { useState } from 'react';
 import { ContentList, ContentListItem, TextNode } from './opt-in-content';
@@ -112,7 +112,7 @@ export const Terms = ( { onClose, onSubmit, isEnrolled, ...props } ) => {
 								size="small"
 							/>
 						}
-						label={ i18n.checkboxText }
+						label={ <TextNode variant="body2">{ i18n.checkboxText }</TextNode> }
 					/>
 				</Stack>
 			</DialogContent>
