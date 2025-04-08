@@ -177,8 +177,13 @@
 		};
 
 		var setSide = function( event ) {
-			var $element = $( currentElement ),
-				elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight(),
+			let $element = $( currentElement );
+
+			if ( $element.is( '[data-atomic]' ) ) {
+				$element = $element.children().first();
+			}
+
+			const elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight(),
 				elementWidth = $element.outerWidth();
 
 			event = event.originalEvent;
@@ -195,8 +200,7 @@
 				return;
 			}
 
-			var elementPosition = currentElement.getBoundingClientRect();
-
+			var elementPosition = $element[ 0 ].getBoundingClientRect();
 			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
 
@@ -229,16 +233,21 @@
 			// Fix placeholder placement for Flex Container with `flex-direction: row`.
 			const isRowContainer = $currentElement.parents( '.e-con--row' ).length,
 				isInnerContainer = $currentElement.hasClass( 'e-con-inner' );
+
 			if ( isRowContainer && ! isFirstInsert ) {
 				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before',
 					$rowTargetElement = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
 				$rowTargetElement[ insertMethod ]( elementsCache.$placeholder );
-
 				return;
 			}
 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
-			elementsCache.$placeholder[ insertMethod ]( currentElement );
+
+			if ( $currentElement.is( '[ data-atomic ]' ) ) {
+				elementsCache.$placeholder[ insertMethod ]( $currentElement.children().first()[ 0 ] );
+			} else {
+				elementsCache.$placeholder[ insertMethod ]( currentElement );
+			}
 		};
 
 		var isDroppingAllowed = function( event ) {
