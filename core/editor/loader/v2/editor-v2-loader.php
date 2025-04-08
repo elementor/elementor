@@ -137,6 +137,9 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 				'@elementor/editor-controls' => [
 					'background_placeholder_image' => Placeholder_Image::get_background_placeholder_image(),
 				],
+				'@elementor/editor-canvas' => [
+					'background_placeholder_image' => Placeholder_Image::get_background_placeholder_image(),
+				],
 			] );
 
 			Utils::print_js_config(
