@@ -67,6 +67,8 @@ const TemplateLibraryManager = function() {
 							}
 						},
 					} );
+
+					self.triggerQuotaUpdate();
 				},
 				error( errorData ) {
 					self.showErrorDialog( errorData );
@@ -79,6 +81,9 @@ const TemplateLibraryManager = function() {
 			page: __( 'Page', 'elementor' ),
 			section: __( 'Section', 'elementor' ),
 			container: __( 'Container', 'elementor' ),
+			'e-div-block': __( 'Div Block', 'elementor' ),
+			'e-flexbox': __( 'Flexbox', 'elementor' ),
+
 			[ elementor.config.document.type ]: elementor.config.document.panel.title,
 		};
 
@@ -198,6 +203,14 @@ const TemplateLibraryManager = function() {
 		lastDeletedItems.clear();
 	};
 
+	this.addLastRemovedItems = function( ids ) {
+		if ( ! Array.isArray( ids ) && ! ids.length ) {
+			return;
+		}
+
+		ids.forEach( ( id ) => lastDeletedItems.add( id ) );
+	};
+
 	this.selectAllTemplates = function() {
 		document.querySelectorAll( '.elementor-template-library-template[data-template_id]' ).forEach( ( element ) => {
 			const templateId = element.getAttribute( 'data-template_id' );
@@ -260,15 +273,19 @@ const TemplateLibraryManager = function() {
 					template_id: templateId,
 				},
 				success( response ) {
-					templatesCollection.remove( templateModel, { silent: true } );
+					templatesCollection.remove( templateModel );
 
 					if ( 'cloud' === source ) {
-						lastDeletedItems.add( templateId );
+						self.addLastRemovedItems( [ templateId ] );
 					}
 
 					if ( options.onSuccess ) {
 						options.onSuccess( response );
 					}
+
+					self.layout.updateViewCollection( templatesCollection.models );
+
+					self.triggerQuotaUpdate();
 				},
 			} );
 		};
@@ -519,9 +536,11 @@ const TemplateLibraryManager = function() {
 				template_id: templateId,
 			},
 			success: ( response ) => {
-				lastDeletedItems.add( templateId );
+				self.addLastRemovedItems( [ templateId ] );
 				templatesCollection.remove( templateModel, { silent: true } );
 				options.onSuccess?.( response );
+
+				this.triggerQuotaUpdate();
 			},
 		} );
 	};
@@ -717,8 +736,8 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
-		if ( this.shouldShowCloudConnectView( args.source ) ) {
-			self.layout.showCloudConnectView();
+		if ( this.shouldShowCloudStateView( args.source ) ) {
+			self.layout.showCloudStateView();
 
 			return;
 		}
@@ -931,8 +950,8 @@ const TemplateLibraryManager = function() {
 		self.setFilter( filterName, templatesSource, true );
 		self.clearBulkSelectionItems();
 
-		if ( this.shouldShowCloudConnectView( templatesSource ) ) {
-			self.layout.showCloudConnectView();
+		if ( this.shouldShowCloudStateView( templatesSource ) ) {
+			self.layout.showCloudStateView();
 
 			return;
 		}
@@ -952,8 +971,22 @@ const TemplateLibraryManager = function() {
 		self.clearBulkSelectionItems();
 	};
 
-	this.shouldShowCloudConnectView = function( source ) {
-		return 'cloud' === source && ! elementor.config.library_connect.is_connected;
+	this.shouldShowCloudStateView = function( source ) {
+		if ( 'cloud' !== source ) {
+			return false;
+		}
+
+		if ( ! elementor.config.library_connect.is_connected ) {
+			return true;
+		}
+
+		return ! this.hasCloudLibraryQuota();
+	};
+
+	this.hasCloudLibraryQuota = function() {
+		return 'undefined' !== typeof elementorAppConfig[ 'cloud-library' ]?.quota &&
+			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold &&
+			elementor.helpers.hasPro();
 	};
 
 	this.addBulkSelectionItem = function( templateId ) {
@@ -1004,7 +1037,7 @@ const TemplateLibraryManager = function() {
 						} );
 
 						if ( 'cloud' === source ) {
-							lastDeletedItems.add( ...selectedItems );
+							self.addLastRemovedItems( templateIds );
 						}
 
 						templatesCollection.remove( modelsToRemove );
@@ -1027,6 +1060,8 @@ const TemplateLibraryManager = function() {
 							message: `${ templateIds.length } items deleted successfully`,
 							buttons,
 						} );
+
+						this.triggerQuotaUpdate();
 
 						resolve();
 					},
@@ -1074,6 +1109,8 @@ const TemplateLibraryManager = function() {
 
 					this.clearLastRemovedItems();
 
+					this.triggerQuotaUpdate();
+
 					resolve();
 				},
 				error: ( error ) => {
@@ -1089,6 +1126,10 @@ const TemplateLibraryManager = function() {
 
 			elementorCommon.ajax.addRequest( 'bulk_undo_delete_items', ajaxOptions );
 		} );
+	};
+
+	this.triggerQuotaUpdate = function() {
+		elementor.channels.templates.trigger( 'quota:update' );
 	};
 };
 

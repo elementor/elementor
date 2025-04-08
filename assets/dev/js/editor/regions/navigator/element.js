@@ -1,9 +1,9 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 
-export default class extends Marionette.CompositeView {
-	NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
+const NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
 
+export default class extends Marionette.CompositeView {
 	getTemplate() {
 		return '#tmpl-elementor-navigator__elements';
 	}
@@ -66,7 +66,7 @@ export default class extends Marionette.CompositeView {
 		if ( ! this.isNavigatorContainer() ) {
 			classes += ' elementor-navigator__element-' + elType;
 			if ( ! this.isExcludedNestableElement() ) {
-				classes += ' ' + this.NEW_NESTABLE_CLASS;
+				classes += ' ' + NEW_NESTABLE_CLASS;
 			}
 		}
 
@@ -85,7 +85,7 @@ export default class extends Marionette.CompositeView {
 			return 'elementor-navigator__element-' + elType;
 		}
 
-		return this.NEW_NESTABLE_CLASS;
+		return NEW_NESTABLE_CLASS;
 	}
 
 	attributes() {
@@ -248,7 +248,13 @@ export default class extends Marionette.CompositeView {
 			settingsModel.unset( '_title', { silent: true } );
 		}
 
-		settingsModel.set( '_title', newTitle );
+		if ( this.isAtomicWidget() ) {
+			const prevEditorSettings = this.model.get( 'editor_settings' );
+
+			this.model.set( 'editor_settings', { ...prevEditorSettings, title: newTitle } );
+		} else {
+			settingsModel.set( '_title', newTitle );
+		}
 
 		// TODO: Remove - After merge pull request #13605.
 		$e.internal( 'document/save/set-is-modified', {
@@ -511,5 +517,11 @@ export default class extends Marionette.CompositeView {
 
 			editor.render();
 		} );
+	}
+
+	isAtomicWidget() {
+		const elementType = 'widget' === this.model.get( 'elType' ) ? this.model.get( 'widgetType' ) : this.model.get( 'elType' );
+
+		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
 	}
 }

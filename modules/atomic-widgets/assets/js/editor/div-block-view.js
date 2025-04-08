@@ -81,6 +81,20 @@ const DivBlockView = BaseElementView.extend( {
 		}
 
 		this.$el.addClass( this.getClasses() );
+
+		if ( this.isTagChanged( changed ) ) {
+			this.rerenderEntireView();
+		}
+	},
+
+	isTagChanged( changed ) {
+		return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName;
+	},
+
+	rerenderEntireView() {
+		const parent = this._parent;
+		this._parent.removeChildView( this );
+		parent.addChild( this.model, DivBlockView, this._index );
 	},
 
 	onRender() {
@@ -121,6 +135,36 @@ const DivBlockView = BaseElementView.extend( {
 
 	droppableInitialize() {
 		this.$el.html5Droppable( this.getDroppableOptions() );
+	},
+
+	/**
+	 * Add a `Save as Template` button to the context menu.
+	 *
+	 * @return {Object} groups
+	 */
+	getContextMenuGroups() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
+			transferGroupClipboardIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+
+		groups.splice( transferGroupClipboardIndex + 1, 0, {
+			name: 'save',
+			actions: [
+				{
+					name: 'save',
+					title: __( 'Save as Template', 'elementor' ),
+					callback: this.saveAsTemplate.bind( this ),
+					isEnabled: () => ! this.getContainer().isLocked(),
+				},
+			],
+		} );
+
+		return groups;
+	},
+
+	saveAsTemplate() {
+		$e.route( 'library/save-template', {
+			model: this.model,
+		} );
 	},
 
 	isDroppingAllowed() {
@@ -377,7 +421,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getBaseClass() {
-		return 'flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'flexbox-base' : 'e-div-block-base';
+		return 'e-flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'e-flexbox-base' : 'e-div-block-base';
 	},
 } );
 

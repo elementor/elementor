@@ -5,6 +5,7 @@
 // Section & Container - Overlay Settings
 .elementor-editor-section-settings,
 .elementor-editor-container-settings,
+.elementor-editor-e-flexbox-settings,
 .elementor-editor-e-div-block-settings {
 	height: 24px;
 	top: 1px;
@@ -80,7 +81,7 @@
 	}
 }
 
-// Top Section / Container (Handles inside)
+// Top Section / Container / Div-block / Flexbox (Handles inside)
 .e-handles-inside {
 
 	> .elementor-element-overlay > .elementor-editor-element-settings {

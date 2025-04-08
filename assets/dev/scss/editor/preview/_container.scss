@@ -87,12 +87,13 @@
 		}
 	}
 
-	&.e-div-block-base, &.flexbox-base {
+	&.e-div-block-base, &.e-flexbox-base {
 		&:has( .elementor-empty-view ) {
 			display: flex;
 		}
 
 		.elementor-empty-view {
+			flex: 1 1 auto;
 			height: auto;
 			min-height: unset;
 		}
@@ -290,7 +291,7 @@
 }
 
 .e-div-block-base:has( .elementor-empty-view ),
-.flexbox-base:has( .elementor-empty-view ) {
+.e-flexbox-base:has( .elementor-empty-view ) {
 	height: 100px;
 }
 

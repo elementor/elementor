@@ -18,6 +18,13 @@ $remote-templates-items-space: 30px;
 	.dialog-message {
 		overflow-y: scroll;
 	}
+
+	.e-back-to-editor {
+		color: var(--e-a-color-txt);
+		text-decoration: underline;
+		font-size: 17px;
+		cursor: pointer;
+	}
 }
 
 #elementor-template-library-header-menu {
@@ -81,10 +88,98 @@ $remote-templates-items-space: 30px;
 
 #elementor-template-library-templates {
 
+	.toolbar-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 2%;
+		margin-top: 10px;
+	}
+
 	#elementor-template-library-templates-container {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: flex-start; // For blocks layout
+	}
+
+	&[data-template-source="local"] {
+		.toolbar-container {
+			.quota-progress-container {
+				display: none;
+			}
+		}
+	}
+
+	&[data-template-source="cloud"],
+	&[data-template-source="empty"] {
+		.toolbar-container {
+			&:has(.bulk-selection-action-bar:not([style*="display: block"])) {
+				justify-content: flex-end;
+			}
+
+			.quota-progress-container {
+				display: flex;
+				align-items: baseline;
+			}
+
+			.quota-progress-info {
+				align-items: center;
+
+				i {
+					font-size: 14px;
+					margin-left: 5px;
+				}
+			}
+
+			.progress-bar-container {
+				width: 200px;
+				margin: 5px 10px 0 10px;
+				align-self: center;
+				text-align: start;
+
+				.quota-warning {
+					font-size: 10px;
+				}
+			}
+
+			.quota-progress-bar {
+				height: 4px;
+				background-color: var(--e-a-color-primary-bold);
+				position: relative;
+				display: flex;
+				align-items: center;
+				padding: 0;
+				&-fill {
+					height: 100%;
+					transition: width 0.3s ease;
+
+					&-normal {
+						background-color: $e-pink-800;
+					}
+
+					&-warning {
+						background-color: $e-warning;
+					}
+
+					&-alert {
+						background-color: $e-accent;
+					}
+				}
+
+				&-normal {
+					background-color: $e-pink-300;
+				}
+
+				&-warning {
+					background-color: lighten($e-warning, 30%);
+				}
+			}
+
+			&-value {
+				font-size: 12px;
+				color: var(--e-a-color-txt);
+			}
+		}
 	}
 
 	&[data-template-source="local"],
@@ -274,7 +369,7 @@ $remote-templates-items-space: 30px;
 					position: absolute;
 					inset: 0;
 					background-color: rgba(0,0,0,.5);
-					cursor: pointer;
+					cursor: default;
 				}
 
 				.elementor-template-library-template-name {
@@ -365,9 +460,9 @@ $remote-templates-items-space: 30px;
 		padding: 10px 25px;
 		border-radius: 5px;
 		color: var(--e-a-bg-invert);
-		margin-top: 10px;
 		gap: 20px;
 		align-items: center;
+		flex: 1;
 
 		i {
 			cursor: pointer;
@@ -1033,6 +1128,7 @@ label.elementor-template-library-order-label {
 			.eicon-info {
 				margin-inline: 5px;
 				color: #919191;
+				cursor: pointer;
 			}
 
 			.selected-folder {
@@ -1047,6 +1143,21 @@ label.elementor-template-library-order-label {
 
 			.eicon-editor-close {
 				cursor: pointer;
+			}
+
+			.upgrade-badge {
+				display: none;
+				border: 1px solid #93003F80;
+				padding: 3px 5px;
+				border-radius: 100px;
+
+				a {
+					color: $e-rose-800;
+
+					i {
+						margin-inline-end: 5px;
+					}
+				}
 			}
 		}
 
@@ -1274,4 +1385,48 @@ label.elementor-template-library-order-label {
 
 #elementor-template-library-error-info {
 	margin-block-start: 10px;
+}
+
+#elementor-library--infotip__dialog {
+	position: absolute;
+	width: 400px;
+	z-index: $super-layer;
+	background-color: var(--e-a-bg-default);
+	box-shadow: var(--e-a-popover-shadow);
+	border-radius: var(--e-a-border-radius);
+
+	&:after {
+		content: '';
+		position: absolute;
+		top: 100%;
+		@include end(90%);
+		transform: scaleX(0.7);
+		border: 10px solid transparent;
+		border-top-color: var(--e-a-bg-default);
+	}
+
+	&__title {
+		font-size: 14px;
+	}
+
+	.dialog {
+
+		&-message {
+			padding: 20px 20px 0px 20px;
+		}
+
+		&-buttons-wrapper {
+			padding: 0 20px 10px;
+			float: inline-end;
+		}
+
+		&-button {
+			padding: 7px 25px;
+			font-size: 13px;
+			background: none;
+			color: #C00BB9;
+			border: none;
+			font-weight: 500;
+		}
+	}
 }

@@ -41,17 +41,32 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 
 	async importTemplate( fileName, fileData ) {
 		const layout = elementor.templates.layout;
+		const activeSource = elementor.templates.getFilter( 'source' );
 
 		this.options = {
 			data: {
 				fileName,
 				fileData,
+				source: activeSource,
 			},
 			success: ( successData ) => {
 				elementor.templates.clearLastRemovedItems();
 				elementor.templates.getTemplatesCollection().add( successData );
+				elementor.templates.setToastConfig( {
+					show: true,
+					options: {
+						/* Translators: 1: Number of templates */
+						message: sprintf( __( 'You successfully imported %1$d template(s).', 'elementor' ), successData.length ),
+						position: {
+							my: 'right bottom',
+							at: 'right-10 bottom-10',
+							of: '#elementor-template-library-modal .dialog-lightbox-widget-content',
+						},
+					},
+				} );
 
 				$e.route( 'library/templates/my-templates' );
+				elementor.templates.triggerQuotaUpdate();
 			},
 			error: ( errorData ) => {
 				elementor.templates.showErrorDialog( errorData );
