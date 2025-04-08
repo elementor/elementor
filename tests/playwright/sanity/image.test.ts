@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
+import { timeouts } from '../config/timeouts';
 
 test( 'Image widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -12,7 +13,7 @@ test( 'Image widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	await page.click( 'text=Media Library' );
 	await page.waitForSelector( 'text=Insert Media' );
 	await page.locator( '#menu-item-upload' ).click();
-	await page.waitForLoadState( 'networkidle' );
+	await page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.action } );
 
 	// Check if previous image is already uploaded
 	const previousImage = await page.$( '[aria-label="mountain-image"], li[tabindex="0"]' );
