@@ -167,6 +167,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );
 		this.modalContent.currentView.ui.bulkSelectionActionBar.css( 'display', display );
+
+		// TODO: Temporary fix until the bulk action bar will be as separate view.
+		const displayNavigationContainer = 0 === selectedCount ? 'flex' : 'none';
+		this.modalContent.currentView.ui.navigationContainer.css( 'display', displayNavigationContainer );
 	},
 
 	selectAllCheckboxMinus() {

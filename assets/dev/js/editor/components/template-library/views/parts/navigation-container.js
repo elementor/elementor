@@ -13,7 +13,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	render() {
-		if ( null === elementor.templates.getFilter( 'parent_id' ) ) {
+		if ( null === elementor.templates.getFilter( 'parent' ) ) {
 			return this;
 		}
 
@@ -21,12 +21,11 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onRender() {
-		this.ui.title.text( elementor.templates.getFilter( 'parent_title' ) );
+		this.ui.title.text( elementor.templates.getFilter( 'parent' )?.title );
 	},
 
 	onBackButtonClick() {
-		elementor.templates.setFilter( 'parent_id', null );
-		elementor.templates.setFilter( 'parent_title', null );
+		elementor.templates.setFilter( 'parent', null );
 
 		$e.route( 'library/templates/my-templates' );
 	},

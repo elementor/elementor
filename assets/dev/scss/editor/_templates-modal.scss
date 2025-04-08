@@ -481,15 +481,20 @@ $remote-templates-items-space: 30px;
 	}
 
 	#elementor-template-library-navigation-container {
-		all: unset;
-		display: contents;
+		display: flex;
+		flex: 1;
 
 		.elementor-template-library-navigation-container {
 			display: flex;
-			flex: 1;
 			flex-direction: row;
 			align-items: center;
 			gap: 15px;
+
+			.elementor-template-library-navigation-back-button {
+				padding-inline-start: 8px;
+				background-color: var(--e-a-bg-hover);
+				color: var(--e-a-color-txt);
+			}
 		}
 	}
 

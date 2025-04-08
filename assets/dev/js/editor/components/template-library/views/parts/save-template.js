@@ -210,7 +210,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		const toastButtons = formData.source?.length > 1
 			? null
-			: this.getToastButtons( lastSource, formData?.parentId?.trim() );
+			: this.getToastButtons( lastSource, formData?.parentId?.trim(), formData?.title?.trim() );
 
 		elementor.templates.setToastConfig( {
 			show: true,
@@ -259,24 +259,27 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		return sprintf( __( '%1$s %2$s.', 'elementor' ), title ? `"${ title }"` : __( 'Template', 'elementor' ), action );
 	},
 
-	getToastButtons( lastSource, parentId ) {
+	getToastButtons( lastSource, parentId, parentTitle ) {
 		const parsedParentId = parseInt( parentId, 10 ) || null;
 
 		return [
 			{
 				name: 'template_after_save',
 				text: __( 'View', 'elementor' ),
-				callback: () => this.navigateToSavedSource( lastSource, parsedParentId ),
+				callback: () => this.navigateToSavedSource( lastSource, parsedParentId, parentTitle ),
 			},
 		];
 	},
 
-	navigateToSavedSource( lastSource, parentId ) {
+	navigateToSavedSource( lastSource, parentId, parentTitle ) {
 		elementor.templates.setSourceSelection( lastSource );
 		elementor.templates.setFilter( 'source', lastSource, true );
 
 		if ( parentId ) {
-			elementor.templates.setFilter( 'parent_id', parentId );
+			elementor.templates.setFilter( 'parent', {
+				id: parentId,
+				title: parentTitle,
+			} );
 
 			const model = new TemplateLibraryTemplateModel( { template_id: parentId } );
 

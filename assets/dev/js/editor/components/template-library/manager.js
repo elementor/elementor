@@ -379,8 +379,10 @@ const TemplateLibraryManager = function() {
 					template_id: parentId,
 				},
 				success: ( data ) => {
-					this.setFilter( 'parent_id', parentId );
-					this.setFilter( 'parent_title', parentTitle );
+					this.setFilter( 'parent', {
+						id: parentId,
+						title: parentTitle,
+					} );
 
 					templatesCollection = new TemplateLibraryCollection( data.templates );
 
@@ -405,7 +407,7 @@ const TemplateLibraryManager = function() {
 	this.createFolder = function( folderData, options ) {
 		this.clearLastRemovedItems();
 
-		if ( null !== this.getFilter( 'parent_id' ) ) {
+		if ( null !== this.getFilter( 'parent' ) ) {
 			this.showErrorDialog( __( 'You can not create a folder inside another folder.', 'elementor' ) );
 
 			return;
@@ -766,8 +768,7 @@ const TemplateLibraryManager = function() {
 			options.refresh = true;
 		}
 
-		this.setFilter( 'parent_id', null, query );
-		this.setFilter( 'parent_title', null );
+		this.setFilter( 'parent', null, query );
 
 		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
 			const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
@@ -798,8 +799,7 @@ const TemplateLibraryManager = function() {
 		this.clearLastRemovedItems();
 
 		return new Promise( ( resolve ) => {
-			this.setFilter( 'parent_id', null );
-			this.setFilter( 'parent_title', null );
+			this.setFilter( 'parent', null );
 
 			isLoading = true;
 
@@ -841,7 +841,7 @@ const TemplateLibraryManager = function() {
 
 		const source = this.getFilter( 'source' );
 
-		const parentId = this.getFilter( 'parent_id' );
+		const parentId = this.getFilter( 'parent' )?.id;
 
 		const ajaxOptions = {
 			data: {
