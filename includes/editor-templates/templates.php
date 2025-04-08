@@ -155,6 +155,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span class="bulk-delete"><i class="eicon-library-delete"></i></span>
 				</div>
 			<?php endif; ?>
+			<div id="elementor-template-library-navigation-container"></div>
 
 			<# if ( 'cloud' === activeSource ) { #>
 				<div class="quota-progress-container">
@@ -209,6 +210,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<# if ( 'cloud' === activeSource ) { #>
 		<div id="elementor-template-library-load-more-anchor" class="elementor-visibility-hidden"><i class="eicon-loading eicon-animation-spin"></i></div>
 	<# } #>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-navigation-container">
+	<button class="elementor-template-library-navigation-back-button elementor-button e-button">
+		<i class="eicon-chevron-left"></i>
+		<?php echo esc_html__( 'Back', 'elementor' ); ?>
+	</button>
+	<span class="elementor-template-library-current-folder-title"></span>
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-template-remote">

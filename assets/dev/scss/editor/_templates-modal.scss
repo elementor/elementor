@@ -87,13 +87,16 @@ $remote-templates-items-space: 30px;
 }
 
 #elementor-template-library-templates {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 
 	.toolbar-container {
 		display: flex;
 		justify-content: space-between;
-		align-items: baseline;
+		align-items: center;
 		gap: 2%;
-		margin-top: 10px;
+		height: 45px;
 	}
 
 	#elementor-template-library-templates-container {
@@ -186,8 +189,6 @@ $remote-templates-items-space: 30px;
 	&[data-template-source="cloud"] {
 
 		#elementor-template-library-templates-container {
-			margin-block-start: 10px;
-			margin-block-end: 45px;
 			border-block-start: var(--e-a-border);
 		}
 
@@ -479,6 +480,24 @@ $remote-templates-items-space: 30px;
 		}
 	}
 
+	#elementor-template-library-navigation-container {
+		display: flex;
+		flex: 1;
+
+		.elementor-template-library-navigation-container {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 15px;
+
+			.elementor-template-library-navigation-back-button {
+				padding-inline-start: 8px;
+				background-color: var(--e-a-bg-hover);
+				color: var(--e-a-color-txt);
+			}
+		}
+	}
+
 	#elementor-template-library-order-toolbar-local:hover {
 
 		#bulk-select-all {
@@ -538,6 +557,9 @@ $remote-templates-items-space: 30px;
 	text-transform: uppercase;
 	padding-inline-end: 22px;
 	user-select: none;
+	line-height: 1;
+	font-size: 10px;
+	font-weight: 500;
 }
 
 label.elementor-template-library-order-label {
@@ -900,16 +922,6 @@ label.elementor-template-library-order-label {
 		.elementor-template-library-local-column-5 {
 			width: 41%;
 		}
-	}
-}
-
-#elementor-template-library-order-toolbar-local {
-	margin-block-start: 30px;
-
-	.elementor-template-library-order-label {
-		line-height: 1;
-		font-size: 10px;
-		font-weight: 500;
 	}
 }
 

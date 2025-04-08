@@ -44,6 +44,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		quotaFill: '.quota-progress-container  .quota-progress-bar .quota-progress-bar-fill',
 		quotaValue: '.quota-progress-container .quota-progress-bar-value',
 		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
+		navigationContainer: '#elementor-template-library-navigation-container',
 	},
 
 	events: {
