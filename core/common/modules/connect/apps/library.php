@@ -103,7 +103,7 @@ class Library extends Common_App {
 		$parts = explode( '.', $token );
 
 		if ( count( $parts ) !== 3 ) {
-			return false;
+			return null;
 		}
 
 		try {
@@ -116,13 +116,13 @@ class Library extends Common_App {
 			$payload = json_decode( $payload_json, true );
 
 			if ( null === $payload ) {
-				return false;
+				return null;
 			}
 
 			return $payload['sub'];
 		} catch ( Exception $e ) {
 			error_log( 'JWT Decoding Error: ' . $e->getMessage() );
-			return false;
+			return null;
 		}
 	}
 
