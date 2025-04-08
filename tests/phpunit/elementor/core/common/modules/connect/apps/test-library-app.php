@@ -10,8 +10,9 @@ class Test_Library_App extends Elementor_Test_Base {
 		parent::setUp();
 	}
 
-	public function test_localize_settings_decodes_jwt_correctly() {
+	public function test_localize_settings__user_id_is_present() {
 		$test_user_id = '123456';
+
 		$jwt_token = $this->createTestJwtToken($test_user_id);
 
 		$library_mock = $this->getMockBuilder(Library::class)

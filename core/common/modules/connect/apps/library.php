@@ -115,7 +115,7 @@ class Library extends Common_App {
 
 			$payload = json_decode( $payload_json, true );
 
-			if ( null === $payload ) {
+			if ( ! isset( $payload['sub'] ) ) {
 				return null;
 			}
 
