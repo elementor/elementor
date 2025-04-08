@@ -177,9 +177,9 @@
 		};
 
 		var setSide = function( event ) {
-			const isAtom = currentElement?.hasAttribute( 'data-atomic' );
-			const insertionTarget = isAtom ? currentElement.firstElementChild : currentElement;
-			const $element = $( insertionTarget );
+			const isAtom = currentElement.hasAttribute( 'data-atomic' );
+			const placeholderInsertionTarget = isAtom ? currentElement.firstElementChild : currentElement;
+			const $element = $( placeholderInsertionTarget );
 			const elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight();
 			const elementWidth = $element.outerWidth();
 
@@ -197,7 +197,7 @@
 				return;
 			}
 
-			const elementPosition = insertionTarget.getBoundingClientRect();
+			const elementPosition = placeholderInsertionTarget.getBoundingClientRect();
 			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
 
@@ -240,9 +240,9 @@
 
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 			const isAtom = currentElement?.hasAttribute( 'data-atomic' );
-			const insertionTarget = isAtom ? currentElement.firstElementChild : currentElement;
+			const placeholderInsertionTarget = isAtom ? currentElement.firstElementChild : currentElement;
 
-			elementsCache.$placeholder[ insertMethod ]( insertionTarget );
+			elementsCache.$placeholder[ insertMethod ]( placeholderInsertionTarget );
 		};
 
 		var isDroppingAllowed = function( event ) {
