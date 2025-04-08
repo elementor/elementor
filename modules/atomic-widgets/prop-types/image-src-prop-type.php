@@ -47,11 +47,11 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 				'id' => null,
 				'url' => [
 					'$$type' => 'url',
-					'value' => Placeholder_Image::get_placeholder_image()
+					'value' => Placeholder_Image::get_placeholder_image(),
 				],
 			];
-		};
-		
+		}
+
 		return $value;
 	}
 }
