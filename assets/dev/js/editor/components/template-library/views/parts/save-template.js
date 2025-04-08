@@ -143,6 +143,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		var formData = this.ui.form.elementorSerializeObject(),
 			JSONParams = { remove: [ 'default' ] };
 
+		formData.parentTitle = formData.parentId ? this.ui.selectedFolderText.html() : '';
+
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
 		this.updateSourceSelections( formData );
@@ -210,7 +212,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		const toastButtons = formData.source?.length > 1
 			? null
-			: this.getToastButtons( lastSource, formData?.parentId?.trim(), formData?.title?.trim() );
+			: this.getToastButtons( lastSource, formData?.parentId?.trim(), formData?.parentTitle?.trim() );
 
 		elementor.templates.setToastConfig( {
 			show: true,
@@ -276,12 +278,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		elementor.templates.setFilter( 'source', lastSource, true );
 
 		if ( parentId ) {
-			elementor.templates.setFilter( 'parent', {
-				id: parentId,
-				title: parentTitle,
-			} );
-
-			const model = new TemplateLibraryTemplateModel( { template_id: parentId } );
+			const model = new TemplateLibraryTemplateModel( { template_id: parentId, title: parentTitle } );
 
 			$e.route( 'library/view-folder', { model } );
 
