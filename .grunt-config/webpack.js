@@ -145,7 +145,6 @@ const entry = {
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
-	'elements-handlers': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/elements-handlers.js' ),
 	'js-handler-example': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/js-handler-example.js' ),
 };
 
