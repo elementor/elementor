@@ -231,7 +231,8 @@ async function captureJustifySnapShot(
 
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
 	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
-	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
+	await page.waitForTimeout( 5000 ); // Let the icons rotate
+	// to do: replace with page.waitForLoadState( 'domcontentloaded' )
 	expect.soft( await justifyControlsContent.screenshot( {
 		type: 'jpeg',
 		quality: 90,
