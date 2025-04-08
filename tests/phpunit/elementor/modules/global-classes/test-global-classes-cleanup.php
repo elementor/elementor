@@ -16,13 +16,13 @@ class Test_Global_Classes_Cleanup extends Elementor_Test_Base {
 				'type' => 'class',
 				'id' => 'g-4-123',
 				'label' => 'pinky',
-				'variants' => [ ],
+				'variants' => [],
 			],
 			'g-4-124' => [
 				'id' => 'g-4-124',
 				'type' => 'class',
 				'label' => 'bluey',
-				'variants' => [ ],
+				'variants' => [],
 			],
 		],
 		'order' => ['g-4-124', 'g-4-123'],
@@ -70,8 +70,6 @@ class Test_Global_Classes_Cleanup extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
-
-		Plugin::$instance->kits_manager->create_new_kit( 'kit' );
 
 		Global_Classes_Repository::make()->put(
 			$this->mock_global_classes['items'],
@@ -177,7 +175,6 @@ class Test_Global_Classes_Cleanup extends Elementor_Test_Base {
         $this->assertEquals( $expected, $elements_data_1 );
         $this->assertEquals( $expected, $elements_data_2 );
     }
-
 
 	private function make_mock_post_with_elements( $elements_data ) {
 		$document = $this->factory()->documents->create_and_get( [

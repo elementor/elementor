@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Base\Document;
