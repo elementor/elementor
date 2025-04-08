@@ -5,7 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\GlobalClasses\Utils\Elements_Classes;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -7,7 +7,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\Utils\Elements_Classes;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,10 +46,10 @@ class Applied_Global_Classes_Usage {
 		$count_per_type = [];
 
 		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $global_class_ids, &$total_count, &$count_per_type ) {
-			$element_type = Elements_Classes::get_element_type( $element_data );
-			$element_instance = Elements_Classes::get_element_instance( $element_type );
+			$element_type = Atomic_Elements_Utils::get_element_type( $element_data );
+			$element_instance = Atomic_Elements_Utils::get_element_instance( $element_type );
 
-			if ( ! Elements_Classes::is_atomic_element( $element_instance ) ) {
+			if ( ! Atomic_Elements_Utils::is_atomic_element( $element_instance ) ) {
 				return;
 			}
 
@@ -67,7 +67,7 @@ class Applied_Global_Classes_Usage {
 
 	private function get_classes_count_for_element( $atomic_props_schema, $atomic_element_data, $global_class_ids ) {
 		return Collection::make( $atomic_props_schema )->reduce( function( $carry, $prop, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
-			if ( ! Elements_Classes::is_classes_prop( $prop ) ) {
+			if ( ! Atomic_Elements_Utils::is_classes_prop( $prop ) ) {
 				return $carry;
 			}
 

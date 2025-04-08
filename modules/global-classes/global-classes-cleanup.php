@@ -6,7 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\GlobalClasses\Utils\Elements_Classes;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,10 +45,10 @@ class Global_Classes_Cleanup {
 
 	private function unapply_deleted_classes( $document, $elements_data, $deleted_classes_ids ) {
 		$elements_data = Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $deleted_classes_ids ) {
-			$element_type = Elements_Classes::get_element_type( $element_data );
-			$element_instance = Elements_Classes::get_element_instance( $element_type );
+			$element_type = Atomic_Elements_Utils::get_element_type( $element_data );
+			$element_instance = Atomic_Elements_Utils::get_element_instance( $element_type );
 
-			if ( ! Elements_Classes::is_atomic_element( $element_instance ) ) {
+			if ( ! Atomic_Elements_Utils::is_atomic_element( $element_instance ) ) {
 				return $element_data;
 			}
 
@@ -61,7 +61,7 @@ class Global_Classes_Cleanup {
 
 	private function unapply_classes_from_element( $props_schema, $element_data, $deleted_classes_ids ) {
 		foreach ( $props_schema as $prop ) {
-			if ( ! Elements_Classes::is_classes_prop( $prop ) ) {
+			if ( ! Atomic_Elements_Utils::is_classes_prop( $prop ) ) {
 				continue;
 			}
 
