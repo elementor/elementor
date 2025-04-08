@@ -63,7 +63,6 @@ class Module extends BaseModule {
 			$license_info = json_decode( $license_data['value'], true );
 
 			if ( isset( $license_info['subscription_id'] ) ) {
-
 				$subscription_id = $license_info['subscription_id'];
 
 				return $subscription_id;
