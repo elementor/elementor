@@ -38,6 +38,7 @@ class Module extends BaseModule {
 			( new Global_Classes_Usage() )->register_hooks();
 			( new Global_Classes_REST_API() )->register_hooks();
 			( new Global_Classes_CSS() )->register_hooks();
+			( new Global_Classes_Cleanup() )->register_hooks();
 			( new Import_Export() )->register_hooks();
 		}
 	}
