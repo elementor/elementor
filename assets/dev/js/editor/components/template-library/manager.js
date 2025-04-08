@@ -283,7 +283,7 @@ const TemplateLibraryManager = function() {
 						options.onSuccess( response );
 					}
 
-					self.layout.updateViewCollection( templatesCollection.models );
+					self.layout.updateViewCollection( self.filterTemplates() );
 
 					self.triggerQuotaUpdate();
 				},
