@@ -7,7 +7,8 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
 	TemplateLibraryConnectView = require( 'elementor-templates/views/parts/connect' ),
 	TemplateLibraryCloudStateView = require( 'elementor-templates/views/parts/cloud-states' ),
-	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
+	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' ),
+	TemplateLibraryNavigationContainerView = require( 'elementor-templates/views/parts/navigation-container' );
 
 import { SAVE_CONTEXTS } from './../constants';
 
@@ -21,7 +22,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 				onOutsideClick: allowClosingModal,
 				onBackgroundClick: allowClosingModal,
 				onEscKeyPress: allowClosingModal,
-				ignore: '.dialog-widget-content, .dialog-buttons-undo_bulk_delete, .dialog-buttons-template_after_save',
+				ignore: '.dialog-widget-content, .dialog-buttons-undo_bulk_delete, .dialog-buttons-template_after_save, #elementor-library--infotip__dialog',
 			},
 		};
 	},
@@ -88,6 +89,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	updateViewCollection( models ) {
 		this.modalContent.currentView.collection.reset( models );
+		this.modalContent.currentView.ui.navigationContainer.html( ( new TemplateLibraryNavigationContainerView() ).render()?.el );
 	},
 
 	addTemplates( models ) {
@@ -140,9 +142,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		try {
 			elementor.templates.layout.showLoadingView();
 
-			const templateId = elementModel.model.get( 'template_id' );
-
-			await elementor.templates.getFolderTemplates( templateId );
+			await elementor.templates.getFolderTemplates( elementModel );
 		} finally {
 			elementor.templates.layout.hideLoadingView();
 		}
@@ -167,6 +167,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );
 		this.modalContent.currentView.ui.bulkSelectionActionBar.css( 'display', display );
+
+		// TODO: Temporary fix until the bulk action bar will be as separate view.
+		const displayNavigationContainer = 0 === selectedCount ? 'flex' : 'none';
+		this.modalContent.currentView.ui.navigationContainer.css( 'display', displayNavigationContainer );
 	},
 
 	selectAllCheckboxMinus() {
