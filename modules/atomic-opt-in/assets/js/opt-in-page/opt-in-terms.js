@@ -8,7 +8,7 @@ import {
 	DialogContent,
 	DialogTitle,
 	FormControlLabel,
-	Stack, Typography,
+	Stack,
 } from '@elementor/ui';
 import React, { useState } from 'react';
 import { ContentList, ContentListItem, TextNode } from './opt-in-content';
