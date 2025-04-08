@@ -178,7 +178,8 @@
 
 		var setSide = function( event ) {
 			const isAtom = currentElement?.hasAttribute( 'data-atomic' );
-			const $element = isAtom ? $( currentElement ).children().first() : $( currentElement );
+			const insertionTarget = isAtom ? currentElement.firstElementChild : currentElement;
+			const $element = $( insertionTarget );
 			const elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight();
 			const elementWidth = $element.outerWidth();
 
@@ -196,7 +197,7 @@
 				return;
 			}
 
-			const elementPosition = $element[ 0 ].getBoundingClientRect();
+			const elementPosition = insertionTarget.getBoundingClientRect();
 			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
 
