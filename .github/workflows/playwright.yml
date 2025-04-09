@@ -29,6 +29,36 @@ jobs:
   build-plugin:
     name: Build plugin
     uses: ./.github/workflows/build.yml
+
+  generate_token:
+    name: Generate GitHub App Token
+    runs-on: ubuntu-latest
+    outputs:
+      token: ${{ steps.generate.outputs.token }}
+    steps:
+      - name: Generate token
+        id: generate
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+
+  map_user:
+    name: Map GitHub user to Slack
+    needs: generate_token
+    uses: elementor/elementor-tests-configuration/.github/workflows/map-user.yml@main
+    with:
+      github_user: ${{ github.actor }}
+    secrets:
+      token: ${{ needs.generate_token.outputs.token }}
+
+  use_mapped_user:
+    name: Use Mapped Slack User
+    runs-on: ubuntu-latest
+    needs: map_user
+    steps:
+      - name: Print Slack user
+        run: echo "Slack user is ${{ needs.map_user.outputs.slack_user }}"
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
@@ -197,14 +227,7 @@ jobs:
       - name: Checkout source code
         if: ${{ needs.Playwright.result == 'failure' }}
         uses: actions/checkout@v4
-      - name: Map GitHub user to Slack
-        #if: ${{ needs.Playwright.result == 'failure' }}
-        id: map_user
-        uses: elementor/elementor-tests-configuration/.github/actions/map-github-to-slack@main
-        with:
-          github_user: ${{ github.actor }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
       - name: Send slack message
         #if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
         uses: ./.github/workflows/post-to-slack
@@ -229,7 +252,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Github User : <${{ steps.map_user.outputs.slack_user }}>"
+                    "text": "Github User : <${{ needs.map_user.outputs.slack_user }}>"
                   }
                 }
               ]
