@@ -7,7 +7,7 @@ export class Load extends $e.modules.CommandInternalBase {
 	}
 
 	apply( args ) {
-		const { config, setAsInitial = false, shouldScroll = true } = args;
+		const { config, setAsInitial = false, shouldScroll = true, shouldNavigateToDefaultRoute = true } = args;
 
 		if ( elementorCommon.config.experimentalFeatures.additional_custom_breakpoints ) {
 			// When the Responsive Optimization experiment is active, the responsive controls are generated on the
@@ -64,6 +64,7 @@ export class Load extends $e.modules.CommandInternalBase {
 
 				return $e.internal( 'editor/documents/attach-preview', {
 					shouldScroll,
+					shouldNavigateToDefaultRoute,
 					selector: args.selector,
 				} );
 			} );

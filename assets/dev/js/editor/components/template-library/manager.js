@@ -273,7 +273,7 @@ const TemplateLibraryManager = function() {
 					template_id: templateId,
 				},
 				success( response ) {
-					templatesCollection.remove( templateModel, { silent: true } );
+					templatesCollection.remove( templateModel );
 
 					if ( 'cloud' === source ) {
 						self.addLastRemovedItems( [ templateId ] );
@@ -282,6 +282,8 @@ const TemplateLibraryManager = function() {
 					if ( options.onSuccess ) {
 						options.onSuccess( response );
 					}
+
+					self.layout.updateViewCollection( self.filterTemplates() );
 
 					self.triggerQuotaUpdate();
 				},
@@ -363,18 +365,25 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.getFolderTemplates = ( templateId ) => {
+	this.getFolderTemplates = ( parentElement ) => {
 		this.clearLastRemovedItems();
+
+		const parentId = parentElement.model.get( 'template_id' );
+		const parentTitle = parentElement.model.get( 'title' );
 
 		return new Promise( ( resolve ) => {
 			isLoading = true;
 			const ajaxOptions = {
 				data: {
 					source: 'cloud',
-					template_id: templateId,
+					template_id: parentId,
 				},
 				success: ( data ) => {
-					this.setFilter( 'parent', templateId );
+					this.setFilter( 'parent', {
+						id: parentId,
+						title: parentTitle,
+					} );
+
 					templatesCollection = new TemplateLibraryCollection( data.templates );
 
 					elementor.templates.layout.hideLoadingView();
@@ -832,7 +841,7 @@ const TemplateLibraryManager = function() {
 
 		const source = this.getFilter( 'source' );
 
-		const parentId = this.getFilter( 'parent' );
+		const parentId = this.getFilter( 'parent' )?.id;
 
 		const ajaxOptions = {
 			data: {
@@ -965,7 +974,7 @@ const TemplateLibraryManager = function() {
 		self.setViewSelection( selectedView );
 		self.setFilter( viewKey, selectedView, true );
 
-		self.layout.showTemplatesView( new TemplateLibraryCollection( self.filterTemplates() ) );
+		self.layout.updateViewCollection( self.filterTemplates() );
 		self.clearBulkSelectionItems();
 	};
 
@@ -1126,8 +1135,8 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.triggerQuotaUpdate = function() {
-		elementor.channels.templates.trigger( 'quota:update' );
+	this.triggerQuotaUpdate = function( force = true ) {
+		elementor.channels.templates.trigger( 'quota:update', { force } );
 	};
 };
 

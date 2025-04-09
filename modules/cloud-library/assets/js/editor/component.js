@@ -1,13 +1,43 @@
 import * as hooks from './hooks/';
 
 export default class Component extends $e.modules.ComponentBase {
+	promise = null;
+
+	request = null;
+
 	getNamespace() {
 		return 'cloud-library';
 	}
 
-	setQuotaConfig() {
-		return new Promise( ( resolve, reject ) => {
-			elementorCommon.ajax.addRequest( 'get_quota', {
+	cancelPendingRequest() {
+		if ( this.request ) {
+			elementorCommon.ajax.cancelRequest( 'get_templates_quota' );
+		}
+
+		this.promise = null;
+		this.request = null;
+	}
+
+	getQuotaConfig( force = false ) {
+		if ( force ) {
+			this.cancelPendingRequest();
+			return this.setQuotaConfig();
+		}
+
+		if ( this.promise && ! force ) {
+			return this.promise;
+		}
+
+		return Promise.resolve( elementorAppConfig[ 'cloud-library' ].quota );
+	}
+
+	setQuotaConfig( force = false ) {
+		if ( force ) {
+			this.cancelPendingRequest();
+		}
+
+		this.promise = new Promise( ( resolve, reject ) => {
+			this.request = elementorCommon.ajax.addRequest( 'get_templates_quota', {
 				data: {
 					source: 'cloud',
 				},
@@ -15,13 +45,24 @@ export default class Component extends $e.modules.ComponentBase {
 				success: ( data ) => {
 					elementorAppConfig[ 'cloud-library' ].quota = data;
 					resolve( data );
+					this.promise = null;
+					this.request = null;
+					elementor.channels.templates.trigger( 'quota:updated', data );
 				},
+
 				error: ( error ) => {
-					delete elementorAppConfig[ 'cloud-library' ].quota;
+					if ( error?.statusText !== 'abort' ) {
+						delete elementorAppConfig[ 'cloud-library' ].quota;
+					}
+
 					reject( error );
+					this.request = null;
+					this.promise = null;
 				},
 			} );
 		} );
+
+		return this.promise;
 	}
 	defaultHooks() {
 		return this.importHooks( hooks );
@@ -30,6 +71,7 @@ export default class Component extends $e.modules.ComponentBase {
 	defaultUtils() {
 		return {
 			setQuotaConfig: this.setQuotaConfig.bind( this ),
+			getQuotaConfig: this.getQuotaConfig.bind( this ),
 		};
 	}
 }

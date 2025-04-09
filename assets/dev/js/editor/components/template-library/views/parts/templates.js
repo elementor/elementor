@@ -44,6 +44,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		quotaFill: '.quota-progress-container  .quota-progress-bar .quota-progress-bar-fill',
 		quotaValue: '.quota-progress-container .quota-progress-bar-value',
 		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
+		navigationContainer: '#elementor-template-library-navigation-container',
 	},
 
 	events: {
@@ -246,9 +247,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	initialize() {
-		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
-		this.listenTo( elementor.channels.templates, 'quota:update', this.handleQuotaUpdate.bind( this ) );
 		this.handleQuotaBar = this.handleQuotaBar.bind( this );
+		this.handleQuotaUpdate = this.handleQuotaUpdate.bind( this );
+		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.listenTo( elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
 
@@ -256,7 +258,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		const activeSource = elementor.templates.getFilter( 'source' ) ?? 'local';
 
 		if ( 'cloud' === activeSource ) {
-			$e.components.get( 'cloud-library' ).utils.setQuotaConfig()
+			$e.components.get( 'cloud-library' ).utils.getQuotaConfig()
 				.then( () => {
 					this.handleQuotaBar();
 				} );
@@ -407,11 +409,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		if ( 'remote' === activeSource && 'page' !== templateType && 'lb' !== templateType ) {
 			this.setFiltersUI();
 		}
+
+		if ( 'cloud' === activeSource ) {
+			this.handleQuotaBar();
+		}
 	},
 
 	onRenderCollection() {
 		this.addSourceData();
-		this.handleQuotaBar();
 
 		this.toggleFilterClass();
 
@@ -425,6 +430,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			this.handleLoadMore();
 
 			this.addViewData();
+
+			this.handleQuotaUpdate();
 		}
 	},
 

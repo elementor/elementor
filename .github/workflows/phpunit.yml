@@ -43,6 +43,7 @@ jobs:
         with:
           PATTERNS: |
             **/*.php
+            **/*.twig
             composer.+(json|lock)
             .github/**/*.yml
             install-wp-tests.sh
