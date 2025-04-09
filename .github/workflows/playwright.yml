@@ -43,6 +43,8 @@ jobs:
         - shardIndex: "elements-regression"
         - shardIndex: "plugin_tester_section"
         - shardIndex: "plugin_tester_container"
+    outputs:
+      app_token: ${{ steps.generate-token.outputs.token }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -204,7 +206,7 @@ jobs:
         with:
           github_user: ${{ github.actor }}
         env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          GH_TOKEN: ${{ needs.Playwright.outputs.app_token }}
       - name: Send slack message
         #if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
         uses: ./.github/workflows/post-to-slack
