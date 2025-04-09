@@ -201,6 +201,7 @@ jobs:
           repository: elementor/elementor-tests-configuration
           token: ${{ steps.generate-token.outputs.token }}
           path: elementor-tests-configuration
+          ref: main
       - name: Map GitHub user to Slack
         #if: ${{ needs.Playwright.result == 'failure' }}
         id: map_user
