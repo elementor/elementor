@@ -272,9 +272,9 @@
 		};
 
 		const insertFlexRowPlaceholder = function() {
-			const { $currentElement, isInnerContainer } = placeholderContext;
+			const { $currentElement, isInnerContainer, placeholderTarget } = placeholderContext;
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
+			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $( placeholderTarget );
 
 			$target[ insertMethod ]( elementsCache.$placeholder );
 		};
