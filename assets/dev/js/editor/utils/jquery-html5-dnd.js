@@ -139,7 +139,7 @@
 
 			if ( ! hasVerticalDetection() ) {
 				const threshold = settings.horizontalThreshold,
-					{ left, right } = currentElement.getBoundingClientRect();
+					{ left, right } = placeholderContext.placeholderTarget.getBoundingClientRect();
 
 				// For cases when the event is actually dispatched on the parent element, but
 				// `currentElement` is the actual element that the offset should be calculated by.
@@ -272,16 +272,19 @@
 		};
 
 		const insertFlexRowPlaceholder = function() {
-			const { $currentElement, isInnerContainer, placeholderTarget } = placeholderContext;
+			const { $currentElement, isInnerContainer } = placeholderContext;
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $( placeholderTarget );
+			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $( currentElement );
 
 			$target[ insertMethod ]( elementsCache.$placeholder );
 		};
 
 		const insertDefaultPlaceholder = function() {
-			const { placeholderTarget } = placeholderContext;
-			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+			const { placeholderTarget, isLogicalElement } = placeholderContext;
+
+			const beforeMethod = isLogicalElement ? 'insertBefore' : 'prependTo';
+			const afterMethod = isLogicalElement ? 'insertAfter' : 'appendTo';
+			const insertMethod = 'top' === currentSide ? beforeMethod : afterMethod;
 
 			elementsCache.$placeholder[ insertMethod ]( placeholderTarget );
 		};
