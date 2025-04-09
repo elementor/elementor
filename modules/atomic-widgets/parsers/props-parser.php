@@ -40,6 +40,7 @@ class Props_Parser {
 			$is_valid = $prop_type->validate( $value ?? $prop_type->get_default() );
 
 			if ( ! $is_valid ) {
+				//here
 				$result->errors()->add( $key, 'invalid_value' );
 
 				continue;

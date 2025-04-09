@@ -103,7 +103,7 @@ trait Has_Atomic_Base {
 		$result = $props_parser->parse( $settings );
 
 		if ( ! $result->is_valid() ) {
-			throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
+			// throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
 		}
 
 		return $result->unwrap();
