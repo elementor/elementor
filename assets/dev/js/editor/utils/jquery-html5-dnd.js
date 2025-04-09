@@ -92,6 +92,7 @@
 			currentElement,
 			currentSide,
 			isDroppingAllowedState = false,
+			placeholderContext = {},
 			defaultSettings = {
 				element: '',
 				items: '>',
@@ -205,39 +206,80 @@
 				return;
 			}
 
-			const $currentElement = $( currentElement ),
-				isGridRowContainer = $currentElement.parents( '.e-grid.e-con--row' ).length,
-				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' ),
-				$parentContainer = $currentElement.closest( '.e-con' ).parent().closest( '.e-con' );
+			placeholderContext = createPlaceholderContext();
 
-			// Make sure that the previous placeholder is removed before inserting a new one.
-			$parentContainer.find( '.elementor-widget-placeholder' )?.remove();
+			clearPreviousPlaceholder();
+
+			const insertMode = getInsertMode();
+
+			switch ( insertMode ) {
+				case 'gridRow':
+					insertGridRowPlaceholder();
+					break;
+				case 'flexRow':
+					insertFlexRowPlaceholder();
+					break;
+				default:
+					insertDefaultPlaceholder();
+					break;
+			}
+		};
+
+		const createPlaceholderContext = function() {
+			const $currentElement = $( currentElement );
+
+			return {
+				$currentElement,
+				isFirstInsert: $currentElement.hasClass( 'elementor-first-add' ),
+				isInnerContainer: $currentElement.hasClass( 'e-con-inner' ),
+				isGridRowContainer: $currentElement.parents( '.e-grid.e-con--row' ).length,
+				isRowContainer: $currentElement.parents( '.e-con--row' ).length,
+				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
+			};
+		};
+
+		const getInsertMode = function() {
+			if ( placeholderContext.isFirstInsert ) {
+				return 'default';
+			}
+
+			if ( placeholderContext.isGridRowContainer ) {
+				return 'gridRow';
+			}
+
+			if ( placeholderContext.isRowContainer ) {
+				return 'flexRow';
+			}
+
+			return 'default';
+		};
+
+		const clearPreviousPlaceholder = function() {
+			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
 
 			// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
-			if ( isGridRowContainer ) {
+			if ( placeholderContext.isGridRowContainer ) {
 				elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right' );
 			}
+		};
 
-			if ( isGridRowContainer && ! isFirstInsert ) {
-				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo',
-					gridPlaceHolder = elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
-				gridPlaceHolder[ insertMethod ]( currentElement );
+		const insertGridRowPlaceholder = function() {
+			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
+			const $gridPlaceHolder = elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
+			$gridPlaceHolder[ insertMethod ]( currentElement );
+		};
 
-				return;
-			}
+		const insertFlexRowPlaceholder = function() {
+			const { $currentElement, isInnerContainer } = placeholderContext;
+			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
 
-			// Fix placeholder placement for Flex Container with `flex-direction: row`.
-			const isRowContainer = $currentElement.parents( '.e-con--row' ).length,
-				isInnerContainer = $currentElement.hasClass( 'e-con-inner' );
-			if ( isRowContainer && ! isFirstInsert ) {
-				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before',
-					$rowTargetElement = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
-				$rowTargetElement[ insertMethod ]( elementsCache.$placeholder );
+			$target[ insertMethod ]( elementsCache.$placeholder );
+		};
 
-				return;
-			}
-
+		const insertDefaultPlaceholder = function() {
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+
 			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
 
