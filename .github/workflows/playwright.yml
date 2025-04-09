@@ -31,11 +31,12 @@ jobs:
     uses: ./.github/workflows/build.yml
 
   generate_token:
+    name: Generate GitHub App Token
     runs-on: ubuntu-latest
     outputs:
       token: ${{ steps.generate.outputs.token }}
     steps:
-      - name: Generate GitHub App Token
+      - name: Generate token
         id: generate
         uses: actions/create-github-app-token@v1
         with:
