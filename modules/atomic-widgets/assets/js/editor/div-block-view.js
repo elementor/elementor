@@ -210,7 +210,6 @@ const DivBlockView = BaseElementView.extend( {
 
 	getDroppableOptions() {
 		const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
-		let $placeholder;
 
 		return {
 			axis: this.getDroppableAxis(),
