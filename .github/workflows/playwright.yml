@@ -43,8 +43,6 @@ jobs:
         - shardIndex: "elements-regression"
         - shardIndex: "plugin_tester_section"
         - shardIndex: "plugin_tester_container"
-    outputs:
-      app_token: ${{ steps.generate-token.outputs.token }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -84,15 +82,6 @@ jobs:
       - name: Install playwright/test
         run: |
           npx playwright install chromium
-      - name: Generate a token
-        id: generate-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
-          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
-      - name: Debug token output
-        run: |
-          echo "Generated token starts with: ${{ steps.generate-token.outputs.token }}"
       # Step 2: Checkout the elementor-tests-configuration repo
       #- name: Checkout elementor-tests-configuration repo
       #  uses: actions/checkout@v4
@@ -187,26 +176,48 @@ jobs:
           if-no-files-found: ignore
           retention-days: 2
 
-
+  generate-token:
+    runs-on: ubuntu-latest
+    outputs:
+      app_token: ${{ steps.token.outputs.token }}
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Generate GitHub App token
+        id: token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+          
   test-result:
-    needs: [ Playwright, PlaywrightWithTag ]
+    needs: [ Playwright, PlaywrightWithTag, generate-token ]
     if: ${{ always() }}
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
+    env:
+      GITHUB_TOKEN: ${{ needs.generate-token.outputs.app_token }}
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
       - name: Checkout source code
         if: ${{ needs.Playwright.result == 'failure' }}
         uses: actions/checkout@v4
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
       - name: Map GitHub user to Slack
         #if: ${{ needs.Playwright.result == 'failure' }}
         id: map_user
         uses: elementor/elementor-tests-configuration/.github/actions/map-github-to-slack@main
         with:
           github_user: ${{ github.actor }}
-        env:
-          GH_TOKEN: ${{ needs.Playwright.outputs.app_token }}
+        # env:
+        #   GH_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Send slack message
         #if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
         uses: ./.github/workflows/post-to-slack
