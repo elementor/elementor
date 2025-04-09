@@ -167,7 +167,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 					: true,
 				items: categories[ categoryName ],
 				promotion: categoryConfig.promotion ?? null,
-				v4: categoryConfig.v4 ?? null,
 			} );
 		} );
 
