@@ -34,7 +34,7 @@ class Module extends BaseModule {
 			'user_agent' => esc_html( Utils::get_super_global_value( $_SERVER, 'HTTP_USER_AGENT' ) ),
 			'site_language' => get_locale(),
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
-			'subscription_id' => null,
+			'subscription_id' => self::get_subscription_id(),
 			'token' => defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ? ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN : '',
 		];
 
@@ -50,5 +50,25 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		];
+	}
+
+	private static function get_subscription_id() {
+		if ( ! Utils::has_pro() ) {
+
+			return null;
+		}
+
+		$license_data = get_option( '_elementor_pro_license_v2_data' );
+		if ( isset( $license_data['value'] ) ) {
+			$license_info = json_decode( $license_data['value'], true );
+
+			if ( isset( $license_info['subscription_id'] ) ) {
+				$subscription_id = $license_info['subscription_id'];
+
+				return $subscription_id;
+			}
+		}
+
+		return null;
 	}
 }
