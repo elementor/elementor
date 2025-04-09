@@ -21,29 +21,29 @@ class Applied_Global_Classes_Usage {
 	 * @return array<string, int> Statistics about applied global classes per global class
 	 */
 	public function get() {
-		$total_count_per_type = [];
+		$total_count_per_class_id = [];
 		$global_class_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
 
 		if ( empty( $global_class_ids ) ) {
-			return $total_count_per_type;
+			return [];
 		}
 
-		Plugin::$instance->db->iterate_elementor_documents( function( $document, $elements_data ) use ( &$total_count_per_type, $global_class_ids ) {
+		Plugin::$instance->db->iterate_elementor_documents( function( $document, $elements_data ) use ( &$total_count_per_class_id, $global_class_ids ) {
 			$count_per_global_class = $this->get_classes_count_per_class( $elements_data, $global_class_ids );
 
-			$total_count_per_type = Collection::make( $count_per_global_class )->reduce( function( $carry, $count, $class_id ) {
+			$total_count_per_class_id = Collection::make( $count_per_global_class )->reduce( function( $carry, $count, $class_id ) {
 				$carry[ $class_id ] ??= 0;
 				$carry[ $class_id ] += $count;
 
 				return $carry;
-			}, $total_count_per_type );
+			}, $total_count_per_class_id );
 		});
 
 		foreach ( $global_class_ids as $global_class_id ) {
-			$total_count_per_type[ $global_class_id ] ??= 0;
+			$total_count_per_class_id[ $global_class_id ] ??= 0;
 		}
 
-		return $total_count_per_type;
+		return $total_count_per_class_id;
 	}
 
 	private function get_classes_count_per_class( $elements_data, $global_class_ids ) {
