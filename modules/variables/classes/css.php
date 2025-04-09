@@ -32,7 +32,7 @@ class CSS {
 	}
 
 	private function raw_css( $kit_id ): string {
-		$css_string = ".elementor-kit-${kit_id} {";
+		$css_string = ".elementor-kit-$kit_id {";
 
 		foreach ( $this->global_variables() as $idx => $variable ) {
 			$css_string .= '--' . $idx . ':' . $variable['value'] . '; ';
