@@ -175,24 +175,9 @@ jobs:
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
-
-  generate-token:
-    runs-on: ubuntu-latest
-    outputs:
-      app_token: ${{ steps.token.outputs.token }}
-    permissions:
-      actions: write
-      contents: read
-    steps:
-      - name: Generate GitHub App token
-        id: token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
-          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
           
   test-result:
-    needs: [ Playwright, PlaywrightWithTag, generate-token ]
+    needs: [ Playwright, PlaywrightWithTag ]
     if: ${{ always() }}
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
@@ -210,10 +195,16 @@ jobs:
         with:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+      - name: Checkout private action repository
+        uses: actions/checkout@v3
+        with:
+          repository: elementor/elementor-tests-configuration
+          token: ${{ steps.generate-token.outputs.token }}
+          path: elementor-tests-configuration
       - name: Map GitHub user to Slack
         #if: ${{ needs.Playwright.result == 'failure' }}
         id: map_user
-        uses: elementor/elementor-tests-configuration/.github/actions/map-github-to-slack@main
+        uses: ./elementor-tests-configuration/.github/actions/map-github-to-slack@main
         with:
           github_user: ${{ github.actor }}
         # env:
