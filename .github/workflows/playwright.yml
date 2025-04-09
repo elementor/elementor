@@ -92,11 +92,11 @@ jobs:
         run: |
           echo "Generated token starts with: ${{ steps.generate-token.outputs.token }}"
       # Step 2: Checkout the elementor-tests-configuration repo
-      #- name: Checkout elementor-tests-configuration repo
-      #  uses: actions/checkout@v4
-      #  with:
-      #    repository: elementor/elementor-tests-configuration
-      #    token: ${{ steps.generate-token.outputs.token }}
+      - name: Checkout elementor-tests-configuration repo
+        uses: actions/checkout@v4
+        with:
+          repository: elementor/elementor-tests-configuration
+          token: ${{ steps.generate-token.outputs.token }}
 
       # Step 3: Run the skip-tests action (using the token to access the action)
       #- name: Get skipped tests from JSON
