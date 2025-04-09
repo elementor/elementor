@@ -135,10 +135,11 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 					],
 				],
 				'@elementor/editor-controls' => [
+					'placeholder_image' => Placeholder_Image::get_placeholder_image(),
 					'background_placeholder_image' => Placeholder_Image::get_background_placeholder_image(),
 				],
 				'@elementor/editor-canvas' => [
-					'background_placeholder_image' => Placeholder_Image::get_background_placeholder_image(),
+					'placeholder_image' => Placeholder_Image::get_placeholder_image(),
 				],
 			] );
 
