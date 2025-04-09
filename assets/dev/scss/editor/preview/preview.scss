@@ -217,10 +217,13 @@ html.elementor-html {
 .elementor-element {
 
 	& [data-atomic] .elementor-sortable-placeholder.elementor-widget-placeholder {
-		margin-bottom: -20px;
+
+		&:first-child {
+			margin-bottom: -20px;
+			border-top: 10px solid transparent;
+		}
 
 		&:last-child {
-			margin-bottom: 0;
 			margin-top: -20px;
 		}
 	}
