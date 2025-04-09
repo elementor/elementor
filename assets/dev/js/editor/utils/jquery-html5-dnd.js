@@ -274,17 +274,18 @@
 		const insertFlexRowPlaceholder = function() {
 			const { $currentElement, isInnerContainer } = placeholderContext;
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $( currentElement );
+			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
 
 			$target[ insertMethod ]( elementsCache.$placeholder );
 		};
 
 		const insertDefaultPlaceholder = function() {
 			const { placeholderTarget, isLogicalElement } = placeholderContext;
+			let insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 
-			const beforeMethod = isLogicalElement ? 'insertBefore' : 'prependTo';
-			const afterMethod = isLogicalElement ? 'insertAfter' : 'appendTo';
-			const insertMethod = 'top' === currentSide ? beforeMethod : afterMethod;
+			if ( isLogicalElement ) {
+				insertMethod = 'top' === currentSide ? 'insertBefore' : 'insertAfter';
+			}
 
 			elementsCache.$placeholder[ insertMethod ]( placeholderTarget );
 		};
