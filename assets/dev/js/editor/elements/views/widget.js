@@ -141,8 +141,12 @@ const WidgetView = BaseWidget.extend( {
 	},
 
 	shouldGetEmptyView( $widgetContainer ) {
-		const hasZeroHeight = $widgetContainer.is( ':visible' ) && ! $widgetContainer.outerHeight();
-		const isEmpty = 0 === $widgetContainer.children().length;
+		if ( ! $widgetContainer.is( ':visible' ) ) {
+			return false;
+		}
+
+		const hasZeroHeight = ! $widgetContainer.outerHeight();
+		const isEmpty = $widgetContainer.is( ':empty' );
 
 		return hasZeroHeight || isEmpty;
 	},
