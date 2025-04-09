@@ -44,13 +44,14 @@ jobs:
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
 
   map_user:
-    name: Map GitHub user to Slack
     needs: generate_token
-    uses: elementor/elementor-tests-configuration/.github/workflows/map-user.yml@main
-    with:
-      github_user: ${{ github.actor }}
-    secrets:
-      token: ${{ needs.generate_token.outputs.token }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use token to call reusable workflow
+        uses: elementor/elementor-tests-configuration/.github/workflows/map-user.yml@main
+        with:
+          github_user: ${{ github.actor }}
+          token: ${{ needs.generate_token.outputs.token }}
 
   use_mapped_user:
     name: Use Mapped Slack User
