@@ -280,10 +280,9 @@
 		};
 
 		const insertDefaultPlaceholder = function() {
-			const { placeholderTarget } = placeholderContext;
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 
-			elementsCache.$placeholder[ insertMethod ]( placeholderTarget );
+			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
 
 		var isDroppingAllowed = function( event ) {
