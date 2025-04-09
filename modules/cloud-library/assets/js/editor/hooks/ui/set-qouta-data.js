@@ -7,7 +7,7 @@ export class SetQuotaData extends $e.modules.hookUI.Before {
 		return 'cloud-library-set-quota-data';
 	}
 
-	getCondition() {
+	getConditions() {
 		elementor.helpers.hasPro();
 	}
 
