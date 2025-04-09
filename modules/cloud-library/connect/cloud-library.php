@@ -11,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Cloud_Library extends Library {
-	const API_URL = 'https://my.elementor.com/api/v1';
-
 	public function get_title(): string {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
