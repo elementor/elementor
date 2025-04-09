@@ -28,8 +28,8 @@ class Applied_Global_Classes_Usage {
 			return $total_count_per_type;
 		}
 
-		Plugin::$instance->db->iterate_elementor_documents( function( $document, $elements_data ) use  ( &$total_count_per_type, $global_class_ids ) {
-			$count_per_global_class = $this->get_classes_count_per_element_type( $elements_data, $global_class_ids );
+		Plugin::$instance->db->iterate_elementor_documents( function( $document, $elements_data ) use ( &$total_count_per_type, $global_class_ids ) {
+			$count_per_global_class = $this->get_classes_count_per_class( $elements_data, $global_class_ids );
 
 			$total_count_per_type = Collection::make( $count_per_global_class )->reduce( function( $carry, $count, $class_id ) {
 				$carry[ $class_id ] ??= 0;
@@ -46,7 +46,7 @@ class Applied_Global_Classes_Usage {
 		return $total_count_per_type;
 	}
 
-	private function get_classes_count_per_element_type( $elements_data, $global_class_ids ) {
+	private function get_classes_count_per_class( $elements_data, $global_class_ids ) {
 		$count_per_class = [];
 
 		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $global_class_ids, &$count_per_class ) {
@@ -70,7 +70,7 @@ class Applied_Global_Classes_Usage {
 	}
 
 	private function get_applied_global_classes_per_element( $atomic_props_schema, $atomic_element_data, $global_class_ids ) {
-		return Collection::make( $atomic_props_schema )->reduce( function($carry, $prop_value, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
+		return Collection::make( $atomic_props_schema )->reduce( function( $carry, $prop_value, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
 			if ( ! Atomic_Elements_Utils::is_classes_prop( $prop_value ) ) {
 				return $carry;
 			}
