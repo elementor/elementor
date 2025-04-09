@@ -181,8 +181,6 @@ jobs:
     if: ${{ always() }}
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
-    env:
-      GITHUB_TOKEN: ${{ needs.generate-token.outputs.app_token }}
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
@@ -197,6 +195,8 @@ jobs:
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
       - name: Checkout private action repository
         uses: actions/checkout@v3
+        env:
+           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         with:
           repository: elementor/elementor-tests-configuration
           token: ${{ steps.generate-token.outputs.token }}
