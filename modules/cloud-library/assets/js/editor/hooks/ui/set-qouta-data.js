@@ -8,7 +8,7 @@ export class SetQuotaData extends $e.modules.hookUI.Before {
 	}
 
 	getConditions() {
-		elementor.helpers.hasPro();
+		return elementor.config.library_connect.is_connected && elementor.helpers.hasPro();
 	}
 
 	apply() {
