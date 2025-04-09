@@ -4,7 +4,7 @@ export class Switch extends $e.modules.CommandBase {
 	}
 
 	apply( args ) {
-		const { id, mode, onClose, shouldScroll = true, setAsInitial = false } = args;
+		const { id, mode, onClose, shouldScroll = true, shouldNavigateToDefaultRoute = true, setAsInitial = false } = args;
 
 		if ( setAsInitial ) {
 			// Will be removed by the attach-preview after the iframe has loaded.
@@ -18,7 +18,7 @@ export class Switch extends $e.modules.CommandBase {
 			selector: args.selector,
 		} )
 			.then( () => {
-				return $e.run( 'editor/documents/open', { id, shouldScroll, selector: args.selector, setAsInitial } );
+				return $e.run( 'editor/documents/open', { id, shouldScroll, shouldNavigateToDefaultRoute, selector: args.selector, setAsInitial } );
 			} )
 			.then( () => {
 				elementor.getPanelView().getPages( 'menu' ).view.addExitItem();
