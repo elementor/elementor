@@ -57,6 +57,7 @@ export default class Component extends $e.modules.ComponentBase {
 
 					reject( error );
 					this.request = null;
+					this.promise = null;
 				},
 			} );
 		} );
