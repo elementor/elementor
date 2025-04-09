@@ -255,7 +255,7 @@
 		};
 
 		const clearPreviousPlaceholder = function() {
-			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' )?.remove();
+			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
 
 			// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
 			if ( placeholderContext.isGridRowContainer ) {
@@ -264,11 +264,9 @@
 		};
 
 		const insertGridRowPlaceholder = function() {
-			const { $currentElement } = placeholderContext;
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
-
-			elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
-			elementsCache.$placeholder[ insertMethod ]( $currentElement );
+			const $gridPlaceHolder = elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
+			$gridPlaceHolder[ insertMethod ]( currentElement );
 		};
 
 		const insertFlexRowPlaceholder = function() {
