@@ -280,30 +280,6 @@ const DivBlockView = BaseElementView.extend( {
 				// User is dragging an element from the panel.
 				this.onDrop( event, { at: newIndex } );
 			},
-			onDragging: ( side, event ) => {
-				if ( ! $placeholder ) {
-					$placeholder = this.$el.find( '.elementor-sortable-placeholder' );
-				}
-
-				if ( ! $placeholder.length ) {
-					return;
-				}
-
-				const currentTarget = event.currentTarget,
-					currentTargetHeight = currentTarget.getBoundingClientRect().height,
-					placeholderElement = $placeholder[ 0 ],
-					isNotBeforeSibling = currentTarget !== placeholderElement.previousElementSibling;
-
-				if ( 'horizontal' === this.getDroppableAxis() ) {
-					if ( isNotBeforeSibling ) {
-						this.handleDropSide( side, placeholderElement, currentTarget );
-					}
-
-					this.maybeShowCustomDropPlaceholder( $placeholder, currentTargetHeight );
-				} else {
-					$placeholder.removeAttr( 'style' );
-				}
-			},
 		};
 	},
 

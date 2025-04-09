@@ -216,18 +216,6 @@ html.elementor-html {
 // Element
 .elementor-element {
 
-	& [data-atomic] .elementor-sortable-placeholder.elementor-widget-placeholder {
-
-		&:first-child {
-			margin-bottom: -20px;
-			border-top: 10px solid transparent;
-		}
-
-		&:last-child {
-			margin-top: -20px;
-		}
-	}
-
 	> .elementor-element-overlay {
 		position: absolute;
 		top: 0;
@@ -440,6 +428,19 @@ html.elementor-html {
 .elementor-widget-placeholder {
 	height: $widget-placeholder-size;
 	animation-name: placeholder-widget;
+
+	&.is-logical {
+		--e-margin-block: calc( -1 * var(--e-row-gap) );
+
+		&:first-child {
+			margin-bottom: var(--e-margin-block, 0px);
+			border-top: 10px solid transparent;
+		}
+
+		&:last-child {
+			margin-top: var(--e-margin-block, 0px);
+		}
+	}
 }
 
 .elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,

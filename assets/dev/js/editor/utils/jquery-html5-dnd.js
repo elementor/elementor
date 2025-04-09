@@ -218,6 +218,9 @@
 				case 'flexRow':
 					insertFlexRowPlaceholder();
 					break;
+				case 'block':
+					insertBlockContainerPlaceholder();
+					break;
 				default:
 					insertDefaultPlaceholder();
 					break;
@@ -227,17 +230,40 @@
 		const createPlaceholderContext = function() {
 			const $currentElement = $( currentElement );
 			const isLogicalElement = 'contents' === getComputedStyle( currentElement ).display;
+			const container = currentElement.closest( '.e-con' );
+			const containerDisplayStyle = window.getComputedStyle( container ).display;
+
+			updateFlexRowClass( container );
 
 			return {
 				$currentElement,
+				placeholderTarget: isLogicalElement ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement,
+				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
 				isFirstInsert: $currentElement.hasClass( 'elementor-first-add' ),
 				isInnerContainer: $currentElement.hasClass( 'e-con-inner' ),
-				isGridRowContainer: $currentElement.parents( '.e-grid.e-con--row' ).length,
-				isRowContainer: $currentElement.parents( '.e-con--row' ).length,
-				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
+				isGridRowContainer: 0 !== $currentElement.parents( '.e-grid.e-con--row' ).length,
+				isRowContainer: 0 !== $currentElement.parents( '.e-con--row' ).length,
+				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
 				isLogicalElement,
-				placeholderTarget: isLogicalElement ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement,
 			};
+		};
+
+		const updateFlexRowClass = function( container ) {
+			if ( ! container ) {
+				return;
+			}
+
+			if ( container.classList.contains( 'e-con--row' ) ) {
+				return;
+			}
+
+			const wrapperStyle = window.getComputedStyle( container.querySelector( '.e-con-inner' ) || container );
+			const isFlexContainer = 'flex' === wrapperStyle.display || 'inline-flex' === wrapperStyle.display;
+			const isRowDirection = 'row' === wrapperStyle.flexDirection || 'row-reverse' === wrapperStyle.flexDirection;
+
+			if ( isFlexContainer && isRowDirection ) {
+				container.classList.add( 'e-con--row' );
+			}
 		};
 
 		const getInsertMode = function() {
@@ -253,16 +279,19 @@
 				return 'flexRow';
 			}
 
+			if ( placeholderContext.isBlockContainer ) {
+				return 'block';
+			}
+
 			return 'default';
 		};
 
 		const clearPreviousPlaceholder = function() {
 			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
 
-			// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
-			if ( placeholderContext.isGridRowContainer ) {
-				elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right' );
-			}
+			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right is-logical' );
+			elementsCache.$placeholder.addClass( 'is-logical' );
+			elementsCache.$placeholder.css( '--e-row-gap', '' );
 		};
 
 		const insertGridRowPlaceholder = function() {
@@ -279,12 +308,26 @@
 			$target[ insertMethod ]( elementsCache.$placeholder );
 		};
 
+		const insertBlockContainerPlaceholder = function() {
+			const { $currentElement, isInnerContainer } = placeholderContext;
+			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
+
+			$target[ insertMethod ]( elementsCache.$placeholder );
+		};
+
 		const insertDefaultPlaceholder = function() {
 			const { placeholderTarget, isLogicalElement } = placeholderContext;
 			let insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 
 			if ( isLogicalElement ) {
 				insertMethod = 'top' === currentSide ? 'insertBefore' : 'insertAfter';
+				elementsCache.$placeholder.addClass( 'is-logical' );
+
+				const elementWrapper = currentElement.closest( '.e-con, .e-con-inner' );
+				const wrapperStyle = window.getComputedStyle( elementWrapper );
+				const rowGap = wrapperStyle.rowGap || wrapperStyle.gap || '0px';
+				elementsCache.$placeholder.css( '--e-row-gap', rowGap );
 			}
 
 			elementsCache.$placeholder[ insertMethod ]( placeholderTarget );
