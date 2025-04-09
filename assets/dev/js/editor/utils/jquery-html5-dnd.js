@@ -178,9 +178,11 @@
 		};
 
 		var setSide = function( event ) {
-			var $element = $( currentElement ),
-				elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight(),
-				elementWidth = $element.outerWidth();
+			const placeholderTarget = placeholderContext.isAtomicWidget ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement;
+			const $element = $( placeholderTarget );
+
+			const elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight();
+			const elementWidth = $element.outerWidth();
 
 			event = event.originalEvent;
 
@@ -196,7 +198,7 @@
 				return;
 			}
 
-			var elementPosition = currentElement.getBoundingClientRect();
+			const elementPosition = placeholderTarget.getBoundingClientRect();
 
 			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
@@ -205,8 +207,6 @@
 			if ( ! settings.placeholder ) {
 				return;
 			}
-
-			placeholderContext = createPlaceholderContext();
 
 			clearPreviousPlaceholder();
 
@@ -218,6 +218,9 @@
 					break;
 				case 'flexRow':
 					insertFlexRowPlaceholder();
+					break;
+				case 'atomic':
+					insertAtomPlaceholder();
 					break;
 				default:
 					insertDefaultPlaceholder();
@@ -235,6 +238,7 @@
 				isGridRowContainer: $currentElement.parents( '.e-grid.e-con--row' ).length,
 				isRowContainer: $currentElement.parents( '.e-con--row' ).length,
 				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
+				isAtomicWidget: currentElement.hasAttribute( 'data-atomic' ),
 			};
 		};
 
@@ -249,6 +253,10 @@
 
 			if ( placeholderContext.isRowContainer ) {
 				return 'flexRow';
+			}
+
+			if ( placeholderContext.isAtomicWidget ) {
+				return 'atomic';
 			}
 
 			return 'default';
@@ -275,6 +283,12 @@
 			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
 
 			$target[ insertMethod ]( elementsCache.$placeholder );
+		};
+
+		const insertAtomPlaceholder = function() {
+			const placeholderTarget = currentElement.querySelector( ':not(.elementor-widget-placeholder)' );
+			const insertMethod = 'top' === currentSide ? 'insertBefore' : 'insertAfter';
+			elementsCache.$placeholder[ insertMethod ]( placeholderTarget );
 		};
 
 		const insertDefaultPlaceholder = function() {
@@ -359,6 +373,8 @@
 
 				droppableInstance.doDragLeave();
 			} );
+
+			placeholderContext = createPlaceholderContext();
 
 			setSide( event );
 
