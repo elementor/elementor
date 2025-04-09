@@ -91,6 +91,22 @@ export default class extends elementorModules.Module {
 		return deferred;
 	}
 
+	cancelRequest( requestId ) {
+		const request = this.requests[ requestId ];
+
+		if ( ! request ) {
+			return null;
+		}
+
+		if ( request.options.deferred.jqXhr ) {
+			return request.options.deferred.jqXhr.abort( 'Request canceled' );
+		}
+
+		if ( request.options.deferred ) {
+			return request.options.deferred.reject( 'Request canceled' );
+		}
+	}
+
 	addRequest( action, options, immediately ) {
 		options = options || {};
 
