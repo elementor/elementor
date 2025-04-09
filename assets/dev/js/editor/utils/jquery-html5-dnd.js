@@ -178,9 +178,8 @@
 		};
 
 		var setSide = function( event ) {
-			const placeholderTarget = placeholderContext.isAtomicWidget ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement;
+			const { placeholderTarget } = placeholderContext;
 			const $element = $( placeholderTarget );
-
 			const elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight();
 			const elementWidth = $element.outerWidth();
 
@@ -219,9 +218,6 @@
 				case 'flexRow':
 					insertFlexRowPlaceholder();
 					break;
-				case 'atomic':
-					insertAtomPlaceholder();
-					break;
 				default:
 					insertDefaultPlaceholder();
 					break;
@@ -230,6 +226,7 @@
 
 		const createPlaceholderContext = function() {
 			const $currentElement = $( currentElement );
+			const isLogicalElement = 'contents' === getComputedStyle( currentElement ).display;
 
 			return {
 				$currentElement,
@@ -238,7 +235,8 @@
 				isGridRowContainer: $currentElement.parents( '.e-grid.e-con--row' ).length,
 				isRowContainer: $currentElement.parents( '.e-con--row' ).length,
 				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
-				isAtomicWidget: currentElement.hasAttribute( 'data-atomic' ),
+				isLogicalElement,
+				placeholderTarget: isLogicalElement ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement,
 			};
 		};
 
@@ -253,10 +251,6 @@
 
 			if ( placeholderContext.isRowContainer ) {
 				return 'flexRow';
-			}
-
-			if ( placeholderContext.isAtomicWidget ) {
-				return 'atomic';
 			}
 
 			return 'default';
@@ -285,16 +279,11 @@
 			$target[ insertMethod ]( elementsCache.$placeholder );
 		};
 
-		const insertAtomPlaceholder = function() {
-			const placeholderTarget = currentElement.querySelector( ':not(.elementor-widget-placeholder)' );
-			const insertMethod = 'top' === currentSide ? 'insertBefore' : 'insertAfter';
-			elementsCache.$placeholder[ insertMethod ]( placeholderTarget );
-		};
-
 		const insertDefaultPlaceholder = function() {
+			const { placeholderTarget } = placeholderContext;
 			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 
-			elementsCache.$placeholder[ insertMethod ]( currentElement );
+			elementsCache.$placeholder[ insertMethod ]( placeholderTarget );
 		};
 
 		var isDroppingAllowed = function( event ) {
