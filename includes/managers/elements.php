@@ -279,6 +279,7 @@ class Elements_Manager {
 			'v4-elements' => [
 				'title' => esc_html__( 'V4 Elements', 'elementor' ),
 				'hideIfEmpty' => true,
+				'v4' => true,
 			],
 			'layout' => [
 				'title' => esc_html__( 'Layout', 'elementor' ),
