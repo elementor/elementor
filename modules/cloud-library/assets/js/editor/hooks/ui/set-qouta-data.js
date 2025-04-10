@@ -7,6 +7,10 @@ export class SetQuotaData extends $e.modules.hookUI.Before {
 		return 'cloud-library-set-quota-data';
 	}
 
+	getConditions() {
+		return elementor.config.library_connect.is_connected && elementor.helpers.hasPro();
+	}
+
 	apply() {
 		$e.components.get( 'cloud-library' ).utils.setQuotaConfig();
 	}

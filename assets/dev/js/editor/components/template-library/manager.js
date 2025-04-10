@@ -283,7 +283,7 @@ const TemplateLibraryManager = function() {
 						options.onSuccess( response );
 					}
 
-					self.layout.updateViewCollection( templatesCollection.models );
+					self.layout.updateViewCollection( self.filterTemplates() );
 
 					self.triggerQuotaUpdate();
 				},
@@ -1135,8 +1135,8 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.triggerQuotaUpdate = function() {
-		elementor.channels.templates.trigger( 'quota:update' );
+	this.triggerQuotaUpdate = function( force = true ) {
+		elementor.channels.templates.trigger( 'quota:update', { force } );
 	};
 };
 
