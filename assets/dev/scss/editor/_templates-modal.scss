@@ -941,10 +941,16 @@ label.elementor-template-library-order-label {
 			padding: 10px 20px;
 			font-size: 11px;
 			cursor: pointer;
+			display: flex;
+			align-items: center;
+			gap: 8px;
 		}
 
 		a {
 			color: var(--e-a-color-txt);
+			display: flex;
+			align-items: center;
+			gap: 8px;
 		}
 
 		.elementor-template-library-template-delete {
@@ -996,6 +1002,9 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-name {
 		font-weight: 500;
+		i {
+			font-size: 16px;
+		}
 	}
 
 	.elementor-template-library-template-name,
