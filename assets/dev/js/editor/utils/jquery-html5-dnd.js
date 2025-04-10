@@ -294,50 +294,58 @@
 			elementsCache.$placeholder.css( '--e-row-gap', '' );
 		};
 
-		const insertPlaceholderInsideElement = function() {
+		const insertPlaceholderInsideElement = function( targetElement = null ) {
+			if ( ! targetElement ) {
+				targetElement = currentElement;
+			}
+
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
-			$currentElement[ insertMethod ]( currentElement );
+			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
 
-		const insertPlaceholderOutsideElement = function() {
+		const insertPlaceholderOutsideElement = function( targetElement = null ) {
+			if ( ! targetElement ) {
+				targetElement = currentElement;
+			}
+
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-			$currentElement[ insertMethod ]( elementsCache.$placeholder );
+			$( targetElement )[ insertMethod ]( elementsCache.$placeholder );
 		};
 
 		const insertGridRowPlaceholder = function() {
-			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
-			const $gridPlaceHolder = elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
-			$gridPlaceHolder[ insertMethod ]( currentElement );
+			elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
+			insertPlaceholderInsideElement();
 		};
 
 		const insertFlexRowPlaceholder = function() {
 			const { $currentElement, isInnerContainer } = placeholderContext;
-			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
-			$target[ insertMethod ]( elementsCache.$placeholder );
+			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 
 		const insertBlockContainerPlaceholder = function() {
-			const { $currentElement } = placeholderContext;
-			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-			$currentElement[ insertMethod ]( elementsCache.$placeholder );
+			insertPlaceholderOutsideElement();
 		};
 
 		const insertDefaultPlaceholder = function() {
 			const { placeholderTarget, isLogicalElement } = placeholderContext;
-			let insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
 
 			if ( isLogicalElement ) {
-				insertMethod = 'top' === currentSide ? 'insertBefore' : 'insertAfter';
-				elementsCache.$placeholder.addClass( 'is-logical' );
-
-				const elementWrapper = currentElement.closest( '.e-con, .e-con-inner' );
-				const wrapperStyle = window.getComputedStyle( elementWrapper );
-				const rowGap = wrapperStyle.rowGap || wrapperStyle.gap || '0px';
-				elementsCache.$placeholder.css( '--e-row-gap', rowGap );
+				updateLogicalPlaceholder();
+				insertPlaceholderOutsideElement();
+				return;
 			}
 
-			elementsCache.$placeholder[ insertMethod ]( placeholderTarget );
+			insertPlaceholderInsideElement( placeholderTarget );
+		};
+
+		const updateLogicalPlaceholder = function() {
+			const elementWrapper = currentElement.closest( '.e-con, .e-con-inner' );
+			const wrapperStyle = window.getComputedStyle( elementWrapper );
+			const rowGap = wrapperStyle.rowGap || wrapperStyle.gap || '0px';
+
+			elementsCache.$placeholder.addClass( 'is-logical' );
+			elementsCache.$placeholder.css( '--e-row-gap', rowGap );
 		};
 
 		var isDroppingAllowed = function( event ) {
