@@ -309,11 +309,9 @@
 		};
 
 		const insertBlockContainerPlaceholder = function() {
-			const { $currentElement, isInnerContainer } = placeholderContext;
+			const { $currentElement } = placeholderContext;
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
-
-			$target[ insertMethod ]( elementsCache.$placeholder );
+			$currentElement[ insertMethod ]( elementsCache.$placeholder );
 		};
 
 		const insertDefaultPlaceholder = function() {
