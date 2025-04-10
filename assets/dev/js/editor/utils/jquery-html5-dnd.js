@@ -294,6 +294,16 @@
 			elementsCache.$placeholder.css( '--e-row-gap', '' );
 		};
 
+		const insertPlaceholderInsideElement = function() {
+			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
+			$currentElement[ insertMethod ]( currentElement );
+		};
+
+		const insertPlaceholderOutsideElement = function() {
+			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+			$currentElement[ insertMethod ]( elementsCache.$placeholder );
+		};
+
 		const insertGridRowPlaceholder = function() {
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
 			const $gridPlaceHolder = elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
@@ -304,7 +314,6 @@
 			const { $currentElement, isInnerContainer } = placeholderContext;
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
 			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
-
 			$target[ insertMethod ]( elementsCache.$placeholder );
 		};
 
