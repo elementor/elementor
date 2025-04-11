@@ -62,7 +62,7 @@ const PopoverCard = ( { doClose } ) => {
 					<Button
 						variant="contained"
 						size="small"
-						color="primary"
+						color="accent"
 						onClick={ redirectHandler }
 						sx={ { ml: 'auto' } }
 					>{ ctaText }</Button>

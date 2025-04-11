@@ -3,7 +3,7 @@ const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/te
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
-import { SAVE_CONTEXTS } from './../../constants';
+import { SAVE_CONTEXTS, QUOTA_WARNINGS, QUOTA_BAR_STATES } from './../../constants';
 
 const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
@@ -40,6 +40,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
 		bulkMove: '.bulk-selection-action-bar .bulk-move',
 		bulkCopy: '.bulk-selection-action-bar .bulk-copy',
+		quota: '.quota-progress-container .quota-progress-bar',
+		quotaFill: '.quota-progress-container  .quota-progress-bar .quota-progress-bar-fill',
+		quotaValue: '.quota-progress-container .quota-progress-bar-value',
+		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
+		navigationContainer: '#elementor-template-library-navigation-container',
 	},
 
 	events: {
@@ -62,6 +67,65 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	className: 'no-bulk-selections',
+
+	resetQuotaBarStyles() {
+		this.ui.quota.removeClass( [
+			'quota-progress-bar-normal',
+			'quota-progress-bar-warning',
+			'quota-progress-bar-alert',
+		] );
+		this.ui.quotaFill.removeClass( [
+			'quota-progress-bar-fill-normal',
+			'quota-progress-bar-fill-warning',
+			'quota-progress-bar-fill-alert',
+		] );
+	},
+
+	setQuotaBarStyles( variant ) {
+		this.ui.quota.addClass( `quota-progress-bar-${ variant }` );
+		this.ui.quotaFill.addClass( `quota-progress-bar-fill-${ variant }` );
+	},
+
+	handleQuotaWarning( variant, quotaUsage ) {
+		const message = QUOTA_WARNINGS[ variant ];
+
+		if ( ! message ) {
+			return;
+		}
+
+		this.ui.quotaWarning.text( sprintf( message, quotaUsage ) );
+		this.ui.quotaWarning.show();
+	},
+
+	handleQuotaBar() {
+		const quota = elementorAppConfig?.[ 'cloud-library' ]?.quota;
+
+		const value = quota ? Math.round( ( quota.currentUsage / quota.threshold ) * 100 ) : 0;
+
+		this.ui.quotaFill.css( 'width', `${ value }%` );
+
+		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold }` );
+
+		this.ui.quotaWarning.hide();
+
+		this.resetQuotaBarStyles();
+
+		const quotaState = this.resolveQuotaState( value );
+
+		this.handleQuotaWarning( quotaState, value );
+
+		this.setQuotaBarStyles( quotaState );
+	},
+
+	resolveQuotaState( value ) {
+		if ( value < 80 ) {
+			return QUOTA_BAR_STATES.NORMAL;
+		} else if ( value < 100 ) {
+			return QUOTA_BAR_STATES.WARNING;
+		}
+
+		return QUOTA_BAR_STATES.ALERT;
+	},
 
 	onClearBulkSelections() {
 		elementor.templates.clearBulkSelectionItems();
@@ -183,8 +247,22 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	initialize() {
+		this.handleQuotaBar = this.handleQuotaBar.bind( this );
+		this.handleQuotaUpdate = this.handleQuotaUpdate.bind( this );
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.listenTo( elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
+	},
+
+	handleQuotaUpdate() {
+		const activeSource = elementor.templates.getFilter( 'source' ) ?? 'local';
+
+		if ( 'cloud' === activeSource ) {
+			$e.components.get( 'cloud-library' ).utils.getQuotaConfig()
+				.then( () => {
+					this.handleQuotaBar();
+				} );
+		}
 	},
 
 	filter( childModel ) {
@@ -331,6 +409,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		if ( 'remote' === activeSource && 'page' !== templateType && 'lb' !== templateType ) {
 			this.setFiltersUI();
 		}
+
+		if ( 'cloud' === activeSource ) {
+			this.handleQuotaBar();
+		}
 	},
 
 	onRenderCollection() {
@@ -348,6 +430,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			this.handleLoadMore();
 
 			this.addViewData();
+
+			this.handleQuotaUpdate();
 		}
 	},
 
@@ -429,6 +513,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	handleLoadMore() {
+		if ( this.removeScrollListener ) {
+			this.removeScrollListener();
+		}
+
 		const scrollableContainer = elementor?.templates?.layout?.modal.getElements( 'message' );
 
 		const listener = () => {
