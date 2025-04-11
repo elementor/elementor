@@ -19,7 +19,7 @@ export default function HelloTheme() {
 		},
 		[ noticeState, setNoticeState ] = useState( state.isHelloThemeActivated ? noticeStateSuccess : null ),
 		[ activeTimeouts, setActiveTimeouts ] = useState( [] ),
-		continueWithHelloThemeText = state.isHelloThemeActivated ? __( 'Next', 'elementor' ) : __( 'Continue with Hello Theme', 'elementor' ),
+		continueWithHelloThemeText = state.isHelloThemeActivated ? __( 'Next', 'elementor' ) : __( 'Continue with Hello Biz Theme', 'elementor' ),
 		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText ),
 		navigate = useNavigate(),
 		pageId = 'hello',
@@ -100,7 +100,7 @@ export default function HelloTheme() {
 		setNoticeState( {
 			type: 'error',
 			icon: 'eicon-warning',
-			message: __( 'There was a problem installing Hello Theme.', 'elementor' ),
+			message: __( 'There was a problem installing Hello Biz Theme.', 'elementor' ),
 		} );
 
 		resetScreenContent();
@@ -122,7 +122,7 @@ export default function HelloTheme() {
 		}
 
 		wp.updates.ajax( 'install-theme', {
-			slug: 'hello-elementor',
+			slug: 'hello-biz',
 			success: () => activateHelloTheme(),
 			error: () => onErrorInstallHelloTheme(),
 		} );
@@ -248,7 +248,7 @@ export default function HelloTheme() {
 				setNoticeState( {
 					type: 'error',
 					icon: 'eicon-warning',
-					message: __( 'There was a problem activating Hello Theme.', 'elementor' ),
+					message: __( 'There was a problem activating Hello Biz Theme.', 'elementor' ),
 				} );
 
 				// Clear any active timeouts for changing the action button text during installation.
@@ -260,22 +260,22 @@ export default function HelloTheme() {
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
-				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Hello.svg' }
+				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Hello_Biz.svg' }
 				title={ __( 'Every site starts with a theme.', 'elementor' ) }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
 			>
 				<p>
-					{ __( 'Hello is Elementor\'s official blank canvas theme optimized to build your website exactly the way you want.', 'elementor' ) }
+					{ __( 'Hello Biz by Elementor helps you launch your professional business website - fast.', 'elementor' ) }
 				</p>
 				{ ! elementorAppConfig.onboarding.experiment && <p>
 					{ __( 'Here\'s why:', 'elementor' ) }
 				</p> }
 				<ul className="e-onboarding__feature-list">
-					<li>{ __( 'Light-weight and fast loading', 'elementor' ) }</li>
+					<li>{ __( 'Get online faster', 'elementor' ) }</li>
+					<li>{ __( 'Lightweight and fast loading', 'elementor' ) }</li>
 					<li>{ __( 'Great for SEO', 'elementor' ) }</li>
-					<li>{ __( 'Already being used by 1M+ web creators', 'elementor' ) }</li>
 				</ul>
 			</PageContentLayout>
 			<div className="e-onboarding__footnote">
