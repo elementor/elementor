@@ -1,46 +1,45 @@
 //
 // Image Box
 //
-.elementor-widget-image-box {
 
-	.elementor-image-box-content {
-		width: 100%; // Hack for Chrome in flex mode
-	}
+@mixin image-position($device) {
+	&.elementor#{$device}-position- {
 
-	@media (min-width: $screen-mobile-next) {
+		&right {
 
-		&.elementor-position- {
-
-			&left, &right {
-
-				.elementor-image-box-wrapper {
-					display: flex;
-				}
-			}
-
-			&right {
-
-				.elementor-image-box-wrapper {
-					text-align: end;
-					flex-direction: getValueByDirection(row-reverse, row);
-				}
-			}
-
-			&left {
-
-				.elementor-image-box-wrapper {
-					text-align: start;
-					flex-direction: getValueByDirection(row, row-reverse);
-				}
-			}
-
-			&top {
-
-				.elementor-image-box-img {
-					margin: auto;
-				}
+			.elementor-image-box-wrapper {
+				text-align: end;
+				flex-direction: getValueByDirection(row-reverse, row);
 			}
 		}
+
+		&left {
+
+			.elementor-image-box-wrapper {
+				text-align: start;
+				flex-direction: getValueByDirection(row, row-reverse);
+			}
+		}
+
+		&top {
+
+			.elementor-image-box-wrapper {
+				flex-direction: column;
+			}
+		}
+
+		&bottom {
+
+			.elementor-image-box-wrapper {
+				flex-direction: column-reverse;
+			}
+		}
+	}
+}
+
+.elementor-widget-image-box {
+
+	@media (min-width: $screen-mobile-next) {
 
 		&.elementor-vertical-align- {
 
@@ -67,12 +66,32 @@
 		}
 	}
 
-	@media (max-width: $screen-mobile-max) {
+	@include image-position('');
+
+	@media (min-width: $screen-widescreen-min) {
+		@include image-position(-widescreen);
+	}
+
+	@media (max-width: $screen-laptop-max) {
+		@include image-position(-laptop);
+	}
+
+	@media (max-width: $screen-tablet-extra-max) {
+		@include image-position(-tablet_extra);
+	}
+
+	@media (max-width: $screen-tablet-max) {
+		@include image-position(-tablet);
+	}
+
+	@media (max-width: $screen-mobile-extra-max) {
+		@include image-position(-mobile_extra);
+	}
+
+	@media (max-width: $screen-mobile-max ) {
 
 		// TEMP code to override the image spacing
 		.elementor-image-box-img {
-			margin-left: auto !important;
-			margin-right: auto !important;
 			margin-bottom: 15px;
 		}
 	}
@@ -89,7 +108,13 @@
 	}
 
 	.elementor-image-box-wrapper {
+		display: flex;
 		text-align: center;
+		align-items: center;
+	}
+
+	.elementor-image-box-content {
+		width: 100%; // For Chrome flex mode
 	}
 
 	.elementor-image-box-description {
