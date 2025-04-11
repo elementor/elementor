@@ -29,14 +29,14 @@ module.exports = Marionette.ItemView.extend( {
 			connectedNoQuota: {
 				title: __( 'It’s time to level up', 'elementor' ),
 				message: __( 'Elementor Pro plans come with Cloud Templates.', 'elementor' ) + '<br>' + __( 'Upgrade now to re-use your templates on all the websites you’re working on.', 'elementor' ),
-				icon: defaultIcon,
+				icon: `<i class="eicon-library-subscription-upgrade" aria-hidden="true" title="${ __( 'Upgrade now', 'elememntor' ) }"></i>`,
 				button: `<a class="elementor-button e-accent" href="" target="_blank">${ __( 'Upgrade now', 'elementor' ) }</a>`,
 			},
 		};
 	},
 
 	getDefaultIcon() {
-		return `<i class="eicon-library-cloud-connect" aria-hidden="true" title="Empty folder"></i>`;
+		return `<i class="eicon-library-cloud-connect" aria-hidden="true" title="${ __( 'Empty folder', 'elememntor' ) }"></i>`;
 	},
 
 	getCurrentMode() {

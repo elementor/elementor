@@ -121,16 +121,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 				<# if ( 'cloud' === activeSource ) { #>
 					<div id="elementor-template-library-add-new-folder" class="elementor-template-library-action-item">
-						<i class="eicon-folder" aria-hidden="true" title="Create a New Folder"></i>
+						<i class="eicon-folder-plus" aria-hidden="true" title="<?php esc_attr_e( 'Create a New Folder', 'elementor' ); ?>"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Create a New Folder', 'elementor' ); ?></span>
 					</div>
 					<span class="divider"></span>
 					<div id="elementor-template-library-view-grid" class="elementor-template-library-action-item">
-						<i class="eicon-library-grid" aria-hidden="true" title="Grid view"></i>
+						<i class="eicon-library-grid" aria-hidden="true" title="<?php esc_attr_e( 'Grid View', 'elementor' ); ?>"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Grid view', 'elementor' ); ?></span>
 					</div>
 					<div id="elementor-template-library-view-list" class="elementor-template-library-action-item">
-						<i class="eicon-library-list aria-hidden="true" title="List view"></i>
+						<i class="eicon-library-list" aria-hidden="true" title="<?php esc_attr_e( 'List View', 'elementor' ); ?>"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'List view', 'elementor' ); ?></span>
 					</div>
 				<# } #>
@@ -258,7 +258,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php endif; ?>
 			<# if ( 'cloud' === activeSource ) {
 				const sourceIcon = typeof subType !== 'undefined' && 'FOLDER' === subType
-					? '<i class="eicon-folder-o" aria-hidden="true"></i>'
+					? '<i class="eicon-library-folder" aria-hidden="true"></i>'
 					: '<i class="eicon-global-colors" aria-hidden="true"></i>';
 
 					print( sourceIcon );
@@ -285,7 +285,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<# if ( typeof subType === 'undefined' || 'FOLDER' !== subType ) { #>
 		<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary e-btn-txt">
-			<i class="eicon-library-download-1" aria-hidden="true"></i>
+			<i class="eicon-library-download" aria-hidden="true"></i>
 			<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 		</button>
 		<# } #>
@@ -308,7 +308,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php endif; ?>
 			<div class="elementor-template-library-template-export">
 				<a href="{{ export_link }}">
-					<i class="eicon-library-download-1" aria-hidden="true"></i>
+					<i class="eicon-library-download" aria-hidden="true"></i>
 					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Export', 'elementor' ); ?></span>
 				</a>
 			</div>
@@ -341,7 +341,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-template-library-template-more" style="display: none;">
 			<div class="elementor-template-library-template-export">
 				<a href="{{ export_link }}">
-					<i class="eicon-library-download-1" aria-hidden="true"></i>
+					<i class="eicon-library-download" aria-hidden="true"></i>
 					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Export', 'elementor' ); ?></span>
 				</a>
 			</div>
@@ -370,7 +370,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<div class="elementor-template-library-template-card-footer-overlay">
 					<button class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
-						<i class="eicon-library-download-1" aria-hidden="true"></i>
+						<i class="eicon-library-download" aria-hidden="true"></i>
 						<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 					</button>
 					<div class="elementor-template-library-template-card-footer-overlay-info">
@@ -395,7 +395,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php endif; ?>
 					<div class="elementor-template-library-template-export">
 						<a href="{{ export_link }}">
-							<i class="eicon-library-download-1" aria-hidden="true"></i>
+							<i class="eicon-library-download" aria-hidden="true"></i>
 							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Export', 'elementor' ); ?></span>
 						</a>
 					</div>
@@ -416,7 +416,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-button">
 	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
-		<i class="eicon-library-download-1" aria-hidden="true"></i>
+		<i class="eicon-library-download" aria-hidden="true"></i>
 		<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 	</a>
 </script>
@@ -430,7 +430,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-insert-and-ai-variations-buttons">
 	<a class="elementor-template-library-template-action elementor-template-library-template-insert elementor-button e-primary">
-		<i class="eicon-library-download-1" aria-hidden="true"></i>
+		<i class="eicon-library-download" aria-hidden="true"></i>
 		<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 	</a>
 	<a class="elementor-template-library-template-action elementor-template-library-template-generate-variation elementor-button e-btn-txt e-btn-txt-border">
