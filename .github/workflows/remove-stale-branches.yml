@@ -1,0 +1,42 @@
+name: Remove stale branches
+
+on:
+  push:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+jobs:
+  remove-stale-branches:
+    name: Remove Stale Branches
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get list of open PRs and build regex
+        id: pr-list
+        run: |
+          prs=$(gh pr list --state=open --json headRefName -q '.[].headRefName' | paste -sd "|" -)
+          regex="^(main|\d+\.\d+|$prs)$"
+          echo "exempt_branches_regex=$regex" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Use regex for exempt branches
+        run: |
+          echo "Exempt branches regex: ${{ env.exempt_branches_regex }}"
+
+      - name: Remove stale branches except PR branches
+        uses: fpicalausa/remove-stale-branches@v1.6.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          dry-run: true
+          exempt-branches-regex: ${{ env.exempt_branches_regex }}
+          exempt-protected-branches: true
+          stale-branch-message: "@{author} Your branch [{branchName}]({branchUrl}) hasn't been updated in the last 60 days and is marked as stale. It will be removed in a week.\r\nIf you want to keep this branch around, delete this comment or add new commits to this branch."
+          default-recipient: "Svitlana-Dykun"
+          days-before-branch-stale: 90
+          days-before-branch-delete: 7
+          operations-per-run: 10
+          ignore-unknown-authors: true
