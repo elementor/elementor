@@ -513,6 +513,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	handleLoadMore() {
+		if ( this.removeScrollListener ) {
+			this.removeScrollListener();
+		}
+
 		const scrollableContainer = elementor?.templates?.layout?.modal.getElements( 'message' );
 
 		const listener = () => {
