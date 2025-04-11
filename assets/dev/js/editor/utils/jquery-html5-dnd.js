@@ -257,7 +257,7 @@
 			const container = currentElement.closest( '.e-con' );
 			const containerDisplayStyle = container ? getComputedStyle( container ).display : null;
 
-			updateFlexRowClass( container );
+			maybeAddFlexRowClass( container );
 
 			return {
 				$currentElement,
@@ -272,7 +272,7 @@
 			};
 		};
 
-		const updateFlexRowClass = function( container ) {
+		const maybeAddFlexRowClass = function( container ) {
 			if ( ! container ) {
 				return;
 			}
@@ -354,13 +354,13 @@
 			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
 
 			if ( hasLogicalWrapper ) {
-				maybeAddFlexRowClass();
+				addLogicalAttributesToPlaceholder();
 			}
 
 			insertPlaceholderInsideElement( placeholderTarget );
 		};
 
-		const maybeAddFlexRowClass = function() {
+		const addLogicalAttributesToPlaceholder = function() {
 			const elementContainer = currentElement.closest( '.e-con, .e-con-inner' );
 			const wrapperStyle = window.getComputedStyle( elementContainer );
 			const rowGap = wrapperStyle.rowGap || wrapperStyle.gap || '0px';
