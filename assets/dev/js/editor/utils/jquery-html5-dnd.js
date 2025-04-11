@@ -332,6 +332,7 @@
 			}
 
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+
 			$( targetElement )[ insertMethod ]( elementsCache.$placeholder );
 		};
 
@@ -343,6 +344,7 @@
 		const insertFlexRowPlaceholder = function() {
 			const { $currentElement, isInnerContainer } = placeholderContext;
 			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
+
 			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 

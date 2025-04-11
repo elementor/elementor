@@ -215,7 +215,7 @@ const DivBlockView = BaseElementView.extend( {
 			axis: this.getDroppableAxis(),
 			items,
 			groups: [ 'elementor-element' ],
-			horizontalThreshold: 5,
+			horizontalThreshold: 0,
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
