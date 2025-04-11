@@ -312,14 +312,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		if ( 'cloud' === activeSource ) {
 			elementor.templates.setFilter( 'orderby', by );
 			elementor.templates.setFilter( 'order', reverseOrder ? 'desc' : 'asc' );
-			
+
 			this.collection.reset();
-			
+
 			elementor.templates.layout.showLoadingView();
-			
-			const totalCount = elementor.templates.getTotalCount();
-			
-			elementor.templates.loadMore({
+
+			const totalCount = elementor.templates.getTotalTemplates();
+
+			elementor.templates.loadMore( {
 				onUpdate: () => {
 					elementor.templates.layout.hideLoadingView();
 				},

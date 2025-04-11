@@ -387,7 +387,7 @@ const TemplateLibraryManager = function() {
 						title: parentTitle,
 					} );
 
-					elementor.channels.templates.trigger('filter:change:parent');
+					elementor.channels.templates.trigger( 'filter:change:parent' );
 
 					templatesCollection = new TemplateLibraryCollection( data.templates );
 
@@ -862,9 +862,9 @@ const TemplateLibraryManager = function() {
 			success: ( result ) => {
 				const collection = new TemplateLibraryCollection( result.templates );
 
-				if (0 === offset) {
-					templatesCollection.reset(collection.models);
-					self.layout.updateViewCollection(templatesCollection.models);
+				if ( 0 === offset ) {
+					templatesCollection.reset( collection.models );
+					self.layout.updateViewCollection( templatesCollection.models );
 				} else {
 					templatesCollection.add( collection.models, { merge: true } );
 					self.layout.addTemplates( collection.models );
@@ -881,15 +881,15 @@ const TemplateLibraryManager = function() {
 			},
 		};
 
-		if (orderby) {
+		if ( orderby ) {
 			ajaxOptions.data.orderby = orderby;
 		}
-		
-		if (order) {
+
+		if ( order ) {
 			ajaxOptions.data.order = order;
 		}
-		
-		if (limit) {
+
+		if ( limit ) {
 			ajaxOptions.data.limit = limit;
 		}
 
@@ -1164,12 +1164,7 @@ const TemplateLibraryManager = function() {
 		elementor.channels.templates.trigger( 'quota:update', { force } );
 	};
 
-	/**
-	 * Get the total count of templates
-	 * 
-	 * @return {number} The total number of templates
-	 */
-	this.getTotalCount = function() {
+	this.getTotalTemplates = function() {
 		return templatesCollection.length;
 	};
 };
