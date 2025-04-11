@@ -16,7 +16,7 @@ class Cloud_Library extends Library {
 	}
 
 	protected function get_api_url(): string {
-		return 'https://cloud-library.prod.builder.elementor.red/api/v1/cloud-library';
+		return 'http://localhost:3000/api/v1/cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
@@ -25,11 +25,13 @@ class Cloud_Library extends Library {
 		$endpoint = 'resources';
 
 		$query_string = http_build_query( [
-			'limit' => $args['limit'] ? (int) $args['limit'] : null,
-			'offset' => $args['offset'] ? (int) $args['offset'] : null,
-			'search' => $args['search'],
-			'parentId' => $args['parentId'],
-			'templateType' => $args['templateType'] ?? null,
+			'limit' => isset( $args['limit'] ) ? (int) $args['limit'] : null,
+			'offset' => isset( $args['offset'] ) ? (int) $args['offset'] : null,
+			'search' => isset( $args['search'] ) ? $args['search'] : null,
+			'parentId' => isset( $args['parentId'] ) ? $args['parentId'] : null,
+			'templateType' => isset( $args['templateType'] ) ? $args['templateType'] : null,
+			'orderBy' => isset( $args['orderby'] ) ? $args['orderby'] : null,
+			'order' => isset( $args['order'] ) ? strtoupper( $args['order'] ) : null,
 		] );
 
 		$endpoint .= '?' . $query_string;

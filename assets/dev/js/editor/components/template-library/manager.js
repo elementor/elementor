@@ -834,6 +834,10 @@ const TemplateLibraryManager = function() {
 	this.loadMore = ( {
 		onUpdate,
 		search = '',
+		orderby = '',
+		order = '',
+		offset = null,
+		limit = null,
 	} = {} ) => {
 		isLoading = true;
 
@@ -846,16 +850,20 @@ const TemplateLibraryManager = function() {
 		const ajaxOptions = {
 			data: {
 				source,
-				offset: templatesCollection.length,
+				offset: offset !== null ? offset : templatesCollection.length,
 				search,
 				parentId,
 			},
 			success: ( result ) => {
 				const collection = new TemplateLibraryCollection( result.templates );
 
-				templatesCollection.add( collection.models, { merge: true } );
-
-				self.layout.addTemplates( collection.models );
+				if (0 === offset) {
+					templatesCollection.reset(collection.models);
+					self.layout.updateViewCollection(templatesCollection.models);
+				} else {
+					templatesCollection.add( collection.models, { merge: true } );
+					self.layout.addTemplates( collection.models );
+				}
 
 				if ( onUpdate ) {
 					onUpdate();
@@ -867,6 +875,18 @@ const TemplateLibraryManager = function() {
 				isLoading = false;
 			},
 		};
+
+		if (orderby) {
+			ajaxOptions.data.orderby = orderby;
+		}
+		
+		if (order) {
+			ajaxOptions.data.order = order;
+		}
+		
+		if (limit) {
+			ajaxOptions.data.limit = limit;
+		}
 
 		elementorCommon.ajax.addRequest( 'load_more_templates', ajaxOptions );
 	};
@@ -1137,6 +1157,15 @@ const TemplateLibraryManager = function() {
 
 	this.triggerQuotaUpdate = function( force = true ) {
 		elementor.channels.templates.trigger( 'quota:update', { force } );
+	};
+
+	/**
+	 * Get the total count of templates
+	 * 
+	 * @return {number} The total number of templates
+	 */
+	this.getTotalCount = function() {
+		return templatesCollection.length;
 	};
 };
 

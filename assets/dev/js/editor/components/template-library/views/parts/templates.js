@@ -305,7 +305,32 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	order( by, reverseOrder ) {
-		var comparator = this.comparators[ by ] || by;
+		let comparator = this.comparators[ by ] || by;
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		if ( 'cloud' === activeSource ) {
+			elementor.templates.setFilter( 'orderby', by );
+			elementor.templates.setFilter( 'order', reverseOrder ? 'desc' : 'asc' );
+			
+			this.collection.reset();
+			
+			elementor.templates.layout.showLoadingView();
+			
+			const totalCount = elementor.templates.getTotalCount();
+			
+			elementor.templates.loadMore({
+				onUpdate: () => {
+					elementor.templates.layout.hideLoadingView();
+				},
+				search: this.ui.textFilter.val(),
+				orderby: by,
+				order: reverseOrder ? 'desc' : 'asc',
+				offset: 0,
+				limit: totalCount,
+			} );
+
+			return;
+		}
 
 		if ( reverseOrder ) {
 			comparator = this.reverseOrder( comparator );
@@ -505,11 +530,15 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		if ( ! $clickedInput[ 0 ].checked ) {
 			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
+		} else {
+			toggle = !$clickedInput.hasClass( 'elementor-template-library-order-reverse' );
 		}
+
+		$clickedInput.prop( 'checked', true );
 
 		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
 
-		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
+		this.order( $clickedInput.val(), toggle );
 	},
 
 	handleLoadMore() {
@@ -531,11 +560,16 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
 			elementor.templates.layout.selectAllCheckboxMinus();
 
+			const orderby = elementor.templates.getFilter( 'orderby' );
+			const order = elementor.templates.getFilter( 'order' );
+
 			elementor.templates.loadMore( {
 				onUpdate: () => {
 					this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
 				},
 				search: this.ui.textFilter.val(),
+				orderby: orderby || '',
+				order: order || '',
 			} );
 		};
 
