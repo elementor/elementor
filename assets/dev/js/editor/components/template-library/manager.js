@@ -34,22 +34,22 @@ const TemplateLibraryManager = function() {
 			},
 			moveDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			copyDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			bulkMoveDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			bulkCopyDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			ajaxParams: {
