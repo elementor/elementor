@@ -329,7 +329,7 @@
 			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
 
 			if ( hasLogicalWrapper ) {
-				updateLogicalPlaceholder();
+				maybeAddFlexRowClass();
 				insertPlaceholderOutsideElement();
 				return;
 			}
@@ -337,7 +337,7 @@
 			insertPlaceholderInsideElement( placeholderTarget );
 		};
 
-		const updateLogicalPlaceholder = function() {
+		const maybeAddFlexRowClass = function() {
 			const elementWrapper = currentElement.closest( '.e-con, .e-con-inner' );
 			const wrapperStyle = window.getComputedStyle( elementWrapper );
 			const rowGap = wrapperStyle.rowGap || wrapperStyle.gap || '0px';
