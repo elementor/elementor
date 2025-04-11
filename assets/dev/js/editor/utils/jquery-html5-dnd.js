@@ -248,10 +248,14 @@
 		};
 
 		const createPlaceholderContext = function() {
+			if ( ! currentElement || ! currentElement.nodeType ) {
+				return;
+			}
+
 			const $currentElement = $( currentElement );
 			const hasLogicalWrapper = 'contents' === getComputedStyle( currentElement ).display;
 			const container = currentElement.closest( '.e-con' );
-			const containerDisplayStyle = window.getComputedStyle( container ).display;
+			const containerDisplayStyle = container ? getComputedStyle( container ).display : null;
 
 			updateFlexRowClass( container );
 
