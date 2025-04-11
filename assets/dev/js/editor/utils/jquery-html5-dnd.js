@@ -253,15 +253,16 @@
 				return;
 			}
 
-			container.classList.remove( 'e-con--row' );
-
 			const wrapperStyle = window.getComputedStyle( container.querySelector( '.e-con-inner' ) || container );
 			const isFlexContainer = 'flex' === wrapperStyle.display || 'inline-flex' === wrapperStyle.display;
 			const isRowDirection = 'row' === wrapperStyle.flexDirection || 'row-reverse' === wrapperStyle.flexDirection;
 
 			if ( isFlexContainer && isRowDirection ) {
-				container.classList.add( 'e-con--row-dynamic' );
+				container.classList.add( 'e-con--row' );
+				return;
 			}
+
+			container.classList.remove( 'e-con--row' );
 		};
 
 		const getInsertMode = function() {
@@ -329,8 +330,6 @@
 
 			if ( hasLogicalWrapper ) {
 				maybeAddFlexRowClass();
-				insertPlaceholderOutsideElement();
-				return;
 			}
 
 			insertPlaceholderInsideElement( placeholderTarget );
