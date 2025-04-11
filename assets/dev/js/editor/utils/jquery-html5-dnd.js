@@ -203,9 +203,7 @@
 		};
 
 		var insertPlaceholder = function() {
-			const isPlaceholderNotAvailable = ! settings.placeholder;
-
-			if ( isPlaceholderNotAvailable ) {
+			if ( ! settings.placeholder ) {
 				return;
 			}
 
@@ -279,8 +277,8 @@
 
 			const innerContainer = container.querySelector( ':scope > .e-con-inner' );
 			const wrapperStyle = getComputedStyle( innerContainer || container );
-			const isFlexContainer = 'flex' === wrapperStyle.display || 'inline-flex' === wrapperStyle.display;
-			const isRowDirection = 'row' === wrapperStyle.flexDirection || 'row-reverse' === wrapperStyle.flexDirection;
+			const isFlexContainer = [ 'flex', 'inline-flex' ].includes( wrapperStyle.display );
+			const isRowDirection = [ 'row', 'row-reverse' ].includes( wrapperStyle.flexDirection );
 
 			if ( isFlexContainer && isRowDirection ) {
 				container.classList.add( 'e-con--row' );
@@ -364,7 +362,7 @@
 
 		const addLogicalAttributesToPlaceholder = function() {
 			const elementContainer = currentElement.closest( '.e-con, .e-con-inner' );
-			const wrapperStyle = window.getComputedStyle( elementContainer );
+			const wrapperStyle = getComputedStyle( elementContainer );
 			const rowGap = wrapperStyle.rowGap || wrapperStyle.gap || '0px';
 
 			elementsCache.$placeholder.addClass( 'is-logical' );
