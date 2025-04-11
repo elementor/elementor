@@ -288,7 +288,6 @@
 			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
 
 			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right is-logical' );
-			elementsCache.$placeholder.addClass( 'is-logical' );
 			elementsCache.$placeholder.css( '--e-row-gap', '' );
 		};
 
@@ -338,8 +337,8 @@
 		};
 
 		const maybeAddFlexRowClass = function() {
-			const elementWrapper = currentElement.closest( '.e-con, .e-con-inner' );
-			const wrapperStyle = window.getComputedStyle( elementWrapper );
+			const elementContainer = currentElement.closest( '.e-con, .e-con-inner' );
+			const wrapperStyle = window.getComputedStyle( elementContainer );
 			const rowGap = wrapperStyle.rowGap || wrapperStyle.gap || '0px';
 
 			elementsCache.$placeholder.addClass( 'is-logical' );
