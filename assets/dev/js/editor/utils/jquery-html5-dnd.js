@@ -204,9 +204,8 @@
 
 		var insertPlaceholder = function() {
 			const isPlaceholderNotAvailable = ! settings.placeholder;
-			const isNonEmptyContainer = !! currentElement.querySelector( '.elementor-element' );
 
-			if ( isPlaceholderNotAvailable || isNonEmptyContainer ) {
+			if ( isPlaceholderNotAvailable ) {
 				return;
 			}
 
