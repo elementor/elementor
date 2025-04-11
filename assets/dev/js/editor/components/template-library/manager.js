@@ -379,10 +379,15 @@ const TemplateLibraryManager = function() {
 					template_id: parentId,
 				},
 				success: ( data ) => {
+					this.setFilter( 'orderby', '', true );
+					this.setFilter( 'order', '', true );
+	
 					this.setFilter( 'parent', {
 						id: parentId,
 						title: parentTitle,
 					} );
+
+					elementor.channels.templates.trigger('filter:change:parent');
 
 					templatesCollection = new TemplateLibraryCollection( data.templates );
 

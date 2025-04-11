@@ -250,6 +250,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.handleQuotaBar = this.handleQuotaBar.bind( this );
 		this.handleQuotaUpdate = this.handleQuotaUpdate.bind( this );
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.listenTo( elementor.channels.templates, 'filter:change:parent', this.clearSortingUI );
 		this.listenTo( elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
@@ -525,13 +526,20 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onOrderLabelsClick( event ) {
-		var $clickedInput = jQuery( event.currentTarget.control ),
+		let $clickedInput = jQuery( event.currentTarget.control ),
 			toggle;
+
+		const isOrderingAuthorOnCloud = 'elementor-template-library-order-local-author' === $clickedInput[ 0 ].id  &&
+			'cloud' === elementor.templates.getFilter( 'source' );
+
+		if ( isOrderingAuthorOnCloud ) {
+			return;
+		}
 
 		if ( ! $clickedInput[ 0 ].checked ) {
 			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
 		} else {
-			toggle = !$clickedInput.hasClass( 'elementor-template-library-order-reverse' );
+			toggle = ! $clickedInput.hasClass( 'elementor-template-library-order-reverse' );
 		}
 
 		$clickedInput.prop( 'checked', true );
@@ -635,6 +643,13 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		$e.route( 'library/save-template', {
 			model: this.model,
 			context: SAVE_CONTEXTS.BULK_COPY,
+		} );
+	},
+
+	clearSortingUI() {
+		this.$( '.elementor-template-library-order-input' ).each( function() {
+			const $input = jQuery( this );
+			$input.prop( 'checked', false );
 		} );
 	},
 } );

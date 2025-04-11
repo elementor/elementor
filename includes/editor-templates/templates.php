@@ -175,10 +175,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<div id="elementor-template-library-order-toolbar-local">
 			<div class="elementor-template-library-local-column-1">
-				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
 				<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 				<input type="checkbox" id="bulk-select-all">
 				<?php endif; ?>
+				<input type="radio" id="elementor-template-library-order-local-title" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="title" data-default-ordering-direction="asc">
 				<label for="elementor-template-library-order-local-title" class="elementor-template-library-order-label"><?php echo esc_html__( 'Name', 'elementor' ); ?></label>
 			</div>
 			<div class="elementor-template-library-local-column-2">
@@ -186,7 +186,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<label for="elementor-template-library-order-local-type" class="elementor-template-library-order-label"><?php echo esc_html__( 'Type', 'elementor' ); ?></label>
 			</div>
 			<div class="elementor-template-library-local-column-3">
-				<input type="radio" id="elementor-template-library-order-local-author" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="author" data-default-ordering-direction="asc">
+				<# if ( 'cloud' !== activeSource ) { #>
+					<input type="radio" id="elementor-template-library-order-local-author" class="elementor-template-library-order-input" name="elementor-template-library-order-local" value="author" data-default-ordering-direction="asc">
+				<# } #>
 				<label for="elementor-template-library-order-local-author" class="elementor-template-library-order-label"><?php echo esc_html__( 'Created By', 'elementor' ); ?></label>
 			</div>
 			<div class="elementor-template-library-local-column-4">
