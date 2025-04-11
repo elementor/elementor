@@ -229,7 +229,7 @@
 
 		const createPlaceholderContext = function() {
 			const $currentElement = $( currentElement );
-			const isLogicalElement = 'contents' === getComputedStyle( currentElement ).display;
+			const hasLogicalWrapper = 'contents' === getComputedStyle( currentElement ).display;
 			const container = currentElement.closest( '.e-con' );
 			const containerDisplayStyle = window.getComputedStyle( container ).display;
 
@@ -237,14 +237,14 @@
 
 			return {
 				$currentElement,
-				placeholderTarget: isLogicalElement ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement,
+				placeholderTarget: hasLogicalWrapper ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement,
 				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
 				isFirstInsert: $currentElement.hasClass( 'elementor-first-add' ),
 				isInnerContainer: $currentElement.hasClass( 'e-con-inner' ),
 				isGridRowContainer: 0 !== $currentElement.parents( '.e-grid.e-con--row' ).length,
 				isRowContainer: 0 !== $currentElement.parents( '.e-con--row' ).length,
 				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
-				isLogicalElement,
+				hasLogicalWrapper,
 			};
 		};
 
@@ -328,9 +328,9 @@
 		};
 
 		const insertDefaultPlaceholder = function() {
-			const { placeholderTarget, isLogicalElement } = placeholderContext;
+			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
 
-			if ( isLogicalElement ) {
+			if ( hasLogicalWrapper ) {
 				updateLogicalPlaceholder();
 				insertPlaceholderOutsideElement();
 				return;
