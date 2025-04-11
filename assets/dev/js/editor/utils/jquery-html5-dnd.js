@@ -203,10 +203,14 @@
 		};
 
 		var insertPlaceholder = function() {
-			if ( ! settings.placeholder ) {
+			const isPlaceholderNotAvailable = ! settings.placeholder;
+			const isNonEmptyContainer = !! currentElement.querySelector( '.elementor-element' );
+
+			if ( isPlaceholderNotAvailable || isNonEmptyContainer ) {
 				return;
 			}
 
+			ensureMinimumDroppableHeight();
 			clearPreviousPlaceholder();
 
 			const insertMode = getInsertMode();
@@ -224,6 +228,23 @@
 				default:
 					insertDefaultPlaceholder();
 					break;
+			}
+		};
+
+		const ensureMinimumDroppableHeight = function() {
+			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
+			const MIN_HEIGHT = 20;
+
+			if ( ! hasLogicalWrapper ) {
+				return;
+			}
+
+			placeholderTarget.classList.remove( 'e-min-height' );
+
+			const targetHeight = placeholderTarget.offsetHeight;
+
+			if ( targetHeight < MIN_HEIGHT ) {
+				placeholderTarget.classList.add( 'e-min-height' );
 			}
 		};
 
@@ -253,15 +274,16 @@
 				return;
 			}
 
-			container.classList.remove( 'e-con--row' );
-
 			const wrapperStyle = window.getComputedStyle( container.querySelector( '.e-con-inner' ) || container );
 			const isFlexContainer = 'flex' === wrapperStyle.display || 'inline-flex' === wrapperStyle.display;
 			const isRowDirection = 'row' === wrapperStyle.flexDirection || 'row-reverse' === wrapperStyle.flexDirection;
 
 			if ( isFlexContainer && isRowDirection ) {
-				container.classList.add( 'e-con--row-dynamic' );
+				container.classList.add( 'e-con--row' );
+				return;
 			}
+
+			container.classList.remove( 'e-con--row' );
 		};
 
 		const getInsertMode = function() {
@@ -329,8 +351,6 @@
 
 			if ( hasLogicalWrapper ) {
 				maybeAddFlexRowClass();
-				insertPlaceholderOutsideElement();
-				return;
 			}
 
 			insertPlaceholderInsideElement( placeholderTarget );
