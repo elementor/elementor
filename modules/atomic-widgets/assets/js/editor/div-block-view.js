@@ -282,22 +282,6 @@ const DivBlockView = BaseElementView.extend( {
 		};
 	},
 
-	handleDropSide( side, placeholderElement, currentTarget ) {
-		const insertMethod = [ 'top', 'left' ].includes( side ) ? 'before' : 'after';
-		currentTarget[ insertMethod ]( placeholderElement );
-	},
-
-	maybeShowCustomDropPlaceholder( $placeholder, currentTargetHeight ) {
-		if ( $placeholder.css( 'height' ) !== `${ currentTargetHeight }px` ) {
-			$placeholder.css( {
-				display: 'block',
-				height: `${ currentTargetHeight }px`,
-				'background-color': '#eb8efb',
-				width: '10px',
-			} );
-		}
-	},
-
 	getEditButtons() {
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
