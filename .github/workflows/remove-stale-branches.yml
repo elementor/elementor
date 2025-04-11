@@ -1,7 +1,6 @@
 name: Remove stale branches
 
 on:
-  push:
   schedule:
     - cron: '0 3 * * 1'
   workflow_dispatch:
@@ -31,7 +30,7 @@ jobs:
         uses: fpicalausa/remove-stale-branches@v1.6.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          dry-run: true
+          dry-run: false
           exempt-branches-regex: ${{ env.exempt_branches_regex }}
           exempt-protected-branches: true
           stale-branch-message: "@{author} Your branch [{branchName}]({branchUrl}) hasn't been updated in the last 60 days and is marked as stale. It will be removed in a week.\r\nIf you want to keep this branch around, delete this comment or add new commits to this branch."
