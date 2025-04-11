@@ -277,7 +277,8 @@
 				return;
 			}
 
-			const wrapperStyle = window.getComputedStyle( container.querySelector( '.e-con-inner' ) || container );
+			const innerContainer = container.querySelector( ':scope > .e-con-inner' );
+			const wrapperStyle = getComputedStyle( innerContainer || container );
 			const isFlexContainer = 'flex' === wrapperStyle.display || 'inline-flex' === wrapperStyle.display;
 			const isRowDirection = 'row' === wrapperStyle.flexDirection || 'row-reverse' === wrapperStyle.flexDirection;
 
