@@ -332,8 +332,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		elementor.templates.layout.showLoadingView();
 
-		const totalCount = elementor.templates.getTotalCurrentTemplates();
-
 		elementor.templates.loadMore( {
 			onUpdate: () => {
 				elementor.templates.layout.hideLoadingView();

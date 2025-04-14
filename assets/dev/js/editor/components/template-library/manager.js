@@ -1149,10 +1149,6 @@ const TemplateLibraryManager = function() {
 	this.triggerQuotaUpdate = function( force = true ) {
 		elementor.channels.templates.trigger( 'quota:update', { force } );
 	};
-
-	this.getTotalCurrentTemplates = function() {
-		return templatesCollection.length;
-	};
 };
 
 module.exports = new TemplateLibraryManager();
