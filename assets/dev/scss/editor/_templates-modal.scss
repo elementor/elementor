@@ -215,6 +215,18 @@ $remote-templates-items-space: 30px;
 			div {
 				max-width: fit-content;
 			}
+
+			.elementor-template-library-local-column-3,
+			.elementor-template-library-local-column-5 {
+				display: none;
+			}
+		}
+	}
+
+	&[data-template-source="cloud"] {
+
+		.elementor-template-library-local-column-3 {
+			pointer-events: none;
 		}
 	}
 

@@ -250,7 +250,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.handleQuotaBar = this.handleQuotaBar.bind( this );
 		this.handleQuotaUpdate = this.handleQuotaUpdate.bind( this );
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
-		this.listenTo( elementor.channels.templates, 'filter:change:parent', this.clearSortingUI );
 		this.listenTo( elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
@@ -307,28 +306,9 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	order( by, reverseOrder ) {
 		let comparator = this.comparators[ by ] || by;
-		const activeSource = elementor.templates.getFilter( 'source' );
 
-		if ( 'cloud' === activeSource ) {
-			elementor.templates.setFilter( 'orderby', by );
-			elementor.templates.setFilter( 'order', reverseOrder ? 'desc' : 'asc' );
-
-			this.collection.reset();
-
-			elementor.templates.layout.showLoadingView();
-
-			const totalCount = elementor.templates.getTotalTemplates();
-
-			elementor.templates.loadMore( {
-				onUpdate: () => {
-					elementor.templates.layout.hideLoadingView();
-				},
-				search: this.ui.textFilter.val(),
-				orderby: by,
-				order: reverseOrder ? 'desc' : 'asc',
-				offset: 0,
-				limit: totalCount,
-			} );
+		if ( 'cloud' === elementor.templates.getFilter( 'source' ) ) {
+			this.handleCloudOrder( by, reverseOrder );
 
 			return;
 		}
@@ -340,6 +320,30 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.collection.comparator = comparator;
 
 		this.collection.sort();
+	},
+
+	handleCloudOrder( by, reverseOrder ) {
+		elementor.templates.setFilter( 'orderby', by );
+		elementor.templates.setFilter( 'order', reverseOrder ? 'desc' : 'asc' );
+
+		this.onClearBulkSelections();
+
+		this.collection.reset();
+
+		elementor.templates.layout.showLoadingView();
+
+		const totalCount = elementor.templates.getTotalCurrentTemplates();
+
+		elementor.templates.loadMore( {
+			onUpdate: () => {
+				elementor.templates.layout.hideLoadingView();
+			},
+			search: this.ui.textFilter.val(),
+			orderby: by,
+			order: reverseOrder ? 'desc' : 'asc',
+			offset: 0,
+			limit: totalCount,
+		} );
 	},
 
 	reverseOrder( comparator ) {
@@ -529,13 +533,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		let $clickedInput = jQuery( event.currentTarget.control ),
 			toggle;
 
-		const isOrderingAuthorOnCloud = 'elementor-template-library-order-local-author' === $clickedInput[ 0 ].id  &&
-			'cloud' === elementor.templates.getFilter( 'source' );
-
-		if ( isOrderingAuthorOnCloud ) {
-			return;
-		}
-
 		if ( ! $clickedInput[ 0 ].checked ) {
 			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
 		} else {
@@ -643,13 +640,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		$e.route( 'library/save-template', {
 			model: this.model,
 			context: SAVE_CONTEXTS.BULK_COPY,
-		} );
-	},
-
-	clearSortingUI() {
-		this.$( '.elementor-template-library-order-input' ).each( function() {
-			const $input = jQuery( this );
-			$input.prop( 'checked', false );
 		} );
 	},
 } );

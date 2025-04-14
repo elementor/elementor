@@ -387,14 +387,13 @@ const TemplateLibraryManager = function() {
 						title: parentTitle,
 					} );
 
-					elementor.channels.templates.trigger( 'filter:change:parent' );
-
 					templatesCollection = new TemplateLibraryCollection( data.templates );
 
 					elementor.templates.layout.hideLoadingView();
 
 					self.layout.updateViewCollection( templatesCollection.models );
 					self.layout.modalContent.currentView.ui.addNewFolder.remove();
+					self.layout.resetSortingUI();
 
 					isLoading = false;
 					resolve();
@@ -1164,7 +1163,7 @@ const TemplateLibraryManager = function() {
 		elementor.channels.templates.trigger( 'quota:update', { force } );
 	};
 
-	this.getTotalTemplates = function() {
+	this.getTotalCurrentTemplates = function() {
 		return templatesCollection.length;
 	};
 };
