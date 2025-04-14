@@ -65,8 +65,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		const context = this.getOption( 'context' );
 
 		if ( SAVE_CONTEXTS.SAVE === context && elementor.templates.hasCloudLibraryQuota() ) {
-			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
-			this.updateSubmitButtonState( true );
+			this.handleSaveAction();
 		}
 
 		if ( SAVE_CONTEXTS.MOVE === context || SAVE_CONTEXTS.COPY === context ) {
@@ -80,6 +79,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( ! elementor.templates.hasCloudLibraryQuota() ) {
 			this.handleCloudLibraryPromo();
 		}
+	},
+
+	handleSaveAction() {
+		this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
+		this.updateSubmitButtonState( true );
 	},
 
 	handleSingleActionContextUiState() {
