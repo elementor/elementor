@@ -173,9 +173,9 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 				'dismissible'  => false,
 				'heading'      => __( 'Ally Accessibility Widget', 'elementor' ),
 				'content'      => __( 'To use the Ally Accessibility widget, please install and activate the Ally Accessibility plugin first.', 'elementor' ),
-				'button_text'  => Hints::is_plugin_installed( $plugin ) ? __( 'Activate Ally', 'elementor' ) : __( 'Install Ally', 'elementor' ),
+				'button_text'  => Hints::is_plugin_installed( $plugin ) ? __( 'Activate Ally', 'elementor' ) : __( 'Install & activate Ally', 'elementor' ),
 				'button_event' => 'openLink#' . base64_encode( json_encode( [
-					'target' => '_blank',
+					'target' => 'fetch',
 					'url'    => hints::get_plugin_action_url( $plugin ),
 				] ) ),
 			] );
@@ -209,7 +209,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 				'content'       => __( 'To use the Ally Accessibility widget, please install and activate the Connect plugin first.', 'elementor' ),
 				'button_text'   => 'Connect Now',
 				'button_event'  => 'openLink#' . base64_encode( json_encode( [
-					'target' => '_blank',
+					'target' => 'fetch',
 					'url'    => admin_url( 'admin.php?page=accessibility-settings' ),
 				] ) ),
 			] );
