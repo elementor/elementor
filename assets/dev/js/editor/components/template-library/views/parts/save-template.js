@@ -27,6 +27,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		cloudInput: '.source-selections-input.cloud',
 		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
 		upgradeBadge: '.source-selections-input.cloud .upgrade-badge',
+		upgradeTooltip: '.source-selections-input.cloud .upgrade-tooltip',
 		infoIcon: '.source-selections-input.cloud .eicon-info',
 	},
 
@@ -61,11 +62,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	handleOnRender() {
-		const context = this.getOption( 'context' );
+		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
 
-		if ( SAVE_CONTEXTS.SAVE === context && elementor.templates.hasCloudLibraryQuota() ) {
-			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
-		}
+		const context = this.getOption( 'context' );
 
 		if ( SAVE_CONTEXTS.MOVE === context || SAVE_CONTEXTS.COPY === context ) {
 			this.handleSingleActionContextUiState();
@@ -111,6 +110,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.ui.ellipsisIcon.css( 'pointer-events', 'none' );
 		this.ui.upgradeBadge.css( 'display', 'inline' );
+		this.ui.upgradeTooltip.css( 'display', 'inline' );
 	},
 
 	getSaveType() {
@@ -160,6 +160,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.updateSaveContext( formData );
 
 		this.updateToastConfig( formData );
+
+		this.updateSourceState( formData );
 
 		elementor.templates.saveTemplate( this.getSaveType(), formData );
 	},
@@ -228,6 +230,22 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		} );
 	},
 
+	updateSourceState( formData ) {
+		if ( ! formData.source.length ) {
+			return;
+		}
+
+		const saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE;
+
+		if ( SAVE_CONTEXTS.SAVE !== saveContext ) {
+			return;
+		}
+
+		const lastSource = formData.source.at( -1 );
+		elementor.templates.setSourceSelection( lastSource );
+		elementor.templates.setFilter( 'source', lastSource, true );
+	},
+
 	getToastMessage( lastSource, saveContext, formData ) {
 		const key = `${ lastSource }_${ saveContext }`;
 
@@ -236,8 +254,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 
 		const actions = {
-			[ `local_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Site Templates.', 'elementor' ),
-			[ `cloud_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Cloud Templates.', 'elementor' ),
 			[ `local_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Site Templates', formData.title ),
 			[ `cloud_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Cloud Templates', formData.title ),
 			[ `local_${ SAVE_CONTEXTS.COPY }` ]: this.getFormattedToastMessage( 'copied to your Site Templates', formData.title ),

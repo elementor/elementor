@@ -477,7 +477,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="source-selections">
 				<div class="source-selections-input cloud">
 					<input type="checkbox" id="cloud" name="cloud" value="cloud">
-					<label for="cloud"> Cloud Library</label> <i class="eicon-info" aria-hidden="true"></i> /  <i class="eicon-ellipsis-h"></i>
+					<label for="cloud"> Cloud Library</label> <i class="eicon-info upgrade-tooltip" aria-hidden="true"></i> /  <i class="eicon-ellipsis-h"></i>
 					<div class="cloud-folder-selection-dropdown">
 						<div class="cloud-folder-selection-dropdown-list"></div>
 					</div>
