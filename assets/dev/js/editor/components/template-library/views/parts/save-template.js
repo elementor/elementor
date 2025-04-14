@@ -231,7 +231,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	updateSourceState( formData ) {
-		if ( ! formData.source.length ) {
+		if ( ! formData.source?.length ) {
 			return;
 		}
 
