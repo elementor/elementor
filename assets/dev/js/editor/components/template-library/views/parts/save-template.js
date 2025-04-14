@@ -150,7 +150,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.updateSourceSelections( formData );
 
 		if ( ! formData?.source && this.templateHelpers()?.canSaveToCloud ) {
-			this.showEmptySourceErrorDialog();
+			this.showErrorDialog( __( 'Please select at least one location.', 'elementor' ) );
+
+			return;
+		}
+
+		if ( ! this.isValidTemplateName( formData ) ) {
+			this.showErrorDialog( __( 'Template name can not be empty.', 'elementor' ) );
 
 			return;
 		}
@@ -162,6 +168,14 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.updateToastConfig( formData );
 
 		elementor.templates.saveTemplate( this.getSaveType(), formData );
+	},
+
+	isValidTemplateName( formData ) {
+		if ( ! [ SAVE_CONTEXTS.SAVE, SAVE_CONTEXTS.MOVE, SAVE_CONTEXTS.COPY ].includes( this.getOption( 'context' ) ) ) {
+			return true;
+		}
+
+		return formData.title.trim().length > 0;
 	},
 
 	updateSourceSelections( formData ) {
@@ -176,11 +190,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
 
-	showEmptySourceErrorDialog() {
+	showErrorDialog( message ) {
 		elementorCommon.dialogsManager.createWidget( 'alert', {
 			id: 'elementor-template-library-error-dialog',
 			headerMessage: __( 'An error occured.', 'elementor' ),
-			message: __( 'Please select at least one location.', 'elementor' ),
+			message,
 		} ).show();
 	},
 
