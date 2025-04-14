@@ -532,8 +532,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onOrderLabelsClick( event ) {
-		let $clickedInput = jQuery( event.currentTarget.control ),
-			toggle;
+		const $clickedInput = jQuery( event.currentTarget.control );
+		let toggle;
 
 		if ( ! $clickedInput[ 0 ].checked ) {
 			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
