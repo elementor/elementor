@@ -15,8 +15,8 @@ export default class Component extends ComponentModalBase {
 		// Remove whole component cache data.
 		$e.data.deleteCache( this, 'library' );
 
-		elementor.channels.templates.on( 'quota:update', () => {
-			$e.components.get( 'cloud-library' ).utils.setQuotaConfig();
+		elementor.channels.templates.on( 'quota:update', ( { force } = {} ) => {
+			$e.components.get( 'cloud-library' ).utils.setQuotaConfig( force );
 		} );
 	}
 

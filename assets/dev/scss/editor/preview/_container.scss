@@ -88,7 +88,7 @@
 	}
 
 	&.e-div-block-base, &.e-flexbox-base {
-		&:has( .elementor-empty-view ) {
+		&:has( >.elementor-empty-view ) {
 			display: flex;
 		}
 

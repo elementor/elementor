@@ -250,6 +250,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.handleQuotaBar = this.handleQuotaBar.bind( this );
 		this.handleQuotaUpdate = this.handleQuotaUpdate.bind( this );
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.listenTo( elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
 
@@ -512,6 +513,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	handleLoadMore() {
+		if ( this.removeScrollListener ) {
+			this.removeScrollListener();
+		}
+
 		const scrollableContainer = elementor?.templates?.layout?.modal.getElements( 'message' );
 
 		const listener = () => {

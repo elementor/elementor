@@ -510,8 +510,15 @@ $remote-templates-items-space: 30px;
 	}
 
 	.elementor-template-library-local-column-1 {
-		display: flex;
-		align-items: center;
+
+		input[type=checkbox] {
+			position: relative;
+			top: 3px;
+		}
+	
+		input[type=checkbox]:checked {
+			top: 0px;
+		}
 	}
 
 	.bulk-selection-item-checkbox:checked,
