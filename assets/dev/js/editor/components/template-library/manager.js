@@ -381,7 +381,7 @@ const TemplateLibraryManager = function() {
 				success: ( data ) => {
 					this.setFilter( 'orderby', '', true );
 					this.setFilter( 'order', '', true );
-	
+
 					this.setFilter( 'parent', {
 						id: parentId,
 						title: parentTitle,
