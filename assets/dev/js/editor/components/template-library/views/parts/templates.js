@@ -323,10 +323,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	handleCloudOrder( by, reverseOrder ) {
-		const order = reverseOrder ? 'desc' : 'asc';
-
 		elementor.templates.setFilter( 'orderby', by );
-		elementor.templates.setFilter( 'order', order );
+		elementor.templates.setFilter( 'order', reverseOrder ? 'desc' : 'asc' );
 
 		this.onClearBulkSelections();
 
@@ -341,10 +339,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 				elementor.templates.layout.hideLoadingView();
 			},
 			search: this.ui.textFilter.val(),
-			orderby: by,
-			order,
-			offset: 0,
-			limit: totalCount,
+			refresh: true,
 		} );
 	},
 
@@ -571,16 +566,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
 			elementor.templates.layout.selectAllCheckboxMinus();
 
-			const orderby = elementor.templates.getFilter( 'orderby' );
-			const order = elementor.templates.getFilter( 'order' );
-
 			elementor.templates.loadMore( {
 				onUpdate: () => {
 					this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
 				},
 				search: this.ui.textFilter.val(),
-				orderby: orderby || '',
-				order: order || '',
 			} );
 		};
 

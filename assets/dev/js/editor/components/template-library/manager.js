@@ -838,10 +838,7 @@ const TemplateLibraryManager = function() {
 	this.loadMore = ( {
 		onUpdate,
 		search = '',
-		orderby = '',
-		order = '',
-		offset = null,
-		limit = null,
+		refresh = false,
 	} = {} ) => {
 		isLoading = true;
 
@@ -854,14 +851,16 @@ const TemplateLibraryManager = function() {
 		const ajaxOptions = {
 			data: {
 				source,
-				offset: null !== offset ? offset : templatesCollection.length,
+				offset: refresh ? 0 : templatesCollection.length,
 				search,
 				parentId,
+				orderby: elementor.templates.getFilter( 'orderby' ) || null,
+				order: elementor.templates.getFilter( 'order' ) || null,
 			},
 			success: ( result ) => {
 				const collection = new TemplateLibraryCollection( result.templates );
 
-				if ( 0 === offset ) {
+				if ( refresh ) {
 					templatesCollection.reset( collection.models );
 					self.layout.updateViewCollection( templatesCollection.models );
 				} else {
@@ -879,18 +878,6 @@ const TemplateLibraryManager = function() {
 				isLoading = false;
 			},
 		};
-
-		if ( orderby ) {
-			ajaxOptions.data.orderby = orderby;
-		}
-
-		if ( order ) {
-			ajaxOptions.data.order = order;
-		}
-
-		if ( limit ) {
-			ajaxOptions.data.limit = limit;
-		}
 
 		elementorCommon.ajax.addRequest( 'load_more_templates', ajaxOptions );
 	};
