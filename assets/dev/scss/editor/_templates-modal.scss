@@ -515,7 +515,7 @@ $remote-templates-items-space: 30px;
 			position: relative;
 			top: 3px;
 		}
-	
+
 		input[type=checkbox]:checked {
 			top: 0px;
 		}
@@ -1116,6 +1116,9 @@ label.elementor-template-library-order-label {
 
 		#elementor-template-library-save-template-submit {
 			float: inline-end;
+			&[disabled] {
+				cursor: not-allowed;
+			}
 		}
 
 		.source-selections {
