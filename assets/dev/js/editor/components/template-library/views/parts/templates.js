@@ -342,7 +342,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			},
 			search: this.ui.textFilter.val(),
 			orderby: by,
-			order: order,
+			order,
 			offset: 0,
 			limit: totalCount,
 		} );
