@@ -539,6 +539,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	onTemplateNameInputChange( event ) {
 		const shouldDisableSubmitButton = 0 === event.target.value.trim().length;
+		
 		this.updateSubmitButtonState( shouldDisableSubmitButton );
 	},
 
