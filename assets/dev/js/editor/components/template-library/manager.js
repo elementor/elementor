@@ -854,7 +854,7 @@ const TemplateLibraryManager = function() {
 		const ajaxOptions = {
 			data: {
 				source,
-				offset: offset !== null ? offset : templatesCollection.length,
+				offset: null !== offset ? offset : templatesCollection.length,
 				search,
 				parentId,
 			},

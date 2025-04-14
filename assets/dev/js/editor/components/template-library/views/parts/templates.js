@@ -323,8 +323,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	handleCloudOrder( by, reverseOrder ) {
+		const order = reverseOrder ? 'desc' : 'asc';
+
 		elementor.templates.setFilter( 'orderby', by );
-		elementor.templates.setFilter( 'order', reverseOrder ? 'desc' : 'asc' );
+		elementor.templates.setFilter( 'order', order );
 
 		this.onClearBulkSelections();
 
@@ -340,7 +342,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			},
 			search: this.ui.textFilter.val(),
 			orderby: by,
-			order: reverseOrder ? 'desc' : 'asc',
+			order: order,
 			offset: 0,
 			limit: totalCount,
 		} );
