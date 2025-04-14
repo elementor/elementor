@@ -11,9 +11,9 @@ import { useEffect, useRef, useState } from 'react';
 
 const i18n = {
 	heading: __( 'Say hello to a new experience!', 'elementor' ),
-	introduction: __( 'You\'re now using Editor V4, a new generation of the web creation.', 'elementor' ),
+	introduction: __( 'You\'re now using Editor V4, a new generation of web creation.', 'elementor' ),
 	listItems: [
-		__( 'Try out the new Editor V4 elements such as Div, SVG and Paragraph.', 'elementor' ),
+		__( 'Try out Editor V4 elements such as Div, SVG and Paragraph.', 'elementor' ),
 		__( 'Set up a new Class and apply it site-wide for perfect consistency.', 'elementor' ),
 		__( 'Customize any style element per screen size by switching between responsive views.', 'elementor' ),
 	],
