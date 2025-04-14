@@ -161,6 +161,18 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		return iframe;
 	},
 
+	handleBulkActionBarUi() {
+		if ( 0 === this.modalContent.currentView.$( '.bulk-selection-item-checkbox:checked' ).length ) {
+			this.modalContent.currentView.$el.addClass( 'no-bulk-selections' );
+			this.modalContent.currentView.$el.removeClass( 'has-bulk-selections' );
+		} else {
+			this.modalContent.currentView.$el.addClass( 'has-bulk-selections' );
+			this.modalContent.currentView.$el.removeClass( 'no-bulk-selections' );
+		}
+
+		this.handleBulkActionBar();
+	},
+
 	handleBulkActionBar() {
 		const selectedCount = elementor.templates.getBulkSelectionItems().size ?? 0;
 		const display = 0 === selectedCount ? 'none' : 'flex';

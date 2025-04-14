@@ -34,7 +34,6 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 
 	events() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
-			click: 'handleItemClicked',
 			'click @ui.toggleMore': 'onToggleMoreClick',
 		} );
 	},
@@ -83,42 +82,11 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	},
 
 	onPreviewButtonClick( event ) {
-		if ( event.shiftKey ) {
-			return;
-		}
+		event.stopPropagation();
 
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
 			$e.route( 'library/view-folder', { model: this.model } );
 		}
-	},
-
-	handleItemClicked( event ) {
-		if ( 'list' === elementor.templates.getViewSelection() ) {
-			return;
-		}
-
-		if ( event.shiftKey ) {
-			this.handleShiftAndClick();
-
-			return;
-		}
-
-		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			$e.route( 'library/view-folder', { model: this.model } );
-		}
-	},
-
-	handleShiftAndClick() {
-		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
-
-		if ( itemIsSelected ) {
-			elementor.templates.removeBulkSelectionItem( this.model.get( 'template_id' ) );
-		} else {
-			elementor.templates.addBulkSelectionItem( this.model.get( 'template_id' ) );
-		}
-
-		this.$el.toggleClass( 'bulk-selected-item' );
-		elementor.templates.layout.handleBulkActionBar();
 	},
 
 	onDeleteButtonClick( event ) {
@@ -143,6 +111,27 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 				$e.routes.refreshContainer( 'library' );
 			},
 		} );
+	},
+
+	handleItemSingleClick() {
+		if ( 'grid' === elementor.templates.getViewSelection() ) {
+			this.handleGridViewItemSingleClick();
+		} else {
+			this.handleListViewItemSingleClick();
+		}
+	},
+
+	handleGridViewItemSingleClick() {
+		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
+
+		if ( itemIsSelected ) {
+			elementor.templates.removeBulkSelectionItem( this.model.get( 'template_id' ) );
+		} else {
+			elementor.templates.addBulkSelectionItem( this.model.get( 'template_id' ) );
+		}
+
+		this.$el.toggleClass( 'bulk-selected-item' );
+		elementor.templates.layout.handleBulkActionBar();
 	},
 } );
 

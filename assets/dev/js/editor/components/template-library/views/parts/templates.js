@@ -32,7 +32,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		addNewFolder: '#elementor-template-library-add-new-folder',
 		selectGridView: '#elementor-template-library-view-grid',
 		selectListView: '#elementor-template-library-view-list',
-		bulkSelectionItemCheckbox: '.bulk-selection-item-checkbox',
 		bulkSelectionActionBar: '.bulk-selection-action-bar',
 		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete i',
 		bulkSelectedCount: '.bulk-selection-action-bar .selected-count',
@@ -56,7 +55,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'click @ui.addNewFolder': 'onCreateNewFolderClick',
 		'click @ui.selectGridView': 'onSelectGridViewClick',
 		'click @ui.selectListView': 'onSelectListViewClick',
-		'change @ui.bulkSelectionItemCheckbox': 'onSelectBulkSelectionItemCheckbox',
 		'change @ui.bulkSelectAllCheckbox': 'onBulkSelectAllCheckbox',
 		'click @ui.clearBulkSelections': 'onClearBulkSelections',
 		'mouseenter @ui.bulkMove': 'onHoverBulkAction',
@@ -144,16 +142,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onSelectBulkSelectionItemCheckbox( event ) {
-		if ( event?.target?.checked ) {
-			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
-		} else {
-			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
-		}
-
-		this.handleBulkActionBarUi();
-	},
-
 	onBulkSelectAllCheckbox() {
 		const isChecked = this.$( '#bulk-select-all:checked' ).length > 0;
 
@@ -162,7 +150,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 
 		this.updateBulkSelectedItems( isChecked );
-		this.handleBulkActionBarUi();
+
+		elementor.templates.layout.handleBulkActionBarUi();
 	},
 
 	updateBulkSelectedItems( isChecked ) {
@@ -176,18 +165,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 				elementor.templates.removeBulkSelectionItem( templateId );
 			}
 		} );
-	},
-
-	handleBulkActionBarUi() {
-		if ( 0 === this.$( '.bulk-selection-item-checkbox:checked' ).length ) {
-			this.$el.addClass( 'no-bulk-selections' );
-			this.$el.removeClass( 'has-bulk-selections' );
-		} else {
-			this.$el.addClass( 'has-bulk-selections' );
-			this.$el.removeClass( 'no-bulk-selections' );
-		}
-
-		elementor.templates.layout.handleBulkActionBar();
 	},
 
 	onBulkDeleteClick() {
