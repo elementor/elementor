@@ -291,6 +291,10 @@ class Source_Cloud extends Source_Base {
 		return $this->get_app()->update_resource_preview( $template_id, $data );
 	}
 
+	public function mark_preview_as_failed( $template_id, $data ) {
+		return $this->get_app()->mark_preview_as_failed( $template_id, $data );
+	}
+
 	/**
 	 * @param int $template_id
 	 * @return Document|\WP_Error
