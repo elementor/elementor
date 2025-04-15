@@ -92,6 +92,7 @@
 			currentElement,
 			currentSide,
 			isDroppingAllowedState = false,
+			placeholderContext = {},
 			defaultSettings = {
 				element: '',
 				items: '>',
@@ -138,7 +139,7 @@
 
 			if ( ! hasVerticalDetection() ) {
 				const threshold = settings.horizontalThreshold,
-					{ left, right } = currentElement.getBoundingClientRect();
+					{ left, right } = placeholderContext.placeholderTarget.getBoundingClientRect();
 
 				// For cases when the event is actually dispatched on the parent element, but
 				// `currentElement` is the actual element that the offset should be calculated by.
@@ -177,9 +178,10 @@
 		};
 
 		var setSide = function( event ) {
-			var $element = $( currentElement ),
-				elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight(),
-				elementWidth = $element.outerWidth();
+			const { placeholderTarget } = placeholderContext;
+			const $element = $( placeholderTarget );
+			const elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight();
+			const elementWidth = $element.outerWidth();
 
 			event = event.originalEvent;
 
@@ -195,7 +197,7 @@
 				return;
 			}
 
-			var elementPosition = currentElement.getBoundingClientRect();
+			const elementPosition = placeholderTarget.getBoundingClientRect();
 
 			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
@@ -205,40 +207,166 @@
 				return;
 			}
 
-			const $currentElement = $( currentElement ),
-				isGridRowContainer = $currentElement.parents( '.e-grid.e-con--row' ).length,
-				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' ),
-				$parentContainer = $currentElement.closest( '.e-con' ).parent().closest( '.e-con' );
+			ensureMinimumDroppableHeight();
+			clearPreviousPlaceholder();
 
-			// Make sure that the previous placeholder is removed before inserting a new one.
-			$parentContainer.find( '.elementor-widget-placeholder' )?.remove();
+			const insertMode = getInsertMode();
 
-			// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
-			if ( isGridRowContainer ) {
-				elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right' );
+			switch ( insertMode ) {
+				case 'gridRow':
+					insertGridRowPlaceholder();
+					break;
+				case 'flexRow':
+					insertFlexRowPlaceholder();
+					break;
+				case 'block':
+					insertBlockContainerPlaceholder();
+					break;
+				default:
+					insertDefaultPlaceholder();
+					break;
 			}
+		};
 
-			if ( isGridRowContainer && ! isFirstInsert ) {
-				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo',
-					gridPlaceHolder = elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
-				gridPlaceHolder[ insertMethod ]( currentElement );
+		const ensureMinimumDroppableHeight = function() {
+			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
+			const MIN_HEIGHT = 20;
 
+			if ( ! hasLogicalWrapper ) {
 				return;
 			}
 
-			// Fix placeholder placement for Flex Container with `flex-direction: row`.
-			const isRowContainer = $currentElement.parents( '.e-con--row' ).length,
-				isInnerContainer = $currentElement.hasClass( 'e-con-inner' );
-			if ( isRowContainer && ! isFirstInsert ) {
-				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before',
-					$rowTargetElement = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
-				$rowTargetElement[ insertMethod ]( elementsCache.$placeholder );
+			placeholderTarget.classList.remove( 'e-min-height' );
 
+			const targetHeight = placeholderTarget.offsetHeight;
+
+			if ( targetHeight < MIN_HEIGHT ) {
+				placeholderTarget.classList.add( 'e-min-height' );
+			}
+		};
+
+		const createPlaceholderContext = function() {
+			if ( ! currentElement || ! currentElement.nodeType ) {
 				return;
 			}
 
-			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
+			const $currentElement = $( currentElement );
+			const hasLogicalWrapper = 'contents' === getComputedStyle( currentElement ).display;
+			const container = currentElement.closest( '.e-con' );
+			const containerDisplayStyle = container ? getComputedStyle( container ).display : null;
+
+			maybeAddFlexRowClass( container );
+
+			return {
+				$currentElement,
+				placeholderTarget: hasLogicalWrapper ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement,
+				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
+				isFirstInsert: $currentElement.hasClass( 'elementor-first-add' ),
+				isInnerContainer: $currentElement.hasClass( 'e-con-inner' ),
+				isGridRowContainer: 0 !== $currentElement.parents( '.e-grid.e-con--row' ).length,
+				isRowContainer: 0 !== $currentElement.parents( '.e-con--row' ).length,
+				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
+				hasLogicalWrapper,
+			};
+		};
+
+		const maybeAddFlexRowClass = function( container ) {
+			if ( ! container ) {
+				return;
+			}
+
+			const innerContainer = container.querySelector( ':scope > .e-con-inner' );
+			const wrapperStyle = getComputedStyle( innerContainer || container );
+			const isFlexContainer = [ 'flex', 'inline-flex' ].includes( wrapperStyle.display );
+			const isRowDirection = [ 'row', 'row-reverse' ].includes( wrapperStyle.flexDirection );
+
+			if ( isFlexContainer && isRowDirection ) {
+				container.classList.add( 'e-con--row' );
+				return;
+			}
+
+			container.classList.remove( 'e-con--row' );
+		};
+
+		const getInsertMode = function() {
+			if ( placeholderContext.isFirstInsert ) {
+				return 'default';
+			}
+
+			if ( placeholderContext.isGridRowContainer ) {
+				return 'gridRow';
+			}
+
+			if ( placeholderContext.isRowContainer ) {
+				return 'flexRow';
+			}
+
+			if ( placeholderContext.isBlockContainer ) {
+				return 'block';
+			}
+
+			return 'default';
+		};
+
+		const clearPreviousPlaceholder = function() {
+			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
+
+			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right is-logical' );
+			elementsCache.$placeholder.css( '--e-row-gap', '' );
+		};
+
+		const insertPlaceholderInsideElement = function( targetElement = null ) {
+			if ( ! targetElement ) {
+				targetElement = currentElement;
+			}
+
+			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
 			elementsCache.$placeholder[ insertMethod ]( currentElement );
+		};
+
+		const insertPlaceholderOutsideElement = function( targetElement = null ) {
+			if ( ! targetElement ) {
+				targetElement = currentElement;
+			}
+
+			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+
+			$( targetElement )[ insertMethod ]( elementsCache.$placeholder );
+		};
+
+		const insertGridRowPlaceholder = function() {
+			elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
+			insertPlaceholderInsideElement();
+		};
+
+		const insertFlexRowPlaceholder = function() {
+			const { $currentElement, isInnerContainer } = placeholderContext;
+			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
+
+			insertPlaceholderOutsideElement( $target[ 0 ] );
+		};
+
+		const insertBlockContainerPlaceholder = function() {
+			insertPlaceholderOutsideElement();
+		};
+
+		const insertDefaultPlaceholder = function() {
+			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
+
+			if ( hasLogicalWrapper ) {
+				addLogicalAttributesToPlaceholder();
+			}
+
+			insertPlaceholderInsideElement( placeholderTarget );
+		};
+
+		const addLogicalAttributesToPlaceholder = function() {
+			const elementContainer = currentElement.closest( '.e-con, .e-con-inner' );
+			const wrapperStyle = getComputedStyle( elementContainer );
+			const rowGap = wrapperStyle.rowGap || wrapperStyle.gap || '0px';
+
+			elementsCache.$placeholder.addClass( 'is-logical' );
+			elementsCache.$placeholder.css( '--e-row-gap', rowGap );
 		};
 
 		var isDroppingAllowed = function( event ) {
@@ -317,6 +445,8 @@
 
 				droppableInstance.doDragLeave();
 			} );
+
+			placeholderContext = createPlaceholderContext();
 
 			setSide( event );
 

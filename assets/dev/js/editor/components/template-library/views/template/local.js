@@ -48,9 +48,6 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			onConfirm() {
 				toggleMoreIcon.removeClass( 'eicon-ellipsis-h' ).addClass( 'eicon-loading eicon-animation-spin' );
 			},
-			onSuccess() {
-				$e.routes.refreshContainer( 'library' );
-			},
 		} );
 	},
 

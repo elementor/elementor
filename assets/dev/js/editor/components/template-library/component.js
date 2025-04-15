@@ -14,6 +14,10 @@ export default class Component extends ComponentModalBase {
 
 		// Remove whole component cache data.
 		$e.data.deleteCache( this, 'library' );
+
+		elementor.channels.templates.on( 'quota:update', ( { force } = {} ) => {
+			$e.components.get( 'cloud-library' ).utils.setQuotaConfig( force );
+		} );
 	}
 
 	getNamespace() {
@@ -108,6 +112,8 @@ export default class Component extends ComponentModalBase {
 	renderTab( tab ) {
 		const currentTab = this.tabs[ tab ];
 		const filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
+
+		this.currentTab = tab;
 
 		this.manager.setScreen( filter );
 	}

@@ -197,6 +197,10 @@ html.elementor-html {
 		min-height: 15px;
 	}
 
+	.elementor-html5dnd-current-element .e-min-height {
+		min-height: 20px;
+	}
+
 	.elementor-edit-hidden {
 		display: none;
 	}
@@ -241,6 +245,11 @@ html.elementor-html {
 			display: block;
 			text-align: center;
 			padding: 10px 0;
+		}
+
+		&[data-atomic] .elementor-widget-empty-icon {
+			background-color: rgb(243, 243, 244);
+			width: 100%;
 		}
 	}
 
@@ -423,6 +432,19 @@ html.elementor-html {
 .elementor-widget-placeholder {
 	height: $widget-placeholder-size;
 	animation-name: placeholder-widget;
+
+	&.is-logical {
+		--e-margin-block: calc( -1 * var(--e-row-gap) );
+
+		&:first-child {
+			margin-bottom: var(--e-margin-block, 0px);
+			border-top: 10px solid transparent;
+		}
+
+		&:last-child {
+			margin-top: var(--e-margin-block, 0px);
+		}
+	}
 }
 
 .elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,

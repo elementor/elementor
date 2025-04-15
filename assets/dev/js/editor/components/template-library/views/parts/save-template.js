@@ -38,27 +38,24 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
 		'change @ui.sourceSelectionCheckboxes': 'maybeAllowOnlyOneCheckboxToBeChecked',
 		'click @ui.infoIcon': 'showInfoTip',
+		'input @ui.templateNameInput': 'onTemplateNameInputChange',
 	},
 
 	onRender() {
-		if ( undefined === elementorAppConfig[ 'cloud-library' ].quota && this.templateHelpers()?.canSaveToCloud ) {
+		if ( 'undefined' === typeof elementorAppConfig[ 'cloud-library' ]?.quota && this.templateHelpers()?.canSaveToCloud ) {
 			elementor.templates.layout.showLoadingView();
 
-			elementorCommon.ajax.addRequest( 'get_quota', {
-				data: {
-					source: 'cloud',
-				},
-				success: ( data ) => {
+			$e.components.get( 'cloud-library' ).utils.setQuotaConfig()
+				.then( ( data ) => {
 					elementorAppConfig[ 'cloud-library' ].quota = data;
-					this.handleOnRender();
-					elementor.templates.layout.hideLoadingView();
-				},
-				error: () => {
+				} )
+				.catch( () => {
 					delete elementorAppConfig[ 'cloud-library' ].quota;
+				} )
+				.finally( () => {
 					this.handleOnRender();
 					elementor.templates.layout.hideLoadingView();
-				},
-			} );
+				} );
 		} else {
 			this.handleOnRender();
 		}
@@ -68,7 +65,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		const context = this.getOption( 'context' );
 
 		if ( SAVE_CONTEXTS.SAVE === context && elementor.templates.hasCloudLibraryQuota() ) {
-			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
+			this.handleSaveAction();
 		}
 
 		if ( SAVE_CONTEXTS.MOVE === context || SAVE_CONTEXTS.COPY === context ) {
@@ -84,9 +81,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
+	handleSaveAction() {
+		this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
+		this.updateSubmitButtonState( true );
+	},
+
 	handleSingleActionContextUiState() {
-		this.ui.templateNameInput.val( this.model.get( 'title' ) );
+		const title = this.model.get( 'title' );
+
+		this.ui.templateNameInput.val( title );
+
 		this.handleContextUiStateChecboxes();
+
+		this.updateSubmitButtonState( 0 === title.trim().length );
 	},
 
 	handleBulkActionContextUiState() {
@@ -147,6 +154,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		var formData = this.ui.form.elementorSerializeObject(),
 			JSONParams = { remove: [ 'default' ] };
 
+		formData.parentTitle = formData.parentId ? this.ui.selectedFolderText.html() : '';
+
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
 		this.updateSourceSelections( formData );
@@ -178,7 +187,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
 
-	showEmptySourceErrorDialog() {
+	showEmptySourceErrorDialog( ) {
 		elementorCommon.dialogsManager.createWidget( 'alert', {
 			id: 'elementor-template-library-error-dialog',
 			headerMessage: __( 'An error occured.', 'elementor' ),
@@ -214,7 +223,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		const toastButtons = formData.source?.length > 1
 			? null
-			: this.getToastButtons( lastSource, formData?.parentId?.trim() );
+			: this.getToastButtons( lastSource, formData?.parentId?.trim(), formData?.parentTitle?.trim() );
 
 		elementor.templates.setToastConfig( {
 			show: true,
@@ -263,28 +272,28 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		return sprintf( __( '%1$s %2$s.', 'elementor' ), title ? `"${ title }"` : __( 'Template', 'elementor' ), action );
 	},
 
-	getToastButtons( lastSource, parentId ) {
+	getToastButtons( lastSource, parentId, parentTitle ) {
 		const parsedParentId = parseInt( parentId, 10 ) || null;
 
 		return [
 			{
 				name: 'template_after_save',
 				text: __( 'View', 'elementor' ),
-				callback: () => this.navigateToSavedSource( lastSource, parsedParentId ),
+				callback: () => this.navigateToSavedSource( lastSource, parsedParentId, parentTitle ),
 			},
 		];
 	},
 
-	navigateToSavedSource( lastSource, parentId ) {
+	navigateToSavedSource( lastSource, parentId, parentTitle ) {
 		elementor.templates.setSourceSelection( lastSource );
 		elementor.templates.setFilter( 'source', lastSource, true );
 
 		if ( parentId ) {
-			elementor.templates.setFilter( 'parent', parentId );
-
-			const model = new TemplateLibraryTemplateModel( { template_id: parentId } );
+			const model = new TemplateLibraryTemplateModel( { template_id: parentId, title: parentTitle } );
 
 			$e.route( 'library/view-folder', { model } );
+
+			elementor.templates.layout.showTemplatesView( new TemplateLibraryCollection( elementor.templates.filterTemplates() ) );
 
 			return;
 		}
@@ -514,22 +523,33 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				at: `${ inlineStartKey }+90 top-60`,
 			},
 		} )
-		.setMessage( __(
-			'With Cloud Templates, you can reuse saved assets across all the websites you’re working on.',
-			'elementor',
-		) )
-		.addButton( {
-			name: 'learn_more',
-			text: __(
-				'Learn more',
+			.setMessage( __(
+				'With Cloud Templates, you can reuse saved assets across all the websites you’re working on.',
 				'elementor',
-			),
-			classes: '',
-			callback: () => open( '', '_blank' ),
-		} );
+			) )
+			.addButton( {
+				name: 'learn_more',
+				text: __(
+					'Learn more',
+					'elementor',
+				),
+				classes: '',
+				callback: () => open( '', '_blank' ),
+			} );
 
 		this.dialog.getElements( 'header' ).remove();
 		this.dialog.show();
+	},
+
+	onTemplateNameInputChange( event ) {
+		const shouldDisableSubmitButton = 0 === event.target.value.trim().length;
+
+		this.updateSubmitButtonState( shouldDisableSubmitButton );
+	},
+
+	updateSubmitButtonState( shouldDisableSubmitButton ) {
+		this.ui.submitButton.toggleClass( 'e-primary', ! shouldDisableSubmitButton );
+		this.ui.submitButton.prop( 'disabled', shouldDisableSubmitButton );
 	},
 } );
 
