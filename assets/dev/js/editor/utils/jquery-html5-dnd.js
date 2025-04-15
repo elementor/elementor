@@ -40,51 +40,47 @@
 		var buildElements = function() {
 			var el = elementsCache.$element[ 0 ];
 
+			// Extract to standalone function
 			if ( 'svg' === el.tagName.toLowerCase() ) {
 				var divClone = document.createElement( 'div' );
 
 				divClone.setAttribute( 'draggable', true );
 				divClone.className = el.getAttribute( 'class' ) || '';
 				divClone.style.cssText = el.getAttribute( 'style' ) || '';
-
-				var computed = window.getComputedStyle( el );
-
 				divClone.style.opacity = '0';
 
-				var originalMarginBottom = parseFloat( computed.marginBottom ) || 0;
-				var svgHeight = parseFloat( computed.height ) || 0;
-				var newMarginTop = -svgHeight - originalMarginBottom;
+				var computed = window.getComputedStyle( el );
+				const container = el.closest( '.e-con, .e-con-inner' );
+				const containerComputed = window.getComputedStyle( container );
 
-				divClone.style.marginTop = newMarginTop + 'px';
+				const isFlexContainer = 'flex' === containerComputed.display || 'inline-flex' === containerComputed.display;
+				const isRowContainer = 'row' === containerComputed.flexDirection || 'row-reverse' === containerComputed.flexDirection;
+
+				// Listen to direction changes inside the container.
+				if ( isFlexContainer && isRowContainer ) {
+					const columnGap = parseFloat( containerComputed.columnGap ) || parseFloat( containerComputed.gap ) || 0;
+					var originalMarginInlineEnd = parseFloat( computed.marginInlineEnd ) || 0;
+					var svgWidth = parseFloat( computed.width ) || 0;
+					var newMarginInlineStart = -svgWidth - originalMarginInlineEnd;
+
+					divClone.style.marginInlineStart = newMarginInlineStart + 'px';
+					divClone.style.marginInlineEnd = ( -1 * columnGap ) + 'px';
+				} else {
+					const rowGap = parseFloat( containerComputed.rowGap ) || parseFloat( containerComputed.gap ) || 0;
+					var originalMarginBottom = parseFloat( computed.marginBottom ) || 0;
+					var svgHeight = parseFloat( computed.height ) || 0;
+					var newMarginTop = -svgHeight - originalMarginBottom;
+
+					divClone.style.marginTop = newMarginTop + 'px';
+					divClone.style.marginBottom = ( -1 * rowGap ) + 'px';
+				}
 
 				el.parentNode.insertBefore( divClone, el.nextSibling );
 
 				elementsCache.$element = $( divClone );
-
-				var CloneView = Marionette.View.extend( {
-					tagName: 'div',
-					className: divClone.className,
-					initialize() {
-						this.setElement( divClone );
-					},
-				} );
-
-				$draggedView = new CloneView();
 			} else {
-				// Use the existing Marionette view for non-SVG elements
-				$draggedView = self;
 				elementsCache.$element.attr( 'draggable', true );
 			}
-		};
-
-		var registerDragReply = function() {
-			elementor.channels.editor.stopReplying( 'element:dragged' );
-
-			elementor.channels.editor.reply( 'element:dragged', {
-				$el: $draggedView.$el,
-				getContainer: () => elementsCache.$element,
-				parent: $draggedView,
-			} );
 		};
 
 		var onDragEnd = function( event ) {
@@ -120,7 +116,6 @@
 			initElementsCache();
 
 			buildElements();
-			registerDragReply();
 
 			attachEvents();
 		};
