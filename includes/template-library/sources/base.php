@@ -414,6 +414,16 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @param int $template_id
+	 * @param string $error
+	 * @return string|\WP_Error
+	 * @throws \Exception
+	 */
+	public function mark_preview_as_failed( int $template_id, string $error ) {
+		return new \WP_Error( 'template_error', 'Cannot mark preview as failed for this source' );
+	}
+
+	/**
 	 * @param int[] $template_ids
 	 * @return bool|\WP_Error
 	 */
