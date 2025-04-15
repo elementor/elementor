@@ -27,8 +27,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		cloudInput: '.source-selections-input.cloud',
 		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
 		upgradeBadge: '.source-selections-input.cloud .upgrade-badge',
-		upgradeTooltip: '.source-selections-input.cloud .upgrade-tooltip',
 		infoIcon: '.source-selections-input.cloud .eicon-info',
+		connect: '#elementor-template-library-connect__badge',
+		connectBadge: '.source-selections-input.cloud .connect-badge',
 	},
 
 	events: {
@@ -38,7 +39,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
 		'change @ui.sourceSelectionCheckboxes': 'maybeAllowOnlyOneCheckboxToBeChecked',
-		'click @ui.infoIcon': 'showInfoTip',
+		'mouseenter @ui.infoIcon': 'showInfoTip',
+		'mouseenter @ui.connect': 'showConnectInfoTip',
 	},
 
 	onRender() {
@@ -77,6 +79,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( ! elementor.templates.hasCloudLibraryQuota() ) {
 			this.handleCloudLibraryPromo();
 		}
+
+		if ( ! elementor.config.library_connect.is_connected ) {
+			this.handleElementorConnect();
+		}
 	},
 
 	handleSingleActionContextUiState() {
@@ -106,11 +112,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 
 		this.$( '.source-selections-input #cloud' ).prop( 'checked', false );
-		this.$( '.source-selections-input #cloud, .source-selections-input.cloud label' ).css( 'pointer-events', 'none' );
 
-		this.ui.ellipsisIcon.css( 'pointer-events', 'none' );
-		this.ui.upgradeBadge.css( 'display', 'inline' );
-		this.ui.upgradeTooltip.css( 'display', 'inline' );
+		this.ui.cloudInput.addClass( 'promotion' );
 	},
 
 	getSaveType() {
@@ -511,13 +514,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	showInfoTip() {
-		if ( this.dialog ) {
-			this.dialog.hide();
+		if ( this.infoTipDialog ) {
+			this.infoTipDialog.hide();
 		}
 
 		const inlineStartKey = elementorCommon.config.isRTL ? 'left' : 'right';
 
-		this.dialog = elementor.dialogsManager.createWidget( 'buttons', {
+		this.infoTipDialog = elementor.dialogsManager.createWidget( 'buttons', {
 			id: 'elementor-library--infotip__dialog',
 			effects: {
 				show: 'show',
@@ -525,7 +528,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			},
 			position: {
 				of: this.ui.infoIcon,
-				at: `${ inlineStartKey }+90 top-60`,
+				at: `${ inlineStartKey }+40 top-75`,
 			},
 		} )
 			.setMessage( __(
@@ -542,8 +545,52 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				callback: () => open( '', '_blank' ),
 			} );
 
-		this.dialog.getElements( 'header' ).remove();
-		this.dialog.show();
+		this.infoTipDialog.getElements( 'header' ).remove();
+		this.infoTipDialog.show();
+	},
+
+	showConnectInfoTip() {
+		if ( this.connectInfoTipDialog ) {
+			this.connectInfoTipDialog.hide();
+		}
+
+		const inlineStartKey = elementorCommon.config.isRTL ? 'left' : 'right';
+
+		this.connectInfoTipDialog = elementor.dialogsManager.createWidget( 'buttons', {
+			id: 'elementor-library--connect_infotip__dialog',
+			effects: {
+				show: 'show',
+				hide: 'hide',
+			},
+			position: {
+				of: this.ui.connectBadge,
+				at: `${ inlineStartKey }+65 top+90`,
+			},
+		} )
+			.setMessage( __(
+				'To access the Cloud Templates Library you must have an active Elementor Pro subscription and connect your site.',
+				'elementor',
+			) );
+
+		this.connectInfoTipDialog.getElements( 'header' ).remove();
+		this.connectInfoTipDialog.getElements( 'buttonsWrapper' ).remove();
+		this.connectInfoTipDialog.show();
+	},
+
+	handleElementorConnect() {
+		this.ui.connect.elementorConnect( {
+			success: () => {
+				elementor.config.library_connect.is_connected = true;
+
+				$e.run( 'library/close' );
+				elementor.notifications.showToast( {
+					message: __( 'Connected successfully.', 'elementor' ),
+				} );
+			},
+			error: () => {
+				elementor.config.library_connect.is_connected = false;
+			},
+		} );
 	},
 } );
 

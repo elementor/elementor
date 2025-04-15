@@ -485,12 +485,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
 					</span>
+					<# if ( elementor.config.library_connect.is_connected ) { #>
 					<span class="upgrade-badge">
 						<a href="" target="_blank">
-						<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+							<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+						</a>
 					</span>
-				</a>
-			</span>
+					<# } else { #>
+					<span class="connect-badge">
+						<a id="elementor-template-library-connect__badge" href="{{{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }}}">
+							<?php echo esc_html__( 'Connect', 'elementor' ); ?>
+						</a>
+					</span>
+					<# } #>
 				</div>
 				<div class="source-selections-input local">
 					<input type="checkbox" id="local" name="local" value="local">
