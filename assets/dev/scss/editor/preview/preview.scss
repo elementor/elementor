@@ -200,6 +200,24 @@ html.elementor-html {
 	.elementor-edit-hidden {
 		display: none;
 	}
+
+	// For POC reasons only.
+	// I we want to use this approach, then we should find a way to conditionally load styling.
+	.e-svg-base {
+
+		svg {
+			display: inherit;
+			width: inherit;
+			height: inherit;
+			min-width: inherit;
+			min-height: inherit;
+			max-width: inherit;
+			max-height: inherit;
+			flex-grow: inherit;
+			flex-shrink: inherit;
+			flex-basis: inherit;
+		}
+	}
 }
 
 .elementor-section-wrap {

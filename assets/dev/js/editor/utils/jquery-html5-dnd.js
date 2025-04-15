@@ -35,8 +35,56 @@
 			elementsCache.$element = $( settings.element );
 		};
 
+		var $draggedView = null;
+
 		var buildElements = function() {
-			elementsCache.$element.attr( 'draggable', true );
+			var el = elementsCache.$element[ 0 ];
+
+			if ( 'svg' === el.tagName.toLowerCase() ) {
+				var divClone = document.createElement( 'div' );
+
+				divClone.setAttribute( 'draggable', true );
+				divClone.className = el.getAttribute( 'class' ) || '';
+				divClone.style.cssText = el.getAttribute( 'style' ) || '';
+
+				var computed = window.getComputedStyle( el );
+
+				divClone.style.opacity = '0';
+
+				var originalMarginBottom = parseFloat( computed.marginBottom ) || 0;
+				var svgHeight = parseFloat( computed.height ) || 0;
+				var newMarginTop = -svgHeight - originalMarginBottom;
+
+				divClone.style.marginTop = newMarginTop + 'px';
+
+				el.parentNode.insertBefore( divClone, el.nextSibling );
+
+				elementsCache.$element = $( divClone );
+
+				var CloneView = Marionette.View.extend( {
+					tagName: 'div',
+					className: divClone.className,
+					initialize() {
+						this.setElement( divClone );
+					},
+				} );
+
+				$draggedView = new CloneView();
+			} else {
+				// Use the existing Marionette view for non-SVG elements
+				$draggedView = self;
+				elementsCache.$element.attr( 'draggable', true );
+			}
+		};
+
+		var registerDragReply = function() {
+			elementor.channels.editor.stopReplying( 'element:dragged' );
+
+			elementor.channels.editor.reply( 'element:dragged', {
+				$el: $draggedView.$el,
+				getContainer: () => elementsCache.$element,
+				parent: $draggedView,
+			} );
 		};
 
 		var onDragEnd = function( event ) {
@@ -72,6 +120,7 @@
 			initElementsCache();
 
 			buildElements();
+			registerDragReply();
 
 			attachEvents();
 		};

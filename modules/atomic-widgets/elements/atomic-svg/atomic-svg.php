@@ -104,9 +104,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			$settings['classes']
 		) );
 
-		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
-			$svg->add_class( implode( ' ', $classes ) );
-		}
+		$svg->add_class( implode( ' ', $classes ) );
 
 		$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
@@ -114,7 +112,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			$svg_html = sprintf( '<a href="%s" target="%s"> %s </a>', esc_url( $settings['link']['href'] ), esc_attr( $settings['link']['target'] ), $svg_html );
 		}
 
-		$this->maybe_add_editor_wrapper( $svg_html, $classes );
+//		$this->maybe_add_editor_wrapper( $svg_html, $classes );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $svg_html;
@@ -152,18 +150,15 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	private function maybe_add_editor_wrapper( &$svg_html, $classes ): void {
-		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
-			return;
-		}
-
-		$wrapper_html = sprintf( '<div> %s </div>', $svg_html );
-		$div = new \WP_HTML_Tag_Processor( $wrapper_html );
-
-		if ( ! $div->next_tag( 'div' ) ) {
-			return;
-		}
-
-		$div->add_class( implode( ' ', array_merge( [ 'e-svg-wrapper' ], $classes ) ) );
-		$svg_html = $div->get_updated_html();
+//		if ( ! Plugin::$instance->editor->is_edit_mode() ) {
+//			return;
+//		}
+//
+//		$div = sprintf(
+//			'<div class="%s" draggable="true"></div>',
+//			esc_attr( implode( ' ', array_merge( [ 'e-svg-wrapper' ], $classes ) ) )
+//		);
+//
+//		$svg_html .= $div;
 	}
 }
