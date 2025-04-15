@@ -395,7 +395,7 @@ class Admin_Notices extends Module {
 		global $pagenow;
 		$notice_id = 'ally_pages_promotion';
 
-		if  ( 'edit.php' !== $pagenow || empty( $_GET['post_type'] ) || 'page' !== $_GET['post_type'] ) {
+		if (  'edit.php' !== $pagenow || empty( $_GET['post_type'] ) || 'page' !== $_GET['post_type'] ) {
 			return false;
 		}
 
@@ -705,6 +705,7 @@ class Admin_Notices extends Module {
 
 	/**
 	 * maybe_log_campaign
+	 * Used to log campaigns for plugins
 	 */
 	public function maybe_log_campaign() {
 		// check for variables
@@ -723,7 +724,7 @@ class Admin_Notices extends Module {
 		}
 
 		// check nonce
-		if ( ! isset( $_GET['plg_campaign_nonce'] ) || ! wp_verify_nonce( $_GET['plg_campaign_nonce'], $_GET['plg_campaign_name'] ) ) {
+		if ( ! isset( $_GET['plg_campaign_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_GET['plg_campaign_nonce'] ), sanitize_key( $_GET['plg_campaign_name'] ) ) ) {
 			return;
 		}
 
@@ -733,7 +734,7 @@ class Admin_Notices extends Module {
 		}
 
 		// check for empty values
-		if ( empty( $_GET['plg_source'] ) || empty ( $_GET['plg_medium'] ) ) {
+		if ( empty( $_GET['plg_source'] ) || empty( $_GET['plg_medium'] ) ) {
 			return;
 		}
 
@@ -743,7 +744,7 @@ class Admin_Notices extends Module {
 			'medium' => sanitize_key( $_GET['plg_medium'] ),
 		];
 
-		set_transient( $_GET['plg_campaign_name'], $campaign_data, 30 * DAY_IN_SECONDS );
+		set_transient( sanitize_key( $_GET['plg_campaign_name'] ), $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 
 	public static function add_plg_campaign_data( $url, $campaign_data ) {
