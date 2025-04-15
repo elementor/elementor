@@ -356,18 +356,11 @@ BaseElementView = BaseContainer.extend( {
 		if ( elementor.helpers.isAtomicWidget( this.model ) ) {
 			/**
 			 * As this functionality is only on runtime, and the hidden state should not be saved for consistency (i.e. resets on each page load) -
-			 * we are using the editor_settings model to store the relevant visibility-toggling data, but won't save it anywhere.
-			 *
-			 * We store the following values:
-			 * is_hidden: the visibility state, equivalent to V3's this.model.get( 'hidden' )
-			 * original_display: the o=original display value in order to gracefully revert to it, made for exceptional cases where the display is not 'contents' (i.e. div-block, flexbox...)
+			 * we are using the editor_settings model to store the hidden flag, equivalent to V3's this.model.get( 'hidden' )
+			 * and we don't save nor parse it in the has_atomic_base trait (in oppose to how the `title` attribute is handled there)
 			 */
 			const prevEditorSettings = this.model.get( 'editor_settings' ) ?? {};
 			const newIsHidden = ! prevEditorSettings.is_hidden;
-
-			if ( ! prevEditorSettings.original_display ) {
-				prevEditorSettings.original_display = this.$el.css( 'display' );
-			}
 
 			this.model.set( 'editor_settings', { ...prevEditorSettings, is_hidden: newIsHidden } );
 		} else {
@@ -379,15 +372,37 @@ BaseElementView = BaseContainer.extend( {
 
 	toggleVisibilityClass() {
 		if ( elementor.helpers.isAtomicWidget( this.model ) ) {
-			const prevEditorSettings = this.model.get( 'editor_settings' ) ?? {};
-			const { is_hidden: isHidden = false, original_display: display } = prevEditorSettings;
+			/**
+			 * We cannot know for sure the nature of this.$el in atomic widgets in terms of its css display value.
+			 * Though most atomic widgets are wrapped with a { display: contents !important } inline styled div, not all are, i.e. div-block and flexbox - both have display: flex.
+			 *
+			 * The simplest solution might be to switch the inline display value to 'none',
+			 * but that would require us to also store the original display value to revert to upon showing back the widget.
+			 *
+			 * This leaves us with a slightly less elegant workaround - to wrap/unwrap it with a {display: none} inline styled div
+			 */
 
-			this.$el.css( {
-				display: isHidden ? 'none' : display,
-			} );
-		} else {
-			this.$el.toggleClass( 'elementor-edit-hidden', !! this.model.get( 'hidden' ) );
+			const prevEditorSettings = this.model.get( 'editor_settings' ) ?? {};
+			const { is_hidden: isHidden = false } = prevEditorSettings;
+
+			const isWrappedWithHiddenElement = this.$el.parent().is( 'div[data-type="hide-atomic-widget"]' );
+
+			if ( isHidden ) {
+				if ( ! isWrappedWithHiddenElement ) {
+					this.$el.wrap( '<div data-type="hide-atomic-widget" style="display: none" />' );
+				}
+
+				return;
+			}
+
+			if ( isWrappedWithHiddenElement ) {
+				this.$el.unwrap();
+			}
+
+			return;
 		}
+
+		this.$el.toggleClass( 'elementor-edit-hidden', !! this.model.get( 'hidden' ) );
 	},
 
 	addElementFromPanel( options ) {

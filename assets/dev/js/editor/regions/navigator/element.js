@@ -156,10 +156,7 @@ export default class extends Marionette.CompositeView {
 
 	toggleHiddenClass() {
 		if ( elementor.helpers.isAtomicWidget( this.model ) ) {
-			const prevEditorSettings = this.model.get( 'editor_settings' ) ?? {};
-			const { is_hidden: isHidden = false } = prevEditorSettings;
-
-			this.$el.toggleClass( 'elementor-navigator__element--hidden', isHidden );
+			this.$el.toggleClass( 'elementor-navigator__element--hidden', !! this.model.get( 'editor_settings' )?.is_hidden );
 		} else {
 			this.$el.toggleClass( 'elementor-navigator__element--hidden', !! this.model.get( 'hidden' ) );
 		}
