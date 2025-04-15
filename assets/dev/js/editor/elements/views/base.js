@@ -353,13 +353,41 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	toggleVisibility() {
-		this.model.set( 'hidden', ! this.model.get( 'hidden' ) );
+		if ( elementor.helpers.isAtomicWidget( this.model ) ) {
+			/**
+			 * As this functionality is only on runtime, and the hidden state should not be saved for consistency (i.e. resets on each page load) -
+			 * we are using the editor_settings model to store the relevant visibility-toggling data, but won't save it anywhere.
+			 *
+			 * We store the following values:
+			 * is_hidden: the visibility state, equivalent to V3's this.model.get( 'hidden' )
+			 * original_display: the o=original display value in order to gracefully revert to it, made for exceptional cases where the display is not 'contents' (i.e. div-block, flexbox...)
+			 */
+			const prevEditorSettings = this.model.get( 'editor_settings' ) ?? {};
+			const newIsHidden = ! prevEditorSettings.is_hidden;
+
+			if ( ! prevEditorSettings.original_display ) {
+				prevEditorSettings.original_display = this.$el.css( 'display' );
+			}
+
+			this.model.set( 'editor_settings', { ...prevEditorSettings, is_hidden: newIsHidden } );
+		} else {
+			this.model.set( 'hidden', ! this.model.get( 'hidden' ) );
+		}
 
 		this.toggleVisibilityClass();
 	},
 
 	toggleVisibilityClass() {
-		this.$el.toggleClass( 'elementor-edit-hidden', !! this.model.get( 'hidden' ) );
+		if ( elementor.helpers.isAtomicWidget( this.model ) ) {
+			const prevEditorSettings = this.model.get( 'editor_settings' ) ?? {};
+			const { is_hidden: isHidden = false, original_display: display } = prevEditorSettings;
+
+			this.$el.css( {
+				display: isHidden ? 'none' : display,
+			} );
+		} else {
+			this.$el.toggleClass( 'elementor-edit-hidden', !! this.model.get( 'hidden' ) );
+		}
 	},
 
 	addElementFromPanel( options ) {
