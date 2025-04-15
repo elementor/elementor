@@ -203,6 +203,33 @@ $remote-templates-items-space: 30px;
 		}
 	}
 
+	&[data-template-source="cloud"][data-template-view="grid"] {
+
+		#elementor-template-library-templates-container {
+			border-block-start: none;
+		}
+
+		#elementor-template-library-order-toolbar-local {
+			padding: 0;
+
+			div {
+				max-width: fit-content;
+			}
+
+			.elementor-template-library-local-column-3,
+			.elementor-template-library-local-column-5 {
+				display: none;
+			}
+		}
+	}
+
+	&[data-template-source="cloud"] {
+
+		.elementor-template-library-local-column-3 {
+			pointer-events: none;
+		}
+	}
+
 	&[data-template-source="remote"] {
 
 		#elementor-template-library-templates-container {
@@ -1115,6 +1142,10 @@ label.elementor-template-library-order-label {
 
 		#elementor-template-library-save-template-submit {
 			float: inline-end;
+			
+			&[disabled] {
+				cursor: not-allowed;
+			}
 		}
 
 		.source-selections {

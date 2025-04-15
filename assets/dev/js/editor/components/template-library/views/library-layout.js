@@ -200,4 +200,10 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	isListView() {
 		return 'list' === elementor.templates.getViewSelection();
 	},
+
+	resetSortingUI() {
+		Array.from( this.modalContent.currentView.ui?.orderInputs || [] ).forEach( function( input ) {
+			input.checked = false;
+		} );
+	},
 } );
