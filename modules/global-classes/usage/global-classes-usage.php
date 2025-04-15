@@ -24,10 +24,10 @@ class Global_Classes_Usage {
 		$applied_global_classes_usage = Collection::make( $applied_global_classes_usage )
 			->filter( fn( $count ) => $count <= self::MIN_CLASSES_COUNT )
 			->keys()
-			->all();
+			->count();
 
 		if ( ! empty( $applied_global_classes_usage ) ) {
-			$params['usages']['global_classes']['applied_classes_per_class'] = $applied_global_classes_usage;
+			$params['usages']['global_classes']['low_usage_global_classes'] = $applied_global_classes_usage;
 		}
 
 		return $params;

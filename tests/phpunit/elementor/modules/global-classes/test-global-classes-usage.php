@@ -255,10 +255,7 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( 4, $params['usages']['global_classes']['total_count'] );
-		$this->assertEquals(
-			[ 'g-4-124', 'g-4-125', 'g-4-126' ],
-			$params['usages']['global_classes']['applied_classes_per_class'],
-		);
+		$this->assertEquals( 3, $params['usages']['global_classes']['low_usage_global_classes'] );
 	}
 
 	public function test_global_classes_usage_with_multiple_posts() {
@@ -274,10 +271,7 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( 4, $params['usages']['global_classes']['total_count'] );
-		$this->assertEquals(
-			[ 'g-4-126' ],
-			$params['usages']['global_classes']['applied_classes_per_class'],
-		);
+		$this->assertEquals( 1, $params['usages']['global_classes']['low_usage_global_classes'] );
 	}
 
 	public function test_global_classes_usage_with_no_classes_exist() {
@@ -291,7 +285,7 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( 0, $params['usages']['global_classes']['total_count'] );
-		$this->assertArrayNotHasKey( 'applied_classes_per_class', $params['usages']['global_classes'] );
+		$this->assertArrayNotHasKey( 'low_usage_global_classes', $params['usages']['global_classes'] );
 	}
 
 	public function test_global_classes_usage_with_all_classes_applied_above_min() {
@@ -310,7 +304,7 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals(4, $params['usages']['global_classes']['total_count']);
-		$this->assertArrayNotHasKey('applied_classes_per_class', $params['usages']['global_classes']);
+		$this->assertArrayNotHasKey('low_usage_global_classes', $params['usages']['global_classes']);
 	}
 
 	private function make_mock_post_with_elements( $elements_data ) {
