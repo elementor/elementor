@@ -1,7 +1,6 @@
-						<a href="https://example.com" target="_blank">
+						<a href="https://example.com" class="e-link" target="_blank">
 		<img class=""
 									id="123"
 												src="https://example.com/image.jpg"
 						/>
 			</a>
-			
