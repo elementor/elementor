@@ -165,6 +165,14 @@ ElementModel = BaseElementModel.extend( {
 		return title;
 	},
 
+	getVisibility() {
+		if ( elementor.helpers.isAtomicWidget( this ) ) {
+			return !! this.get( 'editor_settings' )?.is_hidden;
+		}
+
+		return !! this.get( 'hidden' );
+	},
+
 	getIcon() {
 		const mainIcon = elementor.getElementData( this ).icon,
 			custom = this.get( 'custom' );

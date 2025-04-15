@@ -155,11 +155,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	toggleHiddenClass() {
-		if ( elementor.helpers.isAtomicWidget( this.model ) ) {
-			this.$el.toggleClass( 'elementor-navigator__element--hidden', !! this.model.get( 'editor_settings' )?.is_hidden );
-		} else {
-			this.$el.toggleClass( 'elementor-navigator__element--hidden', !! this.model.get( 'hidden' ) );
-		}
+		this.$el.toggleClass( 'elementor-navigator__element--hidden', this.model.getVisibility() );
 	}
 
 	recursiveChildInvoke( method, ...restArgs ) {
