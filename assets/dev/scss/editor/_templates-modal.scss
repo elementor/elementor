@@ -1142,6 +1142,10 @@ label.elementor-template-library-order-label {
 
 		#elementor-template-library-save-template-submit {
 			float: inline-end;
+			
+			&[disabled] {
+				cursor: not-allowed;
+			}
 		}
 
 		.source-selections {
