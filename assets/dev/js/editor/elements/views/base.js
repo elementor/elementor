@@ -353,20 +353,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	toggleVisibility() {
-		const isVisible = this.model.getVisibility();
-
-		if ( elementor.helpers.isAtomicWidget( this.model ) ) {
-			/**
-			 * As this functionality is only on runtime, and the hidden state should not be saved for consistency (i.e. resets on each page load) -
-			 * we are using the editor_settings model to store the hidden flag, equivalent to V3's this.model.get( 'hidden' )
-			 * and we don't save nor parse it in the has_atomic_base trait (in oppose to how the `title` attribute is handled there)
-			 */
-			const prevEditorSettings = this.model.get( 'editor_settings' ) ?? {};
-
-			this.model.set( 'editor_settings', { ...prevEditorSettings, is_hidden: ! isVisible } );
-		} else {
-			this.model.set( 'hidden', ! isVisible );
-		}
+		this.model.toggleVisibility();
 
 		this.toggleVisibilityClass();
 	},

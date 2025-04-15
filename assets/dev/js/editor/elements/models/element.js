@@ -173,6 +173,22 @@ ElementModel = BaseElementModel.extend( {
 		return !! this.get( 'hidden' );
 	},
 
+	setVisibility( isHidden = false ) {
+		if ( elementor.helpers.isAtomicWidget( this ) ) {
+			const prevEditorSettings = this.get( 'editor_settings' ) || {};
+
+			this.set( 'editor_settings', { ...prevEditorSettings, is_hidden: isHidden } );
+		} else {
+			this.set( 'hidden', isHidden );
+		}
+	},
+
+	toggleVisibility() {
+		const isHidden = this.getVisibility();
+
+		this.setVisibility( ! isHidden );
+	},
+
 	getIcon() {
 		const mainIcon = elementor.getElementData( this ).icon,
 			custom = this.get( 'custom' );
