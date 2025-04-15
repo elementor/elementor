@@ -26,7 +26,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		localInput: '.source-selections-input.local',
 		cloudInput: '.source-selections-input.cloud',
 		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
-		upgradeBadge: '.source-selections-input.cloud .upgrade-badge',
 		infoIcon: '.source-selections-input.cloud .eicon-info',
 		connect: '#elementor-template-library-connect__badge',
 		connectBadge: '.source-selections-input.cloud .connect-badge',
