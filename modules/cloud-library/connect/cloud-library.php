@@ -201,6 +201,28 @@ class Cloud_Library extends Library {
 		return $response['preview_url'];
 	}
 
+	public function mark_preview_as_failed( $template_id, $error ) {
+		$endpoint = 'resources/' . $template_id . '/preview';
+
+		$payload = [
+			'body' => [
+				'error' => $error,
+			],
+		];
+
+		$response = $this->http_request( 'PATCH', $endpoint, $payload, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		]);
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = esc_html__( 'Failed to mark preview as failed.', 'elementor' );
+
+			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return $response;
+	}
+
 	/**
 	 * @param $file_data
 	 * @param $boundary
