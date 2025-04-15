@@ -395,7 +395,7 @@ class Admin_Notices extends Module {
 		global $pagenow;
 		$notice_id = 'ally_pages_promotion';
 
-		if (  'edit.php' !== $pagenow || empty( $_GET['post_type'] ) || 'page' !== $_GET['post_type'] ) {
+		if ( 'edit.php' !== $pagenow || empty( $_GET['post_type'] ) || 'page' !== $_GET['post_type'] ) {
 			return false;
 		}
 
@@ -704,7 +704,6 @@ class Admin_Notices extends Module {
 	}
 
 	/**
-	 * maybe_log_campaign
 	 * Used to log campaigns for plugins
 	 */
 	public function maybe_log_campaign() {
