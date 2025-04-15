@@ -121,6 +121,12 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		}
 	},
 
+	handleItemDoubleClick() {
+		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
+			$e.route( 'library/view-folder', { model: this.model } );
+		}
+	},
+
 	handleGridViewItemSingleClick() {
 		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
 

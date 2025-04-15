@@ -61,7 +61,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			clearTimeout( state.timeoutId );
 			state.timeoutId = null;
 
-			this.handleItemDoubleClick( event );
+			this.handleItemDoubleClick();
 		} else {
 			state.timeoutId = setTimeout( () => {
 				state.timeoutId = null;
@@ -75,15 +75,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		this.handleListViewItemSingleClick();
 	},
 
-	handleItemDoubleClick( event ) {
-		if ( event.shiftKey ) {
-			return;
-		}
-
-		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			$e.route( 'library/view-folder', { model: this.model } );
-		}
-	},
+	handleItemDoubleClick() {},
 
 	handleListViewItemSingleClick() {
 		const checkbox = this.ui.bulkSelectionItemCheckbox;
