@@ -35,8 +35,6 @@
 			elementsCache.$element = $( settings.element );
 		};
 
-		var $draggedView = null;
-
 		var buildElements = function() {
 			var el = elementsCache.$element[ 0 ];
 
