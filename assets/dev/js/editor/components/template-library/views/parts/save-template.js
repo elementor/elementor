@@ -41,6 +41,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'change @ui.sourceSelectionCheckboxes': 'maybeAllowOnlyOneCheckboxToBeChecked',
 		'mouseenter @ui.infoIcon': 'showInfoTip',
 		'mouseenter @ui.connect': 'showConnectInfoTip',
+		'input @ui.templateNameInput': 'onTemplateNameInputChange',
 	},
 
 	onRender() {
@@ -66,7 +67,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	handleOnRender() {
 		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
 
-		const context = this.getOption( 'context' );
+		if ( SAVE_CONTEXTS.SAVE === context && elementor.templates.hasCloudLibraryQuota() ) {
+			this.handleSaveAction();
+		}
 
 		if ( SAVE_CONTEXTS.MOVE === context || SAVE_CONTEXTS.COPY === context ) {
 			this.handleSingleActionContextUiState();
@@ -85,9 +88,18 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
+	handleSaveAction() {
+		this.updateSubmitButtonState( true );
+	},
+
 	handleSingleActionContextUiState() {
-		this.ui.templateNameInput.val( this.model.get( 'title' ) );
+		const title = this.model.get( 'title' );
+
+		this.ui.templateNameInput.val( title );
+
 		this.handleContextUiStateChecboxes();
+
+		this.updateSubmitButtonState( 0 === title.trim().length );
 	},
 
 	handleBulkActionContextUiState() {
@@ -181,7 +193,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
 
-	showEmptySourceErrorDialog() {
+	showEmptySourceErrorDialog( ) {
 		elementorCommon.dialogsManager.createWidget( 'alert', {
 			id: 'elementor-template-library-error-dialog',
 			headerMessage: __( 'An error occured.', 'elementor' ),
@@ -591,6 +603,17 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				elementor.config.library_connect.is_connected = false;
 			},
 		} );
+	},
+
+	onTemplateNameInputChange( event ) {
+		const shouldDisableSubmitButton = 0 === event.target.value.trim().length;
+
+		this.updateSubmitButtonState( shouldDisableSubmitButton );
+	},
+
+	updateSubmitButtonState( shouldDisableSubmitButton ) {
+		this.ui.submitButton.toggleClass( 'e-primary', ! shouldDisableSubmitButton );
+		this.ui.submitButton.prop( 'disabled', shouldDisableSubmitButton );
 	},
 } );
 
