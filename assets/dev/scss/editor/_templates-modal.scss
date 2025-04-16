@@ -574,7 +574,36 @@ $remote-templates-items-space: 30px;
 }
 
 .elementor-template-library-filter-select-source {
-	width: 200px;
+	width: 350px;
+	display: flex;
+	gap: 10px;
+
+	.source-option {
+		flex: 1;
+		border: 0.5px solid $e-gray-200;
+		padding: 5px;
+		border-radius: 3px;
+		cursor: pointer;
+		font-size: 12px;
+
+		i {
+			margin-inline-end: 5px;
+		}
+
+		.new-badge {
+			border: 1px solid $e-pink-300;
+			padding: 2px 4px;
+			color: $e-pink-900;
+			border-radius: 10px;
+			font-size: 10px;
+			margin-inline-start: 5px;
+		}
+
+		&.selected,
+		&:hover {
+			background-color: var(--e-a-bg-hover);
+		}
+	}
 }
 
 #elementor-template-library-filter-toolbar-remote {

@@ -5,7 +5,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	ui: {
 		connect: '#elementor-template-library-connect__button',
-		selectSourceFilter: '.elementor-template-library-filter-select-source',
+		selectSourceFilter: '.elementor-template-library-filter-select-source .source-option',
 		title: '.elementor-template-library-blank-title',
 		message: '.elementor-template-library-blank-message',
 		icon: '.elementor-template-library-blank-icon',
@@ -13,7 +13,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	events: {
-		'change @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'click @ui.selectSourceFilter': 'onSelectSourceFilterChange',
 	},
 
 	modesStrings() {

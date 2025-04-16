@@ -960,12 +960,10 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.onSelectSourceFilterChange = function( event ) {
-		const select = event.currentTarget,
-			filterName = select.dataset.elementorFilter,
-			templatesSource = select.value;
+		const templatesSource = event?.currentTarget?.dataset?.source ?? 'local';
 
 		self.setSourceSelection( templatesSource );
-		self.setFilter( filterName, templatesSource, true );
+		self.setFilter( 'source', templatesSource, true );
 		self.clearBulkSelectionItems();
 
 		if ( this.shouldShowCloudStateView( templatesSource ) ) {
