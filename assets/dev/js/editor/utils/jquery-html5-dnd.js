@@ -138,7 +138,8 @@
 		};
 
 		var checkHorizontal = function( offsetX, clientX, elementWidth ) {
-			let sensitivity;
+			var isPercentValue,
+				sensitivity;
 
 			if ( ! hasHorizontalDetection() ) {
 				return false;
@@ -169,7 +170,7 @@
 
 			sensitivity = sensitivity[ 0 ];
 
-			const isPercentValue = /%$/.test( settings.horizontalSensitivity );
+			isPercentValue = /%$/.test( settings.horizontalSensitivity );
 
 			if ( isPercentValue ) {
 				sensitivity = elementWidth / sensitivity;
