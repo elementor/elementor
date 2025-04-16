@@ -122,16 +122,23 @@
 		};
 
 		var hasHorizontalDetection = function() {
-			return -1 !== settings.axis.indexOf( 'horizontal' );
+			if ( !! settings.axis ) {
+				return -1 !== settings.axis.indexOf( 'horizontal' );
+			}
+
+			return placeholderContext.isFlexRowContainer;
 		};
 
 		var hasVerticalDetection = function() {
-			return -1 !== settings.axis.indexOf( 'vertical' );
+			if ( !! settings.axis ) {
+				return -1 !== settings.axis.indexOf( 'vertical' );
+			}
+
+			return ! placeholderContext.isFlexRowContainer;
 		};
 
 		var checkHorizontal = function( offsetX, clientX, elementWidth ) {
-			var isPercentValue,
-				sensitivity;
+			let sensitivity;
 
 			if ( ! hasHorizontalDetection() ) {
 				return false;
@@ -162,7 +169,7 @@
 
 			sensitivity = sensitivity[ 0 ];
 
-			isPercentValue = /%$/.test( settings.horizontalSensitivity );
+			const isPercentValue = /%$/.test( settings.horizontalSensitivity );
 
 			if ( isPercentValue ) {
 				sensitivity = elementWidth / sensitivity;
@@ -230,18 +237,33 @@
 
 		const ensureMinimumDroppableHeight = function() {
 			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
-			const MIN_HEIGHT = 20;
+			const MIN_HEIGHT = 40;
+			const MIN_BORDER_WIDTH = 10;
 
 			if ( ! hasLogicalWrapper ) {
 				return;
 			}
 
-			placeholderTarget.classList.remove( 'e-min-height' );
+			placeholderTarget.classList.remove( 'e-min-height', 'e-min-border-top', 'e-min-border-bottom' );
 
 			const targetHeight = placeholderTarget.offsetHeight;
 
-			if ( targetHeight < MIN_HEIGHT ) {
-				placeholderTarget.classList.add( 'e-min-height' );
+			if ( targetHeight > MIN_HEIGHT ) {
+				return;
+			}
+
+			placeholderTarget.classList.add( 'e-min-height' );
+
+			const computedStyle = window.getComputedStyle( placeholderTarget );
+			const borderTop = parseFloat( computedStyle.borderTopWidth ) || 0;
+			const borderBottom = parseFloat( computedStyle.borderBottomWidth ) || 0;
+
+			if ( borderTop < MIN_BORDER_WIDTH ) {
+				placeholderTarget.classList.add( 'e-min-border-top' );
+			}
+
+			if ( borderBottom < MIN_BORDER_WIDTH ) {
+				placeholderTarget.classList.add( 'e-min-border-bottom' );
 			}
 		};
 
@@ -252,8 +274,15 @@
 
 			const $currentElement = $( currentElement );
 			const hasLogicalWrapper = 'contents' === getComputedStyle( currentElement ).display;
+
 			const container = currentElement.closest( '.e-con' );
 			const containerDisplayStyle = container ? getComputedStyle( container ).display : null;
+
+			const innerContainer = container.querySelector( ':scope > .e-con-inner' );
+			const containerWrapperStyle = getComputedStyle( innerContainer || container );
+
+			const isFlexContainer = !! container && [ 'flex', 'inline-flex' ].includes( containerWrapperStyle.display );
+			const isRowDirection = !! container && [ 'row', 'row-reverse' ].includes( containerWrapperStyle.flexDirection );
 
 			maybeAddFlexRowClass( container );
 
@@ -264,7 +293,9 @@
 				isFirstInsert: $currentElement.hasClass( 'elementor-first-add' ),
 				isInnerContainer: $currentElement.hasClass( 'e-con-inner' ),
 				isGridRowContainer: 0 !== $currentElement.parents( '.e-grid.e-con--row' ).length,
-				isRowContainer: 0 !== $currentElement.parents( '.e-con--row' ).length,
+				isFlexContainer,
+				isRowDirection,
+				isFlexRowContainer: isFlexContainer && isRowDirection,
 				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
 				hasLogicalWrapper,
 			};
@@ -275,12 +306,9 @@
 				return;
 			}
 
-			const innerContainer = container.querySelector( ':scope > .e-con-inner' );
-			const wrapperStyle = getComputedStyle( innerContainer || container );
-			const isFlexContainer = [ 'flex', 'inline-flex' ].includes( wrapperStyle.display );
-			const isRowDirection = [ 'row', 'row-reverse' ].includes( wrapperStyle.flexDirection );
+			const { isFlexRowContainer } = placeholderContext;
 
-			if ( isFlexContainer && isRowDirection ) {
+			if ( isFlexRowContainer ) {
 				container.classList.add( 'e-con--row' );
 				return;
 			}
@@ -497,6 +525,25 @@
 			}
 		};
 
+		const debounceLogicalElements = function( fn, delay ) {
+			if ( ! placeholderContext.hasLogicalWrapper ) {
+				return function( ...args ) {
+					fn.apply( this, args );
+				};
+			}
+
+			let timer = null;
+
+			return function( ...args ) {
+				clearTimeout( timer );
+				timer = setTimeout( () => fn.apply( this, args ), delay );
+			};
+		};
+
+		const debouncedOnDragLeave = debounceLogicalElements( ( event ) => {
+			onDragLeave.call( event.currentTarget, event );
+		}, 500 );
+
 		var onDragLeave = function( event ) {
 			var elementPosition = this.getBoundingClientRect();
 
@@ -536,7 +583,7 @@
 				.on( 'dragenter', settings.items, onDragEnter )
 				.on( 'dragover', settings.items, onDragOver )
 				.on( 'drop', settings.items, onDrop )
-				.on( 'dragleave drop', settings.items, onDragLeave );
+				.on( 'dragleave drop', settings.items, debouncedOnDragLeave );
 		};
 
 		var init = function() {
@@ -566,7 +613,7 @@
 				.off( 'dragenter', settings.items, onDragEnter )
 				.off( 'dragover', settings.items, onDragOver )
 				.off( 'drop', settings.items, onDrop )
-				.off( 'dragleave drop', settings.items, onDragLeave );
+				.off( 'dragleave drop', settings.items, debouncedOnDragLeave );
 		};
 
 		init();

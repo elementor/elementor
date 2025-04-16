@@ -197,8 +197,18 @@ html.elementor-html {
 		min-height: 15px;
 	}
 
-	.elementor-html5dnd-current-element .e-min-height {
-		min-height: 20px;
+	.elementor-html5dnd-current-element {
+		.e-min-height {
+			min-height: 40px;
+		}
+
+		.e-min-border-top {
+			border-top: 10px solid transparent;
+		}
+
+		.e-min-border-bottom {
+			border-bottom: 10px solid transparent;
+		}
 	}
 
 	.elementor-edit-hidden {

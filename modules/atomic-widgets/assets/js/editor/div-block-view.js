@@ -194,6 +194,10 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getDroppableAxis() {
+		if ( null === this.isHorizontalAxis() ) {
+			return null;
+		}
+
 		if ( this.isHorizontalAxis() ) {
 			return 'horizontal';
 		}
@@ -202,9 +206,15 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	isHorizontalAxis() {
+		const isEmptyView = this.$el.find( '> .elementor-empty-view' ).length > 0;
+
+		if ( isEmptyView ) {
+			return null;
+		}
+
 		const styles = window.getComputedStyle( this.$el[ 0 ] );
 
-		return 'flex' === styles.display &&
+		return [ 'flex', 'inline-flex' ].includes( styles.display ) &&
 			[ 'row', 'row-reverse' ].includes( styles.flexDirection );
 	},
 
