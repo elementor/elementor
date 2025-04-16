@@ -111,11 +111,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="elementor-template-library-filter-select-source">
 						<div class="source-option<# if ( activeSource === 'local' ) { #> selected<# } #>" data-source="local">
 							<i class="eicon-header" aria-hidden="true"></i>
-							<?php echo esc_html__( 'Site Templates', 'elementor' ); ?>
+							<?php echo esc_html__( 'Site templates', 'elementor' ); ?>
 						</div>
 						<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
 							<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
-							<?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?>
+							<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
 							<span class="new-badge">New</span>
 						</div>
 					</div>
@@ -484,7 +484,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="source-selections">
 				<div class="source-selections-input cloud">
 					<input type="checkbox" id="cloud" name="cloud" value="cloud">
-					<label for="cloud"> Cloud Library</label> <i class="eicon-info upgrade-tooltip" aria-hidden="true"></i> /  <i class="eicon-ellipsis-h"></i>
+					<label for="cloud"> <?php echo esc_html__( 'Cloud Library', 'elementor' ); ?></label> <i class="eicon-info upgrade-tooltip" aria-hidden="true"></i> /  <i class="eicon-ellipsis-h"></i>
 					<div class="cloud-folder-selection-dropdown">
 						<div class="cloud-folder-selection-dropdown-list"></div>
 					</div>
@@ -508,7 +508,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<div class="source-selections-input local">
 					<input type="checkbox" id="local" name="local" value="local">
-					<label for="local"> Site Library</label><br>
+					<label for="local"> <?php echo esc_html__( 'Site Library', 'elementor' ); ?></label><br>
 				</div>
 				<input type="hidden" name="parentId" id="parentId" />
 			</div>
@@ -601,11 +601,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-template-library-filter-select-source">
 				<div class="source-option<# if ( activeSource === 'local' ) { #> selected<# } #>" data-source="local">
 					<i class="eicon-header" aria-hidden="true"></i>
-					<?php echo esc_html__( 'Site Templates', 'elementor' ); ?>
+					<?php echo esc_html__( 'Site templates', 'elementor' ); ?>
 				</div>
 				<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
 					<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
-					<?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?>
+					<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
 					<span class="new-badge">New</span>
 				</div>
 			</div>
