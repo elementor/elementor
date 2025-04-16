@@ -771,4 +771,10 @@ module.exports = {
 
 		return this.getAtomicElementTypes().includes( elType );
 	},
+
+	isAtomicWidget( model ) {
+		const elementType = 'widget' === model.get( 'elType' ) ? model.get( 'widgetType' ) : model.get( 'elType' );
+
+		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
+	},
 };
