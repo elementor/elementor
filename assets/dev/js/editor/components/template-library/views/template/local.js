@@ -7,7 +7,6 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	ui() {
 		return _.extend( TemplateLibraryTemplateView.prototype.ui.apply( this, arguments ), {
-			click: 'handleItemClicked',
 			bulkSelectionItemCheckbox: '.bulk-selection-item-checkbox',
 			deleteButton: '.elementor-template-library-template-delete',
 			renameButton: '.elementor-template-library-template-rename',
