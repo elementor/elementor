@@ -477,7 +477,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="source-selections">
 				<div class="source-selections-input cloud">
 					<input type="checkbox" id="cloud" name="cloud" value="cloud">
-					<label for="cloud"> Cloud Library</label> <i class="eicon-info" aria-hidden="true"></i> /  <i class="eicon-ellipsis-h"></i>
+					<label for="cloud"> Cloud Library</label> <i class="eicon-info upgrade-tooltip" aria-hidden="true"></i> /  <i class="eicon-ellipsis-h"></i>
 					<div class="cloud-folder-selection-dropdown">
 						<div class="cloud-folder-selection-dropdown-list"></div>
 					</div>
@@ -485,12 +485,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
 					</span>
+					<# if ( elementor.config.library_connect.is_connected ) { #>
 					<span class="upgrade-badge">
 						<a href="" target="_blank">
-						<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+							<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+						</a>
 					</span>
-				</a>
-			</span>
+					<# } else { #>
+					<span class="connect-badge">
+						<a id="elementor-template-library-connect__badge" href="{{{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }}}">
+							<?php echo esc_html__( 'Connect', 'elementor' ); ?>
+						</a>
+					</span>
+					<# } #>
 				</div>
 				<div class="source-selections-input local">
 					<input type="checkbox" id="local" name="local" value="local">
