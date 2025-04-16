@@ -340,7 +340,7 @@ const ContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		return [...getAllElementTypes(), 'widget'].includes( elementView.model.get( 'elType' ) );
+		return [ ...getAllElementTypes(), 'widget' ].includes( elementView.model.get( 'elType' ) );
 	},
 
 	/**
