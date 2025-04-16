@@ -116,7 +116,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg->set_attribute( 'fill', 'currentColor' );
 		$svg->add_class( $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] );
 
-		$atom_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
+		$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
 		$wrapper_classes = array_filter( array_merge(
 			$settings['classes'],
@@ -126,19 +126,19 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$classes_string = implode( ' ', $wrapper_classes );
 
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
-			$atom_html = sprintf(
+			$svg_html = sprintf(
 				'<a href="%s" target="%s" class="%s">%s</a>',
 				esc_url( $settings['link']['href'] ),
 				esc_attr( $classes_string ),
 				esc_attr( $settings['link']['target'] ),
-				$atom_html
+				$svg_html
 			);
 		} else {
-			$atom_html = sprintf( '<div class="%s">%s</div>', esc_attr( $classes_string ), $atom_html );
+			$svg_html = sprintf( '<div class="%s">%s</div>', esc_attr( $classes_string ), $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $atom_html;
+		echo $svg_html;
 	}
 
 	private function get_svg_content( $settings ) {
