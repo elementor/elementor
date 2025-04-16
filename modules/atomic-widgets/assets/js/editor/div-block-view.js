@@ -193,36 +193,11 @@ const DivBlockView = BaseElementView.extend( {
 		};
 	},
 
-	getDroppableAxis() {
-		if ( null === this.isHorizontalAxis() ) {
-			return null;
-		}
-
-		if ( this.isHorizontalAxis() ) {
-			return 'horizontal';
-		}
-
-		return 'vertical';
-	},
-
-	isHorizontalAxis() {
-		const isEmptyView = this.$el.find( '> .elementor-empty-view' ).length > 0;
-
-		if ( isEmptyView ) {
-			return null;
-		}
-
-		const styles = window.getComputedStyle( this.$el[ 0 ] );
-
-		return [ 'flex', 'inline-flex' ].includes( styles.display ) &&
-			[ 'row', 'row-reverse' ].includes( styles.flexDirection );
-	},
-
 	getDroppableOptions() {
 		const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 		return {
-			axis: this.getDroppableAxis(),
+			axis: null,
 			items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 0,

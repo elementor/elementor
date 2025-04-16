@@ -236,15 +236,15 @@
 		};
 
 		const ensureMinimumDroppableHeight = function() {
-			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
+			const { placeholderTarget, hasLogicalWrapper, isFlexRowContainer } = placeholderContext;
 			const MIN_HEIGHT = 40;
 			const MIN_BORDER_WIDTH = 10;
 
-			if ( ! hasLogicalWrapper ) {
+			placeholderTarget.classList.remove( 'e-min-height', 'e-min-border-top', 'e-min-border-bottom' );
+
+			if ( isFlexRowContainer || ! hasLogicalWrapper ) {
 				return;
 			}
-
-			placeholderTarget.classList.remove( 'e-min-height', 'e-min-border-top', 'e-min-border-bottom' );
 
 			const targetHeight = placeholderTarget.offsetHeight;
 
@@ -325,7 +325,7 @@
 				return 'gridRow';
 			}
 
-			if ( placeholderContext.isRowContainer ) {
+			if ( placeholderContext.isFlexRowContainer ) {
 				return 'flexRow';
 			}
 
