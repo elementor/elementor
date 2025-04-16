@@ -37,7 +37,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
-		'change @ui.sourceSelectionCheckboxes': 'maybeAllowOnlyOneCheckboxToBeChecked',
+		'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
 		'mouseenter @ui.infoIcon': 'showInfoTip',
 		'mouseenter @ui.connect': 'showConnectInfoTip',
 		'input @ui.templateNameInput': 'onTemplateNameInputChange',
@@ -66,6 +66,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	handleOnRender() {
 		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
 
+		const context = this.getOption( 'context' );
+
 		if ( SAVE_CONTEXTS.SAVE === context && elementor.templates.hasCloudLibraryQuota() ) {
 			this.handleSaveAction();
 		}
@@ -88,7 +90,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	handleSaveAction() {
-		this.updateSubmitButtonState( true );
+		this.maybeEnableSaveButton();
 	},
 
 	handleSingleActionContextUiState() {
@@ -98,7 +100,18 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.handleContextUiStateChecboxes();
 
-		this.updateSubmitButtonState( 0 === title.trim().length );
+		this.maybeEnableSaveButton();
+	},
+
+	maybeEnableSaveButton() {
+		if ( ! this.templateHelpers()?.canSaveToCloud ) {
+			return;
+		}
+
+		const isAnyChecked = this.ui.sourceSelectionCheckboxes.is( ':checked' ),
+			isTitleFilled = 0 !== this.ui.templateNameInput.val().trim().length
+
+		this.updateSubmitButtonState( ! isAnyChecked || ! isTitleFilled );
 	},
 
 	handleBulkActionContextUiState() {
@@ -498,6 +511,12 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
+	handleSourceSelectionChange( event ) {
+		this.maybeAllowOnlyOneCheckboxToBeChecked( event );
+
+		this.maybeEnableSaveButton();
+	},
+
 	maybeAllowOnlyOneCheckboxToBeChecked( event ) {
 		if ( this.moreThanOneCheckboxCanBeChecked() ) {
 			return;
@@ -604,10 +623,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onTemplateNameInputChange( event ) {
-		const shouldDisableSubmitButton = 0 === event.target.value.trim().length;
-
-		this.updateSubmitButtonState( shouldDisableSubmitButton );
+	onTemplateNameInputChange() {
+		this.maybeEnableSaveButton();
 	},
 
 	updateSubmitButtonState( shouldDisableSubmitButton ) {
