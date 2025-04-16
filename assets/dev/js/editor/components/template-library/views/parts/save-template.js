@@ -109,7 +109,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 
 		const isAnyChecked = this.ui.sourceSelectionCheckboxes.is( ':checked' ),
-			isTitleFilled = 0 !== this.ui.templateNameInput.val().trim().length
+			isTitleFilled = 0 !== this.ui.templateNameInput.val().trim().length;
 
 		this.updateSubmitButtonState( ! isAnyChecked || ! isTitleFilled );
 	},
