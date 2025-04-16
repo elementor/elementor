@@ -135,7 +135,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				$svg_html
 			);
 		} else {
-			$svg_html = sprintf( '<div class="%s">%s</div>', esc_attr( $classes_string ), $svg_html );
+			$svg_html = sprintf( '<span class="%s">%s</span>', esc_attr( $classes_string ), $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
