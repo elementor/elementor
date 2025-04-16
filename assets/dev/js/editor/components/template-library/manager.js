@@ -960,7 +960,12 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.onSelectSourceFilterChange = function( event ) {
-		const templatesSource = event?.currentTarget?.dataset?.source ?? 'local';
+		const templatesSource = event?.currentTarget?.dataset?.source ?? 'local',
+			alreadyActive = templatesSource === self.getFilter( 'source' );
+
+		if ( alreadyActive ) {
+			return;
+		}
 
 		self.setSourceSelection( templatesSource );
 		self.setFilter( 'source', templatesSource, true );
