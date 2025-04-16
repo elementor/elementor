@@ -5,6 +5,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 import EmptyView from 'elementor-elements/views/container/empty-view';
 import { SetDirectionMode } from 'elementor-document/hooks';
 import { isWidgetSupportNesting } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -339,7 +340,7 @@ const ContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		return [ 'widget', 'container', 'e-div-block', 'e-flexbox' ].includes( elementView.model.get( 'elType' ) );
+		return [...getAllElementTypes(), 'widget'].includes( elementView.model.get( 'elType' ) );
 	},
 
 	/**
@@ -651,7 +652,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	isNotContainerOrDivBlock( elementType ) {
-		return ! [ 'container', 'e-div-block', 'e-flexbox' ].includes( elementType );
+		return ! getAllElementTypes().includes( elementType );
 	},
 } );
 
