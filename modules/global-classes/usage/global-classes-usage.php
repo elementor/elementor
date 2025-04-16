@@ -27,7 +27,7 @@ class Global_Classes_Usage {
 			->count();
 
 		if ( ! empty( $applied_global_classes_usage ) ) {
-			$params['usages']['global_classes']['low_usage_global_classes'] = $applied_global_classes_usage;
+			$params['usages']['global_classes']['low_usage_global_classes_count'] = $applied_global_classes_usage;
 		}
 
 		return $params;
