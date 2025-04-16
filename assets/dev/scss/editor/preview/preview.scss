@@ -320,6 +320,12 @@ html.elementor-html {
 			}
 		}
 	}
+
+	.e-svg-clone {
+		opacity: 0 !important;
+		margin-block-start: var(--e-svg-clone-margin-block-start, 0px) !important;
+		margin-inline-start: var(--e-svg-clone-margin-inline-start, 0px) !important;
+	}
 }
 
 // General - Overlay Settings

@@ -36,49 +36,68 @@
 		};
 
 		var buildElements = function() {
-			var el = elementsCache.$element[ 0 ];
+			const isSvgWidget = 'svg' === elementsCache.$element[ 0 ]?.tagName.toLowerCase() && elementsCache.$element.parent().hasClass( 'elementor-element' );
 
-			// Extract to standalone function
-			if ( 'svg' === el.tagName.toLowerCase() ) {
-				var divClone = document.createElement( 'div' );
-
-				divClone.setAttribute( 'draggable', true );
-				divClone.className = el.getAttribute( 'class' ) || '';
-				divClone.style.cssText = el.getAttribute( 'style' ) || '';
-				divClone.style.opacity = '0';
-
-				var computed = window.getComputedStyle( el );
-				const container = el.closest( '.e-con, .e-con-inner' );
-				const containerComputed = window.getComputedStyle( container );
-
-				const isFlexContainer = 'flex' === containerComputed.display || 'inline-flex' === containerComputed.display;
-				const isRowContainer = 'row' === containerComputed.flexDirection || 'row-reverse' === containerComputed.flexDirection;
-
-				// Listen to direction changes inside the container.
-				if ( isFlexContainer && isRowContainer ) {
-					const columnGap = parseFloat( containerComputed.columnGap ) || parseFloat( containerComputed.gap ) || 0;
-					var originalMarginInlineEnd = parseFloat( computed.marginInlineEnd ) || 0;
-					var svgWidth = parseFloat( computed.width ) || 0;
-					var newMarginInlineStart = -svgWidth - originalMarginInlineEnd;
-
-					divClone.style.marginInlineStart = newMarginInlineStart + 'px';
-					divClone.style.marginInlineEnd = ( -1 * columnGap ) + 'px';
-				} else {
-					const rowGap = parseFloat( containerComputed.rowGap ) || parseFloat( containerComputed.gap ) || 0;
-					var originalMarginBottom = parseFloat( computed.marginBottom ) || 0;
-					var svgHeight = parseFloat( computed.height ) || 0;
-					var newMarginTop = -svgHeight - originalMarginBottom;
-
-					divClone.style.marginTop = newMarginTop + 'px';
-					divClone.style.marginBottom = ( -1 * rowGap ) + 'px';
-				}
-
-				el.parentNode.insertBefore( divClone, el.nextSibling );
-
-				elementsCache.$element = $( divClone );
-			} else {
-				elementsCache.$element.attr( 'draggable', true );
+			if ( isSvgWidget ) {
+				createSvgClone();
+				return;
 			}
+
+			elementsCache.$element.attr( 'draggable', true );
+		};
+
+		const createSvgClone = function() {
+			const element = elementsCache.$element[ 0 ];
+			const divClone = document.createElement( 'div' );
+
+			divClone.setAttribute( 'draggable', true );
+			divClone.className = element.getAttribute( 'class' ) || '';
+			divClone.classList.add( 'e-svg-clone' );
+			divClone.style.cssText = element.getAttribute( 'style' ) || '';
+
+			const container = element.closest( '.e-con, .e-con-inner' );
+
+			const applyClonePositioning = () => {
+				const computedElement = getComputedStyle( element );
+				const computedContainer = getComputedStyle( container );
+
+				const isFlexContainer = 'flex' === computedContainer.display || 'inline-flex' === computedContainer.display;
+				const isRowContainer = 'row' === computedContainer.flexDirection || 'row-reverse' === computedContainer.flexDirection;
+
+				if ( isFlexContainer && isRowContainer ) {
+					const columnGap = parseFloat( computedContainer.columnGap ) || parseFloat( computedContainer.gap ) || 0;
+					const originalMarginInlineEnd = parseFloat( computedElement.marginInlineEnd ) || 0;
+					const svgWidth = parseFloat( computedElement.width ) || 0;
+					const newMarginInlineStart = -1 * ( svgWidth + originalMarginInlineEnd + columnGap );
+
+					divClone.style.removeProperty( '--e-svg-clone-margin-block-start' );
+					divClone.style.setProperty( '--e-svg-clone-margin-inline-start', newMarginInlineStart + 'px' );
+				} else {
+					const rowGap = parseFloat( computedContainer.rowGap ) || parseFloat( computedContainer.gap ) || 0;
+					const originalMarginBlockEnd = parseFloat( computedElement.marginBlockEnd ) || 0;
+					const svgHeight = parseFloat( computedElement.height ) || 0;
+					const newMarginBlockStart = -1 * ( svgHeight + originalMarginBlockEnd + rowGap );
+
+					divClone.style.setProperty( '--e-svg-clone-margin-block-start', newMarginBlockStart + 'px' );
+					divClone.style.removeProperty( '--e-svg-clone-margin-inline-start' );
+				}
+			};
+
+			const debounce = ( fn, delay = 50 ) => {
+				let timeout;
+				return () => {
+					clearTimeout( timeout );
+					timeout = setTimeout( fn, delay );
+				};
+			};
+
+			applyClonePositioning();
+
+			const resizeObserver = new ResizeObserver( debounce( applyClonePositioning ) );
+			resizeObserver.observe( container );
+
+			element.parentNode.insertBefore( divClone, element.nextSibling );
+			elementsCache.$element = $( divClone );
 		};
 
 		var onDragEnd = function( event ) {
