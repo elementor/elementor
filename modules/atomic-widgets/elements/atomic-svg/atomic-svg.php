@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Svg extends Atomic_Widget_Base {
+
 	const WRAPPER_STYLE_KEY = 'wrapper';
 	const BASE_STYLE_KEY = 'base';
 	const DEFAULT_SVG = 'images/default-svg.svg';
@@ -119,8 +120,8 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
 		$wrapper_classes = array_filter( array_merge(
-			$settings['classes'],
-			[ $this->get_base_styles_dictionary()[ self::WRAPPER_STYLE_KEY ] ]
+			[ $this->get_base_styles_dictionary()[ self::WRAPPER_STYLE_KEY ] ],
+			$settings['classes']
 		) );
 
 		$classes_string = implode( ' ', $wrapper_classes );
