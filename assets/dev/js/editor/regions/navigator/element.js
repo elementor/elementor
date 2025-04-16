@@ -155,7 +155,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	toggleHiddenClass() {
-		this.$el.toggleClass( 'elementor-navigator__element--hidden', !! this.model.get( 'hidden' ) );
+		this.$el.toggleClass( 'elementor-navigator__element--hidden', this.model.getVisibility() );
 	}
 
 	recursiveChildInvoke( method, ...restArgs ) {
@@ -248,7 +248,7 @@ export default class extends Marionette.CompositeView {
 			settingsModel.unset( '_title', { silent: true } );
 		}
 
-		if ( this.isAtomicWidget() ) {
+		if ( elementor.helpers.isAtomicWidget( this.model ) ) {
 			const prevEditorSettings = this.model.get( 'editor_settings' );
 
 			this.model.set( 'editor_settings', { ...prevEditorSettings, title: newTitle } );
@@ -354,7 +354,10 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onModelChange() {
-		if ( undefined !== this.model.changed.hidden ) {
+		if (
+			undefined !== this.model.changed.hidden ||
+			undefined !== this.model.changed.editor_settings?.is_hidden
+		) {
 			this.toggleHiddenClass();
 		}
 	}
@@ -517,11 +520,5 @@ export default class extends Marionette.CompositeView {
 
 			editor.render();
 		} );
-	}
-
-	isAtomicWidget() {
-		const elementType = 'widget' === this.model.get( 'elType' ) ? this.model.get( 'widgetType' ) : this.model.get( 'elType' );
-
-		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
 	}
 }
