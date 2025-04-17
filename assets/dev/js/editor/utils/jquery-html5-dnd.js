@@ -238,7 +238,7 @@
 
 		const ensureMinimumDroppableHeight = function() {
 			const { placeholderTarget, hasLogicalWrapper, isFlexRowContainer } = placeholderContext;
-			const MIN_HEIGHT = 40;
+			const MIN_HEIGHT = 30;
 			const MIN_BORDER_WIDTH = 10;
 
 			placeholderTarget.classList.remove( 'e-min-height', 'e-min-border-top', 'e-min-border-bottom' );
