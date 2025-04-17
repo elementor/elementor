@@ -97,7 +97,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	cloudMaxCapacityReached() {
 		return 'undefined' !== typeof elementorAppConfig[ 'cloud-library' ]?.quota &&
 			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold &&
-			elementorAppConfig[ 'cloud-library' ].quota?.currentUsage >= elementorAppConfig[ 'cloud-library' ].quota?.threshold
+			elementorAppConfig[ 'cloud-library' ].quota?.currentUsage >= elementorAppConfig[ 'cloud-library' ].quota?.threshold;
 	},
 
 	handleSaveAction() {
@@ -142,7 +142,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
-	handleCloudLibraryPromo( stateClass = 'promotion') {
+	handleCloudLibraryPromo( stateClass = 'promotion' ) {
 		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ) {
 			this.$( '.source-selections-input #local' ).prop( 'checked', true );
 		} else {
