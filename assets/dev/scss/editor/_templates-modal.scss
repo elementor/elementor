@@ -1186,6 +1186,65 @@ label.elementor-template-library-order-label {
 		width: 500px;
 		margin: 0 auto;
 
+		.upgrade-tooltip,
+		.connect-badge {
+			display: none;
+		}
+
+		.upgrade-badge {
+			display: none;
+			border: 1px solid #93003F80;
+			padding: 3px 5px;
+			border-radius: 100px;
+
+			a {
+				color: $e-rose-800;
+
+				i {
+					margin-inline-end: 5px;
+				}
+			}
+		}
+
+		&.max-capacity {
+
+			.quota-cta {
+				display: inline;
+			}
+		}
+
+		&.promotion,
+		&.max-capacity {
+
+			.upgrade-tooltip,
+			.connect-badge,
+			.upgrade-badge {
+				display: inline;
+			}
+	
+			.eicon-ellipsis-h,
+			#cloud,
+			.cloud label {
+				pointer-events: none;
+			}
+		}
+
+		.quota-cta {
+			display: none;
+			float: inline-start;
+
+			p {
+				font-size: 13px;
+				color: $e-rose-800;
+				text-align: start;
+			}
+
+			a {
+				color: $e-rose-800;
+				text-decoration: underline;
+			}
+		}
+
 		#elementor-template-library-save-template-submit {
 			float: inline-end;
 			
@@ -1240,47 +1299,12 @@ label.elementor-template-library-order-label {
 				cursor: pointer;
 			}
 
-			.upgrade-badge {
-				display: none;
-				border: 1px solid #93003F80;
-				padding: 3px 5px;
-				border-radius: 100px;
-
-				a {
-					color: $e-rose-800;
-
-					i {
-						margin-inline-end: 5px;
-					}
-				}
-			}
-
-			.upgrade-tooltip,
-			.connect-badge {
-				display: none;
-			}
-
 			#elementor-template-library-connect__badge {
 				color: var(--e-a-color-primary-bold);
 				font-size: 14px;
 
 				&:hover {
 					text-decoration: underline;
-				}
-			}
-
-			&.promotion {
-
-				.upgrade-tooltip,
-				.connect-badge,
-				.upgrade-badge {
-					display: inline;
-				}
-
-				.eicon-ellipsis-h,
-				#cloud,
-				&.cloud label {
-					pointer-events: none;
 				}
 			}
 		}
