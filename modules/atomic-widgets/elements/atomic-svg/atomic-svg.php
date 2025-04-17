@@ -21,7 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Svg extends Atomic_Widget_Base {
 
-	const WRAPPER_STYLE_KEY = 'wrapper';
 	const BASE_STYLE_KEY = 'base';
 	const DEFAULT_SVG = 'images/default-svg.svg';
 	const DEFAULT_SVG_PATH = ELEMENTOR_ASSETS_PATH . self::DEFAULT_SVG;
@@ -65,30 +64,18 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	protected function define_base_styles(): array {
 		$display_value = String_Prop_Type::generate( 'inline-block' );
 
-		$wrapper_size = Size_Prop_Type::generate( [
+		$size = Size_Prop_Type::generate( [
 			'size' => 65,
 			'unit' => 'px',
 		] );
 
-		$svg_size = Size_Prop_Type::generate( [
-			'size' => 100,
-			'unit' => '%',
-		] );
-
 		return [
-			self::WRAPPER_STYLE_KEY => Style_Definition::make()
-				->add_variant(
-					Style_Variant::make()
-						->add_prop( 'display', $display_value )
-						->add_prop( 'width', $wrapper_size )
-						->add_prop( 'height', $wrapper_size )
-				),
 			self::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'width', $svg_size )
-						->add_prop( 'height', $svg_size )
-						->add_prop( 'overflow', 'unset' )
+						->add_prop( 'display', $display_value )
+						->add_prop( 'width', $size )
+						->add_prop( 'height', $size )
 				),
 		];
 	}
@@ -109,16 +96,16 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		}
 
 		$svg->set_attribute( 'fill', 'currentColor' );
-		$svg->add_class( $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] );
+		$this->add_svg_style( $svg, 'width: 100%; height: 100%; overflow: unset;' );
 
 		$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
-		$wrapper_classes = array_filter( array_merge(
-			[ $this->get_base_styles_dictionary()[ self::WRAPPER_STYLE_KEY ] ],
+		$classes = array_filter( array_merge(
+			[ $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] ],
 			$settings['classes']
 		) );
 
-		$classes_string = implode( ' ', $wrapper_classes );
+		$classes_string = implode( ' ', $classes );
 
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$svg_html = sprintf(
@@ -165,5 +152,18 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		);
 
 		return $content ? $content : null;
+	}
+
+	private function add_svg_style( &$svg, $new_style ) {
+		$svg_style = $svg->get_attribute( 'style' );
+		$svg_style = trim( $svg_style );
+
+		if ( empty( $svg_style ) ) {
+			$svg_style = $new_style;
+		} else {
+			$svg_style = rtrim( $svg_style, ';' ) . '; ' . $new_style;
+		}
+
+		$svg->set_attribute( 'style', $svg_style );
 	}
 }
