@@ -9,6 +9,7 @@ use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
@@ -62,22 +63,14 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$width = Size_Prop_Type::generate( [
+		$display_value = String_Prop_Type::generate( 'inline-block' );
+
+		$wrapper_size = Size_Prop_Type::generate( [
 			'size' => 65,
 			'unit' => 'px',
 		] );
 
-		$height = Size_Prop_Type::generate( [
-			'size' => 65,
-			'unit' => 'px',
-		] );
-
-		$svg_width = Size_Prop_Type::generate( [
-			'size' => 100,
-			'unit' => '%',
-		] );
-
-		$svg_height = Size_Prop_Type::generate( [
+		$svg_size = Size_Prop_Type::generate( [
 			'size' => 100,
 			'unit' => '%',
 		] );
@@ -86,15 +79,16 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			self::WRAPPER_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'width', $width )
-						->add_prop( 'height', $height )
-						->add_prop( 'overflow', 'unset' )
+						->add_prop( 'display', $display_value )
+						->add_prop( 'width', $wrapper_size )
+						->add_prop( 'height', $wrapper_size )
 				),
 			self::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'width', $svg_width )
-						->add_prop( 'height', $svg_height )
+						->add_prop( 'width', $svg_size )
+						->add_prop( 'height', $svg_size )
+						->add_prop( 'overflow', 'unset' )
 				),
 		];
 	}
@@ -130,12 +124,12 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			$svg_html = sprintf(
 				'<a href="%s" target="%s" class="%s">%s</a>',
 				esc_url( $settings['link']['href'] ),
-				esc_attr( $classes_string ),
 				esc_attr( $settings['link']['target'] ),
+				esc_attr( $classes_string ),
 				$svg_html
 			);
 		} else {
-			$svg_html = sprintf( '<span class="%s">%s</span>', esc_attr( $classes_string ), $svg_html );
+			$svg_html = sprintf( '<div class="%s">%s</div>', esc_attr( $classes_string ), $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
