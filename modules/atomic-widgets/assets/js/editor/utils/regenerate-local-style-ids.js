@@ -59,5 +59,7 @@ export function regenerateLocalStyleIds( container ) {
 
 	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ?? {} ).length > 0 );
 
-	styledElements?.forEach( updateStyleId );
+	// Should be executed in reverse, so that the most outer element gets the updates last,
+	// as the parent settings update seems to override its descendants' changes
+	styledElements?.reverse().forEach( updateStyleId );
 }
