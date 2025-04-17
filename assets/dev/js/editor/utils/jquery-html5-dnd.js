@@ -225,6 +225,7 @@
 					insertGridRowPlaceholder();
 					break;
 				case 'flexRow':
+				case 'childContainer':
 					insertFlexRowPlaceholder();
 					break;
 				case 'block':
@@ -328,6 +329,14 @@
 
 			if ( placeholderContext.isFlexRowContainer ) {
 				return 'flexRow';
+			}
+
+			const isCurrentElementContainer = currentElement.classList.contains( 'e-con' ) ||
+				currentElement.classList.contains( 'e-con-inner' );
+			const hasParentContainer = 0 !== placeholderContext.$parentContainer.length;
+
+			if ( isCurrentElementContainer && hasParentContainer ) {
+				return 'childContainer';
 			}
 
 			if ( placeholderContext.isBlockContainer ) {
