@@ -20,7 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Svg extends Atomic_Widget_Base {
-
 	const BASE_STYLE_KEY = 'base';
 	const DEFAULT_SVG = 'images/default-svg.svg';
 	const DEFAULT_SVG_PATH = ELEMENTOR_ASSETS_PATH . self::DEFAULT_SVG;
@@ -156,7 +155,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 	private function add_svg_style( &$svg, $new_style ) {
 		$svg_style = $svg->get_attribute( 'style' );
-		$svg_style = trim( $svg_style );
+		$svg_style = trim( (string) $svg_style );
 
 		if ( empty( $svg_style ) ) {
 			$svg_style = $new_style;
