@@ -50,6 +50,10 @@ function updateStyleId( container ) {
 	container.model.set( 'styles', newStyles );
 }
 
+function updateElementsStyleIdsInsideOut( styledElements ) {
+	styledElements?.reverse().forEach( updateStyleId );
+}
+
 /**
  * Get a container - iterate over its children, find all styled atomic widgets and update their style ids
  * @param {Container} container
@@ -59,7 +63,5 @@ export function regenerateLocalStyleIds( container ) {
 
 	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ?? {} ).length > 0 );
 
-	// Should be executed in reverse, so that the most outer element gets the updates last,
-	// as the parent settings update seems to override its descendants' changes
-	styledElements?.reverse().forEach( updateStyleId );
+	updateElementsStyleIdsInsideOut( styledElements );
 }
