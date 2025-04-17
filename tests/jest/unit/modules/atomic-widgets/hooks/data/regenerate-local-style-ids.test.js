@@ -152,13 +152,13 @@ describe( 'Regenerate local style IDs', () => {
 
 		expect( nestedStyledElement.model.get( 'styles' ) ).toEqual( initialNestedStyle );
 
+		expect( duplicatedNestedStyledElement.model.get( 'styles' ) ).toEqual( {
+			...createMockStyle( 'e-widget5-1' ),
+		} );
+
 		expect( duplicatedStyledElement.model.get( 'styles' ) ).toEqual( {
 			...createMockStyle( 'e-widget4-2' ),
 			...createMockStyle( 'e-widget4-3' ),
-		} );
-
-		expect( duplicatedNestedStyledElement.model.get( 'styles' ) ).toEqual( {
-			...createMockStyle( 'e-widget5-1' ),
 		} );
 
 		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
