@@ -32,7 +32,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		addNewFolder: '#elementor-template-library-add-new-folder',
 		selectGridView: '#elementor-template-library-view-grid',
 		selectListView: '#elementor-template-library-view-list',
-		bulkSelectionItemCheckbox: '.bulk-selection-item-checkbox',
 		bulkSelectionActionBar: '.bulk-selection-action-bar',
 		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete i',
 		bulkSelectedCount: '.bulk-selection-action-bar .selected-count',
@@ -56,7 +55,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'click @ui.addNewFolder': 'onCreateNewFolderClick',
 		'click @ui.selectGridView': 'onSelectGridViewClick',
 		'click @ui.selectListView': 'onSelectListViewClick',
-		'change @ui.bulkSelectionItemCheckbox': 'onSelectBulkSelectionItemCheckbox',
 		'change @ui.bulkSelectAllCheckbox': 'onBulkSelectAllCheckbox',
 		'click @ui.clearBulkSelections': 'onClearBulkSelections',
 		'mouseenter @ui.bulkMove': 'onHoverBulkAction',
@@ -144,16 +142,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onSelectBulkSelectionItemCheckbox( event ) {
-		if ( event?.target?.checked ) {
-			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
-		} else {
-			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
-		}
-
-		this.handleBulkActionBarUi();
-	},
-
 	onBulkSelectAllCheckbox() {
 		const isChecked = this.$( '#bulk-select-all:checked' ).length > 0;
 
@@ -162,7 +150,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 
 		this.updateBulkSelectedItems( isChecked );
-		this.handleBulkActionBarUi();
+
+		elementor.templates.layout.handleBulkActionBarUi();
 	},
 
 	updateBulkSelectedItems( isChecked ) {
@@ -176,18 +165,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 				elementor.templates.removeBulkSelectionItem( templateId );
 			}
 		} );
-	},
-
-	handleBulkActionBarUi() {
-		if ( 0 === this.$( '.bulk-selection-item-checkbox:checked' ).length ) {
-			this.$el.addClass( 'no-bulk-selections' );
-			this.$el.removeClass( 'has-bulk-selections' );
-		} else {
-			this.$el.addClass( 'has-bulk-selections' );
-			this.$el.removeClass( 'no-bulk-selections' );
-		}
-
-		elementor.templates.layout.handleBulkActionBar();
 	},
 
 	onBulkDeleteClick() {
@@ -305,7 +282,13 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	order( by, reverseOrder ) {
-		var comparator = this.comparators[ by ] || by;
+		let comparator = this.comparators[ by ] || by;
+
+		if ( 'cloud' === elementor.templates.getFilter( 'source' ) ) {
+			this.handleCloudOrder( by, reverseOrder );
+
+			return;
+		}
 
 		if ( reverseOrder ) {
 			comparator = this.reverseOrder( comparator );
@@ -314,6 +297,25 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.collection.comparator = comparator;
 
 		this.collection.sort();
+	},
+
+	handleCloudOrder( by, reverseOrder ) {
+		elementor.templates.setFilter( 'orderby', by );
+		elementor.templates.setFilter( 'order', reverseOrder ? 'desc' : 'asc' );
+
+		this.onClearBulkSelections();
+
+		this.collection.reset();
+
+		elementor.templates.layout.showLoadingView();
+
+		elementor.templates.loadMore( {
+			onUpdate: () => {
+				elementor.templates.layout.hideLoadingView();
+			},
+			search: this.ui.textFilter.val(),
+			refresh: true,
+		} );
 	},
 
 	reverseOrder( comparator ) {
@@ -500,16 +502,20 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onOrderLabelsClick( event ) {
-		var $clickedInput = jQuery( event.currentTarget.control ),
-			toggle;
+		const $clickedInput = jQuery( event.currentTarget.control );
+		let toggle;
 
 		if ( ! $clickedInput[ 0 ].checked ) {
 			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
+		} else {
+			toggle = ! $clickedInput.hasClass( 'elementor-template-library-order-reverse' );
 		}
+
+		$clickedInput.prop( 'checked', true );
 
 		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
 
-		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
+		this.order( $clickedInput.val(), toggle );
 	},
 
 	handleLoadMore() {
