@@ -256,14 +256,14 @@
 			placeholderTarget.classList.add( 'e-min-height' );
 
 			const computedStyle = window.getComputedStyle( placeholderTarget );
-			const borderTop = parseFloat( computedStyle.borderTopWidth ) || 0;
-			const borderBottom = parseFloat( computedStyle.borderBottomWidth ) || 0;
+			const borderTopWidth = parseFloat( computedStyle.borderTopWidth ) || 0;
+			const borderBottomWidth = parseFloat( computedStyle.borderBottomWidth ) || 0;
 
-			if ( borderTop < MIN_BORDER_WIDTH ) {
+			if ( borderTopWidth < MIN_BORDER_WIDTH ) {
 				placeholderTarget.classList.add( 'e-min-border-top' );
 			}
 
-			if ( borderBottom < MIN_BORDER_WIDTH ) {
+			if ( borderBottomWidth < MIN_BORDER_WIDTH ) {
 				placeholderTarget.classList.add( 'e-min-border-bottom' );
 			}
 		};
