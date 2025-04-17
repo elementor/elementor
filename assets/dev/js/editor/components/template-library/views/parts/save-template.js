@@ -109,7 +109,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 
 		const isAnyChecked = this.ui.sourceSelectionCheckboxes.is( ':checked' ),
-			isTitleFilled = 0 !== this.ui.templateNameInput.val().trim().length;
+			isTitleFilled = this.ui.templateNameInput.is( ':visible' )
+				? 0 !== this.ui.templateNameInput.val().trim().length
+				: true;
 
 		this.updateSubmitButtonState( ! isAnyChecked || ! isTitleFilled );
 	},
@@ -117,6 +119,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	handleBulkActionContextUiState() {
 		this.ui.templateNameInput.remove();
 		this.handleContextUiStateChecboxes();
+		this.maybeEnableSaveButton();
 	},
 
 	handleContextUiStateChecboxes() {

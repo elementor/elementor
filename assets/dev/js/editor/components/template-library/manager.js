@@ -34,22 +34,22 @@ const TemplateLibraryManager = function() {
 			},
 			moveDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			copyDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			bulkMoveDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			bulkCopyDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			ajaxParams: {
@@ -960,12 +960,15 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.onSelectSourceFilterChange = function( event ) {
-		const select = event.currentTarget,
-			filterName = select.dataset.elementorFilter,
-			templatesSource = select.value;
+		const templatesSource = event?.currentTarget?.dataset?.source ?? 'local',
+			alreadyActive = templatesSource === self.getFilter( 'source' );
+
+		if ( alreadyActive ) {
+			return;
+		}
 
 		self.setSourceSelection( templatesSource );
-		self.setFilter( filterName, templatesSource, true );
+		self.setFilter( 'source', templatesSource, true );
 		self.clearBulkSelectionItems();
 
 		if ( this.shouldShowCloudStateView( templatesSource ) ) {
