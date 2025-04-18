@@ -54,11 +54,11 @@ class Module extends BaseModule {
 	}
 
 	public function localize_settings( $settings ) {
-		if ( ! isset( $settings['i18n'] ) ) {
-			return $settings;
+		if ( isset( $settings['i18n'] ) ) {
+			$settings['i18n']['folder'] = esc_html__( 'Folder', 'elementor' );
 		}
 
-		$settings['i18n']['folder'] = 'Folder';
+		$settings['library']['doc_types'] = $this->get_document_types();
 
 		return $settings;
 	}
@@ -124,6 +124,20 @@ class Module extends BaseModule {
 			'library_connect_sub_title' => esc_html__( 'Sub Title', 'elementor' ),
 			'library_connect_button_text' => esc_html__( 'Connect', 'elementor' ),
 		] );
+	}
+
+	private function get_document_types() {
+		$document_types = Plugin::$instance->documents->get_document_types( [
+			'show_in_library' => true,
+		] );
+
+		$data = [];
+
+		foreach ( $document_types as $name => $document_type ) {
+			$data[ $name ] = $document_type::get_title();
+		}
+
+		return $data;
 	}
 
 	public function print_content() {
