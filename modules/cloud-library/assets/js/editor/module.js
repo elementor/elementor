@@ -15,7 +15,7 @@ export default class TemplatesModule extends elementorModules.editor.utils.Modul
 				true,
 				{},
 				templateTypesData,
-				elementor.templates.getDefaultTemplateTypeSafeData( title )
+				elementor.templates.getDefaultTemplateTypeSafeData( title ),
 			);
 
 			elementor.templates.registerTemplateType( type, safeData );
