@@ -152,27 +152,27 @@ describe( 'Regenerate local style IDs', () => {
 
 		expect( nestedStyledElement.model.get( 'styles' ) ).toEqual( initialNestedStyle );
 
-		expect( duplicatedStyledElement.model.get( 'styles' ) ).toEqual( {
-			...createMockStyle( 'e-widget4-1' ),
-			...createMockStyle( 'e-widget4-2' ),
-		} );
-
 		expect( duplicatedNestedStyledElement.model.get( 'styles' ) ).toEqual( {
-			...createMockStyle( 'e-widget5-3' ),
+			...createMockStyle( 'e-widget5-1' ),
 		} );
 
-		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
-			container: duplicatedStyledElement,
-			settings: {
-				classes1: createMockClassPropValue( 'e-widget4-1' ),
-				classes2: createMockClassPropValue( 'e-widget4-2' ),
-			},
+		expect( duplicatedStyledElement.model.get( 'styles' ) ).toEqual( {
+			...createMockStyle( 'e-widget4-2' ),
+			...createMockStyle( 'e-widget4-3' ),
 		} );
 
 		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
 			container: duplicatedNestedStyledElement,
 			settings: {
-				classes: createMockClassPropValue( 'e-widget5-3' ),
+				classes: createMockClassPropValue( 'e-widget5-1' ),
+			},
+		} );
+
+		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
+			container: duplicatedStyledElement,
+			settings: {
+				classes1: createMockClassPropValue( 'e-widget4-2' ),
+				classes2: createMockClassPropValue( 'e-widget4-3' ),
 			},
 		} );
 	} );
