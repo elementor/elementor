@@ -132,16 +132,37 @@ class Widget_Common_Base extends Widget_Base {
 	 */
 	private function get_shapes( $add_custom = true ) {
 		$shapes = [
-			'circle' => esc_html__( 'Circle', 'elementor' ),
-			'flower' => esc_html__( 'Flower', 'elementor' ),
-			'sketch' => esc_html__( 'Sketch', 'elementor' ),
-			'triangle' => esc_html__( 'Triangle', 'elementor' ),
-			'blob' => esc_html__( 'Blob', 'elementor' ),
-			'hexagon' => esc_html__( 'Hexagon', 'elementor' ),
+			'circle' => [
+				'title' => esc_html__( 'Circle', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/circle.svg',
+			],
+			'flower' => [
+				'title' => esc_html__( 'Flower', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/flower.svg',
+			],
+			'sketch' => [
+				'title' => esc_html__( 'Sketch', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/sketch.svg',
+			],
+			'triangle' => [
+				'title' => esc_html__( 'Triangle', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/triangle.svg',
+			],
+			'blob' => [
+				'title' => esc_html__( 'Blob', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/blob.svg',
+			],
+			'hexagon' => [
+				'title' => esc_html__( 'Hexagon', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/hexagon.svg',
+			],
 		];
 
 		if ( $add_custom ) {
-			$shapes['custom'] = esc_html__( 'Custom', 'elementor' );
+			$shapes['custom'] = [
+				'title' => esc_html__( 'Custom', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/_custom.svg',
+			];
 		}
 
 		return $shapes;
@@ -988,7 +1009,9 @@ class Widget_Common_Base extends Widget_Base {
 			'_mask_shape',
 			[
 				'label' => esc_html__( 'Shape', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::VISUAL_CHOICE,
+				'label_block' => true,
+				'columns' => 3,
 				'options' => $this->get_shapes(),
 				'default' => 'circle',
 				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
