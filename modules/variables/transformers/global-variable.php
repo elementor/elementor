@@ -14,6 +14,6 @@ class Global_Variable extends Transformer_Base {
 			return null;
 		}
 
-		return "var(--${value})";
+		return "var(--$value)";
 	}
 }

@@ -20,6 +20,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Style_Schema {
 	public static function get() {
+		return apply_filters( 'elementor/atomic-widgets/styles/schema', static::get_style_schema() );
+	}
+
+	public static function get_style_schema(): array {
 		return array_merge(
 			self::get_size_props(),
 			self::get_position_props(),
