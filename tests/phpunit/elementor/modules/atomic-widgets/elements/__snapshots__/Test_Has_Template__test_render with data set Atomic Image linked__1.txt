@@ -1,4 +1,4 @@
-						<a href="https://example.com" class="" target="_blank">
+						<a href="https://example.com" class="e-image-link-base" target="_blank">
 		<img class=""
 									id="123"
 												src="https://example.com/image.jpg"
