@@ -105,7 +105,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg->set_attribute( 'fill', 'currentColor' );
 
 		$classes = array_filter( array_merge(
-			[ self::BASE_STYLE_KEY => $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ], ],
+			[ self::BASE_STYLE_KEY => $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] ],
 			$settings['classes']
 		) );
 

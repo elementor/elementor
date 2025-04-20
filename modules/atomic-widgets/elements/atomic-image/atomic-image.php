@@ -19,7 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Image extends Atomic_Widget_Base {
 	use Has_Template;
-	const LINK_BASE_STYLE_KEY = 'link';
+
+	const LINK_BASE_STYLE_KEY = 'link-base';
 
 	public static function get_element_type(): string {
 		return 'e-image';
