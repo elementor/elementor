@@ -50,8 +50,46 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 					],
 				],
 			],
+			'g-4-125' => [
+				'id' => 'g-4-125',
+				'type' => 'class',
+				'label' => 'globaly',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => null,
+						],
+						'props' => [
+							'color' => [
+								'$$type' => 'color',
+								'value' => 'red',
+							]
+						],
+					],
+				],
+			],
+			'g-4-126' => [
+				'id' => 'g-4-126',
+				'type' => 'class',
+				'label' => 'yellowy',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => null,
+						],
+						'props' => [
+							'color' => [
+								'$$type' => 'color',
+								'value' => 'yellow',
+							]
+						],
+					],
+				],
+			],
 		],
-		'order' => ['g-4-124', 'g-4-123'],
+		'order' => ['g-4-124', 'g-4-123', 'g-4-125', 'g-4-126'],
 	];
 
 	private $mock_elementor_data = [
@@ -106,7 +144,7 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 			'elType' => 'e-div-block',
 			'settings' => [
 				'classes' => [
-					'value' => ['g-4-123', 'e-4-124']
+					'value' => ['g-4-123', 'e-4-124', 'g-4-125']
 				]
 			],
 			'elements' => [
@@ -124,7 +162,7 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 							'elType' => 'e-button',
 							'settings' => [
 								'classes' => [
-									'value' => ['g-4-123', 'e-4-1222']
+									'value' => ['g-4-123', 'e-4-1222', 'g-4-125', 'g-4-126']
 								]
 							],
 						],
@@ -139,6 +177,47 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 			],
 		],
 	];
+
+	private $mock_elementor_data_3 = [
+		[
+			'id' => 'abc12345',
+			'elType' => 'e-div-block',
+			'settings' => [
+				'classes' => [
+					'value' => ['g-4-123', 'e-4-124', 'g-4-125']
+				]
+			],
+			'elements' => [
+				[
+					'id' => 'def45645',
+					'elType' => 'e-div-block',
+					'settings' => [
+						'classes' => [
+							'value' => ['g-4-124', 'e-4-1222']
+						]
+					],
+					'elements' => [
+						[
+							'id' => 'ghi7895',
+							'elType' => 'e-button',
+							'settings' => [
+								'classes' => [
+									'value' => ['g-4-123', 'e-4-1222', 'g-4-125', 'g-4-126']
+								]
+							],
+						],
+						[
+							'id' => 'jkl10154',
+							'elType' => 'widget',
+							'widgetType' => 'heading',
+							'settings' => [],
+						]
+					],
+				],
+			],
+		],
+	];
+
 
 	public function setUp(): void {
 		parent::setUp();
@@ -175,14 +254,8 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', [] );
 
 		// Assert.
-		$this->assertSame( 2, $params['usages']['global_classes']['total_count'] );
-		$this->assertSame(
-			[
-				'e-heading' => 1,
-				'e-div-block' => 3,
-			],
-			$params['usages']['global_classes']['applied_classes_per_element_type'],
-		);
+		$this->assertSame( 4, $params['usages']['global_classes']['total_count'] );
+		$this->assertEquals( 3, $params['usages']['global_classes']['low_usage_global_classes_count'] );
 	}
 
 	public function test_global_classes_usage_with_multiple_posts() {
@@ -197,15 +270,8 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', [] );
 
 		// Assert.
-		$this->assertEquals( 2, $params['usages']['global_classes']['total_count'] );
-		$this->assertEquals(
-			[
-				'e-div-block' => 5,
-				'e-heading' => 1,
-				'e-button' => 1,
-			],
-			$params['usages']['global_classes']['applied_classes_per_element_type'],
-		);
+		$this->assertEquals( 4, $params['usages']['global_classes']['total_count'] );
+		$this->assertEquals( 1, $params['usages']['global_classes']['low_usage_global_classes_count'] );
 	}
 
 	public function test_global_classes_usage_with_no_classes_exist() {
@@ -219,13 +285,17 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( 0, $params['usages']['global_classes']['total_count'] );
-		$this->assertArrayNotHasKey( 'applied_classes_per_element_type', $params['usages']['global_classes'] );
+		$this->assertArrayNotHasKey( 'low_usage_global_classes_count', $params['usages']['global_classes'] );
 	}
 
-	public function test_global_classes_usage_with_no_applied_classes() {
+	public function test_global_classes_usage_with_all_classes_applied_above_min() {
 		// Arrange.
 		$global_classes_usage = new Global_Classes_Usage();
 		$global_classes_usage->register_hooks();
+
+		$this->make_mock_post_with_elements( $this->mock_elementor_data );
+		$this->make_mock_post_with_elements( $this->mock_elementor_data_2 );
+		$this->make_mock_post_with_elements( $this->mock_elementor_data_3 );
 
 		// Act.
 		$params = [];
@@ -233,8 +303,8 @@ class Test_Global_Classes_Usage extends Elementor_Test_Base {
 		$params = apply_filters('elementor/tracker/send_tracking_data_params', $params);
 
 		// Assert.
-		$this->assertEquals(2, $params['usages']['global_classes']['total_count']);
-		$this->assertArrayNotHasKey('applied_classes_per_element_type', $params['usages']['global_classes']);
+		$this->assertEquals(4, $params['usages']['global_classes']['total_count']);
+		$this->assertArrayNotHasKey('low_usage_global_classes_count', $params['usages']['global_classes']);
 	}
 
 	private function make_mock_post_with_elements( $elements_data ) {
