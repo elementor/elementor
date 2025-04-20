@@ -133,9 +133,9 @@ class Style_Parser {
 			return '';
 		}
 
-		$sanitized = esc_html( sanitize_text_field( $label ) );;
+		$sanitized_label = sanitize_text_field( $label );
 
-		return $sanitized;
+		return esc_html( $sanitized_label );
 	}
 
 	/**
