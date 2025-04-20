@@ -38,6 +38,11 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'wp-media',
 	];
 
+	const EXTENSIONS = [
+		'editor-notifications',
+		'editor-panels',
+	];
+
 	/**
 	 * Additional dependencies for packages that rely on global variables, rather than
 	 * an explicit npm dependency (e.g. `window.elementor`, `window.wp`, etc.).
@@ -211,7 +216,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	}
 
 	public static function get_packages_to_enqueue(): array {
-		return apply_filters( 'elementor/editor/v2/packages', [] );
+		return apply_filters( 'elementor/editor/v2/packages', self::EXTENSIONS );
 	}
 
 	private function get_styles(): array {

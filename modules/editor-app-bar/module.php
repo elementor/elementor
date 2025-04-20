@@ -15,7 +15,6 @@ class Module extends BaseModule {
 	const PACKAGES = [
 		'editor-app-bar',
 		'editor-documents',
-		'editor-panels',
 		'editor-site-navigation',
 	];
 
