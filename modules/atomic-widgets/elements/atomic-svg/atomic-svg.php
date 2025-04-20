@@ -107,17 +107,18 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$classes = array_filter( array_merge(
 			[
 				self::BASE_STYLE_KEY => $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ],
-				self::LINK_BASE_STYLE_KEY => $this->get_base_styles_dictionary()[ self::LINK_BASE_STYLE_KEY ]
 			],
 			$settings['classes']
 		) );
 
 		$svg->add_class( implode( ' ', $classes ) );
 
+		$link_base_style = $this->get_base_styles_dictionary()[ self::LINK_BASE_STYLE_KEY ];
+
 		$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
-			$svg_html = sprintf( '<a class="%s" href="%s" target="%s"> %s </a>', $classes[self::LINK_BASE_STYLE_KEY], esc_url( $settings['link']['href'] ), esc_attr( $settings['link']['target'] ), $svg_html );
+			$svg_html = sprintf( '<a class="%s" href="%s" target="%s"> %s </a>', $link_base_style, esc_url( $settings['link']['href'] ), esc_attr( $settings['link']['target'] ), $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
