@@ -56,7 +56,9 @@ class Style_Parser {
 			return $result->wrap( $validated_style );
 		}
 
-		$validated_style['label'] = $this->sanitize_label( $style['label'] );
+		if ( isset( $style['label'] ) ) {
+			$validated_style['label'] = $this->sanitize_label( $style['label'] );
+		}
 
 		$props_parser = Props_Parser::make( $this->schema );
 
