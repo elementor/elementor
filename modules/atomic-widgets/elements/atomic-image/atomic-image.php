@@ -68,7 +68,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', 'inherit' )
-				)
+				),
 		];
 	}
 
