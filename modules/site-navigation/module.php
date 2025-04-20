@@ -38,6 +38,8 @@ class Module extends Module_Base {
 		$this->register_pages_panel_experiment();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
+			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+
 			add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
 				$env['@elementor/editor-site-navigation'] = [
 					'is_pages_panel_active' => true,
@@ -45,8 +47,6 @@ class Module extends Module_Base {
 
 				return $env;
 			} );
-
-			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
 			$this->register_rest_fields();
 		}
