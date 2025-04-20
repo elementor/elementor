@@ -65,6 +65,6 @@ class String_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
-		return sanitize_text_field( $value );
+		return wp_kses_post( $value );
 	}
 }
