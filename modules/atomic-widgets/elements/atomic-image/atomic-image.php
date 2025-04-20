@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Image extends Atomic_Widget_Base {
 	use Has_Template;
+	const LINK_BASE_STYLE_KEY = 'link';
 
 	public static function get_element_type(): string {
 		return 'e-image';
@@ -64,7 +65,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 	protected function define_base_styles(): array {
 		return [
-			'link' => Style_Definition::make()
+			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', 'inherit' )
