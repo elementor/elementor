@@ -115,6 +115,7 @@ const SectionView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: __( 'Save as Template', 'elementor' ),
+					shortcut: '<span class="elementor-context-menu-list__item__shortcut__new-badge">New</span>',
 					isEnabled: () => ! elementor.selection.isMultiple(),
 					callback: this.save.bind( this ),
 				},

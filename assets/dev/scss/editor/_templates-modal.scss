@@ -592,7 +592,7 @@ $remote-templates-items-space: 30px;
 
 		.new-badge {
 			border: 1px solid $e-pink-300;
-			padding: 2px 4px;
+			padding: 2px 8px;
 			color: $e-pink-900;
 			border-radius: 10px;
 			font-size: 10px;
@@ -1221,7 +1221,7 @@ label.elementor-template-library-order-label {
 			.upgrade-badge {
 				display: inline;
 			}
-	
+
 			.eicon-ellipsis-h,
 			#cloud,
 			.cloud label {
@@ -1247,7 +1247,7 @@ label.elementor-template-library-order-label {
 
 		#elementor-template-library-save-template-submit {
 			float: inline-end;
-			
+
 			&[disabled] {
 				cursor: not-allowed;
 			}
