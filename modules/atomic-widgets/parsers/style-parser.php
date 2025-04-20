@@ -56,7 +56,7 @@ class Style_Parser {
 			return $result->wrap( $validated_style );
 		}
 
-		$validated_style['label'] = $this->sanitize_label($style['label']);
+		$validated_style['label'] = $this->sanitize_label( $style['label'] );
 
 		$props_parser = Props_Parser::make( $this->schema );
 
@@ -127,13 +127,13 @@ class Style_Parser {
 	}
 
 	private function sanitize_label( $label ): string {
-		if (!is_string($label)) {
+		if ( ! is_string( $label ) ) {
 			return '';
 		}
 
-		$sanitized = strip_tags($label);
+		$sanitized = strip_tags( $label );
 
-		$sanitized = htmlspecialchars($sanitized, ENT_QUOTES, 'UTF-8');
+		$sanitized = htmlspecialchars( $sanitized, ENT_QUOTES, 'UTF-8' );
 
 		return $sanitized;
 	}
