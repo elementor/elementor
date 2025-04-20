@@ -133,9 +133,7 @@ class Style_Parser {
 			return '';
 		}
 
-		$sanitized = strip_tags( $label );
-
-		$sanitized = htmlspecialchars( $sanitized, ENT_QUOTES, 'UTF-8' );
+		$sanitized = esc_html( sanitize_text_field( $label ) );;
 
 		return $sanitized;
 	}
