@@ -239,7 +239,7 @@ export default class EditorBase extends Marionette.Application {
 				Widget: require( 'elementor-elements/views/widget' ),
 			},
 			components: {
-				AddSectionView: require( 'elementor-views/add-section/inline' ),
+				AddSectionView: require( 'elementor-views/add-section/inline' ).default,
 			},
 		},
 		layouts: {
