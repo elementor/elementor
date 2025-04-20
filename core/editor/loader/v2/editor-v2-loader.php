@@ -41,6 +41,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	const EXTENSIONS = [
 		'editor-notifications',
 		'editor-panels',
+		'editor-documents',
 	];
 
 	/**
