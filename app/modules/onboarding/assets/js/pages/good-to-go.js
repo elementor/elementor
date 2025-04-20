@@ -41,6 +41,14 @@ export default function GoodToGo() {
 						location.reload();
 					} }
 				/>
+				<Card
+					name="site-planner"
+					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Site_Planner.svg' }
+					imageAlt={ __( 'Click here to go to Elementor\'s Site Planner', 'elementor' ) }
+					text={ __( 'Create a professional site in minutes using AI', 'elementor' ) }
+					link={ elementorAppConfig.onboarding.urls.sitePlanner }
+					target="_blank"
+				/>
 			</Grid>
 			<FooterButtons skipButton={ { ...skipButton, target: '_self' } } className="e-onboarding__good-to-go-footer" />
 		</Layout>
