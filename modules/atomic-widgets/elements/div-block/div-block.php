@@ -178,8 +178,4 @@ class Div_Block extends Atomic_Element_Base {
 			'unit' => 'px',
 		] );
 	}
-
-	protected function get_base_height(): array {
-		return String_Prop_Type::generate( 'min-content' );
-	}
 }
