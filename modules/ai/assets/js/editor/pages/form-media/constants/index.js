@@ -24,6 +24,10 @@ export const IMAGE_PROMPT_SETTINGS = {
 	IMAGE_BACKGROUND_COLOR: 'background_color',
 };
 
+export const FEATURE_IDENTIFIER = {
+	ISOLATE_OBJECT: 'isolate-object',
+};
+
 export const IMAGE_PROMPT_CATEGORIES = {
 	'': {
 		label: __( 'None', 'elementor' ),

@@ -34,22 +34,22 @@ const TemplateLibraryManager = function() {
 			},
 			moveDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			copyDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			bulkMoveDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			bulkCopyDialog: {
 				description: '',
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			ajaxParams: {
@@ -379,6 +379,9 @@ const TemplateLibraryManager = function() {
 					template_id: parentId,
 				},
 				success: ( data ) => {
+					this.setFilter( 'orderby', '', true );
+					this.setFilter( 'order', '', true );
+
 					this.setFilter( 'parent', {
 						id: parentId,
 						title: parentTitle,
@@ -390,6 +393,7 @@ const TemplateLibraryManager = function() {
 
 					self.layout.updateViewCollection( templatesCollection.models );
 					self.layout.modalContent.currentView.ui.addNewFolder.remove();
+					self.layout.resetSortingUI();
 
 					isLoading = false;
 					resolve();
@@ -834,6 +838,7 @@ const TemplateLibraryManager = function() {
 	this.loadMore = ( {
 		onUpdate,
 		search = '',
+		refresh = false,
 	} = {} ) => {
 		isLoading = true;
 
@@ -846,16 +851,22 @@ const TemplateLibraryManager = function() {
 		const ajaxOptions = {
 			data: {
 				source,
-				offset: templatesCollection.length,
+				offset: refresh ? 0 : templatesCollection.length,
 				search,
 				parentId,
+				orderby: elementor.templates.getFilter( 'orderby' ) || null,
+				order: elementor.templates.getFilter( 'order' ) || null,
 			},
 			success: ( result ) => {
 				const collection = new TemplateLibraryCollection( result.templates );
 
-				templatesCollection.add( collection.models, { merge: true } );
-
-				self.layout.addTemplates( collection.models );
+				if ( refresh ) {
+					templatesCollection.reset( collection.models );
+					self.layout.updateViewCollection( templatesCollection.models );
+				} else {
+					templatesCollection.add( collection.models, { merge: true } );
+					self.layout.addTemplates( collection.models );
+				}
 
 				if ( onUpdate ) {
 					onUpdate();
@@ -949,12 +960,15 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.onSelectSourceFilterChange = function( event ) {
-		const select = event.currentTarget,
-			filterName = select.dataset.elementorFilter,
-			templatesSource = select.value;
+		const templatesSource = event?.currentTarget?.dataset?.source ?? 'local',
+			alreadyActive = templatesSource === self.getFilter( 'source' );
+
+		if ( alreadyActive ) {
+			return;
+		}
 
 		self.setSourceSelection( templatesSource );
-		self.setFilter( filterName, templatesSource, true );
+		self.setFilter( 'source', templatesSource, true );
 		self.clearBulkSelectionItems();
 
 		if ( this.shouldShowCloudStateView( templatesSource ) ) {

@@ -900,6 +900,19 @@ class Manager {
 		return $this->get_source( 'cloud' )->save_item_preview( $data['template_id'], $raw_binary );
 	}
 
+	/**
+	 * @throws \Exception
+	 */
+	public function template_screenshot_failed( $data ): string {
+		$validate_args = $this->ensure_args( [ 'template_id' ], $data );
+
+		if ( is_wp_error( $validate_args ) ) {
+			return $validate_args;
+		}
+
+		return $this->get_source( 'cloud' )->mark_preview_as_failed( $data['template_id'], $data['error'] );
+	}
+
 	public function bulk_delete_templates( $data ) {
 		$validate_args = $this->ensure_args( [ 'template_ids', 'source' ], $data );
 
@@ -974,6 +987,7 @@ class Manager {
 			'bulk_copy_templates',
 			'bulk_undo_delete_items',
 			'get_templates_quota',
+			'template_screenshot_failed',
 		];
 
 		foreach ( $library_ajax_requests as $ajax_request ) {
