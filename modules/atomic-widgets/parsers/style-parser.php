@@ -56,10 +56,6 @@ class Style_Parser {
 			return $result->wrap( $validated_style );
 		}
 
-		if ( isset( $style['label'] ) ) {
-			$validated_style['label'] = $this->sanitize_label( $style['label'] );
-		}
-
 		$props_parser = Props_Parser::make( $this->schema );
 
 		foreach ( $style['variants'] as $variant_index => $variant ) {
@@ -126,14 +122,6 @@ class Style_Parser {
 		}
 
 		return Parse_Result::make()->wrap( $style );
-	}
-
-	private function sanitize_label( $label ): string {
-		if ( ! is_string( $label ) ) {
-			return '';
-		}
-
-		return preg_replace( '/[^a-zA-Z0-9_-]/', '', $label );
 	}
 
 	/**
