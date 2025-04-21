@@ -24,8 +24,11 @@ export class Paste extends $e.modules.CommandBase {
 		);
 
 		if ( ! containers[ 0 ] ) {
+			const selectedContainers = elementor.selection?.getElements() || [];
+
 			this.target = elementor.getCurrentElement();
 			this.target = this.target ? [ this.target.getContainer() ] : null;
+			this.target = selectedContainers.length  ? selectedContainers : this.target;
 		} else {
 			this.target = containers;
 		}
