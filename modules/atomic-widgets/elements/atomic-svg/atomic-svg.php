@@ -20,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Svg extends Atomic_Widget_Base {
 	const BASE_STYLE_KEY = 'base';
+	const LINK_BASE_STYLE_KEY = 'link-base';
 	const DEFAULT_SVG = 'images/default-svg.svg';
 	const DEFAULT_SVG_PATH = ELEMENTOR_ASSETS_PATH . self::DEFAULT_SVG;
 	const DEFAULT_SVG_URL = ELEMENTOR_ASSETS_URL . self::DEFAULT_SVG;
@@ -78,6 +79,11 @@ class Atomic_Svg extends Atomic_Widget_Base {
 						->add_prop( 'height', $height )
 						->add_prop( 'overflow', 'unset' )
 				),
+			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'display', 'inherit' )
+				),
 		];
 	}
 
@@ -99,16 +105,18 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg->set_attribute( 'fill', 'currentColor' );
 
 		$classes = array_filter( array_merge(
-			[ $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] ],
+			[ self::BASE_STYLE_KEY => $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] ],
 			$settings['classes']
 		) );
 
 		$svg->add_class( implode( ' ', $classes ) );
 
+		$link_base_style = $this->get_base_styles_dictionary()[ self::LINK_BASE_STYLE_KEY ];
+
 		$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
-			$svg_html = sprintf( '<a href="%s" target="%s"> %s </a>', esc_url( $settings['link']['href'] ), esc_attr( $settings['link']['target'] ), $svg_html );
+			$svg_html = sprintf( '<a class="%s" href="%s" target="%s"> %s </a>', $link_base_style, esc_url( $settings['link']['href'] ), esc_attr( $settings['link']['target'] ), $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

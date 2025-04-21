@@ -512,6 +512,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				<input type="hidden" name="parentId" id="parentId" />
 			</div>
+			<div class="quota-cta">
+				<p>
+					<?php echo esc_html__( 'You’ve saved 100% of the templates in your plan.', 'elementor' ); ?>
+					<br>
+					<?php printf(
+					/* translators: %s is the "Upgrade now" link */
+						esc_html__( 'To get more space %s', 'elementor' ),
+						'<a href="#">' . esc_html__( 'Upgrade now', 'elementor' ) . '</a>'
+					); ?>
+				</p>
+			</div>
 			<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
 				<span class="elementor-state-icon">
 					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
