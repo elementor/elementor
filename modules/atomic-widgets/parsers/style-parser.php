@@ -133,9 +133,7 @@ class Style_Parser {
 			return '';
 		}
 
-		$sanitized_label = sanitize_text_field( $label );
-
-		return esc_html( $sanitized_label );
+		return preg_replace( '/[^a-zA-Z0-9_-]/', '', $label );
 	}
 
 	/**
