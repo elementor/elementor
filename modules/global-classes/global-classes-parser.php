@@ -91,7 +91,6 @@ class Global_Classes_Parser {
 			}
 
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
-
 		}
 
 		return $result->wrap( $sanitized_items );
