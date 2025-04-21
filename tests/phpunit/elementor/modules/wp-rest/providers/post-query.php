@@ -126,6 +126,26 @@ trait Post_Query {
 			],
 			[
 				'params' => array_merge( Post_Query_Class::build_query_params( [
+					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [ 'page', 'post' ],
+					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
+						'ID' => 'post_id',
+						'post_title' => 'random_key',
+					],
+				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'Privacy' ] ),
+				'expected' => [],
+			],
+			[
+				'params' => array_merge( Post_Query_Class::build_query_params( [
+					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [ 'page', 'post' ],
+					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
+						'ID' => 'post_id',
+						'post_title' => 'random_key',
+					],
+				] ), [ Post_Query_Class::SEARCH_TERM_KEY => 'Horror' ] ),
+				'expected' => [],
+			],
+			[
+				'params' => array_merge( Post_Query_Class::build_query_params( [
 					Post_Query_Class::EXCLUDED_POST_TYPE_KEYS => [ 'product', 'post' ],
 					Post_Query_Class::POST_KEYS_CONVERSION_MAP => [
 						'ID' => 'id',
