@@ -29,6 +29,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		infoIcon: '.source-selections-input.cloud .eicon-info',
 		connect: '#elementor-template-library-connect__badge',
 		connectBadge: '.source-selections-input.cloud .connect-badge',
+		cloudFormInputs: '.cloud-library-form-inputs',
 	},
 
 	events: {
@@ -84,9 +85,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			this.handleCloudLibraryPromo();
 		}
 
+		if ( this.cloudMaxCapacityReached() ) {
+			this.handleCloudLibraryPromo( 'max-capacity' );
+		}
+
 		if ( ! elementor.config.library_connect.is_connected ) {
 			this.handleElementorConnect();
 		}
+	},
+
+	cloudMaxCapacityReached() {
+		return 'undefined' !== typeof elementorAppConfig[ 'cloud-library' ]?.quota &&
+			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold &&
+			elementorAppConfig[ 'cloud-library' ].quota?.currentUsage >= elementorAppConfig[ 'cloud-library' ].quota?.threshold;
 	},
 
 	handleSaveAction() {
@@ -131,7 +142,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
-	handleCloudLibraryPromo() {
+	handleCloudLibraryPromo( stateClass = 'promotion' ) {
 		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ) {
 			this.$( '.source-selections-input #local' ).prop( 'checked', true );
 		} else {
@@ -140,7 +151,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.$( '.source-selections-input #cloud' ).prop( 'checked', false );
 
-		this.ui.cloudInput.addClass( 'promotion' );
+		this.ui.cloudFormInputs.addClass( stateClass );
 	},
 
 	getSaveType() {
