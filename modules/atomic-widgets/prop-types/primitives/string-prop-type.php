@@ -65,19 +65,9 @@ class String_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
-		$has_leading_space = substr( $value, 0, 1 ) === ' ';
-		$has_trailing_space = substr( $value, -1 ) === ' ';
-
-		$sanitized = sanitize_text_field( $value );
-
-		if ( $has_leading_space ) {
-			$sanitized = ' ' . $sanitized;
-		}
-
-		if ( $has_trailing_space ) {
-			$sanitized = $sanitized . ' ';
-		}
-
-		return $sanitized;
+		return preg_replace_callback( '/^(\s*)(\S*)(\s*)$/', function ( $matches ) {
+			[, $leading, $value, $trailing ] = $matches;
+			return $leading . sanitize_text_field( $value ) . $trailing;
+		}, $value );
 	}
 }
