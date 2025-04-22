@@ -286,6 +286,7 @@ const TemplateLibraryManager = function() {
 					self.layout.updateViewCollection( self.filterTemplates() );
 
 					self.triggerQuotaUpdate();
+					self.resetBulkActionBar();
 				},
 			} );
 		};
@@ -989,7 +990,13 @@ const TemplateLibraryManager = function() {
 		self.setFilter( viewKey, selectedView, true );
 
 		self.layout.updateViewCollection( self.filterTemplates() );
-		self.clearBulkSelectionItems();
+
+		self.resetBulkActionBar();
+	};
+
+	this.resetBulkActionBar = () => {
+		this.clearBulkSelectionItems();
+		this.layout.handleBulkActionBarUi();
 	};
 
 	this.shouldShowCloudStateView = function( source ) {
