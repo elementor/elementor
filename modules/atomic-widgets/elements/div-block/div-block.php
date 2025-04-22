@@ -168,6 +168,7 @@ class Div_Block extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_prop( 'display', $display )
 						->add_prop( 'padding', $this->get_base_padding() )
+						->add_prop( 'min-width', $this->get_base_min_width() )
 				),
 		];
 	}
@@ -175,6 +176,13 @@ class Div_Block extends Atomic_Element_Base {
 	protected function get_base_padding(): array {
 		return Size_Prop_Type::generate( [
 			'size' => 10,
+			'unit' => 'px',
+		] );
+	}
+
+	protected function get_base_min_width(): array {
+		return Size_Prop_Type::generate( [
+			'size' => 30,
 			'unit' => 'px',
 		] );
 	}
