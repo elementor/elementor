@@ -161,6 +161,11 @@ export default class Component extends ComponentModalBase {
 				model: callbackParams.model,
 				data,
 				options: callbackParams.importOptions,
+				onAfter: () => {
+					this.manager.eventManager.sendTemplateInsertedEvent( {
+						library_type: callbackParams.model.get( 'source' ),
+					} );
+				},
 			} );
 		} );
 	}
