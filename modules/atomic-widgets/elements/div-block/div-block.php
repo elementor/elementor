@@ -97,7 +97,9 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
-		if ( 'container' === $element_data['elType'] || 'e-div-block' === $element_data['elType'] ) {
+		$el_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
+
+		if ( in_array( $element_data['elType'], $el_types, true ) ) {
 			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 		}
 
@@ -166,7 +168,6 @@ class Div_Block extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_prop( 'display', $display )
 						->add_prop( 'padding', $this->get_base_padding() )
-						->add_prop( 'min-height', $this->get_base_height() )
 				),
 		];
 	}
@@ -176,9 +177,5 @@ class Div_Block extends Atomic_Element_Base {
 			'size' => 10,
 			'unit' => 'px',
 		] );
-	}
-
-	protected function get_base_height(): array {
-		return String_Prop_Type::generate( 'min-content' );
 	}
 }

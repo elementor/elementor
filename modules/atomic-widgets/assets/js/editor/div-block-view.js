@@ -152,6 +152,7 @@ const DivBlockView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: __( 'Save as Template', 'elementor' ),
+					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
@@ -210,13 +211,12 @@ const DivBlockView = BaseElementView.extend( {
 
 	getDroppableOptions() {
 		const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
-		let $placeholder;
 
 		return {
 			axis: this.getDroppableAxis(),
 			items,
 			groups: [ 'elementor-element' ],
-			horizontalThreshold: 5,
+			horizontalThreshold: 0,
 			isDroppingAllowed: this.isDroppingAllowed.bind( this ),
 			currentElementClass: 'elementor-html5dnd-current-element',
 			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
@@ -280,47 +280,7 @@ const DivBlockView = BaseElementView.extend( {
 				// User is dragging an element from the panel.
 				this.onDrop( event, { at: newIndex } );
 			},
-			onDragging: ( side, event ) => {
-				if ( ! $placeholder ) {
-					$placeholder = this.$el.find( '.elementor-sortable-placeholder' );
-				}
-
-				if ( ! $placeholder.length ) {
-					return;
-				}
-
-				const currentTarget = event.currentTarget,
-					currentTargetHeight = currentTarget.getBoundingClientRect().height,
-					placeholderElement = $placeholder[ 0 ],
-					isNotBeforeSibling = currentTarget !== placeholderElement.previousElementSibling;
-
-				if ( 'horizontal' === this.getDroppableAxis() ) {
-					if ( isNotBeforeSibling ) {
-						this.handleDropSide( side, placeholderElement, currentTarget );
-					}
-
-					this.maybeShowCustomDropPlaceholder( $placeholder, currentTargetHeight );
-				} else {
-					$placeholder.removeAttr( 'style' );
-				}
-			},
 		};
-	},
-
-	handleDropSide( side, placeholderElement, currentTarget ) {
-		const insertMethod = [ 'top', 'left' ].includes( side ) ? 'before' : 'after';
-		currentTarget[ insertMethod ]( placeholderElement );
-	},
-
-	maybeShowCustomDropPlaceholder( $placeholder, currentTargetHeight ) {
-		if ( $placeholder.css( 'height' ) !== `${ currentTargetHeight }px` ) {
-			$placeholder.css( {
-				display: 'block',
-				height: `${ currentTargetHeight }px`,
-				'background-color': '#eb8efb',
-				width: '10px',
-			} );
-		}
 	},
 
 	getEditButtons() {

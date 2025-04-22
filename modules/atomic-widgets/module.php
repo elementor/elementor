@@ -75,7 +75,6 @@ class Module extends BaseModule {
 		'editor-controls', // TODO: Need to be registered and not enqueued.
 		'editor-editing-panel',
 		'editor-elements', // TODO: Need to be registered and not enqueued.
-		'editor-panels',
 		'editor-props', // TODO: Need to be registered and not enqueued.
 		'editor-styles', // TODO: Need to be registered and not enqueued.
 		'editor-styles-repository',
@@ -235,7 +234,7 @@ class Module extends BaseModule {
 	}
 
 	private function render_panel_category_chip() {
-		?><# if ( 'V4 Elements' === title ) { #>
+		?><# if ( 'v4-elements' === name )  { #>
 			<span class="elementor-panel-heading-category-chip">
 				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>

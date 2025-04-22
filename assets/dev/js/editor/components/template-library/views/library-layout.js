@@ -7,7 +7,8 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
 	TemplateLibraryConnectView = require( 'elementor-templates/views/parts/connect' ),
 	TemplateLibraryCloudStateView = require( 'elementor-templates/views/parts/cloud-states' ),
-	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' );
+	TemplateLibraryPreviewView = require( 'elementor-templates/views/parts/preview' ),
+	TemplateLibraryNavigationContainerView = require( 'elementor-templates/views/parts/navigation-container' );
 
 import { SAVE_CONTEXTS } from './../constants';
 
@@ -88,6 +89,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	updateViewCollection( models ) {
 		this.modalContent.currentView.collection.reset( models );
+		this.modalContent.currentView.ui.navigationContainer.html( ( new TemplateLibraryNavigationContainerView() ).render()?.el );
 	},
 
 	addTemplates( models ) {
@@ -140,9 +142,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		try {
 			elementor.templates.layout.showLoadingView();
 
-			const templateId = elementModel.model.get( 'template_id' );
-
-			await elementor.templates.getFolderTemplates( templateId );
+			await elementor.templates.getFolderTemplates( elementModel );
 		} finally {
 			elementor.templates.layout.hideLoadingView();
 		}
@@ -161,12 +161,28 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		return iframe;
 	},
 
+	handleBulkActionBarUi() {
+		if ( 0 === this.modalContent.currentView.$( '.bulk-selection-item-checkbox:checked' ).length ) {
+			this.modalContent.currentView.$el.addClass( 'no-bulk-selections' );
+			this.modalContent.currentView.$el.removeClass( 'has-bulk-selections' );
+		} else {
+			this.modalContent.currentView.$el.addClass( 'has-bulk-selections' );
+			this.modalContent.currentView.$el.removeClass( 'no-bulk-selections' );
+		}
+
+		this.handleBulkActionBar();
+	},
+
 	handleBulkActionBar() {
 		const selectedCount = elementor.templates.getBulkSelectionItems().size ?? 0;
 		const display = 0 === selectedCount ? 'none' : 'flex';
 
 		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );
 		this.modalContent.currentView.ui.bulkSelectionActionBar.css( 'display', display );
+
+		// TODO: Temporary fix until the bulk action bar will be as separate view.
+		const displayNavigationContainer = 0 === selectedCount ? 'flex' : 'none';
+		this.modalContent.currentView.ui.navigationContainer.css( 'display', displayNavigationContainer );
 	},
 
 	selectAllCheckboxMinus() {
@@ -183,5 +199,11 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	isListView() {
 		return 'list' === elementor.templates.getViewSelection();
+	},
+
+	resetSortingUI() {
+		Array.from( this.modalContent.currentView.ui?.orderInputs || [] ).forEach( function( input ) {
+			input.checked = false;
+		} );
 	},
 } );

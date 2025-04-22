@@ -11,14 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Cloud_Library extends Library {
-	const API_URL = 'https://my.elementor.com/api/v1';
-
 	public function get_title(): string {
 		return esc_html__( 'Cloud Library', 'elementor' );
 	}
 
-	protected function get_slug(): string {
-		return 'cloud-library';
+	protected function get_api_url(): string {
+		return 'https://cloud-library.prod.builder.elementor.red/api/v1/cloud-library';
 	}
 
 	public function get_resources( $args = [] ): array {
@@ -27,11 +25,13 @@ class Cloud_Library extends Library {
 		$endpoint = 'resources';
 
 		$query_string = http_build_query( [
-			'limit' => $args['limit'] ? (int) $args['limit'] : null,
-			'offset' => $args['offset'] ? (int) $args['offset'] : null,
-			'search' => $args['search'],
-			'parentId' => $args['parentId'],
-			'templateType' => $args['templateType'] ?? null,
+			'limit' => isset( $args['limit'] ) ? (int) $args['limit'] : null,
+			'offset' => isset( $args['offset'] ) ? (int) $args['offset'] : null,
+			'search' => isset( $args['search'] ) ? $args['search'] : null,
+			'parentId' => isset( $args['parentId'] ) ? $args['parentId'] : null,
+			'templateType' => isset( $args['templateType'] ) ? $args['templateType'] : null,
+			'orderBy' => isset( $args['orderby'] ) ? $args['orderby'] : null,
+			'order' => isset( $args['order'] ) ? strtoupper( $args['order'] ) : null,
 		] );
 
 		$endpoint .= '?' . $query_string;
@@ -199,6 +199,28 @@ class Cloud_Library extends Library {
 		}
 
 		return $response['preview_url'];
+	}
+
+	public function mark_preview_as_failed( $template_id, $error ) {
+		$endpoint = 'resources/' . $template_id . '/preview';
+
+		$payload = [
+			'body' => [
+				'error' => $error,
+			],
+		];
+
+		$response = $this->http_request( 'PATCH', $endpoint, $payload, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		]);
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = esc_html__( 'Failed to mark preview as failed.', 'elementor' );
+
+			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return $response;
 	}
 
 	/**
