@@ -181,6 +181,9 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected function get_base_min_width(): array {
-		return Size_Prop_Type::generate( [ 'size' => 30, 'unit' => 'px', ] );
+		return Size_Prop_Type::generate( [
+			'size' => 30,
+			'unit' => 'px',
+		] );
 	}
 }
