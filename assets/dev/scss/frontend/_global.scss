@@ -294,17 +294,7 @@
 .elementor {
 	.e-heading-base a,
 	.e-paragraph-base a {
-		color: unset;
-		font-family: unset;
-		font-size: unset;
-		font-weight: unset;
-		text-transform: unset;
-		font-style: unset;
-		text-decoration: unset;
-		line-height: unset;
-		text-align: unset;
-		letter-spacing: unset;
-		text-indent: unset;
+		all: unset;
 	}
 }
 
