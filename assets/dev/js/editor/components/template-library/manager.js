@@ -91,7 +91,7 @@ const TemplateLibraryManager = function() {
 			var safeData = jQuery.extend( true, {}, data, {
 				saveDialog: {
 					/* Translators: %s: Template type. */
-					title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
+					title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
 				},
 				moveDialog: {
 					/* Translators: %s: Template type. */

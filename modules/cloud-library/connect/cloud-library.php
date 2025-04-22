@@ -49,6 +49,11 @@ class Cloud_Library extends Library {
 		}
 
 		return [
+			'templates' => [],
+			'total' => 0,
+		];
+
+		return [
 			'templates' => $templates,
 			'total' => $cloud_templates['total'],
 		];

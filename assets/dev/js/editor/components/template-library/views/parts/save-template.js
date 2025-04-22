@@ -562,7 +562,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			this.infoTipDialog.hide();
 		}
 
-		const inlineStartKey = elementorCommon.config.isRTL ? 'left' : 'right';
+		const message = elementor.templates.hasCloudLibraryQuota()
+			? __( 'Upgrade your subscription to get more space and reuse saved assets across all your sites.', 'elementor' )
+			: __( 'Upgrade your subscription to access Cloud Templates and reuse saved assets across all your sites.', 'elementor' );
+
+		const goLink = elementor.templates.hasCloudLibraryQuota()
+			? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-notice'
+			: 'https://go.elementor.com/go-pro-cloud-templates-save-to-free-tooltip/';
 
 		this.infoTipDialog = elementor.dialogsManager.createWidget( 'buttons', {
 			id: 'elementor-library--infotip__dialog',
@@ -572,21 +578,18 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			},
 			position: {
 				of: this.ui.infoIcon,
-				at: `${ inlineStartKey }+40 top-75`,
+				at: 'top-75',
 			},
 		} )
-			.setMessage( __(
-				'With Cloud Templates, you can reuse saved assets across all the websites you’re working on.',
-				'elementor',
-			) )
+			.setMessage( message )
 			.addButton( {
 				name: 'learn_more',
 				text: __(
-					'Learn more',
+					'Upgrade Now',
 					'elementor',
 				),
 				classes: '',
-				callback: () => open( '', '_blank' ),
+				callback: () => open( goLink, '_blank' ),
 			} );
 
 		this.infoTipDialog.getElements( 'header' ).remove();
@@ -598,8 +601,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			this.connectInfoTipDialog.hide();
 		}
 
-		const inlineStartKey = elementorCommon.config.isRTL ? 'left' : 'right';
-
 		this.connectInfoTipDialog = elementor.dialogsManager.createWidget( 'buttons', {
 			id: 'elementor-library--connect_infotip__dialog',
 			effects: {
@@ -608,13 +609,25 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			},
 			position: {
 				of: this.ui.connectBadge,
-				at: `${ inlineStartKey }+65 top+90`,
+				at: 'top+80',
 			},
 		} )
-			.setMessage( __(
-				'To access the Cloud Templates Library you must have an active Elementor Pro subscription and connect your site.',
-				'elementor',
-			) );
+			.setMessage(
+				__(
+					'To access the Cloud Templates Library you must have an active Elementor Pro subscription',
+					'elementor',
+				) +
+				' <i>' +
+				__(
+					'and',
+					'elementor',
+				) +
+				'</i> ' +
+				__(
+					'connect your site.',
+					'elementor',
+				)
+			);
 
 		this.connectInfoTipDialog.getElements( 'header' ).remove();
 		this.connectInfoTipDialog.getElements( 'buttonsWrapper' ).remove();

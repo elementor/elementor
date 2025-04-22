@@ -120,8 +120,8 @@ class Module extends BaseModule {
 				'utm_content' => 'cloud-library',
 				'source' => 'cloud-library',
 			] ) ),
-			'library_connect_title' => esc_html__( 'Connect', 'elementor' ),
-			'library_connect_sub_title' => esc_html__( 'Sub Title', 'elementor' ),
+			'library_connect_title' => esc_html__( 'Connect to your Elementor account', 'elementor' ),
+			'library_connect_sub_title' => esc_html__( 'Then you can find all your templates in one convenient library.', 'elementor' ),
 			'library_connect_button_text' => esc_html__( 'Connect', 'elementor' ),
 		] );
 	}
