@@ -15,6 +15,7 @@ export class Paste extends $e.modules.CommandBase {
 		const { containers = [ args.container ] } = args;
 
 		this.storage = this.getPasteData( args );
+
 		if ( ! this.storage || ! this.storage?.elements?.length || 'elementor' !== this.storage?.type ) {
 			return false;
 		}
@@ -23,15 +24,7 @@ export class Paste extends $e.modules.CommandBase {
 			new Backbone.Model( model ),
 		);
 
-		if ( ! containers[ 0 ] ) {
-			const selectedContainers = elementor.selection?.getElements() || [];
-
-			this.target = elementor.getCurrentElement();
-			this.target = this.target ? [ this.target.getContainer() ] : null;
-			this.target = selectedContainers.length ? selectedContainers : this.target;
-		} else {
-			this.target = containers;
-		}
+		this.target = this.getTarget( containers );
 
 		if ( ! this.target || 0 === this.storage.elements.length ) {
 			return false;
@@ -82,6 +75,17 @@ export class Paste extends $e.modules.CommandBase {
 		}
 
 		return result;
+	}
+
+	getTarget( containers ) {
+		if ( containers[ 0 ] ) {
+			return containers;
+		}
+
+		const selectedContainers = elementor.selection?.getElements() || [];
+		const currentElementContainer = elementor.getCurrentElement()?.getContainer();
+
+		return selectedContainers.length ? selectedContainers : currentElementContainer;
 	}
 }
 
