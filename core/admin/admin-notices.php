@@ -703,13 +703,11 @@ class Admin_Notices extends Module {
 		}
 	}
 
-	/**
-	 * Used to log campaigns for plugins
-	 */
 	public function maybe_log_campaign() {
 		if ( empty( $_GET['plg_campaign'] ) || empty( $_GET['plg_campaign_name'] ) ) {
 			return;
 		}
+
 		$allowed_plgs = [
 			'elementor_image_optimization_campaign',
 			'elementor_ea11y_campaign',
@@ -742,6 +740,13 @@ class Admin_Notices extends Module {
 	}
 
 	public static function add_plg_campaign_data( $url, $campaign_data ) {
+		
+		foreach ( [ 'name', 'campaign', 'source', 'medium'] as $key ) {
+			if ( empty( $campaign_data[ $key ] ) ) {
+				return $url;
+			}
+		}
+		
 		return add_query_arg( [
 			'plg_campaign_name' => $campaign_data['name'],
 			'plg_campaign' => $campaign_data['campaign'],
