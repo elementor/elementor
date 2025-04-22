@@ -79,14 +79,14 @@ class Test_String_Prop_Type extends Elementor_Test_Base {
 		$this->assertEquals( 'scriptalertXSSscript', $result['value'] );
 	}
 
-	public function test_sanitize__not_sanitizes_string_with_whitespace() {
+	public function test_sanitize__sanitizes_string_and_keeps_whitespaces() {
 		// Arrange.
 		$prop_type = String_Prop_Type::make();
 
 		// Act.
-		$result = $prop_type->sanitize( [ '$$type' => 'string', 'value' => '   test   ' ] );
+		$result = $prop_type->sanitize( [ '$$type' => 'string', 'value' => '   sani<script>test</script>   ' ] );
 
 		// Assert.
-		$this->assertEquals( '   test   ', $result['value'] );
+		$this->assertEquals( '   sani   ', $result['value'] );
 	}
 }
