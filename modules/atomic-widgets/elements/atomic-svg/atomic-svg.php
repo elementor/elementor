@@ -100,7 +100,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
 		$classes = array_filter( array_merge(
-			[ $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] ],
+			[ self::BASE_STYLE_KEY => $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] ],
 			$settings['classes']
 		) );
 
