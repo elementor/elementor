@@ -224,8 +224,10 @@
 					insertGridRowPlaceholder();
 					break;
 				case 'flexRow':
-				case 'childContainer':
 					insertFlexRowPlaceholder();
+					break;
+				case 'childContainer':
+					insertChildContainerPlaceholder();
 					break;
 				default:
 					insertDefaultPlaceholder();
@@ -244,8 +246,8 @@
 			const container = currentElement.closest( '.e-con' );
 			const containerDisplayStyle = container ? getComputedStyle( container ).display : null;
 
-			const innerContainer = container.querySelector( ':scope > .e-con-inner' );
-			const containerWrapperStyle = getComputedStyle( innerContainer || container );
+			const innerContainer = container?.querySelector( ':scope > .e-con-inner' );
+			const containerWrapperStyle = !! container ? getComputedStyle( innerContainer || container ) : null;
 
 			const isFlexContainer = !! container && [ 'flex', 'inline-flex' ].includes( containerWrapperStyle.display );
 			const isRowDirection = !! container && [ 'row', 'row-reverse' ].includes( containerWrapperStyle.flexDirection );
@@ -350,6 +352,12 @@
 			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 
+		const insertChildContainerPlaceholder = function() {
+			const { $currentElement, $parentContainer } = placeholderContext;
+
+			insertPlaceholderInsideElement( $parentContainer[ 0 ] );
+		};
+
 		const insertDefaultPlaceholder = function() {
 			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
 
@@ -384,9 +392,9 @@
 
 			const width = parseFloat( styles.width ) || '100%';
 
-			const totalTopOffset = paddingTop + borderTop + marginTop;
-			const totalBottomOffset = paddingBottom + borderBottom + marginBottom;
-			const totalInlineStartOffset = paddingInlineStart + borderInlineStart + marginInlineStart;
+			const totalTopOffset = paddingTop + borderTop;
+			const totalBottomOffset = paddingBottom + borderBottom;
+			const totalInlineStartOffset = paddingInlineStart + borderInlineStart;
 
 			placeholder.style.setProperty( '--e-placeholder-width', `${ width }px` );
 			placeholder.style.setProperty( '--e-placeholder-margin-inline-start', `-${ totalInlineStartOffset }px` );
