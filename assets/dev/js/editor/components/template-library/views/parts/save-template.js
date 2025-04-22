@@ -626,7 +626,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 				__(
 					'connect your site.',
 					'elementor',
-				)
+				),
 			);
 
 		this.connectInfoTipDialog.getElements( 'header' ).remove();
