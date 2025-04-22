@@ -445,22 +445,8 @@ export default class extends Marionette.CompositeView {
 		elementor.navigator.getLayout().activateElementsMouseInteraction();
 	}
 
-	onSortStop( event, ui ) {
+	onSortStop() {
 		elementor.navigator.getLayout().deactivateElementsMouseInteraction();
-
-		// Check if the dragged item is still in a valid state
-		if ( ! this.ui.elements.is( ui.item.parent() ) ) {
-			// Reset the UI state if the drag failed
-			ui.item.removeClass( 'ui-sortable-helper ui-sortable-placeholder' );
-			this.$el.removeClass( 'elementor-dragging-on-child' );
-			this.toggleList( true, () => {
-				this.ui.elements.sortable( 'refreshPositions' );
-			} );
-			return;
-		}
-
-		// Trigger the sort stop event
-		this.model.trigger( 'request:sort:stop', event, ui );
 	}
 
 	onSortOver( event ) {
@@ -479,10 +465,6 @@ export default class extends Marionette.CompositeView {
 		event.stopPropagation();
 
 		if ( ! this.ui.elements.is( ui.item.parent() ) ) {
-			this.toggleList( false, () => {
-				this._parent.ui.elements.sortable( 'refreshPositions' );
-			} );
-
 			return;
 		}
 
