@@ -19,7 +19,7 @@ export default function GoodToGo() {
 					: __( 'That\'s a wrap! What\'s next?', 'elementor' ) }
 			</h1>
 			<div className="e-onboarding__page-content-section-text">
-				{ __( 'There are two ways to get started with Elementor:', 'elementor' ) }
+				{ __( 'There are three ways to get started with Elementor:', 'elementor' ) }
 			</div>
 			<Grid container alignItems="center" justify="space-between" className="e-onboarding__cards-grid e-onboarding__page-content">
 				<Card
