@@ -85,6 +85,9 @@ class Module extends BaseModule {
 			add_action( 'elementor/init', [ $this, 'init' ], 11 );
 		}
 
+		// Register REST API routes
+		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
+
 		add_filter( 'elementor/tracker/send_tracking_data_params', function ( $params ) {
 			return $this->add_tracking_data( $params );
 		} );
@@ -257,5 +260,16 @@ class Module extends BaseModule {
 		];
 
 		return $params;
+	}
+
+	/**
+	 * Register REST routes.
+	 *
+	 * @since x.x.x
+	 * @access public
+	 */
+	public function register_rest_routes() {
+		$rest_api = new Rest_Api();
+		$rest_api->register_routes();
 	}
 }

@@ -719,6 +719,7 @@ abstract class Base_App {
 	protected function redirect_to_remote_authorize_url() {
 		switch ( $this->auth_mode ) {
 			case 'cli':
+			case 'rest':
 				$this->get_app_token_from_cli_token( Utils::get_super_global_value( $_REQUEST, 'token' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 				return;
 			default:
@@ -810,7 +811,7 @@ abstract class Base_App {
 			$this->set_auth_mode( 'xhr' );
 		}
 
-		$mode = Utils::get_super_global_value( $_REQUEST, 'mode' ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+		$mode = Utils::get_super_global_value( $_REQUEST, 'mode' );
 
 		if ( $mode ) {
 			$allowed_auth_modes = [
@@ -819,6 +820,10 @@ abstract class Base_App {
 
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$allowed_auth_modes[] = 'cli';
+			}
+			
+			if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+				$allowed_auth_modes[] = 'rest';
 			}
 
 			if ( in_array( $mode, $allowed_auth_modes, true ) ) {
