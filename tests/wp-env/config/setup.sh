@@ -1,4 +1,13 @@
 #!/bin/bash
+if ! wp core is-installed; then
+  wp core install \
+    --url="http://localhost:8888" \
+    --title="Test Site" \
+    --admin_user="admin" \
+    --admin_password="password" \
+    --admin_email="admin@example.com"
+fi
+
 set -eox pipefail
 
 wp plugin activate elementor
