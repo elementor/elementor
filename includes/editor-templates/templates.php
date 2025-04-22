@@ -116,7 +116,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
 							<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 							<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
-							<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>
+							<#
+								const tabIcon = elementor.templates.hasCloudLibraryQuota()
+									? '<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>' 
+									: '<span class="new-badge"><i class="eicon-upgrade-crown" style="margin-inline-end: 0;"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>';
+
+								print( tabIcon );
+							#>
 						</div>
 					</div>
 				</div>
@@ -623,7 +629,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
 					<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 					<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
-					<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>
+					<#
+						const tabIcon = elementor.templates.hasCloudLibraryQuota()
+							? '<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>' 
+							: '<span class="new-badge"><i class="eicon-upgrade-crown" style="margin-inline-end: 0;"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>';
+
+						print( tabIcon );
+					#>
 				</div>
 			</div>
 		</div>
