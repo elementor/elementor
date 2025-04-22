@@ -80,6 +80,10 @@ class Global_Classes_Parser {
 
 			$sanitized_item = $item_result->unwrap();
 
+			if ( isset( $sanitized_item['label'] ) ) {
+				$sanitized_item['label'] = $this->sanitize_label( $sanitized_item['label'] );
+			}
+
 			if ( $item_id !== $sanitized_item['id'] ) {
 				$result->errors()->add( "$item_id.id", 'mismatching_value' );
 
@@ -112,5 +116,13 @@ class Global_Classes_Parser {
 		return $result->is_valid()
 			? $result->wrap( $order->values() )
 			: $result;
+	}
+
+	private function sanitize_label( $label ): string {
+		if ( ! is_string( $label ) ) {
+			return '';
+		}
+
+		return preg_replace( '/[^a-zA-Z0-9_-]/', '', $label );
 	}
 }
