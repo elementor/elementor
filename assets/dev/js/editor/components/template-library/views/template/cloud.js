@@ -94,7 +94,7 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		}
 
 		if ( 'TEMPLATE' === this.model.get( 'subType' ) ) {
-			this.handleGridViewItemSingleClick()
+			this.handleGridViewItemSingleClick();
 		}
 	},
 
