@@ -707,7 +707,6 @@ class Admin_Notices extends Module {
 	 * Used to log campaigns for plugins
 	 */
 	public function maybe_log_campaign() {
-		// check for variables
 		if ( empty( $_GET['plg_campaign'] ) || empty( $_GET['plg_campaign_name'] ) ) {
 			return;
 		}
@@ -717,22 +716,18 @@ class Admin_Notices extends Module {
 			'elementor_site_mailer_campaign',
 		];
 
-		// whitelist campaign names
 		if ( ! in_array( $_GET['plg_campaign_name'], $allowed_plgs, true ) ) {
 			return;
 		}
 
-		// check nonce
 		if ( ! isset( $_GET['plg_campaign_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_GET['plg_campaign_nonce'] ), sanitize_key( $_GET['plg_campaign_name'] ) ) ) {
 			return;
 		}
 
-		// check capabilities
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
-		// check for empty values
 		if ( empty( $_GET['plg_source'] ) || empty( $_GET['plg_medium'] ) ) {
 			return;
 		}
