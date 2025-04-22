@@ -168,7 +168,6 @@ class Div_Block extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_prop( 'display', $display )
 						->add_prop( 'padding', $this->get_base_padding() )
-						->add_prop( 'min-height', $this->get_base_height() )
 				),
 		];
 	}
@@ -178,9 +177,5 @@ class Div_Block extends Atomic_Element_Base {
 			'size' => 10,
 			'unit' => 'px',
 		] );
-	}
-
-	protected function get_base_height(): array {
-		return String_Prop_Type::generate( 'min-content' );
 	}
 }

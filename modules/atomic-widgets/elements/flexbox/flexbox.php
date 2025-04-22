@@ -42,7 +42,6 @@ class Flexbox extends Div_Block {
 						->add_prop( 'display', $display )
 						->add_prop( 'flex-direction', $flex_direction )
 						->add_prop( 'padding', $this->get_base_padding() )
-						->add_prop( 'min-height', $this->get_base_height() )
 				),
 		];
 	}
