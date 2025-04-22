@@ -116,7 +116,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
 							<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 							<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
-							<span class="new-badge">New</span>
+							<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>
 						</div>
 					</div>
 				</div>
@@ -617,7 +617,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
 					<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 					<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
-					<span class="new-badge">New</span>
+					<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>
 				</div>
 			</div>
 		</div>
