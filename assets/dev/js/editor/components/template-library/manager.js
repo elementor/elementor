@@ -26,56 +26,7 @@ const TemplateLibraryManager = function() {
 		toastConfig = { show: false, options: {} };
 
 	const registerDefaultTemplateTypes = function() {
-		var data = {
-			saveDialog: {
-				description: __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
-				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
-			},
-			moveDialog: {
-				description: '',
-				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
-				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
-			},
-			copyDialog: {
-				description: '',
-				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
-				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
-			},
-			bulkMoveDialog: {
-				description: '',
-				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
-				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
-			},
-			bulkCopyDialog: {
-				description: '',
-				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
-				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
-			},
-			ajaxParams: {
-				success( successData ) {
-					$e.route( 'library/templates/my-templates', {
-						onBefore: () => {
-							if ( templatesCollection ) {
-								const itemExist = templatesCollection.findWhere( {
-									template_id: successData.template_id,
-								} );
-
-								if ( ! itemExist ) {
-									templatesCollection.add( successData );
-								}
-							}
-						},
-					} );
-
-					self.triggerQuotaUpdate();
-				},
-				error( errorData ) {
-					self.showErrorDialog( errorData );
-					self.clearToastConfig();
-				},
-			},
-		};
+		var data = self.getDefaultTemplateTypeData();
 
 		const translationMap = {
 			page: __( 'Page', 'elementor' ),
@@ -88,26 +39,7 @@ const TemplateLibraryManager = function() {
 		};
 
 		jQuery.each( translationMap, function( type, title ) {
-			var safeData = jQuery.extend( true, {}, data, {
-				saveDialog: {
-					/* Translators: %s: Template type. */
-					title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
-				},
-				moveDialog: {
-					/* Translators: %s: Template type. */
-					title: sprintf( __( 'Move Your %s', 'elementor' ), title ),
-				},
-				copyDialog: {
-					/* Translators: %s: Template type. */
-					title: sprintf( __( 'Copy Your %s', 'elementor' ), title ),
-				},
-				bulkMoveDialog: {
-					title: __( 'Move Your Templates', 'elementor' ),
-				},
-				bulkCopyDialog: {
-					title: __( 'Copy Your Templates', 'elementor' ),
-				},
-			} );
+			var safeData = jQuery.extend( true, {}, data, self.getDefaultTemplateTypeSafeData( title ) );
 
 			self.registerTemplateType( type, safeData );
 		} );
@@ -187,6 +119,82 @@ const TemplateLibraryManager = function() {
 		document.addEventListener( 'keydown', this.handleKeydown );
 	};
 
+	this.getDefaultTemplateTypeData = function() {
+		return {
+			saveDialog: {
+				description: __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
+				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
+			moveDialog: {
+				description: '',
+				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
+			copyDialog: {
+				description: '',
+				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
+			bulkMoveDialog: {
+				description: '',
+				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
+			bulkCopyDialog: {
+				description: '',
+				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
+				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+			},
+			ajaxParams: {
+				success( successData ) {
+					$e.route( 'library/templates/my-templates', {
+						onBefore: () => {
+							if ( templatesCollection ) {
+								const itemExist = templatesCollection.findWhere( {
+									template_id: successData.template_id,
+								} );
+
+								if ( ! itemExist ) {
+									templatesCollection.add( successData );
+								}
+							}
+						},
+					} );
+
+					self.triggerQuotaUpdate();
+				},
+				error( errorData ) {
+					self.showErrorDialog( errorData );
+					self.clearToastConfig();
+				},
+			},
+		};
+	};
+
+	this.getDefaultTemplateTypeSafeData = function( title ) {
+		return {
+			saveDialog: {
+				/* Translators: %s: Template type. */
+				title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
+			},
+			moveDialog: {
+				/* Translators: %s: Template type. */
+				title: sprintf( __( 'Move Your %s', 'elementor' ), title ),
+			},
+			copyDialog: {
+				/* Translators: %s: Template type. */
+				title: sprintf( __( 'Copy Your %s', 'elementor' ), title ),
+			},
+			bulkMoveDialog: {
+				title: __( 'Move Your Templates', 'elementor' ),
+			},
+			bulkCopyDialog: {
+				title: __( 'Copy Your Templates', 'elementor' ),
+			},
+		};
+	};
+
 	this.isSelectAllShortcut = function( event ) {
 		return ( event.metaKey || event.ctrlKey ) && 'a' === event.key;
 	};
@@ -251,6 +259,10 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.registerTemplateType = function( type, data ) {
+		if ( templateTypes.hasOwnProperty( type ) ) {
+			return;
+		}
+
 		templateTypes[ type ] = data;
 	};
 
@@ -286,6 +298,7 @@ const TemplateLibraryManager = function() {
 					self.layout.updateViewCollection( self.filterTemplates() );
 
 					self.triggerQuotaUpdate();
+					self.resetBulkActionBar();
 				},
 			} );
 		};
@@ -989,7 +1002,13 @@ const TemplateLibraryManager = function() {
 		self.setFilter( viewKey, selectedView, true );
 
 		self.layout.updateViewCollection( self.filterTemplates() );
-		self.clearBulkSelectionItems();
+
+		self.resetBulkActionBar();
+	};
+
+	this.resetBulkActionBar = () => {
+		this.clearBulkSelectionItems();
+		this.layout.handleBulkActionBarUi();
 	};
 
 	this.shouldShowCloudStateView = function( source ) {
