@@ -292,8 +292,8 @@
 }
 
 .elementor {
-	.e-heading-base a,
-	.e-paragraph-base a {
+	.e-heading-base > a,
+	.e-paragraph-base > a {
 		all: unset;
 	}
 }
