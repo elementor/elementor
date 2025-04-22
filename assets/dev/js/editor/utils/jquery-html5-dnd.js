@@ -371,15 +371,12 @@
 
 			const paddingTop = parseFloat( styles.paddingTop ) || 0;
 			const borderTop = parseFloat( styles.borderTopWidth ) || 0;
-			const marginTop = parseFloat( styles.marginTop ) || 0;
 
 			const paddingBottom = parseFloat( styles.paddingBottom ) || 0;
 			const borderBottom = parseFloat( styles.borderBottomWidth ) || 0;
-			const marginBottom = parseFloat( styles.marginBottom ) || 0;
 
 			const paddingInlineStart = parseFloat( styles.paddingInlineStart ) || 0;
 			const borderInlineStart = parseFloat( styles.borderInlineStartWidth ) || 0;
-			const marginInlineStart = parseFloat( styles.marginInlineStart ) || 0;
 
 			const width = parseFloat( styles.width ) || '100%';
 
