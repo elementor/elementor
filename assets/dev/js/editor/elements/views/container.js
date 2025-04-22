@@ -34,7 +34,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	filterSettings( newItem ) {
-		if ( this.isNotContainerOrDivBlock( newItem.elType ) ) {
+		if ( ! getAllElementTypes().includes( newItem.elType ) ) {
 			return;
 		}
 
@@ -649,10 +649,6 @@ const ContainerView = BaseElementView.extend( {
 		if ( $linkElement ) {
 			$linkElement.attr( 'href', href );
 		}
-	},
-
-	isNotContainerOrDivBlock( elementType ) {
-		return ! getAllElementTypes().includes( elementType );
 	},
 } );
 
