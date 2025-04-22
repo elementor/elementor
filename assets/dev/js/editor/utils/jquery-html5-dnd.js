@@ -342,13 +342,6 @@
 			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 
-		const insertChildContainerPlaceholder = function() {
-			const { $currentElement, $parentContainer } = placeholderContext;
-			const targetElement = $parentContainer[ 0 ].querySelector( ':scope > .e-con-inner' ) || $parentContainer[ 0 ];
-
-			insertPlaceholderInsideElement( targetElement );
-		};
-
 		const insertDefaultPlaceholder = function() {
 			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
 
