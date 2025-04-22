@@ -143,6 +143,10 @@ $remote-templates-items-space: 30px;
 				.quota-warning {
 					font-size: 10px;
 				}
+
+				a {
+					color: var(--e-a-btn-bg-accent);
+				}
 			}
 
 			.quota-progress-bar {
