@@ -215,7 +215,6 @@
 				return;
 			}
 
-			ensureMinimumDroppableHeight();
 			clearPreviousPlaceholder();
 
 			const insertMode = getInsertMode();
@@ -228,44 +227,9 @@
 				case 'childContainer':
 					insertFlexRowPlaceholder();
 					break;
-				case 'block':
-					insertBlockContainerPlaceholder();
-					break;
 				default:
 					insertDefaultPlaceholder();
 					break;
-			}
-		};
-
-		const ensureMinimumDroppableHeight = function() {
-			const { placeholderTarget, hasLogicalWrapper, isFlexRowContainer } = placeholderContext;
-			const MIN_HEIGHT = 30;
-			const MIN_BORDER_WIDTH = 10;
-
-			placeholderTarget.classList.remove( 'e-min-height', 'e-min-border-top', 'e-min-border-bottom' );
-
-			if ( isFlexRowContainer || ! hasLogicalWrapper ) {
-				return;
-			}
-
-			const targetHeight = placeholderTarget.offsetHeight;
-
-			if ( targetHeight > MIN_HEIGHT ) {
-				return;
-			}
-
-			placeholderTarget.classList.add( 'e-min-height' );
-
-			const computedStyle = window.getComputedStyle( placeholderTarget );
-			const borderTopWidth = parseFloat( computedStyle.borderTopWidth ) || 0;
-			const borderBottomWidth = parseFloat( computedStyle.borderBottomWidth ) || 0;
-
-			if ( borderTopWidth < MIN_BORDER_WIDTH ) {
-				placeholderTarget.classList.add( 'e-min-border-top' );
-			}
-
-			if ( borderBottomWidth < MIN_BORDER_WIDTH ) {
-				placeholderTarget.classList.add( 'e-min-border-bottom' );
 			}
 		};
 
@@ -350,7 +314,10 @@
 			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
 
 			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right is-logical' );
-			elementsCache.$placeholder.css( '--e-row-gap', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-margin-top', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-margin-bottom', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-margin-inline-start', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-width', '' );
 		};
 
 		const insertPlaceholderInsideElement = function( targetElement = null ) {
@@ -359,7 +326,7 @@
 			}
 
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
-			elementsCache.$placeholder[ insertMethod ]( currentElement );
+			elementsCache.$placeholder[ insertMethod ]( targetElement );
 		};
 
 		const insertPlaceholderOutsideElement = function( targetElement = null ) {
@@ -368,7 +335,6 @@
 			}
 
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
-
 			$( targetElement )[ insertMethod ]( elementsCache.$placeholder );
 		};
 
@@ -384,10 +350,6 @@
 			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 
-		const insertBlockContainerPlaceholder = function() {
-			insertPlaceholderOutsideElement();
-		};
-
 		const insertDefaultPlaceholder = function() {
 			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
 
@@ -399,12 +361,43 @@
 		};
 
 		const addLogicalAttributesToPlaceholder = function() {
-			const elementContainer = currentElement.closest( '.e-con, .e-con-inner' );
-			const wrapperStyle = getComputedStyle( elementContainer );
-			const rowGap = wrapperStyle.rowGap || wrapperStyle.gap || '0px';
+			const PLACEHOLDER_HEIGHT = 10;
 
-			elementsCache.$placeholder.addClass( 'is-logical' );
-			elementsCache.$placeholder.css( '--e-row-gap', rowGap );
+			const { placeholderTarget } = placeholderContext;
+			const placeholder = elementsCache.$placeholder[ 0 ];
+
+			placeholder.classList.add( 'is-logical' );
+
+			const styles = getComputedStyle( placeholderTarget );
+
+			const paddingTop = parseFloat( styles.paddingTop ) || 0;
+			const borderTop = parseFloat( styles.borderTopWidth ) || 0;
+			const marginTop = parseFloat( styles.marginTop ) || 0;
+
+			const paddingBottom = parseFloat( styles.paddingBottom ) || 0;
+			const borderBottom = parseFloat( styles.borderBottomWidth ) || 0;
+			const marginBottom = parseFloat( styles.marginBottom ) || 0;
+
+			const paddingInlineStart = parseFloat( styles.paddingInlineStart ) || 0;
+			const borderInlineStart = parseFloat( styles.borderInlineStartWidth ) || 0;
+			const marginInlineStart = parseFloat( styles.marginInlineStart ) || 0;
+
+			const width = parseFloat( styles.width ) || '100%';
+
+			const totalTopOffset = paddingTop + borderTop + marginTop;
+			const totalBottomOffset = paddingBottom + borderBottom + marginBottom;
+			const totalInlineStartOffset = paddingInlineStart + borderInlineStart + marginInlineStart;
+
+			placeholder.style.setProperty( '--e-placeholder-width', `${ width }px` );
+			placeholder.style.setProperty( '--e-placeholder-margin-inline-start', `-${ totalInlineStartOffset }px` );
+
+			if ( 'top' === currentSide ) {
+				placeholder.style.setProperty( '--e-placeholder-margin-top', `-${ totalTopOffset }px` );
+				placeholder.style.setProperty( '--e-placeholder-margin-bottom', `${ PLACEHOLDER_HEIGHT }px` );
+			} else if ( 'bottom' === currentSide ) {
+				placeholder.style.setProperty( '--e-placeholder-margin-bottom', `-${ totalBottomOffset }px` );
+				placeholder.style.setProperty( '--e-placeholder-margin-top', `${ PLACEHOLDER_HEIGHT }px` );
+			}
 		};
 
 		var isDroppingAllowed = function( event ) {
@@ -535,25 +528,6 @@
 			}
 		};
 
-		const debounceLogicalElements = function( fn, delay ) {
-			if ( ! placeholderContext.hasLogicalWrapper ) {
-				return function( ...args ) {
-					fn.apply( this, args );
-				};
-			}
-
-			let timer = null;
-
-			return function( ...args ) {
-				clearTimeout( timer );
-				timer = setTimeout( () => fn.apply( this, args ), delay );
-			};
-		};
-
-		const debouncedOnDragLeave = debounceLogicalElements( ( event ) => {
-			onDragLeave.call( event.currentTarget, event );
-		}, 500 );
-
 		var onDragLeave = function( event ) {
 			var elementPosition = this.getBoundingClientRect();
 
@@ -593,7 +567,7 @@
 				.on( 'dragenter', settings.items, onDragEnter )
 				.on( 'dragover', settings.items, onDragOver )
 				.on( 'drop', settings.items, onDrop )
-				.on( 'dragleave drop', settings.items, debouncedOnDragLeave );
+				.on( 'dragleave drop', settings.items, onDragLeave );
 		};
 
 		var init = function() {
@@ -623,7 +597,7 @@
 				.off( 'dragenter', settings.items, onDragEnter )
 				.off( 'dragover', settings.items, onDragOver )
 				.off( 'drop', settings.items, onDrop )
-				.off( 'dragleave drop', settings.items, debouncedOnDragLeave );
+				.off( 'dragleave drop', settings.items, onDragLeave );
 		};
 
 		init();
