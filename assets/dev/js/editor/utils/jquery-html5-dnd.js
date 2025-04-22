@@ -226,9 +226,9 @@
 				case 'flexRow':
 					insertFlexRowPlaceholder();
 					break;
-				case 'childContainer':
-					insertChildContainerPlaceholder();
-					break;
+				// Case 'childContainer':
+				// 	insertChildContainerPlaceholder();
+				// 	break;
 				default:
 					insertDefaultPlaceholder();
 					break;
@@ -266,6 +266,7 @@
 				isFlexRowContainer: isFlexContainer && isRowDirection,
 				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
 				hasLogicalWrapper,
+				isAtomicContainer: !! container && ! container.classList.contains( 'e-flex' ) && ! container.classList.contains( 'e-grid' ),
 			};
 		};
 
@@ -354,14 +355,15 @@
 
 		const insertChildContainerPlaceholder = function() {
 			const { $currentElement, $parentContainer } = placeholderContext;
+			const targetElement = $parentContainer[ 0 ].querySelector( ':scope > .e-con-inner' ) || $parentContainer[ 0 ];
 
-			insertPlaceholderInsideElement( $parentContainer[ 0 ] );
+			insertPlaceholderInsideElement( targetElement );
 		};
 
 		const insertDefaultPlaceholder = function() {
-			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
+			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
 
-			if ( hasLogicalWrapper ) {
+			if ( hasLogicalWrapper || isAtomicContainer ) {
 				addLogicalAttributesToPlaceholder();
 			}
 
