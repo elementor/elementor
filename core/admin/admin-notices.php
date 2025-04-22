@@ -428,7 +428,7 @@ class Admin_Notices extends Module {
 			],
 			'button_secondary' => [
 				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'url' => 'https://go.elementor.com/sm-core-form/',
+				'url' => 'https://go.elementor.com/acc-plg-learn-more',
 				'new_tab' => true,
 				'type' => 'cta',
 			],
@@ -476,7 +476,7 @@ class Admin_Notices extends Module {
 			],
 			'button_secondary' => [
 				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'url' => 'https://go.elementor.com/acc-plg-learn-more',
+				'url' => 'https://go.elementor.com/sm-core-form/',
 				'new_tab' => true,
 				'type' => 'cta',
 			],
