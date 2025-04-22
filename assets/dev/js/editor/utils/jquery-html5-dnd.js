@@ -263,7 +263,7 @@
 				isFlexRowContainer: isFlexContainer && isRowDirection,
 				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
 				hasLogicalWrapper,
-				isAtomicContainer: !! container && ! container.classList.contains( 'e-flex' ) && ! container.classList.contains( 'e-grid' ),
+				isAtomicContainer: [ 'e-div-block', 'e-flexbox' ].includes( currentElement.dataset.element_type ),
 			};
 		};
 
