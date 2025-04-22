@@ -249,7 +249,6 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 
 		const child = elementor.channels.data.request( 'dragging:view' ).getContainer();
-
 		const result = this.moveChild( child, newIndex );
 
 		if ( ! result ) {
@@ -325,7 +324,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	 * @param {Container}     child - The child container to move.
 	 * @param {number|string} index - New index.
 	 *
-	 * @return {void}
+	 * @return {Container|boolean}
 	 */
 	moveChild( child, index ) {
 		return $e.run( 'document/elements/move', {
