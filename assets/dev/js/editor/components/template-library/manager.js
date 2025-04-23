@@ -127,22 +127,20 @@ const TemplateLibraryManager = function() {
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			moveDialog: {
-				description: '',
 				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			copyDialog: {
-				description: '',
 				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			bulkMoveDialog: {
-				description: '',
+				title: __( 'Move templates to a different location', 'elementor' ),
 				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
 			bulkCopyDialog: {
-				description: '',
+				title: __( 'Copy templates to a different location', 'elementor' ),
 				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 			},
@@ -179,18 +177,36 @@ const TemplateLibraryManager = function() {
 				title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
 			},
 			moveDialog: {
+				/* Translators: %1$s and %2$s wrap "copy the template" with underline <u> tags */
+				description: sprintf(
+					__( 'Alternatively, you can %1$scopy the template%2$s.', 'elementor' ),
+					'<u>', '</u>'
+				),
 				/* Translators: %s: Template type. */
-				title: sprintf( __( 'Move Your %s', 'elementor' ), title ),
+				title: sprintf( __( 'Move your %s to a different location', 'elementor' ), title ),
 			},
 			copyDialog: {
+				/* Translators: %1$s and %2$s wrap "move the template" with underline <u> tags */
+				description: sprintf(
+					__( 'Alternatively, you can %1$smove the template%2$s.', 'elementor' ),
+					'<u>', '</u>'
+				),
 				/* Translators: %s: Template type. */
-				title: sprintf( __( 'Copy Your %s', 'elementor' ), title ),
+				title: sprintf( __( 'Copy your %s to a different location', 'elementor' ), title ),
 			},
 			bulkMoveDialog: {
-				title: __( 'Move Your Templates', 'elementor' ),
+				/* Translators: %1$s and %2$s wrap "copy the template" with underline <u> tags */
+				description: sprintf(
+					__( 'Alternatively, you can %1$scopy the templates%2$s.', 'elementor' ),
+					'<u>', '</u>'
+				),
 			},
 			bulkCopyDialog: {
-				title: __( 'Copy Your Templates', 'elementor' ),
+				/* Translators: %1$s and %2$s wrap "move the template" with underline <u> tags */
+				description: sprintf(
+					__( 'Alternatively, you can %1$smove the templates%2$s.', 'elementor' ),
+					'<u>', '</u>'
+				),
 			},
 		};
 	};
@@ -269,7 +285,7 @@ const TemplateLibraryManager = function() {
 	this.deleteTemplate = function( templateModel, options ) {
 		this.clearLastRemovedItems();
 
-		var dialog = self.getDeleteDialog();
+		var dialog = self.getDeleteDialog( templateModel );
 
 		dialog.onConfirm = function() {
 			if ( options.onConfirm ) {
@@ -342,7 +358,7 @@ const TemplateLibraryManager = function() {
 	this.getRenameDialog = function( templateModel ) {
 		const headerMessage = sprintf(
 			// Translators: %1$s: Folder name, %2$s: Number of templates.
-			__( 'Rename "%1$s".', 'elementor' ),
+			__( 'Rename "%1$s"', 'elementor' ),
 			templateModel.get( 'title' ),
 		);
 
@@ -459,13 +475,13 @@ const TemplateLibraryManager = function() {
 	this.getCreateFolderDialog = function( folderData ) {
 		const paragraph = document.createElement( 'p' );
 		paragraph.className = 'elementor-create-folder-template-dialog__p';
-		paragraph.textContent = __( 'Save assets to reuse any site in your account.', 'elementor' );
+		paragraph.textContent = __( 'Save assets to reuse on any site in your account.', 'elementor' );
 
 		const inputArea = document.createElement( 'input' );
 		inputArea.className = 'elementor-create-folder-template-dialog__input';
 		inputArea.type = 'text';
 		inputArea.value = '';
-		inputArea.placeholder = __( 'Folder Name', 'elementor' );
+		inputArea.placeholder = __( 'Folder name', 'elementor' );
 		inputArea.autocomplete = 'off';
 
 		inputArea.addEventListener( 'change', ( event ) => {
@@ -480,7 +496,7 @@ const TemplateLibraryManager = function() {
 
 		return elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-create-new-folder-dialog',
-			headerMessage: __( 'Create New Folder', 'elementor' ),
+			headerMessage: __( 'Create a new folder', 'elementor' ),
 			message: fragment,
 			strings: {
 				confirm: __( 'Create', 'elementor' ),
@@ -521,12 +537,12 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.getDeleteFolderDialog = function( templateModel, data ) {
-		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+		let deleteFolderDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-delete-dialog',
-			headerMessage: __( 'Delete Folder', 'elementor' ),
+			headerMessage: __( 'Delete this folder?', 'elementor' ),
 			message: sprintf(
 				// Translators: %1$s: Folder name, %2$s: Number of templates.
-				__( 'Are you sure you want to delete "%1$s" folder with all %2$d templates?', 'elementor' ),
+				__( 'This will permanently delete %1$s that contains %2$d templates?', 'elementor' ),
 				templateModel.get( 'title' ),
 				data.total,
 			),
@@ -534,21 +550,29 @@ const TemplateLibraryManager = function() {
 				confirm: __( 'Delete', 'elementor' ),
 			},
 		} );
+
+		deleteFolderDialog.getElements( 'ok' ).addClass( 'e-danger color-white' );
+
+		return deleteFolderDialog;
 	};
 
-	this.getBulkDeleteDialog = function( ) {
-		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+	this.getBulkDeleteDialog = function() {
+		let bulkDeleteDialog =  elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-bulk-delete-dialog',
-			headerMessage: __( 'Delete Selected', 'elementor' ),
+			headerMessage: __( 'Delete items?', 'elementor' ),
 			message: sprintf(
 				// Translators: %1$s: Number of selected items.
-				__( 'Are you sure you want to delete "%1$s" selected items?', 'elementor' ),
+				__( 'This will permanently remove %1$s selected items.', 'elementor' ),
 				bulkSelectedItems.size,
 			),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
 			},
 		} );
+
+		bulkDeleteDialog.getElements( 'ok' ).addClass( 'e-danger color-white' );
+
+		return bulkDeleteDialog;
 	};
 
 	this.sendDeleteRequest = function( templateModel, options ) {
@@ -658,16 +682,22 @@ const TemplateLibraryManager = function() {
 		return elementorCommon.ajax.addRequest( 'mark_template_as_favorite', options );
 	};
 
-	this.getDeleteDialog = function() {
+	this.getDeleteDialog = function( templateModel ) {
 		if ( ! deleteDialog ) {
 			deleteDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 				id: 'elementor-template-library-delete-dialog',
-				headerMessage: __( 'Delete Template', 'elementor' ),
-				message: __( 'Are you sure you want to delete this template?', 'elementor' ),
+				headerMessage: __( 'Delete this template?', 'elementor' ),
+				message: sprintf(
+					// Translators: %1$s: Template name.
+					__( 'This will permanently remove %1$s.', 'elementor' ),
+					templateModel.get( 'title' ),
+				),
 				strings: {
 					confirm: __( 'Delete', 'elementor' ),
 				},
 			} );
+
+			deleteDialog.getElements( 'ok' ).addClass( 'e-danger color-white' );
 		}
 
 		return deleteDialog;

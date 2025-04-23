@@ -333,6 +333,10 @@ class Cloud_Library extends Library {
 	 * @return array|\WP_Error
 	 */
 	public function get_quota() {
+		// return [
+		// 	'currentUsage' => 0,
+		// 	'threshold' => 0,
+		// ];
 		return $this->http_request( 'GET', 'quota', [], [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
