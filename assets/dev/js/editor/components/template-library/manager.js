@@ -361,6 +361,9 @@ const TemplateLibraryManager = function() {
 				templateModel.set( 'title', originalTitle );
 			},
 			onShow: () => {
+				elementor.templates.eventManager.sendPageViewEvent( {
+					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.renameDialog,
+				} );
 				$inputArea.trigger( 'focus' );
 			},
 		} );
@@ -480,6 +483,10 @@ const TemplateLibraryManager = function() {
 			},
 			onShow: () => {
 				inputArea.focus();
+
+				elementor.templates.eventManager.sendPageViewEvent( {
+					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.newFolderModal,
+				} );
 			},
 		} );
 	};
@@ -523,6 +530,11 @@ const TemplateLibraryManager = function() {
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
 			},
+			onShow: () => {
+				elementor.templates.eventManager.sendPageViewEvent( {
+					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.deleteFolderDialog,
+				} );
+			},
 		} );
 	};
 
@@ -543,16 +555,26 @@ const TemplateLibraryManager = function() {
 
 	this.sendDeleteRequest = function( templateModel, options ) {
 		const templateId = templateModel.get( 'template_id' );
+		const source = templateModel.get( 'source' );
 
 		elementorCommon.ajax.addRequest( 'delete_template', {
 			data: {
-				source: templateModel.get( 'source' ),
+				source,
 				template_id: templateId,
 			},
 			success: ( response ) => {
 				self.addLastRemovedItems( [ templateId ] );
 				templatesCollection.remove( templateModel, { silent: true } );
 				options.onSuccess?.( response );
+
+				elementor.templates.eventManager.sendPageViewEvent( {
+					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.deleteFolderDialog,
+				} );
+
+				elementor.templates.eventManager.sendItemDeletedEvent( {
+					library_type: source,
+					item_type: 'folder',
+				} );
 
 				this.triggerQuotaUpdate();
 			},
@@ -713,6 +735,11 @@ const TemplateLibraryManager = function() {
 				message: __( 'Are you sure you want to delete this template?', 'elementor' ),
 				strings: {
 					confirm: __( 'Delete', 'elementor' ),
+				},
+				onShow: () => {
+					elementor.templates.eventManager.sendPageViewEvent( {
+						location: elementor.editorEvents.config.secondaryLocations.templateLibrary.deleteDialog,
+					} );
 				},
 			} );
 		}

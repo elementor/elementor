@@ -54,6 +54,10 @@ module.exports = Marionette.ItemView.extend( {
 		this.handleElementorConnect();
 
 		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.add( 'elementor-hidden' );
+
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTabUpgrade,
+		} );
 	},
 
 	updateTemplateMarkup() {

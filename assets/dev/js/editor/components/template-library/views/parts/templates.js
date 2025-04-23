@@ -413,7 +413,20 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 
 		if ( 'cloud' === activeSource ) {
+			const isFolderView = elementor.templates.getFilter( 'parentId' );
+			const location = isFolderView
+				? elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTabFolder
+				: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab;
+
+			elementor.templates.eventManager.sendPageViewEvent( { location } );
+
 			this.handleQuotaBar();
+		}
+
+		if ( 'local' === activeSource ) {
+			elementor.templates.eventManager.sendPageViewEvent( {
+				location: elementor.editorEvents.config.secondaryLocations.templateLibrary.siteTab,
+			} );
 		}
 	},
 

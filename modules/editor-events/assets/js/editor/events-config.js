@@ -12,7 +12,9 @@ const eventsConfig = {
 		widgetPanel: 'Widget Panel',
 		topBar: 'Top Bar',
 		elementorEditor: 'Elementor Editor',
-		templatesLibrary: 'Templates Library',
+		templatesLibrary: {
+			library: 'Templates Library',
+		},
 	},
 
 	secondaryLocations: {
@@ -46,13 +48,28 @@ const eventsConfig = {
 		userPreferences: 'User Preferences',
 		contextMenu: 'Context Menu',
 		templateLibrary: {
-			saveModal: 'Save Modal',
+			saveModal: 'Save to Modal',
+			moveModal: 'Move to Modal',
+			bulkMoveModal: 'Bulk Move to Modal',
+			copyModal: 'Copy to Modal',
+			bulkCopyModal: 'Bulk Copy to Modal',
+			saveModalSelectFolder: 'Save to Modal - select folder',
+			saveModalSelectConnect: 'Save to Modal - select folder',
+			saveModalSelectUpgrade: 'Save to Modal - upgrade',
 			importModal: 'Import Modal',
+			newFolderModal: 'New Folder Modal',
 			deleteDialog: 'Delete Dialog',
+			deleteFolderDialog: 'Delete Folder Dialog',
 			renameDialog: 'Rename Dialog',
 			createFolderDialog: 'Create Folder Dialog',
 			applySettingsDialog: 'Apply Settings Dialog',
 			cloudTab: 'Cloud Tab',
+			siteTab: 'Site Tab',
+			cloudTabFolder: 'Cloud Tab - Folder',
+			cloudTabConnect: 'Cloud Tab - Connect',
+			cloudTabUpgrade: 'Cloud Tab - Upgrade',
+			morePopup: 'Context Menu',
+			move
 		},
 	},
 

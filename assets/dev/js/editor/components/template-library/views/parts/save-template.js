@@ -91,6 +91,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			this.handleCloudLibraryPromo( 'max-capacity' );
 		}
 
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementor.editorEvents.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
+		} );
+
 		if ( ! elementor.config.library_connect.is_connected ) {
 			this.handleElementorConnect();
 		}
