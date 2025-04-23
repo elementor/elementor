@@ -43,10 +43,10 @@ const TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 				button: '',
 			},
 			cloudEmpty: {
-				title: __( 'Haven’t saved templates to cloud library yet?', 'elementor' ),
-				message: __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
+				title: __( 'No templates saved just yet', 'elementor' ),
+				message: __( 'Once you save a template, it’ll show up here, ready for reuse across all of your Elementor sites—no extra work needed.', 'elementor' ),
 				icon: this.getCloudIcon(),
-				button: '<a class="elementor-button e-primary" href="" target="_blank">call to action</a>',
+				button: `<a class="e-back-to-editor">${ __( 'Back to editor', 'elementor' ) }</a>`,
 			},
 			cloudFolderEmpty: {
 				title: __( 'Nothing to see here… yet', 'elementor' ),

@@ -91,7 +91,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		this.ui.quotaWarning.text( sprintf( message, quotaUsage ) );
+		this.ui.quotaWarning.html( sprintf( message, quotaUsage ) );
 		this.ui.quotaWarning.show();
 	},
 
