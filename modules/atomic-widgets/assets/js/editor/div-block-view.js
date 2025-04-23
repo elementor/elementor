@@ -224,7 +224,7 @@ const DivBlockView = BaseElementView.extend( {
 			onDropping: ( side, event ) => {
 				event.stopPropagation();
 
-				// Triggering drag end manually, since it won't fired above iframe
+				// Triggering the drag end manually, since it won't fire above the iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
@@ -254,9 +254,10 @@ const DivBlockView = BaseElementView.extend( {
 				}
 
 				const elements = $elements.toArray();
+
 				const selfIndex = elements.indexOf( draggedElement );
 				const targetIndex = elements.indexOf( event.currentTarget );
-				const finalIndex = this.getDropIndex( containerSelector, side, targetIndex, selfIndex >= 0 ? selfIndex : null );
+				const dropIndex = this.getDropIndex( containerSelector, side, targetIndex, selfIndex );
 
 				// Reset the dragged element cache.
 				elementor.channels.editor.reply( 'element:dragged', null );
@@ -265,7 +266,7 @@ const DivBlockView = BaseElementView.extend( {
 					container: draggedView.getContainer(),
 					target: this.getContainer(),
 					options: {
-						at: finalIndex,
+						at: dropIndex,
 					},
 				} );
 			},
@@ -318,21 +319,19 @@ const DivBlockView = BaseElementView.extend( {
 
 		const isRtl = elementorCommon.config.isRTL;
 
-		const isReverse = Boolean( isFlexReverse ^ isRtl );
-
-		console.log( 'drag: ', side, index, selfIndex, isReverse === this.draggingOnBottomOrRightSide( side ) );
+		const isReverse = isFlexReverse !== isRtl; 	// If not flex reversed + RTL, or if it is flex reversed + LTR
 
 		if ( ( isReverse === this.draggingOnBottomOrRightSide( side ) ) ) {
-			// The element should be placed before the current target
+			// The element should be placed BEFORE the current target
 			// if is reversed + side is bottom/right OR not is reversed + side is top/left
-			if ( null === selfIndex || selfIndex >= index - 1 ) {
+			if ( -1 === selfIndex || selfIndex >= index - 1 ) {
 				return index;
 			}
 
 			return index > 0 ? index - 1 : 0;
 		}
 
-		if ( selfIndex !== null && selfIndex < index ) {
+		if ( 0 <= selfIndex && selfIndex < index ) {
 			return index;
 		}
 
