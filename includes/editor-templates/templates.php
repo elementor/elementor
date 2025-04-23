@@ -116,7 +116,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
 							<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 							<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
-							<span class="new-badge">New</span>
+							<#
+								const tabIcon = elementor.templates.hasCloudLibraryQuota()
+									? '<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>' 
+									: '<span class="new-badge"><i class="eicon-upgrade-crown" style="margin-inline-end: 0;"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>';
+
+								print( tabIcon );
+							#>
 						</div>
 					</div>
 				</div>
@@ -168,7 +174,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="quota-progress-container">
 					<span class="quota-progress-info">
 						<?php echo esc_html__( 'Usage', 'elementor' ); ?>
-						<i class="eicon-info-circle-o tooltip-target" aria-hidden="true" data-tooltip="Back"></i>
 					</span>
 					<div class="progress-bar-container">
 						<div class="quota-progress-bar quota-progress-bar-normal">
@@ -484,7 +489,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="source-selections">
 				<div class="source-selections-input cloud">
 					<input type="checkbox" id="cloud" name="cloud" value="cloud">
-					<label for="cloud"> <?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label> <i class="eicon-info upgrade-tooltip" aria-hidden="true"></i> /  <i class="eicon-ellipsis-h"></i>
+					<label for="cloud"> <?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label> <span class="divider">/</span>  <i class="eicon-ellipsis-h"></i>
 					<div class="cloud-folder-selection-dropdown">
 						<div class="cloud-folder-selection-dropdown-list"></div>
 					</div>
@@ -493,13 +498,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<i class="eicon-editor-close" aria-hidden="true"></i>
 					</span>
 					<# if ( elementor.config.library_connect.is_connected ) { #>
+						<#
+							const goLink = elementor.templates.hasCloudLibraryQuota()
+								? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-badge' 
+								: 'https://go.elementor.com/go-pro-cloud-templates-save-to-free-badge/';
+						#>
 					<span class="upgrade-badge">
-						<a href="" target="_blank">
+						<a href="{{{ goLink }}}" target="_blank">
 							<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
 						</a>
 					</span>
+					<i class="eicon-info upgrade-tooltip" aria-hidden="true"></i>
 					<# } else { #>
 					<span class="connect-badge">
+						<span class="connect-divider">|</span>
 						<a id="elementor-template-library-connect__badge" href="{{{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }}}">
 							<?php echo esc_html__( 'Connect', 'elementor' ); ?>
 						</a>
@@ -519,7 +531,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php printf(
 					/* translators: %s is the "Upgrade now" link */
 						esc_html__( 'To get more space %s', 'elementor' ),
-						'<a href="#">' . esc_html__( 'Upgrade now', 'elementor' ) . '</a>'
+						'<a href="https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-notice">' . esc_html__( 'Upgrade now', 'elementor' ) . '</a>'
 					); ?>
 				</p>
 			</div>
@@ -533,8 +545,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# } #>
 	</form>
 	<div class="elementor-template-library-blank-footer">
-		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
+		<?php echo esc_html__( 'Learn more about the', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Template Library', 'elementor' ); ?></a>
 	</div>
 </script>
 
@@ -549,8 +561,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<label for="elementor-template-library-import-form-input" id="elementor-template-library-import-form-label" class="elementor-button e-primary"><?php echo esc_html__( 'Select File', 'elementor' ); ?></label>
 		<input id="elementor-template-library-import-form-input" type="file" name="file" accept=".json,.zip" required/>
 		<div class="elementor-template-library-blank-footer">
-			<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
-			<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
+			<?php echo esc_html__( 'Learn more about the', 'elementor' ); ?>
+			<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Template Library', 'elementor' ); ?></a>
 		</div>
 	</form>
 </script>
@@ -563,8 +575,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-cloud-empty__button"></div>
 
 	<div class="elementor-template-library-blank-footer">
-		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
+		<?php echo esc_html__( 'Learn more about the', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Template Library', 'elementor' ); ?></a>
 	</div>
 </script>
 
@@ -617,7 +629,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
 					<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 					<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
-					<span class="new-badge">New</span>
+					<#
+						const tabIcon = elementor.templates.hasCloudLibraryQuota()
+							? '<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>' 
+							: '<span class="new-badge"><i class="eicon-upgrade-crown" style="margin-inline-end: 0;"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>';
+
+						print( tabIcon );
+					#>
 				</div>
 			</div>
 		</div>
