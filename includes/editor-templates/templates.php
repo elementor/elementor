@@ -489,7 +489,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="source-selections">
 				<div class="source-selections-input cloud">
 					<input type="checkbox" id="cloud" name="cloud" value="cloud">
-					<label for="cloud"> <?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label> <span class="divider">/</span>  <i class="eicon-ellipsis-h"></i>
+					<label for="cloud"> <?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label> <span class="divider">/</span>  <div class="ellipsis-container"><i class="eicon-ellipsis-h"></i></div>
 					<div class="cloud-folder-selection-dropdown">
 						<div class="cloud-folder-selection-dropdown-list"></div>
 					</div>
@@ -539,7 +539,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<span class="elementor-state-icon">
 					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 				</span>
-				<?php echo esc_html__( 'Save', 'elementor' ); ?>
+				{{{ saveBtnText }}}
 			</button>
 		</div>
 		<# } #>
