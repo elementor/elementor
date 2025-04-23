@@ -42,7 +42,7 @@ export default class Component extends ComponentModalBase {
 				},
 			},
 			'templates/my-templates': {
-				title: __( 'My Templates', 'elementor' ),
+				title: __( 'Templates', 'elementor' ),
 				getFilter: () => ( {
 					source: elementor.templates.getSourceSelection() ?? 'local',
 					view: elementor.templates.getViewSelection() ?? 'list',

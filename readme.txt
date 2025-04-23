@@ -348,6 +348,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.28.4 - 2025-04-22 =
+
+* Tweak: Added Site Planner as an option in the onboarding wizard
+* Tweak: Changed the default theme to Hello Biz in the onboarding wizard
+* Tweak: Added inline editing support for controls using multiple repeaters
+
 = 3.28.3 - 2025-04-01 =
 
 * Tweak: Added Isolate object tool to Elementor AI image editing capabilities
