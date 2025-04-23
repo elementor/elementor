@@ -43,8 +43,8 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		return new \WP_Query( $args );
 	}
 
-	public function get_option( $option_key ) {
-		return get_option( $option_key );
+	public function get_option( $option_key, $default_value = false ) {
+		return get_option( $option_key, $default_value );
 	}
 
 	public function update_option( $option_key, $option_value ): void {
@@ -85,6 +85,18 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 
 	public function get_post_status( $post_id ): string {
 		return get_post_status( $post_id );
+	}
+
+	public function add_filter( string $hook_name, callable $callback, int $priority = 10, int $accepted_args = 1 ): bool {
+		return add_filter( $hook_name, $callback, $priority, $accepted_args );
+	}
+
+	public function add_action( string $hook_name, callable $callback, int $priority = 10, int $accepted_args = 1 ): bool {
+		return add_action( $hook_name, $callback, $priority, $accepted_args );
+	}
+
+	public function apply_filters( string $hook_name, $value, ...$args ) {
+		return apply_filters( $hook_name, $value, ...$args );
 	}
 
 	public function get_posts( $args ): array {

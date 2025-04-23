@@ -1,0 +1,1 @@
+.test-bg-overlay{background:linear-gradient(var(--my-global-var), var(--my-global-var)),linear-gradient(blue, blue);}

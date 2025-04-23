@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
+use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
 
@@ -31,7 +32,7 @@ class Module extends BaseModule {
 	}
 
 	private function hooks() {
-		return new Hooks();
+		return new Hooks( new Wordpress_Adapter() );
 	}
 
 	public function __construct() {
@@ -41,7 +42,12 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$this->hooks()->register_styles_transformers();
+		$this->hooks()
+			->register_styles_transformers()
+			->filter_for_style_schema()
+			->register();
+
+		( new Cache( new Wordpress_Adapter() ) )->clear_if_expired();
 	}
 
 	private function is_experiment_active(): bool {
