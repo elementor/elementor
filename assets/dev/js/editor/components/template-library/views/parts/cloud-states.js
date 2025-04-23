@@ -52,7 +52,7 @@ module.exports = Marionette.ItemView.extend( {
 
 		this.handleElementorConnect();
 
-		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.add( 'elementor-hidden' );
+		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.add( 'e-hidden-disabled' );
 	},
 
 	updateTemplateMarkup() {
@@ -88,6 +88,6 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onDestroy() {
-		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.remove( 'elementor-hidden' );
+		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.remove( 'e-hidden-disabled' );
 	},
 } );
