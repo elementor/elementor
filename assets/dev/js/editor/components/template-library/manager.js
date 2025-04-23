@@ -668,9 +668,9 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.sendOnSavedTemplateFailedEvent = ( formData ) => {
-		if ( [ SAVE_CONTEXTS.BULK_MOVE, SAVE_CONTEXTS.BULK_COPY ].includes( data.save_context ) ) {
+		if ( [ SAVE_CONTEXTS.BULK_MOVE, SAVE_CONTEXTS.BULK_COPY ].includes( formData.save_context ) ) {
 			self.eventManager.sendBulkActionsFailedEvent( {
-				bulk_action: SAVE_CONTEXTS.BULK_MOVE === data.save_context ? 'move' : 'copy',
+				bulk_action: SAVE_CONTEXTS.BULK_MOVE === formData.save_context ? 'move' : 'copy',
 				library_type: formData.source,
 				bulk_count: formData.from_template_id.length,
 				template_origin: formData.from_source,
