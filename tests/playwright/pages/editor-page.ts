@@ -164,17 +164,22 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Add a widget by `widgetType`.
 	 *
-	 * @param {string}  widgetType          - Widget type.
-	 * @param {string}  container           - Optional. Container to create the element in.
-	 * @param {boolean} isContainerASection - Optional. Whether the container is a section.
+	 * @param {Object} props                 - Widget properties
+	 * @param {string} props.widgetType      - Widget type
+	 * @param {string} [props.container]     - Optional. Container to create the element in
+	 * @param {boolean} [props.isContainerASection] - Optional. Whether the container is a section
 	 *
-	 * @return {Promise<string>} The widget ID.
+	 * @return {Promise<string>} The widget ID
 	 */
-	async addWidget( widgetType: string, container: string = null, isContainerASection: boolean = false ): Promise<string> {
-		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
+	async addWidget( props: { widgetType: string, container?: string | null, isContainerASection?: boolean } ): Promise<string> {
+		const widgetId = await this.addElement( { widgetType: props.widgetType, elType: 'widget' }, props.container, props.isContainerASection );
 		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
 
 		return widgetId;
+	}
+
+	async getWidget( widgetId: string ): Promise<Locator> {
+		return this.getPreviewFrame().locator( `[data-id='${ widgetId }']` );
 	}
 
 	/**
@@ -733,7 +738,7 @@ export default class EditorPage extends BasePage {
 	async hideEditorElements(): Promise<void> {
 		const css = '<style>.elementor-element-overlay,.elementor-empty-view{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}</style>';
 
-		await this.addWidget( 'html' );
+		await this.addWidget( { widgetType: 'html' } );
 		await this.setTextareaControlValue( 'type-code', css );
 	}
 
