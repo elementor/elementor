@@ -258,7 +258,7 @@ const TemplateLibraryManager = function() {
 
 			const templateId = templateModel.get( 'template_id' );
 			const source = templateModel.get( 'source' );
-			const itemType = this.model.get( 'subType' )
+			const itemType = this.model.get( 'subType' );
 
 			elementorCommon.ajax.addRequest( 'delete_template', {
 				data: {
@@ -656,11 +656,11 @@ const TemplateLibraryManager = function() {
 				template_origin: formData.from_source,
 				template_destination: formData.source,
 			} );
-		} else if ( [ SAVE_CONTEXTS.BULK_MOVE, SAVE_CONTEXTS.BULK_COPY ].includes( data.save_context ) ) {
-			self.eventManager.sendBulkActionsSuccessEvent( {
-				bulk_action: SAVE_CONTEXTS.BULK_MOVE === data.save_context ? 'move' : 'copy',
-				library_type: data.source,
-				bulk_count: data.from_template_id.length,
+		} else if ( [ SAVE_CONTEXTS.BULK_MOVE, SAVE_CONTEXTS.BULK_COPY ].includes( formData.save_context ) ) {
+			return self.eventManager.sendBulkActionsSuccessEvent( {
+				bulk_action: SAVE_CONTEXTS.BULK_MOVE === formData.save_context ? 'move' : 'copy',
+				library_type: formData.source,
+				bulk_count: formData.from_template_id.length,
 				template_origin: formData.from_source,
 				template_destination: formData.source,
 			} );
