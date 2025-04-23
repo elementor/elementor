@@ -739,9 +739,9 @@ class Admin_Notices extends Module {
 		set_transient( sanitize_key( $_GET['plg_campaign_name'] ), $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 
-	public static function add_plg_campaign_data( $url, $campaign_data ) {
+	private static function add_plg_campaign_data( $url, $campaign_data ) {
 		
-		foreach ( [ 'name', 'campaign', 'source', 'medium'] as $key ) {
+		foreach ( [ 'name', 'campaign' ] as $key ) {
 			if ( empty( $campaign_data[ $key ] ) ) {
 				return $url;
 			}
@@ -750,8 +750,8 @@ class Admin_Notices extends Module {
 		return add_query_arg( [
 			'plg_campaign_name' => $campaign_data['name'],
 			'plg_campaign' => $campaign_data['campaign'],
-			'plg_source' => $campaign_data['source'],
-			'plg_medium' => $campaign_data['medium'],
+			'plg_source' => empty( $campaign_data['source'] ) ? '' : $campaign_data['source'],
+			'plg_medium' => empty( $campaign_data['medium'] ) ? '' : $campaign_data['medium'],
 			'plg_campaign_nonce' => wp_create_nonce( $campaign_data['name'] ),
 		], $url );
 	}
