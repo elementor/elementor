@@ -177,8 +177,8 @@ const TemplateLibraryManager = function() {
 				title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
 			},
 			moveDialog: {
-				/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 				description: sprintf(
+					/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 					__( 'Alternatively, you can %1$scopy the template%2$s.', 'elementor' ),
 					'<u>', '</u>',
 				),
@@ -186,8 +186,8 @@ const TemplateLibraryManager = function() {
 				title: sprintf( __( 'Move your %s to a different location', 'elementor' ), title ),
 			},
 			copyDialog: {
-				/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 				description: sprintf(
+					/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 					__( 'Alternatively, you can %1$smove the template%2$s.', 'elementor' ),
 					'<u>', '</u>',
 				),
@@ -195,15 +195,15 @@ const TemplateLibraryManager = function() {
 				title: sprintf( __( 'Copy your %s to a different location', 'elementor' ), title ),
 			},
 			bulkMoveDialog: {
-				/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 				description: sprintf(
+					/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 					__( 'Alternatively, you can %1$scopy the templates%2$s.', 'elementor' ),
 					'<u>', '</u>',
 				),
 			},
 			bulkCopyDialog: {
-				/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 				description: sprintf(
+					/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 					__( 'Alternatively, you can %1$smove the templates%2$s.', 'elementor' ),
 					'<u>', '</u>',
 				),
