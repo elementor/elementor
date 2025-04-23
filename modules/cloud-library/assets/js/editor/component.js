@@ -84,7 +84,8 @@ export default class Component extends $e.modules.ComponentBase {
 		return elementor.templates.eventManager.sendQuotaBarCapacityEvent( {
 			quota_usage_alert: quotaUsageAlert,
 		} );
-	};
+	}
+
 	defaultHooks() {
 		return this.importHooks( hooks );
 	}
