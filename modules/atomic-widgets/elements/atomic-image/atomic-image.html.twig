@@ -1,15 +1,17 @@
-{% if settings.link.href %}
-	<a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}">
-{% endif %}
-<img class="{{ settings.classes | join(' ') }}"
-	{% for attr, value in settings.image %}
-		{% if attr == 'src' %}
-			src="{{ value | e('full_url') }}"
-		{% else %}
-			{{ attr | e('html_attr') }}="{{ value }}"
-		{% endif %}
-	{% endfor %}
-/>
-{% if settings.link.href %}
-	</a>
+{% if settings.image.src is not empty %}
+	{% if settings.link.href %}
+		<a href="{{ settings.link.href | e('full_url') }}" class="{{ base_styles['link-base'] }}" target="{{ settings.link.target }}">
+	{% endif %}
+	<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}"
+		{% for attr, value in settings.image %}
+			{% if attr == 'src' %}
+				src="{{ value | e('full_url') }}"
+			{% else %}
+				{{ attr | e('html_attr') }}="{{ value }}"
+			{% endif %}
+		{% endfor %}
+	/>
+	{% if settings.link.href %}
+		</a>
+	{% endif %}
 {% endif %}

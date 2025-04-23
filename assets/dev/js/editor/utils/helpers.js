@@ -581,7 +581,7 @@ module.exports = {
 
 		setTimeout( function() {
 			// Sometimes element removed during the timeout.
-			if ( ! $element[ 0 ].isConnected ) {
+			if ( ! $element[ 0 ]?.isConnected ) {
 				return;
 			}
 
@@ -770,5 +770,11 @@ module.exports = {
 		const { type: elType = null } = elementor.getContainer( elementId ) || {};
 
 		return this.getAtomicElementTypes().includes( elType );
+	},
+
+	isAtomicWidget( model ) {
+		const elementType = 'widget' === model.get( 'elType' ) ? model.get( 'widgetType' ) : model.get( 'elType' );
+
+		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
 	},
 };

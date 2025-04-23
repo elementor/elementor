@@ -339,13 +339,24 @@ class Screenshot extends elementorModules.ViewModule {
 
 	/**
 	 * Mark this post screenshot as failed.
+	 * @param {Error} e
 	 */
-	markAsFailed() {
+	markAsFailed( e ) {
 		return new Promise( ( resolve, reject ) => {
-			elementorCommon.ajax.addRequest( 'screenshot_failed', {
-				data: {
-					post_id: this.getSettings( 'post_id' ),
-				},
+			const templateId = this.getSettings( 'template_id' );
+			const postId = this.getSettings( 'post_id' );
+
+			const route = templateId ? 'template_screenshot_failed' : 'screenshot_failed';
+
+			const data = templateId ? {
+				template_id: templateId,
+				error: e.message || e.toString(),
+			} : {
+				post_id: postId,
+			};
+
+			elementorCommon.ajax.addRequest( route, {
+				data,
 				success: () => {
 					this.log( `Marked as failed.` );
 
@@ -385,7 +396,7 @@ class Screenshot extends elementorModules.ViewModule {
 	screenshotFailed( e ) {
 		this.log( e, null );
 
-		this.markAsFailed()
+		this.markAsFailed( e )
 			.then( () => this.screenshotDone( false ) );
 	}
 

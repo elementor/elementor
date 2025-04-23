@@ -67,18 +67,6 @@ class Test_Style_Schema extends TestCase {
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
 
-	private function stub_array_prop_type() {
-		return new class() extends Array_Prop_Type {
-			protected function define_item_type(): Prop_Type {
-				return String_Prop_Type::make();
-			}
-
-			public static function get_key(): string {
-				return 'stub-array-prop-type';
-			}
-		};
-	}
-
 	public function test_augment__will_convert_item_of_array_prop_type() {
 		// Arrange.
 		$style_def = [
@@ -135,13 +123,13 @@ class Test_Style_Schema extends TestCase {
 
 		// Assert.
 		$expected = [
-			'bg' => $this->stub_background_prop_type(),
+			'bg' => $this->expected_background_prop_type(),
 		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
 
-	private function stub_background_prop_type() {
+	private function expected_background_prop_type() {
 		$bg_prop_type = Background_Prop_Type::make();
 
 		$shape = $bg_prop_type->get_shape();
@@ -183,5 +171,17 @@ class Test_Style_Schema extends TestCase {
 		$shape['background-overlay']->set_item_type($overlay_item);
 
 		return $bg_prop_type->set_shape( $shape );
+	}
+
+	private function stub_array_prop_type() {
+		return new class() extends Array_Prop_Type {
+			protected function define_item_type(): Prop_Type {
+				return String_Prop_Type::make();
+			}
+
+			public static function get_key(): string {
+				return 'stub-array-prop-type';
+			}
+		};
 	}
 }

@@ -26,8 +26,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		localInput: '.source-selections-input.local',
 		cloudInput: '.source-selections-input.cloud',
 		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
-		upgradeBadge: '.source-selections-input.cloud .upgrade-badge',
 		infoIcon: '.source-selections-input.cloud .eicon-info',
+		connect: '#elementor-template-library-connect__badge',
+		connectBadge: '.source-selections-input.cloud .connect-badge',
+		cloudFormInputs: '.cloud-library-form-inputs',
 	},
 
 	events: {
@@ -36,39 +38,39 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
-		'change @ui.sourceSelectionCheckboxes': 'maybeAllowOnlyOneCheckboxToBeChecked',
-		'click @ui.infoIcon': 'showInfoTip',
+		'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
+		'mouseenter @ui.infoIcon': 'showInfoTip',
+		'mouseenter @ui.connect': 'showConnectInfoTip',
+		'input @ui.templateNameInput': 'onTemplateNameInputChange',
 	},
 
 	onRender() {
-		if ( undefined === elementorAppConfig[ 'cloud-library' ].quota && this.templateHelpers()?.canSaveToCloud ) {
+		if ( 'undefined' === typeof elementorAppConfig[ 'cloud-library' ]?.quota && this.templateHelpers()?.canSaveToCloud ) {
 			elementor.templates.layout.showLoadingView();
 
-			elementorCommon.ajax.addRequest( 'get_quota', {
-				data: {
-					source: 'cloud',
-				},
-				success: ( data ) => {
+			$e.components.get( 'cloud-library' ).utils.setQuotaConfig()
+				.then( ( data ) => {
 					elementorAppConfig[ 'cloud-library' ].quota = data;
-					this.handleOnRender();
-					elementor.templates.layout.hideLoadingView();
-				},
-				error: () => {
+				} )
+				.catch( () => {
 					delete elementorAppConfig[ 'cloud-library' ].quota;
+				} )
+				.finally( () => {
 					this.handleOnRender();
 					elementor.templates.layout.hideLoadingView();
-				},
-			} );
+				} );
 		} else {
 			this.handleOnRender();
 		}
 	},
 
 	handleOnRender() {
+		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
+
 		const context = this.getOption( 'context' );
 
 		if ( SAVE_CONTEXTS.SAVE === context && elementor.templates.hasCloudLibraryQuota() ) {
-			this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
+			this.handleSaveAction();
 		}
 
 		if ( SAVE_CONTEXTS.MOVE === context || SAVE_CONTEXTS.COPY === context ) {
@@ -82,16 +84,53 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( ! elementor.templates.hasCloudLibraryQuota() ) {
 			this.handleCloudLibraryPromo();
 		}
+
+		if ( this.cloudMaxCapacityReached() ) {
+			this.handleCloudLibraryPromo( 'max-capacity' );
+		}
+
+		if ( ! elementor.config.library_connect.is_connected ) {
+			this.handleElementorConnect();
+		}
+	},
+
+	cloudMaxCapacityReached() {
+		return 'undefined' !== typeof elementorAppConfig[ 'cloud-library' ]?.quota &&
+			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold &&
+			elementorAppConfig[ 'cloud-library' ].quota?.currentUsage >= elementorAppConfig[ 'cloud-library' ].quota?.threshold;
+	},
+
+	handleSaveAction() {
+		this.maybeEnableSaveButton();
 	},
 
 	handleSingleActionContextUiState() {
-		this.ui.templateNameInput.val( this.model.get( 'title' ) );
+		const title = this.model.get( 'title' );
+
+		this.ui.templateNameInput.val( title );
+
 		this.handleContextUiStateChecboxes();
+
+		this.maybeEnableSaveButton();
+	},
+
+	maybeEnableSaveButton() {
+		if ( ! this.templateHelpers()?.canSaveToCloud ) {
+			return;
+		}
+
+		const isAnyChecked = this.ui.sourceSelectionCheckboxes.is( ':checked' ),
+			isTitleFilled = this.ui.templateNameInput.is( ':visible' )
+				? 0 !== this.ui.templateNameInput.val().trim().length
+				: true;
+
+		this.updateSubmitButtonState( ! isAnyChecked || ! isTitleFilled );
 	},
 
 	handleBulkActionContextUiState() {
 		this.ui.templateNameInput.remove();
 		this.handleContextUiStateChecboxes();
+		this.maybeEnableSaveButton();
 	},
 
 	handleContextUiStateChecboxes() {
@@ -103,7 +142,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
-	handleCloudLibraryPromo() {
+	handleCloudLibraryPromo( stateClass = 'promotion' ) {
 		if ( SAVE_CONTEXTS.SAVE === this.getOption( 'context' ) ) {
 			this.$( '.source-selections-input #local' ).prop( 'checked', true );
 		} else {
@@ -111,10 +150,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 
 		this.$( '.source-selections-input #cloud' ).prop( 'checked', false );
-		this.$( '.source-selections-input #cloud, .source-selections-input.cloud label' ).css( 'pointer-events', 'none' );
 
-		this.ui.ellipsisIcon.css( 'pointer-events', 'none' );
-		this.ui.upgradeBadge.css( 'display', 'inline' );
+		this.ui.cloudFormInputs.addClass( stateClass );
 	},
 
 	getSaveType() {
@@ -147,6 +184,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		var formData = this.ui.form.elementorSerializeObject(),
 			JSONParams = { remove: [ 'default' ] };
 
+		formData.parentTitle = formData.parentId ? this.ui.selectedFolderText.html() : '';
+
 		formData.content = this.model ? [ this.model.toJSON( JSONParams ) ] : elementor.elements.toJSON( JSONParams );
 
 		this.updateSourceSelections( formData );
@@ -163,6 +202,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.updateToastConfig( formData );
 
+		this.updateSourceState( formData );
+
 		elementor.templates.saveTemplate( this.getSaveType(), formData );
 	},
 
@@ -178,7 +219,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
 
-	showEmptySourceErrorDialog() {
+	showEmptySourceErrorDialog( ) {
 		elementorCommon.dialogsManager.createWidget( 'alert', {
 			id: 'elementor-template-library-error-dialog',
 			headerMessage: __( 'An error occured.', 'elementor' ),
@@ -214,7 +255,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		const toastButtons = formData.source?.length > 1
 			? null
-			: this.getToastButtons( lastSource, formData?.parentId?.trim() );
+			: this.getToastButtons( lastSource, formData?.parentId?.trim(), formData?.parentTitle?.trim() );
 
 		elementor.templates.setToastConfig( {
 			show: true,
@@ -230,6 +271,22 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		} );
 	},
 
+	updateSourceState( formData ) {
+		if ( ! formData.source?.length ) {
+			return;
+		}
+
+		const saveContext = this.getOption( 'context' ) ?? SAVE_CONTEXTS.SAVE;
+
+		if ( SAVE_CONTEXTS.SAVE !== saveContext ) {
+			return;
+		}
+
+		const lastSource = formData.source.at( -1 );
+		elementor.templates.setSourceSelection( lastSource );
+		elementor.templates.setFilter( 'source', lastSource, true );
+	},
+
 	getToastMessage( lastSource, saveContext, formData ) {
 		const key = `${ lastSource }_${ saveContext }`;
 
@@ -238,8 +295,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 
 		const actions = {
-			[ `local_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Site Templates.', 'elementor' ),
-			[ `cloud_${ SAVE_CONTEXTS.SAVE }` ]: __( 'Template saved to your Cloud Templates.', 'elementor' ),
 			[ `local_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Site Templates', formData.title ),
 			[ `cloud_${ SAVE_CONTEXTS.MOVE }` ]: this.getFormattedToastMessage( 'moved to your Cloud Templates', formData.title ),
 			[ `local_${ SAVE_CONTEXTS.COPY }` ]: this.getFormattedToastMessage( 'copied to your Site Templates', formData.title ),
@@ -263,26 +318,24 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		return sprintf( __( '%1$s %2$s.', 'elementor' ), title ? `"${ title }"` : __( 'Template', 'elementor' ), action );
 	},
 
-	getToastButtons( lastSource, parentId ) {
+	getToastButtons( lastSource, parentId, parentTitle ) {
 		const parsedParentId = parseInt( parentId, 10 ) || null;
 
 		return [
 			{
 				name: 'template_after_save',
 				text: __( 'View', 'elementor' ),
-				callback: () => this.navigateToSavedSource( lastSource, parsedParentId ),
+				callback: () => this.navigateToSavedSource( lastSource, parsedParentId, parentTitle ),
 			},
 		];
 	},
 
-	navigateToSavedSource( lastSource, parentId ) {
+	navigateToSavedSource( lastSource, parentId, parentTitle ) {
 		elementor.templates.setSourceSelection( lastSource );
 		elementor.templates.setFilter( 'source', lastSource, true );
 
 		if ( parentId ) {
-			elementor.templates.setFilter( 'parent', parentId );
-
-			const model = new TemplateLibraryTemplateModel( { template_id: parentId } );
+			const model = new TemplateLibraryTemplateModel( { template_id: parentId, title: parentTitle } );
 
 			$e.route( 'library/view-folder', { model } );
 
@@ -472,6 +525,12 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
+	handleSourceSelectionChange( event ) {
+		this.maybeAllowOnlyOneCheckboxToBeChecked( event );
+
+		this.maybeEnableSaveButton();
+	},
+
 	maybeAllowOnlyOneCheckboxToBeChecked( event ) {
 		if ( this.moreThanOneCheckboxCanBeChecked() ) {
 			return;
@@ -499,13 +558,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	showInfoTip() {
-		if ( this.dialog ) {
-			this.dialog.hide();
+		if ( this.infoTipDialog ) {
+			this.infoTipDialog.hide();
 		}
 
-		const inlineStartKey = elementorCommon.config.isRTL ? 'left' : 'right';
+		const message = elementor.templates.hasCloudLibraryQuota()
+			? __( 'Upgrade your subscription to get more space and reuse saved assets across all your sites.', 'elementor' )
+			: __( 'Upgrade your subscription to access Cloud Templates and reuse saved assets across all your sites.', 'elementor' );
 
-		this.dialog = elementor.dialogsManager.createWidget( 'buttons', {
+		const goLink = elementor.templates.hasCloudLibraryQuota()
+			? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-notice'
+			: 'https://go.elementor.com/go-pro-cloud-templates-save-to-free-tooltip/';
+
+		this.infoTipDialog = elementor.dialogsManager.createWidget( 'buttons', {
 			id: 'elementor-library--infotip__dialog',
 			effects: {
 				show: 'show',
@@ -513,25 +578,85 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			},
 			position: {
 				of: this.ui.infoIcon,
-				at: `${ inlineStartKey }+90 top-60`,
+				at: 'top-75',
 			},
 		} )
-		.setMessage( __(
-			'With Cloud Templates, you can reuse saved assets across all the websites you’re working on.',
-			'elementor',
-		) )
-		.addButton( {
-			name: 'learn_more',
-			text: __(
-				'Learn more',
-				'elementor',
-			),
-			classes: '',
-			callback: () => open( '', '_blank' ),
-		} );
+			.setMessage( message )
+			.addButton( {
+				name: 'learn_more',
+				text: __(
+					'Upgrade Now',
+					'elementor',
+				),
+				classes: '',
+				callback: () => open( goLink, '_blank' ),
+			} );
 
-		this.dialog.getElements( 'header' ).remove();
-		this.dialog.show();
+		this.infoTipDialog.getElements( 'header' ).remove();
+		this.infoTipDialog.show();
+	},
+
+	showConnectInfoTip() {
+		if ( this.connectInfoTipDialog ) {
+			this.connectInfoTipDialog.hide();
+		}
+
+		this.connectInfoTipDialog = elementor.dialogsManager.createWidget( 'buttons', {
+			id: 'elementor-library--connect_infotip__dialog',
+			effects: {
+				show: 'show',
+				hide: 'hide',
+			},
+			position: {
+				of: this.ui.connectBadge,
+				at: 'top+80',
+			},
+		} )
+			.setMessage(
+				__(
+					'To access the Cloud Templates Library you must have an active Elementor Pro subscription',
+					'elementor',
+				) +
+				' <i>' +
+				__(
+					'and',
+					'elementor',
+				) +
+				'</i> ' +
+				__(
+					'connect your site.',
+					'elementor',
+				),
+			);
+
+		this.connectInfoTipDialog.getElements( 'header' ).remove();
+		this.connectInfoTipDialog.getElements( 'buttonsWrapper' ).remove();
+		this.connectInfoTipDialog.show();
+	},
+
+	handleElementorConnect() {
+		this.ui.connect.elementorConnect( {
+			success: () => {
+				elementor.config.library_connect.is_connected = true;
+
+				$e.run( 'library/close' );
+				elementor.notifications.showToast( {
+					message: __( 'Connected successfully.', 'elementor' ),
+				} );
+			},
+			error: () => {
+				elementor.config.library_connect.is_connected = false;
+			},
+		} );
+	},
+
+	onTemplateNameInputChange() {
+		this.maybeEnableSaveButton();
+	},
+
+	updateSubmitButtonState( shouldDisableSubmitButton ) {
+		this.ui.submitButton.toggleClass( 'e-primary', ! shouldDisableSubmitButton );
+		this.ui.submitButton.prop( 'disabled', shouldDisableSubmitButton );
 	},
 } );
 

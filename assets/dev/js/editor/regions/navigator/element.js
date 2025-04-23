@@ -155,7 +155,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	toggleHiddenClass() {
-		this.$el.toggleClass( 'elementor-navigator__element--hidden', !! this.model.get( 'hidden' ) );
+		this.$el.toggleClass( 'elementor-navigator__element--hidden', this.model.getVisibility() );
 	}
 
 	recursiveChildInvoke( method, ...restArgs ) {
@@ -248,7 +248,13 @@ export default class extends Marionette.CompositeView {
 			settingsModel.unset( '_title', { silent: true } );
 		}
 
-		settingsModel.set( '_title', newTitle );
+		if ( elementor.helpers.isAtomicWidget( this.model ) ) {
+			const prevEditorSettings = this.model.get( 'editor_settings' );
+
+			this.model.set( 'editor_settings', { ...prevEditorSettings, title: newTitle } );
+		} else {
+			settingsModel.set( '_title', newTitle );
+		}
 
 		// TODO: Remove - After merge pull request #13605.
 		$e.internal( 'document/save/set-is-modified', {
@@ -348,7 +354,10 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onModelChange() {
-		if ( undefined !== this.model.changed.hidden ) {
+		if (
+			undefined !== this.model.changed.hidden ||
+			undefined !== this.model.changed.editor_settings?.is_hidden
+		) {
 			this.toggleHiddenClass();
 		}
 	}

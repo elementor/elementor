@@ -3,7 +3,7 @@ const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/te
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
-import { SAVE_CONTEXTS } from './../../constants';
+import { SAVE_CONTEXTS, QUOTA_WARNINGS, QUOTA_BAR_STATES } from './../../constants';
 
 const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	template: '#tmpl-elementor-template-library-templates',
@@ -28,11 +28,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		orderLabels: 'label.elementor-template-library-order-label',
 		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
-		selectSourceFilter: '.elementor-template-library-filter-select-source',
+		selectSourceFilter: '.elementor-template-library-filter-select-source .source-option',
 		addNewFolder: '#elementor-template-library-add-new-folder',
 		selectGridView: '#elementor-template-library-view-grid',
 		selectListView: '#elementor-template-library-view-list',
-		bulkSelectionItemCheckbox: '.bulk-selection-item-checkbox',
 		bulkSelectionActionBar: '.bulk-selection-action-bar',
 		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete i',
 		bulkSelectedCount: '.bulk-selection-action-bar .selected-count',
@@ -40,6 +39,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
 		bulkMove: '.bulk-selection-action-bar .bulk-move',
 		bulkCopy: '.bulk-selection-action-bar .bulk-copy',
+		quota: '.quota-progress-container .quota-progress-bar',
+		quotaFill: '.quota-progress-container  .quota-progress-bar .quota-progress-bar-fill',
+		quotaValue: '.quota-progress-container .quota-progress-bar-value',
+		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
+		navigationContainer: '#elementor-template-library-navigation-container',
 	},
 
 	events: {
@@ -47,11 +51,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'change @ui.selectFilter': 'onSelectFilterChange',
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
-		'change @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'click @ui.selectSourceFilter': 'onSelectSourceFilterChange',
 		'click @ui.addNewFolder': 'onCreateNewFolderClick',
 		'click @ui.selectGridView': 'onSelectGridViewClick',
 		'click @ui.selectListView': 'onSelectListViewClick',
-		'change @ui.bulkSelectionItemCheckbox': 'onSelectBulkSelectionItemCheckbox',
 		'change @ui.bulkSelectAllCheckbox': 'onBulkSelectAllCheckbox',
 		'click @ui.clearBulkSelections': 'onClearBulkSelections',
 		'mouseenter @ui.bulkMove': 'onHoverBulkAction',
@@ -62,6 +65,65 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	className: 'no-bulk-selections',
+
+	resetQuotaBarStyles() {
+		this.ui.quota.removeClass( [
+			'quota-progress-bar-normal',
+			'quota-progress-bar-warning',
+			'quota-progress-bar-alert',
+		] );
+		this.ui.quotaFill.removeClass( [
+			'quota-progress-bar-fill-normal',
+			'quota-progress-bar-fill-warning',
+			'quota-progress-bar-fill-alert',
+		] );
+	},
+
+	setQuotaBarStyles( variant ) {
+		this.ui.quota.addClass( `quota-progress-bar-${ variant }` );
+		this.ui.quotaFill.addClass( `quota-progress-bar-fill-${ variant }` );
+	},
+
+	handleQuotaWarning( variant, quotaUsage ) {
+		const message = QUOTA_WARNINGS[ variant ];
+
+		if ( ! message ) {
+			return;
+		}
+
+		this.ui.quotaWarning.html( sprintf( message, quotaUsage ) );
+		this.ui.quotaWarning.show();
+	},
+
+	handleQuotaBar() {
+		const quota = elementorAppConfig?.[ 'cloud-library' ]?.quota;
+
+		const value = quota ? Math.round( ( quota.currentUsage / quota.threshold ) * 100 ) : 0;
+
+		this.ui.quotaFill.css( 'width', `${ value }%` );
+
+		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold }` );
+
+		this.ui.quotaWarning.hide();
+
+		this.resetQuotaBarStyles();
+
+		const quotaState = this.resolveQuotaState( value );
+
+		this.handleQuotaWarning( quotaState, value );
+
+		this.setQuotaBarStyles( quotaState );
+	},
+
+	resolveQuotaState( value ) {
+		if ( value < 80 ) {
+			return QUOTA_BAR_STATES.NORMAL;
+		} else if ( value < 100 ) {
+			return QUOTA_BAR_STATES.WARNING;
+		}
+
+		return QUOTA_BAR_STATES.ALERT;
+	},
 
 	onClearBulkSelections() {
 		elementor.templates.clearBulkSelectionItems();
@@ -80,16 +142,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onSelectBulkSelectionItemCheckbox( event ) {
-		if ( event?.target?.checked ) {
-			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
-		} else {
-			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
-		}
-
-		this.handleBulkActionBarUi();
-	},
-
 	onBulkSelectAllCheckbox() {
 		const isChecked = this.$( '#bulk-select-all:checked' ).length > 0;
 
@@ -98,7 +150,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 
 		this.updateBulkSelectedItems( isChecked );
-		this.handleBulkActionBarUi();
+
+		elementor.templates.layout.handleBulkActionBarUi();
 	},
 
 	updateBulkSelectedItems( isChecked ) {
@@ -112,18 +165,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 				elementor.templates.removeBulkSelectionItem( templateId );
 			}
 		} );
-	},
-
-	handleBulkActionBarUi() {
-		if ( 0 === this.$( '.bulk-selection-item-checkbox:checked' ).length ) {
-			this.$el.addClass( 'no-bulk-selections' );
-			this.$el.removeClass( 'has-bulk-selections' );
-		} else {
-			this.$el.addClass( 'has-bulk-selections' );
-			this.$el.removeClass( 'no-bulk-selections' );
-		}
-
-		elementor.templates.layout.handleBulkActionBar();
 	},
 
 	onBulkDeleteClick() {
@@ -183,8 +224,22 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	initialize() {
+		this.handleQuotaBar = this.handleQuotaBar.bind( this );
+		this.handleQuotaUpdate = this.handleQuotaUpdate.bind( this );
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.listenTo( elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
+	},
+
+	handleQuotaUpdate() {
+		const activeSource = elementor.templates.getFilter( 'source' ) ?? 'local';
+
+		if ( 'cloud' === activeSource ) {
+			$e.components.get( 'cloud-library' ).utils.getQuotaConfig()
+				.then( () => {
+					this.handleQuotaBar();
+				} );
+		}
 	},
 
 	filter( childModel ) {
@@ -227,7 +282,13 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	order( by, reverseOrder ) {
-		var comparator = this.comparators[ by ] || by;
+		let comparator = this.comparators[ by ] || by;
+
+		if ( 'cloud' === elementor.templates.getFilter( 'source' ) ) {
+			this.handleCloudOrder( by, reverseOrder );
+
+			return;
+		}
 
 		if ( reverseOrder ) {
 			comparator = this.reverseOrder( comparator );
@@ -236,6 +297,25 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.collection.comparator = comparator;
 
 		this.collection.sort();
+	},
+
+	handleCloudOrder( by, reverseOrder ) {
+		elementor.templates.setFilter( 'orderby', by );
+		elementor.templates.setFilter( 'order', reverseOrder ? 'desc' : 'asc' );
+
+		this.onClearBulkSelections();
+
+		this.collection.reset();
+
+		elementor.templates.layout.showLoadingView();
+
+		elementor.templates.loadMore( {
+			onUpdate: () => {
+				elementor.templates.layout.hideLoadingView();
+			},
+			search: this.ui.textFilter.val(),
+			refresh: true,
+		} );
 	},
 
 	reverseOrder( comparator ) {
@@ -331,6 +411,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		if ( 'remote' === activeSource && 'page' !== templateType && 'lb' !== templateType ) {
 			this.setFiltersUI();
 		}
+
+		if ( 'cloud' === activeSource ) {
+			this.handleQuotaBar();
+		}
 	},
 
 	onRenderCollection() {
@@ -348,6 +432,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			this.handleLoadMore();
 
 			this.addViewData();
+
+			this.handleQuotaUpdate();
 		}
 	},
 
@@ -416,19 +502,27 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onOrderLabelsClick( event ) {
-		var $clickedInput = jQuery( event.currentTarget.control ),
-			toggle;
+		const $clickedInput = jQuery( event.currentTarget.control );
+		let toggle;
 
 		if ( ! $clickedInput[ 0 ].checked ) {
 			toggle = 'asc' !== $clickedInput.data( 'default-ordering-direction' );
+		} else {
+			toggle = ! $clickedInput.hasClass( 'elementor-template-library-order-reverse' );
 		}
+
+		$clickedInput.prop( 'checked', true );
 
 		$clickedInput.toggleClass( 'elementor-template-library-order-reverse', toggle );
 
-		this.order( $clickedInput.val(), $clickedInput.hasClass( 'elementor-template-library-order-reverse' ) );
+		this.order( $clickedInput.val(), toggle );
 	},
 
 	handleLoadMore() {
+		if ( this.removeScrollListener ) {
+			this.removeScrollListener();
+		}
+
 		const scrollableContainer = elementor?.templates?.layout?.modal.getElements( 'message' );
 
 		const listener = () => {

@@ -11,6 +11,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 	ui: {
 		uploadForm: '#elementor-template-library-import-form',
 		fileInput: '#elementor-template-library-import-form-input',
+		icon: '.elementor-template-library-blank-icon i',
 	},
 
 	events: {
@@ -66,6 +67,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 				} );
 
 				$e.route( 'library/templates/my-templates' );
+				elementor.templates.triggerQuotaUpdate();
 			},
 			error: ( errorData ) => {
 				elementor.templates.showErrorDialog( errorData );
@@ -104,6 +106,16 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			'dragleave drop': this.onFormDragLeave.bind( this ),
 			drop: this.onFormDrop.bind( this ),
 		} );
+
+		this.resolveIcon();
+	},
+
+	resolveIcon() {
+		const activeSource = elementor.templates.getFilter( 'source' ) || 'local';
+
+		const className = 'local' === activeSource ? 'eicon-library-upload' : 'eicon-library-import';
+
+		this.ui.icon.removeClass().addClass( className );
 	},
 
 	onFormActions( event ) {

@@ -149,7 +149,9 @@ ElementModel = BaseElementModel.extend( {
 	},
 
 	getTitle() {
-		let title = this.getSetting( '_title' ) || this.getSetting( 'presetTitle' );
+		const editorSettings = this.get( 'editor_settings' );
+		let title = editorSettings?.title || this.getSetting( '_title' ) || this.getSetting( 'presetTitle' );
+
 		const custom = this.get( 'custom' );
 
 		if ( ! title && ( custom?.isPreset ?? false ) ) {
@@ -161,6 +163,30 @@ ElementModel = BaseElementModel.extend( {
 		}
 
 		return title;
+	},
+
+	getVisibility() {
+		if ( elementor.helpers.isAtomicWidget( this ) ) {
+			return !! this.get( 'editor_settings' )?.is_hidden;
+		}
+
+		return !! this.get( 'hidden' );
+	},
+
+	setVisibility( isHidden = false ) {
+		if ( elementor.helpers.isAtomicWidget( this ) ) {
+			const prevEditorSettings = this.get( 'editor_settings' ) || {};
+
+			this.set( 'editor_settings', { ...prevEditorSettings, is_hidden: isHidden } );
+		} else {
+			this.set( 'hidden', isHidden );
+		}
+	},
+
+	toggleVisibility() {
+		const isHidden = this.getVisibility();
+
+		this.setVisibility( ! isHidden );
 	},
 
 	getIcon() {

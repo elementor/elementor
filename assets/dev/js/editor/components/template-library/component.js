@@ -14,6 +14,10 @@ export default class Component extends ComponentModalBase {
 
 		// Remove whole component cache data.
 		$e.data.deleteCache( this, 'library' );
+
+		elementor.channels.templates.on( 'quota:update', ( { force } = {} ) => {
+			$e.components.get( 'cloud-library' ).utils.setQuotaConfig( force );
+		} );
 	}
 
 	getNamespace() {
@@ -38,7 +42,7 @@ export default class Component extends ComponentModalBase {
 				},
 			},
 			'templates/my-templates': {
-				title: __( 'My Templates', 'elementor' ),
+				title: __( 'Templates', 'elementor' ),
 				getFilter: () => ( {
 					source: elementor.templates.getSourceSelection() ?? 'local',
 					view: elementor.templates.getViewSelection() ?? 'list',
