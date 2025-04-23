@@ -177,35 +177,35 @@ const TemplateLibraryManager = function() {
 				title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
 			},
 			moveDialog: {
-				/* Translators: %1$s and %2$s wrap "copy the template" with underline <u> tags */
+				/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 				description: sprintf(
 					__( 'Alternatively, you can %1$scopy the template%2$s.', 'elementor' ),
-					'<u>', '</u>'
+					'<u>', '</u>',
 				),
 				/* Translators: %s: Template type. */
 				title: sprintf( __( 'Move your %s to a different location', 'elementor' ), title ),
 			},
 			copyDialog: {
-				/* Translators: %1$s and %2$s wrap "move the template" with underline <u> tags */
+				/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 				description: sprintf(
 					__( 'Alternatively, you can %1$smove the template%2$s.', 'elementor' ),
-					'<u>', '</u>'
+					'<u>', '</u>',
 				),
 				/* Translators: %s: Template type. */
 				title: sprintf( __( 'Copy your %s to a different location', 'elementor' ), title ),
 			},
 			bulkMoveDialog: {
-				/* Translators: %1$s and %2$s wrap "copy the template" with underline <u> tags */
+				/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 				description: sprintf(
 					__( 'Alternatively, you can %1$scopy the templates%2$s.', 'elementor' ),
-					'<u>', '</u>'
+					'<u>', '</u>',
 				),
 			},
 			bulkCopyDialog: {
-				/* Translators: %1$s and %2$s wrap "move the template" with underline <u> tags */
+				/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
 				description: sprintf(
 					__( 'Alternatively, you can %1$smove the templates%2$s.', 'elementor' ),
-					'<u>', '</u>'
+					'<u>', '</u>',
 				),
 			},
 		};
@@ -537,7 +537,7 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.getDeleteFolderDialog = function( templateModel, data ) {
-		let deleteFolderDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
+		const deleteFolderDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-delete-dialog',
 			headerMessage: __( 'Delete this folder?', 'elementor' ),
 			message: sprintf(
@@ -557,7 +557,7 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.getBulkDeleteDialog = function() {
-		let bulkDeleteDialog =  elementorCommon.dialogsManager.createWidget( 'confirm', {
+		const bulkDeleteDialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-bulk-delete-dialog',
 			headerMessage: __( 'Delete items?', 'elementor' ),
 			message: sprintf(
