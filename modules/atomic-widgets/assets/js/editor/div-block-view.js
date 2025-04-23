@@ -214,56 +214,46 @@ const DivBlockView = BaseElementView.extend( {
 				elementor.getPreviewView().onPanelElementDragEnd();
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
-					draggingInSameParent = ( draggedView?.parent === this ),
+					draggedElement = draggedView.getContainer().view.el,
 					containerSelector = event.currentTarget.parentElement;
 
-				let $elements = jQuery( containerSelector ).find( '> .elementor-element' );
+				const $elements = jQuery( containerSelector ).find( '> .elementor-element' );
 
-				// Exclude the dragged element from the indexing calculations.
-				if ( draggingInSameParent ) {
-					$elements = $elements.not( draggedView.$el );
-				}
-
-				const widgetsArray = Object.values( $elements );
-
-				let newIndex = widgetsArray.indexOf( event.currentTarget );
-
-				// Plus one in order to insert it after the current target element.
-				if ( this.shouldIncrementIndex( side ) ) {
-					newIndex++;
-				}
-
-				// User is sorting inside a Container.
-				if ( draggedView ) {
-					// Prevent the user from dragging a parent container into its own child container
-					const draggedId = draggedView.getContainer().id;
-
-					let currentTargetParentContainer = this.container;
-
-					while ( currentTargetParentContainer ) {
-						if ( currentTargetParentContainer.id === draggedId ) {
-							return;
-						}
-
-						currentTargetParentContainer = currentTargetParentContainer.parent;
-					}
-
-					// Reset the dragged element cache.
-					elementor.channels.editor.reply( 'element:dragged', null );
-
-					$e.run( 'document/elements/move', {
-						container: draggedView.getContainer(),
-						target: this.getContainer(),
-						options: {
-							at: newIndex,
-						},
-					} );
+				// User is dragging an element from the panel.
+				if ( ! draggedView ) {
+					this.onDrop( event, { at: $elements.length } );
 
 					return;
 				}
 
-				// User is dragging an element from the panel.
-				this.onDrop( event, { at: newIndex } );
+				// Prevent the user from dragging a parent container into its own child container
+				const draggedId = draggedView.getContainer().id;
+
+				let currentTargetParentContainer = this.container;
+
+				while ( currentTargetParentContainer ) {
+					if ( currentTargetParentContainer.id === draggedId ) {
+						return;
+					}
+
+					currentTargetParentContainer = currentTargetParentContainer.parent;
+				}
+
+				const elements = $elements.toArray();
+				const selfIndex = elements.indexOf( draggedElement );
+				const targetIndex = elements.indexOf( event.currentTarget );
+				const finalIndex = this.getDropIndex( containerSelector, side, targetIndex, selfIndex >= 0 ? selfIndex : null );
+
+				// Reset the dragged element cache.
+				elementor.channels.editor.reply( 'element:dragged', null );
+
+				$e.run( 'document/elements/move', {
+					container: draggedView.getContainer(),
+					target: this.getContainer(),
+					options: {
+						at: finalIndex,
+					},
+				} );
 			},
 		};
 	},
@@ -305,20 +295,38 @@ const DivBlockView = BaseElementView.extend( {
 		return editTools;
 	},
 
-	shouldIncrementIndex( side ) {
-		if ( ! this.draggingOnBottomOrRightSide( side ) ) {
-			return false;
+	getDropIndex( container, side, index, selfIndex ) {
+		const styles = window.getComputedStyle( container );
+
+		const isFlex = 'flex' === styles.display;
+		const isFlexReverse = isFlex &&
+			[ 'column-reverse', 'row-reverse' ].includes( styles.flexDirection );
+
+		const isRtl = elementorCommon.config.isRTL;
+
+		const isReverse = Boolean( isFlexReverse ^ isRtl );
+
+		console.log( 'drag: ', side, index, selfIndex, isReverse === this.draggingOnBottomOrRightSide( side ) );
+
+		if ( ( isReverse === this.draggingOnBottomOrRightSide( side ) ) ) {
+			// The element should be placed before the current target
+			// if is reversed + side is bottom/right OR not is reversed + side is top/left
+			if ( null === selfIndex || selfIndex >= index - 1 ) {
+				return index;
+			}
+
+			return index > 0 ? index - 1 : 0;
 		}
 
-		return ! this.emptyViewIsCurrentlyBeingDraggedOver();
+		if ( selfIndex !== null && selfIndex < index ) {
+			return index;
+		}
+
+		return index + 1;
 	},
 
 	draggingOnBottomOrRightSide( side ) {
 		return [ 'bottom', 'right' ].includes( side );
-	},
-
-	emptyViewIsCurrentlyBeingDraggedOver() {
-		return this.$el.find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
 	},
 
 	/**
@@ -366,7 +374,9 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getBaseClass() {
-		return 'e-flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'e-flexbox-base' : 'e-div-block-base';
+		const baseClass = elementor.helpers.getAtomicWidgetBaseClass( this.options?.model );
+
+		return Object.keys( baseClass ?? {} )[ 0 ] ?? '';
 	},
 } );
 
