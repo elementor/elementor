@@ -14,7 +14,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	ui: {
 		form: '#elementor-template-library-save-template-form',
 		submitButton: '#elementor-template-library-save-template-submit',
-		ellipsisIcon: '.cloud-library-form-inputs .eicon-ellipsis-h',
+		ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
 		foldersList: '.cloud-folder-selection-dropdown ul',
 		foldersDropdown: '.cloud-folder-selection-dropdown',
 		foldersListContainer: '.cloud-folder-selection-dropdown-list',
