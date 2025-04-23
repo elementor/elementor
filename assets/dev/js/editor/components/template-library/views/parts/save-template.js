@@ -30,6 +30,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		connect: '#elementor-template-library-connect__badge',
 		connectBadge: '.source-selections-input.cloud .connect-badge',
 		cloudFormInputs: '.cloud-library-form-inputs',
+		upgradeBadge: '.source-selections-input.cloud upgrade-badge',
 	},
 
 	events: {
@@ -38,6 +39,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'click @ui.foldersList': 'onFoldersListClick',
 		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
 		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
+		'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
 		'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
 		'mouseenter @ui.infoIcon': 'showInfoTip',
 		'mouseenter @ui.connect': 'showConnectInfoTip',
@@ -589,7 +591,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 					'elementor',
 				),
 				classes: '',
-				callback: () => open( goLink, '_blank' ),
+				callback: () => {
+					open( goLink, '_blank' );
+					this.onUpgradeBadgeClicked();
+				},
 			} );
 
 		this.infoTipDialog.getElements( 'header' ).remove();
@@ -657,6 +662,15 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	updateSubmitButtonState( shouldDisableSubmitButton ) {
 		this.ui.submitButton.toggleClass( 'e-primary', ! shouldDisableSubmitButton );
 		this.ui.submitButton.prop( 'disabled', shouldDisableSubmitButton );
+	},
+
+	onUpgradeBadgeClicked() {
+		const upgradePosition = elementor.templates.hasCloudLibraryQuota() ? 'save to-max' : 'save to-free';
+
+		elementor.templates.eventManager.sendUpgradeClickedEvent( {
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModal,
+			upgrade_position: upgradePosition,
+		} );
 	},
 } );
 

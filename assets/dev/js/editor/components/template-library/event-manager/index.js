@@ -13,56 +13,77 @@ const EVENTS_MAP = {
 	FOLDER_CREATE: 'folder_create',
 	QUOTA_BAR_CAPACITY: 'quota_bar_capacity',
 	INSERT_APPLY_SETTINGS: 'insert_apply_settings',
+	UPGRADE_CLICKED: 'upgrade_clicked',
 };
 
 export class EventManager {
 	sendEvent( eventName, data ) {
 		return elementor.editorEvents.dispatchEvent(
 			eventName,
-			{
-				location: elementor.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementor.editorEvents.config.secondaryLocations.contextMenu,
-				trigger: elementor.editorEvents.config.triggers.visible,
-				...data,
-			},
+			data,
 		);
 	}
 
 	sendContextMenuExposureEvent() {
-		return this.sendEvent( EVENTS_MAP.SAVE_TEMPLATE_CONTEXT_MENU_EXPOSURE );
+		return this.sendEvent( EVENTS_MAP.SAVE_TEMPLATE_CONTEXT_MENU_EXPOSURE, {
+			location: elementor.editorEvents.config.locations.elementorEditor,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.contextMenu,
+			trigger: elementor.editorEvents.config.triggers.visible,
+		} );
 	}
 
 	sendNewSaveTemplateClickedEvent() {
-		return this.sendEvent( EVENTS_MAP.NEW_SAVE_TEMPLATE_CLICKED );
-	}
-
-	sendTemplateSavedEvent( data ) {
-		return this.sendEvent( EVENTS_MAP.NEW_SAVE_TEMPLATE_CLICKED, data );
+		return this.sendEvent( EVENTS_MAP.NEW_SAVE_TEMPLATE_CLICKED, {
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModal,
+			trigger: elementor.editorEvents.config.triggers.click,
+		} );
 	}
 
 	sendTemplateTransferEvent( data ) {
-		return this.sendEvent( EVENTS_MAP.NEW_SAVE_TEMPLATE_CLICKED, data );
+		return this.sendEvent( EVENTS_MAP.NEW_SAVE_TEMPLATE_CLICKED, {
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModal,
+			...data,
+		} );
 	}
 
 	sendItemDeletedEvent( data ) {
-		return this.sendEvent( EVENTS_MAP.ITEM_DELETED, data );
+		return this.sendEvent( EVENTS_MAP.ITEM_DELETED, {
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.deleteDialog,
+			...data,
+		} );
 	}
 
 	sendTemplateImportEvent( data ) {
-		return this.sendEvent( EVENTS_MAP.TEMPLATE_IMPORT, data );
+		return this.sendEvent( EVENTS_MAP.TEMPLATE_IMPORT, {
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModal,
+			...data,
+		} );
 	}
 
 	sendTemplateRenameEvent( data ) {
-		return this.sendEvent( EVENTS_MAP.TEMPLATE_RENAME, data );
+		return this.sendEvent( EVENTS_MAP.TEMPLATE_RENAME, {
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.renameDialog,
+			...data,
+		} );
 	}
 
 	sendTemplateInsertedEvent( data ) {
-		return this.sendEvent( EVENTS_MAP.TEMPLATE_INSERTED, data );
+		return this.sendEvent( EVENTS_MAP.TEMPLATE_INSERTED, {
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			...data,
+		} );
 	}
 
 	sendBulkActionsSuccessEvent( data ) {
 		return this.sendEvent( EVENTS_MAP.BULK_ACTIONS_SUCCESS, {
 			bulk_status: 'success',
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModal,
 			...data,
 		} );
 	}
@@ -70,20 +91,40 @@ export class EventManager {
 	sendBulkActionsFailedEvent( data ) {
 		return this.sendEvent( EVENTS_MAP.BULK_ACTIONS_FAILED, {
 			bulk_status: 'fail',
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModal,
 			...data,
 		} );
 	}
 
 	sendFolderCreateEvent() {
-		return this.sendEvent( EVENTS_MAP.FOLDER_CREATE );
+		return this.sendEvent( EVENTS_MAP.FOLDER_CREATE, {
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.createFolderDialog,
+		} );
 	}
 
 	sendQuotaBarCapacityEvent( data ) {
-		return this.sendEvent( EVENTS_MAP.QUOTA_BAR_CAPACITY, data );
+		return this.sendEvent( EVENTS_MAP.QUOTA_BAR_CAPACITY, {
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			...data,
+		} );
 	}
 
 	sendInsertApplySettingsEvent( data ) {
-		return this.sendEvent( EVENTS_MAP.INSERT_APPLY_SETTINGS, data );
+		return this.sendEvent( EVENTS_MAP.INSERT_APPLY_SETTINGS, {
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.applySettingsDialog,
+			...data,
+		} );
+	}
+
+	sendUpgradeClickedEvent( data ) {
+		return this.sendEvent( EVENTS_MAP.UPGRADE_CLICKED, {
+			location: elementor.editorEvents.config.locations.templatesLibrary,
+			current_sub: elementor?.config?.library_connect?.current_access_tier,
+			...data,
+		} );
 	}
 }
 

@@ -5,12 +5,14 @@ const eventsConfig = {
 		toggleClick: 'Toggle Click',
 		dropdownClick: 'Click Dropdown',
 		editorLoaded: 'Editor Loaded',
+		visible: 'Visible',
 	},
 
 	locations: {
 		widgetPanel: 'Widget Panel',
 		topBar: 'Top Bar',
 		elementorEditor: 'Elementor Editor',
+		templatesLibrary: 'Templates Library',
 	},
 
 	secondaryLocations: {
@@ -42,6 +44,16 @@ const eventsConfig = {
 		checklistHeader: 'Checklist Header',
 		checklistSteps: 'Checklist Steps',
 		userPreferences: 'User Preferences',
+		contextMenu: 'Context Menu',
+		templateLibrary: {
+			saveModal: 'Save Modal',
+			importModal: 'Import Modal',
+			deleteDialog: 'Delete Dialog',
+			renameDialog: 'Rename Dialog',
+			createFolderDialog: 'Create Folder Dialog',
+			applySettingsDialog: 'Apply Settings Dialog',
+			cloudTab: 'Cloud Tab',
+		},
 	},
 
 	elements: {

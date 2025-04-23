@@ -14,6 +14,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	events: {
 		'click @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'click @ui.button': 'onButtonClick',
 	},
 
 	modesStrings() {
@@ -85,6 +86,13 @@ module.exports = Marionette.ItemView.extend( {
 
 	onSelectSourceFilterChange( event ) {
 		elementor.templates.onSelectSourceFilterChange( event );
+	},
+
+	onButtonClick() {
+		elementor.templates.eventManager.sendUpgradeClickedEvent( {
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab,
+			upgradePosition: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab,
+		} );
 	},
 
 	onDestroy() {
