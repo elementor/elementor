@@ -539,7 +539,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<span class="elementor-state-icon">
 					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 				</span>
-				<?php echo esc_html__( 'Save', 'elementor' ); ?>
+				{{{ saveBtnText }}}
 			</button>
 		</div>
 		<# } #>

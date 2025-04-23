@@ -125,24 +125,29 @@ const TemplateLibraryManager = function() {
 				description: __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+				saveBtnText: __( 'Save', 'elementor' ),
 			},
 			moveDialog: {
 				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+				saveBtnText: __( 'Move', 'elementor' ),
 			},
 			copyDialog: {
 				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+				saveBtnText: __( 'Copy', 'elementor' ),
 			},
 			bulkMoveDialog: {
 				title: __( 'Move templates to a different location', 'elementor' ),
 				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+				saveBtnText: __( 'Move', 'elementor' ),
 			},
 			bulkCopyDialog: {
 				title: __( 'Copy templates to a different location', 'elementor' ),
 				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+				saveBtnText: __( 'Copy', 'elementor' ),
 			},
 			ajaxParams: {
 				success( successData ) {

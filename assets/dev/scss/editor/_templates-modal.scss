@@ -1312,6 +1312,11 @@ label.elementor-template-library-order-label {
 				top: 2px;
 			}
 
+			#cloud:checked,
+			#local:checked {
+				top: -2px;
+			}
+
 			.eicon-ellipsis-h {
 				vertical-align: bottom;
 			}
