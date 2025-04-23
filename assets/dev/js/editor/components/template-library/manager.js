@@ -645,19 +645,19 @@ const TemplateLibraryManager = function() {
 
 	this.sendOnSavedTemplateSuccessEvent = ( formData ) => {
 		if ( SAVE_CONTEXTS.SAVE === formData.save_context ) {
-			return this.eventManager.sendNewSaveTemplateClickedEvent( {
+			this.eventManager.sendNewSaveTemplateClickedEvent( {
 				library_type: formData.source,
 				template_type: formData.type,
 			} );
 		} else if ( [ SAVE_CONTEXTS.COPY, SAVE_CONTEXTS.MOVE ].includes( formData.save_context ) ) {
-			return this.eventManager.sendTemplateTransferEvent( {
+			this.eventManager.sendTemplateTransferEvent( {
 				transfer_method: formData.save_context,
 				template_type: formData.type,
 				template_origin: formData.from_source,
 				template_destination: formData.source,
 			} );
 		} else if ( [ SAVE_CONTEXTS.BULK_MOVE, SAVE_CONTEXTS.BULK_COPY ].includes( formData.save_context ) ) {
-			return self.eventManager.sendBulkActionsSuccessEvent( {
+			self.eventManager.sendBulkActionsSuccessEvent( {
 				bulk_action: SAVE_CONTEXTS.BULK_MOVE === formData.save_context ? 'move' : 'copy',
 				library_type: formData.source,
 				bulk_count: formData.from_template_id.length,
