@@ -1310,11 +1310,10 @@ label.elementor-template-library-order-label {
 			#local {
 				position: relative;
 				top: 2px;
-			}
 
-			#cloud:checked,
-			#local:checked {
-				top: -2px;
+				&:checked {
+					top: -2px;
+				}
 			}
 
 			.eicon-ellipsis-h {
