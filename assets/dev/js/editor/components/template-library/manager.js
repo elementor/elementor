@@ -547,7 +547,7 @@ const TemplateLibraryManager = function() {
 			headerMessage: __( 'Delete this folder?', 'elementor' ),
 			message: sprintf(
 				// Translators: %1$s: Folder name, %2$s: Number of templates.
-				__( 'This will permanently delete %1$s that contains %2$d templates?', 'elementor' ),
+				__( 'This will permanently delete %1$s that contains %2$d templates', 'elementor' ),
 				templateModel.get( 'title' ),
 				data.total,
 			),
