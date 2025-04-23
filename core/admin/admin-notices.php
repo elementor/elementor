@@ -740,13 +740,13 @@ class Admin_Notices extends Module {
 	}
 
 	private static function add_plg_campaign_data( $url, $campaign_data ) {
-		
+
 		foreach ( [ 'name', 'campaign' ] as $key ) {
 			if ( empty( $campaign_data[ $key ] ) ) {
 				return $url;
 			}
 		}
-		
+
 		return add_query_arg( [
 			'plg_campaign_name' => $campaign_data['name'],
 			'plg_campaign' => $campaign_data['campaign'],
