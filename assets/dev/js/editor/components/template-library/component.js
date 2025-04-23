@@ -228,6 +228,12 @@ export default class Component extends ComponentModalBase {
 					$e.run( 'library/insert-template', {
 						model,
 						withPageSettings: true,
+						onAfter: () => {
+							elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+								apply_modal_result: 'apply',
+								library_type: model.get( 'source' ),
+							} );
+						},
 					} );
 				};
 
@@ -235,6 +241,12 @@ export default class Component extends ComponentModalBase {
 					$e.run( 'library/insert-template', {
 						model,
 						withPageSettings: false,
+						onAfter: () => {
+							elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+								apply_modal_result: `don't apply`,
+								library_type: model.get( 'source' ),
+							} );
+						},
 					} );
 				};
 

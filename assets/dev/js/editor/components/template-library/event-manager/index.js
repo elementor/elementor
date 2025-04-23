@@ -12,11 +12,11 @@ const EVENTS_MAP = {
 	BULK_ACTIONS_FAILED: 'bulk_actions',
 	FOLDER_CREATE: 'folder_create',
 	QUOTA_BAR_CAPACITY: 'quota_bar_capacity',
+	INSERT_APPLY_SETTINGS: 'insert_apply_settings',
 };
 
 export class EventManager {
 	sendEvent( eventName, data ) {
-		console.log('!_DISPATCHED_EVENT_!', eventName, data );
 		return elementor.editorEvents.dispatchEvent(
 			eventName,
 			{
@@ -80,6 +80,10 @@ export class EventManager {
 
 	sendQuotaBarCapacityEvent( data ) {
 		return this.sendEvent( EVENTS_MAP.QUOTA_BAR_CAPACITY, data );
+	}
+
+	sendInsertApplySettingsEvent( data ) {
+		return this.sendEvent( EVENTS_MAP.INSERT_APPLY_SETTINGS, data );
 	}
 }
 
