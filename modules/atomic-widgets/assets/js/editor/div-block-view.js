@@ -214,14 +214,16 @@ const DivBlockView = BaseElementView.extend( {
 				elementor.getPreviewView().onPanelElementDragEnd();
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
-					draggedElement = draggedView.getContainer().view.el,
+					draggedElement = draggedView?.getContainer().view.el,
 					containerSelector = event.currentTarget.parentElement;
 
 				const $elements = jQuery( containerSelector ).find( '> .elementor-element' );
+				const elements = $elements.toArray();
+				const targetIndex = elements.indexOf( event.currentTarget );
 
 				// User is dragging an element from the panel.
-				if ( ! draggedView ) {
-					this.onDrop( event, { at: $elements.length } );
+				if ( ! draggedView || ! draggedElement ) {
+					this.onDrop( event, { at: targetIndex } );
 
 					return;
 				}
@@ -239,10 +241,7 @@ const DivBlockView = BaseElementView.extend( {
 					currentTargetParentContainer = currentTargetParentContainer.parent;
 				}
 
-				const elements = $elements.toArray();
-
 				const selfIndex = elements.indexOf( draggedElement );
-				const targetIndex = elements.indexOf( event.currentTarget );
 
 				if ( targetIndex === selfIndex ) {
 					return;
