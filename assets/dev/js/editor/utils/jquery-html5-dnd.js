@@ -122,19 +122,11 @@
 		};
 
 		var hasHorizontalDetection = function() {
-			if ( !! settings.axis ) {
-				return -1 !== settings.axis.indexOf( 'horizontal' );
-			}
-
-			return placeholderContext.isFlexRowContainer;
+			return -1 !== settings.axis.indexOf( 'horizontal' );
 		};
 
 		var hasVerticalDetection = function() {
-			if ( !! settings.axis ) {
-				return -1 !== settings.axis.indexOf( 'vertical' );
-			}
-
-			return ! placeholderContext.isFlexRowContainer;
+			return -1 !== settings.axis.indexOf( 'vertical' );
 		};
 
 		var checkHorizontal = function( offsetX, clientX, elementWidth ) {
@@ -215,6 +207,7 @@
 				return;
 			}
 
+			ensureMinimumDroppableHeight();
 			clearPreviousPlaceholder();
 
 			const insertMode = getInsertMode();
@@ -226,9 +219,29 @@
 				case 'flexRow':
 					insertFlexRowPlaceholder();
 					break;
+				case 'block':
+					insertBlockContainerPlaceholder();
+					break;
 				default:
 					insertDefaultPlaceholder();
 					break;
+			}
+		};
+
+		const ensureMinimumDroppableHeight = function() {
+			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
+			const MIN_HEIGHT = 20;
+
+			if ( ! hasLogicalWrapper ) {
+				return;
+			}
+
+			placeholderTarget.classList.remove( 'e-min-height' );
+
+			const targetHeight = placeholderTarget.offsetHeight;
+
+			if ( targetHeight < MIN_HEIGHT ) {
+				placeholderTarget.classList.add( 'e-min-height' );
 			}
 		};
 
@@ -239,15 +252,8 @@
 
 			const $currentElement = $( currentElement );
 			const hasLogicalWrapper = 'contents' === getComputedStyle( currentElement ).display;
-
 			const container = currentElement.closest( '.e-con' );
 			const containerDisplayStyle = container ? getComputedStyle( container ).display : null;
-
-			const innerContainer = container?.querySelector( ':scope > .e-con-inner' );
-			const containerWrapperStyle = !! container ? getComputedStyle( innerContainer || container ) : null;
-
-			const isFlexContainer = !! container && [ 'flex', 'inline-flex' ].includes( containerWrapperStyle.display );
-			const isRowDirection = !! container && [ 'row', 'row-reverse' ].includes( containerWrapperStyle.flexDirection );
 
 			maybeAddFlexRowClass( container );
 
@@ -258,12 +264,9 @@
 				isFirstInsert: $currentElement.hasClass( 'elementor-first-add' ),
 				isInnerContainer: $currentElement.hasClass( 'e-con-inner' ),
 				isGridRowContainer: 0 !== $currentElement.parents( '.e-grid.e-con--row' ).length,
-				isFlexContainer,
-				isRowDirection,
-				isFlexRowContainer: isFlexContainer && isRowDirection,
+				isRowContainer: 0 !== $currentElement.parents( '.e-con--row' ).length,
 				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
 				hasLogicalWrapper,
-				isAtomicContainer: [ 'e-div-block', 'e-flexbox' ].includes( currentElement.dataset.element_type ),
 			};
 		};
 
@@ -272,9 +275,12 @@
 				return;
 			}
 
-			const { isFlexRowContainer } = placeholderContext;
+			const innerContainer = container.querySelector( ':scope > .e-con-inner' );
+			const wrapperStyle = getComputedStyle( innerContainer || container );
+			const isFlexContainer = [ 'flex', 'inline-flex' ].includes( wrapperStyle.display );
+			const isRowDirection = [ 'row', 'row-reverse' ].includes( wrapperStyle.flexDirection );
 
-			if ( isFlexRowContainer ) {
+			if ( isFlexContainer && isRowDirection ) {
 				container.classList.add( 'e-con--row' );
 				return;
 			}
@@ -291,7 +297,7 @@
 				return 'gridRow';
 			}
 
-			if ( placeholderContext.isFlexRowContainer ) {
+			if ( placeholderContext.isRowContainer ) {
 				return 'flexRow';
 			}
 
@@ -306,10 +312,7 @@
 			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
 
 			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right is-logical' );
-			elementsCache.$placeholder.css( '--e-placeholder-margin-top', '' );
-			elementsCache.$placeholder.css( '--e-placeholder-margin-bottom', '' );
-			elementsCache.$placeholder.css( '--e-placeholder-margin-inline-start', '' );
-			elementsCache.$placeholder.css( '--e-placeholder-width', '' );
+			elementsCache.$placeholder.css( '--e-row-gap', '' );
 		};
 
 		const insertPlaceholderInsideElement = function( targetElement = null ) {
@@ -318,7 +321,7 @@
 			}
 
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
-			elementsCache.$placeholder[ insertMethod ]( targetElement );
+			elementsCache.$placeholder[ insertMethod ]( currentElement );
 		};
 
 		const insertPlaceholderOutsideElement = function( targetElement = null ) {
@@ -327,6 +330,7 @@
 			}
 
 			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+
 			$( targetElement )[ insertMethod ]( elementsCache.$placeholder );
 		};
 
@@ -342,10 +346,14 @@
 			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 
-		const insertDefaultPlaceholder = function() {
-			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
+		const insertBlockContainerPlaceholder = function() {
+			insertPlaceholderOutsideElement();
+		};
 
-			if ( hasLogicalWrapper || isAtomicContainer ) {
+		const insertDefaultPlaceholder = function() {
+			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
+
+			if ( hasLogicalWrapper ) {
 				addLogicalAttributesToPlaceholder();
 			}
 
@@ -353,40 +361,12 @@
 		};
 
 		const addLogicalAttributesToPlaceholder = function() {
-			const PLACEHOLDER_HEIGHT = 10;
+			const elementContainer = currentElement.closest( '.e-con, .e-con-inner' );
+			const wrapperStyle = getComputedStyle( elementContainer );
+			const rowGap = wrapperStyle.rowGap || wrapperStyle.gap || '0px';
 
-			const { placeholderTarget } = placeholderContext;
-			const placeholder = elementsCache.$placeholder[ 0 ];
-
-			placeholder.classList.add( 'is-logical' );
-
-			const styles = getComputedStyle( placeholderTarget );
-
-			const paddingTop = parseFloat( styles.paddingTop ) || 0;
-			const borderTop = parseFloat( styles.borderTopWidth ) || 0;
-
-			const paddingBottom = parseFloat( styles.paddingBottom ) || 0;
-			const borderBottom = parseFloat( styles.borderBottomWidth ) || 0;
-
-			const paddingInlineStart = parseFloat( styles.paddingInlineStart ) || 0;
-			const borderInlineStart = parseFloat( styles.borderInlineStartWidth ) || 0;
-
-			const width = parseFloat( styles.width ) || '100%';
-
-			const totalTopOffset = paddingTop + borderTop;
-			const totalBottomOffset = paddingBottom + borderBottom;
-			const totalInlineStartOffset = paddingInlineStart + borderInlineStart;
-
-			placeholder.style.setProperty( '--e-placeholder-width', `${ width }px` );
-			placeholder.style.setProperty( '--e-placeholder-margin-inline-start', `-${ totalInlineStartOffset }px` );
-
-			if ( 'top' === currentSide ) {
-				placeholder.style.setProperty( '--e-placeholder-margin-top', `-${ totalTopOffset }px` );
-				placeholder.style.setProperty( '--e-placeholder-margin-bottom', `${ PLACEHOLDER_HEIGHT }px` );
-			} else if ( 'bottom' === currentSide ) {
-				placeholder.style.setProperty( '--e-placeholder-margin-bottom', `-${ totalBottomOffset }px` );
-				placeholder.style.setProperty( '--e-placeholder-margin-top', `${ PLACEHOLDER_HEIGHT }px` );
-			}
+			elementsCache.$placeholder.addClass( 'is-logical' );
+			elementsCache.$placeholder.css( '--e-row-gap', rowGap );
 		};
 
 		var isDroppingAllowed = function( event ) {

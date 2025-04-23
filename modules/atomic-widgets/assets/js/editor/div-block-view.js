@@ -194,11 +194,26 @@ const DivBlockView = BaseElementView.extend( {
 		};
 	},
 
+	getDroppableAxis() {
+		if ( this.isHorizontalAxis() ) {
+			return 'horizontal';
+		}
+
+		return 'vertical';
+	},
+
+	isHorizontalAxis() {
+		const styles = window.getComputedStyle( this.$el[ 0 ] );
+
+		return 'flex' === styles.display &&
+			[ 'row', 'row-reverse' ].includes( styles.flexDirection );
+	},
+
 	getDroppableOptions() {
 		const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 		return {
-			axis: null,
+			axis: this.getDroppableAxis(),
 			items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 0,
