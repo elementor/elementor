@@ -243,6 +243,11 @@ const DivBlockView = BaseElementView.extend( {
 
 				const selfIndex = elements.indexOf( draggedElement );
 				const targetIndex = elements.indexOf( event.currentTarget );
+
+				if ( targetIndex === selfIndex ) {
+					return;
+				}
+
 				const dropIndex = this.getDropIndex( containerSelector, side, targetIndex, selfIndex );
 
 				// Reset the dragged element cache.
