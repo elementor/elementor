@@ -581,7 +581,7 @@ module.exports = {
 
 		setTimeout( function() {
 			// Sometimes element removed during the timeout.
-			if ( ! $element[ 0 ]?.isConnected ) {
+			if ( ! $element[ 0 ].isConnected ) {
 				return;
 			}
 
