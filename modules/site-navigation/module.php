@@ -17,7 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends Module_Base {
 	const PAGES_PANEL_EXPERIMENT_NAME = 'pages_panel';
-
+	const PACKAGES = [
+		'editor-site-navigation',
+	];
 	/**
 	 * Initialize the Site navigation module.
 	 *
@@ -35,6 +37,8 @@ class Module extends Module_Base {
 
 		$this->register_pages_panel_experiment();
 
+		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+
 		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
 				$env['@elementor/editor-site-navigation'] = [
@@ -43,6 +47,7 @@ class Module extends Module_Base {
 
 				return $env;
 			} );
+
 			$this->register_rest_fields();
 		}
 	}
@@ -80,5 +85,9 @@ class Module extends Module_Base {
 		add_action( 'rest_api_init', function() {
 			( new Page_User_Can() )->register_rest_field();
 		} );
+	}
+
+	private function add_packages( $packages ) {
+		return array_merge( $packages, self::PACKAGES );
 	}
 }
