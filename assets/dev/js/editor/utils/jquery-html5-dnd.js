@@ -331,8 +331,13 @@
 		};
 
 		const insertGridRowPlaceholder = function() {
-			elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
-			insertPlaceholderInsideElement();
+			const { hasLogicalWrapper, placeholderTarget } = placeholderContext;
+
+			if ( ! hasLogicalWrapper ) {
+				elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
+			}
+
+			insertPlaceholderInsideElement( placeholderTarget );
 		};
 
 		const insertFlexRowPlaceholder = function() {
