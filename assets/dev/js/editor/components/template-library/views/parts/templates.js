@@ -30,6 +30,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
 		selectSourceFilter: '.elementor-template-library-filter-select-source .source-option',
 		addNewFolder: '#elementor-template-library-add-new-folder',
+		addNewFolderDivider: '.elementor-template-library-filter-toolbar-side-actions .divider',
 		selectGridView: '#elementor-template-library-view-grid',
 		selectListView: '#elementor-template-library-view-list',
 		bulkSelectionActionBar: '.bulk-selection-action-bar',
