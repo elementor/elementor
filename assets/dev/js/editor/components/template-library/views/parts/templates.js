@@ -87,7 +87,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	handleQuotaWarning( variant, quotaUsage ) {
-		const message = QUOTA_WARNINGS[ 'alert' ];
+		const message = QUOTA_WARNINGS[ variant ];
 
 		if ( ! message ) {
 			return;
