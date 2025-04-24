@@ -117,7 +117,13 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	showSaveTemplateView( elementModel, context = SAVE_CONTEXTS.SAVE ) {
-		this.getHeaderView().menuArea.reset();
+		const headerView = this.getHeaderView();
+
+		headerView.menuArea.reset();
+
+		if ( SAVE_CONTEXTS.SAVE !== context ) {
+			headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
+		}
 
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel, context } ) );
 	},
