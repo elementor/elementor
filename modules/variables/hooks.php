@@ -8,8 +8,24 @@ use Elementor\Modules\Variables\Classes\Style_Transformers;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
+ 
 class Hooks {
+	const PACKAGES = [
+		'editor-global-variables'
+	];
+
+	public function register_packages() {
+		add_filter( 'elementor/editor/v2/packages', function ( $packages ) {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return $packages;
+			}
+
+			return array_merge( $packages, self::PACKAGES );
+		} );
+		
+		return $this;
+	}
+
 	public function register_styles_transformers() {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			( new Style_Transformers() )->append_to( $registry );

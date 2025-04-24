@@ -14,9 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const MODULE_NAME = 'e-variables';
 	const EXPERIMENT_NAME = 'e_variables';
-	const PACKAGE = [
-		'editor-global-variables'
-	];
 
 	public function get_name() {
 		return self::MODULE_NAME;
@@ -44,23 +41,14 @@ class Module extends BaseModule {
 			return;
 		}
 
-		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-
 		$this->hooks()
 			->register_styles_transformers()
+			->register_packages()
 			->filter_for_style_schema();
 	}
 
 	private function is_experiment_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
 			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
-	}
-
-	private function add_packages( $packages ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return $packages;
-		}
-
-		return array_merge( $packages, self::PACKAGE );
 	}
 }
