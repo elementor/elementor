@@ -1138,6 +1138,10 @@ label.elementor-template-library-order-label {
 
 	i {
 		font-size: 85px;
+
+		&.eicon-library-upload {
+			font-size: 65px;
+		}
 	}
 
 	img {
@@ -1358,6 +1362,7 @@ label.elementor-template-library-order-label {
 			overflow: auto;
 			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 			z-index: 1;
+			border-radius: 2px;
 
 			.eicon-loading {
 				margin: 15px;
