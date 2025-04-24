@@ -113,5 +113,4 @@ class Global_Classes_Parser {
 			? $result->wrap( $order->values() )
 			: $result;
 	}
-
 }
