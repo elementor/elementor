@@ -43,6 +43,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		quotaFill: '.quota-progress-container  .quota-progress-bar .quota-progress-bar-fill',
 		quotaValue: '.quota-progress-container .quota-progress-bar-value',
 		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
+		quotaUpgrade: '.quota-progress-container .progress-bar-container .quota-warning a',
 		navigationContainer: '#elementor-template-library-navigation-container',
 	},
 
@@ -62,6 +63,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'click @ui.bulkMove': 'onClickBulkMove',
 		'click @ui.bulkActionBarDelete': 'onBulkDeleteClick',
 		'click @ui.bulkCopy': 'onClickBulkCopy',
+		'click @ui.quotaUpgrade': 'onQuotaUpgradeClicked',
 	},
 
 	className: 'no-bulk-selections',
@@ -102,7 +104,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.ui.quotaFill.css( 'width', `${ value }%` );
 
-		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold }` );
+		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold?.toLocaleString() }` );
 
 		this.ui.quotaWarning.hide();
 
@@ -158,11 +160,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		document.querySelectorAll( '.bulk-selection-item-checkbox' ).forEach( function( checkbox ) {
 			checkbox.checked = isChecked;
 			const templateId = checkbox.dataset.template_id;
+			const parentDiv = checkbox.closest( '.elementor-template-library-template' );
 
 			if ( isChecked ) {
 				elementor.templates.addBulkSelectionItem( templateId );
+				parentDiv?.classList.add( 'bulk-selected-item' );
 			} else {
 				elementor.templates.removeBulkSelectionItem( templateId );
+				parentDiv?.classList.remove( 'bulk-selected-item' );
 			}
 		} );
 	},
@@ -413,7 +418,20 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 
 		if ( 'cloud' === activeSource ) {
+			const isFolderView = elementor.templates.getFilter( 'parentId' );
+			const location = isFolderView
+				? elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTabFolder
+				: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab;
+
+			elementor.templates.eventManager.sendPageViewEvent( { location } );
+
 			this.handleQuotaBar();
+		}
+
+		if ( 'local' === activeSource ) {
+			elementor.templates.eventManager.sendPageViewEvent( {
+				location: elementor.editorEvents.config.secondaryLocations.templateLibrary.siteTab,
+			} );
 		}
 	},
 
@@ -611,6 +629,17 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		$e.route( 'library/save-template', {
 			model: this.model,
 			context: SAVE_CONTEXTS.BULK_COPY,
+		} );
+	},
+
+	onQuotaUpgradeClicked() {
+		const quota = elementorAppConfig?.[ 'cloud-library' ]?.quota;
+
+		const value = quota ? Math.round( ( quota.currentUsage / quota.threshold ) * 100 ) : 0;
+
+		elementor.templates.eventManager.sendUpgradeClickedEvent( {
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.quotaBar,
+			upgrade_position: `quota bar ${ value ? value + '%' : '' }`,
 		} );
 	},
 } );

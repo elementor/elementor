@@ -101,6 +101,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		event.stopPropagation();
 
 		this.ui.morePopup.show();
+
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.morePopup,
+		} );
 	},
 
 	onPreviewButtonClick( event ) {
@@ -152,8 +156,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 		if ( event?.target?.checked ) {
 			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
+			this.$el.addClass( 'bulk-selected-item' );
 		} else {
 			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
+			this.$el.removeClass( 'bulk-selected-item' );
 		}
 
 		elementor.templates.layout.handleBulkActionBarUi();
