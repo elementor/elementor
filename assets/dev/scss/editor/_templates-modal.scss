@@ -19,6 +19,13 @@ $remote-templates-items-space: 30px;
 		overflow-y: scroll;
 	}
 
+	&:has(#elementor-template-library-save-template) {
+ 		
+		.dialog-message {
+			overflow-y: hidden;
+		}
+	}
+
 	.e-back-to-editor {
 		color: var(--e-a-color-txt);
 		text-decoration: underline;
