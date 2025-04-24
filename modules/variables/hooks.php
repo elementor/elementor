@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Hooks {
 	const PACKAGES = [
-		'editor-global-variables',
+		'editor-variables',
 	];
 
 	public function register_packages() {
