@@ -372,7 +372,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<# } else { #>
 			<#
-				const imageSource = preview_url || '<?php echo esc_html( Utils::get_placeholder_image_src() ); ?>';
+				const imageSource = preview_url || '<?php echo esc_html( ELEMENTOR_ASSETS_URL . 'images/placeholder-cloud-grid.png' ); ?>';
 			#>
 			<div class="elementor-template-library-template-thumbnail">
 				<img src="{{{ imageSource }}}"/>
