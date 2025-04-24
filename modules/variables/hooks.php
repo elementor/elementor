@@ -8,10 +8,10 @@ use Elementor\Modules\Variables\Classes\Style_Transformers;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
- 
+
 class Hooks {
 	const PACKAGES = [
-		'editor-global-variables'
+		'editor-global-variables',
 	];
 
 	public function register_packages() {
@@ -22,7 +22,7 @@ class Hooks {
 
 			return array_merge( $packages, self::PACKAGES );
 		} );
-		
+
 		return $this;
 	}
 
