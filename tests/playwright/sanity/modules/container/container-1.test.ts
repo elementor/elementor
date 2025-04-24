@@ -37,11 +37,8 @@ test.describe( 'Container tests 1 @container', () => {
 		const image = await editor.addWidget( widgets.image, containerId );
 
 		// Act - Move the button to be last.
-		await editor.previewFrame.dragAndDrop(
-			getElementSelector( button ),
-			getElementSelector( image ),
-		);
-		await editor.previewFrame.dragAndDrop(
+		await editor.selectElement( button );
+		await editor.previe	wFrame.dragAndDrop(
 			getElementSelector( button ),
 			getElementSelector( image ),
 		);
