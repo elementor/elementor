@@ -333,6 +333,7 @@
 		const insertGridRowPlaceholder = function() {
 			const { hasLogicalWrapper, placeholderTarget } = placeholderContext;
 
+			// If we want to use horizontal placeholders inside V3, then we should remove these 3 lines of the code.
 			if ( ! hasLogicalWrapper ) {
 				elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
 			}
