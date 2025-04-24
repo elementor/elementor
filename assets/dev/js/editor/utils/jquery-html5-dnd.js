@@ -268,7 +268,7 @@
 		};
 
 		const maybeAddFlexRowClass = function( container ) {
-			if ( ! container ) {
+			if ( ! container || container.classList.contains( 'e-grid' ) ) {
 				return;
 			}
 
