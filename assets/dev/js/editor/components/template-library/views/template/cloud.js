@@ -132,7 +132,12 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 
 	handleItemDoubleClick() {
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			$e.route( 'library/view-folder', { model: this.model } );
+			$e.route( 'library/view-folder', {
+				model: this.model,
+				onAfter: () => {
+					elementor.templates.resetBulkActionBar();
+				},
+			} );
 		}
 	},
 
