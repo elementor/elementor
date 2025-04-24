@@ -38,7 +38,7 @@ test.describe( 'Container tests 1 @container', () => {
 
 		// Act - Move the button to be last.
 		await editor.selectElement( button );
-		await editor.previewFrame.dragAndDrop(
+		await editor.previe	wFrame.dragAndDrop(
 			getElementSelector( button ),
 			getElementSelector( image ),
 		);
