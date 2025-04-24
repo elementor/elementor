@@ -577,7 +577,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( [
 			'items' => [
 				'g-1' => $class_1,
-				'g-3' => $this->create_global_class( 'g-3', 'should-be-sanitized', 'bshould-be-sanitizedb' ),
+				'g-3' => $this->create_global_class( 'g-3', 'should-be-sanitized', 'should-be-sanitized' ),
 			],
 			'order' => [ 'g-3', 'g-1' ],
 		], $classes );
