@@ -115,6 +115,14 @@ class Style_Parser {
 	private function sanitize( array $style ): Parse_Result {
 		$props_parser = Props_Parser::make( $this->schema );
 
+		if ( isset( $style['label'] ) ) {
+			$style['label'] = sanitize_text_field( $style['label'] );
+		}
+
+		if ( isset( $style['id'] ) ) {
+			$style['id'] = sanitize_text_field( $style['id'] );
+		}
+
 		if ( ! empty( $style['variants'] ) ) {
 			foreach ( $style['variants'] as $variant_index => $variant ) {
 				$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] )->unwrap();
