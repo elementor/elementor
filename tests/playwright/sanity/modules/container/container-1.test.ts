@@ -24,32 +24,6 @@ test.describe( 'Container tests 1 @container', () => {
 		await page.close();
 	} );
 
-	test( 'Sort items in a Container using DnD', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const editor = await wpAdmin.openNewPage();
-
-		// Act.
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
-		const button = await editor.addWidget( widgets.button, containerId );
-		const heading = await editor.addWidget( widgets.heading, containerId );
-		const image = await editor.addWidget( widgets.image, containerId );
-
-		// Act - Move the button to be last.
-		await editor.previewFrame.dragAndDrop(
-			getElementSelector( button ),
-			getElementSelector( image ),
-		);
-		const buttonEl = await editor.getElementHandle( button );
-		const headingEl = await editor.getElementHandle( heading );
-		const elBeforeButton = await buttonEl.evaluate( ( node ) => node.previousElementSibling );
-		const elAfterHeading = await headingEl.evaluate( ( node ) => node.nextElementSibling );
-
-		// Assert - Test that the image is between the heading & button.
-		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
-	} );
-
 	test( 'Background slideshow', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -76,6 +50,32 @@ test.describe( 'Container tests 1 @container', () => {
 		await test.step( 'Verify background slideshow on the frontend', async () => {
 			await expect.soft( page.locator( '.e-con' ) ).toHaveScreenshot( 'frontend-container-background-slideshow.png' );
 		} );
+	} );
+
+	test( 'Sort items in a Container using DnD', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		// Act.
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
+		const button = await editor.addWidget( widgets.button, containerId );
+		const heading = await editor.addWidget( widgets.heading, containerId );
+		const image = await editor.addWidget( widgets.image, containerId );
+
+		// Act - Move the button to be last.
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( button ),
+			getElementSelector( image ),
+		);
+		const buttonEl = await editor.getElementHandle( button );
+		const headingEl = await editor.getElementHandle( heading );
+		const elBeforeButton = await buttonEl.evaluate( ( node ) => node.previousElementSibling );
+		const elAfterHeading = await headingEl.evaluate( ( node ) => node.nextElementSibling );
+
+		// Assert - Test that the image is between the heading & button.
+		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
 	} );
 
 	test( 'Test widgets display inside the container using various directions and content width', async ( { page, apiRequests }, testInfo ) => {
