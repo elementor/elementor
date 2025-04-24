@@ -286,7 +286,7 @@ class Admin_Notices extends Module {
 			],
 			'button_secondary' => [
 				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'url' => 'https://elementor.com/help/share-usage-data/',
+				'url' => 'https://go.elementor.com/wp-dash-update-usage-notice/',
 				'new_tab' => true,
 				'type' => 'cta',
 			],
