@@ -263,7 +263,7 @@ const TemplateLibraryManager = function() {
 
 			const templateId = templateModel.get( 'template_id' );
 			const source = templateModel.get( 'source' );
-			const itemType = this.model.get( 'subType' );
+			const itemType = templateModel.get( 'subType' );
 
 			elementorCommon.ajax.addRequest( 'delete_template', {
 				data: {
