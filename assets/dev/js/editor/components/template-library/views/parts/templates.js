@@ -104,7 +104,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.ui.quotaFill.css( 'width', `${ value }%` );
 
-		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold }` );
+		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold?.toLocaleString() }` );
 
 		this.ui.quotaWarning.hide();
 
@@ -160,11 +160,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		document.querySelectorAll( '.bulk-selection-item-checkbox' ).forEach( function( checkbox ) {
 			checkbox.checked = isChecked;
 			const templateId = checkbox.dataset.template_id;
+			const parentDiv = checkbox.closest( '.elementor-template-library-template' );
 
 			if ( isChecked ) {
 				elementor.templates.addBulkSelectionItem( templateId );
+				parentDiv?.classList.add( 'bulk-selected-item' );
 			} else {
 				elementor.templates.removeBulkSelectionItem( templateId );
+				parentDiv?.classList.remove( 'bulk-selected-item' );
 			}
 		} );
 	},
