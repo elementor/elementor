@@ -105,7 +105,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.ui.quotaFill.css( 'width', `${ value }%` );
 
-		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold?.toLocaleString() }` );
+		this.ui.quotaValue.text( `${ quota?.currentUsage?.toLocaleString() }/${ quota?.threshold?.toLocaleString() }` );
 
 		this.ui.quotaWarning.hide();
 
