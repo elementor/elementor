@@ -54,7 +54,7 @@ const eventsConfig = {
 			copyModal: 'Copy to Modal',
 			bulkCopyModal: 'Bulk Copy to Modal',
 			saveModalSelectFolder: 'Save to Modal - select folder',
-			saveModalSelectConnect: 'Save to Modal - select folder',
+			saveModalSelectConnect: 'Save to Modal - connect',
 			saveModalSelectUpgrade: 'Save to Modal - upgrade',
 			importModal: 'Import Modal',
 			newFolderModal: 'New Folder Modal',
@@ -69,7 +69,7 @@ const eventsConfig = {
 			cloudTabConnect: 'Cloud Tab - Connect',
 			cloudTabUpgrade: 'Cloud Tab - Upgrade',
 			morePopup: 'Context Menu',
-			move
+			quotaBar: 'Quota Bar',
 		},
 	},
 
