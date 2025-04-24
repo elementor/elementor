@@ -7,10 +7,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Style_Parser extends Elementor_Test_Base {
-	/**
-	 * @var Style_Parser
-	 */
-	private $parser;
+	private Style_Parser $parser;
 
 	public function setUp(): void {
 		parent::setUp();
