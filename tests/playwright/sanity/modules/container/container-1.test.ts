@@ -41,6 +41,10 @@ test.describe( 'Container tests 1 @container', () => {
 			getElementSelector( button ),
 			getElementSelector( image ),
 		);
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( button ),
+			getElementSelector( image ),
+		);
 		const buttonEl = await editor.getElementHandle( button );
 		const headingEl = await editor.getElementHandle( heading );
 		const elBeforeButton = await buttonEl.evaluate( ( node ) => node.previousElementSibling );
