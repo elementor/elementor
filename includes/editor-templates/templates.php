@@ -118,7 +118,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
 							<#
 								const tabIcon = elementor.templates.hasCloudLibraryQuota()
-									? '<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>' 
+									? '<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>'
 									: '<span class="new-badge"><i class="eicon-upgrade-crown" style="margin-inline-end: 0;"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>';
 
 								print( tabIcon );
@@ -487,12 +487,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="cloud-library-form-inputs">
 			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Give your template a name', 'elementor' ); ?>" required>
 			<div class="source-selections">
+				<div class="cloud-folder-selection-dropdown">
+					<div class="cloud-folder-selection-dropdown-list"></div>
+				</div>
 				<div class="source-selections-input cloud">
 					<input type="checkbox" id="cloud" name="cloud" value="cloud">
 					<label for="cloud"> <?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label> <span class="divider">/</span>  <div class="ellipsis-container"><i class="eicon-ellipsis-h"></i></div>
-					<div class="cloud-folder-selection-dropdown">
-						<div class="cloud-folder-selection-dropdown-list"></div>
-					</div>
 					<span class="selected-folder">
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
@@ -500,7 +500,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<# if ( elementor.config.library_connect.is_connected ) { #>
 						<#
 							const goLink = elementor.templates.hasCloudLibraryQuota()
-								? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-badge' 
+								? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-badge'
 								: 'https://go.elementor.com/go-pro-cloud-templates-save-to-free-badge/';
 						#>
 					<span class="upgrade-badge">
@@ -631,7 +631,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
 					<#
 						const tabIcon = elementor.templates.hasCloudLibraryQuota()
-							? '<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>' 
+							? '<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>'
 							: '<span class="new-badge"><i class="eicon-upgrade-crown" style="margin-inline-end: 0;"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>';
 
 						print( tabIcon );
