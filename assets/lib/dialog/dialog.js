@@ -63,6 +63,8 @@
 		var self = this,
 			elements = {},
 			settings = {};
+		
+		self.openDialogs = [];
 
 		var initElements = function() {
 
@@ -481,6 +483,12 @@
 		};
 
 		this.destroy = function() {
+			const widgetId = self.getElements('widget')?.attr('id'),
+				index = self.parent.openDialogs.lastIndexOf(widgetId);
+
+			if (index !== -1) {
+				self.parent.openDialogs.splice(index, 1);
+			}
 
 			unbindEvents();
 
@@ -513,6 +521,16 @@
 				return;
 			}
 
+			const widgetId = self.getElements('widget')?.attr('id'),
+				openDialogs = self.parent.openDialogs,
+				topDialogId = openDialogs[openDialogs.length - 1];
+
+			if (topDialogId !== widgetId) {
+				return;
+			}
+
+			openDialogs.pop();
+
 			clearTimeout(hideTimeOut);
 
 			callEffect('hide', arguments);
@@ -533,6 +551,8 @@
 			if (!(parent instanceof DialogsManager.Instance)) {
 				throw 'The ' + self.widgetName + ' must to be initialized from an instance of DialogsManager.Instance';
 			}
+
+			self.parent = parent;
 
 			ensureClosureMethods();
 
@@ -676,6 +696,10 @@
 			}
 
 			self.trigger('show');
+
+			const widgetId = self.getElements('widget')?.attr('id');
+
+			self.parent.openDialogs.push(widgetId);
 
 			return self;
 		};
