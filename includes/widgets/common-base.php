@@ -139,6 +139,8 @@ class Widget_Common_Base extends Widget_Base {
 			'hexagon-vertical' => esc_html__( 'Hexagon vertical', 'elementor' ),
 			'hexagon-horizontal' => esc_html__( 'Hexagon horizontal', 'elementor' ),
 			'octagon' => esc_html__( 'Octagon', 'elementor' ),
+			'parallelogram-right' => esc_html__( 'Parallelogram right', 'elementor' ),
+			'parallelogram-left' => esc_html__( 'Parallelogram left', 'elementor' ),
 			'flower' => esc_html__( 'Flower', 'elementor' ),
 			'sketch' => esc_html__( 'Sketch', 'elementor' ),
 			'hexagon' => esc_html__( 'Hexagon Donut', 'elementor' ),
