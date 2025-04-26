@@ -133,6 +133,7 @@ class Style_Schema {
 				'rtl',
 			]),
 			'stroke' => Stroke_Prop_Type::make(),
+			'all' => Stroke_Prop_Type::make(),
 		];
 	}
 
