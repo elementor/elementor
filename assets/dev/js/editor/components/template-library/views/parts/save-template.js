@@ -488,6 +488,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.selectedFolderText.html( value );
 		this.ui.selectedFolder.show();
 		this.ui.hiddenInputSelectedFolder.val( id );
+		this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
 	},
 
 	highlightSelectedFolder( id ) {
@@ -506,6 +507,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.ellipsisIcon.show();
 		this.ui.hiddenInputSelectedFolder.val( '' );
 		this.ui.foldersDropdown.hide();
+		this.$( '.source-selections-input #cloud' ).prop( 'checked', false );
 	},
 
 	async loadMoreFolders() {
