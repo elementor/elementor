@@ -161,11 +161,11 @@ const TemplateLibraryManager = function() {
 	this.getDefaultTemplateTypeSafeData = function( title ) {
 		return {
 			saveDialog: {
-				description: sprintf(
+				description: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? sprintf(
 					/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
 					__( 'You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it’s always ready when editing this website.', 'elementor' ),
 					'<b>', '</b>', '<br>', '<b>', '</b>',
-				),
+				) : __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				/* Translators: %s: Template type. */
 				title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
 			},
@@ -346,13 +346,9 @@ const TemplateLibraryManager = function() {
 			type: 'text',
 			value: templateModel.get( 'title' ),
 		} )
-			.attr( 'autocomplete', 'off' )
-			.on( 'change', ( event ) => {
-				event.preventDefault();
-				templateModel.set( 'title', event.target.value );
-			} );
+			.attr( 'autocomplete', 'off' );
 
-		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+		const dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-rename-dialog',
 			headerMessage,
 			message: $inputArea,
@@ -372,6 +368,21 @@ const TemplateLibraryManager = function() {
 				$inputArea.trigger( 'focus' );
 			},
 		} );
+
+		$inputArea.on( 'input', ( event ) => {
+			event.preventDefault();
+			const title = event.target.value.trim();
+
+			templateModel.set( 'title', title );
+
+			dialog.getElements( 'ok' ).prop( 'disabled', ! self.isTemplateTitleValid( title ) );
+		} );
+
+		return dialog;
+	};
+
+	this.isTemplateTitleValid = ( title ) => {
+		return title.trim().length > 0 && title.trim().length <= 75;
 	};
 
 	this.getFolderTemplates = ( parentElement ) => {
@@ -467,17 +478,11 @@ const TemplateLibraryManager = function() {
 		inputArea.placeholder = __( 'Folder name', 'elementor' );
 		inputArea.autocomplete = 'off';
 
-		inputArea.addEventListener( 'change', ( event ) => {
-			event.preventDefault();
-
-			folderData.title = event.target.value;
-		} );
-
 		const fragment = document.createDocumentFragment();
 		fragment.appendChild( paragraph );
 		fragment.appendChild( inputArea );
 
-		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+		const dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-create-new-folder-dialog',
 			headerMessage: __( 'Create a new folder', 'elementor' ),
 			message: fragment,
@@ -495,6 +500,22 @@ const TemplateLibraryManager = function() {
 				} );
 			},
 		} );
+
+		dialog.getElements( 'ok' ).prop( 'disabled', true );
+
+		inputArea.addEventListener( 'input', ( event ) => {
+			event.preventDefault();
+
+			const title = event.target.value.trim();
+
+			folderData.title = title;
+
+			const isTitleValid = self.isTemplateTitleValid( title );
+
+			dialog.getElements( 'ok' ).prop( 'disabled', ! isTitleValid );
+		} );
+
+		return dialog;
 	};
 
 	this.deleteFolder = function( templateModel, options ) {
