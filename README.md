@@ -42,6 +42,18 @@ Community contributions are always welcomed and help us remain the Number 1 Word
 
 There are many ways to contribute to Elementor:
 
+### Development Environment
+
+To start development environment, run:
+
+1. `npm ci`, 
+2. `npm run dev`
+
+The development command will:
+- Update Composer dependencies
+- Start a local WordPress environment at port 8888
+- Watch for both script and style changes concurrently
+
 ### Contribution Guidelines
 
 Please read our [Contribution Guidelines](https://elemn.to/gh-contributing) to learn the best practices for contributing to Elementor.
