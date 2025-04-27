@@ -117,14 +117,6 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		);
 
 		wp_register_script(
-			'jquery-hover-intent',
-			"{$assets_url}lib/jquery-hover-intent/jquery-hover-intent{$min_suffix}.js",
-			[],
-			'1.0.0',
-			true
-		);
-
-		wp_register_script(
 			'nouislider',
 			"{$assets_url}lib/nouislider/nouislider{$min_suffix}.js",
 			[],
@@ -159,7 +151,6 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 				'flatpickr',
 				'ace',
 				'ace-language-tools',
-				'jquery-hover-intent',
 				'nouislider',
 				'pickr',
 				'react',
