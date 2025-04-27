@@ -263,7 +263,7 @@ const TemplateLibraryManager = function() {
 
 			const templateId = templateModel.get( 'template_id' );
 			const source = templateModel.get( 'source' );
-			const itemType = this.model.get( 'subType' );
+			const itemType = templateModel.get( 'subType' );
 
 			elementorCommon.ajax.addRequest( 'delete_template', {
 				data: {
@@ -627,7 +627,7 @@ const TemplateLibraryManager = function() {
 
 		data.content = JSON.stringify( data.content );
 
-		const ajaxParams = {
+		const defaultAjaxParams = {
 			data,
 			success( successData ) {
 				$e.route( 'library/templates/my-templates', {
@@ -653,6 +653,8 @@ const TemplateLibraryManager = function() {
 				self.sendOnSavedTemplateFailedEvent( data );
 			},
 		};
+
+		const ajaxParams = _.extend( defaultAjaxParams, templateType.ajaxParams );
 
 		elementorCommon.ajax.addRequest( this.getSaveAjaxAction( data.save_context ), ajaxParams );
 	};
