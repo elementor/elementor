@@ -18,6 +18,7 @@ const AiSiteCreator = ( { ...props } ) => {
 		input_placeholder: inputPlaceholder,
 		button_title: buttonTitle,
 		button_cta_url: buttonCtaUrl,
+		background_image: backgroundImage,
 	} = aiCreatorData;
 
 	const handleInputChange = ( event ) => {
@@ -44,7 +45,10 @@ const AiSiteCreator = ( { ...props } ) => {
 				gap: 2,
 				border: '1px solid #E5E5E5',
 				borderRadius: 1,
-				borderColor: 'rgba(0, 0, 0, 0.12)',
+				boxShadow: 'none',
+				backgroundImage: `url(${ backgroundImage })`,
+				backgroundSize: 'auto',
+				backgroundPosition: 'center',
 			} }
 		>
 			<Stack gap={ 1 } justifyContent="center">
