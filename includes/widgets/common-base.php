@@ -141,6 +141,8 @@ class Widget_Common_Base extends Widget_Base {
 			'octagon' => esc_html__( 'Octagon', 'elementor' ),
 			'parallelogram-right' => esc_html__( 'Parallelogram right', 'elementor' ),
 			'parallelogram-left' => esc_html__( 'Parallelogram left', 'elementor' ),
+			'trapezoid-up' => esc_html__( 'Trapezoid Up', 'elementor' ),
+			'trapezoid-down' => esc_html__( 'Trapezoid Down', 'elementor' ),
 			'flower' => esc_html__( 'Flower', 'elementor' ),
 			'sketch' => esc_html__( 'Sketch', 'elementor' ),
 			'hexagon' => esc_html__( 'Hexagon Donut', 'elementor' ),
@@ -998,7 +1000,7 @@ class Widget_Common_Base extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => $this->get_shapes(),
 				'default' => 'circle',
-				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . 'mask-shapes/{{VALUE}}.svg );' ),
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
 				'condition' => [
 					'_mask_switch!' => '',
 				],
