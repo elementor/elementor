@@ -263,7 +263,7 @@ const DivBlockView = BaseElementView.extend( {
 	getDropIndex( container, side, index, selfIndex ) {
 		const styles = window.getComputedStyle( container );
 
-		const isFlex = 'flex' === styles.display;
+		const isFlex = [ 'flex', 'inline-flex' ].includes( styles.display );
 		const isFlexReverse = isFlex &&
 			[ 'column-reverse', 'row-reverse' ].includes( styles.flexDirection );
 
