@@ -143,6 +143,8 @@ class Widget_Common_Base extends Widget_Base {
 			'parallelogram-left' => esc_html__( 'Parallelogram left', 'elementor' ),
 			'trapezoid-up' => esc_html__( 'Trapezoid Up', 'elementor' ),
 			'trapezoid-down' => esc_html__( 'Trapezoid Down', 'elementor' ),
+			'pill-vertical' => esc_html__( 'Pill vertical', 'elementor' ),
+			'pill-horizontal' => esc_html__( 'Pill horizontal', 'elementor' ),
 			'flower' => esc_html__( 'Flower', 'elementor' ),
 			'sketch' => esc_html__( 'Sketch', 'elementor' ),
 			'hexagon' => esc_html__( 'Hexagon Donut', 'elementor' ),
