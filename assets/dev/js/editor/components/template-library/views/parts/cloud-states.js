@@ -14,6 +14,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	events: {
 		'click @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'click @ui.button': 'onButtonClick',
 	},
 
 	modesStrings() {
@@ -30,7 +31,7 @@ module.exports = Marionette.ItemView.extend( {
 				title: __( 'It’s time to level up', 'elementor' ),
 				message: __( 'Elementor Pro plans come with Cloud Templates.', 'elementor' ) + '<br>' + __( 'Upgrade now to re-use your templates on all the websites you’re working on.', 'elementor' ),
 				icon: `<i class="eicon-library-subscription-upgrade" aria-hidden="true" title="${ __( 'Upgrade now', 'elememntor' ) }"></i>`,
-				button: `<a class="elementor-button e-accent" href="" target="_blank">${ __( 'Upgrade now', 'elementor' ) }</a>`,
+				button: `<a class="elementor-button e-accent" href="https://go.elementor.com/go-pro-cloud-templates-cloud-tab" target="_blank">${ __( 'Upgrade now', 'elementor' ) }</a>`,
 			},
 		};
 	},
@@ -53,6 +54,10 @@ module.exports = Marionette.ItemView.extend( {
 		this.handleElementorConnect();
 
 		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.add( 'e-hidden-disabled' );
+
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTabUpgrade,
+		} );
 	},
 
 	updateTemplateMarkup() {
@@ -85,6 +90,13 @@ module.exports = Marionette.ItemView.extend( {
 
 	onSelectSourceFilterChange( event ) {
 		elementor.templates.onSelectSourceFilterChange( event );
+	},
+
+	onButtonClick() {
+		elementor.templates.eventManager.sendUpgradeClickedEvent( {
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab,
+			upgradePosition: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab,
+		} );
 	},
 
 	onDestroy() {
