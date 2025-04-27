@@ -161,11 +161,11 @@ const TemplateLibraryManager = function() {
 	this.getDefaultTemplateTypeSafeData = function( title ) {
 		return {
 			saveDialog: {
-				description: sprintf(
+				description: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? sprintf(
 					/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
 					__( 'You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it’s always ready when editing this website.', 'elementor' ),
 					'<b>', '</b>', '<br>', '<b>', '</b>',
-				),
+				) : __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				/* Translators: %s: Template type. */
 				title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
 			},
