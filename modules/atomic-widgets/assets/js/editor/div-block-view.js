@@ -389,9 +389,9 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getBaseClass() {
-		const baseClass = elementor.helpers.getAtomicWidgetBaseClass( this.options?.model );
+		const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
 
-		return Object.keys( baseClass ?? {} )[ 0 ] ?? '';
+		return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
 	},
 } );
 

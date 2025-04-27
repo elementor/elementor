@@ -784,7 +784,7 @@ module.exports = {
 		return !! widgetCache?.atomic_props_schema;
 	},
 
-	getAtomicWidgetBaseClass( model ) {
+	getAtomicWidgetBaseStyles( model ) {
 		if ( ! this.isAtomicWidget( model ) ) {
 			return;
 		}
