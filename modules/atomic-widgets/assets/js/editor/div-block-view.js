@@ -215,30 +215,18 @@ const DivBlockView = BaseElementView.extend( {
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 					draggedElement = draggedView?.getContainer().view.el,
-					containerSelector = event.currentTarget.parentElement;
+					containerElement = event.currentTarget.parentElement,
+					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] ),
+					targetIndex = elements.indexOf( event.currentTarget );
 
-				const $elements = jQuery( containerSelector ).find( '> .elementor-element' );
-				const elements = $elements.toArray();
-				const targetIndex = elements.indexOf( event.currentTarget );
-
-				// User is dragging an element from the panel.
-				if ( ! draggedView || ! draggedElement ) {
+				if ( this.isPanelElement( draggedView, draggedElement ) ) {
 					this.onDrop( event, { at: targetIndex } );
 
 					return;
 				}
 
-				// Prevent the user from dragging a parent container into its own child container
-				const draggedId = draggedView.getContainer().id;
-
-				let currentTargetParentContainer = this.container;
-
-				while ( currentTargetParentContainer ) {
-					if ( currentTargetParentContainer.id === draggedId ) {
-						return;
-					}
-
-					currentTargetParentContainer = currentTargetParentContainer.parent;
+				if ( this.isParentElement( draggedView.getContainer().id ) ) {
+					return;
 				}
 
 				const selfIndex = elements.indexOf( draggedElement );
@@ -247,20 +235,72 @@ const DivBlockView = BaseElementView.extend( {
 					return;
 				}
 
-				const dropIndex = this.getDropIndex( containerSelector, side, targetIndex, selfIndex );
+				const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
 
-				// Reset the dragged element cache.
-				elementor.channels.editor.reply( 'element:dragged', null );
-
-				$e.run( 'document/elements/move', {
-					container: draggedView.getContainer(),
-					target: this.getContainer(),
-					options: {
-						at: dropIndex,
-					},
-				} );
+				this.moveDroppedItem( draggedView, dropIndex );
 			},
 		};
+	},
+
+	isPanelElement( draggedView, draggedElement ) {
+		return ! draggedView || ! draggedElement;
+	},
+
+	isParentElement( draggedId ) {
+		let current = this.container;
+
+		while ( current ) {
+			if ( current.id === draggedId ) {
+				return true;
+			}
+
+			current = current.parent;
+		}
+
+		return false;
+	},
+
+	getDropIndex( container, side, index, selfIndex ) {
+		const styles = window.getComputedStyle( container );
+
+		const isFlex = 'flex' === styles.display;
+		const isFlexReverse = isFlex &&
+			[ 'column-reverse', 'row-reverse' ].includes( styles.flexDirection );
+
+		const isRow = isFlex && [ 'row-reverse', 'row' ].includes( styles.flexDirection );
+
+		const isRtl = elementorCommon.config.isRTL;
+
+		const isReverse = isRow ? isFlexReverse !== isRtl : isFlexReverse;
+
+		// The element should be placed BEFORE the current target
+		// if is reversed + side is bottom/right OR not is reversed + side is top/left
+		if ( ( isReverse === this.draggingOnBottomOrRightSide( side ) ) ) {
+			if ( -1 === selfIndex || selfIndex >= index - 1 ) {
+				return index;
+			}
+
+			return index > 0 ? index - 1 : 0;
+		}
+
+		if ( 0 <= selfIndex && selfIndex < index ) {
+			return index;
+		}
+
+		return index + 1;
+	},
+
+	moveDroppedItem( draggedView, dropIndex ) {
+		// Reset the dragged element cache.
+		elementor.channels.editor.reply( 'element:dragged', null );
+
+		$e.run( 'document/elements/move', {
+			container: draggedView.getContainer(),
+			target: this.getContainer(),
+			options: {
+				at: dropIndex,
+			},
+		} );
 	},
 
 	getEditButtons() {
@@ -298,34 +338,6 @@ const DivBlockView = BaseElementView.extend( {
 		}
 
 		return editTools;
-	},
-
-	getDropIndex( container, side, index, selfIndex ) {
-		const styles = window.getComputedStyle( container );
-
-		const isFlex = 'flex' === styles.display;
-		const isFlexReverse = isFlex &&
-			[ 'column-reverse', 'row-reverse' ].includes( styles.flexDirection );
-
-		const isRtl = elementorCommon.config.isRTL;
-
-		const isReverse = isFlexReverse !== isRtl; 	// If not flex reversed + RTL, or if it is flex reversed + LTR
-
-		if ( ( isReverse === this.draggingOnBottomOrRightSide( side ) ) ) {
-			// The element should be placed BEFORE the current target
-			// if is reversed + side is bottom/right OR not is reversed + side is top/left
-			if ( -1 === selfIndex || selfIndex >= index - 1 ) {
-				return index;
-			}
-
-			return index > 0 ? index - 1 : 0;
-		}
-
-		if ( 0 <= selfIndex && selfIndex < index ) {
-			return index;
-		}
-
-		return index + 1;
 	},
 
 	draggingOnBottomOrRightSide( side ) {
