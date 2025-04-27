@@ -125,10 +125,13 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			return;
 		}
 
-		const isAnyChecked = this.ui.sourceSelectionCheckboxes.is( ':checked' ),
-			isTitleFilled = this.ui.templateNameInput.is( ':visible' )
-				? 0 !== this.ui.templateNameInput.val().trim().length
-				: true;
+		const isAnyChecked = this.ui.sourceSelectionCheckboxes.is( ':checked' );
+
+		const title = this.ui.templateNameInput.val().trim();
+
+		const isTitleFilled = this.ui.templateNameInput.is( ':visible' )
+			? elementor.templates.isTemplateTitleValid( title )
+			: true;
 
 		this.updateSubmitButtonState( ! isAnyChecked || ! isTitleFilled );
 	},
@@ -489,6 +492,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.selectedFolder.show();
 		this.ui.hiddenInputSelectedFolder.val( id );
 		this.$( '.source-selections-input #cloud' ).prop( 'checked', true );
+		this.maybeEnableSaveButton();
 	},
 
 	highlightSelectedFolder( id ) {
@@ -507,7 +511,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.ellipsisIcon.show();
 		this.ui.hiddenInputSelectedFolder.val( '' );
 		this.ui.foldersDropdown.hide();
-		this.$( '.source-selections-input #cloud' ).prop( 'checked', false );
 	},
 
 	async loadMoreFolders() {
