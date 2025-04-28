@@ -112,7 +112,7 @@ class Test_Style_Schema extends TestCase {
 	public function test_augment__will_update_background_prop_type() {
 		// Arrange.
 		$style_def = [
-			'background-overlay' => Background_Overlay_Prop_Type::make(),
+			'bg' => Background_Overlay_Prop_Type::make(),
 		];
 
 		// Act.
@@ -120,7 +120,7 @@ class Test_Style_Schema extends TestCase {
 
 		// Assert.
 		$expected = [
-			'background-overlay' => $this->expected_background_overlay_prop_type(),
+			'bg' => $this->expected_background_overlay_prop_type(),
 		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
