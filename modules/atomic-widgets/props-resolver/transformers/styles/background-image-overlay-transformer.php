@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Background_Image_Overlay_Transformer extends Transformer_Base {
 	public static $default_repeat = 'repeat';
 	public static $default_attachment = 'scroll';
-	public static $default_size = 'auto';
+	public static $default_size = 'auto auto';
 	public static $default_position = '0% 0%';
 
 	public function transform( $value, Props_Resolver_Context $context ) {
