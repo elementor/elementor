@@ -400,8 +400,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								'value' => 'red',
 							],
 						],
+						'meta' => [],
 					],
-					'meta' => [],
 				],
 			],
 		];
@@ -521,8 +521,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								],
 							],
 						],
+						'meta' => [],
 					],
-					'meta' => [],
 				]
 			],
 		];
