@@ -31,7 +31,7 @@ module.exports = Marionette.ItemView.extend( {
 				title: __( 'It’s time to level up', 'elementor' ),
 				message: __( 'Elementor Pro plans come with Cloud Templates.', 'elementor' ) + '<br>' + __( 'Upgrade now to re-use your templates on all the websites you’re working on.', 'elementor' ),
 				icon: `<i class="eicon-library-subscription-upgrade" aria-hidden="true" title="${ __( 'Upgrade now', 'elememntor' ) }"></i>`,
-				button: `<a class="elementor-button e-accent" href="" target="_blank">${ __( 'Upgrade now', 'elementor' ) }</a>`,
+				button: `<a class="elementor-button e-accent" href="https://go.elementor.com/go-pro-cloud-templates-cloud-tab" target="_blank">${ __( 'Upgrade now', 'elementor' ) }</a>`,
 			},
 		};
 	},

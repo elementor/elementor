@@ -125,28 +125,31 @@ const TemplateLibraryManager = function() {
 	this.getDefaultTemplateTypeData = function() {
 		return {
 			saveDialog: {
-				description: __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 				saveBtnText: __( 'Save', 'elementor' ),
 			},
 			moveDialog: {
+				description: __( 'Alternatively, you can copy the template.', 'elementor' ),
 				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 				saveBtnText: __( 'Move', 'elementor' ),
 			},
 			copyDialog: {
+				description: __( 'Alternatively, you can move the template.', 'elementor' ),
 				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 				saveBtnText: __( 'Copy', 'elementor' ),
 			},
 			bulkMoveDialog: {
+				description: __( 'Alternatively, you can copy the templates.', 'elementor' ),
 				title: __( 'Move templates to a different location', 'elementor' ),
 				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
 				saveBtnText: __( 'Move', 'elementor' ),
 			},
 			bulkCopyDialog: {
+				description: __( 'Alternatively, you can move the templates.', 'elementor' ),
 				title: __( 'Copy templates to a different location', 'elementor' ),
 				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
@@ -158,40 +161,21 @@ const TemplateLibraryManager = function() {
 	this.getDefaultTemplateTypeSafeData = function( title ) {
 		return {
 			saveDialog: {
+				description: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? sprintf(
+					/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
+					__( 'You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it’s always ready when editing this website.', 'elementor' ),
+					'<b>', '</b>', '<br>', '<b>', '</b>',
+				) : __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				/* Translators: %s: Template type. */
-				title: sprintf( __( 'Save Your %s to Library', 'elementor' ), title ),
+				title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
 			},
 			moveDialog: {
-				description: sprintf(
-					/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
-					__( 'Alternatively, you can %1$scopy the template%2$s.', 'elementor' ),
-					'<u>', '</u>',
-				),
 				/* Translators: %s: Template type. */
 				title: sprintf( __( 'Move your %s to a different location', 'elementor' ), title ),
 			},
 			copyDialog: {
-				description: sprintf(
-					/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
-					__( 'Alternatively, you can %1$smove the template%2$s.', 'elementor' ),
-					'<u>', '</u>',
-				),
 				/* Translators: %s: Template type. */
 				title: sprintf( __( 'Copy your %s to a different location', 'elementor' ), title ),
-			},
-			bulkMoveDialog: {
-				description: sprintf(
-					/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
-					__( 'Alternatively, you can %1$scopy the templates%2$s.', 'elementor' ),
-					'<u>', '</u>',
-				),
-			},
-			bulkCopyDialog: {
-				description: sprintf(
-					/* Translators: 1: Opening underline tag, 2: Closing underline tag. */
-					__( 'Alternatively, you can %1$smove the templates%2$s.', 'elementor' ),
-					'<u>', '</u>',
-				),
 			},
 		};
 	};
@@ -279,7 +263,7 @@ const TemplateLibraryManager = function() {
 
 			const templateId = templateModel.get( 'template_id' );
 			const source = templateModel.get( 'source' );
-			const itemType = this.model.get( 'subType' );
+			const itemType = templateModel.get( 'subType' );
 
 			elementorCommon.ajax.addRequest( 'delete_template', {
 				data: {
@@ -362,13 +346,9 @@ const TemplateLibraryManager = function() {
 			type: 'text',
 			value: templateModel.get( 'title' ),
 		} )
-			.attr( 'autocomplete', 'off' )
-			.on( 'change', ( event ) => {
-				event.preventDefault();
-				templateModel.set( 'title', event.target.value );
-			} );
+			.attr( 'autocomplete', 'off' );
 
-		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+		const dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-rename-dialog',
 			headerMessage,
 			message: $inputArea,
@@ -388,6 +368,21 @@ const TemplateLibraryManager = function() {
 				$inputArea.trigger( 'focus' );
 			},
 		} );
+
+		$inputArea.on( 'input', ( event ) => {
+			event.preventDefault();
+			const title = event.target.value.trim();
+
+			templateModel.set( 'title', title );
+
+			dialog.getElements( 'ok' ).prop( 'disabled', ! self.isTemplateTitleValid( title ) );
+		} );
+
+		return dialog;
+	};
+
+	this.isTemplateTitleValid = ( title ) => {
+		return title.trim().length > 0 && title.trim().length <= 75;
 	};
 
 	this.getFolderTemplates = ( parentElement ) => {
@@ -418,6 +413,7 @@ const TemplateLibraryManager = function() {
 
 					self.layout.updateViewCollection( templatesCollection.models );
 					self.layout.modalContent.currentView.ui.addNewFolder.remove();
+					self.layout.modalContent.currentView.ui.addNewFolderDivider.remove();
 					self.layout.resetSortingUI();
 
 					isLoading = false;
@@ -482,17 +478,11 @@ const TemplateLibraryManager = function() {
 		inputArea.placeholder = __( 'Folder name', 'elementor' );
 		inputArea.autocomplete = 'off';
 
-		inputArea.addEventListener( 'change', ( event ) => {
-			event.preventDefault();
-
-			folderData.title = event.target.value;
-		} );
-
 		const fragment = document.createDocumentFragment();
 		fragment.appendChild( paragraph );
 		fragment.appendChild( inputArea );
 
-		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+		const dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-create-new-folder-dialog',
 			headerMessage: __( 'Create a new folder', 'elementor' ),
 			message: fragment,
@@ -510,6 +500,22 @@ const TemplateLibraryManager = function() {
 				} );
 			},
 		} );
+
+		dialog.getElements( 'ok' ).prop( 'disabled', true );
+
+		inputArea.addEventListener( 'input', ( event ) => {
+			event.preventDefault();
+
+			const title = event.target.value.trim();
+
+			folderData.title = title;
+
+			const isTitleValid = self.isTemplateTitleValid( title );
+
+			dialog.getElements( 'ok' ).prop( 'disabled', ! isTitleValid );
+		} );
+
+		return dialog;
 	};
 
 	this.deleteFolder = function( templateModel, options ) {
@@ -544,7 +550,7 @@ const TemplateLibraryManager = function() {
 			headerMessage: __( 'Delete this folder?', 'elementor' ),
 			message: sprintf(
 				// Translators: %1$s: Folder name, %2$s: Number of templates.
-				__( 'This will permanently delete %1$s that contains %2$d templates.', 'elementor' ),
+				__( 'This will permanently delete "%1$s" that contains %2$d templates.', 'elementor' ),
 				templateModel.get( 'title' ),
 				data.total,
 			),
@@ -642,7 +648,7 @@ const TemplateLibraryManager = function() {
 
 		data.content = JSON.stringify( data.content );
 
-		const ajaxParams = {
+		const defaultAjaxParams = {
 			data,
 			success( successData ) {
 				$e.route( 'library/templates/my-templates', {
@@ -668,6 +674,8 @@ const TemplateLibraryManager = function() {
 				self.sendOnSavedTemplateFailedEvent( data );
 			},
 		};
+
+		const ajaxParams = _.extend( defaultAjaxParams, templateType.ajaxParams );
 
 		elementorCommon.ajax.addRequest( this.getSaveAjaxAction( data.save_context ), ajaxParams );
 	};
@@ -763,7 +771,7 @@ const TemplateLibraryManager = function() {
 				headerMessage: __( 'Delete this template?', 'elementor' ),
 				message: sprintf(
 					// Translators: %1$s: Template name.
-					__( 'This will permanently remove %1$s.', 'elementor' ),
+					__( 'This will permanently remove "%1$s".', 'elementor' ),
 					templateModel.get( 'title' ),
 				),
 				strings: {
