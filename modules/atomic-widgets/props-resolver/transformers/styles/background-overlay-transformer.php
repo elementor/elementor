@@ -14,10 +14,10 @@ class Background_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		return Multi_Props::generate( [
 			'background-image' => implode( ',', $this->get_image( $value ) ),
-			'background-repeat' => implode( ',', $this->get_nested_prop( $value, 'repeat', Background_Image_Overlay_Transformer::$DEFAULT_REPEAT ) ),
-			'background-attachment' => implode( ',', $this->get_nested_prop( $value, 'attachment', Background_Image_Overlay_Transformer::$DEFAULT_ATTACHMENT ) ),
-			'background-size' => implode( ',', $this->get_nested_prop( $value, 'size', Background_Image_Overlay_Transformer::$DEFAULT_SIZE ) ),
-			'background-position' => implode( ',', $this->get_nested_prop( $value, 'position', Background_Image_Overlay_Transformer::$DEFAULT_POSITION ) ),
+			'background-repeat' => implode( ',', $this->get_nested_prop( $value, 'repeat', Background_Image_Overlay_Transformer::$default_repeat ) ),
+			'background-attachment' => implode( ',', $this->get_nested_prop( $value, 'attachment', Background_Image_Overlay_Transformer::$default_attachment ) ),
+			'background-size' => implode( ',', $this->get_nested_prop( $value, 'size', Background_Image_Overlay_Transformer::$default_size ) ),
+			'background-position' => implode( ',', $this->get_nested_prop( $value, 'position', Background_Image_Overlay_Transformer::$default_position ) ),
 		] );
 	}
 

@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
-	public static $DEFAULT_REPEAT = 'repeat';
-	public static $DEFAULT_ATTACHMENT = 'scroll';
-	public static $DEFAULT_SIZE = 'auto';
-	public static $DEFAULT_POSITION = '0% 0%';
+	public static $default_repeat = 'repeat';
+	public static $default_attachment = 'scroll';
+	public static $default_size = 'auto';
+	public static $default_position = '0% 0%';
 
 	public function transform( $value, Props_Resolver_Context $context ) {
 		if ( ! isset( $value['image'] ) ) {
@@ -25,10 +25,10 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 		return Multi_Props::generate( [
 			'url' => "url(\" $image_url \")",
-			'repeat' => $value['repeat'] ?? self::$DEFAULT_REPEAT,
-			'attachment' => $value['attachment'] ?? self::$DEFAULT_ATTACHMENT,
-			'size' => $value['size'] ?? self::$DEFAULT_SIZE,
-			'position' => $value['position'] ?? self::$DEFAULT_POSITION,
+			'repeat' => $value['repeat'] ?? self::$default_repeat,
+			'attachment' => $value['attachment'] ?? self::$default_attachment,
+			'size' => $value['size'] ?? self::$default_size,
+			'position' => $value['position'] ?? self::$default_position,
 		] );
 	}
 }
