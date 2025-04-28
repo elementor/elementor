@@ -142,6 +142,7 @@ class Widget_Common_Base extends Widget_Base {
 			'pentagon' => esc_html__( 'Pentagon', 'elementor' ),
 			'hexagon-vertical' => esc_html__( 'Hexagon vertical', 'elementor' ),
 			'hexagon-horizontal' => esc_html__( 'Hexagon horizontal', 'elementor' ),
+			'heptagon' => esc_html__( 'Heptagon', 'elementor' ),
 			'octagon' => esc_html__( 'Octagon', 'elementor' ),
 			'parallelogram-right' => esc_html__( 'Parallelogram right', 'elementor' ),
 			'parallelogram-left' => esc_html__( 'Parallelogram left', 'elementor' ),
