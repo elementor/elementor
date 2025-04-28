@@ -118,8 +118,6 @@ class Test_Style_Schema extends TestCase {
 		// Act.
 		$schema = $this->style_schema()->augment( $style_def );
 
-		var_dump($schema);
-
 		// Assert.
 		$expected = [
 			'background-overlay' => $this->expected_background_overlay_prop_type(),
