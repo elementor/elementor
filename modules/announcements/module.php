@@ -109,7 +109,7 @@ class Module extends BaseApp {
 			'description' => __( '<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>', 'elementor' ),
 			'media' => [
 				'type' => 'image',
-				'src' => ELEMENTOR_ASSETS_URL . 'images/announcement.png?' . ELEMENTOR_VERSION,
+				'src' => 'https://assets.elementor.com/ai/v1/images/ai-social-hd.gif',
 			],
 			'cta' => [
 				[
