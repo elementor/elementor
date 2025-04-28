@@ -12,8 +12,8 @@
           },
           "props": {
             "background-color": {
-			  "$$type": "color",
-			  "value": "<script>alert()</script>"
+              "$$type": "color",
+              "value": "<script>alert()</script>"
             },
             "display": {
               "$$type": "string",
