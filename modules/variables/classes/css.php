@@ -20,12 +20,12 @@ class CSS {
 		}
 
 		$post->get_stylesheet()->add_raw_css(
-			$this->raw_css( $post->get_post_id() )
+			$this->raw_css()
 		);
 	}
 
-	private function raw_css( $kit_id ): string {
-		$css_string = ".elementor-kit-${kit_id} {";
+	private function raw_css(): string {
+		$css_string = ":root {";
 
 		foreach ( $this->global_variables() as $idx => $variable ) {
 			$css_string .= '--' . $idx . ':' . $variable['value'] . '; ';
