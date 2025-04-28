@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\GlobalClasses\Database\Migrations;
+namespace Elementor\Modules\AtomicWidgets\Database\Migrations;
 
 use Elementor\Core\Database\Base_Migration;
 

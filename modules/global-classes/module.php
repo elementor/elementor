@@ -5,7 +5,7 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
-use Elementor\Modules\GlobalClasses\Database\Atomic_Widgets_Database_Updater;
+use Elementor\Modules\GlobalClasses\Database\Global_Classes_Database_Updater;
 use Elementor\Modules\GlobalClasses\ImportExport\Import_Export;
 use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Usage;
 use Elementor\Plugin;
@@ -41,7 +41,7 @@ class Module extends BaseModule {
 			( new Global_Classes_CSS() )->register_hooks();
 			( new Global_Classes_Cleanup() )->register_hooks();
 			( new Import_Export() )->register_hooks();
-			( new Atomic_Widgets_Database_Updater() )->register();
+			( new Global_Classes_Database_Updater() )->register();
 		}
 	}
 

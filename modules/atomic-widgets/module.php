@@ -59,7 +59,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\GlobalClasses\Database\Atomic_Widgets_Database_Updater;
+use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Elementor\Modules\GlobalClasses\Database;
+namespace Elementor\Modules\AtomicWidgets\Database;
 
 use Elementor\Core\Database\Base_Database_Updater;
-use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
+use Elementor\Modules\AtomicWidgets\Database\Migrations\Add_Capabilities;
 
 class Atomic_Widgets_Database_Updater extends Base_Database_Updater {
 	const DB_VERSION = 1;
