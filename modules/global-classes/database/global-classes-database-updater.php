@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\GlobalClasses\Database;
 
-
 use Elementor\Core\Database\Base_Database_Updater;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 

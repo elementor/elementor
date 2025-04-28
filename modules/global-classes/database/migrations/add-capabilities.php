@@ -13,7 +13,7 @@ class Add_Capabilities extends Base_Migration {
 	public function up() {
 		$capabilities = [
 			self::ACCESS_CLASS_MANAGER      => [ 'administrator' ],
-			self::UPDATE_CLASS       		=> [ 'administrator' ],
+			self::UPDATE_CLASS              => [ 'administrator' ],
 			self::REMOVE_CSS_CLASS          => [ 'administrator', 'editor', 'author', 'contributor', 'shop_manager' ],
 			self::APPLY_CSS_CLASS           => [ 'administrator', 'editor', 'author', 'contributor', 'shop_manager' ],
 		];
