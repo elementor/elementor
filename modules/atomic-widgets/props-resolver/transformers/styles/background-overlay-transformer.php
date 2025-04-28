@@ -13,16 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Background_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		return Multi_Props::generate( [
-			'background-image' => implode( ',', $this->get_image( $value ) ),
-			'background-repeat' => implode( ',', $this->get_nested_prop( $value, 'repeat', Background_Image_Overlay_Transformer::$default_repeat ) ),
-			'background-attachment' => implode( ',', $this->get_nested_prop( $value, 'attachment', Background_Image_Overlay_Transformer::$default_attachment ) ),
-			'background-size' => implode( ',', $this->get_nested_prop( $value, 'size', Background_Image_Overlay_Transformer::$default_size ) ),
-			'background-position' => implode( ',', $this->get_nested_prop( $value, 'position', Background_Image_Overlay_Transformer::$default_position ) ),
+			'background-image' => $this->get_images( $value ),
+			'background-repeat' => $this->get_values_by_prop( $value, 'repeat', Background_Image_Overlay_Transformer::$default_repeat ),
+			'background-attachment' => $this->get_values_by_prop( $value, 'attachment', Background_Image_Overlay_Transformer::$default_attachment ),
+			'background-size' => $this->get_values_by_prop( $value, 'size', Background_Image_Overlay_Transformer::$default_size ),
+			'background-position' => $this->get_values_by_prop( $value, 'position', Background_Image_Overlay_Transformer::$default_position ),
 		] );
 	}
 
-	private function get_image( $value ): array {
-		return array_map( function ( $item ) {
+	private function get_images( $value ): string {
+		return implode( ',', array_map( function ( $item ) {
 			if ( is_string( $item ) ) {
 				return $item;
 			}
@@ -32,11 +32,11 @@ class Background_Overlay_Transformer extends Transformer_Base {
 			}
 
 			return Multi_Props::get_value( $item )['url'] ?? 'unset';
-		}, $value );
+		}, $value ) );
 	}
 
-	private function get_nested_prop( $value, string $prop, string $default ): array {
-		return array_map( function ( $item ) use ( $prop, $default ) {
+	private function get_values_by_prop( $value, string $prop, string $default ): string {
+		return implode( ',', array_map( function ( $item ) use ( $prop, $default ) {
 			if ( is_string( $item ) ) {
 				return $default;
 			}
@@ -46,6 +46,6 @@ class Background_Overlay_Transformer extends Transformer_Base {
 			}
 
 			return Multi_Props::get_value( $item )[ $prop ] ?? $default;
-		}, $value );
+		}, $value ) );
 	}
 }
