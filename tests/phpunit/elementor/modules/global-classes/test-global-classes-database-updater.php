@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Modules\GlobalClasses;
 
-use Elementor\Modules\GlobalClasses\Database\Atomic_Widgets_Database_Updater;
+use Elementor\Modules\GlobalClasses\Database\Global_Classes_Database_Updater;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -11,14 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Global_Classes_Database_Updater extends Elementor_Test_Base {
 	/**
-	 * @var Atomic_Widgets_Database_Updater
+	 * @var Global_Classes_Database_Updater
 	 */
 	private $database_updater;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->database_updater = new Atomic_Widgets_Database_Updater();
+		$this->database_updater = new Global_Classes_Database_Updater();
 
         remove_all_actions( 'admin_init' );
 	}
@@ -41,14 +41,14 @@ class Test_Global_Classes_Database_Updater extends Elementor_Test_Base {
 			}
 		}
 
-		delete_option( Atomic_Widgets_Database_Updater::OPTION_NAME );
+		delete_option( Global_Classes_Database_Updater::OPTION_NAME );
 
 		parent::tearDown();
 	}
 
 	public function test_should_run_add_capabilities_migration_when_version_option_is_empty() {
 		// Assert
-		$this->assertFalse( get_option( Atomic_Widgets_Database_Updater::OPTION_NAME ) );
+		$this->assertFalse( get_option( Global_Classes_Database_Updater::OPTION_NAME ) );
 		$admin_role = get_role( 'administrator' );
 		$this->assertFalse( $admin_role->has_cap( Add_Capabilities::ACCESS_CLASS_MANAGER ) );
 
@@ -59,7 +59,7 @@ class Test_Global_Classes_Database_Updater extends Elementor_Test_Base {
         do_action( 'admin_init' );
 
 		// Assert
-		$this->assertEquals( 1, intval( get_option( Atomic_Widgets_Database_Updater::OPTION_NAME ) ) );
+		$this->assertEquals( 1, intval( get_option( Global_Classes_Database_Updater::OPTION_NAME ) ) );
 
 		$admin_role = get_role( 'administrator' );
 		$this->assertTrue( $admin_role->has_cap( Add_Capabilities::ACCESS_CLASS_MANAGER ) );
@@ -70,7 +70,7 @@ class Test_Global_Classes_Database_Updater extends Elementor_Test_Base {
 
 	public function test_should_not_run_add_capabilities_migration_when_version_option_is_1() {
 		// Arrange
-		update_option( Atomic_Widgets_Database_Updater::OPTION_NAME, 1 );
+		update_option( Global_Classes_Database_Updater::OPTION_NAME, 1 );
 
         $this->database_updater->register();
 
@@ -78,7 +78,7 @@ class Test_Global_Classes_Database_Updater extends Elementor_Test_Base {
         do_action( 'admin_init' );
 
 		// Assert
-		$this->assertEquals( 1, intval( get_option( Atomic_Widgets_Database_Updater::OPTION_NAME ) ) );
+		$this->assertEquals( 1, intval( get_option( Global_Classes_Database_Updater::OPTION_NAME ) ) );
 
 		$admin_role = get_role( 'administrator' );
 		$this->assertFalse( $admin_role->has_cap( Add_Capabilities::ACCESS_CLASS_MANAGER ) );
