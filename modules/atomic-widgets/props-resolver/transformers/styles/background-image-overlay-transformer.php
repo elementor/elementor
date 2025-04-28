@@ -23,7 +23,6 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 
 		$image_url = $value['image']['src'];
 
-
 		return Multi_Props::generate( [
 			'url' => "url(\" $image_url \")",
 			'repeat' => $value['repeat'] ?? self::$DEFAULT_REPEAT,
