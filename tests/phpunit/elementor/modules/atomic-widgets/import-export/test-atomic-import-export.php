@@ -80,13 +80,11 @@ class Test_Atomic_Import_Export extends Elementor_Test_Base {
 								->add_variant(
 									Style_Variant::make()
 										->add_prop(
-											'background',
-											Background_Prop_Type::generate( [
-												'background-overlay' => Background_Overlay_Prop_Type::generate([
-													Background_Image_Overlay_Prop_Type::generate([
-														'image' => $image
-													])
-												])
+											'background-overlay',
+											Background_Overlay_Prop_Type::generate([
+												Background_Image_Overlay_Prop_Type::generate([
+													'image' => $image
+												] )
 											] )
 										)
 										->add_prop( 'color', Color_Prop_Type::generate( '#000000' ) )
@@ -163,13 +161,11 @@ class Test_Atomic_Import_Export extends Elementor_Test_Base {
 								->add_variant(
 									Style_Variant::make()
 										->add_prop(
-											'background',
-											Background_Prop_Type::generate( [
-												'background-overlay' => Background_Overlay_Prop_Type::generate([
-													Background_Image_Overlay_Prop_Type::generate([
-														'image' => $image
-													])
-												])
+											'background-overlay',
+											Background_Overlay_Prop_Type::generate([
+												Background_Image_Overlay_Prop_Type::generate([
+													'image' => $image
+												] )
 											] )
 										)
 										->add_prop( 'color', Color_Prop_Type::generate( '#000000' ) )

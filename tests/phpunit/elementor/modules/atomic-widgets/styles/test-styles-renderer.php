@@ -357,56 +357,51 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'background' => [
-								'$$type' => 'background',
+							'background-overlay' => [
+								'$$type' => 'background-overlay',
 								'value' => [
-									'background-overlay' => [
-										'$$type' => 'background-overlay',
+									[
+										'$$type' => 'background-color-overlay',
 										'value' => [
-											[
-												'$$type' => 'background-color-overlay',
-												'value' => [
-													'color' => 'blue',
-												],
-											],
-											[
-												'$$type' => 'background-image-overlay',
-												'value' => [
-													'image' => [
-														'$$type' => 'image',
-														'value' => [
-															'src' => [
-																'$$type' => 'image-src',
-																'value' => [
-																	'id' => [
-																		'$$type' => 'image-attachment-id',
-																		'value' => 3,
-																	],
-																	'url' => null
-																],
-															],
-															'size' => [
-																'$$type' => 'string',
-																'value' => 'medium',
-															]
-														]
-													],
-													'position' => 'top center',
-													'repeat' => 'repeat-y',
-													'attachment' => 'fixed',
-												]
-											],
+											'color' => 'blue',
 										],
 									],
-									'color' => [
-										'$$type' => 'color',
-										'value' => 'red',
+									[
+										'$$type' => 'background-image-overlay',
+										'value' => [
+											'image' => [
+												'$$type' => 'image',
+												'value' => [
+													'src' => [
+														'$$type' => 'image-src',
+														'value' => [
+															'id' => [
+																'$$type' => 'image-attachment-id',
+																'value' => 3,
+															],
+															'url' => null
+														],
+													],
+													'size' => [
+														'$$type' => 'string',
+														'value' => 'medium',
+													]
+												]
+											],
+											'position' => 'top center',
+											'repeat' => 'repeat-y',
+											'attachment' => 'fixed',
+										]
 									],
 								],
 							],
+							'background-color' => [
+								'$$type' => 'color',
+								'value' => 'red',
+							],
 						],
-						'meta' => [],
 					],
+					'meta' => [],
 				],
 			],
 		];
@@ -432,107 +427,102 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'background' => [
-								'$$type' => 'background',
+							'background-overlay' => [
+								'$$type' => 'background-overlay',
 								'value' => [
-									'background-overlay' => [
-										'$$type' => 'background-overlay',
+									[
+										'$$type' => 'background-gradient-overlay',
 										'value' => [
-											[
-												'$$type' => 'background-gradient-overlay',
+											'type' => [
+												'$$type' => 'string',
+												'value' => 'linear',
+											],
+											'angle' => [
+												'$$type' => 'number',
+												'value' => 45,
+											],
+											'stops' => [
+												'$$type' => 'gradient-color-stop',
 												'value' => [
-													'type' => [
-														'$$type' => 'string',
-														'value' => 'linear',
-													],
-													'angle' => [
-														'$$type' => 'number',
-														'value' => 45,
-													],
-													'stops' => [
-														'$$type' => 'gradient-color-stop',
+													[
+														'$$type' => 'color-stop',
 														'value' => [
-															[
-																'$$type' => 'color-stop',
-																'value' => [
-																	'color' => [
-																		'$$type' => 'color',
-																		'value' => 'red',
-																	],
-																	'offset' => [
-																		'$$type' => 'number',
-																		'value' => 0,
-																	],
-																],
+															'color' => [
+																'$$type' => 'color',
+																'value' => 'red',
 															],
-															[
-																'$$type' => 'color-stop',
-																'value' => [
-																	'color' => [
-																		'$$type' => 'color',
-																		'value' => 'rgb(255, 0, 255, 0.3)',
-																	],
-																	'offset' => [
-																		'$$type' => 'number',
-																		'value' => 100,
-																	],
-																],
+															'offset' => [
+																'$$type' => 'number',
+																'value' => 0,
 															],
 														],
 													],
-												]
-											],
-											[
-												'$$type' => 'background-gradient-overlay',
-												'value' => [
-													'type' => [
-														'$$type' => 'string',
-														'value' => 'radial',
-													],
-													'positions' => [
-														'$$type' => 'string',
-														'value' => 'bottom center',
-													],
-													'stops' => [
-														'$$type' => 'gradient-color-stop',
+													[
+														'$$type' => 'color-stop',
 														'value' => [
-															[
-																'$$type' => 'color-stop',
-																'value' => [
-																	'color' => [
-																		'$$type' => 'color',
-																		'value' => 'rgb(90, 143,11)',
-																	],
-																	'offset' => [
-																		'$$type' => 'number',
-																		'value' => 67,
-																	],
-																],
+															'color' => [
+																'$$type' => 'color',
+																'value' => 'rgb(255, 0, 255, 0.3)',
 															],
-															[
-																'$$type' => 'color-stop',
-																'value' => [
-																	'color' => [
-																		'$$type' => 'color',
-																		'value' => 'rgb(0, 0, 0)',
-																	],
-																	'offset' => [
-																		'$$type' => 'number',
-																		'value' => 21,
-																	],
-																],
+															'offset' => [
+																'$$type' => 'number',
+																'value' => 100,
 															],
 														],
 													],
-												]
+												],
 											],
-										],
+										]
+									],
+									[
+										'$$type' => 'background-gradient-overlay',
+										'value' => [
+											'type' => [
+												'$$type' => 'string',
+												'value' => 'radial',
+											],
+											'positions' => [
+												'$$type' => 'string',
+												'value' => 'bottom center',
+											],
+											'stops' => [
+												'$$type' => 'gradient-color-stop',
+												'value' => [
+													[
+														'$$type' => 'color-stop',
+														'value' => [
+															'color' => [
+																'$$type' => 'color',
+																'value' => 'rgb(90, 143,11)',
+															],
+															'offset' => [
+																'$$type' => 'number',
+																'value' => 67,
+															],
+														],
+													],
+													[
+														'$$type' => 'color-stop',
+														'value' => [
+															'color' => [
+																'$$type' => 'color',
+																'value' => 'rgb(0, 0, 0)',
+															],
+															'offset' => [
+																'$$type' => 'number',
+																'value' => 21,
+															],
+														],
+													],
+												],
+											],
+										]
 									],
 								],
 							],
 						],
-						'meta' => [],
-					]
+					],
+					'meta' => [],
 				]
 			],
 		];
@@ -556,86 +546,80 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'background' => [
-								'$$type' => 'background',
+							'background-overlay' => [
+								'$$type' => 'background-overlay',
 								'value' => [
-									'background-overlay' => [
-										'$$type' => 'background-overlay',
+									[
+										'$$type' => 'background-color-overlay',
 										'value' => [
-											[
-												'$$type' => 'background-color-overlay',
+											'color' => 'blue',
+										],
+									],
+									[
+										'$$type' => 'background-image-overlay',
+										'value' => [
+											'image' => [
+												'$$type' => 'image',
 												'value' => [
-													'color' => 'blue',
-												],
-											],
-											[
-												'$$type' => 'background-image-overlay',
-												'value' => [
-													'image' => [
-														'$$type' => 'image',
+													'src' => [
+														'$$type' => 'image-src',
 														'value' => [
-															'src' => [
-																'$$type' => 'image-src',
-																'value' => [
-																	'id' => null,
-																	'url' => 'https://example.com/image.jpg',
-																],
-															],
-														]
-													],
-													'size' => 'cover',
-													'position' => 'bottom right',
-													'repeat' => 'repeat',
-													'attachment' => 'fixed',
-												]
-											],
-											[
-												'$$type' => 'background-image-overlay',
-												'value' => [
-													'image' => [
-														'$$type' => 'image',
-														'value' => [
-															'src' => [
-																'$$type' => 'image-src',
-																'value' => [
-																	'id' => null,
-																	'url' => 'https://example.com/image.jpg',
-																],
-															],
-														]
-													],
-													'position' => [
-														'$$type' => 'background-image-position-offset',
-														'value' => [
-															'x' => [
-																'$$type' => 'size',
-																'value' => [
-																	'unit' => 'px',
-																	'size' => 40,
-																],
-															],
-															'y' => [
-																'$$type' => 'size',
-																'value' => [
-																	'unit' => 'px',
-																	'size' => 70,
-																],
-															],
+															'id' => null,
+															'url' => 'https://example.com/image.jpg',
 														],
 													],
 												]
 											],
-										],
+											'size' => 'cover',
+											'position' => 'bottom right',
+											'repeat' => 'repeat',
+											'attachment' => 'fixed',
+										]
 									],
-
-									'color' => [
-										'$$type' => 'color',
-										'value' => 'red',
+									[
+										'$$type' => 'background-image-overlay',
+										'value' => [
+											'image' => [
+												'$$type' => 'image',
+												'value' => [
+													'src' => [
+														'$$type' => 'image-src',
+														'value' => [
+															'id' => null,
+															'url' => 'https://example.com/image.jpg',
+														],
+													],
+												]
+											],
+											'position' => [
+												'$$type' => 'background-image-position-offset',
+												'value' => [
+													'x' => [
+														'$$type' => 'size',
+														'value' => [
+															'unit' => 'px',
+															'size' => 40,
+														],
+													],
+													'y' => [
+														'$$type' => 'size',
+														'value' => [
+															'unit' => 'px',
+															'size' => 70,
+														],
+													],
+												],
+											],
+										]
 									],
 								],
 							],
-						],
 
+							'color' => [
+								'$$type' => 'color',
+								'value' => 'red',
+							],
+						],
 						'meta' => [],
 					],
 				],
@@ -660,14 +644,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'background' => [
-								'$$type' => 'background',
-								'value' => [
-									'color' => [
-										'$$type' => 'color',
-										'value' => 'red',
-									],
-								],
+							'background-color' => [
+								'$$type' => 'color',
+								'value' => 'red',
 							],
 						],
 
@@ -703,63 +682,57 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'background' => [
-								'$$type' => 'background',
+							'background-overlay' => [
+								'$$type' => 'background-overlay',
 								'value' => [
-									'background-overlay' => [
-										'$$type' => 'background-overlay',
+									[
+										'$$type' => 'background-color-overlay',
 										'value' => [
-											[
-												'$$type' => 'background-color-overlay',
+											'color' => 'blue',
+										],
+									],
+									[
+										'$$type' => 'background-image-overlay',
+										'value' => [
+											'image' => [
+												'$$type' => 'image',
 												'value' => [
-													'color' => 'blue',
-												],
-											],
-											[
-												'$$type' => 'background-image-overlay',
-												'value' => [
-													'image' => [
-														'$$type' => 'image',
+													'src' => [
+														'$$type' => 'image-src',
 														'value' => [
-															'src' => [
-																'$$type' => 'image-src',
-																'value' => [
-																	'id' => [
-																		'$$type' => 'image-attachment-id',
-																		'value' => 3,
-																	],
-																	'url' => null
-																],
+															'id' => [
+																'$$type' => 'image-attachment-id',
+																'value' => 3,
 															],
-															'size' => [
-																'$$type' => 'string',
-																'value' => 'large',
-															]
-														]
-													],
-													'size' => [
-														'$$type' => 'background-image-size-scale',
-														'value'  => [
-															//Missing 'height'
-															'width'  => [
-																'$$type' => 'size',
-																'value'  => [
-																	'size' => 140,
-																	'unit' => 'px'
-																]
-															],
+															'url' => null
 														],
 													],
-													'attachment' => 'scroll',
-													'repeat' => 'repeat-x',
+													'size' => [
+														'$$type' => 'string',
+														'value' => 'large',
+													]
 												]
 											],
-										],
+											'size' => [
+												'$$type' => 'background-image-size-scale',
+												'value'  => [
+													//Missing 'height'
+													'width'  => [
+														'$$type' => 'size',
+														'value'  => [
+															'size' => 140,
+															'unit' => 'px'
+														]
+													],
+												],
+											],
+											'attachment' => 'scroll',
+											'repeat' => 'repeat-x',
+										]
 									],
 								],
 							],
 						],
-
 						'meta' => [],
 					],
 				],
@@ -793,24 +766,18 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				'variants' => [
 					[
 						'props' => [
-							'background' => [
-								'$$type' => 'background',
+							'background-overlay' => [
+								'$$type' => 'background-overlay',
 								'value' => [
-									'background-overlay' => [
-										'$$type' => 'background-overlay',
+									[
+										'$$type' => 'background-color-overlay',
 										'value' => [
-											[
-												'$$type' => 'background-color-overlay',
-												'value' => [
-													'color' => 'blue',
-												],
-											],
+											'color' => 'blue',
 										],
 									],
 								],
 							],
 						],
-
 						'meta' => [],
 					],
 				],
