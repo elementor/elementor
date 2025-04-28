@@ -25,6 +25,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Tra
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Gradient_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Color_Stop_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Multi_Props_Transformer;
@@ -173,9 +174,10 @@ class Module extends BaseModule {
 		$transformers->register( Background_Image_Overlay_Size_Scale_Prop_Type::get_key(), new Background_Image_Overlay_Size_Scale_Transformer() );
 		$transformers->register( Background_Image_Position_Offset_Prop_Type::get_key(), new Background_Image_Position_Offset_Transformer() );
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
-		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
-		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
+//		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
+		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Background_Overlay_Transformer() );
+		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register(

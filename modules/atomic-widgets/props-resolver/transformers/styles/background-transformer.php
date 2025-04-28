@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		$overlay = $value['background-overlay'] ?? '';
-		$color = $value['color'] ?? '';
+		$overlay = $value['background-overlay'];
+		$color = $value['color'];
 
 		return Multi_Props::generate( [
-			'background' => $overlay,
+			'background-overlay' => $overlay,
 			'background-color' => $color,
 		] );
 	}

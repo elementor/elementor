@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
@@ -174,7 +174,8 @@ class Style_Schema {
 
 	private static function get_background_props() {
 		return [
-			'background' => Background_Prop_Type::make(),
+			'background-overlay' => Background_Overlay_Prop_Type::make(),
+			'background-color' => Color_Prop_Type::make(),
 		];
 	}
 
