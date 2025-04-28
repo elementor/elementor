@@ -67,9 +67,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$background_color_value = Background_Prop_Type::generate( [
-			'color' => Color_Prop_Type::generate( '#375EFB' ),
-		] );
+		$background_color_value = Color_Prop_Type::generate( '#375EFB' );
 		$display_value = String_Prop_Type::generate( 'inline-block' );
 		$padding_value = Dimensions_Prop_Type::generate( [
 			'block-start' => Size_Prop_Type::generate( [
@@ -103,7 +101,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'base' => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'background', $background_color_value )
+						->add_prop( 'background-color', $background_color_value )
 						->add_prop( 'display', $display_value )
 						->add_prop( 'padding', $padding_value )
 						->add_prop( 'border-radius', $border_radius_value )

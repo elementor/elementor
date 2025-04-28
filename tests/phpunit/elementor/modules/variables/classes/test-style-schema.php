@@ -2,8 +2,10 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
@@ -115,30 +117,26 @@ class Test_Style_Schema extends TestCase {
 	public function test_augment__will_update_background_prop_type() {
 		// Arrange.
 		$style_def = [
-			'bg' => Background_Prop_Type::make(),
+			'background-overlay' => Background_Overlay_Prop_Type::make(),
 		];
 
 		// Act.
 		$schema = $this->style_schema()->augment( $style_def );
 
+		var_dump($schema);
+
 		// Assert.
 		$expected = [
-			'bg' => $this->expected_background_prop_type(),
+			'background-overlay' => $this->expected_background_overlay_prop_type(),
 		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
 
-	private function expected_background_prop_type() {
-		$bg_prop_type = Background_Prop_Type::make();
+	private function expected_background_overlay_prop_type() {
+		$bg_prop_type = Background_Overlay_Prop_Type::make();
 
-		$shape = $bg_prop_type->get_shape();
-
-		$shape['color'] = Union_Prop_Type::make()
-			->add_prop_type( Color_Prop_Type::make() )
-			->add_prop_type( Color_Variable_Prop_Type::make() );
-
-		$overlay_item = $shape['background-overlay']->get_item_type();
+		$overlay_item = $bg_prop_type->get_item_type();
 
 		foreach ( $overlay_item->get_prop_types() as $prop_type ) {
 			if ( 'background-color-overlay' === $prop_type->get_key() ) {
@@ -168,9 +166,7 @@ class Test_Style_Schema extends TestCase {
 			}
 		}
 
-		$shape['background-overlay']->set_item_type($overlay_item);
-
-		return $bg_prop_type->set_shape( $shape );
+		return $bg_prop_type->set_item_type( $overlay_item );
 	}
 
 	private function stub_array_prop_type() {

@@ -26,7 +26,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Gradient_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Color_Stop_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Multi_Props_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Transformer;
@@ -42,7 +41,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Size_Scal
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Position_Offset_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
@@ -175,9 +173,7 @@ class Module extends BaseModule {
 		$transformers->register( Background_Image_Position_Offset_Prop_Type::get_key(), new Background_Image_Position_Offset_Transformer() );
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
 		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
-//		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Background_Overlay_Transformer() );
-		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register(
