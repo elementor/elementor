@@ -35,27 +35,22 @@ const showLabel = ( label, key, isViewed, markAsViewed ) => {
 };
 
 const changeImageType = ( e, props, markVectorAsViewed ) => {
-	switch ( e.target.value ) {
-		case 'vector':
-			markVectorAsViewed();
-			break;
-		default:
-			break;
+	if ( 'vector' === e.target.value ) {
+		markVectorAsViewed();
 	}
 	if ( props.onChange ) {
 		props.onChange( e );
 	}
 };
+
 const ImageTypeSelect = ( props ) => {
 	const { isViewed: isVectorViewed, markAsViewed: markVectorAsViewed } = useIntroduction( 'e-ai-image-vector-option' );
 
 	const imageTypesWithNewChip = Object.entries( IMAGE_PROMPT_CATEGORIES ).map( ( [ key, { label } ] ) => {
-		switch ( key ) {
-			case 'vector':
-				return showLabel( label, key, isVectorViewed, markVectorAsViewed );
-			default:
-				return { label, value: key };
+		if ( 'vector' === key ) {
+			return showLabel( label, key, isVectorViewed, markVectorAsViewed );
 		}
+		return { label, value: key };
 	} );
 
 	return (
