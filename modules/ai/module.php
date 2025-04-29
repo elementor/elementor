@@ -1584,9 +1584,9 @@ class Module extends BaseModule {
 				'button_title' => 'Create with AI',
 				'button_cta_url' => 'http://planner.elementor.com/chat.html',
 				'background_image' => ELEMENTOR_ASSETS_URL . 'images/app/ai/ai-site-creator-homepage-bg.svg',
-				'utm_source' => 'ai-site-creator',
+				'utm_source' => 'editor-home',
 				'utm_medium' => 'wp-dash',
-				'utm_campaign' => 'ai-site',
+				'utm_campaign' => 'generate-with-ai',
 			];
 		} else {
 			$home_screen_data['ai_creator'] = null;
