@@ -1,11 +1,9 @@
 import { Box, Paper, Stack, TextField } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
-import PropTypes from 'prop-types';
 import { useState } from 'react';
 
-const AiSiteCreator = ( { ...props } ) => {
-	const { aiCreatorData } = props;
+const AiSiteCreator = ( { aiCreatorData } ) => {
 	const [ inputValue, setInputValue ] = useState( '' );
 
 	if ( ! aiCreatorData ) {
@@ -19,6 +17,9 @@ const AiSiteCreator = ( { ...props } ) => {
 		button_title: buttonTitle,
 		button_cta_url: buttonCtaUrl,
 		background_image: backgroundImage,
+		utm_source: utmSource,
+		utm_medium: utmMedium,
+		utm_campaign: utmCampaign,
 	} = aiCreatorData;
 
 	const handleInputChange = ( event ) => {
@@ -31,6 +32,9 @@ const AiSiteCreator = ( { ...props } ) => {
 		}
 		const url = new URL( buttonCtaUrl );
 		url.searchParams.append( 'prompt', inputValue );
+		url.searchParams.append( 'utm_source', utmSource );
+		url.searchParams.append( 'utm_medium', utmMedium );
+		url.searchParams.append( 'utm_campaign', utmCampaign );
 		return url.toString();
 	};
 
@@ -60,7 +64,8 @@ const AiSiteCreator = ( { ...props } ) => {
 					fullWidth
 					placeholder={ inputPlaceholder }
 					variant="outlined"
-					size="medium"
+					color="secondary"
+					size="small"
 					sx={ { flex: 1 } }
 					value={ inputValue }
 					onChange={ handleInputChange }
@@ -81,7 +86,7 @@ const AiSiteCreator = ( { ...props } ) => {
 };
 
 AiSiteCreator.propTypes = {
-	aiCreatorData: PropTypes.object.isRequired,
+	aiCreatorData: PropTypes.object,
 };
 
 export default AiSiteCreator;
