@@ -22,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Paragraph extends Atomic_Widget_Base {
 	use Has_Template;
 
+	const LINK_BASE_STYLE_KEY = 'link-base';
+
 	public static function get_element_type(): string {
 		return 'e-paragraph';
 	}
@@ -75,6 +77,11 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'margin', $margin_value )
+				),
+			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'all', 'unset' )
 				),
 		];
 	}
