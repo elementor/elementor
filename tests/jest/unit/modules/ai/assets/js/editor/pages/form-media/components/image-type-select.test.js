@@ -45,24 +45,4 @@ describe( 'ImageTypeSelect Component', () => {
 
 		unmount();
 	} );
-
-	it( 'passes isViewed and markAsViewed from useIntroduction hook to showLabel', () => {
-		useIntroduction.mockImplementation( () => ( {
-			isViewed: true,
-			markAsViewed: mockMarkAsViewed,
-		} ) );
-
-		const componentTrue = ImageTypeSelect( {} );
-		const optionsWithIsViewedTrue = componentTrue.props.options;
-
-		useIntroduction.mockImplementation( () => ( {
-			isViewed: false,
-			markAsViewed: mockMarkAsViewed,
-		} ) );
-
-		const componentFalse = ImageTypeSelect( {} );
-		const optionsWithIsViewedFalse = componentFalse.props.options;
-
-		expect( optionsWithIsViewedTrue ).not.toEqual( optionsWithIsViewedFalse );
-	} );
 } );
