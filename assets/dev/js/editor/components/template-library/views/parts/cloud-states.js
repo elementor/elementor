@@ -33,6 +33,12 @@ module.exports = Marionette.ItemView.extend( {
 				icon: `<i class="eicon-library-subscription-upgrade" aria-hidden="true" title="${ __( 'Upgrade now', 'elememntor' ) }"></i>`,
 				button: `<a class="elementor-button e-accent" href="https://go.elementor.com/go-pro-cloud-templates-cloud-tab" target="_blank">${ __( 'Upgrade now', 'elementor' ) }</a>`,
 			},
+			deactivated: {
+				title: __( 'Your library has been deactivated', 'elementor' ),
+				message: __( 'This is because you don’t have an active subscription.', 'elementor' ) + '<br>' + __( 'Your templates are saved for 90 days from the day your subscription expires,', 'elementor' ) + '<br>' + __( 'then they’ll be gone forever.', 'elementor' ),
+				icon: `<i class="eicon-library-subscription-upgrade" aria-hidden="true" title="${ __( 'Renew my subscription', 'elememntor' ) }"></i>`,
+				button: `<a class="elementor-button e-accent" href="https://go.elementor.com/renew-license-cloud-templates-cloud-tab" target="_blank">${ __( 'Renew my subscription', 'elementor' ) }</a>`,
+			},
 		};
 	},
 
@@ -45,8 +51,31 @@ module.exports = Marionette.ItemView.extend( {
 			return 'notConnected';
 		}
 
+		if ( this.isDeactivated() ) {
+			return 'deactivated';
+		}
+
 		return 'connectedNoQuota';
 	},
+
+	isDeactivated() {
+		const quota = elementorAppConfig['cloud-library']?.quota;
+
+		if ( ! quota ) {
+			return false;
+		}
+	
+		const {
+			currentUsage = 0,
+			threshold = 0,
+			subscriptionId = ''
+		} = quota;
+	
+		const isOverThreshold = currentUsage > threshold;
+		const hasNoSubscription = '' === subscriptionId;
+	
+		return isOverThreshold && hasNoSubscription;
+	},	
 
 	onRender() {
 		this.updateTemplateMarkup();
