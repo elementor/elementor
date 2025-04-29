@@ -59,23 +59,23 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	isDeactivated() {
-		const quota = elementorAppConfig['cloud-library']?.quota;
+		const quota = elementorAppConfig[ 'cloud-library' ]?.quota;
 
 		if ( ! quota ) {
 			return false;
 		}
-	
+
 		const {
 			currentUsage = 0,
 			threshold = 0,
-			subscriptionId = ''
+			subscriptionId = '',
 		} = quota;
-	
+
 		const isOverThreshold = currentUsage > threshold;
 		const hasNoSubscription = '' === subscriptionId;
-	
+
 		return isOverThreshold && hasNoSubscription;
-	},	
+	},
 
 	onRender() {
 		this.updateTemplateMarkup();
