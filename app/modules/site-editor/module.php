@@ -5,7 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

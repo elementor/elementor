@@ -17,7 +17,7 @@ use Elementor\Plugin;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class NestedTabs extends Widget_Nested_Base {
@@ -1208,15 +1208,11 @@ class NestedTabs extends Widget_Nested_Base {
 	}
 
 	protected function get_initial_config(): array {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
-			return array_merge( parent::get_initial_config(), [
-				'support_improved_repeaters' => true,
-				'target_container' => [ '.e-n-tabs-heading' ],
-				'node' => 'button',
-			] );
-		}
-
-		return parent::get_initial_config();
+		return array_merge( parent::get_initial_config(), [
+			'support_improved_repeaters' => true,
+			'target_container' => [ '.e-n-tabs-heading' ],
+			'node' => 'button',
+		] );
 	}
 
 	protected function content_template_single_repeater_item() {
@@ -1284,16 +1280,24 @@ class NestedTabs extends Widget_Nested_Base {
 			'class': [ 'e-n-tab-title-text' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
-			'data-binding-setting': [ 'tab_title' ],
+			'data-binding-setting': [ 'tab_title', 'element_id' ],
 			'data-binding-index': tabCount,
-			'data-binding-dynamic': 'true',
+			'data-binding-config': JSON.stringify({
+				'element_id': {
+					attr: 'id',
+					selector: 'button',
+					editType: 'attribute',
+				},
+				'tab_title': {
+					editType: 'text',
+				},
+			}),
 		}, null, true );
 
 		view.addRenderAttribute( 'tab-icon', {
 			'class': [ 'e-n-tab-icon' ],
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'tabs',
-			'data-binding-setting': [ 'tab_icon', 'tab_icon_active' ],
 			'data-binding-index': tabCount,
 		}, null, true );
 		#>

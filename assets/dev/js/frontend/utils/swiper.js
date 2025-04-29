@@ -1,4 +1,4 @@
-export default class Swiper {
+export default class SwiperHandler {
 	constructor( container, config ) {
 		this.config = config;
 
@@ -17,8 +17,19 @@ export default class Swiper {
 		container.closest( '.elementor-widget' )?.classList.add( 'e-widget-swiper' );
 
 		return new Promise( ( resolve ) => {
-			elementorFrontend.utils.assetsLoader.load( 'script', 'swiper' )
-				.then( () => resolve( this.createSwiperInstance( container, this.config ) ) );
+			// TODO: Remove in v3.29.0 [ED-16272].
+			if ( 'undefined' === typeof Swiper ) {
+				elementorFrontend.utils.assetsLoader.load( 'script', 'swiper' )
+					.then( () => resolve( this.createSwiperInstance( container, this.config ) ) );
+
+				return;
+			}
+
+			if ( 'function' === typeof Swiper && 'undefined' === typeof window.Swiper ) {
+				window.Swiper = Swiper;
+			}
+
+			resolve( this.createSwiperInstance( container, this.config ) );
 		} );
 	}
 

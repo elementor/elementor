@@ -4,7 +4,7 @@ namespace Elementor\Core\Kits\Controls;
 use Elementor\Control_Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Repeater extends Control_Repeater {

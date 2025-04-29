@@ -5,7 +5,7 @@ use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_Module::EXPERIMENT_NAME );

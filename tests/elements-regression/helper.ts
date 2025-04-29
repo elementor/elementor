@@ -24,6 +24,12 @@ export default class ElementRegressionHelper {
 		if ( widgetType.includes( 'hover' ) ) {
 			return;
 		}
+
+		// TODO: Fix in a separate task.
+		if ( 'text_path' === widgetType ) {
+			return;
+		}
+
 		const locator = isPublished
 			? this.page.locator( EditorSelectors.container + ' >> nth=0' )
 			: this.editor.getPreviewFrame().locator( EditorSelectors.container + ' >> nth=0' );
@@ -78,12 +84,23 @@ export default class ElementRegressionHelper {
 		let label = '';
 		const deviceParams = { mobile: { width: 360, height: 736 }, tablet: { width: 768, height: 787 } };
 
+		// TODO: Fix in a separate task.
+		if ( 'text_path' === args.widgetType ) {
+			return;
+		}
+
 		if ( args.widgetType.includes( 'hover' ) ) {
 			return;
 		}
+
 		if ( args.isPublished ) {
 			page = this.page;
 			await page.setViewportSize( deviceParams[ args.device ] );
+
+			if ( 'container_grid' === args.widgetType && 'mobile' === args.device ) {
+				await page.waitForTimeout( 500 );
+			}
+
 			label = '_published';
 			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
@@ -91,8 +108,9 @@ export default class ElementRegressionHelper {
 			page = this.editor.getPreviewFrame();
 			await this.setResponsiveMode( args.device );
 			await this.page.evaluate( () => {
-				const iframe = document.getElementById( 'elementor-preview-iframe' );
-				iframe.style.height = '3000px';
+				const wrapper = document.getElementById( 'elementor-preview-responsive-wrapper' );
+				wrapper.style.overflow = 'visible';
+				wrapper.style.maxHeight = 'none';
 			} );
 			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );

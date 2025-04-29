@@ -25,13 +25,12 @@ abstract class Controller extends WP_REST_Controller {
 	 * Controller constructor.
 	 *
 	 * Register endpoints on 'rest_api_init'.
-	 *
 	 */
 	public function __construct() {
 		// TODO: Controllers and endpoints can have common interface.
 
 		// TODO: Uncomment when native 3rd plugins uses V2.
-		//$this->deprecated();
+		// $this->deprecated();
 
 		$this->namespace = Manager::ROOT_NAMESPACE . '/v' . Manager::VERSION;
 		$this->rest_base = Manager::REST_BASE . $this->get_name();
@@ -305,7 +304,7 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * Default controller permission callback.
 	 * By default endpoint will inherit the permission callback from the controller.
-	 * By default permission is `current_user_can( 'administrator' );`.
+	 * By default permission is `current_user_can( 'manage_options' );`.
 	 *
 	 * @param \WP_REST_Request $request
 	 *
@@ -320,7 +319,7 @@ abstract class Controller extends WP_REST_Controller {
 			case 'PUT':
 			case 'DELETE':
 			case 'PATCH':
-				return current_user_can( 'administrator' );
+				return current_user_can( 'manage_options' );
 		}
 
 		return false;

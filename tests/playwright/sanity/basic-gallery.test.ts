@@ -33,7 +33,15 @@ test( 'Basic Gallery Lightbox', async ( { page, apiRequests }, testInfo ) => {
 	await editor.addWidget( 'image-gallery' );
 
 	// Act.
-	await testBasicSwiperGallery( editor );
+	await editor.openPanelTab( 'content' );
+	await editor.addImagesToGalleryControl();
+
+	await editor.togglePreviewMode();
+	await assertLightboxStyling( editor, editor.getPreviewFrame() );
+	await editor.togglePreviewMode();
+
+	await editor.publishAndViewPage();
+	await assertLightboxStyling( editor, editor.page, '-frontend' );
 } );
 
 test( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRequests }, testInfo ) => {
@@ -62,19 +70,6 @@ test( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRequest
 	// Assert.
 	await expect( page.locator( '.elementor-lightbox-item.swiper-slide-active' ) ).toHaveScreenshot( 'gallery-lightbox-breakpoint.png' );
 } );
-
-async function testBasicSwiperGallery( editor: EditorPage ) {
-	// Act.
-	await editor.openPanelTab( 'content' );
-	await editor.addImagesToGalleryControl();
-
-	await editor.togglePreviewMode();
-	await assertLightboxStyling( editor, editor.getPreviewFrame() );
-	await editor.togglePreviewMode();
-
-	await editor.publishAndViewPage();
-	await assertLightboxStyling( editor, editor.page, '-frontend' );
-}
 
 async function assertLightboxStyling( editor: EditorPage, context: Page | Frame, suffix = '' ): Promise<void> {
 	await context.locator( 'div#gallery-1 img' ).first().click();

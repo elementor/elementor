@@ -2,19 +2,23 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
 use Elementor\Core\Isolation\Plugin_Status_Adapter;
+use Elementor\Core\Isolation\Plugin_Status_Adapter_Interface;
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Modules\Home\Transformations\Filter_Plugins;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Plugins extends PHPUnit_TestCase {
 
-	private $wordpress_adapter;
+	private Wordpress_Adapter_Interface $wordpress_adapter;
 
-	private $plugin_status_adapter;
+	private Plugin_Status_Adapter_Interface $plugin_status_adapter;
 
-	public function __construct( ?string $name = null, array $data = [], $dataName = '' ) {
-		parent::__construct( $name, $data, $dataName );
-		$this->wordpress_adapter = null;
-		$this->plugin_status_adapter = null;
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->wordpress_adapter_mock();
+		$this->plugin_status_adapter_mock();
 	}
 
 	public function test_transform() {
@@ -108,13 +112,6 @@ class Test_Filter_Plugins extends PHPUnit_TestCase {
 				'Version' => 'Windows',
 			],
 		];
-	}
-
-	public function setUp(): void {
-		parent::setUp();
-
-		$this->wordpress_adapter_mock();
-		$this->plugin_status_adapter_mock();
 	}
 
 	public function plugin_status_adapter_mock(): void {

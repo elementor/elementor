@@ -14,7 +14,7 @@ use Elementor\Widget_Base;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 trait Button_Trait {
@@ -375,6 +375,15 @@ trait Button_Trait {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-button',
+				'condition' => $args['section_condition'],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
@@ -419,12 +428,18 @@ trait Button_Trait {
 			[
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'condition' => [
-					'border_border!' => '',
-				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
 				],
+				'condition' => $args['section_condition'],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_hover_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus',
 				'condition' => $args['section_condition'],
 			]
 		);
@@ -476,15 +491,6 @@ trait Button_Trait {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-				'condition' => $args['section_condition'],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'button_box_shadow',
-				'selector' => '{{WRAPPER}} .elementor-button',
 				'condition' => $args['section_condition'],
 			]
 		);
@@ -669,7 +675,7 @@ trait Button_Trait {
 		] );
 
 		// TODO: replace the protected with public
-		//$instance->add_inline_editing_attributes( 'text', 'none' );
+		// $instance->add_inline_editing_attributes( 'text', 'none' );
 		?>
 		<span <?php $instance->print_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>

@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\DynamicTags\Manager;
+use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -91,8 +92,8 @@ class DB {
 	 * @deprecated 3.1.0 Use `Plugin::$instance->documents->get( $post_id )->get_elements_raw_data( null, true )` OR `Plugin::$instance->documents->get_doc_or_auto_save( $post_id )->get_elements_raw_data( null, true )` instead.
 	 * @access public
 	 *
-	 * @param int     $post_id           Post ID.
-	 * @param string  $status            Optional. Post status. Default is `publish`.
+	 * @param int    $post_id           Post ID.
+	 * @param string $status            Optional. Post status. Default is `publish`.
 	 *
 	 * @return array Editor data.
 	 */
@@ -251,7 +252,7 @@ class DB {
 	 *
 	 * @param array    $data_container Any type of elementor data.
 	 * @param callable $callback       A function to iterate data by.
-	 * @param array    $args           Array of args pointers for passing parameters in & out of the callback
+	 * @param array    $args           Array of args pointers for passing parameters in & out of the callback.
 	 *
 	 * @return mixed Iterated data.
 	 */
@@ -277,6 +278,37 @@ class DB {
 		return $data_container;
 	}
 
+	public static function iterate_elementor_documents( $callback, $batch_size = 100 ) {
+		$processed_posts = 0;
+
+		while ( true ) {
+			$args = wp_parse_args( [
+				'post_type' => [ Source_Local::CPT, 'post', 'page' ],
+				'post_status' => [ 'publish' ],
+				'posts_per_page' => $batch_size,
+				'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
+				'meta_value' => 'builder',
+				'offset' => $processed_posts,
+				'fields' => 'ids',
+			] );
+
+			$query = new \WP_Query( $args );
+
+			if ( empty( $query->posts ) ) {
+				break;
+			}
+
+			foreach ( $query->posts as $post_id ) {
+				$document = Plugin::$instance->documents->get( $post_id );
+				$elements_data = $document->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+
+				$callback( $document, $elements_data );
+
+				$processed_posts++;
+			}
+		}
+	}
+
 	/**
 	 * Safely copy Elementor meta.
 	 *
@@ -299,7 +331,7 @@ class DB {
 				return;
 			}
 
-			// It's an exited Elementor auto-save
+			// It's an exited Elementor auto-save.
 			if ( get_post_meta( $to_post_id, '_elementor_data', true ) ) {
 				return;
 			}
@@ -329,18 +361,18 @@ class DB {
 		];
 
 		foreach ( $from_post_meta as $meta_key => $values ) {
-			// Copy only meta with the `_elementor` prefix
+			// Copy only meta with the `_elementor` prefix.
 			if ( 0 === strpos( $meta_key, '_elementor' ) || in_array( $meta_key, $core_meta, true ) ) {
 				$value = $values[0];
 
-				// The elementor JSON needs slashes before saving
+				// The elementor JSON needs slashes before saving.
 				if ( '_elementor_data' === $meta_key ) {
 					$value = wp_slash( $value );
 				} else {
 					$value = maybe_unserialize( $value );
 				}
 
-				// Don't use `update_post_meta` that can't handle `revision` post type
+				// Don't use `update_post_meta` that can't handle `revision` post type.
 				update_metadata( 'post', $to_post_id, $meta_key, $value );
 			}
 		}
@@ -398,7 +430,7 @@ class DB {
 
 		$this->switched_post_data[] = [
 			'switched_id' => $post_id,
-			'original_id' => get_the_ID(), // Note, it can be false if the global isn't set
+			'original_id' => get_the_ID(), // Note, it can be false if the global isn't set.
 		];
 
 		$GLOBALS['post'] = get_post( $post_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -422,7 +454,7 @@ class DB {
 			return;
 		}
 
-		// It was switched from an empty global post, restore this state and unset the global post
+		// It was switched from an empty global post, restore this state and unset the global post.
 		if ( false === $data['original_id'] ) {
 			unset( $GLOBALS['post'] );
 			return;
@@ -471,7 +503,7 @@ class DB {
 
 		$wp_query = $new_query; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-		// Ensure the global post is set only if needed
+		// Ensure the global post is set only if needed.
 		unset( $GLOBALS['post'] );
 
 		if ( isset( $new_query->posts[0] ) ) {

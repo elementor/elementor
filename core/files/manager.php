@@ -193,6 +193,8 @@ class Manager {
 		add_action( 'update_option_siteurl', function () {
 			$this->reset_assets_data();
 		} );
+
+		add_action( 'rest_api_init', [ $this, 'register_endpoints' ] );
 	}
 
 	/**
@@ -259,5 +261,19 @@ class Manager {
 		 * @since 3.25.0
 		 */
 		do_action( 'elementor/core/files/after_generate_css' );
+	}
+
+	public function register_endpoints() {
+		register_rest_route(
+			'elementor/v1',
+			'/cache',
+			[
+				'methods' => \WP_REST_Server::DELETABLE,
+				'callback' => [ $this, 'clear_cache' ],
+				'permission_callback' => function() {
+					return current_user_can( 'manage_options' );
+				},
+			]
+		);
 	}
 }

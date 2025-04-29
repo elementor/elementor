@@ -173,7 +173,7 @@ abstract class Base {
 	 * @since 3.3.0
 	 * @access protected
 	 *
-	 * @param string $asset_key
+	 * @param string $version
 	 *
 	 * @return boolean
 	 */
@@ -189,7 +189,7 @@ abstract class Base {
 	 * @since 3.3.0
 	 * @access protected
 	 *
-	 * @param string $data_type (exists|content|size)
+	 * @param string $data_type (exists|content|size).
 	 * @param string $file_key - In case that the same file data is needed for multiple assets (like a JSON file), the file data key should be the same for all shared assets to make sure that the file is being read only once.
 	 *
 	 * @return string|number

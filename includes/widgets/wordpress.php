@@ -122,6 +122,20 @@ class Widget_WordPress extends Widget_Base {
 		return [ 'e-swiper' ];
 	}
 
+	/**
+	 * Get script dependencies.
+	 *
+	 * Retrieve the list of script dependencies the widget requires.
+	 *
+	 * @since 3.27.0
+	 * @access public
+	 *
+	 * @return array Widget script dependencies.
+	 */
+	public function get_script_depends(): array {
+		return [ 'swiper' ];
+	}
+
 	public function get_help_url() {
 		return '';
 	}

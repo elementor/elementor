@@ -35,7 +35,7 @@ abstract class Render_Base {
 		$image_links_columns_value = $this->settings['image_links_per_row'] ?? 2;
 
 		/**
-		 * if empty returns a sub-array with all empty values
+		 * If empty returns a sub-array with all empty values
 		 * Check for this here to avoid rendering container when empty
 		 */
 		$image_links_value = $this->clean_array( $image_links_value_initial );

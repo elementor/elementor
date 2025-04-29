@@ -1,6 +1,17 @@
 name: PHPUnit
 
 on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+    branches:
+      - 'main'
+      - '3.*'
   pull_request:
     paths-ignore:
       - '**.md'
@@ -18,7 +29,7 @@ concurrency:
 
 jobs:
   file-diff:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     name: File Diff
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -32,6 +43,7 @@ jobs:
         with:
           PATTERNS: |
             **/*.php
+            **/*.twig
             composer.+(json|lock)
             .github/**/*.yml
             install-wp-tests.sh
@@ -42,12 +54,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        wordpress_versions: ['nightly', 'latest', '6.5', '6.4', '6.3']
-        php_versions: ['7.4', '8.0']
+        wordpress_versions: ['nightly', 'latest', '6.6', '6.5']
+        php_versions: ['7.4', '8.0', '8.1', '8.2', '8.3']
     name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
-      COVERAGE: ${{ matrix.php_versions >= 8.0 && matrix.wordpress_versions == 'latest' }}
+      COVERAGE: ${{ matrix.php_versions >= 8.3 && matrix.wordpress_versions == 'latest' && github.event_name == 'push' }}
     services:
       mysql:
         image: mysql:5.7
@@ -88,7 +100,7 @@ jobs:
   test-result:
     needs: test
     if: ${{ always() }} # Will be run even if 'test' matrix will be skipped
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: PHPUnit - Test Results
     steps:
       - name: Test status

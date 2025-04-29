@@ -38,10 +38,10 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 *
 	 * @since 1.0.0
 	 * @access public
-	 * @param Widget_Base $parent
+	 * @param Widget_Base $element_parent
 	 */
-	public function __construct( Widget_Base $parent ) {
-		parent::__construct( $parent );
+	public function __construct( Widget_Base $element_parent ) {
+		parent::__construct( $element_parent );
 
 		$this->_register_controls_actions();
 	}
@@ -161,7 +161,6 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 
 	 * @since 3.0.0 New `$options` parameter added.
 	 * @access public
-	 *
 	 */
 	public function add_control( $id, $args = [], $options = [] ) {
 		$args['condition']['_skin'] = $this->get_id();
@@ -198,7 +197,6 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 *
 	 * @since  1.0.5
 	 * @access public
-	 *
 	 */
 	public function add_responsive_control( $id, $args, $options = [] ) {
 		$args['condition']['_skin'] = $this->get_id();
@@ -248,7 +246,6 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 *
 	 * @since  1.0.0
 	 * @access public
-	 *
 	 */
 	final public function add_group_control( $group_name, $args = [], $options = [] ) {
 		$args['condition']['_skin'] = $this->get_id();
@@ -263,9 +260,9 @@ abstract class Skin_Base extends Sub_Controls_Stack {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param Widget_Base $parent Parent widget.
+	 * @param Widget_Base $element_parent Parent widget.
 	 */
-	public function set_parent( $parent ) {
-		$this->parent = $parent;
+	public function set_parent( $element_parent ) {
+		$this->parent = $element_parent;
 	}
 }

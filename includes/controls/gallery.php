@@ -41,7 +41,7 @@ class Control_Gallery extends Base_Data_Control {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $settings Control settings
+	 * @param array $settings Control settings.
 	 *
 	 * @return array Control settings.
 	 */
@@ -97,7 +97,9 @@ class Control_Gallery extends Base_Data_Control {
 					</div>
 				</div>
 
-				<?php /* ?>
+				<?php
+				/*
+				?>
 				<div class="elementor-control-media__warnings" role="alert" style="display: none;">
 					<?php
 					Hints::get_notice_template( [
@@ -107,27 +109,42 @@ class Control_Gallery extends Base_Data_Control {
 					] );
 					?>
 				</div>
-				<?php */ ?>
-
-				<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
-				<div class="elementor-control-media__promotions" role="alert" style="display: none;">
-					<?php
-					Hints::get_notice_template( [
-						'display' => ! Hints::is_dismissed( 'image-optimization' ),
-						'type' => 'info',
-						'content' => __( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
-						'icon' => true,
-						'dismissible' => 'image_optimizer_hint',
-						'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
-						'button_event' => 'image_optimizer_hint',
-						'button_data' => [
-							'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
-						],
-					] ); ?>
-				</div>
-				<?php endif; ?>
-
+				<?php
+				*/ ?>
+				<?php $this->maybe_display_io_hints(); ?>
 			</div>
+		</div>
+		<?php
+	}
+
+	private function maybe_display_io_hints() {
+		if ( Hints::should_display_hint( 'image-optimization' ) ) {
+			$content_text = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			$button_text = Hints::is_plugin_installed( 'image-optimization' ) ? esc_html__( 'Activate Plugin', 'elementor' ) : esc_html__( 'Install Plugin', 'elementor' );
+			$action_url = Hints::get_plugin_action_url( 'image-optimization' );
+		} elseif ( Hints::should_display_hint( 'image-optimization-connect' ) ) {
+			$content_text = esc_html__( "This image isn't optimized. You need to connect your Image Optimizer account first.", 'elementor' );
+			$button_text = esc_html__( 'Connect Now', 'elementor' );
+			$action_url = admin_url( 'admin.php?page=image-optimization-settings' );
+		} else {
+			return;
+		}
+
+		?>
+		<div class="elementor-control-media__promotions" role="alert" style="display: none;">
+			<?php
+			Hints::get_notice_template( [
+				'display' => ! Hints::is_dismissed( 'image-optimization' ),
+				'type' => 'info',
+				'content' => $content_text,
+				'icon' => true,
+				'dismissible' => 'image_optimizer_hint',
+				'button_text' => $button_text,
+				'button_event' => 'image_optimizer_hint',
+				'button_data' => [
+					'action_url' => $action_url,
+				],
+			] ); ?>
 		</div>
 		<?php
 	}

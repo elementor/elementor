@@ -1,0 +1,17 @@
+{% if settings.text is not empty %}
+    {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
+
+    {% if settings.link.href %}
+        <a
+                href="{{ settings.link.href | e('full_url') }}"
+                target="{{ settings.link.target }}"
+                class="{{ classes }}"
+        >
+            {{ settings.text }}
+        </a>
+    {% else %}
+        <button class="{{ classes }}">
+            {{ settings.text }}
+        </button>
+    {% endif %}
+{% endif %}

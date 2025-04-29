@@ -4,7 +4,7 @@ namespace Elementor\Core\Common\Modules\Finder\Categories;
 use Elementor\Core\Common\Modules\Finder\Base_Category;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

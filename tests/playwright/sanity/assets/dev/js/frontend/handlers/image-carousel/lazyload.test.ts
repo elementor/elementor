@@ -10,13 +10,10 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page, apiRequests 
 	await editor.addWidget( 'image-carousel' );
 	await editor.openPanelTab( 'content' );
 	await editor.addImagesToGalleryControl( { images } );
+	await editor.setSelectControlValue( 'slides_to_show', '1' );
 	await editor.openSection( 'section_additional_options' );
 	await editor.setSwitcherControlValue( 'lazyload', true );
 	await editor.setSwitcherControlValue( 'autoplay', false );
-
-	// Set Image carousel settings
-	await page.click( '#elementor-controls >> text=Image Carousel' );
-	await editor.setSelectControlValue( 'slides_to_show', '1' );
 
 	const widget = await editor.getPreviewFrame().waitForSelector( '.elementor-image-carousel' );
 	const widgetImages = await widget.$$( '.swiper-slide >> img' );

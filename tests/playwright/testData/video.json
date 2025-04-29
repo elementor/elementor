@@ -1,22 +1,19 @@
 {
     "youtube": {
         "controls": [
-            "autoplayInp",
-            "playOnMobileInp",
-            "muteInp",
-            "loopInp",
-            "modestbrandingInp",
-            "ccLoadPolicyInp",
-            "privacyInp",
-            "lazyLoadInp"
+            "autoplay",
+            "play_on_mobile",
+            "mute",
+            "loop",
+            "cc_load_policy",
+            "yt_privacy",
+            "lazy_load"
         ],
-        "source": "youtube",
         "expected": {
             "autoplay": "1",
             "controls": "1",
             "start": 10,
             "end": 20,
-            "modestbranding": "1",
             "cc_load_policy": "1",
             "playsinline": "1"
         },
@@ -24,13 +21,12 @@
     },
     "vimeo": {
         "controls": [
-            "autoplayInp",
-            "playOnMobileInp",
-            "muteInp",
-            "loopInp",
-            "privacyInp"
+            "autoplay",
+            "play_on_mobile",
+            "mute",
+            "loop",
+            "yt_privacy"
         ],
-        "source": "vimeo",
         "expected": {
             "autoplay": "1",
             "autopause": "0",
@@ -46,11 +42,10 @@
     },
     "dailymotion": {
         "controls": [
-            "autoplayInp",
-            "playOnMobileInp",
-            "muteInp"
+            "autoplay",
+            "play_on_mobile",
+            "mute"
         ],
-        "source": "vimeo",
         "expected": {
             "autoplay": "1",
             "endscreen-enable": "0",

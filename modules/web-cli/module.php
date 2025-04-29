@@ -4,7 +4,7 @@ namespace Elementor\Modules\WebCli;
 use Elementor\Core\Base\App;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends App {

@@ -15,7 +15,7 @@ use Elementor\Utils;
 use Elementor\Group_Control_Text_Stroke;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -764,7 +764,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 		$this->end_controls_tab();
 	}
 
-	private function is_active_icon_exist( $settings ):bool {
+	private function is_active_icon_exist( $settings ): bool {
 		return array_key_exists( 'accordion_item_title_icon_active', $settings ) && ! empty( $settings['accordion_item_title_icon_active'] ) && ! empty( $settings['accordion_item_title_icon_active']['value'] );
 	}
 
@@ -901,16 +901,12 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	protected function get_initial_config(): array {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
-			return array_merge( parent::get_initial_config(), [
-				'support_improved_repeaters' => true,
-				'target_container' => [ '.e-n-accordion' ],
-				'node' => 'details',
-				'is_interlaced' => true,
-			] );
-		}
-
-		return parent::get_initial_config();
+		return array_merge( parent::get_initial_config(), [
+			'support_improved_repeaters' => true,
+			'target_container' => [ '.e-n-accordion' ],
+			'node' => 'details',
+			'is_interlaced' => true,
+		] );
 	}
 
 	protected function content_template_single_repeater_item() {
@@ -933,11 +929,20 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		const itemTitleTextAttributes = {
 			'class': [ 'e-n-accordion-item-title-text' ],
+			'data-binding-index': view.collection.length + 1,
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'items',
-			'data-binding-setting': ['item_title'],
-			'data-binding-index': view.collection.length + 1,
-			'data-binding-dynamic': 'true',
+			'data-binding-setting': ['item_title', 'element_css_id'],
+			'data-binding-config': JSON.stringify({
+				'element_css_id': {
+					editType: 'attribute',
+					attr: 'id',
+					selector: 'details'
+				},
+				'item_title': {
+					editType: 'text'
+				}
+			}),
 		};
 
 		view.addRenderAttribute( 'details-container', itemWrapperAttributes, null, true );
@@ -1007,11 +1012,20 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 					view.addRenderAttribute( itemTitleTextKey, {
 						'class': ['e-n-accordion-item-title-text'],
+						'data-binding-index': itemCount,
 						'data-binding-type': 'repeater-item',
 						'data-binding-repeater-name': 'items',
-						'data-binding-setting': ['item_title'],
-						'data-binding-index': itemCount,
-						'data-binding-dynamic': 'true',
+						'data-binding-setting': ['item_title', 'element_css_id'],
+						'data-binding-config': JSON.stringify({
+							'element_css_id': {
+								editType: 'attribute',
+								attr: 'id',
+								selector: 'details'
+							},
+							'item_title': {
+								editType: 'text'
+							}
+						}),
 					});
 				#>
 

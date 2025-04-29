@@ -21,7 +21,7 @@ const UnifyProductImages = ( { productsImages, setProductImages, onClose } ) => 
 				getControlValue={ () => ( {
 					images: productsImages,
 				} ) }
-				setControlValue={ ( productImage ) => setProductImages(
+				setControlValue={ async ( productImage ) => await setProductImages(
 					productImage.url,
 					productImage.image.productId,
 					productImage.id,

@@ -5,7 +5,7 @@ namespace Elementor\Modules\Promotions\AdminMenuItems\Interfaces;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 interface Promotion_Menu_Item extends Admin_Menu_Item_With_Page {
@@ -13,7 +13,7 @@ interface Promotion_Menu_Item extends Admin_Menu_Item_With_Page {
 
 	public function get_promotion_title();
 
-	public function render_promotion_description();
+	public function get_promotion_description();
 
 	public function get_cta_text();
 

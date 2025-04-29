@@ -30,7 +30,7 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	 *                         specified post type is not hierarchical or the specified status is not
 	 *                         supported by the post type.
 	 */
-	public function get_pages( $args ) : ?array {
+	public function get_pages( $args ): ?array {
 		return get_pages( $args );
 	}
 
@@ -39,7 +39,7 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 	 *
 	 * @return \WP_Query
 	 */
-	public function get_query( $args ) : ?\WP_Query {
+	public function get_query( $args ): ?\WP_Query {
 		return new \WP_Query( $args );
 	}
 
@@ -47,11 +47,11 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		return get_option( $option_key );
 	}
 
-	public function update_option( $option_key, $option_value ) : void {
+	public function update_option( $option_key, $option_value ): void {
 		update_option( $option_key, $option_value );
 	}
 
-	public function add_option( $option_key, $option_value ) : void {
+	public function add_option( $option_key, $option_value ): void {
 		add_option( $option_key, $option_value );
 	}
 
@@ -71,19 +71,27 @@ class Wordpress_Adapter implements Wordpress_Adapter_Interface {
 		return Upgrade_Manager::is_new_installation();
 	}
 
-	public function add_query_arg( $args, $url ) : string {
+	public function add_query_arg( $args, $url ): string {
 		return add_query_arg( $args, $url );
 	}
 
-	public function has_custom_logo() : bool {
+	public function has_custom_logo(): bool {
 		return has_custom_logo();
 	}
 
-	public function current_user_can( $capability, $args ) : bool {
+	public function current_user_can( $capability, $args ): bool {
 		return current_user_can( $capability, $args );
 	}
 
-	public function get_post_status( $post_id ) : string {
+	public function get_post_status( $post_id ): string {
 		return get_post_status( $post_id );
+	}
+
+	public function get_posts( $args ): array {
+		return get_posts( $args );
+	}
+
+	public function get_post_types( $args = [], $output = 'names', $operator = 'and' ): array {
+		return get_post_types( $args, $output, $operator );
 	}
 }

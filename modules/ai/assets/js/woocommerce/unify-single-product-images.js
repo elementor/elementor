@@ -15,7 +15,7 @@ const extractImgIds = ( imageIdsStr ) => {
 		: { productId: imageIdsStr, imageId: null };
 };
 
-const UnifySingleProductImages = ( { productsImages, setProductImages, isProductGallery = false } ) => {
+const UnifySingleProductImages = ( { productsImages, setProductImages, onClose, isProductGallery = false } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const productsImagesDigested = productsImages.map( ( productImage, idx ) =>
 		( { ...productImage, productId: `${ productImage.productId }${ PRODUCT_ID_SEPARATOR }${ productImage.id }`, sleepTime: ( idx ? idx + 10 : idx ) * 10 } ) );
@@ -31,11 +31,10 @@ const UnifySingleProductImages = ( { productsImages, setProductImages, isProduct
 			{ isOpen && <UnifyProductImages
 				productsImages={ productsImagesDigested }
 				setProductImages={ async ( url, currentImageIdsStr, newImage ) => {
-					setIsOpen( false );
 					const { productId, imageId: currentImage } = extractImgIds( currentImageIdsStr );
 					const product = productsImagesDigested.find( ( productImage ) => productImage.productId === currentImageIdsStr );
 					await new Promise( ( resolve ) => setTimeout( resolve, product.sleepTime ) );
-					setProductImages(
+					await setProductImages(
 						url,
 						productId,
 						currentImage,
@@ -43,7 +42,10 @@ const UnifySingleProductImages = ( { productsImages, setProductImages, isProduct
 						isProductGallery,
 					);
 				} }
-				onClose={ () => setIsOpen( false ) }
+				onClose={ () => {
+					setIsOpen( false );
+					onClose();
+				} }
 			/> }
 		</div> );
 };
@@ -51,6 +53,7 @@ const UnifySingleProductImages = ( { productsImages, setProductImages, isProduct
 UnifySingleProductImages.propTypes = {
 	productsImages: PropTypes.arrayOf( PropTypes.object ),
 	setProductImages: PropTypes.func,
+	onClose: PropTypes.func,
 	isProductGallery: PropTypes.bool,
 };
 

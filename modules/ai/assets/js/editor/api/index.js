@@ -45,7 +45,7 @@ export const getCustomCSS = ( payload ) => request( 'ai_get_custom_css', { paylo
 
 export const setGetStarted = () => request( 'ai_set_get_started' );
 
-export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId } );
+export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId }, true );
 
 export const getTextToImageGeneration = ( payload ) => request( 'ai_get_text_to_image', { payload } );
 
@@ -60,6 +60,8 @@ export const getImageToImageOutPainting = ( payload ) => request( 'ai_get_image_
 export const getImageToImageUpscale = ( payload ) => request( 'ai_get_image_to_image_upscale', { payload } );
 
 export const getImageToImageRemoveBackground = ( payload ) => request( 'ai_get_image_to_image_remove_background', { payload } );
+
+export const getImageToImageIsolateObjects = ( payload ) => request( 'ai_get_image_to_image_isolate_objects', { payload } );
 
 export const getImageToImageReplaceBackground = ( payload ) => request( 'ai_get_image_to_image_replace_background', { payload } );
 

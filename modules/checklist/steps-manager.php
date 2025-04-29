@@ -41,7 +41,7 @@ class Steps_Manager {
 	 *
 	 * @return array
 	 */
-	public function get_steps_for_frontend() : array {
+	public function get_steps_for_frontend(): array {
 		$formatted_steps = [];
 
 		foreach ( self::$step_ids as $step_id ) {
@@ -61,7 +61,7 @@ class Steps_Manager {
 		return $formatted_steps;
 	}
 
-	public function update_step( string $step_id, array $data ) : void {
+	public function update_step( string $step_id, array $data ): void {
 		$step = $this->get_step_by_id( $step_id );
 
 		if ( ! $step ) {
@@ -78,7 +78,7 @@ class Steps_Manager {
 	 *
 	 * @return void
 	 */
-	public function mark_step_as_completed( string $step_id ) : void {
+	public function mark_step_as_completed( string $step_id ): void {
 		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => true ] );
 	}
 
@@ -89,7 +89,7 @@ class Steps_Manager {
 	 *
 	 * @return void
 	 */
-	public function unmark_step_as_completed( string $step_id ) : void {
+	public function unmark_step_as_completed( string $step_id ): void {
 		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => false ] );
 	}
 
@@ -100,7 +100,7 @@ class Steps_Manager {
 	 *
 	 * @return void
 	 */
-	public function maybe_set_step_as_immutable_completed( string $step_id ) : void {
+	public function maybe_set_step_as_immutable_completed( string $step_id ): void {
 		$step = $this->get_step_by_id( $step_id );
 
 		if ( ! $step ) {
@@ -110,14 +110,14 @@ class Steps_Manager {
 		$step->maybe_immutably_mark_as_completed();
 	}
 
-	public function get_step_by_id( string $step_id ) : ?Step_Base {
+	public function get_step_by_id( string $step_id ): ?Step_Base {
 		return $this->step_instances[ $step_id ] ?? null;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function get_step_config( $step_id ) : array {
+	public function get_step_config( $step_id ): array {
 		$step_instance = $this->step_instances[ $step_id ];
 
 		return $step_instance
@@ -141,7 +141,7 @@ class Steps_Manager {
 	 *
 	 * @return void
 	 */
-	private function register_steps() : void {
+	private function register_steps(): void {
 		foreach ( self::$step_ids as $step_id ) {
 			$step_instance = $this->get_step_instance( $step_id );
 
@@ -156,7 +156,7 @@ class Steps_Manager {
 	 *
 	 * @return array
 	 */
-	public static function get_step_ids() : array {
+	public static function get_step_ids(): array {
 		return self::$step_ids;
 	}
 
@@ -167,7 +167,7 @@ class Steps_Manager {
 	 *
 	 * @return Step_Base|null
 	 */
-	private function get_step_instance( string $step_id ) : ?Step_Base {
+	private function get_step_instance( string $step_id ): ?Step_Base {
 		$class_name = '\\Elementor\\Modules\\Checklist\\Steps\\' . $step_id;
 
 		if ( ! class_exists( $class_name ) ) {

@@ -7,7 +7,7 @@ use Elementor\Core\Editor\Loader\V2\Editor_V2_Loader;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Test_Editor_Loader_Factory extends Elementor_Test_Base {

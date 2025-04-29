@@ -1,5 +1,7 @@
 .elementor {
 	@media (max-width: $screen-mobile-max) {
+		// TODO: Delete `.elementor-hidden-phone` in the future. It's BC since 3.4.0.
+		.elementor-hidden-phone,
 		.elementor-hidden-mobile {
 			display: none;
 		}

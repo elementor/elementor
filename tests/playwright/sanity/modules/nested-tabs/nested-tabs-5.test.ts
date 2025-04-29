@@ -1,17 +1,14 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { setup, setTabItemColor, setTabBorderColor } from './helper';
-import _path from 'path';
+import { setupExperiments, setTabItemColor, setTabBorderColor, templatePath } from './helper';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	const templatePath = _path.resolve( __dirname, '../../../templates/nested-tabs-with-icons.json' );
-
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await setup( wpAdmin );
+		await setupExperiments( wpAdmin );
 
 		await page.close();
 	} );
@@ -171,14 +168,9 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		await editor.openPanelTab( 'style' );
-		// Set tab hover style.
 		await editor.setTabControlValue( 'tabs_title_style', 'tabs_title_hover' );
 		await editor.setSelectControlValue( 'tabs_title_border_hover_border', 'solid' );
-		// Set shadow
-		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
-		// Close shadow panel
-		await page.locator( '.elementor-control-tabs_title_box_shadow_hover_box_shadow_type i.eicon-edit' ).click();
-		// Set border radius
+		await editor.setShadowControlValue( 'tabs_title_box_shadow_hover', 'box' );
 		await editor.setDimensionsValue( 'tabs_title_border_radius', '15' );
 
 		// Act.
